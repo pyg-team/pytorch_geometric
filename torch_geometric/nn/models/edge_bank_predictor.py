@@ -56,11 +56,10 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         mem_tensor = self.memory[0]
         # make into decimal index
-        decimal_combined_edge_index = 10 * query_edge_indices[
-            0, :] + query_edge_indices[1, :]
-        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
-        edge_isin_mem_tensor = torch.isin(decimal_combined_edge_index,
-                                          decimal_combined_memory)
+        combined_edge_index = cantor_pairing_function(query_edge_indices[0, :], query_edge_indices[1, :])
+        combined_memory = cantor_pairing_function(mem_tensor[0, :], mem_tensor[1, :])
+        edge_isin_mem_tensor = torch.isin(combined_edge_index,
+                                          combined_memory)
 
         return edge_isin_mem_tensor
 
@@ -74,11 +73,10 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         mem_tensor = self.memory[0]
         # make into decimal index
-        decimal_combined_edge_index = 10 * query_edge_indices[
-            0, :] + query_edge_indices[1, :]
-        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
+        combined_edge_index = cantor_pairing_function(query_edge_indices[0, :], query_edge_indices[1, :])
+        combined_memory = cantor_pairing_function(mem_tensor[0, :], mem_tensor[1, :])
         mem_indices = torch.argwhere(
-            torch.isin(decimal_combined_memory, decimal_combined_edge_index))
+            torch.isin(combined_memory, combined_edge_index))
         return mem_indices
 
     def update_memory(self, edge_index: torch.tensor, ts: torch.tensor):
@@ -193,3 +191,11 @@ class EdgeBankPredictor(torch.nn.Module):
                 self.memory[1][self._index_mem(selected_edges)] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
+
+def cantor_pairing_function(a: torch.tensor, b: torch.tensor) -> torch.tensor:
+    """
+    The Cantor Pairing Function uniquely encodes
+    two natural numbers into a single natural number.
+    https://en.wikipedia.org/wiki/Pairing_function
+    """
+    return (a + b) * (a + b + 1) / 2 + a
