@@ -133,7 +133,7 @@ class EdgeBankPredictor(torch.nn.Module):
                            torch.ones(len(update_edge_index)))
             return None
         edge_isin_mem_tensor = self._edge_isin_mem(update_edge_index)
-        indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
+        indices_to_use = torch.argwhere(torch.logical_not(edge_isin_mem_tensor))
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         ts_to_cat = torch.ones(len(update_edge_index))
@@ -165,7 +165,7 @@ class EdgeBankPredictor(torch.nn.Module):
 
         #* add new edges to the time window
         edge_isin_mem_tensor = self._edge_isin_mem(query_edge_indices)
-        indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
+        indices_to_use = torch.argwhere(torch.logical_not(edge_isin_mem_tensor))
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         self.memory[1] = torch.cat((self.memory[1], update_ts))
