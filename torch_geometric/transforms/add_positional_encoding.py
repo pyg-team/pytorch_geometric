@@ -77,6 +77,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         )
 
         L = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes)
+        L = L.tocsr()
 
         eig_vals, eig_vecs = eig_fn(
             L,
