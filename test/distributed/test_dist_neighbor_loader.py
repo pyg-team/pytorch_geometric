@@ -35,7 +35,7 @@ def create_dist_data(tmp_path, rank):
         node_pb = torch.cat(list(node_pb.values()))
         edge_pb = torch.cat(list(edge_pb.values()))
     else:
-        feat_store.labels = torch.arange(node_pb.size[0])
+        feat_store.labels = torch.arange(node_pb.size()[0])
 
     graph_store.partition_idx = partition_idx
     graph_store.num_partitions = num_partitions
