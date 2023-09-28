@@ -12,7 +12,6 @@ from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
     interface to act as a local graph store for distributed training."""
-
     def __init__(self):
         super().__init__()
         self._edge_index: Dict[Tuple, EdgeTensorType] = {}
@@ -64,9 +63,8 @@ class LocalGraphStore(GraphStore):
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._edge_id.pop(self.key(edge_attr), None) is not None
 
-    def _put_edge_index(
-        self, edge_index: EdgeTensorType, edge_attr: EdgeAttr
-    ) -> bool:
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
         self._edge_index[self.key(edge_attr)] = edge_index
         self._edge_attr[self.key(edge_attr)] = edge_attr
         return True
@@ -170,12 +168,10 @@ class LocalGraphStore(GraphStore):
 
         if meta["is_hetero"]:
             for edge_type, data in graph_data.items():
-                attr = dict(
-                    edge_type=edge_type, layout="coo", size=data["size"]
-                )
+                attr = dict(edge_type=edge_type, layout="coo",
+                            size=data["size"])
                 graph_store.put_edge_index(
-                    torch.stack((data["row"], data["col"]), dim=0), **attr
-                )
+                    torch.stack((data["row"], data["col"]), dim=0), **attr)
                 graph_store.put_edge_id(data["edge_id"], **attr)
 
         return graph_store
