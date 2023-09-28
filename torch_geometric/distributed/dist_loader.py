@@ -64,8 +64,7 @@ class DistLoader:
             raise ValueError(
                 f"'{self}': missing master address "
                 "for rpc communication, try to provide it or set it "
-                "with environment variable 'MASTER_ADDR'"
-            )
+                "with environment variable 'MASTER_ADDR'")
         if master_port is not None:
             self.master_port = int(master_port)
         elif os.environ.get("MASTER_PORT") is not None:
@@ -74,8 +73,7 @@ class DistLoader:
             raise ValueError(
                 f"'{self}': missing master port "
                 "for rpc communication, try to provide it or set it "
-                "with environment variable 'MASTER_ADDR'"
-            )
+                "with environment variable 'MASTER_ADDR'")
         logging.info(
             print(
                 self,
@@ -83,8 +81,7 @@ class DistLoader:
                 self.master_addr,
                 " MASTER_PORT: ",
                 self.master_port,
-            )
-        )
+            ))
 
         self.num_rpc_threads = num_rpc_threads
         if self.num_rpc_threads is not None:
@@ -101,8 +98,7 @@ class DistLoader:
         if self.channel:
             out = self.channel.get()
             logging.debug(
-                f"{repr(self)} retrieved Sampler result from PyG MSG channel"
-            )
+                f"{repr(self)} retrieved Sampler result from PyG MSG channel")
         return out
 
     def worker_init_fn(self, worker_id):
@@ -111,10 +107,10 @@ class DistLoader:
             self.current_ctx_worker = DistContext(
                 world_size=self.current_ctx.world_size * num_sampler_proc,
                 rank=self.current_ctx.rank * num_sampler_proc + worker_id,
-                global_world_size=self.current_ctx.world_size
-                * num_sampler_proc,
-                global_rank=self.current_ctx.rank * num_sampler_proc
-                + worker_id,
+                global_world_size=self.current_ctx.world_size *
+                num_sampler_proc,
+                global_rank=self.current_ctx.rank * num_sampler_proc +
+                worker_id,
                 group_name="mp_sampling_worker",
             )
 
