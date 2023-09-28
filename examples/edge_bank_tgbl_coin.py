@@ -43,10 +43,10 @@ def test_edge_bank_pred():
             end_idx = min(start_idx + BATCH_SIZE,
                           len(data['sources'][test_mask]))
             pos_src, pos_dst, pos_t = (
-                torch.tensor(data['sources'][test_mask][start_idx:end_idx]),
+                torch.tensor(data['sources'][test_mask][start_idx:end_idx]).to(device),
                 torch.tensor(
-                    data['destinations'][test_mask][start_idx:end_idx]),
-                torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
+                    data['destinations'][test_mask][start_idx:end_idx]).to(device),
+                torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]).to(device),
             )
             neg_batch_list = neg_sampler.query_batch(pos_src, pos_dst, pos_t,
                                                      split_mode=split_mode)
@@ -54,17 +54,17 @@ def test_edge_bank_pred():
             for idx, neg_batch in enumerate(neg_batch_list):
                 query_src = torch.tensor([
                     int(pos_src[idx]) for _ in range(len(neg_batch) + 1)
-                ]).reshape(1, -1)
+                ]).to(device).reshape(1, -1)
                 query_dst = torch.cat([
                     torch.tensor([int(pos_dst[idx])]),
                     torch.tensor(neg_batch),
-                ]).reshape(1, -1)
+                ]).to(device).reshape(1, -1)
                 query_edge_index = torch.cat((query_src, query_dst))
                 y_pred = edgebank.predict_link(query_edge_index)
                 # compute MRR
                 input_dict = {
-                    "y_pred_pos": torch.tensor([y_pred[0]]),
-                    "y_pred_neg": torch.tensor(y_pred[1:]),
+                    "y_pred_pos": y_pred[0],
+                    "y_pred_neg": y_pred[1:],
                     "eval_metric": [metric],
                 }
                 perf_list.append(evaluator.eval(input_dict)[metric])
@@ -108,11 +108,11 @@ def test_edge_bank_pred():
     test_mask = dataset.test_mask
 
     #data for memory in edgebank
-    hist_src = torch.tensor(data['sources'][train_mask])
-    hist_dst = torch.tensor(data['destinations'][train_mask])
+    hist_src = torch.tensor(data['sources'][train_mask]).to(device)
+    hist_dst = torch.tensor(data['destinations'][train_mask]).to(device)
     hist_edge_index = torch.cat(
         (hist_src.reshape(1, -1), hist_dst.reshape(1, -1)))
-    hist_ts = torch.tensor(data['timestamps'][train_mask])
+    hist_ts = torch.tensor(data['timestamps'][train_mask]).to(device)
     print("dataset.full_data=", dataset.full_data)
     print("dataset.eval_metric=", dataset.eval_metric)
     print("dataset.train_mask=", dataset.train_mask)
