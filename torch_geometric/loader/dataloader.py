@@ -7,12 +7,16 @@ from torch.utils.data.dataloader import default_collate
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.datapipes import DatasetAdapter
+from torch_geometric.data.on_disk_dataset import OnDiskDataset
 
 
 class Collater:
-    def __init__(self, follow_batch, exclude_keys):
+    def __init__(self, follow_batch, exclude_keys, query_dataset=None,
+                 **kwargs):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
+        self.query_dataset = query_dataset
+        self.query_batch_size = kwargs.get('batch_size')
 
     def __call__(self, batch):
         elem = batch[0]
@@ -24,7 +28,12 @@ class Collater:
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
-            return torch.tensor(batch)
+            if self.query_dataset and isinstance(self.query_dataset,
+                                                 OnDiskDataset):
+                return self.query_dataset.multi_get(
+                    batch, batch_size=self.query_batch_size)
+            else:
+                return torch.tensor(batch)
         elif isinstance(elem, str):
             return batch
         elif isinstance(elem, Mapping):
@@ -62,7 +71,8 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
+        dataset: Union[Dataset, OnDiskDataset, Sequence[BaseData],
+                       DatasetAdapter],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
@@ -76,10 +86,16 @@ class DataLoader(torch.utils.data.DataLoader):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
+        query_dataset = None
+
+        if isinstance(dataset, OnDiskDataset):
+            query_dataset = dataset
+            dataset = range(0, len(dataset))
+
         super().__init__(
             dataset,
             batch_size,
             shuffle,
-            collate_fn=Collater(follow_batch, exclude_keys),
+            collate_fn=Collater(follow_batch, exclude_keys, query_dataset),
             **kwargs,
         )
