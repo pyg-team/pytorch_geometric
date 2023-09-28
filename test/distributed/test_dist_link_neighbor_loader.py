@@ -1,4 +1,5 @@
 import socket
+
 import pytest
 import torch
 import torch.multiprocessing as mp
@@ -85,9 +86,8 @@ def dist_link_neighbor_loader_hetero(
         ),
     )
 
-    edge_label = torch.randint(high=2, size=(1, edge_label_index[1].size()[1]))[
-        0
-    ]
+    edge_label = torch.randint(high=2,
+                               size=(1, edge_label_index[1].size()[1]))[0]
 
     loader = DistLinkNeighborLoader(
         data=data,
@@ -113,25 +113,21 @@ def dist_link_neighbor_loader_hetero(
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert (
-            batch[edge_type].input_id.numel()
-            == batch[edge_type].batch_size
-            == 10
-        )
+        assert (batch[edge_type].input_id.numel() ==
+                batch[edge_type].batch_size == 10)
         assert len(batch.node_types) == 2
         for ntype in batch.node_types:
             assert torch.equal(batch[ntype].x, batch.x_dict[ntype])
             assert batch.x_dict[ntype].device == device
             assert batch.x_dict[ntype].size(0) >= 0
-            assert batch[ntype].n_id.size() == (batch[ntype].num_nodes,)
+            assert batch[ntype].n_id.size() == (batch[ntype].num_nodes, )
         assert len(batch.edge_types) == 4
         for etype in batch.edge_types:
             if batch[etype].edge_index.numel() > 0:
                 assert batch[etype].edge_index.device == device
                 assert batch[etype].edge_attr.device == device
-                assert batch[etype].edge_attr.size(0) == batch[
-                    etype
-                ].edge_index.size(1)
+                assert batch[etype].edge_attr.size(
+                    0) == batch[etype].edge_index.size(1)
 
 
 def dist_link_neighbor_loader_homo(
@@ -165,9 +161,8 @@ def dist_link_neighbor_loader_homo(
             dim=0,
         ),
     )
-    edge_label = torch.randint(high=2, 
-                               size=(1, edge_label_index[1].size()[1])
-                               )[0]
+    edge_label = torch.randint(high=2,
+                               size=(1, edge_label_index[1].size()[1]))[0]
 
     loader = DistLinkNeighborLoader(
         data=data,
@@ -194,7 +189,7 @@ def dist_link_neighbor_loader_homo(
         assert isinstance(batch, Data)
         assert batch.x.device == device
         assert batch.x.size(0) >= 0
-        assert batch.n_id.size() == (batch.num_nodes,)
+        assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
@@ -207,9 +202,8 @@ def dist_link_neighbor_loader_homo(
 @pytest.mark.parametrize("num_workers", [0, 2])
 @pytest.mark.parametrize("async_sampling", [True, False])
 @pytest.mark.parametrize("neg_ratio", [None, 1.0])
-def test_dist_link_neighbor_loader_homo(
-    tmp_path, num_workers, async_sampling, neg_ratio
-):
+def test_dist_link_neighbor_loader_homo(tmp_path, num_workers, async_sampling,
+                                        neg_ratio):
     mp_context = torch.multiprocessing.get_context("spawn")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("127.0.0.1", 0))
@@ -217,9 +211,8 @@ def test_dist_link_neighbor_loader_homo(
     s.close()
     addr = "localhost"
 
-    data = FakeDataset(
-        num_graphs=1, avg_num_nodes=100, avg_degree=3, edge_dim=2
-    )[0]
+    data = FakeDataset(num_graphs=1, avg_num_nodes=100, avg_degree=3,
+                       edge_dim=2)[0]
 
     num_parts = 2
     partitioner = Partitioner(data, num_parts, tmp_path)
@@ -265,9 +258,8 @@ def test_dist_link_neighbor_loader_homo(
 @pytest.mark.parametrize("async_sampling", [True, False])
 @pytest.mark.parametrize("neg_ratio", [None, 1.0])
 @pytest.mark.parametrize("edge_type", [("v0", "e0", "v0"), ("v1", "e0", "v0")])
-def test_dist_link_neighbor_loader_homo(
-    tmp_path, num_workers, async_sampling, neg_ratio, edge_type
-):
+def test_dist_link_neighbor_loader_homo(tmp_path, num_workers, async_sampling,
+                                        neg_ratio, edge_type):
     mp_context = torch.multiprocessing.get_context("spawn")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("127.0.0.1", 0))
