@@ -111,8 +111,7 @@ def test_edge_bank_pred():
     #data for memory in edgebank
     hist_src = torch.tensor(data['sources'][train_mask])
     hist_dst = torch.tensor(data['destinations'][train_mask])
-    hist_edge_index = torch.cat(
-        (hist_src, hist_dst))
+    hist_edge_index = torch.cat((hist_src, hist_dst))
     hist_ts = torch.tensor(data['timestamps'][train_mask])
     print("dataset.full_data=", dataset.full_data)
     print("dataset.eval_metric=", dataset.eval_metric)
