@@ -54,12 +54,11 @@ class EdgeBankPredictor(torch.nn.Module):
             edge_isin_mem_tensor: [num_edges] boolean tensor representing
                 whether each query edge is in memory already
         """
-        mem_tensor = self.memory[0]
         # make into decimal index
         combined_edge_index = cantor_pairing_function(query_edge_indices[0, :],
                                                       query_edge_indices[1, :])
-        combined_memory = cantor_pairing_function(mem_tensor[0, :],
-                                                  mem_tensor[1, :])
+        combined_memory = cantor_pairing_function(self.memory_tensor[0, :],
+                                                  self.memory_tensor[1, :])
         edge_isin_mem_tensor = torch.isin(combined_edge_index, combined_memory)
 
         return edge_isin_mem_tensor
@@ -72,12 +71,11 @@ class EdgeBankPredictor(torch.nn.Module):
         Returns:
             mem_indices: indices in memory
         """
-        mem_tensor = self.memory[0]
         # make into decimal index
         combined_edge_index = cantor_pairing_function(query_edge_indices[0, :],
                                                       query_edge_indices[1, :])
-        combined_memory = cantor_pairing_function(mem_tensor[0, :],
-                                                  mem_tensor[1, :])
+        combined_memory = cantor_pairing_function(self.memory_tensor[0, :],
+                                                  self.memory_tensor[1, :])
         mem_indices = torch.argwhere(
             torch.isin(combined_memory, combined_edge_index))
         return mem_indices
@@ -130,7 +128,7 @@ class EdgeBankPredictor(torch.nn.Module):
             update_edge_index: [2, num_edges] tensor of edge indices
         """
         if self.memory is None:
-            self.memory = (update_edge_index,
+            self.memory_tensor, self.timestamps = (update_edge_index,
                            torch.ones(len(update_edge_index)))
             return None
         print("update_edge_index.size()=", update_edge_index.size())
@@ -141,9 +139,9 @@ class EdgeBankPredictor(torch.nn.Module):
         print("indices_to_use.size()=", indices_to_use.size())
         edges_to_cat = update_edge_index[:, indices_to_use]
         print("edges_to_cat.size()=", edges_to_cat.size())
-        self.memory[0] = torch.cat((self.memory[0], edges_to_cat), dim=1)
+        self.memory_tensor = torch.cat((self.memory_tensor, edges_to_cat), dim=1)
         ts_to_cat = torch.ones(len(update_edge_index))
-        self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
+        self.self.timestamps = torch.cat((self.timestamps, ts_to_cat))
 
     def _update_time_window_memory(self, update_edge_index: torch.tensor,
                                    update_ts: torch.tensor) -> None:
@@ -167,15 +165,15 @@ class EdgeBankPredictor(torch.nn.Module):
 
         #* update existing edges in memory
         mem_indices_to_use = self._index_mem(update_edge_index)
-        self.memory[1][mem_indices_to_use] = update_ts
+        self.timestamps[mem_indices_to_use] = update_ts
 
         #* add new edges to the time window
         edge_isin_mem_tensor = self._edge_isin_mem(query_edge_indices)
         indices_to_use = torch.argwhere(
             torch.logical_not(edge_isin_mem_tensor))
         edges_to_cat = update_edge_index[:, indices_to_use]
-        self.memory[0] = torch.cat((self.memory[0], edges_to_cat), dim=1)
-        self.memory[1] = torch.cat((self.memory[1], update_ts))
+        self.memory_tensor = torch.cat((self.memory_tensor, edges_to_cat), dim=1)
+        self.timestamps = torch.cat((self.timestamps, update_ts))
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
         r"""
@@ -192,7 +190,7 @@ class EdgeBankPredictor(torch.nn.Module):
         if (self.memory_mode == 'fixed_time_window'):
             selected_edges = query_edge_indices[edge_indices_to_use]
             edge_indices_to_use = torch.argwhere(
-                self.memory[1][self._index_mem(selected_edges)] >= self.prev_t)
+                self.timestamps[self._index_mem(selected_edges)] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
 
