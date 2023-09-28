@@ -48,20 +48,21 @@ class LocalFeatureStore(FeatureStore):
     interface to act as a local feature store for distributed training."""
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
-
         self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
-
         # Save the global node/edge IDs:
         self._global_id: Dict[Union[NodeType, EdgeType], Tensor] = {}
-
         # Save the mapping from global node/edge IDs to indices in `_feat`:
         self._global_id_to_index: Dict[Union[NodeType, EdgeType], Tensor] = {}
-
-        # For partition/rpc information related to distribute features:
-        self.num_partitions = 1
-        self.partition_idx = 0
-        self.feature_pb: Union[Tensor, Dict[NodeOrEdgeType, Tensor]]
-        self.local_only = False
+        # for partition/rpc info related to distributed features
+        self.num_partitions: int = 1
+        self.partition_idx: int = 0
+        # Mapping between node ID and partition ID
+        self.node_feat_pb: Union[Tensor, Dict[NodeType, Tensor]]
+        # Mapping between edge ID and partition ID
+        self.edge_feat_pb: Union[Tensor, Dict[EdgeType, Tensor]]
+        # Node labels
+        self.labels: Optional[Tensor] = None
+        self.local_only: bool = False
         self.rpc_router: Optional[RPCRouter] = None
         self.meta: Optional[Dict] = None
         self.rpc_call_id: Optional[int] = None
