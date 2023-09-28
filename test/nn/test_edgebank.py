@@ -13,13 +13,13 @@ from tqdm import tqdm
 
 from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn.models import EdgeBankPredictor
-from torch_geometric.testing import withPackage
 
 
 # ==================
 # ==================
 # ==================
-@withPackage('tgb')
+# (TODO) replace TGB w/ FakeTemporalDataset
+@pytest.mark.skip()
 def test_edge_bank_pred():
     from tgb.linkproppred.dataset import LinkPropPredDataset
     from tgb.linkproppred.evaluate import Evaluator
