@@ -1,88 +1,15 @@
 import argparse
 import time
 from math import ceil
-from typing import List
 
 import matplotlib.pyplot as plt
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.data import Data
-from torch_geometric.loader import IBMBNodeLoader
+from torch_geometric.loader import IBMBNodeLoader, NeighborLoader
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import add_remaining_self_loops, to_undirected
-
-
-def normalize_adjmat(adj: SparseTensor, normalization: str):
-    """
-    Normalize SparseTensor adjacency matrix.
-
-    :param normalization:
-    :return:
-    """
-
-    assert normalization in [
-        'sym', 'rw'
-    ], f"Unsupported normalization type {normalization}"
-    assert isinstance(
-        adj, SparseTensor), f"Expect SparseTensor type, got {type(adj)}"
-
-    adj = adj.fill_value(1.)
-    degree = adj.sum(0)
-
-    degree[degree == 0.] = 1e-12
-    deg_inv = 1 / degree
-
-    if normalization == 'sym':
-        deg_inv_sqrt = deg_inv**0.5
-        adj = adj * deg_inv_sqrt.reshape(1, -1)
-        adj = adj * deg_inv_sqrt.reshape(-1, 1)
-    elif normalization == 'rw':
-        adj = adj * deg_inv.reshape(-1, 1)
-
-    return adj
-
-
-class NeighborSamplingLoader(torch.utils.data.DataLoader):
-    def __init__(self, graph: Data, sizes: List[int], node_idx, **kwargs):
-
-        adj = SparseTensor.from_edge_index(
-            graph.edge_index, sparse_sizes=(graph.num_nodes, graph.num_nodes))
-        adj = normalize_adjmat(adj, 'sym')
-
-        self.node_idx = node_idx
-        self.batch_size = kwargs['batch_size']
-        self.sizes = sizes
-        self.adj_t = adj
-        self.original_graph = graph
-
-        super().__init__(node_idx, collate_fn=self.sample, **kwargs)
-
-    def __getitem__(self, idx):
-        return self.node_idx[idx]
-
-    def __len__(self):
-        return len(self.node_idx)
-
-    @property
-    def loader_len(self):
-        return ceil(len(self.node_idx) / self.batch_size)
-
-    def sample(self, batch):
-        batch = torch.tensor(batch)
-        adjs = []
-        n_id = batch
-        for size in self.sizes:
-            adj_t, n_id = self.adj_t.sample_adj(n_id, size, replace=False)
-            adjs.append(adj_t)
-
-        adjs = adjs[0] if len(adjs) == 1 else adjs[::-1]
-
-        subg = Data(x=self.original_graph.x[n_id],
-                    y=self.original_graph.y[batch], edge_index=adjs,
-                    output_node_mask=torch.ones(len(batch), dtype=torch.bool))
-        return subg
 
 
 class GraphPreprocess:
@@ -109,16 +36,9 @@ class GraphPreprocess:
         return graph
 
 
-class MyGCNConv(GCNConv):
-    def forward(self, x, edge_index):
-        x = self.lin(x)
-        out = matmul(edge_index, x, reduce=self.aggr)
-        return out
-
-
 class GCN(torch.nn.Module):
     def __init__(self, num_node_features, num_classes, hidden_channels,
-                 num_layers):
+                 num_layers, normalize, add_self_loops):
         super(GCN, self).__init__()
         self.conv_layers = torch.nn.ModuleList([])
         self.bns = torch.nn.ModuleList([])
@@ -127,39 +47,24 @@ class GCN(torch.nn.Module):
         for i in range(num_layers):
             in_channels = num_node_features if i == 0 else hidden_channels
             self.conv_layers.append(
-                MyGCNConv(in_channels=in_channels,
-                          out_channels=hidden_channels))
+                GCNConv(in_channels=in_channels, out_channels=hidden_channels,
+                        normalize=normalize, add_self_loops=add_self_loops))
             self.bns.append(
                 torch.nn.LayerNorm(hidden_channels, elementwise_affine=True))
 
         self.lastlayer = torch.nn.Linear(hidden_channels, num_classes)
 
     def forward(self, data):
-        x, adjs, prime_index = data.x, data.edge_index, data.output_node_mask
+        x, edge_index = data.x, data.edge_index
 
         for i, l in enumerate(self.conv_layers):
-            if i == self.num_layers - 1 and prime_index is not None:
-                if isinstance(adjs, SparseTensor):
-                    adj = adjs[prime_index, :]
-                elif isinstance(adjs, list):
-                    adj = adjs[i]
-                else:
-                    raise TypeError
-            else:
-                if isinstance(adjs, SparseTensor):
-                    adj = adjs
-                elif isinstance(adjs, list):
-                    adj = adjs[i]
-                else:
-                    raise TypeError
-
-            x = l(x, adj)
+            x = l(x, edge_index)
             x = self.bns[i](x)
             x = torch.nn.functional.dropout(torch.relu(x), p=0.5,
                                             training=self.training)
         x = self.lastlayer(x)
 
-        return x.log_softmax(dim=-1)
+        return x
 
     def reset_parameters(self):
         for c in self.conv_layers:
@@ -180,8 +85,8 @@ def train(model, train_loader, optimizer):
         y = data.y[data.output_node_mask]
 
         optimizer.zero_grad()
-        outputs = model(data)
-        loss = torch.nn.functional.nll_loss(outputs, y)
+        outputs = model(data)[data.output_node_mask]
+        loss = torch.nn.CrossEntropyLoss()(outputs, y)
         loss.backward()
 
         optimizer.step()
@@ -203,8 +108,56 @@ def test(model, loader, scheduler):
         data = data.to(device)
         y = data.y[data.output_node_mask]
 
-        outputs = model(data)
-        loss = torch.nn.functional.nll_loss(outputs, y)
+        outputs = model(data)[data.output_node_mask]
+        loss = torch.nn.CrossEntropyLoss()(outputs, y)
+        if scheduler is not None:
+            scheduler.step(loss)
+        pred = torch.argmax(outputs.detach(), dim=1)
+        corrects += pred.eq(y).sum().item()
+        total_loss += loss.item() * len(y)
+        num_nodes += len(y)
+    return total_loss / num_nodes, corrects / num_nodes
+
+
+def train_neighborloader(model, train_loader, optimizer):
+    model.train()
+
+    corrects = 0
+    total_loss = 0
+    num_nodes = 0
+    for data in train_loader:
+        data = data.to(device)
+        batch_size = data.batch_size
+        y = data.y[:batch_size]
+
+        optimizer.zero_grad()
+        outputs = model(data)[:batch_size]
+        loss = torch.nn.CrossEntropyLoss()(outputs, y)
+        loss.backward()
+
+        optimizer.step()
+        pred = torch.argmax(outputs.detach(), dim=1)
+        corrects += pred.eq(y).sum()
+        total_loss += loss * len(y)
+        num_nodes += len(y)
+    return total_loss / num_nodes, corrects / num_nodes
+
+
+@torch.no_grad()
+def test_neighborloader(model, loader, scheduler):
+    model.eval()
+
+    corrects = 0
+    total_loss = 0
+    num_nodes = 0
+    for data in loader:
+        data = data.to(device)
+        batch_size = data.batch_size
+        y = data.y[:batch_size]
+
+        outputs = model(data)[:batch_size]
+
+        loss = torch.nn.CrossEntropyLoss()(outputs, y)
         if scheduler is not None:
             scheduler.step(loss)
         pred = torch.argmax(outputs.detach(), dim=1)
@@ -247,21 +200,19 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = GCN(graph.num_node_features,
-                graph.y.max().item() + 1, args.hidden_channels,
-                args.num_layers).to(device)
-
     ibmb_timing = []
     ibmb_acc = []
     baseline_timing = []
     baseline_acc = []
 
-    model.reset_parameters()
+    model = GCN(graph.num_node_features,
+                graph.y.max().item() + 1, args.hidden_channels,
+                args.num_layers, normalize=False,
+                add_self_loops=False).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1.e-3,
                                  weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.33, patience=30, cooldown=10,
-        min_lr=1.e-4)
+        optimizer, mode='min', factor=0.33, patience=50, min_lr=1.e-5)
 
     if torch.cuda.is_available():
         torch.cuda.synchronize()
@@ -298,12 +249,14 @@ if __name__ == '__main__':
         ibmb_timing.append(time.time() - ibmb_start_time)
         ibmb_acc.append(val_acc)
 
-    model.reset_parameters()
+    model = GCN(graph.num_node_features,
+                graph.y.max().item() + 1, args.hidden_channels,
+                args.num_layers, normalize=True,
+                add_self_loops=False).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1.e-3,
                                  weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.33, patience=30, cooldown=10,
-        min_lr=1.e-4)
+        optimizer, mode='min', factor=0.33, patience=50, min_lr=1.e-5)
 
     if torch.cuda.is_available():
         torch.cuda.synchronize()
@@ -313,24 +266,25 @@ if __name__ == '__main__':
     num_nodes = [3, 3, 3]
     # Neighbor Loader
     # the number of batches should be the same as IBMB loader
-    train_loader = NeighborSamplingLoader(
-        graph, sizes=num_nodes, node_idx=split_idx["train"],
+    train_loader = NeighborLoader(
+        graph, num_neighbors=num_nodes, input_nodes=split_idx["train"],
         batch_size=ceil(len(split_idx["train"]) / len(train_loader)),
         shuffle=True)
-    val_loader = NeighborSamplingLoader(
-        graph, sizes=num_nodes, node_idx=split_idx["valid"],
+    val_loader = NeighborLoader(
+        graph, num_neighbors=num_nodes, input_nodes=split_idx["valid"],
         batch_size=ceil(len(split_idx["train"]) / len(val_loader)),
         shuffle=True)
-    test_loader = NeighborSamplingLoader(
-        graph, sizes=num_nodes, node_idx=split_idx["test"],
+    test_loader = NeighborLoader(
+        graph, num_neighbors=num_nodes, input_nodes=split_idx["test"],
         batch_size=ceil(len(split_idx["test"]) / len(test_loader)),
         shuffle=True)
 
     print("=========== Start baseline training ===========")
     for epoch in range(300):
-        train_loss, train_acc = train(model, train_loader, optimizer)
-        val_loss, val_acc = test(model, val_loader, scheduler)
-        best_loss, best_acc = test(model, val_loader, None)
+        train_loss, train_acc = train_neighborloader(model, train_loader,
+                                                     optimizer)
+        val_loss, val_acc = test_neighborloader(model, val_loader, scheduler)
+        best_loss, best_acc = test_neighborloader(model, val_loader, None)
         print(f'Epoch: {epoch}, '
               f'train loss: {train_loss:.4f}, train acc: {train_acc:.4f}, '
               f'val loss: {val_loss:.4f}, val acc: {val_acc:.4f}, '
@@ -345,4 +299,5 @@ if __name__ == '__main__':
     plt.plot(baseline_timing, baseline_acc, label="Baseline")
     plt.legend()
     plt.xscale("log")
+    # plt.ylim(66, 72)
     fig.savefig('curves.png', dpi=400)
