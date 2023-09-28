@@ -70,8 +70,8 @@ def test_edge_bank_pred():
                 perf_list.append(evaluator.eval(input_dict)[metric])
 
             # update edgebank memory after each positive batch
-            pos_edge_index = torch.cat(pos_src.reshape(1, -1),
-                                       pos_dst.reshape(1, -1))
+            pos_edge_index = torch.cat((pos_src.reshape(1, -1),
+                                       pos_dst.reshape(1, -1)))
             edgebank.update_memory(pos_edge_index, pos_t)
 
         perf_metrics = float(torch.mean(torch.tensor(perf_list)))
@@ -97,6 +97,7 @@ def test_edge_bank_pred():
 
     # data loading with `numpy`
     dataset = LinkPropPredDataset(name=DATA, root="datasets", preprocess=True)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("dataset=", dataset)
     data = dataset.full_data
     metric = dataset.eval_metric
