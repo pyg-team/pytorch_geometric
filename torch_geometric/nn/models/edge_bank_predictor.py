@@ -138,7 +138,7 @@ class EdgeBankPredictor(torch.nn.Module):
         print("indices_to_use.size()=", indices_to_use.size())
         edges_to_cat = update_edge_index[:, indices_to_use]
         print("edges_to_cat.size()=", edges_to_cat.size())
-        self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
+        self.memory[0] = torch.cat((self.memory[0], edges_to_cat), dim=1)
         ts_to_cat = torch.ones(len(update_edge_index))
         self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
 
@@ -171,7 +171,7 @@ class EdgeBankPredictor(torch.nn.Module):
         indices_to_use = torch.argwhere(
             torch.logical_not(edge_isin_mem_tensor))
         edges_to_cat = update_edge_index[:, indices_to_use]
-        self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
+        self.memory[0] = torch.cat((self.memory[0], edges_to_cat), dim=1)
         self.memory[1] = torch.cat((self.memory[1], update_ts))
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
