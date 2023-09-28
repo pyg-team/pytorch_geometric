@@ -227,9 +227,7 @@ class DistNeighborSampler:
         """
 
         input_type = inputs.input_type
-        self.input_type = input_type
-
-        batch_size = seed.numel()
+        batch_size = inputs.input_id.size()[0]
 
         seed_dict = None
         seed_time_dict = None
@@ -241,7 +239,8 @@ class DistNeighborSampler:
                 inputs.time.to(self.device) if inputs.time is not None else None
             )
             src_batch = torch.arange(batch_size) if self.disjoint else None
-
+            seed_dict = {input_type: seed}
+            seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
             metadata = (seed, seed_time)
 
         elif isinstance(inputs, EdgeSamplerInput) and self.is_hetero:
@@ -268,12 +267,8 @@ class DistNeighborSampler:
 
             node_dict = NodeDict(self._sampler.node_types)
             batch_dict = BatchDict(self._sampler.node_types, self.disjoint)
-
             edge_dict: Dict[EdgeType, Tensor] = {}
-
-            seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
             num_sampled_nodes_dict: Dict[NodeType, List[int]] = {}
-
             sampled_nbrs_per_node_dict: Dict[EdgeType, List[int]] = {}
             num_sampled_edges_dict: Dict[EdgeType, List[int]] = {}
 
@@ -293,8 +288,8 @@ class DistNeighborSampler:
                 }
 
                 num_sampled_nodes_dict = {
-                    input_type[0]: inputs.row.numel(),
-                    input_type[-1]: inputs.col.numel(),
+                    input_type[0]: [inputs.row.numel()],
+                    input_type[-1]: [inputs.col.numel()],
                 }
 
                 if self.disjoint:
@@ -324,7 +319,7 @@ class DistNeighborSampler:
                     if node_dict.src[src].numel():
                         seed_time = (
                             seed_time_dict.get(src, None)
-                            if seed_time_dict.get(src, None) is not None
+                            if seed_time_dict is not None
                             else None
                         )
                         one_hop_num = (
@@ -386,7 +381,7 @@ class DistNeighborSampler:
             row_dict, col_dict = torch.ops.pyg.hetero_relabel_neighborhood(
                 self._sampler.node_types,
                 self._sampler.edge_types,
-                {input_type: seed},
+                seed_dict,
                 node_dict.with_dupl,
                 sampled_nbrs_per_node_dict,
                 self._sampler.num_nodes,
@@ -681,25 +676,17 @@ class DistNeighborSampler:
             nfeats = {}
             efeats = {}
             # Collect node labels of input node type.
-            node_labels = self.dist_graph.labels
+            node_labels = self.dist_feature.labels
             if node_labels is not None:
-                nlabels[self.input_type] = node_labels[
-                    output.node[self.input_type]
-                ]
+                for ntype in output.node.keys():
+                    nlabels[ntype] = node_labels[output.node[ntype]]
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
                     if output.node[ntype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=True,
-                            index=output.node[ntype],
-                            input_type=ntype,
-                        )
-                        # print('node fut')
-                        print(
-                            {max(output.node[ntype])},
-                            {self.dist_feature.node_feat_pb.size()},
-                        )
+                            is_node_feat=True, index=output.node[ntype],
+                            input_type=ntype)
                         nfeat = await wrap_torch_future(fut)
                         nfeat = nfeat.to(torch.device("cpu"))
                         nfeats[ntype] = nfeat
@@ -710,14 +697,8 @@ class DistNeighborSampler:
                 for etype in output.edge.keys():
                     if output.edge[etype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=False,
-                            index=output.edge[etype],
-                            input_type=etype,
-                        )
-                        # print('edge fut')
-                        print(
-                            f"{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}"
-                        )
+                            is_node_feat=False, index=output.edge[etype],
+                            input_type=etype)
                         efeat = await wrap_torch_future(fut)
                         efeat = efeat.to(torch.device("cpu"))
                         efeats[etype] = efeat
@@ -727,15 +708,14 @@ class DistNeighborSampler:
         else:  # Homo
             # Collect node labels.
             nlabels = (
-                self.dist_graph.labels[output.node]
-                if (self.dist_graph.labels is not None)
+                self.dist_feature.labels[output.node]
+                if (self.dist_feature.labels is not None)
                 else None
             )
             # Collect node features.
             if output.node is not None:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=True, index=output.node
-                )
+                    is_node_feat=True, index=output.node)
                 nfeats = await wrap_torch_future(fut)
                 nfeats = nfeats.to(torch.device("cpu"))
             # else:
@@ -743,8 +723,7 @@ class DistNeighborSampler:
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=False, index=output.edge
-                )
+                    is_node_feat=False, index=output.edge)
                 efeats = await wrap_torch_future(fut)
                 efeats = efeats.to(torch.device("cpu"))
             else:

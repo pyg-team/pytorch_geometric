@@ -675,12 +675,11 @@ async def edge_sample_async(
                 out = await sample_fn(
                     EdgeSamplerInput(
                         input_id,
-                        seed_dict[
-                            input_type[0],
-                            seed_dict[input_type[-1]],
-                            src_seed_time,
-                            input_type,
-                        ],
+                        src,
+                        dst,
+                        edge_label,
+                        src_seed_time,
+                        input_type
                     ),
                     dst_seed_time,
                 )
