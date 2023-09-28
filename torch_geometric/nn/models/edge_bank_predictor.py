@@ -169,8 +169,6 @@ class EdgeBankPredictor(torch.nn.Module):
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         self.memory[1] = torch.cat((self.memory[1], update_ts))
-        
-
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
         r"""
