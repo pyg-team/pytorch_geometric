@@ -160,9 +160,18 @@ class EdgeBankPredictor(torch.nn.Module):
             self.cur_t = update_ts.max()
             self.prev_t = self.cur_t - self.duration
 
-        #* add new edges to the time window
+        #* update existing edges in memory
         mem_indices_to_use = self._index_mem(update_edge_index)
-        self.memory[1][mem_indices_to_use] = ts
+        self.memory[1][mem_indices_to_use] = update_ts
+
+        #* add new edges to the time window
+        edge_isin_mem_tensor = self._edge_isin_mem(query_edge_indices)
+        indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
+        edges_to_cat = update_edge_index[:, indices_to_use]
+        self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
+        self.memory[1] = torch.cat((self.memory[1], update_ts))
+        
+
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
         r"""
