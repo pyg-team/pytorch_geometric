@@ -173,6 +173,7 @@ class EdgeBankPredictor(torch.nn.Module):
             pred: the prediction for all query edges
         """
         pred = torch.zeros(len(query_edge_indices))
+        print("self.memory[0].size()=", self.memory[0].size())
         edge_isin_mem_tensor = self._edge_isin_mem(query_edge_indices)
         edge_indices_to_use = torch.argwhere(edge_isin_mem_tensor)
         if (self.memory_mode == 'fixed_time_window'):
