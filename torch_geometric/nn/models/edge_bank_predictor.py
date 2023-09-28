@@ -135,7 +135,8 @@ class EdgeBankPredictor(torch.nn.Module):
         print("update_edge_index.size()=", update_edge_index.size())
         edge_isin_mem_tensor = self._edge_isin_mem(update_edge_index)
         print("edge_isin_mem_tensor.size()=", edge_isin_mem_tensor.size())
-        indices_to_use = torch.argwhere(torch.logical_not(edge_isin_mem_tensor))
+        indices_to_use = torch.argwhere(
+            torch.logical_not(edge_isin_mem_tensor))
         print("indices_to_use.size()=", indices_to_use.size())
         edges_to_cat = update_edge_index[:, indices_to_use]
         print("edges_to_cat.size()=", edges_to_cat.size())
