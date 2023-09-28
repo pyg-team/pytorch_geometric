@@ -16,7 +16,7 @@ class Collater:
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
         self.query_dataset = query_dataset
-        self.query_batch_size = kwargs.get('batch_size')
+        self.query_batch_size = kwargs.get('query_batch_size')
 
     def __call__(self, batch):
         elem = batch[0]
