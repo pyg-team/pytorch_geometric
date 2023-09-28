@@ -61,7 +61,7 @@ def test_edge_bank_pred():
                     torch.tensor([int(pos_dst[idx])]),
                     torch.tensor(neg_batch),
                 ]).reshape(1, -1)
-                query_edge_index = torch.cat((query_src, query_dst), dim=1)
+                query_edge_index = torch.cat((query_src, query_dst))
                 y_pred = edgebank.predict_link(query_edge_index)
                 # compute MRR
                 input_dict = {
@@ -73,7 +73,7 @@ def test_edge_bank_pred():
 
             # update edgebank memory after each positive batch
             pos_edge_index = torch.cat(pos_src.reshape(1, -1),
-                                       post_dst.reshape(1, -1), dim=1)
+                                       post_dst.reshape(1, -1))
             edgebank.update_memory(pos_edge_index, pos_t)
 
         perf_metrics = float(torch.mean(torch.tensor(perf_list)))
