@@ -54,14 +54,14 @@ def create_dist_data(tmp_path, rank):
 
 
 def dist_neighbor_loader_homo(
-    tmp_path: str,
-    world_size: int,
-    rank: int,
-    master_addr: str,
-    master_port: int,
-    num_workers: int,
-    async_sampling: bool,
-    device=torch.device("cpu"),
+        tmp_path: str,
+        world_size: int,
+        rank: int,
+        master_addr: str,
+        master_port: int,
+        num_workers: int,
+        async_sampling: bool,
+        device=torch.device("cpu"),
 ):
     data = create_dist_data(tmp_path, rank)
     input_nodes = data[0].get_global_id(None)
@@ -97,7 +97,7 @@ def dist_neighbor_loader_homo(
         assert isinstance(batch, Data)
         assert batch.x.device == device
         assert batch.x.size(0) >= 0
-        assert batch.n_id.size() == (batch.num_nodes,)
+        assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
@@ -107,14 +107,14 @@ def dist_neighbor_loader_homo(
 
 
 def dist_neighbor_loader_hetero(
-    tmp_path: str,
-    world_size: int,
-    rank: int,
-    master_addr: str,
-    master_port: int,
-    num_workers: int,
-    async_sampling: bool,
-    device=torch.device("cpu"),
+        tmp_path: str,
+        world_size: int,
+        rank: int,
+        master_addr: str,
+        master_port: int,
+        num_workers: int,
+        async_sampling: bool,
+        device=torch.device("cpu"),
 ):
     data = create_dist_data(tmp_path, rank)
     input_nodes = ("v0", data[0].get_global_id("v0"))
@@ -155,15 +155,14 @@ def dist_neighbor_loader_hetero(
             assert torch.equal(batch[ntype].x, batch.x_dict[ntype])
             assert batch.x_dict[ntype].device == device
             assert batch.x_dict[ntype].size(0) >= 0
-            assert batch[ntype].n_id.size() == (batch[ntype].num_nodes,)
+            assert batch[ntype].n_id.size() == (batch[ntype].num_nodes, )
         assert len(batch.edge_types) == 4
         for etype in batch.edge_types:
             if batch[etype].edge_index.numel() > 0:
                 assert batch[etype].edge_index.device == device
                 assert batch[etype].edge_attr.device == device
-                assert batch[etype].edge_attr.size(0) == batch[
-                    etype
-                ].edge_index.size(1)
+                assert batch[etype].edge_attr.size(
+                    0) == batch[etype].edge_index.size(1)
 
 
 @onlyLinux
@@ -178,9 +177,8 @@ def test_dist_neighbor_loader_homo(tmp_path, num_workers, async_sampling):
     s.close()
     addr = "localhost"
 
-    data = FakeDataset(
-        num_graphs=1, avg_num_nodes=100, avg_degree=3, edge_dim=2
-    )[0]
+    data = FakeDataset(num_graphs=1, avg_num_nodes=100, avg_degree=3,
+                       edge_dim=2)[0]
 
     num_parts = 2
     partitioner = Partitioner(data, num_parts, tmp_path)
