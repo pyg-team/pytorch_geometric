@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
@@ -11,29 +11,30 @@ from torch_geometric.data.on_disk_dataset import OnDiskDataset
 
 
 class Collater:
-    def __init__(self, follow_batch, exclude_keys, query_dataset=None,
-                 **kwargs):
+    def __init__(
+        self,
+        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
+    ):
+        self.dataset = dataset
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
-        self.query_dataset = query_dataset
-        self.query_batch_size = kwargs.get('query_batch_size')
 
-    def __call__(self, batch):
+    def __call__(self, batch: Sequence[Any]) -> Any:
         elem = batch[0]
         if isinstance(elem, BaseData):
-            return Batch.from_data_list(batch, self.follow_batch,
-                                        self.exclude_keys)
+            return Batch.from_data_list(
+                batch,
+                follow_batch=self.follow_batch,
+                exclude_keys=self.exclude_keys,
+            )
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
-            if self.query_dataset and isinstance(self.query_dataset,
-                                                 OnDiskDataset):
-                return self.query_dataset.multi_get(
-                    batch, batch_size=self.query_batch_size)
-            else:
-                return torch.tensor(batch)
+            return torch.tensor(batch)
         elif isinstance(elem, str):
             return batch
         elif isinstance(elem, Mapping):
@@ -43,11 +44,15 @@ class Collater:
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
             return [self(s) for s in zip(*batch)]
 
-        raise TypeError(f'DataLoader found invalid type: {type(elem)}')
+        raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
-    def collate(self, batch):  # pragma: no cover
-        # TODO Deprecated, remove soon.
-        return self(batch)
+    def collate_fn(self, indices: List[int]) -> Any:
+        if isinstance(self.dataset, OnDiskDataset):
+            data_list = self.dataset.multi_get(indices)
+        else:
+            data_list = [self.dataset[i] for i in indices]
+
+        return self(data_list)
 
 
 class DataLoader(torch.utils.data.DataLoader):
@@ -71,8 +76,7 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, OnDiskDataset, Sequence[BaseData],
-                       DatasetAdapter],
+        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
@@ -86,16 +90,12 @@ class DataLoader(torch.utils.data.DataLoader):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-        query_dataset = None
-
-        if isinstance(dataset, OnDiskDataset):
-            query_dataset = dataset
-            dataset = range(0, len(dataset))
+        self.collator = Collater(dataset, follow_batch, exclude_keys)
 
         super().__init__(
-            dataset,
+            range(len(dataset)),
             batch_size,
             shuffle,
-            collate_fn=Collater(follow_batch, exclude_keys, query_dataset),
+            collate_fn=self.collator.collate_fn,
             **kwargs,
         )
