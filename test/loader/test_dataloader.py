@@ -79,6 +79,8 @@ def test_dataloader_on_disk_dataset(tmp_path):
     assert torch.equal(batch.x, torch.cat([data1.x, data2.x], dim=0))
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1, 1]
 
+    dataset.close()
+
 
 def test_dataloader_fallbacks():
     # Test inputs of type List[torch.Tensor]:
