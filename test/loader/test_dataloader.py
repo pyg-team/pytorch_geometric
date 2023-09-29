@@ -1,13 +1,11 @@
 import multiprocessing
 import sys
 from collections import namedtuple
-from unittest import mock
 
 import pytest
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.on_disk_dataset import OnDiskDataset
+from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import get_random_edge_index, withCUDA
 
@@ -68,20 +66,18 @@ def test_dataloader(num_workers, device):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
-@mock.patch.object(
-    OnDiskDataset, 'multi_get', side_effect=[
-        Data(x=torch.tensor([[1.0], [1.0], [1.0]]),
-             edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]), id=1),
-        Data(x=torch.tensor([[1.0], [1.0], [1.0]]),
-             edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]), id=2),
-    ])
-@mock.patch.object(OnDiskDataset, '__len__', return_value=2)
-def test_dataloader_on_disk_dataset(data_len_mock, data_get_mock):
-    dataset = OnDiskDataset('test')
-    loader = DataLoader(dataset)
-    data_len_mock.assert_called()
-    for idx, batch in enumerate(loader):
-        assert batch.id == idx + 1
+def test_dataloader_on_disk_dataset(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data1 = Data(x=torch.randn(3, 8))
+    data2 = Data(x=torch.randn(4, 8))
+    dataset.extend([data1, data2])
+
+    loader = DataLoader(dataset, batch_size=2)
+    assert len(loader) == 1
+    batch = next(iter(loader))
+    assert batch.num_nodes == 7
+    assert torch.equal(batch.x, torch.cat([data1.x, data2.x], dim=0))
+    assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1, 1]
 
 
 def test_dataloader_fallbacks():
