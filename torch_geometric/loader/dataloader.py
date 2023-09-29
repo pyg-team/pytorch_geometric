@@ -21,7 +21,7 @@ class Collater:
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-    def __call__(self, batch: Sequence[Any]) -> Any:
+    def __call__(self, batch: List[Any]) -> Any:
         elem = batch[0]
         if isinstance(elem, BaseData):
             return Batch.from_data_list(
@@ -46,13 +46,10 @@ class Collater:
 
         raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
-    def collate_fn(self, indices: List[int]) -> Any:
+    def collate_fn(self, batch: List[Any]) -> Any:
         if isinstance(self.dataset, OnDiskDataset):
-            data_list = self.dataset.multi_get(indices)
-        else:
-            data_list = [self.dataset[i] for i in indices]
-
-        return self(data_list)
+            return self(self.dataset.multi_get(batch))
+        return self(batch)
 
 
 class DataLoader(torch.utils.data.DataLoader):
@@ -92,8 +89,11 @@ class DataLoader(torch.utils.data.DataLoader):
 
         self.collator = Collater(dataset, follow_batch, exclude_keys)
 
+        if isinstance(dataset, OnDiskDataset):
+            dataset = range(len(dataset))
+
         super().__init__(
-            range(len(dataset)),
+            dataset,
             batch_size,
             shuffle,
             collate_fn=self.collator.collate_fn,
