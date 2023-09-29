@@ -1,8 +1,9 @@
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+
 
 @functional_transform('center')
 class Center(BaseTransform):
@@ -14,8 +15,8 @@ class Center(BaseTransform):
             interval for the transformation. Defaults to (0.0, 1.0).
     """
     def __init__(
-        self,
-        interval: Tuple[float, float] = (0.0, 1.0),
+            self,
+            interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.interval = interval
 
@@ -25,7 +26,7 @@ class Center(BaseTransform):
     ) -> Union[Data, HeteroData]:
         # Pass the interval argument to the transformed data
         data.interval = self.interval
-        
+
         for store in data.node_stores:
             if hasattr(store, 'pos'):
                 store.pos = store.pos - store.pos.mean(dim=-2, keepdim=True)
