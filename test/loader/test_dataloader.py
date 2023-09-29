@@ -5,7 +5,7 @@ from collections import namedtuple
 import pytest
 import torch
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import get_random_edge_index, withCUDA
 
@@ -64,6 +64,22 @@ def test_dataloader(num_workers, device):
     for batch in loader:
         assert batch.num_graphs == len(batch) == 2
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
+
+
+def test_dataloader_on_disk_dataset(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data1 = Data(x=torch.randn(3, 8))
+    data2 = Data(x=torch.randn(4, 8))
+    dataset.extend([data1, data2])
+
+    loader = DataLoader(dataset, batch_size=2)
+    assert len(loader) == 1
+    batch = next(iter(loader))
+    assert batch.num_nodes == 7
+    assert torch.equal(batch.x, torch.cat([data1.x, data2.x], dim=0))
+    assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1, 1]
+
+    dataset.close()
 
 
 def test_dataloader_fallbacks():
