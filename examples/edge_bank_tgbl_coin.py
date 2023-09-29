@@ -100,7 +100,6 @@ def test_edge_bank_pred():
     # data loading with `numpy`
     dataset = LinkPropPredDataset(name=DATA, root="datasets", preprocess=True)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print("dataset=", dataset)
     data = dataset.full_data
     metric = dataset.eval_metric
 
@@ -115,9 +114,10 @@ def test_edge_bank_pred():
     hist_edge_index = torch.cat(
         (hist_src.reshape(1, -1), hist_dst.reshape(1, -1)))
     hist_ts = torch.tensor(data['timestamps'][train_mask]).to(device)
-    print("dataset.full_data=", dataset.full_data)
-    print("dataset.eval_metric=", dataset.eval_metric)
-    print("dataset.train_mask=", dataset.train_mask)
+    # print("dataset=", dataset)
+    # print("dataset.full_data=", dataset.full_data)
+    # print("dataset.eval_metric=", dataset.eval_metric)
+    # print("dataset.train_mask=", dataset.train_mask)
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(memory_mode=MEMORY_MODE,
