@@ -1,7 +1,6 @@
 import copy
 from abc import ABC
-from typing import Any
-
+from typing import Any, Tuple
 
 class BaseTransform(ABC):
     r"""An abstract base class for writing transforms.
@@ -27,11 +26,19 @@ class BaseTransform(ABC):
         data = TUDataset(path, name='MUTAG')[0]
         data = transform(data)  # Explicitly transform data.
     """
+    def __init__(
+            self,
+            interval: Tuple[float, float] = (0.0, 1.0),
+    ):
+        self.interval = interval
+
     def __call__(self, data: Any) -> Any:
         # Shallow-copy the data so that we prevent in-place data modification.
         return self.forward(copy.copy(data))
 
     def forward(self, data: Any) -> Any:
+        # Pass the interval argument to the transformed data
+        data.interval = self.interval
         pass
 
     def __repr__(self) -> str:
