@@ -66,13 +66,14 @@ def test_dataloader(num_workers, device):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
-def test_dataloader_on_disk_dataset(tmp_path):
+@pytest.mark.parametrize('num_workers', num_workers_list)
+def test_dataloader_on_disk_dataset(tmp_path, num_workers):
     dataset = OnDiskDataset(tmp_path)
     data1 = Data(x=torch.randn(3, 8))
     data2 = Data(x=torch.randn(4, 8))
     dataset.extend([data1, data2])
 
-    loader = DataLoader(dataset, batch_size=2)
+    loader = DataLoader(dataset, batch_size=2, num_workers=num_workers)
     assert len(loader) == 1
     batch = next(iter(loader))
     assert batch.num_nodes == 7
