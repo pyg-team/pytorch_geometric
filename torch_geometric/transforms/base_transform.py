@@ -2,6 +2,7 @@ import copy
 from abc import ABC
 from typing import Any, Tuple
 
+
 class BaseTransform(ABC):
     r"""An abstract base class for writing transforms.
 
