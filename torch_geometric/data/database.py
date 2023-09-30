@@ -315,6 +315,7 @@ class SQLiteDatabase(Database):
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
         self.cursor.execute(query, (index, *self._serialize(data)))
+        self._connection.commit()
 
     def _multi_insert(
         self,
@@ -331,6 +332,7 @@ class SQLiteDatabase(Database):
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
         self.cursor.executemany(query, data_list)
+        self._connection.commit()
 
     def get(self, index: int) -> Any:
         query = (f'SELECT {self._joined_col_names} FROM {self.name} '
