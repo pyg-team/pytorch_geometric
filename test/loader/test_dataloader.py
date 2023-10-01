@@ -1,6 +1,7 @@
 import multiprocessing
 import sys
 from collections import namedtuple
+from typing import Any, Dict, List
 
 import pytest
 import torch
@@ -191,10 +192,60 @@ if __name__ == '__main__':
     parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
-    dataset = QM9('/tmp/QM9')
-    loader = DataLoader(dataset, batch_size=128, shuffle=True,
-                        num_workers=args.num_workers)
+    kwargs = dict(batch_size=128, shuffle=True, num_workers=args.num_workers)
 
+    in_memory_dataset = QM9('/tmp/QM9')
+    loader = DataLoader(in_memory_dataset, **kwargs)
+
+    print('In-Memory Dataset:')
+    for _ in range(2):
+        print(f'Start loading {len(loader)} mini-batches ... ', end='')
+        t = time.perf_counter()
+        for batch in loader:
+            pass
+        print(f'Done! [{time.perf_counter() - t:.4f}s]')
+
+    class OnDiskQM9(OnDiskDataset):
+        def __init__(self, root: str):
+            schema = {
+                'x': dict(dtype=torch.float32, size=(-1, 11)),
+                'edge_index': dict(dtype=torch.int64, size=(2, -1)),
+                'edge_attr': dict(dtype=torch.float, size=(-1, 8)),
+                'y': dict(dtype=torch.float, size=(1, 19)),
+                'z': dict(dtype=torch.int64, size=(-1, )),
+                'smiles': str,
+                'name': str,
+                'idx': dict(dtype=torch.int64, size=(-1, )),
+            }
+            super().__init__(root, schema=schema)
+
+        def process(self):
+            data_list: List[Data] = []
+            for i, data in enumerate(in_memory_dataset):
+                data_list.append(data)
+                if i + 1 == len(in_memory_dataset) or (i + 1) % 1000 == 0:
+                    self.extend(data_list)
+                    data_list = []
+
+        def serialize(self, data: Data) -> Dict[str, Any]:
+            return dict(
+                x=data.x,
+                edge_index=data.edge_index,
+                edge_attr=data.edge_attr,
+                y=data.y,
+                z=data.z,
+                smiles=data.smiles,
+                name=data.name,
+                idx=data.idx,
+            )
+
+        def deserialize(self, data: Dict[str, Any]) -> Data:
+            return Data.from_dict(data)
+
+    on_disk_dataset = OnDiskQM9(root='/tmp/OnDiskQM9')
+    loader = DataLoader(on_disk_dataset, **kwargs)
+
+    print('On-Disk Dataset:')
     for _ in range(2):
         print(f'Start loading {len(loader)} mini-batches ... ', end='')
         t = time.perf_counter()

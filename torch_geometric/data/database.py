@@ -424,7 +424,9 @@ class SQLiteDatabase(Database):
         # If we find a `torch.Tensor` that is not registered as such in
         # `schema`, we modify the schema in-place for improved efficiency.
         out: List[Any] = []
-        for key, col in self._to_dict(row).items():
+        row_dict = self._to_dict(row)
+        for key, col_schema in self.schema.items():
+            col = row_dict[key]
             if isinstance(self.schema[key], TensorInfo):
                 out.append(col.numpy().tobytes())
             elif isinstance(col, Tensor):
@@ -445,13 +447,17 @@ class SQLiteDatabase(Database):
         # * object: Load via pickle
         out_dict = {}
         for i, (key, col_schema) in enumerate(self.schema.items()):
+            value = row[i]
             if isinstance(col_schema, TensorInfo):
-                out_dict[key] = torch.frombuffer(
-                    row[i], dtype=col_schema.dtype).view(*col_schema.size)
+                if len(value) > 0:
+                    tensor = torch.frombuffer(value, dtype=col_schema.dtype)
+                else:
+                    tensor = torch.empty(0, dtype=col_schema.dtype)
+                out_dict[key] = tensor.view(*col_schema.size)
             elif col_schema in {int, float, str}:
-                out_dict[key] = row[i]
+                out_dict[key] = value
             else:
-                out_dict[key] = pickle.loads(row[i])
+                out_dict[key] = pickle.loads(value)
 
         # In case `0` exists as integer in the schema, this means that the
         # schema was passed as either a single entry or a tuple:
