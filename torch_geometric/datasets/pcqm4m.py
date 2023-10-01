@@ -84,7 +84,6 @@ class PCQM4Mv2(OnDiskDataset):
         import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0])
-        df = df[:1]
 
         data_list: List[Data] = []
         iterator = enumerate(zip(df['smiles'], df['homolumogap']))
