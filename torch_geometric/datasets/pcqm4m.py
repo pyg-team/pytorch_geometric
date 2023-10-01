@@ -13,8 +13,10 @@ class PCQM4Mv2(OnDiskDataset):
     r"""The PCQM4Mv2 dataset from the `"OGB-LSC: A Large-Scale Challenge for
     Machine Learning on Graphs" <https://arxiv.org/abs/2103.09430>`_ paper.
     :class:`PCQM4Mv2` is a quantum chemistry dataset originally curated under
-    the PubChemQC project. The task is to predict the DFT-calculated HOMO-LUMO
-    energy gap of molecules given their 2D molecular graphs.
+    the `PubChemQC project
+    <https://pubs.acs.org/doi/10.1021/acs.jcim.7b00083>`_.
+    The task is to predict the DFT-calculated HOMO-LUMO energy gap of molecules
+    given their 2D molecular graphs.
 
     .. note::
         This dataset uses the :class:`OnDiskDataset` base class to load data
@@ -99,7 +101,7 @@ class PCQM4Mv2(OnDiskDataset):
             x=data.x,
             edge_index=data.edge_index,
             edge_attr=data.edge_attr,
-            y=data.x,
+            y=data.y,
             smiles=data.smiles,
         )
 
