@@ -99,8 +99,8 @@ def test_edge_bank_pred():
 
     # data loading with `numpy`
     dataset = LinkPropPredDataset(name=DATA, root="datasets", preprocess=True)
-    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    device = 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    #device = 'cpu'
     data = dataset.full_data
     metric = dataset.eval_metric
 
