@@ -9,11 +9,12 @@ from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
-    filter_dist_store,
     filter_hetero_data,
     get_input_nodes,
     infer_filter_per_worker,
 )
+from torch_geometric.distributed.utils import filter_dist_store
+
 from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
@@ -78,6 +79,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -96,8 +98,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             filter_per_worker = infer_filter_per_worker(data)
 
         # Remove for PyTorch Lightning:
-        kwargs.pop('dataset', None)
-        kwargs.pop('collate_fn', None)
+        kwargs.pop("dataset", None)
+        kwargs.pop("collate_fn", None)
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes = get_input_nodes(data, input_nodes)
@@ -118,8 +120,12 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(input_nodes.size(0))
-        super().__init__(iterator, collate_fn=self.collate_fn,
-                         worker_init_fn=self.worker_init_fn, **kwargs)
+        super().__init__(
+            iterator,
+            collate_fn=self.collate_fn,
+            worker_init_fn=self.worker_init_fn,
+            **kwargs,
+        )
 
     def __call__(
         self,
@@ -155,9 +161,14 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
-                data = filter_data(self.data, out.node, out.row, out.col,
-                                   out.edge,
-                                   self.node_sampler.edge_permutation)
+                data = filter_data(
+                    self.data,
+                    out.node,
+                    out.row,
+                    out.col,
+                    out.edge,
+                    self.node_sampler.edge_permutation,
+                )
             else:  # Tuple[FeatureStore, GraphStore]
                 data = Data(
                     x=out.metadata[-3],
@@ -165,9 +176,9 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                     edge_index=torch.stack([out.row, out.col]),
                     edge_attr=out.metadata[-1],
                 )
-            if 'n_id' not in data:
+            if "n_id" not in data:
                 data.n_id = out.node
-            if out.edge is not None and 'e_id' not in data:
+            if out.edge is not None and "e_id" not in data:
                 edge = out.edge.to(torch.long)
                 perm = self.node_sampler.edge_permutation
                 data.e_id = perm[edge] if perm is not None else edge
@@ -182,33 +193,51 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(self.data, out.node, out.row,
-                                          out.col, out.edge,
-                                          self.node_sampler.edge_permutation)
+                data = filter_hetero_data(
+                    self.data,
+                    out.node,
+                    out.row,
+                    out.col,
+                    out.edge,
+                    self.node_sampler.edge_permutation,
+                )
             else:  # Tuple[FeatureStore, GraphStore]
-                if not isinstance(self.node_sampler,
-                                  BaseSampler):  # DistSampler
-                    data = filter_dist_store(*self.data, out.node, out.row,
-                                             out.col, out.edge,
-                                             self.custom_cls, out.metadata)
+                if not isinstance(
+                    self.node_sampler, BaseSampler
+                ):  # DistSampler
+                    data = filter_dist_store(
+                        *self.data,
+                        out.node,
+                        out.row,
+                        out.col,
+                        out.edge,
+                        self.custom_cls,
+                        out.metadata,
+                    )
                 else:
-                    data = filter_custom_store(*self.data, out.node, out.row,
-                                               out.col, out.edge,
-                                               self.custom_cls)
+                    data = filter_custom_store(
+                        *self.data,
+                        out.node,
+                        out.row,
+                        out.col,
+                        out.edge,
+                        self.custom_cls,
+                        self.input_data.input_type
+                    )
 
             for key, node in out.node.items():
-                if 'n_id' not in data[key]:
+                if "n_id" not in data[key]:
                     data[key].n_id = node
 
             for key, edge in (out.edge or {}).items():
-                if edge is not None and 'e_id' not in data[key]:
+                if edge is not None and "e_id" not in data[key]:
                     edge = edge.to(torch.long)
                     perm = self.node_sampler.edge_permutation[key]
                     data[key].e_id = perm[edge] if perm is not None else edge
 
-            data.set_value_dict('batch', out.batch)
-            data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)
-            data.set_value_dict('num_sampled_edges', out.num_sampled_edges)
+            data.set_value_dict("batch", out.batch)
+            data.set_value_dict("num_sampled_nodes", out.num_sampled_nodes)
+            data.set_value_dict("num_sampled_edges", out.num_sampled_edges)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
@@ -216,8 +245,10 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{type(out)}'")
+            raise TypeError(
+                f"'{self.__class__.__name__}'' found invalid "
+                f"type: '{type(out)}'"
+            )
 
         return data if self.transform is None else self.transform(data)
 
@@ -240,4 +271,4 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         return self
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"
