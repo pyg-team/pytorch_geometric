@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
+from torch_geometric.distributed.utils import filter_dist_store
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
@@ -13,8 +14,6 @@ from torch_geometric.loader.utils import (
     get_input_nodes,
     infer_filter_per_worker,
 )
-from torch_geometric.distributed.utils import filter_dist_store
-
 from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
@@ -79,7 +78,6 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -202,9 +200,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                     self.node_sampler.edge_permutation,
                 )
             else:  # Tuple[FeatureStore, GraphStore]
-                if not isinstance(
-                    self.node_sampler, BaseSampler
-                ):  # DistSampler
+                if not isinstance(self.node_sampler,
+                                  BaseSampler):  # DistSampler
                     data = filter_dist_store(
                         *self.data,
                         out.node,
@@ -215,15 +212,10 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                         out.metadata,
                     )
                 else:
-                    data = filter_custom_store(
-                        *self.data,
-                        out.node,
-                        out.row,
-                        out.col,
-                        out.edge,
-                        self.custom_cls,
-                        self.input_data.input_type
-                    )
+                    data = filter_custom_store(*self.data, out.node, out.row,
+                                               out.col, out.edge,
+                                               self.custom_cls,
+                                               self.input_data.input_type)
 
             for key, node in out.node.items():
                 if "n_id" not in data[key]:
@@ -245,10 +237,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
-            raise TypeError(
-                f"'{self.__class__.__name__}'' found invalid "
-                f"type: '{type(out)}'"
-            )
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)
 
