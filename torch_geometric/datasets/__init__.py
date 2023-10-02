@@ -20,6 +20,7 @@ from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
 from .molecule_net import MoleculeNet
+from .pcqm4m import PCQM4Mv2
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
@@ -125,6 +126,7 @@ homo_datasets = [
     'ZINC',
     'AQSOL',
     'MoleculeNet',
+    'PCQM4Mv2',
     'Entities',
     'RelLinkPredDataset',
     'GEDDataset',

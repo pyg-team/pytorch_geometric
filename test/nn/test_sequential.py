@@ -34,11 +34,11 @@ def test_sequential():
     assert len(model) == 5
     assert str(model) == (
         'Sequential(\n'
-        '  (0): GCNConv(16, 64)\n'
-        '  (1): ReLU(inplace=True)\n'
-        '  (2): GCNConv(64, 64)\n'
-        '  (3): ReLU(inplace=True)\n'
-        '  (4): Linear(in_features=64, out_features=7, bias=True)\n'
+        '  (0) - GCNConv(16, 64): x, edge_index -> x\n'
+        '  (1) - ReLU(inplace=True): x -> x\n'
+        '  (2) - GCNConv(64, 64): x, edge_index -> x\n'
+        '  (3) - ReLU(inplace=True): x -> x\n'
+        '  (4) - Linear(in_features=64, out_features=7, bias=True): x -> x\n'
         ')')
 
     assert isinstance(model[0], GCNConv)
@@ -46,6 +46,12 @@ def test_sequential():
     assert isinstance(model[2], GCNConv)
     assert isinstance(model[3], ReLU)
     assert isinstance(model[4], Linear)
+
+    assert model.module_headers[0] == (['x', 'edge_index'], ['x'])
+    assert model.module_headers[1] == (['x'], ['x'])
+    assert model.module_headers[2] == (['x', 'edge_index'], ['x'])
+    assert model.module_headers[3] == (['x'], ['x'])
+    assert model.module_headers[4] == (['x'], ['x'])
 
     out = model(x, edge_index)
     assert out.size() == (4, 7)
