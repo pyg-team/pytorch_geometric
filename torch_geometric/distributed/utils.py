@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.typing import Dict, NodeType, Optional
+from torch_geometric.typing import Dict, EdgeType, NodeType, Optional, Union
 
 
 @dataclass
@@ -80,6 +80,7 @@ def filter_dist_store(
     edge_dict: Dict[str, Optional[Tensor]],
     custom_cls: Optional[HeteroData] = None,
     meta: Optional[Dict[str, Tensor]] = None,
+    input_type: str = None,
 ) -> HeteroData:
     r"""Constructs a :class:`HeteroData` object from a feature store that only
     holds nodes in `node` end edges in `edge` for each node and edge type,
@@ -116,7 +117,24 @@ def filter_dist_store(
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
 
-    for label in nlabels:
-        data[label].y = nlabels[label]
+    if nlabels is not None:
+        data[input_type].y = nlabels
 
     return data
+
+
+def as_str(type: Union[NodeType, EdgeType]) -> str:
+    if isinstance(type, NodeType):
+        return type
+    elif isinstance(type, (list, tuple)) and len(type) == 3:
+        return '__'.join(type)
+    return ''
+
+def reverse_edge_type(etype: EdgeType):
+    src, edge, dst = etype
+    if not src == dst:
+        if edge.split("_", 1)[0] == 'rev': # undirected edge with `rev_` prefix.
+            edge = edge.split("_", 1)[1]
+        else:
+            edge = 'rev_' + edge
+    return (dst, edge, src)

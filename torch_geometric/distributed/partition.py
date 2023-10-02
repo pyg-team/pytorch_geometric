@@ -14,9 +14,8 @@ from torch_geometric.typing import (
     EdgeTypeStr,
     NodeType,
     Tuple,
-    as_str,
 )
-
+from torch_geometric.distributed.utils import as_str, reverse_edge_type
 
 class Partitioner:
     r"""Partition the graph structure and its features of a
