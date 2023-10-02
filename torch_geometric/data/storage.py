@@ -303,13 +303,19 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
+            if isinstance(value, Tensor) and key in N_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and key in N_KEYS:
                 return value.num_rows
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
+            if isinstance(value, Tensor) and 'node' in key:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and 'node' in key:
@@ -338,7 +344,9 @@ class NodeStorage(BaseStorage):
 
     @property
     def num_node_features(self) -> int:
-        if 'x' in self and isinstance(self.x, (Tensor, np.ndarray)):
+        if 'x' in self and isinstance(self.x, Tensor):
+            return 1 if self.x.dim() == 1 else self.x.size(-1)
+        if 'x' in self and isinstance(self.x, np.ndarray):
             return 1 if self.x.ndim == 1 else self.x.shape[-1]
         if 'x' in self and isinstance(self.x, SparseTensor):
             return 1 if self.x.dim() == 1 else self.x.size(-1)
@@ -429,13 +437,19 @@ class EdgeStorage(BaseStorage):
         if 'num_edges' in self:
             return self['num_edges']
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
+            if isinstance(value, Tensor) and key in E_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, Tensor) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and key in E_KEYS:
                 return value.num_rows
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and 'edge' in key:
+            if isinstance(value, Tensor) and 'edge' in key:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and 'edge' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and 'edge' in key:
@@ -449,8 +463,9 @@ class EdgeStorage(BaseStorage):
 
     @property
     def num_edge_features(self) -> int:
-        if ('edge_attr' in self and isinstance(self.edge_attr,
-                                               (Tensor, np.ndarray))):
+        if 'edge_attr' in self and isinstance(self.edge_attr, Tensor):
+            return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
+        if 'edge_attr' in self and isinstance(self.edge_attr, np.ndarray):
             return 1 if self.edge_attr.ndim == 1 else self.edge_attr.shape[-1]
         return 0
 
