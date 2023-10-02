@@ -82,7 +82,7 @@ def test_edge_bank_pred():
 
     # set hyperparameters
     DATA = 'tgbl-coin'
-    BATCH_SIZE = 2048
+    BATCH_SIZE = 8192
     K_VALUE = 10
     SEED = 1
     set_random_seed(SEED)
