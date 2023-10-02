@@ -37,17 +37,11 @@ class LocalGraphStore(GraphStore):
         node_type: Optional[NodeType] = None,
     ) -> Tensor:
         r"""Get the partition IDs of node IDs for a specific node type."""
-        if self.meta['is_hetero']:
-            assert node_type is not None
-            return self.node_pb[node_type][ids]
         return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
                                     edge_type: Optional[EdgeType] = None):
         r"""Get the partition IDs of edge IDs for a specific edge type."""
-        if self.meta["is_hetero"]:
-            assert edge_type is not None
-            return self.edge_pb[edge_type][eids]
         return self.edge_pb[eids]
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:

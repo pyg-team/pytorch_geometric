@@ -194,12 +194,9 @@ class LocalFeatureStore(FeatureStore):
         input_type: Optional[Union[NodeType, EdgeType]] = None,
     ) -> Tuple[Tensor, Tensor]:
         r""" lookup the features in local nodes based on node/edge ids """
-        if self.meta['is_hetero']:
-            feat = self
-            pb = self.feature_pb[input_type]
-        else:
-            feat = self
-            pb = self.feature_pb
+
+        feat = self
+        pb = self.feature_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
         partition_ids = pb[index]
@@ -237,10 +234,7 @@ class LocalFeatureStore(FeatureStore):
     ) -> torch.futures.Future:
         r"""Fetch the remote features with the remote node/edge ids"""
 
-        if self.meta["is_hetero"]:
-            pb = self.feature_pb[input_type]
-        else:
-            pb = self.feature_pb
+        pb = self.feature_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
         partition_ids = pb[index]
