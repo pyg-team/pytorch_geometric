@@ -1,4 +1,5 @@
 import copy
+from typing import Callable
 
 import pytest
 import torch
@@ -483,10 +484,59 @@ def test_data_generate_ids():
     assert data.e_id.tolist() == [0, 1, 2, 3, 4]
 
 
-@withPackage('tensor_frame')
-def test_data_with_tensor_frame():
-    from torch_frame.data import TensorFrame
-    _ = TensorFrame(
-        feat_dict={},
-        col_names_dict={},
+@withPackage('torch_frame')
+@pytest.fixture()
+def get_fake_tensor_frame() -> Callable:
+    from torch_frame import TensorFrame
+
+    def _get_fake_tensor_frame(num_rows: int) -> TensorFrame:
+        import torch_frame
+        from torch_frame.data import TensorFrame
+        feat_dict = {
+            torch_frame.categorical: torch.randint(0, 3, size=(num_rows, 3)),
+            torch_frame.numerical: torch.randn(size=(num_rows, 2)),
+        }
+        col_names_dict = {
+            torch_frame.categorical: ['a', 'b', 'c'],
+            torch_frame.numerical: ['x', 'y'],
+        }
+        y = torch.randn(num_rows)
+
+        return TensorFrame(
+            feat_dict=feat_dict,
+            col_names_dict=col_names_dict,
+            y=y,
+        )
+
+    return _get_fake_tensor_frame
+
+
+@withPackage('torch_frame')
+def test_data_with_tensor_frame(get_fake_tensor_frame):
+    x = get_fake_tensor_frame(10)
+
+    data = Data(
+        x=x,
+        edge_index=torch.randint(0, 8, size=(2, 15)),
     )
+
+    # Test basic attributes
+    assert data.is_node_attr('x')
+    assert data.num_nodes == x.num_rows
+    assert data.num_edges == 15
+    assert data.num_node_features == x.num_cols
+
+    # Test subgraph
+    data_sub = data.subgraph(torch.tensor([1, 2, 3]))
+    assert data_sub.num_nodes == 3
+    # Implement allclose for tensor frame
+    for key, val in data_sub.x.feat_dict.items():
+        assert torch.allclose(val, x.feat_dict[key][1:4])
+
+    data_sub = data.subgraph(
+        torch.tensor([
+            False, True, True, True, False, False, False, False, False, False
+        ]))
+    assert data_sub.num_nodes == 3
+    for key, val in data_sub.x.feat_dict.items():
+        assert torch.allclose(val, x.feat_dict[key][1:4])

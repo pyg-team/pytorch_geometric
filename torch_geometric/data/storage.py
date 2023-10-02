@@ -367,6 +367,11 @@ class NodeStorage(BaseStorage):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
+        if (isinstance(value, TensorFrame)
+                and value.num_rows == self.num_nodes):
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -617,6 +622,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         value = self[key]
 
         if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if (isinstance(value, TensorFrame)
+                and value.num_rows == self.num_nodes):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
