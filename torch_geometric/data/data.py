@@ -19,11 +19,6 @@ import numpy as np
 import torch
 from torch import Tensor
 
-try:
-    from torch_frame.data import TensorFrame
-except ImportError:
-    TensorFrame = 'TensorFrame'
-
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.data.graph_store import EdgeLayout
@@ -443,9 +438,15 @@ class Data(BaseData, FeatureStore, GraphStore):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: Optional[Union[Tensor, TensorFrame]] = None,
-                 edge_index: OptTensor = None, edge_attr: OptTensor = None,
-                 y: OptTensor = None, pos: OptTensor = None, **kwargs):
+    def __init__(
+        self,
+        x: Optional[Tensor] = None,
+        edge_index: OptTensor = None,
+        edge_attr: OptTensor = None,
+        y: OptTensor = None,
+        pos: OptTensor = None,
+        **kwargs,
+    ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
         super().__init__(tensor_attr_cls=DataTensorAttr)
@@ -874,7 +875,6 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     # FeatureStore interface ##################################################
 
-    # TODO(jinu): Update support TensorFrame
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         out = self.get(attr.attr_name)
         if out is not None and attr.index is not None:

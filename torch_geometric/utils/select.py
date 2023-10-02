@@ -3,17 +3,16 @@ from typing import Any, List, Union
 import torch
 from torch import Tensor
 
-try:
-    from torch_frame.data import TensorFrame
-except ImportError:
-    TensorFrame = 'TensorFrame'
-
+from torch_geometric.typing import TensorFrame
 from torch_geometric.utils.mask import mask_select
 from torch_geometric.utils.sparse import is_torch_sparse_tensor
 
 
-def select(src: Union[Tensor, List[Any], TensorFrame], index_or_mask: Tensor,
-           dim: int) -> Union[Tensor, List[Any]]:
+def select(
+    src: Union[Tensor, List[Any], TensorFrame],
+    index_or_mask: Tensor,
+    dim: int,
+) -> Union[Tensor, List[Any]]:
     r"""Selects the input tensor or input list according to a given index or
     mask vector.
 
@@ -22,11 +21,6 @@ def select(src: Union[Tensor, List[Any], TensorFrame], index_or_mask: Tensor,
         index_or_mask (torch.Tensor): The index or mask vector.
         dim (int): The dimension along which to select.
     """
-    if isinstance(src, TensorFrame):
-        if index_or_mask.dtype == torch.bool:
-            return mask_select(src, dim, index_or_mask)
-        # TODO(jinu): Add index_select for TensorFrame
-        return src[index_or_mask]
     if isinstance(src, Tensor):
         if index_or_mask.dtype == torch.bool:
             return mask_select(src, dim, index_or_mask)
@@ -38,6 +32,12 @@ def select(src: Union[Tensor, List[Any], TensorFrame], index_or_mask: Tensor,
         if index_or_mask.dtype == torch.bool:
             return [src[i] for i, m in enumerate(index_or_mask) if m]
         return [src[i] for i in index_or_mask]
+
+    if isinstance(src, TensorFrame):
+        assert dim == 0
+        if index_or_mask.dtype == torch.bool:
+            return mask_select(src, dim, index_or_mask)
+        return src[index_or_mask]
 
     raise ValueError(f"Encountered invalid input type (got '{type(src)}')")
 
