@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  full_pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ${{ matrix.os }}
 
@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup packages
         uses: ./.github/actions/setup

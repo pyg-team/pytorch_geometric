@@ -46,9 +46,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
     .. note::
         For an example of using :class:`GraphMaskExplainer`,
-        see `examples/contrib/graphmask_explainer.py
+        see `examples/explain/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        /contrib/graphmask_explainer.py>`_.
+        /explain/graphmask_explainer.py>`_.
+
+        A working real-time example of :class:`GraphMaskExplainer` in the form
+        of a deployed app can be accessed `here
+        <https://graph-explainability.streamlit.app/>`_.
 
     Args:
         num_layers (int): The number of layers to use.

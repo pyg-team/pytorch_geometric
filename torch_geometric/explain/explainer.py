@@ -170,11 +170,14 @@ class Explainer:
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
-                set to :obj:`None` and will get automatically inferred.
+                set to :obj:`None` and will get automatically inferred. For
+                classification tasks, the target needs to contain the class
+                labels. (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The indices in the
+                first-dimension of the model output to explain.
+                Can be a single index or a tensor of indices.
+                If set to :obj:`None`, all model outputs will be explained.
                 (default: :obj:`None`)
-            index (Union[int, Tensor], optional): The index of the model
-                output to explain. Can be a single index or a tensor of
-                indices. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -191,6 +194,9 @@ class Explainer:
                     f"type '{self.explanation_type.value}'")
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
+
+        if isinstance(index, int):
+            index = torch.tensor([index])
 
         training = self.model.training
         self.model.eval()

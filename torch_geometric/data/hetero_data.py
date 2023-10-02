@@ -18,6 +18,7 @@ from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
+    NodeOrEdgeType,
     NodeType,
     QueryType,
     SparseTensor,
@@ -29,7 +30,6 @@ from torch_geometric.utils import (
     mask_select,
 )
 
-NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
@@ -386,6 +386,23 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Validates the correctness of the data."""
         cls_name = self.__class__.__name__
         status = True
+
+        node_types = set(self.node_types)
+        num_src_node_types = {src for src, _, _ in self.edge_types}
+        num_dst_node_types = {dst for _, _, dst in self.edge_types}
+
+        dangling_types = (num_src_node_types | num_dst_node_types) - node_types
+        if len(dangling_types) > 0:
+            status = False
+            warn_or_raise(
+                f"The node types {dangling_types} are referenced in edge "
+                f"types but do not exist as node types", raise_on_error)
+
+        dangling_types = node_types - (num_src_node_types | num_dst_node_types)
+        if len(dangling_types) > 0:
+            warn_or_raise(  # May be intended.
+                f"The node types {dangling_types} are isolated and are not "
+                f"referenced by any edge type ", raise_on_error=False)
 
         for edge_type, store in self._edge_store_dict.items():
             src, _, dst = edge_type
@@ -1033,17 +1050,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
             del store.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.COO), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.COO), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
             del store.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSR), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSR), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
             del store.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSC), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSC), None)
             return True
         return False
 

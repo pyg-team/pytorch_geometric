@@ -80,6 +80,9 @@ def run(args: argparse.ArgumentParser):
         _, _, test_mask = get_split_masks(data, dataset_name)
         degree = None
 
+        if hetero and args.cached_loader:
+            args.cached_loader = False
+            print('Disabling CachedLoader, not supported in Hetero models')
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
@@ -209,12 +212,19 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
+                            inference_kwargs = dict(cache=args.cached_loader)
+                            if args.reuse_device_for_embeddings and not hetero:
+                                inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                                    model.inference(
+                                        subgraph_loader,
+                                        device,
+                                        progress_bar=True,
+                                        **inference_kwargs,
+                                    )
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -232,6 +242,7 @@ def run(args: argparse.ArgumentParser):
                                         subgraph_loader,
                                         device,
                                         progress_bar=True,
+                                        **inference_kwargs,
                                     )
                                     if args.evaluate:
                                         test_acc = test(
@@ -287,6 +298,8 @@ if __name__ == '__main__':
 
     add('--device', choices=['cpu', 'cuda', 'xpu'], default='cpu',
         help='Device to run benchmark on')
+    add('--reuse-device-for-embeddings', action='store_true',
+        help='Use the same device for embeddings as specified in "--device"')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
@@ -322,4 +335,5 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
+    add('--cached-loader', action='store_true', help='Use CachedLoader')
     run(argparser.parse_args())

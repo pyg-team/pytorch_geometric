@@ -129,7 +129,14 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
 
     adj = torch.sparse_coo_tensor(
         indices=edge_index,
@@ -187,7 +194,14 @@ def to_torch_csr_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
 
     adj = torch.sparse_csr_tensor(
         crow_indices=index2ptr(edge_index[0], size[0]),
@@ -250,7 +264,14 @@ def to_torch_csc_tensor(
                                          sort_by_row=False)
 
     if edge_attr is None:
-        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
 
     adj = torch.sparse_csc_tensor(
         ccol_indices=index2ptr(edge_index[1], size[1]),
