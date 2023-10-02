@@ -2,7 +2,11 @@ from typing import Optional, Union
 
 import torch
 from torch import Tensor
-from torch_frame.data import TensorFrame
+
+try:
+    from torch_frame.data import TensorFrame
+except ImportError:
+    TensorFrame = 'TensorFrame'
 
 
 def mask_select(src: Union[Tensor, TensorFrame], dim: int,

@@ -20,7 +20,11 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
-from torch_frame.data import TensorFrame
+
+try:
+    from torch_frame.data import TensorFrame
+except ImportError:
+    TensorFrame = 'TensorFrame'
 
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor

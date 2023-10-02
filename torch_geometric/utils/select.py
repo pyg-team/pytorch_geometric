@@ -2,7 +2,11 @@ from typing import Any, List, Union
 
 import torch
 from torch import Tensor
-from torch_frame.data import TensorFrame
+
+try:
+    from torch_frame.data import TensorFrame
+except ImportError:
+    TensorFrame = 'TensorFrame'
 
 from torch_geometric.utils.mask import mask_select
 from torch_geometric.utils.sparse import is_torch_sparse_tensor

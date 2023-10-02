@@ -18,7 +18,11 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
-from torch_frame.data import TensorFrame
+
+try:
+    from torch_frame.data import TensorFrame
+except ImportError:
+    TensorFrame = 'TensorFrame'
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
