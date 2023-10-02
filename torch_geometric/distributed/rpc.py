@@ -2,7 +2,7 @@ import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 from torch.distributed import rpc
 
@@ -23,7 +23,7 @@ def rpc_require_initialized(func: Callable) -> Callable:
 
 
 @rpc_require_initialized
-def global_all_gather(obj, timeout=None):
+def global_all_gather(obj, timeout: Optional[int] = None):
     r"""Gathers objects from all groups in a list."""
     if timeout is None:
         return rpc.api._all_gather(obj)
@@ -31,7 +31,7 @@ def global_all_gather(obj, timeout=None):
 
 
 @rpc_require_initialized
-def global_barrier(timeout=None):
+def global_barrier(timeout: Optional[int] = None):
     r""" Block until all local and remote RPC processes."""
     try:
         global_all_gather(obj=None, timeout=timeout)
@@ -45,7 +45,7 @@ def init_rpc(
     master_addr: str,
     master_port: int,
     num_rpc_threads: int = 16,
-    rpc_timeout: float = 240,
+    rpc_timeout: int = 240,
 ):
     with _rpc_init_lock:
         if rpc_is_initialized():

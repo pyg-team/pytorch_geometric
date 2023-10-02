@@ -54,7 +54,6 @@ class OnDiskDataset(Dataset, ABC):
         self,
         root: str,
         transform: Optional[Callable] = None,
-        *,
         pre_filter: Optional[Callable] = None,
         backend: str = 'sqlite',
         schema: Schema = object,
