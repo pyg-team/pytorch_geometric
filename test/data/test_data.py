@@ -481,3 +481,12 @@ def test_data_generate_ids():
     assert len(data) == 4
     assert data.n_id.tolist() == [0, 1, 2]
     assert data.e_id.tolist() == [0, 1, 2, 3, 4]
+
+
+@withPackage('tensor_frame')
+def test_data_with_tensor_frame():
+    from torch_frame.data import TensorFrame
+    _ = TensorFrame(
+        feat_dict={},
+        col_names_dict={},
+    )
