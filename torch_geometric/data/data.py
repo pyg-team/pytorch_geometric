@@ -18,6 +18,7 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
+from torch_frame.data import TensorFrame
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
@@ -438,9 +439,9 @@ class Data(BaseData, FeatureStore, GraphStore):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
-                 edge_attr: OptTensor = None, y: OptTensor = None,
-                 pos: OptTensor = None, **kwargs):
+    def __init__(self, x: Optional[Union[Tensor, TensorFrame]] = None,
+                 edge_index: OptTensor = None, edge_attr: OptTensor = None,
+                 y: OptTensor = None, pos: OptTensor = None, **kwargs):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
         super().__init__(tensor_attr_cls=DataTensorAttr)
