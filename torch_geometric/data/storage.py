@@ -36,7 +36,7 @@ from torch_geometric.utils import (
     sort_edge_index,
 )
 
-N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id'}
+N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id', 'tf'}
 E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
 
 
@@ -303,19 +303,13 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if isinstance(value, Tensor) and key in N_KEYS:
-                cat_dim = self._parent().__cat_dim__(key, value, self)
-                return value.size(cat_dim)
-            if isinstance(value, np.ndarray) and key in N_KEYS:
+            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and key in N_KEYS:
                 return value.num_rows
         for key, value in self.items():
-            if isinstance(value, Tensor) and 'node' in key:
-                cat_dim = self._parent().__cat_dim__(key, value, self)
-                return value.size(cat_dim)
-            if isinstance(value, np.ndarray) and 'node' in key:
+            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and 'node' in key:
@@ -438,10 +432,14 @@ class EdgeStorage(BaseStorage):
             if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
+            if isinstance(value, TensorFrame) and key in E_KEYS:
+                return value.num_rows
         for key, value in self.items():
             if isinstance(value, (Tensor, np.ndarray)) and 'edge' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
+            if isinstance(value, TensorFrame) and 'edge' in key:
+                return value.num_rows
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):
                 return value.nnz()

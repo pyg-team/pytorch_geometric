@@ -507,7 +507,7 @@ def get_fake_tensor_frame(num_rows: int) -> TensorFrame:
 @withPackage('torch_frame')
 def test_data_with_tensor_frame():
     tf = get_fake_tensor_frame(num_rows=10)
-    data = Data(x=tf, edge_index=torch.randint(0, 10, size=(2, 20)))
+    data = Data(tf=tf, edge_index=torch.randint(0, 10, size=(2, 20)))
 
     # Test basic attributes:
     assert data.is_node_attr('x')
@@ -519,12 +519,12 @@ def test_data_with_tensor_frame():
     index = torch.tensor([1, 2, 3])
     sub_data = data.subgraph(index)
     assert sub_data.num_nodes == 3
-    for key, value in sub_data.x.feat_dict.items():
+    for key, value in sub_data.tf.feat_dict.items():
         assert torch.allclose(value, tf.feat_dict[key][index])
 
     mask = torch.tensor(
         [False, True, True, True, False, False, False, False, False, False])
     data_sub = data.subgraph(mask)
     assert data_sub.num_nodes == 3
-    for key, value in sub_data.x.feat_dict.items():
+    for key, value in sub_data.tf.feat_dict.items():
         assert torch.allclose(value, tf.feat_dict[key][mask])
