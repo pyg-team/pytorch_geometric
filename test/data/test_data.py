@@ -1,5 +1,4 @@
 import copy
-from typing import Callable
 
 import pytest
 import torch
