@@ -50,7 +50,6 @@ def index_select(
         <https://github.com/pytorch/pytorch/issues/61819>`_ via
         :obj:`torch.int64`.
     """
-
     # PyTorch currently only supports indexing via `torch.int64`:
     # https://github.com/pytorch/pytorch/issues/61819
     index = index.to(torch.int64)
