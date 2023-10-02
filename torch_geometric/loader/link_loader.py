@@ -9,11 +9,12 @@ from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
-    filter_dist_store,
     filter_hetero_data,
     get_edge_label_index,
     infer_filter_per_worker,
 )
+from torch_geometric.distributed.utils import filter_dist_store
+
 from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
@@ -275,7 +276,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 else:
                     data = filter_custom_store(*self.data, out.node, out.row,
                                                out.col, out.edge,
-                                               self.custom_cls)
+                                               self.custom_cls,
+                                               self.input_data.input_type)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
