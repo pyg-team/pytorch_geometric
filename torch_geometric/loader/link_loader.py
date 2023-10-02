@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
+from torch_geometric.distributed.utils import filter_dist_store
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
@@ -13,8 +14,6 @@ from torch_geometric.loader.utils import (
     get_edge_label_index,
     infer_filter_per_worker,
 )
-from torch_geometric.distributed.utils import filter_dist_store
-
 from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
