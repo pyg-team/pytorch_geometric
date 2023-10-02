@@ -221,6 +221,7 @@ class DistNeighborSampler:
         """
 
         input_type = inputs.input_type
+        self.input_type = input_type
         batch_size = inputs.input_id.size()[0]
 
         seed_dict = None
@@ -520,7 +521,7 @@ class DistNeighborSampler:
             o.edge if o is not None else torch.empty(0, dtype=torch.int64)
             for o in outputs
         ]
-        cumsum_neighbors_per_node = [
+        cumm_sampled_nbrs_per_node = [
             o.metadata if o is not None else [] for o in outputs
         ]
 
@@ -621,8 +622,9 @@ class DistNeighborSampler:
             res_fut_list = await wrap_torch_future(
                 torch.futures.collect_all(futs))
             for i, res_fut in enumerate(res_fut_list):
-                p_id = ((self.dist_graph.partition_idx + i + 1) %
-                        self.dist_graph.num_partitions)
+                p_id = (
+                    self.dist_graph.partition_idx + i + 1
+                ) % self.dist_graph.num_partitions
                 p_outputs.pop(p_id)
                 p_outputs.insert(p_id, res_fut.wait())
 
@@ -647,15 +649,18 @@ class DistNeighborSampler:
             # Collect node labels of input node type.
             node_labels = self.dist_feature.labels
             if node_labels is not None:
-                for ntype in output.node.keys():
-                    nlabels[ntype] = node_labels[output.node[ntype]]
+                nlabels = node_labels[output.node[self.input_type]]
+            else:
+                nlabels = None
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
                     if output.node[ntype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=True, index=output.node[ntype],
-                            input_type=ntype)
+                            is_node_feat=True,
+                            index=output.node[ntype],
+                            input_type=ntype,
+                        )
                         nfeat = await wrap_torch_future(fut)
                         nfeat = nfeat.to(torch.device("cpu"))
                         nfeats[ntype] = nfeat
@@ -666,8 +671,10 @@ class DistNeighborSampler:
                 for etype in output.edge.keys():
                     if output.edge[etype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=False, index=output.edge[etype],
-                            input_type=etype)
+                            is_node_feat=False,
+                            index=output.edge[etype],
+                            input_type=etype,
+                        )
                         efeat = await wrap_torch_future(fut)
                         efeat = efeat.to(torch.device("cpu"))
                         efeats[etype] = efeat
@@ -681,7 +688,8 @@ class DistNeighborSampler:
             # Collect node features.
             if output.node is not None:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=True, index=output.node)
+                    is_node_feat=True, index=output.node
+                )
                 nfeats = await wrap_torch_future(fut)
                 nfeats = nfeats.to(torch.device("cpu"))
             # else:
@@ -689,7 +697,8 @@ class DistNeighborSampler:
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=False, index=output.edge)
+                    is_node_feat=False, index=output.edge
+                )
                 efeats = await wrap_torch_future(fut)
                 efeats = efeats.to(torch.device("cpu"))
             else:
