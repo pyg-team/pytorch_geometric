@@ -870,6 +870,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     # FeatureStore interface ##################################################
 
+    # TODO(jinu): Update support TensorFrame
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         out = self.get(attr.attr_name)
         if out is not None and attr.index is not None:

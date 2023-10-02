@@ -2,12 +2,13 @@ from typing import Any, List, Union
 
 import torch
 from torch import Tensor
+from torch_frame.data import TensorFrame
 
 from torch_geometric.utils.mask import mask_select
 from torch_geometric.utils.sparse import is_torch_sparse_tensor
 
 
-def select(src: Union[Tensor, List[Any]], index_or_mask: Tensor,
+def select(src: Union[Tensor, List[Any], TensorFrame], index_or_mask: Tensor,
            dim: int) -> Union[Tensor, List[Any]]:
     r"""Selects the input tensor or input list according to a given index or
     mask vector.
@@ -17,6 +18,11 @@ def select(src: Union[Tensor, List[Any]], index_or_mask: Tensor,
         index_or_mask (torch.Tensor): The index or mask vector.
         dim (int): The dimension along which to select.
     """
+    if isinstance(src, TensorFrame):
+        if index_or_mask.dtype == torch.bool:
+            return mask_select(src, dim, index_or_mask)
+        # TODO(jinu): Add index_select for TensorFrame
+        return src[index_or_mask]
     if isinstance(src, Tensor):
         if index_or_mask.dtype == torch.bool:
             return mask_select(src, dim, index_or_mask)

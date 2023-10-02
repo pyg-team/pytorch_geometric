@@ -1,10 +1,12 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 from torch import Tensor
+from torch_frame.data import TensorFrame
 
 
-def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
+def mask_select(src: Union[Tensor, TensorFrame], dim: int,
+                mask: Tensor) -> Tensor:
     r"""Returns a new tensor which masks the :obj:`src` tensor along the
     dimension :obj:`dim` according to the boolean mask :obj:`mask`.
 
@@ -15,6 +17,10 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
             index with.
     """
     assert mask.dim() == 1
+    if isinstance(src, TensorFrame):
+        # TODO(jinu): Will this work
+        # if tensorframe is not 2-d?
+        return src[mask]
     assert src.size(dim) == mask.numel()
     dim = dim + src.dim() if dim < 0 else dim
     assert dim >= 0 and dim < src.dim()
