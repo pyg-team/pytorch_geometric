@@ -130,10 +130,12 @@ def as_str(type: Union[NodeType, EdgeType]) -> str:
         return '__'.join(type)
     return ''
 
+
 def reverse_edge_type(etype: EdgeType):
     src, edge, dst = etype
     if not src == dst:
-        if edge.split("_", 1)[0] == 'rev': # undirected edge with `rev_` prefix.
+        if edge.split("_",
+                      1)[0] == 'rev':  # undirected edge with `rev_` prefix.
             edge = edge.split("_", 1)[1]
         else:
             edge = 'rev_' + edge
