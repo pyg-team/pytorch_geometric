@@ -1,13 +1,13 @@
 from dataclasses import dataclass
+
 import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.sampler import SamplerOutput
-from torch_geometric.typing import Dict, NodeType, Dict, Optional
-
 from torch_geometric.data import HeteroData
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
+from torch_geometric.sampler import SamplerOutput
+from torch_geometric.typing import Dict, NodeType, Optional
 
 
 @dataclass
@@ -19,7 +19,6 @@ class NodeDict:
        matrix,
     3) output nodes without duplicates.
     """
-
     def __init__(self, node_types):
         self.src: Dict[NodeType, Tensor] = {}
         self.with_dupl: Dict[NodeType, Tensor] = {}
@@ -41,7 +40,6 @@ class BatchDict:
        output matrix,
     3) output subgraph ids without duplicates.
     """
-
     def __init__(self, node_types, disjoint):
         self.src: Dict[NodeType, Tensor] = {}
         self.with_dupl: Dict[NodeType, Tensor] = {}
@@ -52,8 +50,7 @@ class BatchDict:
             for ntype in node_types:
                 self.src.update({ntype: torch.empty(0, dtype=torch.int64)})
                 self.with_dupl.update(
-                    {ntype: torch.empty(0, dtype=torch.int64)}
-                )
+                    {ntype: torch.empty(0, dtype=torch.int64)})
                 self.out.update({ntype: np.empty(0, dtype=np.int64)})
         else:
             for ntype in node_types:
