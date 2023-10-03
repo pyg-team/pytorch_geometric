@@ -75,7 +75,7 @@ def dense_to_sparse(
         mask = None
 
     if mask is not None and mask.dim() != 2:
-        raise ValueError(f"Mask must be 2-dimensional "
+        raise ValueError(f"Mask must be two-dimensional "
                          f"(got {mask.dim()} dimensions)")
 
     if mask is not None and adj.size(-2) != adj.size(-1):

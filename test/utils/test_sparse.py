@@ -61,7 +61,6 @@ def test_dense_to_sparse():
             [0.0, 5.0, 0.0],
         ],
     ])
-
     mask = torch.tensor([[True, True, False], [True, True, True]])
 
     edge_index, edge_attr = dense_to_sparse(adj, mask)
