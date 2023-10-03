@@ -80,6 +80,7 @@ class DistNeighborSampler:
         temporal_strategy: str = "uniform",
         time_attr: Optional[str] = None,
         concurrency: int = 1,
+        csc: bool = True,
         **kwargs,
     ):
         self.current_ctx = current_ctx
@@ -100,7 +101,8 @@ class DistNeighborSampler:
         self.temporal_strategy = temporal_strategy
         self.time_attr = time_attr
         self.with_edge_attr = self.dist_feature.has_edge_attr()
-        self.edge_permutation = None  # TODO: Debug edge_perm for LinkLoader
+        _, _, self.edge_permutation = self.dist_graph.csc()
+        self.csc = csc
 
     def register_sampler_rpc(self) -> None:
         partition2workers = rpc_partition_to_workers(
