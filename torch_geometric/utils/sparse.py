@@ -1,26 +1,34 @@
+import warnings
 from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import coalesce
+from torch_geometric.utils import coalesce, cumsum
 
 
-def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
+def dense_to_sparse(
+    adj: Tensor,
+    mask: Optional[Tensor] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Converts a dense adjacency matrix to a sparse adjacency matrix defined
     by edge indices and edge attributes.
 
     Args:
-        adj (Tensor): The dense adjacency matrix of shape
+        adj (torch.Tensor): The dense adjacency matrix of shape
             :obj:`[num_nodes, num_nodes]` or
             :obj:`[batch_size, num_nodes, num_nodes]`.
+        mask (torch.Tensor, optional): A boolean tensor of shape
+            :obj:`[batch_size, num_nodes]` holding information about which
+            nodes are in each example are valid. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
 
-        >>> # Forr a single adjacency matrix
+        >>> # For a single adjacency matrix:
         >>> adj = torch.tensor([[3, 1],
         ...                     [2, 0]])
         >>> dense_to_sparse(adj)
@@ -28,7 +36,7 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
                 [0, 1, 0]]),
         tensor([3, 1, 2]))
 
-        >>> # For two adjacency matrixes
+        >>> # For two adjacency matrixes:
         >>> adj = torch.tensor([[[3, 1],
         ...                      [2, 0]],
         ...                     [[0, 1],
@@ -37,21 +45,70 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
         (tensor([[0, 0, 1, 2, 3],
                 [0, 1, 0, 3, 3]]),
         tensor([3, 1, 2, 1, 2]))
+
+        >>> # First graph with two nodes, second with three:
+        >>> adj = torch.tensor([[
+        ...         [3, 1, 0],
+        ...         [2, 0, 0],
+        ...         [0, 0, 0]
+        ...     ], [
+        ...         [0, 1, 0],
+        ...         [0, 2, 3],
+        ...         [0, 5, 0]
+        ...     ]])
+        >>> mask = torch.tensor([
+        ...         [True, True, False],
+        ...         [True, True, True]
+        ...     ])
+        >>> dense_to_sparse(adj, mask)
+        (tensor([[0, 0, 1, 2, 3, 3, 4],
+                [0, 1, 0, 3, 3, 4, 3]]),
+        tensor([3, 1, 2, 1, 2, 3, 5]))
     """
     if adj.dim() < 2 or adj.dim() > 3:
-        raise ValueError(f"Dense adjacency matrix 'adj' must be 2- or "
-                         f"3-dimensional (got {adj.dim()} dimensions)")
+        raise ValueError(f"Dense adjacency matrix 'adj' must be two- or "
+                         f"three-dimensional (got {adj.dim()} dimensions)")
 
-    edge_index = adj.nonzero().t()
+    if mask is not None and adj.dim() == 2:
+        warnings.warn("Mask should not be provided in case the dense "
+                      "adjacency matrix is two-dimensional")
+        mask = None
 
-    if edge_index.size(0) == 2:
+    if mask is not None and mask.dim() != 2:
+        raise ValueError(f"Mask must be two-dimensional "
+                         f"(got {mask.dim()} dimensions)")
+
+    if mask is not None and adj.size(-2) != adj.size(-1):
+        raise ValueError(f"Mask is only supported on quadratic adjacency "
+                         f"matrices (got [*, {adj.size(-2)}, {adj.size(-1)}])")
+
+    if adj.dim() == 2:
+        edge_index = adj.nonzero().t()
         edge_attr = adj[edge_index[0], edge_index[1]]
         return edge_index, edge_attr
     else:
-        edge_attr = adj[edge_index[0], edge_index[1], edge_index[2]]
-        row = edge_index[1] + adj.size(-2) * edge_index[0]
-        col = edge_index[2] + adj.size(-1) * edge_index[0]
-        return torch.stack([row, col], dim=0), edge_attr
+        flatten_adj = adj.view(-1, adj.size(-1))
+        if mask is not None:
+            flatten_adj = flatten_adj[mask.view(-1)]
+        edge_index = flatten_adj.nonzero().t()
+        edge_attr = flatten_adj[edge_index[0], edge_index[1]]
+
+        if mask is None:
+            offset = torch.arange(
+                start=0,
+                end=adj.size(0) * adj.size(2),
+                step=adj.size(2),
+                device=adj.device,
+            )
+            offset = offset.repeat_interleave(adj.size(1))
+        else:
+            count = mask.sum(dim=-1)
+            offset = cumsum(count)[:-1]
+            offset = offset.repeat_interleave(count)
+
+        edge_index[1] += offset[edge_index[0]]
+
+        return edge_index, edge_attr
 
 
 def is_torch_sparse_tensor(src: Any) -> bool:
@@ -66,7 +123,8 @@ def is_torch_sparse_tensor(src: Any) -> bool:
             return True
         if src.layout == torch.sparse_csr:
             return True
-        if src.layout == torch.sparse_csc:
+        if (torch_geometric.typing.WITH_PT112
+                and src.layout == torch.sparse_csc):
             return True
     return False
 
@@ -127,7 +185,14 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
 
     adj = torch.sparse_coo_tensor(
         indices=edge_index,
@@ -176,8 +241,33 @@ def to_torch_csr_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csr)
 
     """
-    adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
-    return adj.to_sparse_csr()
+    if size is None:
+        size = int(edge_index.max()) + 1
+    if not isinstance(size, (tuple, list)):
+        size = (size, size)
+
+    if not is_coalesced:
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
+
+    if edge_attr is None:
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
+
+    adj = torch.sparse_csr_tensor(
+        crow_indices=index2ptr(edge_index[0], size[0]),
+        col_indices=edge_index[1],
+        values=edge_attr,
+        size=tuple(size) + edge_attr.size()[1:],
+        device=edge_index.device,
+    )
+
+    return adj
 
 
 def to_torch_csc_tensor(
@@ -216,6 +306,10 @@ def to_torch_csc_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csc)
 
     """
+    if not torch_geometric.typing.WITH_PT112:
+        return torch_geometric.typing.MockTorchCSCTensor(
+            edge_index, edge_attr, size)
+
     if size is None:
         size = int(edge_index.max()) + 1
     if not isinstance(size, (tuple, list)):
@@ -226,7 +320,14 @@ def to_torch_csc_tensor(
                                          sort_by_row=False)
 
     if edge_attr is None:
-        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+        if torch_geometric.typing.WITH_PT20:
+            edge_attr = torch.ones(1, device=edge_index.device)
+            edge_attr = edge_attr.expand(edge_index.size(1))
+        else:
+            edge_attr = torch.ones(
+                edge_index.size(1),
+                device=edge_index.device,
+            )
 
     adj = torch.sparse_csc_tensor(
         ccol_indices=index2ptr(edge_index[1], size[1]),
@@ -271,7 +372,7 @@ def to_torch_sparse_tensor(
         return to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
     if layout == torch.sparse_csr:
         return to_torch_csr_tensor(edge_index, edge_attr, size, is_coalesced)
-    if layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
         return to_torch_csc_tensor(edge_index, edge_attr, size, is_coalesced)
 
     raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
@@ -310,7 +411,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         col = adj.col_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
 
-    if adj.layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and adj.layout == torch.sparse_csc:
         col = ptr2index(adj.ccol_indices().detach())
         row = adj.row_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
@@ -359,7 +460,7 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             device=value.device,
         )
 
-    if adj.layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and adj.layout == torch.sparse_csc:
         return torch.sparse_csc_tensor(
             ccol_indices=adj.ccol_indices(),
             row_indices=adj.row_indices(),

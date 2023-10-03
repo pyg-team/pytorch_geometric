@@ -2,7 +2,7 @@ import pytest
 import torch
 
 import torch_geometric.typing
-from torch_geometric.nn import SAGEConv
+from torch_geometric.nn import MLPAggregation, SAGEConv
 from torch_geometric.testing import assert_module, is_full_test
 from torch_geometric.typing import SparseTensor
 
@@ -56,6 +56,22 @@ def test_sage_conv(project, aggr):
         assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
 
 
+@pytest.mark.parametrize('project', [False, True])
+def test_lazy_sage_conv(project):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    if project:
+        with pytest.raises(ValueError, match="does not support lazy"):
+            SAGEConv(-1, 32, project=project)
+    else:
+        conv = SAGEConv(-1, 32, project=project)
+        assert str(conv) == 'SAGEConv(-1, 32, aggr=mean)'
+
+        out = conv(x, edge_index)
+        assert out.size() == (4, 32)
+
+
 def test_lstm_aggr_sage_conv():
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -69,6 +85,25 @@ def test_lstm_aggr_sage_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 0]])
     with pytest.raises(ValueError, match="'index' tensor is not sorted"):
         conv(x, edge_index)
+
+
+def test_mlp_sage_conv():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = SAGEConv(
+        in_channels=8,
+        out_channels=32,
+        aggr=MLPAggregation(
+            in_channels=8,
+            out_channels=8,
+            max_num_elements=2,
+            num_layers=1,
+        ),
+    )
+
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
 
 
 @pytest.mark.parametrize('aggr_kwargs', [

@@ -51,8 +51,8 @@ class LayerNorm(torch.nn.Module):
         self.mode = mode
 
         if affine:
-            self.weight = Parameter(torch.Tensor(in_channels))
-            self.bias = Parameter(torch.Tensor(in_channels))
+            self.weight = Parameter(torch.empty(in_channels))
+            self.bias = Parameter(torch.empty(in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
@@ -151,8 +151,8 @@ class HeteroLayerNorm(torch.nn.Module):
         self.affine = affine
 
         if affine:
-            self.weight = Parameter(torch.Tensor(num_types, in_channels))
-            self.bias = Parameter(torch.Tensor(num_types, in_channels))
+            self.weight = Parameter(torch.empty(num_types, in_channels))
+            self.bias = Parameter(torch.empty(num_types, in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)

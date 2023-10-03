@@ -64,7 +64,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         self.is_undirected = is_undirected
         self.kwargs = kwargs
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         from scipy.sparse.linalg import eigs, eigsh
         eig_fn = eigs if not self.is_undirected else eigsh
 
@@ -77,6 +77,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         )
 
         L = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes)
+        L = L.tocsr()
 
         eig_vals, eig_vecs = eig_fn(
             L,
@@ -117,7 +118,7 @@ class AddRandomWalkPE(BaseTransform):
         self.walk_length = walk_length
         self.attr_name = attr_name
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         row, col = data.edge_index
         N = data.num_nodes
 

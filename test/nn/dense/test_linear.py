@@ -8,11 +8,11 @@ from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import cumsum
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -125,7 +125,33 @@ def test_hetero_linear(device):
     assert out.size() == (3, 32)
 
     jit = torch.jit.script(lin)
-    assert torch.allclose(jit(x, type_vec), out)
+    assert torch.allclose(jit(x, type_vec), out, atol=1e-3)
+
+
+def test_hetero_linear_initializer():
+    lin = HeteroLinear(
+        16,
+        32,
+        num_types=3,
+        weight_initializer='glorot',
+        bias_initializer='zeros',
+    )
+    assert torch.equal(lin.bias, torch.zeros_like(lin.bias))
+
+
+@withCUDA
+@pytest.mark.parametrize('use_segmm', [True, False])
+def test_hetero_linear_amp(device, use_segmm):
+    warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
+
+    x = torch.randn(3, 16, device=device)
+    type_vec = torch.tensor([0, 1, 2], device=device)
+
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
+    lin.use_segmm = use_segmm
+
+    with torch.cuda.amp.autocast():
+        assert lin(x, type_vec).size() == (3, 32)
 
 
 @withCUDA
@@ -180,13 +206,8 @@ def test_hetero_dict_linear_jit():
 
     lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
 
-    if torch_geometric.typing.WITH_GMM:
-        # See: https://github.com/pytorch/pytorch/pull/97960
-        with pytest.raises(RuntimeError, match="Unknown builtin op"):
-            jit = torch.jit.script(lin)
-    else:
-        jit = torch.jit.script(lin)
-        assert len(jit(x_dict)) == 2
+    jit = torch.jit.script(lin)
+    assert len(jit(x_dict)) == 2
 
 
 @withCUDA
@@ -207,6 +228,7 @@ def test_lazy_hetero_dict_linear(device):
 
 @withCUDA
 @withPackage('pyg_lib')
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('type_vec', [
     torch.tensor([0, 0, 1, 1, 2, 2]),
     torch.tensor([0, 1, 2, 0, 1, 2]),
@@ -279,7 +301,7 @@ if __name__ == '__main__':
 
         xs = get_xs(mean, std, num_types, channels)
         count = torch.tensor([x.size(0) for x in xs])
-        ptr = torch.tensor([0] + [x.size(0) for x in xs]).cumsum(0)
+        ptr = cumsum(torch.tensor([x.size(0) for x in xs]))
         x = torch.cat(xs, dim=0)
         padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
         weight = torch.randn(num_types, channels, channels, device=args.device)

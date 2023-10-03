@@ -11,6 +11,7 @@ import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import EdgeType, NodeType, pyg_lib
 from torch_geometric.utils import index_sort
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -93,14 +94,14 @@ class Linear(torch.nn.Module):
         self.bias_initializer = bias_initializer
 
         if in_channels > 0:
-            self.weight = Parameter(torch.Tensor(out_channels, in_channels))
+            self.weight = Parameter(torch.empty(out_channels, in_channels))
         else:
             self.weight = nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -142,12 +143,12 @@ class Linear(torch.nn.Module):
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
         if (is_uninitialized_parameter(self.weight)
-                or torch.onnx.is_in_onnx_export()):
+                or torch.onnx.is_in_onnx_export() or keep_vars):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            if torch.onnx.is_in_onnx_export():
+            if torch.onnx.is_in_onnx_export() or keep_vars:
                 destination[prefix + 'bias'] = self.bias
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
@@ -197,6 +198,13 @@ class HeteroLinear(torch.nn.Module):
             :obj:`type_vec` is sorted. This avoids internal re-sorting of the
             data and can improve runtime and memory efficiency.
             (default: :obj:`False`)
+        use_segmm (bool, optional): If set to :obj:`True` and :obj:`pyg-lib` is
+            installed, this module will use the fused :obj:`segment_matmul`
+            kernel to parallelize the linear transformation across types. If
+            set to :obj:`False`, :obj:`segment_matmul` will not be used. If
+            left as :obj:`None` and :obj:`pyg-lib` is installed, the module
+            will determine heuristically whether to use :obj:`segment_matmul`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
 
@@ -206,49 +214,43 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 is_sorted: bool = False, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_types: int,
+        is_sorted: bool = False,
+        use_segmm: Optional[bool] = None,
+        **kwargs,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_types = num_types
         self.is_sorted = is_sorted
+        self.use_segmm: int = -1 if use_segmm is None else int(use_segmm)
         self.kwargs = kwargs
 
-        if torch_geometric.typing.WITH_PYG_LIB:
-            self.lins = None
-            if self.in_channels == -1:
-                self.weight = nn.parameter.UninitializedParameter()
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-            else:
-                self.weight = torch.nn.Parameter(
-                    torch.Tensor(num_types, in_channels, out_channels))
-            if kwargs.get('bias', True):
-                self.bias = Parameter(torch.Tensor(num_types, out_channels))
-            else:
-                self.register_parameter('bias', None)
+        if self.in_channels == -1:
+            self.weight = nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
         else:
-            self.lins = torch.nn.ModuleList([
-                Linear(in_channels, out_channels, **kwargs)
-                for _ in range(num_types)
-            ])
-            self.register_parameter('weight', None)
+            self.weight = torch.nn.Parameter(
+                torch.empty(num_types, in_channels, out_channels))
+        if kwargs.get('bias', True):
+            self.bias = Parameter(torch.empty(num_types, out_channels))
+        else:
             self.register_parameter('bias', None)
-
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        if torch_geometric.typing.WITH_PYG_LIB:
-            reset_weight_(self.weight, self.in_channels,
-                          self.kwargs.get('weight_initializer', None))
-            reset_weight_(self.bias, self.in_channels,
-                          self.kwargs.get('bias_initializer', None))
-        else:
-            for lin in self.lins:
-                lin.reset_parameters()
+        reset_weight_(self.weight, self.in_channels,
+                      self.kwargs.get('weight_initializer', None))
+        reset_bias_(self.bias, self.in_channels,
+                    self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
@@ -256,7 +258,8 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        if torch_geometric.typing.WITH_PYG_LIB:
+        if (torch_geometric.typing.WITH_SEGMM
+                and (self.use_segmm == -1 or bool(self.use_segmm))):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -266,6 +269,9 @@ class HeteroLinear(torch.nn.Module):
                     x = x[perm]
 
             type_vec_ptr = index2ptr(type_vec, self.num_types)
+            if self.use_segmm == -1:
+                self.use_segmm = segmatmul_heuristic(x, type_vec_ptr,
+                                                     self.weight)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]
@@ -275,11 +281,17 @@ class HeteroLinear(torch.nn.Module):
                 out_unsorted[perm] = out
                 out = out_unsorted
         else:
-            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
-            for i, lin in enumerate(self.lins):
+            for i in range(self.num_types):
                 mask = type_vec == i
-                out[mask] = lin(x[mask])
+                if mask.numel() == 0:
+                    continue
+                subset_out = F.linear(x[mask], self.weight[i].T)
+                # The data type may have changed with mixed precision:
+                out[mask] = subset_out.to(out.dtype)
+
+            if self.bias is not None:
+                out += self.bias[type_vec]
         return out
 
     @torch.no_grad()
@@ -316,6 +328,13 @@ class HeteroDictLinear(torch.nn.Module):
         out_channels (int): Size of each output sample.
         types (List[Any], optional): The keys of the input dictionary.
             (default: :obj:`None`)
+        use_segmm (bool, optional): If set to :obj:`True` and :obj:`pyg-lib` is
+            installed, this module will use the fused :obj:`segment_matmul`
+            kernel to parallelize the linear transformation across types. If
+            set to :obj:`False`, :obj:`segment_matmul` will not be used. If
+            left as :obj:`None` and :obj:`pyg-lib` is installed, the module
+            will determine heuristically whether to use :obj:`segment_matmul`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
@@ -324,6 +343,7 @@ class HeteroDictLinear(torch.nn.Module):
         in_channels: Union[int, Dict[Any, int]],
         out_channels: int,
         types: Optional[Any] = None,
+        use_segmm: Optional[bool] = None,
         **kwargs,
     ):
         super().__init__()
@@ -353,6 +373,7 @@ class HeteroDictLinear(torch.nn.Module):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.use_segmm = use_segmm
         self.kwargs = kwargs
 
         self.lins = torch.nn.ModuleDict({
@@ -385,18 +406,22 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
 
-        if torch_geometric.typing.WITH_GMM:
-            xs = [x_dict[key] for key in x_dict.keys()]
-            weights = [
-                self.lins[self.get_key(key)].weight.t()
-                for key in x_dict.keys()
-            ]
-            if self.kwargs.get('bias', True):
-                biases = [
-                    self.lins[self.get_key(key)].bias for key in x_dict.keys()
-                ]
-            else:
-                biases = None
+        # Only apply fused kernel for more than 10 types, otherwise default
+        # back to sequential computation (which is faster for these cases).
+        if self.use_segmm is None:
+            use_segmm = len(x_dict) >= 10
+        else:
+            use_segmm = self.use_segmm
+
+        if (torch_geometric.typing.WITH_GMM and not torch.jit.is_scripting()
+                and use_segmm):
+            xs, weights, biases = [], [], []
+            for key, lin in self.lins.items():
+                if key in x_dict:
+                    xs.append(x_dict[key])
+                    weights.append(lin.weight.t())
+                    biases.append(lin.bias)
+            biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             for key, out in zip(x_dict.keys(), outs):
                 if key in x_dict:

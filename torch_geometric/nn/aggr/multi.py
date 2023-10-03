@@ -38,6 +38,9 @@ class MultiAggregation(Aggregation):
             (int) is needed to be specified for the number of parallel
             attention heads. (default: :obj:`None`)
     """
+    fused_out_index: List[int]
+    is_fused_aggr: List[bool]
+
     def __init__(
         self,
         aggrs: List[Union[Aggregation, str]],
@@ -73,7 +76,6 @@ class MultiAggregation(Aggregation):
         # Divide the set into fusable and non-fusable aggregations:
         fused_aggrs: List[Aggregation] = []
         self.fused_out_index: List[int] = []
-        # self.non_fused_aggrs: List[Aggregation] = []
         self.is_fused_aggr: List[bool] = []
         for i, aggr in enumerate(self.aggrs):
             if aggr.__class__ in FusedAggregation.FUSABLE_AGGRS:

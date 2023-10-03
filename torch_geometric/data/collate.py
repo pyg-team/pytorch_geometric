@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -9,7 +9,7 @@ import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
 
@@ -131,7 +131,8 @@ def _collate(
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         if cat_dim is None or elem.dim() == 0:
             values = [value.unsqueeze(0) for value in values]
-        slices = cumsum([value.size(cat_dim or 0) for value in values])
+        sizes = torch.tensor([value.size(cat_dim or 0) for value in values])
+        slices = cumsum(sizes)
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
@@ -142,24 +143,34 @@ def _collate(
         else:
             incs = None
 
+        if getattr(elem, 'is_nested', False):
+            tensors = []
+            for nested_tensor in values:
+                tensors.extend(nested_tensor.unbind())
+            value = torch.nested.nested_tensor(tensors)
+
+            return value, slices, incs
+
+        out = None
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
-            if torch_geometric.typing.WITH_PT2:
+            if torch_geometric.typing.WITH_PT20:
                 storage = elem.untyped_storage()._new_shared(
                     numel * elem.element_size(), device=elem.device)
-            else:
+            elif torch_geometric.typing.WITH_PT112:
                 storage = elem.storage()._new_shared(numel, device=elem.device)
+            else:
+                storage = elem.storage()._new_shared(numel)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
             else:
                 shape[cat_dim] = int(slices[-1])
             out = elem.new(storage).resize_(*shape)
-        else:
-            out = None
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
+
         return value, slices, incs
 
     elif is_sparse(elem) and increment:
@@ -169,7 +180,7 @@ def _collate(
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
-        slices = cumsum(repeats)
+        slices = cumsum(torch.tensor(repeats))
         if is_torch_sparse_tensor(elem):
             value = cat(values, dim=cat_dim)
         else:
@@ -256,15 +267,6 @@ def repeat_interleave(
 ) -> Tensor:
     outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
     return torch.cat(outs, dim=0)
-
-
-def cumsum(value: Union[Tensor, List[int]]) -> Tensor:
-    if not isinstance(value, Tensor):
-        value = torch.tensor(value)
-    out = value.new_empty((value.size(0) + 1, ) + value.size()[1:])
-    out[0] = 0
-    torch.cumsum(value, 0, out=out[1:])
-    return out
 
 
 def get_incs(key, values: List[Any], data_list: List[BaseData],

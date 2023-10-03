@@ -20,6 +20,7 @@ parser.add_argument('--K', type=int, default=2)
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
+parser.add_argument('--compile', action='store_true')
 args = parser.parse_args()
 
 
@@ -41,7 +42,7 @@ class Net(torch.nn.Module):
 dataset = get_planetoid_dataset(args.dataset, not args.no_normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
-    args.early_stopping, args.inference, args.profile, args.bf16,
+    args.early_stopping, args.inference, args.profile, args.bf16, args.compile,
     permute_masks)
 
 if args.profile:

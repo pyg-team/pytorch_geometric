@@ -1,5 +1,3 @@
-import copy
-
 import torch
 from torch import tensor
 
@@ -30,22 +28,22 @@ def test_add_metapaths():
 
     transform = AddMetaPaths(metapaths)
     assert str(transform) == 'AddMetaPaths()'
-    meta1 = transform(copy.copy(data))
+    meta1 = transform(data)
 
     transform = AddMetaPaths(metapaths, drop_orig_edge_types=True)
     assert str(transform) == 'AddMetaPaths()'
-    meta2 = transform(copy.copy(data))
+    meta2 = transform(data)
 
     transform = AddMetaPaths(metapaths, drop_orig_edge_types=True,
                              keep_same_node_type=True)
     assert str(transform) == 'AddMetaPaths()'
-    meta3 = transform(copy.copy(data))
+    meta3 = transform(data)
 
     transform = AddMetaPaths(metapaths, drop_orig_edge_types=True,
                              keep_same_node_type=True,
                              drop_unconnected_node_types=True)
     assert str(transform) == 'AddMetaPaths()'
-    meta4 = transform(copy.copy(data))
+    meta4 = transform(data)
 
     assert meta1['metapath_0'].edge_index.size() == (2, 9)
     assert meta2['metapath_0'].edge_index.size() == (2, 9)
@@ -66,7 +64,7 @@ def test_add_metapaths():
         [('a', 'p'), ('p', 'c'), ('c', 'p'), ('p', 'a')],
     ]
     transform = AddMetaPaths(metapaths)
-    meta = transform(copy.copy(data))
+    meta = transform(data)
     new_edge_types = [('a', 'metapath_0', 'c'), ('a', 'metapath_1', 'a')]
     assert meta['metapath_0'].edge_index.size() == (2, 4)
     assert meta['metapath_1'].edge_index.size() == (2, 4)
@@ -112,7 +110,7 @@ def test_add_weighted_metapaths():
          ('b', 'a')],
     ]
     transform = AddMetaPaths(metapaths, weighted=True)
-    out = transform(copy.copy(data))
+    out = transform(data)
 
     # Make sure manually added metapaths compute the correct number of edges:
     edge_index = out['a', 'a'].edge_index
@@ -135,7 +133,7 @@ def test_add_weighted_metapaths():
 
     # Compute intra-table metapaths efficiently:
     metapaths = [[('a', 'b'), ('b', 'c'), ('c', 'd')]]
-    out = AddMetaPaths(metapaths, weighted=True)(copy.copy(data))
+    out = AddMetaPaths(metapaths, weighted=True)(data)
     out['d', 'a'].edge_index = out['a', 'd'].edge_index.flip([0])
     out['d', 'a'].edge_weight = out['a', 'd'].edge_weight
     metapaths = [[('a', 'd'), ('d', 'a')]]
@@ -157,43 +155,43 @@ def test_add_random_metapaths():
     torch.manual_seed(12345)
 
     transform = AddRandomMetaPaths(metapaths)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
-    meta1 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[1])')
+    meta1 = transform(data)
 
     transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
-    meta2 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[1])')
+    meta2 = transform(data)
 
     transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True,
                                    keep_same_node_type=True)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
-    meta3 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[1])')
+    meta3 = transform(data)
 
     transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True,
                                    keep_same_node_type=True,
                                    drop_unconnected_node_types=True)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
-    meta4 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[1])')
+    meta4 = transform(data)
 
     transform = AddRandomMetaPaths(metapaths, sample_ratio=0.8,
                                    drop_orig_edge_types=True,
                                    keep_same_node_type=True,
                                    drop_unconnected_node_types=True)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=0.8, walks_per_node=[1])'
-    meta5 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=0.8, '
+                              'walks_per_node=[1])')
+    meta5 = transform(data)
 
     transform = AddRandomMetaPaths(metapaths, walks_per_node=5,
                                    drop_orig_edge_types=True,
                                    keep_same_node_type=True,
                                    drop_unconnected_node_types=True)
-    assert str(transform
-               ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[5])'
-    meta6 = transform(copy.copy(data))
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[5])')
+    meta6 = transform(data)
 
     assert meta1['metapath_0'].edge_index.size() == (2, 5)
     assert meta2['metapath_0'].edge_index.size() == (2, 5)
@@ -216,11 +214,10 @@ def test_add_random_metapaths():
         [('a', 'p'), ('p', 'c'), ('c', 'p'), ('p', 'a')],
     ]
     transform = AddRandomMetaPaths(metapaths)
-    assert str(
-        transform
-    ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1, 1])'
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[1, 1])')
 
-    meta1 = transform(copy.copy(data))
+    meta1 = transform(data)
     new_edge_types = [('a', 'metapath_0', 'c'), ('a', 'metapath_1', 'a')]
     assert meta1['metapath_0'].edge_index.size() == (2, 2)
     assert meta1['metapath_1'].edge_index.size() == (2, 2)
@@ -230,11 +227,10 @@ def test_add_random_metapaths():
     assert list(meta1.metapath_dict.keys()) == new_edge_types
 
     transform = AddRandomMetaPaths(metapaths, walks_per_node=[2, 5])
-    assert str(
-        transform
-    ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[2, 5])'
+    assert str(transform) == ('AddRandomMetaPaths(sample_ratio=1.0, '
+                              'walks_per_node=[2, 5])')
 
-    meta2 = transform(copy.copy(data))
+    meta2 = transform(data)
     new_edge_types = [('a', 'metapath_0', 'c'), ('a', 'metapath_1', 'a')]
     assert meta2['metapath_0'].edge_index.size() == (2, 2)
     assert meta2['metapath_1'].edge_index.size() == (2, 3)

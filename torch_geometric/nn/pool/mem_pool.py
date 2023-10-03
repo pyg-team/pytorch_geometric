@@ -46,7 +46,7 @@ class MemPooling(torch.nn.Module):
         self.num_clusters = num_clusters
         self.tau = tau
 
-        self.k = Parameter(torch.Tensor(heads, num_clusters, in_channels))
+        self.k = Parameter(torch.empty(heads, num_clusters, in_channels))
         self.conv = Conv2d(heads, 1, kernel_size=1, padding=0, bias=False)
         self.lin = Linear(in_channels, out_channels, bias=False)
 

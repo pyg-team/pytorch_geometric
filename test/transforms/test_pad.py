@@ -1,5 +1,4 @@
 import numbers
-from copy import deepcopy
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import pytest
@@ -29,13 +28,13 @@ def fake_hetero_data(node_types=2, edge_types=5) -> HeteroData:
 
 
 def _generate_homodata_node_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_node_attr(attr):
             yield attr
 
 
 def _generate_homodata_edge_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_edge_attr(attr):
             yield attr
 
@@ -75,10 +74,10 @@ def _check_homo_data_nodes(
 
     for attr in _generate_homodata_node_attrs(original):
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -133,10 +132,10 @@ def _check_homo_data_edges(
         if attr == 'edge_index':
             continue
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -329,12 +328,10 @@ def test_pad_repr():
 @pytest.mark.parametrize('num_nodes', [32, 64])
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_auto_edges(data, num_nodes, add_pad_mask):
-    original = data
-    data = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask)
+    out = transform(data)
+    _check_data(data, out, num_nodes, is_mask_available=add_pad_mask)
 
 
 @pytest.mark.parametrize('num_nodes', [32, 64])
@@ -342,12 +339,11 @@ def test_pad_auto_edges(data, num_nodes, add_pad_mask):
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_data_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_data()
-    original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
                     add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, num_edges,
+    out = transform(data)
+    _check_data(data, out, num_nodes, num_edges,
                 is_mask_available=add_pad_mask)
 
 
@@ -356,12 +352,11 @@ def test_pad_data_explicit_edges(num_nodes, num_edges, add_pad_mask):
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_heterodata_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_hetero_data()
-    original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
                     add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, num_edges,
+    out = transform(data)
+    _check_data(data, out, num_nodes, num_edges,
                 is_mask_available=add_pad_mask)
 
 
@@ -370,12 +365,11 @@ def test_pad_heterodata_explicit_edges(num_nodes, num_edges, add_pad_mask):
                          [11, AttrNamePadding({'edge_attr': 2.0})])
 def test_pad_data_pad_values(node_pad_value, edge_pad_value):
     data = fake_data()
-    original = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, node_pad_value=node_pad_value,
                     edge_pad_value=edge_pad_value)
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, node_pad_value=node_pad_value,
+    out = transform(data)
+    _check_data(data, out, num_nodes, node_pad_value=node_pad_value,
                 edge_pad_value=edge_pad_value)
 
 
@@ -398,13 +392,12 @@ def test_pad_data_pad_values(node_pad_value, edge_pad_value):
 ])
 def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):
     data = fake_hetero_data()
-    original = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, node_pad_value=node_pad_value,
                     edge_pad_value=edge_pad_value)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, node_pad_value=node_pad_value,
+    out = transform(data)
+    _check_data(data, out, num_nodes, node_pad_value=node_pad_value,
                 edge_pad_value=edge_pad_value)
 
 
@@ -416,35 +409,39 @@ def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):
     ['y', 'edge_attr'],
 ])
 def test_pad_data_exclude_keys(data, add_pad_mask, exclude_keys):
-    original = data
-    data = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask,
                     exclude_keys=exclude_keys)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask,
+    out = transform(data)
+    _check_data(data, out, num_nodes, is_mask_available=add_pad_mask,
                 exclude_keys=exclude_keys)
 
 
-@pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
-def test_pad_invalid_max_num_nodes(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_nodes(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of nodes after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
-@pytest.mark.parametrize(
-    'data',
-    [fake_data(), fake_hetero_data(node_types=1, edge_types=1)])
-def test_pad_invalid_max_num_edges(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_edges(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1, edge_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes + 10,
                     max_num_edges=data.num_edges - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of edges after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
@@ -452,7 +449,7 @@ def test_pad_num_nodes_not_complete():
     data = fake_hetero_data(node_types=2, edge_types=1)
     transform = Pad(max_num_nodes={'v0': 100})
 
-    with pytest.raises(AssertionError, match='The number of v1 nodes'):
+    with pytest.raises(AssertionError, match="The number of v1 nodes"):
         transform(data)
 
 
@@ -464,7 +461,7 @@ def test_pad_invalid_padding_type():
 
 
 def test_pad_data_non_tensor_attr():
-    data = deepcopy(fake_data())
+    data = fake_data()
     batch_size = 13
     data.batch_size = batch_size
 
@@ -474,7 +471,7 @@ def test_pad_data_non_tensor_attr():
 
     exclude_transform = Pad(max_num_nodes=101, exclude_keys=('batch_size', ))
     padded = exclude_transform(data)
-    assert 'batch_size' not in padded.keys
+    assert 'batch_size' not in padded.keys()
 
 
 @pytest.mark.parametrize('mask_pad_value', [True, False])

@@ -69,7 +69,7 @@ class RandomNodeSplit(BaseTransform):
         self.num_test = num_test
         self.key = key
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

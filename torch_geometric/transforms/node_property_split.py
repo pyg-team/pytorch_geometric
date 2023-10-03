@@ -14,7 +14,7 @@ class NodePropertySplit(BaseTransform):
     r"""Creates a node-level split with distributional shift based on a given
     node property, as proposed in the `"Evaluating Robustness and Uncertainty
     of Graph Models Under Structural Distributional Shifts"
-    <https://arxiv.org/abs/2302.13875v1>`__ paper
+    <https://arxiv.org/abs/2302.13875>`__ paper
     (functional name: :obj:`node_property_split`).
 
     It splits the nodes in a given graph into five non-intersecting parts
@@ -81,8 +81,7 @@ class NodePropertySplit(BaseTransform):
         self.ratios = ratios
         self.ascending = ascending
 
-    def __call__(self, data: Data) -> Data:
-
+    def forward(self, data: Data) -> Data:
         G = to_networkx(data, to_undirected=True, remove_self_loops=True)
         property_values = self.compute_fn(G, self.ascending)
         mask_dict = self._mask_nodes_by_property(property_values, self.ratios)

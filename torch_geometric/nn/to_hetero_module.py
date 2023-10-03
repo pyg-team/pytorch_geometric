@@ -3,12 +3,13 @@ import warnings
 from typing import Dict, List, Optional, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
 from torch_geometric.nn.dense import HeteroLinear, Linear
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
-from torch_geometric.utils import scatter
+from torch_geometric.utils import cumsum, scatter
 
 
 class SubParam:
@@ -109,7 +110,9 @@ class ToHeteroLinear(torch.nn.Module):
 
         if not torch_geometric.typing.WITH_PYG_LIB:
             return {
-                key: self.hetero_module.lins[i](x_dict[key])
+                key:
+                F.linear(x_dict[key], self.hetero_module.weight[i].t()) +
+                self.hetero_module.bias[i]
                 for i, key in enumerate(self.types)
             }
 
@@ -200,7 +203,7 @@ class ToHeteroMessagePassing(torch.nn.Module):
         edge_sizes = scatter(torch.ones_like(edge_type), edge_type, dim=0,
                              dim_size=len(self.edge_types), reduce='sum')
 
-        cumsum = torch.cat([node_type.new_zeros(1), node_sizes.cumsum(0)[:1]])
+        ptr = cumsum(node_sizes)
 
         xs = x.split(node_sizes.tolist())
         x_dict = {node_type: x for node_type, x in zip(self.node_types, xs)}
@@ -208,8 +211,8 @@ class ToHeteroMessagePassing(torch.nn.Module):
         # TODO Consider out-sourcing to its own function.
         edge_indices = edge_index.clone().split(edge_sizes.tolist(), dim=1)
         for (src, _, dst), index in zip(self.edge_types, edge_indices):
-            index[0] -= cumsum[self.node_type_to_index[src]]
-            index[1] -= cumsum[self.node_type_to_index[dst]]
+            index[0] -= ptr[self.node_type_to_index[src]]
+            index[1] -= ptr[self.node_type_to_index[dst]]
 
         edge_index_dict = {
             edge_type: edge_index

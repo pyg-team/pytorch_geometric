@@ -16,6 +16,7 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -126,37 +127,37 @@ class RGCNConv(MessagePassing):
         self.num_bases = num_bases
         self.num_blocks = num_blocks
         self.is_sorted = is_sorted
-
+        self.use_segmm: int = -1
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.Tensor(num_bases, in_channels[0], out_channels))
-            self.comp = Parameter(torch.Tensor(num_relations, num_bases))
+                torch.empty(num_bases, in_channels[0], out_channels))
+            self.comp = Parameter(torch.empty(num_relations, num_bases))
 
         elif num_blocks is not None:
             assert (in_channels[0] % num_blocks == 0
                     and out_channels % num_blocks == 0)
             self.weight = Parameter(
-                torch.Tensor(num_relations, num_blocks,
-                             in_channels[0] // num_blocks,
-                             out_channels // num_blocks))
+                torch.empty(num_relations, num_blocks,
+                            in_channels[0] // num_blocks,
+                            out_channels // num_blocks))
             self.register_parameter('comp', None)
 
         else:
             self.weight = Parameter(
-                torch.Tensor(num_relations, in_channels[0], out_channels))
+                torch.empty(num_relations, in_channels[0], out_channels))
             self.register_parameter('comp', None)
 
         if root_weight:
-            self.root = Param(torch.Tensor(in_channels[1], out_channels))
+            self.root = Param(torch.empty(in_channels[1], out_channels))
         else:
             self.register_parameter('root', None)
 
         if bias:
-            self.bias = Param(torch.Tensor(out_channels))
+            self.bias = Param(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -201,7 +202,6 @@ class RGCNConv(MessagePassing):
             x_r = x[1]
 
         size = (x_l.size(0), x_r.size(0))
-
         if isinstance(edge_index, SparseTensor):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
@@ -229,15 +229,19 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
-                    and x_l.is_floating_point()
-                    and isinstance(edge_index, Tensor)):
+            if (torch_geometric.typing.WITH_SEGMM and self.num_bases is None
+                    and x_l.is_floating_point() and isinstance(
+                        edge_index, Tensor)) and (self.use_segmm == -1
+                                                  or bool(self.use_segmm)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
                             edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
+                if self.use_segmm == -1:
+                    self.use_segmm = segmatmul_heuristic(
+                        x_l, edge_type_ptr, self.weight)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
             else:
@@ -269,7 +273,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if torch_geometric.typing.WITH_PYG_LIB and edge_type_ptr is not None:
+        if torch_geometric.typing.WITH_SEGMM and edge_type_ptr is not None:
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 

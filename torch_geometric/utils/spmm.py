@@ -24,10 +24,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:
-        src (Tensor or torch_sparse.SparseTensor): The input sparse matrix,
-            either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
+        src (torch.Tensor or torch_sparse.SparseTensor): The input sparse
+            matrix, either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
             :pytorch:`PyTorch` :class:`torch.sparse.Tensor`.
-        other (Tensor): The input dense matrix.
+        other (torch.Tensor): The input dense matrix.
         reduce (str, optional): The reduce operation to use
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`).
             (default: :obj:`"sum"`)
@@ -40,10 +40,13 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
     if isinstance(src, SparseTensor):
-        if (torch_geometric.typing.WITH_PT2 and other.dim() == 2
-                and not src.is_cuda()):
+        if src.nnz() == 0:
+            return other.new_zeros(src.size(0), other.size(1))
+
+        if (torch_geometric.typing.WITH_PT20 and other.dim() == 2
+                and not src.is_cuda() and not src.requires_grad()):
             # Use optimized PyTorch `torch.sparse.mm` path:
-            csr = src.to_torch_sparse_csr_tensor()
+            csr = src.to_torch_sparse_csr_tensor().to(other.dtype)
             return torch.sparse.mm(csr, other, reduce)
         return torch_sparse.matmul(src, other, reduce)
 
@@ -53,7 +56,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     # `torch.sparse.mm` only supports reductions on CPU for PyTorch>=2.0.
     # This will currently throw on error for CUDA tensors.
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
 
         if src.is_cuda and (reduce == 'min' or reduce == 'max'):
             raise NotImplementedError(f"`{reduce}` reduction is not yet "
@@ -114,7 +117,8 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         if src.layout == torch.sparse_csr:
             ptr = src.crow_indices()
             deg = ptr[1:] - ptr[:-1]
-        elif src.layout == torch.sparse_csc:
+        elif (torch_geometric.typing.WITH_PT112
+              and src.layout == torch.sparse_csc):
             assert src.layout == torch.sparse_csc
             deg = scatter(torch.ones_like(src.values()), src.row_indices(),
                           dim=0, dim_size=src.size(0), reduce='sum')

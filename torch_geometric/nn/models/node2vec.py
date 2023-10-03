@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -99,7 +99,7 @@ class Node2Vec(torch.nn.Module):
     def forward(self, batch: Optional[Tensor] = None) -> Tensor:
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
-        return emb if batch is None else emb.index_select(0, batch)
+        return emb if batch is None else emb[batch]
 
     def loader(self, **kwargs) -> DataLoader:
         return DataLoader(range(self.num_nodes), collate_fn=self.sample,
@@ -123,7 +123,8 @@ class Node2Vec(torch.nn.Module):
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length))
+        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length),
+                           dtype=batch.dtype, device=batch.device)
         rw = torch.cat([batch.view(-1, 1), rw], dim=-1)
 
         walks = []
@@ -133,7 +134,7 @@ class Node2Vec(torch.nn.Module):
         return torch.cat(walks, dim=0)
 
     @torch.jit.export
-    def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
+    def sample(self, batch: Union[List[int], Tensor]) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)

@@ -5,6 +5,7 @@
 # | 7 layers 160 channels   | 0.8276 ± 0.0027 | 0.9272 ± 0.0006 |
 
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -14,7 +15,6 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
-from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import index_to_mask
 
 
@@ -81,9 +81,11 @@ class RevGNN(torch.nn.Module):
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
-transform = T.AddSelfLoops()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
-dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
+dataset = PygNodePropPredDataset('ogbn-products', root,
+                                 transform=T.AddSelfLoops())
 evaluator = Evaluator(name='ogbn-products')
 
 data = dataset[0]
@@ -97,7 +99,6 @@ train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
 # the full batch graph into your GPU:
 test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = RevGNN(
     in_channels=dataset.num_features,
     hidden_channels=160,
@@ -117,12 +118,11 @@ def train(epoch):
 
     total_loss = total_examples = 0
     for data in train_loader:
-        data = data.to(device)
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
-        adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        out = model(data.x, adj_t)[data.train_mask]
+        data = transform(data)
+        out = model(data.x, data.adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
         loss.backward()
         optimizer.step()
@@ -147,11 +147,9 @@ def test(epoch):
     pbar.set_description(f'Evaluating epoch: {epoch:03d}')
 
     for data in test_loader:
-        data = data.to(device)
-
         # Memory-efficient aggregations
-        adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        out = model(data.x, adj_t).argmax(dim=-1, keepdim=True)
+        data = transform(data)
+        out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
 
         for split in ['train', 'valid', 'test']:
             mask = data[f'{split}_mask']
@@ -180,10 +178,12 @@ def test(epoch):
     return train_acc, valid_acc, test_acc
 
 
+times = []
 best_val = 0.0
 final_train = 0.0
 final_test = 0.0
 for epoch in range(1, 1001):
+    start = time.time()
     loss = train(epoch)
     train_acc, val_acc, test_acc = test(epoch)
     if val_acc > best_val:
@@ -192,6 +192,8 @@ for epoch in range(1, 1001):
         final_test = test_acc
     print(f'Loss: {loss:.4f}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+    times.append(time.time() - start)
 
 print(f'Final Train: {final_train:.4f}, Best Val: {best_val:.4f}, '
       f'Final Test: {final_test:.4f}')
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

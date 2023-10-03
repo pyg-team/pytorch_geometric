@@ -18,6 +18,7 @@ from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
+    NodeOrEdgeType,
     NodeType,
     QueryType,
     SparseTensor,
@@ -29,7 +30,6 @@ from torch_geometric.utils import (
     mask_select,
 )
 
-NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
@@ -331,7 +331,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
-        elif 'index' in key or 'face' in key:
+        elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
         return 0
 
@@ -386,6 +386,23 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Validates the correctness of the data."""
         cls_name = self.__class__.__name__
         status = True
+
+        node_types = set(self.node_types)
+        num_src_node_types = {src for src, _, _ in self.edge_types}
+        num_dst_node_types = {dst for _, _, dst in self.edge_types}
+
+        dangling_types = (num_src_node_types | num_dst_node_types) - node_types
+        if len(dangling_types) > 0:
+            status = False
+            warn_or_raise(
+                f"The node types {dangling_types} are referenced in edge "
+                f"types but do not exist as node types", raise_on_error)
+
+        dangling_types = node_types - (num_src_node_types | num_dst_node_types)
+        if len(dangling_types) > 0:
+            warn_or_raise(  # May be intended.
+                f"The node types {dangling_types} are isolated and are not "
+                f"referenced by any edge type ", raise_on_error=False)
 
         for edge_type, store in self._edge_store_dict.items():
             src, _, dst = edge_type
@@ -502,7 +519,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         """
         return self.node_types, self.edge_types
 
-    def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
+    def collect(
+        self,
+        key: str,
+        allow_empty: bool = False,
+    ) -> Dict[NodeOrEdgeType, Any]:
         r"""Collects the attribute :attr:`key` from all node and edge types.
 
         .. code-block:: python
@@ -517,12 +538,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         .. note::
 
             This is equivalent to writing :obj:`data.x_dict`.
+
+        Args:
+            key (str): The attribute to collect from all node and ege types.
+            allow_empty (bool, optional): If set to :obj:`True`, will not raise
+                an error in case the attribute does not exit in any node or
+                edge type. (default: :obj:`False`)
         """
         mapping = {}
         for subtype, store in chain(self._node_store_dict.items(),
                                     self._edge_store_dict.items()):
             if hasattr(store, key):
                 mapping[subtype] = getattr(store, key)
+        if not allow_empty and len(mapping) == 0:
+            raise KeyError(f"Tried to collect '{key}' but did not find any "
+                           f"occurrences of it in any node and/or edge type")
         return mapping
 
     def _check_type_name(self, name: str):
@@ -638,17 +668,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         subset_dict = copy.copy(subset_dict)
 
         for node_type, subset in subset_dict.items():
-
-            if subset.dtype == torch.bool:
-                num_nodes = int(subset.sum())
-            else:
-                num_nodes = subset.size(0)
-                subset = torch.unique(subset, sorted=True)
-                subset_dict[node_type] = subset
-
             for key, value in self[node_type].items():
                 if key == 'num_nodes':
-                    data[node_type].num_nodes = num_nodes
+                    if subset.dtype == torch.bool:
+                        data[node_type].num_nodes = int(subset.sum())
+                    else:
+                        data[node_type].num_nodes = subset.size(0)
                 elif self[node_type].is_node_attr(key):
                     data[node_type][key] = value[subset]
                 else:
@@ -789,7 +814,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             sizes_dict = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
-                    if key in ['edge_index', 'adj', 'adj_t']:
+                    if key in [
+                            'edge_index', 'edge_label_index', 'adj', 'adj_t'
+                    ]:
                         continue
                     if isinstance(value, Tensor):
                         dim = self.__cat_dim__(key, value, store)
@@ -828,10 +855,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
             sizes_dict = get_sizes(stores)
-            return [
-                key for key, sizes in sizes_dict.items()
-                if len(sizes) == len(stores) and len(set(sizes)) == 1
-            ]
+            keys = []
+            for key, sizes in sizes_dict.items():
+                # The attribute needs to exist in all types:
+                if len(sizes) != len(stores):
+                    continue
+                # The attributes needs to have the same number of dimensions:
+                lengths = set([len(size) for size in sizes])
+                if len(lengths) != 1:
+                    continue
+                # The attributes needs to have the same size in all dimensions:
+                if len(sizes[0]) != 1 and len(set(sizes)) != 1:
+                    continue
+                keys.append(key)
+            return keys
 
         if dummy_values:
             self = copy.copy(self)
@@ -855,6 +892,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
+            dim = values[0].dim() + dim if dim < 0 else dim
+            # For two-dimensional features, we allow arbitrary shapes and pad
+            # them with zeros if necessary in case their size doesn't match:
+            if values[0].dim() == 2 and dim == 0:
+                _max = max([value.size(-1) for value in values])
+                for i, v in enumerate(values):
+                    if v.size(-1) < _max:
+                        values[i] = torch.cat(
+                            [v, v.new_zeros(v.size(0), _max - v.size(-1))],
+                            dim=-1,
+                        )
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
@@ -869,6 +917,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             dim = self.__cat_dim__(key, values[0], self.edge_stores[0])
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
+
+        if 'edge_label_index' in self:
+            edge_label_index_dict = self.edge_label_index_dict
+            for edge_type, edge_label_index in edge_label_index_dict.items():
+                edge_label_index = edge_label_index.clone()
+                edge_label_index[0] += node_slices[edge_type[0]][0]
+                edge_label_index[1] += node_slices[edge_type[-1]][0]
+                edge_label_index_dict[edge_type] = edge_label_index
+            data.edge_label_index = torch.cat(
+                list(edge_label_index_dict.values()), dim=-1)
 
         if add_node_type:
             sizes = [offset[1] - offset[0] for offset in node_slices.values()]
@@ -969,6 +1027,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Gets an edge index from edge storage, in the specified layout."""
         store = self[edge_attr.edge_type]
 
+        edge_attrs = getattr(self, '_edge_attrs', {})
+        if (edge_attr.edge_type, edge_attr.layout) in edge_attrs:
+            edge_attr = edge_attrs[(edge_attr.edge_type, edge_attr.layout)]
         if edge_attr.size is None:
             edge_attr.size = store.size()  # Modify in-place.
 
@@ -989,17 +1050,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
             del store.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.COO), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.COO), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
             del store.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSR), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSR), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
             del store.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSC), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSC), None)
             return True
         return False
 
@@ -1062,7 +1123,7 @@ def to_homogeneous_edge_index(
     cumsum = 0
     edge_indices: List[Tensor] = []
     edge_slices: Dict[EdgeType, Tuple[int, int]] = {}
-    for edge_type, edge_index in data.edge_index_dict.items():
+    for edge_type, edge_index in data.collect('edge_index', True).items():
         edge_index = offset_edge_index(node_slices, edge_type, edge_index)
         edge_indices.append(edge_index)
         edge_slices[edge_type] = (cumsum, cumsum + edge_index.size(1))

@@ -33,9 +33,9 @@ class GraphNorm(torch.nn.Module):
         self.in_channels = in_channels
         self.eps = eps
 
-        self.weight = torch.nn.Parameter(torch.Tensor(in_channels))
-        self.bias = torch.nn.Parameter(torch.Tensor(in_channels))
-        self.mean_scale = torch.nn.Parameter(torch.Tensor(in_channels))
+        self.weight = torch.nn.Parameter(torch.empty(in_channels))
+        self.bias = torch.nn.Parameter(torch.empty(in_channels))
+        self.mean_scale = torch.nn.Parameter(torch.empty(in_channels))
 
         self.reset_parameters()
 

@@ -1,17 +1,14 @@
-import warnings
 from typing import Optional
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import warnings
 from torch_geometric.typing import torch_scatter
+from torch_geometric.utils.functions import cumsum
 
-major, minor, _ = torch.__version__.split('.', maxsplit=2)
-major, minor = int(major), int(minor)
-has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
-
-if has_pytorch112:  # pragma: no cover
+if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
@@ -164,3 +161,96 @@ else:  # pragma: no cover
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
+
+
+def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
+                   dim_size: Optional[int] = None) -> Tensor:
+
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
+        return out[1]
+
+    # Only implemented under certain conditions for now :(
+    assert src.dim() == 1 and index.dim() == 1
+    assert dim == 0 or dim == -1
+    assert src.numel() == index.numel()
+
+    if dim_size is None:
+        dim_size = index.max() + 1 if index.numel() > 0 else 0
+
+    if torch_geometric.typing.WITH_PT112:
+        res = src.new_empty(dim_size)
+        res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                            include_self=False)
+    elif torch_geometric.typing.WITH_PT111:
+        res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
+                                   output_size=dim_size)
+    else:
+        raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
+
+    out = index.new_full((dim_size, ), fill_value=dim_size - 1)
+    nonzero = (src == res[index]).nonzero().view(-1)
+    out[index[nonzero]] = nonzero
+
+    return out
+
+
+def group_argsort(
+    src: Tensor,
+    index: Tensor,
+    dim: int = 0,
+    num_groups: Optional[int] = None,
+    descending: bool = False,
+    return_consecutive: bool = False,
+    stable: bool = False,
+) -> Tensor:
+    r"""Returns the indices that sort the tensor :obj:`src` along a given
+    dimension in ascending order by value.
+    In contrast to :meth:`torch.argsort`, sorting is performed in groups
+    according to the values in :obj:`index`.
+
+    Args:
+        src (torch.Tensor): The source tensor.
+        index (torch.Tensor): The index tensor.
+        dim (int, optional): The dimension along which to index.
+            (default: :obj:`0`)
+        num_groups (int, optional): The number of groups.
+            (default: :obj:`None`)
+        descending (bool, optional): Controls the sorting order (ascending or
+            descending). (default: :obj:`False`)
+        return_consecutive (bool, optional): If set to :obj:`True`, will not
+            offset the output to start from :obj:`0` for each group.
+            (default: :obj:`False`)
+        stable (bool, optional): Controls the relative order of equivalent
+            elements. (default: :obj:`False`)
+    """
+    # Only implemented under certain conditions for now :(
+    assert src.dim() == 1 and index.dim() == 1
+    assert dim == 0 or dim == -1
+    assert src.numel() == index.numel() and src.numel() > 0
+
+    # Normalize `src` to range [0, 1]:
+    src = src - src.min()
+    src = src / src.max()
+
+    # Compute `grouped_argsort`:
+    src = src - 2 * index if descending else src + 2 * index
+    if torch_geometric.typing.WITH_PT113:
+        perm = src.argsort(descending=descending, stable=stable)
+    else:
+        perm = src.argsort(descending=descending)
+        if stable:
+            warnings.warn("Ignoring option `stable=True` in 'group_argsort' "
+                          "since it requires PyTorch >= 1.13.0")
+    out = torch.empty_like(index)
+    out[perm] = torch.arange(index.numel(), device=index.device)
+
+    if return_consecutive:
+        return out
+
+    # Compute cumulative sum of number of entries with the same index:
+    count = scatter(torch.ones_like(index), index, dim=dim,
+                    dim_size=num_groups, reduce='sum')
+    ptr = cumsum(count)
+
+    return out - ptr[index]

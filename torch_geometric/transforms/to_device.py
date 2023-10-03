@@ -29,7 +29,7 @@ class ToDevice(BaseTransform):
         self.attrs = attrs or []
         self.non_blocking = non_blocking
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

@@ -105,6 +105,12 @@ class TemporalData(BaseData):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+    @classmethod
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
+        r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
+        a Python dictionary."""
+        return cls(**mapping)
+
     def index_select(self, idx: Any) -> 'TemporalData':
         idx = prepare_idx(idx)
         data = copy.copy(self)
@@ -211,6 +217,16 @@ class TemporalData(BaseData):
     def num_edges(self) -> int:
         r"""Alias for :meth:`~torch_geometric.data.TemporalData.num_events`."""
         return self.num_events
+
+    @property
+    def edge_index(self) -> Tensor:
+        r"""Returns the edge indices of the graph."""
+        if 'edge_index' in self:
+            return self._store['edge_index']
+        if self.src is not None and self.dst is not None:
+            return torch.stack([self.src, self.dst], dim=0)
+        raise ValueError(f"{self.__class__.__name__} does not contain "
+                         f"'edge_index' information")
 
     def size(
         self, dim: Optional[int] = None
