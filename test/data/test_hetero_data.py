@@ -658,6 +658,13 @@ def test_hetero_data_with_tensor_frame():
         for key, value in data[node_type].x.feat_dict.items():
             assert torch.allclose(value, data1[node_type].x.feat_dict[key])
 
+    # Test to_homogenous without specifying node_attrs
+    out = data.to_homogeneous()
+    assert isinstance(out.x, TensorFrame)
+    assert len(out.x) == data.num_nodes
+    assert out.num_nodes == data.num_nodes
+    assert out.num_node_features == 5
+
 
 # Graph Store #################################################################
 
