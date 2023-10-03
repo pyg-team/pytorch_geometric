@@ -302,7 +302,7 @@ class DistNeighborSampler:
                                      if seed_time_dict is not None else None)
                         one_hop_num = (self.num_neighbors[i] if isinstance(
                             self.num_neighbors, List) else
-                            self.num_neighbors[etype][i])
+                                       self.num_neighbors[etype][i])
 
                         task_dict[etype] = self.event_loop._loop.create_task(
                             self.sample_one_hop(
