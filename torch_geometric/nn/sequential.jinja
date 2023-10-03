@@ -24,5 +24,10 @@ class {{cls_name}}(torch.nn.Module):
         return {{calls|length}}
 
     def __repr__(self) -> str:
-        return 'Sequential(\n{}\n)'.format('\n'.join(
-            [f'  ({idx}): ' + str(self[idx]) for idx in range(len(self))]))
+        module_reprs = [
+            (f"  ({i}) - {self[i]}: {', '.join(self.module_headers[i].args)} "
+             f"-> {', '.join(self.module_headers[i].output)}")
+            for i in range(len(self))
+        ]
+
+        return 'Sequential(\n{}\n)'.format('\n'.join(module_reprs))
