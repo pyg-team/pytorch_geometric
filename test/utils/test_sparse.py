@@ -49,8 +49,18 @@ def test_dense_to_sparse():
         assert edge_index.tolist() == [[0, 0, 1, 2, 3], [0, 1, 0, 3, 3]]
         assert edge_attr.tolist() == [3, 1, 2, 1, 2]
 
-    adj = torch.tensor([[[3.0, 1.0, 0.0], [2.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
-                        [[0.0, 1.0, 0.0], [0.0, 2.0, 3.0], [0.0, 5.0, 0.0]]])
+    adj = torch.tensor([
+        [
+            [3.0, 1.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+        ],
+        [
+            [0.0, 1.0, 0.0],
+            [0.0, 2.0, 3.0],
+            [0.0, 5.0, 0.0],
+        ],
+    ])
 
     mask = torch.tensor([[True, True, False], [True, True, True]])
 
