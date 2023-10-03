@@ -52,9 +52,9 @@ def test_dense_to_sparse():
     adj = torch.tensor([[[3.0, 1.0, 0.0], [2.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
                         [[0.0, 1.0, 0.0], [0.0, 2.0, 3.0], [0.0, 5.0, 0.0]]])
 
-    node_mask = torch.tensor([[1, 1, 0], [1, 1, 1]]).bool()
+    mask = torch.tensor([[True, True, False], [True, True, True]])
 
-    edge_index, edge_attr = dense_to_sparse(adj, node_mask)
+    edge_index, edge_attr = dense_to_sparse(adj, mask)
 
     assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],
                                    [0, 1, 0, 3, 3, 4, 3]]
@@ -62,7 +62,7 @@ def test_dense_to_sparse():
 
     if is_full_test():
         jit = torch.jit.script(dense_to_sparse)
-        edge_index, edge_attr = jit(adj, node_mask)
+        edge_index, edge_attr = jit(adj, mask)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],
                                        [0, 1, 0, 3, 3, 4, 3]]
         assert edge_attr.tolist() == [3, 1, 2, 1, 2, 3, 5]
