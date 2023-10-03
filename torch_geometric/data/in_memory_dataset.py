@@ -170,8 +170,8 @@ class InMemoryDataset(Dataset, ABC):
         log: bool = True,
     ) -> 'torch_geometric.data.OnDiskDataset':
         r"""Converts the :class:`InMemoryDataset` to a :class:`OnDiskDataset`
-        variant. Useful for distributed training and instances with limited
-        shared memory.
+        variant. Useful for distributed training and hardware instances with
+        limited amount of shared memory.
 
         root (str, optional): Root directory where the dataset should be saved.
             If set to :obj:`None`, will save the dataset in
