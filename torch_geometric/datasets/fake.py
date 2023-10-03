@@ -53,7 +53,7 @@ class FakeDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs,
     ):
-        super().__init__('.', transform)
+        super().__init__(None, transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
@@ -150,7 +150,7 @@ class FakeHeteroDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs,
     ):
-        super().__init__('.', transform)
+        super().__init__(None, transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
