@@ -22,6 +22,7 @@ from torch_geometric.typing import (
     NodeType,
     QueryType,
     SparseTensor,
+    TensorFrame,
 )
 from torch_geometric.utils import (
     bipartite_subgraph,
@@ -822,6 +823,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
                         sizes_dict[key].append(tuple(size))
+                    if isinstance(value, TensorFrame):
+                        dim = self.__cat_dim__(key, value, store)
+                        key_stype = list(value.feat_dict.keys())[0]
+                        size = value.feat_dict[key_stype].size()[:dim] + \
+                            value.feat_dict[key_stype].size()[dim + 1:]
+                        sizes_dict[key].append(tuple(size))
+
             return sizes_dict
 
         def fill_dummy_(stores: List[BaseStorage],
@@ -892,18 +900,32 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
-            dim = values[0].dim() + dim if dim < 0 else dim
-            # For two-dimensional features, we allow arbitrary shapes and pad
-            # them with zeros if necessary in case their size doesn't match:
-            if values[0].dim() == 2 and dim == 0:
-                _max = max([value.size(-1) for value in values])
-                for i, v in enumerate(values):
-                    if v.size(-1) < _max:
-                        values[i] = torch.cat(
-                            [v, v.new_zeros(v.size(0), _max - v.size(-1))],
-                            dim=-1,
-                        )
-            value = torch.cat(values, dim) if len(values) > 1 else values[0]
+            if isinstance(values[0], TensorFrame):
+                # TODO(jinu): Implement cat for TensorFrame.
+                feat_dict = {}
+                for key_stype in values[0].feat_dict.keys():
+                    feat_dict[key_stype] = torch.cat(
+                        [value.feat_dict[key_stype] for value in values], dim)
+                y = None
+                if values[0].y is not None:
+                    y = torch.cat([value.y for value in values], dim)
+                value = TensorFrame(feat_dict, values[0].col_names_dict, y)
+            else:
+                dim = values[0].dim() + dim if dim < 0 else dim
+                # For two-dimensional features, we allow arbitrary shapes and
+                # pad them with zeros if necessary in case their size doesn't
+                # match:
+                if values[0].dim() == 2 and dim == 0:
+                    _max = max([value.size(-1) for value in values])
+                    for i, v in enumerate(values):
+                        if v.size(-1) < _max:
+                            values[i] = torch.cat(
+                                [v,
+                                 v.new_zeros(v.size(0), _max - v.size(-1))],
+                                dim=-1,
+                            )
+                value = torch.cat(values,
+                                  dim) if len(values) > 1 else values[0]
             data[key] = value
 
         if not data.can_infer_num_nodes:
