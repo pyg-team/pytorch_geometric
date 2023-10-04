@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
@@ -505,107 +505,6 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
-
-    def __neighbors_to_graph__(
-        self,
-        neighbors: List[List[int]],
-        neighbor_weights: List[List[float]],
-        normalization: str = 'row',
-        device: torch.device = 'cpu',
-    ) -> Tuple[Tensor, Tensor]:
-        r"""Combine a list of neighbors and neighbor weights to create a sparse
-        graph.
-
-        Args:
-            neighbors (List[List[int]]): List of neighbors for each node.
-            neighbor_weights (List[List[float]]): List of weights for the
-                neighbors of each node.
-            normalization (str): Normalization of resulting matrix
-                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
-            device (torch.device): Device to create output tensors on.
-                (default: :obj:`"cpu"`)
-
-        :rtype: (:class:`LongTensor`, :class:`Tensor`)
-        """
-        edge_weight = torch.from_numpy(np.concatenate(neighbor_weights))
-        edge_weight = edge_weight.to(device, torch.get_default_dtype())
-        i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=int))
-        j = np.concatenate(neighbors)
-        if normalization == 'col':
-            edge_index = torch.from_numpy(np.vstack([j, i])).to(device)
-            N = len(neighbors)
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
-        elif normalization == 'row':
-            edge_index = torch.from_numpy(np.vstack([i, j])).to(device)
-        else:
-            raise ValueError(
-                f"PPR matrix normalization {normalization} unknown.")
-        return edge_index, edge_weight
-
-
-def get_calc_ppr():
-    import numba
-
-    @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(
-        indptr: np.ndarray,
-        indices: np.ndarray,
-        out_degree: np.ndarray,
-        alpha: float,
-        eps: float,
-    ) -> Tuple[List[List[int]], List[List[float]]]:
-        r"""Calculate the personalized PageRank vector for all nodes
-        using a variant of the Andersen algorithm
-        (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
-
-        Args:
-            indptr (np.ndarray): Index pointer for the sparse matrix
-                (CSR-format).
-            indices (np.ndarray): Indices of the sparse matrix entries
-                (CSR-format).
-            out_degree (np.ndarray): Out-degree of each node.
-            alpha (float): Alpha of the PageRank to calculate.
-            eps (float): Threshold for PPR calculation stopping criterion
-                (:obj:`edge_weight >= eps * out_degree`).
-
-        :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
-        """
-
-        alpha_eps = alpha * eps
-        js = [[0]] * len(out_degree)
-        vals = [[0.]] * len(out_degree)
-        for inode_uint in numba.prange(len(out_degree)):
-            inode = numba.int64(inode_uint)
-            p = {inode: 0.0}
-            r = {}
-            r[inode] = alpha
-            q = [inode]
-            while len(q) > 0:
-                unode = q.pop()
-
-                res = r[unode] if unode in r else 0
-                if unode in p:
-                    p[unode] += res
-                else:
-                    p[unode] = res
-                r[unode] = 0
-                for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-                    _val = (1 - alpha) * res / out_degree[unode]
-                    if vnode in r:
-                        r[vnode] += _val
-                    else:
-                        r[vnode] = _val
-
-                    res_vnode = r[vnode] if vnode in r else 0
-                    if res_vnode >= alpha_eps * out_degree[vnode]:
-                        if vnode not in q:
-                            q.append(vnode)
-            js[inode] = list(p.keys())
-            vals[inode] = list(p.values())
-        return js, vals
-
-    return calc_ppr
 
 
 def sparsify_top_k(edge_index: torch.Tensor, edge_weight: torch.Tensor, k: int,
