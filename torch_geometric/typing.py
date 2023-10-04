@@ -212,6 +212,17 @@ except Exception as e:
 
 
 try:
+    import torch_frame  # noqa
+    WITH_TORCH_FRAME = True
+    from torch_frame import TensorFrame
+except Exception:
+    WITH_TORCH_FRAME = False
+
+    class TensorFrame:
+        pass
+
+
+try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True
 except Exception:
