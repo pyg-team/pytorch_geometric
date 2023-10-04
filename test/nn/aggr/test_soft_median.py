@@ -7,16 +7,16 @@ def test_weighted_median():
     aggr = WeightedMedianAggregation()
     assert str(aggr) == 'WeightedMedianAggregation()'
 
+    # Single segment
+
     # Unweighted dimension-wise median
     x = torch.tensor([[1, 1, 5, 1], [1, 2, 3, 1], [1, 4, 4, 3], [1, 3, 2, 3],
                       [1, 5, 1, 2]]).float()
-    # For simplicity the weights sum up to 1, otherwise the output is scaled
-    weight = torch.tensor([0.2, 0.2, 0.2, 0.2, 0.2])
     index = torch.tensor([0, 0, 0, 0, 0])
-    out = aggr(x, index, weight)
+    out = aggr(x, index)
     assert (out == torch.tensor([1, 3, 3, 2])).all()
 
-    # Single segment
+    # Weighted dimension-wise median
     x = torch.arange(20).reshape(5, 4).float()
     # For simplicity the weights sum up to 1, otherwise the output is scaled
     weight = torch.tensor([0.0, 0.1, 0.2, 0.3, 0.4])
@@ -35,6 +35,7 @@ def test_weighted_median():
     assert torch.allclose(out, 1 / 2 * x[3, :])
 
     # Two segments
+
     weight = torch.tensor([0.2, 0.4, 0.4, 0.6, 0.4])
     index = torch.tensor([0, 0, 0, 1, 1])
     out = aggr(x, index, weight)
@@ -50,6 +51,15 @@ def test_weighted_median():
     out = aggr(x, index, weight)
     assert (out[0] == x[1, :]).all()
     assert (out[1] == x[4, :]).all()
+
+    # Permute order (median is invariant w.r.t. input permutations)
+    p = torch.tensor([3, 0, 4, 2, 1])
+
+    weight = torch.tensor([0.2, 0.4, 0.4, 0.6, 0.4])
+    index = torch.tensor([0, 0, 0, 1, 1])
+    out = aggr(x[p], index[p], weight[p])
+    assert (out[0] == x[1, :]).all()
+    assert (out[1] == x[3, :]).all()
 
 
 def test_soft_median():

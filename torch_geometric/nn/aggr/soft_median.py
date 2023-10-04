@@ -29,6 +29,7 @@ class WeightedQuantileAggregation(WeightedAggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
+
     def __init__(self, q: float, fill_value: float = 0.0):
         super().__init__()
 
@@ -43,52 +44,58 @@ class WeightedQuantileAggregation(WeightedAggregation):
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
 
         dim = x.dim() + dim if dim < 0 else dim
+        other_dim = dim - 1 if dim > 0 else dim + 1
+
+        if x.dim() == 0:
+            raise ValueError("Only supports median along 0th dimension")
+        if x.dim() != 2:
+            raise ValueError("Only supports two-dimensional feature array")
 
         self.assert_index_present(index)
         assert index is not None  # Required for TorchScript.
 
+        count = torch.bincount(index, minlength=dim_size or 0)
+        cumsum = torch.cumsum(count, dim=0) - count
+
+        if count.min() == 0:
+            raise ValueError(f"Aggregation does not support empty segment")
+
         if weight is None:
-            # TODO: divide by degree
-            weight = torch.ones_like(index, dtype=x.dtype)
+            weight = torch.ones_like(index, dtype=x.dtype) / count[index]
         elif weight.min() < 0:
             raise ValueError(f"The weights must be positive, but the "
                              f"minimum weight is {weight.min().item()}.")
 
-        # To ensure non-negative edge_weights
-        edge_weight = torch.clamp_min(weight, 0)
-
-        count = torch.bincount(index, minlength=dim_size or 0)
-        cumsum = torch.cumsum(count, dim=0) - count
-
-        cumweight = torch.zeros(count.shape[0], dtype=edge_weight.dtype,
+        cumweight = torch.zeros(count.shape[0], dtype=weight.dtype,
                                 device=x.device)
-        cumweight = cumweight.scatter_add(0, index, edge_weight)
+        cumweight = cumweight.scatter_add(0, index, weight)
 
         shape = [1] * x.dim()
         shape[dim] = -1
 
         # We require later the index to be sorted
-        index, index_perm = torch.sort(index, dim=dim)
+        index, index_perm = torch.sort(index)
+        weight = weight[index_perm]
         x = x.take_along_dim(index_perm.view(shape), dim=dim)
 
         # No gradient required, since only indices are being determined
         with torch.no_grad():
             _, x_perm = torch.sort(x, dim=dim)
-            edge_weight = edge_weight[x_perm]
+            weight_ = weight[x_perm]
             _, index_perm = torch.sort(index[x_perm], dim=dim, stable=True)
 
             # Accumulate weights per segment
-            edge_weight = edge_weight.take_along_dim(index_perm, dim=0)
-            edge_weight = edge_weight / cumweight[index][:, None]
-            edge_weight[cumsum[1:]] -= 1
-            edge_weight = edge_weight.cumsum(0)
+            weight_ = weight_.take_along_dim(index_perm, dim=dim)
+            weight_ = weight_ / cumweight[index].view(shape)
+            weight_[cumsum[1:]] -= 1
+            weight_ = weight_.cumsum(0)
 
-            diff = (edge_weight >= self.q).float()
+            diff = (weight_ >= self.q).float()
+            prep_shape = ((1, x.shape[1]) if dim == 0 else (x.shape[0], 1))
             diff = diff.diff(dim=dim,
-                             prepend=torch.zeros_like(edge_weight[:1]))
+                             prepend=torch.zeros(prep_shape, device=x.device))
             # Either where we accumulate to q or the first element of a row
-            first_element_diff = index.diff(
-                prepend=torch.zeros_like(index[:1]))
+            first_element_diff = index.diff(prepend=torch.zeros_like(index[:1]))
             quantile_mask = ((diff > 0) |
                              ((diff == 0) &
                               (first_element_diff.view(shape) > 0)))
@@ -98,11 +105,21 @@ class WeightedQuantileAggregation(WeightedAggregation):
             reverse_perm = x_perm.take_along_dim(index_perm, dim=dim)
             quantile_index = reverse_perm[quantile_index, quantile_dim]
 
-        quantile = x[quantile_index, quantile_dim].reshape((dim_size, -1))
+            # Reshape to target size
+            quantile_index = quantile_index.reshape((dim_size, -1))
+            quantile_dim = quantile_dim.reshape((dim_size, -1))
 
-        mask = (count == 0).view(shape)
-        quantile = quantile.masked_fill(mask, self.fill_value)
-        cumweight = cumweight.view(shape).masked_fill(mask, 1.)
+            # Reorder each row by feature dimension
+            quantile_index = torch.scatter(torch.zeros_like(quantile_dim),
+                                            other_dim, quantile_dim,
+                                            quantile_index)
+            quantile_dim = torch.arange(x.shape[other_dim],
+                                         device=x.device)[None, :]
+
+        # Retrieve closest quantile element
+        quantile = x[quantile_index, quantile_dim]
+
+        cumweight = cumweight.view(shape)
 
         return cumweight * quantile
 
@@ -129,6 +146,7 @@ class WeightedMedianAggregation(WeightedQuantileAggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
+
     def __init__(self, fill_value: float = 0.0):
         super().__init__(0.5, fill_value)
 
@@ -155,6 +173,7 @@ class SoftMedianAggregation(WeightedAggregation):
         p (float, optional): Norm for distances (via :obj:`torch.norm`).
             (default: :obj:`2.0`)
     """
+
     def __init__(self, T: float = 1.0, p: float = 2.0):
         super().__init__()
 
@@ -173,6 +192,11 @@ class SoftMedianAggregation(WeightedAggregation):
                 weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
         dim = x.dim() + dim if dim < 0 else dim
+        other_dim = dim - 1 if dim > 0 else dim + 1
+
+        if x.dim() != 2:
+            raise ValueError("Only supports two-dimensional feature array")
+
         shape = [1] * x.dim()
         shape[dim] = -1
 
@@ -185,19 +209,22 @@ class SoftMedianAggregation(WeightedAggregation):
         x_median = self.dimwise_median(x, index, weight, ptr=ptr,
                                        dim_size=dim_size, dim=dim)
         x_median = x_median / weight_sums.view(shape)
+        x_median = x_median.take_along_dim(index.view(shape), dim=dim)
 
         # Distance of each embedding to dimension-wise median
-        distances = torch.norm((x_median[index] - x).T, dim=dim, p=self.p)
-        distances = distances / pow(x.shape[dim], 1 / self.p)
+        distances = torch.norm((x_median - x).T, dim=dim, p=self.p)
+        distances = distances / pow(x.shape[other_dim], 1 / self.p)
 
         # Softmin to find (softly) closest point to dimension-wise median
         soft_weights = softmax(-distances / self.T, index)
 
         # Final weights to reweigh inputs per segment
-        weighted_values = soft_weights * weight
-        segment_weight = self.reduce(weighted_values, index, ptr, dim_size,
+        weight = soft_weights * weight
+        segment_weight = self.reduce(weight, index, ptr, dim_size,
                                      dim, reduce='sum')
-        weights = weighted_values / segment_weight[index] * weight_sums[index]
+        weight = weight / segment_weight[index] * weight_sums[index]
 
-        return self.weighted_reduce(x, index, weights, ptr, dim_size, dim,
-                                    reduce='sum')
+        out = self.weighted_reduce(x, index, weight, ptr, dim_size, dim,
+                                   reduce='sum')
+
+        return out
