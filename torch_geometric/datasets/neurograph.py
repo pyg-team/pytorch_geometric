@@ -27,21 +27,22 @@ class NeuroGraphDataset(InMemoryDataset):
     +--------------------+---------+----------------------+
     | Dataset            | #Graphs | Task                 |
     +====================+=========+======================+
-    | :obj:`HCPActivity` | 7443    | Graph Classification |
+    | :obj:`HCPActivity` | 7,443   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPGender`   | 1078    | Graph Classification |
+    | :obj:`HCPGender`   | 1,078   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPAge`      | 1065    | Graph Classification |
+    | :obj:`HCPAge`      | 1,065   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPFI`       | 1071    | Graph Regression     |
+    | :obj:`HCPFI`       | 1,071   | Graph Regression     |
     +--------------------+---------+----------------------+
-    | :obj:`HCPWM`       | 1078    | Graph Regression     |
+    | :obj:`HCPWM`       | 1,078   | Graph Regression     |
     +--------------------+---------+----------------------+
 
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"HCPGender"`,
-        :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`, :obj:`"HCPWM"`).
+            :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`,
+            :obj:`"HCPWM"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
