@@ -69,7 +69,8 @@ def test_dense_to_sparse():
                                    [0, 1, 0, 3, 3, 4, 3]]
     assert edge_attr.tolist() == [3, 1, 2, 1, 2, 3, 5]
 
-    if is_full_test():
+    # There is a bug in TorchScript for PyTorch < 1.12 :(
+    if torch_geometric.typing.WITH_PT112 and is_full_test():
         jit = torch.jit.script(dense_to_sparse)
         edge_index, edge_attr = jit(adj, mask)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],

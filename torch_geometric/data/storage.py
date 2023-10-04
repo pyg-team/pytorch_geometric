@@ -352,6 +352,8 @@ class NodeStorage(BaseStorage):
             return 1 if self.x.dim() == 1 else self.x.size(-1)
         if 'x' in self and isinstance(self.x, TensorFrame):
             return self.x.num_cols
+        if 'tf' in self and isinstance(self.tf, TensorFrame):
+            return self.tf.num_cols
         return 0
 
     @property
@@ -467,6 +469,8 @@ class EdgeStorage(BaseStorage):
             return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
         if 'edge_attr' in self and isinstance(self.edge_attr, np.ndarray):
             return 1 if self.edge_attr.ndim == 1 else self.edge_attr.shape[-1]
+        if 'edge_attr' in self and isinstance(self.edge_attr, TensorFrame):
+            return self.edge_attr.num_cols
         return 0
 
     @property

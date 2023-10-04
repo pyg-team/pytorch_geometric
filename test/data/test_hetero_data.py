@@ -6,6 +6,7 @@ import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.typing import TensorFrame
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -599,6 +600,56 @@ def test_basic_feature_store():
     assert 'x' in data['paper'].__dict__['_mapping']
     data.remove_tensor(group_name='paper', attr_name='x', index=None)
     assert 'x' not in data['paper'].__dict__['_mapping']
+
+
+@withPackage('torch_frame')
+def test_hetero_data_with_tensor_frame(get_tensor_frame):
+    data = HeteroData()
+    data['paper'].tf = get_tensor_frame(num_rows=x_paper.size(0))
+    data['author'].tf = get_tensor_frame(num_rows=x_author.size(0))
+    data['author', 'paper'].edge_index = edge_index_author_paper
+
+    # Basic functionality:
+    assert set(data.node_attrs()) == {'tf'}
+    assert data.num_nodes == x_paper.size(0) + x_author.size(0)
+    assert data.num_node_features['paper'] == 5
+    assert data.num_node_features['author'] == 5
+
+    # Test subgraph:
+    subset = {
+        'paper': torch.tensor([1, 2, 3, 4]),
+        'author': torch.tensor([0, 1, 2, 3]),
+    }
+    out = data.subgraph(subset)
+    assert set(out.node_attrs()) == {'tf'}
+    assert out.num_nodes == 8
+    for key, value in out['paper'].tf.feat_dict.items():
+        assert value.size(0) == 4
+        assert torch.allclose(value, data['paper'].tf.feat_dict[key][1:5])
+    for key, value in out['author'].tf.feat_dict.items():
+        assert value.size(0) == 4
+        assert torch.allclose(value, data['author'].tf.feat_dict[key][0:4])
+
+    # Test conversion to homogenous graphs and back:
+    for node_attrs in [None, ['tf']]:
+        out = data.to_homogeneous(node_attrs=node_attrs)
+        assert isinstance(out.tf, TensorFrame)
+        assert len(out.tf) == data.num_nodes
+        assert out.num_nodes == data.num_nodes
+        assert out.num_node_features == 5
+        for key, value in out.tf.feat_dict.items():
+            assert torch.allclose(
+                value,
+                torch.cat([
+                    data['paper'].tf.feat_dict[key],
+                    data['author'].tf.feat_dict[key],
+                ], dim=0),
+            )
+
+        out = out.to_heterogeneous()
+        for node_type in data.node_types:
+            for key, value in data[node_type].tf.feat_dict.items():
+                assert torch.allclose(value, out[node_type].tf.feat_dict[key])
 
 
 # Graph Store #################################################################
