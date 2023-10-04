@@ -763,6 +763,7 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif (isinstance(value, TensorFrame)
                       and self.is_node_attr(attr)):
                     data[key][attr] = value[node_ids[i]]
+
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
 

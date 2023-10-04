@@ -823,7 +823,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
                         sizes_dict[key].append(tuple(size))
-
             return sizes_dict
 
         def fill_dummy_(stores: List[BaseStorage],
@@ -871,7 +870,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     continue
                 keys.append(key)
 
-            # Check for `TensorFrame` consistent column names:
+            # Check for consistent column names in `TensorFrame`:
             tf_cols = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
