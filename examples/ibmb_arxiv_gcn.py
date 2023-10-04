@@ -301,3 +301,4 @@ if __name__ == '__main__':
     plt.xscale("log")
     # plt.ylim(66, 72)
     fig.savefig('curves.png', dpi=400)
+    plt.close()
