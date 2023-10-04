@@ -93,9 +93,15 @@ class Aggregation(torch.nn.Module):
         pass
 
     @disable_dynamic_shapes(required_args=['dim_size'])
-    def __call__(self, x: Tensor, index: Optional[Tensor] = None,
-                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                 dim: int = -2, **kwargs) -> Tensor:
+    def __call__(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        **kwargs,
+    ) -> Tensor:
 
         if dim >= x.dim() or dim < -x.dim():
             raise ValueError(f"Encountered invalid dimension '{dim}' of "

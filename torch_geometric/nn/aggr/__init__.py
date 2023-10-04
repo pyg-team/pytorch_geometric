@@ -29,6 +29,7 @@ from .soft_median import (
     WeightedQuantileAggregation,
     SoftMedianAggregation,
 )
+from .lcm import LCMAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -60,4 +61,5 @@ __all__ = classes = [
     'WeightedMedianAggregation',
     'WeightedQuantileAggregation',
     'SoftMedianAggregation',
+    'LCMAggregation',
 ]
