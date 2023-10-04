@@ -1,4 +1,5 @@
 import copy
+import inspect
 from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 
 import torch
@@ -6,7 +7,8 @@ from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
 
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.data import Data
+from torch_geometric.loader import CachedLoader, NeighborLoader
 from torch_geometric.nn.conv import (
     EdgeConv,
     GATConv,
@@ -63,6 +65,7 @@ class BasicGNN(torch.nn.Module):
     """
     supports_edge_weight: Final[bool]
     supports_edge_attr: Final[bool]
+    supports_norm_batch: Final[bool]
 
     def __init__(
         self,
@@ -128,6 +131,12 @@ class BasicGNN(torch.nn.Module):
         )
         if norm_layer is None:
             norm_layer = torch.nn.Identity()
+
+        self.supports_norm_batch = False
+        if hasattr(norm_layer, 'forward'):
+            norm_params = inspect.signature(norm_layer.forward).parameters
+            self.supports_norm_batch = 'batch' in norm_params
+
         for _ in range(num_layers - 1):
             self.norms.append(copy.deepcopy(norm_layer))
 
@@ -172,10 +181,12 @@ class BasicGNN(torch.nn.Module):
         edge_index,
         edge_weight=None,
         edge_attr=None,
+        batch=None,
+        batch_size=None,
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, Tensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     @torch.jit._overload_method
@@ -184,10 +195,12 @@ class BasicGNN(torch.nn.Module):
         edge_index,
         edge_weight=None,
         edge_attr=None,
+        batch=None,
+        batch_size=None,
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, SparseTensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     def forward(  # noqa
@@ -196,9 +209,11 @@ class BasicGNN(torch.nn.Module):
         edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
+        batch: OptTensor = None,
+        batch_size: Optional[int] = None,
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
-    ) -> Tensor:
+    ):
         r"""
         Args:
             x (torch.Tensor): The input node features.
@@ -207,6 +222,17 @@ class BasicGNN(torch.nn.Module):
                 supported by the underlying GNN layer). (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the underlying GNN layer). (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
             num_sampled_nodes_per_hop (List[int], optional): The number of
                 sampled nodes per hop.
                 Useful in :class:`~torch_geometric.loader.NeighborLoader`
@@ -259,7 +285,10 @@ class BasicGNN(torch.nn.Module):
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
                     x = self.act(x)
-                x = norm(x)
+                if self.supports_norm_batch:
+                    x = norm(x, batch, batch_size)
+                else:
+                    x = norm(x)
                 if self.act is not None and not self.act_first:
                     x = self.act(x)
                 x = self.dropout(x)
@@ -303,6 +332,7 @@ class BasicGNN(torch.nn.Module):
         device: Optional[Union[str, torch.device]] = None,
         embedding_device: Union[str, torch.device] = 'cpu',
         progress_bar: bool = False,
+        cache: bool = False,
     ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
@@ -324,6 +354,10 @@ class BasicGNN(torch.nn.Module):
                 (default: :obj:`"cpu"`)
             progress_bar (bool, optional): If set to :obj:`True`, will print a
                 progress bar during computation. (default: :obj:`False`)
+            cache (bool, optional): If set to :obj:`True`, caches intermediate
+                sampler outputs for usage in later epochs.
+                This will avoid repeated sampling to accelerate inference.
+                (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
@@ -336,6 +370,20 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.to(embedding_device)
+
+        if cache:
+
+            # Only cache necessary attributes:
+            def transform(data: Data) -> Data:
+                kwargs = dict(n_id=data.n_id, batch_size=data.batch_size)
+                if hasattr(data, 'adj_t'):
+                    kwargs['adj_t'] = data.adj_t
+                else:
+                    kwargs['edge_index'] = data.edge_index
+
+                return Data.from_dict(kwargs)
+
+            loader = CachedLoader(loader, device=device, transform=transform)
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
@@ -377,6 +425,8 @@ class BasicGNN(torch.nn.Module):
                 edge_index: Tensor,
                 edge_weight: OptTensor = None,
                 edge_attr: OptTensor = None,
+                batch: OptTensor = None,
+                batch_size: Optional[int] = None,
                 num_sampled_nodes_per_hop: Optional[List[int]] = None,
                 num_sampled_edges_per_hop: Optional[List[int]] = None,
             ) -> Tensor:
@@ -385,6 +435,8 @@ class BasicGNN(torch.nn.Module):
                     edge_index,
                     edge_weight,
                     edge_attr,
+                    batch,
+                    batch_size,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
                 )
@@ -406,6 +458,8 @@ class BasicGNN(torch.nn.Module):
                 edge_index: SparseTensor,
                 edge_weight: OptTensor = None,
                 edge_attr: OptTensor = None,
+                batch: OptTensor = None,
+                batch_size: Optional[int] = None,
                 num_sampled_nodes_per_hop: Optional[List[int]] = None,
                 num_sampled_edges_per_hop: Optional[List[int]] = None,
             ) -> Tensor:
@@ -414,6 +468,8 @@ class BasicGNN(torch.nn.Module):
                     edge_index,
                     edge_weight,
                     edge_attr,
+                    batch,
+                    batch_size,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
                 )
@@ -472,6 +528,7 @@ class GCN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = True
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -516,6 +573,7 @@ class GraphSAGE(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -557,6 +615,7 @@ class GIN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -615,6 +674,7 @@ class GAT(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -677,6 +737,7 @@ class PNA(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -718,6 +779,7 @@ class EdgeCNN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
@@ -11,11 +11,12 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
     add_self_loops,
     coalesce,
+    get_ppr,
     is_undirected,
     scatter,
+    sort_edge_index,
     to_dense_adj,
 )
-from torch_geometric.utils.sparse import index2ptr
 
 
 @functional_transform('gdc')
@@ -83,9 +84,6 @@ class GDC(BaseTransform):
                                                      avg_degree=64),
         exact: bool = True,
     ):
-
-        self.__calc_ppr__ = get_calc_ppr()
-
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -303,20 +301,16 @@ class GDC(BaseTransform):
                 _, col = edge_index
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            edge_index_np = edge_index.cpu().numpy()
+            edge_index, edge_weight = get_ppr(
+                edge_index,
+                alpha=kwargs['alpha'],
+                eps=kwargs['eps'],
+                num_nodes=num_nodes,
+            )
 
-            # Assumes sorted and coalesced edge indices:
-            indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
-            out_degree = indptr[1:] - indptr[:-1]
-
-            neighbors, neighbor_weights = self.__calc_ppr__(
-                indptr, edge_index_np[1], out_degree, kwargs['alpha'],
-                kwargs['eps'])
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
+            if normalization == 'col':
+                edge_index, edge_weight = sort_edge_index(
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -442,6 +436,15 @@ class GDC(BaseTransform):
                    - **avg_degree** (*int*) - If :obj:`eps` is not given,
                      it can optionally be calculated by calculating the
                      :obj:`eps` required to achieve a given :obj:`avg_degree`.
+
+                2. :obj:`"topk"`: Keep edges with top :obj:`k` edge weights per
+                   node (column).
+                   Additionally expects the following parameters:
+
+                   - **k** (*int*) - Specifies the number of edges to keep.
+
+                   - **dim** (*int*) - The axis along which to take the top
+                     :obj:`k`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """

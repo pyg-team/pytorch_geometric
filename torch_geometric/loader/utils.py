@@ -62,7 +62,7 @@ def index_select(
             size = list(value.shape)
             size[dim] = index.numel()
             numel = math.prod(size)
-            if torch_geometric.typing.WITH_PT2:
+            if torch_geometric.typing.WITH_PT20:
                 storage = value.untyped_storage()._new_shared(
                     numel * value.element_size())
             else:

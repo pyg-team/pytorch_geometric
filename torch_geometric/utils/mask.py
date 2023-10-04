@@ -3,6 +3,8 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import TensorFrame
+
 
 def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
     r"""Returns a new tensor which masks the :obj:`src` tensor along the
@@ -15,6 +17,12 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
             index with.
     """
     assert mask.dim() == 1
+
+    if not torch.jit.is_scripting():
+        if isinstance(src, TensorFrame):
+            assert dim == 0 and src.num_rows == mask.numel()
+            return src[mask]
+
     assert src.size(dim) == mask.numel()
     dim = dim + src.dim() if dim < 0 else dim
     assert dim >= 0 and dim < src.dim()

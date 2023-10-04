@@ -4,7 +4,9 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.datasets import KarateClub
 from torch_geometric.testing import withPackage
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import SparseTensor
 
 
@@ -391,3 +393,38 @@ def test_file_names_as_property_and_method():
             pass
 
     MyTestDataset()
+
+
+@withPackage('sqlite3')
+def test_to_on_disk_dataset(tmp_path):
+    class MyTransform(BaseTransform):
+        def forward(self, data: Data) -> Data:
+            data.z = 'test_str'
+            return data
+
+    in_memory_dataset = KarateClub(transform=MyTransform())
+
+    with pytest.raises(ValueError, match="root directory of 'KarateClub'"):
+        in_memory_dataset.to_on_disk_dataset()
+
+    on_disk_dataset = in_memory_dataset.to_on_disk_dataset(tmp_path, log=False)
+    assert str(on_disk_dataset) == 'OnDiskKarateClub()'
+    assert on_disk_dataset.schema == {
+        'x': dict(dtype=torch.float32, size=(-1, 34)),
+        'edge_index': dict(dtype=torch.int64, size=(2, -1)),
+        'y': dict(dtype=torch.int64, size=(-1, )),
+        'train_mask': dict(dtype=torch.bool, size=(-1, )),
+    }
+    assert in_memory_dataset.transform == on_disk_dataset.transform
+
+    data1 = in_memory_dataset[0]
+    data2 = on_disk_dataset[0]
+
+    assert len(data1) == len(data2)
+    assert torch.allclose(data1.x, data2.x)
+    assert torch.equal(data1.edge_index, data2.edge_index)
+    assert torch.equal(data1.y, data2.y)
+    assert torch.equal(data1.train_mask, data2.train_mask)
+    assert data1.z == data2.z
+
+    on_disk_dataset.close()
