@@ -27,21 +27,22 @@ class NeuroGraphDataset(InMemoryDataset):
     +--------------------+---------+----------------------+
     | Dataset            | #Graphs | Task                 |
     +====================+=========+======================+
-    | :obj:`HCPActivity` | 7443    | Graph Classification |
+    | :obj:`HCPActivity` | 7,443   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPGender`   | 1078    | Graph Classification |
+    | :obj:`HCPGender`   | 1,078   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPAge`      | 1065    | Graph Classification |
+    | :obj:`HCPAge`      | 1,065   | Graph Classification |
     +--------------------+---------+----------------------+
-    | :obj:`HCPFI`       | 1071    | Graph Regression     |
+    | :obj:`HCPFI`       | 1,071   | Graph Regression     |
     +--------------------+---------+----------------------+
-    | :obj:`HCPWM`       | 1078    | Graph Regression     |
+    | :obj:`HCPWM`       | 1,078   | Graph Regression     |
     +--------------------+---------+----------------------+
 
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"HCPGender"`,
-        :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`, :obj:`"HCPWM"`).
+            :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`,
+            :obj:`"HCPWM"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -111,10 +112,8 @@ class NeuroGraphDataset(InMemoryDataset):
         data_list: List[Data] = []
         for i in range(num_samples):
             x = data.x[slices['x'][i]:slices['x'][i + 1]]
-            edge_index = data.edge_index[
-                :,
-                slices['edge_index'][i]:slices['edge_index'][i + 1],
-            ]
+            edge_index = data.edge_index[:, slices['edge_index'][i]:
+                                         slices['edge_index'][i + 1], ]
             sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 
             if self.pre_filter is not None and not self.pre_filter(sample):
