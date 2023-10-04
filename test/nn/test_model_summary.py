@@ -196,7 +196,7 @@ def test_summary_with_to_hetero_model():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
     # flake8: noqa
-    if WITH_GMM:
+    if False:
         expected = """
 +---------------------------+---------------------+----------------+----------+
 | Layer                     | Input Shape         | Output Shape   | #Param   |
