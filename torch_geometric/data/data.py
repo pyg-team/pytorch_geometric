@@ -760,8 +760,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, node_ids[i])
-                elif isinstance(value,
-                                TensorFrame) and self.is_node_attr(attr):
+                elif (isinstance(value, TensorFrame)
+                      and self.is_node_attr(attr)):
                     data[key][attr] = value[node_ids[i]]
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -779,8 +779,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, edge_ids[i])
-                elif isinstance(value,
-                                TensorFrame) and self.is_edge_attr(attr):
+                elif (isinstance(value, TensorFrame)
+                      and self.is_edge_attr(attr)):
                     data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.

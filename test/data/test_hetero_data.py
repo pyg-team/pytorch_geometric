@@ -602,68 +602,54 @@ def test_basic_feature_store():
     assert 'x' not in data['paper'].__dict__['_mapping']
 
 
-def get_fake_tensor_frame(num_rows: int) -> TensorFrame:
-    import torch_frame
-
-    feat_dict = {
-        torch_frame.categorical: torch.randint(0, 3, size=(num_rows, 3)),
-        torch_frame.numerical: torch.randn(size=(num_rows, 2)),
-    }
-    col_names_dict = {
-        torch_frame.categorical: ['a', 'b', 'c'],
-        torch_frame.numerical: ['x', 'y'],
-    }
-    y = torch.randn(num_rows)
-
-    return TensorFrame(
-        feat_dict=feat_dict,
-        col_names_dict=col_names_dict,
-        y=y,
-    )
-
-
 @withPackage('torch_frame')
-def test_hetero_data_with_tensor_frame():
+def test_hetero_data_with_tensor_frame(get_tensor_frame):
     data = HeteroData()
-    data['paper'].x = get_fake_tensor_frame(x_paper.size(0))
-    data['author'].node_feat = x_author
+    data['paper'].tf = get_tensor_frame(num_rows=x_paper.size(0))
+    data['author'].tf = get_tensor_frame(num_rows=x_author.size(0))
     data['author', 'paper'].edge_index = edge_index_author_paper
 
-    # basic functionality
-    assert set(data.node_attrs()) == {'x', 'node_feat'}
+    # Basic functionality:
+    assert set(data.node_attrs()) == {'tf'}
     assert data.num_nodes == x_paper.size(0) + x_author.size(0)
     assert data.num_node_features['paper'] == 5
+    assert data.num_node_features['author'] == 5
 
-    # Test subgraph
+    # Test subgraph:
     subset = {
         'paper': torch.tensor([1, 2, 3, 4]),
         'author': torch.tensor([0, 1, 2, 3]),
     }
     out = data.subgraph(subset)
-    assert set(out.node_attrs()) == {'x', 'node_feat'}
+    assert set(out.node_attrs()) == {'tf'}
     assert out.num_nodes == 8
-    for key, value in out['paper'].x.feat_dict.items():
+    for key, value in out['paper'].tf.feat_dict.items():
         assert value.size(0) == 4
-        assert torch.allclose(value, data['paper'].x.feat_dict[key][1:5])
+        assert torch.allclose(value, data['paper'].tf.feat_dict[key][1:5])
+    for key, value in out['author'].tf.feat_dict.items():
+        assert value.size(0) == 4
+        assert torch.allclose(value, data['author'].tf.feat_dict[key][0:4])
 
-    # Test to_homogenous and back
-    data['author'].x = get_fake_tensor_frame(x_author.size(0))
-    out = data.to_homogeneous(node_attrs=['x'])
-    assert len(out.x) == data.num_nodes
-    assert out.num_nodes == data.num_nodes
-    assert out.num_node_features == 5
+    # Test conversion to homogenous graphs and back:
+    for node_attrs in [None, ['tf']]:
+        out = data.to_homogeneous(node_attrs=node_attrs)
+        assert isinstance(out.tf, TensorFrame)
+        assert len(out.tf) == data.num_nodes
+        assert out.num_nodes == data.num_nodes
+        assert out.num_node_features == 5
+        for key, value in out.tf.feat_dict.items():
+            assert torch.allclose(
+                value,
+                torch.cat([
+                    data['paper'].tf.feat_dict[key],
+                    data['author'].tf.feat_dict[key],
+                ], dim=0),
+            )
 
-    data1 = out.to_heterogeneous()
-    for node_type in data.node_types:
-        for key, value in data[node_type].x.feat_dict.items():
-            assert torch.allclose(value, data1[node_type].x.feat_dict[key])
-
-    # Test to_homogenous without specifying node_attrs
-    out = data.to_homogeneous()
-    assert isinstance(out.x, TensorFrame)
-    assert len(out.x) == data.num_nodes
-    assert out.num_nodes == data.num_nodes
-    assert out.num_node_features == 5
+        out = out.to_heterogeneous()
+        for node_type in data.node_types:
+            for key, value in data[node_type].tf.feat_dict.items():
+                assert torch.allclose(value, out[node_type].tf.feat_dict[key])
 
 
 # Graph Store #################################################################

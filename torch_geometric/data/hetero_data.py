@@ -823,12 +823,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
                         sizes_dict[key].append(tuple(size))
-                    if isinstance(value, TensorFrame):
-                        dim = self.__cat_dim__(key, value, store)
-                        key_stype = list(value.feat_dict.keys())[0]
-                        size = value.feat_dict[key_stype].size()[:dim] + \
-                            value.feat_dict[key_stype].size()[dim + 1:]
-                        sizes_dict[key].append(tuple(size))
 
             return sizes_dict
 
@@ -876,6 +870,25 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if len(sizes[0]) != 1 and len(set(sizes)) != 1:
                     continue
                 keys.append(key)
+
+            # Check for `TensorFrame` consistent column names:
+            tf_cols = defaultdict(list)
+            for store in stores:
+                for key, value in store.items():
+                    if isinstance(value, TensorFrame):
+                        cols = tuple(chain(*value.col_names_dict.values()))
+                        tf_cols[key].append(cols)
+
+            for key, cols in tf_cols.items():
+                # The attribute needs to exist in all types:
+                if len(cols) != len(stores):
+                    continue
+                # The attributes needs to have the same column names:
+                lengths = set(cols)
+                if len(lengths) != 1:
+                    continue
+                keys.append(key)
+
             return keys
 
         if dummy_values:
@@ -899,18 +912,18 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if key in {'ptr'}:
                 continue
             values = [store[key] for store in self.node_stores]
-            dim = self.__cat_dim__(key, values[0], self.node_stores[0])
             if isinstance(values[0], TensorFrame):
-                # TODO(jinu): Implement cat for TensorFrame.
+                # TODO (jinu) Implement `cat` function for TensorFrame.
                 feat_dict = {}
-                for key_stype in values[0].feat_dict.keys():
-                    feat_dict[key_stype] = torch.cat(
-                        [value.feat_dict[key_stype] for value in values], dim)
+                for stype in values[0].feat_dict.keys():
+                    feat_dict[stype] = torch.cat(
+                        [value.feat_dict[stype] for value in values], dim=0)
                 y = None
                 if values[0].y is not None:
-                    y = torch.cat([value.y for value in values], dim)
+                    y = torch.cat([value.y for value in values], dim=0)
                 value = TensorFrame(feat_dict, values[0].col_names_dict, y)
             else:
+                dim = self.__cat_dim__(key, values[0], self.node_stores[0])
                 dim = values[0].dim() + dim if dim < 0 else dim
                 # For two-dimensional features, we allow arbitrary shapes and
                 # pad them with zeros if necessary in case their size doesn't
@@ -919,13 +932,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     _max = max([value.size(-1) for value in values])
                     for i, v in enumerate(values):
                         if v.size(-1) < _max:
-                            values[i] = torch.cat(
-                                [v,
-                                 v.new_zeros(v.size(0), _max - v.size(-1))],
-                                dim=-1,
-                            )
-                value = torch.cat(values,
-                                  dim) if len(values) > 1 else values[0]
+                            pad = v.new_zeros(v.size(0), _max - v.size(-1))
+                            values[i] = torch.cat([v, pad], dim=-1)
+                value = torch.cat(values, dim)
             data[key] = value
 
         if not data.can_infer_num_nodes:
