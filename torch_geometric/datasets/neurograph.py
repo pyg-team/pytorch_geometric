@@ -112,8 +112,10 @@ class NeuroGraphDataset(InMemoryDataset):
         data_list: List[Data] = []
         for i in range(num_samples):
             x = data.x[slices['x'][i]:slices['x'][i + 1]]
-            edge_index = data.edge_index[:, slices['edge_index'][i]:
-                                         slices['edge_index'][i + 1], ]
+            edge_index = data.edge_index[
+                :,
+                slices['edge_index'][i]:slices['edge_index'][i + 1],
+            ]
             sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 
             if self.pre_filter is not None and not self.pre_filter(sample):
