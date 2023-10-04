@@ -256,7 +256,7 @@ class WeightedAggregation(Aggregation):
     ) -> Tensor:
 
         if index is None and ptr is None:
-                index = x.new_zeros(x.size(dim), dtype=torch.long)
+            index = x.new_zeros(x.size(dim), dtype=torch.long)
 
         if weight is not None and weight.dim() != 1:
             raise ValueError(f"The 'weight' vector needs to be one-"
@@ -288,7 +288,7 @@ class WeightedAggregation(Aggregation):
         sizes[dim] = x.size(dim)
 
         self.assert_weight_present(weight)
-        
+
         weight = weight.view(sizes)
 
         if ptr is not None:

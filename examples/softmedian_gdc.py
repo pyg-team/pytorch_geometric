@@ -13,7 +13,6 @@ from torch_geometric.contrib.nn import PRBCDAttack
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv, SoftMedianAggregation
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='Cora')
 parser.add_argument('--hidden_channels', type=int, default=64)
@@ -30,7 +29,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
-
 
 transform = T.GDC(
     self_loop_weight=1,
@@ -61,10 +59,14 @@ class GCN(torch.nn.Module):
                  aggr=None):
         super().__init__()
         if aggr is not None:
-            self.conv1 = WeightedAggregationGCNConv(
-                in_channels, hidden_channels, normalize=normalize, aggr=aggr)
-            self.conv2 = WeightedAggregationGCNConv(
-                hidden_channels, out_channels, normalize=normalize, aggr=aggr)
+            self.conv1 = WeightedAggregationGCNConv(in_channels,
+                                                    hidden_channels,
+                                                    normalize=normalize,
+                                                    aggr=aggr)
+            self.conv2 = WeightedAggregationGCNConv(hidden_channels,
+                                                    out_channels,
+                                                    normalize=normalize,
+                                                    aggr=aggr)
         else:
             self.conv1 = GCNConv(in_channels, hidden_channels,
                                  normalize=normalize)
@@ -98,7 +100,9 @@ def train(model, data, epochs=200, lr=0.01, weight_decay=1e-3):
         if best_val_acc <= val_acc:
             best_val_acc = val_acc
             best_model_state_dict = {
-                key: value.clone() for key, value in model.state_dict().items()}
+                key: value.clone()
+                for key, value in model.state_dict().items()
+            }
 
     model.load_state_dict(best_model_state_dict)
     model.eval()

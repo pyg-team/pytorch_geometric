@@ -59,12 +59,12 @@ class WeightedQuantileAggregation(WeightedAggregation):
         cumsum = torch.cumsum(count, dim=0) - count
 
         if count.min() == 0:
-            raise ValueError(f"Aggregation does not support empty segment")
+            raise ValueError("Aggregation does not support empty segment")
 
         if weight is None:
             weight = torch.ones_like(index, dtype=x.dtype) / count[index]
         elif weight.min() < 0:
-            raise ValueError(f"The weights must be positive, but the "
+            raise ValueError("The weights must be positive, but the "
                              f"minimum weight is {weight.min().item()}.")
 
         cumweight = torch.zeros(count.shape[0], dtype=weight.dtype,
@@ -191,7 +191,7 @@ class SoftMedianAggregation(WeightedAggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
-        
+
         self.assert_index_present(index)
 
         dim = x.dim() + dim if dim < 0 else dim
