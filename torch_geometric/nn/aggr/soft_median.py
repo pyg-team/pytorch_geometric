@@ -29,7 +29,6 @@ class WeightedQuantileAggregation(WeightedAggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
-
     def __init__(self, q: float, fill_value: float = 0.0):
         super().__init__()
 
@@ -42,6 +41,8 @@ class WeightedQuantileAggregation(WeightedAggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
+
+        self.assert_index_present(index)
 
         dim = x.dim() + dim if dim < 0 else dim
         other_dim = dim - 1 if dim > 0 else dim + 1
@@ -95,7 +96,8 @@ class WeightedQuantileAggregation(WeightedAggregation):
             diff = diff.diff(dim=dim,
                              prepend=torch.zeros(prep_shape, device=x.device))
             # Either where we accumulate to q or the first element of a row
-            first_element_diff = index.diff(prepend=torch.zeros_like(index[:1]))
+            first_element_diff = index.diff(
+                prepend=torch.zeros_like(index[:1]))
             quantile_mask = ((diff > 0) |
                              ((diff == 0) &
                               (first_element_diff.view(shape) > 0)))
@@ -111,10 +113,10 @@ class WeightedQuantileAggregation(WeightedAggregation):
 
             # Reorder each row by feature dimension
             quantile_index = torch.scatter(torch.zeros_like(quantile_dim),
-                                            other_dim, quantile_dim,
-                                            quantile_index)
+                                           other_dim, quantile_dim,
+                                           quantile_index)
             quantile_dim = torch.arange(x.shape[other_dim],
-                                         device=x.device)[None, :]
+                                        device=x.device)[None, :]
 
         # Retrieve closest quantile element
         quantile = x[quantile_index, quantile_dim]
@@ -146,7 +148,6 @@ class WeightedMedianAggregation(WeightedQuantileAggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
-
     def __init__(self, fill_value: float = 0.0):
         super().__init__(0.5, fill_value)
 
@@ -173,7 +174,6 @@ class SoftMedianAggregation(WeightedAggregation):
         p (float, optional): Norm for distances (via :obj:`torch.norm`).
             (default: :obj:`2.0`)
     """
-
     def __init__(self, T: float = 1.0, p: float = 2.0):
         super().__init__()
 
@@ -191,6 +191,9 @@ class SoftMedianAggregation(WeightedAggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
+        
+        self.assert_index_present(index)
+
         dim = x.dim() + dim if dim < 0 else dim
         other_dim = dim - 1 if dim > 0 else dim + 1
 
@@ -201,7 +204,8 @@ class SoftMedianAggregation(WeightedAggregation):
         shape[dim] = -1
 
         if weight is None:
-            weight = torch.ones_like(index, dtype=x.dtype)
+            count = torch.bincount(index, minlength=dim_size or 0)
+            weight = torch.ones_like(index, dtype=x.dtype) / count[index]
 
         weight_sums = self.reduce(weight, index, ptr, dim_size, dim,
                                   reduce='sum')
@@ -220,8 +224,8 @@ class SoftMedianAggregation(WeightedAggregation):
 
         # Final weights to reweigh inputs per segment
         weight = soft_weights * weight
-        segment_weight = self.reduce(weight, index, ptr, dim_size,
-                                     dim, reduce='sum')
+        segment_weight = self.reduce(weight, index, ptr, dim_size, dim,
+                                     reduce='sum')
         weight = weight / segment_weight[index] * weight_sums[index]
 
         out = self.weighted_reduce(x, index, weight, ptr, dim_size, dim,

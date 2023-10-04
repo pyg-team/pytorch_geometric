@@ -46,6 +46,8 @@ class WeightedMeanAggregation(WeightedAggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
+        if weight is None:
+            return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
         return self.weighted_reduce(x, index, weight, ptr, dim_size, dim,
                                     reduce='sum')
 

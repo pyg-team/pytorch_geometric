@@ -93,11 +93,11 @@ def test_weighted_mean_aggregation():
     aggr = WeightedMeanAggregation()
     assert str(aggr) == 'WeightedMeanAggregation()'
 
-    out = aggr(x, weight, index)
+    out = aggr(x, index, weight)
     assert out.size() == (3, x.size(1))
     assert torch.allclose(out, expected)
     if torch_geometric.typing.WITH_TORCH_SCATTER:
-        assert torch.allclose(out, aggr(x, weight, ptr=ptr))
+        assert torch.allclose(out, aggr(x, weight=weight, ptr=ptr))
 
 
 def test_var_aggregation():

@@ -255,6 +255,9 @@ class WeightedAggregation(Aggregation):
         **kwargs,
     ) -> Tensor:
 
+        if index is None and ptr is None:
+                index = x.new_zeros(x.size(dim), dtype=torch.long)
+
         if weight is not None and weight.dim() != 1:
             raise ValueError(f"The 'weight' vector needs to be one-"
                              f"dimensional (got {weight.dim()} dimensions)")
@@ -284,18 +287,28 @@ class WeightedAggregation(Aggregation):
         sizes = [1] * x.dim()
         sizes[dim] = x.size(dim)
 
-        assert index is not None
-
-        if weight is None:
-            weight = torch.ones_like(index, dtype=x.dtype)
-
+        self.assert_weight_present(weight)
+        
         weight = weight.view(sizes)
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
-            return segment(x * weight, ptr, reduce=reduce)
+
+            shape = [1] * x.dim()
+            shape[dim] = -1
+
+            return segment(x * weight.view(shape), ptr, reduce=reduce)
 
         return scatter(x * weight, index, dim, dim_size, reduce)
+
+    # Assertions ##############################################################
+
+    def assert_weight_present(self, weight: Optional[Tensor]):
+        # TODO Currently, not all aggregators support `ptr`. This assert helps
+        # to ensure that we require `weight` to be passed to the computation:
+        if weight is None:
+            raise NotImplementedError(
+                "Weighted aggregation requires 'weight' to be specified")
 
 
 ###############################################################################
