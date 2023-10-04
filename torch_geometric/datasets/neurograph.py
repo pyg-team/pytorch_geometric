@@ -1,115 +1,128 @@
 import os
-import zipfile
+import os.path as osp
+import shutil
+from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
-class NeuroGraphStatic(InMemoryDataset):
-    r"""The `"NeuroGraph Benchmarks"
-    <https://arxiv.org/pdf/2306.06202.pdf>`_
-    datasets which is a collection of 5 Neuroimaging graph learning datasets that span multiple categories of demographics, mental states, and cognitive traits. See the
-    `documentation <https://neurograph.readthedocs.io/en/latest/NeuroGraph.html>`_ and the `Github <https://github.com/Anwar-Said/NeuroGraph>`_ for more details.
+class NeuroGraphDataset(InMemoryDataset):
+    r"""The NeuroGraph benchmark datasets from the
+    `"NeuroGraph: Benchmarks for Graph Machine Learning in Brain Connectomics"
+    <https://arxiv.org/abs/2306.06202>`_ paper.
+    :class:`NeuroGraphDataset` holds a collection of five neuroimaging graph
+    learning datasets that span multiple categories of demographics, mental
+    states, and cognitive traits.
+    See the `documentation
+    <https://neurograph.readthedocs.io/en/latest/NeuroGraph.html>`_ and the
+    `Github <https://github.com/Anwar-Said/NeuroGraph>`_ for more details.
 
-    +------------------------+-------------------+----------------------+
-    | Dataset                | Num. Graphs       | Task                 |
-    +========================+===================+======================+
-    | :obj:`HCPActivity`     | 7443              | Graph Classification |
-    +------------------------+-------------------+----------------------+
-    | :obj:`HCPGender`       | 1078              | Graph Classification |
-    +------------------------+-------------------+----------------------+
-    | :obj:`HCPAge`          | 1065              | Graph Classification |
-    +------------------------+-------------------+----------------------+
-    | :obj:`HCPFI`           | 1071              | Graph Regression     |
-    +------------------------+-------------------+----------------------+
-    | :obj:`HCPWM`           | 1078              | Graph Regression     |
-    +------------------------+-------------------+----------------------+
+    +--------------------+---------+----------------------+
+    | Dataset            | #Graphs | Task                 |
+    +====================+=========+======================+
+    | :obj:`HCPActivity` | 7443    | Graph Classification |
+    +--------------------+---------+----------------------+
+    | :obj:`HCPGender`   | 1078    | Graph Classification |
+    +--------------------+---------+----------------------+
+    | :obj:`HCPAge`      | 1065    | Graph Classification |
+    +--------------------+---------+----------------------+
+    | :obj:`HCPFI`       | 1071    | Graph Regression     |
+    +--------------------+---------+----------------------+
+    | :obj:`HCPWM`       | 1078    | Graph Regression     |
+    +--------------------+---------+----------------------+
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        name (str): The name of the dataset (one of :obj:`"HCPGender"` :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`, :obj:`"HCPWM"`)
-        transform (callable, optional): A function/transform that takes in an       :obj:`torch_geometric.data.Data` object and returns a transformed version. The data object will be transformed before every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in an :obj:`torch_geometric.data.Data` object and returns a transformed version. The data object will be transformed before being saved to disk. (default: :obj:`None`)
-
+        name (str): The name of the dataset (one of :obj:`"HCPGender"`,
+        :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`, :obj:`"HCPWM"`).
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
     """
-    def __init__(self, root, dataset_name, transform=None, pre_transform=None,
-                 pre_filter=None):
-        self.root, self.name = root, dataset_name
-        self.root = root
-        self.urls = {
-            "HCPGender":
-            "https://vanderbilt.box.com/shared/static/r6hlz2arm7yiy6v6981cv2nzq3b0meax.zip",
-            "HCPActivity":
-            "https://vanderbilt.box.com/shared/static/b4g59ibn8itegr0rpcd16m9ajb2qyddf.zip",
-            "HCPAge":
-            "https://vanderbilt.box.com/shared/static/lzzks4472czy9f9vc8aikp7pdbknmtfe.zip",
-            "HCPWM":
-            "https://vanderbilt.box.com/shared/static/xtmpa6712fidi94x6kevpsddf9skuoxy.zip",
-            "HCPFI":
-            "https://vanderbilt.box.com/shared/static/g2md9h9snh7jh6eeay02k1kr9m4ido9f.zip",
-        }
+    url = 'https://vanderbilt.box.com/shared/static'
+    filenames = {
+        'HCPGender': 'r6hlz2arm7yiy6v6981cv2nzq3b0meax.zip',
+        'HCPActivity': 'b4g59ibn8itegr0rpcd16m9ajb2qyddf.zip',
+        'HCPAge': 'static/lzzks4472czy9f9vc8aikp7pdbknmtfe.zip',
+        'HCPWM': 'xtmpa6712fidi94x6kevpsddf9skuoxy.zip',
+        'HCPFI': 'g2md9h9snh7jh6eeay02k1kr9m4ido9f.zip',
+    }
+
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
+        assert name in self.filenames.keys()
+        self.name = name
+
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
-        return os.path.join(self.root, self.name, self.name + "raw")
+    def raw_dir(self) -> str:
+        return os.path.join(self.root, self.name, 'raw')
 
     @property
-    def raw_file_names(self):
-        return [self.name]
+    def raw_file_names(self) -> str:
+        return 'data.pt'
 
     @property
     def processed_dir(self) -> str:
-        name = "processed"
-        return os.path.join(self.root, self.name, name)
+        return os.path.join(self.root, self.name, 'processed')
 
     @property
-    def processed_file_names(self):
-        return [self.name + ".pt"]
+    def processed_file_names(self) -> str:
+        return 'data.pt'
 
     def download(self):
-        # Download to `self.raw_dir`.
-        print(
-            "downloading the data. The files are large and may take a few minutes"
-        )
-        if self.urls.get(self.name):
-            download_url(self.urls.get(self.name), self.raw_dir)
-            basename = os.path.basename(self.urls.get(self.name))
-            with zipfile.ZipFile(os.path.join(self.raw_dir, basename),
-                                 "r") as file:
-                file.extractall(
-                    os.path.join(self.raw_dir, os.path.dirname(basename)))
-            # self.remove(os.path.join(self.raw_dir,basename))
-        else:
-            print(
-                'dataset not found! Please choose from: "HCPGender","HCPActivity","HCPAge","HCPWM","HCPFI"'
-            )
+        url = f'{self.url}/{self.filenames[self.name]}'
+        path = download_url(url, self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
+        os.rename(
+            osp.join(self.raw_dir, self.name, 'processed', f'{self.name}.pt'),
+            osp.join(self.raw_dir, 'data.pt'))
+        shutil.rmtree(osp.join(self.raw_dir, self.name))
 
     def process(self):
-        print("processing the data")
-        data, slices = torch.load(
-            os.path.join(self.raw_dir, self.name, "processed",
-                         self.name + ".pt"))
-        num_samples = slices["x"].size(0) - 1
-        data_list = []
+        data, slices = torch.load(self.raw_paths[0])
+
+        num_samples = slices['x'].size(0) - 1
+        data_list: List[Data] = []
         for i in range(num_samples):
-            start_x = slices["x"][i]
-            end_x = slices["x"][i + 1]
-            x = data.x[start_x:end_x, :]
-            start_ei = slices["edge_index"][i]
-            end_ei = slices["edge_index"][i + 1]
-            edge_index = data.edge_index[:, start_ei:end_ei]
-            y = data.y[i]
-            data_sample = Data(x=x, edge_index=edge_index, y=y)
-            data_list.append(data_sample)
+            x = data.x[slices['x'][i]:slices['x'][i + 1]]
+            edge_index = data.edge_index[
+                :,
+                slices['edge_index'][i]:slices['edge_index'][i + 1],
+            ]
+            sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 
-        if self.pre_filter is not None:
-            data_list = [data for data in data_list if self.pre_filter(data)]
+            if self.pre_filter is not None and not self.pre_filter(sample):
+                continue
 
-        if self.pre_transform is not None:
-            data_list = [self.pre_transform(data) for data in data_list]
+            if self.pre_transform is not None:
+                sample = self.pre_transform(sample)
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+            data_list.append(sample)
+
+        self.save(data_list, self.processed_paths[0])
