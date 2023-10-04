@@ -60,6 +60,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
+from .neurograph import NeuroGraphStatic
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -180,6 +181,7 @@ homo_datasets = [
     'Wikidata5M',
     'MyketDataset',
     'BrcaTcga',
+    'NeuroGraphStatic'
 ]
 
 hetero_datasets = [
