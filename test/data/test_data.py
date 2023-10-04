@@ -8,7 +8,6 @@ import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.storage import AttrType
 from torch_geometric.testing import withPackage
-from torch_geometric.typing import TensorFrame
 
 
 def test_data():
