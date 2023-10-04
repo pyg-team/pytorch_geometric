@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+
+- Added `WeightedAggregation` base class and implementations ([#7025](https://github.com/pyg-team/pytorch_geometric/pull/7025))
+- Added `sparsify_top_k` support in `transforms.GDC` ([#7025](https://github.com/pyg-team/pytorch_geometric/pull/7025))
 - Added the `NeuroGraphDataset` benchmark collection ([#8122](https://github.com/pyg-team/pytorch_geometric/pull/8122))
 - Added support for a node-level `mask` tensor in `dense_to_sparse` ([#8117](https://github.com/pyg-team/pytorch_geometric/pull/8117))
 - Added the `to_on_disk_dataset()` method to convert `InMemoryDataset` instances to `OnDiskDataset` instances ([#8116](https://github.com/pyg-team/pytorch_geometric/pull/8116))

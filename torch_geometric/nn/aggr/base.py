@@ -164,9 +164,15 @@ class Aggregation(torch.nn.Module):
 
     # Helper methods ##########################################################
 
-    def reduce(self, x: Tensor, index: Optional[Tensor] = None,
-               ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-               dim: int = -2, reduce: str = 'sum') -> Tensor:
+    def reduce(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        reduce: str = 'sum',
+    ) -> Tensor:
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
@@ -198,6 +204,117 @@ class Aggregation(torch.nn.Module):
             fill_value=fill_value,
             max_num_nodes=max_num_elements,
         )
+
+
+class WeightedAggregation(Aggregation):
+    r"""An abstract base class for implementing custom weighted aggregations.
+
+    In addition to :obj:`Aggregation`, :class:`WeightedAggregation` assigns a
+    custom :obj:`weight` value to each element in the input tensor :obj:`x`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(*, |\mathcal{V}|, F_{in})` or edge features
+          :math:`(*, |\mathcal{E}|, F_{in})`,
+          node weights :math:`(|\mathcal{V}|)` or edge weights
+          :math:`(|\mathcal{E}|)`,
+          index vector :math:`(|\mathcal{V}|)` or :math:`(|\mathcal{E}|)`,
+        - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
+          node features :math:`(*, |\mathcal{V}|, F_{out})`
+    """
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            index (torch.Tensor, optional): The indices of elements for
+                applying the aggregation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            weight (torch.Tensor, optional): The weight vector.
+            ptr (torch.Tensor, optional): If given, computes the aggregation
+                based on sorted inputs in CSR representation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim` after aggregation. (default: :obj:`None`)
+            dim (int, optional): The dimension in which to aggregate.
+                (default: :obj:`-2`)
+        """
+        pass
+
+    def __call__(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        **kwargs,
+    ) -> Tensor:
+
+        if index is None and ptr is None:
+            index = x.new_zeros(x.size(dim), dtype=torch.long)
+
+        if weight is not None and weight.dim() != 1:
+            raise ValueError(f"The 'weight' vector needs to be one-"
+                             f"dimensional (got {weight.dim()} dimensions)")
+
+        if weight is not None and weight.size(0) != x.size(dim):
+            raise ValueError(f"The input tensor has {x.size(dim)} elements, "
+                             f"but the 'weight' vector holds {weight.size(0)} "
+                             f"elements. Please make sure that the size of "
+                             f"the inputs align")
+
+        return super().__call__(x, weight=weight, index=index, ptr=ptr,
+                                dim_size=dim_size, dim=dim, **kwargs)
+
+    # Helper methods ##########################################################
+
+    def weighted_reduce(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        reduce: str = 'sum',
+    ) -> Tensor:
+
+        sizes = [1] * x.dim()
+        sizes[dim] = x.size(dim)
+
+        self.assert_weight_present(weight)
+
+        weight = weight.view(sizes)
+
+        if ptr is not None:
+            ptr = expand_left(ptr, dim, dims=x.dim())
+
+            shape = [1] * x.dim()
+            shape[dim] = -1
+
+            return segment(x * weight.view(shape), ptr, reduce=reduce)
+
+        return scatter(x * weight, index, dim, dim_size, reduce)
+
+    # Assertions ##############################################################
+
+    def assert_weight_present(self, weight: Optional[Tensor]):
+        # TODO Currently, not all aggregators support `ptr`. This assert helps
+        # to ensure that we require `weight` to be passed to the computation:
+        if weight is None:
+            raise NotImplementedError(
+                "Weighted aggregation requires 'weight' to be specified")
 
 
 ###############################################################################

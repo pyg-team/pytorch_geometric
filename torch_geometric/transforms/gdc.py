@@ -437,6 +437,15 @@ class GDC(BaseTransform):
                      it can optionally be calculated by calculating the
                      :obj:`eps` required to achieve a given :obj:`avg_degree`.
 
+                2. :obj:`"topk"`: Keep edges with top :obj:`k` edge weights per
+                   node (column).
+                   Additionally expects the following parameters:
+
+                   - **k** (*int*) - Specifies the number of edges to keep.
+
+                   - **dim** (*int*) - The axis along which to take the top
+                     :obj:`k`.
+
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
         if method == 'threshold':
@@ -449,8 +458,9 @@ class GDC(BaseTransform):
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
-            raise NotImplementedError(
-                'Sparse topk sparsification not implemented')
+            edge_index, edge_weight = sparsify_top_k(edge_index, edge_weight,
+                                                     kwargs['k'],
+                                                     kwargs['dim'])
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
 
@@ -495,3 +505,39 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
+
+
+def sparsify_top_k(edge_index: torch.Tensor, edge_weight: torch.Tensor, k: int,
+                   dim: int = 0):
+    r"""Sparsifies a given sparse graph further by choosing the top :obj:`k`
+    edges according to :obj:`edge_weight` along dimension :obj:`dim`.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_weight (Tensor): The one-dimensional edge weights.
+        k (int): Number of elements to keep per node.
+        dim (int, optional): The dimension along which to sparsify. (default:
+            :obj:`0`)
+
+    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+    """
+    # Count how many elements are in each segment
+    count = torch.bincount(edge_index[dim], minlength=0)
+    cumsum = torch.cumsum(count, dim=0) - count
+
+    # Construct integer order for each segment
+    segment_wise_order = torch.ones_like(edge_weight)
+    segment_wise_order[0] = 0
+    segment_wise_order[cumsum[1:]] -= count[:-1]
+    segment_wise_order = segment_wise_order.cumsum(0)
+
+    # Use integer order ids to filter the topk element per segment
+    weights_perm = torch.sort(edge_weight, descending=True).indices
+    index_perm = torch.sort(edge_index[dim][weights_perm], stable=True).indices
+    topk_elements = weights_perm[index_perm[segment_wise_order < k]]
+
+    # Construct topk filterd index
+    topk_index = edge_index[:, topk_elements]
+    topk_weight = edge_weight[topk_elements]
+
+    return topk_index, topk_weight

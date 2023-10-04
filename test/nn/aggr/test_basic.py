@@ -12,6 +12,7 @@ from torch_geometric.nn import (
     StdAggregation,
     SumAggregation,
     VarAggregation,
+    WeightedMeanAggregation,
 )
 
 
@@ -30,6 +31,21 @@ def test_validate():
 
     with pytest.raises(ValueError, match="invalid 'dim_size'"):
         aggr(x, index, dim_size=2)
+
+
+def test_weighted_validate():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+
+    aggr = WeightedMeanAggregation()
+
+    with pytest.raises(ValueError, match="needs to be one-dimensional"):
+        weight = torch.rand(6, 2)
+        aggr(x, index, weight)
+
+    with pytest.raises(ValueError, match="that the size of the inputs align"):
+        weight = torch.rand(4)
+        aggr(x, index, weight)
 
 
 @pytest.mark.parametrize('Aggregation', [
@@ -60,6 +76,28 @@ def test_basic_aggregation(Aggregation):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
+
+
+def test_weighted_mean_aggregation():
+    x = torch.randn(6, 16)
+    weight = torch.rand(6)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    expected = torch.cat([
+        (x[0:2] * weight[0:2].view(-1, 1)).sum(dim=0, keepdim=True),
+        (x[2:5] * weight[2:5].view(-1, 1)).sum(dim=0, keepdim=True),
+        (x[5:6] * weight[5:6].view(-1, 1)).sum(dim=0, keepdim=True),
+    ], dim=0)
+
+    aggr = WeightedMeanAggregation()
+    assert str(aggr) == 'WeightedMeanAggregation()'
+
+    out = aggr(x, index, weight)
+    assert out.size() == (3, x.size(1))
+    assert torch.allclose(out, expected)
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(out, aggr(x, weight=weight, ptr=ptr))
 
 
 def test_var_aggregation():
