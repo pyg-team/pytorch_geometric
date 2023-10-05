@@ -12,7 +12,7 @@ from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear,
 
-from torch_geometric.typing import WITH_GMM, EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -42,7 +42,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         import torch
         from torch_geometric.nn import SAGEConv, to_hetero
 
-        class GNN(torch.nn.Module):
+        class GNN(torch.nn.Module):cd
             def __init__(self):
                 super().__init__()
                 self.conv1 = SAGEConv((-1, -1), 32)
@@ -398,8 +398,8 @@ class ToHeteroTransformer(Transformer):
             return module
 
         if is_linear(module):
-            return ToHeteroLinear(module,
-                                  self.metadata[int(has_edge_level_target)])
+            return ToHeteroLinear(
+                    module, self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
