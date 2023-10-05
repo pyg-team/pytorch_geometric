@@ -52,6 +52,8 @@ except Exception as e:
     WITH_METIS = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
 
+WITH_TO_HETERO_HETEROLIN = WITH_PYG_LIB and WITH_PT112
+
 try:
     import torch_scatter  # noqa
     WITH_TORCH_SCATTER = True
