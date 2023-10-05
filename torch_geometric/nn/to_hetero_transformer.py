@@ -292,22 +292,24 @@ class ToHeteroTransformer(Transformer):
             return
 
         self.graph.inserting_after(node)
-        if hasattr(self.module, name):
-            submod = getattr(self.module, name)
-            is_heterolin = is_linear(submod)
-        else:
-            split_name = name.split('_')
-            submod = getattr(self.module, '_'.join(split_name[:-1]))
-            # handle iterable Modules (dict/list/sequential) containing Linear
-            if is_iterable_module(submod):
-                try:
-                    selected_subsubmod = submod[split_name[-1]]
-                except TypeError:
-                    selected_subsubmod = submod[int(split_name[-1])]
-                is_heterolin = is_linear(selected_subsubmod)
+        is_heterolin = False
+        if torch_geometric.typing.WITH_PYG_LIB:
+            if hasattr(self.module, name):
+                submod = getattr(self.module, name)
+                is_heterolin = is_linear(submod)
             else:
-                is_heterolin = False
-        if is_heterolin and torch_geometric.typing.WITH_PYG_LIB:
+                split_name = name.split('_')
+                submod = getattr(self.module, '_'.join(split_name[:-1]))
+                # handle iterable Modules (dict/list/sequential) containing Linear
+                if is_iterable_module(submod):
+                    try:
+                        selected_subsubmod = submod[split_name[-1]]
+                    except TypeError:
+                        selected_subsubmod = submod[int(split_name[-1])]
+                    is_heterolin = is_linear(selected_subsubmod)
+                else:
+                    is_heterolin = False
+        if is_heterolin:
             self.add_heterolin_to_graph(node, target, name)
         else:
             # Add calls to node type-wise or edge type-wise modules.
