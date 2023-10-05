@@ -12,8 +12,7 @@ from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.typing import (
-    WITH_PT112,
-    WITH_PYG_LIB,
+    WITH_TO_HETERO_HETEROLIN,
     EdgeType,
     Metadata,
     NodeType,
@@ -27,8 +26,6 @@ try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
-
-WITH_HETEROLIN = WITH_PYG_LIB and WITH_PT112
 
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
@@ -301,7 +298,7 @@ class ToHeteroTransformer(Transformer):
 
         self.graph.inserting_after(node)
         is_heterolin = False
-        if WITH_HETEROLIN:
+        if WITH_TO_HETERO_HETEROLIN:
             if hasattr(self.module, name):
                 submod = getattr(self.module, name)
                 is_heterolin = is_linear(submod)
@@ -329,7 +326,7 @@ class ToHeteroTransformer(Transformer):
             return
 
         self.graph.inserting_after(node)
-        if WITH_HETEROLIN:
+        if WITH_TO_HETERO_HETEROLIN:
             # Addresses:
             # "RuntimeError: Output 0 of SplitWithSizesBackward0
             # is a view and is being modified inplace."
@@ -406,7 +403,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        if WITH_HETEROLIN and is_linear(module):
+        if WITH_TO_HETERO_HETEROLIN and is_linear(module):
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
         else:

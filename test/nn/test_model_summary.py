@@ -8,7 +8,7 @@ import torch_geometric.typing
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
-from torch_geometric.typing import WITH_GMM, SparseTensor
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 
 
 class GraphSAGE(torch.nn.Module):
@@ -196,7 +196,7 @@ def test_summary_with_to_hetero_model():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
     # flake8: noqa
-    if not torch_geometric.typing.WITH_PYG_LIB:
+    if not WITH_TO_HETERO_HETEROLIN:
         expected = """
 +---------------------------+---------------------+----------------+----------+
 | Layer                     | Input Shape         | Output Shape   | #Param   |
