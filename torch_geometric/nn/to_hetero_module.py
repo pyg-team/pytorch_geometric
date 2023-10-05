@@ -96,7 +96,7 @@ class ToHeteroLinear(torch.nn.Module):
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
         # 2) model.lin[node_type].bias.data = conv.bias.data
         if not torch_geometric.typing.WITH_PYG_LIB:
-            return self.hetero_module.lins[self.types.index(get_type)]
+            return self.hetero_module.weight[self.types.index(get_type)]
         else:
             return DummyLinear(get_type, self.types, self.hetero_module)
 
