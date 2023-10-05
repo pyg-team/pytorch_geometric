@@ -300,7 +300,7 @@ class ToHeteroTransformer(Transformer):
             else:
                 split_name = name.split('_')
                 submod = getattr(self.module, '_'.join(split_name[:-1]))
-                # handle iterable Modules (dict/list/sequential) containing Linear
+                # handle iterable Modules (dict/list/sequential) w/ Linear
                 if is_iterable_module(submod):
                     try:
                         selected_subsubmod = submod[split_name[-1]]
