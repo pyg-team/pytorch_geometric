@@ -8,13 +8,10 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.nn.dense import HeteroDictLinear
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.nn.to_hetero_module import (
-    ToHeteroLinear,
-    get_linear_channels,
-)
+from torch_geometric.nn.to_hetero_module import ToHeteroLinear,
+
 from torch_geometric.typing import WITH_GMM, EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
