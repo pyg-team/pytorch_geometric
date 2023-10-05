@@ -224,6 +224,8 @@ def test_to_hetero_basic():
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             out2 = model(x_dict, adj_t_dict)
             assert isinstance(out2, dict) and len(out2) == 2
+            print("out2=", out2)
+            print("out1=", out1)
             for key in x_dict.keys():
                 assert torch.allclose(out1[key], out2[key], atol=1e-6)
 
