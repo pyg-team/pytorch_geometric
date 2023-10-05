@@ -319,7 +319,8 @@ class ToHeteroTransformer(Transformer):
             return
 
         self.graph.inserting_after(node)
-        if torch_geometric.typing.WITH_PYG_LIB:
+        #if torch_geometric.typing.WITH_PYG_LIB:
+        if False:
             # Addresses:
             # "RuntimeError: Output 0 of SplitWithSizesBackward0
             # is a view and is being modified inplace."
