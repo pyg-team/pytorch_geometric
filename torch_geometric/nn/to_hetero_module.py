@@ -20,7 +20,6 @@ class SubParam:
     def get_data(self):
         return self.param[self.idx].data
 
-
     def set_data(self, data):
         if self.param.data[self.idx].shape == data.t().shape:
             self.param.data[self.idx] = data.t()
