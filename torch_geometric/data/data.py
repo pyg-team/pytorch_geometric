@@ -437,6 +437,10 @@ class Data(BaseData, FeatureStore, GraphStore):
             labels with arbitrary shape. (default: :obj:`None`)
         pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
+        use_cudf (bool, optional): If true, convert inputted tensors
+            to CUDF for faster data manipulation.
+            Not recommended for use with NeighborLoader.
+            (default: :obj:`False`).
         **kwargs (optional): Additional attributes.
     """
     def __init__(
@@ -446,6 +450,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         edge_attr: OptTensor = None,
         y: OptTensor = None,
         pos: OptTensor = None,
+        use_cudf: bool = False
         **kwargs,
     ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
@@ -468,6 +473,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             self.y = y
         if pos is not None:
             self.pos = pos
+        self.use_cudf = use_cudf
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -482,6 +488,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
+        if self.use_cudf and isinstance(value, Tensor):
+            # convert to CUDF
         propobj = getattr(self.__class__, key, None)
         if propobj is not None and getattr(propobj, 'fset', None) is not None:
             propobj.fset(self, value)
