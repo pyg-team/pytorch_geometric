@@ -307,7 +307,7 @@ class ToHeteroTransformer(Transformer):
                 is_heterolin = is_linear(selected_subsubmod)
             else:
                 is_heterolin = False
-        if is_heterolin:
+        if is_heterolin and torch_geometric.typing.WITH_PYG_LIB:
             self.add_heterolin_to_graph(node, target, name)
         else:
             # Add calls to node type-wise or edge type-wise modules.
