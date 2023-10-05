@@ -396,7 +396,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        if is_linear(module):
+        if is_linear(module) and torch_geometric.typing.WITH_PYG_LIB:
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
         else:
