@@ -334,7 +334,7 @@ def test_trim_to_layer():
 @withCUDA
 @onlyLinux
 @disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
@@ -355,7 +355,7 @@ def test_compile_graph_breaks(Model, device):
     model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
     model = to_jittable(model).to(device)
 
-    explanation = dynamo.explain(model, x, edge_index)
+    explanation = dynamo.explain(model)(x, edge_index)
     if hasattr(explanation, 'graph_break_count'):
         assert explanation.graph_break_count == 0
     else:
