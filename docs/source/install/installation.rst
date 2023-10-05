@@ -95,11 +95,11 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
       pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu121.html
 
-   For example, for :pytorch:`PyTorch` 2.0.* and CUDA 11.7, type:
+   For example, for :pytorch:`PyTorch` 2.0.* and CUDA 11.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu117.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
 
 **Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1 and 1.13.0/1.13.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.

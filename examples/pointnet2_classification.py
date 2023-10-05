@@ -104,9 +104,6 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1, 201):
-        import time
-        t = time.perf_counter()
         train(epoch)
         test_acc = test(test_loader)
-        print(time.perf_counter() - t)
         print(f'Epoch: {epoch:03d}, Test: {test_acc:.4f}')
