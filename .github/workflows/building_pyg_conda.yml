@@ -12,8 +12,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11']
-        torch-version: [1.12.0, 1.13.0, 2.0.0]
-        cuda-version: ['cpu', 'cu102', 'cu113', 'cu116', 'cu117', 'cu118']
+        torch-version: [1.12.0, 1.13.0, 2.0.0, 2.1.0]
+        cuda-version: ['cpu', 'cu113', 'cu116', 'cu117', 'cu118', 'cu121']
         exclude:
           - torch-version: 1.12.0
             python-version: '3.11'
@@ -21,26 +21,32 @@ jobs:
             cuda-version: 'cu117'
           - torch-version: 1.12.0
             cuda-version: 'cu118'
+          - torch-version: 1.12.0
+            cuda-version: 'cu121'
           - torch-version: 1.13.0
             python-version: '3.11'
-          - torch-version: 1.13.0
-            cuda-version: 'cu102'
           - torch-version: 1.13.0
             cuda-version: 'cu113'
           - torch-version: 1.13.0
             cuda-version: 'cu118'
-          - torch-version: 2.0.0
-            cuda-version: 'cu102'
+          - torch-version: 1.13.0
+            cuda-version: 'cu121'
           - torch-version: 2.0.0
             cuda-version: 'cu113'
-          - torch-version: 2.0.0
-            cuda-version: 'cu115'
           - torch-version: 2.0.0
             cuda-version: 'cu116'
-          - os: macos-latest
-            cuda-version: 'cu102'
+          - torch-version: 1.13.0
+            cuda-version: 'cu121'
+          - torch-version: 2.1.0
+            cuda-version: 'cu113'
+          - torch-version: 2.1.0
+            cuda-version: 'cu116'
+          - torch-version: 2.1.0
+            cuda-version: 'cu117'
           - os: macos-latest
             cuda-version: 'cu113'
+          - os: macos-latest
+            cuda-version: 'cu115'
           - os: macos-latest
             cuda-version: 'cu116'
           - os: macos-latest
@@ -57,10 +63,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Free up disk space
+      - name: Free Disk Space (Ubuntu)
         if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo rm -rf /usr/share/dotnet
+        uses: jlumbroso/free-disk-space@main
 
       - name: Install Conda packages
         run: |
