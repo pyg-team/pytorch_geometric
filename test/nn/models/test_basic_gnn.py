@@ -334,7 +334,7 @@ def test_trim_to_layer():
 @withCUDA
 @onlyLinux
 @disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
