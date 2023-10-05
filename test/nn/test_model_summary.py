@@ -196,28 +196,7 @@ def test_summary_with_to_hetero_model():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
     # flake8: noqa
-    if False:
-        expected = """
-+---------------------------+---------------------+----------------+----------+
-| Layer                     | Input Shape         | Output Shape   | #Param   |
-|---------------------------+---------------------+----------------+----------|
-| GraphModule               |                     |                | 5,824    |
-| ├─(lin1)HeteroDictLinear  |                     |                | 544      |
-| │    └─(lins)ModuleDict   | --                  | --             | 544      |
-| │    │    └─(p)Linear     | --                  | --             | 272      |
-| │    │    └─(a)Linear     | --                  | --             | 272      |
-| ├─(conv1)ModuleDict       | --                  | --             | 3,168    |
-| │    └─(p__to__p)SAGEConv | [100, 16], [2, 200] | [100, 32]      | 1,056    |
-| │    └─(p__to__a)SAGEConv | [2, 200]            | [100, 32]      | 1,056    |
-| │    └─(a__to__p)SAGEConv | [2, 200]            | [100, 32]      | 1,056    |
-| ├─(lin2)HeteroDictLinear  |                     |                | 2,112    |
-| │    └─(lins)ModuleDict   | --                  | --             | 2,112    |
-| │    │    └─(p)Linear     | --                  | --             | 1,056    |
-| │    │    └─(a)Linear     | --                  | --             | 1,056    |
-+---------------------------+---------------------+----------------+----------+
-"""
-    else:
-        expected = """
+    expected = """
 +------------------------------------+---------------------+----------------+----------+
 | Layer                              | Input Shape         | Output Shape   | #Param   |
 |------------------------------------+---------------------+----------------+----------|

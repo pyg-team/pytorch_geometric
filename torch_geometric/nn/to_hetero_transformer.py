@@ -401,14 +401,7 @@ class ToHeteroTransformer(Transformer):
             return module
 
         if is_linear(module):
-            if False:
-                # faster grouped matmul path
-                in_channels, out_channels = get_linear_channels(module)
-                return HeteroDictLinear(
-                    in_channels, out_channels,
-                    types=self.metadata[int(has_edge_level_target)])
-            else:
-                return ToHeteroLinear(
+            return ToHeteroLinear(
                     module, self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
