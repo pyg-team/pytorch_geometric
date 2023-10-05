@@ -11,7 +11,7 @@ import torch_geometric
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
-from torch_geometric.typing import WITH_PYG_LIB, EdgeType, Metadata, NodeType
+from torch_geometric.typing import WITH_PYG_LIB, WITH_PT112, EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -22,7 +22,7 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
-WITH_HETEROLIN = WITH_PYG_LIB and int(torch.__version__.split('.')[1]) > 11
+WITH_HETEROLIN = WITH_PYG_LIB and WITH_PT112
 
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
