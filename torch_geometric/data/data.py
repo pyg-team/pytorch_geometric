@@ -507,6 +507,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
+        if self.use_cudf and isinstance(value, Tensor):
+            # convert to CUDF
         self._store[key] = value
 
     def __delitem__(self, key: str):
