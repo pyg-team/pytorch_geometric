@@ -355,7 +355,7 @@ def test_compile_graph_breaks(Model, device):
     model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
     model = to_jittable(model).to(device)
 
-    explanation = dynamo.explain(model, x, edge_index)
+    explanation = dynamo.explain(model)(x, edge_index)
     if hasattr(explanation, 'graph_break_count'):
         assert explanation.graph_break_count == 0
     else:
