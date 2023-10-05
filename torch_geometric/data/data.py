@@ -474,7 +474,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         if pos is not None:
             self.pos = pos
         self.use_cudf = use_cudf
-
+        if self.use_cudf:
+            # convert all inputs to CUDF
         for key, value in kwargs.items():
             setattr(self, key, value)
 
