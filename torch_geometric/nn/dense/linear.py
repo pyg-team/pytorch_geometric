@@ -9,7 +9,7 @@ from torch.nn.parameter import Parameter
 
 import torch_geometric.typing
 from torch_geometric.nn import inits
-from torch_geometric.typing import EdgeType, NodeType, pyg_lib
+from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
@@ -377,19 +377,12 @@ class HeteroDictLinear(torch.nn.Module):
         self.kwargs = kwargs
 
         self.lins = torch.nn.ModuleDict({
-            self.get_key(key):
+            key:
             Linear(channels, self.out_channels, **kwargs)
             for key, channels in self.in_channels.items()
         })
 
         self.reset_parameters()
-
-    def get_key(self, get_type):
-        return "_".join(get_type) if isinstance(get_type, tuple) else get_type
-
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
-        # returns a Linear layer for type
-        return self.lins[self.get_key(get_type)]
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
