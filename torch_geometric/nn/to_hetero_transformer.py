@@ -398,8 +398,8 @@ class ToHeteroTransformer(Transformer):
             return module
 
         if is_linear(module):
-            return ToHeteroLinear(
-                    module, self.metadata[int(has_edge_level_target)])
+            return ToHeteroLinear(module,
+                                  self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
