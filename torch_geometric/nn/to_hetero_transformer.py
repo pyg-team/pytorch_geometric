@@ -22,7 +22,7 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
-WITH_HETEROLIN = WITH_PYG_LIB and int(torch.__version__.split('.')[1]) <= 11
+WITH_HETEROLIN = WITH_PYG_LIB and int(torch.__version__.split('.')[1]) > 11
 
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
