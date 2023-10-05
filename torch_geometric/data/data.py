@@ -504,7 +504,10 @@ class Data(BaseData, FeatureStore, GraphStore):
     # __getitem__, __setitem__, and __delitem__ so, for example, we
     # can accept key: Union[str, TensorAttr] in __getitem__.
     def __getitem__(self, key: str) -> Any:
-        return self._store[key]
+        value = self._store[key]
+        if self.use_cudf and isinstance(value, Tensor):
+            # convert from CUDF to Tensor
+        return value
 
     def __setitem__(self, key: str, value: Any):
         if self.use_cudf and isinstance(value, Tensor):
@@ -566,6 +569,8 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def update(self, data: Union['Data', Dict[str, Any]]) -> 'Data':
         for key, value in data.items():
+            if self.use_cudf and isinstance(value, Tensor):
+                # convert to CUDF
             self[key] = value
         return self
 
@@ -589,35 +594,37 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Validates the correctness of the data."""
         cls_name = self.__class__.__name__
         status = True
-
-        num_nodes = self.num_nodes
-        if num_nodes is None:
-            status = False
-            warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
-                          raise_on_error)
-
-        if 'edge_index' in self:
-            if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
+        if self.use_cudf:
+            # CUDF versions of else
+        else:
+            num_nodes = self.num_nodes
+            if num_nodes is None:
                 status = False
-                warn_or_raise(
-                    f"'edge_index' needs to be of shape [2, num_edges] in "
-                    f"'{cls_name}' (found {self.edge_index.size()})",
-                    raise_on_error)
+                warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
+                              raise_on_error)
 
-        if 'edge_index' in self and self.edge_index.numel() > 0:
-            if self.edge_index.min() < 0:
-                status = False
-                warn_or_raise(
-                    f"'edge_index' contains negative indices in "
-                    f"'{cls_name}' (found {int(self.edge_index.min())})",
-                    raise_on_error)
+            if 'edge_index' in self:
+                if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' needs to be of shape [2, num_edges] in "
+                        f"'{cls_name}' (found {self.edge_index.size()})",
+                        raise_on_error)
 
-            if num_nodes is not None and self.edge_index.max() >= num_nodes:
-                status = False
-                warn_or_raise(
-                    f"'edge_index' contains larger indices than the number "
-                    f"of nodes ({num_nodes}) in '{cls_name}' "
-                    f"(found {int(self.edge_index.max())})", raise_on_error)
+            if 'edge_index' in self and self.edge_index.numel() > 0:
+                if self.edge_index.min() < 0:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' contains negative indices in "
+                        f"'{cls_name}' (found {int(self.edge_index.min())})",
+                        raise_on_error)
+
+                if num_nodes is not None and self.edge_index.max() >= num_nodes:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' contains larger indices than the number "
+                        f"of nodes ({num_nodes}) in '{cls_name}' "
+                        f"(found {int(self.edge_index.max())})", raise_on_error)
 
         return status
 
