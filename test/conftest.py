@@ -1,8 +1,10 @@
 import functools
 import os.path as osp
 import shutil
+from typing import Callable
 
 import pytest
+import torch
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset
@@ -44,11 +46,35 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 
 
 @pytest.fixture(scope='session')
-def get_dataset():
+def get_dataset() -> Callable:
     root = osp.join('/', 'tmp', 'pyg_test_datasets')
     yield functools.partial(load_dataset, root)
     if osp.exists(root):
         shutil.rmtree(root)
+
+
+@pytest.fixture()
+def get_tensor_frame() -> Callable:
+    import torch_frame
+
+    def _get_tensor_frame(num_rows: int) -> torch_frame.TensorFrame:
+        feat_dict = {
+            torch_frame.categorical: torch.randint(0, 3, size=(num_rows, 3)),
+            torch_frame.numerical: torch.randn(size=(num_rows, 2)),
+        }
+        col_names_dict = {
+            torch_frame.categorical: ['a', 'b', 'c'],
+            torch_frame.numerical: ['x', 'y'],
+        }
+        y = torch.randn(num_rows)
+
+        return torch_frame.TensorFrame(
+            feat_dict=feat_dict,
+            col_names_dict=col_names_dict,
+            y=y,
+        )
+
+    return _get_tensor_frame
 
 
 @pytest.fixture
