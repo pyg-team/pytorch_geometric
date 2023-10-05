@@ -20,6 +20,7 @@ class SubParam:
     def get_data(self):
         return self.param[self.idx].data
 
+
     def set_data(self, data):
         if self.param.data[self.idx].shape == data.t().shape:
             self.param.data[self.idx] = data.t()
@@ -40,7 +41,6 @@ class DummyLinear:
         self.out_channels = hetero_module.out_channels
         self.hetero_weight = hetero_module.weight
         self.use_bias = hetero_module.kwargs.get('bias', True)
-
         self.hetero_bias = hetero_module.bias
 
     @property
@@ -95,10 +95,7 @@ class ToHeteroLinear(torch.nn.Module):
         # neccesary to avoid changing usage in the following examples:
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
         # 2) model.lin[node_type].bias.data = conv.bias.data
-        if not torch_geometric.typing.WITH_PYG_LIB:
-            return self.hetero_module.weight[self.types.index(get_type)]
-        else:
-            return DummyLinear(get_type, self.types, self.hetero_module)
+        return DummyLinear(get_type, self.types, self.hetero_module)
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         return self.hetero_module(x, type_vec)
