@@ -356,10 +356,7 @@ def test_compile_graph_breaks(Model, device):
     model = to_jittable(model).to(device)
 
     explanation = dynamo.explain(model)(x, edge_index)
-    if hasattr(explanation, 'graph_break_count'):
-        assert explanation.graph_break_count == 0
-    else:
-        assert 'with 0 graph break' in explanation[0]
+    assert explanation.graph_break_count == 0
 
 
 @withPackage('pyg_lib')

@@ -11,8 +11,8 @@ Under the hood, :meth:`torch.compile` captures :pytorch:`PyTorch` programs via :
 
 In this tutorial, we show how to optimize your custom :pyg:`PyG` model via :meth:`torch.compile`.
 
-Introducing :meth:`torch_geometric.compile`
--------------------------------------------
+:meth:`torch_geometric.compile`
+-------------------------------
 
 By default, :meth:`torch.compile` struggles to optimize a custom :pyg:`PyG` model since its underlying :class:`~torch_geometric.nn.conv.MessagePassing` interface is JIT-unfriendly due to its generality.
 As such, in :pyg:`PyG 2.3`, we introduce :meth:`torch_geometric.compile`, a wrapper around :meth:`torch.compile` with the same signature.
@@ -55,16 +55,45 @@ and execute it as usual:
 
     out = model(data.x, data.edge_index)
 
+Maximizing Performance
+----------------------
+
+The :meth:`torch.compile`/:meth:`torch_geometric.compile` method provides two important arguments to be aware of:
+
+* Most of the mini-batches observed in :pyg:`PyG` are dynamic by nature, meaning that their shape varies across different mini-batches.
+  For these scenarios, we can enforce dynamic shape tracing in :pytorch:`PyTorch` via the :obj:`dynamic=True` argument:
+
+  .. code-block:: python
+
+      torch_geometric.compile(model, dynamic=True)
+
+  With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
+  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, leading to significant slowdowns in model execution on dynamic mini-batches.
+  As such, you should only ever not specify :obj:`dynamic=True` when graph sizes are guaranteed to never change.
+  Note that :obj:`dynamic=True` requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
+
+* In order to maximize speedup, graphs breaks in the compiled model should be limited.
+  We can force compilation to raise an error upon the first graph break encountered by using the :obj:`fullgraph=True` argument:
+
+  .. code-block:: python
+
+      torch_geometric.compile(model, fullgraph=True)
+
+  It is generally a good practice to confirm that your written model does not contain any graph breaks.
+  Importantly, there exists a few operations in :pyg:`PyG` that will currently lead to graph breaks (but workaround exists), *e.g.*:
+
+  1. :meth:`~torch_geometric.nn.pool.global_mean_pool` (and other pooling operators) perform device synchronization in case the batch size :obj:`size` is not passed, leading to a graph break.
+
+  2. :meth:`~torch_geometric.utils.remove_self_loops` and :meth:`~torch_geometric.utils.add_remaining_self_loops` mask the given :obj:`edge_index`, leading to a device synchronization to compute its final output shape.
+     As such, we recommend to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False`/:obj:`normalize=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNNorm`.
+
+Exampe Scripts
+--------------
+
 We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch_geometric.compile`:
 
-#. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN`
-#. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN`
-
-Note that :meth:`torch.compile(model, dynamic=True)` does sadly not yet work for :pyg:`PyG` models on :pytorch:`PyTorch 2.0`.
-While static compilation via :meth:`torch.compile(model, dynamic=False)` works fine, it will re-compile the model everytime it sees an input with a different shape.
-That currently does not play that nicely with the way :pyg:`PyG` performs mini-batching, and will hence lead to major slow-downs.
-We are working with the :pytorch:`PyTorch` team to fix this limitation (see `this <https://github.com/pytorch/pytorch/issues/94640>`_ :github:`GitHub` issue).
-A temporary workaround is to utilize the :class:`torch_geometric.transforms.Pad` transformation to ensure that all inputs are of equal shape.
+#. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN` (:obj:`dynamic=False`)
+#. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN` (:obj:`dynamic=True`)
 
 If you notice that :meth:`~torch_geometric.compile` fails for a certain :pyg:`PyG` model, do not hesitate to reach out either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/issues>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_.
 We are very eager to improve :meth:`~torch_geometric.compile` support across the whole :pyg:`PyG` code base.
