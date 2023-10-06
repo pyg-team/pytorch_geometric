@@ -242,7 +242,7 @@ class RGCNConv(MessagePassing):
 
                 self._use_segment_matmul_heuristic_output = (
                     torch_geometric.backend.use_segment_matmul_heuristic(
-                        num_segments=self.num_types,
+                        num_segments=self.num_relations,
                         max_segment_size=int(segment_count.max()),
                         in_channels=self.weight.size(1),
                         out_channels=self.weight.size(2),
