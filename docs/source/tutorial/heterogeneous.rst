@@ -329,7 +329,7 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
                 conv = HeteroConv({
                     ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
                     ('author', 'writes', 'paper'): SAGEConv((-1, -1), hidden_channels),
-                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels),
+                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels, add_self_loops=False),
                 }, aggr='sum')
                 self.convs.append(conv)
 
