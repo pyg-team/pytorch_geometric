@@ -282,6 +282,10 @@ For example, this is all it takes to implement a heterogeneous graph attention n
     model = GAT(hidden_channels=64, out_channels=dataset.num_classes)
     model = to_hetero(model, data.metadata(), aggr='sum')
 
+Note that we disable the creation of self loops via the :obj:`add_self_loops=False` argument.
+This is done because the creating of self-loops is not well-defined in bipartite graphs (message passing within an edge type with distinct source and destination node types).
+To preserve central node information, we thus utilize a learnable skip-connection via :obj:`conv(x, edge_index) + lin(x)` instead which will perform attention-based message passing from source to destination node features, which is then summed up to the existing destination node features.
+
 Afterwards, the created model can be trained as usual:
 
 .. _trainfunc:
