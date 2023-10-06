@@ -282,6 +282,10 @@ For example, this is all it takes to implement a heterogeneous graph attention n
     model = GAT(hidden_channels=64, out_channels=dataset.num_classes)
     model = to_hetero(model, data.metadata(), aggr='sum')
 
+Note that we disable the creation of self loops via the :obj:`add_self_loops=False` argument.
+This is done because the concept of self-loops is not well-defined in bipartite graphs (message passing for an edge type with distinct source and destination node types), and we would mistakenly add the edges :obj:`[(0, 0), (1, 1), ...]` to the bipartite graph.
+To preserve central node information, we thus utilize a learnable skip-connection via :obj:`conv(x, edge_index) + lin(x)` instead, which will perform attention-based message passing from source to destination node features, and its output is then summed up to the existing destination node features.
+
 Afterwards, the created model can be trained as usual:
 
 .. _trainfunc:
@@ -325,7 +329,7 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
                 conv = HeteroConv({
                     ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
                     ('author', 'writes', 'paper'): SAGEConv((-1, -1), hidden_channels),
-                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels),
+                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels, add_self_loops=False),
                 }, aggr='sum')
                 self.convs.append(conv)
 
