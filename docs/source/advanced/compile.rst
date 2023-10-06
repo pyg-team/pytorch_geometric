@@ -85,6 +85,7 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method further provide
   With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
   Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, leading to slowdowns in model execution on dynamic mini-batches.
   As such, you should only specify :obj:`dynamic=False` when graph sizes are guaranteed to never change.
+  Note that :obj:`dynamic=True` requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
 
 Exampe Scripts
 --------------
