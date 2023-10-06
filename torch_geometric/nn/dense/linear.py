@@ -105,8 +105,8 @@ class Linear(torch.nn.Module):
         else:
             self.register_parameter('bias', None)
 
-        self._load_hook = self._register_load_state_dict_pre_hook(
-            self._lazy_load_hook)
+        # self._load_hook = self._register_load_state_dict_pre_hook(
+        #     self._lazy_load_hook)
 
         self.reset_parameters()
 

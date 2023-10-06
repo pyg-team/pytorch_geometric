@@ -46,6 +46,7 @@ def test_lazy_linear(weight, bias, device):
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
 def test_load_lazy_linear(dim1, dim2, device):
+    print("DRIN")
     lin1 = Linear(dim1, 32).to(device)
     lin2 = Linear(dim1, 32).to(device)
     lin2.load_state_dict(lin1.state_dict())
