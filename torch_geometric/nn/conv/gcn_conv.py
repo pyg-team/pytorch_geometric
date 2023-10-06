@@ -18,6 +18,7 @@ from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils import add_self_loops as add_self_loops_fn
 from torch_geometric.utils import (
     is_torch_sparse_tensor,
+    remove_self_loops,
     scatter,
     spmm,
     to_edge_index,
