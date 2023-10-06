@@ -8,6 +8,7 @@ from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
+import torch_geometric.backend
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
@@ -140,18 +141,22 @@ def test_hetero_linear_initializer():
 
 
 @withCUDA
-@pytest.mark.parametrize('use_segmm', [True, False])
-def test_hetero_linear_amp(device, use_segmm):
+@pytest.mark.parametrize('use_segment_matmul', [None, True, False])
+def test_hetero_linear_amp(device, use_segment_matmul):
     warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
+
+    old_state = torch_geometric.backend.use_segment_matmul
+    torch_geometric.backend.use_segment_matmul = use_segment_matmul
 
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
     lin = HeteroLinear(16, 32, num_types=3).to(device)
-    lin.use_segmm = use_segmm
 
     with torch.cuda.amp.autocast():
         assert lin(x, type_vec).size() == (3, 32)
+
+    torch_geometric.backend.use_segment_matmul = old_state
 
 
 @withCUDA
