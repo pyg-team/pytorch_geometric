@@ -15,6 +15,7 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import remove_self_loops
 from torch_geometric.utils import add_self_loops as add_self_loops_fn
 from torch_geometric.utils import (
     is_torch_sparse_tensor,
@@ -88,8 +89,9 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if add_self_loops:
-        edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes)
+        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
+        edge_index, edge_weight = add_self_loops_fn(edge_index, edge_weight,
+                                                    fill_value, num_nodes)
 
     if edge_weight is None:
         edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
