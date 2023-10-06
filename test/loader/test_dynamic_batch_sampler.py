@@ -43,3 +43,8 @@ def test_dataloader_with_dynamic_batches():
         for data in loader:
             num_nodes_total += data.num_nodes
         assert num_nodes_total == 601
+
+    with pytest.raises(ValueError, match="The length of a DynamicBatchSampler is undefined"):
+        len(DynamicBatchSampler(data_list, max_num=300, num_steps=None))
+
+    assert len(DynamicBatchSampler(data_list, max_num=300, num_steps=2)) == 2

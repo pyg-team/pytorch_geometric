@@ -50,15 +50,13 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
             raise ValueError("`mode` choice should be either "
                              f"'node' or 'edge' (got '{mode}').")
 
-        if num_steps is None:
-            num_steps = len(dataset)
-
         self.dataset = dataset
         self.max_num = max_num
         self.mode = mode
         self.shuffle = shuffle
         self.skip_too_big = skip_too_big
         self.num_steps = num_steps
+        self.max_steps = num_steps or len(dataset)
 
     def __iter__(self) -> Iterator[List[int]]:
         batch = []
@@ -72,7 +70,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
             indices = torch.arange(len(self.dataset), dtype=torch.long)
 
         while (num_processed < len(self.dataset)
-               and num_steps < self.num_steps):
+               and num_steps < self.max_steps):
             # Fill batch
             for idx in indices[num_processed:]:
                 # Size of sample
@@ -101,3 +99,12 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
             batch = []
             batch_n = 0
             num_steps += 1
+
+    def __len__(self) -> Optional[int]:
+        if self.num_steps is not None:
+            return self.num_steps
+
+        raise ValueError("The length of a DynamicBatchSampler is undefined "
+                         "since the number of steps per epoch is ambiguous. "
+                         "Either specify `num_steps` or use a static batch "
+                         "sampler.")
