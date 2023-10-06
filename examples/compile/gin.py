@@ -9,6 +9,9 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, GINConv, global_add_pool
 
+if not torch_geometric.typing.WITH_PT21:
+    quit('Dynamic shape compilation requires PyTorch >= 2.1.0')
+
 if torch.cuda.is_available():
     device = torch.device('cuda')
 elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():

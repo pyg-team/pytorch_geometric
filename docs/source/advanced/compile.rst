@@ -92,8 +92,8 @@ Exampe Scripts
 
 We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch_geometric.compile`:
 
-#. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN`
-#. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN`
+#. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN` (:obj:`dynamic=False`)
+#. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN` (:obj:`dynamic=True`)
 
 If you notice that :meth:`~torch_geometric.compile` fails for a certain :pyg:`PyG` model, do not hesitate to reach out either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/issues>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_.
 We are very eager to improve :meth:`~torch_geometric.compile` support across the whole :pyg:`PyG` code base.
