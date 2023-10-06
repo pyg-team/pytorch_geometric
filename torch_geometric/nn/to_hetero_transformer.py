@@ -46,7 +46,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         import torch
         from torch_geometric.nn import SAGEConv, to_hetero
 
-        class GNN(torch.nn.Module):cd
+        class GNN(torch.nn.Module):
             def __init__(self):
                 super().__init__()
                 self.conv1 = SAGEConv((-1, -1), 32)
