@@ -230,7 +230,6 @@ def test_summary_with_to_hetero_model():
 | │    └─(hetero_module)HeteroLinear | [200, 32], [200]    | [200, 32]      | 2,112    |
 +------------------------------------+---------------------+----------------+----------+
 """
-    print(summary(model, x_dict, edge_index_dict))
     assert summary(model, x_dict, edge_index_dict) == expected[1:-1]
 
 
