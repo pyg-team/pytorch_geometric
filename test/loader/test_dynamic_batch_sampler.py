@@ -33,13 +33,6 @@ def test_dataloader_with_dynamic_batches():
         num_nodes_total += data.num_nodes
     assert num_nodes_total == 404
 
-    # Test warning
-    batch_sampler = DynamicBatchSampler(data_list, 300, skip_too_big=False,
-                                        num_steps=2)
-    loader = DataLoader(data_list, batch_sampler=batch_sampler)
-
-    with pytest.warns(UserWarning, match="is larger than 300 nodes"):
-        num_nodes_total = 0
-        for data in loader:
-            num_nodes_total += data.num_nodes
-        assert num_nodes_total == 601
+    with pytest.raises(ValueError, match="length of 'DynamicBatchSampler'"):
+        len(DynamicBatchSampler(data_list, max_num=300))
+    assert len(DynamicBatchSampler(data_list, max_num=300, num_steps=2)) == 2

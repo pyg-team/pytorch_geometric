@@ -111,7 +111,7 @@ def real_sph_harm(k, zero_m_only=True, spherical_coordinates=True):
         z = sym.symbols('z')
         for i in range(len(P_l_m)):
             for j in range(len(P_l_m[i])):
-                if type(P_l_m[i][j]) != int:
+                if not isinstance(P_l_m[i][j], int):
                     P_l_m[i][j] = P_l_m[i][j].subs(z, sym.cos(theta))
         if not zero_m_only:
             phi = sym.symbols('phi')
