@@ -101,6 +101,3 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
             batch = []
             batch_n = 0
             num_steps += 1
-
-    def __len__(self) -> int:
-        return self.num_steps
