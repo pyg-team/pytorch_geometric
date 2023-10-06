@@ -1,5 +1,6 @@
-import torch
 from typing import Optional
+
+import torch
 
 # If set to `True`, PyG is configured to use the `segment_matmul` and
 # `grouped_matmul` kernels from `pyg-lib` to parallelize matrix multiplication

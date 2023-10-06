@@ -5,8 +5,8 @@ from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
 
-import torch_geometric.typing
 import torch_geometric.backend
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
