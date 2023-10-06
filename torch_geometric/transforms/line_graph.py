@@ -41,6 +41,12 @@ class LineGraph(BaseTransform):
         row, col = edge_index
 
         if self.force_directed or data.is_directed():
+# ==============change==================
+            print("It's a direct graph")
+            old_src, old_dst = data.edge_index #
+            line_graph_edge_attr = data.x[old_dst]#
+            (_,_),line_graph_edge_attr = coalesce(edge_index, line_graph_edge_attr, N, N)
+# ======================================
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
             count = scatter(torch.ones_like(row), row, dim=0,
@@ -55,6 +61,10 @@ class LineGraph(BaseTransform):
             data.edge_index = torch.stack([row, col], dim=0)
             data.x = data.edge_attr
             data.num_nodes = edge_index.size(1)
+# ============change=====================
+            src, dst = data.edge_index
+            data.edge_attr = line_graph_edge_attr[src]
+# =======================================
 
         else:
             # Compute node indices.
@@ -91,6 +101,7 @@ class LineGraph(BaseTransform):
                 data.x = scatter(edge_attr, i, dim=0, dim_size=N, reduce='sum')
             data.edge_index = joints
             data.num_nodes = edge_index.size(1) // 2
+            data.edge_attr = None
 
-        data.edge_attr = None
+#         data.edge_attr = None
         return data
