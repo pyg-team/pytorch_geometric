@@ -46,7 +46,6 @@ def test_lazy_linear(weight, bias, device):
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
 def test_load_lazy_linear(dim1, dim2, device):
-    print("DRIN")
     lin1 = Linear(dim1, 32).to(device)
     lin2 = Linear(dim1, 32).to(device)
     lin2.load_state_dict(lin1.state_dict())
@@ -81,13 +80,6 @@ def test_identical_linear_default_initialization(lazy):
     assert torch.equal(lin1.weight, lin2.weight)
     assert torch.equal(lin1.bias, lin2.bias)
     assert torch.allclose(lin1(x), lin2(x))
-
-
-@withPackage('torch<=1.12')
-def test_copy_unintialized_parameter():
-    weight = UninitializedParameter()
-    with pytest.raises(Exception):
-        copy.deepcopy(weight)
 
 
 @withCUDA

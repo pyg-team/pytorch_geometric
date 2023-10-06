@@ -105,20 +105,7 @@ class Linear(torch.nn.Module):
         else:
             self.register_parameter('bias', None)
 
-        # self._load_hook = self._register_load_state_dict_pre_hook(
-        #     self._lazy_load_hook)
-
         self.reset_parameters()
-
-    def __deepcopy__(self, memo):
-        out = Linear(self.in_channels, self.out_channels, self.bias
-                     is not None, self.weight_initializer,
-                     self.bias_initializer)
-        if self.in_channels > 0:
-            out.weight = copy.deepcopy(self.weight, memo)
-        if self.bias is not None:
-            out.bias = copy.deepcopy(self.bias, memo)
-        return out
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -152,25 +139,6 @@ class Linear(torch.nn.Module):
                 destination[prefix + 'bias'] = self.bias
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
-
-    def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
-                        missing_keys, unexpected_keys, error_msgs):
-
-        weight = state_dict.get(prefix + 'weight', None)
-
-        if weight is not None and is_uninitialized_parameter(weight):
-            self.in_channels = -1
-            self.weight = torch.nn.parameter.UninitializedParameter()
-            if not hasattr(self, '_hook'):
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-
-        elif weight is not None and is_uninitialized_parameter(self.weight):
-            self.in_channels = weight.size(-1)
-            self.weight.materialize((self.out_channels, self.in_channels))
-            if hasattr(self, '_hook'):
-                self._hook.remove()
-                delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
