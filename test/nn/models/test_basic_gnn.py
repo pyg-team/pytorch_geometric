@@ -335,7 +335,7 @@ def test_trim_to_layer():
 @onlyLinux
 @disableExtensions
 @withPackage('torch>=2.1.0')
-@pytest.mark.parametrize('Model', [GCN])
+@pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
 
@@ -345,7 +345,7 @@ def test_compile_graph_breaks(Model, device):
     kwargs = {}
     if Model in {GCN, GAT}:
         # Adding self-loops inside the model leads to graph breaks :(
-        kwargs['add_self_loops'] = True
+        kwargs['add_self_loops'] = False
 
     if Model in {PNA}:  # `PNA` requires additional arguments:
         kwargs['aggregators'] = ['sum', 'mean', 'min', 'max', 'var', 'std']

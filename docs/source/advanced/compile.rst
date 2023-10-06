@@ -68,12 +68,12 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method further provide
       torch_geometric.compile(model, fullgraph=True)
 
   It is generally a good practice to confirm that your written model does not contain any graph breaks.
-  Importantly, there exists a few operations in :pyg:`PyG` that currently enforce graph breaks (but workaround exists), *e.g.*:
+  Importantly, there exists a few operations in :pyg:`PyG` that will currently lead to graph breaks (but workaround exists), *e.g.*:
 
   1. :meth:`~torch_geometric.nn.pool.global_mean_pool` (and other pooling operators) perform device synchronization in case the batch size :obj:`size` is not passed, leading to a graph break.
 
   2. :meth:`~torch_geometric.utils.remove_self_loops` and :meth:`~torch_geometric.utils.add_remaining_self_loops` mask the given :obj:`edge_index`, leading to a device synchronization to compute its final output shape.
-     As such, it is generally recommended to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNNorm`.
+     As such, we recommend to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNNorm`.
 
 * Most of the mini-batches observed in :pyg:`PyG` are dynamic by nature, meaning that their shape varies across different mini-batches.
   For these scenarios, we can enforce dynamic shape tracing in :pytorch:`PyTorch` via the :obj:`dynamic=True` argument:
@@ -83,7 +83,7 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method further provide
       torch_geometric.compile(model, dynamic=True)
 
   With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
-  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, leading to slowdowns in model execution on dynamic mini-batches.
+  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, leading to significant slowdowns in model execution on dynamic mini-batches.
   As such, you should only specify :obj:`dynamic=False` when graph sizes are guaranteed to never change.
   Note that :obj:`dynamic=True` requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
 

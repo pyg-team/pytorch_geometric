@@ -26,8 +26,13 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
-init_wandb(name=f'GCN-{args.dataset}', lr=args.lr, epochs=args.epochs,
-           hidden_channels=args.hidden_channels, device=device)
+init_wandb(
+    name=f'GCN-{args.dataset}',
+    lr=args.lr,
+    epochs=args.epochs,
+    hidden_channels=args.hidden_channels,
+    device=device,
+)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
