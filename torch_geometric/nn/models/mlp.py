@@ -223,6 +223,8 @@ class MLP(torch.nn.Module):
         # the value of an input argument.
         emb: Optional[Tensor] = None
 
+        # If `plain_last=True`, then `len(norms) = len(lins) -1, thus skipping
+        # the execution of the last layer inside the for-loop.
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
@@ -239,7 +241,6 @@ class MLP(torch.nn.Module):
 
         if self.plain_last:
             x = self.lins[-1](x)
-            x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
         return (x, emb) if isinstance(return_emb, bool) else x
 
