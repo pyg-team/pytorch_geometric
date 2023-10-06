@@ -6,3 +6,4 @@ Use-Cases & Applications
 
     explain
     shallow_node_embeddings
+    graph_transformer
