@@ -241,6 +241,7 @@ class MLP(torch.nn.Module):
 
         if self.plain_last:
             x = self.lins[-1](x)
+            x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
         return (x, emb) if isinstance(return_emb, bool) else x
 
