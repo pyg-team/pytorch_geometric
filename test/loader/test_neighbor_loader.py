@@ -24,6 +24,7 @@ from torch_geometric.typing import (
     WITH_PYG_LIB,
     WITH_TORCH_SPARSE,
     WITH_WEIGHTED_NEIGHBOR_SAMPLE,
+    TensorFrame,
 )
 from torch_geometric.utils import (
     is_undirected,
@@ -782,3 +783,48 @@ def test_weighted_hetero_neighbor_loader():
     assert batch['paper', 'paper'].num_edges == 2
     global_edge_index = batch['paper'].n_id[batch['paper', 'paper'].edge_index]
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
+
+
+@withPackage('torch_frame')
+@withCUDA
+@onlyNeighborSampler
+@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
+def test_homo_neighbor_with_tensor_frame(device, dtype, filter_per_worker,
+                                         get_tensor_frame):
+
+    torch.manual_seed(12345)
+
+    data = Data()
+
+    data.x = get_tensor_frame(100)
+    data.edge_index = get_random_edge_index(100, 100, 500, dtype, device)
+    data.edge_attr = get_tensor_frame(500)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[5] * 2,
+        batch_size=20,
+        filter_per_worker=filter_per_worker,
+    )
+
+    assert str(loader) == 'NeighborLoader()'
+    assert len(loader) == 5
+
+    batch = loader([0])
+    assert isinstance(batch, Data)
+    assert batch.n_id[:1].tolist() == [0]
+
+    for i, batch in enumerate(loader):
+        assert isinstance(batch, Data)
+        assert batch.x.device == device
+        assert isinstance(batch.x, TensorFrame)
+        assert batch.x.num_rows <= 100
+        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.input_id.numel() == batch.batch_size == 20
+        assert batch.edge_index.device == device
+        assert batch.edge_index.min() >= 0
+        assert batch.edge_index.max() < batch.num_nodes
+        assert batch.edge_attr.device == device
+        assert isinstance(batch.edge_attr, TensorFrame)
+        assert batch.edge_attr.num_rows == batch.edge_index.size(1)
