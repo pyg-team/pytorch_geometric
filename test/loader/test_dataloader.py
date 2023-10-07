@@ -7,7 +7,11 @@ import torch
 
 from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.testing import get_random_edge_index, withCUDA
+from torch_geometric.testing import (
+    get_random_edge_index,
+    withCUDA,
+    withPackage,
+)
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
@@ -179,6 +183,26 @@ def test_heterogeneous_dataloader(num_workers):
 
         for store in batch.stores:
             assert id(batch) == id(store._parent())
+
+
+@withPackage('torch_frame')
+def test_dataloader_tensor_frame(get_tensor_frame):
+    tf = get_tensor_frame(10)
+    loader = DataLoader([tf, tf, tf, tf], batch_size=2, shuffle=False)
+    assert len(loader) == 2
+
+    for batch in loader:
+        assert batch.num_rows == 20
+
+    data = Data(tf=tf, edge_index=get_random_edge_index(10, 10, 20))
+    loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False)
+    assert len(loader) == 2
+
+    for batch in loader:
+        assert batch.num_graphs == len(batch) == 2
+        assert batch.num_nodes == 20
+        assert batch.tf.num_rows == 20
+        assert batch.edge_index.max() >= 10
 
 
 if __name__ == '__main__':
