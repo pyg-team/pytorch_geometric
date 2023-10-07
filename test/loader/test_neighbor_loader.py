@@ -14,6 +14,7 @@ from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
     get_random_edge_index,
+    get_random_tensor_frame,
     onlyLinux,
     onlyNeighborSampler,
     onlyOnline,
@@ -24,6 +25,7 @@ from torch_geometric.typing import (
     WITH_PYG_LIB,
     WITH_TORCH_SPARSE,
     WITH_WEIGHTED_NEIGHBOR_SAMPLE,
+    TensorFrame,
 )
 from torch_geometric.utils import (
     is_undirected,
@@ -782,3 +784,33 @@ def test_weighted_hetero_neighbor_loader():
     assert batch['paper', 'paper'].num_edges == 2
     global_edge_index = batch['paper'].n_id[batch['paper', 'paper'].edge_index]
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
+
+
+@withCUDA
+@onlyNeighborSampler
+@withPackage('torch_frame')
+def test_neighbor_loader_with_tensor_frame(device):
+    data = Data()
+    data.tf = get_random_tensor_frame(num_rows=100, device=device)
+    data.edge_index = get_random_edge_index(100, 100, 500, device=device)
+    data.edge_attr = get_random_tensor_frame(500, device=device)
+    data.global_tf = get_random_tensor_frame(num_rows=1, device=device)
+
+    loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20)
+    assert len(loader) == 5
+
+    for batch in loader:
+        assert isinstance(batch.tf, TensorFrame)
+        assert batch.tf.device == device
+        assert batch.tf.num_rows == batch.n_id.numel()
+        assert batch.tf == data.tf[batch.n_id]
+
+        assert isinstance(batch.edge_attr, TensorFrame)
+        assert batch.edge_attr.device == device
+        assert batch.edge_attr.num_rows == batch.e_id.numel()
+        assert batch.edge_attr == data.edge_attr[batch.e_id]
+
+        assert isinstance(batch.global_tf, TensorFrame)
+        assert batch.global_tf.device == device
+        assert batch.global_tf.num_rows == 1
+        assert batch.global_tf == data.global_tf

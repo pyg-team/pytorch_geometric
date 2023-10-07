@@ -7,7 +7,7 @@ import torch.multiprocessing as mp
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.storage import AttrType
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import get_random_tensor_frame, withPackage
 
 
 def test_data():
@@ -484,8 +484,8 @@ def test_data_generate_ids():
 
 
 @withPackage('torch_frame')
-def test_data_with_tensor_frame(get_tensor_frame):
-    tf = get_tensor_frame(num_rows=10)
+def test_data_with_tensor_frame():
+    tf = get_random_tensor_frame(num_rows=10)
     data = Data(tf=tf, edge_index=torch.randint(0, 10, size=(2, 20)))
 
     # Test basic attributes:
