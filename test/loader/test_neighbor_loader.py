@@ -785,46 +785,31 @@ def test_weighted_hetero_neighbor_loader():
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
 
 
-@withPackage('torch_frame')
 @withCUDA
 @onlyNeighborSampler
-@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-@pytest.mark.parametrize('filter_per_worker', [None, True, False])
-def test_homo_neighbor_with_tensor_frame(device, dtype, filter_per_worker,
-                                         get_tensor_frame):
-
-    torch.manual_seed(12345)
-
+@withPackage('torch_frame')
+def test_neighbor_loader_with_tensor_frame(device, get_tensor_frame):
     data = Data()
+    data.tf = get_tensor_frame(num_rows=100, device=device)
+    data.edge_index = get_random_edge_index(100, 100, 500, device=device)
+    data.edge_attr = get_tensor_frame(500, device=device)
+    data.global_tf = get_tensor_frame(num_rows=1, device=device)
 
-    data.x = get_tensor_frame(100)
-    data.edge_index = get_random_edge_index(100, 100, 500, dtype, device)
-    data.edge_attr = get_tensor_frame(500)
-
-    loader = NeighborLoader(
-        data,
-        num_neighbors=[5] * 2,
-        batch_size=20,
-        filter_per_worker=filter_per_worker,
-    )
-
-    assert str(loader) == 'NeighborLoader()'
+    loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20)
     assert len(loader) == 5
 
-    batch = loader([0])
-    assert isinstance(batch, Data)
-    assert batch.n_id[:1].tolist() == [0]
+    for batch in loader:
+        assert isinstance(batch.tf, TensorFrame)
+        assert batch.tf.device == device
+        assert batch.tf.num_rows == batch.n_id.numel()
+        assert batch.tf == data.tf[batch.n_id]
 
-    for i, batch in enumerate(loader):
-        assert isinstance(batch, Data)
-        assert batch.x.device == device
-        assert isinstance(batch.x, TensorFrame)
-        assert batch.x.num_rows <= 100
-        assert batch.n_id.size() == (batch.num_nodes, )
-        assert batch.input_id.numel() == batch.batch_size == 20
-        assert batch.edge_index.device == device
-        assert batch.edge_index.min() >= 0
-        assert batch.edge_index.max() < batch.num_nodes
-        assert batch.edge_attr.device == device
         assert isinstance(batch.edge_attr, TensorFrame)
-        assert batch.edge_attr.num_rows == batch.edge_index.size(1)
+        assert batch.edge_attr.device == device
+        assert batch.edge_attr.num_rows == batch.e_id.numel()
+        assert batch.edge_attr == data.edge_attr[batch.e_id]
+
+        assert isinstance(batch.global_tf, TensorFrame)
+        assert batch.global_tf.device == device
+        assert batch.global_tf.num_rows == 1
+        assert batch.global_tf == data.global_tf

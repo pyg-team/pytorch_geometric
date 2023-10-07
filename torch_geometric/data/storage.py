@@ -365,14 +365,17 @@ class NodeStorage(BaseStorage):
             self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
 
         if key in self._cached_attr[AttrType.NODE]:
+            print('CACHED NODE', key)
             return True
         if key in self._cached_attr[AttrType.OTHER]:
+            print('CACHED OTHER', key)
             return False
 
         value = self[key]
 
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_nodes):
+            print("CACHE NODE ATTR ", key)
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
@@ -631,21 +634,24 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
 
         if key in self._cached_attr[AttrType.NODE]:
+            print("CACHED NODE", key)
             return True
         if key in self._cached_attr[AttrType.EDGE]:
+            print("CACHED EDGE", key)
             return False
         if key in self._cached_attr[AttrType.OTHER]:
+            print("CACHED OTHER", key)
             return False
 
         value = self[key]
 
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_nodes):
+            print("CACHE NODE", key)
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:
@@ -692,7 +698,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:
