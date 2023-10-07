@@ -14,6 +14,7 @@ from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
     get_random_edge_index,
+    get_random_tensor_frame,
     onlyLinux,
     onlyNeighborSampler,
     onlyOnline,
@@ -788,12 +789,12 @@ def test_weighted_hetero_neighbor_loader():
 @withCUDA
 @onlyNeighborSampler
 @withPackage('torch_frame')
-def test_neighbor_loader_with_tensor_frame(device, get_tensor_frame):
+def test_neighbor_loader_with_tensor_frame(device):
     data = Data()
-    data.tf = get_tensor_frame(num_rows=100, device=device)
+    data.tf = get_random_tensor_frame(num_rows=100, device=device)
     data.edge_index = get_random_edge_index(100, 100, 500, device=device)
-    data.edge_attr = get_tensor_frame(500, device=device)
-    data.global_tf = get_tensor_frame(num_rows=1, device=device)
+    data.edge_attr = get_random_tensor_frame(500, device=device)
+    data.global_tf = get_random_tensor_frame(num_rows=1, device=device)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20)
     assert len(loader) == 5
