@@ -74,10 +74,7 @@ def index_select(
 
     if isinstance(value, TensorFrame):
         assert dim == 0
-        print('initial', value.num_rows)
-        out = value[index]
-        print('after', out.num_rows)
-        return out
+        return value[index]
 
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
@@ -90,10 +87,6 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
                        index: Tensor):
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
-        if isinstance(value, TensorFrame):
-            print(key, out_store.num_nodes, store.is_node_attr(key),
-                  value.num_rows)
-
         if key == 'num_nodes':
             out_store.num_nodes = index.numel()
 
