@@ -186,15 +186,14 @@ def test_heterogeneous_dataloader(num_workers):
             assert id(batch) == id(store._parent())
 
 
-@withPackage('torch-frame')
+@withPackage('torch_frame')
 def test_dataloader_tensor_frame(get_tensor_frame):
     data = get_tensor_frame(10)
     loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False)
     assert len(loader) == 2
 
     for batch in loader:
-        assert batch.num_graphs == len(batch) == 2
-        assert batch.num_nodes == 40
+        assert batch.num_rows == 20
 
     data = Data(x=get_tensor_frame(10),
                 edge_index=get_random_edge_index(10, 10, 20))
@@ -202,8 +201,9 @@ def test_dataloader_tensor_frame(get_tensor_frame):
     assert len(loader) == 2
     for batch in loader:
         assert batch.num_graphs == len(batch) == 2
-        assert batch.num_nodes == 40
+        assert batch.num_nodes == 20
         assert isinstance(batch.x, TensorFrame)
+        assert batch.edge_index.max() >= 10
 
 
 if __name__ == '__main__':
