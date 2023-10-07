@@ -1,10 +1,9 @@
 import functools
 import os.path as osp
 import shutil
-from typing import Callable, Optional
+from typing import Callable
 
 import pytest
-import torch
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset

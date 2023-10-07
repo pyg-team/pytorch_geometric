@@ -9,6 +9,7 @@ from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import (
     get_random_edge_index,
+    get_random_tensor_frame,
     withCUDA,
     withPackage,
 )
@@ -186,8 +187,8 @@ def test_heterogeneous_dataloader(num_workers):
 
 
 @withPackage('torch_frame')
-def test_dataloader_tensor_frame(get_tensor_frame):
-    tf = get_tensor_frame(10)
+def test_dataloader_tensor_frame():
+    tf = get_random_tensor_frame(num_rows=10)
     loader = DataLoader([tf, tf, tf, tf], batch_size=2, shuffle=False)
     assert len(loader) == 2
 
