@@ -174,7 +174,24 @@ def _collate(
         return value, slices, incs
 
     elif isinstance(elem, TensorFrame):
-        raise NotImplementedError()
+        import torch_frame
+        key = str(key)
+
+        sizes = torch.tensor([value.num_rows for value in values])
+        slices = cumsum(sizes)
+        incs = None
+        if increment:
+            # Should this be supported?
+            # Would both feat_dict and y need to be incremented?
+            pass
+
+        if torch.utils.data.get_worker_info() is not None:
+            # TODO: support out parameter for tensor_frame.cat
+            # Support writing tensors in TensorFrame to shared memory
+            pass
+
+        value = torch_frame.cat(values, along="row")
+        return value, slices, incs
 
     elif is_sparse(elem) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
