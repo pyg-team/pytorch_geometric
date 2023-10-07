@@ -12,7 +12,6 @@ from torch_geometric.testing import (
     withCUDA,
     withPackage,
 )
-from torch_geometric.typing import TensorFrame
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
@@ -188,21 +187,21 @@ def test_heterogeneous_dataloader(num_workers):
 
 @withPackage('torch_frame')
 def test_dataloader_tensor_frame(get_tensor_frame):
-    data = get_tensor_frame(10)
-    loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False)
+    tf = get_tensor_frame(10)
+    loader = DataLoader([tf, tf, tf, tf], batch_size=2, shuffle=False)
     assert len(loader) == 2
 
     for batch in loader:
         assert batch.num_rows == 20
 
-    data = Data(x=get_tensor_frame(10),
-                edge_index=get_random_edge_index(10, 10, 20))
+    data = Data(tf=tf, edge_index=get_random_edge_index(10, 10, 20))
     loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False)
     assert len(loader) == 2
+
     for batch in loader:
         assert batch.num_graphs == len(batch) == 2
         assert batch.num_nodes == 20
-        assert isinstance(batch.x, TensorFrame)
+        assert batch.tf.num_rows == 20
         assert batch.edge_index.max() >= 10
 
 

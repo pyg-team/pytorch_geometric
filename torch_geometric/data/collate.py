@@ -8,7 +8,12 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
-from torch_geometric.typing import SparseTensor, TensorFrame, torch_sparse
+from torch_geometric.typing import (
+    SparseTensor,
+    TensorFrame,
+    torch_frame,
+    torch_sparse,
+)
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
@@ -174,24 +179,11 @@ def _collate(
         return value, slices, incs
 
     elif isinstance(elem, TensorFrame):
-        import torch_frame
         key = str(key)
-
         sizes = torch.tensor([value.num_rows for value in values])
         slices = cumsum(sizes)
-        incs = None
-        if increment:
-            # Should this be supported?
-            # Would both feat_dict and y need to be incremented?
-            pass
-
-        if torch.utils.data.get_worker_info() is not None:
-            # TODO: support out parameter for tensor_frame.cat
-            # Support writing tensors in TensorFrame to shared memory
-            pass
-
-        value = torch_frame.cat(values, along="row")
-        return value, slices, incs
+        value = torch_frame.cat(values, along='row')
+        return value, slices, None
 
     elif is_sparse(elem) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.

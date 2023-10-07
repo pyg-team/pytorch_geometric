@@ -8,7 +8,7 @@ from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.datapipes import DatasetAdapter
 from torch_geometric.data.on_disk_dataset import OnDiskDataset
-from torch_geometric.typing import TensorFrame
+from torch_geometric.typing import TensorFrame, torch_frame
 
 
 class Collater:
@@ -33,8 +33,7 @@ class Collater:
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
         elif isinstance(elem, TensorFrame):
-            import torch_frame
-            return torch_frame.cat(batch, along="row")
+            return torch_frame.cat(batch, along='row')
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
