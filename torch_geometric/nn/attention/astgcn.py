@@ -1,3 +1,5 @@
+#reference from https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/attention/astgcn.py
+
 import math
 from typing import List, Optional, Union
 
