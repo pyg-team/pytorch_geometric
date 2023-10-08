@@ -379,7 +379,7 @@ For this, simply run
 pip install torch_geometric
 ```
 
-PyG 2.3 requires that at least PyTorch 1.12 is installed.
+PyG 2.3 requires that at least PyTorch 1.11 is installed.
 
 ### Additional Libraries
 

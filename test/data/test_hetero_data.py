@@ -5,7 +5,11 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.testing import (
+    get_random_edge_index,
+    get_random_tensor_frame,
+    withPackage,
+)
 from torch_geometric.typing import TensorFrame
 
 x_paper = torch.randn(10, 16)
@@ -603,10 +607,10 @@ def test_basic_feature_store():
 
 
 @withPackage('torch_frame')
-def test_hetero_data_with_tensor_frame(get_tensor_frame):
+def test_hetero_data_with_tensor_frame():
     data = HeteroData()
-    data['paper'].tf = get_tensor_frame(num_rows=x_paper.size(0))
-    data['author'].tf = get_tensor_frame(num_rows=x_author.size(0))
+    data['paper'].tf = get_random_tensor_frame(num_rows=x_paper.size(0))
+    data['author'].tf = get_random_tensor_frame(num_rows=x_author.size(0))
     data['author', 'paper'].edge_index = edge_index_author_paper
 
     # Basic functionality:

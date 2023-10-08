@@ -645,7 +645,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:
@@ -692,7 +691,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:

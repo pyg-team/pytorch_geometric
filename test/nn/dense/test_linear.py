@@ -82,11 +82,13 @@ def test_identical_linear_default_initialization(lazy):
     assert torch.allclose(lin1(x), lin2(x))
 
 
-@withPackage('torch<=1.12')
 def test_copy_unintialized_parameter():
     weight = UninitializedParameter()
-    with pytest.raises(Exception):
+    if torch_geometric.typing.WITH_PT113:
         copy.deepcopy(weight)
+    else:  # PyTorch <= 1.12
+        with pytest.raises(Exception):
+            copy.deepcopy(weight)
 
 
 @withCUDA
