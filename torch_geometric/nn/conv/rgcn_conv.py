@@ -251,11 +251,10 @@ class RGCNConv(MessagePassing):
                 assert self._use_segment_matmul_heuristic_output is not None
                 use_segment_matmul = self._use_segment_matmul_heuristic_output
 
-            use_segment_matmul &= self.num_bases is None
-            use_segment_matmul &= x_l.is_floating_point()
-            use_segment_matmul &= isinstance(edge_index, Tensor)
+            if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
+                    and self.num_bases is None and x_l.is_floating_point()
+                    and isinstance(edge_index, Tensor)):
 
-            if use_segment_matmul and torch_geometric.typing.WITH_SEGMM:
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
