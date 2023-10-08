@@ -36,6 +36,7 @@ from torch_geometric.typing import (
     NodeType,
     OptTensor,
     SparseTensor,
+    TensorFrame,
 )
 from torch_geometric.utils import is_sparse, select, subgraph
 
@@ -438,9 +439,15 @@ class Data(BaseData, FeatureStore, GraphStore):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
-                 edge_attr: OptTensor = None, y: OptTensor = None,
-                 pos: OptTensor = None, **kwargs):
+    def __init__(
+        self,
+        x: Optional[Tensor] = None,
+        edge_index: OptTensor = None,
+        edge_attr: OptTensor = None,
+        y: OptTensor = None,
+        pos: OptTensor = None,
+        **kwargs,
+    ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
         super().__init__(tensor_attr_cls=DataTensorAttr)
@@ -753,6 +760,9 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, node_ids[i])
+                elif (isinstance(value, TensorFrame)
+                      and self.is_node_attr(attr)):
+                    data[key][attr] = value[node_ids[i]]
 
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -770,6 +780,9 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, edge_ids[i])
+                elif (isinstance(value, TensorFrame)
+                      and self.is_edge_attr(attr)):
+                    data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.
         exclude_keys = set(data.keys()) | {

@@ -20,6 +20,7 @@ from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
 from .molecule_net import MoleculeNet
+from .pcqm4m import PCQM4Mv2
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
@@ -60,6 +61,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
+from .neurograph import NeuroGraphDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -125,6 +127,7 @@ homo_datasets = [
     'ZINC',
     'AQSOL',
     'MoleculeNet',
+    'PCQM4Mv2',
     'Entities',
     'RelLinkPredDataset',
     'GEDDataset',
@@ -180,6 +183,7 @@ homo_datasets = [
     'Wikidata5M',
     'MyketDataset',
     'BrcaTcga',
+    'NeuroGraphDataset',
 ]
 
 hetero_datasets = [

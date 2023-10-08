@@ -1,5 +1,4 @@
 import os
-from abc import ABC
 from typing import Any, Callable, Iterable, List, Optional, Union
 
 from torch import Tensor
@@ -10,7 +9,7 @@ from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
 
 
-class OnDiskDataset(Dataset, ABC):
+class OnDiskDataset(Dataset):
     r"""Dataset base class for creating large graph datasets which do not
     easily fit into CPU memory at once by leveraging a :class:`Database`
     backend for on-disk storage and access of data objects.
@@ -54,7 +53,6 @@ class OnDiskDataset(Dataset, ABC):
         self,
         root: str,
         transform: Optional[Callable] = None,
-        *,
         pre_filter: Optional[Callable] = None,
         backend: str = 'sqlite',
         schema: Schema = object,

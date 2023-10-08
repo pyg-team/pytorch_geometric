@@ -5,6 +5,7 @@ from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
 
+import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
@@ -16,7 +17,6 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
-from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -127,10 +127,12 @@ class RGCNConv(MessagePassing):
         self.num_bases = num_bases
         self.num_blocks = num_blocks
         self.is_sorted = is_sorted
-        self.use_segmm: int = -1
+
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
+
+        self._use_segment_matmul_heuristic_output: Optional[bool] = None
 
         if num_bases is not None:
             self.weight = Parameter(
@@ -229,19 +231,37 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (torch_geometric.typing.WITH_SEGMM and self.num_bases is None
-                    and x_l.is_floating_point() and isinstance(
-                        edge_index, Tensor)) and (self.use_segmm == -1
-                                                  or bool(self.use_segmm)):
+
+            use_segment_matmul = torch_geometric.backend.use_segment_matmul
+            # If `use_segment_matmul` is not specified, use a simple heuristic
+            # to determine whether `segment_matmul` can speed up computation
+            # given the observed input sizes:
+            if use_segment_matmul is None:
+                segment_count = scatter(torch.ones_like(edge_type), edge_type,
+                                        dim_size=self.num_relations)
+
+                self._use_segment_matmul_heuristic_output = (
+                    torch_geometric.backend.use_segment_matmul_heuristic(
+                        num_segments=self.num_relations,
+                        max_segment_size=int(segment_count.max()),
+                        in_channels=self.weight.size(1),
+                        out_channels=self.weight.size(2),
+                    ))
+
+                assert self._use_segment_matmul_heuristic_output is not None
+                use_segment_matmul = self._use_segment_matmul_heuristic_output
+
+            use_segment_matmul &= self.num_bases is None
+            use_segment_matmul &= x_l.is_floating_point()
+            use_segment_matmul &= isinstance(edge_index, Tensor)
+
+            if use_segment_matmul and torch_geometric.typing.WITH_SEGMM:
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
                             edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
-                if self.use_segmm == -1:
-                    self.use_segmm = segmatmul_heuristic(
-                        x_l, edge_type_ptr, self.weight)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
             else:
