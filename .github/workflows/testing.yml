@@ -1,4 +1,4 @@
-name: Testing PyTorch 2.0
+name: Testing PyTorch 2.1
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 40
 

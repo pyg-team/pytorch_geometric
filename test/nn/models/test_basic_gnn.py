@@ -160,6 +160,28 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@pytest.mark.parametrize('norm', [
+    'BatchNorm',
+    'GraphNorm',
+    'InstanceNorm',
+    'LayerNorm',
+])
+def test_batch(norm):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    batch = torch.tensor([0, 0, 1])
+
+    model = GraphSAGE(8, 16, num_layers=2, norm=norm)
+    assert model.supports_norm_batch == (norm != 'BatchNorm')
+
+    out = model(x, edge_index, batch=batch)
+    assert out.size() == (3, 16)
+
+    if model.supports_norm_batch:
+        with pytest.raises(RuntimeError, match="out of bounds"):
+            model(x, edge_index, batch=batch, batch_size=1)
+
+
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
@@ -312,14 +334,10 @@ def test_trim_to_layer():
 @withCUDA
 @onlyLinux
 @disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
-
-    # TODO EdgeCNN and PNA currently lead to graph breaks on CUDA :(
-    if Model in {EdgeCNN, PNA} and device.type == 'cuda':
-        return
 
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
@@ -337,11 +355,8 @@ def test_compile_graph_breaks(Model, device):
     model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
     model = to_jittable(model).to(device)
 
-    explanation = dynamo.explain(model, x, edge_index)
-    if hasattr(explanation, 'graph_break_count'):
-        assert explanation.graph_break_count == 0
-    else:
-        assert 'with 0 graph break' in explanation[0]
+    explanation = dynamo.explain(model)(x, edge_index)
+    assert explanation.graph_break_count == 0
 
 
 @withPackage('pyg_lib')

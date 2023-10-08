@@ -8,10 +8,12 @@ from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
+import torch_geometric.backend
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import cumsum
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -80,11 +82,13 @@ def test_identical_linear_default_initialization(lazy):
     assert torch.allclose(lin1(x), lin2(x))
 
 
-@withPackage('torch<=1.12')
 def test_copy_unintialized_parameter():
     weight = UninitializedParameter()
-    with pytest.raises(Exception):
+    if torch_geometric.typing.WITH_PT113:
         copy.deepcopy(weight)
+    else:  # PyTorch <= 1.12
+        with pytest.raises(Exception):
+            copy.deepcopy(weight)
 
 
 @withCUDA
@@ -139,18 +143,22 @@ def test_hetero_linear_initializer():
 
 
 @withCUDA
-@pytest.mark.parametrize('use_segmm', [True, False])
-def test_hetero_linear_amp(device, use_segmm):
+@pytest.mark.parametrize('use_segment_matmul', [None, True, False])
+def test_hetero_linear_amp(device, use_segment_matmul):
     warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
+
+    old_state = torch_geometric.backend.use_segment_matmul
+    torch_geometric.backend.use_segment_matmul = use_segment_matmul
 
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
     lin = HeteroLinear(16, 32, num_types=3).to(device)
-    lin.use_segmm = use_segmm
 
     with torch.cuda.amp.autocast():
         assert lin(x, type_vec).size() == (3, 32)
+
+    torch_geometric.backend.use_segment_matmul = old_state
 
 
 @withCUDA
@@ -300,7 +308,7 @@ if __name__ == '__main__':
 
         xs = get_xs(mean, std, num_types, channels)
         count = torch.tensor([x.size(0) for x in xs])
-        ptr = torch.tensor([0] + [x.size(0) for x in xs]).cumsum(0)
+        ptr = cumsum(torch.tensor([x.size(0) for x in xs]))
         x = torch.cat(xs, dim=0)
         padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
         weight = torch.randn(num_types, channels, channels, device=args.device)

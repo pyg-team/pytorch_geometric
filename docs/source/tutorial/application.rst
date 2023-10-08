@@ -5,3 +5,4 @@ Use-Cases & Applications
     :name: rst-gallery
 
     explain
+    shallow_node_embeddings

@@ -45,3 +45,17 @@ def test_pdn_conv_with_sparse_node_input_feature():
 
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 32)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, edge_attr, (4, 4))
+        assert torch.allclose(conv(x, adj.t(), edge_attr), out, atol=1e-6)
+
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, edge_index, edge_attr), out)
+
+    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t(), edge_attr), out, atol=1e-6)
