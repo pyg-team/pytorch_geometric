@@ -49,6 +49,7 @@ nbsphinx_thumbnails = {
     'tutorial/heterogeneous': '_static/thumbnails/heterogeneous.png',
     'tutorial/create_dataset': '_static/thumbnails/create_dataset.png',
     'tutorial/load_csv': '_static/thumbnails/load_csv.png',
+    'tutorial/neighbor_loader': '_static/thumbnails/neighbor_loader.png',
     'tutorial/explain': '_static/thumbnails/explain.png',
     'tutorial/shallow_node_embeddings':
     '_static/thumbnails/shallow_node_embeddings.png',
