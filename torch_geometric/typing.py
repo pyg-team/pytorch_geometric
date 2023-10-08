@@ -216,6 +216,7 @@ try:
     WITH_TORCH_FRAME = True
     from torch_frame import TensorFrame
 except Exception:
+    torch_frame = object
     WITH_TORCH_FRAME = False
 
     class TensorFrame:
