@@ -7,8 +7,8 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
-from torch.nn import init
 import torch.nn.functional as F
+from torch.nn import init
 
 
 class Linear(nn.Module):
@@ -21,12 +21,10 @@ class Linear(nn.Module):
         c_out (int): Number of output channels.
         bias (bool, optional): Whether to have bias. Default: True.
     """
-
     def __init__(self, c_in: int, c_out: int, bias: bool = True):
         super(Linear, self).__init__()
-        self._mlp = torch.nn.Conv2d(
-            c_in, c_out, kernel_size=(1, 1), padding=(0, 0), stride=(1, 1), bias=bias
-        )
+        self._mlp = torch.nn.Conv2d(c_in, c_out, kernel_size=(1, 1),
+                                    padding=(0, 0), stride=(1, 1), bias=bias)
 
         self._reset_parameters()
 
@@ -62,8 +60,8 @@ class MixProp(nn.Module):
         dropout (float): Dropout rate.
         alpha (float): Ratio of retaining the root nodes's original states, a value between 0 and 1.
     """
-
-    def __init__(self, c_in: int, c_out: int, gdep: int, dropout: float, alpha: float):
+    def __init__(self, c_in: int, c_out: int, gdep: int, dropout: float,
+                 alpha: float):
         super(MixProp, self).__init__()
         self._mlp = Linear((gdep + 1) * c_in, c_out)
         self._gdep = gdep
@@ -79,7 +77,8 @@ class MixProp(nn.Module):
             else:
                 nn.init.uniform_(p)
 
-    def forward(self, X: torch.FloatTensor, A: torch.FloatTensor) -> torch.FloatTensor:
+    def forward(self, X: torch.FloatTensor,
+                A: torch.FloatTensor) -> torch.FloatTensor:
         """
         Making a forward pass of mix-hop propagation.
 
@@ -97,8 +96,7 @@ class MixProp(nn.Module):
         A = A / d.view(-1, 1)
         for _ in range(self._gdep):
             H = self._alpha * X + (1 - self._alpha) * torch.einsum(
-                "ncwl,vw->ncvl", (H, A)
-            )
+                "ncwl,vw->ncvl", (H, A))
             H_0 = torch.cat((H_0, H), dim=1)
         H_0 = self._mlp(H_0)
         return H_0
@@ -115,16 +113,16 @@ class DilatedInception(nn.Module):
         kernel_set (list of int): List of kernel sizes.
         dilated_factor (int, optional): Dilation factor.
     """
-
-    def __init__(self, c_in: int, c_out: int, kernel_set: list, dilation_factor: int):
+    def __init__(self, c_in: int, c_out: int, kernel_set: list,
+                 dilation_factor: int):
         super(DilatedInception, self).__init__()
         self._time_conv = nn.ModuleList()
         self._kernel_set = kernel_set
         c_out = int(c_out / len(self._kernel_set))
         for kern in self._kernel_set:
             self._time_conv.append(
-                nn.Conv2d(c_in, c_out, (1, kern), dilation=(1, dilation_factor))
-            )
+                nn.Conv2d(c_in, c_out, (1, kern),
+                          dilation=(1, dilation_factor)))
         self._reset_parameters()
 
     def _reset_parameters(self):
@@ -149,7 +147,7 @@ class DilatedInception(nn.Module):
         for i in range(len(self._kernel_set)):
             X.append(self._time_conv[i](X_in))
         for i in range(len(self._kernel_set)):
-            X[i] = X[i][..., -X[-1].size(3) :]
+            X[i] = X[i][..., -X[-1].size(3):]
         X = torch.cat(X, dim=1)
         return X
 
@@ -166,10 +164,8 @@ class GraphConstructor(nn.Module):
         alpha (float, optional): Tanh alpha for generating adjacency matrix, alpha controls the saturation rate
         xd (int, optional): Static feature dimension, default None.
     """
-
-    def __init__(
-        self, nnodes: int, k: int, dim: int, alpha: float, xd: Optional[int] = None
-    ):
+    def __init__(self, nnodes: int, k: int, dim: int, alpha: float,
+                 xd: Optional[int] = None):
         super(GraphConstructor, self).__init__()
         if xd is not None:
             self._static_feature_dim = xd
@@ -193,9 +189,8 @@ class GraphConstructor(nn.Module):
             else:
                 nn.init.uniform_(p)
 
-    def forward(
-        self, idx: torch.LongTensor, FE: Optional[torch.FloatTensor] = None
-    ) -> torch.FloatTensor:
+    def forward(self, idx: torch.LongTensor,
+                FE: Optional[torch.FloatTensor] = None) -> torch.FloatTensor:
         """
         Making a forward pass to construct an adjacency matrix from node embeddings.
 
@@ -218,8 +213,7 @@ class GraphConstructor(nn.Module):
         nodevec2 = torch.tanh(self._alpha * self._linear2(nodevec2))
 
         a = torch.mm(nodevec1, nodevec2.transpose(1, 0)) - torch.mm(
-            nodevec2, nodevec1.transpose(1, 0)
-        )
+            nodevec2, nodevec1.transpose(1, 0))
         A = F.relu(torch.tanh(self._alpha * a))
         mask = torch.zeros(idx.size(0), idx.size(0)).to(A.device)
         mask.fill_(float("0"))
@@ -230,9 +224,11 @@ class GraphConstructor(nn.Module):
 
 
 class LayerNormalization(nn.Module):
-    __constants__ = ["normalized_shape", "weight", "bias", "eps", "elementwise_affine"]
+    __constants__ = [
+        "normalized_shape", "weight", "bias", "eps", "elementwise_affine"
+    ]
     r"""An implementation of the layer normalization layer.
-    For details see this paper: `"Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks." 
+    For details see this paper: `"Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks."
     <https://arxiv.org/pdf/2005.11650.pdf>`_
 
     Args:
@@ -240,10 +236,8 @@ class LayerNormalization(nn.Module):
         eps (float, optional): Value added to the denominator for numerical stability. Default: 1e-5.
         elementwise_affine (bool, optional): Whether to conduct elementwise affine transformation or not. Default: True.
     """
-
-    def __init__(
-        self, normalized_shape: int, eps: float = 1e-5, elementwise_affine: bool = True
-    ):
+    def __init__(self, normalized_shape: int, eps: float = 1e-5,
+                 elementwise_affine: bool = True):
         super(LayerNormalization, self).__init__()
         self._normalized_shape = tuple(normalized_shape)
         self._eps = eps
@@ -261,7 +255,8 @@ class LayerNormalization(nn.Module):
             init.ones_(self._weight)
             init.zeros_(self._bias)
 
-    def forward(self, X: torch.FloatTensor, idx: torch.LongTensor) -> torch.FloatTensor:
+    def forward(self, X: torch.FloatTensor,
+                idx: torch.LongTensor) -> torch.FloatTensor:
         """
         Making a forward pass of layer normalization.
 
@@ -283,9 +278,8 @@ class LayerNormalization(nn.Module):
                 self._eps,
             )
         else:
-            return F.layer_norm(
-                X, tuple(X.shape[1:]), self._weight, self._bias, self._eps
-            )
+            return F.layer_norm(X, tuple(X.shape[1:]), self._weight,
+                                self._bias, self._eps)
 
 
 class MTGNNLayer(nn.Module):
@@ -313,7 +307,6 @@ class MTGNNLayer(nn.Module):
         propalpha (float): Prop alpha, ratio of retaining the root nodes's original states in mix-hop propagation, a value between 0 and 1.
 
     """
-
     def __init__(
         self,
         dilation_exponential: int,
@@ -339,12 +332,9 @@ class MTGNNLayer(nn.Module):
         self._gcn_true = gcn_true
 
         if dilation_exponential > 1:
-            rf_size_j = int(
-                rf_size_i
-                + (kernel_size - 1)
-                * (dilation_exponential ** j - 1)
-                / (dilation_exponential - 1)
-            )
+            rf_size_j = int(rf_size_i + (kernel_size - 1) *
+                            (dilation_exponential**j - 1) /
+                            (dilation_exponential - 1))
         else:
             rf_size_j = rf_size_i + j * (kernel_size - 1)
 
@@ -382,13 +372,11 @@ class MTGNNLayer(nn.Module):
             )
 
         if gcn_true:
-            self._mixprop_conv1 = MixProp(
-                conv_channels, residual_channels, gcn_depth, dropout, propalpha
-            )
+            self._mixprop_conv1 = MixProp(conv_channels, residual_channels,
+                                          gcn_depth, dropout, propalpha)
 
-            self._mixprop_conv2 = MixProp(
-                conv_channels, residual_channels, gcn_depth, dropout, propalpha
-            )
+            self._mixprop_conv2 = MixProp(conv_channels, residual_channels,
+                                          gcn_depth, dropout, propalpha)
 
         if seq_length > receptive_field:
             self._normalization = LayerNormalization(
@@ -398,7 +386,8 @@ class MTGNNLayer(nn.Module):
 
         else:
             self._normalization = LayerNormalization(
-                (residual_channels, num_nodes, receptive_field - rf_size_j + 1),
+                (residual_channels, num_nodes,
+                 receptive_field - rf_size_j + 1),
                 elementwise_affine=layer_norm_affline,
             )
         self._reset_parameters()
@@ -446,12 +435,11 @@ class MTGNNLayer(nn.Module):
         X_skip = self._skip_conv(X) + X_skip
         if self._gcn_true:
             X = self._mixprop_conv1(X, A_tilde) + self._mixprop_conv2(
-                X, A_tilde.transpose(1, 0)
-            )
+                X, A_tilde.transpose(1, 0))
         else:
             X = self._residual_conv(X)
 
-        X = X + X_residual[:, :, :, -X.size(3) :]
+        X = X + X_residual[:, :, :, -X.size(3):]
         X = self._normalization(X, idx)
         return X, X_skip
 
@@ -485,7 +473,6 @@ class MTGNN(nn.Module):
         layer_norm_affline (bool): Whether to do elementwise affine in Layer Normalization.
         xd (int, optional): Static feature dimension, default None.
     """
-
     def __init__(
         self,
         gcn_true: bool,
@@ -523,9 +510,9 @@ class MTGNN(nn.Module):
 
         self._mtgnn_layers = nn.ModuleList()
 
-        self._graph_constructor = GraphConstructor(
-            num_nodes, subgraph_size, node_dim, alpha=tanhalpha, xd=xd
-        )
+        self._graph_constructor = GraphConstructor(num_nodes, subgraph_size,
+                                                   node_dim, alpha=tanhalpha,
+                                                   xd=xd)
 
         self._set_receptive_field(dilation_exponential, kernel_size, layers)
 
@@ -550,24 +537,21 @@ class MTGNN(nn.Module):
                     gcn_depth=gcn_depth,
                     num_nodes=num_nodes,
                     propalpha=propalpha,
-                )
-            )
+                ))
 
             new_dilation *= dilation_exponential
 
-        self._setup_conv(
-            in_dim, skip_channels, end_channels, residual_channels, out_dim
-        )
+        self._setup_conv(in_dim, skip_channels, end_channels,
+                         residual_channels, out_dim)
 
         self._reset_parameters()
 
-    def _setup_conv(
-        self, in_dim, skip_channels, end_channels, residual_channels, out_dim
-    ):
+    def _setup_conv(self, in_dim, skip_channels, end_channels,
+                    residual_channels, out_dim):
 
-        self._start_conv = nn.Conv2d(
-            in_channels=in_dim, out_channels=residual_channels, kernel_size=(1, 1)
-        )
+        self._start_conv = nn.Conv2d(in_channels=in_dim,
+                                     out_channels=residual_channels,
+                                     kernel_size=(1, 1))
 
         if self._seq_length > self._receptive_field:
 
@@ -623,12 +607,9 @@ class MTGNN(nn.Module):
 
     def _set_receptive_field(self, dilation_exponential, kernel_size, layers):
         if dilation_exponential > 1:
-            self._receptive_field = int(
-                1
-                + (kernel_size - 1)
-                * (dilation_exponential ** layers - 1)
-                / (dilation_exponential - 1)
-            )
+            self._receptive_field = int(1 + (kernel_size - 1) *
+                                        (dilation_exponential**layers - 1) /
+                                        (dilation_exponential - 1))
         else:
             self._receptive_field = layers * (kernel_size - 1) + 1
 
@@ -652,31 +633,28 @@ class MTGNN(nn.Module):
             * **X** (PyTorch FloatTensor) - Output sequence for prediction, with shape (batch_size, seq_len, num_nodes, 1).
         """
         seq_len = X_in.size(3)
-        assert (
-            seq_len == self._seq_length
-        ), "Input sequence length not equal to preset sequence length."
+        assert (seq_len == self._seq_length
+                ), "Input sequence length not equal to preset sequence length."
 
         if self._seq_length < self._receptive_field:
             X_in = nn.functional.pad(
-                X_in, (self._receptive_field - self._seq_length, 0, 0, 0)
-            )
+                X_in, (self._receptive_field - self._seq_length, 0, 0, 0))
 
         if self._gcn_true:
             if self._build_adj_true:
                 if idx is None:
-                    A_tilde = self._graph_constructor(self._idx.to(X_in.device), FE=FE)
+                    A_tilde = self._graph_constructor(
+                        self._idx.to(X_in.device), FE=FE)
                 else:
                     A_tilde = self._graph_constructor(idx, FE=FE)
 
         X = self._start_conv(X_in)
         X_skip = self._skip_conv_0(
-            F.dropout(X_in, self._dropout, training=self.training)
-        )
+            F.dropout(X_in, self._dropout, training=self.training))
         if idx is None:
             for mtgnn in self._mtgnn_layers:
-                X, X_skip = mtgnn(
-                    X, X_skip, A_tilde, self._idx.to(X_in.device), self.training
-                )
+                X, X_skip = mtgnn(X, X_skip, A_tilde,
+                                  self._idx.to(X_in.device), self.training)
         else:
             for mtgnn in self._mtgnn_layers:
                 X, X_skip = mtgnn(X, X_skip, A_tilde, idx, self.training)
@@ -686,4 +664,3 @@ class MTGNN(nn.Module):
         X = F.relu(self._end_conv_1(X))
         X = self._end_conv_2(X)
         return X
-        

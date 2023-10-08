@@ -1,15 +1,18 @@
 #refernce from https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/attention/dnntsp.py
 
-import torch
-import numpy as np
-import torch.nn as nn
 from typing import List
+
+import numpy as np
+import torch
+import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.nn import GCNConv
 
 
 class MaskedSelfAttention(nn.Module):
-    def __init__(self, input_dim, output_dim, n_heads, attention_aggregate="mean"):
+    def __init__(self, input_dim, output_dim, n_heads,
+                 attention_aggregate="mean"):
         super(MaskedSelfAttention, self).__init__()
 
         self.attention_aggregate = attention_aggregate
@@ -23,7 +26,8 @@ class MaskedSelfAttention(nn.Module):
         elif attention_aggregate == "mean":
             self.per_head_dim = self.dq = self.dk = self.dv = output_dim
         else:
-            raise ValueError(f"wrong value for aggregate {attention_aggregate}")
+            raise ValueError(
+                f"wrong value for aggregate {attention_aggregate}")
 
         self.Wq = nn.Linear(input_dim, n_heads * self.dq, bias=False)
         self.Wk = nn.Linear(input_dim, n_heads * self.dk, bias=False)
@@ -36,23 +40,18 @@ class MaskedSelfAttention(nn.Module):
         K = self.Wk(input_tensor)
         V = self.Wv(input_tensor)
 
-        Q = Q.reshape(
-            input_tensor.shape[0], input_tensor.shape[1], self.n_heads, self.dq
-        ).transpose(1, 2)
-        K = K.reshape(
-            input_tensor.shape[0], input_tensor.shape[1], self.n_heads, self.dk
-        ).permute(0, 2, 3, 1)
-        V = V.reshape(
-            input_tensor.shape[0], input_tensor.shape[1], self.n_heads, self.dv
-        ).transpose(1, 2)
+        Q = Q.reshape(input_tensor.shape[0], input_tensor.shape[1],
+                      self.n_heads, self.dq).transpose(1, 2)
+        K = K.reshape(input_tensor.shape[0], input_tensor.shape[1],
+                      self.n_heads, self.dk).permute(0, 2, 3, 1)
+        V = V.reshape(input_tensor.shape[0], input_tensor.shape[1],
+                      self.n_heads, self.dv).transpose(1, 2)
 
         attention_score = Q.matmul(K) / np.sqrt(self.per_head_dim)
 
-        attention_mask = (
-            torch.zeros(seq_length, seq_length)
-            .masked_fill(torch.tril(torch.ones(seq_length, seq_length)) == 0, -np.inf)
-            .to(input_tensor.device)
-        )
+        attention_mask = (torch.zeros(seq_length, seq_length).masked_fill(
+            torch.tril(torch.ones(seq_length, seq_length)) == 0,
+            -np.inf).to(input_tensor.device))
 
         attention_score = attention_score + attention_mask
 
@@ -62,12 +61,13 @@ class MaskedSelfAttention(nn.Module):
 
         if self.attention_aggregate == "concat":
             output = multi_head_result.transpose(1, 2).reshape(
-                input_tensor.shape[0], seq_length, self.n_heads * self.per_head_dim
-            )
+                input_tensor.shape[0], seq_length,
+                self.n_heads * self.per_head_dim)
         elif self.attention_aggregate == "mean":
             output = multi_head_result.transpose(1, 2).mean(dim=2)
         else:
-            raise ValueError(f"wrong value for aggregate {self.attention_aggregate}")
+            raise ValueError(
+                f"wrong value for aggregate {self.attention_aggregate}")
         print(output.shape)
         return output
 
@@ -77,7 +77,8 @@ class GlobalGatedUpdater(nn.Module):
         super(GlobalGatedUpdater, self).__init__()
         self.items_total = items_total
         self.item_embedding = item_embedding
-        self.alpha = nn.Parameter(torch.rand(items_total, 1), requires_grad=True)
+        self.alpha = nn.Parameter(torch.rand(items_total, 1),
+                                  requires_grad=True)
 
     def forward(self, nodes_output):
 
@@ -85,11 +86,11 @@ class GlobalGatedUpdater(nn.Module):
         id = 0
         num_nodes = self.items_total
         items_embedding = self.item_embedding(
-            torch.tensor([i for i in range(self.items_total)]).to(nodes_output.device)
-        )
+            torch.tensor([i for i in range(self.items_total)
+                          ]).to(nodes_output.device))
         batch_embedding = []
         for _ in range(batch_size):
-            output_node_features = nodes_output[id : id + num_nodes, :]
+            output_node_features = nodes_output[id:id + num_nodes, :]
             embed = (1 - self.alpha) * items_embedding
 
             embed = embed + self.alpha * output_node_features
@@ -119,7 +120,8 @@ class AggregateTemporalNodeFeatures(nn.Module):
 
 
 class WeightedGCNBlock(nn.Module):
-    def __init__(self, in_features: int, hidden_sizes: List[int], out_features: int):
+    def __init__(self, in_features: int, hidden_sizes: List[int],
+                 out_features: int):
         super(WeightedGCNBlock, self).__init__()
         gcns, relus, bns = nn.ModuleList(), nn.ModuleList(), nn.ModuleList()
         input_size = in_features
@@ -156,29 +158,27 @@ class DNNTSP(nn.Module):
         item_embedding_dim (int): Item embedding dimensions.
         n_heads (int): Number of attention heads.
     """
-
-    def __init__(self, items_total: int, item_embedding_dim: int, n_heads: int):
+    def __init__(self, items_total: int, item_embedding_dim: int,
+                 n_heads: int):
 
         super(DNNTSP, self).__init__()
         self.item_embedding = nn.Embedding(items_total, item_embedding_dim)
         self.item_embedding_dim = item_embedding_dim
         self.items_total = items_total
 
-        self.stacked_gcn = WeightedGCNBlock(
-            item_embedding_dim, [item_embedding_dim], item_embedding_dim
-        )
+        self.stacked_gcn = WeightedGCNBlock(item_embedding_dim,
+                                            [item_embedding_dim],
+                                            item_embedding_dim)
 
         self.masked_self_attention = MaskedSelfAttention(
-            input_dim=item_embedding_dim, output_dim=item_embedding_dim, n_heads=n_heads
-        )
+            input_dim=item_embedding_dim, output_dim=item_embedding_dim,
+            n_heads=n_heads)
 
         self.aggregate_nodes_temporal_feature = AggregateTemporalNodeFeatures(
-            item_embed_dim=item_embedding_dim
-        )
+            item_embed_dim=item_embedding_dim)
 
         self.global_gated_updater = GlobalGatedUpdater(
-            items_total=items_total, item_embedding=self.item_embedding
-        )
+            items_total=items_total, item_embedding=self.item_embedding)
 
     def forward(
         self,
