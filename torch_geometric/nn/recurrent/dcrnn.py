@@ -1,9 +1,11 @@
 ##dc rnn https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/recurrent/dcrnn.py
 
 import math
+
 import torch
-from torch_geometric.utils import to_dense_adj, dense_to_sparse
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import dense_to_sparse, to_dense_adj
 
 
 class DConv(MessagePassing):
@@ -19,13 +21,13 @@ class DConv(MessagePassing):
             will not learn an additive bias (default :obj:`True`).
 
     """
-
     def __init__(self, in_channels, out_channels, K, bias=True):
         super(DConv, self).__init__(aggr="add", flow="source_to_target")
         assert K > 0
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.weight = torch.nn.Parameter(torch.Tensor(2, K, in_channels, out_channels))
+        self.weight = torch.nn.Parameter(
+            torch.Tensor(2, K, in_channels, out_channels))
 
         if bias:
             self.bias = torch.nn.Parameter(torch.Tensor(out_channels))
@@ -61,12 +63,11 @@ class DConv(MessagePassing):
         adj_mat = to_dense_adj(edge_index, edge_attr=edge_weight)
         adj_mat = adj_mat.reshape(adj_mat.size(1), adj_mat.size(2))
         deg_out = torch.matmul(
-            adj_mat, torch.ones(size=(adj_mat.size(0), 1)).to(X.device)
-        )
+            adj_mat,
+            torch.ones(size=(adj_mat.size(0), 1)).to(X.device))
         deg_out = deg_out.flatten()
         deg_in = torch.matmul(
-            torch.ones(size=(1, adj_mat.size(0))).to(X.device), adj_mat
-        )
+            torch.ones(size=(1, adj_mat.size(0))).to(X.device), adj_mat)
         deg_in = deg_in.flatten()
 
         deg_out_inv = torch.reciprocal(deg_out)
@@ -81,30 +82,24 @@ class DConv(MessagePassing):
         Tx_0 = X
         Tx_1 = X
         H = torch.matmul(Tx_0, (self.weight[0])[0]) + torch.matmul(
-            Tx_0, (self.weight[1])[0]
-        )
+            Tx_0, (self.weight[1])[0])
 
         if self.weight.size(1) > 1:
             Tx_1_o = self.propagate(edge_index, x=X, norm=norm_out, size=None)
-            Tx_1_i = self.propagate(reverse_edge_index, x=X, norm=norm_in, size=None)
-            H = (
-                H
-                + torch.matmul(Tx_1_o, (self.weight[0])[1])
-                + torch.matmul(Tx_1_i, (self.weight[1])[1])
-            )
+            Tx_1_i = self.propagate(reverse_edge_index, x=X, norm=norm_in,
+                                    size=None)
+            H = (H + torch.matmul(Tx_1_o, (self.weight[0])[1]) +
+                 torch.matmul(Tx_1_i, (self.weight[1])[1]))
 
         for k in range(2, self.weight.size(1)):
-            Tx_2_o = self.propagate(edge_index, x=Tx_1_o, norm=norm_out, size=None)
+            Tx_2_o = self.propagate(edge_index, x=Tx_1_o, norm=norm_out,
+                                    size=None)
             Tx_2_o = 2.0 * Tx_2_o - Tx_0
-            Tx_2_i = self.propagate(
-                reverse_edge_index, x=Tx_1_i, norm=norm_in, size=None
-            )
+            Tx_2_i = self.propagate(reverse_edge_index, x=Tx_1_i, norm=norm_in,
+                                    size=None)
             Tx_2_i = 2.0 * Tx_2_i - Tx_0
-            H = (
-                H
-                + torch.matmul(Tx_2_o, (self.weight[0])[k])
-                + torch.matmul(Tx_2_i, (self.weight[1])[k])
-            )
+            H = (H + torch.matmul(Tx_2_o, (self.weight[0])[k]) +
+                 torch.matmul(Tx_2_i, (self.weight[1])[k]))
             Tx_0, Tx_1_o, Tx_1_i = Tx_1, Tx_2_o, Tx_2_i
 
         if self.bias is not None:
@@ -126,8 +121,8 @@ class DCRNN(torch.nn.Module):
             will not learn an additive bias (default :obj:`True`)
 
     """
-
-    def __init__(self, in_channels: int, out_channels: int, K: int, bias: bool = True):
+    def __init__(self, in_channels: int, out_channels: int, K: int,
+                 bias: bool = True):
         super(DCRNN, self).__init__()
 
         self.in_channels = in_channels
@@ -216,6 +211,7 @@ class DCRNN(torch.nn.Module):
         H = self._set_hidden_state(X, H)
         Z = self._calculate_update_gate(X, edge_index, edge_weight, H)
         R = self._calculate_reset_gate(X, edge_index, edge_weight, H)
-        H_tilde = self._calculate_candidate_state(X, edge_index, edge_weight, H, R)
+        H_tilde = self._calculate_candidate_state(X, edge_index, edge_weight,
+                                                  H, R)
         H = self._calculate_hidden_state(Z, H, H_tilde)
         return H

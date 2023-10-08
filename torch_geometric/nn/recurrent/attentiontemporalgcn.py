@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.nn.inits import glorot, zeros
 
 
@@ -16,22 +17,19 @@ class AVWGCN(nn.Module):
         K (int): Filter size :math:`K`.
         embedding_dimensions (int): Number of node embedding dimensions.
     """
-
-    def __init__(
-        self, in_channels: int, out_channels: int, K: int, embedding_dimensions: int
-    ):
+    def __init__(self, in_channels: int, out_channels: int, K: int,
+                 embedding_dimensions: int):
         super(AVWGCN, self).__init__()
         self.K = K
         self.weights_pool = torch.nn.Parameter(
-            torch.Tensor(embedding_dimensions, K, in_channels, out_channels)
-        )
+            torch.Tensor(embedding_dimensions, K, in_channels, out_channels))
         self.bias_pool = torch.nn.Parameter(
-            torch.Tensor(embedding_dimensions, out_channels)
-        )
+            torch.Tensor(embedding_dimensions, out_channels))
         glorot(self.weights_pool)
         zeros(self.bias_pool)
 
-    def forward(self, X: torch.FloatTensor, E: torch.FloatTensor) -> torch.FloatTensor:
+    def forward(self, X: torch.FloatTensor,
+                E: torch.FloatTensor) -> torch.FloatTensor:
         r"""Making a forward pass.
         Arg types:
             * **X** (PyTorch Float Tensor) - Node features.
@@ -42,9 +40,12 @@ class AVWGCN(nn.Module):
 
         number_of_nodes = E.shape[0]
         supports = F.softmax(F.relu(torch.mm(E, E.transpose(0, 1))), dim=1)
-        support_set = [torch.eye(number_of_nodes).to(supports.device), supports]
+        support_set = [
+            torch.eye(number_of_nodes).to(supports.device), supports
+        ]
         for _ in range(2, self.K):
-            support = torch.matmul(2 * supports, support_set[-1]) - support_set[-2]
+            support = torch.matmul(2 * supports,
+                                   support_set[-1]) - support_set[-2]
             support_set.append(support)
         supports = torch.stack(support_set, dim=0)
         W = torch.einsum("nd,dkio->nkio", E, self.weights_pool)
@@ -66,7 +67,6 @@ class AGCRN(nn.Module):
         K (int): Filter size :math:`K`.
         embedding_dimensions (int): Number of node embedding dimensions.
     """
-
     def __init__(
         self,
         number_of_nodes: int,
@@ -101,12 +101,12 @@ class AGCRN(nn.Module):
 
     def _set_hidden_state(self, X, H):
         if H is None:
-            H = torch.zeros(X.shape[0], X.shape[1], self.out_channels).to(X.device)
+            H = torch.zeros(X.shape[0], X.shape[1],
+                            self.out_channels).to(X.device)
         return H
 
-    def forward(
-        self, X: torch.FloatTensor, E: torch.FloatTensor, H: torch.FloatTensor = None
-    ) -> torch.FloatTensor:
+    def forward(self, X: torch.FloatTensor, E: torch.FloatTensor,
+                H: torch.FloatTensor = None) -> torch.FloatTensor:
         r"""Making a forward pass.
         Arg types:
             * **X** (PyTorch Float Tensor) - Node feature matrix.
