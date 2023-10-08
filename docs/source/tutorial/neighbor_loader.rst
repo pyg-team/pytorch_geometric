@@ -20,6 +20,12 @@ That is, starting from a set of seed nodes :math:`\mathcal{B} \subset \mathcal{V
 The resulting graph structure holds a **directed** :math:`L`-hop subgraph around every node in :math:`v \in \mathcal{B}`, for which it is guaranteed that every node has at least one path of at most length :math:`L` to at least one of the seed nodes in :math:`\mathcal{B}`.
 As such, a message passing GNN with :math:`L` layers will incorporate the full set of sampled nodes in its computation graph.
 
+.. figure:: ../_static/thumbnails/neighbor_loader.png
+  :align: center
+  :width: 40%
+
+|
+
 It is important to note that neighbor sampling can only mitigate the neighbor explosion problem to some extend since the overall neighborhood size still increases exponentially with the number of layers.
 As a result, sampling for more than two or three iterations is generally not feasible.
 
