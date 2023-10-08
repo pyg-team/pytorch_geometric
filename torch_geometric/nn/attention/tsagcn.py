@@ -1,13 +1,14 @@
 #reference from https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/attention/tsagcn.py
 
-
 import math
-import torch
+
 import numpy as np
+import torch
 import torch.nn as nn
-from torch.autograd import Variable
-from torch_geometric.utils.to_dense_adj import to_dense_adj
 import torch.nn.functional as F
+from torch.autograd import Variable
+
+from torch_geometric.utils.to_dense_adj import to_dense_adj
 
 
 class GraphAAGCN:
@@ -23,7 +24,6 @@ class GraphAAGCN:
     Return types:
             * **A** (PyTorch Float Tensor) - Three layer normalized adjacency matrix
     """
-
     def __init__(self, edge_index: list, num_nodes: int):
         self.num_nodes = num_nodes
         self.edge_index = edge_index
@@ -51,10 +51,8 @@ class UnitTCN(nn.Module):
         kernel_size (int): Convolutional kernel size. (default: :obj:`9`)
         stride (int): Temporal Convolutional kernel stride. (default: :obj:`1`)
     """
-
-    def __init__(
-        self, in_channels: int, out_channels: int, kernel_size: int = 9, stride: int = 1
-    ):
+    def __init__(self, in_channels: int, out_channels: int,
+                 kernel_size: int = 9, stride: int = 1):
         super(UnitTCN, self).__init__()
         pad = int((kernel_size - 1) / 2)
         self.conv = nn.Conv2d(
@@ -100,7 +98,6 @@ class UnitGCN(nn.Module):
         adaptive (bool, optional): Apply Adaptive Graph Convolutions. (default: :obj:`True`)
         attention (bool, optional): Apply Attention. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -135,9 +132,8 @@ class UnitGCN(nn.Module):
             self._init_attention_layers()
 
         if in_channels != out_channels:
-            self.down = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, 1), nn.BatchNorm2d(out_channels)
-            )
+            self.down = nn.Sequential(nn.Conv2d(in_channels, out_channels, 1),
+                                      nn.BatchNorm2d(out_channels))
         else:
             self.down = lambda x: x
 
@@ -231,12 +227,8 @@ class UnitGCN(nn.Module):
 
         A = self.PA
         for i in range(self.num_subset):
-            A1 = (
-                self.conv_a[i](x)
-                .permute(0, 3, 1, 2)
-                .contiguous()
-                .view(N, V, self.inter_c * T)
-            )
+            A1 = (self.conv_a[i](x).permute(0, 3, 1, 2).contiguous().view(
+                N, V, self.inter_c * T))
             A2 = self.conv_b[i](x).view(N, self.inter_c * T, V)
             A1 = self.tan(torch.matmul(A1, A2) / A1.size(-1))  # N V V
             A1 = A[i] + A1 * self.alpha
@@ -290,7 +282,6 @@ class AAGCN(nn.Module):
         attention (bool, optional): Applying spatial-temporal-channel-attention.
         (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -309,9 +300,8 @@ class AAGCN(nn.Module):
         self.graph = GraphAAGCN(self.edge_index, self.num_nodes)
         self.A = self.graph.A
 
-        self.gcn1 = UnitGCN(
-            in_channels, out_channels, self.A, adaptive=adaptive, attention=attention
-        )
+        self.gcn1 = UnitGCN(in_channels, out_channels, self.A,
+                            adaptive=adaptive, attention=attention)
         self.tcn1 = UnitTCN(out_channels, out_channels, stride=stride)
         self.relu = nn.ReLU(inplace=True)
         self.attention = attention
@@ -323,9 +313,8 @@ class AAGCN(nn.Module):
             self.residual = lambda x: x
 
         else:
-            self.residual = UnitTCN(
-                in_channels, out_channels, kernel_size=1, stride=stride
-            )
+            self.residual = UnitTCN(in_channels, out_channels, kernel_size=1,
+                                    stride=stride)
 
     def forward(self, x):
         """

@@ -1,9 +1,11 @@
 #reference from https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/attention/stgcn.py
 
 import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.nn import ChebConv
 
 
@@ -19,8 +21,8 @@ class TemporalConv(nn.Module):
         out_channels (int): Number of output features.
         kernel_size (int): Convolutional kernel size.
     """
-
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3):
+    def __init__(self, in_channels: int, out_channels: int,
+                 kernel_size: int = 3):
         super(TemporalConv, self).__init__()
         self.conv_1 = nn.Conv2d(in_channels, out_channels, (1, kernel_size))
         self.conv_2 = nn.Conv2d(in_channels, out_channels, (1, kernel_size))
@@ -86,7 +88,6 @@ class STConv(nn.Module):
             an additive bias. (default: :obj:`True`)
 
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -136,7 +137,6 @@ class STConv(nn.Module):
         edge_index: torch.LongTensor,
         edge_weight: torch.FloatTensor = None,
     ) -> torch.FloatTensor:
-
         r"""Forward pass. If edge weights are not present the forward pass
         defaults to an unweighted graph.
 
