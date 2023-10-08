@@ -34,7 +34,7 @@ Basic Usage
 .. note::
 
     In this section of the tutorial, we will learn how to utilize the :class:`~torch_geometric.nn.models.Node2Vec` class of :pyg:`PyG` to train GNNs on single graphs in a mini-batch fashion.
-    A fully working example is available in `examples/reddit.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`_.
+    A fully working example on large-scale real-world data is available in `examples/reddit.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`_.
 
 The :class:`~torch_geometric.loader.NeighborLoader` is initialized from a :pyg:`PyG` :class:`~torch_geometric.data.Data` or :class:`~torch_geometric.data.HeteroData` object and defines how sampling should be performed:
 
@@ -184,15 +184,15 @@ In particular,
   Sampling on heterogeneous graphs via :class:`~torch_geometric.loader.NeighborLoader` allows for fine-granular control of sampling parameters, *e.g.*, it allows to specify the number of neighbors to sample for each edge type individually.
   Take a look at the `Heterogeneous Graph Learning <../advanced/heterogeneous.html>`__ tutorial for additional information.
 
-* By default, :class:`~torch_geometric.loader.NeighborLoader` fuses the sampled nodes across different seed nodes into a single subgraph.
-  This way, shared neighbors of seed nodes will not be duplicated in the resulting subgraph in order to save memory.
+* By default, :class:`~torch_geometric.loader.NeighborLoader` fuses sampled nodes across different seed nodes into a single subgraph.
+  This way, shared neighbors of seed nodes will not be duplicated in the resulting subgraph and hence save memory.
   You can disable this behavior by passing the :obj:`disjoint=True` option to the :class:`~torch_geometric.loader.NeighborLoader`.
 
-* By default, the subgraphs returned from :class:`~torch_geometric.loader.NeighborLoader` will be directed and thus restricting its use to GNNs with equal depth to the number of sampling hops.
+* By default, the subgraphs returned from :class:`~torch_geometric.loader.NeighborLoader` will be **directed**, which restricts its use to GNNs with equal depth to the number of sampling hops.
   If you want to utilize deeper GNNs, specify the :obj:`subgraph_type` option.
   If set to :obj:`"bidirectional"`, sampled edges are converted to bidirectional edges.
-  If set to :obj:`"induces"`, the returned subgraph will contain the induced subgraph of all sampled nodes.
+  If set to :obj:`"induced"`, the returned subgraph will contain the induced subgraph of all sampled nodes.
 
-* :class:`~torch_geometric.loader.NeighborLoader` is designed to perform sampling from seed nodes.
+* :class:`~torch_geometric.loader.NeighborLoader` is designed to perform sampling from individual seed nodes.
   As such, it is not directly applicable in a link prediction scenario.
-  For this use-cases, we developed the :class:`~torch_geometric.loader.LinkNeighborLoader`, which expects a set of input edges, and will return subgraphs which were created via neighbor sampling from both source and destination nodes.
+  For this use-cases, we developed the :class:`~torch_geometric.loader.LinkNeighborLoader`, which expects a set of input edges, and will return subgraphs that were created via neighbor sampling from both source and destination nodes.
