@@ -89,7 +89,8 @@ class DeepGCNLayer(torch.nn.Module):
                 h = self.act(h)
             h = F.dropout(h, p=self.dropout, training=self.training)
             if self.conv is not None and self.ckpt_grad and h.requires_grad:
-                h = checkpoint(self.conv, h, *args, **kwargs)
+                h = checkpoint(self.conv, h, *args, use_reentrant=True,
+                               **kwargs)
             else:
                 h = self.conv(h, *args, **kwargs)
 
@@ -97,7 +98,8 @@ class DeepGCNLayer(torch.nn.Module):
 
         else:
             if self.conv is not None and self.ckpt_grad and x.requires_grad:
-                h = checkpoint(self.conv, x, *args, **kwargs)
+                h = checkpoint(self.conv, x, *args, use_reentrant=True,
+                               **kwargs)
             else:
                 h = self.conv(x, *args, **kwargs)
             if self.norm is not None:
