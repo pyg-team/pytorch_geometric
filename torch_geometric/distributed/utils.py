@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Tuple
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.typing import Dict, EdgeType, NodeType, Optional, Union
+from torch_geometric.typing import EdgeType, NodeType
 
 
 @dataclass
