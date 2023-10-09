@@ -34,6 +34,7 @@ class ModuleDict(torch.nn.ModuleDict):
         if hasattr(cls, key):
             key = f'<{key}>'
 
+        # ModuleDict cannot handle dots in keys:
         return key.replace('.', '#')
 
     @classmethod

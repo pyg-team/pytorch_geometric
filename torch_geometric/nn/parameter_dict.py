@@ -25,16 +25,17 @@ class ParameterDict(torch.nn.ParameterDict):
 
     @classmethod
     def to_internal_key(cls, key: Key) -> str:
-        # ModuleDict cannot handle tuples as keys:
+        # ParameterDict cannot handle tuples as keys:
         if isinstance(key, tuple):
             assert len(key) > 1
             key = f"<{'___'.join(key)}>"
         assert isinstance(key, str)
 
-        # ModuleDict cannot handle keys that exists as class attributes:
+        # ParameterDict cannot handle keys that exists as class attributes:
         if hasattr(cls, key):
             key = f'<{key}>'
 
+        # ParameterDict cannot handle dots in keys:
         return key.replace('.', '#')
 
     @classmethod
