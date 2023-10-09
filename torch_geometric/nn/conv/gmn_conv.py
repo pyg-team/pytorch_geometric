@@ -8,6 +8,7 @@ from torch_geometric.nn.conv import PNAConv
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.resolver import activation_resolver
 
+
 class Transpose(nn.Module):
     def __init__(self, dim0, dim1):
         super(Transpose, self).__init__()
@@ -16,6 +17,7 @@ class Transpose(nn.Module):
 
     def forward(self, x):
         return x.transpose(self.dim0, self.dim1)
+
 
 class GMNConv(PNAConv):
     r"""The Graph Mixer convolution operator
