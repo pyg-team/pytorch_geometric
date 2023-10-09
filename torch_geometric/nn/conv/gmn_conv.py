@@ -106,13 +106,13 @@ class GMNConv(PNAConv):
 
             for _ in range(post_layers - 1):
                 x = self.F_out
-                modules += [nn.LayerNorm()]
-                modules += [torch.Transpose(1, 2)]
+                modules += [nn.LayerNorm([x])]
+                modules += [torch.transpose(1, 2)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
-                modules += [torch.Transpose(1, 2)]
+                modules += [torch.transpose(1, 2)]
                 modules += x
-                modules += [nn.LayerNorm()]
+                modules += [nn.LayerNorm([self.F_out])]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))
