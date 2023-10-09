@@ -29,7 +29,7 @@ try:
         try:
             x = torch.randn(3, 4, device='cuda')
             ptr = torch.tensor([0, 2, 3], device='cuda')
-            weight = torch.tensor([2, 4, 4], device='cuda')
+            weight = torch.randn(2, 4, 4, device='cuda')
             out = pyg_lib.ops.segment_matmul(x, ptr, weight)
         except RuntimeError:
             WITH_GMM = False
@@ -216,6 +216,7 @@ try:
     WITH_TORCH_FRAME = True
     from torch_frame import TensorFrame
 except Exception:
+    torch_frame = object
     WITH_TORCH_FRAME = False
 
     class TensorFrame:

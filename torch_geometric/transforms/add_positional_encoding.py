@@ -52,6 +52,9 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             :obj:`False`) or :meth:`scipy.sparse.linalg.eigsh` (when
             :attr:`is_undirected` is :obj:`True`).
     """
+    # Number of nodes from which to use sparse eigenvector computation:
+    SPARSE_THRESHOLD: int = 100
+
     def __init__(
         self,
         k: int,
@@ -65,9 +68,6 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         self.kwargs = kwargs
 
     def forward(self, data: Data) -> Data:
-        from scipy.sparse.linalg import eigs, eigsh
-        eig_fn = eigs if not self.is_undirected else eigsh
-
         num_nodes = data.num_nodes
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
@@ -77,15 +77,23 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         )
 
         L = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes)
-        L = L.tocsr()
 
-        eig_vals, eig_vecs = eig_fn(
-            L,
-            k=self.k + 1,
-            which='SR' if not self.is_undirected else 'SA',
-            return_eigenvectors=True,
-            **self.kwargs,
-        )
+        if num_nodes < self.SPARSE_THRESHOLD:
+            from numpy.linalg import eig, eigh
+            eig_fn = eig if not self.is_undirected else eigh
+
+            eig_vals, eig_vecs = eig_fn(L.todense())
+        else:
+            from scipy.sparse.linalg import eigs, eigsh
+            eig_fn = eigs if not self.is_undirected else eigsh
+
+            eig_vals, eig_vecs = eig_fn(
+                L,
+                k=self.k + 1,
+                which='SR' if not self.is_undirected else 'SA',
+                return_eigenvectors=True,
+                **self.kwargs,
+            )
 
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
         pe = torch.from_numpy(eig_vecs[:, 1:self.k + 1])
