@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.module_dict import ModuleDict
-from torch_geometric.typing import Adj, EdgeType, NodeType
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
 
 
@@ -80,7 +80,7 @@ class HeteroConv(torch.nn.Module):
                 f"passing as they do not occur as destination type in any "
                 f"edge type. This may lead to unexpected behavior.")
 
-        self.convs = ModuleDict({'__'.join(k): v for k, v in convs.items()})
+        self.convs = ModuleDict(convs)
         self.aggr = aggr
 
     def reset_parameters(self):
@@ -90,8 +90,6 @@ class HeteroConv(torch.nn.Module):
 
     def forward(
         self,
-        x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType, Adj],
         *args_dict,
         **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
@@ -117,42 +115,48 @@ class HeteroConv(torch.nn.Module):
                 :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
         out_dict = defaultdict(list)
-        for edge_type, edge_index in edge_index_dict.items():
+
+        for edge_type in self.convs.keys():
             src, rel, dst = edge_type
 
-            str_edge_type = '__'.join(edge_type)
-            if str_edge_type not in self.convs:
-                continue
+            has_edge_level_arg = False
 
             args = []
             for value_dict in args_dict:
                 if edge_type in value_dict:
+                    has_edge_level_arg = True
                     args.append(value_dict[edge_type])
                 elif src == dst and src in value_dict:
                     args.append(value_dict[src])
                 elif src in value_dict or dst in value_dict:
-                    args.append(
-                        (value_dict.get(src, None), value_dict.get(dst, None)))
+                    args.append((
+                        value_dict.get(src, None),
+                        value_dict.get(dst, None),
+                    ))
 
             kwargs = {}
             for arg, value_dict in kwargs_dict.items():
+                if not arg.endswith('_dict'):
+                    raise ValueError(
+                        f"Keyword arguments in '{self.__class__.__name__}' "
+                        f"need to end with '_dict' (got '{arg}')")
+
                 arg = arg[:-5]  # `{*}_dict`
                 if edge_type in value_dict:
+                    has_edge_level_arg = True
                     kwargs[arg] = value_dict[edge_type]
                 elif src == dst and src in value_dict:
                     kwargs[arg] = value_dict[src]
                 elif src in value_dict or dst in value_dict:
-                    kwargs[arg] = (value_dict.get(src, None),
-                                   value_dict.get(dst, None))
+                    kwargs[arg] = (
+                        value_dict.get(src, None),
+                        value_dict.get(dst, None),
+                    )
 
-            conv = self.convs[str_edge_type]
+            if not has_edge_level_arg:
+                continue
 
-            if src == dst:
-                out = conv(x_dict[src], edge_index, *args, **kwargs)
-            else:
-                out = conv((x_dict[src], x_dict[dst]), edge_index, *args,
-                           **kwargs)
-
+            out = self.convs[edge_type](*args, **kwargs)
             out_dict[dst].append(out)
 
         for key, value in out_dict.items():
