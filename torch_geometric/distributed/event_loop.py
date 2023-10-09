@@ -5,6 +5,10 @@ from typing import Callable, Optional
 
 import torch
 
+# This code is taken from alibaba graphlearn-for-pytorch repository:
+# https://github.com/alibaba/graphlearn-for-pytorch/blob/main/graphlearn_torch/
+# python/distributed/event_loop.py
+
 
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     r"""Convert a :class:`torch.futures.Future` to a standard asyncio future.
