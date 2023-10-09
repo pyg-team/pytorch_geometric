@@ -119,12 +119,12 @@ class HeteroConv(torch.nn.Module):
         for edge_type in self.convs.keys():
             src, rel, dst = edge_type
 
-            has_edge_type_arg = False
+            has_edge_level_arg = False
 
             args = []
             for value_dict in args_dict:
                 if edge_type in value_dict:
-                    has_edge_type_arg = True
+                    has_edge_level_arg = True
                     args.append(value_dict[edge_type])
                 elif src == dst and src in value_dict:
                     args.append(value_dict[src])
@@ -143,7 +143,7 @@ class HeteroConv(torch.nn.Module):
 
                 arg = arg[:-5]  # `{*}_dict`
                 if edge_type in value_dict:
-                    has_edge_type_arg = True
+                    has_edge_level_arg = True
                     kwargs[arg] = value_dict[edge_type]
                 elif src == dst and src in value_dict:
                     kwargs[arg] = value_dict[src]
@@ -153,7 +153,7 @@ class HeteroConv(torch.nn.Module):
                         value_dict.get(dst, None),
                     )
 
-            if not has_edge_type_arg:
+            if not has_edge_level_arg:
                 continue
 
             out = self.convs[edge_type](*args, **kwargs)
