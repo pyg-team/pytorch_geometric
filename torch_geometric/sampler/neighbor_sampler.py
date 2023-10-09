@@ -122,9 +122,7 @@ class NeighborSampler(BaseSampler):
             self.node_types = list(set(attr.group_name for attr in node_attrs))
 
             edge_attrs = graph_store.get_all_edge_attrs()
-            self.edge_types = list(set(attr.edge_type) for attr in edge_attrs)
-
-            is_hetero = self.node_types == [None]
+            self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
 
             if weight_attr is not None:
                 raise NotImplementedError(
@@ -154,7 +152,7 @@ class NeighborSampler(BaseSampler):
                     if attr.attr_name == time_attr
                 ]
 
-            if not is_hetero:
+            if not self.is_hetero:
                 self.num_nodes = max(edge_attrs[0].size)
                 self.edge_weight: Optional[Tensor] = None
 
@@ -216,6 +214,16 @@ class NeighborSampler(BaseSampler):
             self._num_neighbors = num_neighbors
         else:
             self._num_neighbors = NumNeighbors(num_neighbors)
+
+    @property
+    def is_hetero(self) -> bool:
+        if self.data_type == DataType.homogeneous:
+            return False
+        if self.data_type == DataType.heterogeneous:
+            return False
+
+        # self.data_type == DataType.remote
+        return self.node_types != [None]
 
     @property
     def is_temporal(self) -> bool:
@@ -425,39 +433,35 @@ class NeighborSampler(BaseSampler):
 
     def _sample_one_hop(
         self,
-        srcs: Tensor,
+        input_nodes: Tensor,
         num_neighbors: int,
         seed_time: Optional[Tensor] = None,
-        csc: bool = True,
-        edge_type: EdgeType = None,
+        edge_type: Optional[EdgeType] = None,
     ) -> SamplerOutput:
-        r"""Implements one-hop neighbor sampling for a :obj:`srcs`
-        leveraging a :obj:`neighbor_sample` function from :obj:`pyg-lib`.
+        r"""Implements one-hop neighbor sampling for a set of input nodes for a
+        specific edge type.
         """
-        rel_type = "__".join(edge_type) if self.is_hetero else None
+        rel_type = '__'.join(edge_type) if self.is_hetero else None
 
-        colptr = (self.colptr
-                  if not self.is_hetero else self.colptr_dict[rel_type])
-        row = self.row if not self.is_hetero else self.row_dict[rel_type]
-
-        if self.node_time is not None:
-            node_time = (
-                self.node_time if not self.is_hetero else
-                self.node_time[edge_type[0] if not csc else edge_type[2]])
+        if not self.is_hetero:
+            colptr = self.colptr
+            row = self.row
+            node_time = self.node_time
         else:
-            node_time = None
-
-        seed = srcs
+            rel_type = '__'.join(edge_type)
+            colptr = self.colptr_dict[rel_type]
+            row = self.row_dict[rel_type]
+            node_time = self.node_time.get(edge_type[2], None)
 
         out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
             row,
-            seed.to(colptr.dtype),
-            one_hop_num,
+            input_nodes.to(colptr.dtype),
+            num_neighbors,
             node_time,
             seed_time,
             None,  # TODO: edge_weight
-            csc,
+            True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,
             self.disjoint and node_time is not None,
@@ -465,11 +469,17 @@ class NeighborSampler(BaseSampler):
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        if self.disjoint and node_time is not None:
-            _, node = node.t().contiguous()
+        if self.disjoint:
+            batch, node = node.t().contiguous()
 
-        return SamplerOutput(node=node, row=None, col=None, edge=edge,
-                             batch=None, metadata=(cumsum_neighbors_per_node))
+        return SamplerOutput(
+            node=node,
+            row=None,
+            col=None,
+            edge=edge,
+            batch=batch,
+            metadata=(cumsum_neighbors_per_node, ),
+        )
 
 
 # Sampling Utilities ##########################################################
@@ -601,6 +611,7 @@ def edge_sample(
                 }
 
         else:  # Only a single node type: Merge both source and destination.
+
             seed = torch.cat([src, dst], dim=0)
 
             if not disjoint:
