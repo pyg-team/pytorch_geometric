@@ -88,20 +88,14 @@ class GMNConv(PNAConv):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels: int, 
-                 out_channels: int,
-                 aggregators: List[str], 
-                 scalers: List[str], 
-                 deg: Tensor,
-                 edge_dim: Optional[int] = None, 
-                 towers: int = 1,
-                 post_layers: int = 1,  
-                 divide_input: bool = False, 
+    def __init__(self, in_channels: int, out_channels: int,
+                 aggregators: List[str], scalers: List[str], deg: Tensor,
+                 edge_dim: Optional[int] = None, towers: int = 1,
+                 post_layers: int = 1, divide_input: bool = False,
                  act: Union[str, Callable, None] = "relu",
-                 act_kwargs: Optional[Dict[str, Any]] = None,
-                 **kwargs):
+                 act_kwargs: Optional[Dict[str, Any]] = None, **kwargs):
 
-        super().__init__(in_channels, out_channels, aggregators, scalers, deg, 
+        super().__init__(in_channels, out_channels, aggregators, scalers, deg,
                          edge_dim, towers, divide_input, **kwargs)
 
         self.post_nns = ModuleList()

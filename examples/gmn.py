@@ -61,8 +61,8 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=64)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
-
 deg = GMNConv.get_degree_histogram(train_loader)
+
 
 class GraphMixerNet(torch.nn.Module):
     def __init__(self):
@@ -102,6 +102,7 @@ model = GraphMixerNet().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
                               min_lr=0.00001)
+
 
 def train(epoch):
     model.train()
