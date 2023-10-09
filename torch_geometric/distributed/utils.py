@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Tuple
 
 import numpy as np
@@ -13,51 +13,28 @@ from torch_geometric.typing import Dict, NodeType, Optional
 
 @dataclass
 class NodeDict:
-    r"""Class used during hetero sampling. It contains fields that refer to
-    NodeDict in three situations:
-    1) the nodes are to serve as srcs in the next layer,
-    2) nodes with duplicates, that are further needed to create COO output
-       matrix,
-    3) output nodes without duplicates.
+    r"""Class used during heterogeneous sampling:
+    1) The nodes to serve as source nodes in the next layer
+    2) The nodes with duplicates that are further needed to create COO output
+    3) The output nodes without duplicates
     """
-    def __init__(self, node_types):
-        self.src: Dict[NodeType, Tensor] = {}
-        self.with_dupl: Dict[NodeType, Tensor] = {}
-        self.out: Dict[NodeType, np.array] = {}
-
-        for ntype in node_types:
-            self.src.update({ntype: torch.empty(0, dtype=torch.int64)})
-            self.with_dupl.update({ntype: torch.empty(0, dtype=torch.int64)})
-            self.out.update({ntype: np.empty(0, dtype=np.int64)})
+    src: Dict[NodeType, Tensor] = field(default_factory=dict)
+    with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
+    out: Dict[NodeType, Tensor] = field(default_factory=dict)
 
 
 @dataclass
 class BatchDict:
-    r"""Class used during disjoint hetero sampling. It contains fields that
-    refer to BatchDict in three situations:
-    1) the batch is to serve as initial subgraph ids for src nodes in the next
-       layer,
-    2) subgraph ids with duplicates, that are further needed to create COO
-       output matrix,
-    3) output subgraph ids without duplicates.
+    r"""Class used during disjoint heterogeneous sampling:
+    1) The batch to serve as initial subgraph IDs for source nodes in the next
+       layer
+    2) The subgraph IDs with duplicates that are further needed to create COO
+       output
+    3) The output subgraph IDs without duplicates
     """
-    def __init__(self, node_types, disjoint):
-        self.src: Dict[NodeType, Tensor] = {}
-        self.with_dupl: Dict[NodeType, Tensor] = {}
-        self.out: Dict[NodeType, Tensor] = {}
-        self.disjoint = disjoint
-
-        if self.disjoint:
-            for ntype in node_types:
-                self.src.update({ntype: torch.empty(0, dtype=torch.int64)})
-                self.with_dupl.update(
-                    {ntype: torch.empty(0, dtype=torch.int64)})
-                self.out.update({ntype: np.empty(0, dtype=np.int64)})
-        else:
-            for ntype in node_types:
-                self.src.update({ntype: None})
-                self.with_dupl.update({ntype: None})
-                self.out.update({ntype: None})
+    src: Dict[NodeType, Tensor] = field(default_factory=dict)
+    with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)
+    out: Dict[NodeType, Tensor] = field(default_factory=dict)
 
 
 def remove_duplicates(
