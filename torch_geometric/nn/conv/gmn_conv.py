@@ -1,6 +1,5 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
-import torch
 import torch.nn as nn
 from torch import Tensor
 from torch.nn import ModuleList, Sequential
