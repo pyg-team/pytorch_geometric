@@ -39,17 +39,16 @@ class NeighborSampler(BaseSampler):
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighborsType,
-        subgraph_type: Union[SubgraphType, str] = "directional",
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         replace: bool = False,
         disjoint: bool = False,
-        temporal_strategy: str = "uniform",
+        temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
         # Deprecated:
         directed: bool = True,
-        is_hetero: bool = None,
     ):
         if not directed:
             subgraph_type = SubgraphType.induced
@@ -75,12 +74,8 @@ class NeighborSampler(BaseSampler):
 
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
-                data,
-                device="cpu",
-                share_memory=share_memory,
-                is_sorted=is_sorted,
-                src_node_time=self.node_time,
-            )
+                data, device='cpu', share_memory=share_memory,
+                is_sorted=is_sorted, src_node_time=self.node_time)
 
             self.edge_weight: Optional[Tensor] = None
             if weight_attr is not None:
@@ -100,17 +95,13 @@ class NeighborSampler(BaseSampler):
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
             # to be converted into single strings.
-            self.to_rel_type = {k: "__".join(k) for k in self.edge_types}
+            self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
             self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
 
             # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
-                data,
-                device="cpu",
-                share_memory=share_memory,
-                is_sorted=is_sorted,
-                node_time_dict=self.node_time,
-            )
+                data, device='cpu', share_memory=share_memory,
+                is_sorted=is_sorted, node_time_dict=self.node_time)
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
