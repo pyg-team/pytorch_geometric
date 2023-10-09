@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple
 
 import numpy as np
 import torch
@@ -61,31 +62,34 @@ class BatchDict:
 
 def remove_duplicates(
     out: SamplerOutput,
-    node: np.array,
-    batch: Optional[np.array] = None,
+    node: Tensor,
+    batch: Optional[Tensor] = None,
     disjoint: bool = False,
-):
-    num_node = len(node)
-    out_node_numpy = out.node.numpy()
-    node_numpy = np.concatenate((node, out_node_numpy))
+) -> Tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor]]:
+
+    num_nodes = node.numel()
+    node_combined = torch.cat([node, out.node])
 
     if not disjoint:
-        _, idx = np.unique(node_numpy, return_index=True)
-        node = node_numpy[np.sort(idx)]
-        src = torch.from_numpy(node[num_node:])
+        _, idx = np.unique(node_combined.cpu().numpy(), return_index=True)
+        idx = torch.from_numpy(idx).to(node.device).sort().values
+
+        node = node_combined[idx]
+        src = node[num_nodes:]
 
         return (src, node, None, None)
+
     else:
-        batch_numpy = np.concatenate((batch, out.batch.numpy()))
+        batch_combined = torch.cat([batch, out.batch])
+        node_batch = torch.stack([batch_combined, node_combined], dim=0)
 
-        disjoint_numpy = np.array((batch_numpy, node_numpy))
-        _, idx = np.unique(disjoint_numpy, axis=1, return_index=True)
+        _, idx = np.unique(node_batch.cpu().numpy(), axis=1, return_index=True)
+        idx = torch.from_numpy(idx).to(node.device).sort().values
 
-        batch = disjoint_numpy[0][np.sort(idx)]
-        node = disjoint_numpy[1][np.sort(idx)]
-
-        src_batch = torch.from_numpy(batch[num_node:])
-        src = torch.from_numpy(node[num_node:])
+        batch = batch_combined[idx]
+        node = node_combined[idx]
+        src_batch = batch[num_nodes:]
+        src = node[num_nodes:]
 
         return (src, node, src_batch, batch)
 
