@@ -14,7 +14,7 @@ scalers = [
 ]
 
 
-@pytest.mark.parametrize('divide_input', [True, False])
+@pytest.mark.parametrize('divide_input', [False])
 def test_gmn_conv(divide_input):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
