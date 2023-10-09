@@ -120,7 +120,7 @@ class GMNConv(PNAConv):
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
                 modules += [Transpose(1, 2)]
-                modules += [Tensor([x])]
+                #modules += [Tensor([x])]
                 modules += [nn.LayerNorm([self.F_out])]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
