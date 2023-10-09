@@ -220,7 +220,7 @@ class NeighborSampler(BaseSampler):
         if self.data_type == DataType.homogeneous:
             return False
         if self.data_type == DataType.heterogeneous:
-            return False
+            return True
 
         # self.data_type == DataType.remote
         return self.node_types != [None]
