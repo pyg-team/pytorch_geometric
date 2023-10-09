@@ -61,6 +61,7 @@ from .gps_conv import GPSConv
 from .antisymmetric_conv import AntiSymmetricConv
 from .dir_gnn_conv import DirGNNConv
 from .mixhop_conv import MixHopConv
+from .gmn_conv import GMNConv
 
 __all__ = [
     'MessagePassing',
@@ -129,6 +130,7 @@ __all__ = [
     'AntiSymmetricConv',
     'DirGNNConv',
     'MixHopConv',
+    'GMNConv'
 ]
 
 classes = __all__
