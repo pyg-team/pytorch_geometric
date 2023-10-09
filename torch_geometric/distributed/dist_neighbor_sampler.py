@@ -28,11 +28,9 @@ from torch_geometric.distributed.utils import (
 from torch_geometric.sampler import (
     EdgeSamplerInput,
     HeteroSamplerOutput,
-    NegativeSampling,
     NeighborSampler,
     NodeSamplerInput,
     SamplerOutput,
-    edge_sample_async,
 )
 from torch_geometric.sampler.base import NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import remap_keys
@@ -75,12 +73,11 @@ class DistNeighborSampler:
         num_neighbors: NumNeighborsType,
         channel: Optional[mp.Queue] = None,
         replace: bool = False,
-        subgraph_type: Union[SubgraphType, str] = "directional",
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
-        temporal_strategy: str = "uniform",
+        temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         concurrency: int = 1,
-        csc: bool = True,
         **kwargs,
     ):
         self.current_ctx = current_ctx
@@ -89,7 +86,7 @@ class DistNeighborSampler:
         self.feature_store, self.graph_store = data
         assert isinstance(self.dist_graph, LocalGraphStore)
         assert isinstance(self.dist_feature_store, LocalFeatureStore)
-        self.is_hetero = self.dist_graph.meta["is_hetero"]
+        self.is_hetero = self.dist_graph.meta['is_hetero']
 
         self.num_neighbors = num_neighbors
         self.channel = channel or mp.Queue()
@@ -102,7 +99,7 @@ class DistNeighborSampler:
         self.time_attr = time_attr
         self.with_edge_attr = self.dist_feature.has_edge_attr()
         _, _, self.edge_permutation = self.dist_graph.csc()
-        self.csc = csc
+        self.csc = True
 
     def register_sampler_rpc(self) -> None:
         partition2workers = rpc_partition_to_workers(
@@ -146,49 +143,15 @@ class DistNeighborSampler:
             coro=self._sample_from(self.node_sample, inputs), callback=cb)
         return None
 
-    # Edge-based distributed sampling #########################################
-
-    def sample_from_edges(
+    async def _sample_from(
         self,
-        inputs: EdgeSamplerInput,
-        neg_sampling: Optional[NegativeSampling] = None,
+        async_func,
+        *args,
         **kwargs,
     ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
-        if self.channel is None:
-            # synchronous sampling
-            return self.event_loop.run_task(coro=self._sample_from(
-                edge_sample_async,
-                inputs,
-                self.node_sample,
-                self._sampler.num_nodes,
-                self.disjoint,
-                self._sampler.node_time,
-                neg_sampling,
-                distributed=True,
-            ))
 
-        # asynchronous sampling
-        cb = kwargs.get("callback", None)
-        self.event_loop.add_task(
-            coro=self._sample_from(
-                edge_sample_async,
-                inputs,
-                self.node_sample,
-                self._sampler.num_nodes,
-                self.disjoint,
-                self._sampler.node_time,
-                neg_sampling,
-                distributed=True,
-            ),
-            callback=cb,
-        )
-        return None
-
-    async def _sample_from(
-            self, async_func, *args,
-            **kwargs) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
         sampler_output = await async_func(*args, **kwargs)
-        res = await self._colloate_fn(sampler_output)
+        res = await self._collate_fn(sampler_output)
 
         if self.channel is None:
             return res
@@ -242,14 +205,14 @@ class DistNeighborSampler:
             metadata = (seed_dict, seed_time_dict)
 
         else:
-            raise ValueError("")
+            raise NotImplementedError
 
         if self.is_hetero:
             if input_type is None:
                 raise ValueError("Input type should be defined")
 
-            node_dict = NodeDict(self._sampler.node_types)
-            batch_dict = BatchDict(self._sampler.node_types, self.disjoint)
+            node_dict = NodeDict()
+            batch_dict = BatchDict(self.disjoint)
             edge_dict: Dict[EdgeType, Tensor] = {}
             num_sampled_nodes_dict: Dict[NodeType, List[int]] = {}
             sampled_nbrs_per_node_dict: Dict[EdgeType, List[int]] = {}
@@ -302,9 +265,10 @@ class DistNeighborSampler:
                     if node_dict.src[src].numel():
                         seed_time = (seed_time_dict.get(src, None)
                                      if seed_time_dict is not None else None)
-                        one_hop_num = (self.num_neighbors[i] if isinstance(
-                            self.num_neighbors, List) else
-                                       self.num_neighbors[etype][i])
+                        if isinstance(self.num_neighbors, list):
+                            one_hop_num = self.num_neighbors[i]
+                        else:
+                            one_hop_num = self.num_neighbors[etype][i]
 
                         task_dict[etype] = self.event_loop._loop.create_task(
                             self.sample_one_hop(
@@ -624,7 +588,7 @@ class DistNeighborSampler:
         return self.merge_sampler_outputs(partition_ids, partition_orders,
                                           p_outputs, one_hop_num, src_batch)
 
-    async def _colloate_fn(
+    async def _collate_fn(
         self, output: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Collect labels and features for the sampled subgrarph if necessary,
@@ -696,7 +660,7 @@ class DistNeighborSampler:
             output.col = remap_keys(output.col, self._sampler.to_edge_type)
         return output
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}()-PID{mp.current_process().pid}"
 
 
