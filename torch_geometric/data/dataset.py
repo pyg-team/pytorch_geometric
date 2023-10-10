@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -256,16 +257,28 @@ class Dataset(torch.utils.data.Dataset, ABC):
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
         tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type long or
         bool, will return a subset of the dataset at the specified indices."""
+
+        # We can't hook __getitem__ item as it is a special method
+        # https://docs.python.org/3/reference/datamodel.html#special-lookup
+        if os.environ.get('NVIDIA_NVTX_RANGES',
+                          "0") == "1" and torch.cuda.is_available():
+            nvtx_handle = torch.cuda.nvtx.range_start(
+                f"[Dataset] __getitem__ for {self}")
+
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
 
             data = self.get(self.indices()[idx])
             data = data if self.transform is None else self.transform(data)
-            return data
-
         else:
-            return self.index_select(idx)
+            data = self.index_select(idx)
+
+        if os.environ.get('NVIDIA_NVTX_RANGES',
+                          "0") == "1" and torch.cuda.is_available():
+            torch.cuda.nvtx.range_end(nvtx_handle)
+
+        return data
 
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
