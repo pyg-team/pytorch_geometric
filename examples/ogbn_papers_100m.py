@@ -27,6 +27,13 @@ parser.add_argument(
     default=4,
     help="If using GATConv, number of attention heads to use",
 )
+parser.add_argument(
+    "--cugraph_data_loader",
+    type=bool,
+    default=False,
+    help="Wether or not to use CuGraph for Neighbor Loading",
+)
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
@@ -42,8 +49,8 @@ def get_num_workers() -> int:
 
 kwargs = dict(
     data=dataset[0],
-    num_neighbors=[50, 50],
-    batch_size=128,
+    num_neighbors=[args.fan_out, args.fan_out],
+    batch_size=args.batch_size,
     num_workers=get_num_workers(),
 )
 train_loader = NeighborLoader(input_nodes=split_idx['train'], shuffle=True,
@@ -70,7 +77,7 @@ class GNN(torch.nn.Module):
         return x
 
 
-model = GNN(dataset.num_features, 64, dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads).to(device)
+model = GNN(dataset.num_features, args.hidden_channels, dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 
 warmup_steps = 50

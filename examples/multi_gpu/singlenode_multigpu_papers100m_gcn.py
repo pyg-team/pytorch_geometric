@@ -137,6 +137,12 @@ if __name__ == '__main__':
         default=4,
         help="If using GATConv, number of attention heads to use",
     )
+    parser.add_argument(
+        "--cugraph_data_loader",
+        type=bool,
+        default=False,
+        help="Wether or not to use CuGraph for Neighbor Loading",
+    )
 
     args = parser.parse_args()
 
