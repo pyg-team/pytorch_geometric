@@ -1,14 +1,26 @@
+# The OGC method from the "From Cluster Assumption to Graph Convolution:
+# Graph-based Semi-Supervised Learning Revisited" paper.
+# ArXiv: https://arxiv.org/abs/2309.13599
+
+# Datasets  CiteSeer  Cora   PubMed
+# Acc       0.774     0.869  0.837
+# Time      3.76      1.53   2.92
+
 import argparse
 import os.path as osp
 import time
+import warnings
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
+from torch import Tensor
 
 import torch_geometric.transforms as T
+from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
+from torch_geometric.utils import one_hot
+
+warnings.filterwarnings('ignore', '.*Sparse CSR tensor support.*')
 
 decline = 0.9  # decline rate
 eta_sup = 0.001  # learning rate for supervised loss
@@ -17,113 +29,118 @@ beta = 0.1  # moving probability that a node moves to neighbors
 max_sim_tol = 0.995  # max label prediction similarity between iterations
 max_patience = 2  # tolerance for consecutive similar test predictions
 
-# Datasets          CiteSeer            Cora                PubMed
-# Acc               0.774               0.869               0.837
-# Time              3.76                1.53                2.92
-
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='Cora',
-                    choices=['Cora', 'CiteSeer',
-                             'PubMed'], help='Dataset to use.')
-args, _ = parser.parse_known_args()
+parser.add_argument('--dataset', type=str, default='Cora')
+args = parser.parse_args()
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 
-transform = T.Compose([T.NormalizeFeatures(), T.GCNNorm(), T.ToSparseTensor()])
+transform = T.Compose([
+    T.NormalizeFeatures(),
+    T.GCNNorm(),
+    T.ToSparseTensor(layout=torch.sparse_csr),
+])
 dataset = Planetoid(path, name=args.dataset, transform=transform)
 data = dataset[0].to(device)
 
-y_one_hot = F.one_hot(data.y).float()
-data.tv_mask = data.train_mask + data.val_mask
+y_one_hot = one_hot(data.y, dataset.num_classes)
+data.trainval_mask = data.train_mask | data.val_mask
+# LIM track, else use trainval_mask to construct S
 S = torch.diag(data.train_mask).float().to_sparse()
-# LIM track, else use tv_mask to construct S
-I_N = torch.eye(data.x.shape[0]).to_sparse().to(device)
+I_N = torch.eye(data.num_nodes).to_sparse(layout=torch.sparse_csr).to(device)
+
+# Lazy random walk (also known as lazy graph convolution):
+lazy_adj = beta * data.adj_t + (1 - beta) * I_N
 
 
-class LinearNeuralNetwork(nn.Module):
-    def __init__(self, nfeat, nclass, bias=True):
-        super(LinearNeuralNetwork, self).__init__()
-        self.W = nn.Linear(nfeat, nclass, bias=bias)
+class LinearNeuralNetwork(torch.nn.Module):
+    def __init__(self, num_features: int, num_classes: int, bias: bool = True):
+        super().__init__()
+        self.W = torch.nn.Linear(num_features, num_classes, bias=bias)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         return self.W(x)
 
     @torch.no_grad()
-    def test(self, U, y_one_hot, data):
+    def test(self, U: Tensor, y_one_hot: Tensor, data: Data):
         self.eval()
-        output = self(U)
-        pred = output.argmax(dim=-1)
-        loss_tv = float(
-            F.mse_loss(output[data.tv_mask], y_one_hot[data.tv_mask]))
-        accs = []
-        for _, mask in data('tv_mask', 'test_mask'):
-            accs.append(float((pred[mask] == data.y[mask]).sum() / mask.sum()))
-        return loss_tv, accs[0], accs[1], pred
+        out = self(U)
 
-    def update_W(self, U, y_one_hot, data):
-        optimizer = optim.SGD(self.parameters(), lr=eta_W)
+        loss = F.mse_loss(
+            out[data.trainval_mask],
+            y_one_hot[data.trainval_mask],
+        )
+
+        accs = []
+        pred = out.argmax(dim=-1)
+        for _, mask in data('trainval_mask', 'test_mask'):
+            accs.append(float((pred[mask] == data.y[mask]).sum() / mask.sum()))
+
+        return float(loss), accs[0], accs[1], pred
+
+    def update_W(self, U: Tensor, y_one_hot: Tensor, data: Data):
+        optimizer = torch.optim.SGD(self.parameters(), lr=eta_W)
         self.train()
         optimizer.zero_grad()
         pred = self(U)
-        loss_tv = F.mse_loss(pred[data.tv_mask], y_one_hot[data.tv_mask],
-                             reduction='sum')
-        loss_tv.backward()
+        loss = F.mse_loss(pred[data.trainval_mask], y_one_hot[
+            data.trainval_mask,
+        ], reduction='sum')
+        loss.backward()
         optimizer.step()
         return self(U).data, self.W.weight.data
 
 
-linear_clf = LinearNeuralNetwork(nfeat=data.x.shape[1],
-                                 nclass=y_one_hot.shape[1],
-                                 bias=False).to(device)
-# lazy random walk (also known as lazy graph convolution)
-lazy_adj = beta * data.adj_t.to_sparse_coo() + (1 - beta) * I_N
+model = LinearNeuralNetwork(
+    num_features=dataset.num_features,
+    num_classes=dataset.num_classes,
+    bias=False,
+).to(device)
 
 
-def update_U(U, Y, predY, W):
+def update_U(U: Tensor, y_one_hot: Tensor, pred: Tensor, W: Tensor):
     global eta_sup
 
-    # ------ update the smoothness loss via LGC ------
-    U = torch.sparse.mm(lazy_adj, U)
+    # Update the smoothness loss via LGC:
+    U = lazy_adj @ U
 
-    # ------ update the supervised loss via SEB ------
-    dU_sup = 2 * torch.mm(torch.sparse.mm(S, -Y + predY), W)
+    # Update the supervised loss via SEB:
+    dU_sup = 2 * (S @ (-y_one_hot + pred)) @ W
     U = U - eta_sup * dU_sup
 
     eta_sup = eta_sup * decline
     return U
 
 
-def OGC():
-    patience = 0
+def ogc() -> float:
     U = data.x
-    test_res = linear_clf.test(U, y_one_hot, data)
-    _, _, last_acc, last_outp = test_res
-    for i in range(64):
-        # updating W by training a simple linear neural network
-        predY, W = linear_clf.update_W(U, y_one_hot, data)
+    _, _, last_acc, last_pred = model.test(U, y_one_hot, data)
 
-        # updating U by LGC and SEB jointly
-        U = update_U(U, y_one_hot, predY, W)
+    patience = 0
+    for i in range(1, 65):
+        # Updating W by training a simple linear neural network:
+        pred, W = model.update_W(U, y_one_hot, data)
 
-        test_res = linear_clf.test(U, y_one_hot, data)
-        loss_tv, acc_tv, acc_test, pred = test_res
-        print(f'epoch {i} loss_train_val {loss_tv:.4f} ' +
-              f'acc_train_val {acc_tv:.4f} acc_test {acc_test:.4f}')
+        # Updating U by LGC and SEB jointly:
+        U = update_U(U, y_one_hot, pred, W)
 
-        sim_rate = float((pred == last_outp).sum()) / pred.shape[0]
+        loss, trainval_acc, test_acc, pred = model.test(U, y_one_hot, data)
+        print(f'Epoch: {i:02d}, Loss: {loss:.4f}, '
+              f'Train+Val Acc: {trainval_acc:.4f} Test Acc {test_acc:.4f}')
+
+        sim_rate = float((pred == last_pred).sum()) / pred.size(0)
         if (sim_rate > max_sim_tol):
             patience += 1
             if (patience > max_patience):
                 break
 
-        last_acc = acc_test
-        last_outp = pred
+        last_acc, last_pred = test_acc, pred
+
     return last_acc
 
 
 start_time = time.time()
-res = OGC()
-time_tot = time.time() - start_time
-
-print(f'Test Acc: {res:.4f}')
-print(f'Total Time: {time_tot:.4f}')
+test_acc = ogc()
+print(f'Test Accuracy: {test_acc:.4f}')
+print(f'Total Time: {time.time() - start_time:.4f}s')
