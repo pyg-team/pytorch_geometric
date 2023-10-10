@@ -10,7 +10,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
-from torch_geometric.nn import GCNConv, GATConv
+from torch_geometric.nn import GATConv, GCNConv
 
 
 def pyg_num_work(world_size):

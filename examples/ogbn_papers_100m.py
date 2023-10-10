@@ -131,10 +131,8 @@ def train():
             print(f'Epoch: {epoch:02d}, Iteration: {i}, Loss: {loss:.4f}, '
                   f's/iter: {time.perf_counter() - start:.6f}')
 
-    print(
-        f'Average Training Iteration Time (s/iter): \
-            {time.perf_counter() - start_avg_time:.6f}'
-    )
+    print(f'Average Training Iteration Time (s/iter): \
+            {time.perf_counter() - start_avg_time:.6f}')
 
 
 @torch.no_grad()
@@ -155,10 +153,8 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
         total_correct += int((pred == y).sum())
         total_examples += y.size(0)
 
-    print(
-        f'Average Inference Iteration Time (s/iter): \
-            {time.perf_counter() - start_avg_time:.6f}'
-    )
+    print(f'Average Inference Iteration Time (s/iter): \
+            {time.perf_counter() - start_avg_time:.6f}')
 
     return total_correct / total_examples
 
