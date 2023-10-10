@@ -18,6 +18,7 @@ class TransposeModule(nn.Module):
     def forward(self, x):
         return x.transpose(self.dim0, self.dim1)
 
+
 class GMNConv(PNAConv):
     r"""The Graph Mixer convolution operator
     from the `"The Graph Mixer Networks"
@@ -118,7 +119,7 @@ class GMNConv(PNAConv):
                 modules += [TransposeModule(1, -1)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
-                modules += [TransposeModule(1, -1)] # 
+                modules += [TransposeModule(1, -1)]  #
                 modules += [nn.LayerNorm(self.F_out)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
