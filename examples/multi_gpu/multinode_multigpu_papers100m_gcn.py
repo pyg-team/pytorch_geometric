@@ -143,9 +143,8 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
     kwargs = dict(
         num_neighbors=[fan_out, fan_out],
         batch_size=batch_size,
-        num_workers=num_work(),
     )
-    # Set Up Dataloaders
+    # Set Up Neighbor Loading
     if cugraph_data_loader:
         import cugraph
         from cugraph_pyg.data import CuGraphStore

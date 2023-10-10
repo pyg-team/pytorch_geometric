@@ -59,7 +59,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         num_neighbors=[fan_out, fan_out],
         batch_size=batch_size,
     )
-    # Set Up Dataloaders
+    # Set Up Neighbor Loading
     if cugraph_data_loader:
         import cugraph
         from cugraph_pyg.data import CuGraphStore

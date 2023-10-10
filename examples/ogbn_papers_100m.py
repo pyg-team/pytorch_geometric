@@ -50,7 +50,7 @@ kwargs = dict(
     num_neighbors=[args.fan_out, args.fan_out],
     batch_size=args.batch_size,
 )
-# Set Up Dataloaders
+# Set Up Neighbor Loading
 data = dataset[0]
 if args.cugraph_data_loader:
     import cugraph
