@@ -26,11 +26,15 @@ def pyg_num_work(world_size):
     return int(num_work)
 
 
-class GCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+class GNN(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=1):
         super().__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, out_channels)
+        if use_gat_conv:
+            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+        else:
+            self.conv1 = GCNConv(in_channels, hidden_channels)
+            self.conv2 = GCNConv(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, edge_weight=None):
         x = F.dropout(x, p=0.5, training=self.training)
@@ -121,6 +125,18 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--fan_out', type=int, default=50)
+    parser.add_argument(
+        "--use_gat_conv",
+        type=bool,
+        default=False,
+        help="Wether or not to use GATConv. (Defaults to using GCNConv)",
+    )
+    parser.add_argument(
+        "--n_gat_conv_heads",
+        type=int,
+        default=1,
+        help="If using GATConv, number of attention heads to use",
+    )
 
     args = parser.parse_args()
 
@@ -128,8 +144,8 @@ if __name__ == '__main__':
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
-    model = GCN(dataset.num_features, args.hidden_channels,
-                dataset.num_classes)
+    model = GNN(dataset.num_features, args.hidden_channels,
+                dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads)
     print("Data =", data)
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
