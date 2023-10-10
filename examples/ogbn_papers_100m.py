@@ -78,7 +78,7 @@ class GNN(torch.nn.Module):
 
 
 model = GNN(dataset.num_features, args.hidden_channels, dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=0.0005)
 
 warmup_steps = 50
 
@@ -127,7 +127,7 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
     return total_correct / total_examples
 
 
-for epoch in range(1, 4):
+for epoch in range(1, 1+args.epochs):
     train()
     val_acc = test(val_loader, eval_steps=100)
     print(f'Val Acc: ~{val_acc:.4f}')
