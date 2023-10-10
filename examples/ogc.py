@@ -10,31 +10,27 @@ import torch.optim as optim
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 
-decline = 0.9        # decline rate
-eta_sup = 0.001      # learning rate for supervised loss
-eta_W = 0.5          # learning rate for updating W
-beta = 0.1           # moving probability that a node moves to neighbors
+decline = 0.9  # decline rate
+eta_sup = 0.001  # learning rate for supervised loss
+eta_W = 0.5  # learning rate for updating W
+beta = 0.1  # moving probability that a node moves to neighbors
 max_sim_tol = 0.995  # max label prediction similarity between iterations
-max_patience = 2     # tolerance for consecutive similar test predictions
+max_patience = 2  # tolerance for consecutive similar test predictions
 
 # Datasets          CiteSeer            Cora                PubMed
 # Acc               0.774               0.869               0.837
 # Time              3.76                1.53                2.92
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset',
-                    type=str,
-                    default='Cora',
-                    choices=['Cora', 'CiteSeer', 'PubMed'],
-                    help='Dataset to use.')
+parser.add_argument('--dataset', type=str, default='Cora',
+                    choices=['Cora', 'CiteSeer',
+                             'PubMed'], help='Dataset to use.')
 args, _ = parser.parse_known_args()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 
 transform = T.Compose([T.NormalizeFeatures(), T.GCNNorm(), T.ToSparseTensor()])
-dataset = Planetoid(path,
-                    name=args.dataset,
-                    transform=transform)
+dataset = Planetoid(path, name=args.dataset, transform=transform)
 data = dataset[0].to(device)
 
 y_one_hot = F.one_hot(data.y).float()
@@ -57,8 +53,8 @@ class LinearNeuralNetwork(nn.Module):
         self.eval()
         output = self(U)
         pred = output.argmax(dim=-1)
-        loss_tv = float(F.mse_loss(output[data.tv_mask],
-                                   y_one_hot[data.tv_mask]))
+        loss_tv = float(
+            F.mse_loss(output[data.tv_mask], y_one_hot[data.tv_mask]))
         accs = []
         for _, mask in data('tv_mask', 'test_mask'):
             accs.append(float((pred[mask] == data.y[mask]).sum() / mask.sum()))
@@ -69,8 +65,7 @@ class LinearNeuralNetwork(nn.Module):
         self.train()
         optimizer.zero_grad()
         pred = self(U)
-        loss_tv = F.mse_loss(pred[data.tv_mask],
-                             y_one_hot[data.tv_mask],
+        loss_tv = F.mse_loss(pred[data.tv_mask], y_one_hot[data.tv_mask],
                              reduction='sum')
         loss_tv.backward()
         optimizer.step()
