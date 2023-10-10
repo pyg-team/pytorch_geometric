@@ -27,7 +27,7 @@ def pyg_num_work(world_size):
 
 
 class GNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=1):
+    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=4):
         super().__init__()
         if use_gat_conv:
             self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
@@ -120,11 +120,11 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hidden_channels', type=int, default=64)
-    parser.add_argument('--lr', type=float, default=0.01)
+    parser.add_argument('--hidden_channels', type=int, default=128)
+    parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--epochs', type=int, default=3)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--fan_out', type=int, default=50)
+    parser.add_argument('--batch_size', type=int, default=2048)
+    parser.add_argument('--fan_out', type=int, default=16)
     parser.add_argument(
         "--use_gat_conv",
         type=bool,
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--n_gat_conv_heads",
         type=int,
-        default=1,
+        default=4,
         help="If using GATConv, number of attention heads to use",
     )
 

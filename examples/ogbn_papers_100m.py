@@ -1,14 +1,32 @@
 import os
 import time
 from typing import Optional
-
+import argparse
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, GATConv
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--hidden_channels', type=int, default=128)
+parser.add_argument('--lr', type=float, default=0.001)
+parser.add_argument('--epochs', type=int, default=3)
+parser.add_argument('--batch_size', type=int, default=2048)
+parser.add_argument('--fan_out', type=int, default=16)
+parser.add_argument(
+    "--use_gat_conv",
+    type=bool,
+    default=False,
+    help="Wether or not to use GATConv. (Defaults to using GCNConv)",
+)
+parser.add_argument(
+    "--n_gat_conv_heads",
+    type=int,
+    default=4,
+    help="If using GATConv, number of attention heads to use",
+)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
@@ -34,21 +52,25 @@ val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
 test_loader = NeighborLoader(input_nodes=split_idx['test'], **kwargs)
 
 
-class GCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+class GNN(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=4):
         super().__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, out_channels)
+        if use_gat_conv:
+            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+        else:
+            self.conv1 = GCNConv(in_channels, hidden_channels)
+            self.conv2 = GCNConv(hidden_channels, out_channels)
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, edge_weight=None):
         x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv1(x, edge_index).relu()
+        x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index, edge_weight)
         return x
 
 
-model = GCN(dataset.num_features, 64, dataset.num_classes).to(device)
+model = GNN(dataset.num_features, 64, dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 
 warmup_steps = 50
