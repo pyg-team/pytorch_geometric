@@ -19,7 +19,7 @@ srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
 srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
     --container-name=cont
     --container-mounts=
-    /lustre/fsw/dlfw/dlfw-pyg/riship/ogb-papers100m/:/workspace/dataset/
+    <data-directory>/ogb-papers100m/:/workspace/dataset/
 python3 multinode-papers100m-gcn.py --ngpu_per_node 3
 
 
