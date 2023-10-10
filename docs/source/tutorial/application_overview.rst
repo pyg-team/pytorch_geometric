@@ -137,7 +137,7 @@ Just like that, we have now trained and tested a node classification Graph Neura
 Graph Level Tasks
 -----------------
 
-Graph-level task are concerned with predicting the properties of an entire graph.
+Graph-level tasks are concerned with predicting the properties of an entire graph.
 
 Just like for node level tasks, graph level tasks can be declined in different genres such as:
 
@@ -328,7 +328,7 @@ For this task, we will be taking the `link pred <https://github.com/pyg-team/pyt
         dataset = Planetoid(path, name='Cora', transform=transform)
         train_data, val_data, test_data = dataset[0]
 
-    Note that we are using an additional transformation :class:`RandomLinkSplit`. It has the effect of splitting the edges of the original graph into three distinct splits (train, validation, test). We call it an *inductive learning setting* since training can only access edges from the training set during propagation.
+    Note that we are using an additional transformation :class:`RandomLinkSplit`. It has the effect of splitting the edges of the original graph into three distinct splits (train, validation, test). We call it an **inductive** learning setting since training can only access edges from the training set during propagation.
 
     Just like for the node classification dataset processing, since :class:`Cora` contains a single graph, we can extract it from the list to simplify things forward.
 
