@@ -22,7 +22,7 @@ def test_gmn_conv(divide_input):
     value = torch.rand(edge_index.size(1), 3)
 
     conv = GMNConv(16, 32, aggregators, scalers, deg=deg, edge_dim=3, towers=4,
-                   post_layers=1, divide_input=divide_input)
+                   post_layers=2, divide_input=divide_input)
     assert str(conv) == 'GMNConv(16, 32, towers=4, edge_dim=3)'
 
     out = conv(x, edge_index, value)
