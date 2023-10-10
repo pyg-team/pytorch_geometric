@@ -1,13 +1,21 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
-import torch
+import torch.nn as nn
 from torch import Tensor
 from torch.nn import ModuleList, Sequential
 
 from torch_geometric.nn.conv import PNAConv
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.resolver import activation_resolver, normalization_resolver
+from torch_geometric.nn.resolver import activation_resolver
 
+class TransposeModule(nn.Module):
+    def __init__(self, dim0, dim1):
+        super(TransposeModule, self).__init__()
+        self.dim0 = dim0
+        self.dim1 = dim1
+        
+    def forward(self, x):
+        return x.transpose(self.dim0, self.dim1)
 
 class GMNConv(PNAConv):
     r"""The Graph Mixer convolution operator
@@ -92,7 +100,6 @@ class GMNConv(PNAConv):
                  edge_dim: Optional[int] = None, towers: int = 1,
                  post_layers: int = 1, divide_input: bool = False,
                  act: Union[str, Callable, None] = "relu",
-                 norm: Union[str, Callable, None] = "LayerNorm",
                  act_kwargs: Optional[Dict[str, Any]] = None, **kwargs):
 
         super().__init__(in_channels, out_channels, aggregators, scalers, deg,
@@ -106,13 +113,12 @@ class GMNConv(PNAConv):
 
             for _ in range(post_layers - 1):
                 x = self.F_out
-                modules += [normalization_resolver(norm, **(act_kwargs or {}))]
-                modules += [torch.transpose(0, 1)]
+                modules += [nn.LayerNorm(x)]
+                modules += [TransposeModule(0, 1)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
-                modules += [torch.transpose(0, 1)]
-                modules += x
-                modules += [normalization_resolver(norm, **(act_kwargs or {}))]
+                modules += [TransposeModule(0, 1)] #
+                modules += [nn.LayerNorm(self.F_out)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))
