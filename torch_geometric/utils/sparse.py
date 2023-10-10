@@ -185,7 +185,8 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if torch_geometric.typing.WITH_PT20:
+        if (torch_geometric.typing.WITH_PT20
+                and not torch_geometric.typing.WITH_ARM):
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
@@ -250,7 +251,8 @@ def to_torch_csr_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if torch_geometric.typing.WITH_PT20:
+        if (torch_geometric.typing.WITH_PT20
+                and not torch_geometric.typing.WITH_ARM):
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
@@ -320,7 +322,8 @@ def to_torch_csc_tensor(
                                          sort_by_row=False)
 
     if edge_attr is None:
-        if torch_geometric.typing.WITH_PT20:
+        if (torch_geometric.typing.WITH_PT20
+                and not torch_geometric.typing.WITH_ARM):
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
