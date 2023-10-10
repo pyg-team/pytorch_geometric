@@ -140,7 +140,6 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
     model = DistributedDataParallel(model, device_ids=[loc_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
-    num_work = pyg_num_work(ngpu_per_node)
     kwargs = dict(
         num_neighbors=[fan_out, fan_out],
         batch_size=batch_size,
@@ -163,10 +162,11 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
             test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
-        train_loader = NeighborLoader(data, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+        num_work = pyg_num_work(world_size)
+        train_loader = NeighborLoader(data, input_nodes=split_idx['train'], num_workers=num_work, shuffle=True, **kwargs)
         if rank == 0:
-            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'], **kwargs)
-            test_loader = NeighborLoader(data, input_nodes=split_idx['test'], **kwargs)
+            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'], num_workers=num_work, **kwargs)
+            test_loader = NeighborLoader(data, input_nodes=split_idx['test'], num_workers=num_work, **kwargs)
 
     eval_steps = 1000
     warmup_steps = 100

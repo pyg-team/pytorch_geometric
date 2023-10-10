@@ -49,7 +49,6 @@ def get_num_workers() -> int:
 kwargs = dict(
     num_neighbors=[args.fan_out, args.fan_out],
     batch_size=args.batch_size,
-    num_workers=get_num_workers(),
 )
 # Set Up Dataloaders
 data = dataset[0]
@@ -67,11 +66,12 @@ if args.cugraph_data_loader:
     val_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
     test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
 else:
+    num_work = get_num_workers()
     from torch_geometric.loader import NeighborLoader
-    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'], shuffle=True,
+    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'], num_workers=num_work, shuffle=True,
                                   **kwargs)
-    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'], **kwargs)
-    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'], **kwargs)
+    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'], num_workers=num_work, **kwargs)
+    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'], num_workers=num_work, **kwargs)
 
 
 class GNN(torch.nn.Module):
