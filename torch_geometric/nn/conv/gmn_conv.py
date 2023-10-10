@@ -6,7 +6,10 @@ from torch.nn import ModuleList, Sequential
 
 from torch_geometric.nn.conv import PNAConv
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.resolver import activation_resolver, normalization_resolver
+from torch_geometric.nn.resolver import (
+    activation_resolver,
+    normalization_resolver,
+)
 
 
 class GMNConv(PNAConv):
@@ -91,8 +94,9 @@ class GMNConv(PNAConv):
                  aggregators: List[str], scalers: List[str], deg: Tensor,
                  edge_dim: Optional[int] = None, towers: int = 1,
                  post_layers: int = 1, divide_input: bool = False,
-                 act: Union[str, Callable, None] = "relu",
-                 norm: Union[str, Callable, None] = "LayerNorm",
+                 act: Union[str, Callable,
+                            None] = "relu", norm: Union[str, Callable,
+                                                        None] = "LayerNorm",
                  act_kwargs: Optional[Dict[str, Any]] = None, **kwargs):
 
         super().__init__(in_channels, out_channels, aggregators, scalers, deg,
