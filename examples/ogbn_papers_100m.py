@@ -6,7 +6,6 @@ import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 
-from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv, GATConv
 
 parser = argparse.ArgumentParser()
@@ -48,15 +47,31 @@ def get_num_workers() -> int:
 
 
 kwargs = dict(
-    data=dataset[0],
     num_neighbors=[args.fan_out, args.fan_out],
     batch_size=args.batch_size,
     num_workers=get_num_workers(),
 )
-train_loader = NeighborLoader(input_nodes=split_idx['train'], shuffle=True,
-                              **kwargs)
-val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
-test_loader = NeighborLoader(input_nodes=split_idx['test'], **kwargs)
+# Set Up Dataloaders
+data = dataset[0]
+if args.cugraph_data_loader:
+    import cugraph
+    from cugraph_pyg.data import CuGraphStore
+    from cugraph_pyg.loader import CuGraphNeighborLoader
+    G = {("N", "E", "N"): graph.edge_index}
+    N = {"N": graph.num_nodes}
+    fs = cugraph.gnn.FeatureStore(backend="torch")
+    fs.add_data(data.x, "N", "x")
+    fs.add_data(data.y, "N", "y")
+    cugraph_store = CuGraphStore(fs, G, N)
+    train_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+    val_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
+    test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
+else:
+    from torch_geometric.loader import NeighborLoader
+    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'], shuffle=True,
+                                  **kwargs)
+    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'], **kwargs)
+    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'], **kwargs)
 
 
 class GNN(torch.nn.Module):

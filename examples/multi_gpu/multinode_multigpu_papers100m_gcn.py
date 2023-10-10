@@ -126,7 +126,7 @@ class GNN(torch.nn.Module):
 
 
 def run_train(device, data, world_size, ngpu_per_node, model, epochs,
-              batch_size, fan_out, split_idx, num_classes):
+              batch_size, fan_out, split_idx, num_classes, cugraph_data_loader):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
@@ -141,19 +141,33 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
     num_work = pyg_num_work(ngpu_per_node)
-    train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                  input_nodes=split_idx['train'],
-                                  batch_size=batch_size, shuffle=True,
-                                  num_workers=num_work)
-    if rank == 0:
-        eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                     input_nodes=split_idx['valid'],
-                                     batch_size=batch_size, shuffle=True,
-                                     num_workers=num_work)
-        test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                     input_nodes=split_idx['test'],
-                                     batch_size=batch_size, shuffle=False,
-                                     num_workers=num_work)
+    kwargs = dict(
+        num_neighbors=[fan_out, fan_out],
+        batch_size=batch_size,
+        num_workers=num_work(),
+    )
+    # Set Up Dataloaders
+    if cugraph_data_loader:
+        import cugraph
+        from cugraph_pyg.data import CuGraphStore
+        from cugraph_pyg.loader import CuGraphNeighborLoader
+        G = {("N", "E", "N"): graph.edge_index}
+        N = {"N": graph.num_nodes}
+        fs = cugraph.gnn.FeatureStore(backend="torch")
+        fs.add_data(data.x, "N", "x")
+        fs.add_data(data.y, "N", "y")
+        cugraph_store = CuGraphStore(fs, G, N)
+        train_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+        if rank == 0:
+            eval_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
+            test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
+    else:
+        from torch_geometric.loader import NeighborLoader
+        train_loader = NeighborLoader(data, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+        if rank == 0:
+            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'], **kwargs)
+            test_loader = NeighborLoader(data, input_nodes=split_idx['test'], **kwargs)
+
     eval_steps = 1000
     warmup_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
@@ -254,4 +268,4 @@ if __name__ == '__main__':
     model = GNN(dataset.num_features, args.hidden_channels,
                 dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads)
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
-              args.batch_size, args.fan_out, split_idx, dataset.num_classes)
+              args.batch_size, args.fan_out, split_idx, dataset.num_classes, args.cugraph_data_loader)
