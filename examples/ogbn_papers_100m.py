@@ -51,11 +51,14 @@ class GCN(torch.nn.Module):
 model = GCN(dataset.num_features, 64, dataset.num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 
+warmup_steps = 50
 
 def train():
     model.train()
 
     for i, batch in enumerate(train_loader):
+        if i >= warmup_steps:
+            start_avg_time = time.perf_counter()
         start = time.perf_counter()
         batch = batch.to(device)
         optimizer.zero_grad()
@@ -69,6 +72,8 @@ def train():
             print(f'Epoch: {epoch:02d}, Iteration: {i}, Loss: {loss:.4f}, '
                   f's/iter: {time.perf_counter() - start:.6f}')
 
+    print(f'Average Training Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}')
+
 
 @torch.no_grad()
 def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
@@ -78,7 +83,8 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
     for i, batch in enumerate(loader):
         if eval_steps is not None and i >= eval_steps:
             break
-
+        if i >= warmup_steps:
+            start_avg_time = time.perf_counter()
         batch = batch.to(device)
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         pred = out.argmax(dim=-1)
@@ -86,6 +92,8 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
 
         total_correct += int((pred == y).sum())
         total_examples += y.size(0)
+
+    print(f'Average Inference Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}')
 
     return total_correct / total_examples
 

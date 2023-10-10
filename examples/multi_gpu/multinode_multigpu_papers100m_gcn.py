@@ -65,7 +65,7 @@ from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, GATConv
 
 warnings.filterwarnings("ignore")
 
@@ -107,11 +107,15 @@ def get_local_process_group():
     return _LOCAL_PROCESS_GROUP
 
 
-class GCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+class GNN(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=1):
         super().__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, out_channels)
+        if use_gat_conv:
+            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+        else:
+            self.conv1 = GCNConv(in_channels, hidden_channels)
+            self.conv2 = GCNConv(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, edge_weight=None):
         x = F.dropout(x, p=0.5, training=self.training)
@@ -212,6 +216,18 @@ if __name__ == '__main__':
         default="1",
         help="number of GPU(s) for each node for multi-gpu training,",
     )
+    parser.add_argument(
+        "--use_gat_conv",
+        type=bool,
+        default=False,
+        help="Wether or not to use GATConv. (Defaults to using GCNConv)",
+    )
+    parser.add_argument(
+        "--n_gat_conv_heads",
+        type=int,
+        default=1,
+        help="If using GATConv, number of attention heads to use",
+    )
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
@@ -228,7 +244,7 @@ if __name__ == '__main__':
 
     data = dataset[0]
     data.y = data.y.reshape(-1)
-    model = GCN(dataset.num_features, args.hidden_channels,
-                dataset.num_classes)
+    model = GNN(dataset.num_features, args.hidden_channels,
+                dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads)
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
               args.batch_size, args.fan_out, split_idx, dataset.num_classes)
