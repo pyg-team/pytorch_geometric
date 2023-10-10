@@ -33,7 +33,7 @@ parser.add_argument(
     default=False,
     help="Wether or not to use CuGraph for Neighbor Loading",
 )
-
+args = parser.parse_args()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
@@ -57,8 +57,8 @@ if args.cugraph_data_loader:
     import cugraph
     from cugraph_pyg.data import CuGraphStore
     from cugraph_pyg.loader import CuGraphNeighborLoader
-    G = {("N", "E", "N"): graph.edge_index}
-    N = {"N": graph.num_nodes}
+    G = {("N", "E", "N"): data.edge_index}
+    N = {"N": data.num_nodes}
     fs = cugraph.gnn.FeatureStore(backend="torch")
     fs.add_data(data.x, "N", "x")
     fs.add_data(data.y, "N", "y")
@@ -132,7 +132,8 @@ def train():
                   f's/iter: {time.perf_counter() - start:.6f}')
 
     print(
-        f'Average Training Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}'
+        f'Average Training Iteration Time (s/iter): \
+            {time.perf_counter() - start_avg_time:.6f}'
     )
 
 
@@ -155,7 +156,8 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
         total_examples += y.size(0)
 
     print(
-        f'Average Inference Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}'
+        f'Average Inference Iteration Time (s/iter): \
+            {time.perf_counter() - start_avg_time:.6f}'
     )
 
     return total_correct / total_examples

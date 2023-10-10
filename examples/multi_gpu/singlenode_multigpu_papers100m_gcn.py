@@ -10,7 +10,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, GATConv
 
 
 def pyg_num_work(world_size):
@@ -67,8 +67,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         import cugraph
         from cugraph_pyg.data import CuGraphStore
         from cugraph_pyg.loader import CuGraphNeighborLoader
-        G = {("N", "E", "N"): graph.edge_index}
-        N = {"N": graph.num_nodes}
+        G = {("N", "E", "N"): data.edge_index}
+        N = {"N": data.num_nodes}
         fs = cugraph.gnn.FeatureStore(backend="torch")
         fs.add_data(data.x, "N", "x")
         fs.add_data(data.y, "N", "y")
