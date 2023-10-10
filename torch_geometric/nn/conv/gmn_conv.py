@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
+import torch
 import torch.nn as nn
 from torch import Tensor
 from torch.nn import ModuleList, Sequential
@@ -117,7 +118,7 @@ class GMNConv(PNAConv):
                 modules += [TransposeModule(0, 1)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
-                modules += [TransposeModule(0, 1)] #
+                modules += [TransposeModule(0, 1)]
                 modules += [nn.LayerNorm(self.F_out)]
                 modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
