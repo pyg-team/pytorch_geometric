@@ -65,7 +65,7 @@ from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GCNConv, GATConv
+from torch_geometric.nn import GATConv, GCNConv
 
 warnings.filterwarnings("ignore")
 
@@ -108,11 +108,14 @@ def get_local_process_group():
 
 
 class GNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=4):
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 use_gat_conv=False, n_gat_conv_heads=4):
         super().__init__()
         if use_gat_conv:
-            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
-            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+            self.conv1 = GATConv(in_channels, hidden_channels,
+                                 heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels,
+                                 heads=n_gat_conv_heads)
         else:
             self.conv1 = GCNConv(in_channels, hidden_channels)
             self.conv2 = GCNConv(hidden_channels, out_channels)
@@ -126,7 +129,8 @@ class GNN(torch.nn.Module):
 
 
 def run_train(device, data, world_size, ngpu_per_node, model, epochs,
-              batch_size, fan_out, split_idx, num_classes, cugraph_data_loader):
+              batch_size, fan_out, split_idx, num_classes,
+              cugraph_data_loader):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
@@ -155,17 +159,27 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
         fs.add_data(data.x, "N", "x")
         fs.add_data(data.y, "N", "y")
         cugraph_store = CuGraphStore(fs, G, N)
-        train_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+        train_loader = CuGraphNeighborLoader(cugraph_store,
+                                             input_nodes=split_idx['train'],
+                                             shuffle=True, **kwargs)
         if rank == 0:
-            eval_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
-            test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
+            eval_loader = CuGraphNeighborLoader(cugraph_store,
+                                                input_nodes=split_idx['valid'],
+                                                **kwargs)
+            test_loader = CuGraphNeighborLoader(cugraph_store,
+                                                input_nodes=split_idx['test'],
+                                                **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
         num_work = pyg_num_work(world_size)
-        train_loader = NeighborLoader(data, input_nodes=split_idx['train'], num_workers=num_work, shuffle=True, **kwargs)
+        train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
+                                      num_workers=num_work, shuffle=True,
+                                      **kwargs)
         if rank == 0:
-            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'], num_workers=num_work, **kwargs)
-            test_loader = NeighborLoader(data, input_nodes=split_idx['test'], num_workers=num_work, **kwargs)
+            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
+                                         num_workers=num_work, **kwargs)
+            test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
+                                         num_workers=num_work, **kwargs)
 
     eval_steps = 1000
     warmup_steps = 100
@@ -267,4 +281,5 @@ if __name__ == '__main__':
     model = GNN(dataset.num_features, args.hidden_channels,
                 dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads)
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
-              args.batch_size, args.fan_out, split_idx, dataset.num_classes, args.cugraph_data_loader)
+              args.batch_size, args.fan_out, split_idx, dataset.num_classes,
+              args.cugraph_data_loader)

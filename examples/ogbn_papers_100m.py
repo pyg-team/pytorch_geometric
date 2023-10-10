@@ -1,12 +1,13 @@
+import argparse
 import os
 import time
 from typing import Optional
-import argparse
+
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 
-from torch_geometric.nn import GCNConv, GATConv
+from torch_geometric.nn import GATConv, GCNConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=128)
@@ -62,24 +63,35 @@ if args.cugraph_data_loader:
     fs.add_data(data.x, "N", "x")
     fs.add_data(data.y, "N", "y")
     cugraph_store = CuGraphStore(fs, G, N)
-    train_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['train'], shuffle=True, **kwargs)
-    val_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
-    test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
+    train_loader = CuGraphNeighborLoader(cugraph_store,
+                                         input_nodes=split_idx['train'],
+                                         shuffle=True, **kwargs)
+    val_loader = CuGraphNeighborLoader(cugraph_store,
+                                       input_nodes=split_idx['valid'],
+                                       **kwargs)
+    test_loader = CuGraphNeighborLoader(cugraph_store,
+                                        input_nodes=split_idx['test'],
+                                        **kwargs)
 else:
     num_work = get_num_workers()
     from torch_geometric.loader import NeighborLoader
-    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'], num_workers=num_work, shuffle=True,
-                                  **kwargs)
-    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'], num_workers=num_work, **kwargs)
-    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'], num_workers=num_work, **kwargs)
+    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
+                                  num_workers=num_work, shuffle=True, **kwargs)
+    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
+                                num_workers=num_work, **kwargs)
+    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
+                                 num_workers=num_work, **kwargs)
 
 
 class GNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=4):
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 use_gat_conv=False, n_gat_conv_heads=4):
         super().__init__()
         if use_gat_conv:
-            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
-            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+            self.conv1 = GATConv(in_channels, hidden_channels,
+                                 heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels,
+                                 heads=n_gat_conv_heads)
         else:
             self.conv1 = GCNConv(in_channels, hidden_channels)
             self.conv2 = GCNConv(hidden_channels, out_channels)
@@ -92,10 +104,13 @@ class GNN(torch.nn.Module):
         return x
 
 
-model = GNN(dataset.num_features, args.hidden_channels, dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=0.0005)
+model = GNN(dataset.num_features, args.hidden_channels, dataset.num_classes,
+            args.use_gat_conv, args.n_gat_conv_heads).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                             weight_decay=0.0005)
 
 warmup_steps = 50
+
 
 def train():
     model.train()
@@ -116,7 +131,9 @@ def train():
             print(f'Epoch: {epoch:02d}, Iteration: {i}, Loss: {loss:.4f}, '
                   f's/iter: {time.perf_counter() - start:.6f}')
 
-    print(f'Average Training Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}')
+    print(
+        f'Average Training Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}'
+    )
 
 
 @torch.no_grad()
@@ -137,12 +154,14 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
         total_correct += int((pred == y).sum())
         total_examples += y.size(0)
 
-    print(f'Average Inference Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}')
+    print(
+        f'Average Inference Iteration Time (s/iter): {time.perf_counter() - start_avg_time:.6f}'
+    )
 
     return total_correct / total_examples
 
 
-for epoch in range(1, 1+args.epochs):
+for epoch in range(1, 1 + args.epochs):
     train()
     val_acc = test(val_loader, eval_steps=100)
     print(f'Val Acc: ~{val_acc:.4f}')

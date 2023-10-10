@@ -26,11 +26,14 @@ def pyg_num_work(world_size):
 
 
 class GNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, use_gat_conv=False, n_gat_conv_heads=4):
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 use_gat_conv=False, n_gat_conv_heads=4):
         super().__init__()
         if use_gat_conv:
-            self.conv1 = GATConv(in_channels, hidden_channels, heads=n_gat_conv_heads)
-            self.conv2 = GATConv(hidden_channels, out_channels, heads=n_gat_conv_heads)
+            self.conv1 = GATConv(in_channels, hidden_channels,
+                                 heads=n_gat_conv_heads)
+            self.conv2 = GATConv(hidden_channels, out_channels,
+                                 heads=n_gat_conv_heads)
         else:
             self.conv1 = GCNConv(in_channels, hidden_channels)
             self.conv2 = GCNConv(hidden_channels, out_channels)
@@ -54,7 +57,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
-    
+
     kwargs = dict(
         num_neighbors=[fan_out, fan_out],
         batch_size=batch_size,
@@ -70,17 +73,27 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         fs.add_data(data.x, "N", "x")
         fs.add_data(data.y, "N", "y")
         cugraph_store = CuGraphStore(fs, G, N)
-        train_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['train'], shuffle=True, **kwargs)
+        train_loader = CuGraphNeighborLoader(cugraph_store,
+                                             input_nodes=split_idx['train'],
+                                             shuffle=True, **kwargs)
         if rank == 0:
-            eval_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['valid'], **kwargs)
-            test_loader = CuGraphNeighborLoader(cugraph_store, input_nodes=split_idx['test'], **kwargs)
+            eval_loader = CuGraphNeighborLoader(cugraph_store,
+                                                input_nodes=split_idx['valid'],
+                                                **kwargs)
+            test_loader = CuGraphNeighborLoader(cugraph_store,
+                                                input_nodes=split_idx['test'],
+                                                **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
         num_work = pyg_num_work(world_size)
-        train_loader = NeighborLoader(data, input_nodes=split_idx['train'], num_workers=num_work, shuffle=True, **kwargs)
+        train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
+                                      num_workers=num_work, shuffle=True,
+                                      **kwargs)
         if rank == 0:
-            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'], num_workers=num_work, **kwargs)
-            test_loader = NeighborLoader(data, input_nodes=split_idx['test'], num_workers=num_work, **kwargs)
+            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
+                                         num_workers=num_work, **kwargs)
+            test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
+                                         num_workers=num_work, **kwargs)
     eval_steps = 1000
     warmup_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
@@ -169,5 +182,6 @@ if __name__ == '__main__':
     print('Let\'s use', world_size, 'GPUs!')
     mp.spawn(
         run_train, args=(data, world_size, model, args.epochs, args.batch_size,
-                         args.fan_out, split_idx, dataset.num_classes, args.cugraph_data_loader),
-        nprocs=world_size, join=True)
+                         args.fan_out, split_idx, dataset.num_classes,
+                         args.cugraph_data_loader), nprocs=world_size,
+        join=True)
