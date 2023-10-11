@@ -94,12 +94,12 @@ class CitationFull(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        suffix = 'undirected' if self.to_undirected else 'directed'
-        return f'{self.name}_{suffix}.npz'
+        return f'{self.name}.npz'
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        suffix = 'undirected' if self.to_undirected else 'directed'
+        return f'data_{suffix}.pt'
 
     def download(self):
         download_url(self.url.format(self.name), self.raw_dir)
