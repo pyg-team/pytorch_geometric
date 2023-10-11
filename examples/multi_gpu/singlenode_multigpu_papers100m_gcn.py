@@ -150,9 +150,11 @@ if __name__ == '__main__':
     data = dataset[0]
     data.y = data.y.reshape(-1)
     if args.use_gat_conv:
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features, args.hidden_channels, args.num_layers,
-            dataset.num_classes, heads=args.n_gat_conv_heads)
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.n_gat_conv_heads)
     else:
         model = torch_geometric.nn.models.GCN(dataset.num_features,
                                               args.hidden_channels,
