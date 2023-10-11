@@ -259,7 +259,7 @@ if __name__ == '__main__':
         model = torch_geometric.nn.models.GAT(dataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes,
                 heads=args.n_gat_conv_heads).to(device)
     else:
-        model = torch_geometric.nn.models.GCN(ddataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes).to(device)
+        model = torch_geometric.nn.models.GCN(dataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes).to(device)
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
               args.batch_size, args.fan_out, split_idx, dataset.num_classes,
               args.cugraph_data_loader)
