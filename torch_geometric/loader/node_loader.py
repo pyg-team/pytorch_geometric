@@ -174,6 +174,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                     edge_index=torch.stack([out.row, out.col]),
                     edge_attr=out.metadata[-1],
                 )
+                data.e_id = out.edge.to(torch.long)
             if "n_id" not in data:
                 data.n_id = out.node
             if out.edge is not None and "e_id" not in data:
