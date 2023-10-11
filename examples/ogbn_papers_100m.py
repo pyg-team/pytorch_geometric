@@ -17,8 +17,7 @@ parser.add_argument('--batch_size', type=int, default=2048)
 parser.add_argument('--fan_out', type=int, default=16)
 parser.add_argument(
     "--use_gat_conv",
-    type=bool,
-    default=False,
+    action='store_true',
     help="Wether or not to use GATConv. (Defaults to using GCNConv)",
 )
 parser.add_argument(
@@ -30,7 +29,7 @@ parser.add_argument(
 parser.add_argument(
     "--cugraph_data_loader",
     type=bool,
-    default=False,
+    action='store_true',
     help="Wether or not to use CuGraph for Neighbor Loading",
 )
 args = parser.parse_args()
