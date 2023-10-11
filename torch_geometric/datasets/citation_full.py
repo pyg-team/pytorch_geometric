@@ -94,8 +94,8 @@ class CitationFull(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        suffix = '' if self.to_undirected else '_directed'
-        return f'{self.name}{suffix}.npz'
+        suffix = 'undirected' if self.to_undirected else 'directed'
+        return f'{self.name}_{suffix}.npz'
 
     @property
     def processed_file_names(self) -> str:
