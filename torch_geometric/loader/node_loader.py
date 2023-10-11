@@ -217,6 +217,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                                                out.col, out.edge,
                                                self.custom_cls,
                                                self.input_data.input_type)
+                    data.e_id = out.edge.to(torch.long)
 
             for key, node in out.node.items():
                 if "n_id" not in data[key]:
