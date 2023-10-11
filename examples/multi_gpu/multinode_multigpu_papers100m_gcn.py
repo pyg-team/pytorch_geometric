@@ -63,8 +63,7 @@ import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
-
-from torch_geometric.nn import GATConv, GCNConv
+import torch_geometric
 
 warnings.filterwarnings("ignore")
 
@@ -254,12 +253,12 @@ if __name__ == '__main__':
     if args.use_gat_conv:
         model = torch_geometric.nn.models.GAT(
             dataset.num_features, args.hidden_channels, args.num_layers,
-            dataset.num_classes, heads=args.n_gat_conv_heads).to(device)
+            dataset.num_classes, heads=args.n_gat_conv_heads)
     else:
         model = torch_geometric.nn.models.GCN(dataset.num_features,
                                               args.hidden_channels,
                                               args.num_layers,
-                                              dataset.num_classes).to(device)
+                                              dataset.num_classes)
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
               args.batch_size, args.fan_out, split_idx, dataset.num_classes,
               args.cugraph_data_loader)
