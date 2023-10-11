@@ -25,27 +25,6 @@ def pyg_num_work(world_size):
     return int(num_work)
 
 
-class GNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels,
-                 use_gat_conv=False, n_gat_conv_heads=4):
-        super().__init__()
-        if use_gat_conv:
-            self.conv1 = GATConv(in_channels, hidden_channels,
-                                 heads=n_gat_conv_heads)
-            self.conv2 = GATConv(n_gat_conv_heads * hidden_channels, int(out_channels / n_gat_conv_heads),
-                                 heads=n_gat_conv_heads)
-        else:
-            self.conv1 = GCNConv(in_channels, hidden_channels)
-            self.conv2 = GCNConv(hidden_channels, out_channels)
-
-    def forward(self, x, edge_index, edge_weight=None):
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv1(x, edge_index, edge_weight).relu()
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index, edge_weight)
-        return x
-
-
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes, cugraph_data_loader):
     os.environ['MASTER_ADDR'] = 'localhost'
@@ -146,6 +125,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_channels', type=int, default=128)
+    parser.add_argument('--num_layers', type=int, default=2)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--batch_size', type=int, default=2048)
@@ -173,8 +153,11 @@ if __name__ == '__main__':
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
-    model = GNN(dataset.num_features, args.hidden_channels,
-                dataset.num_classes, args.use_gat_conv, args.n_gat_conv_heads)
+    if args.use_gat_conv:
+        model = torch_geometric.nn.models.GAT(dataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes,
+                heads=args.n_gat_conv_heads).to(device)
+    else:
+        model = torch_geometric.nn.models.GCN(ddataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes).to(device)
     print("Data =", data)
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
