@@ -5,11 +5,12 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import GRU
-from torch_geometric.typing import Adj, OptTensor
 from torch_sparse import SparseTensor
-from torch_geometric.nn.inits import glorot
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.inits import glorot
+from torch_geometric.typing import Adj, OptTensor
 
 
 class GCNConv_Fixed_W(MessagePassing):
@@ -59,7 +60,7 @@ class GCNConv_Fixed_W(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  improved: bool = False, cached: bool = False,
                  add_self_loops: bool = True, normalize: bool = True,
-                **kwargs):
+                 **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super(GCNConv_Fixed_W, self).__init__(**kwargs)
@@ -103,7 +104,6 @@ class GCNConv_Fixed_W(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
 
-
 class EvolveGCNO(torch.nn.Module):
     r"""An implementation of the Evolving Graph Convolutional without Hidden Layer.
     For details see this paper: `"EvolveGCN: Evolving Graph Convolutional
@@ -124,7 +124,6 @@ class EvolveGCNO(torch.nn.Module):
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -140,11 +139,12 @@ class EvolveGCNO(torch.nn.Module):
         self.cached = cached
         self.normalize = normalize
         self.add_self_loops = add_self_loops
-        self.initial_weight = torch.nn.Parameter(torch.Tensor(1, in_channels, in_channels))
+        self.initial_weight = torch.nn.Parameter(
+            torch.Tensor(1, in_channels, in_channels))
         self.weight = None
         self._create_layers()
         self.reset_parameters()
-    
+
     def reset_parameters(self):
         glorot(self.initial_weight)
 
@@ -153,21 +153,18 @@ class EvolveGCNO(torch.nn.Module):
 
     def _create_layers(self):
 
-        self.recurrent_layer = GRU(
-            input_size=self.in_channels, hidden_size=self.in_channels, num_layers=1
-        )
+        self.recurrent_layer = GRU(input_size=self.in_channels,
+                                   hidden_size=self.in_channels, num_layers=1)
         for param in self.recurrent_layer.parameters():
             param.requires_grad = True
             param.retain_grad()
 
-        self.conv_layer = GCNConv_Fixed_W(
-            in_channels=self.in_channels,
-            out_channels=self.in_channels,
-            improved=self.improved,
-            cached=self.cached,
-            normalize=self.normalize,
-            add_self_loops=self.add_self_loops
-        )
+        self.conv_layer = GCNConv_Fixed_W(in_channels=self.in_channels,
+                                          out_channels=self.in_channels,
+                                          improved=self.improved,
+                                          cached=self.cached,
+                                          normalize=self.normalize,
+                                          add_self_loops=self.add_self_loops)
 
     def forward(
         self,
@@ -184,11 +181,12 @@ class EvolveGCNO(torch.nn.Module):
         Return types:
             * **X** *(PyTorch Float Tensor)* - Output matrix for all nodes.
         """
-        
+
         if self.weight is None:
-            _, self.weight = self.recurrent_layer(self.initial_weight, self.initial_weight)
+            _, self.weight = self.recurrent_layer(self.initial_weight,
+                                                  self.initial_weight)
         else:
             _, self.weight = self.recurrent_layer(self.weight, self.weight)
-        X = self.conv_layer(self.weight.squeeze(dim=0), X, edge_index, edge_weight)
+        X = self.conv_layer(self.weight.squeeze(dim=0), X, edge_index,
+                            edge_weight)
         return X
-        

@@ -2,9 +2,10 @@
 
 import torch
 from torch.nn import GRU
+
 from torch_geometric.nn import TopKPooling
 
-from .evolvegcno import glorot, GCNConv_Fixed_W
+from .evolvegcno import GCNConv_Fixed_W, glorot
 
 
 class EvolveGCNH(torch.nn.Module):
@@ -29,7 +30,6 @@ class EvolveGCNH(torch.nn.Module):
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         num_of_nodes: int,
@@ -48,10 +48,11 @@ class EvolveGCNH(torch.nn.Module):
         self.normalize = normalize
         self.add_self_loops = add_self_loops
         self.weight = None
-        self.initial_weight = torch.nn.Parameter(torch.Tensor(1, in_channels, in_channels))
+        self.initial_weight = torch.nn.Parameter(
+            torch.Tensor(1, in_channels, in_channels))
         self._create_layers()
         self.reset_parameters()
-    
+
     def reset_parameters(self):
         glorot(self.initial_weight)
 
@@ -64,18 +65,15 @@ class EvolveGCNH(torch.nn.Module):
 
         self.pooling_layer = TopKPooling(self.in_channels, self.ratio)
 
-        self.recurrent_layer = GRU(
-            input_size=self.in_channels, hidden_size=self.in_channels, num_layers=1
-        )
+        self.recurrent_layer = GRU(input_size=self.in_channels,
+                                   hidden_size=self.in_channels, num_layers=1)
 
-        self.conv_layer = GCNConv_Fixed_W(
-            in_channels=self.in_channels,
-            out_channels=self.in_channels,
-            improved=self.improved,
-            cached=self.cached,
-            normalize=self.normalize,
-            add_self_loops=self.add_self_loops
-        )
+        self.conv_layer = GCNConv_Fixed_W(in_channels=self.in_channels,
+                                          out_channels=self.in_channels,
+                                          improved=self.improved,
+                                          cached=self.cached,
+                                          normalize=self.normalize,
+                                          add_self_loops=self.add_self_loops)
 
     def forward(
         self,
@@ -100,5 +98,6 @@ class EvolveGCNH(torch.nn.Module):
             _, self.weight = self.recurrent_layer(X_tilde, self.initial_weight)
         else:
             _, self.weight = self.recurrent_layer(X_tilde, self.weight)
-        X = self.conv_layer(self.weight.squeeze(dim=0), X, edge_index, edge_weight)
+        X = self.conv_layer(self.weight.squeeze(dim=0), X, edge_index,
+                            edge_weight)
         return X

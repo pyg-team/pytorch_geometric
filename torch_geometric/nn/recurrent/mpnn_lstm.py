@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.nn import GCNConv
 
 
@@ -15,7 +16,6 @@ class MPNNLSTM(nn.Module):
         window (int): Number of past samples included in the input.
         dropout (float): Dropout rate.
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -103,4 +103,3 @@ class MPNNLSTM(nn.Module):
 
         H = torch.cat([H_1[0, :, :], H_2[0, :, :], S], dim=1)
         return H
-        

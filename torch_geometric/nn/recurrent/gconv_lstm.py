@@ -2,6 +2,7 @@
 
 import torch
 from torch.nn import Parameter
+
 from torch_geometric.nn import ChebConv
 from torch_geometric.nn.inits import glorot, zeros
 
@@ -38,7 +39,6 @@ class GConvLSTM(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -165,33 +165,41 @@ class GConvLSTM(torch.nn.Module):
             C = torch.zeros(X.shape[0], self.out_channels).to(X.device)
         return C
 
-    def _calculate_input_gate(self, X, edge_index, edge_weight, H, C, lambda_max):
+    def _calculate_input_gate(self, X, edge_index, edge_weight, H, C,
+                              lambda_max):
         I = self.conv_x_i(X, edge_index, edge_weight, lambda_max=lambda_max)
-        I = I + self.conv_h_i(H, edge_index, edge_weight, lambda_max=lambda_max)
+        I = I + self.conv_h_i(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         I = I + (self.w_c_i * C)
         I = I + self.b_i
         I = torch.sigmoid(I)
         return I
 
-    def _calculate_forget_gate(self, X, edge_index, edge_weight, H, C, lambda_max):
+    def _calculate_forget_gate(self, X, edge_index, edge_weight, H, C,
+                               lambda_max):
         F = self.conv_x_f(X, edge_index, edge_weight, lambda_max=lambda_max)
-        F = F + self.conv_h_f(H, edge_index, edge_weight, lambda_max=lambda_max)
+        F = F + self.conv_h_f(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         F = F + (self.w_c_f * C)
         F = F + self.b_f
         F = torch.sigmoid(F)
         return F
 
-    def _calculate_cell_state(self, X, edge_index, edge_weight, H, C, I, F, lambda_max):
+    def _calculate_cell_state(self, X, edge_index, edge_weight, H, C, I, F,
+                              lambda_max):
         T = self.conv_x_c(X, edge_index, edge_weight, lambda_max=lambda_max)
-        T = T + self.conv_h_c(H, edge_index, edge_weight, lambda_max=lambda_max)
+        T = T + self.conv_h_c(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         T = T + self.b_c
         T = torch.tanh(T)
         C = F * C + I * T
         return C
 
-    def _calculate_output_gate(self, X, edge_index, edge_weight, H, C, lambda_max):
+    def _calculate_output_gate(self, X, edge_index, edge_weight, H, C,
+                               lambda_max):
         O = self.conv_x_o(X, edge_index, edge_weight, lambda_max=lambda_max)
-        O = O + self.conv_h_o(H, edge_index, edge_weight, lambda_max=lambda_max)
+        O = O + self.conv_h_o(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         O = O + (self.w_c_o * C)
         O = O + self.b_o
         O = torch.sigmoid(O)
@@ -230,9 +238,13 @@ class GConvLSTM(torch.nn.Module):
         """
         H = self._set_hidden_state(X, H)
         C = self._set_cell_state(X, C)
-        I = self._calculate_input_gate(X, edge_index, edge_weight, H, C, lambda_max)
-        F = self._calculate_forget_gate(X, edge_index, edge_weight, H, C, lambda_max)
-        C = self._calculate_cell_state(X, edge_index, edge_weight, H, C, I, F, lambda_max)
-        O = self._calculate_output_gate(X, edge_index, edge_weight, H, C, lambda_max)
+        I = self._calculate_input_gate(X, edge_index, edge_weight, H, C,
+                                       lambda_max)
+        F = self._calculate_forget_gate(X, edge_index, edge_weight, H, C,
+                                        lambda_max)
+        C = self._calculate_cell_state(X, edge_index, edge_weight, H, C, I, F,
+                                       lambda_max)
+        O = self._calculate_output_gate(X, edge_index, edge_weight, H, C,
+                                        lambda_max)
         H = self._calculate_hidden_state(O, C)
         return H, C

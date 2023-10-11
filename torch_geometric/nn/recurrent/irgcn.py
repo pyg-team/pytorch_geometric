@@ -1,5 +1,6 @@
 import torch
 from torch.nn import Parameter
+
 from torch_geometric.nn import RGCNConv
 from torch_geometric.nn.inits import glorot, zeros
 
@@ -15,10 +16,8 @@ class LRGCN(torch.nn.Module):
         num_relations (int): Number of relations.
         num_bases (int): Number of bases.
     """
-
-    def __init__(
-        self, in_channels: int, out_channels: int, num_relations: int, num_bases: int
-    ):
+    def __init__(self, in_channels: int, out_channels: int, num_relations: int,
+                 num_bases: int):
         super(LRGCN, self).__init__()
 
         self.in_channels = in_channels
@@ -167,4 +166,3 @@ class LRGCN(torch.nn.Module):
         O = self._calculate_output_gate(X, edge_index, edge_type, H, C)
         H = self._calculate_hidden_state(O, C)
         return H, C
-        

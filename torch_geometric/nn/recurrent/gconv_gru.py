@@ -1,6 +1,7 @@
 #reference fom https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/torch_geometric_temporal/nn/recurrent/gconv_gru.py
 
 import torch
+
 from torch_geometric.nn import ChebConv
 
 
@@ -36,7 +37,6 @@ class GConvGRU(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -118,21 +118,27 @@ class GConvGRU(torch.nn.Module):
             H = torch.zeros(X.shape[0], self.out_channels).to(X.device)
         return H
 
-    def _calculate_update_gate(self, X, edge_index, edge_weight, H, lambda_max):
+    def _calculate_update_gate(self, X, edge_index, edge_weight, H,
+                               lambda_max):
         Z = self.conv_x_z(X, edge_index, edge_weight, lambda_max=lambda_max)
-        Z = Z + self.conv_h_z(H, edge_index, edge_weight, lambda_max=lambda_max)
+        Z = Z + self.conv_h_z(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         Z = torch.sigmoid(Z)
         return Z
 
     def _calculate_reset_gate(self, X, edge_index, edge_weight, H, lambda_max):
         R = self.conv_x_r(X, edge_index, edge_weight, lambda_max=lambda_max)
-        R = R + self.conv_h_r(H, edge_index, edge_weight, lambda_max=lambda_max)
+        R = R + self.conv_h_r(H, edge_index, edge_weight,
+                              lambda_max=lambda_max)
         R = torch.sigmoid(R)
         return R
 
-    def _calculate_candidate_state(self, X, edge_index, edge_weight, H, R, lambda_max):
-        H_tilde = self.conv_x_h(X, edge_index, edge_weight, lambda_max=lambda_max)
-        H_tilde = H_tilde + self.conv_h_h(H * R, edge_index, edge_weight, lambda_max=lambda_max)
+    def _calculate_candidate_state(self, X, edge_index, edge_weight, H, R,
+                                   lambda_max):
+        H_tilde = self.conv_x_h(X, edge_index, edge_weight,
+                                lambda_max=lambda_max)
+        H_tilde = H_tilde + self.conv_h_h(H * R, edge_index, edge_weight,
+                                          lambda_max=lambda_max)
         H_tilde = torch.tanh(H_tilde)
         return H_tilde
 
@@ -165,9 +171,11 @@ class GConvGRU(torch.nn.Module):
             * **H** *(PyTorch Float Tensor)* - Hidden state matrix for all nodes.
         """
         H = self._set_hidden_state(X, H)
-        Z = self._calculate_update_gate(X, edge_index, edge_weight, H, lambda_max)
-        R = self._calculate_reset_gate(X, edge_index, edge_weight, H, lambda_max)
-        H_tilde = self._calculate_candidate_state(X, edge_index, edge_weight, H, R, lambda_max)
+        Z = self._calculate_update_gate(X, edge_index, edge_weight, H,
+                                        lambda_max)
+        R = self._calculate_reset_gate(X, edge_index, edge_weight, H,
+                                       lambda_max)
+        H_tilde = self._calculate_candidate_state(X, edge_index, edge_weight,
+                                                  H, R, lambda_max)
         H = self._calculate_hidden_state(Z, H, H_tilde)
         return H
-
