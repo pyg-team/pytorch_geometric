@@ -88,7 +88,8 @@ class GNN(torch.nn.Module):
         if use_gat_conv:
             self.conv1 = GATConv(in_channels, hidden_channels,
                                  heads=n_gat_conv_heads)
-            self.conv2 = GATConv(n_gat_conv_heads * hidden_channels, out_channels / n_gat_conv_heads,
+            self.conv2 = GATConv(n_gat_conv_heads * hidden_channels,
+                                 out_channels / n_gat_conv_heads,
                                  heads=n_gat_conv_heads)
         else:
             self.conv1 = GCNConv(in_channels, hidden_channels)
