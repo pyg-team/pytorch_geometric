@@ -100,16 +100,12 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 for i, batch in enumerate(eval_loader):
                     if i >= eval_steps:
                         break
-                    if i >= warmup_steps:
-                        start = time.time()
                     batch = batch.to(rank)
                     batch.y = batch.y.to(torch.long)
                     out = model(batch.x, batch.edge_index)
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
             print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-            print("Average Inference Iteration Time:",
-                  (time.time() - start) / (i - warmup_steps), "s/iter")
     if rank == 0:
         acc_sum = 0.0
         with torch.no_grad():
