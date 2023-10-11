@@ -163,7 +163,6 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         "--cugraph_data_loader",
-        type=bool,
         action='store_true',
         help="Wether or not to use CuGraph for Neighbor Loading",
     )
