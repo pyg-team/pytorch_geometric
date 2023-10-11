@@ -82,10 +82,14 @@ else:
                                  num_workers=num_work, **kwargs)
 
 if args.use_gat_conv:
-    model = torch_geometric.nn.models.GAT(dataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes,
-            heads=args.n_gat_conv_heads).to(device)
+    model = torch_geometric.nn.models.GAT(
+        dataset.num_features, args.hidden_channels, args.num_layers,
+        dataset.num_classes, heads=args.n_gat_conv_heads).to(device)
 else:
-    model = torch_geometric.nn.models.GCN(dataset.num_features, args.hidden_channels, args.num_layers, dataset.num_classes).to(device)
+    model = torch_geometric.nn.models.GCN(dataset.num_features,
+                                          args.hidden_channels,
+                                          args.num_layers,
+                                          dataset.num_classes).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                              weight_decay=0.0005)
