@@ -237,7 +237,6 @@ if __name__ == '__main__':
             a reduction in batch_size/fan_out/hidden_channels/num_layers",
     )
 
-
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
