@@ -128,8 +128,6 @@ def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
     for i, batch in enumerate(loader):
         if eval_steps is not None and i >= eval_steps:
             break
-        if i >= warmup_steps:
-            start_avg_time = time.perf_counter()
         batch = batch.to(device)
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         pred = out.argmax(dim=-1)
