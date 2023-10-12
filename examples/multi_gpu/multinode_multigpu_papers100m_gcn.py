@@ -162,7 +162,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                                          num_workers=num_work, **kwargs)
 
     eval_steps = 1000
-    warmup_steps = 100
+    warmup_steps = 20
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
     if rank == 0:
         print("Beginning training...")

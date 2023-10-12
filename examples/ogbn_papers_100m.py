@@ -96,7 +96,7 @@ else:
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                              weight_decay=0.0005)
 
-warmup_steps = 50
+warmup_steps = 20
 
 
 def train():

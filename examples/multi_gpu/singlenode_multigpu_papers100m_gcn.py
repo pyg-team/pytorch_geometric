@@ -74,7 +74,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
                                          num_workers=num_work, **kwargs)
     eval_steps = 1000
-    warmup_steps = 100
+    warmup_steps = 20
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
     if rank == 0:
         print("Beginning training...")
