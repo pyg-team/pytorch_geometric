@@ -1,18 +1,18 @@
 import argparse
-import os.path as osp
 import copy
+import os.path as osp
 from random import sample, shuffle
 
+import networkx
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from torch import Tensor
-import networkx
 
-from torch_geometric.utils import from_networkx, one_hot
-from torch_geometric.data import Data
 import torch_geometric.transforms as T
+from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
+from torch_geometric.utils import from_networkx, one_hot
 
 parser = argparse.ArgumentParser()
 # default parameter setting for CiteSeer.
@@ -33,12 +33,12 @@ args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-transform = T.Compose([T.NormalizeFeatures(),
-                       T.GCNNorm(),
-                       T.ToSparseTensor(layout=torch.sparse_coo)])
-dataset = Planetoid(path,
-                    name=args.dataset,
-                    transform=transform)
+transform = T.Compose([
+    T.NormalizeFeatures(),
+    T.GCNNorm(),
+    T.ToSparseTensor(layout=torch.sparse_coo)
+])
+dataset = Planetoid(path, name=args.dataset, transform=transform)
 data = dataset[0].to(device)
 
 num_nodes = data.x.size(0)
@@ -54,12 +54,15 @@ if avg_edge_num % 2 != 0:
 def inver_graph_convolution(neg_graph: Tensor):
     change_num = args.change_num  # interchange edges for how many times
     if neg_graph is None:
-        regular_graph = networkx.random_regular_graph(d=avg_edge_num, n=num_nodes)
-        data_G = T.ToSparseTensor(layout=torch.sparse_coo)(from_networkx(regular_graph))
+        regular_graph = networkx.random_regular_graph(d=avg_edge_num,
+                                                      n=num_nodes)
+        data_G = T.ToSparseTensor(layout=torch.sparse_coo)(
+            from_networkx(regular_graph))
         neg_graph = data_G.adj_t.coalesce().to(device)
     else:
         # randomly modify neg_graph, perserving iters of nodes
-        index_sample = sample(list(range(num_nodes * avg_edge_num)), change_num)
+        index_sample = sample(list(range(num_nodes * avg_edge_num)),
+                              change_num)
         neg_graph_ind = neg_graph.indices()
         ulis = neg_graph_ind[0][index_sample]
         vlis = neg_graph_ind[1][index_sample]
@@ -78,8 +81,7 @@ def inver_graph_convolution(neg_graph: Tensor):
             ind[1].extend([v, u])
             val.extend([1, 1])
 
-        delta = torch.sparse_coo_tensor(ind,
-                                        val,
+        delta = torch.sparse_coo_tensor(ind, val,
                                         (num_nodes, num_nodes)).to(device)
         neg_graph += delta
         neg_graph = neg_graph.coalesce()
@@ -92,7 +94,8 @@ def lazy_random_walk(adj: Tensor, beta: float) -> Tensor:
     return beta * adj + (1 - beta) * I_N
 
 
-def ggcm(degree: int, alpha: float, decline: float, decline_neg: float) -> Tensor:
+def ggcm(degree: int, alpha: float, decline: float,
+         decline_neg: float) -> Tensor:
     beta = 1.0
     neg_beta = 1.0
 
@@ -125,8 +128,7 @@ class LinearNeuralNetwork(torch.nn.Module):
     def __init__(self, num_features: int, num_classes: int, bias: bool = True):
         super().__init__()
         self.W = torch.nn.Linear(num_features, num_classes, bias=bias)
-        self.optimizer = optim.Adam(self.parameters(),
-                                    lr=args.lr,
+        self.optimizer = optim.Adam(self.parameters(), lr=args.lr,
                                     weight_decay=args.wd)
 
     def forward(self, x: Tensor) -> Tensor:
@@ -149,8 +151,7 @@ class LinearNeuralNetwork(torch.nn.Module):
         self.train()
         self.optimizer.zero_grad()
         out = self(embedds)
-        loss = F.cross_entropy(out[data.train_mask],
-                               data.y[data.train_mask])
+        loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
         loss.backward()
         self.optimizer.step()
 
