@@ -27,9 +27,9 @@ parser.add_argument('--wd', type=float, default=1e-3)
 parser.add_argument('--negative_rate', type=float, default=20.0)
 parser.add_argument('--change_num', type=int, default=20)
 args = parser.parse_args()
-# for Cora and PubMed :
-# python ggcm.py --dataset=Cora --decline_neg=0.5 --wd=1e-5
-# python ggcm.py --dataset=PubMed --alpha=0.1 --decline_neg=0.5 --wd=2e-5 --change_num=80
+# parameters for Cora and PubMed :
+# --dataset=Cora --decline_neg=0.5 --wd=1e-5
+# --dataset=PubMed --alpha=0.1 --decline_neg=0.5 --wd=2e-5 --change_num=80
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
