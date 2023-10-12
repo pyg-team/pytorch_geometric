@@ -137,13 +137,13 @@ if __name__ == '__main__':
         default=4,
         help="If using GATConv, number of attention heads to use",
     )
-parser.add_argument(
-    "--cugraph_data_loader",
-    action='store_true',
-    help="Wether or not to use CuGraph for Neighbor Loading. \
-        \nNote that this requires more GPU memory or \
-        a reduction in batch_size/fan_out/hidden_channels/num_layers",
-)
+    parser.add_argument(
+        "--cugraph_data_loader",
+        action='store_true',
+        help="Wether or not to use CuGraph for Neighbor Loading. \
+            \nNote that this requires more GPU memory or \
+            a reduction in batch_size/fan_out/hidden_channels/num_layers",
+    )
 
     args = parser.parse_args()
 
