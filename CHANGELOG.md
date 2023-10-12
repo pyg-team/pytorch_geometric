@@ -9,7 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+### Deprecated
+
 ### Removed
+
+### Fixed
 
 ## [2.4.0] - 2023-10-12
 
