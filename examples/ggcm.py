@@ -51,7 +51,7 @@ if avg_edge_num % 2 != 0:
     avg_edge_num += 1
 
 
-def inver_graph_convolution(neg_graph: Tensor):
+def inverse_graph_convolution(neg_graph: Tensor):
     change_num = args.change_num  # interchange edges for how many times
     if neg_graph is None:
         regular_graph = networkx.random_regular_graph(d=avg_edge_num,
@@ -110,7 +110,7 @@ def ggcm(degree: int, alpha: float, decline: float,
         embedds = torch.sparse.mm(lazy_adj, U)
 
         # inverse graph convlution (IGC), lazy version
-        neg_adj_nor, neg_graph = inver_graph_convolution(neg_graph)
+        neg_adj_nor, neg_graph = inverse_graph_convolution(neg_graph)
         inv_lazy_adj = lazy_random_walk(neg_adj_nor, neg_beta)
         inv_embedds = torch.sparse.mm(inv_lazy_adj, U)
 
