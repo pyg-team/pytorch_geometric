@@ -66,7 +66,8 @@ if args.cugraph_data_loader:
     cugraph_store = CuGraphStore(fs, G, N)
     train_loader = CuGraphNeighborLoader(cugraph_store,
                                          input_nodes=split_idx['train'],
-                                         shuffle=True, drop_last=True, **kwargs)
+                                         shuffle=True, drop_last=True,
+                                         **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
                                        **kwargs)
@@ -77,7 +78,8 @@ else:
     num_work = get_num_workers()
     NeighborLoader = torch_geometric.loader.NeighborLoader
     train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
-                                  num_workers=num_work, drop_last=True, shuffle=True, **kwargs)
+                                  num_workers=num_work, drop_last=True,
+                                  shuffle=True, **kwargs)
     val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
                                 num_workers=num_work, **kwargs)
     test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
