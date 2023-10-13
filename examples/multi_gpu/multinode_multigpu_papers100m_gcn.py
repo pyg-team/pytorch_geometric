@@ -141,7 +141,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
         cugraph_store = CuGraphStore(fs, G, N)
         train_loader = CuGraphNeighborLoader(cugraph_store,
                                              input_nodes=split_idx['train'],
-                                             shuffle=True, **kwargs)
+                                             shuffle=True, , drop_last=True, **kwargs)
         if rank == 0:
             eval_loader = CuGraphNeighborLoader(cugraph_store,
                                                 input_nodes=split_idx['valid'],
@@ -153,7 +153,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
         from torch_geometric.loader import NeighborLoader
         num_work = pyg_num_work(world_size)
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
-                                      num_workers=num_work, shuffle=True,
+                                      num_workers=num_work, shuffle=True, drop_last=True,
                                       **kwargs)
         if rank == 0:
             eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
