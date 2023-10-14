@@ -63,6 +63,8 @@ nbsphinx_thumbnails = {
     '_static/thumbnails/multi_gpu_vanilla.png',
     'tutorial/multi_node_multi_gpu_vanilla':
     '_static/thumbnails/multi_gpu_vanilla.png',
+    'tutorial/application_overview':
+    '_static/thumbnails/application_overview.png',
 }
 
 
