@@ -1,29 +1,36 @@
 Application Overview
 ====================
 
-Graphs are highly versatile representations. We can model many problems as graph problems and, incidently, solve them using Graph Neural Networks.
+Graphs are highly versatile representations. Many problems can be modelled with graphs and, incidently, solved using Graph Neural Networks.
 
-Three types of tasks can be distinguished: node level, edge level, and graph level tasks. :pyg:`PyG` provides a framework able to tackle each of them.
+Three types of tasks can be distinguished: **node-level**, **edge-level**, and **graph-level** tasks. :pyg:`PyG` provides a framework able to tackle each of them.
+
+.. figure:: ../_figures/application_overview.png
+  :align: center
+  :width: 100%
 
 We will demonstrate how by going through an example of each, showing how PyG's toolbox can adapt to their specifities.
 
-Node Level Tasks
+.. contents::
+    :local:
+
+Node-Level Tasks
 ----------------
 
-Node-level tasks deal with predicting properties for each node within a graph. Examples can be:
+Node-level tasks deal with predicting properties for each node within a graph. Examples of that are:
 
 * **Node Classification**: predicting a discrete class for each node. An example of that task can be found in `examples/gcn.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/gcn.py>`_.
 
 * **Node Regression**: predicting a continuous quantity for each node. For example, one could predict the age of individuals in a social network, where each individual corresponds to a node.
 
-* **Node Embedding**: providing a vector representation to each node. You can find a Node2Vec embedding example in `examples/node2vec.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/node2vec.py>`_.
+* **Node Embedding**: providing a vector representation to each node. You can find a Node2Vec embedding example in `examples/node2vec.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/node2vec.py>`_ and a tutorial for `shallow node embeddings <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/shallow_node_embeddings.html>`_.
 
 * **Node Clustering**: splitting nodes into different groups. You can find an example using Adversarially Regularized Graph Autoencoder for clustering in `examples/argva_node_clustering.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/argva_node_clustering.py>`_.
 
 Node Classification
 ~~~~~~~~~~~~~~~~~~~
 
-Diving more into the node classification task details, we will use the classification of scientific publications into one of seven classes as our pilot example.
+Diving more into node classification, we will use the *classification of scientific publications* as our pilot example.
 
 We will describe the specificities of that task in terms of dataset, model, training and testing pipelines.
 
@@ -33,12 +40,13 @@ We will describe the specificities of that task in terms of dataset, model, trai
 
     * *Multi-graph datasets*, containing a list of different graphs. An example of that is the :class:`COCO-SP` dataset.
 
-    * *Single-graph datasets*, containing one single large graph. Examples of that are the :class:`Cora` and :class:`KarateClub` datasets.
+    * *Single-graph datasets*, containing one single large graph. Examples of that are the :class:`Cora` and :class:`~torch_geometric.datasets.KarateClub` datasets.
 
 
-    In our example, we will be loading the :class:`Cora` dataset. This is a single-graph dataset containing 2,708 nodes, 10,556 edges 1,433 features and 7 classes.
+    In our example, we load the :class:`Cora` dataset. This is a single-graph dataset containing 2,708 nodes, 10,556 edges 1,433 features and 7 classes. We need to download that dataset from its parent class, :class:`~torch_geometric.datasets.Planetoid`.
 
-    We need to download that dataset from its parent class, :class:`~torch_geometric.datasets.Planetoid`. A good practice can be to normalize its features using the :class:`torch_geometric.transforms.NormalizeFeatures` transformation.
+    A good practice is to normalize features. That is achieved here using the :class:`torch_geometric.transforms.NormalizeFeatures` transformation.
+
     Finally, we can extract the data at index 0 since we are dealing with a single graph.
 
     .. code-block:: python
@@ -49,13 +57,13 @@ We will describe the specificities of that task in terms of dataset, model, trai
         dataset = Planetoid("data/Planetoid", "Cora", transform=T.NormalizeFeatures())
         data = dataset[0]
 
-    Once the dataset is ready, the user needs to define a Model architecture capable of predicting a label for each node of its graph input.
+    Once the dataset is ready, the user needs to define a model architecture capable of predicting a label for each node of its graph input.
 
 #. **Model**
 
-    To define this model, the user can employ the many layers of GNN available in :pyg:`PyG` or define its own layers (c.f. `Creating Message Passing Networks <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/create_gnn.html>`_).
+    To define this model, the user can employ the `many convolutional layers <https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#convolutional-layers>`_ available in :pyg:`PyG` or define its own layers (c.f. `Creating Message Passing Networks <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/create_gnn.html>`_).
 
-    Here, we defined our own model architecture by alternating :class:`~torch_geometric.nn.GCNConv` graph convolution layers, :class:`~torch.nn.ReLU` activation layers and :class:`~torch.nn.Dropout` layers to predict classes:
+    Here, we defined our model architecture by alternating :class:`~torch_geometric.nn.conv.GCNConv` layers, :class:`~torch.nn.ReLU` activation functions and :class:`~torch.nn.Dropout` layers to predict classes:
 
     .. code-block:: python
 
@@ -85,11 +93,11 @@ We will describe the specificities of that task in terms of dataset, model, trai
 
 #. **Training pipeline**
 
-    In order to train our model, we then need to pick a loss function to evaluate our predictions. We can use any regular classification loss function: : :class:`~torch.nn.NLLLoss`, :class:`~torch.nn.CrossEntropyLoss` and :class:`~torch.nn.BCELoss` to name a few. In this example we are using the :func:`~torch.nn.functional.cross_entropy` function.
+    In order to train our model, we then need to pick a loss function and evaluate our predictions. We can use any regular classification loss function: : :class:`~torch.nn.NLLLoss`, :class:`~torch.nn.CrossEntropyLoss` and :class:`~torch.nn.BCELoss` to name a few. In this example we are using the :func:`~torch.nn.functional.cross_entropy` function.
 
-    We apply the loss to each node's prediction, comparing them to their respective label.
+    We apply the loss to each node predictions, comparing them to their respective label.
 
-    Following that, we need an optimizer to update our model weights with. In this example we choose :class:`~torch.optim.Adam` as a standard.
+    Following that, we need an optimizer to update our model weights. In this example we choose :class:`~torch.optim.Adam` as a standard.
 
     The training pipeline can be defined as such:
 
@@ -134,18 +142,18 @@ Just like that, we have now trained and tested a node classification Graph Neura
 .. note::
     Node regression models can be trained in a very similar fashion, changing the labels and the loss function.
 
-Graph Level Tasks
+Graph-Level Tasks
 -----------------
 
 Graph-level tasks are concerned with predicting the properties of an entire graph.
 
-Just like for node level tasks, graph level tasks can be declined in different genres such as:
+Just like for node-level tasks, graph-level tasks can be declined in different genres such as:
 
-* Graph Classification: predicting a discrete class for a graph. You can find a protein classification example `examples/proteins_topk_pool.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/proteins_topk_pool.py>`_.
+* **Graph Classification**: predicting a discrete class for a graph. You can find a protein classification example `examples/proteins_topk_pool.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/proteins_topk_pool.py>`_.
 
-* Graph Regression: predicting a continuous quantity for a graph. You can find a molecule property regression example using Graph GPS in `examples/graph_gps.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/graph_gps.py>`_.
+* **Graph Regression**: predicting a continuous quantity for a graph. You can find a molecule property regression example using Graph GPS in `examples/graph_gps.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/graph_gps.py>`_.
 
-* Graph Generation: generating a graph drawn from a certain distribution. This tutorial describes how you achieve it. [:youtube:`null` `YouTube <https://www.youtube.com/watch?v=embpBq1gHAE>`__].
+* **Graph Generation**: generating a graph drawn from a certain distribution. This tutorial describes how you achieve it. [:youtube:`null` `YouTube <https://www.youtube.com/watch?v=embpBq1gHAE>`__].
 
 Graph Classification
 ~~~~~~~~~~~~~~~~~~~~
@@ -178,9 +186,9 @@ Our guiding example for this task will be that of `Protein Top-k Pooling <https:
 
 #. **Model**
 
-    Creating a model for graph classification intially relies on the same alternance of Graph Convolution Layers and activations, but now follows it up with a **hierarchical pooling** layer as well.
+    Creating a model for graph classification intially relies on the same alternance of graph convolutional layers and activations, but now follows it up with a **hierarchical pooling** layer as well.
 
-    Hierarchical pooling creates a gradual transition from node level to graph level representations. We can consider it as the counterpart of pooling layers in CNN models.
+    Hierarchical pooling performs a gradual transition from node-level to graph-level representations. We can consider it as the counterpart of pooling layers in image models.
 
     .. note::
         You can find multiple pooling layers in the `PyG layer catalog <https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html?highlight=pooling#pooling-layers>`_.
@@ -242,7 +250,7 @@ Our guiding example for this task will be that of `Protein Top-k Pooling <https:
 
 #. **Training pipeline**
 
-    Just like for node classification, graph classification too makes use of usual classification loss functions such as the ones mentioned above.
+    Just like for node classification, graph classification makes use of usual classification loss functions such as the ones mentioned above.
 
     For this example, we will be using the :func:`~torch.nn.functional.nll_loss` function.
 
@@ -280,21 +288,21 @@ Our guiding example for this task will be that of `Protein Top-k Pooling <https:
 
     Note that using :obj:`.max(dim=1)[1]` has the same effect as the :meth:`argmax` method previously seen.
 
-That sums up our Graph Classification example!
+That sums up our graph classification example!
 
 .. note::
     The complete code for the example can be found `examples/proteins_topk_pool.py <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/proteins_topk_pool.py>`_ on :pyg:`PyG`'s GitHub repository.
 
-Link Level Tasks
+Link-Level Tasks
 ----------------
 
 Link-level or edge-level tasks complete our overview by looking to predict properties between pairs of nodes. This can happen under different settings:
 
-* Link prediction: predicting wether a link exists between two nodes. That could be a connection between two individuals in a social network. You can find an example of link prediction in `this file <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/link_pred.py>`_.
+* **Link prediction**: predicting wether a link exists between two nodes. That could be a connection between two individuals in a social network. You can find an example of link prediction in `this file <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/link_pred.py>`_.
 
-* Edge classification: predicting the class of an existing edge. It could be the nature of a connection in a knowledge graph.
+* **Edge classification**: predicting the class of an existing edge. It could be the nature of a connection in a knowledge graph.
 
-* Edge regression: estimating a continuous value over an existing edge. For example, one could try to estimate the distance between two points.
+* **Edge regression**: estimating a continuous value over an existing edge. For example, one could try to estimate the distance between two points.
 
 Link Prediction
 ~~~~~~~~~~~~~~~
@@ -305,11 +313,11 @@ For this task, we will be taking the `link pred <https://github.com/pyg-team/pyt
 
     We can resort to link-prediction with different kind of datasets:
 
-    * Multi-graph datasets, containing multiple distinct graphs. An example of that is the :class:`~torch_geometric.datasets.PPI` dataset.
+    * *Multi-graph datasets*, containing multiple distinct graphs. An example of that is the :class:`~torch_geometric.datasets.PPI` dataset.
 
-    * Single-graph datasets, containing only one single large graph. An example of that is the :class:`~torch_geometric.datasets.PCQM-Contact` dataset.
+    * *Single-graph datasets*, containing only one single large graph. An example of that is the :class:`~torch_geometric.datasets.PCQM-Contact` dataset.
 
-    * Heterogeneous datasets, containing different type of nodes, each with its own feature dimension. It often occurs in recommendation engine contexts. An example of that is the :class:`~torch_geometric.datasets.MovieLens` dataset, containing nodes for both *users* and *movies*.
+    * *Heterogeneous datasets*, containing different type of nodes, each with its own feature dimension. It often occurs in recommendation engine contexts. An example of that is the :class:`~torch_geometric.datasets.MovieLens` dataset, containing nodes for both *users* and *movies*.
 
     Our example deals with the same :class:`Cora` dataset as for the node classification we have previously seen. However, not performing the same task, it uses different pre-processing steps.
 
@@ -328,7 +336,7 @@ For this task, we will be taking the `link pred <https://github.com/pyg-team/pyt
         dataset = Planetoid(path, name='Cora', transform=transform)
         train_data, val_data, test_data = dataset[0]
 
-    Note that we are using an additional transformation :class:`RandomLinkSplit`. It has the effect of splitting the edges of the original graph into three distinct splits (train, validation, test). We call it an **inductive** learning setting since training can only access edges from the training set during propagation.
+    Note that we are using an additional transformation :class:`~torch_geometric.transforms.RandomLinkSplit`. It has the effect of splitting the edges of the original graph into three distinct splits (train, validation, test). We call it an **inductive** learning setting since training can only access edges from the training set during propagation.
 
     Just like for the node classification dataset processing, since :class:`Cora` contains a single graph, we can extract it from the list to simplify things forward.
 
@@ -379,7 +387,7 @@ For this task, we will be taking the `link pred <https://github.com/pyg-team/pyt
 
     Link-prediction tasks require both positive and negative examples to create a balanced training set.
 
-    While the first is naturally provided by our training split, the latter needs to be added. This is called *negative sampling*, where disconnected pairs of nodes are randomly selected. In :pyg:`PyG`, this can be done using the :func:`~torch_geometric.utils.negative_sampling` function.
+    While the first is naturally provided by our training split, the latter needs to be added. This is called **negative sampling**, where disconnected pairs of nodes are randomly selected. In :pyg:`PyG`, this can be done using the :func:`~torch_geometric.utils.negative_sampling` function.
 
     .. code-block:: python
 
@@ -424,7 +432,7 @@ For this task, we will be taking the `link pred <https://github.com/pyg-team/pyt
 
     This simplifies this evaluation compared to the training.
 
-    **The motivations for not resorting to that during training is to be able to sample different negative edges at each new epoch.**
+    *The motivations for not resorting to that during training is to be able to sample different negative edges at each new epoch.*
 
     .. code-block:: python
 
