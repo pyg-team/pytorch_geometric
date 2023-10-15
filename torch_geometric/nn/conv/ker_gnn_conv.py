@@ -78,6 +78,7 @@ class KerGNNConv(MessagePassing):
         self.simple_conv = SimpleConv()
         self.dropout = nn.Dropout(p=dropout)
         self.relu = nn.ReLU()
+        self.ker_linear = Linear(out_channels, out_channels) if kernel == 'drw' else torch.nn.Identity()
 
         self.reset_parameters()
         assert self.filter_g is not None and self.filter_g.validate()
@@ -106,7 +107,6 @@ class KerGNNConv(MessagePassing):
         for i in range(self.power):
             if i == 0:
                 o = self.propagate(edge_index, x=x, edge_weight=edge_weight, z=z)
-                t = o * xz
             else:
                 x = self.simple_conv(x, edge_index=edge_index)
                 # propagate_type: (x: Tensor, edge_weight: OptTensor, z: Tensor, is_kernel: bool)
@@ -116,9 +116,8 @@ class KerGNNConv(MessagePassing):
                                    z=self.filter_g.edge_attr, is_kernel=True)
                 z = z.reshape(self.size_graph_filter, -1, self.out_channels)
                 o = self.propagate(edge_index, x=x, edge_weight=edge_weight, z=z)
-                t = o * xz
-
-            outs.append(t)
+            t = o * xz
+            outs.append(self.ker_linear(t))
         return torch.mean(sum(outs) / len(outs), dim=[0])
 
     def message(self, x_j: Tensor, edge_weight: OptTensor, z: Tensor, is_kernel: bool = False) -> Tensor:
@@ -133,4 +132,4 @@ class KerGNNConv(MessagePassing):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, power={self.power})')
+                f'{self.out_channels}, kernel={self.kernel}, power={self.power})')
