@@ -134,7 +134,7 @@ def test(loader):
 
 best_train_acc = 0
 best_test_acc = 0
-for epoch in range(50):
+for epoch in range(200):
     loss = train()
     train_acc = test(train_loader)
     test_acc = test(test_loader)
