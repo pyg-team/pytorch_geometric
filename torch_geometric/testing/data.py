@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData, InMemoryDataset
+from torch_geometric.typing import TensorFrame, torch_frame
 from torch_geometric.utils import coalesce as coalesce_fn
 
 
@@ -25,6 +26,30 @@ def get_random_edge_index(
         edge_index = coalesce_fn(edge_index)
 
     return edge_index
+
+
+def get_random_tensor_frame(
+    num_rows: int,
+    device: Optional[torch.device] = None,
+) -> TensorFrame:
+
+    feat_dict = {
+        torch_frame.categorical:
+        torch.randint(0, 3, size=(num_rows, 3), device=device),
+        torch_frame.numerical:
+        torch.randn(size=(num_rows, 2), device=device),
+    }
+    col_names_dict = {
+        torch_frame.categorical: ['a', 'b', 'c'],
+        torch_frame.numerical: ['x', 'y'],
+    }
+    y = torch.randn(num_rows, device=device)
+
+    return torch_frame.TensorFrame(
+        feat_dict=feat_dict,
+        col_names_dict=col_names_dict,
+        y=y,
+    )
 
 
 class FakeHeteroDataset(InMemoryDataset):

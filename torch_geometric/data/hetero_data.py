@@ -23,6 +23,7 @@ from torch_geometric.typing import (
     QueryType,
     SparseTensor,
     TensorFrame,
+    torch_frame,
 )
 from torch_geometric.utils import (
     bipartite_subgraph,
@@ -912,15 +913,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             if isinstance(values[0], TensorFrame):
-                # TODO (jinu) Implement `cat` function for TensorFrame.
-                feat_dict = {}
-                for stype in values[0].feat_dict.keys():
-                    feat_dict[stype] = torch.cat(
-                        [value.feat_dict[stype] for value in values], dim=0)
-                y = None
-                if values[0].y is not None:
-                    y = torch.cat([value.y for value in values], dim=0)
-                value = TensorFrame(feat_dict, values[0].col_names_dict, y)
+                value = torch_frame.cat(values, along='row')
             else:
                 dim = self.__cat_dim__(key, values[0], self.node_stores[0])
                 dim = values[0].dim() + dim if dim < 0 else dim

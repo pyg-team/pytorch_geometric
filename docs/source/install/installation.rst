@@ -18,7 +18,7 @@ Installation via Anaconda
 
 You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗
 If you have not yet installed :pytorch:`PyTorch`, install it via :obj:`conda` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
-Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.12.0`), simply run
+Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 
 .. code-block:: none
 
@@ -37,7 +37,7 @@ For this, simply run:
 
    pip install torch_geometric
 
-PyG 2.3 requires that at least PyTorch 1.12 is installed.
+PyG 2.3 requires that at least PyTorch 1.11 is installed.
 
 Additional Libraries
 --------------------
@@ -63,7 +63,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    Wheels are currently not available for M1/M2/M3 macs.
    Please install the extension packages `from source <installation.html#installation-from-source>`__.
 
-#. Ensure that at least :pytorch:`PyTorch` 1.12.0 is installed:
+#. Ensure that at least :pytorch:`PyTorch` 1.11.0 is installed:
 
    .. code-block:: none
 

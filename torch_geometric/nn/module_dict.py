@@ -22,19 +22,31 @@ class ModuleDict(torch.nn.ModuleDict):
             }
         super().__init__(modules)
 
-    @staticmethod
-    def to_internal_key(key: Key) -> str:
+    @classmethod
+    def to_internal_key(cls, key: Key) -> str:
+        # ModuleDict cannot handle tuples as keys:
         if isinstance(key, tuple):
             assert len(key) > 1
             key = f"<{'___'.join(key)}>"
         assert isinstance(key, str)
+
+        # ModuleDict cannot handle keys that exists as class attributes:
+        if hasattr(cls, key):
+            key = f'<{key}>'
+
+        # ModuleDict cannot handle dots in keys:
         return key.replace('.', '#')
 
-    @staticmethod
-    def to_external_key(key: str) -> Key:
+    @classmethod
+    def to_external_key(cls, key: str) -> Key:
         key = key.replace('#', '.')
-        if key.startswith('<') and key.endswith('>') and '___' in key:
+
+        if key[0] == '<' and key[-1] == '>' and hasattr(cls, key[1:-1]):
+            key = key[1:-1]
+
+        if key[0] == '<' and key[-1] == '>' and '___' in key:
             key = tuple(key[1:-1].split('___'))
+
         return key
 
     def __getitem__(self, key: Key) -> Module:

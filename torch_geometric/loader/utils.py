@@ -26,6 +26,7 @@ from torch_geometric.typing import (
     NodeType,
     OptTensor,
     SparseTensor,
+    TensorFrame,
 )
 
 
@@ -71,6 +72,10 @@ def index_select(
 
         return torch.index_select(value, dim, index, out=out)
 
+    if isinstance(value, TensorFrame):
+        assert dim == 0
+        return value[index]
+
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
 
@@ -86,7 +91,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            if isinstance(value, Tensor):
+            if isinstance(value, (Tensor, TensorFrame)):
                 index = index.to(value.device)
             elif isinstance(value, np.ndarray):
                 index = index.cpu()
@@ -127,14 +132,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                 continue
 
             dim = store._parent().__cat_dim__(key, value, store)
-            if isinstance(value, Tensor):
+            if isinstance(value, (Tensor, TensorFrame)):
                 index = index.to(value.device)
             elif isinstance(value, np.ndarray):
                 index = index.cpu()
             if perm is None:
                 out_store[key] = index_select(value, index, dim=dim)
             else:
-                if isinstance(value, Tensor):
+                if isinstance(value, (Tensor, TensorFrame)):
                     perm = perm.to(value.device)
                 elif isinstance(value, np.ndarray):
                     perm = perm.cpu()
