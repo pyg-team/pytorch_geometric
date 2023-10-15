@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added the `KerGNNConv` layer and an corresponding example ([#8189](https://github.com/pyg-team/pytorch_geometric/pull/8189))
+
 ### Changed
 
 ### Deprecated
