@@ -1,12 +1,13 @@
+from typing import Union
+
 import torch
 import torch.nn as nn
-
-from typing import Union
 from torch import Tensor
+
 from torch_geometric.data import Data
 from torch_geometric.nn.conv import MessagePassing, SimpleConv
 from torch_geometric.nn.dense import Linear
-from torch_geometric.typing import Adj, PairTensor, OptTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import to_undirected
 
 
@@ -29,8 +30,8 @@ class KerGNNConv(MessagePassing):
         hidden_channels (int): Hidden node feature dimensionality. (default: :obj:`None`)
         kernel (str): Kernel type. (default: :obj:`rw`)
         power (int): The power of the adjacency matrix to use. (default: :obj:`1`)
-        size_graph_filter (int): 
-        size_subgraph (int): 
+        size_graph_filter (int):
+        size_subgraph (int):
         dropout (float, optional): Dropout probability of the nodes during training. (default: 0)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -42,18 +43,10 @@ class KerGNNConv(MessagePassing):
         - **output:**
           node features :math:`(|\mathcal{V}|, |P| \cdot F_{out})`
     """
-    def __init__(
-        self, 
-        in_channels: int, 
-        out_channels: int, 
-        hidden_channels: int = None,
-        kernel: str = 'rw', 
-        power: int = 1, 
-        size_graph_filter: int = 6, 
-        size_subgraph: int = 10, 
-        dropout: float = 0., 
-        **kwargs
-    ):
+    def __init__(self, in_channels: int, out_channels: int,
+                 hidden_channels: int = None, kernel: str = 'rw',
+                 power: int = 1, size_graph_filter: int = 6,
+                 size_subgraph: int = 10, dropout: float = 0., **kwargs):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
@@ -67,18 +60,24 @@ class KerGNNConv(MessagePassing):
 
         if hidden_channels:
             self.linear = Linear(in_channels, hidden_channels)
-            self.filter_x = torch.empty(size_graph_filter, hidden_channels, out_channels)
+            self.filter_x = torch.empty(size_graph_filter, hidden_channels,
+                                        out_channels)
         else:
-            self.filter_x = torch.empty(size_graph_filter, in_channels, out_channels)
-        
-        self.filter_edge_index = torch.triu_indices(size_graph_filter, size_graph_filter, 1)
-        self.filter_edge_attr = torch.empty(size_graph_filter * (size_graph_filter - 1) // 2 , out_channels)
+            self.filter_x = torch.empty(size_graph_filter, in_channels,
+                                        out_channels)
+
+        self.filter_edge_index = torch.triu_indices(size_graph_filter,
+                                                    size_graph_filter, 1)
+        self.filter_edge_attr = torch.empty(
+            size_graph_filter * (size_graph_filter - 1) // 2, out_channels)
         self.filter_g = None
 
         self.simple_conv = SimpleConv()
         self.dropout = nn.Dropout(p=dropout)
         self.relu = nn.ReLU()
-        self.ker_linear = Linear(out_channels, out_channels) if kernel == 'drw' else torch.nn.Identity()
+        self.ker_linear = Linear(
+            out_channels,
+            out_channels) if kernel == 'drw' else torch.nn.Identity()
 
         self.reset_parameters()
         assert self.filter_g is not None and self.filter_g.validate()
@@ -88,39 +87,42 @@ class KerGNNConv(MessagePassing):
         self.filter_x.data.uniform_(0, 1)
         self.filter_edge_attr.data.uniform_(-1, 1)
 
-        self.filter_edge_index, self.filter_edge_attr = to_undirected(self.filter_edge_index, self.filter_edge_attr)
+        self.filter_edge_index, self.filter_edge_attr = to_undirected(
+            self.filter_edge_index, self.filter_edge_attr)
 
-        self.filter_g = Data(
-            x=self.filter_x,
-            edge_index=self.filter_edge_index,
-            edge_attr=self.filter_edge_attr
-        )
+        self.filter_g = Data(x=self.filter_x,
+                             edge_index=self.filter_edge_index,
+                             edge_attr=self.filter_edge_attr)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         self.filter_g.to(x.device)
         if self.hidden_channels:
             x = self.relu(self.linear(x))
-        
+
         outs = []
         z = self.filter_g.x
         xz = x @ z
         for i in range(self.power):
             if i == 0:
-                o = self.propagate(edge_index, x=x, edge_weight=edge_weight, z=z)
+                o = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                                   z=z)
             else:
                 x = self.simple_conv(x, edge_index=edge_index)
                 # propagate_type: (x: Tensor, edge_weight: OptTensor, z: Tensor, is_kernel: bool)
-                z = self.propagate(self.filter_g.edge_index, 
-                                   x=z.reshape(self.size_graph_filter, -1), 
-                                   edge_weight=edge_weight,
+                z = self.propagate(self.filter_g.edge_index,
+                                   x=z.reshape(self.size_graph_filter,
+                                               -1), edge_weight=edge_weight,
                                    z=self.filter_g.edge_attr, is_kernel=True)
                 z = z.reshape(self.size_graph_filter, -1, self.out_channels)
-                o = self.propagate(edge_index, x=x, edge_weight=edge_weight, z=z)
+                o = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                                   z=z)
             t = o * xz
             outs.append(self.ker_linear(t))
         return torch.mean(sum(outs) / len(outs), dim=[0])
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor, z: Tensor, is_kernel: bool = False) -> Tensor:
+    def message(self, x_j: Tensor, edge_weight: OptTensor, z: Tensor,
+                is_kernel: bool = False) -> Tensor:
         x_j = x_j if edge_weight is None else x_j * edge_weight.view(-1, 1)
         if is_kernel:
             num_edges = z.shape[0]
@@ -131,5 +133,6 @@ class KerGNNConv(MessagePassing):
             return x_j @ z
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, kernel={self.kernel}, power={self.power})')
+        return (
+            f'{self.__class__.__name__}({self.in_channels}, '
+            f'{self.out_channels}, kernel={self.kernel}, power={self.power})')

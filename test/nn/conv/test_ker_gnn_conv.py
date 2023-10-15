@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 
 from torch_geometric.nn import KerGNNConv
 from torch_geometric.utils import to_torch_csc_tensor

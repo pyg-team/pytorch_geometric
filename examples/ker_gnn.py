@@ -4,10 +4,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch_geometric.seed import seed_everything
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader, NeighborLoader
-from torch_geometric.nn import KerGNNConv, global_add_pool, Linear
+from torch_geometric.nn import KerGNNConv, Linear, global_add_pool
+from torch_geometric.seed import seed_everything
 
 seed_everything(42)
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
@@ -23,8 +23,8 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 
 
 class Net(torch.nn.Module):
-    def __init__(self, features_dim, n_classes, hidden_channels, kernel, 
-                 power, dropout_rate, size_graph_filter, size_subgraph, no_norm):
+    def __init__(self, features_dim, n_classes, hidden_channels, kernel, power,
+                 dropout_rate, size_graph_filter, size_subgraph, no_norm):
         assert len(hidden_channels) == len(size_graph_filter) + 1
         super().__init__()
         self.no_norm = no_norm
@@ -37,30 +37,29 @@ class Net(torch.nn.Module):
 
         for layer in range(self.num_layers):
             if layer == 0:
-                self.ker_layers.append(KerGNNConv(features_dim, 
-                                                  hidden_channels[1], 
-                                                  kernel=kernel,
-                                                  hidden_channels=hidden_channels[0], 
-                                                  power=power, 
-                                                  size_graph_filter=size_graph_filter[0], 
-                                                  size_subgraph=size_subgraph,
-                                                  dropout=dropout_rate))
+                self.ker_layers.append(
+                    KerGNNConv(features_dim, hidden_channels[1], kernel=kernel,
+                               hidden_channels=hidden_channels[0], power=power,
+                               size_graph_filter=size_graph_filter[0],
+                               size_subgraph=size_subgraph,
+                               dropout=dropout_rate))
                 self.batch_norms.append(nn.BatchNorm1d(hidden_channels[1]))
             else:
-                self.ker_layers.append(KerGNNConv(hidden_channels[layer], 
-                                                  hidden_channels[layer + 1], 
-                                                  kernel=kernel,
-                                                  hidden_channels=None, 
-                                                  power=power, 
-                                                  size_graph_filter=size_graph_filter[layer], 
-                                                  size_subgraph=size_subgraph,
-                                                  dropout=dropout_rate))
-                self.batch_norms.append(nn.BatchNorm1d(hidden_channels[layer + 1]))
-        
+                self.ker_layers.append(
+                    KerGNNConv(hidden_channels[layer],
+                               hidden_channels[layer + 1], kernel=kernel,
+                               hidden_channels=None, power=power,
+                               size_graph_filter=size_graph_filter[layer],
+                               size_subgraph=size_subgraph,
+                               dropout=dropout_rate))
+                self.batch_norms.append(
+                    nn.BatchNorm1d(hidden_channels[layer + 1]))
+
         self.linear = nn.ModuleList()
         for layer in range(self.num_layers + 1):
-            self.linear.append(Linear(features_dim if layer == 0 else hidden_channels[layer], n_classes))
-
+            self.linear.append(
+                Linear(features_dim if layer == 0 else hidden_channels[layer],
+                       n_classes))
 
     def forward(self, x, edge_index, batch):
         _, counts = torch.unique(batch, return_counts=True)
@@ -74,26 +73,21 @@ class Net(torch.nn.Module):
 
         score_over_layer = 0
         for layer, h in enumerate(hidden_rep):
-            pooled_h = global_add_pool(h, batch)             
+            pooled_h = global_add_pool(h, batch)
             if not self.no_norm:
                 norm = counts.unsqueeze(1).repeat(1, pooled_h.shape[1])
                 pooled_h = pooled_h / norm
-            score_over_layer += F.dropout(self.linear[layer](pooled_h), self.dropout_rate, training=self.training)
+            score_over_layer += F.dropout(self.linear[layer](pooled_h),
+                                          self.dropout_rate,
+                                          training=self.training)
 
         return score_over_layer
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(features_dim=dataset.num_features, 
-            n_classes=dataset.num_classes, 
-            hidden_channels=[16, 32], 
-            kernel='rw', 
-            power=1, 
-            dropout_rate=0.4,
-            size_graph_filter=[6], 
-            size_subgraph=10, 
-            no_norm=False)
-
+model = Net(features_dim=dataset.num_features, n_classes=dataset.num_classes,
+            hidden_channels=[16, 32], kernel='rw', power=1, dropout_rate=0.4,
+            size_graph_filter=[6], size_subgraph=10, no_norm=False)
 
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -104,10 +98,8 @@ def train():
     model.train()
     total_loss = 0.
     for data in train_loader:
-        loader = NeighborLoader(data, 
-                                num_neighbors=[10], 
-                                batch_size=data.num_nodes, 
-                                shuffle=False)
+        loader = NeighborLoader(data, num_neighbors=[10],
+                                batch_size=data.num_nodes, shuffle=False)
         for subgraph_data in loader:
             data = data.to(device)
             subgraph_data = subgraph_data.to(device)
@@ -145,7 +137,7 @@ for epoch in range(200):
 
     if epoch % 20 == 0:
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
-            f'Train: {train_acc:.4f}, Test: {test_acc:.4f}')
+              f'Train: {train_acc:.4f}, Test: {test_acc:.4f}')
 
 print(f"Best train acc: {best_train_acc}")
 print(f"Best test acc: {best_test_acc}")
