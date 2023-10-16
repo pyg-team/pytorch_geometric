@@ -2,6 +2,7 @@ from typing import Union
 
 import torch
 import torch.nn as nn
+from torch.nn import Parameter
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -55,19 +56,19 @@ class KerGNNConv(MessagePassing):
         assert kernel in ['rw', 'drw'] and power > 0
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
-        # import pdb; pdb.set_trace()
+
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kernel = kernel
         self.power = power
         self.size_graph_filter = size_graph_filter
 
-        self.filter_x = torch.empty(size_graph_filter, in_channels,
-                                    out_channels, requires_grad=True)
+        self.filter_x = Parameter(torch.empty(
+            size_graph_filter, in_channels, out_channels))
         self.filter_edge_index = torch.triu_indices(size_graph_filter,
                                                     size_graph_filter, 1)
-        self.filter_edge_attr = torch.empty(
-            size_graph_filter * (size_graph_filter - 1) // 2, out_channels, requires_grad=True)
+        self.filter_edge_attr = Parameter(torch.empty(
+            size_graph_filter * (size_graph_filter - 1) // 2, out_channels))
         self.filter_g = None
 
         self.simple_conv = SimpleConv()
@@ -84,17 +85,15 @@ class KerGNNConv(MessagePassing):
         super().reset_parameters()
         self.filter_x.data.uniform_(0, 1)
         self.filter_edge_attr.data.uniform_(-1, 1)
-
-        self.filter_edge_index, self.filter_edge_attr = to_undirected(
+        bi_filter_edge_index, bi_filter_edge_attr = to_undirected(
             self.filter_edge_index, self.filter_edge_attr)
 
         self.filter_g = Data(x=self.filter_x,
-                             edge_index=self.filter_edge_index,
-                             edge_attr=self.filter_edge_attr)
+                             edge_index=bi_filter_edge_index,
+                             edge_attr=bi_filter_edge_attr)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        self.filter_g.to(x.device)
         outs = None
         z = self.filter_g.x
         xz = x @ z
