@@ -92,6 +92,7 @@ from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
+from .rcdd import RCDD
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
