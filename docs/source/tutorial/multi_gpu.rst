@@ -5,3 +5,4 @@ Multi-GPU Training
     :name: rst-gallery
 
     multi_gpu_vanilla
+    multi_gpu_pytorch_lightning
