@@ -58,9 +58,11 @@ class RCDD(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         x = [
-            'AliRCD_ICDM_nodes.csv', 'AliRCD_ICDM_edges.csv',
-            'AliRCD_ICDM_train_labels.csv', 'AliRCD_ICDM_test_labels.csv',
-            'AliRCD_ICDM_test_ids.csv'
+            'AliRCD_ICDM_nodes.csv',
+            'AliRCD_ICDM_edges.csv',
+            'AliRCD_ICDM_train_labels.csv',
+            'AliRCD_ICDM_test_labels.csv',
+            'AliRCD_ICDM_test_ids.csv',
         ]
         return x
 
