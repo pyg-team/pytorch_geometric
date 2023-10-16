@@ -203,6 +203,7 @@ hetero_datasets = [
     'AmazonBook',
     'HM',
     'OSE_GVCS',
+    'RCDD'
 ]
 synthetic_datasets = [
     'FakeDataset',
