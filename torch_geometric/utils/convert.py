@@ -154,7 +154,6 @@ def to_networkx(
                 attr[key] = to_networkx_value(store[key][i])
             G.add_node(start + i, **attr)
 
-    # import pdb; pdb.set_trace()
     for store in data.edge_stores:
         for i, (v, w) in enumerate(store.edge_index.t().tolist()):
             if to_undirected_upper and v > w:
