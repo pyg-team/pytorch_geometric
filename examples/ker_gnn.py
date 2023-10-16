@@ -31,18 +31,17 @@ class Net(torch.nn.Module):
         self.dropout_rate = dropout_rate
         self.dropout = nn.Dropout(p=dropout_rate)
         self.num_layers = len(hidden_channels) - 1
-        
+
         self.linear_transform = Linear(features_dim, 16)
         self.ker_layers = nn.ModuleList()
         self.batch_norms = nn.ModuleList()
 
         for layer in range(self.num_layers):
             self.ker_layers.append(
-                KerGNNConv(hidden_channels[layer],
-                        hidden_channels[layer + 1], kernel=kernel,
-                        power=power,
-                        size_graph_filter=size_graph_filter[layer],
-                        dropout=dropout_rate))
+                KerGNNConv(hidden_channels[layer], hidden_channels[layer + 1],
+                           kernel=kernel, power=power,
+                           size_graph_filter=size_graph_filter[layer],
+                           dropout=dropout_rate))
             self.batch_norms.append(nn.BatchNorm1d(hidden_channels[layer + 1]))
 
         self.linear = nn.ModuleList()

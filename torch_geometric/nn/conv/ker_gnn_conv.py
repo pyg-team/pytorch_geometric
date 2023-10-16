@@ -2,8 +2,8 @@ from typing import Union
 
 import torch
 import torch.nn as nn
-from torch.nn import Parameter
 from torch import Tensor
+from torch.nn import Parameter
 
 from torch_geometric.data import Data
 from torch_geometric.nn.conv import MessagePassing, SimpleConv
@@ -14,7 +14,7 @@ from torch_geometric.utils import to_undirected
 
 class KerGNNConv(MessagePassing):
     r"""The kernel graph convolutional operator from the
-    `"KerGNNs: Interpretable Graph Neural Networks with Graph Kernels" 
+    `"KerGNNs: Interpretable Graph Neural Networks with Graph Kernels"
     <https://arxiv.org/abs/2201.00491>`_ paper
 
     .. math::
@@ -22,11 +22,11 @@ class KerGNNConv(MessagePassing):
         (\mathbf{X_1}\mathbf{X_2}^T)\odot(\mathbf{A_1}^p\mathbf{X_1}
         (\mathbf{A_2}^p\mathbf{X_2})^T)]_{ij},
 
-    where :math:`\mathbf{X_k}^{\prime}` means the k-th dimention of node's 
+    where :math:`\mathbf{X_k}^{\prime}` means the k-th dimention of node's
     feature :math:`\mathbf{X}^{\prime}`;
-    :math:`\mathbf{X_1}` and :math:`\mathbf{A_1}` denotes the node's 
+    :math:`\mathbf{X_1}` and :math:`\mathbf{A_1}` denotes the node's
     feature and adjacency matrix of original graph;
-    :math:`\mathbf{X_2}` and :math:`\mathbf{A_2}` denotes the node's 
+    :math:`\mathbf{X_2}` and :math:`\mathbf{A_2}` denotes the node's
     feature and adjacency matrix of graph filter.
 
     Args:
@@ -34,11 +34,11 @@ class KerGNNConv(MessagePassing):
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         kernel (str): Kernel type. (default: :obj:`rw`)
-        power (int): The power of the adjacency matrix to use. 
+        power (int): The power of the adjacency matrix to use.
             (default: :obj:`1`)
-        size_graph_filter (int): The number of graph filter. 
+        size_graph_filter (int): The number of graph filter.
             (default: :obj:`10`)
-        dropout (float, optional): Dropout probability of the nodes 
+        dropout (float, optional): Dropout probability of the nodes
             during training. (default: 0)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -50,9 +50,9 @@ class KerGNNConv(MessagePassing):
         - **output:**
           node features :math:`(|\mathcal{V}|, |P| \cdot F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 kernel: str = 'rw', power: int = 1, 
-                 size_graph_filter: int = 6, dropout: float = 0., **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, kernel: str = 'rw',
+                 power: int = 1, size_graph_filter: int = 6,
+                 dropout: float = 0., **kwargs):
         assert kernel in ['rw', 'drw'] and power > 0
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -63,12 +63,13 @@ class KerGNNConv(MessagePassing):
         self.power = power
         self.size_graph_filter = size_graph_filter
 
-        self.filter_x = Parameter(torch.empty(
-            size_graph_filter, in_channels, out_channels))
+        self.filter_x = Parameter(
+            torch.empty(size_graph_filter, in_channels, out_channels))
         self.filter_edge_index = torch.triu_indices(size_graph_filter,
                                                     size_graph_filter, 1)
-        self.filter_edge_attr = Parameter(torch.empty(
-            size_graph_filter * (size_graph_filter - 1) // 2, out_channels))
+        self.filter_edge_attr = Parameter(
+            torch.empty(size_graph_filter * (size_graph_filter - 1) // 2,
+                        out_channels))
         self.filter_g = None
 
         self.simple_conv = SimpleConv()
@@ -88,8 +89,7 @@ class KerGNNConv(MessagePassing):
         bi_filter_edge_index, bi_filter_edge_attr = to_undirected(
             self.filter_edge_index, self.filter_edge_attr)
 
-        self.filter_g = Data(x=self.filter_x,
-                             edge_index=bi_filter_edge_index,
+        self.filter_g = Data(x=self.filter_x, edge_index=bi_filter_edge_index,
                              edge_attr=bi_filter_edge_attr)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
@@ -103,13 +103,12 @@ class KerGNNConv(MessagePassing):
                                    z=z)
             else:
                 x = self.simple_conv(x, edge_index=edge_index)
-                # propagate_type: (x: Tensor, edge_weight: OptTensor, 
+                # propagate_type: (x: Tensor, edge_weight: OptTensor,
                 # z: Tensor, is_kernel: bool)
                 z = self.propagate(self.filter_g.edge_index,
-                                   x=z.view(self.size_graph_filter, -1), 
-                                   edge_weight=edge_weight,
-                                   z=self.filter_g.edge_attr, 
-                                   is_kernel=True)
+                                   x=z.view(self.size_graph_filter,
+                                            -1), edge_weight=edge_weight,
+                                   z=self.filter_g.edge_attr, is_kernel=True)
                 z = z.view(self.size_graph_filter, -1, self.out_channels)
                 o = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                    z=z)
