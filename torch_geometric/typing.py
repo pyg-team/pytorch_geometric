@@ -21,8 +21,6 @@ WITH_ARM = platform.machine() != 'x86_64'
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = -1
 
-print("===================")
-print("pyg-lib")
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
@@ -59,8 +57,6 @@ except Exception as e:
     WITH_METIS = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
 
-print("===================")
-print("torch-scatter")
 try:
     import torch_scatter  # noqa
     WITH_TORCH_SCATTER = True
@@ -71,8 +67,6 @@ except Exception as e:
     torch_scatter = object
     WITH_TORCH_SCATTER = False
 
-print("===================")
-print("torch-cluster")
 try:
     import torch_cluster  # noqa
     WITH_TORCH_CLUSTER = True
@@ -90,8 +84,6 @@ except Exception as e:
 
     torch_cluster = TorchCluster()
 
-print("===================")
-print("torch-spline-conv")
 try:
     import torch_spline_conv  # noqa
     WITH_TORCH_SPLINE_CONV = True
@@ -102,8 +94,6 @@ except Exception as e:
             f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPLINE_CONV = False
 
-print("===================")
-print("torch-sparse")
 try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
@@ -226,8 +216,6 @@ except Exception as e:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
-print("===================")
-print("torch-frame")
 try:
     import torch_frame  # noqa
     WITH_TORCH_FRAME = True
