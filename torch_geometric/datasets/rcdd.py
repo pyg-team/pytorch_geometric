@@ -21,8 +21,8 @@ class RCDD(InMemoryDataset):
     Neural Networks" <http://shichuan.org/doc/156.pdf>`_ paper.
     RCDD is an industrial-scale heterogeneous graph dataset based on a
     real risk detection scenario from Alibaba's e-commerce platform.
-    It has 13,806,619 nodes, 157,814,864 edges, as well as 7 node types
-    and 7 edges types.
+    It consists of 13,806,619 nodes, 157,814,864 edges, with 7 node types
+    and 7 edge types. Particularly,
 
     Args:
         root (str): Root directory where the dataset should be saved.
