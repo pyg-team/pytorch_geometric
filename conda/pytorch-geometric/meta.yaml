@@ -6,11 +6,9 @@ source:
   url: https://files.pythonhosted.org/packages/e6/6e/a596e2ddecc3b13a0d576495369a30309fb54c74fadf0bbca645bfbcaa2f/torch_geometric-2.4.0.tar.gz
 
 requirements:
-  build:
-    - flit-core
-
   host:
     - pip
+    - flit-core
     - python {{ environ.get('PYTHON_VERSION') }}
 
   run:
