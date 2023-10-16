@@ -9,13 +9,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Added the ``ggcm`` method as example ([#8186](https://github.com/pyg-team/pytorch_geometric/pull/8186))
 
+- Added distributed `GAT + ogbn-products` example targeting XPU device ([#8032](https://github.com/pyg-team/pytorch_geometric/pull/8032))
+
 ### Changed
 
 ### Deprecated
 
-### Removed
-
 ### Fixed
+
+- Fixed sparse-sparse matrix multiplication support on Windows in `TwoHop` and `AddRandomWalkPE` transformations ([#8197](https://github.com/pyg-team/pytorch_geometric/pull/8197))
+
+### Removed
 
 ## [2.4.0] - 2023-10-12
 
