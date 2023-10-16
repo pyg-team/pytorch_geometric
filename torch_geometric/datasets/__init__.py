@@ -190,7 +190,7 @@ homo_datasets = [
 hetero_datasets = [
     'DBP15K', 'AMiner', 'OGB_MAG', 'DBLP', 'MovieLens', 'MovieLens100K',
     'MovieLens1M', 'IMDB', 'LastFM', 'HGBDataset', 'Taobao', 'IGMCDataset',
-    'AmazonBook', 'HM', 'OSE_GVCS', 'RCDD'
+    'AmazonBook', 'HM', 'OSE_GVCS', 'RCDD',
 ]
 synthetic_datasets = [
     'FakeDataset',
