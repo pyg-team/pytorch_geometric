@@ -32,7 +32,8 @@ class GATConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
+        \sum_{j \in \mathcal{N}(i)}
+        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 
@@ -64,9 +65,11 @@ class GATConv(MessagePassing):
         \exp\left(\mathrm{LeakyReLU}\left(
         \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
         + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_k
-        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]\right)\right)}.
+        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
+        \right)\right)}.
 
-    If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
+    If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} =
+    \mathbf{\Theta}_{t}`.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
