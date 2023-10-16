@@ -24,36 +24,26 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 
 class Net(torch.nn.Module):
     def __init__(self, features_dim, n_classes, hidden_channels, kernel, power,
-                 dropout_rate, size_graph_filter, size_subgraph, no_norm):
+                 dropout_rate, size_graph_filter, no_norm):
         assert len(hidden_channels) == len(size_graph_filter) + 1
         super().__init__()
         self.no_norm = no_norm
         self.dropout_rate = dropout_rate
         self.dropout = nn.Dropout(p=dropout_rate)
         self.num_layers = len(hidden_channels) - 1
-
+        
+        self.linear_transform = Linear(features_dim, 16)
         self.ker_layers = nn.ModuleList()
         self.batch_norms = nn.ModuleList()
 
         for layer in range(self.num_layers):
-            if layer == 0:
-                self.ker_layers.append(
-                    KerGNNConv(features_dim, hidden_channels[1], kernel=kernel,
-                               hidden_channels=hidden_channels[0], power=power,
-                               size_graph_filter=size_graph_filter[0],
-                               size_subgraph=size_subgraph,
-                               dropout=dropout_rate))
-                self.batch_norms.append(nn.BatchNorm1d(hidden_channels[1]))
-            else:
-                self.ker_layers.append(
-                    KerGNNConv(hidden_channels[layer],
-                               hidden_channels[layer + 1], kernel=kernel,
-                               hidden_channels=None, power=power,
-                               size_graph_filter=size_graph_filter[layer],
-                               size_subgraph=size_subgraph,
-                               dropout=dropout_rate))
-                self.batch_norms.append(
-                    nn.BatchNorm1d(hidden_channels[layer + 1]))
+            self.ker_layers.append(
+                KerGNNConv(hidden_channels[layer],
+                        hidden_channels[layer + 1], kernel=kernel,
+                        power=power,
+                        size_graph_filter=size_graph_filter[layer],
+                        dropout=dropout_rate))
+            self.batch_norms.append(nn.BatchNorm1d(hidden_channels[layer + 1]))
 
         self.linear = nn.ModuleList()
         for layer in range(self.num_layers + 1):
@@ -64,7 +54,7 @@ class Net(torch.nn.Module):
     def forward(self, x, edge_index, batch):
         _, counts = torch.unique(batch, return_counts=True)
         hidden_rep = [x]
-        h = x
+        h = F.relu(self.linear_transform(x))
 
         for layer in range(self.num_layers):
             h = self.ker_layers[layer](h, edge_index)
@@ -87,7 +77,7 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net(features_dim=dataset.num_features, n_classes=dataset.num_classes,
             hidden_channels=[16, 32], kernel='rw', power=1, dropout_rate=0.4,
-            size_graph_filter=[6], size_subgraph=10, no_norm=False)
+            size_graph_filter=[6], no_norm=False)
 
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
