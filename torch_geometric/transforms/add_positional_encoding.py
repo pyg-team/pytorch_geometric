@@ -3,6 +3,7 @@ from typing import Any, Optional
 import numpy as np
 import torch
 
+import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -12,6 +13,7 @@ from torch_geometric.utils import (
     scatter,
     to_edge_index,
     to_scipy_sparse_matrix,
+    to_torch_coo_tensor,
     to_torch_csr_tensor,
 )
 
@@ -136,7 +138,10 @@ class AddRandomWalkPE(BaseTransform):
         value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
         value = 1.0 / value
 
-        adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
+        if torch_geometric.typing.WITH_WINDOWS:
+            adj = to_torch_coo_tensor(data.edge_index, value, size=data.size())
+        else:
+            adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
         out = adj
         pe_list = [get_self_loop_attr(*to_edge_index(out), num_nodes=N)]
