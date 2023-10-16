@@ -73,6 +73,7 @@ runs:
         pip install scipy
         pip install --no-deps captum
         pip install --no-deps pgmpy
+      shell: bash
 
     - name: Install extension packages
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
