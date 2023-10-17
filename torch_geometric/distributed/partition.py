@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.distributed.utils import as_str, reverse_edge_type
+from torch_geometric.distributed.utils import as_str
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
 
