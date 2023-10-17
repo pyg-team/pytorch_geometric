@@ -107,9 +107,13 @@ def test_to_networkx_undirected():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
-        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
-                        remove_self_loops=remove_self_loops,
-                        to_undirected=True)
+        G = to_networkx(
+            data,
+            node_attrs=['x', 'pos'],
+            edge_attrs=['weight'],
+            remove_self_loops=remove_self_loops,
+            to_undirected=True,
+        )
 
         assert G.nodes[0]['x'] == [1, 2]
         assert G.nodes[1]['x'] == [3, 4]
@@ -125,7 +129,7 @@ def test_to_networkx_undirected():
     assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
 
     G = to_networkx(data, edge_attrs=['weight'], to_undirected="upper")
-    assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
+    assert nx.to_numpy_array(G).tolist() == [[3, 1], [1, 0]]
 
     G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
     assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
