@@ -56,8 +56,8 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install flit-core
-          pip install --no-build-isolation -e .[full,test]
+          # pip install flit-core
+          pip install .[full,test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
