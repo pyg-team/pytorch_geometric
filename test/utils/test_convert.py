@@ -128,11 +128,26 @@ def test_to_networkx_undirected():
     G = to_networkx(data, edge_attrs=['weight'], to_undirected=False)
     assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
 
-    G = to_networkx(data, edge_attrs=['weight'], to_undirected="upper")
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected='upper')
     assert nx.to_numpy_array(G).tolist() == [[3, 1], [1, 0]]
 
-    G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected='lower')
     assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
+
+
+def test_to_networkx_undirected_options():
+    import networkx as nx
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 0]])
+    data = Data(edge_index=edge_index, num_nodes=3)
+
+    G = to_networkx(data, to_undirected=True)
+    assert nx.to_numpy_array(G).tolist() == [[0, 1, 1], [1, 0, 1], [1, 1, 0]]
+
+    G = to_networkx(data, to_undirected='upper')
+    assert nx.to_numpy_array(G).tolist() == [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+
+    G = to_networkx(data, to_undirected='lower')
+    assert nx.to_numpy_array(G).tolist() == [[0, 1, 1], [1, 0, 0], [1, 0, 0]]
 
 
 @withPackage('networkx')
