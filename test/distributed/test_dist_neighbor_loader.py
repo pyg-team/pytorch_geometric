@@ -167,9 +167,8 @@ def dist_neighbor_loader_hetero(
             if batch[etype].edge_index.numel() > 0:
                 assert batch[etype].edge_index.device == device
                 assert batch[etype].edge_attr.device == device
-                assert batch[etype].edge_attr.size(0) == batch[
-                    etype
-                ].edge_index.size(1)
+                assert batch[etype].edge_attr.size(
+                    0) == batch[etype].edge_index.size(1)
                 # test edge mapping
                 src, dst = etype[0], etype[-1]
                 edge_index = part_data[1]._edge_index[(etype, "coo")]
@@ -197,9 +196,8 @@ def test_dist_neighbor_loader_homo(tmp_path, num_workers, async_sampling):
     s.close()
     addr = "localhost"
 
-    data = FakeDataset(
-        num_graphs=1, avg_num_nodes=100, avg_degree=3, edge_dim=2
-    )[0]
+    data = FakeDataset(num_graphs=1, avg_num_nodes=100, avg_degree=3,
+                       edge_dim=2)[0]
     num_parts = 2
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
