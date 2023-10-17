@@ -102,13 +102,21 @@ def test_static_gcn_conv():
 def test_gcn_conv_norm():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
-    row, col = edge_index
 
     conv = GCNConv(16, 32, flow="source_to_target")
     out1 = conv(x, edge_index)
     conv.flow = "target_to_source"
     out2 = conv(x, edge_index.flip(0))
     assert torch.allclose(out1, out2, atol=1e-6)
+
+    x = torch.tensor([[0], [2], [1]], dtype=torch.float)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    conv = GCNConv(1, 1, add_self_loops=True, bias=False, 
+                   normalize=False, aggr='max')
+    conv.lin.bias=torch.nn.Parameter(torch.tensor(0., requires_grad=True))
+    conv.lin.weight=torch.nn.Parameter(torch.tensor([[1.]], requires_grad=True))
+    out3 = conv(x, edge_index)
+    assert torch.allclose(out3, torch.tensor([[2.], [2.], [2.]]), atol=1e-6)
 
 
 @pytest.mark.parametrize('requires_grad', [False, True])

@@ -237,6 +237,27 @@ class GCNConv(MessagePassing):
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
+        else:
+            fill_value = 2. if self.improved else 1.
+            if isinstance(edge_index, Tensor):
+                cache = self._cached_edge_index
+                if cache is None:
+                    if self.add_self_loops:
+                        edge_index, edge_weight = add_remaining_self_loops(
+                            edge_index, edge_weight, fill_value, x.size(self.node_dim))
+                    if self.cached:
+                        self._cached_edge_index = (edge_index, edge_weight)
+                else:
+                    edge_index, edge_weight = cache[0], cache[1]
+            elif isinstance(edge_index, SparseTensor):
+                cache = self._cached_adj_t
+                if cache is None:
+                    if self.add_self_loops:
+                        edge_index = torch_sparse.fill_diag(edge_index, fill_value)
+                    if self.cached:
+                        self._cached_adj_t = edge_index
+                else:
+                    edge_index = cache
 
         x = self.lin(x)
 
