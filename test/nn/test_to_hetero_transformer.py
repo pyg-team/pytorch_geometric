@@ -512,3 +512,24 @@ def test_to_hetero_validate():
 
     with pytest.warns(UserWarning, match="letters, numbers and underscores"):
         model = to_hetero(model, metadata, debug=False)
+
+
+def test_to_hetero_on_static_graphs():
+    x_dict = {
+        'paper': torch.randn(4, 100, 16),
+        'author': torch.randn(4, 100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+    model = to_hetero(Net4(), metadata, debug=False)
+    out_dict = model(x_dict, edge_index_dict)
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (4, 100, 32)
+    assert out_dict['author'].size() == (4, 100, 32)
