@@ -80,7 +80,6 @@ full = [
     "tabulate",
     "matplotlib",
     "pynndescent",
-    "torchmetrics",
     "scikit-image",
     "opt_einsum",
     "statsmodels",
