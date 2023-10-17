@@ -5,9 +5,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import EdgeAttr, GraphStore, Data, HeteroData
+from torch_geometric.data import Data, EdgeAttr, GraphStore, HeteroData
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
+
 
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
@@ -74,7 +75,7 @@ class LocalGraphStore(GraphStore):
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         return [self._edge_attr[key] for key in self._edge_index.keys()]
-    
+
     # Initialization ##########################################################
 
     @classmethod
@@ -96,7 +97,8 @@ class LocalGraphStore(GraphStore):
 
         graph_store = cls()
         if not is_sorted:
-            edge_index, edge_id = sort_edge_index(edge_index, edge_id, sort_by_row=False)
+            edge_index, edge_id = sort_edge_index(edge_index, edge_id,
+                                                  sort_by_row=False)
         attr = dict(
             edge_type=None,
             layout="coo",
@@ -106,7 +108,7 @@ class LocalGraphStore(GraphStore):
 
         graph_store.put_edge_index(edge_index, **attr)
         graph_store.put_edge_id(edge_id, **attr)
-        
+
         return graph_store
 
     @classmethod
@@ -140,7 +142,8 @@ class LocalGraphStore(GraphStore):
             )
             edge_id = edge_id_dict[edge_type]
             if not is_sorted:
-                edge_index, edge_id = sort_edge_index(edge_index, edge_id, sort_by_row=False)
+                edge_index, edge_id = sort_edge_index(edge_index, edge_id,
+                                                      sort_by_row=False)
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
         return graph_store
@@ -155,15 +158,17 @@ class LocalGraphStore(GraphStore):
 
         graph_data = torch.load(osp.join(part_dir, "graph.pt"))
         graph_store = cls()
-        graph_store.is_sorted = meta["is_sorted"]                
+        graph_store.is_sorted = meta["is_sorted"]
 
         if not meta["is_hetero"]:
-            edge_index = torch.stack((graph_data["row"], graph_data["col"]), dim=0)
+            edge_index = torch.stack((graph_data["row"], graph_data["col"]),
+                                     dim=0)
             edge_id = graph_data["edge_id"]
             if not graph_store.is_sorted:
-                edge_index, edge_id = sort_edge_index(edge_index, edge_id, sort_by_row=False)
-                
-            attr = dict(edge_type=None, layout="coo", size=graph_data["size"], 
+                edge_index, edge_id = sort_edge_index(edge_index, edge_id,
+                                                      sort_by_row=False)
+
+            attr = dict(edge_type=None, layout="coo", size=graph_data["size"],
                         is_sorted=True)
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
@@ -171,16 +176,18 @@ class LocalGraphStore(GraphStore):
         if meta["is_hetero"]:
             for edge_type, data in graph_data.items():
                 attr = dict(
-                    edge_type=edge_type, layout="coo", size=data["size"], is_sorted=True,
+                    edge_type=edge_type,
+                    layout="coo",
+                    size=data["size"],
+                    is_sorted=True,
                 )
                 edge_index = torch.stack((data["row"], data["col"]), dim=0)
                 edge_id = data["edge_id"]
 
                 if not graph_store.is_sorted:
-                    edge_index, edge_id = sort_edge_index(edge_index, edge_id, sort_by_row=False)
+                    edge_index, edge_id = sort_edge_index(
+                        edge_index, edge_id, sort_by_row=False)
                 graph_store.put_edge_index(edge_index, **attr)
                 graph_store.put_edge_id(edge_id, **attr)
 
         return graph_store
-    
-

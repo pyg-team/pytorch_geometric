@@ -10,13 +10,11 @@ def test_local_graph_store():
     edge_index = get_random_edge_index(100, 100, 300)
     edge_id = torch.tensor([1, 2, 3, 5, 8, 4])
 
-    graph_store.put_edge_index(
-        edge_index, edge_type=None, layout="coo", size=(100, 100)
-    )
+    graph_store.put_edge_index(edge_index, edge_type=None, layout="coo",
+                               size=(100, 100))
 
-    graph_store.put_edge_id(
-        edge_id, edge_type=None, layout="coo", size=(100, 100)
-    )
+    graph_store.put_edge_id(edge_id, edge_type=None, layout="coo",
+                            size=(100, 100))
 
     assert len(graph_store.get_all_edge_attrs()) == 1
     edge_attr = graph_store.get_all_edge_attrs()[0]
@@ -32,9 +30,8 @@ def test_homogeneous_graph_store():
     edge_id = torch.randperm(300)
     edge_index = get_random_edge_index(100, 100, 300)
     edge_index[1] = torch.sort(edge_index[1], dim=0)[0]
-    graph_store = LocalGraphStore.from_data(
-        edge_id, edge_index, num_nodes=100, is_sorted=True
-    )
+    graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes=100,
+                                            is_sorted=True)
 
     assert len(graph_store.get_all_edge_attrs()) == 1
     edge_attr = graph_store.get_all_edge_attrs()[0]
@@ -101,9 +98,8 @@ def test_dst_sorting_graph_store():
         graph_store.get_edge_index(edge_type=None, layout="coo"),
         edge_index_sorted,
     )
-    assert torch.equal(
-        graph_store.get_edge_id(edge_type=None, layout="coo"), edge_id_sorted
-    )
+    assert torch.equal(graph_store.get_edge_id(edge_type=None, layout="coo"),
+                       edge_id_sorted)
 
     edge_type = ("paper", "to", "paper")
     edge_index_dict = {edge_type: edge_index}
