@@ -1,10 +1,8 @@
 import os
-import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-from tqdm import tqdm
 
 from torch_geometric.data import (
     HeteroData,
@@ -21,8 +19,8 @@ class RCDD(InMemoryDataset):
     Neural Networks" <http://shichuan.org/doc/156.pdf>`_ paper.
     RCDD is an industrial-scale heterogeneous graph dataset based on a
     real risk detection scenario from Alibaba's e-commerce platform.
-    It consists of 13,806,619 nodes, 157,814,864 edges, with 7 node types
-    and 7 edge types. Particularly,
+    It consists of 13,806,619 nodes and 157,814,864 edges across 7 node types
+    and 7 edge types, respectively.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -45,26 +43,16 @@ class RCDD(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
-
-    @property
-    def raw_dir(self) -> str:
-        return osp.join(self.root, 'raw')
-
-    @property
-    def processed_dir(self) -> str:
-        return osp.join(self.root, 'processed')
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
-        x = [
+        return [
             'AliRCD_ICDM_nodes.csv',
             'AliRCD_ICDM_edges.csv',
             'AliRCD_ICDM_train_labels.csv',
             'AliRCD_ICDM_test_labels.csv',
-            'AliRCD_ICDM_test_ids.csv',
         ]
-        return x
 
     @property
     def processed_file_names(self) -> str:
@@ -83,51 +71,60 @@ class RCDD(InMemoryDataset):
         import pandas as pd
 
         data = HeteroData()
-        # AliRCD_ICDM_nodes.csv
-        nodes = pd.read_csv(self.raw_paths[0], header=None,
-                            names=['node_id', 'node_type', 'node_feat'])
-        # map global node id to local one for each node type
-        mapper = torch.zeros(len(nodes), dtype=torch.long)
-        for node_type in tqdm(nodes['node_type'].unique(),
-                              desc='Processing node info...'):
-            subset = nodes.query(f"node_type == '{node_type}'")
-            num_nodes = len(subset)
-            mapper[subset['node_id'].values] = torch.arange(num_nodes)
+
+        node_df = pd.read_csv(  # AliRCD_ICDM_nodes.csv:
+            self.raw_paths[0],
+            header=None,
+            names=['node_id', 'node_type', 'node_feat'],
+        )
+        # Map global node IDs to local ones for each node type:
+        mapping = torch.empty(len(node_df), dtype=torch.long)
+        for node_type in node_df['node_type'].unique():
+            mask = node_df['node_type'] == node_type
+            mask = torch.from_numpy(mask.values)
+            num_nodes = int(mask.sum())
+            mapping[mask] = torch.arange(num_nodes)
             data[node_type].num_nodes = num_nodes
             x = np.vstack([
                 np.asarray(f.split(':'), dtype=np.float32)
-                for f in subset['node_feat']
+                for f in node_df['node_feat'][mask.numpy()]
             ])
             data[node_type].x = torch.from_numpy(x)
-            del x
 
-        # AliRCD_ICDM_edges.csv
-        edges = pd.read_csv(
-            self.raw_paths[1], header=None,
-            names=['src_id', 'dst_id', 'src_type', 'dst_type', 'edge_type'])
-        for edge_type in tqdm(edges['edge_type'].unique(),
-                              desc='Processing edge info...'):
-            subset = edges.query(f"edge_type == '{edge_type}'")
-            src_type = subset['src_type'].iloc[0]
-            dst_type = subset['dst_type'].iloc[0]
-            src = mapper[subset['src_id'].values]
-            dst = mapper[subset['dst_id'].values]
-            data[src_type, edge_type,
-                 dst_type].edge_index = torch.stack([src, dst], dim=0)
+        edge_df = pd.read_csv(  # AliRCD_ICDM_edges.csv:
+            self.raw_paths[1],
+            header=None,
+            names=['src_id', 'dst_id', 'src_type', 'dst_type', 'edge_type'],
+        )
+        for edge_type in edge_df['edge_type'].unique():
+            edge_type_df = edge_df[edge_df['edge_type'] == edge_type]
+            src_type = edge_type_df['src_type'].iloc[0]
+            dst_type = edge_type_df['dst_type'].iloc[0]
+            src = mapping[torch.from_numpy(edge_type_df['src_id'].values)]
+            dst = mapping[torch.from_numpy(edge_type_df['dst_id'].values)]
+            edge_index = torch.stack([src, dst], dim=0)
+            data[src_type, edge_type, dst_type].edge_index = edge_index
 
-        # AliRCD_ICDM_train_labels.csv
-        train_labels = pd.read_csv(self.raw_paths[2], header=None,
-                                   names=['node_id', 'label'], dtype=int)
-        # AliRCD_ICDM_test_labels.csv
-        test_labels = pd.read_csv(self.raw_paths[3], header=None, sep='\t',
-                                  names=['node_id', 'label'], dtype=int)
+        train_df = pd.read_csv(  # AliRCD_ICDM_train_labels.csv:
+            self.raw_paths[2],
+            header=None,
+            names=['node_id', 'label'],
+            dtype=int,
+        )
+        test_df = pd.read_csv(  # AliRCD_ICDM_test_labels.csv:
+            self.raw_paths[3],
+            header=None,
+            sep='\t',
+            names=['node_id', 'label'],
+            dtype=int,
+        )
 
-        train_idx = mapper[train_labels['node_id'].values]
-        test_idx = mapper[test_labels['node_id'].values]
+        train_idx = mapping[torch.from_numpy(train_df['node_id'].values)]
+        test_idx = mapping[torch.from_numpy(test_df['node_id'].values)]
 
         y = torch.full((data['item'].num_nodes, ), -1, dtype=torch.long)
-        y[train_idx] = torch.from_numpy(train_labels['label'].values)
-        y[test_idx] = torch.from_numpy(test_labels['label'].values)
+        y[train_idx] = torch.from_numpy(train_df['label'].values)
+        y[test_idx] = torch.from_numpy(test_df['label'].values)
 
         train_mask = index_to_mask(train_idx, data['item'].num_nodes)
         test_mask = index_to_mask(test_idx, data['item'].num_nodes)
@@ -139,4 +136,4 @@ class RCDD(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
