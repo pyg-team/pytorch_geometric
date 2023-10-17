@@ -98,7 +98,6 @@ class DistNeighborSampler:
         self.temporal_strategy = temporal_strategy
         self.time_attr = time_attr
         self.with_edge_attr = self.dist_feature.has_edge_attr()
-        _, _, self.edge_permutation = self.dist_graph.csc()
         self.csc = True
 
     def register_sampler_rpc(self) -> None:
@@ -119,6 +118,8 @@ class DistNeighborSampler:
             temporal_strategy=self.temporal_strategy,
             time_attr=self.time_attr,
         )
+        self.edge_permutation = self._sampler.perm
+
         rpc_sample_callee = RPCSamplingCallee(self._sampler)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
@@ -655,9 +656,9 @@ class DistNeighborSampler:
                 efeats = None
 
         output.metadata = (*output.metadata, nfeats, nlabels, efeats)
-        if self.is_hetero:
-            output.row = remap_keys(output.row, self._sampler.to_edge_type)
-            output.col = remap_keys(output.col, self._sampler.to_edge_type)
+        # if self.is_hetero:
+        #     output.row = remap_keys(output.row, self._sampler.to_edge_type)
+        #     output.col = remap_keys(output.col, self._sampler.to_edge_type)
         return output
 
     def __repr__(self) -> str:
