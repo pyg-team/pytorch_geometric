@@ -67,18 +67,10 @@ runs:
         pip install faiss-gpu
       shell: bash
 
-    - name: Install broken packages
-      if: ${{ inputs.full_install == 'true' }}
-      run: |
-        pip install scipy
-        pip install --no-deps captum
-        pip install --no-deps pgmpy
-        pip install --no-deps torchmetrics
-      shell: bash
-
     - name: Install extension packages
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        pip install scipy
         pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
