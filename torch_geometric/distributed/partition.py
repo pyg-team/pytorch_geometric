@@ -246,12 +246,12 @@ class Partitioner:
                 global_col, perm = index_sort(global_col, max_value=num_cols)
                 global_row = global_row[perm]
                 edge_id = edge_id[perm]
-                edge_attr = part_data.edge_attr[perm]
 
-                assert torch.equal(self.data.edge_index[:, edge_id],
-                                   torch.stack((global_row, global_col)))
-                assert torch.equal(self.data.edge_attr[edge_id, :], edge_attr)
-
+                assert torch.equal(self.data.edge_index[:, edge_id], torch.stack((global_row, global_col)))
+                if 'edge_attr' in part_data:
+                    edge_attr = part_data.edge_attr[perm]
+                    assert torch.equal(self.data.edge_attr[edge_id,:], edge_attr)
+                
                 torch.save(
                     {
                         'edge_id': edge_id,
