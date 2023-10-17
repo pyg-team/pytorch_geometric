@@ -57,7 +57,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           # pip install flit-core
-          pip install .[full,test]
+          pip install  --verbose .[full,test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
