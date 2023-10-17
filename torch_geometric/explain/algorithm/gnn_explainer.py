@@ -30,12 +30,12 @@ class GNNExplainer(ExplainerAlgorithm):
         pytorch_geometric/blob/master/examples/explain/gnn_explainer_link_pred.py>`_.
 
         Please consider adjusting the `edge_size` coefficient according to
-        the average number of edges per node, especially if this value is 
-        bigger than in the datasets used in the original paper. The 
+        the average number of edges per node, especially if this value is
+        bigger than in the datasets used in the original paper. The
         coefficient `edge_size` is  multiplied by the number of nodes in the
         explanation at every iteration, and the resulting value is added to
         the loss (a regularization term), with the goal of producing compact
-        explanations. A higher value will push the algorithm towards 
+        explanations. A higher value will push the algorithm towards
         explanations with less elements.
 
     Args:
