@@ -82,7 +82,6 @@ full = [
     "pynndescent",
     "torchmetrics",
     "scikit-image",
-    "pytorch-memlab",
     "opt_einsum",
     "statsmodels",
     "rdkit",
