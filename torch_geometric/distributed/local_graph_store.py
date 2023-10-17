@@ -100,6 +100,8 @@ class LocalGraphStore(GraphStore):
         graph_store = cls()
         graph_store.put_edge_index(edge_index, **attr)
         graph_store.put_edge_id(edge_id, **attr)
+        graph_store.meta = {'is_hetero': False}
+
         return graph_store
 
     @classmethod
@@ -133,6 +135,8 @@ class LocalGraphStore(GraphStore):
             )
 
         graph_store = cls()
+        graph_store.meta = {'is_hetero': True}
+
         for edge_type, edge_index in edge_index_dict.items():
             attr = attr_dict[edge_type]
             edge_id = edge_id_dict[edge_type]
