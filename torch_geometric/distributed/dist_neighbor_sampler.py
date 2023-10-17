@@ -656,9 +656,6 @@ class DistNeighborSampler:
                 efeats = None
 
         output.metadata = (*output.metadata, nfeats, nlabels, efeats)
-        # if self.is_hetero:
-        #     output.row = remap_keys(output.row, self._sampler.to_edge_type)
-        #     output.col = remap_keys(output.col, self._sampler.to_edge_type)
         return output
 
     def __repr__(self) -> str:
