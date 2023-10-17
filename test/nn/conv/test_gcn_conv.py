@@ -111,10 +111,11 @@ def test_gcn_conv_norm():
 
     x = torch.tensor([[0], [2], [1]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    conv = GCNConv(1, 1, add_self_loops=True, bias=False, 
-                   normalize=False, aggr='max')
-    conv.lin.bias=torch.nn.Parameter(torch.tensor(0., requires_grad=True))
-    conv.lin.weight=torch.nn.Parameter(torch.tensor([[1.]], requires_grad=True))
+    conv = GCNConv(1, 1, add_self_loops=True, bias=False, normalize=False,
+                   aggr='max')
+    conv.lin.bias = torch.nn.Parameter(torch.tensor(0., requires_grad=True))
+    conv.lin.weight = torch.nn.Parameter(
+        torch.tensor([[1.]], requires_grad=True))
     out3 = conv(x, edge_index)
     assert torch.allclose(out3, torch.tensor([[2.], [2.], [2.]]), atol=1e-6)
 
