@@ -92,7 +92,7 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     # Replace instances of `MessagePassing` by their jittable version:
     model = to_jittable(model)
 
-    # Do not generate device transfers which may slow down model execution:
+    # Do not generate device asserts which may slow down model execution:
     torch._inductor.config.triton.assert_indirect_indexing = False
 
     # Finally, run `torch.compile` to create an optimized version:
