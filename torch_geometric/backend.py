@@ -10,6 +10,9 @@ import torch
 # Requires `pyg-lib` to be installed.
 use_segment_matmul: Optional[bool] = None
 
+# set this to True if you want to_hetero models to use
+# HeteroLinear instead of ModuleDict of Linears
+use_heterolin_in_to_hetero = False
 # Helper functions ############################################################
 
 
