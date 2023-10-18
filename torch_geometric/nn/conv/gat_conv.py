@@ -252,6 +252,7 @@ class GATConv(MessagePassing):
         alpha = self.edge_updater(edge_index, alpha=alpha, edge_attr=edge_attr)
 
         # propagate_type: (x: OptPairTensor, alpha: Tensor)
+        print("propagate", edge_index.size(), alpha.shape)
         out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
 
         if self.concat:
@@ -297,6 +298,7 @@ class GATConv(MessagePassing):
         return alpha
 
     def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
+        print("message", x_j.shape, alpha.shape)
         return alpha.unsqueeze(-1) * x_j
 
     def __repr__(self) -> str:

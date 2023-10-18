@@ -167,7 +167,7 @@ class MessagePassing(torch.nn.Module):
             self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
         # Support for explainability.
-        self._explain = False
+        self._explain: Optional[bool] = None
         self._edge_mask = None
         self._loop_mask = None
         self._apply_sigmoid = True
@@ -461,6 +461,7 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         msg_kwargs = res[0] if isinstance(res, tuple) else res
                 out = self.message(**msg_kwargs)
+                print(out.shape)
                 for hook in self._message_forward_hooks.values():
                     res = hook(self, (msg_kwargs, ), out)
                     if res is not None:
@@ -546,11 +547,11 @@ class MessagePassing(torch.nn.Module):
         return x_j
 
     @property
-    def explain(self) -> bool:
+    def explain(self) -> Optional[bool]:
         return self._explain
 
     @explain.setter
-    def explain(self, explain: bool):
+    def explain(self, explain: Optional[bool]):
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -566,6 +567,8 @@ class MessagePassing(torch.nn.Module):
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
         # see stackoverflow.com: 394770/override-a-method-at-instance-level
+        print("explain message")
+        print(inputs.shape, self._edge_mask.shape, self.node_dim)
 
         edge_mask = self._edge_mask
 
