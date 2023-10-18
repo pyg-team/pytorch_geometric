@@ -1,7 +1,7 @@
 Multi-Node-Multi-GPU GNN Training
 ==================================
 
-Before doing this tutorial we recommend going through <insert single-node-multi-gpu tutorial> as a warm up.
+Before doing this tutorial we recommend going through `our tutorial on single-node multi-gpu training <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/multi_gpu.html>`_ as a warm up.
 Our first step is to understand the basic structure of a multi-node-multi-gpu example.
 
 
@@ -78,9 +78,9 @@ Our first step is to understand the basic structure of a multi-node-multi-gpu ex
                   args.fan_out, split_idx, dataset.num_classes)
 
 
-Similarly to the warm up example, we define a :meth:`run` function. However, in this case we are using torch distributed with NVIDIA NCCL backend, instead of relying on :class:`~torch.multiprocessing`. Because we are running on multiple nodes, we want to set up a local process group for each node, and use :obj:`args.ngpu_per_node` GPUs per node. We then select the the CUDA device that will be used by each process within each process group. The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` usage. We load our (synthetic) dataset and then set up our 60/20/20 train/val/test split. Next, we define our :class:`~torch_geometric.nn.models.GCN` model and finally call our :meth:`run` function.
+Similarly to the single-node multi-gpu example, we define a :meth:`run` function. However, in this case we are using torch distributed with NVIDIA NCCL backend, instead of relying on :class:`~torch.multiprocessing`. Because we are running on multiple nodes, we want to set up a local process group for each node, and use :obj:`args.ngpu_per_node` GPUs per node. Check out this `pytorch tutorial on multi-node multi-gpu training <https://pytorch.org/tutorials/intermediate/ddp_series_multinode.html>`_ for more details. We then select the the CUDA device that will be used by each process within each process group. The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` usage. We load our (synthetic) dataset and then set up our 60/20/20 train/val/test split. Next, we define our :class:`~torch_geometric.nn.models.GCN` model and finally call our :meth:`run` function.
 
-Before we look into how our run function should be defined, we need to understand how we create and get our local process groups.
+Before we look into how our run function should be defined, we need to understand how we create and get our local process groups. 
 
 
 .. code-block:: python
