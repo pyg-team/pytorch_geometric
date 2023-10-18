@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
+from torch_geometric.backend import use_heterolin_in_to_hetero, use_heteroline
 from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
@@ -17,12 +18,8 @@ from torch_geometric.nn import (
     to_hetero,
 )
 from torch_geometric.testing import withPackage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
-from torch_geometric.backend import use_heteroline
-from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN
-from torch_geometric.backend import use_heterolin_in_to_hetero
-
 
 torch.fx.wrap('dropout_edge')
 
@@ -521,6 +518,8 @@ def test_to_hetero_validate():
 # (TODO) make to_hetero w/ HeteroLinear backend work for this
 pytest.mark.skipif(WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero, \
                    "not working for experimental to_hetero w/ HeteroLinear")
+
+
 def test_to_hetero_on_static_graphs():
     x_dict = {
         'paper': torch.randn(4, 100, 16),
