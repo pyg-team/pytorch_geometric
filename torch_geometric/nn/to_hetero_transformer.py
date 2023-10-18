@@ -28,7 +28,8 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
-WITH_TO_HETERO_HETEROLIN = WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero
+WITH_TO_HETERO_HETEROLIN = WITH_TO_HETERO_HETEROLIN and \
+                            use_heterolin_in_to_hetero
 
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
