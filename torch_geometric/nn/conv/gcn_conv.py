@@ -27,15 +27,15 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             t, flow, dtype):
+def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops, t,
+             flow, dtype):
     # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             t, flow, dtype):
+def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops, t,
+             flow, dtype):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
@@ -60,7 +60,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
         adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
-        adj_t = (1-t)*torch.eye(adj_t.shape[0]) + t*adj_t # (1-t)*I + t*P
+        adj_t = (1 - t) * torch.eye(
+            adj_t.shape[0]) + t * adj_t  # (1-t)*I + t*P
         return adj_t
 
     if is_torch_sparse_tensor(edge_index):
@@ -82,7 +83,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
         value = deg_inv_sqrt[row] * value * deg_inv_sqrt[col]
         self_loops = torch.eq(row, col).long()
-        value = (1-t)*self_loops + t*value # (1-t)*I + t*P
+        value = (1 - t) * self_loops + t * value  # (1-t)*I + t*P
         return set_sparse_value(adj_t, value), None
 
     assert flow in ['source_to_target', 'target_to_source']
@@ -103,7 +104,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
     edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
     self_loops = torch.eq(row, col).long()
-    edge_weight = (1-t)*self_loops + t*edge_weight # (1-t)*I + t*P
+    edge_weight = (1 - t) * self_loops + t * edge_weight  # (1-t)*I + t*P
     return edge_index, edge_weight
 
 
@@ -192,13 +193,13 @@ class GCNConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.t = t
         self.normalize = normalize
-        
+
         self._cached_edge_index = None
         self._cached_adj_t = None
 
         self.lin = Linear(in_channels, out_channels, bias=False,
                           weight_initializer=weight_initializer)
-        
+
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
@@ -229,8 +230,8 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, self.t,
-                        self.flow, x.dtype)
+                        self.improved, self.add_self_loops, self.t, self.flow,
+                        x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -241,8 +242,8 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, self.t,
-                        self.flow, x.dtype)
+                        self.improved, self.add_self_loops, self.t, self.flow,
+                        x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:

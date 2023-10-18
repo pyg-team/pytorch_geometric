@@ -33,7 +33,7 @@ def reset_weight_(weight: Tensor, in_channels: int,
     elif initializer == 'kaiming_uniform':
         inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
     elif initializer == 'normal':
-        inits.normal(weight, mean=0, std=math.sqrt(2.25/in_channels))
+        inits.normal(weight, mean=0, std=math.sqrt(2.25 / in_channels))
     elif initializer is None:
         inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
     else:
