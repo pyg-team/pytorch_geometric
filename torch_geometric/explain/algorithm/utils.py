@@ -67,7 +67,7 @@ def clear_masks(model: torch.nn.Module):
     r"""Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            if module.explain:
+            if module.explain is True:
                 module.explain = None
             module._edge_mask = None
             module._loop_mask = None
