@@ -51,6 +51,9 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
        jittable instances
        (see :meth:`torch_geometric.nn.conv.MessagePassing.jittable`)
 
+    3. disables generation of device asserts during fused gather/scatter calls
+       to avoid performance impacts
+
     .. note::
         Without these adjustments, :meth:`torch.compile` may currently fail to
         correctly optimize your :pyg:`PyG` model.
@@ -88,6 +91,9 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
 
     # Replace instances of `MessagePassing` by their jittable version:
     model = to_jittable(model)
+
+    # Do not generate device asserts which may slow down model execution:
+    torch._inductor.config.triton.assert_indirect_indexing = False
 
     # Finally, run `torch.compile` to create an optimized version:
     out = torch.compile(model, *args, **kwargs)
