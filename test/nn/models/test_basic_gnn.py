@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import random
 import sys
 import warnings
 
@@ -388,11 +389,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
+    parser.add_argument('--dynamic', action='store_true')
     args = parser.parse_args()
 
-    num_nodes, num_edges = 10_000, 200_000
-    x = torch.randn(num_nodes, 64, device=args.device)
-    edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
+    if args.dynamic:
+        min_num_nodes, max_num_nodes = 10_000, 15_000
+        min_num_edges, max_num_edges = 200_000, 300_000
+    else:
+        min_num_nodes, max_num_nodes = 10_000, 10_000
+        min_num_edges, max_num_edges = 200_000, 200_000
+
+    def gen_args():
+        N = random.randint(min_num_nodes, max_num_nodes)
+        E = random.randint(min_num_edges, max_num_edges)
+
+        x = torch.randn(N, 64, device=args.device)
+        edge_index = torch.randint(N, (2, E), device=args.device)
+
+        return x, edge_index
 
     for Model in [GCN, GraphSAGE, GIN, EdgeCNN]:
         print(f'Model: {Model.__name__}')
@@ -403,7 +417,7 @@ if __name__ == '__main__':
         benchmark(
             funcs=[model, compiled_model],
             func_names=['Vanilla', 'Compiled'],
-            args=(x, edge_index),
+            args=gen_args,
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
             backward=args.backward,
