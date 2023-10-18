@@ -461,7 +461,6 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         msg_kwargs = res[0] if isinstance(res, tuple) else res
                 out = self.message(**msg_kwargs)
-                print(out.shape)
                 for hook in self._message_forward_hooks.values():
                     res = hook(self, (msg_kwargs, ), out)
                     if res is not None:
@@ -567,9 +566,6 @@ class MessagePassing(torch.nn.Module):
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
         # see stackoverflow.com: 394770/override-a-method-at-instance-level
-        print("explain message")
-        print(inputs.shape, self._edge_mask.shape, self.node_dim)
-
         edge_mask = self._edge_mask
 
         if edge_mask is None:
