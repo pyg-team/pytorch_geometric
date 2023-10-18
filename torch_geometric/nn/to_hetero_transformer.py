@@ -21,12 +21,13 @@ from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
 )
-
+from torch_geometric.backend import use_heterolin_in_to_hetero
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
+WITH_TO_HETERO_HETEROLIN = WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return mapping if mapping is not None else {}
