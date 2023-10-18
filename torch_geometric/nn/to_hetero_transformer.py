@@ -8,6 +8,7 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
+from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
@@ -21,13 +22,14 @@ from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
 )
-from torch_geometric.backend import use_heterolin_in_to_hetero
+
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 WITH_TO_HETERO_HETEROLIN = WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero
+
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return mapping if mapping is not None else {}
