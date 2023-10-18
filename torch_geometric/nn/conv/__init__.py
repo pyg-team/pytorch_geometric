@@ -3,6 +3,7 @@ from .simple_conv import SimpleConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
+from .sage_conv_temporal import SAGEConv_temporal
 from .cugraph.sage_conv import CuGraphSAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv

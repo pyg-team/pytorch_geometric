@@ -90,8 +90,12 @@ class MovieLens(InMemoryDataset):
         edge_index = torch.tensor([src, dst])
 
         rating = torch.from_numpy(df['rating'].values).to(torch.long)
+        timestamp = torch.from_numpy(df['timestamp'].values).to(torch.long)
+        print(df.columns)
         data['user', 'rates', 'movie'].edge_index = edge_index
         data['user', 'rates', 'movie'].edge_label = rating
+        data['user', 'rates', 'movie'].timestamp = timestamp
+        
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
