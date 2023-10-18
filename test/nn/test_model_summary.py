@@ -5,11 +5,11 @@ import torch
 from torch import Tensor, nn
 
 import torch_geometric.typing
+from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
-from torch_geometric.backend import use_heterolin_in_to_hetero
 
 
 class GraphSAGE(torch.nn.Module):
