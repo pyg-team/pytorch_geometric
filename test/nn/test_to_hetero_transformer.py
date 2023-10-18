@@ -7,7 +7,7 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
-from torch_geometric.backend import use_heterolin_in_to_hetero, use_heteroline
+from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
