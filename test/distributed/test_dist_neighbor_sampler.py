@@ -20,21 +20,21 @@ def create_data(rank, world_size):
     # create dist data
     if rank == 0:
         # partition 0
-        node_id = torch.tensor([0, 1, 2, 3, 4, 5, 6, 10])
+        node_id = torch.tensor([0, 1, 2, 3, 4, 5, 6])
         edge_index = torch.tensor([
             [1, 2, 3, 4, 5, 0, 0],
             [0, 1, 2, 3, 4, 4, 9],
         ])
     else:
         # partition 1
-        node_id = torch.tensor([0, 4, 5, 6, 7, 8, 9, 10])
+        node_id = torch.tensor([0, 4, 5, 6, 7, 8, 9])
         edge_index = torch.tensor([
             [5, 6, 7, 8, 9, 0, 5],
             [4, 5, 6, 7, 8, 9, 9],
         ])
 
     feature_store = LocalFeatureStore.from_data(node_id)
-    graph_store = LocalGraphStore.from_data(None, edge_index, num_nodes=11)
+    graph_store = LocalGraphStore.from_data(None, edge_index, num_nodes=10)
 
     graph_store.node_pb = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
     graph_store.meta.update({'num_parts': 2})
@@ -48,7 +48,7 @@ def create_data(rank, world_size):
         [1, 2, 3, 4, 5, 0, 0, 6, 7, 8, 9, 5],
         [0, 1, 2, 3, 4, 4, 9, 5, 6, 7, 8, 9],
     ])
-    data = Data(x=None, y=None, edge_index=edge_index, num_nodes=11)
+    data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
     return (dist_data, data)
 
