@@ -61,6 +61,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
+from .neurograph import NeuroGraphDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -91,6 +92,7 @@ from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
+from .rcdd import RCDD
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -182,6 +184,7 @@ homo_datasets = [
     'Wikidata5M',
     'MyketDataset',
     'BrcaTcga',
+    'NeuroGraphDataset',
 ]
 
 hetero_datasets = [
@@ -200,6 +203,7 @@ hetero_datasets = [
     'AmazonBook',
     'HM',
     'OSE_GVCS',
+    'RCDD',
 ]
 synthetic_datasets = [
     'FakeDataset',

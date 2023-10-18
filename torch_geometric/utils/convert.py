@@ -101,12 +101,14 @@ def to_networkx(
             copied. (default: :obj:`None`)
         graph_attrs (iterable of str, optional): The graph attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool or str, optional): If set to :obj:`True` or
-            :obj:`"upper"`, will return a :obj:`networkx.Graph` instead of a
-            :obj:`networkx.DiGraph`. The undirected graph will correspond to
-            the upper triangle of the corresponding adjacency matrix.
-            Similarly, if set to :obj:`"lower"`, the undirected graph will
-            correspond to the lower triangle of the adjacency matrix.
+        to_undirected (bool or str, optional): If set to :obj:`True`, will
+            return a :class:`networkx.Graph` instead of a
+            :class:`networkx.DiGraph`.
+            By default, will include all edges and make them undirected.
+            If set to :obj:`"upper"`, the undirected graph will only correspond
+            to the upper triangle of the input adjacency matrix.
+            If set to :obj:`"lower"`, the undirected graph will only correspond
+            to the lower triangle of the input adjacency matrix.
             Only applicable in case the :obj:`data` object holds a homogeneous
             graph. (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
@@ -127,9 +129,10 @@ def to_networkx(
 
     from torch_geometric.data import HeteroData
 
-    to_undirected_upper: bool = to_undirected in {'upper', True}
+    to_undirected_upper: bool = to_undirected == 'upper'
     to_undirected_lower: bool = to_undirected == 'lower'
-    to_undirected: bool = to_undirected_upper or to_undirected_lower
+    to_undirected: bool = (to_undirected_upper or to_undirected_lower
+                           or to_undirected is True)
 
     if isinstance(data, HeteroData) and to_undirected:
         raise ValueError("'to_undirected' is not supported in "

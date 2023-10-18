@@ -1,7 +1,6 @@
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.testing import onlyLinux
 from torch_geometric.transforms import (
     AddLaplacianEigenvectorPE,
     AddRandomWalkPE,
@@ -56,27 +55,24 @@ def test_eigenvector_permutation_invariance():
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
     data = Data(edge_index=edge_index, num_nodes=6)
 
-    perm = torch.tensor([5, 4, 3, 2, 1, 0])
+    perm = torch.randperm(data.num_nodes)
     transform = AddLaplacianEigenvectorPE(
-        k=1,
+        k=2,
         is_undirected=True,
         attr_name='x',
-        v0=torch.arange(data.num_nodes),
     )
     out1 = transform(data)
 
     transform = AddLaplacianEigenvectorPE(
-        k=1,
+        k=2,
         is_undirected=True,
         attr_name='x',
-        v0=perm,
     )
     out2 = transform(data.subgraph(perm))
 
-    assert torch.allclose(out1.x[perm].abs(), out2.x.abs(), atol=1e-1)
+    assert torch.allclose(out1.x[perm].abs(), out2.x.abs(), atol=1e-6)
 
 
-@onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
 def test_add_random_walk_pe():
     x = torch.randn(6, 4)
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],

@@ -63,7 +63,7 @@ model = HierarchicalHeteroGraphSage(
     hidden_channels=64,
     out_channels=dataset.num_classes,
     num_layers=2,
-).to(args.device)
+).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
