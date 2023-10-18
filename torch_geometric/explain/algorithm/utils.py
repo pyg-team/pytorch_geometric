@@ -20,6 +20,9 @@ def set_masks(
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
+            # Skip layers that have been explicitly set to `False`:
+            if module.explain is False:
+                continue
 
             # Convert mask to a param if it was previously registered as one.
             # This is a workaround for the fact that PyTorch does not allow
@@ -64,7 +67,8 @@ def clear_masks(model: torch.nn.Module):
     r"""Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module.explain = False
+            if module.explain is True:
+                module.explain = None
             module._edge_mask = None
             module._loop_mask = None
             module._apply_sigmoid = True
