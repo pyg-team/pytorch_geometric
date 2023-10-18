@@ -82,6 +82,8 @@ class MetaPath2Vec(torch.nn.Module):
             self.col_dict[keys] = col
             self.rowcount_dict[keys] = rowptr[1:] - rowptr[:-1]
 
+        for i in range(1, len(metapath)):
+            assert metapath[i - 1][-1] == metapath[i][0]
         assert walk_length + 1 >= context_size
         if walk_length > len(metapath) and metapath[0][0] != metapath[-1][-1]:
             raise AttributeError(
