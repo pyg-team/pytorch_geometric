@@ -115,6 +115,7 @@ class AttentiveFP(torch.nn.Module):
         self.mol_conv = GATConv(hidden_channels, hidden_channels,
                                 dropout=dropout, add_self_loops=False,
                                 negative_slope=0.01)
+        self.mol_conv.explain = False  # Cannot explain global pooling.
         self.mol_gru = GRUCell(hidden_channels, hidden_channels)
 
         self.lin2 = Linear(hidden_channels, out_channels)
