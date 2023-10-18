@@ -19,6 +19,10 @@ from torch_geometric.nn import (
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge
+from torch_geometric.backend import use_heteroline
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN
+from torch_geometric.backend import use_heterolin_in_to_hetero
+
 
 torch.fx.wrap('dropout_edge')
 
@@ -515,22 +519,24 @@ def test_to_hetero_validate():
 
 
 # (TODO) make to_hetero w/ HeteroLinear backend work for this
-# def test_to_hetero_on_static_graphs():
-#     x_dict = {
-#         'paper': torch.randn(4, 100, 16),
-#         'author': torch.randn(4, 100, 16),
-#     }
-#     edge_index_dict = {
-#         ('paper', 'written_by', 'author'):
-#         torch.randint(100, (2, 200), dtype=torch.long),
-#         ('author', 'writes', 'paper'):
-#         torch.randint(100, (2, 200), dtype=torch.long),
-#     }
+pytest.mark.skipif(WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero, \
+                   "not working for experimental to_hetero w/ HeteroLinear")
+def test_to_hetero_on_static_graphs():
+    x_dict = {
+        'paper': torch.randn(4, 100, 16),
+        'author': torch.randn(4, 100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
 
-#     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
-#     model = to_hetero(Net4(), metadata, debug=False)
-#     out_dict = model(x_dict, edge_index_dict)
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+    model = to_hetero(Net4(), metadata, debug=False)
+    out_dict = model(x_dict, edge_index_dict)
 
-#     assert len(out_dict) == 2
-#     assert out_dict['paper'].size() == (4, 100, 32)
-#     assert out_dict['author'].size() == (4, 100, 32)
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (4, 100, 32)
+    assert out_dict['author'].size() == (4, 100, 32)
