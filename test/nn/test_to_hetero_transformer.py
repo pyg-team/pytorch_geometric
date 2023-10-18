@@ -513,6 +513,7 @@ def test_to_hetero_validate():
     with pytest.warns(UserWarning, match="letters, numbers and underscores"):
         model = to_hetero(model, metadata, debug=False)
 
+
 # (TODO) make to_hetero w/ HeteroLinear backend work for this
 # def test_to_hetero_on_static_graphs():
 #     x_dict = {
