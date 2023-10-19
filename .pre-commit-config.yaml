@@ -42,7 +42,7 @@ repos:
   #       args: [--min=10, .]
 
   - repo: https://github.com/google/yapf
-    rev: v0.40.0
+    rev: v0.40.2
     hooks:
       - id: yapf
         name: Format code
@@ -55,7 +55,7 @@ repos:
         name: Sort imports
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         name: Check PEP8

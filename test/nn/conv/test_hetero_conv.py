@@ -4,6 +4,7 @@ import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import (
     GATConv,
+    GCN2Conv,
     GCNConv,
     HeteroConv,
     Linear,
@@ -35,24 +36,55 @@ def test_hetero_conv(aggr):
             SAGEConv((-1, -1), 64),
             ('paper', 'to', 'author'):
             GATConv((-1, -1), 64, edge_dim=3, add_self_loops=False),
-        }, aggr=aggr)
+        },
+        aggr=aggr,
+    )
 
     assert len(list(conv.parameters())) > 0
     assert str(conv) == 'HeteroConv(num_relations=3)'
 
-    out = conv(data.x_dict, data.edge_index_dict, data.edge_attr_dict,
-               edge_weight_dict=data.edge_weight_dict)
+    out_dict = conv(
+        data.x_dict,
+        data.edge_index_dict,
+        data.edge_attr_dict,
+        edge_weight_dict=data.edge_weight_dict,
+    )
 
-    assert len(out) == 2
+    assert len(out_dict) == 2
     if aggr == 'cat':
-        assert out['paper'].size() == (50, 128)
-        assert out['author'].size() == (30, 64)
+        assert out_dict['paper'].size() == (50, 128)
+        assert out_dict['author'].size() == (30, 64)
     elif aggr is not None:
-        assert out['paper'].size() == (50, 64)
-        assert out['author'].size() == (30, 64)
+        assert out_dict['paper'].size() == (50, 64)
+        assert out_dict['author'].size() == (30, 64)
     else:
-        assert out['paper'].size() == (50, 2, 64)
-        assert out['author'].size() == (30, 1, 64)
+        assert out_dict['paper'].size() == (50, 2, 64)
+        assert out_dict['author'].size() == (30, 1, 64)
+
+
+def test_gcn2_hetero_conv():
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['author', 'author'].edge_index = get_random_edge_index(30, 30, 100)
+    data['paper', 'paper'].edge_weight = torch.rand(200)
+
+    conv = HeteroConv({
+        ('paper', 'to', 'paper'): GCN2Conv(32, alpha=0.1),
+        ('author', 'to', 'author'): GCN2Conv(64, alpha=0.2),
+    })
+
+    out_dict = conv(
+        data.x_dict,
+        data.x_dict,
+        data.edge_index_dict,
+        edge_weight_dict=data.edge_weight_dict,
+    )
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 32)
+    assert out_dict['author'].size() == (30, 64)
 
 
 class CustomConv(MessagePassing):
@@ -81,11 +113,15 @@ def test_hetero_conv_with_custom_conv():
 
     conv = HeteroConv({key: CustomConv(64) for key in data.edge_types})
     # Test node `args_dict` and `kwargs_dict` with `y_dict` and `z_dict`:
-    out = conv(data.x_dict, data.edge_index_dict, data.y_dict,
-               z_dict=data.z_dict)
-    assert len(out) == 2
-    assert out['paper'].size() == (50, 64)
-    assert out['author'].size() == (30, 64)
+    out_dict = conv(
+        data.x_dict,
+        data.edge_index_dict,
+        data.y_dict,
+        z_dict=data.z_dict,
+    )
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)
 
 
 class MessagePassingLoops(MessagePassing):
@@ -122,9 +158,12 @@ def test_hetero_conv_with_dot_syntax_node_types():
     assert len(list(conv.parameters())) > 0
     assert str(conv) == 'HeteroConv(num_relations=3)'
 
-    out = conv(data.x_dict, data.edge_index_dict,
-               edge_weight_dict=data.edge_weight_dict)
+    out_dict = conv(
+        data.x_dict,
+        data.edge_index_dict,
+        edge_weight_dict=data.edge_weight_dict,
+    )
 
-    assert len(out) == 2
-    assert out['src.paper'].size() == (50, 64)
-    assert out['author'].size() == (30, 64)
+    assert len(out_dict) == 2
+    assert out_dict['src.paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)

@@ -3,6 +3,7 @@ from typing import Any, Optional
 import numpy as np
 import torch
 
+import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -12,6 +13,7 @@ from torch_geometric.utils import (
     scatter,
     to_edge_index,
     to_scipy_sparse_matrix,
+    to_torch_coo_tensor,
     to_torch_csr_tensor,
 )
 
@@ -52,6 +54,9 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             :obj:`False`) or :meth:`scipy.sparse.linalg.eigsh` (when
             :attr:`is_undirected` is :obj:`True`).
     """
+    # Number of nodes from which to use sparse eigenvector computation:
+    SPARSE_THRESHOLD: int = 100
+
     def __init__(
         self,
         k: int,
@@ -65,9 +70,6 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         self.kwargs = kwargs
 
     def forward(self, data: Data) -> Data:
-        from scipy.sparse.linalg import eigs, eigsh
-        eig_fn = eigs if not self.is_undirected else eigsh
-
         num_nodes = data.num_nodes
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
@@ -78,13 +80,22 @@ class AddLaplacianEigenvectorPE(BaseTransform):
 
         L = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes)
 
-        eig_vals, eig_vecs = eig_fn(
-            L,
-            k=self.k + 1,
-            which='SR' if not self.is_undirected else 'SA',
-            return_eigenvectors=True,
-            **self.kwargs,
-        )
+        if num_nodes < self.SPARSE_THRESHOLD:
+            from numpy.linalg import eig, eigh
+            eig_fn = eig if not self.is_undirected else eigh
+
+            eig_vals, eig_vecs = eig_fn(L.todense())
+        else:
+            from scipy.sparse.linalg import eigs, eigsh
+            eig_fn = eigs if not self.is_undirected else eigsh
+
+            eig_vals, eig_vecs = eig_fn(
+                L,
+                k=self.k + 1,
+                which='SR' if not self.is_undirected else 'SA',
+                return_eigenvectors=True,
+                **self.kwargs,
+            )
 
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
         pe = torch.from_numpy(eig_vecs[:, 1:self.k + 1])
@@ -127,7 +138,10 @@ class AddRandomWalkPE(BaseTransform):
         value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
         value = 1.0 / value
 
-        adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
+        if torch_geometric.typing.WITH_WINDOWS:
+            adj = to_torch_coo_tensor(data.edge_index, value, size=data.size())
+        else:
+            adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
         out = adj
         pe_list = [get_self_loop_attr(*to_edge_index(out), num_nodes=N)]
