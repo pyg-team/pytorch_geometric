@@ -409,7 +409,7 @@ class SQLiteDatabase(Database):
     def _to_sql_type(self, type_info: Any) -> str:
         if type_info == int:
             return 'INTEGER'
-        if type_info == int:
+        if type_info == float:
             return 'FLOAT'
         if type_info == str:
             return 'TEXT'
