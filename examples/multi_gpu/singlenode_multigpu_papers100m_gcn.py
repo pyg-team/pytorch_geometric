@@ -147,7 +147,9 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-
+    if args.cugraph_data_loader:
+        from cugraph.testing.mg_utils import enable_spilling
+        enable_spilling()
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
     data = dataset[0]

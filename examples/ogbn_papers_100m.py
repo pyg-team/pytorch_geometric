@@ -39,7 +39,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
 split_idx = dataset.get_idx_split()
-
+if args.cugraph_data_loader:
+    from cugraph.testing.mg_utils import enable_spilling
+    enable_spilling()
 
 def get_num_workers() -> int:
     try:

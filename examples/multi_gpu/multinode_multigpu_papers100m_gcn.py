@@ -241,6 +241,9 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
+    if args.cugraph_data_loader:
+        from cugraph.testing.mg_utils import enable_spilling
+        enable_spilling()
     # setup multi node
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
