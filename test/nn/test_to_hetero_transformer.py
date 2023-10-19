@@ -517,7 +517,7 @@ def test_to_hetero_validate():
 
 # (TODO) make to_hetero w/ HeteroLinear backend work for this
 @pytest.mark.skipif(WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero,
-                    "not working for experimental to_hetero w/ HeteroLinear")
+                    reason="not working for experimental to_hetero w/ HeteroLinear")
 def test_to_hetero_on_static_graphs():
     x_dict = {
         'paper': torch.randn(4, 100, 16),
