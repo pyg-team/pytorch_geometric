@@ -43,6 +43,7 @@ if args.cugraph_data_loader:
     from cugraph.testing.mg_utils import enable_spilling
     enable_spilling()
 
+
 def get_num_workers() -> int:
     try:
         return len(os.sched_getaffinity(0)) // 2
