@@ -147,6 +147,8 @@ class AddRandomWalkPE(BaseTransform):
         pe_list = [get_self_loop_attr(*to_edge_index(out), num_nodes=N)]
         for _ in range(self.walk_length - 1):
             out = out @ adj
+            if out.layout == torch.sparse_coo:
+                out = out._coalesced_(True)
             pe_list.append(get_self_loop_attr(*to_edge_index(out), N))
         pe = torch.stack(pe_list, dim=-1)
 
