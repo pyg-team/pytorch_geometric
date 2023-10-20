@@ -58,11 +58,12 @@ kwargs = dict(
 # Set Up Neighbor Loading
 data = dataset[0]
 if args.cugraph_data_loader:
-    import rmm
     import cupy
-    
-    rmm.reinitialize(devices=[0], pool_allocator=True, initial_pool_size=78e9, managed_memory=True)
-    
+    import rmm
+
+    rmm.reinitialize(devices=[0], pool_allocator=True, initial_pool_size=78e9,
+                     managed_memory=True)
+
     from rmm.allocators.torch import rmm_torch_allocator
     torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
@@ -78,10 +79,11 @@ if args.cugraph_data_loader:
     fs.add_data(data.x, "N", "x")
     fs.add_data(data.y, "N", "y")
     cugraph_store = CuGraphStore(fs, G, N)
-    train_loader = CuGraphNeighborLoader(cugraph_store,
-                                         input_nodes=split_idx['train'],
-                                         #shuffle=True, drop_last=True,
-                                         **kwargs)
+    train_loader = CuGraphNeighborLoader(
+        cugraph_store,
+        input_nodes=split_idx['train'],
+        #shuffle=True, drop_last=True,
+        **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
                                        **kwargs)
@@ -127,7 +129,7 @@ def train():
         start = time.perf_counter()
         batch = batch.to(device)
         optimizer.zero_grad()
-        batch_size=batch.num_sampled_nodes[0]
+        batch_size = batch.num_sampled_nodes[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
         y = batch.y[:batch_size].view(-1).to(torch.long)
         loss = F.cross_entropy(out, y)
@@ -153,7 +155,7 @@ def test(loader, eval_steps: Optional[int] = None):
         if isinstance(batch, torch_geometric.data.HeteroData):
             batch = batch.to_homogeneous()
         batch = batch.to(device)
-        batch_size=batch.num_sampled_nodes[0]
+        batch_size = batch.num_sampled_nodes[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
