@@ -265,7 +265,8 @@ class SQLiteDatabase(Database):
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
-    def __init__(self, path: str, name: str, schema: Schema = object):
+    def __init__(self, path: str, name: str, schema: Schema = object,
+                 db_indices: Optional[List[str]] = None):
         super().__init__(schema)
 
         warnings.filterwarnings('ignore', '.*given buffer is not writable.*')
@@ -291,6 +292,12 @@ class SQLiteDatabase(Database):
                  f'{sql_schema}\n'
                  f')')
         self.cursor.execute(query)
+        if db_indices:
+            for idx in db_indices:
+                index_query = (f'CREATE INDEX ID NOT EXISTS '
+                               f'{self.name}_{idx} ON '
+                               f'{self.name} ({idx})')
+                self.cursor.execute(index_query)
 
     def connect(self):
         import sqlite3

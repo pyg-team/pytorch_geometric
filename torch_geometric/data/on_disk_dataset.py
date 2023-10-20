@@ -120,7 +120,10 @@ class OnDiskDataset(Dataset):
     def append(self, data: BaseData):
         r"""Appends the data object to the dataset."""
         index = len(self)
-        self.db.insert(index, self.serialize(data))
+        self.db.insert(
+            index,
+            self.serialize(data),
+        )
         self._numel += 1
 
     def extend(
@@ -135,20 +138,22 @@ class OnDiskDataset(Dataset):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
-    def get(self, idx: int) -> BaseData:
+    def get(self, idx: int, node_labels: Optional[str] = None,
+            edge_labels: Optional[str] = None) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.deserialize(self.db.get(idx))
+        return self.deserialize(self.db.get(idx, node_labels, edge_labels))
 
     def multi_get(
-        self,
-        indices: Union[Iterable[int], Tensor, slice, range],
-        batch_size: Optional[int] = None,
-    ) -> List[BaseData]:
+            self, indices: Union[Iterable[int], Tensor, slice,
+                                 range], batch_size: Optional[int] = None,
+            node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[str]] = None) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
         if len(indices) == 1:
-            data_list = [self.db.get(indices[0])]
+            data_list = [self.db.get(indices[0], node_labels, edge_labels)]
         else:
-            data_list = self.db.multi_get(indices, batch_size)
+            data_list = self.db.multi_get(indices, batch_size, node_labels,
+                                          edge_labels)
 
         return [self.deserialize(data) for data in data_list]
 
