@@ -147,7 +147,7 @@ class GCNConv(MessagePassing):
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
+            symmetric normalization coefficients on-the-fly.
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
@@ -177,6 +177,11 @@ class GCNConv(MessagePassing):
     ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
+
+        if add_self_loops and not normalize:
+            raise ValueError(f"'{self.__class__.__name__}' does not support "
+                             f"adding self-loops to the graph when no "
+                             f"on-the-fly normalization is applied")
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -233,29 +238,6 @@ class GCNConv(MessagePassing):
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
                         self.improved, self.add_self_loops, self.flow, x.dtype)
-                    if self.cached:
-                        self._cached_adj_t = edge_index
-                else:
-                    edge_index = cache
-        else:
-            fill_value = 2. if self.improved else 1.
-            if isinstance(edge_index, Tensor):
-                cache = self._cached_edge_index
-                if cache is None:
-                    if self.add_self_loops:
-                        edge_index, edge_weight = add_remaining_self_loops(
-                            edge_index, edge_weight, fill_value,
-                            x.size(self.node_dim))
-                    if self.cached:
-                        self._cached_edge_index = (edge_index, edge_weight)
-                else:
-                    edge_index, edge_weight = cache[0], cache[1]
-            elif isinstance(edge_index, SparseTensor):
-                cache = self._cached_adj_t
-                if cache is None:
-                    if self.add_self_loops:
-                        edge_index = torch_sparse.fill_diag(
-                            edge_index, fill_value)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
