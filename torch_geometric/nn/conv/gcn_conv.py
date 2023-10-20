@@ -145,7 +145,9 @@ class GCNConv(MessagePassing):
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
+            self-loops to the input graph. By default, self-loops will be added
+            in case :obj:`normalize` is set to :obj:`True`, and not added
+            otherwise. (default: :obj:`None`)
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on-the-fly.
             (default: :obj:`True`)
@@ -170,13 +172,16 @@ class GCNConv(MessagePassing):
         out_channels: int,
         improved: bool = False,
         cached: bool = False,
-        add_self_loops: bool = True,
+        add_self_loops: Optional[bool] = None,
         normalize: bool = True,
         bias: bool = True,
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
+
+        if add_self_loops is None:
+            add_self_loops = normalize
 
         if add_self_loops and not normalize:
             raise ValueError(f"'{self.__class__.__name__}' does not support "
