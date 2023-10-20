@@ -99,10 +99,14 @@ def test_static_gcn_conv():
     assert out.size() == (3, 4, 32)
 
 
-def test_gcn_conv_norm():
+def test_gcn_conv_error():
+    with pytest.raises(ValueError, match="does not support adding self-loops"):
+        GCNConv(16, 32, normalize=False, add_self_loops=True)
+
+
+def test_gcn_conv_flow():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
-    row, col = edge_index
 
     conv = GCNConv(16, 32, flow="source_to_target")
     out1 = conv(x, edge_index)
