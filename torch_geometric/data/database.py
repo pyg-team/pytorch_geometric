@@ -62,7 +62,7 @@ class Database(ABC):
         >>> {'x': torch.tensor(...), 'y': 0, 'z': 'id_0'}
 
     In addition, databases support batch-wise insert and get, and support
-    syntactic sugar known from indexing Python lists, *e.g.*:
+    syntactic sugar known from indexing :python:`Python` lists, *e.g.*:
 
     .. code-block:: python
 
