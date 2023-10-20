@@ -130,7 +130,7 @@ class InMemoryDataset(Dataset, ABC):
     def collate(
         data_list: List[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
-        r"""Collates a Python list of :class:`~torch_geometric.data.Data` or
+        r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal
         storage format of :class:`~torch_geometric.data.InMemoryDataset`."""
         if len(data_list) == 1:

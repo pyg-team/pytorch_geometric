@@ -2,7 +2,7 @@ TorchScript Support
 ===================
 
 TorchScript is a way to create serializable and optimizable models from :pytorch:`PyTorch` code.
-Any TorchScript program can be saved from a Python process and loaded in a process where there is no Python dependency.
+Any TorchScript program can be saved from a :python:`Python` process and loaded in a process where there is no :python:`Python` dependency.
 If you are unfamilar with TorchScript, we recommend to read the official "`Introduction to TorchScript <https://pytorch.org/tutorials/beginner/Intro_to_TorchScript_tutorial.html>`_" tutorial first.
 
 Converting GNN Models
