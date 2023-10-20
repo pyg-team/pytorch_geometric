@@ -41,7 +41,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     Storage objects can hold either node-level, link-level or graph-level
     attributes.
     In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
-    behavior of a regular **nested** Python dictionary.
+    behavior of a regular **nested** :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -130,7 +130,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'HeteroData':
         r"""Creates a :class:`~torch_geometric.data.HeteroData` object from a
-        Python dictionary."""
+        dictionary."""
         out = cls()
         for key, value in mapping.items():
             if key == '_global_store':
