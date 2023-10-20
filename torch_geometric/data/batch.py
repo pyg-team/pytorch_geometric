@@ -83,7 +83,7 @@ class Batch(metaclass=DynamicInheritance):
                        follow_batch: Optional[List[str]] = None,
                        exclude_keys: Optional[List[str]] = None):
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
-        Python list of :class:`~torch_geometric.data.Data` or
+        list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects.
         The assignment vector :obj:`batch` is created on the fly.
         In addition, creates assignment vectors for each key in
