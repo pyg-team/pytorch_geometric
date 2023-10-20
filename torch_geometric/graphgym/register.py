@@ -23,7 +23,7 @@ def register_base(mapping: Dict[str, Any], key: str,
     r"""Base function for registering a module in GraphGym.
 
     Args:
-        mapping (dict): Python dictionary to register the module.
+        mapping (dict): :python:`Python` dictionary to register the module.
             hosting all the registered modules
         key (str): The name of the module.
         module (any, optional): The module. If set to :obj:`None`, will return
