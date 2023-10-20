@@ -43,6 +43,7 @@ if args.cugraph_data_loader:
     from cugraph.testing.mg_utils import enable_spilling
     enable_spilling()
 
+
 def get_num_workers() -> int:
     try:
         return len(os.sched_getaffinity(0)) // 2
@@ -57,6 +58,17 @@ kwargs = dict(
 # Set Up Neighbor Loading
 data = dataset[0]
 if args.cugraph_data_loader:
+    import rmm
+    import cupy
+    
+    rmm.reinitialize(devices=[0], pool_allocator=True, initial_pool_size=78e9, managed_memory=True)
+    
+    from rmm.allocators.torch import rmm_torch_allocator
+    torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
+
+    from rmm.allocators.cupy import rmm_cupy_allocator
+    cupy.cuda.set_allocator(rmm_cupy_allocator)
+
     import cugraph
     from cugraph_pyg.data import CuGraphStore
     from cugraph_pyg.loader import CuGraphNeighborLoader
@@ -68,7 +80,7 @@ if args.cugraph_data_loader:
     cugraph_store = CuGraphStore(fs, G, N)
     train_loader = CuGraphNeighborLoader(cugraph_store,
                                          input_nodes=split_idx['train'],
-                                         shuffle=True, drop_last=True,
+                                         #shuffle=True, drop_last=True,
                                          **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
@@ -80,8 +92,8 @@ else:
     num_work = get_num_workers()
     NeighborLoader = torch_geometric.loader.NeighborLoader
     train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
-                                  num_workers=num_work, drop_last=True,
-                                  shuffle=True, **kwargs)
+                                  num_workers=num_work, drop_last=False,
+                                  shuffle=False, **kwargs)
     val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
                                 num_workers=num_work, **kwargs)
     test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
@@ -107,13 +119,17 @@ def train():
     model.train()
 
     for i, batch in enumerate(train_loader):
+        if isinstance(batch, torch_geometric.data.HeteroData):
+            batch = batch.to_homogeneous()
+
         if i >= warmup_steps:
             start_avg_time = time.perf_counter()
         start = time.perf_counter()
         batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
-        y = batch.y[:batch.batch_size].view(-1).to(torch.long)
+        batch_size=batch.num_sampled_nodes[0]
+        out = model(batch.x, batch.edge_index)[:batch_size]
+        y = batch.y[:batch_size].view(-1).to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
         optimizer.step()
@@ -127,17 +143,20 @@ def train():
 
 
 @torch.no_grad()
-def test(loader: NeighborLoader, eval_steps: Optional[int] = None):
+def test(loader, eval_steps: Optional[int] = None):
     model.eval()
 
     total_correct = total_examples = 0
     for i, batch in enumerate(loader):
         if eval_steps is not None and i >= eval_steps:
             break
+        if isinstance(batch, torch_geometric.data.HeteroData):
+            batch = batch.to_homogeneous()
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        batch_size=batch.num_sampled_nodes[0]
+        out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
-        y = batch.y[:batch.batch_size].view(-1).to(torch.long)
+        y = batch.y[:batch_size].view(-1).to(torch.long)
 
         total_correct += int((pred == y).sum())
         total_examples += y.size(0)
