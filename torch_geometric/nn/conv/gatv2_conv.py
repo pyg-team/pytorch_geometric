@@ -34,20 +34,21 @@ class GATv2Conv(MessagePassing):
     In contrast, in :class:`GATv2`, every node can attend to any other node.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
+        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
+        \sum_{j \in \mathcal{N}(i)}
+        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_j
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_k
         \right)\right)}.
 
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
@@ -56,19 +57,23 @@ class GATv2Conv(MessagePassing):
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j \, \Vert \, \mathbf{e}_{i,j}]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i
+        + \mathbf{\Theta}_{t} \mathbf{x}_j
+        + \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k \, \Vert \, \mathbf{e}_{i,k}]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i
+        + \mathbf{\Theta}_{t} \mathbf{x}_k
+        + \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]
         \right)\right)}.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
-            dimensionalities.
+            dimensionalities in case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -96,7 +101,8 @@ class GATv2Conv(MessagePassing):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
-            will be applied to the source and the target node of every edge.
+            will be applied to the source and the target node of every edge,
+            *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
             (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.

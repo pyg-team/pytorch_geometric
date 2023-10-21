@@ -31,20 +31,23 @@ class GATConv(MessagePassing):
     <https://arxiv.org/abs/1710.10903>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
+        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
+        \sum_{j \in \mathcal{N}(i)}
+        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_j]
+        \exp\left(\mathrm{LeakyReLU}\left(
+        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_j
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k]
+        \exp\left(\mathrm{LeakyReLU}\left(
+        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{t}\mathbf{\Theta}_{t}\mathbf{x}_k
         \right)\right)}.
 
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
@@ -53,19 +56,26 @@ class GATConv(MessagePassing):
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_j
-        \, \Vert \, \mathbf{\Theta}_{e} \mathbf{e}_{i,j}]\right)\right)}
+        \exp\left(\mathrm{LeakyReLU}\left(
+        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_j
+        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
+        \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k
-        \, \Vert \, \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]\right)\right)}.
+        \exp\left(\mathrm{LeakyReLU}\left(
+        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_k
+        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
+        \right)\right)}.
+
+    If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} =
+    \mathbf{\Theta}_{t}`.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
-            dimensionalities.
+            dimensionalities in case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
