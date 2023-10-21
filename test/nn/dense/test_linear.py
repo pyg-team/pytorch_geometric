@@ -45,14 +45,16 @@ def test_lazy_linear(weight, bias, device):
 @withCUDA
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
-def test_load_lazy_linear(dim1, dim2, device):
-    lin1 = Linear(dim1, 32).to(device)
-    lin2 = Linear(dim1, 32).to(device)
+@pytest.mark.parametrize('bias', [True])
+def test_load_lazy_linear(dim1, dim2, bias, device):
+    lin1 = Linear(dim1, 32, bias=bias).to(device)
+    lin2 = Linear(dim2, 32, bias=bias).to(device)
     lin2.load_state_dict(lin1.state_dict())
 
     if dim1 != -1:
+        assert isinstance(lin1.weight, torch.nn.Parameter)
+        assert isinstance(lin2.weight, torch.nn.Parameter)
         assert torch.allclose(lin1.weight, lin2.weight)
-        assert torch.allclose(lin1.bias, lin2.bias)
         assert not hasattr(lin1, '_hook')
         assert not hasattr(lin2, '_hook')
     else:
@@ -60,6 +62,14 @@ def test_load_lazy_linear(dim1, dim2, device):
         assert isinstance(lin2.weight, UninitializedParameter)
         assert hasattr(lin1, '_hook')
         assert hasattr(lin2, '_hook')
+
+    if bias:
+        assert isinstance(lin1.bias, torch.nn.Parameter)
+        assert isinstance(lin2.bias, torch.nn.Parameter)
+        assert torch.allclose(lin1.bias, lin2.bias)
+    else:
+        assert lin1.bias is None
+        assert lin2.bias is None
 
     with pytest.raises(RuntimeError, match="in state_dict"):
         lin1.load_state_dict({}, strict=True)
