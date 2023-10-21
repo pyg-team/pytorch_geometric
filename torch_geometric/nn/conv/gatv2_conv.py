@@ -101,8 +101,8 @@ class GATv2Conv(MessagePassing):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
-            will be applied to the source and the target node of every edge.
-            I.e., :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
+            will be applied to the source and the target node of every edge,
+            *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
             (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
