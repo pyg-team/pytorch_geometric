@@ -38,13 +38,8 @@ def kill_proc(ip, port, pids):
     for pid in pids:
         assert curr_pid != pid
         print("kill process {} on {}:{}".format(pid, ip, port), flush=True)
-        kill_cmd = (
-            "ssh -o StrictHostKeyChecking=no -p "
-            + str(port)
-            + " "
-            + ip
-            + " 'kill {}'".format(pid)
-        )
+        kill_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " +
+                    ip + " 'kill {}'".format(pid))
         subprocess.run(kill_cmd, shell=True)
         killed_pids.append(pid)
     for i in range(3):
@@ -54,16 +49,10 @@ def kill_proc(ip, port, pids):
         else:
             killed_pids.sort()
             for pid in killed_pids:
-                print(
-                    "kill process {} on {}:{}".format(pid, ip, port), flush=True
-                )
-                kill_cmd = (
-                    "ssh -o StrictHostKeyChecking=no -p "
-                    + str(port)
-                    + " "
-                    + ip
-                    + " 'kill -9 {}'".format(pid)
-                )
+                print("kill process {} on {}:{}".format(pid, ip, port),
+                      flush=True)
+                kill_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) +
+                            " " + ip + " 'kill -9 {}'".format(pid))
                 subprocess.run(kill_cmd, shell=True)
 
 
@@ -71,13 +60,8 @@ def get_pids_to_killed(ip, port, killed_pids):
     """Get the process IDs that we want to kill but are still alive."""
     killed_pids = [str(pid) for pid in killed_pids]
     killed_pids = ",".join(killed_pids)
-    ps_cmd = (
-        "ssh -o StrictHostKeyChecking=no -p "
-        + str(port)
-        + " "
-        + ip
-        + " 'ps -p {} -h'".format(killed_pids)
-    )
+    ps_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " + ip +
+              " 'ps -p {} -h'".format(killed_pids))
     res = subprocess.run(ps_cmd, shell=True, stdout=subprocess.PIPE)
     pids = []
     for p in res.stdout.decode("utf-8").split("\n"):
@@ -153,13 +137,8 @@ def get_remote_pids(ip, port, cmd_regex):
     pids = []
     curr_pid = os.getpid()
     # Here we want to get the python processes. We may get some ssh processes, so we should filter them out.
-    ps_cmd = (
-        "ssh -o StrictHostKeyChecking=no -p "
-        + str(port)
-        + " "
-        + ip
-        + " 'ps -aux | grep python | grep -v StrictHostKeyChecking'"
-    )
+    ps_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " + ip +
+              " 'ps -aux | grep python | grep -v StrictHostKeyChecking'")
     res = subprocess.run(ps_cmd, shell=True, stdout=subprocess.PIPE)
     for p in res.stdout.decode("utf-8").split("\n"):
         l = p.split()
@@ -171,13 +150,8 @@ def get_remote_pids(ip, port, cmd_regex):
             pids.append(l[1])
 
     pid_str = ",".join([str(pid) for pid in pids])
-    ps_cmd = (
-        "ssh -o StrictHostKeyChecking=no -p "
-        + str(port)
-        + " "
-        + ip
-        + " 'pgrep -P {}'".format(pid_str)
-    )
+    ps_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " + ip +
+              " 'pgrep -P {}'".format(pid_str))
     res = subprocess.run(ps_cmd, shell=True, stdout=subprocess.PIPE)
     pids1 = res.stdout.decode("utf-8").split("\n")
     all_pids = []
@@ -203,9 +177,6 @@ def get_all_remote_pids(hosts, ssh_port, udf_command):
     return remote_pids
 
 
-
-
-
 def wrap_cmd_w_envvars(cmd: str, env_vars: str) -> str:
     """Wraps a CLI command with desired env vars with the following properties:
     Example:
@@ -214,7 +185,7 @@ def wrap_cmd_w_envvars(cmd: str, env_vars: str) -> str:
         >>> wrap_cmd_w_envvars(cmd, env_vars)
         "(export VAR1=value1 VAR2=value2; ls && pwd)"
     """
-    if env_vars=="":
+    if env_vars == "":
         return f"({cmd})"
     else:
         return f"(export {env_vars}; {cmd})"
@@ -275,17 +246,15 @@ def submit_all_jobs(args, udf_command, dry_run=False):
     state_q = queue.Queue()
 
     master_ip, _ = hosts[0]
-    for i in range(len(hosts)): 
-        ip, _ = hosts[i] 
-        server_env_vars_cur = "" 
+    for i in range(len(hosts)):
+        ip, _ = hosts[i]
+        server_env_vars_cur = ""
         cmd = wrap_cmd_w_envvars(udf_command, server_env_vars_cur)
-        cmd = (
-            wrap_cmd_w_extra_envvars(cmd, args.extra_envs)
-            if len(args.extra_envs) > 0
-            else cmd
-        )
+        cmd = (wrap_cmd_w_extra_envvars(cmd, args.extra_envs)
+               if len(args.extra_envs) > 0 else cmd)
 
-        cmd = cmd[:-1] + f" --dataset_root_dir={args.dataset_root_dir} --num_nodes={args.num_nodes} --num_neighbors={args.num_neighbors} --node_rank={i} --num_training_procs={args.num_training_procs} --master_addr={master_ip} --epochs={args.epochs} --batch_size={args.batch_size} --num_workers={args.num_workers} --concurrency={args.concurrency}" +")"
+        cmd = cmd[:
+                  -1] + f" --dataset_root_dir={args.dataset_root_dir} --num_nodes={args.num_nodes} --num_neighbors={args.num_neighbors} --node_rank={i} --num_training_procs={args.num_training_procs} --master_addr={master_ip} --epochs={args.epochs} --batch_size={args.batch_size} --num_workers={args.num_workers} --concurrency={args.concurrency}" + ")"
         servers_cmd.append(cmd)
         if not dry_run:
             thread_list.append(
@@ -295,8 +264,7 @@ def submit_all_jobs(args, udf_command, dry_run=False):
                     ip,
                     args.ssh_port,
                     username=args.ssh_username,
-                )
-            )
+                ))
 
     # Start a cleanup process dedicated for cleaning up remote training jobs.
     conn1, conn2 = multiprocessing.Pipe()
@@ -334,16 +302,12 @@ def main():
     parser = argparse.ArgumentParser(description="Launch a distributed job")
     parser.add_argument("--ssh_port", type=int, default=22, help="SSH Port.")
     parser.add_argument(
-        "--ssh_username",
-        default="",
-        help="Optional. When issuing commands (via ssh) to cluster, use the provided username in the ssh cmd. "
+        "--ssh_username", default="", help=
+        "Optional. When issuing commands (via ssh) to cluster, use the provided username in the ssh cmd. "
         "Example: If you provide --ssh_username=bob, then the ssh command will be like: 'ssh bob@1.2.3.4 CMD' "
     )
-    parser.add_argument(
-        "--workspace",
-        type=str,
-        help="Path of user directory of distributed tasks. "
-    )
+    parser.add_argument("--workspace", type=str,
+                        help="Path of user directory of distributed tasks. ")
     parser.add_argument(
         "--dataset",
         type=str,
@@ -437,9 +401,8 @@ def main():
     args, udf_command = parser.parse_known_args()
 
     assert len(udf_command) == 1, "Please provide user command line."
-    assert (
-        args.workspace is not None
-    ), "A user has to specify a workspace with --workspace."
+    assert (args.workspace
+            is not None), "A user has to specify a workspace with --workspace."
     assert (
         args.part_config is not None
     ), "A user has to specify a partition configuration file with --part_config."
@@ -450,8 +413,7 @@ def main():
     udf_command = str(udf_command[0])
     if "python" not in udf_command:
         raise RuntimeError(
-            "PyG launching script can only support Python executable file."
-        )
+            "PyG launching script can only support Python executable file.")
     submit_all_jobs(args, udf_command)
 
 
