@@ -93,7 +93,10 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     model = to_jittable(model)
 
     # Do not generate device asserts which may slow down model execution:
-    torch._inductor.config.triton.assert_indirect_indexing = False
+    try:
+        torch._inductor.config.triton.assert_indirect_indexing = False
+    except AttributeError:  # PyTorch < 2.1:
+        pass
 
     # Finally, run `torch.compile` to create an optimized version:
     out = torch.compile(model, *args, **kwargs)
