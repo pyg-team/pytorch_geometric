@@ -45,7 +45,7 @@ def test_lazy_linear(weight, bias, device):
 @withCUDA
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
-@pytest.mark.parametrize('bias', [True])
+@pytest.mark.parametrize('bias', [True, False])
 def test_load_lazy_linear(dim1, dim2, bias, device):
     lin1 = Linear(dim1, 32, bias=bias).to(device)
     lin2 = Linear(dim2, 32, bias=bias).to(device)
