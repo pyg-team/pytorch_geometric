@@ -18,31 +18,30 @@ def split_graph(
     num_nodes: Optional[int] = None,
     bridge: bool = True,
 ) -> Tuple[Tensor, Tensor, OptTensor, OptTensor, OptTensor, OptTensor]:
-    r"""
-    Given a graph and two node subsets, this function returns the subgraphs
+    r"""Given a graph and two node subsets, this function returns the subgraphs
     edges induced by the two subsets, as well as the bridge edges between them
-    (if :attr:`bridge` = True).
+    (if :attr:`bridge` = :obj:`True`).
 
     Args:
         edge_index (Tensor): The edge indices of the graph to be split.
         edge_attr (OptTensor, optional): The edge attributes of the graph
-                    to be split. (default: :obj:`None`)
+            to be split. (default: :obj:`None`)
         subset1 (Union[Tensor, List[int]]): the first subset of nodes to keep.
-                    It should be a boolean mask (Tensor) or
-                    a list of indices (List[int]).
+            It should be a boolean mask (Tensor) or
+            a list of indices (List[int]).
         subset2 (Union[Tensor, List[int]]): the second subset of nodes to keep.
-                    It should be a boolean mask (Tensor) or
-                    a list of indices (List[int]).
+            It should be a boolean mask (Tensor) or
+            a list of indices (List[int]).
         num_nodes (Optional[int], optional): The number of nodes in the graph.
-                    (default: :obj:`None`)
+            (default: :obj:`None`)
         bridge (bool, optional): whether to return the bridge edges between
-                    the two subsets. (default: :obj:`True`)
+            the two subsets. (default: :obj:`True`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`OptTensor`,
         :class:`OptTensor`, :class:`OptTensor`, :class:`OptTensor`)
         if :obj:`bridge` = True,
-            (:class:`Tensor`, :class:`Tensor`,
-            :class:`OptTensor`, :class:`OptTensor`) otherwise.
+        (:class:`Tensor`, :class:`Tensor`, :class:`OptTensor`,
+        :class:`OptTensor`) otherwise.
 
     Examples:
 
@@ -121,23 +120,23 @@ def split_graph(
 
 def inductive_train_test_split(data, train_node, test_node,
                                bridge=True) -> Tuple[Data, Data]:
-    r"""
-    Given a graph and two node subsets, this function returns the train and
+    r"""Given a graph and two node subsets, this function returns the train and
     test subgraphs data induced by the two subsets, as well as the bridge edges
-    between them (if :attr:`bridge` = True) and also splits the node features
-    and labels. train_node and test_node must be disjoint and cover all nodes.
+    between them (if :attr:`bridge` = :obj:`True`) and also splits the node
+    features and labels. train_node and test_node must be disjoint and
+    cover all nodes.
 
     Args:
         data (Data): Data object to be split.
         train_node (_type_): the train subset of nodes to keep. It should be a
-                boolean mask (Tensor) or a list of indices (List[int]).
+            boolean mask (Tensor) or a list of indices (List[int]).
         test_node (_type_): the test subset of nodes to keep. It should be a
-                boolean mask (Tensor) or a list of indices (List[int]).
-                train_node and test_node must be disjoint and cover all nodes.
+            boolean mask (Tensor) or a list of indices (List[int]).
+            train_node and test_node must be disjoint and cover all nodes.
         bridge (bool, optional): whether to return the bridge edges between
-                the two subsets in test data features
-                as bridge_edge_index and bridge_edge_attr.
-                (default: :obj:`True`)
+            the two subsets in test data features
+            as bridge_edge_index and bridge_edge_attr.
+            (default: :obj:`True`)
 
     Raises:
         ValueError: train/test node must be disjoint
