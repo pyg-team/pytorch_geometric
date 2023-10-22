@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.5.0] - 2023-MM-DD
 
 ### Added
-
+- Added the `utils.inductive_train_test_split()` and `utils.split_graph` to split graph according to given subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
 - Added the `RCDD` dataset ([#8196](https://github.com/pyg-team/pytorch_geometric/pull/8196))
 - Added distributed `GAT + ogbn-products` example targeting XPU device ([#8032](https://github.com/pyg-team/pytorch_geometric/pull/8032))
 - Added the option to skip explanations of certain message passing layers via `conv.explain = False` ([#8216](https://github.com/pyg-team/pytorch_geometric/pull/8216))
