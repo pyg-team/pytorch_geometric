@@ -51,7 +51,6 @@ class AttentionExplainer(ExplainerAlgorithm):
         alphas: List[Tensor] = []
 
         def hook(module, msg_kwargs, out):
-            print(module)
             if 'alpha' in msg_kwargs[0]:
                 alphas.append(msg_kwargs[0]['alpha'].detach())
             elif getattr(module, '_alpha', None) is not None:
