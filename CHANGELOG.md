@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.5.0] - 2023-MM-DD
 
 ### Added
-- Added the `utils.inductive_train_test_split()` and `utils.split_graph` to split graph according to given subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
+
+- Added support for `to_hetero_with_bases` on static graphs ([#8247](https://github.com/pyg-team/pytorch_geometric/pull/8247))
+- Added the `utils.inductive_train_test_split()` and `utils.split_graph()` to split graph according to given subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
 
 - Added support for `to_hetero_with_bases` on static graphs ([#8247](https://github.com/pyg-team/pytorch_geometric/pull/8247))
 - Added the `utils.inductive_train_test_split()` and `utils.split_graph()` to split graph according to given two subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
@@ -23,6 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed `AttentionExplainer` usage within `AttentiveFP` ([#8244](https://github.com/pyg-team/pytorch_geometric/pull/8244))
 - Fixed `load_from_state_dict` in lazy `Linear` modules ([#8242](https://github.com/pyg-team/pytorch_geometric/pull/8242))
 - Fixed pre-trained `DimeNet++` performance on `QM9` ([#8239](https://github.com/pyg-team/pytorch_geometric/pull/8239))
 - Fixed `GNNExplainer` usage within `AttentiveFP` ([#8216](https://github.com/pyg-team/pytorch_geometric/pull/8216))
