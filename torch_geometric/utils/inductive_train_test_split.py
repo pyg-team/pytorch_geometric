@@ -60,7 +60,10 @@ def split_graph(
             torch.tensor([[6], [7]]),
             torch.tensor([[4], [5], [8], [9], [10], [11]]),
         )
-        >>> split_graph([0, 1, 2], [3, 4], edge_index, edge_attr, bridge=False)
+        >>> split_graph(
+        ...     [True, True, True, False, False],
+        ...     [False, False, False, True, True],
+        ...     edge_index, edge_attr, bridge=False)
         (
             torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
             torch.tensor([[3, 4], [4, 3]]),
@@ -72,10 +75,16 @@ def split_graph(
     device = edge_index.device
 
     if isinstance(subset1, (list, tuple)):
-        subset1 = torch.tensor(subset1, dtype=torch.long, device=device)
+        if isinstance(subset1[0], bool):
+            subset1 = torch.tensor(subset1, dtype=torch.bool, device=device)
+        else:
+            subset1 = torch.tensor(subset1, dtype=torch.long, device=device)
 
     if isinstance(subset2, (list, tuple)):
-        subset2 = torch.tensor(subset2, dtype=torch.long, device=device)
+        if isinstance(subset2[0], bool):
+            subset2 = torch.tensor(subset2, dtype=torch.bool, device=device)
+        else:
+            subset2 = torch.tensor(subset2, dtype=torch.long, device=device)
 
     if subset1.dtype != torch.bool:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -171,20 +180,6 @@ def inductive_train_test_split(data, train_node, test_node,
             bridge_edge_index=torch.tensor([[2, 3, 3, 0, 4, 2],
                                             [3, 2, 0, 3, 2, 4]]),
             bridge_edge_attr=torch.tensor([[4], [5], [8], [9], [10], [11]]),
-        ))
-        >>> inductive_train_test_split(input_graph, [0, 1, 2],
-        ...                                [3, 4], bridge=False)
-        (Data(
-            edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
-            edge_attr=torch.tensor([[0], [1], [2], [3]]),
-            x=torch.tensor([[0], [1], [2]]),
-            y=torch.tensor([0, 1, 2]),
-        ),
-        Data(
-            edge_index=torch.tensor([[3, 4], [4, 3]]),
-            edge_attr=torch.tensor([[6], [7]]),
-            x=torch.tensor([[3], [4]]),
-            y=torch.tensor([3, 4]),
         ))
         >>> inductive_train_test_split( input_graph,
         ...        [True, True, True, False, False],
