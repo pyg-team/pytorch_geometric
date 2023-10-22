@@ -37,6 +37,18 @@ def test_split():
     assert torch.equal(output9, expected_output4)
     assert torch.equal(output10, expected_output5)
 
+    output11, output12, output13, output14 = split_graph(
+        [True, True, True, False, False],
+        [False, False, False, True, True],
+        edge_index,
+        edge_attr,
+        bridge=False,
+    )
+    assert torch.equal(output11, expected_output1)
+    assert torch.equal(output12, expected_output2)
+    assert torch.equal(output13, expected_output4)
+    assert torch.equal(output14, expected_output5)
+
 
 input_graph = tg.data.Data(
     edge_index=torch.tensor([
