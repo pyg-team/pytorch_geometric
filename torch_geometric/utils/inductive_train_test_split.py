@@ -173,7 +173,24 @@ def inductive_train_test_split(data, train_node, test_node,
             bridge_edge_attr=torch.tensor([[4], [5], [8], [9], [10], [11]]),
         ))
         >>> inductive_train_test_split(input_graph, [0, 1, 2],
-                                            [3, 4], bridge=False)
+        ...                                [3, 4], bridge=False)
+        (Data(
+            edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+            edge_attr=torch.tensor([[0], [1], [2], [3]]),
+            x=torch.tensor([[0], [1], [2]]),
+            y=torch.tensor([0, 1, 2]),
+        ),
+        Data(
+            edge_index=torch.tensor([[3, 4], [4, 3]]),
+            edge_attr=torch.tensor([[6], [7]]),
+            x=torch.tensor([[3], [4]]),
+            y=torch.tensor([3, 4]),
+        ))
+        >>> inductive_train_test_split( input_graph,
+        ...        [True, True, True, False, False],
+        ...        [False, False, False, True, True],
+        ...        bridge=False,
+        ... )
         (Data(
             edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
             edge_attr=torch.tensor([[0], [1], [2], [3]]),

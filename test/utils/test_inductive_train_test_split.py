@@ -76,6 +76,12 @@ def test_inductive_train_test_split():
                                                   [3, 4], bridge=False)
     output3, output4 = inductive_train_test_split(input_graph, [0, 1, 2],
                                                   [3, 4])
+    output5, output6 = inductive_train_test_split(
+        input_graph,
+        [True, True, True, False, False],
+        [False, False, False, True, True],
+        bridge=False,
+    )
 
     assert torch.equal(output1.edge_index, expected_output1.edge_index)
     assert torch.equal(output1.edge_attr, expected_output1.edge_attr)
@@ -102,6 +108,14 @@ def test_inductive_train_test_split():
                        expected_output3.bridge_edge_index)
     assert torch.equal(output4.bridge_edge_attr,
                        expected_output3.bridge_edge_attr)
+    assert torch.equal(output5.edge_index, expected_output1.edge_index)
+    assert torch.equal(output5.edge_attr, expected_output1.edge_attr)
+    assert torch.equal(output5.x, expected_output1.x)
+    assert torch.equal(output5.y, expected_output1.y)
+    assert torch.equal(output6.edge_index, expected_output2.edge_index)
+    assert torch.equal(output6.edge_attr, expected_output2.edge_attr)
+    assert torch.equal(output6.x, expected_output2.x)
+    assert torch.equal(output6.y, expected_output2.y)
 
     with pytest.raises(Exception) as e:
         inductive_train_test_split(input_graph, [0, 1, 2], [1, 3, 4])
