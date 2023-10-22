@@ -54,6 +54,7 @@ from .embedding import get_embeddings
 from .trim_to_layer import trim_to_layer
 from .ppr import get_ppr
 from .train_test_split_edges import train_test_split_edges
+from .inductive_train_test_split import inductive_train_test_split, split_graph
 
 __all__ = [
     'scatter',
@@ -141,6 +142,8 @@ __all__ = [
     'trim_to_layer',
     'get_ppr',
     'train_test_split_edges',
+    'inductive_train_test_split',
+    'split_graph',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
