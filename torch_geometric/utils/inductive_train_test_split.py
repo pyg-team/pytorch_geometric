@@ -21,7 +21,7 @@ def split_graph(
     r"""
     Given a graph and two node subsets, this function returns the subgraphs
     edges induced by the two subsets, as well as the bridge edges between them
-    (if :obj:`bridge` = True).
+    (if :attr:`bridge` = True).
 
     Args:
         edge_index (Tensor): The edge indices of the graph to be split.
@@ -41,8 +41,8 @@ def split_graph(
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`OptTensor`,
         :class:`OptTensor`, :class:`OptTensor`, :class:`OptTensor`)
         if :obj:`bridge` = True,
-            (:class:`Tensor`, :class:`Tensor`, :class:`OptTensor`,
-        :class:`OptTensor`) otherwise.
+            (:class:`Tensor`, :class:`Tensor`,
+            :class:`OptTensor`, :class:`OptTensor`) otherwise.
 
     Examples:
 
@@ -68,7 +68,6 @@ def split_graph(
             torch.tensor([[0], [1], [2], [3]]),
             torch.tensor([[6], [7]]),
         )
-
     """
 
     device = edge_index.device
@@ -125,7 +124,7 @@ def inductive_train_test_split(data, train_node, test_node,
     r"""
     Given a graph and two node subsets, this function returns the train and
     test subgraphs data induced by the two subsets, as well as the bridge edges
-    between them (if :obj:`bridge` = True) and also splits the node features
+    between them (if :attr:`bridge` = True) and also splits the node features
     and labels. train_node and test_node must be disjoint and cover all nodes.
 
     Args:
