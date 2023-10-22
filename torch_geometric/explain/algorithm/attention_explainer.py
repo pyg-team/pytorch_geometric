@@ -51,6 +51,7 @@ class AttentionExplainer(ExplainerAlgorithm):
         alphas: List[Tensor] = []
 
         def hook(module, msg_kwargs, out):
+            print(module)
             if 'alpha' in msg_kwargs[0]:
                 alphas.append(msg_kwargs[0]['alpha'].detach())
             elif getattr(module, '_alpha', None) is not None:
@@ -58,7 +59,8 @@ class AttentionExplainer(ExplainerAlgorithm):
 
         hook_handles = []
         for module in model.modules():  # Register message forward hooks:
-            if isinstance(module, MessagePassing):
+            if (isinstance(module, MessagePassing)
+                    and module.explain is not False):
                 hook_handles.append(module.register_message_forward_hook(hook))
 
         model(x, edge_index, **kwargs)
