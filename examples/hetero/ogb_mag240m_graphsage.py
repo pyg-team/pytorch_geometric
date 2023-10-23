@@ -181,10 +181,8 @@ def run(
         debug=debug,
     )
     if rank == 0:
-        print(
-            f"# GNN Params: \
-            {sum([p.numel() for p in model.parameters()])/10**6:.1f}M"
-        )
+        print(f"# GNN Params: \
+            {sum([p.numel() for p in model.parameters()])/10**6:.1f}M")
         print('Setting up NeighborLoaders...')
     train_idx = data["paper"].train_mask.nonzero(as_tuple=False).view(-1)
     if n_devices > 1:
@@ -254,10 +252,9 @@ def run(
             if i > num_warmup_iters_for_timing:
                 time_sum += iter_time
             if rank == 0 and i % log_every_n_steps == 0:
-                print(
-                    f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
+                print(f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
                     Train Acc: {sum_acc / (i) * 100.0:.2f}%, Step Time: {iter_time:.4f}s"
-                )
+                      )
         if n_devices > 1:
             dist.barrier()
         if rank == 0:
@@ -315,7 +312,7 @@ def estimate_hetero_data_size(data):
     for e_type in data.edge_types:
         try:
             out_bytes += data[e_type].edge_index.numel() * 64
-        except: # noqa
+        except:  # noqa
             continue
     return out_bytes
 
@@ -331,8 +328,8 @@ if __name__ == "__main__":
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
     parser.add_argument(
-        "--subgraph", type=float, default=1,
-        help='decimal from (0,1] representing the portion of nodes to use in subgraph'
+        "--subgraph", type=float, default=1, help=
+        'decimal from (0,1] representing the portion of nodes to use in subgraph'
     )
     parser.add_argument("--sizes", type=str, default="128")
     parser.add_argument("--n_devices", type=int, default=1,
@@ -363,10 +360,8 @@ if __name__ == "__main__":
     print("Data =", data)
 
     if args.subgraph < 1.0:
-        print(
-            "Making a subgraph of the data to \
-            save and reduce hardware requirements..."
-        )
+        print("Making a subgraph of the data to \
+            save and reduce hardware requirements...")
         data = data.subgraph({
             n_type:
             torch.randperm(
