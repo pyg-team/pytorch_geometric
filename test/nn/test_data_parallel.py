@@ -6,7 +6,7 @@ from torch_geometric.nn import DataParallel
 from torch_geometric.testing import onlyCUDA
 
 
-def test_data_parallel_deprecated():
+def test_data_parallel_deprecation():
     with pytest.warns(UserWarning, match="much slower"):
         DataParallel(torch.nn.Identity())
 
