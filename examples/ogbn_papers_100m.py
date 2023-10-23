@@ -78,9 +78,14 @@ if args.cugraph_data_loader:
     fs.add_data(data.x, "N", "x")
     fs.add_data(data.y, "N", "y")
     cugraph_store = CuGraphStore(fs, G, N)
+    # Note that train dataloader SHOULD have shuffle and drop_last as True
+    # However this feature is not yet available in CuGraphNeighborLoader
+    # Coming early 2024
+    # CuGraphNeighborLoader can produce huge speed ups but not shuffling
+    # can have negative impacts on val/test accuracy.
     train_loader = CuGraphNeighborLoader(cugraph_store,
                                          input_nodes=split_idx['train'],
-                                         #shuffle=True, drop_last=True,
+                                         # shuffle=True, drop_last=True,
                                          **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
@@ -92,7 +97,7 @@ else:
     num_work = get_num_workers()
     NeighborLoader = torch_geometric.loader.NeighborLoader
     train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
-                                  num_workers=num_work, drop_last=False,
+                                  num_workers=num_work, drop_last=True,
                                   shuffle=False, **kwargs)
     val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
                                 num_workers=num_work, **kwargs)
