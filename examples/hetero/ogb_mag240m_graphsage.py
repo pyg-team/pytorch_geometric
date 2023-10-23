@@ -255,7 +255,7 @@ def run(
                 time_sum += iter_time
             if rank == 0 and i % log_every_n_steps == 0:
                 print(
-                    f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f},
+                    f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
                     Train Acc: {sum_acc / (i) * 100.0:.2f}%, Step Time: {iter_time:.4f}s"
                 )
         if n_devices > 1:
