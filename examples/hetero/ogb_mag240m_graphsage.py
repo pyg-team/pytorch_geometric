@@ -253,14 +253,17 @@ def run(
                 time_sum += iter_time
             if rank == 0 and i % log_every_n_steps == 0:
                 print(f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
-                    Train Acc: {sum_acc / (i) * 100.0:.2f}%, Step Time: {iter_time:.4f}s"
+                    Train Acc: {sum_acc / (i) * 100.0:.2f}%, \
+                    Step Time: {iter_time:.4f}s"
                       )
         if n_devices > 1:
             dist.barrier()
         if rank == 0:
             print(
-                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Train Acc:{sum_acc / i * 100.0:.2f}%, \
-                Average Step Time: {time_sum/(i - num_warmup_iters_for_timing):.4f}s"
+                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
+                Train Acc:{sum_acc / i * 100.0:.2f}%, \
+                Average Step Time: \
+                {time_sum/(i - num_warmup_iters_for_timing):.4f}s"
             )
             model.eval()
             acc_sum = 0
@@ -328,8 +331,11 @@ if __name__ == "__main__":
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
     parser.add_argument(
-        "--subgraph", type=float, default=1, help=
-        'decimal from (0,1] representing the portion of nodes to use in subgraph'
+        "--subgraph",
+        type=float, 
+        default=1,
+        help='decimal from (0,1] representing the \
+        portion of nodes to use in subgraph'
     )
     parser.add_argument("--sizes", type=str, default="128")
     parser.add_argument("--n_devices", type=int, default=1,
