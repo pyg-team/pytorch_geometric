@@ -28,6 +28,19 @@ class DataParallel(torch.nn.DataParallel):
         You need to use the :class:`torch_geometric.loader.DataListLoader` for
         this module.
 
+    .. warning::
+
+        It is recommended to use
+        :class:`torch.nn.parallel.DistributedDataParallel` instead of
+        :class:`DataParallel` for multi-GPU training.
+        :class:`DataParallel` is usually much slower than
+        :class:`~torch.nn.parallel.DistributedDataParallel` even on a single
+        machine.
+        Take a look `here <https://github.com/pyg-team/pytorch_geometric/blob/
+        master/examples/multi_gpu/distributed_batching.py>`_ for an example on
+        how to use :pyg:`PyG` in combination with
+        :class:`~torch.nn.parallel.DistributedDataParallel`.
+
     Args:
         module (Module): Module to be parallelized.
         device_ids (list of int or torch.device): CUDA devices.
