@@ -1,12 +1,8 @@
 import argparse
-import glob
 import os
-import os.path as osp
-import pathlib
 import time
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, List, Tuple
 
-import psutil
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
@@ -14,18 +10,16 @@ import torch.nn.functional as F
 from ogb.lsc import MAG240MDataset, MAG240MEvaluator
 from root import ROOT
 from torch import Tensor
-from torch.nn import BatchNorm1d, Dropout, Linear, ModuleList, ReLU, Sequential
+from torch.nn import Linear
 from torch.nn.parallel import DistributedDataParallel
-from torch.optim.lr_scheduler import StepLR
 from torchmetrics import Accuracy
 from tqdm import tqdm
 
-import torch_geometric.transforms as T
 from torch_geometric import seed_everything
-from torch_geometric.data import Batch, NeighborSampler
+from torch_geometric.data import Batch
 from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.loader.neighbor_loader import NeighborLoader
-from torch_geometric.nn import GATConv, SAGEConv, to_hetero
+from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
@@ -103,10 +97,6 @@ class HeteroGNN(torch.nn.Module):
             dropout=dropout,
         )
         self.model = to_hetero(model, metadata, aggr="sum", debug=debug)
-        # self.embeds = {}
-        # for node_type, num_nodes in num_nodes_dict.items():
-        #     if node_type != 'paper':
-        #         self.embeds[node_type] = torch.nn.Embedding(num_embeddings=num_nodes, embedding_dim=in_channels)
         self.acc = Accuracy(task="multiclass", num_classes=out_channels)
 
     def forward(
@@ -192,7 +182,8 @@ def run(
     )
     if rank == 0:
         print(
-            f"# GNN Params: {sum([p.numel() for p in model.parameters()])/10**6:.1f}M"
+            f"# GNN Params: 
+            {sum([p.numel() for p in model.parameters()])/10**6:.1f}M"
         )
         print('Setting up NeighborLoaders...')
     train_idx = data["paper"].train_mask.nonzero(as_tuple=False).view(-1)
@@ -264,13 +255,15 @@ def run(
                 time_sum += iter_time
             if rank == 0 and i % log_every_n_steps == 0:
                 print(
-                    f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, Train Acc: {sum_acc / (i) * 100.0:.2f}%, Step Time: {iter_time:.4f}s"
+                    f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f},
+                    Train Acc: {sum_acc / (i) * 100.0:.2f}%, Step Time: {iter_time:.4f}s"
                 )
         if n_devices > 1:
             dist.barrier()
         if rank == 0:
             print(
-                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Train Acc:{sum_acc / i * 100.0:.2f}%, Average Step Time: {time_sum/(i - num_warmup_iters_for_timing):.4f}s"
+                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Train Acc:{sum_acc / i * 100.0:.2f}%,
+                Average Step Time: {time_sum/(i - num_warmup_iters_for_timing):.4f}s"
             )
             model.eval()
             acc_sum = 0
@@ -322,7 +315,7 @@ def estimate_hetero_data_size(data):
     for e_type in data.edge_types:
         try:
             out_bytes += data[e_type].edge_index.numel() * 64
-        except:
+        except: # noqa
             continue
     return out_bytes
 
@@ -338,8 +331,8 @@ if __name__ == "__main__":
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
     parser.add_argument(
-        "--subgraph", type=float, default=1, help=
-        'decimal from (0,1] representing the portion of nodes to use in subgraph'
+        "--subgraph", type=float, default=1,
+        help='decimal from (0,1] representing the portion of nodes to use in subgraph'
     )
     parser.add_argument("--sizes", type=str, default="128")
     parser.add_argument("--n_devices", type=int, default=1,
@@ -371,7 +364,8 @@ if __name__ == "__main__":
 
     if args.subgraph < 1.0:
         print(
-            "Making a subgraph of the data to save and reduce hardware requirements..."
+            "Making a subgraph of the data to \
+            save and reduce hardware requirements..."
         )
         data = data.subgraph({
             n_type:
@@ -457,5 +451,5 @@ if __name__ == "__main__":
                 y_pred = model.predict_step(batch).argmax(dim=-1).cpu()
                 y_preds.append(y_pred)
         res = {'y_pred': torch.cat(y_preds, dim=0)}
-        evaluator.save_test_submission(res, f'results/', mode='test-dev')
+        evaluator.save_test_submission(res, 'results/', mode='test-dev')
         print("Done!")
