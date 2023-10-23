@@ -182,7 +182,7 @@ def run(
     )
     if rank == 0:
         print(
-            f"# GNN Params:
+            f"# GNN Params: \
             {sum([p.numel() for p in model.parameters()])/10**6:.1f}M"
         )
         print('Setting up NeighborLoaders...')
