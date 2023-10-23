@@ -262,7 +262,7 @@ def run(
             dist.barrier()
         if rank == 0:
             print(
-                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Train Acc:{sum_acc / i * 100.0:.2f}%,
+                f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Train Acc:{sum_acc / i * 100.0:.2f}%, \
                 Average Step Time: {time_sum/(i - num_warmup_iters_for_timing):.4f}s"
             )
             model.eval()
