@@ -6,27 +6,28 @@ import pathlib
 import time
 from typing import Dict, List, NamedTuple, Optional, Tuple
 
+import psutil
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
-import torch_geometric.transforms as T
+from ogb.lsc import MAG240MDataset, MAG240MEvaluator
 from root import ROOT
 from torch import Tensor
 from torch.nn import BatchNorm1d, Dropout, Linear, ModuleList, ReLU, Sequential
 from torch.nn.parallel import DistributedDataParallel
 from torch.optim.lr_scheduler import StepLR
+from torchmetrics import Accuracy
+from tqdm import tqdm
+
+import torch_geometric.transforms as T
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, NeighborSampler
 from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import GATConv, SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
-from torchmetrics import Accuracy
-from tqdm import tqdm
 
-from ogb.lsc import MAG240MDataset, MAG240MEvaluator
-import psutil
 
 class MAG240M(LightningNodeData):
     def __init__(self, *args, **kwargs):
@@ -115,7 +116,8 @@ class HeteroGNN(torch.nn.Module):
     ) -> Dict[NodeType, Tensor]:
         return self.model(x_dict, edge_index_dict)
 
-    def common_step(self, batch: Batch, ddp_module=None) -> Tuple[Tensor, Tensor]:
+    def common_step(self, batch: Batch,
+                    ddp_module=None) -> Tuple[Tensor, Tensor]:
         batch_size = batch["paper"].batch_size
         # for node_type, embed in self.embeds.items():
         #     batch[node_type].x = embed(batch[node_type].n_id)
@@ -125,14 +127,17 @@ class HeteroGNN(torch.nn.Module):
                 paper_x = batch["paper"].x
                 # (NOTE) embeddings take too much memory
                 batch[node_type].x = torch.zeros(
-                    size=(torch.numel(batch[node_type].n_id), paper_x.size(-1)),
+                    size=(torch.numel(batch[node_type].n_id),
+                          paper_x.size(-1)),
                     device=paper_x.device,
                     dtype=paper_x.dtype,
                 )
         if ddp_module is None:
-            y_hat = self(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
+            y_hat = self(batch.x_dict,
+                         batch.edge_index_dict)["paper"][:batch_size]
         else:
-            y_hat = ddp_module(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
+            y_hat = ddp_module(batch.x_dict,
+                               batch.edge_index_dict)["paper"][:batch_size]
         y = batch["paper"].y[:batch_size].to(torch.long)
         return y_hat, y
 
@@ -166,7 +171,7 @@ def run(
     num_warmup_iters_for_timing=10,
     debug=False,
 ):
-    seed_everything(12345) 
+    seed_everything(12345)
     if n_devices > 1:
         if rank == 0:
             print("Setting up distributed...")
@@ -186,7 +191,9 @@ def run(
         debug=debug,
     )
     if rank == 0:
-        print(f"# GNN Params: {sum([p.numel() for p in model.parameters()])/10**6:.1f}M")
+        print(
+            f"# GNN Params: {sum([p.numel() for p in model.parameters()])/10**6:.1f}M"
+        )
         print('Setting up NeighborLoaders...')
     train_idx = data["paper"].train_mask.nonzero(as_tuple=False).view(-1)
     if n_devices > 1:
@@ -228,7 +235,7 @@ def run(
     if rank == 0:
         print("about to make optimizer")
     if n_devices > 1:
-        ddp  = DistributedDataParallel(model, device_ids=[rank])
+        ddp = DistributedDataParallel(model, device_ids=[rank])
         optimizer = torch.optim.Adam(ddp.parameters(), lr=0.001)
     else:
         ddp = None
@@ -274,9 +281,7 @@ def run(
                     if n_devices > 0:
                         batch = batch.to(rank, "x", "y", "edge_index")
                     acc_sum += model.validation_step(batch)
-                print(
-                    f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%",
-                )
+                print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.barrier()
     if rank == 0:
@@ -289,9 +294,7 @@ def run(
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
                 acc_sum += model.validation_step(batch)
-            print(
-                f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%",
-            )
+            print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
     torch.save(model, 'trained_gnn.pt')
@@ -334,12 +337,13 @@ if __name__ == "__main__":
     parser.add_argument("--log_every_n_steps", type=int, default=1)
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
-    parser.add_argument("--subgraph", type=float, default=1, 
-        help='decimal from (0,1] representing the portion of nodes to use in subgraph')
-    parser.add_argument("--sizes", type=str, default="128")
     parser.add_argument(
-        "--n_devices", type=int, default=1, help="0 devices for CPU, or 1-8 to use GPUs"
+        "--subgraph", type=float, default=1, help=
+        'decimal from (0,1] representing the portion of nodes to use in subgraph'
     )
+    parser.add_argument("--sizes", type=str, default="128")
+    parser.add_argument("--n_devices", type=int, default=1,
+                        help="0 devices for CPU, or 1-8 to use GPUs")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument('--evaluate', action='store_true')
     args = parser.parse_args()
@@ -366,8 +370,16 @@ if __name__ == "__main__":
     print("Data =", data)
 
     if args.subgraph < 1.0:
-        print("Making a subgraph of the data to save and reduce hardware requirements...")
-        data = data.subgraph({n_type:torch.randperm(data[n_type].num_nodes)[:int(data[n_type].num_nodes*args.subgraph)] for n_type in data.node_types})
+        print(
+            "Making a subgraph of the data to save and reduce hardware requirements..."
+        )
+        data = data.subgraph({
+            n_type:
+            torch.randperm(
+                data[n_type].num_nodes)[:int(data[n_type].num_nodes *
+                                             args.subgraph)]
+            for n_type in data.node_types
+        })
     if not args.evaluate:
         if args.n_devices > 1:
             print("Let's use", args.n_devices, "GPUs!")
@@ -394,7 +406,8 @@ if __name__ == "__main__":
                 )
             except ProcessExitedException as e:
                 print("torch.multiprocessing.spawn.ProcessExitedException:", e)
-                print("Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
+                print(
+                    "Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
 
         else:
             if args.n_devices == 1:
@@ -416,7 +429,7 @@ if __name__ == "__main__":
                 args.num_warmup_iters_for_timing,
                 args.debug,
             )
-    else: # eval
+    else:  # eval
         model = torch.load('trained_gnn.pt')
         evaluator = MAG240MEvaluator()
         test_idx = data["paper"].test_mask.nonzero(as_tuple=False).view(-1)
@@ -433,7 +446,8 @@ if __name__ == "__main__":
             **kwargs,
         )
         model.eval()
-        device = 'cuda' if (torch.cuda.is_available() and args.n_devices > 0) else 'cpu'
+        device = 'cuda' if (torch.cuda.is_available()
+                            and args.n_devices > 0) else 'cpu'
         model.to(device)
         y_preds = []
         print("Evaluating...")
@@ -443,5 +457,5 @@ if __name__ == "__main__":
                 y_pred = model.predict_step(batch).argmax(dim=-1).cpu()
                 y_preds.append(y_pred)
         res = {'y_pred': torch.cat(y_preds, dim=0)}
-        evaluator.save_test_submission(res, f'results/', mode = 'test-dev')
+        evaluator.save_test_submission(res, f'results/', mode='test-dev')
         print("Done!")
