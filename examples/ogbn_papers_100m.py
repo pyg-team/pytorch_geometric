@@ -87,7 +87,7 @@ if args.cugraph_data_loader:
     train_loader = CuGraphNeighborLoader(
         cugraph_store,
         input_nodes=split_idx['train'],
-        #shuffle=True, drop_last=True,
+        # shuffle=True, drop_last=True,
         **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
