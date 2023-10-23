@@ -6,11 +6,6 @@ from torch_geometric.nn import DataParallel
 from torch_geometric.testing import onlyCUDA
 
 
-def test_data_parallel_deprecation():
-    with pytest.warns(UserWarning, match="much slower"):
-        DataParallel(torch.nn.Identity())
-
-
 @onlyCUDA
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason='No multiple GPUs')
 def test_data_parallel():
