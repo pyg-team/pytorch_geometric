@@ -525,10 +525,8 @@ def test_to_hetero_on_static_graphs():
         'author': torch.randn(4, 100, 16),
     }
     edge_index_dict = {
-        ('paper', 'written_by', 'author'):
-        torch.randint(100, (2, 200), dtype=torch.long),
-        ('author', 'writes', 'paper'):
-        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'): torch.randint(100, (2, 200)),
+        ('author', 'writes', 'paper'): torch.randint(100, (2, 200)),
     }
 
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())

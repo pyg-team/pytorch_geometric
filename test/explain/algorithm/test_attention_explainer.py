@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.explain import AttentionExplainer, Explainer
 from torch_geometric.explain.config import ExplanationType, MaskType
-from torch_geometric.nn import GATConv, GATv2Conv, TransformerConv
+from torch_geometric.nn import AttentiveFP, GATConv, GATv2Conv, TransformerConv
 
 
 class AttentionGNN(torch.nn.Module):
@@ -25,6 +25,8 @@ edge_index = torch.tensor([
     [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
     [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
 ])
+edge_attr = torch.randn(edge_index.size(1), 5)
+batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 
 
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
@@ -61,3 +63,22 @@ def test_attention_explainer_supports(explanation_type, node_mask_type):
                 return_type='raw',
             ),
         )
+
+
+def test_attention_explainer_attentive_fp(check_explanation):
+    model = AttentiveFP(3, 16, 1, edge_dim=5, num_layers=2, num_timesteps=2)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=AttentionExplainer(),
+        explanation_type='model',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='binary_classification',
+            task_level='node',
+            return_type='raw',
+        ),
+    )
+
+    explanation = explainer(x, edge_index, edge_attr=edge_attr, batch=batch)
+    check_explanation(explanation, None, explainer.edge_mask_type)
