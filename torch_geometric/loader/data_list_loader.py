@@ -12,7 +12,7 @@ def collate_fn(data_list):
 
 class DataListLoader(torch.utils.data.DataLoader):
     r"""A data loader which batches data objects from a
-    :class:`torch_geometric.data.dataset` to a Python list.
+    :class:`torch_geometric.data.dataset` to a :python:`Python` list.
     Data objects can be either of type :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData`.
 

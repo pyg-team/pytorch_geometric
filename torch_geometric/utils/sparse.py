@@ -407,6 +407,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         return torch.stack([row, col], dim=0).long(), value
 
     if adj.layout == torch.sparse_coo:
+        adj = adj._coalesced_(True)
         return adj.indices().detach().long(), adj.values()
 
     if adj.layout == torch.sparse_csr:
