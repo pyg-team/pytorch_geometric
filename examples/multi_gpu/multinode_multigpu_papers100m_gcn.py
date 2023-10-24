@@ -34,7 +34,6 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
-from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
