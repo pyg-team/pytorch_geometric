@@ -153,7 +153,7 @@ def run(device, world_size, ngpu_per_node, data, split_idx, model):
             for i, batch in enumerate(val_loader):
                 if i >= val_steps:
                     break
-                if i >= warmup_steps:
+                if i == warmup_steps:
                     start = time.time()
 
                 batch = batch.to(device)
