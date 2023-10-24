@@ -91,9 +91,9 @@ class GCN(torch.nn.Module):
         return x
 
 
-def run(device, world_size, ngpu_per_node, data, split_idx, model):
+def run(device, world_size, data, split_idx, model):
     local_group = get_local_process_group()
-    loc_id = dist.get_rank(group=local_group)
+    local_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
     os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
     if rank == 0:
@@ -104,7 +104,7 @@ def run(device, world_size, ngpu_per_node, data, split_idx, model):
         dim=0,
     )[rank].clone()
 
-    model = DistributedDataParallel(model.to(device), device_ids=[loc_id])
+    model = DistributedDataParallel(model.to(device), device_ids=[local_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     kwargs = dict(
@@ -205,4 +205,4 @@ if __name__ == '__main__':
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 64, dataset.num_classes)
 
-    run(device, nprocs, args.ngpu_per_node, dataset[0], split_idx, model)
+    run(device, nprocs, dataset[0], split_idx, model)
