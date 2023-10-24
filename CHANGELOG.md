@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated `DataParallel` in favor of `DistributedDataParallel` ([#8250](https://github.com/pyg-team/pytorch_geometric/pull/8250))
+
 ### Fixed
 
 - Fixed empty edge handling in `MetaPath2Vec` ([#8248](https://github.com/pyg-team/pytorch_geometric/pull/8248))
