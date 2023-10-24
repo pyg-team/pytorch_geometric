@@ -82,6 +82,13 @@ class MetaPath2Vec(torch.nn.Module):
             self.col_dict[keys] = col
             self.rowcount_dict[keys] = rowptr[1:] - rowptr[:-1]
 
+        for edge_type1, edge_type2 in zip(metapath[:-1], metapath[1:]):
+            if edge_type1[-1] != edge_type2[0]:
+                raise ValueError(
+                    "Found invalid metapath. Ensure that the destination node "
+                    "type matches with the source node type across all "
+                    "consecutive edge types.")
+
         assert walk_length + 1 >= context_size
         if walk_length > len(metapath) and metapath[0][0] != metapath[-1][-1]:
             raise AttributeError(
@@ -241,10 +248,14 @@ class MetaPath2Vec(torch.nn.Module):
 def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
            num_neighbors: int, dummy_idx: int) -> Tensor:
 
+    mask = subset >= dummy_idx
+    subset = subset.clamp(min=0, max=rowptr.numel() - 2)
+    count = rowcount[subset]
+
     rand = torch.rand((subset.size(0), num_neighbors), device=subset.device)
-    rand *= rowcount[subset].to(rand.dtype).view(-1, 1)
+    rand *= count.to(rand.dtype).view(-1, 1)
     rand = rand.to(torch.long) + rowptr[subset].view(-1, 1)
 
-    col = col[rand]
-    col[(subset >= dummy_idx) | (rowcount[subset] == 0)] = dummy_idx
+    col = col[rand] if col.numel() > 0 else rand
+    col[mask | (count == 0)] = dummy_idx
     return col

@@ -46,13 +46,13 @@ jobs:
           - os: macos-latest
             cuda-version: 'cu113'
           - os: macos-latest
-            cuda-version: 'cu115'
-          - os: macos-latest
             cuda-version: 'cu116'
           - os: macos-latest
             cuda-version: 'cu117'
           - os: macos-latest
             cuda-version: 'cu118'
+          - os: macos-latest
+            cuda-version: 'cu121'
 
     steps:
       - name: Checkout repository

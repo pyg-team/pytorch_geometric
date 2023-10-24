@@ -71,6 +71,7 @@ def sph_harm_prefactor(k, m):
 
 
 def associated_legendre_polynomials(k, zero_m_only=True):
+    r"""Helper function to calculate Y_l^m."""
     z = sym.symbols('z')
     P_l_m = [[0] * (j + 1) for j in range(k)]
 
@@ -79,15 +80,22 @@ def associated_legendre_polynomials(k, zero_m_only=True):
         P_l_m[1][0] = z
 
         for j in range(2, k):
+            # Use the property of Eq (7) in
+            # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
             P_l_m[j][0] = sym.simplify(((2 * j - 1) * z * P_l_m[j - 1][0] -
                                         (j - 1) * P_l_m[j - 2][0]) / j)
         if not zero_m_only:
             for i in range(1, k):
-                P_l_m[i][i] = sym.simplify((1 - 2 * i) * P_l_m[i - 1][i - 1])
+                P_l_m[i][i] = sym.simplify(
+                    (1 - 2 * i) * P_l_m[i - 1][i - 1] * (1 - z**2)**0.5)
                 if i + 1 < k:
+                    # Use the property of Eq (11) in
+                    # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
                     P_l_m[i + 1][i] = sym.simplify(
                         (2 * i + 1) * z * P_l_m[i][i])
                 for j in range(i + 2, k):
+                    # Use the property of Eq (7) in
+                    # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
                     P_l_m[j][i] = sym.simplify(
                         ((2 * j - 1) * z * P_l_m[j - 1][i] -
                          (i + j - 1) * P_l_m[j - 2][i]) / (j - i))

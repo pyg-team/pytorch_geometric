@@ -280,11 +280,11 @@ class {{cls_name}}({{parent_cls_name}}):
 {% endif %}
 
     @property
-    def explain(self) -> bool:
+    def explain(self) -> Optional[bool]:
         return self._explain
 
     @explain.setter
-    def explain(self, explain: bool):
+    def explain(self, explain: Optional[bool]):
         raise ValueError("Explainability of message passing modules "
                          "is only supported on the Python module")
 

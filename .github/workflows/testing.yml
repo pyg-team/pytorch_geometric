@@ -44,7 +44,7 @@ jobs:
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pytest --cov --cov-report=xml
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: steps.changed-files-specific.outputs.only_changed != 'true'
