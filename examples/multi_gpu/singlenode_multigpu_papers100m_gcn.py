@@ -75,7 +75,7 @@ def run(rank, world_size, data, split_idx, model):
     for epoch in range(1, 4):
         model.train()
         for i, batch in enumerate(train_loader):
-            if i >= warmup_steps:
+            if i == warmup_steps:
                 start = time.time()
             batch = batch.to(rank)
             optimizer.zero_grad()
@@ -97,7 +97,7 @@ def run(rank, world_size, data, split_idx, model):
             for i, batch in enumerate(val_loader):
                 if i >= val_steps:
                     break
-                if i >= warmup_steps:
+                if i == warmup_steps:
                     start = time.time()
 
                 batch = batch.to(rank)
@@ -118,7 +118,6 @@ def run(rank, world_size, data, split_idx, model):
         total_correct = total_examples = 0
         for i, batch in enumerate(test_loader):
             batch = batch.to(rank)
-            batch.y = batch.y.to(torch.long)
             with torch.no_grad():
                 out = model(batch.x, batch.edge_index)[:batch.batch_size]
             pred = out.argmax(dim=-1)
@@ -130,19 +129,9 @@ def run(rank, world_size, data, split_idx, model):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--hidden_channels', type=int, default=64)
-    parser.add_argument('--lr', type=float, default=0.01)
-    parser.add_argument('--epochs', type=int, default=3)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--fan_out', type=int, default=50)
-
-    args = parser.parse_args()
-
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
-    model = GCN(dataset.num_features, args.hidden_channels,
-                dataset.num_classes)
+    model = GCN(dataset.num_features, 64, dataset.num_classes)
 
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
