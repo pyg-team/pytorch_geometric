@@ -1,4 +1,5 @@
 import logging
+import warnings
 from itertools import chain
 
 import torch
@@ -28,6 +29,19 @@ class DataParallel(torch.nn.DataParallel):
         You need to use the :class:`torch_geometric.loader.DataListLoader` for
         this module.
 
+    .. warning::
+
+        It is recommended to use
+        :class:`torch.nn.parallel.DistributedDataParallel` instead of
+        :class:`DataParallel` for multi-GPU training.
+        :class:`DataParallel` is usually much slower than
+        :class:`~torch.nn.parallel.DistributedDataParallel` even on a single
+        machine.
+        Take a look `here <https://github.com/pyg-team/pytorch_geometric/blob/
+        master/examples/multi_gpu/distributed_batching.py>`_ for an example on
+        how to use :pyg:`PyG` in combination with
+        :class:`~torch.nn.parallel.DistributedDataParallel`.
+
     Args:
         module (Module): Module to be parallelized.
         device_ids (list of int or torch.device): CUDA devices.
@@ -42,6 +56,12 @@ class DataParallel(torch.nn.DataParallel):
     def __init__(self, module, device_ids=None, output_device=None,
                  follow_batch=None, exclude_keys=None):
         super().__init__(module, device_ids, output_device)
+
+        warnings.warn("'DataParallel' is usually much slower than "
+                      "'DistributedDataParallel' even on a single machine. "
+                      "Please consider switching to 'DistributedDataParallel' "
+                      "for multi-GPU training.")
+
         self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
         self.follow_batch = follow_batch or []
         self.exclude_keys = exclude_keys or []

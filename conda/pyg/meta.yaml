@@ -1,13 +1,14 @@
 package:
   name: pyg
-  version: 2.3.1
+  version: 2.4.0
 
 source:
-  url: https://files.pythonhosted.org/packages/06/a5/9f5af849c4185da5ea55f70ef17e23f93355cd4e989d82cfc8ba2d8747af/torch_geometric-2.3.1.tar.gz
+  url: https://files.pythonhosted.org/packages/e6/6e/a596e2ddecc3b13a0d576495369a30309fb54c74fadf0bbca645bfbcaa2f/torch_geometric-2.4.0.tar.gz
 
 requirements:
   host:
     - pip
+    - flit-core
     - python {{ environ.get('PYTHON_VERSION') }}
 
   run:

@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -7,6 +8,7 @@ from torch_geometric.utils import (
     coalesce,
     remove_self_loops,
     to_edge_index,
+    to_torch_coo_tensor,
     to_torch_csr_tensor,
 )
 
@@ -19,8 +21,14 @@ class TwoHop(BaseTransform):
         edge_index, edge_attr = data.edge_index, data.edge_attr
         N = data.num_nodes
 
-        adj = to_torch_csr_tensor(edge_index, size=(N, N))
-        edge_index2, _ = to_edge_index(adj @ adj)
+        if torch_geometric.typing.WITH_WINDOWS:
+            adj = to_torch_coo_tensor(edge_index, size=(N, N))
+        else:
+            adj = to_torch_csr_tensor(edge_index, size=(N, N))
+
+        adj = adj @ adj
+
+        edge_index2, _ = to_edge_index(adj)
         edge_index2, _ = remove_self_loops(edge_index2)
 
         edge_index = torch.cat([edge_index, edge_index2], dim=1)

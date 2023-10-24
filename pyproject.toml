@@ -116,7 +116,11 @@ include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
 [tool.pytest.ini_options]
-addopts = "--capture=no"
+addopts = [
+    "--capture=no",
+    "--color=yes",
+    "-vv",
+]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
     "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",

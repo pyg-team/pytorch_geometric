@@ -68,9 +68,9 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method provides two im
       torch_geometric.compile(model, dynamic=True)
 
   With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
-  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, leading to significant slowdowns in model execution on dynamic mini-batches.
-  As such, you should only ever not specify :obj:`dynamic=True` when graph sizes are guaranteed to never change.
-  Note that :obj:`dynamic=True` requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
+  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, and thus only works when graph sizes are guaranteed to never change (*e.g.*, in full-batch training on small graphs).
+  By default, :obj:`dynamic` is set to :obj:`None` in :pytorch:`PyTorch` :obj:`>= 2.1.0`, and :pytorch:`PyTorch` will automatically detect if dynamism has occured.
+  Note that support for dynamic shape tracing requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
 
 * In order to maximize speedup, graphs breaks in the compiled model should be limited.
   We can force compilation to raise an error upon the first graph break encountered by using the :obj:`fullgraph=True` argument:

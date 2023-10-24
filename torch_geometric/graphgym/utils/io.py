@@ -13,11 +13,11 @@ def string_to_python(string):
 
 def dict_to_json(dict, fname):
     '''
-    Dump a Python dictionary to JSON file
+    Dump a :python:`Python` dictionary to a JSON file.
 
     Args:
-        dict (dict): Python dictionary
-        fname (str): Output file name
+        dict (dict): The :python:`Python` dictionary.
+        fname (str): The output file name.
 
     '''
     with open(fname, 'a') as f:
@@ -27,11 +27,11 @@ def dict_to_json(dict, fname):
 
 def dict_list_to_json(dict_list, fname):
     '''
-    Dump a list of Python dictionaries to JSON file
+    Dump a list of :python:`Python` dictionaries to a JSON file.
 
     Args:
-        dict_list (list of dict): List of Python dictionaries
-        fname (str): Output file name
+        dict_list (list of dict): List of :python:`Python` dictionaries.
+        fname (str): the output file name.
 
     '''
     with open(fname, 'a') as f:
