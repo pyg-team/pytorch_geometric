@@ -164,7 +164,7 @@ Then, open another Slurm login terminal, and type:
     squeue -u <slurm-unix-account-id>
     export jobid=<JOBID from SQUEUE>
 
-In this step, we are saving the job ID of our slurm job from the first step.
+In this step, we are saving the job ID of our Slurm job from the first step.
 
 Now, we are going to pull a container with a functional :pyg:`PyG` and CUDA environment onto each node:
 
@@ -175,7 +175,7 @@ Now, we are going to pull a container with a functional :pyg:`PyG` and CUDA envi
     --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
 
 NVIDIA provides a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
-You can sign up for early access at `here <https://developer.nvidia.com/pyg-container-early-access>`_.
+You can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
 General availability on `NVIDIA NGC <https://www.ngc.nvidia.com/>`_ is set for the end of 2023.
 Alternatively, see `docker.com <https://www.docker.com/>`_ for information on how to create your own container.
 
