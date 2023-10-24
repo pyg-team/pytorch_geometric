@@ -1,4 +1,6 @@
+import enum
 import os
+from dataclasses import dataclass
 from typing import Any, Callable, Iterable, List, Optional, Union
 
 from torch import Tensor
@@ -7,6 +9,21 @@ from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
+
+
+class GraphType(enum.Enum):
+    HOMOGENOUS = 0
+    HETEROGENOUS = 1
+
+
+@dataclass
+class EdgeAttr:
+    source: str
+    type: str
+    dest: str
+
+    def __str__(self) -> str:
+        return f'{self.type}_{self.source}_{self.dest}'
 
 
 class OnDiskDataset(Dataset):
@@ -49,15 +66,11 @@ class OnDiskDataset(Dataset):
         'rocksdb': RocksDatabase,
     }
 
-    def __init__(
-        self,
-        root: str,
-        transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        backend: str = 'sqlite',
-        schema: Schema = object,
-        log: bool = True,
-    ):
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None,
+                 backend: str = 'sqlite', schema: Schema = object,
+                 log: bool = True,
+                 graph_type: GraphType = GraphType.HOMOGENOUS):
         if backend not in self.BACKENDS:
             raise ValueError(f"Database backend must be one of "
                              f"{set(self.BACKENDS.keys())} "
@@ -68,6 +81,7 @@ class OnDiskDataset(Dataset):
 
         self._db: Optional[Database] = None
         self._numel: Optional[int] = None
+        self.graph_type = graph_type
 
         super().__init__(root, transform, pre_filter=pre_filter, log=log)
 
@@ -85,6 +99,8 @@ class OnDiskDataset(Dataset):
         cls = self.BACKENDS[self.backend]
         if issubclass(cls, SQLiteDatabase):
             kwargs['name'] = self.__class__.__name__
+            if self.graph_type == GraphType.HETEROGENOUS:
+                kwargs['db_indices'] = ['node_attr', 'edge_attr']
 
         os.makedirs(self.processed_dir, exist_ok=True)
         path = self.processed_paths[0]
@@ -138,22 +154,33 @@ class OnDiskDataset(Dataset):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
-    def get(self, idx: int, node_labels: Optional[str] = None,
-            edge_labels: Optional[str] = None) -> BaseData:
+    def get(self, idx: int, node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[EdgeAttr]] = None) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.deserialize(self.db.get(idx, node_labels, edge_labels))
+        indices = []
+        if node_labels:
+            indices.extend(node_labels)
+        if edge_labels:
+            indices.extend([str(edge) for edge in edge_labels])
+        return self.deserialize(self.db.get(idx, indices))
 
     def multi_get(
             self, indices: Union[Iterable[int], Tensor, slice,
                                  range], batch_size: Optional[int] = None,
             node_labels: Optional[Iterable[str]] = None,
-            edge_labels: Optional[Iterable[str]] = None) -> List[BaseData]:
+            edge_labels: Optional[Iterable[EdgeAttr]] = None
+    ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
+        db_indices = []
+        if node_labels:
+            db_indices.extend(node_labels)
+        if edge_labels:
+            db_indices.extend([str(edge) for edge in edge_labels])
+
         if len(indices) == 1:
-            data_list = [self.db.get(indices[0], node_labels, edge_labels)]
+            data_list = [self.db.get(indices[0], db_indices)]
         else:
-            data_list = self.db.multi_get(indices, batch_size, node_labels,
-                                          edge_labels)
+            data_list = self.db.multi_get(indices, batch_size, db_indices)
 
         return [self.deserialize(data) for data in data_list]
 
