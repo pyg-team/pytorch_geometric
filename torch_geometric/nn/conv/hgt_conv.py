@@ -147,10 +147,10 @@ class HGTConv(MessagePassing):
         ks = torch.cat(ks, dim=0).transpose(0, 1).reshape(-1, D)
         vs = torch.cat(vs, dim=0).transpose(0, 1).reshape(-1, D)
         type_vec = torch.cat(type_list, dim=1).flatten()
-        print(ks.size())
-        print(self.k_rel)
-        print(vs.size())
-        print(self.v_rel)
+        print("ks.size()=", ks.size())
+        print("self.k_rel=", self.k_rel)
+        print("vs.size()=", vs.size())
+        print("self.v_rel=", self.v_rel)
         k = self.k_rel(ks, type_vec).view(H, -1, D).transpose(0, 1)
         v = self.v_rel(vs, type_vec).view(H, -1, D).transpose(0, 1)
 
@@ -184,8 +184,8 @@ class HGTConv(MessagePassing):
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
 
         # Compute K, Q, V over node types:
-        print({key:val.size() for key, val in x_dict.items()})
-        print(self.kqv_lin)
+        print("x_dict=", {key:val.size() for key, val in x_dict.items()})
+        print("self.kqv_lin=", self.kqv_lin)
         kqv_dict = self.kqv_lin(x_dict)
         for key, val in kqv_dict.items():
             k, q, v = torch.tensor_split(val, 3, dim=1)
@@ -216,8 +216,8 @@ class HGTConv(MessagePassing):
             torch.nn.functional.gelu(v) if v is not None else v
             for k, v in out_dict.items()
         }
-        print({key:val.size() for key, val in o_i.items()})
-        print(self.out_lin)
+        print("input_to_out_lin=", {key:val.size() for key, val in o_i.items()})
+        print("self.out_lin=", self.out_lin)
         a_dict = self.out_lin(o_i)
 
         # Iterate over node types:
