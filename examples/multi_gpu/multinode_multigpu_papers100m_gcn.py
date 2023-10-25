@@ -175,6 +175,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                                batch.y[:batch_size])
             print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_channels', type=int, default=128)
