@@ -113,7 +113,9 @@ class OnDiskDataset(Dataset):
         if self._db is not None:
             self._db.close()
 
-    def serialize(self, data: BaseData) -> Any:
+    def serialize(self, data: BaseData,
+                  node_labels: Optional[Iterable[str]] = None,
+                  edge_labels: Optional[Iterable[EdgeAttr]] = None) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
         schema."""
@@ -123,7 +125,9 @@ class OnDiskDataset(Dataset):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def deserialize(self, data: Any) -> BaseData:
+    def deserialize(
+            self, data: Any, node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[EdgeAttr]] = None) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object."""
@@ -133,24 +137,28 @@ class OnDiskDataset(Dataset):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: BaseData):
+    def append(self, data: BaseData,
+               node_labels: Optional[Iterable[str]] = None,
+               edge_labels: Optional[Iterable[EdgeAttr]] = None):
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(
             index,
-            self.serialize(data),
+            self.serialize(data, node_labels, edge_labels),
         )
         self._numel += 1
 
-    def extend(
-        self,
-        data_list: List[BaseData],
-        batch_size: Optional[int] = None,
-    ):
+    def extend(self, data_list: List[BaseData],
+               batch_size: Optional[int] = None,
+               node_labels: Optional[Iterable[str]] = None,
+               edge_labels: Optional[Iterable[EdgeAttr]] = None):
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)
-        data_list = [self.serialize(data) for data in data_list]
+        data_list = [
+            self.serialize(data, node_labels, edge_labels)
+            for data in data_list
+        ]
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
@@ -162,7 +170,8 @@ class OnDiskDataset(Dataset):
             indices.extend(node_labels)
         if edge_labels:
             indices.extend([str(edge) for edge in edge_labels])
-        return self.deserialize(self.db.get(idx, indices))
+        return self.deserialize(self.db.get(idx, indices), node_labels,
+                                edge_labels)
 
     def multi_get(
             self, indices: Union[Iterable[int], Tensor, slice,
@@ -182,7 +191,10 @@ class OnDiskDataset(Dataset):
         else:
             data_list = self.db.multi_get(indices, batch_size, db_indices)
 
-        return [self.deserialize(data) for data in data_list]
+        return [
+            self.deserialize(data, node_labels, edge_labels)
+            for data in data_list
+        ]
 
     def len(self) -> int:
         if self._numel is None:
