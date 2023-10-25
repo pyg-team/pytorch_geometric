@@ -81,7 +81,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         print("Beginning training...")
     for epoch in range(epochs):
         for i, batch in enumerate(train_loader):
-            if i >= warmup_steps:
+            if i == warmup_steps:
                 start = time.time()
             batch = batch.to(rank)
             batch.y = batch.y.to(torch.long)

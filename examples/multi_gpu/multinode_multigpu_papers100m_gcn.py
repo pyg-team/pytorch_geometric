@@ -169,7 +169,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
         print("Beginning training...")
     for epoch in range(epochs):
         for i, batch in enumerate(train_loader):
-            if i >= warmup_steps:
+            if i == warmup_steps:
                 start = time.time()
             batch = batch.to(device)
             batch.y = batch.y.to(torch.long)

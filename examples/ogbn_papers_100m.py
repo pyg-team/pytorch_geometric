@@ -124,12 +124,12 @@ warmup_steps = 20
 
 def train():
     model.train()
-
+    start_timer = False
     for i, batch in enumerate(train_loader):
         if isinstance(batch, torch_geometric.data.HeteroData):
             batch = batch.to_homogeneous()
 
-        if i >= warmup_steps:
+        if i == warmup_steps:
             start_avg_time = time.perf_counter()
         start = time.perf_counter()
         batch = batch.to(device)
