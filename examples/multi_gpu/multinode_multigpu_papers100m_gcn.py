@@ -34,8 +34,9 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
-import torch_geometric
 from torchmetrics import Accuracy
+
+import torch_geometric
 
 
 def get_num_workers(world_size: int) -> int:
@@ -112,10 +113,11 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
         # Coming early 2024.
         # CuGraphNeighborLoader can produce huge speed ups but not shuffling
         # can have negative impacts on val/test accuracy.
-        train_loader = CuGraphNeighborLoader(cugraph_store,
-                                             input_nodes=split_idx['train'],
-                                             # shuffle=True, drop_last=True,
-                                             **kwargs)
+        train_loader = CuGraphNeighborLoader(
+            cugraph_store,
+            input_nodes=split_idx['train'],
+            # shuffle=True, drop_last=True,
+            **kwargs)
         if rank == 0:
             eval_loader = CuGraphNeighborLoader(cugraph_store,
                                                 input_nodes=split_idx['valid'],
