@@ -124,7 +124,6 @@ warmup_steps = 20
 
 def train():
     model.train()
-    start_timer = False
     for i, batch in enumerate(train_loader):
         if isinstance(batch, torch_geometric.data.HeteroData):
             batch = batch.to_homogeneous()
