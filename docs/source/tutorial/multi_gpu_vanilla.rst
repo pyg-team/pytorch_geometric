@@ -171,5 +171,5 @@ After finishing training, we can clean up processes and destroy the process grou
         dist.destroy_process_group()
 
 And that's it.
-Putting it all together gives a working multi-GPU example that follows a similar training flow than single GPU training.
+Putting it all together gives a working multi-GPU example that follows a training flow that is similar to single GPU training.
 You can run the shown tutorial by yourself by looking at `examples/multi_gpu/distributed_sampling.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py>`_.

@@ -13,16 +13,16 @@ from torchmetrics import Accuracy
 import torch_geometric
 
 
-def pyg_num_work(world_size):
-    num_work = None
+def get_num_workers(world_size: int) -> int:
+    num_workers = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_work = len(os.sched_getaffinity(0)) / (2 * world_size)
+            num_workers = len(os.sched_getaffinity(0)) // (2 * world_size)
         except Exception:
             pass
-    if num_work is None:
-        num_work = os.cpu_count() / (2 * world_size)
-    return int(num_work)
+    if num_workers is None:
+        num_workers = os.cpu_count() // (2 * world_size)
+    return num_workers
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
@@ -65,7 +65,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                                 **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
-        num_work = pyg_num_work(world_size)
+        num_work = get_num_workers(world_size)
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                       num_workers=num_work, shuffle=True,
                                       drop_last=True, **kwargs)

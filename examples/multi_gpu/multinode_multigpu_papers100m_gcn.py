@@ -1,16 +1,18 @@
-'''
+"""
+In terminal 1:
+==============
 
-in terminal 1:
 srun --overlap -A <slurm_access_group> -p interactive \
     -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
-in terminal 2:
+In terminal 2:
+==============
 
 squeue -u <slurm-unix-account-id>
-then
 export jobid=<JOBID from SQUEUE>
 
-then
+Then:
+=====
 
 srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
     --container-image=<image_url> --container-name=cont
@@ -20,84 +22,51 @@ srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
     --container-name=cont
     --container-mounts=
     <data-directory>/ogb-papers100m/:/workspace/dataset/
-python3 multinode-papers100m-gcn.py --ngpu_per_node 3
 
-
-
-Results:
-
-Data = Data(num_nodes=111059956, edge_index=[2, 1615685872],
-    x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
-Using 6 GPUs...
-Beginning training...
-
-Epoch: 0, Iteration: 1570, Loss:
-    tensor(2.7372, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.0022558025027757116 s/iter
-Validation Accuracy: 33.1712%
-Average Inference Iteration Time: 0.002441989262174637 s/iter
-
-Epoch: 1, Iteration: 1570, Loss:
-    tensor(2.6074, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.002187901319104231 s/iter
-Validation Accuracy: 32.2733%
-Average Inference Iteration Time: 0.002225210835015855 s/iter
-
-Epoch: 2, Iteration: 1570, Loss:
-    tensor(2.5593, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.002199090496994302 s/iter
-Validation Accuracy: 33.9588%
-Average Inference Iteration Time: 0.003229572181006499 s/iter
-Test Accuracy: 24.5902%
-
-'''
-
+python3 multinode_multigpu_papers100m_gcn.py --ngpu_per_node 3
+"""
 import argparse
 import os
 import time
-import warnings
 
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
-from torchmetrics import Accuracy
 
-import torch_geometric
-
-warnings.filterwarnings("ignore")
+from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import GCNConv
 
 
-def pyg_num_work(ngpu_per_node):
-    num_work = None
+def get_num_workers(world_size: int) -> int:
+    num_workers = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_work = len(os.sched_getaffinity(0)) / (2 * ngpu_per_node)
+            num_workers = len(os.sched_getaffinity(0)) // (2 * world_size)
         except Exception:
             pass
-    if num_work is None:
-        num_work = os.cpu_count() / (2 * ngpu_per_node)
-    return int(num_work)
+    if num_workers is None:
+        num_workers = os.cpu_count() // (2 * world_size)
+    return num_workers
 
 
 _LOCAL_PROCESS_GROUP = None
 
 
-def create_local_process_group(num_workers_per_node):
+def create_local_process_group(num_workers_per_node: int):
     global _LOCAL_PROCESS_GROUP
     assert _LOCAL_PROCESS_GROUP is None
     world_size = dist.get_world_size() if dist.is_initialized() else 1
     rank = dist.get_rank() if dist.is_initialized() else 0
-    assert world_size % num_workers_per_node == 0, \
-        "world_size = " + str(world_size) + \
-        "\nnum_workers_per_node = " + str(num_workers_per_node)
+    assert world_size % num_workers_per_node == 0
 
     num_nodes = world_size // num_workers_per_node
     node_rank = rank // num_workers_per_node
     for i in range(num_nodes):
-        ranks_on_i = list(
-            range(i * num_workers_per_node, (i + 1) * num_workers_per_node))
+        start = i * num_workers_per_node
+        end = (i + 1) * num_workers_per_node
+        ranks_on_i = list(range(start, end))
         pg = dist.new_group(ranks_on_i)
         if i == node_rank:
             _LOCAL_PROCESS_GROUP = pg
@@ -152,7 +121,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                                                 **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
-        num_work = pyg_num_work(world_size)
+        num_work = get_num_workers(world_size)
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                       num_workers=num_work, shuffle=True,
                                       drop_last=True, **kwargs)
@@ -206,7 +175,6 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                                batch.y[:batch_size])
             print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_channels', type=int, default=128)
@@ -249,8 +217,10 @@ if __name__ == '__main__':
     nprocs = dist.get_world_size()
     create_local_process_group(args.ngpu_per_node)
     local_group = get_local_process_group()
-    device_id = dist.get_rank(
-        group=local_group) if dist.is_initialized() else 0
+    if dist.is_initialized():
+        device_id = dist.get_rank(group=local_group)
+    else:
+        device_id = 0
     torch.cuda.set_device(device_id)
     device = torch.device(device_id)
 

@@ -150,12 +150,12 @@ def train():
 
 
 @torch.no_grad()
-def test(loader, eval_steps: Optional[int] = None):
+def test(loader: NeighborLoader, val_steps: Optional[int] = None):
     model.eval()
 
     total_correct = total_examples = 0
     for i, batch in enumerate(loader):
-        if eval_steps is not None and i >= eval_steps:
+        if val_steps is not None and i >= val_steps:
             break
         if isinstance(batch, torch_geometric.data.HeteroData):
             batch = batch.to_homogeneous()
@@ -173,7 +173,7 @@ def test(loader, eval_steps: Optional[int] = None):
 
 for epoch in range(1, 1 + args.epochs):
     train()
-    val_acc = test(val_loader, eval_steps=100)
+    val_acc = test(val_loader, val_steps=100)
     print(f'Val Acc: ~{val_acc:.4f}')
 
 test_acc = test(test_loader)
