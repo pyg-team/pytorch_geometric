@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric
+from torch_geometric.loader import NeighborLoader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=128)
@@ -97,7 +98,6 @@ if args.cugraph_data_loader:
                                         **kwargs)
 else:
     num_work = get_num_workers()
-    NeighborLoader = torch_geometric.loader.NeighborLoader
     train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
                                   num_workers=num_work, drop_last=True,
                                   shuffle=False, **kwargs)
