@@ -83,7 +83,6 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
-    os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
     if rank == 0:
         print("Data =", data)
         print('Using', nprocs, 'GPUs...')
