@@ -166,7 +166,8 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                 out = model(batch.x, batch.edge_index)
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                batch.y[:batch_size])
-            torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+            torch.distributed.all_reduce(acc_sum,
+                                         op=torch.distributed.ReduceOp.MEAN)
             print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
     acc_sum = 0.0
     with torch.no_grad():
@@ -176,9 +177,9 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
             out = model(batch.x, batch.edge_index)
             acc_sum += acc(out[:batch_size].softmax(dim=-1),
                            batch.y[:batch_size])
-        torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+        torch.distributed.all_reduce(acc_sum,
+                                     op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-        
 
 
 if __name__ == '__main__':
