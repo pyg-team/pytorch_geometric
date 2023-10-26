@@ -118,24 +118,22 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
             input_nodes=split_idx['train'],
             # shuffle=True, drop_last=True,
             **kwargs)
-        if rank == 0:
-            eval_loader = CuGraphNeighborLoader(cugraph_store,
-                                                input_nodes=split_idx['valid'],
-                                                **kwargs)
-            test_loader = CuGraphNeighborLoader(cugraph_store,
-                                                input_nodes=split_idx['test'],
-                                                **kwargs)
+        eval_loader = CuGraphNeighborLoader(cugraph_store,
+                                            input_nodes=split_idx['valid'],
+                                            **kwargs)
+        test_loader = CuGraphNeighborLoader(cugraph_store,
+                                            input_nodes=split_idx['test'],
+                                            **kwargs)
     else:
         from torch_geometric.loader import NeighborLoader
         num_work = get_num_workers(world_size)
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                       num_workers=num_work, shuffle=True,
                                       drop_last=True, **kwargs)
-        if rank == 0:
-            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
-                                         num_workers=num_work, **kwargs)
-            test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
-                                         num_workers=num_work, **kwargs)
+        eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
+                                     num_workers=num_work, **kwargs)
+        test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
+                                     num_workers=num_work, **kwargs)
 
     eval_steps = 1000
     warmup_steps = 20
@@ -156,30 +154,31 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
             if rank == 0 and i % 10 == 0:
                 print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                       ", Loss: " + str(loss))
-        if rank == 0:
             print("Average Training Iteration Time:",
                   (time.time() - start) / (i - 10), "s/iter")
-            acc_sum = 0.0
-            with torch.no_grad():
-                for i, batch in enumerate(eval_loader):
-                    if i >= eval_steps:
-                        break
-                    batch = batch.to(device)
-                    batch.y = batch.y.to(torch.long)
-                    out = model(batch.x, batch.edge_index)
-                    acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                   batch.y[:batch_size])
-            print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-    if rank == 0:
         acc_sum = 0.0
         with torch.no_grad():
-            for i, batch in enumerate(test_loader):
+            for i, batch in enumerate(eval_loader):
+                if i >= eval_steps:
+                    break
                 batch = batch.to(device)
                 batch.y = batch.y.to(torch.long)
                 out = model(batch.x, batch.edge_index)
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                batch.y[:batch_size])
-            print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+            torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+            print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+    acc_sum = 0.0
+    with torch.no_grad():
+        for i, batch in enumerate(test_loader):
+            batch = batch.to(device)
+            batch.y = batch.y.to(torch.long)
+            out = model(batch.x, batch.edge_index)
+            acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                           batch.y[:batch_size])
+        torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+        print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+        
 
 
 if __name__ == '__main__':
