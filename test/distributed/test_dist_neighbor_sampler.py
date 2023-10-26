@@ -13,6 +13,7 @@ from torch_geometric.distributed.dist_neighbor_sampler import (
 )
 from torch_geometric.distributed.rpc import init_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
+from torch_geometric.sampler.neighbor_sampler import node_sample
 from torch_geometric.testing import withPackage
 
 
@@ -122,7 +123,7 @@ def dist_neighbor_sampler_homo(
                               disjoint=disjoint)
 
     # evaluate node sample function
-    out = sampler._sample(input_node)
+    out = node_sample(inputs, sampler._sample)
 
     # compare distributed output with single machine output
     assert torch.equal(out_dist.node, out.node)
