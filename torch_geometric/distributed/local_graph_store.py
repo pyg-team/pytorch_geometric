@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, EdgeAttr, GraphStore, HeteroData
+from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 
@@ -86,13 +86,15 @@ class LocalGraphStore(GraphStore):
         num_nodes: int,
         is_sorted: Optional[bool] = False,
     ) -> "LocalGraphStore":
-        r"""Creates a local graph store from a homogeneous or heterogenous :pyg:`PyG` graph.
+        r"""Creates a local graph store from a homogeneous or heterogenous
+        :pyg:`PyG` graph.
 
         Args:
             edge_id (torch.Tensor): The global identifier for every local edge.
             edge_index (torch.Tensor): The local edge indices.
             num_nodes (int): The number of nodes in the local graph.
-            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node (CSC format)
+            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
+                (CSC format)
         """
 
         graph_store = cls()
@@ -126,7 +128,8 @@ class LocalGraphStore(GraphStore):
                 for every local edge of every edge type.
             edge_index_dict (Dict[EdgeType, torch.Tensor]): The local edge
                 indices of every edge type.
-            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node (CSC format)
+            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
+                (CSC format)
         """
 
         graph_store = cls()

@@ -164,7 +164,8 @@ class Partitioner:
                     global_row = node_id[rows]
                     global_col = node_perm[col]
 
-                    # Sort on col to avoid additional perm in neighbor_sampler when converting to CSC format
+                    # Sort on col to avoid additional perm in neighbor_sampler
+                    # when converting to CSC format
                     num_cols = col.size()[0]
                     global_col, perm = index_sort(global_col,
                                                   max_value=num_cols)
@@ -242,7 +243,8 @@ class Partitioner:
                 global_row = node_id[rows]  # part_ids -> global
                 global_col = node_perm[col]
 
-                # Sort on col to avoid additional perm in neighbor_sampler when converting to CSC format
+                # Sort on col to avoid additional perm in neighbor_sampler when
+                # converting to CSC format
                 global_col, perm = index_sort(global_col, max_value=num_cols)
                 global_row = global_row[perm]
                 edge_id = edge_id[perm]
