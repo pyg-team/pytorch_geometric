@@ -63,7 +63,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                             input_nodes=split_idx['test'],
                                             **kwargs)
     else:
-        from torch_geometric.loader import NeighborLoader
+        NeighborLoader = torch_geometric.loader.NeighborLoader
         num_work = get_num_workers(world_size)
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                       num_workers=num_work, shuffle=True,
