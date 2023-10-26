@@ -130,7 +130,6 @@ def train():
 
         if i == warmup_steps:
             start_avg_time = time.perf_counter()
-        start = time.perf_counter()
         batch = batch.to(device)
         optimizer.zero_grad()
         batch_size = batch.num_sampled_nodes[0]
