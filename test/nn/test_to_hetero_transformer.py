@@ -17,10 +17,10 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
-from torch_geometric.profile import benchmark
 
 torch.fx.wrap('dropout_edge')
 
@@ -556,11 +556,10 @@ if __name__ == '__main__':
 
     def gen_hetero_args(num_types):
         x_dict = {
-            'N'+str(i):torch.randn(100_000, 64, device=args.device)
+            'N' + str(i): torch.randn(100_000, 64, device=args.device)
             for i in range(num_types)
         }
         return x_dict
-
 
     homo_model = Net1().to(args.device)
     print("Benchmarking Model = ", homo_model)
@@ -583,7 +582,10 @@ if __name__ == '__main__':
 
         benchmark(
             funcs=[hetero_model],
-            func_names=['Vanilla to_hetero w/ num_types = ' + str(num_types), 'HeteroLinear to_hetero'] + str(num_types),
+            func_names=[
+                'Vanilla to_hetero w/ num_types = ' + str(num_types),
+                'HeteroLinear to_hetero'
+            ] + str(num_types),
             args=gen_hetero_args,
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
