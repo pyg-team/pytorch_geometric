@@ -17,10 +17,10 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.profile import benchmark
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
+from torch_geometric.profile import benchmark
 
 torch.fx.wrap('dropout_edge')
 
@@ -550,40 +550,23 @@ if __name__ == '__main__':
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
-    min_num_nodes, max_num_nodes = 10_000, 10_000
-    min_num_edges, max_num_edges = 200_000, 200_000
-
     def gen_homo_args():
-        N = random.randint(min_num_nodes, max_num_nodes)
-        E = random.randint(min_num_edges, max_num_edges)
-
-        x = torch.randn(N, 64, device=args.device)
-        edge_index = torch.randint(N, (2, E), device=args.device)
-
-        return x, edge_index
+        x = torch.randn(100_000, 64, device=args.device)
+        return x
 
     def gen_hetero_args(num_types):
-        N = random.randint(min_num_nodes, max_num_nodes)
-        E = random.randint(min_num_edges, max_num_edges)
-
         x_dict = {
-            torch.randn(N, 64, device=args.device)
+            'N'+str(i):torch.randn(100_000, 64, device=args.device)
             for i in range(num_types)
         }
-        edge_index_dict = {
-            torch.randint(N, (2, E), device=args.device)
-            for i in range(num_types)
-            for i in range(num_types)
-        }
+        return x_dict
 
-        return x_dict, edge_index_dict
 
-    print("Benchmarking Model = ", Net2)
-
-    homo_model = Net2().to(args.device)
+    homo_model = Net1().to(args.device)
+    print("Benchmarking Model = ", homo_model)
 
     benchmark(
-        funcs=[model],
+        funcs=[homo_model],
         func_names=['Homogeneous'],
         args=gen_homo_args,
         num_steps=50 if args.device == 'cpu' else 500,
@@ -596,11 +579,11 @@ if __name__ == '__main__':
         use_heterolin_in_to_hetero = True
         heterolinear_model = to_hetero(model)
 
-        print("Benchmarking w/ num_types =", num_types)
+        print("Benchmarking ", num_types)
 
         benchmark(
             funcs=[hetero_model],
-            func_names=['Vanilla to_hetero', 'HeteroLinear to_hetero'],
+            func_names=['Vanilla to_hetero w/ num_types = ' + str(num_types), 'HeteroLinear to_hetero'] + str(num_types),
             args=gen_hetero_args,
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
