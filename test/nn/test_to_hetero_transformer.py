@@ -601,8 +601,8 @@ if __name__ == '__main__':
 
     for num_types in [4, 8, 16, 32, 64, 128]:
         metadata = gen_metadata(num_types)
-        hetero_model = to_hetero(homo_model, metadata)
-        heterolinear_model = to_hetero(homo_model, metadata, use_heterolinears=True)
+        hetero_model = to_hetero(homo_model, metadata).to(args.device)
+        heterolinear_model = to_hetero(homo_model, metadata, use_heterolinears=True).to(args.device)
         benchmark(
             funcs=[hetero_model, heterolinear_model],
             func_names=[
