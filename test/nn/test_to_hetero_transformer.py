@@ -575,8 +575,8 @@ if __name__ == '__main__':
     def gen_hetero_args(metadata):
         node_types, edge_types = metadata
         x_dict = {
-            node_type: torch.randn(N, 64, device=args.device)
-            for node_type in range(node_types)
+            node_type:torch.randn(N, 64, device=args.device)
+            for node_type in node_types
         }
         edge_attr_dict = {edge_type:torch.randn(N, 64, device=args.device) for edge_type in edge_types}
         return x_dict, edge_attr_dict
