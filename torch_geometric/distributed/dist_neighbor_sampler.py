@@ -347,7 +347,7 @@ class DistNeighborSampler:
             num_sampled_edges = []
 
             # loop over the layers
-            for one_hop_num in self.num_neighbors:
+            for i, one_hop_num in enumerate(self.num_neighbors):
                 out = await self.sample_one_hop(src, one_hop_num, seed_time,
                                                 src_batch)
                 if out.node.numel() == 0:
@@ -363,6 +363,12 @@ class DistNeighborSampler:
 
                 if self.disjoint:
                     batch_with_dupl.append(out.batch)
+
+                if seed_time is not None and i < self.num_hops - 1:
+                    # get seed_time for the next layer based on the previous
+                    # seed_time and sampled neighbors per node info
+                    seed_time = torch.repeat_interleave(
+                        seed_time, torch.as_tensor(out.metadata[0]))
 
                 num_sampled_nodes.append(len(src))
                 num_sampled_edges.append(len(out.node))
@@ -610,17 +616,16 @@ class DistNeighborSampler:
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        batch = None
-        # return batch only during temporal sampling
         if self.disjoint and node_time is not None:
-            batch, node = node.t().contiguous()
+            # We create a batch during the step of merging sampler outputs.
+            _, node = node.t().contiguous()
 
         return SamplerOutput(
             node=node,
             row=None,
             col=None,
             edge=edge,
-            batch=batch,
+            batch=None,
             metadata=(cumsum_neighbors_per_node, ),
         )
 
