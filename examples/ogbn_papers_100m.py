@@ -36,6 +36,7 @@ parser.add_argument(
         a reduction in batch_size/fan_out/hidden_channels/num_layers",
 )
 args = parser.parse_args()
+wall_clock_start = time.perf_counter()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
@@ -175,3 +176,5 @@ for epoch in range(1, 1 + args.epochs):
 
 test_acc = test(test_loader)
 print(f'Test Acc: {test_acc:.4f}')
+print("Total Program Runtime =", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+

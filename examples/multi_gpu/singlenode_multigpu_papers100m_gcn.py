@@ -117,6 +117,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         torch.distributed.all_reduce(acc_sum,
                                      op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%")
+    if rank == 0:
+        print("Total Program Runtime =", round(time.perf_counter() - wall_clock_start, 2), "seconds")
 
 
 if __name__ == '__main__':
@@ -147,6 +149,7 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
+    wall_clock_start = time.perf_counter()
     if args.cugraph_data_loader:
         from cugraph.testing.mg_utils import enable_spilling
         enable_spilling()
@@ -171,5 +174,6 @@ if __name__ == '__main__':
     mp.spawn(
         run_train, args=(data, world_size, model, args.epochs, args.batch_size,
                          args.fan_out, split_idx, dataset.num_classes,
-                         args.cugraph_data_loader), nprocs=world_size,
+                         args.cugraph_data_loader, wall_clock_start), nprocs=world_size,
         join=True)
+
