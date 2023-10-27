@@ -557,8 +557,7 @@ if __name__ == '__main__':
             self.lin_e_0 = Linear(64, 32)
             self.lin_e_1 = Linear(32, 16)
 
-        def forward(self, x: Tensor,
-                    edge_attr: Tensor) -> Tensor:
+        def forward(self, x: Tensor, edge_attr: Tensor) -> Tensor:
             x = self.lin_x_0(x)
             x = self.lin_x_1(x)
             edge_attr = self.lin_e_0(edge_attr)
@@ -574,15 +573,16 @@ if __name__ == '__main__':
 
     def gen_metadata(num_types):
         node_types = ['N' + str(i) for i in range(num_types)]
-        edge_types = [('N' + str(i), 'E' + str(i), 'N' + str(i + 1))
-                      for i in range(num_types - 1)
-                      ] + [('N' + str(num_types - 1), 'E' + str(num_types - 1), 'N0')]
+        edge_types = [
+            ('N' + str(i), 'E' + str(i), 'N' + str(i + 1))
+            for i in range(num_types - 1)
+        ] + [('N' + str(num_types - 1), 'E' + str(num_types - 1), 'N0')]
         return node_types, edge_types
 
     def gen_hetero_args(metadata):
         node_types, edge_types = metadata
         x_dict = {
-            node_type:torch.randn(N, 64, device=args.device)
+            node_type: torch.randn(N, 64, device=args.device)
             for node_type in node_types
         }
         edge_attr_dict = {
@@ -619,4 +619,3 @@ if __name__ == '__main__':
             num_warmups=10 if args.device == 'cpu' else 100,
             backward=False,
         )
-
