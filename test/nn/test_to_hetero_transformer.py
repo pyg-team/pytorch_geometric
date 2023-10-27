@@ -17,10 +17,10 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
-from torch_geometric.profile import benchmark
 
 torch.fx.wrap('dropout_edge')
 
