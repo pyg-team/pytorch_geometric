@@ -68,10 +68,10 @@ class GraphSAGE(torch.nn.Module):
         self.norms = torch.nn.ModuleList()
 
         self.convs.append(SAGEConv(in_channels, hidden_channels))
-        self.bns.append(BatchNorm(hidden_channels))
+        self.norms.append(BatchNorm(hidden_channels))
         for i in range(1, num_layers):
-            self.layers.append(SAGEConv(hidden_channels, hidden_channels))
-            self.bns.append(BatchNorm(hidden_channels))
+            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
+            self.norms.append(BatchNorm(hidden_channels))
 
         self.mlp = MLP(
             in_channels=in_channels + num_layers * hidden_channels,
@@ -81,6 +81,8 @@ class GraphSAGE(torch.nn.Module):
             norm='batch_norm',
             act='leaky_relu',
         )
+
+        self.dropout = dropout
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=self.dropout, training=self.training)
@@ -105,9 +107,9 @@ for epoch in range(1, NUM_EPOCHS + 1):
         batch_size = batch['paper'].batch_size
 
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch_size]
-        y = batch.y[:batch_size].long().view(-1)
-        loss = F.cross_entropy_loss(out, y)
+        out = model(batch["paper"].x, batch["paper", "cites", "paper"].edge_index)[:batch_size]
+        y = batch["paper"].y[:batch_size].long().view(-1)
+        loss = F.cross_entropy(out, y)
 
         loss.backward()
         optimizer.step()
