@@ -595,9 +595,9 @@ if __name__ == '__main__':
 
     for num_types in [4, 8, 16, 32, 64, 128]:
         metadata = gen_metadata(num_types)
-        hetero_model = to_hetero(model, metadata)
+        hetero_model = to_hetero(homo_model, metadata)
         use_heterolin_in_to_hetero = True
-        heterolinear_model = to_hetero(model, metadata)
+        heterolinear_model = to_hetero(homo_model, metadata)
 
         print("Benchmarking ", num_types)
 
