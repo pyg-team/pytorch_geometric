@@ -560,7 +560,7 @@ if __name__ == '__main__':
             edge_attr = self.lin_e_1(edge_attr)
             return x, edge_attr
 
-    N = 100_000
+    N = 10_000
 
     def gen_homo_args():
         x = torch.randn((N, 64), device=args.device)
@@ -599,7 +599,7 @@ if __name__ == '__main__':
         backward=False,
     )
 
-    for num_types in [4, 8, 16, 32, 64, 128]:
+    for num_types in [4, 8, 16, 32, 64]:
         metadata = gen_metadata(num_types)
         hetero_model = to_hetero(homo_model, metadata)
         heterolinear_model = to_hetero(homo_model, metadata,
