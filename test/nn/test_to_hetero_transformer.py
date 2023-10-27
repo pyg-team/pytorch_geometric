@@ -540,6 +540,7 @@ def test_to_hetero_on_static_graphs():
 
 if __name__ == '__main__':
     import argparse
+
     from torch_geometric import seed_everything
     seed_everything(0)
 
@@ -564,10 +565,18 @@ if __name__ == '__main__':
         N = random.randint(min_num_nodes, max_num_nodes)
         E = random.randint(min_num_edges, max_num_edges)
 
-        x_dict = {torch.randn(N, 64, device=args.device) for i in range(num_types)}
-        edge_index_dict = {torch.randint(N, (2, E), device=args.device) for i in range(num_types) for i in range(num_types)}
+        x_dict = {
+            torch.randn(N, 64, device=args.device)
+            for i in range(num_types)
+        }
+        edge_index_dict = {
+            torch.randint(N, (2, E), device=args.device)
+            for i in range(num_types)
+            for i in range(num_types)
+        }
 
         return x_dict, edge_index_dict
+
     print("Benchmarking Model = ", Net2)
 
     homo_model = Net2().to(args.device)
@@ -587,8 +596,6 @@ if __name__ == '__main__':
         heterolinear_model = to_hetero(model)
 
         print("Benchmarking w/ num_types =", num_types)
-
-        
 
         benchmark(
             funcs=[hetero_model],
