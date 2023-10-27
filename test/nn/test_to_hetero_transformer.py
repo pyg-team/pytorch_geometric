@@ -547,21 +547,41 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
-    parser.add_argument('--backward', action='store_true')
+    backward = True
     args = parser.parse_args()
-
+    class Net1(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.lin_x_0 = Linear(64, 32)
+            self.lin_x_1 = Linear(32, 16)
+            self.lin_e_0 = Linear(64, 32)
+            self.lin_e_1 = Linear(32, 16)
+    
+        def forward(self, x: Tensor, edge_attr: Tensor) -> Tuple[Tensor, Tensor]:
+            x = self.lin_x_1(self.lin_x_0(x))
+            edge_attr = self.lin_e_1(self.lin_e_0(edge_attr))
+            return x, edge_attr
+    N = 100_000
     def gen_homo_args():
-        x = torch.randn(100_000, 64, device=args.device)
-        return x
+        x = torch.randn((N, 64), device=args.device)
+        edge_attr = torch.randn((N, 64), device=args.device)
+        return x, edge_attr
 
-    def gen_hetero_args(num_types):
+    def gen_metadata(num_types):
+        node_types = ['N' + str(i) for i in range(num_types)]
+        edge_types = [('N'+ str(i), 'E' + str(i), 'N' + str(i+1)) for i in range(num_types)] + [('N4','E' + str(num_types - 1), 'N2')]
+        return node_types, edge_types
+
+    def gen_hetero_args(metadata):
+        node_types, edge_types
         x_dict = {
-            'N' + str(i): torch.randn(100_000, 64, device=args.device)
-            for i in range(num_types)
+            node_type: torch.randn(N, 64, device=args.device)
+            for node_type in range(node_types)
         }
-        return x_dict
+        edge_attr_dict = {edge_type:torch.randn(N, 64, device=args.device) for edge_type in edge_types}
+        return x_dict, edge_attr_dict
 
-    homo_model = Net1().to(args.device)
+    homo_model = Net().to(args.device)
     print("Benchmarking Model = ", homo_model)
 
     benchmark(
@@ -570,13 +590,14 @@ if __name__ == '__main__':
         args=gen_homo_args,
         num_steps=50 if args.device == 'cpu' else 500,
         num_warmups=10 if args.device == 'cpu' else 100,
-        backward=args.backward,
+        backward=True,
     )
 
     for num_types in [4, 8, 16, 32, 64, 128]:
-        hetero_model = to_hetero(model)
+        metadata = gen_metadata(num_types)
+        hetero_model = to_hetero(model, metadata)
         use_heterolin_in_to_hetero = True
-        heterolinear_model = to_hetero(model)
+        heterolinear_model = to_hetero(model, metadata)
 
         print("Benchmarking ", num_types)
 
@@ -584,10 +605,10 @@ if __name__ == '__main__':
             funcs=[hetero_model],
             func_names=[
                 'Vanilla to_hetero w/ num_types = ' + str(num_types),
-                'HeteroLinear to_hetero'
-            ] + str(num_types),
-            args=gen_hetero_args,
+                'HeteroLinear to_hetero w/ num_types = ' + str(num_types)
+            ],
+            args=gen_hetero_args(metadata),
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
-            backward=args.backward,
+            backward=True,
         )
