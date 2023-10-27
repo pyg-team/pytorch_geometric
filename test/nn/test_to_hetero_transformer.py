@@ -549,23 +549,19 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     backward = True
     args = parser.parse_args()
-
-    class Net1(torch.nn.Module):
+    class Net(torch.nn.Module):
         def __init__(self):
             super().__init__()
             self.lin_x_0 = Linear(64, 32)
             self.lin_x_1 = Linear(32, 16)
             self.lin_e_0 = Linear(64, 32)
             self.lin_e_1 = Linear(32, 16)
-
-        def forward(self, x: Tensor,
-                    edge_attr: Tensor) -> Tuple[Tensor, Tensor]:
+    
+        def forward(self, x: Tensor, edge_attr: Tensor) -> Tuple[Tensor, Tensor]:
             x = self.lin_x_1(self.lin_x_0(x))
             edge_attr = self.lin_e_1(self.lin_e_0(edge_attr))
             return x, edge_attr
-
     N = 100_000
-
     def gen_homo_args():
         x = torch.randn((N, 64), device=args.device)
         edge_attr = torch.randn((N, 64), device=args.device)
@@ -573,9 +569,7 @@ if __name__ == '__main__':
 
     def gen_metadata(num_types):
         node_types = ['N' + str(i) for i in range(num_types)]
-        edge_types = [('N' + str(i), 'E' + str(i), 'N' + str(i + 1))
-                      for i in range(num_types)
-                      ] + [('N4', 'E' + str(num_types - 1), 'N2')]
+        edge_types = [('N'+ str(i), 'E' + str(i), 'N' + str(i+1)) for i in range(num_types)] + [('N4','E' + str(num_types - 1), 'N2')]
         return node_types, edge_types
 
     def gen_hetero_args(metadata):
@@ -584,10 +578,7 @@ if __name__ == '__main__':
             node_type: torch.randn(N, 64, device=args.device)
             for node_type in range(node_types)
         }
-        edge_attr_dict = {
-            edge_type: torch.randn(N, 64, device=args.device)
-            for edge_type in edge_types
-        }
+        edge_attr_dict = {edge_type:torch.randn(N, 64, device=args.device) for edge_type in edge_types}
         return x_dict, edge_attr_dict
 
     homo_model = Net().to(args.device)
