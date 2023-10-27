@@ -17,9 +17,10 @@ from torch_geometric.nn import (
     to_hetero,
 )
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import withPackage, withCUDA
 from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
+
 
 torch.fx.wrap('dropout_edge')
 
@@ -356,7 +357,6 @@ def test_to_hetero_with_basic_model():
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
 
-
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
         super().__init__(aggr='sum')
@@ -534,7 +534,6 @@ def test_to_hetero_on_static_graphs():
     assert out_dict['paper'].size() == (4, 100, 32)
     assert out_dict['author'].size() == (4, 100, 32)
 
-
 if __name__ == '__main__':
     import argparse
 
@@ -601,9 +600,9 @@ if __name__ == '__main__':
 
     for num_types in [4, 8, 16, 32, 64, 128]:
         metadata = gen_metadata(num_types)
-        hetero_model = to_hetero(homo_model, metadata).to(args.device)
+        hetero_model = to_hetero(homo_model, metadata)
         heterolinear_model = to_hetero(homo_model, metadata,
-                                       use_heterolinears=True).to(args.device)
+                                       use_heterolinears=True)
         benchmark(
             funcs=[hetero_model, heterolinear_model],
             func_names=[
