@@ -611,7 +611,7 @@ if __name__ == '__main__':
         print("Benchmarking ", num_types)
 
         benchmark(
-            funcs=[hetero_model],
+            funcs=[hetero_model, heterolinear_model],
             func_names=[
                 'Vanilla to_hetero w/ num_types = ' + str(num_types),
                 'HeteroLinear to_hetero w/ num_types = ' + str(num_types)
