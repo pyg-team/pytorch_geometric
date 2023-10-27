@@ -411,7 +411,7 @@ class ToHeteroTransformer(Transformer):
 
         if self.use_heterolinears and is_linear(module):
             return ToHeteroLinear(module,
-                                  self.metadata[int(has_edge_level_target)])
+                                  self.metadata[int(has_edge_level_target)]).to(module.weight.device)
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
