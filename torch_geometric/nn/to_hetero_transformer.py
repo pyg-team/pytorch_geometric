@@ -8,7 +8,6 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
@@ -28,16 +27,13 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
-WITH_TO_HETERO_HETEROLIN &= use_heterolin_in_to_hetero
-
-
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return mapping if mapping is not None else {}
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
-              debug: bool = False) -> GraphModule:
+              debug: bool = False, use_heterolinears=False) -> GraphModule:
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent in
     which node representations are learned for each node type in
     :obj:`metadata[0]`, and messages are exchanged between each edge type in
@@ -126,8 +122,11 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
             (default: :obj:`None`)
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
+        use_heterolinears (bool, optional):
+            If set to :obj:`True`, to_hetero models use HeteroLinear
+            instead of ModuleDict of Linears. (default: :obj:`False`)
     """
-    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
+    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug, use_heterolinears)
     return transformer.transform()
 
 
@@ -150,11 +149,13 @@ class ToHeteroTransformer(Transformer):
         aggr: str = 'sum',
         input_map: Optional[Dict[str, str]] = None,
         debug: bool = False,
+        use_heterolinears = False,
     ):
         super().__init__(module, input_map, debug)
 
         self.metadata = metadata
         self.aggr = aggr
+        self.use_heterolinears = use_heterolinears and WITH_TO_HETERO_HETEROLIN
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
@@ -301,7 +302,7 @@ class ToHeteroTransformer(Transformer):
 
         self.graph.inserting_after(node)
         is_heterolin = False
-        if WITH_TO_HETERO_HETEROLIN:
+        if self.use_heterolinears:
             if hasattr(self.module, name):
                 submod = getattr(self.module, name)
                 is_heterolin = is_linear(submod)
@@ -329,7 +330,7 @@ class ToHeteroTransformer(Transformer):
             return
 
         self.graph.inserting_after(node)
-        if WITH_TO_HETERO_HETEROLIN:
+        if self.use_heterolinears:
             # Addresses:
             # "RuntimeError: Output 0 of SplitWithSizesBackward0
             # is a view and is being modified inplace."
@@ -406,7 +407,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        if WITH_TO_HETERO_HETEROLIN and is_linear(module):
+        if self.use_heterolinears and is_linear(module):
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
         else:

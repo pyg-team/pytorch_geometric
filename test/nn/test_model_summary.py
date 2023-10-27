@@ -5,7 +5,6 @@ import torch
 from torch import Tensor, nn
 
 import torch_geometric.typing
-from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
@@ -197,8 +196,7 @@ def test_summary_with_to_hetero_model():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
     # flake8: noqa
-    if not (WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero):
-        expected = """
+    expected = """
 +---------------------------+---------------------+----------------+----------+
 | Layer                     | Input Shape         | Output Shape   | #Param   |
 |---------------------------+---------------------+----------------+----------|
@@ -215,8 +213,9 @@ def test_summary_with_to_hetero_model():
 | │    └─(a)Linear          | [100, 32]           | [100, 32]      | 1,056    |
 +---------------------------+---------------------+----------------+----------+
 """
-    else:
-        expected = """
+    assert summary(model, x_dict, edge_index_dict) == expected[1:-1]
+    model = to_hetero(GraphSAGE(), metadata, use_heterolinears=True)
+    expected = """
 +------------------------------------+---------------------+----------------+----------+
 | Layer                              | Input Shape         | Output Shape   | #Param   |
 |------------------------------------+---------------------+----------------+----------|

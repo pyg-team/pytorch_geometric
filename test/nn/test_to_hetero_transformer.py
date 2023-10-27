@@ -7,7 +7,6 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
-from torch_geometric.backend import use_heterolin_in_to_hetero
 from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
@@ -517,9 +516,6 @@ def test_to_hetero_validate():
 
 
 # (TODO) make to_hetero w/ HeteroLinear backend work for this
-@pytest.mark.skipif(
-    WITH_TO_HETERO_HETEROLIN and use_heterolin_in_to_hetero,
-    reason="not working for experimental to_hetero w/ HeteroLinear")
 def test_to_hetero_on_static_graphs():
     x_dict = {
         'paper': torch.randn(4, 100, 16),
@@ -606,8 +602,7 @@ if __name__ == '__main__':
     for num_types in [4, 8, 16, 32, 64, 128]:
         metadata = gen_metadata(num_types)
         hetero_model = to_hetero(homo_model, metadata)
-        use_heterolin_in_to_hetero = True
-        heterolinear_model = to_hetero(homo_model, metadata)
+        heterolinear_model = to_hetero(homo_model, metadata, use_heterolinears=True)
         benchmark(
             funcs=[hetero_model, heterolinear_model],
             func_names=[
