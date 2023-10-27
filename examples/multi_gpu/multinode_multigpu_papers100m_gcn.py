@@ -180,7 +180,9 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs,
                                      op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
     if rank == 0:
-        print("Total Program Runtime =", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+        print("Total Program Runtime =",
+              round(time.perf_counter() - wall_clock_start, 2), "seconds")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -251,4 +253,3 @@ if __name__ == '__main__':
     run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
               args.batch_size, args.fan_out, split_idx, dataset.num_classes,
               args.cugraph_data_loader, wall_clock_start)
-

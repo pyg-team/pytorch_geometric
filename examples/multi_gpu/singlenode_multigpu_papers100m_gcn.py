@@ -118,7 +118,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                      op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%")
     if rank == 0:
-        print("Total Program Runtime =", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+        print("Total Program Runtime =",
+              round(time.perf_counter() - wall_clock_start, 2), "seconds")
 
 
 if __name__ == '__main__':
@@ -174,6 +175,5 @@ if __name__ == '__main__':
     mp.spawn(
         run_train, args=(data, world_size, model, args.epochs, args.batch_size,
                          args.fan_out, split_idx, dataset.num_classes,
-                         args.cugraph_data_loader, wall_clock_start), nprocs=world_size,
-        join=True)
-
+                         args.cugraph_data_loader, wall_clock_start),
+        nprocs=world_size, join=True)

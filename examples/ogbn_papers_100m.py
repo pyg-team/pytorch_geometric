@@ -176,5 +176,5 @@ for epoch in range(1, 1 + args.epochs):
 
 test_acc = test(test_loader)
 print(f'Test Acc: {test_acc:.4f}')
-print("Total Program Runtime =", round(time.perf_counter() - wall_clock_start, 2), "seconds")
-
+print("Total Program Runtime =",
+      round(time.perf_counter() - wall_clock_start, 2), "seconds")
