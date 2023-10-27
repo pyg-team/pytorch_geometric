@@ -27,13 +27,14 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
+
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return mapping if mapping is not None else {}
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
-              input_map: Optional[Dict[str, str]] = None,
-              debug: bool = False, use_heterolinears=False) -> GraphModule:
+              input_map: Optional[Dict[str, str]] = None, debug: bool = False,
+              use_heterolinears=False) -> GraphModule:
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent in
     which node representations are learned for each node type in
     :obj:`metadata[0]`, and messages are exchanged between each edge type in
@@ -126,7 +127,8 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
             If set to :obj:`True`, to_hetero models use HeteroLinear
             instead of ModuleDict of Linears. (default: :obj:`False`)
     """
-    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug, use_heterolinears)
+    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug,
+                                      use_heterolinears)
     return transformer.transform()
 
 
@@ -149,7 +151,7 @@ class ToHeteroTransformer(Transformer):
         aggr: str = 'sum',
         input_map: Optional[Dict[str, str]] = None,
         debug: bool = False,
-        use_heterolinears = False,
+        use_heterolinears=False,
     ):
         super().__init__(module, input_map, debug)
 
