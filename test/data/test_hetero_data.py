@@ -702,7 +702,7 @@ def test_basic_graph_store():
     assert len(data.get_all_edge_attrs()) == 0
 
 
-def test_data_generate_ids():
+def test_generate_ids():
     data = HeteroData()
 
     data['paper'].x = torch.randn(100, 128)
@@ -718,3 +718,21 @@ def test_data_generate_ids():
     assert data['author'].n_id.tolist() == list(range(200))
     assert data['paper', 'author'].e_id.tolist() == list(range(300))
     assert data['author', 'paper'].e_id.tolist() == list(range(400))
+
+
+def test_invalid_keys():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(10, 128)
+    data['paper'].node_attrs = ['y']
+    data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 20)
+    data['paper', 'paper'].edge_attrs = ['edge_attr']
+
+    assert data['paper'].node_attrs() == ['x']
+    assert data['paper']['node_attrs'] == ['y']
+    assert data['paper', 'paper'].edge_attrs() == ['edge_index']
+    assert data['paper', 'paper']['edge_attrs'] == ['edge_attr']
+
+    out = data.to_homogeneous()
+    assert set(out.node_attrs()) == {'x', 'node_type'}
+    assert set(out.edge_attrs()) == {'edge_index', 'edge_type'}
