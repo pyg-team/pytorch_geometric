@@ -268,6 +268,16 @@ def test_data_subgraph_with_list_field():
     assert out.x.tolist() == out.y == [1, 2, 3]
 
 
+def test_data_empty_subgraph():
+    data = Data(x=torch.arange(5), y=torch.tensor(0.0))
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert 'edge_index' not in out
+    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.y, data.y)
+    assert out.num_nodes == 3
+
+
 def test_copy_data():
     data = Data(x=torch.randn(20, 5))
 
