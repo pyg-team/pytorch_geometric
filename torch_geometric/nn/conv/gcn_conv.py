@@ -160,7 +160,7 @@ class GCNConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`
-          or :math:`(|\mathcal{V}|, |\mathcal{V}|)` *(sparse)*,
+          or sparse matrix :math:`(|\mathcal{V}|, |\mathcal{V}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
