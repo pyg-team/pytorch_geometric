@@ -332,6 +332,26 @@ def test_hetero_data_subgraph():
     assert out['paper', 'paper'].edge_attr.size() == (4, 8)
 
 
+def test_hetero_data_empty_subgraph():
+    data = HeteroData()
+    data.num_node_types = 3
+    data['paper'].x = torch.arange(5)
+    data['author'].x = torch.arange(5)
+    data['paper', 'author'].edge_weight = torch.arange(5)
+
+    out = data.subgraph(subset_dict={
+        'paper': torch.tensor([1, 2, 3]),
+        'author': torch.tensor([1, 2, 3]),
+    })
+
+    assert torch.equal(out['paper'].x, torch.arange(1, 4))
+    assert out['paper'].num_nodes == 3
+    assert torch.equal(out['author'].x, torch.arange(1, 4))
+    assert out['author'].num_nodes == 3
+    assert 'edge_index' not in out['paper', 'author']
+    assert torch.equal(out['paper', 'author'].edge_weight, torch.arange(5))
+
+
 def test_copy_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
