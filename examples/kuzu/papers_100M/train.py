@@ -107,9 +107,9 @@ for epoch in range(1, NUM_EPOCHS + 1):
         batch_size = batch['paper'].batch_size
 
         optimizer.zero_grad()
-        out = model(batch["paper"].x, batch["paper", "cites",
-                                            "paper"].edge_index)[:batch_size]
-        y = batch["paper"].y[:batch_size].long().view(-1)
+        out = model(batch['paper'].x, batch['paper', 'cites',
+                                            'paper'].edge_index,)[:batch_size]
+        y = batch['paper'].y[:batch_size].long().view(-1)
         loss = F.cross_entropy(out, y)
 
         loss.backward()
