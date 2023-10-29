@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 from torch_geometric.nn import dense_mincut_pool
@@ -25,4 +26,4 @@ def test_dense_mincut_pool():
         assert x_jit.size() == (2, 10, 16)
         assert adj_jit.size() == (2, 10, 10)
         assert -1 <= mincut_loss <= 0
-        assert 0 <= ortho_loss <= 2
+        assert 0 <= ortho_loss <= np.sqrt(2)
