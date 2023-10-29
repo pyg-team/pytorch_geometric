@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 from torch import Tensor
 
@@ -29,10 +27,7 @@ class LinearTransformation(BaseTransform):
         # We do this to enable post-multiplication in `forward`.
         self.matrix = matrix.t()
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.node_stores:
             if not hasattr(store, 'pos'):
                 continue

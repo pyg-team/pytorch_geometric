@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
@@ -17,10 +17,7 @@ class NormalizeFeatures(BaseTransform):
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.stores:
             for key, value in store.items(*self.attrs):
                 if value.numel() > 0:

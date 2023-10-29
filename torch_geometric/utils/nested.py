@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -50,7 +50,7 @@ def to_nested_tensor(
 def from_nested_tensor(
     x: Tensor,
     return_batch: bool = False,
-) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+) -> Tensor | Tuple[Tensor, Tensor]:
     r"""Given a `nested PyTorch tensor
     <https://pytorch.org/docs/stable/nested.html>`__, creates a contiguous
     batch of tensors

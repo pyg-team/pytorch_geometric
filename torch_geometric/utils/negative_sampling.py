@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 def negative_sampling(
     edge_index: Tensor,
-    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+    num_nodes: Optional[int | Tuple[int, int]] = None,
     num_neg_samples: Optional[int] = None,
     method: str = "sparse",
     force_undirected: bool = False,
@@ -111,7 +111,7 @@ def negative_sampling(
 
 def batched_negative_sampling(
     edge_index: Tensor,
-    batch: Union[Tensor, Tuple[Tensor, Tensor]],
+    batch: Tensor | Tuple[Tensor, Tensor],
     num_neg_samples: Optional[int] = None,
     method: str = "sparse",
     force_undirected: bool = False,

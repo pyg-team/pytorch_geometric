@@ -1,6 +1,5 @@
 import copy
 from collections import defaultdict
-from typing import Union
 
 import torch
 
@@ -13,10 +12,7 @@ from torch_geometric.transforms import BaseTransform
 class RemoveIsolatedNodes(BaseTransform):
     r"""Removes isolated nodes from the graph
     (functional name: :obj:`remove_isolated_nodes`)."""
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         # Gather all nodes that occur in at least one edge (across all types):
         n_id_dict = defaultdict(list)
         for store in data.edge_stores:

@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import torch
 
@@ -23,7 +23,7 @@ class HGTSampler(BaseSampler):
     def __init__(
         self,
         data: HeteroData,
-        num_samples: Union[List[int], Dict[NodeType, List[int]]],
+        num_samples: List[int] | Dict[NodeType, List[int]],
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
@@ -77,5 +77,5 @@ class HGTSampler(BaseSampler):
         )
 
     @property
-    def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
+    def edge_permutation(self) -> OptTensor | Dict[EdgeType, OptTensor]:
         return self.perm

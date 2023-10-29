@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Optional, Union
+from typing import Optional
 
 import pytest
 import torch
@@ -12,8 +12,8 @@ from torch_geometric.testing import withPackage
 
 def create_random_explanation(
     data: Data,
-    node_mask_type: Optional[Union[MaskType, str]] = None,
-    edge_mask_type: Optional[Union[MaskType, str]] = None,
+    node_mask_type: Optional[MaskType | str] = None,
+    edge_mask_type: Optional[MaskType | str] = None,
 ):
     if node_mask_type is not None:
         node_mask_type = MaskType(node_mask_type)

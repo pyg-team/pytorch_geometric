@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import scipy.sparse
 import torch
@@ -78,14 +78,11 @@ def from_scipy_sparse_matrix(
 
 
 def to_networkx(
-    data: Union[
-        'torch_geometric.data.Data',
-        'torch_geometric.data.HeteroData',
-    ],
+    data: 'torch_geometric.data.Data' | 'torch_geometric.data.HeteroData',
     node_attrs: Optional[Iterable[str]] = None,
     edge_attrs: Optional[Iterable[str]] = None,
     graph_attrs: Optional[Iterable[str]] = None,
-    to_undirected: Optional[Union[bool, str]] = False,
+    to_undirected: Optional[bool | str] = False,
     remove_self_loops: bool = False,
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
@@ -181,8 +178,8 @@ def to_networkx(
 
 def from_networkx(
     G: Any,
-    group_node_attrs: Optional[Union[List[str], all]] = None,
-    group_edge_attrs: Optional[Union[List[str], all]] = None,
+    group_node_attrs: Optional[List[str] | all] = None,
+    group_edge_attrs: Optional[List[str] | all] = None,
 ) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
@@ -472,7 +469,7 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
 
 
 def to_dgl(
-    data: Union['torch_geometric.data.Data', 'torch_geometric.data.HeteroData']
+    data: 'torch_geometric.data.Data' | 'torch_geometric.data.HeteroData',
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` or
     :class:`torch_geometric.data.HeteroData` instance to a :obj:`dgl` graph
@@ -555,7 +552,7 @@ def to_dgl(
 
 def from_dgl(
     g: Any,
-) -> Union['torch_geometric.data.Data', 'torch_geometric.data.HeteroData']:
+) -> 'torch_geometric.data.Data' | 'torch_geometric.data.HeteroData':
     r"""Converts a :obj:`dgl` graph object to a
     :class:`torch_geometric.data.Data` or
     :class:`torch_geometric.data.HeteroData` instance.

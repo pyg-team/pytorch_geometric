@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -27,7 +27,7 @@ def maybe_num_nodes(edge_index, num_nodes):
 
 
 def maybe_num_nodes(
-    edge_index: Union[Tensor, Tuple[Tensor, Tensor], SparseTensor],
+    edge_index: Tensor | Tuple[Tensor, Tensor] | SparseTensor,
     num_nodes: Optional[int] = None,
 ) -> int:
     if num_nodes is not None:

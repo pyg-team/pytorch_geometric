@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import torch
 from torch import Tensor
@@ -29,9 +29,12 @@ class GridSampling(BaseTransform):
             maximum coordinates found in :obj:`data.pos`.
             (default: :obj:`None`)
     """
-    def __init__(self, size: Union[float, List[float], Tensor],
-                 start: Optional[Union[float, List[float], Tensor]] = None,
-                 end: Optional[Union[float, List[float], Tensor]] = None):
+    def __init__(
+        self,
+        size: float | List[float] | Tensor,
+        start: Optional[float | List[float] | Tensor] = None,
+        end: Optional[float | List[float] | Tensor] = None,
+    ):
         self.size = size
         self.start = start
         self.end = end

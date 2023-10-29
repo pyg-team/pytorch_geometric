@@ -17,7 +17,7 @@ Run with:
 import copy
 import os
 import os.path as osp
-from typing import Tuple, Union
+from typing import Tuple
 
 import intel_extension_for_pytorch  # noqa
 import oneccl_bindings_for_pytorch  # noqa
@@ -75,7 +75,7 @@ class GAT(torch.nn.Module):
     def inference(
         self,
         x_all: Tensor,
-        device: Union[str, torch.device],
+        device: str | torch.device,
         subgraph_loader: NeighborLoader,
     ) -> Tensor:
         pbar = tqdm(total=x_all.size(0) * self.num_layers)

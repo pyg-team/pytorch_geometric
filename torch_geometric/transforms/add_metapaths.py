@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -224,7 +224,7 @@ class AddRandomMetaPaths(BaseTransform):
         drop_orig_edge_types: bool = False,
         keep_same_node_type: bool = False,
         drop_unconnected_node_types: bool = False,
-        walks_per_node: Union[int, List[int]] = 1,
+        walks_per_node: int | List[int] = 1,
         sample_ratio: float = 1.0,
     ):
 

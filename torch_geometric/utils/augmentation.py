@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -159,7 +159,7 @@ def add_random_edge(
     edge_index,
     p: float = 0.5,
     force_undirected: bool = False,
-    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+    num_nodes: Optional[int | Tuple[int, int]] = None,
     training: bool = True,
 ) -> Tuple[Tensor, Tensor]:
     r"""Randomly adds edges to :obj:`edge_index`.

@@ -1,4 +1,4 @@
-from typing import Callable, List, Union
+from typing import Callable, List
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
@@ -13,10 +13,7 @@ class Compose(BaseTransform):
     def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for transform in self.transforms:
             if isinstance(data, (list, tuple)):
                 data = [transform(d) for d in data]
@@ -38,10 +35,7 @@ class ComposeFilters:
     def __init__(self, filters: List[Callable]):
         self.filters = filters
 
-    def __call__(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> bool:
+    def __call__(self, data: Data | HeteroData) -> bool:
         for filter_fn in self.filters:
             if isinstance(data, (list, tuple)):
                 if not all([filter_fn(d) for d in data]):

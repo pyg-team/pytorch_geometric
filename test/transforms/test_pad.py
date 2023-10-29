@@ -1,5 +1,5 @@
 import numbers
-from typing import Dict, Generator, List, Optional, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple
 
 import pytest
 import torch
@@ -58,7 +58,7 @@ def _generate_heterodata_edges(
 def _check_homo_data_nodes(
     original: Data,
     padded: Data,
-    max_num_nodes: Union[int, Dict[NodeType, int]],
+    max_num_nodes: int | Dict[NodeType, int],
     node_pad_value: Optional[Padding] = None,
     is_mask_available: bool = False,
     exclude_keys: Optional[List[str]] = None,
@@ -157,7 +157,7 @@ def _check_homo_data_edges(
 def _check_hetero_data_nodes(
     original: HeteroData,
     padded: HeteroData,
-    max_num_nodes: Union[int, Dict[NodeType, int]],
+    max_num_nodes: int | Dict[NodeType, int],
     node_pad_value: Optional[Padding] = None,
     is_mask_available: bool = False,
     exclude_keys: Optional[List[str]] = None,
@@ -209,7 +209,7 @@ def _check_hetero_data_nodes(
 def _check_hetero_data_edges(
     original: HeteroData,
     padded: HeteroData,
-    max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
+    max_num_edges: Optional[int | Dict[EdgeType, int]] = None,
     edge_pad_value: Optional[Padding] = None,
     is_mask_available: bool = False,
     exclude_keys: Optional[List[str]] = None,
@@ -282,12 +282,12 @@ def _check_hetero_data_edges(
 
 
 def _check_data(
-    original: Union[Data, HeteroData],
-    padded: Union[Data, HeteroData],
-    max_num_nodes: Union[int, Dict[NodeType, int]],
-    max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
-    node_pad_value: Optional[Union[Padding, int, float]] = None,
-    edge_pad_value: Optional[Union[Padding, int, float]] = None,
+    original: Data | HeteroData,
+    padded: Data | HeteroData,
+    max_num_nodes: int | Dict[NodeType, int],
+    max_num_edges: Optional[int | Dict[EdgeType, int]] = None,
+    node_pad_value: Optional[Padding | int | float] = None,
+    edge_pad_value: Optional[Padding | int | float] = None,
     is_mask_available: bool = False,
     exclude_keys: Optional[List[str]] = None,
 ):

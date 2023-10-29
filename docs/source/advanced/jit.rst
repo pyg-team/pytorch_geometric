@@ -56,10 +56,14 @@ Under the hood, the :func:`~torch_geometric.nn.conv.message_passing.MessagePassi
 
 .. code-block:: python
 
-    from typing import Union, Tuple
+    from typing import Tuple
     from torch import Tensor
 
-    def forward(self, x: Union[Tensor, Tuple[Tensor, Tensor]], edge_index: Tensor) -> Tensor:
+    def forward(
+        self,
+        x: Tensor | Tuple[Tensor, Tensor],
+        edge_index: Tensor,
+    ) -> Tensor:
         pass
 
     conv(x, edge_index)

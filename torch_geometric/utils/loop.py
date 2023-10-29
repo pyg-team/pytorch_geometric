@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -167,8 +167,8 @@ def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
 def add_self_loops(
     edge_index: Tensor,
     edge_attr: OptTensor = None,
-    fill_value: Optional[Union[float, Tensor, str]] = None,
-    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+    fill_value: Optional[float | Tensor, str] = None,
+    num_nodes: Optional[int | Tuple[int, int]] = None,
 ) -> Tuple[Tensor, OptTensor]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
@@ -300,7 +300,7 @@ def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
 def add_remaining_self_loops(
     edge_index: Tensor,
     edge_attr: OptTensor = None,
-    fill_value: Optional[Union[float, Tensor, str]] = None,
+    fill_value: Optional[float | Tensor | str] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, OptTensor]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node

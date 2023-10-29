@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -57,8 +57,8 @@ class RandomNodeSplit(BaseTransform):
         split: str = "train_rest",
         num_splits: int = 1,
         num_train_per_class: int = 20,
-        num_val: Union[int, float] = 500,
-        num_test: Union[int, float] = 1000,
+        num_val: int | float = 500,
+        num_test: int | float = 1000,
         key: Optional[str] = "y",
     ):
         assert split in ['train_rest', 'test_rest', 'random']
@@ -69,10 +69,7 @@ class RandomNodeSplit(BaseTransform):
         self.num_test = num_test
         self.key = key
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.node_stores:
             if self.key is not None and not hasattr(store, self.key):
                 continue

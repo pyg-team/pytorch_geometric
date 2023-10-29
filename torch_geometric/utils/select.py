@@ -1,4 +1,4 @@
-from typing import Any, List, Union
+from typing import Any, List
 
 import torch
 from torch import Tensor
@@ -9,10 +9,10 @@ from torch_geometric.utils.sparse import is_torch_sparse_tensor
 
 
 def select(
-    src: Union[Tensor, List[Any], TensorFrame],
+    src: Tensor | List[Any] | TensorFrame,
     index_or_mask: Tensor,
     dim: int,
-) -> Union[Tensor, List[Any]]:
+) -> Tensor | List[Any] | TensorFrame:
     r"""Selects the input tensor or input list according to a given index or
     mask vector.
 
@@ -42,8 +42,12 @@ def select(
     raise ValueError(f"Encountered invalid input type (got '{type(src)}')")
 
 
-def narrow(src: Union[Tensor, List[Any]], dim: int, start: int,
-           length: int) -> Union[Tensor, List[Any]]:
+def narrow(
+    src: Tensor | List[Any],
+    dim: int,
+    start: int,
+    length: int,
+) -> Tensor | List[Any]:
     r"""Narrows the input tensor or input list to the specified range.
 
     Args:

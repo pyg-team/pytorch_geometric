@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 import torch
 from scipy.sparse.csgraph import minimum_spanning_tree
@@ -15,7 +15,7 @@ from torch_geometric.utils import (
 def tree_decomposition(
     mol: Any,
     return_vocab: bool = False,
-) -> Union[Tuple[Tensor, Tensor, int], Tuple[Tensor, Tensor, int, Tensor]]:
+) -> Tuple[Tensor, Tensor, int] | Tuple[Tensor, Tensor, int, Tensor]:
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.

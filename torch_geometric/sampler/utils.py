@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
 import torch
 from torch import Tensor
@@ -27,7 +27,7 @@ def sort_csc(
 
 # TODO(manan) deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
-    data: Union[Data, EdgeStorage],
+    data: Data | EdgeStorage,
     device: Optional[torch.device] = None,
     share_memory: bool = False,
     is_sorted: bool = False,
@@ -139,7 +139,7 @@ def remap_keys(
     inputs: Dict[X, Any],
     mapping: Dict[X, Y],
     exclude: Optional[List[X]] = None,
-) -> Dict[Union[X, Y], Any]:
+) -> Dict[X | Y, Any]:
     exclude = exclude or []
     return {
         k if k in exclude else mapping.get(k, k): v

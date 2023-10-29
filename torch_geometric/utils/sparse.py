@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -143,7 +143,7 @@ def is_sparse(src: Any) -> bool:
 def to_torch_coo_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[int | Tuple[int, int]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -209,7 +209,7 @@ def to_torch_coo_tensor(
 def to_torch_csr_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[int | Tuple[int, int]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -275,7 +275,7 @@ def to_torch_csr_tensor(
 def to_torch_csc_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[int | Tuple[int, int]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -346,7 +346,7 @@ def to_torch_csc_tensor(
 def to_torch_sparse_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[int | Tuple[int, int]] = None,
     is_coalesced: bool = False,
     layout: torch.layout = torch.sparse_coo,
 ):
@@ -381,7 +381,7 @@ def to_torch_sparse_tensor(
     raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
 
-def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
+def to_edge_index(adj: Tensor | SparseTensor) -> Tuple[Tensor, Tensor]:
     r"""Converts a :class:`torch.sparse.Tensor` or a
     :class:`torch_sparse.SparseTensor` to edge indices and edge attributes.
 
@@ -486,7 +486,7 @@ def index2ptr(index: Tensor, size: int) -> Tensor:
         index, size, out_int32=index.dtype == torch.int32)
 
 
-def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
+def cat(tensors: List[Tensor], dim: int | Tuple[int, int]) -> Tensor:
     # TODO (matthias) We can make this more efficient by directly operating on
     # the individual sparse tensor layouts.
     assert dim in {0, 1, (0, 1)}

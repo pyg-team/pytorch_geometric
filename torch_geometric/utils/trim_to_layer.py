@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -15,8 +15,7 @@ from torch_geometric.typing import (
 )
 
 
-def filter_empty_entries(
-        input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
+def filter_empty_entries(input_dict: Dict[Any, Tensor]) -> Dict[Any, Tensor]:
     r"""Removes empty tensors from a dictionary. This avoids unnecessary
     computation when some node/edge types are non-reachable after trimming."""
     out_dict = copy.copy(input_dict)
@@ -28,8 +27,8 @@ def filter_empty_entries(
 
 def trim_to_layer(
     layer: int,
-    num_sampled_nodes_per_hop: Union[List[int], Dict[NodeType, List[int]]],
-    num_sampled_edges_per_hop: Union[List[int], Dict[EdgeType, List[int]]],
+    num_sampled_nodes_per_hop: List[int] | Dict[NodeType, List[int]],
+    num_sampled_edges_per_hop: List[int] | Dict[EdgeType, List[int]],
     x: MaybeHeteroNodeTensor,
     edge_index: MaybeHeteroEdgeTensor,
     edge_attr: Optional[MaybeHeteroEdgeTensor] = None,

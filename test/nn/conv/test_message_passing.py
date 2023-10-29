@@ -1,5 +1,5 @@
 import copy
-from typing import Tuple, Union
+from typing import Tuple
 
 import pytest
 import torch
@@ -24,8 +24,12 @@ from torch_geometric.utils import (
 
 
 class MyConv(MessagePassing):
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, aggr: str = 'add'):
+    def __init__(
+        self,
+        in_channels: int | Tuple[int, int],
+        out_channels: int,
+        aggr: str = 'add',
+    ):
         super().__init__(aggr=aggr)
 
         if isinstance(in_channels, int):
@@ -34,8 +38,13 @@ class MyConv(MessagePassing):
         self.lin_l = Linear(in_channels[0], out_channels)
         self.lin_r = Linear(in_channels[1], out_channels)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_weight: OptTensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor | OptPairTensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -62,7 +71,7 @@ class MyConvWithSelfLoops(MessagePassing):
     def __init__(self, aggr: str = 'add'):
         super().__init__(aggr=aggr)
 
-    def forward(self, x: Tensor, edge_index: torch.Tensor) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         edge_index, _ = add_self_loops(edge_index)
 
         # propagate_type: (x: Tensor)

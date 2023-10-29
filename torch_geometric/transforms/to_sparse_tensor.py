@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -68,11 +68,7 @@ class ToSparseTensor(BaseTransform):
         self.fill_cache = fill_cache
         self.layout = layout
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
-
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue

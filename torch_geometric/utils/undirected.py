@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -24,7 +24,7 @@ def is_undirected(edge_index, edge_attr, num_nodes):
 
 def is_undirected(
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor]] = None,
+    edge_attr: OptTensor | List[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -105,10 +105,10 @@ def to_undirected(edge_index, edge_attr, num_nodes, reduce):
 
 def to_undirected(
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: OptTensor | List[Tensor] | str = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
-) -> Union[Tensor, Tuple[OptTensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+) -> Tensor | Tuple[Tensor, OptTensor] | Tuple[Tensor, List[Tensor]]:
     r"""Converts the graph given by :attr:`edge_index` to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
     \mathcal{E}`.

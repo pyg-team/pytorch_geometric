@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
@@ -21,7 +21,7 @@ class ToDevice(BaseTransform):
     """
     def __init__(
         self,
-        device: Union[int, str],
+        device: torch.device | str | int,
         attrs: Optional[List[str]] = None,
         non_blocking: bool = False,
     ):
@@ -29,12 +29,12 @@ class ToDevice(BaseTransform):
         self.attrs = attrs or []
         self.non_blocking = non_blocking
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
-        return data.to(self.device, *self.attrs,
-                       non_blocking=self.non_blocking)
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
+        return data.to(
+            self.device,
+            *self.attrs,
+            non_blocking=self.non_blocking,
+        )
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.device})'

@@ -1,6 +1,6 @@
 import numbers
 from itertools import repeat
-from typing import Sequence, Union
+from typing import Sequence
 
 import torch
 
@@ -23,7 +23,7 @@ class RandomJitter(BaseTransform):
             If :obj:`translate` is a number instead of a sequence, the same
             range is used for each dimension.
     """
-    def __init__(self, translate: Union[float, int, Sequence]):
+    def __init__(self, translate: float | int | Sequence):
         self.translate = translate
 
     def forward(self, data: Data) -> Data:

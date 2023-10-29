@@ -1,6 +1,6 @@
 import warnings
 from copy import copy
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import torch
 from torch import Tensor
@@ -87,16 +87,16 @@ class RandomLinkSplit(BaseTransform):
     """
     def __init__(
         self,
-        num_val: Union[int, float] = 0.1,
-        num_test: Union[int, float] = 0.2,
+        num_val: int | float = 0.1,
+        num_test: int | float = 0.2,
         is_undirected: bool = False,
         key: str = 'edge_label',
         split_labels: bool = False,
         add_negative_train_samples: bool = True,
         neg_sampling_ratio: float = 1.0,
-        disjoint_train_ratio: Union[int, float] = 0.0,
-        edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
-        rev_edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
+        disjoint_train_ratio: int | float = 0.0,
+        edge_types: Optional[EdgeType | List[EdgeType]] = None,
+        rev_edge_types: Optional[EdgeType | List[EdgeType]] = None,
     ):
         if isinstance(edge_types, list):
             if rev_edge_types is None:
@@ -116,10 +116,7 @@ class RandomLinkSplit(BaseTransform):
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         edge_types = self.edge_types
         rev_edge_types = self.rev_edge_types
 

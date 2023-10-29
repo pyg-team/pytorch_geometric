@@ -5,7 +5,7 @@ from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import torch
 from torch import Tensor
@@ -82,7 +82,7 @@ class NodeSamplerInput(CastMixin):
         self.time = time
         self.input_type = input_type
 
-    def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
+    def __getitem__(self, index: Tensor | Any) -> 'NodeSamplerInput':
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
@@ -145,7 +145,7 @@ class EdgeSamplerInput(CastMixin):
         self.time = time
         self.input_type = input_type
 
-    def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
+    def __getitem__(self, index: Tensor | Any) -> 'EdgeSamplerInput':
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
@@ -343,12 +343,12 @@ class NumNeighbors:
         default (List[int], optional): The default number of neighbors for edge
             types not specified in :obj:`values`. (default: :obj:`None`)
     """
-    values: Union[List[int], Dict[EdgeTypeStr, List[int]]]
+    values: List[int] | Dict[EdgeTypeStr, List[int]]
     default: Optional[List[int]] = None
 
     def __init__(
         self,
-        values: Union[List[int], Dict[EdgeType, List[int]]],
+        values: List[int] | Dict[EdgeType, List[int]],
         default: Optional[List[int]] = None,
     ):
         if isinstance(values, (tuple, list)) and default is not None:
@@ -367,7 +367,7 @@ class NumNeighbors:
         self,
         edge_types: Optional[List[EdgeType]] = None,
         mapped: bool = False,
-    ) -> Union[List[int], Dict[Union[EdgeType, EdgeTypeStr], List[int]]]:
+    ) -> List[int] | Dict[EdgeType | EdgeTypeStr, List[int]]:
 
         if edge_types is not None:
             if isinstance(self.values, (tuple, list)):
@@ -407,7 +407,7 @@ class NumNeighbors:
     def get_values(
         self,
         edge_types: Optional[List[EdgeType]] = None,
-    ) -> Union[List[int], Dict[EdgeType, List[int]]]:
+    ) -> List[int] | Dict[EdgeType, List[int]]:
         r"""Returns the number of neighbors.
 
         Args:
@@ -425,7 +425,7 @@ class NumNeighbors:
     def get_mapped_values(
         self,
         edge_types: Optional[List[EdgeType]] = None,
-    ) -> Union[List[int], Dict[str, List[int]]]:
+    ) -> List[int] | Dict[str, List[int]]:
         r"""Returns the number of neighbors.
         For heterogeneous graphs, a dictionary is returned in which edge type
         tuples are converted to strings.
@@ -491,13 +491,13 @@ class NegativeSampling(CastMixin):
             (default: :obj:`None`)
     """
     mode: NegativeSamplingMode
-    amount: Union[int, float] = 1
+    amount: int | float = 1
     weight: Optional[Tensor] = None
 
     def __init__(
         self,
-        mode: Union[NegativeSamplingMode, str],
-        amount: Union[int, float] = 1,
+        mode: NegativeSamplingMode | str,
+        amount: int | float = 1,
         weight: Optional[Tensor] = None,
     ):
         self.mode = NegativeSamplingMode(mode)
@@ -557,7 +557,7 @@ class BaseSampler(ABC):
         self,
         index: NodeSamplerInput,
         **kwargs,
-    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+    ) -> HeteroSamplerOutput | SamplerOutput:
         r"""Performs sampling from the nodes specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
@@ -576,7 +576,7 @@ class BaseSampler(ABC):
         self,
         index: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None,
-    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+    ) -> HeteroSamplerOutput | SamplerOutput:
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
@@ -596,7 +596,7 @@ class BaseSampler(ABC):
         raise NotImplementedError
 
     @property
-    def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
+    def edge_permutation(self) -> OptTensor | Dict[EdgeType, OptTensor]:
         r"""If the sampler performs any modification of edge ordering in the
         original graph, this function is expected to return the permutation
         tensor that defines the permutation from the edges in the original

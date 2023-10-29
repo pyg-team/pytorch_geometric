@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 from torch import Tensor
 
@@ -34,10 +32,7 @@ class ToUndirected(BaseTransform):
         self.reduce = reduce
         self.merge = merge
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue

@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -30,12 +30,12 @@ def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
 
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: OptTensor | List[Tensor] | str = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
     is_sorted: bool = False,
     sort_by_row: bool = True,
-) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
+) -> Tensor | Tuple[Tensor, OptTensor] | Tuple[Tensor, List[Tensor]]:
     """Row-wise sorts :obj:`edge_index` and removes its duplicated entries.
     Duplicate entries in :obj:`edge_attr` are merged by scattering them
     together according to the given :obj:`reduce` option.

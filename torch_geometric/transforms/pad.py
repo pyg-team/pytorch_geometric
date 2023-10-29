@@ -2,7 +2,7 @@ import numbers
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -19,9 +19,9 @@ class Padding(ABC):
     @abstractmethod
     def get_value(
         self,
-        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        store_type: Optional[NodeType | EdgeType] = None,
         attr_name: Optional[str] = None,
-    ) -> Union[int, float]:
+    ) -> int | float:
         pass
 
 
@@ -33,9 +33,9 @@ class UniformPadding(Padding):
         value (int or float, optional): The value to be used for padding.
             (default: :obj:`0.0`)
     """
-    value: Union[int, float] = 0.0
+    value: int | float = 0.0
 
-    def __init__(self, value: Union[int, float] = 0.0):
+    def __init__(self, value: int | float = 0.0):
         self.value = value
 
         if not isinstance(self.value, (int, float)):
@@ -44,9 +44,9 @@ class UniformPadding(Padding):
 
     def get_value(
         self,
-        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        store_type: Optional[NodeType | EdgeType] = None,
         attr_name: Optional[str] = None,
-    ) -> Union[int, float]:
+    ) -> int | float:
         return self.value
 
 
@@ -58,8 +58,8 @@ class MappingPadding(Padding):
 
     def __init__(
         self,
-        values: Dict[Any, Union[int, float, Padding]],
-        default: Union[int, float] = 0.0,
+        values: Dict[Any, int | float | Padding],
+        default: int | float = 0.0,
     ):
         if not isinstance(values, dict):
             raise ValueError(f"Expected 'values' to be a dictionary "
@@ -98,9 +98,9 @@ class AttrNamePadding(MappingPadding):
 
     def get_value(
         self,
-        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        store_type: Optional[NodeType | EdgeType] = None,
         attr_name: Optional[str] = None,
-    ) -> Union[int, float]:
+    ) -> int | float:
         padding = self.values.get(attr_name, self.default)
         return padding.get_value()
 
@@ -127,7 +127,7 @@ class NodeTypePadding(MappingPadding):
         self,
         store_type: Optional[NodeType] = None,
         attr_name: Optional[str] = None,
-    ) -> Union[int, float]:
+    ) -> int | float:
         padding = self.values.get(store_type, self.default)
         return padding.get_value(attr_name=attr_name)
 
@@ -158,7 +158,7 @@ class EdgeTypePadding(MappingPadding):
         self,
         store_type: Optional[EdgeType] = None,
         attr_name: Optional[str] = None,
-    ) -> Union[int, float]:
+    ) -> int | float:
         padding = self.values.get(store_type, self.default)
         return padding.get_value(attr_name=attr_name)
 
@@ -276,10 +276,10 @@ class Pad(BaseTransform):
     """
     def __init__(
         self,
-        max_num_nodes: Union[int, Dict[NodeType, int]],
-        max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
-        node_pad_value: Union[int, float, Padding] = 0.0,
-        edge_pad_value: Union[int, float, Padding] = 0.0,
+        max_num_nodes: int | Dict[NodeType, int],
+        max_num_edges: Optional[int | Dict[EdgeType, int]] = None,
+        node_pad_value: int | float | Padding = 0.0,
+        edge_pad_value: int | float | Padding = 0.0,
         mask_pad_value: bool = False,
         add_pad_mask: bool = False,
         exclude_keys: Optional[List[str]] = None,
@@ -333,8 +333,11 @@ class Pad(BaseTransform):
             return self.value[key]
 
     class _NumEdges(_IntOrDict):
-        def __init__(self, value: Union[int, Dict[EdgeType, int], None],
-                     num_nodes: '_NumNodes'):  # noqa: F821
+        def __init__(
+                self,
+                value: Optional[int | Dict[EdgeType, int]],
+                num_nodes: '_NumNodes',  # noqa: F821
+        ):
             assert value is None or isinstance(value, (int, dict)), \
                 f'If provided, parameter `max_num_edges` must be of type ' \
                 f'int or dict but is {type(value)}.'
@@ -388,22 +391,22 @@ class Pad(BaseTransform):
         return False
 
     def __get_node_padding(
-            self, attr_name: str,
-            node_type: Optional[NodeType] = None) -> Union[int, float]:
+        self,
+        attr_name: str,
+        node_type: Optional[NodeType] = None,
+    ) -> int | float:
         if attr_name in self.node_additional_attrs_pad:
             return self.node_additional_attrs_pad[attr_name]
         return self.node_pad.get_value(node_type, attr_name)
 
     def __get_edge_padding(
-            self, attr_name: str,
-            edge_type: Optional[EdgeType] = None) -> Union[int, float]:
+        self,
+        attr_name: str,
+        edge_type: Optional[EdgeType] = None,
+    ) -> int | float:
         return self.edge_pad.get_value(edge_type, attr_name)
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
-
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         if isinstance(data, Data):
             assert isinstance(self.node_pad, (UniformPadding, AttrNamePadding))
             assert isinstance(self.edge_pad, (UniformPadding, AttrNamePadding))
@@ -468,9 +471,13 @@ class Pad(BaseTransform):
             store[attr_name] = self._pad_tensor_dim(attr, dim, num_pad_nodes,
                                                     pad_value)
 
-    def __pad_edge_store(self, store: EdgeStorage, get_dim_fn: Callable,
-                         num_nodes: Union[int, Tuple[int, int]],
-                         edge_type: Optional[str] = None):
+    def __pad_edge_store(
+        self,
+        store: EdgeStorage,
+        get_dim_fn: Callable,
+        num_nodes: int | Tuple[int, int],
+        edge_type: Optional[str] = None,
+    ):
         attrs_to_pad = set(
             attr for attr in store.keys()
             if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr))

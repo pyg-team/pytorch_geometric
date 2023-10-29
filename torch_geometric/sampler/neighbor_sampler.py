@@ -2,7 +2,7 @@ import copy
 import math
 import sys
 import warnings
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -28,7 +28,7 @@ from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
-NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
+NumNeighborsType = NumNeighbors | List[int] | Dict[EdgeType, List[int]]
 
 
 class NeighborSampler(BaseSampler):
@@ -36,9 +36,9 @@ class NeighborSampler(BaseSampler):
     by :class:`~torch_geometric.loader.NeighborLoader`."""
     def __init__(
         self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+        data: Data | HeteroData | Tuple[FeatureStore, GraphStore],
         num_neighbors: NumNeighborsType,
-        subgraph_type: Union[SubgraphType, str] = 'directional',
+        subgraph_type: SubgraphType | str = 'directional',
         replace: bool = False,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
@@ -242,7 +242,7 @@ class NeighborSampler(BaseSampler):
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         out = node_sample(inputs, self._sample)
         if self.subgraph_type == SubgraphType.bidirectional:
             out = out.to_bidirectional()
@@ -254,7 +254,7 @@ class NeighborSampler(BaseSampler):
         self,
         inputs: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
         if self.subgraph_type == SubgraphType.bidirectional:
@@ -264,17 +264,17 @@ class NeighborSampler(BaseSampler):
     # Other Utilities #########################################################
 
     @property
-    def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
+    def edge_permutation(self) -> OptTensor | Dict[EdgeType, OptTensor]:
         return self.perm
 
     # Helper functions ########################################################
 
     def _sample(
         self,
-        seed: Union[Tensor, Dict[NodeType, Tensor]],
-        seed_time: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
+        seed: Tensor | Dict[NodeType, Tensor],
+        seed_time: Optional[Tensor | Dict[NodeType, Tensor]] = None,
         **kwargs,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
         installed) or :obj:`torch-sparse` (if installed) sampling routines."""
         if isinstance(seed, dict):  # Heterogeneous sampling:
@@ -488,7 +488,7 @@ class NeighborSampler(BaseSampler):
 def node_sample(
     inputs: NodeSamplerInput,
     sample_fn: Callable,
-) -> Union[SamplerOutput, HeteroSamplerOutput]:
+) -> SamplerOutput | HeteroSamplerOutput:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
     input. Returns the output of this sampling procedure."""
@@ -510,11 +510,11 @@ def node_sample(
 def edge_sample(
     inputs: EdgeSamplerInput,
     sample_fn: Callable,
-    num_nodes: Union[int, Dict[NodeType, int]],
+    num_nodes: int | Dict[NodeType, int],
     disjoint: bool,
-    node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
+    node_time: Optional[Tensor | Dict[str, Tensor]] = None,
     neg_sampling: Optional[NegativeSampling] = None,
-) -> Union[SamplerOutput, HeteroSamplerOutput]:
+) -> SamplerOutput | HeteroSamplerOutput:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
     input_id = inputs.input_id

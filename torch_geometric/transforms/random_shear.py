@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 
 from torch_geometric.data import Data
@@ -26,7 +24,7 @@ class RandomShear(BaseTransform):
         shear (float or int): maximum shearing factor defining the range
             :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
     """
-    def __init__(self, shear: Union[float, int]):
+    def __init__(self, shear: float | int):
         self.shear = abs(shear)
 
     def forward(self, data: Data) -> Data:

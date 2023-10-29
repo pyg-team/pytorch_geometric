@@ -1,12 +1,10 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.data.storage import BaseStorage
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import index_to_mask, mask_to_index
-
-AnyData = Union[Data, HeteroData]
 
 
 def get_attrs_with_suffix(
@@ -44,18 +42,15 @@ class IndexToMask(BaseTransform):
     """
     def __init__(
         self,
-        attrs: Optional[Union[str, List[str]]] = None,
-        sizes: Optional[Union[int, List[int]]] = None,
+        attrs: Optional[str | List[str]] = None,
+        sizes: Optional[int | List[int]] = None,
         replace: bool = False,
     ):
         self.attrs = [attrs] if isinstance(attrs, str) else attrs
         self.sizes = sizes
         self.replace = replace
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.stores:
             attrs = get_attrs_with_suffix(self.attrs, store, '_index')
 
@@ -100,16 +95,13 @@ class MaskToIndex(BaseTransform):
     """
     def __init__(
         self,
-        attrs: Optional[Union[str, List[str]]] = None,
+        attrs: Optional[str | List[str]] = None,
         replace: bool = False,
     ):
         self.attrs = [attrs] if isinstance(attrs, str) else attrs
         self.replace = replace
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.stores:
             attrs = get_attrs_with_suffix(self.attrs, store, '_mask')
 

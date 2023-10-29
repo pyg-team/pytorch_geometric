@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
@@ -22,20 +22,18 @@ class RemoveDuplicatedEdges(BaseTransform):
     """
     def __init__(
         self,
-        key: Union[str, List[str]] = ['edge_attr', 'edge_weight'],
-        reduce: str = "add",
+        key: str | List[str] | None = None,
+        reduce: str = 'add',
     ):
-        if isinstance(key, str):
+        if key is None:
+            key = ['edge_attr', 'edge_weight']
+        elif isinstance(key, str):
             key = [key]
 
         self.keys = key
         self.reduce = reduce
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
-
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.edge_stores:
             keys = [key for key in self.keys if key in store]
 

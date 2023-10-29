@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -38,13 +38,13 @@ def get_num_hops(model: torch.nn.Module) -> int:
 
 
 def subgraph(
-    subset: Union[Tensor, List[int]],
+    subset: Tensor | List[int],
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Tuple[Tensor, OptTensor] | Tuple[Tensor, OptTensor, OptTensor]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -116,13 +116,13 @@ def subgraph(
 
 
 def bipartite_subgraph(
-    subset: Union[PairTensor, Tuple[List[int], List[int]]],
+    subset: PairTensor | Tuple[List[int], List[int]],
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     size: Optional[Tuple[int, int]] = None,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Tuple[Tensor, OptTensor] | Tuple[Tensor, OptTensor, OptTensor]:
     r"""Returns the induced subgraph of the bipartite graph
     :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
@@ -205,7 +205,7 @@ def bipartite_subgraph(
 
 
 def k_hop_subgraph(
-    node_idx: Union[int, List[int], Tensor],
+    node_idx: int | List[int] | Tensor,
     num_hops: int,
     edge_index: Tensor,
     relabel_nodes: bool = False,
@@ -329,13 +329,13 @@ def k_hop_subgraph(
 
 
 def hyper_subgraph(
-    subset: Union[Tensor, List[int]],
+    subset: Tensor | List[int],
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Tuple[Tensor, OptTensor] | Tuple[Tensor, OptTensor, OptTensor]:
     r"""Returns the induced subgraph of the hyper graph of
         :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 

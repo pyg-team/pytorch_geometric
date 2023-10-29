@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import torch
 
@@ -25,7 +25,7 @@ class Constant(BaseTransform):
         self,
         value: float = 1.0,
         cat: bool = True,
-        node_types: Optional[Union[str, List[str]]] = None,
+        node_types: Optional[str | List[str]] = None,
     ):
         if isinstance(node_types, str):
             node_types = [node_types]
@@ -34,11 +34,7 @@ class Constant(BaseTransform):
         self.cat = cat
         self.node_types = node_types
 
-    def forward(
-        self,
-        data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
-
+    def forward(self, data: Data | HeteroData) -> Data | HeteroData:
         for store in data.node_stores:
             if self.node_types is None or store._key in self.node_types:
                 num_nodes = store.num_nodes
