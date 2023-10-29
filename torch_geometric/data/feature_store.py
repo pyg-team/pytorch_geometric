@@ -20,6 +20,8 @@ features in interesting manners based on the provided metadata.
 Major TODOs for future implementation:
 * Async `put` and `get` functionality
 """
+from __future__ import annotations
+
 import copy
 from abc import abstractmethod
 from dataclasses import dataclass

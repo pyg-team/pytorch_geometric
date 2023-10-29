@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numbers
 from abc import ABC, abstractmethod
 from collections import defaultdict

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List
 
 from torch_geometric.data import Data, HeteroData
