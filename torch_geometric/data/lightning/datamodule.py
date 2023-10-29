@@ -1,7 +1,7 @@
 import copy
 import inspect
 import warnings
-from typing import Any, Dict, Optional, Tuple, Type, Union
+from typing import Any, Dict, Optional, Tuple, Type
 
 import torch
 
@@ -60,7 +60,7 @@ class LightningDataModule(PLLightningDataModule):
 class LightningData(LightningDataModule):
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Data | HeteroData,
         has_val: bool,
         has_test: bool,
         loader: str = 'neighbor',
@@ -376,7 +376,7 @@ class LightningNodeData(LightningData):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Data | HeteroData,
         input_train_nodes: InputNodes = None,
         input_train_time: OptTensor = None,
         input_val_nodes: InputNodes = None,
@@ -564,7 +564,7 @@ class LightningLinkData(LightningData):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+        data: Data | HeteroData | Tuple[FeatureStore, GraphStore],
         input_train_edges: InputEdges = None,
         input_train_labels: OptTensor = None,
         input_train_time: OptTensor = None,
@@ -685,7 +685,7 @@ class LightningLinkData(LightningData):
 
 
 # TODO support Tuple[FeatureStore, GraphStore]
-def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
+def infer_input_nodes(data: Data | HeteroData, split: str) -> InputNodes:
     attr_name: Optional[str] = None
     if f'{split}_mask' in data:
         attr_name = f'{split}_mask'

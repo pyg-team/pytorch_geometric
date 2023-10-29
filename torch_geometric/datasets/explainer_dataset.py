@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional
 
 import torch
 
@@ -66,8 +66,8 @@ class ExplainerDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        graph_generator: Union[GraphGenerator, str],
-        motif_generator: Union[MotifGenerator, str],
+        graph_generator: GraphGenerator | str,
+        motif_generator: MotifGenerator | str,
         num_motifs: int,
         num_graphs: int = 1,
         graph_generator_kwargs: Optional[Dict[str, Any]] = None,

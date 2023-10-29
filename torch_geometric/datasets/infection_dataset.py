@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import torch
 
@@ -64,9 +64,9 @@ class InfectionDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        graph_generator: Union[GraphGenerator, str],
-        num_infected_nodes: Union[int, List[int]],
-        max_path_length: Union[int, List[int]],
+        graph_generator: GraphGenerator | str,
+        num_infected_nodes: int | List[int],
+        max_path_length: int | List[int],
         num_graphs: Optional[int] = None,
         graph_generator_kwargs: Optional[Dict[str, Any]] = None,
         transform: Optional[Callable] = None,

@@ -1,6 +1,6 @@
 import inspect
 from collections.abc import Sequence
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 
 import numpy as np
 import torch
@@ -164,7 +164,7 @@ class Batch(metaclass=DynamicInheritance):
 
         return [self.get_example(i) for i in idx]
 
-    def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
+    def __getitem__(self, idx: int | np.integer | str | IndexType) -> Any:
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):

@@ -1,5 +1,5 @@
 import os
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -41,8 +41,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        block_sizes: Union[List[int], Tensor],
-        edge_probs: Union[List[List[float]], Tensor],
+        block_sizes: List[int] | Tensor,
+        edge_probs: List[List[float]] | Tensor,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
         transform: Optional[Callable] = None,

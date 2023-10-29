@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from glob import glob
 from pathlib import Path
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -58,7 +58,7 @@ class HydroNet(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         num_workers: int = 8,
-        clusters: Optional[Union[int, List[int]]] = None,
+        clusters: Optional[int | List[int]] = None,
         use_processed: bool = True,
     ):
         self.name = name
@@ -128,7 +128,7 @@ class HydroNet(InMemoryDataset):
 
     def select_clusters(
         self,
-        clusters: Optional[Union[int, List[int]]],
+        clusters: Optional[int | List[int]],
     ) -> 'Optional[List[Partition]]':
         if self.name is not None:
             clusters = self._validate_name(clusters)

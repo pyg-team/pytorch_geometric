@@ -1,7 +1,7 @@
 # This file defines a set of utilities for remote backends (backends that are
 # characterize as Tuple[FeatureStore, GraphStore]). TODO support for
 # non-heterogeneous graphs (feature stores with a group_name=None).
-from typing import Tuple, Union
+from typing import Tuple
 
 from torch_geometric.data import FeatureStore, GraphStore
 from torch_geometric.typing import EdgeType, NodeType
@@ -12,13 +12,15 @@ from torch_geometric.typing import EdgeType, NodeType
 def _internal_num_nodes(
     feature_store: FeatureStore,
     graph_store: GraphStore,
-    query: Union[NodeType, EdgeType],
-) -> Union[int, Tuple[int, int]]:
+    query: NodeType | EdgeType,
+) -> int | Tuple[int, int]:
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
     in the feature and graph stores that reveal this number."""
-    def _matches_node_type(query: Union[NodeType, EdgeType],
-                           node_type: NodeType) -> bool:
+    def _matches_node_type(
+        query: NodeType | EdgeType,
+        node_type: NodeType,
+    ) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType
             return query[0] == node_type or query[-1] == node_type
         else:

@@ -1,14 +1,5 @@
 import copy
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    NamedTuple,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Tuple
 
 import numpy as np
 import torch
@@ -229,8 +220,9 @@ class TemporalData(BaseData):
                          f"'edge_index' information")
 
     def size(
-        self, dim: Optional[int] = None
-    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
+        self,
+        dim: Optional[int] = None,
+    ) -> Tuple[Optional[int], Optional[int]] | Optional[int]:
         r"""Returns the size of the adjacency matrix induced by the graph."""
         size = (int(self.src.max()), int(self.dst.max()))
         return size if dim is None else size[dim]

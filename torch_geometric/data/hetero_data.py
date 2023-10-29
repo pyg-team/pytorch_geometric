@@ -4,7 +4,7 @@ import warnings
 from collections import defaultdict, namedtuple
 from collections.abc import Mapping
 from itertools import chain
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -32,7 +32,7 @@ from torch_geometric.utils import (
     mask_select,
 )
 
-NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
+NodeOrEdgeStorage = NodeStorage | EdgeStorage
 
 
 class HeteroData(BaseData, FeatureStore, GraphStore):

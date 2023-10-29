@@ -2,7 +2,7 @@ import json
 import os
 import os.path as osp
 import shutil
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional
 
 import torch
 
@@ -121,7 +121,7 @@ class ShapeNet(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        categories: Optional[Union[str, List[str]]] = None,
+        categories: Optional[str | List[str]] = None,
         include_normals: bool = True,
         split: str = 'trainval',
         transform: Optional[Callable] = None,

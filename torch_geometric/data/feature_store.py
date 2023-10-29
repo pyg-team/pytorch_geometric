@@ -24,17 +24,18 @@ import copy
 from abc import abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
 
 # We allow indexing with a tensor, numpy array, Python slicing, or a single
 # integer index.
-IndexType = Union[torch.Tensor, np.ndarray, slice, int]
+IndexType = Tensor | np.ndarray | slice | int
 
 
 class _FieldStatus(Enum):
@@ -120,7 +121,7 @@ class AttrView(CastMixin):
 
     # Advanced indexing #######################################################
 
-    def __getattr__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
+    def __getattr__(self, key: Any) -> 'AttrView' | FeatureTensorType:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute.
         This allows for :class:`AttrView` to be indexed by different values of
@@ -155,7 +156,7 @@ class AttrView(CastMixin):
 
         return out
 
-    def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
+    def __getitem__(self, key: Any) -> 'AttrView' | FeatureTensorType:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute via indexing.
         This allows for :class:`AttrView` to be indexed by different values of
@@ -465,11 +466,9 @@ class FeatureStore:
         attr: TensorAttr,
         tensor: FeatureTensorType,
     ) -> FeatureTensorType:
-        if (isinstance(attr.index, torch.Tensor)
-                and isinstance(tensor, np.ndarray)):
+        if (isinstance(attr.index, Tensor) and isinstance(tensor, np.ndarray)):
             return torch.from_numpy(tensor)
-        if (isinstance(attr.index, np.ndarray)
-                and isinstance(tensor, torch.Tensor)):
+        if (isinstance(attr.index, np.ndarray) and isinstance(tensor, Tensor)):
             return tensor.detach().cpu().numpy()
         return tensor
 

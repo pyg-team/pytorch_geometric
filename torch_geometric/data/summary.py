@@ -1,8 +1,9 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 import torch
+from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Dataset, HeteroData
@@ -19,8 +20,8 @@ class Stats:
     max: float
 
     @classmethod
-    def from_data(cls, data: Union[List[int], List[float], torch.Tensor]):
-        if not isinstance(data, torch.Tensor):
+    def from_data(cls, data: List[int] | List[float] | Tensor):
+        if not isinstance(data, Tensor):
             data = torch.tensor(data)
         data = data.to(torch.float)
 

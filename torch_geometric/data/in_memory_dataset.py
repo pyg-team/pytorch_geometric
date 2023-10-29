@@ -3,17 +3,7 @@ import os.path as osp
 import warnings
 from abc import ABC
 from collections.abc import Mapping, Sequence
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 import torch
 from torch import Tensor
@@ -58,11 +48,11 @@ class InMemoryDataset(Dataset, ABC):
             downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> str | List[str] | Tuple[str, ...]:
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> str | List[str] | Tuple[str, ...]:
         raise NotImplementedError
 
     def __init__(
@@ -303,7 +293,7 @@ class InMemoryDataset(Dataset, ABC):
                              f"attribute '{key}'")
 
 
-def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+def nested_iter(node: Mapping | Sequence) -> Iterable:
     if isinstance(node, Mapping):
         for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
