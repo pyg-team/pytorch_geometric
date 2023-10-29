@@ -30,7 +30,7 @@ Node-level tasks deal with predicting properties for each node within a graph. E
 Node Classification
 ~~~~~~~~~~~~~~~~~~~
 
-Diving more into node classification, we will use the *classification of scientific publications* as our pilot example.
+Diving more into node classification, we will use the `classification of scientific publications <https://paperswithcode.com/dataset/cora>`_ as our pilot example.
 
 We will describe the specificities of that task in terms of dataset, model, training and testing pipelines.
 
@@ -43,7 +43,7 @@ We will describe the specificities of that task in terms of dataset, model, trai
     * *Single-graph datasets*, containing one single large graph. Examples of that are the :class:`Cora` and :class:`~torch_geometric.datasets.KarateClub` datasets.
 
 
-    In our example, we load the :class:`Cora` dataset. This is a single-graph dataset containing 2,708 nodes, 10,556 edges 1,433 features and 7 classes. We need to download that dataset from its parent class, :class:`~torch_geometric.datasets.Planetoid`.
+    In our example, we load the :class:`Cora` dataset, a single-graph dataset containing 2,708 nodes, 10,556 edges 1,433 features and 7 classes. We need to download that dataset from its parent class, :class:`~torch_geometric.datasets.Planetoid`.
 
     A good practice is to normalize features. That is achieved here using the :class:`torch_geometric.transforms.NormalizeFeatures` transformation.
 
@@ -307,11 +307,11 @@ Link-level or edge-level tasks complete our overview by looking to predict prope
 Link Prediction
 ~~~~~~~~~~~~~~~
 
-For this task, we will be taking the `link pred <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/link_pred.py>`_ as a guiding example.
+For this task, we will be taking the `link pred example <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/link_pred.py>`_ as a guide.
 
 #. **Dataset**
 
-    We can resort to link-prediction with different kind of datasets:
+    We can learn link-prediction with different kind of datasets:
 
     * *Multi-graph datasets*, containing multiple distinct graphs. An example of that is the :class:`~torch_geometric.datasets.PPI` dataset.
 
