@@ -118,7 +118,7 @@ class DMoNPooling(torch.nn.Module):
 
         # Spectral loss:
         degrees = torch.einsum('ijk->ij', adj).unsqueeze(-1)  # B x N x 1
-        degrees_t = degrees.transpose(1,2)  # B x 1 x N
+        degrees_t = degrees.transpose(1, 2)  # B x 1 x N
         m = torch.einsum('ijk->i', degrees) / 2  # B
         m_expand = m.unsqueeze(-1).unsqueeze(-1).expand(-1, k, k)  # B x C x C
 
@@ -139,8 +139,9 @@ class DMoNPooling(torch.nn.Module):
         ortho_loss = torch.mean(ortho_loss)
 
         # Cluster loss:
-        cluster_loss = torch.norm(torch.einsum(
-            'ijk->ij', ss)) / torch.sqrt(torch.tensor(s.size(0))).to(x.device) / adj.size(1) * torch.norm(i_s) - 1
+        cluster_loss = torch.norm(torch.einsum('ijk->ij', ss)) / torch.sqrt(
+            torch.tensor(s.size(0))).to(
+                x.device) / adj.size(1) * torch.norm(i_s) - 1
 
         # Fix and normalize coarsened adjacency matrix:
         ind = torch.arange(k, device=out_adj.device)
