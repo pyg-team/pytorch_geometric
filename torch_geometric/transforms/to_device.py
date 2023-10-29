@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
+import torch
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -23,7 +25,7 @@ class ToDevice(BaseTransform):
     """
     def __init__(
         self,
-        device: torch.device | str | int,
+        device: torch.device | str,
         attrs: Optional[List[str]] = None,
         non_blocking: bool = False,
     ):

@@ -26,7 +26,7 @@ import copy
 from abc import abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -37,7 +37,7 @@ from torch_geometric.utils.mixin import CastMixin
 
 # We allow indexing with a tensor, numpy array, Python slicing, or a single
 # integer index.
-IndexType = Tensor | np.ndarray | slice | int
+IndexType = Union[Tensor, np.ndarray, slice, int]
 
 
 class _FieldStatus(Enum):

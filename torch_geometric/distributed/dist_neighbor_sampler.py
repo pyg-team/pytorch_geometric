@@ -44,9 +44,10 @@ from torch_geometric.typing import (
     NodeType,
     Optional,
     Tuple,
+    Union,
 )
 
-NumNeighborsType = NumNeighbors | List[int] | Dict[EdgeType, List[int]]
+NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
 class RPCSamplingCallee(RPCCallBase):
