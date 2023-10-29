@@ -117,13 +117,15 @@ class DMoNPooling(torch.nn.Module):
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ik', adj).transpose(0, 1)
-        m = torch.einsum('ij->', degrees)
+        degrees = torch.einsum('ijk->ij', adj).unsqueeze(-1)  # B x N x 1
+        degrees_t = degrees.transpose(1,2)  # B x 1 x N
+        m = torch.einsum('ijk->i', degrees) / 2  # B
+        m_expand = m.unsqueeze(-1).unsqueeze(-1).expand(-1, k, k)  # B x C x C
 
-        ca = torch.matmul(s.transpose(1, 2), degrees)
-        cb = torch.matmul(degrees.transpose(0, 1), s)
+        ca = torch.matmul(s.transpose(1, 2), degrees)  # B x C x 1
+        cb = torch.matmul(degrees_t, s)  # B x 1 x C
 
-        normalizer = torch.matmul(ca, cb) / 2 / m
+        normalizer = torch.matmul(ca, cb) / 2 / m_expand
         decompose = out_adj - normalizer
         spectral_loss = -_rank3_trace(decompose) / 2 / m
         spectral_loss = torch.mean(spectral_loss)
@@ -138,7 +140,7 @@ class DMoNPooling(torch.nn.Module):
 
         # Cluster loss:
         cluster_loss = torch.norm(torch.einsum(
-            'ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
+            'ijk->ij', ss)) / torch.sqrt(torch.tensor(s.size(0))).to(x.device) / adj.size(1) * torch.norm(i_s) - 1
 
         # Fix and normalize coarsened adjacency matrix:
         ind = torch.arange(k, device=out_adj.device)
