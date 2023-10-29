@@ -1,6 +1,6 @@
 import json
 import os.path as osp
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -21,13 +21,13 @@ class LocalGraphStore(GraphStore):
         self.num_partitions = 1
         self.partition_idx = 0
         # Mapping between node ID and partition ID
-        self.node_pb: Union[Tensor, Dict[NodeType, Tensor]] = None
+        self.node_pb: Tensor | Dict[NodeType, Tensor] = None
         # Mapping between edge ID and partition ID
-        self.edge_pb: Union[Tensor, Dict[EdgeType, Tensor]] = None
+        self.edge_pb: Tensor | Dict[EdgeType, Tensor] = None
         # Meta information related to partition and graph store info
         self.meta: Optional[Dict[Any, Any]] = None
         # Partition labels
-        self.labels: Union[Tensor, Dict[EdgeType, Tensor]] = None
+        self.labels: Tensor | Dict[EdgeType, Tensor] = None
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:

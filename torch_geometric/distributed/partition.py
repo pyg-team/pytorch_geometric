@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import os.path as osp
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import torch
 
@@ -66,7 +66,7 @@ class Partitioner:
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Data | HeteroData,
         num_parts: int,
         root: str,
         recursive: bool = False,

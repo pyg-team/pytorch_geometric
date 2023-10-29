@@ -42,10 +42,9 @@ from torch_geometric.typing import (
     NodeType,
     Optional,
     Tuple,
-    Union,
 )
 
-NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
+NumNeighborsType = NumNeighbors | List[int] | Dict[EdgeType, List[int]]
 
 
 class RPCSamplingCallee(RPCCallBase):
@@ -73,7 +72,7 @@ class DistNeighborSampler:
         num_neighbors: NumNeighborsType,
         channel: Optional[mp.Queue] = None,
         replace: bool = False,
-        subgraph_type: Union[SubgraphType, str] = 'directional',
+        subgraph_type: SubgraphType | str = 'directional',
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
@@ -129,8 +128,10 @@ class DistNeighborSampler:
     # Node-based distributed sampling #########################################
 
     def sample_from_nodes(
-            self, inputs: NodeSamplerInput,
-            **kwargs) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+        self,
+        inputs: NodeSamplerInput,
+        **kwargs,
+    ) -> Optional[SamplerOutput | HeteroSamplerOutput]:
         inputs = NodeSamplerInput.cast(inputs)
         if self.channel is None:
             # synchronous sampling
@@ -148,7 +149,7 @@ class DistNeighborSampler:
         async_func,
         *args,
         **kwargs,
-    ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+    ) -> Optional[SamplerOutput | HeteroSamplerOutput]:
 
         sampler_output = await async_func(*args, **kwargs)
         res = await self._collate_fn(sampler_output)
@@ -160,18 +161,18 @@ class DistNeighborSampler:
 
     async def node_sample(
         self,
-        inputs: Union[NodeSamplerInput, EdgeSamplerInput],
+        inputs: NodeSamplerInput | EdgeSamplerInput,
         dst_time: Tensor = None,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Performs layer by layer distributed sampling from a
         :class:`NodeSamplerInput` and returns the output of the sampling
         procedure.
 
-        Note:
-            In case of distributed training it is required to synchronize the
+        .. note::
+
+            In case of distributed training, it is required to synchronize the
             results between machines after each layer.
         """
-
         input_type = inputs.input_type
         self.input_type = input_type
         batch_size = inputs.input_id.size()[0]
@@ -589,8 +590,9 @@ class DistNeighborSampler:
                                           p_outputs, one_hop_num, src_batch)
 
     async def _collate_fn(
-        self, output: Union[SamplerOutput, HeteroSamplerOutput]
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        self,
+        output: SamplerOutput | HeteroSamplerOutput,
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Collect labels and features for the sampled subgrarph if necessary,
         and put them into a sample message.
         """

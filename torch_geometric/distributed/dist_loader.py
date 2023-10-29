@@ -1,7 +1,7 @@
 import atexit
 import logging
 import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import torch.multiprocessing as mp
 
@@ -42,7 +42,7 @@ class DistLoader:
         current_ctx: DistContext,
         rpc_worker_names: Dict[DistRole, List[str]],
         master_addr: Optional[str] = None,
-        master_port: Optional[Union[int, str]] = None,
+        master_port: Optional[int | str] = None,
         channel: Optional[mp.Queue] = None,
         num_rpc_threads: int = 16,
         rpc_timeout: int = 180,

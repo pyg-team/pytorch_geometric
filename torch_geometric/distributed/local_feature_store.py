@@ -2,7 +2,7 @@ import copy
 import json
 import os.path as osp
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -36,7 +36,7 @@ class LocalTensorAttr(TensorAttr):
     r"""Tensor attribute for storing features without :obj:`index`."""
     def __init__(
         self,
-        group_name: Optional[Union[NodeType, EdgeType]] = _FieldStatus.UNSET,
+        group_name: Optional[NodeType | EdgeType] = _FieldStatus.UNSET,
         attr_name: Optional[str] = _FieldStatus.UNSET,
         index=None,
     ):
@@ -49,18 +49,18 @@ class LocalFeatureStore(FeatureStore):
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
 
-        self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
+        self._feat: Dict[Tuple[NodeType | EdgeType, str], Tensor] = {}
 
         # Save the global node/edge IDs:
-        self._global_id: Dict[Union[NodeType, EdgeType], Tensor] = {}
+        self._global_id: Dict[NodeType | EdgeType, Tensor] = {}
 
         # Save the mapping from global node/edge IDs to indices in `_feat`:
-        self._global_id_to_index: Dict[Union[NodeType, EdgeType], Tensor] = {}
+        self._global_id_to_index: Dict[NodeType | EdgeType, Tensor] = {}
 
         # For partition/rpc information related to distribute features:
         self.num_partitions = 1
         self.partition_idx = 0
-        self.feature_pb: Union[Tensor, Dict[NodeOrEdgeType, Tensor]]
+        self.feature_pb: Tensor | Dict[NodeOrEdgeType, Tensor]
         self.local_only = False
         self.rpc_router: Optional[RPCRouter] = None
         self.meta: Optional[Dict] = None
@@ -73,7 +73,7 @@ class LocalFeatureStore(FeatureStore):
     def put_global_id(
         self,
         global_id: Tensor,
-        group_name: Union[NodeType, EdgeType],
+        group_name: NodeType | EdgeType,
     ) -> bool:
         self._global_id[group_name] = global_id
         self._set_global_id_to_index(group_name)
@@ -81,14 +81,14 @@ class LocalFeatureStore(FeatureStore):
 
     def get_global_id(
         self,
-        group_name: Union[NodeType, EdgeType],
+        group_name: NodeType | EdgeType,
     ) -> Optional[Tensor]:
         return self._global_id.get(group_name)
 
-    def remove_global_id(self, group_name: Union[NodeType, EdgeType]) -> bool:
+    def remove_global_id(self, group_name: NodeType | EdgeType) -> bool:
         return self._global_id.pop(group_name) is not None
 
-    def _set_global_id_to_index(self, group_name: Union[NodeType, EdgeType]):
+    def _set_global_id_to_index(self, group_name: NodeType | EdgeType):
         global_id = self.get_global_id(group_name)
 
         if global_id is None:
@@ -180,7 +180,7 @@ class LocalFeatureStore(FeatureStore):
         self,
         index: Tensor,
         is_node_feat: bool = True,
-        input_type: Optional[Union[NodeType, EdgeType]] = None,
+        input_type: Optional[NodeType | EdgeType] = None,
     ) -> Tuple[Tensor, Tensor]:
         r""" lookup the features in local nodes based on node/edge ids """
         if self.meta['is_hetero']:
@@ -222,7 +222,7 @@ class LocalFeatureStore(FeatureStore):
         self,
         index: Tensor,
         is_node_feat: bool = True,
-        input_type: Optional[Union[NodeType, EdgeType]] = None,
+        input_type: Optional[NodeType | EdgeType] = None,
     ) -> torch.futures.Future:
         r"""Fetch the remote features with the remote node/edge ids"""
 
@@ -269,7 +269,7 @@ class LocalFeatureStore(FeatureStore):
         self,
         index: Tensor,
         is_node_feat: bool = True,
-        input_type: Optional[Union[NodeType, EdgeType]] = None,
+        input_type: Optional[NodeType | EdgeType] = None,
     ) -> Tensor:
         r"""Lookup of features in remote nodes."""
         if self.meta['is_hetero']:
