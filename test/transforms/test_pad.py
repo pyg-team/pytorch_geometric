@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numbers
 from typing import Dict, Generator, List, Optional, Tuple
 

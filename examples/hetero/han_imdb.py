@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os.path as osp
 from typing import Dict, List
 

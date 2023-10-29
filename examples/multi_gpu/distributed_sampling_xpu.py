@@ -13,6 +13,7 @@ Additional requirements:
 Run with:
     mpirun -np 2 python distributed_sampling_xpu.py
 """
+from __future__ import annotations
 
 import copy
 import os
