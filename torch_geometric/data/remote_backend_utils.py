@@ -1,6 +1,8 @@
 # This file defines a set of utilities for remote backends (backends that are
 # characterize as Tuple[FeatureStore, GraphStore]). TODO support for
 # non-heterogeneous graphs (feature stores with a group_name=None).
+from __future__ import annotations
+
 from typing import Tuple
 
 from torch_geometric.data import FeatureStore, GraphStore
