@@ -13,8 +13,6 @@ Additional requirements:
 Run with:
     mpirun -np 2 python distributed_sampling_xpu.py
 """
-from __future__ import annotations
-
 import copy
 import os
 import os.path as osp
@@ -76,7 +74,7 @@ class GAT(torch.nn.Module):
     def inference(
         self,
         x_all: Tensor,
-        device: str | torch.device,
+        device: torch.device,
         subgraph_loader: NeighborLoader,
     ) -> Tensor:
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
