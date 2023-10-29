@@ -684,6 +684,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     data[node_type][key] = value
 
         for edge_type in self.edge_types:
+            if 'edge_index' not in self[edge_type]:
+                continue
+
             src, _, dst = edge_type
 
             src_subset = subset_dict.get(src)

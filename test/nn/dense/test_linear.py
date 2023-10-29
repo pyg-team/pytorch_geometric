@@ -66,7 +66,8 @@ def test_load_lazy_linear(dim1, dim2, bias, device):
     if bias:
         assert isinstance(lin1.bias, torch.nn.Parameter)
         assert isinstance(lin2.bias, torch.nn.Parameter)
-        assert torch.allclose(lin1.bias, lin2.bias)
+        if dim1 != -1:  # Only check for equality on materialized bias:
+            assert torch.allclose(lin1.bias, lin2.bias)
     else:
         assert lin1.bias is None
         assert lin2.bias is None

@@ -40,10 +40,10 @@ To develop PyG on your machine, here are some tips:
    pip uninstall torch-geometric  # run this command twice
    ```
 
-4. Clone a copy of PyG from source:
+4. Fork and clone the PyG repository:
 
    ```bash
-   git clone https://github.com/pyg-team/pytorch_geometric
+   git clone https://github.com/<your_username>/pytorch_geometric
    cd pytorch_geometric
    ```
 
