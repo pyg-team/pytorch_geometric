@@ -5,7 +5,7 @@ from time import perf_counter
 from typing import Any, Tuple, Union
 
 import intel_extension_for_pytorch as ipex
-import oneccl_bindings_for_pytorch
+import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
@@ -108,9 +108,10 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
         'paper'].num_features if args.dataset == 'ogbn-mag' \
         else data.num_features
 
-    assert args.model in supported_sets[
-        args.
-        dataset], f'Configuration of {args.dataset} + {args.model} not supported'
+    if args.model not in supported_sets[args.dataset]:
+        err_msg = (f'Configuration of {args.dataset} + {args.model}'
+                   'not supported')
+        raise RuntimeError(err_msg)
     if rank == 0:
         print(f'Training bench for {args.model}:')
 
@@ -123,9 +124,9 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
     elif type(num_neighbors) is int:
         num_neighbors = [num_neighbors] * args.num_layers
 
-    assert len(
-        num_neighbors
-    ) == args.num_layers, f'num_neighbors={num_neighbors} lenght != num of layers={args.num_layers}'
+    if len(num_neighbors) != args.num_layers:
+        err_msg = (f'num_neighbors={num_neighbors} lenght != num of'
+                   'layers={args.num_layers}')
 
     kwargs = {
         'num_neighbors': num_neighbors,
