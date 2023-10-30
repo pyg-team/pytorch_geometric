@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 
 from torch_geometric.nn import DMoNPooling
@@ -18,5 +17,5 @@ def test_dmon_pooling():
     assert x.size() == (2, 10, 16)
     assert adj.size() == (2, 10, 10)
     assert -1 <= spectral_loss <= 0.5
-    assert 0 <= ortho_loss <= np.sqrt(2)
-    assert 0 <= cluster_loss <= np.sqrt(num_clusters) - 1
+    assert 0 <= ortho_loss <= torch.sqrt(torch.tensor(2))
+    assert 0 <= cluster_loss <= torch.sqrt(torch.tensor(num_clusters)) - 1
