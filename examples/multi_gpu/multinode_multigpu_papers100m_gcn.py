@@ -44,9 +44,11 @@ class GCN(torch.nn.Module):
         return x
 
 
-def run(device, world_size, data, split_idx, model):
+def run(world_size, data, split_idx, model):
     local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
+    torch.cuda.set_device(local_id)
+    device = torch.device(local_id)
     if rank == 0:
         print(f'Using {nprocs} GPUs...')
 
@@ -139,15 +141,9 @@ if __name__ == '__main__':
     # Setup multi-node:
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
-    if dist.is_initialized():
-        device_id = dist.get_rank()
-    else:
-        device_id = 0
-    torch.cuda.set_device(device_id)
-    device = torch.device(device_id)
-
+    assert dist.is_initialized(), "Distributed cluster not initialized"
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 64, dataset.num_classes)
 
-    run(device, nprocs, dataset[0], split_idx, model)
+    run(nprocs, dataset[0], split_idx, model)
