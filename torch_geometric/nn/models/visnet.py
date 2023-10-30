@@ -6,13 +6,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from torch.autograd import grad
-from torch_geometric.utils import scatter
 
 from torch_geometric.nn import MessagePassing, radius_graph
+from torch_geometric.utils import scatter
 
 
 class CosineCutoff(nn.Module):
-
     def __init__(self, cutoff):
         super(CosineCutoff, self).__init__()
 
@@ -45,8 +44,8 @@ class ExpNormalSmearing(nn.Module):
     def _initial_params(self):
         start_value = torch.exp(torch.scalar_tensor(-self.cutoff))
         means = torch.linspace(start_value, 1, self.num_rbf)
-        betas = torch.tensor(
-            [(2 / self.num_rbf * (1 - start_value)) ** -2] * self.num_rbf)
+        betas = torch.tensor([(2 / self.num_rbf * (1 - start_value))**-2] *
+                             self.num_rbf)
         return means, betas
 
     def reset_parameters(self):
@@ -56,22 +55,23 @@ class ExpNormalSmearing(nn.Module):
 
     def forward(self, dist):
         dist = dist.unsqueeze(-1)
-        return self.cutoff_fn(dist) * torch.exp(-self.betas * (torch.exp(self.alpha * (-dist)) - self.means) ** 2)
+        return self.cutoff_fn(dist) * torch.exp(
+            -self.betas * (torch.exp(self.alpha * (-dist)) - self.means)**2)
 
 
 class Sphere(nn.Module):
-
     def __init__(self, lmax=2):
         super(Sphere, self).__init__()
         self.lmax = lmax
 
     def forward(self, edge_vec):
-        edge_sh = self._spherical_harmonics(
-            self.lmax, edge_vec[..., 0], edge_vec[..., 1], edge_vec[..., 2])
+        edge_sh = self._spherical_harmonics(self.lmax, edge_vec[..., 0],
+                                            edge_vec[..., 1], edge_vec[..., 2])
         return edge_sh
 
     @staticmethod
-    def _spherical_harmonics(lmax: int, x: torch.Tensor, y: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+    def _spherical_harmonics(lmax: int, x: torch.Tensor, y: torch.Tensor,
+                             z: torch.Tensor) -> torch.Tensor:
 
         sh_1_0, sh_1_1, sh_1_2 = x, y, z
 
@@ -87,7 +87,9 @@ class Sphere(nn.Module):
         sh_2_4 = math.sqrt(3.0) / 2.0 * (z.pow(2) - x.pow(2))
 
         if lmax == 2:
-            return torch.stack([sh_1_0, sh_1_1, sh_1_2, sh_2_0, sh_2_1, sh_2_2, sh_2_3, sh_2_4], dim=-1)
+            return torch.stack([
+                sh_1_0, sh_1_1, sh_1_2, sh_2_0, sh_2_1, sh_2_2, sh_2_3, sh_2_4
+            ], dim=-1)
 
 
 class VecLayerNorm(nn.Module):
@@ -157,7 +159,8 @@ class Distance(nn.Module):
 
     def forward(self, pos, batch):
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                  loop=self.loop, max_num_neighbors=self.max_num_neighbors)
+                                  loop=self.loop,
+                                  max_num_neighbors=self.max_num_neighbors)
         edge_vec = pos[edge_index[0]] - pos[edge_index[1]]
 
         if self.loop:
@@ -207,7 +210,6 @@ class NeighborEmbedding(MessagePassing):
 
 
 class EdgeEmbedding(MessagePassing):
-
     def __init__(self, num_rbf, hidden_channels):
         super(EdgeEmbedding, self).__init__(aggr=None)
         self.edge_proj = nn.Linear(num_rbf, hidden_channels)
@@ -243,8 +245,7 @@ class ViS_MP(MessagePassing):
         assert hidden_channels % num_heads == 0, (
             f"The number of hidden channels ({hidden_channels}) "
             f"must be evenly divisible by the number of "
-            f"attention heads ({num_heads})"
-        )
+            f"attention heads ({num_heads})")
 
         self.num_heads = num_heads
         self.hidden_channels = hidden_channels
@@ -252,16 +253,17 @@ class ViS_MP(MessagePassing):
         self.last_layer = last_layer
 
         self.layernorm = nn.LayerNorm(hidden_channels)
-        self.vec_layernorm = VecLayerNorm(
-            hidden_channels, trainable=trainable_vecnorm, norm_type=vecnorm_type)
+        self.vec_layernorm = VecLayerNorm(hidden_channels,
+                                          trainable=trainable_vecnorm,
+                                          norm_type=vecnorm_type)
 
         self.act = nn.SiLU()
         self.attn_activation = nn.SiLU()
 
         self.cutoff = CosineCutoff(cutoff)
 
-        self.vec_proj = nn.Linear(
-            hidden_channels, hidden_channels * 3, bias=False)
+        self.vec_proj = nn.Linear(hidden_channels, hidden_channels * 3,
+                                  bias=False)
 
         self.q_proj = nn.Linear(hidden_channels, hidden_channels)
         self.k_proj = nn.Linear(hidden_channels, hidden_channels)
@@ -272,10 +274,10 @@ class ViS_MP(MessagePassing):
         self.s_proj = nn.Linear(hidden_channels, hidden_channels * 2)
         if not self.last_layer:
             self.f_proj = nn.Linear(hidden_channels, hidden_channels)
-            self.w_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
-            self.w_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
+            self.w_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.w_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
 
         self.o_proj = nn.Linear(hidden_channels, hidden_channels * 3)
 
@@ -319,13 +321,13 @@ class ViS_MP(MessagePassing):
         q = self.q_proj(x).reshape(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).reshape(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        dk = self.act(self.dk_proj(f_ij)).reshape(-1,
-                                                  self.num_heads, self.head_dim)
-        dv = self.act(self.dv_proj(f_ij)).reshape(-1,
-                                                  self.num_heads, self.head_dim)
+        dk = self.act(self.dk_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
+        dv = self.act(self.dv_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
 
-        vec1, vec2, vec3 = torch.split(
-            self.vec_proj(vec), self.hidden_channels, dim=-1)
+        vec1, vec2, vec3 = torch.split(self.vec_proj(vec),
+                                       self.hidden_channels, dim=-1)
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(
@@ -345,8 +347,8 @@ class ViS_MP(MessagePassing):
         dx = vec_dot * o2 + o3
         dvec = vec3 * o1.unsqueeze(1) + vec_out
         if not self.last_layer:
-            df_ij = self.edge_updater(
-                edge_index, vec=vec, d_ij=d_ij, f_ij=f_ij)
+            df_ij = self.edge_updater(edge_index, vec=vec, d_ij=d_ij,
+                                      f_ij=f_ij)
             return dx, dvec, df_ij
         else:
             return dx, dvec, None
@@ -359,8 +361,8 @@ class ViS_MP(MessagePassing):
         v_j = v_j * dv
         v_j = (v_j * attn.unsqueeze(2)).view(-1, self.hidden_channels)
 
-        s1, s2 = torch.split(self.act(self.s_proj(v_j)),
-                             self.hidden_channels, dim=1)
+        s1, s2 = torch.split(self.act(self.s_proj(v_j)), self.hidden_channels,
+                             dim=1)
         vec_j = vec_j * s1.unsqueeze(1) + s2.unsqueeze(1) * d_ij.unsqueeze(2)
 
         return v_j, vec_j
@@ -399,8 +401,7 @@ class ViS_MP_Vertex(MessagePassing):
         assert hidden_channels % num_heads == 0, (
             f"The number of hidden channels ({hidden_channels}) "
             f"must be evenly divisible by the number of "
-            f"attention heads ({num_heads})"
-        )
+            f"attention heads ({num_heads})")
 
         self.num_heads = num_heads
         self.hidden_channels = hidden_channels
@@ -408,16 +409,17 @@ class ViS_MP_Vertex(MessagePassing):
         self.last_layer = last_layer
 
         self.layernorm = nn.LayerNorm(hidden_channels)
-        self.vec_layernorm = VecLayerNorm(
-            hidden_channels, trainable=trainable_vecnorm, norm_type=vecnorm_type)
+        self.vec_layernorm = VecLayerNorm(hidden_channels,
+                                          trainable=trainable_vecnorm,
+                                          norm_type=vecnorm_type)
 
         self.act = nn.SiLU()
         self.attn_activation = nn.SiLU()
 
         self.cutoff = CosineCutoff(cutoff)
 
-        self.vec_proj = nn.Linear(
-            hidden_channels, hidden_channels * 3, bias=False)
+        self.vec_proj = nn.Linear(hidden_channels, hidden_channels * 3,
+                                  bias=False)
 
         self.q_proj = nn.Linear(hidden_channels, hidden_channels)
         self.k_proj = nn.Linear(hidden_channels, hidden_channels)
@@ -428,14 +430,14 @@ class ViS_MP_Vertex(MessagePassing):
         self.s_proj = nn.Linear(hidden_channels, hidden_channels * 2)
         if not self.last_layer:
             self.f_proj = nn.Linear(hidden_channels, hidden_channels * 2)
-            self.w_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
-            self.w_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
-            self.t_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
-            self.t_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False)
+            self.w_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.w_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.t_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.t_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
 
         self.o_proj = nn.Linear(hidden_channels, hidden_channels * 3)
 
@@ -481,13 +483,13 @@ class ViS_MP_Vertex(MessagePassing):
         q = self.q_proj(x).reshape(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).reshape(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        dk = self.act(self.dk_proj(f_ij)).reshape(-1,
-                                                  self.num_heads, self.head_dim)
-        dv = self.act(self.dv_proj(f_ij)).reshape(-1,
-                                                  self.num_heads, self.head_dim)
+        dk = self.act(self.dk_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
+        dv = self.act(self.dv_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
 
-        vec1, vec2, vec3 = torch.split(
-            self.vec_proj(vec), self.hidden_channels, dim=-1)
+        vec1, vec2, vec3 = torch.split(self.vec_proj(vec),
+                                       self.hidden_channels, dim=-1)
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(
@@ -507,8 +509,8 @@ class ViS_MP_Vertex(MessagePassing):
         dx = vec_dot * o2 + o3
         dvec = vec3 * o1.unsqueeze(1) + vec_out
         if not self.last_layer:
-            df_ij = self.edge_updater(
-                edge_index, vec=vec, d_ij=d_ij, f_ij=f_ij)
+            df_ij = self.edge_updater(edge_index, vec=vec, d_ij=d_ij,
+                                      f_ij=f_ij)
             return dx, dvec, df_ij
         else:
             return dx, dvec, None
@@ -521,8 +523,8 @@ class ViS_MP_Vertex(MessagePassing):
         v_j = v_j * dv
         v_j = (v_j * attn.unsqueeze(2)).view(-1, self.hidden_channels)
 
-        s1, s2 = torch.split(self.act(self.s_proj(v_j)),
-                             self.hidden_channels, dim=1)
+        s1, s2 = torch.split(self.act(self.s_proj(v_j)), self.hidden_channels,
+                             dim=1)
         vec_j = vec_j * s1.unsqueeze(1) + s2.unsqueeze(1) * d_ij.unsqueeze(2)
 
         return v_j, vec_j
@@ -537,8 +539,8 @@ class ViS_MP_Vertex(MessagePassing):
         t2 = self.vector_rejection(self.t_src_proj(vec_i), -d_ij)
         t_dot = (t1 * t2).sum(dim=1)
 
-        f1, f2 = torch.split(self.act(self.f_proj(f_ij)),
-                             self.hidden_channels, dim=-1)
+        f1, f2 = torch.split(self.act(self.f_proj(f_ij)), self.hidden_channels,
+                             dim=-1)
 
         return f1 * w_dot + f2 * t_dot
 
@@ -556,7 +558,6 @@ class ViS_MP_Vertex(MessagePassing):
 
 
 class ViSNetBlock(nn.Module):
-
     def __init__(
         self,
         lmax=1,
@@ -586,34 +587,31 @@ class ViSNetBlock(nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
         self.embedding = nn.Embedding(max_z, hidden_channels)
-        self.distance = Distance(
-            cutoff, max_num_neighbors=max_num_neighbors, loop=True)
+        self.distance = Distance(cutoff, max_num_neighbors=max_num_neighbors,
+                                 loop=True)
         self.sphere = Sphere(lmax=lmax)
-        self.distance_expansion = ExpNormalSmearing(
-            cutoff, num_rbf, trainable_rbf)
-        self.neighbor_embedding = NeighborEmbedding(
-            hidden_channels, num_rbf, cutoff, max_z)
-        self.edge_embedding = EdgeEmbedding(
-            num_rbf, hidden_channels)
+        self.distance_expansion = ExpNormalSmearing(cutoff, num_rbf,
+                                                    trainable_rbf)
+        self.neighbor_embedding = NeighborEmbedding(hidden_channels, num_rbf,
+                                                    cutoff, max_z)
+        self.edge_embedding = EdgeEmbedding(num_rbf, hidden_channels)
 
         self.vis_mp_layers = nn.ModuleList()
-        vis_mp_kwargs = dict(
-            num_heads=num_heads,
-            hidden_channels=hidden_channels,
-            cutoff=cutoff,
-            vecnorm_type=vecnorm_type,
-            trainable_vecnorm=trainable_vecnorm
-        )
+        vis_mp_kwargs = dict(num_heads=num_heads,
+                             hidden_channels=hidden_channels, cutoff=cutoff,
+                             vecnorm_type=vecnorm_type,
+                             trainable_vecnorm=trainable_vecnorm)
         vis_mp_class = ViS_MP if not vertex else ViS_MP_Vertex
         for _ in range(num_layers - 1):
             layer = vis_mp_class(last_layer=False, **vis_mp_kwargs)
             self.vis_mp_layers.append(layer)
-        self.vis_mp_layers.append(vis_mp_class(
-            last_layer=True, **vis_mp_kwargs))
+        self.vis_mp_layers.append(
+            vis_mp_class(last_layer=True, **vis_mp_kwargs))
 
         self.out_norm = nn.LayerNorm(hidden_channels)
-        self.vec_out_norm = VecLayerNorm(
-            hidden_channels, trainable=trainable_vecnorm, norm_type=vecnorm_type)
+        self.vec_out_norm = VecLayerNorm(hidden_channels,
+                                         trainable=trainable_vecnorm,
+                                         norm_type=vecnorm_type)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -637,20 +635,20 @@ class ViSNetBlock(nn.Module):
             torch.norm(edge_vec[mask], dim=1).unsqueeze(1)
         edge_vec = self.sphere(edge_vec)
         x = self.neighbor_embedding(z, x, edge_index, edge_weight, edge_attr)
-        vec = torch.zeros(x.size(0), ((self.lmax + 1) ** 2) -
-                          1, x.size(1), device=x.device)
+        vec = torch.zeros(x.size(0), ((self.lmax + 1)**2) - 1, x.size(1),
+                          device=x.device)
         edge_attr = self.edge_embedding(edge_index, edge_attr, x)
 
         # ViS-MP Layers
         for attn in self.vis_mp_layers[:-1]:
-            dx, dvec, dedge_attr = attn(
-                x, vec, edge_index, edge_weight, edge_attr, edge_vec)
+            dx, dvec, dedge_attr = attn(x, vec, edge_index, edge_weight,
+                                        edge_attr, edge_vec)
             x = x + dx
             vec = vec + dvec
             edge_attr = edge_attr + dedge_attr
 
-        dx, dvec, _ = self.vis_mp_layers[-1](x, vec,
-                                             edge_index, edge_weight, edge_attr, edge_vec)
+        dx, dvec, _ = self.vis_mp_layers[-1](x, vec, edge_index, edge_weight,
+                                             edge_attr, edge_vec)
         x = x + dx
         vec = vec + dvec
 
@@ -661,7 +659,6 @@ class ViSNetBlock(nn.Module):
 
 
 class GatedEquivariantBlock(nn.Module):
-
     def __init__(
         self,
         hidden_channels,
@@ -675,8 +672,8 @@ class GatedEquivariantBlock(nn.Module):
         if intermediate_channels is None:
             intermediate_channels = hidden_channels
 
-        self.vec1_proj = nn.Linear(
-            hidden_channels, hidden_channels, bias=False)
+        self.vec1_proj = nn.Linear(hidden_channels, hidden_channels,
+                                   bias=False)
         self.vec2_proj = nn.Linear(hidden_channels, out_channels, bias=False)
 
         self.update_net = nn.Sequential(
@@ -738,7 +735,6 @@ class EquivariantScalar(nn.Module):
 
 
 class Atomref(nn.Module):
-
     def __init__(self, atomref=None, max_z=100):
         super(Atomref, self).__init__()
         if atomref is None:

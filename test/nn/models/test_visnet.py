@@ -4,6 +4,7 @@ import torch
 from torch_geometric.nn import ViSNet
 from torch_geometric.testing import withPackage
 
+
 @withPackage('torch_cluster')
 @pytest.mark.parametrize('Version', [1, 2])
 def test_visnet(Version):
@@ -12,9 +13,11 @@ def test_visnet(Version):
     batch = torch.zeros(20, dtype=torch.long)
 
     if Version == 1:
-        kwargs = dict(lmax=2, derivative=True, vecnorm_type='none', vertex=False)
+        kwargs = dict(lmax=2, derivative=True, vecnorm_type='none',
+                      vertex=False)
     else:
-        kwargs = dict(lmax=1, derivative=False, vecnorm_type='max_min', vertex=True)
+        kwargs = dict(lmax=1, derivative=False, vecnorm_type='max_min',
+                      vertex=True)
 
     model = ViSNet(
         trainable_vecnorm=False,
