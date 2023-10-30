@@ -4,10 +4,17 @@ import os
 import numpy as np
 import torch
 import torch.distributed as dist
+from torch.distributed.algorithms.join import Join
 import torch.multiprocessing as mp
 from ogb.nodeproppred import PygNodePropPredDataset
+import time
 
+import torch
+import torch.nn.functional as F
+from torch.nn.parallel import DistributedDataParallel
+from torchmetrics import Accuracy
 import torch_geometric
+import tempfile
 
 os.environ['CUDF_SPILL'] = '1'
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
@@ -72,7 +79,6 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
     if cugraph_data_loader:
         import cupy
         import rmm
-        import torch
         """
         rmm.reinitialize(
             devices=[rank],
@@ -102,13 +108,6 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes, cugraph_data_loader,
               scheduler_address=None, tempdir=None):
-    import time
-
-    import torch
-    import torch.nn.functional as F
-    from torch.nn.parallel import DistributedDataParallel
-    from torchmetrics import Accuracy
-
     init_pytorch_worker(
         rank,
         world_size,
@@ -144,11 +143,6 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
         from distributed import Event as Dask_Event
         event = Dask_Event("cugraph_store_creation_event")
-
-        import torch.distributed as dist
-        from torch.distributed.algorithms.join import Join
-
-        import torch_geometric
         dist.barrier()
 
         if rank == 0:
@@ -336,7 +330,6 @@ if __name__ == '__main__':
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
 
-    import tempfile
     with tempfile.TemporaryDirectory() as tempdir:
         mp.spawn(
             run_train,
