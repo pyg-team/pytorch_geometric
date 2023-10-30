@@ -1,13 +1,14 @@
 import argparse
 import os
+
 import numpy as np
 
 os.environ['CUDF_SPILL'] = '1'
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
 
+
 def start_dask_cluster():
     from cugraph.testing.mg_utils import enable_spilling
-
     from dask_cuda import LocalCUDACluster
 
     cluster = LocalCUDACluster(
@@ -25,9 +26,10 @@ def start_dask_cluster():
     del client
     return cluster
 
+
 def create_dask_client(scheduler_address):
-    from dask.distributed import Client, Lock
     from cugraph.dask.comms import comms as Comms
+    from dask.distributed import Client, Lock
 
     client = Client(scheduler_address)
     lock = Lock('comms_init')
@@ -62,10 +64,9 @@ def pyg_num_work(world_size):
 
 def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
     if cugraph_data_loader:
-        import rmm
         import cupy
+        import rmm
         import torch
-
         """
         rmm.reinitialize(
             devices=[rank],
@@ -91,17 +92,17 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
     os.environ['MASTER_PORT'] = '12355'
 
     import torch.distributed as dist
-    dist.init_process_group('nccl', rank=rank, world_size=world_size)       
+    dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
-              split_idx, num_classes, cugraph_data_loader, scheduler_address=None, tempdir=None):
-    import torch
-    from torch.nn.parallel import DistributedDataParallel
-    import torch.nn.functional as F
-
+              split_idx, num_classes, cugraph_data_loader,
+              scheduler_address=None, tempdir=None):
     import time
 
+    import torch
+    import torch.nn.functional as F
+    from torch.nn.parallel import DistributedDataParallel
     from torchmetrics import Accuracy
 
     init_pytorch_worker(
@@ -130,7 +131,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     if cugraph_data_loader:
         import cugraph
         from cugraph_pyg.data import CuGraphStore
-        from cugraph_pyg.loader import CuGraphNeighborLoader, BulkSampleLoader
+        from cugraph_pyg.loader import BulkSampleLoader, CuGraphNeighborLoader
         G = {("N", "E", "N"): data.edge_index}
         N = {"N": data.num_nodes}
         fs = cugraph.gnn.FeatureStore(backend="torch")
@@ -140,13 +141,16 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         from distributed import Event as Dask_Event
         event = Dask_Event("cugraph_store_creation_event")
 
-        import torch_geometric
         import torch.distributed as dist
         from torch.distributed.algorithms.join import Join
+
+        import torch_geometric
         dist.barrier()
 
         if rank == 0:
-            print("Rank 0 creating its cugraph store and initializing distributed graph")
+            print(
+                "Rank 0 creating its cugraph store and initializing distributed graph"
+            )
             cugraph_store = CuGraphStore(fs, G, N, multi_gpu=True)
             event.set()
             print("Distributed graph initialization complete.")
@@ -154,13 +158,16 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             print(f"Rank {rank} waiting for distributed graph initialization")
             if event.wait(timeout=1000):
                 print(f"Rank {rank} proceeding with store creation")
-                cugraph_store = CuGraphStore(fs, {k:len(v) for k,v in G.items()}, N, multi_gpu=False)
+                cugraph_store = CuGraphStore(fs, {
+                    k: len(v)
+                    for k, v in G.items()
+                }, N, multi_gpu=False)
                 print(f"Rank {rank} created store")
 
         dist.barrier()
         if rank == 0:
             for epoch in range(epochs):
-                train_path=os.path.join(tempdir, f'samples_{epoch}')
+                train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
                 # runs sampling for the training epoch
                 BulkSampleLoader(
@@ -169,8 +176,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     input_nodes=split_idx['train'],
                     directory=train_path,
                     #shuffle=True, drop_last=True,
-                    **kwargs
-                )
+                    **kwargs)
 
             print('validation', len(split_idx['valid']))
             eval_loader = CuGraphNeighborLoader(cugraph_store,
@@ -179,7 +185,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             test_loader = CuGraphNeighborLoader(cugraph_store,
                                                 input_nodes=split_idx['test'],
                                                 **kwargs)
-        
+
         dist.barrier()
     else:
         from torch_geometric.loader import NeighborLoader
@@ -204,17 +210,12 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         if cugraph_data_loader:
             train_path = os.path.join(tempdir, f'samples_{epoch}')
 
-            input_files=np.array_split(
-                np.array(os.listdir(train_path)),
-                world_size
-            )[rank]
+            input_files = np.array_split(np.array(os.listdir(train_path)),
+                                         world_size)[rank]
 
-            train_loader = BulkSampleLoader(
-                cugraph_store,
-                cugraph_store,
-                directory=train_path,
-                input_files=input_files
-            )
+            train_loader = BulkSampleLoader(cugraph_store, cugraph_store,
+                                            directory=train_path,
+                                            input_files=input_files)
         with Join([model]):
             for i, batch in enumerate(train_loader):
                 if i >= warmup_steps:
@@ -233,18 +234,18 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 optimizer.step()
                 if rank == 0 and i % 10 == 0:
                     print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
-                        ", Loss: " + str(loss))
+                          ", Loss: " + str(loss))
         dist.barrier()
         with Join([model]):
             if rank == 0:
                 print("Average Training Iteration Time:",
-                    (time.time() - start) / (i - warmup_steps), "s/iter")
+                      (time.time() - start) / (i - warmup_steps), "s/iter")
                 acc_sum = 0.0
                 with torch.no_grad():
                     for i, batch in enumerate(eval_loader):
                         if i >= eval_steps:
                             break
-                        
+
                         batch = batch.to(rank)
                         if isinstance(batch, torch_geometric.data.HeteroData):
                             batch = batch.to_homogeneous()
@@ -253,10 +254,10 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                         batch.y = batch.y.to(torch.long)
                         out = model.module(batch.x, batch.edge_index)
                         acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                    batch.y[:batch_size])
+                                       batch.y[:batch_size])
                 print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
         dist.barrier()
-    
+
     with Join([model]):
         if rank == 0:
             acc_sum = 0.0
@@ -270,10 +271,10 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                batch.y[:batch_size])
+                                   batch.y[:batch_size])
                 print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
     dist.barrier()
-    
+
     if cugraph_data_loader:
         shutdown_dask_client(client)
     dist.barrier()
@@ -313,9 +314,9 @@ if __name__ == '__main__':
 
     import torch
     import torch.multiprocessing as mp
-    import torch_geometric
-
     from ogb.nodeproppred import PygNodePropPredDataset
+
+    import torch_geometric
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
@@ -340,15 +341,12 @@ if __name__ == '__main__':
     import tempfile
     with tempfile.TemporaryDirectory() as tempdir:
         mp.spawn(
-            run_train, 
+            run_train,
             args=(data, world_size, model, args.epochs, args.batch_size,
-                args.fan_out, split_idx, dataset.num_classes,
-                args.cugraph_data_loader,
-                None if cluster is None else cluster.scheduler_address,
-                tempdir
-            ),
-            nprocs=world_size,
-            join=True)
-    
+                  args.fan_out, split_idx, dataset.num_classes,
+                  args.cugraph_data_loader,
+                  None if cluster is None else cluster.scheduler_address,
+                  tempdir), nprocs=world_size, join=True)
+
     if cluster is not None:
         cluster.close()
