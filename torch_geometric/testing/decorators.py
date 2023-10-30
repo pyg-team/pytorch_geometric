@@ -169,6 +169,7 @@ def withCUDA(func: Callable):
     devices = [torch.device('cpu')]
     if torch.cuda.is_available():
         devices.append(torch.device('cuda:0'))
+
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
     if device:
