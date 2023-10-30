@@ -180,7 +180,7 @@ class GCNConv(MessagePassing):
         t: float = 1.0,
         normalize: bool = True,
         bias: bool = False,
-        weight_initializer: str = "normal",
+        weight_initializer: str = "glorot",
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
