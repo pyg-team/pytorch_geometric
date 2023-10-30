@@ -600,7 +600,7 @@ class ViSNetBlock(nn.Module):
         self.embedding = nn.Embedding(max_z, hidden_channels)
         self.distance = Distance(
             cutoff, max_num_neighbors=max_num_neighbors, loop=True)
-        self.sphere = Sphere(l=lmax)
+        self.sphere = Sphere(lmax=lmax)
         self.distance_expansion = ExpNormalSmearing(
             cutoff, num_rbf, trainable_rbf)
         self.neighbor_embedding = NeighborEmbedding(
@@ -861,17 +861,3 @@ class ViSNet(nn.Module):
                     "Autograd returned None for the force prediction.")
             return out, -dy
         return out, None
-
-
-if __name__ == '__main__':
-
-    from torch_geometric.datasets import MD17
-    from torch_geometric.data import Batch
-
-    datasets = MD17(root='/tmp/MD17', name='aspirin', transform=None)
-    data = Batch.from_data_list(datasets[:1])
-
-    model = ViSNet(derivative=True)
-    energy, forces = model(data.z, data.pos, data.batch)
-    print(energy)
-    print(forces)
