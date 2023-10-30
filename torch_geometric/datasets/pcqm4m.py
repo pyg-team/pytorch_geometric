@@ -76,7 +76,7 @@ class PCQM4Mv2(OnDiskDataset):
         ]
 
     def download(self):
-        path = download_url(self.url_2d, self.raw_dir)
+        path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
