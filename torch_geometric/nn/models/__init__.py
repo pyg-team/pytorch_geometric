@@ -25,6 +25,7 @@ from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
 from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
+from .visnet import ViSNet
 
 __all__ = classes = [
     'MLP',
@@ -66,4 +67,5 @@ __all__ = classes = [
     'GNNFF',
     'PMLP',
     'NeuralFingerprint',
+    'ViSNet'
 ]
