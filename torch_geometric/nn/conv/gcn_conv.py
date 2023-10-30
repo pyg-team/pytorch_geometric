@@ -179,7 +179,7 @@ class GCNConv(MessagePassing):
         add_self_loops: bool = True,
         t: float = 1.0,
         normalize: bool = True,
-        bias: bool = False,
+        bias: bool = True,
         weight_initializer: str = "glorot",
         **kwargs,
     ):
