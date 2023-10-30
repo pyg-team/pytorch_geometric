@@ -103,9 +103,7 @@ class VecLayerNorm(nn.Module):
         else:
             self.register_buffer("weight", weight)
 
-        if norm_type == "rms":
-            self.norm = self.rms_norm
-        elif norm_type == "max_min":
+        if norm_type == "max_min":
             self.norm = self.max_min_norm
         else:
             self.norm = self.none_norm
@@ -118,16 +116,6 @@ class VecLayerNorm(nn.Module):
 
     def none_norm(self, vec):
         return vec
-
-    def rms_norm(self, vec):
-        dist = torch.norm(vec, dim=1)
-
-        if (dist == 0).all():
-            return torch.zeros_like(vec)
-
-        dist = dist.clamp(min=self.eps)
-        dist = torch.sqrt(torch.mean(dist ** 2, dim=-1))
-        return vec / F.relu(dist).unsqueeze(-1).unsqueeze(-1)
 
     def max_min_norm(self, vec):
         dist = torch.norm(vec, dim=1, keepdim=True)

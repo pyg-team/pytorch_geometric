@@ -5,20 +5,18 @@ from torch_geometric.nn import ViSNet
 from torch_geometric.testing import withPackage
 
 @withPackage('torch_cluster')
-@pytest.mark.parametrize('derivative', [True, False])
-def test_visnet(derivative):
+@pytest.mark.parametrize('Version', [1, 2])
+def test_visnet(Version):
     z = torch.randint(1, 10, (20, ))
     pos = torch.randn(20, 3)
     batch = torch.zeros(20, dtype=torch.long)
 
-    if derivative:
-        kwargs = dict(derivative=True)
+    if Version == 1:
+        kwargs = dict(lmax=2, derivative=True, vecnorm_type='none', vertex=False)
     else:
-        kwargs = dict(derivative=False)
+        kwargs = dict(lmax=1, derivative=False, vecnorm_type='max_min', vertex=True)
 
     model = ViSNet(
-        lmax=1,
-        vecnorm_type='none',
         trainable_vecnorm=False,
         num_heads=8,
         num_layers=6,
@@ -28,7 +26,6 @@ def test_visnet(derivative):
         max_z=100,
         cutoff=5.0,
         max_num_neighbors=32,
-        vertex=False,
         atomref=None,
         reduce_op="add",
         mean=None,
@@ -42,7 +39,7 @@ def test_visnet(derivative):
 
     assert energy.size() == (1, 1)
 
-    if derivative:
+    if Version == 1:
         assert forces.size() == (20, 3)
     else:
         assert forces is None
