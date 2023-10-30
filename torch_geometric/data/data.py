@@ -630,9 +630,21 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = subgraph(subset, self.edge_index, relabel_nodes=True,
-                       num_nodes=self.num_nodes, return_edge_mask=True)
-        edge_index, _, edge_mask = out
+        if 'edge_index' in self:
+            edge_index, _, edge_mask = subgraph(
+                subset,
+                self.edge_index,
+                relabel_nodes=True,
+                num_nodes=self.num_nodes,
+                return_edge_mask=True,
+            )
+        else:
+            edge_index = None
+            edge_mask = torch.ones(
+                self.num_edges,
+                dtype=torch.bool,
+                device=subset.device,
+            )
 
         data = copy.copy(self)
 
@@ -843,31 +855,31 @@ class Data(BaseData, FeatureStore, GraphStore):
             yield key, value
 
     @property
-    def x(self) -> Any:
+    def x(self) -> Optional[Tensor]:
         return self['x'] if 'x' in self._store else None
 
     @property
-    def edge_index(self) -> Any:
+    def edge_index(self) -> Optional[Tensor]:
         return self['edge_index'] if 'edge_index' in self._store else None
 
     @property
-    def edge_weight(self) -> Any:
+    def edge_weight(self) -> Optional[Tensor]:
         return self['edge_weight'] if 'edge_weight' in self._store else None
 
     @property
-    def edge_attr(self) -> Any:
+    def edge_attr(self) -> Optional[Tensor]:
         return self['edge_attr'] if 'edge_attr' in self._store else None
 
     @property
-    def y(self) -> Any:
+    def y(self) -> Optional[Union[Tensor, int, float]]:
         return self['y'] if 'y' in self._store else None
 
     @property
-    def pos(self) -> Any:
+    def pos(self) -> Optional[Tensor]:
         return self['pos'] if 'pos' in self._store else None
 
     @property
-    def batch(self) -> Any:
+    def batch(self) -> Optional[Tensor]:
         return self['batch'] if 'batch' in self._store else None
 
     # Deprecated functions ####################################################
