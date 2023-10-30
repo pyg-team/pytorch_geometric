@@ -2,7 +2,12 @@ import argparse
 import os
 
 import numpy as np
+import torch
+import torch.multiprocessing as mp
+from ogb.nodeproppred import PygNodePropPredDataset
 
+import torch_geometric
+import torch.distributed as dist
 os.environ['CUDF_SPILL'] = '1'
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
 
@@ -90,8 +95,6 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
 
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = '12355'
-
-    import torch.distributed as dist
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
 
@@ -311,12 +314,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     cluster = start_dask_cluster() if args.cugraph_data_loader else None
-
-    import torch
-    import torch.multiprocessing as mp
-    from ogb.nodeproppred import PygNodePropPredDataset
-
-    import torch_geometric
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
