@@ -3,11 +3,12 @@ import os
 
 import numpy as np
 import torch
+import torch.distributed as dist
 import torch.multiprocessing as mp
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric
-import torch.distributed as dist
+
 os.environ['CUDF_SPILL'] = '1'
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
 
