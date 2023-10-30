@@ -1,20 +1,19 @@
 import argparse
 import os
+import tempfile
+import time
 
 import numpy as np
 import torch
 import torch.distributed as dist
-from torch.distributed.algorithms.join import Join
 import torch.multiprocessing as mp
-from ogb.nodeproppred import PygNodePropPredDataset
-import time
-
-import torch
 import torch.nn.functional as F
+from ogb.nodeproppred import PygNodePropPredDataset
+from torch.distributed.algorithms.join import Join
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
+
 import torch_geometric
-import tempfile
 
 os.environ['CUDF_SPILL'] = '1'
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
