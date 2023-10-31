@@ -2,6 +2,7 @@ from typing import Any, Optional
 
 from torch_geometric.config_store import (
     class_from_dataclass,
+    clear_config_store,
     dataclass_from_class,
     fill_config_store,
     get_config_store,
@@ -9,6 +10,11 @@ from torch_geometric.config_store import (
     to_dataclass,
 )
 from torch_geometric.testing import withPackage
+from torch_geometric.transforms import AddSelfLoops
+
+
+def teardown_function():
+    clear_config_store()
 
 
 def test_to_dataclass():
@@ -39,10 +45,8 @@ def test_to_dataclass():
 
 
 def test_register():
-    from torch_geometric.transforms import AddSelfLoops
-
-    register(AddSelfLoops, group='transforms')
-    assert 'transforms' in get_config_store().repo
+    register(AddSelfLoops, group='transform')
+    assert 'transform' in get_config_store().repo
 
     AddSelfLoopsConfig = dataclass_from_class('AddSelfLoops')
 
@@ -55,6 +59,18 @@ def test_register():
     assert ConfigCls == AddSelfLoopsConfig
     ConfigCls = dataclass_from_class(ConfigCls)
     assert ConfigCls == AddSelfLoopsConfig
+
+
+def test_fill_config_store():
+    fill_config_store()
+
+    assert {
+        'transform',
+        'dataset',
+        'model',
+        'optimizer',
+        'lr_scheduler',
+    }.issubset(get_config_store().repo.keys())
 
 
 @withPackage('hydra')

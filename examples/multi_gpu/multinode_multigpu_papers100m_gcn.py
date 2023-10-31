@@ -1,31 +1,10 @@
 """
-In terminal 1:
-==============
-
-srun --overlap -A <slurm_access_group> -p interactive \
-    -J <experiment-name> -N 2 -t 02:00:00 --pty bash
-
-In terminal 2:
-==============
-
-squeue -u <slurm-unix-account-id>
-export jobid=<JOBID from SQUEUE>
-
-Then:
-=====
-
-srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
-    --container-image=<image_url> --container-name=cont
-    --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
-
-srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
-    --container-name=cont
-    --container-mounts=
-    <data-directory>/ogb-papers100m/:/workspace/dataset/
-
-python3 multinode_multigpu_papers100m_gcn.py --ngpu_per_node 3
+To run:
+srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
+--container-name=cont --container-image=<image_url> \
+--container-mounts=/ogb-papers100m/:/workspace/dataset
+python3 path_to_script.py
 """
-import argparse
 import os
 import time
 
@@ -50,46 +29,20 @@ def get_num_workers(world_size: int) -> int:
         num_workers = os.cpu_count() // (2 * world_size)
     return num_workers
 
-
-_LOCAL_PROCESS_GROUP = None
-
-
-def create_local_process_group(num_workers_per_node: int):
-    global _LOCAL_PROCESS_GROUP
-    assert _LOCAL_PROCESS_GROUP is None
-    world_size = dist.get_world_size() if dist.is_initialized() else 1
-    rank = dist.get_rank() if dist.is_initialized() else 0
-    assert world_size % num_workers_per_node == 0
-
-    num_nodes = world_size // num_workers_per_node
-    node_rank = rank // num_workers_per_node
-    for i in range(num_nodes):
-        start = i * num_workers_per_node
-        end = (i + 1) * num_workers_per_node
-        ranks_on_i = list(range(start, end))
-        pg = dist.new_group(ranks_on_i)
-        if i == node_rank:
-            _LOCAL_PROCESS_GROUP = pg
-
-
-def get_local_process_group():
-    assert _LOCAL_PROCESS_GROUP is not None
-    return _LOCAL_PROCESS_GROUP
-
-
-def run_train(device, data, world_size, ngpu_per_node, model, epochs,
+def run_train(data, world_size, model, epochs,
               batch_size, fan_out, split_idx, num_classes,
               cugraph_data_loader):
-    local_group = get_local_process_group()
-    loc_id = dist.get_rank(group=local_group)
+    local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
+    torch.cuda.set_device(local_id)
+    device = torch.device(local_id)
     if rank == 0:
         print("Data =", data)
-        print('Using', nprocs, 'GPUs...')
+        print('Using', world_size, 'GPUs...')
     split_idx['train'] = split_idx['train'].split(
         split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
     model = model.to(device)
-    model = DistributedDataParallel(model, device_ids=[loc_id])
+    model = DistributedDataParallel(model, device_ids=[local_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
     kwargs = dict(
@@ -193,12 +146,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=2048)
     parser.add_argument('--fan_out', type=int, default=16)
     parser.add_argument(
-        "--ngpu_per_node",
-        type=int,
-        default="1",
-        help="number of GPU(s) for each node for multi-gpu training,",
-    )
-    parser.add_argument(
         "--use_gat_conv",
         action='store_true',
         help="Wether or not to use GATConv. (Defaults to using GCNConv)",
@@ -222,18 +169,10 @@ if __name__ == '__main__':
     if args.cugraph_data_loader:
         from cugraph.testing.mg_utils import enable_spilling
         enable_spilling()
-    # setup multi node
+    # Setup multi-node:
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
-    create_local_process_group(args.ngpu_per_node)
-    local_group = get_local_process_group()
-    if dist.is_initialized():
-        device_id = dist.get_rank(group=local_group)
-    else:
-        device_id = 0
-    torch.cuda.set_device(device_id)
-    device = torch.device(device_id)
-
+    assert dist.is_initialized(), "Distributed cluster not initialized"
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
 
@@ -250,6 +189,6 @@ if __name__ == '__main__':
                                               args.hidden_channels,
                                               args.num_layers,
                                               dataset.num_classes)
-    run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
+    run_train(data, nprocs, model, args.epochs,
               args.batch_size, args.fan_out, split_idx, dataset.num_classes,
               args.cugraph_data_loader, wall_clock_start)
