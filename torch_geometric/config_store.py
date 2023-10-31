@@ -271,6 +271,15 @@ def get_config_store() -> ConfigStore:
     return ConfigStore.instance()
 
 
+def clear_config_store() -> ConfigStore:
+    r"""Clears the global configuration store."""
+    config_store = get_config_store()
+    for key in list(config_store.repo.keys()):
+        if key != 'hydra' and not key.endswith('.yaml'):
+            del config_store.repo[key]
+    return config_store
+
+
 def register(
     cls: Optional[Any] = None,
     data_cls: Optional[Any] = None,
@@ -284,12 +293,12 @@ def register(
             return a decorator. (default: :obj:`None`)
         data_cls (Any, optional): The data class to register. If set to
             :obj:`None`, will dynamically create the data class according to
-            :class:`~torch_geometric.graphgym.config_store.to_dataclass`.
+            :class:`~torch_geometric.config_store.to_dataclass`.
             (default: :obj:`None`)
         group (str, optional): The group in the global configuration store.
             (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
-            :class:`~torch_geometric.graphgym.config_store.to_dataclass`.
+            :class:`~torch_geometric.config_store.to_dataclass`.
     """
     if cls is not None:
         name = cls.__name__
