@@ -11,13 +11,12 @@ Our first step is to understand the basic structure of a multi-node-multi-GPU ex
 
 .. code-block:: python
 
-    import argparse
+    import os
 
     import torch
     import torch.distributed as dist
     from torch_geometric.datasets import FakeDataset
     from torch_geometric.nn.models import GCN
-    import os
 
     def run(device, world_size, data, model):
         pass
@@ -48,7 +47,8 @@ The final step of coding is to define our :meth:`run` function:
         device = torch.device(local_id)
         ...
 
-We only need to assign our :obj:`local_id`, our global :obj:`rank`, and the device we want to use.
+We first define our local :obj:`local_id` and our global :obj:`rank`.
+Here, :obj:`local_id` refers to the GPU device within a node we want to run the model on.
 To understand this better, consider a scenario where we use three nodes with 8 GPUs each.
 The 7th GPU on the 3rd node, or the 23rd GPU in our system, has the global process rank :obj:`22`, however, its local rank :obj:`local_id` is :obj:`6`.
 

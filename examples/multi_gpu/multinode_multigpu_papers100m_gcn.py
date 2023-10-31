@@ -1,7 +1,7 @@
 """
-To Run:
-srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node>
---container-name=cont --container-image=<image_url>
+To run:
+srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
+--container-name=cont --container-image=<image_url> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
 python3 path_to_script.py
 """
