@@ -109,15 +109,18 @@ class DMoNPooling(torch.nn.Module):
 
         (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-        if mask is not None:
-            mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
-            x, s = x * mask, s * mask
+        if mask is None:
+            mask = torch.ones(batch_size, num_nodes, dtype=torch.bool,
+                              device=x.device)
+        mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
+
+        x, s = x * mask, s * mask
 
         out = F.selu(torch.matmul(s.transpose(1, 2), x))
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ij', adj).unsqueeze(-1)  # B x N x 1
+        degrees = torch.einsum('ijk->ij', adj).unsqueeze(-1) * mask  # B x N x 1
         degrees_t = degrees.transpose(1, 2)  # B x 1 x N
         m = torch.einsum('ijk->i', degrees) / 2  # B
         m_expand = m.unsqueeze(-1).unsqueeze(-1).expand(-1, k, k)  # B x C x C
