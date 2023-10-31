@@ -169,6 +169,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         if isinstance(edge_index, SparseTensor):
             edge_index = torch.vstack([row, col])
 
+        device = edge_index.device
+
         if batch is None:
             edge_index_list = [edge_index]
             y_list = [y]
@@ -180,9 +182,9 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         for edge_index, y in zip(edge_index_list, y_list):
             graph = nx.Graph()
             graph.add_nodes_from(range(edge_index.max().item()))
-            graph.add_edges_from(edge_index.T.numpy())
+            graph.add_edges_from(edge_index.cpu().T.numpy())
 
-            labels = y.numpy()
+            labels = y.cpu().numpy()
 
             # Convert labels to consecutive integers
             unique_labels = np.unique(labels)
@@ -212,7 +214,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         if batch is None:
             return h_adj_list[0]
         else:
-            return torch.tensor(h_adj_list, dtype=torch.float32)
+            return torch.tensor(h_adj_list, dtype=torch.float32, device=device)
 
     else:
         raise NotImplementedError
