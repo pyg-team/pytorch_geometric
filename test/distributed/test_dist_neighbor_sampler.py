@@ -239,7 +239,7 @@ def dist_neighbor_sampler_temporal(
 
 
 @withPackage('pyg_lib')
-@pytest.mark.parametrize("disjoint", [True, False])
+@pytest.mark.parametrize("disjoint", [False, True])
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context("spawn")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
