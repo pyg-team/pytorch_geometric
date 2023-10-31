@@ -132,10 +132,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         dist.barrier()
 
         if rank == 0:
-            print(
-                "Rank 0 creating its cugraph store and \
-                initializing distributed graph"
-            )
+            print("Rank 0 creating its cugraph store and \
+                initializing distributed graph")
             cugraph_store = CuGraphStore(fs, G, N, multi_gpu=True)
             event.set()
             print("Distributed graph initialization complete.")
@@ -151,7 +149,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
         dist.barrier()
         if rank == 0:
-            
+
             for epoch in range(epochs):
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
