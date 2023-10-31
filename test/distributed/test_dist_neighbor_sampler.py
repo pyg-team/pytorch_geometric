@@ -22,7 +22,7 @@ def create_data(rank, world_size, temporal=False):
     # create dist data
     if rank == 0:
         # partition 0
-        node_id = torch.tensor([0, 1, 2, 3, 4, 5, 6])
+        node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
         # sorted by dst
         edge_index = torch.tensor([
             [1, 2, 3, 4, 5, 0, 0],
@@ -49,12 +49,11 @@ def create_data(rank, world_size, temporal=False):
 
     dist_data = (feature_store, graph_store)
 
-    # create reference data sorted by dst
+    # create reference data
     edge_index = torch.tensor([
-        [1, 2, 3, 4, 5, 0, 0, 6, 7, 8, 9, 5],
+        [1, 2, 3, 4, 5, 0, 5, 6, 7, 8, 9, 0],
         [0, 1, 2, 3, 4, 4, 9, 5, 6, 7, 8, 9],
     ])
-
     data = Data(x=None, y=None, edge_index=edge_index, num_nodes=num_nodes)
 
     if temporal:

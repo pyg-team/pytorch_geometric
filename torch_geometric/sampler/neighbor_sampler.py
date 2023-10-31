@@ -159,13 +159,15 @@ class NeighborSampler(BaseSampler):
                 self.edge_weight: Optional[Tensor] = None
 
                 self.node_time: Optional[Tensor] = None
-                if time_attr is not None and len(time_attrs) != 1:
-                    raise ValueError("Temporal sampling specified but did "
-                                     "not find any temporal data")
-                else:
-                    time_attrs[0].index = None  # Reset index for full data.
-                    time_tensor = feature_store.get_tensor(time_attrs[0])
-                    self.node_time = time_tensor
+                if time_attr is not None:
+                    if len(time_attrs) != 1:
+                        raise ValueError("Temporal sampling specified but did "
+                                         "not find any temporal data")
+                    else:
+                        time_attrs[
+                            0].index = None  # Reset index for full data.
+                        time_tensor = feature_store.get_tensor(time_attrs[0])
+                        self.node_time = time_tensor
 
                 self.row, self.colptr, self.perm = graph_store.csc()
 

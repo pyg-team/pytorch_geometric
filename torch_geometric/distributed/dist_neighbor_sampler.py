@@ -167,11 +167,11 @@ class DistNeighborSampler:
 
         if isinstance(inputs, NodeSamplerInput):
             seed = inputs.node.to(self.device)
-            seed_time = (inputs.time.to(self.device)
-                         if inputs.time is not None else None)
+            seed_time = None
+            if self.time_attr is not None:
+                seed_time = (inputs.time.to(self.device) if inputs.time
+                             is not None else self.node_time[seed])
             src_batch = torch.arange(batch_size) if self.disjoint else None
-            seed_dict = {input_type: seed}
-            seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
             metadata = (seed, seed_time)
 
         elif isinstance(inputs, EdgeSamplerInput) and self.is_hetero:
@@ -195,6 +195,9 @@ class DistNeighborSampler:
         if self.is_hetero:
             if input_type is None:
                 raise ValueError("Input type should be defined")
+
+            seed_dict = {input_type: seed}
+            seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
 
             node_dict = NodeDict()
             batch_dict = BatchDict(self.disjoint)
