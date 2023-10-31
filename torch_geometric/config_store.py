@@ -89,7 +89,8 @@ except ImportError:
             if group is not None:
                 cur = cur[group]
             if name in cur:
-                raise KeyError(f"Configuration '{name}' already registered")
+                raise KeyError(f"Configuration '{name}' already registered. "
+                               f"Please store it under a different 'group'.")
             cur[name] = ConfigNode(name, node, group)
 
     def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
