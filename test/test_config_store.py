@@ -57,6 +57,15 @@ def test_register():
     assert ConfigCls == AddSelfLoopsConfig
 
 
+def test_fill_config_store():
+    fill_config_store()
+
+    config_store = get_config_store()
+    assert set(config_store.repo.keys()) == {
+        'transform', 'dataset', 'model', 'optimizer', 'lr_scheduler', 'config'
+    }
+
+
 @withPackage('hydra')
 def test_hydra_config_store():
     import hydra

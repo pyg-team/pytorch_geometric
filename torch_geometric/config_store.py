@@ -88,6 +88,8 @@ except ImportError:
             cur = self.repo
             if group is not None:
                 cur = cur[group]
+            if name in cur:
+                raise KeyError(f"Configuration '{name}' already registered")
             cur[name] = ConfigNode(name, node, group)
 
     def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
