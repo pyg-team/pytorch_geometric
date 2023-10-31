@@ -128,7 +128,7 @@ class KGEModel(torch.nn.Module):
             mean_ranks.append(rank)
             reciprocal_ranks.append(torch.reciprocal(rank))
             hits_at_k.append(rank < k)
-        
+
         mean_rank = float(torch.tensor(mean_ranks, dtype=torch.float).mean())
         mrr = float(torch.tensor(reciprocal_ranks, dtype=torch.float).mean())
         hits_at_k = int(torch.tensor(hits_at_k).sum()) / len(hits_at_k)
