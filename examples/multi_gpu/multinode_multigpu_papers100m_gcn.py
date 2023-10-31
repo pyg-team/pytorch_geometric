@@ -29,9 +29,9 @@ def get_num_workers(world_size: int) -> int:
         num_workers = os.cpu_count() // (2 * world_size)
     return num_workers
 
-def run_train(data, world_size, model, epochs,
-              batch_size, fan_out, split_idx, num_classes,
-              cugraph_data_loader):
+
+def run_train(data, world_size, model, epochs, batch_size, fan_out, split_idx,
+              num_classes, cugraph_data_loader):
     local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
     torch.cuda.set_device(local_id)
@@ -189,6 +189,6 @@ if __name__ == '__main__':
                                               args.hidden_channels,
                                               args.num_layers,
                                               dataset.num_classes)
-    run_train(data, nprocs, model, args.epochs,
-              args.batch_size, args.fan_out, split_idx, dataset.num_classes,
-              args.cugraph_data_loader, wall_clock_start)
+    run_train(data, nprocs, model, args.epochs, args.batch_size, args.fan_out,
+              split_idx, dataset.num_classes, args.cugraph_data_loader,
+              wall_clock_start)
