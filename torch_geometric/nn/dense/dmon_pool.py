@@ -120,7 +120,8 @@ class DMoNPooling(torch.nn.Module):
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ij', adj).unsqueeze(-1) * mask  # B x N x 1
+        degrees = torch.einsum('ijk->ij',
+                               adj).unsqueeze(-1) * mask  # B x N x 1
         degrees_t = degrees.transpose(1, 2)  # B x 1 x N
         m = torch.einsum('ijk->i', degrees) / 2  # B
         m_expand = m.unsqueeze(-1).unsqueeze(-1).expand(-1, k, k)  # B x C x C
