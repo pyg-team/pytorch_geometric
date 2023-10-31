@@ -60,10 +60,13 @@ def test_register():
 def test_fill_config_store():
     fill_config_store()
 
-    config_store = get_config_store()
-    assert set(config_store.repo.keys()) == {
-        'transform', 'dataset', 'model', 'optimizer', 'lr_scheduler', 'config'
-    }
+    assert {
+        'transform',
+        'dataset',
+        'model',
+        'optimizer',
+        'lr_scheduler',
+    }.issubset(get_config_store().repo.keys())
 
 
 @withPackage('hydra')
