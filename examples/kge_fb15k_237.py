@@ -85,6 +85,4 @@ for epoch in range(1, 501):
               f'Val Mean Reciprocal Rank: {mrr:.4f}, Val Hits@10: {hits:.4f}')
 
 rank, mrr, hits_at_10 = test(test_data)
-print(
-    f'Test Mean Rank: {rank:.2f}, Test Mean Reciprocal Rank: {mrr:.4f}, Test Hits@10: {hits_at_10:.4f}'
-)
+print(f'Test Mean Rank: {rank:.2f}, Test Mean Reciprocal Rank: {mrr:.4f}, Test Hits@10: {hits_at_10:.4f}')
