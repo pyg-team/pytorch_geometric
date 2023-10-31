@@ -327,8 +327,16 @@ def register(
     if cls is not None:
         name = cls.__name__
 
+        if get_node(cls):
+            raise ValueError(f"The class '{name}' is already registered in "
+                             "the global configuration store")
+
         if data_cls is None:
             data_cls = to_dataclass(cls, **kwargs)
+        elif get_node(data_cls):
+            raise ValueError(
+                f"The data class '{data_cls.__name__}' is already registered "
+                f"in the global configuration store")
 
         if WITH_HYDRA:
             get_config_store().store(name, data_cls, group)
