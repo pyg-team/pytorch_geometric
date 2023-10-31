@@ -77,19 +77,6 @@ def pyg_num_work(world_size):
 def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
     if cugraph_data_loader:
         import cupy
-        import rmm
-        """
-        rmm.reinitialize(
-            devices=[rank],
-            pool_allocator=False,
-            managed_memory=False
-        )
-        """
-
-        #if rank == 0:
-        #    from rmm.allocators.torch import rmm_torch_allocator
-        #    torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
-
         cupy.cuda.Device(rank).use()
         from rmm.allocators.cupy import rmm_cupy_allocator
         cupy.cuda.set_allocator(rmm_cupy_allocator)
@@ -146,7 +133,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
         if rank == 0:
             print(
-                "Rank 0 creating its cugraph store and initializing distributed graph"
+                "Rank 0 creating its cugraph store and \
+                initializing distributed graph"
             )
             cugraph_store = CuGraphStore(fs, G, N, multi_gpu=True)
             event.set()
@@ -163,16 +151,22 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
         dist.barrier()
         if rank == 0:
+            
             for epoch in range(epochs):
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
-                # runs sampling for the training epoch
+                # Runs sampling for the training epoch.
+                # Note that train dataloader SHOULD have shuffle and drop_last as True.
+                # However, this feature is not yet available.
+                # Coming early 2024.
+                # CuGraph can produce huge speed ups but not shuffling
+                # can have negative impacts on val/test accuracy.
                 BulkSampleLoader(
                     cugraph_store,
                     cugraph_store,
                     input_nodes=split_idx['train'],
                     directory=train_path,
-                    #shuffle=True, drop_last=True,
+                    # shuffle=True, drop_last=True,
                     **kwargs)
 
             print('validation', len(split_idx['valid']))
