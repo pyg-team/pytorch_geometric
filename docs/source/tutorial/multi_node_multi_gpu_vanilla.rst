@@ -25,12 +25,7 @@ Our first step is to understand the basic structure of a multi-node-multi-GPU ex
     if __name__ == '__main__':
         torch.distributed.init_process_group("nccl")
         nprocs = dist.get_world_size()
-        if dist.is_initialized():
-            device_id = dist.get_rank()
-        else:
-            device_id = 0
-        torch.cuda.set_device(device_id)
-        device = torch.device(device_id)
+        assert dist.is_initialized(), "Distributed cluster not initialized"
 
         dataset = FakeDataset(avg_num_nodes=100_000)
         model = GCN(dataset.num_features, 64, dataset.num_classes, num_layers=2)
@@ -39,7 +34,6 @@ Our first step is to understand the basic structure of a multi-node-multi-GPU ex
 
 Similarly to the single-node multi-GPU example, we define a :meth:`run` function. However, in this case we are using :obj:`torch.distributed` with NVIDIA NCCL backend instead of relying on :class:`~torch.multiprocessing`.
 Check out this :pytorch:`null` `PyTorch tutorial on multi-node multi-GPU training <https://pytorch.org/tutorials/intermediate/ddp_series_multinode.html>`_ for more details.
-We then select the CUDA device that will be used by each process within each process group.
 The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` usage.
 We load our (synthetic) dataset and define a :class:`~torch_geometric.nn.models.GCN` model and pass these to our :meth:`run` function.
 
@@ -50,10 +44,11 @@ The final step of coding is to define our :meth:`run` function:
     def run(device, world_size, data, model):
         local_id = int(os.environ['LOCAL_RANK'])
         rank = torch.distributed.get_rank()
-
+        torch.cuda.set_device(local_id)
+        device = torch.device(local_id)
         ...
 
-As such, we only need to assign our :obj:`local_id` and our global :obj:`rank`.
+We only need to assign our :obj:`local_id`, our global :obj:`rank`, and the device we want to use.
 To understand this better, consider a scenario where we use three nodes with 8 GPUs each.
 The 7th GPU on the 3rd node, or the 23rd GPU in our system, has the global process rank :obj:`22`, however, its local rank :obj:`local_id` is :obj:`6`.
 
