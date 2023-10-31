@@ -20,26 +20,32 @@ except ImportError:
 
 try:
     from hydra.core.config_store import ConfigStore
+    WITH_HYDRA = True
 
     def get_node(cls: Union[str, Any]) -> Optional[Any]:
         if (not isinstance(cls, str)
                 and cls.__module__ in {'builtins', 'typing'}):
             return None
 
-        def _recursive_get_node(repo: Dict[str, Any]) -> Optional[Any]:
+        def _get_candidates(repo: Dict[str, Any]) -> List[Any]:
+            outs: List[Any] = []
             for key, value in repo.items():
                 if isinstance(value, dict):
-                    out = _recursive_get_node(value)
-                    if out is not None:
-                        return out
-                elif isinstance(cls, str) and key == f'{cls}.yaml':
-                    return value.node
+                    outs.extend(_get_candidates(value))
                 elif getattr(value.node._metadata, 'object_type', None) == cls:
-                    return value.node
+                    outs.append(value.node)
                 elif getattr(value.node._metadata, 'orig_type', None) == cls:
-                    return value.node
+                    outs.append(value.node)
+                elif isinstance(cls, str) and key == f'{cls}.yaml':
+                    outs.append(value.node)
 
-        return _recursive_get_node(get_config_store().repo)
+        candidates = _get_candidates(get_config_store().repo)
+
+        if len(candidates) > 1:
+            raise ValueError("Found multiple entries in the configuration "
+                             "store for the same class")
+
+        return candidates[0] if len(candidates) == 1 else None
 
     def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the :obj:`dataclass` of a class registered in the global
@@ -54,6 +60,8 @@ try:
         return node._metadata.orig_type if node is not None else None
 
 except ImportError:
+
+    WITH_HYDRA = False
 
     class Singleton(type):
         _instances: Dict[type, Any] = {}
@@ -84,34 +92,48 @@ except ImportError:
         def instance(cls, *args, **kwargs) -> 'ConfigStore':
             return cls(*args, **kwargs)
 
-        def store(self, name: str, node: Any, group: Optional[str] = None):
+        def store(
+            self,
+            name: str,
+            node: Any,
+            group: Optional[str] = None,
+            orig_type: Optional[Any] = None,
+        ):
             cur = self.repo
             if group is not None:
                 cur = cur[group]
             if name in cur:
                 raise KeyError(f"Configuration '{name}' already registered. "
                                f"Please store it under a different group.")
-            cur[name] = ConfigNode(name, node, group)
+            metadata = Metadata(orig_type=orig_type)
+            cur[name] = ConfigNode(name, node, group, metadata)
 
     def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
         if (not isinstance(cls, str)
                 and cls.__module__ in {'builtins', 'typing'}):
             return None
 
-        def _recursive_get_node(repo: Dict[str, Any]) -> Optional[ConfigNode]:
+        def _get_candidates(repo: Dict[str, Any]) -> List[ConfigNode]:
+            outs: List[ConfigNode] = []
             for key, value in repo.items():
                 if isinstance(value, dict):
-                    out = _recursive_get_node(value)
-                    if out is not None:
-                        return out
-                elif isinstance(cls, str) and key == cls:
-                    return value
+                    outs.extend(_get_candidates(value))
                 elif value.node == cls:
-                    return value
+                    outs.append(value)
                 elif value._metadata.orig_type == cls:
-                    return value
+                    outs.append(value)
+                elif isinstance(cls, str) and key == cls:
+                    outs.append(value)
 
-        return _recursive_get_node(get_config_store().repo)
+            return outs
+
+        candidates = _get_candidates(get_config_store().repo)
+
+        if len(candidates) > 1:
+            raise ValueError("Found multiple entries in the configuration "
+                             "store for the same class")
+
+        return candidates[0] if len(candidates) == 1 else None
 
     def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the :obj:`dataclass` of a class registered in the global
@@ -306,8 +328,11 @@ def register(
         if data_cls is None:
             data_cls = to_dataclass(cls, **kwargs)
 
-        get_config_store().store(name, data_cls, group)
-        get_node(name)._metadata.orig_type = cls
+        if WITH_HYDRA:
+            get_config_store().store(name, data_cls, group)
+            get_node(name)._metadata.orig_type = cls
+        else:
+            get_config_store().store(name, data_cls, group, cls)
 
         return data_cls
 
