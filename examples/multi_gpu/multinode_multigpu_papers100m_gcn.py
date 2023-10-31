@@ -5,9 +5,9 @@ srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
 python3 path_to_script.py
 """
+import argparse
 import os
 import time
-import argparse
 
 import torch
 import torch.distributed as dist
