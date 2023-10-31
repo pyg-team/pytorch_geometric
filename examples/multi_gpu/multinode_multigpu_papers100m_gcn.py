@@ -7,6 +7,7 @@ python3 path_to_script.py
 """
 import os
 import time
+import argparse
 
 import torch
 import torch.distributed as dist
