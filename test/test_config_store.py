@@ -41,8 +41,8 @@ def test_to_dataclass():
 def test_register():
     from torch_geometric.transforms import AddSelfLoops
 
-    register(AddSelfLoops, group='transforms')
-    assert 'transforms' in get_config_store().repo
+    register(AddSelfLoops, group='transform')
+    assert 'transform' in get_config_store().repo
 
     AddSelfLoopsConfig = dataclass_from_class('AddSelfLoops')
 
