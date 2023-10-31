@@ -37,7 +37,7 @@ def is_undirected(
             If given as a list, will check for equivalence in all its entries.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+            :obj:`max(edge_index) + 1`. (default: :obj:`None`)
 
     :rtype: bool
 
@@ -77,11 +77,15 @@ def is_undirected(
 
     if not torch.equal(edge_index1[0], edge_index2[1]):
         return False
+
     if not torch.equal(edge_index1[1], edge_index2[0]):
         return False
+
+    assert isinstance(edge_attrs1, list) and isinstance(edge_attrs2, list)
     for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2):
         if not torch.equal(edge_attr1, edge_attr2):
             return False
+
     return True
 
 
@@ -108,7 +112,7 @@ def to_undirected(
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
-) -> Union[Tensor, Tuple[OptTensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     r"""Converts the graph given by :attr:`edge_index` to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
     \mathcal{E}`.
@@ -120,7 +124,7 @@ def to_undirected(
             If given as a list, will remove duplicates for all its entries.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+            :obj:`max(edge_index) + 1`. (default: :obj:`None`)
         reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
