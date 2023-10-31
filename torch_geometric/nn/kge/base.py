@@ -99,7 +99,7 @@ class KGEModel(torch.nn.Module):
         k: int = 10,
         log: bool = True,
     ) -> Tuple[float, float]:
-        r"""Evaluates the model quality by computing Mean Rank and
+        r"""Evaluates the model quality by computing Mean Rank, MRR, and
         Hits @ :math:`k` across all possible tail entities.
 
         Args:
@@ -115,7 +115,7 @@ class KGEModel(torch.nn.Module):
         arange = range(head_index.numel())
         arange = tqdm(arange) if log else arange
 
-        mean_ranks, hits_at_k = [], []
+        mean_ranks, reciprocal_ranks, hits_at_k = [], [], []
         for i in arange:
             h, r, t = head_index[i], rel_type[i], tail_index[i]
 
@@ -126,10 +126,11 @@ class KGEModel(torch.nn.Module):
             rank = int((torch.cat(scores).argsort(
                 descending=True) == t).nonzero().view(-1))
             mean_ranks.append(rank)
+            reciprocal_ranks.append(torch.reciprocal(rank))
             hits_at_k.append(rank < k)
         
         mean_rank = float(torch.tensor(mean_ranks, dtype=torch.float).mean())
-        mrr = (1. / torch.tensor(mean_ranks, dtype=torch.float)).mean()
+        mrr = float(torch.tensor(reciprocal_ranks, dtype=torch.float).mean())
         hits_at_k = int(torch.tensor(hits_at_k).sum()) / len(hits_at_k)
 
         return mean_rank, mrr, hits_at_k
