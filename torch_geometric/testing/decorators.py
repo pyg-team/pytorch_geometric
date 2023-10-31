@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 from importlib import import_module
 from importlib.util import find_spec
 from typing import Callable
@@ -175,8 +176,8 @@ def withCUDA(func: Callable):
     if device:
         backend = os.getenv('TORCH_BACKEND')
         if backend is None:
-            warnings.warn("Please specify the backend via 'TORCH_BACKEND' in"
-                          "order to test againt '{device}'")
+            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
+                          f"order to test against '{device}'")
         else:
             import_module(backend)
             devices.append(torch.device(device))
