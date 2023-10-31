@@ -39,11 +39,13 @@ try:
                 elif isinstance(cls, str) and key == f'{cls}.yaml':
                     outs.append(value.node)
 
+            return outs
+
         candidates = _get_candidates(get_config_store().repo)
 
         if len(candidates) > 1:
-            raise ValueError("Found multiple entries in the configuration "
-                             "store for the same class")
+            raise ValueError(f"Found multiple entries in the configuration "
+                             f"store for the same node '{candidates[0].name}'")
 
         return candidates[0] if len(candidates) == 1 else None
 
