@@ -1,3 +1,4 @@
+import copy
 import math
 from typing import Any, Dict, Optional, Union
 
@@ -83,9 +84,14 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
-                 weight_initializer: Optional[str] = None,
-                 bias_initializer: Optional[str] = None):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool = True,
+        weight_initializer: Optional[str] = None,
+        bias_initializer: Optional[str] = None,
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -105,6 +111,25 @@ class Linear(torch.nn.Module):
             self.register_parameter('bias', None)
 
         self.reset_parameters()
+
+    def __deepcopy__(self, memo):
+        # PyTorch<1.13 cannot handle deep copies of uninitialized parameters :(
+        # TODO Drop this code once PyTorch 1.12 is no longer supported.
+        out = Linear(
+            self.in_channels,
+            self.out_channels,
+            self.bias is not None,
+            self.weight_initializer,
+            self.bias_initializer,
+        ).to(self.weight.device)
+
+        if self.in_channels > 0:
+            out.weight = copy.deepcopy(self.weight, memo)
+
+        if self.bias is not None:
+            out.bias = copy.deepcopy(self.bias, memo)
+
+        return out
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
