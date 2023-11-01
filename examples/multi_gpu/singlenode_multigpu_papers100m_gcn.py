@@ -154,7 +154,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
                 # Runs sampling for the training epoch.
-                # Note that train dataloader SHOULD have shuffle and drop_last as True.
+                # Note that train dataloader SHOULD have shuffle
+                # and drop_last as True.
                 # However, this feature is not yet available.
                 # Coming early 2024.
                 # CuGraph can produce huge speed ups but not shuffling
