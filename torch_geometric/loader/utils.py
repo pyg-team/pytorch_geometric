@@ -1,7 +1,6 @@
 import copy
 import logging
 import math
-from collections.abc import Sequence
 from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
@@ -261,7 +260,10 @@ def get_input_nodes(
             return nodes, input_id
 
         if not isinstance(nodes, Tensor):
-            return torch.tensor(nodes, dtype=torch.long), input_id
+            nodes = torch.tensor(nodes, dtype=torch.long)
+
+        if input_id is not None:
+            assert input_id.numel() == nodes.numel()
 
         return nodes, input_id
 
