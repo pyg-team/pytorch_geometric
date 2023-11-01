@@ -2,8 +2,8 @@ import pytest
 import torch
 
 import torch_geometric.typing
-from torch_geometric.typing import SparseTensor
 from torch_geometric.testing import withPackage
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import homophily
 
 

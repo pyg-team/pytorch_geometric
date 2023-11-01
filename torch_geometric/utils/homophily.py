@@ -163,8 +163,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         return out if out.numel() > 1 else float(out)
 
     elif method == 'adjusted':
-        import numpy as np
         import networkx as nx
+        import numpy as np
 
         if isinstance(edge_index, SparseTensor):
             edge_index = torch.vstack([row, col])
@@ -203,12 +203,12 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
             h_edge = edges_with_same_label / len(graph.edges)
 
-            degree_sums = np.zeros((num_classes,))
+            degree_sums = np.zeros((num_classes, ))
             for u in graph.nodes:
                 label = labels[u]
                 degree_sums[label] += graph.degree(u)
 
-            adjust = (degree_sums ** 2 / (len(graph.edges) * 2) ** 2).sum()
+            adjust = (degree_sums**2 / (len(graph.edges) * 2)**2).sum()
 
             h_adj = (h_edge - adjust) / (1 - adjust)
 

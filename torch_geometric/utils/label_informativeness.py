@@ -68,8 +68,8 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         >>> label_informativeness(edge_index, y, method='node')
         0.3381873621927896
     """
-    import numpy as np
     import networkx as nx
+    import numpy as np
 
     assert method in {'edge', 'node'}
     y = y.squeeze(-1) if y.dim() > 1 else y
@@ -104,8 +104,7 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
         if method == 'edge':
             class_degree_weighted_probs = np.array(
-                [0 for _ in range(num_classes)], dtype=float
-            )
+                [0 for _ in range(num_classes)], dtype=float)
             for u in graph.nodes:
                 label = labels[u]
                 class_degree_weighted_probs[label] += graph.degree(u)
@@ -131,12 +130,10 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             li_list.append(li_edge)
 
         elif method == 'node':
-            class_probs = np.array(
-                [0 for _ in range(num_classes)], dtype=float
-            )
+            class_probs = np.array([0 for _ in range(num_classes)],
+                                   dtype=float)
             class_degree_weighted_probs = np.array(
-                [0 for _ in range(num_classes)], dtype=float
-            )
+                [0 for _ in range(num_classes)], dtype=float)
             num_zero_degree_nodes = 0
             for u in graph.nodes:
                 if graph.degree(u) == 0:
@@ -167,7 +164,7 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
                           class_degree_weighted_probs.reshape(1, -1)))
             numerator = (edge_probs * log).sum()
             denominator = (class_probs * np.log(class_probs)).sum()
-            li_node = - numerator / denominator
+            li_node = -numerator / denominator
 
             li_list.append(li_node)
 
