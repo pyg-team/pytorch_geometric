@@ -193,7 +193,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
             num_classes = len(unique_labels)
             if num_classes == 1:
-                h_adj_list.append(1)
+                h_adj_list.append(1.)
                 continue
 
             edges_with_same_label = 0
