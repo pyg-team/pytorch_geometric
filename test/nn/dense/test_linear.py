@@ -37,9 +37,17 @@ def test_lazy_linear(weight, bias, device):
     x = torch.randn(3, 4, 16, device=device)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
     lin = lin.to(device)
+    copied_lin = copy.deepcopy(lin)
+
+    assert lin.weight.device == device
+    assert lin.bias.device == device
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
+
+    assert copied_lin.weight.device == device
+    assert copied_lin.bias.device == device
+    assert copied_lin(x).size() == (3, 4, 32)
 
 
 @withCUDA
