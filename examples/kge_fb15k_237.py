@@ -82,9 +82,8 @@ for epoch in range(1, 501):
     if epoch % 25 == 0:
         rank, mrr, hits = test(val_data)
         print(f'Epoch: {epoch:03d}, Val Mean Rank: {rank:.2f}, '
-              f'Val Mean Reciprocal Rank: {mrr:.4f}, Val Hits@10: {hits:.4f}')
+              f'Val MRR: {mrr:.4f}, Val Hits@10: {hits:.4f}')
 
 rank, mrr, hits_at_10 = test(test_data)
-print(
-    f'Test Mean Rank: {rank:.2f}, Test Mean Reciprocal Rank: {mrr:.4f}, Test Hits@10: {hits_at_10:.4f}'
-)
+print(f'Test Mean Rank: {rank:.2f}, Test MRR: {mrr:.4f}, '
+      f'Test Hits@10: {hits_at_10:.4f}')
