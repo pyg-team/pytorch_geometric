@@ -98,7 +98,9 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
+        print(input_nodes)
         input_type, input_nodes = get_input_nodes(data, input_nodes)
+        print(input_nodes)
 
         self.data = data
         self.node_sampler = node_sampler
