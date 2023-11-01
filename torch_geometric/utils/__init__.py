@@ -17,7 +17,9 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
+from .unbatch import unbatch, unbatch_edge_index
 from .homophily import homophily
+from .label_informativeness import label_informativeness
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
@@ -31,7 +33,6 @@ from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_csc_tensor, to_torch_sparse_tensor,
                      to_edge_index)
 from .spmm import spmm
-from .unbatch import unbatch, unbatch_edge_index
 from .one_hot import one_hot
 from .normalized_cut import normalized_cut
 from .grid import grid
