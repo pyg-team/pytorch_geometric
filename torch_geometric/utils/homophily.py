@@ -191,14 +191,17 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             labels_map = {label: i for i, label in enumerate(unique_labels)}
             labels = np.array([labels_map[label] for label in labels])
 
+            num_classes = len(unique_labels)
+            if num_classes == 1:
+                h_adj_list.append(1)
+                continue
+
             edges_with_same_label = 0
             for u, v in graph.edges:
                 if labels[u] == labels[v]:
                     edges_with_same_label += 1
 
             h_edge = edges_with_same_label / len(graph.edges)
-
-            num_classes = len(unique_labels)
 
             degree_sums = np.zeros((num_classes,))
             for u in graph.nodes:
