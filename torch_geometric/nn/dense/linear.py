@@ -405,13 +405,11 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
         # handle tuple keys since ModuleDict doesn't support tuple keys
-        print("x_dict=", x_dict)
         if self.using_tuple_keys:
             new_x_dict = {}
             for key, x in x_dict.items():
                 new_x_dict[make_key_safe(key)] = x
             x_dict = new_x_dict
-        print("new_x_dict=", x_dict)
 
         # Only apply fused kernel for more than 10 types, otherwise use
         # sequential computation (which is generally faster for these cases).
@@ -436,7 +434,6 @@ class HeteroDictLinear(torch.nn.Module):
             for key, lin in self.lins.items():
                 if key in x_dict:
                     out_dict[revert_key(key)] = lin(x_dict[key])
-        print("out_dict=", out_dict)
         return out_dict
 
     @torch.no_grad()
