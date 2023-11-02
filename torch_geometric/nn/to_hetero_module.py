@@ -88,12 +88,14 @@ class ToHeteroLinear(torch.nn.Module):
         )
 
     def __getitem__(
-            self, get_type: Union[NodeType,
-                                  EdgeType]) -> Union[Linear, DummyLinear]:
-        # returns a Linear layer for type
-        # neccesary to avoid changing usage in the following examples:
-        # 1) model.lin[node_type].weight.data = conv.root.data.t()
-        # 2) model.lin[node_type].bias.data = conv.bias.data
+        self,
+        get_type: Union[NodeType, EdgeType],
+    ) -> Union[Linear, DummyLinear]:
+        """Returns a linear layer for a given type.
+        This is neccesary to avoid changing usage in the following examples:
+        1) model.lin[node_type].weight.data = conv.root.data.t()
+        2) model.lin[node_type].bias.data = conv.bias.data
+        """
         return DummyLinear(get_type, self.types, self.hetero_module)
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
@@ -188,10 +190,15 @@ class ToHeteroMessagePassing(torch.nn.Module):
         self.hetero_module = HeteroConv(convs, aggr)
         self.hetero_module.reset_parameters()
 
-    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor,
-                      edge_type: Tensor) -> Tensor:
-        # TODO This currently does not fuse at all :(
-        # TODO We currently assume that `x` and `edge_index` are both sorted
+    def fused_forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        node_type: Tensor,
+        edge_type: Tensor,
+    ) -> Tensor:
+        # FIXME: This currently does not fuse at all :(
+        # TODO: We currently assume that `x` and `edge_index` are both sorted
         # according to `type`.
 
         node_sizes = scatter(torch.ones_like(node_type), node_type, dim=0,
@@ -204,7 +211,7 @@ class ToHeteroMessagePassing(torch.nn.Module):
         xs = x.split(node_sizes.tolist())
         x_dict = {node_type: x for node_type, x in zip(self.node_types, xs)}
 
-        # TODO Consider out-sourcing to its own function.
+        # TODO: Consider out-sourcing to its own function.
         edge_indices = edge_index.clone().split(edge_sizes.tolist(), dim=1)
         for (src, _, dst), index in zip(self.edge_types, edge_indices):
             index[0] -= ptr[self.node_type_to_index[src]]
