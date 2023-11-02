@@ -35,5 +35,5 @@ __all__ = classes = [
     'to_captum_model', 'to_captum_input', 'captum_output_to_dicts',
     'MetaPath2Vec', 'DeepGCNLayer', 'TGNMemory', 'LabelPropagation',
     'CorrectAndSmooth', 'AttentiveFP', 'RECT_L', 'LINKX', 'LightGCN',
-    'MaskLabel', 'GroupAddRev', 'GNNFF', 'PMLP', 'NeuralFingerprint', 'ViSNet'
+    'MaskLabel', 'GroupAddRev', 'GNNFF', 'PMLP', 'NeuralFingerprint', 'ViSNet',
 ]
