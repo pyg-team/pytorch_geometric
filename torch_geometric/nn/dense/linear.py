@@ -435,7 +435,7 @@ class HeteroDictLinear(torch.nn.Module):
         else:
             for key, lin in self.lins.items():
                 if key in x_dict:
-                    out_dict[key] = lin(x_dict[key])
+                    out_dict[revert_key(key)] = lin(x_dict[key])
 
         return out_dict
 
@@ -458,3 +458,6 @@ class HeteroDictLinear(torch.nn.Module):
 
 def make_key_safe(key):
     return '-'.join(key) if isinstance(key, tuple) else key
+
+def revert_key(key):
+    return tuple(key.split('-'))
