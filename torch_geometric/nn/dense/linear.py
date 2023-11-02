@@ -436,7 +436,7 @@ class HeteroDictLinear(torch.nn.Module):
             for key, lin in self.lins.items():
                 if key in x_dict:
                     out_dict[revert_key(key)] = lin(x_dict[key])
-
+        print("out_dict=", out_dict)
         return out_dict
 
     @torch.no_grad()
