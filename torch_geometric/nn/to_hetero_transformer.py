@@ -414,7 +414,7 @@ class ToHeteroTransformer(Transformer):
             in_channels, out_channels = get_linear_channels(module)
             return HeteroDictLinear(
                     in_channels, out_channels,
-                    types=self.metadata[int(has_edge_level_target)])
+                    types=self.metadata[int(has_edge_level_target)]).to(module.weight.device)
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
