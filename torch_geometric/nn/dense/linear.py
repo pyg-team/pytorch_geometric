@@ -374,7 +374,7 @@ class HeteroDictLinear(torch.nn.Module):
         # handle tuple keys since ModuleDict doesn't support tuple keys
         new_in_channels = {}
         self.using_tuple_keys = False
-        for key, val in self.in_channels:
+        for key, val in self.in_channels.items():
             if not self.using_tuple_keys and isinstance(key, tuple):
                 self.using_tuple_keys = True
             if self.using_tuple_keys:
