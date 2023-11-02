@@ -25,8 +25,8 @@ from torch_geometric.nn import (
     to_hetero,
 )
 from torch_geometric.profile import benchmark
-from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.testing import onlyCUDA, withPackage
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
 
 torch.fx.wrap('dropout_edge')
@@ -648,4 +648,3 @@ if __name__ == '__main__':
             num_warmups=10 if args.device == 'cpu' else 100,
             backward=False,
         )
-

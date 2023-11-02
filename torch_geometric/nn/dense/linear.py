@@ -396,7 +396,7 @@ class HeteroDictLinear(torch.nn.Module):
         if self.using_tuple_keys:
             self.in_channels = new_in_channels
         self.lins = torch.nn.ModuleDict({
-            key: 
+            key:
             Linear(channels, self.out_channels, **kwargs)
             for key, channels in self.in_channels.items()
         })
@@ -469,6 +469,7 @@ class HeteroDictLinear(torch.nn.Module):
 
 def make_key_safe(key):
     return '-'.join(key) if isinstance(key, tuple) else key
+
 
 def revert_key(key):
     splitkey = tuple(key.split('-'))

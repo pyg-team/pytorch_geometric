@@ -8,8 +8,10 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.nn.dense.linear import is_uninitialized_parameter, HeteroDictLinear
-
+from torch_geometric.nn.dense.linear import (
+    HeteroDictLinear,
+    is_uninitialized_parameter,
+)
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import get_linear_channels
 from torch_geometric.typing import (
@@ -413,8 +415,9 @@ class ToHeteroTransformer(Transformer):
         if self.use_heterolinears and is_linear(module):
             in_channels, out_channels = get_linear_channels(module)
             return HeteroDictLinear(
-                    in_channels, out_channels,
-                    types=self.metadata[int(has_edge_level_target)]).to(module.weight.device)
+                in_channels, out_channels,
+                types=self.metadata[int(has_edge_level_target)]).to(
+                    module.weight.device)
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
