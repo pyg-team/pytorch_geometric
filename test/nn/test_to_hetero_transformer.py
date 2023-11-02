@@ -602,10 +602,8 @@ if __name__ == '__main__':
     for num_types in [4, 8, 16, 32, 64]:
         metadata = gen_metadata(num_types)
         hetero_model = to_hetero(homo_model, metadata)
-        print("Vanilla Hetero Model=", hetero_model)
         heterolinear_model = to_hetero(homo_model, metadata,
                                        use_heterolinears=True)
-        print("To HeteroLinear Model=", heterolinear_model)
         benchmark(
             funcs=[hetero_model, heterolinear_model],
             func_names=[
