@@ -431,7 +431,7 @@ class HeteroDictLinear(torch.nn.Module):
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             for key, out in zip(x_dict.keys(), outs):
                 if key in x_dict:
-                    out_dict[key] = out
+                    out_dict[revert_key(key)] = out
         else:
             for key, lin in self.lins.items():
                 if key in x_dict:
