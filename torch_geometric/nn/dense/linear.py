@@ -460,4 +460,8 @@ def make_key_safe(key):
     return '-'.join(key) if isinstance(key, tuple) else key
 
 def revert_key(key):
-    return tuple(key.split('-'))
+    splitkey = tuple(key.split('-'))
+    if len(splitkey) == 3:
+        return splitkey
+    else:
+        return key
