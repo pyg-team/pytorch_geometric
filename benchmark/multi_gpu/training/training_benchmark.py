@@ -197,8 +197,9 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
 
     train = train_hetero if hetero else train_homo
 
+    maybe_synchronize(args.device)
+    dist.barrier()
     if rank == 0:
-        maybe_synchronize(args.device)
         beg = perf_counter()
 
     for epoch in range(args.num_epochs):
@@ -223,8 +224,9 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
 
         dist.barrier()
 
+    maybe_synchronize(args.device)
+    dist.barrier()
     if rank == 0:
-        maybe_synchronize(args.device)
         end = perf_counter()
         duration = end - beg
 
