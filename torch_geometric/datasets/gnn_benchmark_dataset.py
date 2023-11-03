@@ -134,7 +134,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
             raise ValueError(f"Split '{split}' found, but expected either "
                              f"'train', 'val', or 'test'")
 
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:

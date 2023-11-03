@@ -75,11 +75,11 @@ class PPI(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
-            self.load(self.processed_paths[0], data_cls=Data)
+            self.load(self.processed_paths[0])
         elif split == 'val':
-            self.load(self.processed_paths[1], data_cls=Data)
+            self.load(self.processed_paths[1])
         elif split == 'test':
-            self.load(self.processed_paths[2], data_cls=Data)
+            self.load(self.processed_paths[2])
 
     @property
     def raw_file_names(self) -> List[str]:

@@ -136,7 +136,7 @@ class GEDDataset(InMemoryDataset):
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.load(path, data_cls=Data)
+        self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         self.ged = torch.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')

@@ -74,7 +74,7 @@ class AQSOL(InMemoryDataset):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:

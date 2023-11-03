@@ -47,7 +47,7 @@ class FB15k_237(InMemoryDataset):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:

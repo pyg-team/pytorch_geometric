@@ -1,7 +1,7 @@
 import os.path as osp
 from typing import Callable, Optional
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
 
@@ -62,7 +62,7 @@ class Amazon(InMemoryDataset):
         self.name = name.lower()
         assert self.name in ['computers', 'photo']
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:

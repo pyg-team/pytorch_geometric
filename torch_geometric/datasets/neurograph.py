@@ -77,7 +77,7 @@ class NeuroGraphDataset(InMemoryDataset):
         self.name = name
 
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:

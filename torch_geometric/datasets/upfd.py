@@ -97,7 +97,7 @@ class UPFD(InMemoryDataset):
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:

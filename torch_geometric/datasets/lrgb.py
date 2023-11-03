@@ -138,7 +138,7 @@ class LRGBDataset(InMemoryDataset):
 
         super().__init__(root, transform, pre_transform, pre_filter)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:

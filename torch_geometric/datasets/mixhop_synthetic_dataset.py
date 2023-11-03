@@ -46,7 +46,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         super().__init__(root, transform, pre_transform)
 
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:

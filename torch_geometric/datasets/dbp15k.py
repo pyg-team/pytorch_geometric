@@ -47,7 +47,7 @@ class DBP15K(InMemoryDataset):
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:

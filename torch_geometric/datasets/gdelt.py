@@ -2,7 +2,7 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import Data, download_url
+from torch_geometric.data import download_url
 from torch_geometric.datasets.icews import EventDataset
 from torch_geometric.io import read_txt_array
 
@@ -42,7 +42,7 @@ class GDELT(EventDataset):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index(f'{split}.pt')
-        self.load(self.processed_paths[idx], data_cls=Data)
+        self.load(self.processed_paths[idx])
 
     @property
     def num_nodes(self) -> int:

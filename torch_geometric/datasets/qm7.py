@@ -53,7 +53,7 @@ class QM7b(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:

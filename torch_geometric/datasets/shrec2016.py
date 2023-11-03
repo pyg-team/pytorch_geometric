@@ -5,12 +5,7 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_off, read_txt_array
 
 
@@ -82,7 +77,7 @@ class SHREC2016(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
         self.__ref__ = torch.load(self.processed_paths[0])
         path = self.processed_paths[1] if train else self.processed_paths[2]
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def ref(self) -> str:

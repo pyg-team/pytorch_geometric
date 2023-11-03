@@ -52,7 +52,7 @@ class RelLinkPredDataset(InMemoryDataset):
         self.name = name
         assert name in ['FB15k-237']
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def num_relations(self) -> int:

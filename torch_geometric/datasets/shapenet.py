@@ -148,7 +148,7 @@ class ShapeNet(InMemoryDataset):
             raise ValueError((f'Split {split} found, but expected either '
                               'train, val, trainval or test'))
 
-        self.load(path, data_cls=Data)
+        self.load(path)
         self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),

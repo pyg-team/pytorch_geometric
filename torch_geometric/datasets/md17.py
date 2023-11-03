@@ -361,7 +361,7 @@ class MD17(InMemoryDataset):
                 f"the 'train' argument was not specified")
 
         idx = 0 if train is None or train else 1
-        self.load(self.processed_paths[idx], data_cls=Data)
+        self.load(self.processed_paths[idx])
 
     def mean(self) -> float:
         return float(self._data.energy.mean())

@@ -61,7 +61,7 @@ class PascalPF(InMemoryDataset):
         self.category = category.lower()
         assert self.category in self.categories
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
         self.pairs = torch.load(self.processed_paths[1])
 
     @property

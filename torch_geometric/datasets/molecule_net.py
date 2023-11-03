@@ -5,12 +5,7 @@ from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_gz,
-)
+from torch_geometric.data import InMemoryDataset, download_url, extract_gz
 from torch_geometric.utils import from_smiles
 
 
@@ -164,7 +159,7 @@ class MoleculeNet(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.names.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:

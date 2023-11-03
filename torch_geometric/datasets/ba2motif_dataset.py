@@ -85,7 +85,7 @@ class BA2MotifDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     def raw_file_names(self) -> str:
         return self.filename

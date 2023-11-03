@@ -68,7 +68,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         self.kwargs.update(kwargs)
 
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def processed_dir(self) -> str:
@@ -174,7 +174,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
 
         super().__init__(root, block_sizes, edge_probs, num_channels,
                          is_undirected, transform, pre_transform, **kwargs)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:

@@ -3,12 +3,7 @@ import os.path as osp
 import shutil
 from typing import Callable, List, Optional
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-)
+from torch_geometric.data import InMemoryDataset, download_url, extract_tar
 from torch_geometric.io import read_planetoid_data
 
 
@@ -63,7 +58,7 @@ class NELL(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0], data_cls=Data)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:

@@ -65,7 +65,7 @@ class MNISTSuperpixels(InMemoryDataset):
     ):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.load(path, data_cls=Data)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> str:
