@@ -50,7 +50,7 @@ Let's see this process in a simplified example:
     class MyOwnDataset(InMemoryDataset):
         def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
             super().__init__(root, transform, pre_transform, pre_filter)
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.load(self.processed_paths[0])
 
         @property
         def raw_file_names(self):
@@ -75,8 +75,7 @@ Let's see this process in a simplified example:
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(data) for data in data_list]
 
-            data, slices = self.collate(data_list)
-            torch.save((data, slices), self.processed_paths[0])
+            self.save(data_list, self.processed_paths[0])
 
 Creating "Larger" Datasets
 --------------------------
