@@ -5,8 +5,13 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.io import Data, read_off
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
+from torch_geometric.io import read_off
 
 
 class GeometricShapes(InMemoryDataset):
