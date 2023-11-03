@@ -20,7 +20,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Disallow the usage of `add_self_loops=True` in `GCNConv(normalize=False)` ([#8210](https://github.com/pyg-team/pytorch_geometric/pull/8210))
 - Disable device asserts during `torch_geometric.compile` ([#8220](https://github.com/pyg-team/pytorch_geometric/pull/8220))
-- Replace `torch.save` and `torch.load` with `InMemoryDataset.save` and `InMemoryDataset.load` ([#8317](https://github.com/pyg-team/pytorch_geometric/pull/8317))
 
 ### Deprecated
 
