@@ -236,7 +236,7 @@ class LRGBDataset(InMemoryDataset):
                     data_list.append(data)
 
                 self.save(data_list, osp.join(self.processed_dir,
-                                              f'{split}.pt'))
+                                              f'{split}.pt'), )
 
     def label_remap_coco(self):
         # Util function for name 'COCO-SP'
