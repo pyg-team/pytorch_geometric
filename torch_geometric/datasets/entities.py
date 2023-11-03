@@ -80,8 +80,10 @@ class Entities(InMemoryDataset):
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0],
-                  data_cls=HeteroData if hetero else Data, )
+        self.load(
+            self.processed_paths[0],
+            data_cls=HeteroData if hetero else Data,
+        )
 
     @property
     def raw_dir(self) -> str:
