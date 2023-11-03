@@ -54,7 +54,7 @@ class DGraphFin(InMemoryDataset):
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     def download(self):
         raise RuntimeError(
@@ -96,5 +96,4 @@ class DGraphFin(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

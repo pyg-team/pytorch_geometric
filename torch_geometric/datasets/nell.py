@@ -3,9 +3,12 @@ import os.path as osp
 import shutil
 from typing import Callable, List, Optional
 
-import torch
-
-from torch_geometric.data import InMemoryDataset, download_url, extract_tar
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
 from torch_geometric.io import read_planetoid_data
 
 
@@ -60,7 +63,7 @@ class NELL(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -81,4 +84,4 @@ class NELL(InMemoryDataset):
     def process(self):
         data = read_planetoid_data(self.raw_dir, 'nell.0.001')
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

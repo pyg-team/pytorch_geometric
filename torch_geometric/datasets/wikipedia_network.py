@@ -60,7 +60,7 @@ class WikipediaNetwork(InMemoryDataset):
             raise AttributeError("The dataset 'crocodile' is not available in "
                                  "case 'geom_gcn_preprocess=True'")
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -140,4 +140,4 @@ class WikipediaNetwork(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

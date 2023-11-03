@@ -4,7 +4,7 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
 
 
@@ -90,7 +90,7 @@ class Planetoid(InMemoryDataset):
         assert self.split in ['public', 'full', 'geom-gcn', 'random']
 
         super().__init__(root, transform, pre_transform)
-        self.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
         if split == 'full':
             data = self.get(0)

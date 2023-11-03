@@ -52,7 +52,7 @@ class RelLinkPredDataset(InMemoryDataset):
         self.name = name
         assert name in ['FB15k-237']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def num_relations(self) -> int:

@@ -97,7 +97,7 @@ class UPFD(InMemoryDataset):
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -158,7 +158,7 @@ class UPFD(InMemoryDataset):
                 data_list = [d for d in data_list if self.pre_filter(d)]
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(d) for d in data_list]
-            torch.save(self.collate(data_list), path)
+            self.save(data_list, path)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, name={self.name}, '

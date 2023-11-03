@@ -60,7 +60,7 @@ class S3DIS(InMemoryDataset):
         self.test_area = test_area
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -108,5 +108,5 @@ class S3DIS(InMemoryDataset):
             else:
                 test_data_list.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+        self.save(train_data_list, self.processed_paths[0])
+        self.save(test_data_list, self.processed_paths[1])

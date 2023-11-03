@@ -24,7 +24,7 @@ class SEALDataset(InMemoryDataset):
         self.num_hops = num_hops
         super().__init__(dataset.root)
         index = ['train', 'val', 'test'].index(split)
-        self.data, self.slices = torch.load(self.processed_paths[index])
+        self.load(self.processed_paths[index])
 
     @property
     def processed_file_names(self):

@@ -59,7 +59,7 @@ class MalNetTiny(InMemoryDataset):
             raise ValueError(f'Split "{split}" found, but expected either '
                              f'"train", "val", "trainval", "test" or None')
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
         if split is not None:
             split_slices = torch.load(self.processed_paths[1])
@@ -119,5 +119,5 @@ class MalNetTiny(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
         torch.save(split_slices, self.processed_paths[1])

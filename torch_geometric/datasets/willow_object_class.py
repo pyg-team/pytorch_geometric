@@ -67,7 +67,7 @@ class WILLOWObjectClass(InMemoryDataset):
         self.category = category
         self.device = device
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -172,7 +172,7 @@ class WILLOWObjectClass(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

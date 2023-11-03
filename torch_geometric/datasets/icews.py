@@ -82,7 +82,7 @@ class ICEWS18(EventDataset):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index(f'{split}.pt')
-        self.data, self.slices = torch.load(self.processed_paths[idx])
+        self.load(self.processed_paths[idx], data_cls=Data)
 
     @property
     def num_nodes(self) -> int:
@@ -115,6 +115,6 @@ class ICEWS18(EventDataset):
     def process(self):
         s = self.splits
         data_list = super().process()
-        torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
-        torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
-        torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])
+        self.save(data_list[s[0]:s[1]], self.processed_paths[0])
+        self.save(data_list[s[1]:s[2]], self.processed_paths[1])
+        self.save(data_list[s[2]:s[3]], self.processed_paths[2])

@@ -148,7 +148,7 @@ class ShapeNet(InMemoryDataset):
             raise ValueError((f'Split {split} found, but expected either '
                               'train, val, trainval or test'))
 
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
         self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
@@ -216,8 +216,8 @@ class ShapeNet(InMemoryDataset):
             data_list = self.process_filenames(filenames)
             if split == 'train' or split == 'val':
                 trainval += data_list
-            torch.save(self.collate(data_list), self.processed_paths[i])
-        torch.save(self.collate(trainval), self.processed_paths[3])
+            self.save(data_list, self.processed_paths[i])
+        self.save(trainval, self.processed_paths[3])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

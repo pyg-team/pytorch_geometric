@@ -119,7 +119,7 @@ class AttributedGraphDataset(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -178,7 +178,7 @@ class AttributedGraphDataset(InMemoryDataset):
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}()'

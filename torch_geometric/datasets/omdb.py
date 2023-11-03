@@ -37,7 +37,7 @@ class OMDB(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_file_names(self) -> str:
@@ -77,5 +77,5 @@ class OMDB(InMemoryDataset):
             train_data = [self.pre_transform(d) for d in train_data]
             test_data = [self.pre_transform(d) for d in test_data]
 
-        torch.save(self.collate(train_data), self.processed_paths[0])
-        torch.save(self.collate(test_data), self.processed_paths[1])
+        self.save(train_data, self.processed_paths[0])
+        self.save(test_data, self.processed_paths[1])

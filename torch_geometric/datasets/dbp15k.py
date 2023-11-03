@@ -47,7 +47,7 @@ class DBP15K(InMemoryDataset):
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -93,7 +93,7 @@ class DBP15K(InMemoryDataset):
         data = Data(x1=x1, edge_index1=edge_index1, rel1=rel1, x2=x2,
                     edge_index2=edge_index2, rel2=rel2, train_y=train_y,
                     test_y=test_y)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def process_graph(
         self,

@@ -134,7 +134,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
             raise ValueError(f"Split '{split}' found, but expected either "
                              f"'train', 'val', or 'test'")
 
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -170,7 +170,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
     def process(self):
         if self.name == 'CSL':
             data_list = self.process_CSL()
-            torch.save(self.collate(data_list), self.processed_paths[0])
+            self.save(data_list, self.processed_paths[0])
         else:
             inputs = torch.load(self.raw_paths[0])
             for i in range(len(inputs)):
@@ -182,7 +182,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
                 if self.pre_transform is not None:
                     data_list = [self.pre_transform(d) for d in data_list]
 
-                torch.save(self.collate(data_list), self.processed_paths[i])
+                self.save(data_list, self.processed_paths[i])
 
     def process_CSL(self) -> List[Data]:
         with open(self.raw_paths[0], 'rb') as f:

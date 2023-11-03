@@ -37,7 +37,7 @@ class GemsecDeezer(InMemoryDataset):
         self.name = name
         assert self.name in ['HU', 'HR', 'RO']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -69,4 +69,4 @@ class GemsecDeezer(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

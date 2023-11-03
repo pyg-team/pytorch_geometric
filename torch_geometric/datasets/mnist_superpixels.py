@@ -65,7 +65,7 @@ class MNISTSuperpixels(InMemoryDataset):
     ):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_file_names(self) -> str:
@@ -91,4 +91,4 @@ class MNISTSuperpixels(InMemoryDataset):
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(d) for d in data_list]
 
-            torch.save(self.collate(data_list), self.processed_paths[i])
+            self.save(data_list, self.processed_paths[i])

@@ -1,9 +1,7 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import torch
-
-from torch_geometric.data import InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
 
@@ -63,7 +61,7 @@ class Coauthor(InMemoryDataset):
         assert name.lower() in ['cs', 'physics']
         self.name = 'CS' if name.lower() == 'cs' else 'Physics'
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=Data)
 
     @property
     def raw_dir(self) -> str:
@@ -87,8 +85,7 @@ class Coauthor(InMemoryDataset):
     def process(self):
         data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name}()'

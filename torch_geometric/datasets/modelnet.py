@@ -96,7 +96,7 @@ class ModelNet(InMemoryDataset):
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -123,8 +123,8 @@ class ModelNet(InMemoryDataset):
             shutil.rmtree(metadata_folder)
 
     def process(self):
-        torch.save(self.process_set('train'), self.processed_paths[0])
-        torch.save(self.process_set('test'), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
@@ -145,7 +145,7 @@ class ModelNet(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        return self.collate(data_list)
+        return data_list
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name}({len(self)})'

@@ -6,7 +6,7 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.io import read_off
+from torch_geometric.io import Data, read_off
 
 
 class GeometricShapes(InMemoryDataset):
@@ -66,7 +66,7 @@ class GeometricShapes(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path, data_cls=Data)
 
     @property
     def raw_file_names(self) -> str:
@@ -82,8 +82,8 @@ class GeometricShapes(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        torch.save(self.process_set('train'), self.processed_paths[0])
-        torch.save(self.process_set('test'), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
@@ -105,4 +105,4 @@ class GeometricShapes(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        return self.collate(data_list)
+        return data_list
