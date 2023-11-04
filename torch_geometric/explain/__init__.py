@@ -5,10 +5,10 @@ from .explainer import Explainer
 from .metric import *  # noqa
 
 __all__ = [
-    'ExplainerConfig',
-    'ModelConfig',
-    'ThresholdConfig',
-    'Explanation',
-    'HeteroExplanation',
-    'Explainer',
+    "ExplainerConfig",
+    "ModelConfig",
+    "ThresholdConfig",
+    "Explanation",
+    "HeteroExplanation",
+    "Explainer",
 ]

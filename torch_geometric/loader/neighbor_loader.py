@@ -200,6 +200,7 @@ class NeighborLoader(NodeLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -207,9 +208,9 @@ class NeighborLoader(NodeLoader):
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
         replace: bool = False,
-        subgraph_type: Union[SubgraphType, str] = 'directional',
+        subgraph_type: Union[SubgraphType, str] = "directional",
         disjoint: bool = False,
-        temporal_strategy: str = 'uniform',
+        temporal_strategy: str = "uniform",
         time_attr: Optional[str] = None,
         weight_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
@@ -221,9 +222,11 @@ class NeighborLoader(NodeLoader):
         **kwargs,
     ):
         if input_time is not None and time_attr is None:
-            raise ValueError("Received conflicting 'input_time' and "
-                             "'time_attr' arguments: 'input_time' is set "
-                             "while 'time_attr' is not set.")
+            raise ValueError(
+                "Received conflicting 'input_time' and "
+                "'time_attr' arguments: 'input_time' is set "
+                "while 'time_attr' is not set."
+            )
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -236,7 +239,7 @@ class NeighborLoader(NodeLoader):
                 time_attr=time_attr,
                 weight_attr=weight_attr,
                 is_sorted=is_sorted,
-                share_memory=kwargs.get('num_workers', 0) > 0,
+                share_memory=kwargs.get("num_workers", 0) > 0,
                 directed=directed,
             )
 

@@ -61,6 +61,7 @@ class HeteroConv(torch.nn.Module):
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"cat"`, :obj:`None`). (default: :obj:`"sum"`)
     """
+
     def __init__(
         self,
         convs: Dict[EdgeType, MessagePassing],
@@ -78,7 +79,8 @@ class HeteroConv(torch.nn.Module):
                 f"There exist node types ({src_node_types - dst_node_types}) "
                 f"whose representations do not get updated during message "
                 f"passing as they do not occur as destination type in any "
-                f"edge type. This may lead to unexpected behavior.")
+                f"edge type. This may lead to unexpected behavior."
+            )
 
         self.convs = ModuleDict(convs)
         self.aggr = aggr
@@ -129,17 +131,20 @@ class HeteroConv(torch.nn.Module):
                 elif src == dst and src in value_dict:
                     args.append(value_dict[src])
                 elif src in value_dict or dst in value_dict:
-                    args.append((
-                        value_dict.get(src, None),
-                        value_dict.get(dst, None),
-                    ))
+                    args.append(
+                        (
+                            value_dict.get(src, None),
+                            value_dict.get(dst, None),
+                        )
+                    )
 
             kwargs = {}
             for arg, value_dict in kwargs_dict.items():
-                if not arg.endswith('_dict'):
+                if not arg.endswith("_dict"):
                     raise ValueError(
                         f"Keyword arguments in '{self.__class__.__name__}' "
-                        f"need to end with '_dict' (got '{arg}')")
+                        f"need to end with '_dict' (got '{arg}')"
+                    )
 
                 arg = arg[:-5]  # `{*}_dict`
                 if edge_type in value_dict:
@@ -165,4 +170,4 @@ class HeteroConv(torch.nn.Module):
         return out_dict
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(num_relations={len(self.convs)})'
+        return f"{self.__class__.__name__}(num_relations={len(self.convs)})"

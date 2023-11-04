@@ -57,8 +57,9 @@ class JODIEDataset(InMemoryDataset):
           - 2
           - 1
     """
-    url = 'http://snap.stanford.edu/jodie/{}.csv'
-    names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
+
+    url = "http://snap.stanford.edu/jodie/{}.csv"
+    names = ["reddit", "wikipedia", "mooc", "lastfm"]
 
     def __init__(
         self,
@@ -75,19 +76,19 @@ class JODIEDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, "raw")
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, "processed")
 
     @property
     def raw_file_names(self) -> str:
-        return f'{self.name}.csv'
+        return f"{self.name}.csv"
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         download_url(self.url.format(self.name), self.raw_dir)
@@ -112,4 +113,4 @@ class JODIEDataset(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f'{self.name.capitalize()}()'
+        return f"{self.name.capitalize()}()"

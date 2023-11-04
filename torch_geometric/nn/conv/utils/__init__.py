@@ -10,15 +10,15 @@ from .cheatsheet import processes_hypergraphs
 from .cheatsheet import processes_point_clouds
 
 __all__ = [
-    'paper_title',
-    'paper_link',
-    'supports_sparse_tensor',
-    'supports_edge_weights',
-    'supports_edge_features',
-    'supports_bipartite_graphs',
-    'supports_static_graphs',
-    'supports_lazy_initialization',
-    'processes_heterogeneous_graphs',
-    'processes_hypergraphs',
-    'processes_point_clouds',
+    "paper_title",
+    "paper_link",
+    "supports_sparse_tensor",
+    "supports_edge_weights",
+    "supports_edge_features",
+    "supports_bipartite_graphs",
+    "supports_static_graphs",
+    "supports_lazy_initialization",
+    "processes_heterogeneous_graphs",
+    "processes_hypergraphs",
+    "processes_point_clouds",
 ]

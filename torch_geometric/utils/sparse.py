@@ -66,21 +66,28 @@ def dense_to_sparse(
         tensor([3, 1, 2, 1, 2, 3, 5]))
     """
     if adj.dim() < 2 or adj.dim() > 3:
-        raise ValueError(f"Dense adjacency matrix 'adj' must be two- or "
-                         f"three-dimensional (got {adj.dim()} dimensions)")
+        raise ValueError(
+            f"Dense adjacency matrix 'adj' must be two- or "
+            f"three-dimensional (got {adj.dim()} dimensions)"
+        )
 
     if mask is not None and adj.dim() == 2:
-        warnings.warn("Mask should not be provided in case the dense "
-                      "adjacency matrix is two-dimensional")
+        warnings.warn(
+            "Mask should not be provided in case the dense "
+            "adjacency matrix is two-dimensional"
+        )
         mask = None
 
     if mask is not None and mask.dim() != 2:
-        raise ValueError(f"Mask must be two-dimensional "
-                         f"(got {mask.dim()} dimensions)")
+        raise ValueError(
+            f"Mask must be two-dimensional " f"(got {mask.dim()} dimensions)"
+        )
 
     if mask is not None and adj.size(-2) != adj.size(-1):
-        raise ValueError(f"Mask is only supported on quadratic adjacency "
-                         f"matrices (got [*, {adj.size(-2)}, {adj.size(-1)}])")
+        raise ValueError(
+            f"Mask is only supported on quadratic adjacency "
+            f"matrices (got [*, {adj.size(-2)}, {adj.size(-1)}])"
+        )
 
     if adj.dim() == 2:
         edge_index = adj.nonzero().t()
@@ -123,8 +130,7 @@ def is_torch_sparse_tensor(src: Any) -> bool:
             return True
         if src.layout == torch.sparse_csr:
             return True
-        if (torch_geometric.typing.WITH_PT112
-                and src.layout == torch.sparse_csc):
+        if torch_geometric.typing.WITH_PT112 and src.layout == torch.sparse_csc:
             return True
     return False
 
@@ -185,8 +191,7 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
+        if torch_geometric.typing.WITH_PT20 and not torch_geometric.typing.WITH_ARM:
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
@@ -251,8 +256,7 @@ def to_torch_csr_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
+        if torch_geometric.typing.WITH_PT20 and not torch_geometric.typing.WITH_ARM:
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
@@ -309,8 +313,7 @@ def to_torch_csc_tensor(
 
     """
     if not torch_geometric.typing.WITH_PT112:
-        return torch_geometric.typing.MockTorchCSCTensor(
-            edge_index, edge_attr, size)
+        return torch_geometric.typing.MockTorchCSCTensor(edge_index, edge_attr, size)
 
     if size is None:
         size = int(edge_index.max()) + 1
@@ -318,12 +321,12 @@ def to_torch_csc_tensor(
         size = (size, size)
 
     if not is_coalesced:
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size),
-                                         sort_by_row=False)
+        edge_index, edge_attr = coalesce(
+            edge_index, edge_attr, max(size), sort_by_row=False
+        )
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
+        if torch_geometric.typing.WITH_PT20 and not torch_geometric.typing.WITH_ARM:
             edge_attr = torch.ones(1, device=edge_index.device)
             edge_attr = edge_attr.expand(edge_index.size(1))
         else:
@@ -483,7 +486,8 @@ def ptr2index(ptr: Tensor) -> Tensor:
 
 def index2ptr(index: Tensor, size: int) -> Tensor:
     return torch._convert_indices_from_coo_to_csr(
-        index, size, out_int32=index.dtype == torch.int32)
+        index, size, out_int32=index.dtype == torch.int32
+    )
 
 
 def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:

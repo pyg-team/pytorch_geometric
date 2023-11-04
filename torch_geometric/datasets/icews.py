@@ -32,7 +32,7 @@ class EventDataset(InMemoryDataset):
         events = events - events.min(dim=0, keepdim=True)[0]
 
         data_list = []
-        for (sub, rel, obj, t) in events.tolist():
+        for sub, rel, obj, t in events.tolist():
             data = Data(sub=sub, rel=rel, obj=obj, t=t)
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
@@ -68,20 +68,20 @@ class ICEWS18(EventDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
+    url = "https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18"
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
     def __init__(
         self,
         root: str,
-        split: str = 'train',
+        split: str = "train",
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
     ):
-        assert split in ['train', 'val', 'test']
+        assert split in ["train", "val", "test"]
         super().__init__(root, transform, pre_transform, pre_filter)
-        idx = self.processed_file_names.index(f'{split}.pt')
+        idx = self.processed_file_names.index(f"{split}.pt")
         self.load(self.processed_paths[idx])
 
     @property
@@ -94,20 +94,20 @@ class ICEWS18(EventDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [f'{name}.txt' for name in ['train', 'valid', 'test']]
+        return [f"{name}.txt" for name in ["train", "valid", "test"]]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['train.pt', 'val.pt', 'test.pt']
+        return ["train.pt", "val.pt", "test.pt"]
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f'{self.url}/{filename}', self.raw_dir)
+            download_url(f"{self.url}/{filename}", self.raw_dir)
 
     def process_events(self) -> torch.Tensor:
         events = []
         for path in self.raw_paths:
-            data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
+            data = read_txt_array(path, sep="\t", end=4, dtype=torch.long)
             data[:, 3] = data[:, 3] // 24
             events += [data]
         return torch.cat(events, dim=0)
@@ -115,6 +115,6 @@ class ICEWS18(EventDataset):
     def process(self):
         s = self.splits
         data_list = super().process()
-        self.save(data_list[s[0]:s[1]], self.processed_paths[0])
-        self.save(data_list[s[1]:s[2]], self.processed_paths[1])
-        self.save(data_list[s[2]:s[3]], self.processed_paths[2])
+        self.save(data_list[s[0] : s[1]], self.processed_paths[0])
+        self.save(data_list[s[1] : s[2]], self.processed_paths[1])
+        self.save(data_list[s[2] : s[3]], self.processed_paths[2])

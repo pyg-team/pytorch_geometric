@@ -4,7 +4,7 @@ from typing import Any, Optional
 import torch
 from torch import Tensor
 
-BACKENDS = {'graphviz', 'networkx'}
+BACKENDS = {"graphviz", "networkx"}
 
 
 def has_graphviz() -> bool:
@@ -55,15 +55,16 @@ def visualize_graph(
         edge_weight = torch.ones(edge_index.size(1))
 
     if backend is None:
-        backend = 'graphviz' if has_graphviz() else 'networkx'
+        backend = "graphviz" if has_graphviz() else "networkx"
 
-    if backend.lower() == 'networkx':
+    if backend.lower() == "networkx":
         return _visualize_graph_via_networkx(edge_index, edge_weight, path)
-    elif backend.lower() == 'graphviz':
+    elif backend.lower() == "graphviz":
         return _visualize_graph_via_graphviz(edge_index, edge_weight, path)
 
-    raise ValueError(f"Expected graph drawing backend to be in "
-                     f"{BACKENDS} (got '{backend}')")
+    raise ValueError(
+        f"Expected graph drawing backend to be in " f"{BACKENDS} (got '{backend}')"
+    )
 
 
 def _visualize_graph_via_graphviz(
@@ -73,20 +74,20 @@ def _visualize_graph_via_graphviz(
 ) -> Any:
     import graphviz
 
-    suffix = path.split('.')[-1] if path is not None else None
-    g = graphviz.Digraph('graph', format=suffix)
-    g.attr('node', shape='circle', fontsize='11pt')
+    suffix = path.split(".")[-1] if path is not None else None
+    g = graphviz.Digraph("graph", format=suffix)
+    g.attr("node", shape="circle", fontsize="11pt")
 
     for node in edge_index.view(-1).unique().tolist():
         g.node(str(node))
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         hex_color = hex(255 - round(255 * w))[2:]
-        hex_color = f'{hex_color}0' if len(hex_color) == 1 else hex_color
-        g.edge(str(src), str(dst), color=f'#{hex_color}{hex_color}{hex_color}')
+        hex_color = f"{hex_color}0" if len(hex_color) == 1 else hex_color
+        g.edge(str(src), str(dst), color=f"#{hex_color}{hex_color}{hex_color}")
 
     if path is not None:
-        path = '.'.join(path.split('.')[:-1])
+        path = ".".join(path.split(".")[:-1])
         g.render(path, cleanup=True)
     else:
         g.view()
@@ -115,21 +116,22 @@ def _visualize_graph_via_networkx(
     pos = nx.spring_layout(g)
     for src, dst, data in g.edges(data=True):
         ax.annotate(
-            '',
+            "",
             xy=pos[src],
             xytext=pos[dst],
             arrowprops=dict(
                 arrowstyle="->",
-                alpha=data['alpha'],
+                alpha=data["alpha"],
                 shrinkA=sqrt(node_size) / 2.0,
                 shrinkB=sqrt(node_size) / 2.0,
                 connectionstyle="arc3,rad=0.1",
             ),
         )
 
-    nodes = nx.draw_networkx_nodes(g, pos, node_size=node_size,
-                                   node_color='white', margins=0.1)
-    nodes.set_edgecolor('black')
+    nodes = nx.draw_networkx_nodes(
+        g, pos, node_size=node_size, node_color="white", margins=0.1
+    )
+    nodes.set_edgecolor("black")
     nx.draw_networkx_labels(g, pos, font_size=10)
 
     if path is not None:

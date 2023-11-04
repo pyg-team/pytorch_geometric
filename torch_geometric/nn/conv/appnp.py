@@ -55,13 +55,21 @@ class APPNP(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
+
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, K: int, alpha: float, dropout: float = 0.,
-                 cached: bool = False, add_self_loops: bool = True,
-                 normalize: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+    def __init__(
+        self,
+        K: int,
+        alpha: float,
+        dropout: float = 0.0,
+        cached: bool = False,
+        add_self_loops: bool = True,
+        normalize: bool = True,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
         self.K = K
         self.alpha = alpha
@@ -78,16 +86,22 @@ class APPNP(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
+    ) -> Tensor:
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, self.flow, dtype=x.dtype)
+                        edge_index,
+                        edge_weight,
+                        x.size(self.node_dim),
+                        False,
+                        self.add_self_loops,
+                        self.flow,
+                        dtype=x.dtype,
+                    )
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -97,8 +111,14 @@ class APPNP(MessagePassing):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, self.flow, dtype=x.dtype)
+                        edge_index,
+                        edge_weight,
+                        x.size(self.node_dim),
+                        False,
+                        self.add_self_loops,
+                        self.flow,
+                        dtype=x.dtype,
+                    )
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -119,11 +139,10 @@ class APPNP(MessagePassing):
                     value = edge_index.storage.value()
                     assert value is not None
                     value = F.dropout(value, p=self.dropout)
-                    edge_index = edge_index.set_value(value, layout='coo')
+                    edge_index = edge_index.set_value(value, layout="coo")
 
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                               size=None)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
             x = x * (1 - self.alpha)
             x = x + self.alpha * h
 
@@ -136,4 +155,4 @@ class APPNP(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(K={self.K}, alpha={self.alpha})'
+        return f"{self.__class__.__name__}(K={self.K}, alpha={self.alpha})"

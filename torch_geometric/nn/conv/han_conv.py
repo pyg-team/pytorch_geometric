@@ -16,7 +16,6 @@ def group(
     q: nn.Parameter,
     k_lin: nn.Module,
 ) -> Tuple[OptTensor, OptTensor]:
-
     if len(xs) == 0:
         return None, None
     else:
@@ -62,6 +61,7 @@ class HANConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(
         self,
         in_channels: Union[int, Dict[str, int]],
@@ -72,7 +72,7 @@ class HANConv(MessagePassing):
         dropout: float = 0.0,
         **kwargs,
     ):
-        super().__init__(aggr='add', node_dim=0, **kwargs)
+        super().__init__(aggr="add", node_dim=0, **kwargs)
 
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
@@ -94,7 +94,7 @@ class HANConv(MessagePassing):
         self.lin_dst = nn.ParameterDict()
         dim = out_channels // heads
         for edge_type in metadata[1]:
-            edge_type = '__'.join(edge_type)
+            edge_type = "__".join(edge_type)
             self.lin_src[edge_type] = nn.Parameter(torch.empty(1, heads, dim))
             self.lin_dst[edge_type] = nn.Parameter(torch.empty(1, heads, dim))
 
@@ -113,8 +113,10 @@ class HANConv(MessagePassing):
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Dict[EdgeType, Adj],
         return_semantic_attention_weights: bool = False,
-    ) -> Union[Dict[NodeType, OptTensor], Tuple[Dict[NodeType, OptTensor],
-                                                Dict[NodeType, OptTensor]]]:
+    ) -> Union[
+        Dict[NodeType, OptTensor],
+        Tuple[Dict[NodeType, OptTensor], Dict[NodeType, OptTensor]],
+    ]:
         r"""Runs the forward pass of the module.
 
         Args:
@@ -141,7 +143,7 @@ class HANConv(MessagePassing):
         # Iterate over edge types:
         for edge_type, edge_index in edge_index_dict.items():
             src_type, _, dst_type = edge_type
-            edge_type = '__'.join(edge_type)
+            edge_type = "__".join(edge_type)
             lin_src = self.lin_src[edge_type]
             lin_dst = self.lin_dst[edge_type]
             x_src = x_node_dict[src_type]
@@ -149,8 +151,9 @@ class HANConv(MessagePassing):
             alpha_src = (x_src * lin_src).sum(dim=-1)
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
             # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
-            out = self.propagate(edge_index, x=(x_src, x_dst),
-                                 alpha=(alpha_src, alpha_dst), size=None)
+            out = self.propagate(
+                edge_index, x=(x_src, x_dst), alpha=(alpha_src, alpha_dst), size=None
+            )
 
             out = F.relu(out)
             out_dict[dst_type].append(out)
@@ -167,10 +170,15 @@ class HANConv(MessagePassing):
 
         return out_dict
 
-    def message(self, x_j: Tensor, alpha_i: Tensor, alpha_j: Tensor,
-                index: Tensor, ptr: Optional[Tensor],
-                size_i: Optional[int]) -> Tensor:
-
+    def message(
+        self,
+        x_j: Tensor,
+        alpha_i: Tensor,
+        alpha_j: Tensor,
+        index: Tensor,
+        ptr: Optional[Tensor],
+        size_i: Optional[int],
+    ) -> Tensor:
         alpha = alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
@@ -179,5 +187,4 @@ class HANConv(MessagePassing):
         return out.view(-1, self.out_channels)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.out_channels}, '
-                f'heads={self.heads})')
+        return f"{self.__class__.__name__}({self.out_channels}, " f"heads={self.heads})"

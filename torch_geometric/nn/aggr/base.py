@@ -59,6 +59,7 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+
     def forward(
         self,
         x: Tensor,
@@ -92,7 +93,7 @@ class Aggregation(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         pass
 
-    @disable_dynamic_shapes(required_args=['dim_size'])
+    @disable_dynamic_shapes(required_args=["dim_size"])
     def __call__(
         self,
         x: Tensor,
@@ -102,10 +103,11 @@ class Aggregation(torch.nn.Module):
         dim: int = -2,
         **kwargs,
     ) -> Tensor:
-
         if dim >= x.dim() or dim < -x.dim():
-            raise ValueError(f"Encountered invalid dimension '{dim}' of "
-                             f"source tensor with {x.dim()} dimensions")
+            raise ValueError(
+                f"Encountered invalid dimension '{dim}' of "
+                f"source tensor with {x.dim()} dimensions"
+            )
 
         if index is None and ptr is None:
             index = x.new_zeros(x.size(dim), dtype=torch.long)
@@ -114,26 +116,31 @@ class Aggregation(torch.nn.Module):
             if dim_size is None:
                 dim_size = ptr.numel() - 1
             elif dim_size != ptr.numel() - 1:
-                raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                 f"'{dim_size}' but expected "
-                                 f"'{ptr.numel() - 1}')")
+                raise ValueError(
+                    f"Encountered invalid 'dim_size' (got "
+                    f"'{dim_size}' but expected "
+                    f"'{ptr.numel() - 1}')"
+                )
 
         if index is not None and dim_size is None:
             dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
         try:
-            return super().__call__(x, index=index, ptr=ptr, dim_size=dim_size,
-                                    dim=dim, **kwargs)
+            return super().__call__(
+                x, index=index, ptr=ptr, dim_size=dim_size, dim=dim, **kwargs
+            )
         except (IndexError, RuntimeError) as e:
             if index is not None:
                 if index.numel() > 0 and dim_size <= int(index.max()):
-                    raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                     f"'{dim_size}' but expected "
-                                     f">= '{int(index.max()) + 1}')")
+                    raise ValueError(
+                        f"Encountered invalid 'dim_size' (got "
+                        f"'{dim_size}' but expected "
+                        f">= '{int(index.max()) + 1}')"
+                    )
             raise e
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"
 
     # Assertions ##############################################################
 
@@ -141,33 +148,42 @@ class Aggregation(torch.nn.Module):
         # TODO Currently, not all aggregators support `ptr`. This assert helps
         # to ensure that we require `index` to be passed to the computation:
         if index is None:
-            raise NotImplementedError(
-                "Aggregation requires 'index' to be specified")
+            raise NotImplementedError("Aggregation requires 'index' to be specified")
 
     def assert_sorted_index(self, index: Optional[Tensor]):
         if index is not None and not torch.all(index[:-1] <= index[1:]):
-            raise ValueError("Can not perform aggregation since the 'index' "
-                             "tensor is not sorted. Specifically, if you use "
-                             "this aggregation as part of 'MessagePassing`, "
-                             "ensure that 'edge_index' is sorted by "
-                             "destination nodes, e.g., by calling "
-                             "`data.sort(sort_by_row=False)`")
+            raise ValueError(
+                "Can not perform aggregation since the 'index' "
+                "tensor is not sorted. Specifically, if you use "
+                "this aggregation as part of 'MessagePassing`, "
+                "ensure that 'edge_index' is sorted by "
+                "destination nodes, e.g., by calling "
+                "`data.sort(sort_by_row=False)`"
+            )
 
     def assert_two_dimensional_input(self, x: Tensor, dim: int):
         if x.dim() != 2:
-            raise ValueError(f"Aggregation requires two-dimensional inputs "
-                             f"(got '{x.dim()}')")
+            raise ValueError(
+                f"Aggregation requires two-dimensional inputs " f"(got '{x.dim()}')"
+            )
 
         if dim not in [-2, 0]:
-            raise ValueError(f"Aggregation needs to perform aggregation in "
-                             f"first dimension (got '{dim}')")
+            raise ValueError(
+                f"Aggregation needs to perform aggregation in "
+                f"first dimension (got '{dim}')"
+            )
 
     # Helper methods ##########################################################
 
-    def reduce(self, x: Tensor, index: Optional[Tensor] = None,
-               ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-               dim: int = -2, reduce: str = 'sum') -> Tensor:
-
+    def reduce(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        reduce: str = "sum",
+    ) -> Tensor:
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment(x, ptr, reduce=reduce)
@@ -185,7 +201,6 @@ class Aggregation(torch.nn.Module):
         fill_value: float = 0.0,
         max_num_elements: Optional[int] = None,
     ) -> Tuple[Tensor, Tensor]:
-
         # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_sorted_index(index)

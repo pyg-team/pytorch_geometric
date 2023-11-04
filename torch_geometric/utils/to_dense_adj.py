@@ -69,7 +69,7 @@ def to_dense_adj(
         batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
 
     one = batch.new_ones(batch.size(0))
-    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
+    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce="sum")
     cum_nodes = cumsum(num_nodes)
 
     idx0 = batch[edge_index[0]]
@@ -79,8 +79,9 @@ def to_dense_adj(
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
 
-    elif ((idx1.numel() > 0 and idx1.max() >= max_num_nodes)
-          or (idx2.numel() > 0 and idx2.max() >= max_num_nodes)):
+    elif (idx1.numel() > 0 and idx1.max() >= max_num_nodes) or (
+        idx2.numel() > 0 and idx2.max() >= max_num_nodes
+    ):
         mask = (idx1 < max_num_nodes) & (idx2 < max_num_nodes)
         idx0 = idx0[mask]
         idx1 = idx1[mask]
@@ -95,7 +96,7 @@ def to_dense_adj(
     flattened_size = batch_size * max_num_nodes * max_num_nodes
 
     idx = idx0 * max_num_nodes * max_num_nodes + idx1 * max_num_nodes + idx2
-    adj = scatter(edge_attr, idx, dim=0, dim_size=flattened_size, reduce='sum')
+    adj = scatter(edge_attr, idx, dim=0, dim_size=flattened_size, reduce="sum")
     adj = adj.view(size)
 
     return adj

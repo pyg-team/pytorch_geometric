@@ -53,16 +53,18 @@ class GINConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
-                 **kwargs):
-        kwargs.setdefault('aggr', 'add')
+
+    def __init__(
+        self, nn: Callable, eps: float = 0.0, train_eps: bool = False, **kwargs
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
             self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.empty(1))
+            self.register_buffer("eps", torch.empty(1))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -70,9 +72,9 @@ class GINConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
-
+    def forward(
+        self, x: Union[Tensor, OptPairTensor], edge_index: Adj, size: Size = None
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -88,14 +90,13 @@ class GINConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor) -> Tensor:
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(nn={self.nn})'
+        return f"{self.__class__.__name__}(nn={self.nn})"
 
 
 class GINEConv(MessagePassing):
@@ -137,23 +138,29 @@ class GINEConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: torch.nn.Module, eps: float = 0.,
-                 train_eps: bool = False, edge_dim: Optional[int] = None,
-                 **kwargs):
-        kwargs.setdefault('aggr', 'add')
+
+    def __init__(
+        self,
+        nn: torch.nn.Module,
+        eps: float = 0.0,
+        train_eps: bool = False,
+        edge_dim: Optional[int] = None,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
             self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.empty(1))
+            self.register_buffer("eps", torch.empty(1))
         if edge_dim is not None:
             if isinstance(self.nn, torch.nn.Sequential):
                 nn = self.nn[0]
-            if hasattr(nn, 'in_features'):
+            if hasattr(nn, "in_features"):
                 in_channels = nn.in_features
-            elif hasattr(nn, 'in_channels'):
+            elif hasattr(nn, "in_channels"):
                 in_channels = nn.in_channels
             else:
                 raise ValueError("Could not infer input channels from `nn`.")
@@ -169,9 +176,13 @@ class GINEConv(MessagePassing):
         if self.lin is not None:
             self.lin.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -186,9 +197,11 @@ class GINEConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         if self.lin is None and x_j.size(-1) != edge_attr.size(-1):
-            raise ValueError("Node and edge feature dimensionalities do not "
-                             "match. Consider setting the 'edge_dim' "
-                             "attribute of 'GINEConv'")
+            raise ValueError(
+                "Node and edge feature dimensionalities do not "
+                "match. Consider setting the 'edge_dim' "
+                "attribute of 'GINEConv'"
+            )
 
         if self.lin is not None:
             edge_attr = self.lin(edge_attr)
@@ -196,4 +209,4 @@ class GINEConv(MessagePassing):
         return (x_j + edge_attr).relu()
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(nn={self.nn})'
+        return f"{self.__class__.__name__}(nn={self.nn})"

@@ -7,7 +7,7 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-MISSING = '???'
+MISSING = "???"
 
 
 @torch.jit._overload

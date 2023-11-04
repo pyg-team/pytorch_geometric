@@ -32,8 +32,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = ('https://raw.githubusercontent.com/samihaija/mixhop/master/data'
-           '/synthetic')
+    url = "https://raw.githubusercontent.com/samihaija/mixhop/master/data" "/synthetic"
 
     def __init__(
         self,
@@ -50,30 +49,30 @@ class MixHopSyntheticDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'raw')
+        return osp.join(self.root, f"{self.homophily:0.1f}"[::2], "raw")
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'processed')
+        return osp.join(self.root, f"{self.homophily:0.1f}"[::2], "processed")
 
     @property
     def raw_file_names(self) -> List[str]:
-        name = f'ind.n5000-h{self.homophily:0.1f}-c10'
-        return [f'{name}.allx', f'{name}.ally', f'{name}.graph']
+        name = f"ind.n5000-h{self.homophily:0.1f}-c10"
+        return [f"{name}.allx", f"{name}.ally", f"{name}.graph"]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f'{self.url}/{filename}', self.raw_dir)
+            download_url(f"{self.url}/{filename}", self.raw_dir)
 
     def process(self):
         x = torch.from_numpy(np.load(self.raw_paths[0]))
         y = torch.from_numpy(np.load(self.raw_paths[1])).argmax(dim=-1)
 
-        edges = pickle.load(open(self.raw_paths[2], 'rb'), encoding='latin1')
+        edges = pickle.load(open(self.raw_paths[2], "rb"), encoding="latin1")
         row, col = [], []
         for k, v in edges.items():
             row += [k] * len(v)
@@ -85,12 +84,18 @@ class MixHopSyntheticDataset(InMemoryDataset):
         train_mask = torch.zeros(x.size(0), dtype=torch.bool)
         train_mask[:N_s] = True
         val_mask = torch.zeros(x.size(0), dtype=torch.bool)
-        val_mask[N_s:2 * N_s] = True
+        val_mask[N_s : 2 * N_s] = True
         test_mask = torch.zeros(x.size(0), dtype=torch.bool)
-        test_mask[2 * N_s:] = True
+        test_mask[2 * N_s :] = True
 
-        data = Data(x=x, y=y, edge_index=edge_index, train_mask=train_mask,
-                    val_mask=val_mask, test_mask=test_mask)
+        data = Data(
+            x=x,
+            y=y,
+            edge_index=edge_index,
+            train_mask=train_mask,
+            val_mask=val_mask,
+            test_mask=test_mask,
+        )
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
@@ -98,4 +103,4 @@ class MixHopSyntheticDataset(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(homophily={self.homophily:.1f})'
+        return f"{self.__class__.__name__}(homophily={self.homophily:.1f})"

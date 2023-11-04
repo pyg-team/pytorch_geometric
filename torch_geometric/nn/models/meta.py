@@ -96,6 +96,7 @@ class MetaLayer(torch.nn.Module):
         op = MetaLayer(EdgeModel(), NodeModel(), GlobalModel())
         x, edge_attr, u = op(x, edge_index, edge_attr, u, batch)
     """
+
     def __init__(
         self,
         edge_model: Optional[torch.nn.Module] = None,
@@ -112,7 +113,7 @@ class MetaLayer(torch.nn.Module):
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         for item in [self.node_model, self.edge_model, self.global_model]:
-            if hasattr(item, 'reset_parameters'):
+            if hasattr(item, "reset_parameters"):
                 item.reset_parameters()
 
     def forward(
@@ -139,8 +140,9 @@ class MetaLayer(torch.nn.Module):
         col = edge_index[1]
 
         if self.edge_model is not None:
-            edge_attr = self.edge_model(x[row], x[col], edge_attr, u,
-                                        batch if batch is None else batch[row])
+            edge_attr = self.edge_model(
+                x[row], x[col], edge_attr, u, batch if batch is None else batch[row]
+            )
 
         if self.node_model is not None:
             x = self.node_model(x, edge_index, edge_attr, u, batch)
@@ -151,8 +153,10 @@ class MetaLayer(torch.nn.Module):
         return x, edge_attr, u
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(\n'
-                f'  edge_model={self.edge_model},\n'
-                f'  node_model={self.node_model},\n'
-                f'  global_model={self.global_model}\n'
-                f')')
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  edge_model={self.edge_model},\n"
+            f"  node_model={self.node_model},\n"
+            f"  global_model={self.global_model}\n"
+            f")"
+        )

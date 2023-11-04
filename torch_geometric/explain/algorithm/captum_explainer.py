@@ -41,13 +41,14 @@ class CaptumExplainer(ExplainerAlgorithm):
             to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
+
     SUPPORTED_METHODS = [  # TODO: Add support for more methods.
-        'IntegratedGradients',
-        'Saliency',
-        'InputXGradient',
-        'Deconvolution',
-        'ShapleyValueSampling',
-        'GuidedBackprop',
+        "IntegratedGradients",
+        "Saliency",
+        "InputXGradient",
+        "Deconvolution",
+        "ShapleyValueSampling",
+        "GuidedBackprop",
     ]
 
     def __init__(
@@ -68,15 +69,17 @@ class CaptumExplainer(ExplainerAlgorithm):
             self.attribution_method_class = attribution_method
 
         if not self._is_supported_attribution_method():
-            raise ValueError(f"{self.__class__.__name__} does not support "
-                             f"attribution method "
-                             f"{self.attribution_method_class.__name__}")
+            raise ValueError(
+                f"{self.__class__.__name__} does not support "
+                f"attribution method "
+                f"{self.attribution_method_class.__name__}"
+            )
 
-        if kwargs.get('internal_batch_size', 1) != 1:
+        if kwargs.get("internal_batch_size", 1) != 1:
             warnings.warn("Overriding 'internal_batch_size' to 1")
 
-        if 'internal_batch_size' in self._get_attribute_parameters():
-            kwargs['internal_batch_size'] = 1
+        if "internal_batch_size" in self._get_attribute_parameters():
+            kwargs["internal_batch_size"] = 1
 
         self.kwargs = kwargs
 
@@ -91,8 +94,9 @@ class CaptumExplainer(ExplainerAlgorithm):
         elif edge_mask_type is not None:
             mask_type = MaskLevelType.edge
         else:
-            raise ValueError("Neither node mask type nor "
-                             "edge mask type is specified.")
+            raise ValueError(
+                "Neither node mask type nor " "edge mask type is specified."
+            )
         return mask_type
 
     def _get_attribute_parameters(self) -> Dict[str, Any]:
@@ -103,8 +107,8 @@ class CaptumExplainer(ExplainerAlgorithm):
     def _needs_baseline(self) -> bool:
         r"""Checks if the method needs a baseline."""
         parameters = self._get_attribute_parameters()
-        if 'baselines' in parameters:
-            param = parameters['baselines']
+        if "baselines" in parameters:
+            param = parameters["baselines"]
             if param.default is inspect.Parameter.empty:
                 return True
         return False
@@ -128,7 +132,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-
         mask_type = self._get_mask_type()
 
         inputs, add_forward_args = to_captum_input(
@@ -149,11 +152,9 @@ class CaptumExplainer(ExplainerAlgorithm):
             )
         else:
             metadata = None
-            captum_model = CaptumModel(model, mask_type, index,
-                                       self.model_config)
+            captum_model = CaptumModel(model, mask_type, index, self.model_config)
 
-        self.attribution_method_instance = self.attribution_method_class(
-            captum_model)
+        self.attribution_method_instance = self.attribution_method_class(captum_model)
 
         # In captum, the target is the class index for which
         # the attribution is computed. With CaptumModel, we transform
@@ -181,24 +182,30 @@ class CaptumExplainer(ExplainerAlgorithm):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
         explanation = HeteroExplanation()
-        explanation.set_value_dict('node_mask', node_mask)
-        explanation.set_value_dict('edge_mask', edge_mask)
+        explanation.set_value_dict("node_mask", node_mask)
+        explanation.set_value_dict("edge_mask", edge_mask)
         return explanation
 
     def supports(self) -> bool:
         node_mask_type = self.explainer_config.node_mask_type
         if node_mask_type not in [None, MaskType.attributes]:
-            logging.error(f"'{self.__class__.__name__}' expects "
-                          f"'node_mask_type' to be 'None' or 'attributes' "
-                          f"(got '{node_mask_type.value}')")
+            logging.error(
+                f"'{self.__class__.__name__}' expects "
+                f"'node_mask_type' to be 'None' or 'attributes' "
+                f"(got '{node_mask_type.value}')"
+            )
             return False
 
         return_type = self.model_config.return_type
-        if (self.model_config.mode == ModelMode.binary_classification
-                and return_type != ModelReturnType.probs):
-            logging.error(f"'{self.__class__.__name__}' expects "
-                          f"'return_type' to be 'probs' for binary "
-                          f"classification tasks (got '{return_type.value}')")
+        if (
+            self.model_config.mode == ModelMode.binary_classification
+            and return_type != ModelReturnType.probs
+        ):
+            logging.error(
+                f"'{self.__class__.__name__}' expects "
+                f"'return_type' to be 'probs' for binary "
+                f"classification tasks (got '{return_type.value}')"
+            )
             return False
 
         # TODO (ramona) Confirm that output type is valid.

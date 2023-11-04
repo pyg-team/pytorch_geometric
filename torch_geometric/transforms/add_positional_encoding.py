@@ -18,11 +18,10 @@ from torch_geometric.utils import (
 )
 
 
-def add_node_attr(data: Data, value: Any,
-                  attr_name: Optional[str] = None) -> Data:
+def add_node_attr(data: Data, value: Any, attr_name: Optional[str] = None) -> Data:
     # TODO Move to `BaseTransform`.
     if attr_name is None:
-        if 'x' in data:
+        if "x" in data:
             x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
             data.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
         else:
@@ -33,7 +32,7 @@ def add_node_attr(data: Data, value: Any,
     return data
 
 
-@functional_transform('add_laplacian_eigenvector_pe')
+@functional_transform("add_laplacian_eigenvector_pe")
 class AddLaplacianEigenvectorPE(BaseTransform):
     r"""Adds the Laplacian eigenvector positional encoding from the
     `"Benchmarking Graph Neural Networks" <https://arxiv.org/abs/2003.00982>`_
@@ -54,13 +53,14 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             :obj:`False`) or :meth:`scipy.sparse.linalg.eigsh` (when
             :attr:`is_undirected` is :obj:`True`).
     """
+
     # Number of nodes from which to use sparse eigenvector computation:
     SPARSE_THRESHOLD: int = 100
 
     def __init__(
         self,
         k: int,
-        attr_name: Optional[str] = 'laplacian_eigenvector_pe',
+        attr_name: Optional[str] = "laplacian_eigenvector_pe",
         is_undirected: bool = False,
         **kwargs,
     ):
@@ -74,7 +74,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
             data.edge_weight,
-            normalization='sym',
+            normalization="sym",
             num_nodes=num_nodes,
         )
 
@@ -82,31 +82,33 @@ class AddLaplacianEigenvectorPE(BaseTransform):
 
         if num_nodes < self.SPARSE_THRESHOLD:
             from numpy.linalg import eig, eigh
+
             eig_fn = eig if not self.is_undirected else eigh
 
             eig_vals, eig_vecs = eig_fn(L.todense())
         else:
             from scipy.sparse.linalg import eigs, eigsh
+
             eig_fn = eigs if not self.is_undirected else eigsh
 
             eig_vals, eig_vecs = eig_fn(
                 L,
                 k=self.k + 1,
-                which='SR' if not self.is_undirected else 'SA',
+                which="SR" if not self.is_undirected else "SA",
                 return_eigenvectors=True,
                 **self.kwargs,
             )
 
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
-        pe = torch.from_numpy(eig_vecs[:, 1:self.k + 1])
-        sign = -1 + 2 * torch.randint(0, 2, (self.k, ))
+        pe = torch.from_numpy(eig_vecs[:, 1 : self.k + 1])
+        sign = -1 + 2 * torch.randint(0, 2, (self.k,))
         pe *= sign
 
         data = add_node_attr(data, pe, attr_name=self.attr_name)
         return data
 
 
-@functional_transform('add_random_walk_pe')
+@functional_transform("add_random_walk_pe")
 class AddRandomWalkPE(BaseTransform):
     r"""Adds the random walk positional encoding from the `"Graph Neural
     Networks with Learnable Structural and Positional Representations"
@@ -120,10 +122,11 @@ class AddRandomWalkPE(BaseTransform):
             concatenated to :obj:`data.x`.
             (default: :obj:`"random_walk_pe"`)
     """
+
     def __init__(
         self,
         walk_length: int,
-        attr_name: Optional[str] = 'random_walk_pe',
+        attr_name: Optional[str] = "random_walk_pe",
     ):
         self.walk_length = walk_length
         self.attr_name = attr_name
@@ -135,7 +138,7 @@ class AddRandomWalkPE(BaseTransform):
         value = data.edge_weight
         if value is None:
             value = torch.ones(data.num_edges, device=row.device)
-        value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
+        value = scatter(value, row, dim_size=N, reduce="sum").clamp(min=1)[row]
         value = 1.0 / value
 
         if torch_geometric.typing.WITH_WINDOWS:

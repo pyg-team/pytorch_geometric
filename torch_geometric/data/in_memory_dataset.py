@@ -57,6 +57,7 @@ class InMemoryDataset(Dataset, ABC):
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
     """
+
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
@@ -96,7 +97,7 @@ class InMemoryDataset(Dataset, ABC):
         if self.len() == 1:
             return copy.copy(self._data)
 
-        if not hasattr(self, '_data_list') or self._data_list is None:
+        if not hasattr(self, "_data_list") or self._data_list is None:
             self._data_list = self.len() * [None]
         elif self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
@@ -145,7 +146,7 @@ class InMemoryDataset(Dataset, ABC):
 
         return data, slices
 
-    def copy(self, idx: Optional[IndexType] = None) -> 'InMemoryDataset':
+    def copy(self, idx: Optional[IndexType] = None) -> "InMemoryDataset":
         r"""Performs a deep-copy of the dataset. If :obj:`idx` is not given,
         will clone the full dataset. Otherwise, will only clone a subset of the
         dataset from indices :obj:`idx`.
@@ -166,9 +167,9 @@ class InMemoryDataset(Dataset, ABC):
     def to_on_disk_dataset(
         self,
         root: Optional[str] = None,
-        backend: str = 'sqlite',
+        backend: str = "sqlite",
         log: bool = True,
-    ) -> 'torch_geometric.data.OnDiskDataset':
+    ) -> "torch_geometric.data.OnDiskDataset":
         r"""Converts the :class:`InMemoryDataset` to a :class:`OnDiskDataset`
         variant. Useful for distributed training and hardware instances with
         limited amount of shared memory.
@@ -184,19 +185,22 @@ class InMemoryDataset(Dataset, ABC):
             processing the dataset. (default: :obj:`True`)
         """
         if root is None and (self.root is None or not osp.exists(self.root)):
-            raise ValueError(f"The root directory of "
-                             f"'{self.__class__.__name__}' is not specified. "
-                             f"Please pass in 'root' when creating on-disk "
-                             f"datasets from it.")
+            raise ValueError(
+                f"The root directory of "
+                f"'{self.__class__.__name__}' is not specified. "
+                f"Please pass in 'root' when creating on-disk "
+                f"datasets from it."
+            )
 
-        root = root or osp.join(self.root, 'on_disk')
+        root = root or osp.join(self.root, "on_disk")
 
         in_memory_dataset = self
         ref_data = in_memory_dataset.get(0)
         if not isinstance(ref_data, Data):
             raise NotImplementedError(
                 f"`{self.__class__.__name__}.to_on_disk_dataset()` is "
-                f"currently only supported on homogeneous graphs")
+                f"currently only supported on homogeneous graphs"
+            )
 
         # Parse the schema ====================================================
 
@@ -205,7 +209,7 @@ class InMemoryDataset(Dataset, ABC):
             if isinstance(value, (int, float, str)):
                 schema[key] = value.__class__
             elif isinstance(value, Tensor) and value.dim() == 0:
-                schema[key] = dict(dtype=value.dtype, size=(-1, ))
+                schema[key] = dict(dtype=value.dtype, size=(-1,))
             elif isinstance(value, Tensor):
                 size = list(value.size())
                 size[ref_data.__cat_dim__(key, value)] = -1
@@ -229,12 +233,9 @@ class InMemoryDataset(Dataset, ABC):
                 )
 
             def process(self):
-                _iter = [
-                    in_memory_dataset.get(i)
-                    for i in in_memory_dataset.indices()
-                ]
+                _iter = [in_memory_dataset.get(i) for i in in_memory_dataset.indices()]
                 if log:  # pragma: no cover
-                    _iter = tqdm(_iter, desc='Converting to OnDiskDataset')
+                    _iter = tqdm(_iter, desc="Converting to OnDiskDataset")
 
                 data_list: List[Data] = []
                 for i, data in enumerate(_iter):
@@ -250,36 +251,43 @@ class InMemoryDataset(Dataset, ABC):
                 return Data.from_dict(data)
 
             def __repr__(self) -> str:
-                arg_repr = str(len(self)) if len(self) > 1 else ''
-                return (f'OnDisk{in_memory_dataset.__class__.__name__}('
-                        f'{arg_repr})')
+                arg_repr = str(len(self)) if len(self) > 1 else ""
+                return f"OnDisk{in_memory_dataset.__class__.__name__}(" f"{arg_repr})"
 
         return OnDiskDataset(root, transform=in_memory_dataset.transform)
 
     @property
     def data(self) -> Any:
-        msg1 = ("It is not recommended to directly access the internal "
-                "storage format `data` of an 'InMemoryDataset'.")
-        msg2 = ("The given 'InMemoryDataset' only references a subset of "
-                "examples of the full dataset, but 'data' will contain "
-                "information of the full dataset.")
-        msg3 = ("The data of the dataset is already cached, so any "
-                "modifications to `data` will not be reflected when accessing "
-                "its elements. Clearing the cache now by removing all "
-                "elements in `dataset._data_list`.")
-        msg4 = ("If you are absolutely certain what you are doing, access the "
-                "internal storage via `InMemoryDataset._data` instead to "
-                "suppress this warning. Alternatively, you can access stacked "
-                "individual attributes of every graph via "
-                "`dataset.{attr_name}`.")
+        msg1 = (
+            "It is not recommended to directly access the internal "
+            "storage format `data` of an 'InMemoryDataset'."
+        )
+        msg2 = (
+            "The given 'InMemoryDataset' only references a subset of "
+            "examples of the full dataset, but 'data' will contain "
+            "information of the full dataset."
+        )
+        msg3 = (
+            "The data of the dataset is already cached, so any "
+            "modifications to `data` will not be reflected when accessing "
+            "its elements. Clearing the cache now by removing all "
+            "elements in `dataset._data_list`."
+        )
+        msg4 = (
+            "If you are absolutely certain what you are doing, access the "
+            "internal storage via `InMemoryDataset._data` instead to "
+            "suppress this warning. Alternatively, you can access stacked "
+            "individual attributes of every graph via "
+            "`dataset.{attr_name}`."
+        )
 
         msg = msg1
         if self._indices is not None:
-            msg += f' {msg2}'
+            msg += f" {msg2}"
         if self._data_list is not None:
-            msg += f' {msg3}'
+            msg += f" {msg3}"
             self._data_list = None
-        msg += f' {msg4}'
+        msg += f" {msg4}"
 
         warnings.warn(msg)
 
@@ -291,7 +299,7 @@ class InMemoryDataset(Dataset, ABC):
         self._data_list = None
 
     def __getattr__(self, key: str) -> Any:
-        data = self.__dict__.get('_data')
+        data = self.__dict__.get("_data")
         if isinstance(data, Data) and key in data:
             if self._indices is None and data.__inc__(key, data[key]) == 0:
                 return data[key]
@@ -299,8 +307,9 @@ class InMemoryDataset(Dataset, ABC):
                 data_list = [self.get(i) for i in self.indices()]
                 return Batch.from_data_list(data_list)[key]
 
-        raise AttributeError(f"'{self.__class__.__name__}' object has no "
-                             f"attribute '{key}'")
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no " f"attribute '{key}'"
+        )
 
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:

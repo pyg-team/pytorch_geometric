@@ -26,6 +26,7 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
     package that fuses message passing computation for accelerated execution
     and lower memory footprint.
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -51,15 +52,16 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         elif bias and not concat:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        gain = torch.nn.init.calculate_gain('relu')
+        gain = torch.nn.init.calculate_gain("relu")
         torch.nn.init.xavier_normal_(
-            self.att.view(2, self.heads, self.out_channels), gain=gain)
+            self.att.view(2, self.heads, self.out_channels), gain=gain
+        )
         zeros(self.bias)
 
     def forward(
@@ -73,11 +75,26 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         x = self.lin(x)
 
         if LEGACY_MODE:
-            out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, False, self.concat)
+            out = GATConvAgg(
+                x,
+                self.att,
+                graph,
+                self.heads,
+                "LeakyReLU",
+                self.negative_slope,
+                False,
+                self.concat,
+            )
         else:
-            out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, self.concat)
+            out = GATConvAgg(
+                x,
+                self.att,
+                graph,
+                self.heads,
+                "LeakyReLU",
+                self.negative_slope,
+                self.concat,
+            )
 
         if self.bias is not None:
             out = out + self.bias
@@ -85,5 +102,7 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, heads={self.heads})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, heads={self.heads})"
+        )

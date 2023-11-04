@@ -59,8 +59,8 @@ def assortativity(edge_index: Adj) -> float:
     x = y = degrees.float()
     a, b = M.sum(0), M.sum(1)
 
-    vara = (a * x**2).sum() - ((a * x).sum())**2
-    varb = (b * x**2).sum() - ((b * x).sum())**2
+    vara = (a * x**2).sum() - ((a * x).sum()) ** 2
+    varb = (b * x**2).sum() - ((b * x).sum()) ** 2
     xy = torch.outer(x, y)
     ab = torch.outer(a, b)
     out = (xy * (M - ab)).sum() / (vara * varb).sqrt()

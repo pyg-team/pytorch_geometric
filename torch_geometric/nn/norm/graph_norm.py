@@ -27,6 +27,7 @@ class GraphNorm(torch.nn.Module):
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
     """
+
     def __init__(self, in_channels: int, eps: float = 1e-5):
         super().__init__()
 
@@ -45,8 +46,9 @@ class GraphNorm(torch.nn.Module):
         zeros(self.bias)
         ones(self.mean_scale)
 
-    def forward(self, x: Tensor, batch: OptTensor = None,
-                batch_size: Optional[int] = None) -> Tensor:
+    def forward(
+        self, x: Tensor, batch: OptTensor = None, batch_size: Optional[int] = None
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -63,11 +65,11 @@ class GraphNorm(torch.nn.Module):
         if batch_size is None:
             batch_size = int(batch.max()) + 1
 
-        mean = scatter(x, batch, 0, batch_size, reduce='mean')
+        mean = scatter(x, batch, 0, batch_size, reduce="mean")
         out = x - mean.index_select(0, batch) * self.mean_scale
-        var = scatter(out.pow(2), batch, 0, batch_size, reduce='mean')
+        var = scatter(out.pow(2), batch, 0, batch_size, reduce="mean")
         std = (var + self.eps).sqrt().index_select(0, batch)
         return self.weight * out / std + self.bias
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.in_channels})'
+        return f"{self.__class__.__name__}({self.in_channels})"

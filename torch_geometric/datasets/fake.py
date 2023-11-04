@@ -39,6 +39,7 @@ class FakeDataset(InMemoryDataset):
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
+
     def __init__(
         self,
         num_graphs: int = 1,
@@ -55,9 +56,9 @@ class FakeDataset(InMemoryDataset):
     ):
         super().__init__(None, transform)
 
-        if task == 'auto':
-            task = 'graph' if num_graphs > 1 else 'node'
-        assert task in ['node', 'graph']
+        if task == "auto":
+            task = "graph" if num_graphs > 1 else "node"
+        assert task in ["node", "graph"]
 
         self.avg_num_nodes = max(avg_num_nodes, avg_degree)
         self.avg_degree = max(avg_degree, 1)
@@ -76,19 +77,19 @@ class FakeDataset(InMemoryDataset):
 
         data = Data()
 
-        if self._num_classes > 0 and self.task == 'node':
-            data.y = torch.randint(self._num_classes, (num_nodes, ))
-        elif self._num_classes > 0 and self.task == 'graph':
+        if self._num_classes > 0 and self.task == "node":
+            data.y = torch.randint(self._num_classes, (num_nodes,))
+        elif self._num_classes > 0 and self.task == "graph":
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
 
-        data.edge_index = get_edge_index(num_nodes, num_nodes, self.avg_degree,
-                                         self.is_undirected, remove_loops=True)
+        data.edge_index = get_edge_index(
+            num_nodes, num_nodes, self.avg_degree, self.is_undirected, remove_loops=True
+        )
 
-        if self.num_channels > 0 and self.task == 'graph':
+        if self.num_channels > 0 and self.task == "graph":
             data.x = torch.randn(num_nodes, self.num_channels) + data.y
-        elif self.num_channels > 0 and self.task == 'node':
-            data.x = torch.randn(num_nodes,
-                                 self.num_channels) + data.y.unsqueeze(1)
+        elif self.num_channels > 0 and self.task == "node":
+            data.x = torch.randn(num_nodes, self.num_channels) + data.y.unsqueeze(1)
         else:
             data.num_nodes = num_nodes
 
@@ -135,6 +136,7 @@ class FakeHeteroDataset(InMemoryDataset):
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
+
     def __init__(
         self,
         num_graphs: int = 1,
@@ -152,11 +154,11 @@ class FakeHeteroDataset(InMemoryDataset):
     ):
         super().__init__(None, transform)
 
-        if task == 'auto':
-            task = 'graph' if num_graphs > 1 else 'node'
-        assert task in ['node', 'graph']
+        if task == "auto":
+            task = "graph" if num_graphs > 1 else "node"
+        assert task in ["node", "graph"]
 
-        self.node_types = [f'v{i}' for i in range(max(num_node_types, 1))]
+        self.node_types = [f"v{i}" for i in range(max(num_node_types, 1))]
 
         edge_types = []
         edge_type_product = list(product(self.node_types, self.node_types))
@@ -166,8 +168,8 @@ class FakeHeteroDataset(InMemoryDataset):
 
         self.edge_types = []
         count = defaultdict(lambda: 0)
-        for edge_type in edge_types[:max(num_edge_types, 1)]:
-            rel = f'e{count[edge_type]}'
+        for edge_type in edge_types[: max(num_edge_types, 1)]:
+            rel = f"e{count[edge_type]}"
             count[edge_type] += 1
             self.edge_types.append((edge_type[0], rel, edge_type[1]))
 
@@ -198,10 +200,10 @@ class FakeHeteroDataset(InMemoryDataset):
             else:
                 store.num_nodes = num_nodes
 
-            if self._num_classes > 0 and self.task == 'node' and i == 0:
-                store.y = torch.randint(self._num_classes, (num_nodes, ))
+            if self._num_classes > 0 and self.task == "node" and i == 0:
+                store.y = torch.randint(self._num_classes, (num_nodes,))
 
-        for (src, rel, dst) in self.edge_types:
+        for src, rel, dst in self.edge_types:
             store = data[(src, rel, dst)]
 
             store.edge_index = get_edge_index(
@@ -219,7 +221,7 @@ class FakeHeteroDataset(InMemoryDataset):
 
             pass
 
-        if self._num_classes > 0 and self.task == 'graph':
+        if self._num_classes > 0 and self.task == "graph":
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
 
         for feature_name, feature_shape in self.kwargs.items():
@@ -243,12 +245,16 @@ def get_num_channels(num_channels) -> int:
     return random.randint(min_num_channels, max_num_channels)
 
 
-def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: int,
-                   is_undirected: bool = False,
-                   remove_loops: bool = False) -> torch.Tensor:
+def get_edge_index(
+    num_src_nodes: int,
+    num_dst_nodes: int,
+    avg_degree: int,
+    is_undirected: bool = False,
+    remove_loops: bool = False,
+) -> torch.Tensor:
     num_edges = num_src_nodes * avg_degree
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.int64)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.int64)
+    row = torch.randint(num_src_nodes, (num_edges,), dtype=torch.int64)
+    col = torch.randint(num_dst_nodes, (num_edges,), dtype=torch.int64)
     edge_index = torch.stack([row, col], dim=0)
 
     if remove_loops:

@@ -8,14 +8,17 @@ from torch_geometric.utils import barabasi_albert_graph
 
 
 def house():
-    edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
-                               [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]])
+    edge_index = torch.tensor(
+        [[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4], [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]]
+    )
     label = torch.tensor([1, 1, 2, 2, 3])
     return edge_index, label
 
 
-@deprecated("use 'datasets.ExplainerDataset' in combination with "
-            "'datasets.graph_generator.BAGraph' instead")
+@deprecated(
+    "use 'datasets.ExplainerDataset' in combination with "
+    "'datasets.graph_generator.BAGraph' instead"
+)
 class BAShapes(InMemoryDataset):
     r"""The BA-Shapes dataset from the `"GNNExplainer: Generating Explanations
     for Graph Neural Networks" <https://arxiv.org/abs/1903.03894>`__ paper,
@@ -39,10 +42,14 @@ class BAShapes(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-    def __init__(self, connection_distribution: str = "random",
-                 transform: Optional[Callable] = None):
+
+    def __init__(
+        self,
+        connection_distribution: str = "random",
+        transform: Optional[Callable] = None,
+    ):
         super().__init__(None, transform)
-        assert connection_distribution in ['random', 'uniform']
+        assert connection_distribution in ["random", "uniform"]
 
         # Build the Barabasi-Albert graph:
         num_nodes = 300
@@ -52,7 +59,7 @@ class BAShapes(InMemoryDataset):
 
         # Select nodes to connect shapes:
         num_houses = 80
-        if connection_distribution == 'random':
+        if connection_distribution == "random":
             connecting_nodes = torch.randperm(num_nodes)[:num_houses]
         else:
             step = num_nodes // num_houses
@@ -67,11 +74,15 @@ class BAShapes(InMemoryDataset):
 
             edge_indices.append(house_edge_index + num_nodes)
             edge_indices.append(
-                torch.tensor([[int(connecting_nodes[i]), num_nodes],
-                              [num_nodes, int(connecting_nodes[i])]]))
+                torch.tensor(
+                    [
+                        [int(connecting_nodes[i]), num_nodes],
+                        [num_nodes, int(connecting_nodes[i])],
+                    ]
+                )
+            )
 
-            edge_labels.append(
-                torch.ones(house_edge_index.size(1), dtype=torch.long))
+            edge_labels.append(torch.ones(house_edge_index.size(1), dtype=torch.long))
             edge_labels.append(torch.zeros(2, dtype=torch.long))
 
             node_labels.append(house_label)
@@ -86,7 +97,12 @@ class BAShapes(InMemoryDataset):
         expl_mask = torch.zeros(num_nodes, dtype=torch.bool)
         expl_mask[torch.arange(400, num_nodes, 5)] = True
 
-        data = Data(x=x, edge_index=edge_index, y=node_label,
-                    expl_mask=expl_mask, edge_label=edge_label)
+        data = Data(
+            x=x,
+            edge_index=edge_index,
+            y=node_label,
+            expl_mask=expl_mask,
+            edge_label=edge_label,
+        )
 
         self.data, self.slices = self.collate([data])

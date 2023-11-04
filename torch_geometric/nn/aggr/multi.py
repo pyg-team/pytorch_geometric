@@ -38,6 +38,7 @@ class MultiAggregation(Aggregation):
             (int) is needed to be specified for the number of parallel
             attention heads. (default: :obj:`None`)
     """
+
     fused_out_index: List[int]
     is_fused_aggr: List[bool]
 
@@ -45,33 +46,39 @@ class MultiAggregation(Aggregation):
         self,
         aggrs: List[Union[Aggregation, str]],
         aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
-        mode: Optional[str] = 'cat',
+        mode: Optional[str] = "cat",
         mode_kwargs: Optional[Dict[str, Any]] = None,
     ):
-
         super().__init__()
 
         if not isinstance(aggrs, (list, tuple)):
-            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
-                             f"be a list or tuple (got '{type(aggrs)}').")
+            raise ValueError(
+                f"'aggrs' of '{self.__class__.__name__}' should "
+                f"be a list or tuple (got '{type(aggrs)}')."
+            )
 
         if len(aggrs) == 0:
-            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
-                             f"not be empty.")
+            raise ValueError(
+                f"'aggrs' of '{self.__class__.__name__}' should " f"not be empty."
+            )
 
         if aggrs_kwargs is None:
             aggrs_kwargs = [{}] * len(aggrs)
         elif len(aggrs) != len(aggrs_kwargs):
-            raise ValueError(f"'aggrs_kwargs' with invalid length passed to "
-                             f"'{self.__class__.__name__}' "
-                             f"(got '{len(aggrs_kwargs)}', "
-                             f"expected '{len(aggrs)}'). Ensure that both "
-                             f"'aggrs' and 'aggrs_kwargs' are consistent.")
+            raise ValueError(
+                f"'aggrs_kwargs' with invalid length passed to "
+                f"'{self.__class__.__name__}' "
+                f"(got '{len(aggrs_kwargs)}', "
+                f"expected '{len(aggrs)}'). Ensure that both "
+                f"'aggrs' and 'aggrs_kwargs' are consistent."
+            )
 
-        self.aggrs = torch.nn.ModuleList([
-            aggregation_resolver(aggr, **aggr_kwargs)
-            for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
-        ])
+        self.aggrs = torch.nn.ModuleList(
+            [
+                aggregation_resolver(aggr, **aggr_kwargs)
+                for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
+            ]
+        )
 
         # Divide the set into fusable and non-fusable aggregations:
         fused_aggrs: List[Aggregation] = []
@@ -93,51 +100,52 @@ class MultiAggregation(Aggregation):
         self.mode = mode
         mode_kwargs = copy.copy(mode_kwargs) or {}
 
-        self.in_channels = mode_kwargs.pop('in_channels', None)
-        self.out_channels = mode_kwargs.pop('out_channels', None)
+        self.in_channels = mode_kwargs.pop("in_channels", None)
+        self.out_channels = mode_kwargs.pop("out_channels", None)
 
-        if mode == 'proj' or mode == 'attn':
+        if mode == "proj" or mode == "attn":
             if len(aggrs) == 1:
-                raise ValueError("Multiple aggregations are required for "
-                                 "'proj' or 'attn' combine mode.")
+                raise ValueError(
+                    "Multiple aggregations are required for "
+                    "'proj' or 'attn' combine mode."
+                )
 
             if (self.in_channels and self.out_channels) is None:
                 raise ValueError(
                     f"Combine mode '{mode}' must have `in_channels` "
-                    f"and `out_channels` specified.")
+                    f"and `out_channels` specified."
+                )
 
             if isinstance(self.in_channels, int):
                 self.in_channels = [self.in_channels] * len(aggrs)
 
-            if mode == 'proj':
+            if mode == "proj":
                 self.lin = Linear(
                     sum(self.in_channels),
                     self.out_channels,
                     **mode_kwargs,
                 )
 
-            elif mode == 'attn':
-                channels = {str(k): v for k, v, in enumerate(self.in_channels)}
+            elif mode == "attn":
+                channels = {str(k): v for k, v in enumerate(self.in_channels)}
                 self.lin_heads = HeteroDictLinear(channels, self.out_channels)
-                num_heads = mode_kwargs.pop('num_heads', 1)
+                num_heads = mode_kwargs.pop("num_heads", 1)
                 self.multihead_attn = MultiheadAttention(
                     self.out_channels,
                     num_heads,
                     **mode_kwargs,
                 )
 
-        dense_combine_modes = [
-            'sum', 'mean', 'max', 'min', 'logsumexp', 'std', 'var'
-        ]
+        dense_combine_modes = ["sum", "mean", "max", "min", "logsumexp", "std", "var"]
         if mode in dense_combine_modes:
             self.dense_combine = getattr(torch, mode)
 
     def reset_parameters(self):
         for aggr in self.aggrs:
             aggr.reset_parameters()
-        if self.mode == 'proj':
+        if self.mode == "proj":
             self.lin.reset_parameters()
-        if self.mode == 'attn':
+        if self.mode == "attn":
             self.lin_heads.reset_parameters()
             self.multihead_attn._reset_parameters()
 
@@ -145,14 +153,18 @@ class MultiAggregation(Aggregation):
         if self.out_channels is not None:
             return self.out_channels
         # TODO Support having customized `out_channels` in each aggregation.
-        if self.mode == 'cat':
+        if self.mode == "cat":
             return in_channels * len(self.aggrs)
         return in_channels
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         # `FusedAggregation` is currently limited to two-dimensional inputs:
         if index is None or x.dim() != 2 or self.fused_aggr is None:
             outs = [aggr(x, index, ptr, dim_size, dim) for aggr in self.aggrs]
@@ -174,26 +186,26 @@ class MultiAggregation(Aggregation):
         if len(inputs) == 1:
             return inputs[0]
 
-        if self.mode == 'cat':
+        if self.mode == "cat":
             return torch.cat(inputs, dim=-1)
 
-        if hasattr(self, 'lin'):
+        if hasattr(self, "lin"):
             return self.lin(torch.cat(inputs, dim=-1))
 
-        if hasattr(self, 'multihead_attn'):
-            x_dict = {str(k): v for k, v, in enumerate(inputs)}
+        if hasattr(self, "multihead_attn"):
+            x_dict = {str(k): v for k, v in enumerate(inputs)}
             x_dict = self.lin_heads(x_dict)
             xs = [x_dict[str(key)] for key in range(len(inputs))]
             x = torch.stack(xs, dim=0)
             attn_out, _ = self.multihead_attn(x, x, x)
             return torch.mean(attn_out, dim=0)
 
-        if hasattr(self, 'dense_combine'):
+        if hasattr(self, "dense_combine"):
             out = self.dense_combine(torch.stack(inputs, dim=0), dim=0)
             return out if isinstance(out, Tensor) else out[0]
 
         raise ValueError(f"Combine mode '{self.mode}' is not supported.")
 
     def __repr__(self) -> str:
-        aggrs = ',\n'.join([f'  {aggr}' for aggr in self.aggrs]) + ',\n'
-        return f'{self.__class__.__name__}([\n{aggrs}], mode={self.mode})'
+        aggrs = ",\n".join([f"  {aggr}" for aggr in self.aggrs]) + ",\n"
+        return f"{self.__class__.__name__}([\n{aggrs}], mode={self.mode})"

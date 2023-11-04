@@ -43,6 +43,7 @@ class SetTransformerAggregation(Aggregation):
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)
     """
+
     def __init__(
         self,
         channels: int,
@@ -63,18 +64,23 @@ class SetTransformerAggregation(Aggregation):
         self.layer_norm = layer_norm
         self.dropout = dropout
 
-        self.encoders = torch.nn.ModuleList([
-            SetAttentionBlock(channels, heads, layer_norm, dropout)
-            for _ in range(num_encoder_blocks)
-        ])
+        self.encoders = torch.nn.ModuleList(
+            [
+                SetAttentionBlock(channels, heads, layer_norm, dropout)
+                for _ in range(num_encoder_blocks)
+            ]
+        )
 
-        self.pma = PoolingByMultiheadAttention(channels, num_seed_points,
-                                               heads, layer_norm, dropout)
+        self.pma = PoolingByMultiheadAttention(
+            channels, num_seed_points, heads, layer_norm, dropout
+        )
 
-        self.decoders = torch.nn.ModuleList([
-            SetAttentionBlock(channels, heads, layer_norm, dropout)
-            for _ in range(num_decoder_blocks)
-        ])
+        self.decoders = torch.nn.ModuleList(
+            [
+                SetAttentionBlock(channels, heads, layer_norm, dropout)
+                for _ in range(num_decoder_blocks)
+            ]
+        )
 
     def reset_parameters(self):
         for encoder in self.encoders:
@@ -83,7 +89,7 @@ class SetTransformerAggregation(Aggregation):
         for decoder in self.decoders:
             decoder.reset_parameters()
 
-    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
+    @disable_dynamic_shapes(required_args=["dim_size", "max_num_elements"])
     def forward(
         self,
         x: Tensor,
@@ -93,9 +99,9 @@ class SetTransformerAggregation(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                      max_num_elements=max_num_elements)
+        x, mask = self.to_dense_batch(
+            x, index, ptr, dim_size, dim, max_num_elements=max_num_elements
+        )
 
         for encoder in self.encoders:
             x = encoder(x, mask)
@@ -110,8 +116,10 @@ class SetTransformerAggregation(Aggregation):
         return x.flatten(1, 2) if self.concat else x.mean(dim=1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.channels}, '
-                f'num_seed_points={self.num_seed_points}, '
-                f'heads={self.heads}, '
-                f'layer_norm={self.layer_norm}, '
-                f'dropout={self.dropout})')
+        return (
+            f"{self.__class__.__name__}({self.channels}, "
+            f"num_seed_points={self.num_seed_points}, "
+            f"heads={self.heads}, "
+            f"layer_norm={self.layer_norm}, "
+            f"dropout={self.dropout})"
+        )

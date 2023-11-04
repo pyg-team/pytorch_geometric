@@ -11,6 +11,7 @@ from torch_geometric.nn.inits import glorot, zeros
 
 class DenseGATConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GATConv`."""
+
     def __init__(
         self,
         in_channels: int,
@@ -31,8 +32,9 @@ class DenseGATConv(torch.nn.Module):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.lin = Linear(in_channels, heads * out_channels, bias=False,
-                          weight_initializer='glorot')
+        self.lin = Linear(
+            in_channels, heads * out_channels, bias=False, weight_initializer="glorot"
+        )
 
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.empty(1, 1, heads, out_channels))
@@ -43,7 +45,7 @@ class DenseGATConv(torch.nn.Module):
         elif bias and not concat:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -53,8 +55,13 @@ class DenseGATConv(torch.nn.Module):
         glorot(self.att_dst)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
-                add_loop: bool = True):
+    def forward(
+        self,
+        x: Tensor,
+        adj: Tensor,
+        mask: Optional[Tensor] = None,
+        add_loop: bool = True,
+    ):
         r"""
         Args:
             x (torch.Tensor): Node feature tensor
@@ -92,7 +99,7 @@ class DenseGATConv(torch.nn.Module):
 
         # Weighted and masked softmax:
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = alpha.masked_fill(adj.unsqueeze(-1) == 0, float('-inf'))
+        alpha = alpha.masked_fill(adj.unsqueeze(-1) == 0, float("-inf"))
         alpha = alpha.softmax(dim=2)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
@@ -113,5 +120,7 @@ class DenseGATConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, heads={self.heads})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, heads={self.heads})"
+        )

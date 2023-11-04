@@ -25,21 +25,27 @@ class FusedGATConv(GATConv):  # pragma: no cover
         See `here <https://github.com/dgSPARSE/dgNN>`__ for instructions on how
         to install.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self.add_self_loops:
-            raise ValueError(f"'{self.__class__.__name__}' does not support "
-                             f"adding self-loops. Please add them manually "
-                             f"in a pre-processing step and set "
-                             f"`add_self_loops=False`.")
+            raise ValueError(
+                f"'{self.__class__.__name__}' does not support "
+                f"adding self-loops. Please add them manually "
+                f"in a pre-processing step and set "
+                f"`add_self_loops=False`."
+            )
 
         if self.edge_dim is not None:
-            raise ValueError(f"'{self.__class__.__name__}' does not support "
-                             f"edge features. Set `edge_dim=None` in order "
-                             f"to proceed.")
+            raise ValueError(
+                f"'{self.__class__.__name__}' does not support "
+                f"edge features. Set `edge_dim=None` in order "
+                f"to proceed."
+            )
 
         from dgNN.operators import GATConvFuse
+
         self.op = GATConvFuse
 
     @staticmethod
@@ -55,19 +61,25 @@ class FusedGATConv(GATConv):  # pragma: no cover
             size ((int, int), optional). The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
-        value = torch.arange(edge_index.size(1), dtype=torch.int,
-                             device=edge_index.device)
+        value = torch.arange(
+            edge_index.size(1), dtype=torch.int, device=edge_index.device
+        )
 
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=size)
-        adj.set_value_(value, layout='csr')
+        adj.set_value_(value, layout="csr")
 
         rowptr, col, _ = adj.csr()
         colptr, row, perm = adj.csc()
 
         return (rowptr.int(), col.int()), (row.int(), colptr.int()), perm
 
-    def forward(self, x: Tensor, csr: Tuple[Tensor, Tensor],
-                csc: Tuple[Tensor, Tensor], perm: Tensor) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        csr: Tuple[Tensor, Tensor],
+        csc: Tuple[Tensor, Tensor],
+        perm: Tensor,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
@@ -99,8 +111,18 @@ class FusedGATConv(GATConv):  # pragma: no cover
         dropout = self.dropout if self.training else 0.0
 
         (rowptr, col), (row, colptr) = csr, csc
-        out = self.op(alpha_dst, alpha_src, rowptr, col, colptr, row, perm,
-                      self.negative_slope, x, dropout)
+        out = self.op(
+            alpha_dst,
+            alpha_src,
+            rowptr,
+            col,
+            colptr,
+            row,
+            perm,
+            self.negative_slope,
+            x,
+            dropout,
+        )
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)

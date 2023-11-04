@@ -32,50 +32,40 @@ class LINKXDataset(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
-                  'raw/master/data')
-    gdrive_url = 'https://drive.google.com/uc?confirm=t&'
+    github_url = "https://github.com/CUAI/Non-Homophily-Large-Scale/" "raw/master/data"
+    gdrive_url = "https://drive.google.com/uc?confirm=t&"
 
-    facebook_datasets = [
-        'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
-    ]
+    facebook_datasets = ["penn94", "reed98", "amherst41", "cornell5", "johnshopkins55"]
 
     datasets = {
-        'penn94': {
-            'data.mat': f'{github_url}/facebook100/Penn94.mat'
+        "penn94": {"data.mat": f"{github_url}/facebook100/Penn94.mat"},
+        "reed98": {"data.mat": f"{github_url}/facebook100/Reed98.mat"},
+        "amherst41": {
+            "data.mat": f"{github_url}/facebook100/Amherst41.mat",
         },
-        'reed98': {
-            'data.mat': f'{github_url}/facebook100/Reed98.mat'
+        "cornell5": {"data.mat": f"{github_url}/facebook100/Cornell5.mat"},
+        "johnshopkins55": {
+            "data.mat": f"{github_url}/facebook100/Johns%20Hopkins55.mat"
         },
-        'amherst41': {
-            'data.mat': f'{github_url}/facebook100/Amherst41.mat',
+        "genius": {"data.mat": f"{github_url}/genius.mat"},
+        "wiki": {
+            "wiki_views2M.pt": f"{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP",
+            "wiki_edges2M.pt": f"{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u",
+            "wiki_features2M.pt": f"{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK",
         },
-        'cornell5': {
-            'data.mat': f'{github_url}/facebook100/Cornell5.mat'
-        },
-        'johnshopkins55': {
-            'data.mat': f'{github_url}/facebook100/Johns%20Hopkins55.mat'
-        },
-        'genius': {
-            'data.mat': f'{github_url}/genius.mat'
-        },
-        'wiki': {
-            'wiki_views2M.pt':
-            f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
-            'wiki_edges2M.pt':
-            f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
-            'wiki_features2M.pt':
-            f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
-        }
     }
 
     splits = {
-        'penn94': f'{github_url}/splits/fb100-Penn94-splits.npy',
+        "penn94": f"{github_url}/splits/fb100-Penn94-splits.npy",
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform)
@@ -83,22 +73,22 @@ class LINKXDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, "raw")
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, "processed")
 
     @property
     def raw_file_names(self) -> List[str]:
         names = list(self.datasets[self.name].keys())
         if self.name in self.splits:
-            names += [self.splits[self.name].split('/')[-1]]
+            names += [self.splits[self.name].split("/")[-1]]
         return names
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         for filename, path in self.datasets[self.name].items():
@@ -107,11 +97,10 @@ class LINKXDataset(InMemoryDataset):
             download_url(self.splits[self.name], self.raw_dir)
 
     def _process_wiki(self):
-
-        paths = {x.split('/')[-1]: x for x in self.raw_paths}
-        x = torch.load(paths['wiki_features2M.pt'])
-        edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
-        y = torch.load(paths['wiki_views2M.pt'])
+        paths = {x.split("/")[-1]: x for x in self.raw_paths}
+        x = torch.load(paths["wiki_features2M.pt"])
+        edge_index = torch.load(paths["wiki_edges2M.pt"]).t().contiguous()
+        y = torch.load(paths["wiki_views2M.pt"])
 
         return Data(x=x, edge_index=edge_index, y=y)
 
@@ -120,12 +109,12 @@ class LINKXDataset(InMemoryDataset):
 
         mat = loadmat(self.raw_paths[0])
 
-        A = mat['A'].tocsr().tocoo()
+        A = mat["A"].tocsr().tocoo()
         row = torch.from_numpy(A.row).to(torch.long)
         col = torch.from_numpy(A.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        metadata = torch.from_numpy(mat['local_info'].astype('int64'))
+        metadata = torch.from_numpy(mat["local_info"].astype("int64"))
 
         xs = []
         y = metadata[:, 1] - 1  # gender label, -1 means unlabeled
@@ -145,9 +134,9 @@ class LINKXDataset(InMemoryDataset):
             data.test_mask = torch.zeros(sizes, dtype=torch.bool)
 
             for i, split in enumerate(splits):
-                data.train_mask[:, i][torch.tensor(split['train'])] = True
-                data.val_mask[:, i][torch.tensor(split['valid'])] = True
-                data.test_mask[:, i][torch.tensor(split['test'])] = True
+                data.train_mask[:, i][torch.tensor(split["train"])] = True
+                data.val_mask[:, i][torch.tensor(split["valid"])] = True
+                data.test_mask[:, i][torch.tensor(split["test"])] = True
 
         return data
 
@@ -155,22 +144,23 @@ class LINKXDataset(InMemoryDataset):
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
-        edge_index = torch.from_numpy(mat['edge_index']).to(torch.long)
-        x = torch.from_numpy(mat['node_feat']).to(torch.float)
-        y = torch.from_numpy(mat['label']).squeeze().to(torch.long)
+        edge_index = torch.from_numpy(mat["edge_index"]).to(torch.long)
+        x = torch.from_numpy(mat["node_feat"]).to(torch.float)
+        y = torch.from_numpy(mat["label"]).squeeze().to(torch.long)
 
         return Data(x=x, edge_index=edge_index, y=y)
 
     def process(self):
         if self.name in self.facebook_datasets:
             data = self._process_facebook()
-        elif self.name == 'genius':
+        elif self.name == "genius":
             data = self._process_genius()
-        elif self.name == 'wiki':
+        elif self.name == "wiki":
             data = self._process_wiki()
         else:
             raise NotImplementedError(
-                f"chosen dataset '{self.name}' is not implemented")
+                f"chosen dataset '{self.name}' is not implemented"
+            )
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
@@ -178,4 +168,4 @@ class LINKXDataset(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f'{self.name.capitalize()}({len(self)})'
+        return f"{self.name.capitalize()}({len(self)})"

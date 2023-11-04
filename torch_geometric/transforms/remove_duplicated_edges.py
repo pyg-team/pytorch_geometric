@@ -6,7 +6,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import coalesce
 
 
-@functional_transform('remove_duplicated_edges')
+@functional_transform("remove_duplicated_edges")
 class RemoveDuplicatedEdges(BaseTransform):
     r"""Removes duplicated edges from a given homogeneous or heterogeneous
     graph. Useful to clean-up known repeated edges/self-loops in common
@@ -20,9 +20,10 @@ class RemoveDuplicatedEdges(BaseTransform):
             attributes (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`,
             :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"add"`)
     """
+
     def __init__(
         self,
-        key: Union[str, List[str]] = ['edge_attr', 'edge_weight'],
+        key: Union[str, List[str]] = ["edge_attr", "edge_weight"],
         reduce: str = "add",
     ):
         if isinstance(key, str):
@@ -35,7 +36,6 @@ class RemoveDuplicatedEdges(BaseTransform):
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
-
         for store in data.edge_stores:
             keys = [key for key in self.keys if key in store]
 

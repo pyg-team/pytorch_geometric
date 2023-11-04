@@ -10,10 +10,10 @@ except ImportError:
     ModelHubMixin = object
     hf_hub_download = None
 
-CONFIG_NAME = 'config.json'
+CONFIG_NAME = "config.json"
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
-MODEL_WEIGHTS_NAME = 'model.pth'
-TAGS = ['graph-machine-learning']
+MODEL_WEIGHTS_NAME = "model.pth"
+TAGS = ["graph-machine-learning"]
 
 
 class PyGModelHubMixin(ModelHubMixin):
@@ -68,6 +68,7 @@ class PyGModelHubMixin(ModelHubMixin):
         dataset_name (str): Name of the dataset the model was trained against.
         model_kwargs (Dict[str, Any]): The arguments to initialise the model.
     """
+
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
         ModelHubMixin.__init__(self)
 
@@ -76,17 +77,17 @@ class PyGModelHubMixin(ModelHubMixin):
         # such as torch Tensors (node2vec being an example), we have to remove
         # these as they are not json serialisable
         self.model_config = {
-            k: v
-            for k, v in model_kwargs.items() if type(v) in [str, int, float]
+            k: v for k, v in model_kwargs.items() if type(v) in [str, int, float]
         }
         self.model_name = model_name
         self.dataset_name = dataset_name
 
     def construct_model_card(self, model_name: str, dataset_name: str) -> Any:
         from huggingface_hub import ModelCard, ModelCardData
+
         card_data = ModelCardData(
-            language='en',
-            license='mit',
+            language="en",
+            license="mit",
             library_name=MODEL_HUB_ORGANIZATION,
             tags=TAGS,
             datasets=dataset_name,
@@ -97,12 +98,16 @@ class PyGModelHubMixin(ModelHubMixin):
 
     def _save_pretrained(self, save_directory: Union[Path, str]):
         path = os.path.join(save_directory, MODEL_WEIGHTS_NAME)
-        model_to_save = self.module if hasattr(self, 'module') else self
+        model_to_save = self.module if hasattr(self, "module") else self
         torch.save(model_to_save.state_dict(), path)
 
-    def save_pretrained(self, save_directory: Union[str, Path],
-                        push_to_hub: bool = False,
-                        repo_id: Optional[str] = None, **kwargs):
+    def save_pretrained(
+        self,
+        save_directory: Union[str, Path],
+        push_to_hub: bool = False,
+        repo_id: Optional[str] = None,
+        **kwargs,
+    ):
         r"""Save a trained model to a local directory or to the HuggingFace
         model hub.
 
@@ -121,7 +126,7 @@ class PyGModelHubMixin(ModelHubMixin):
         # the model config can end up in one of the items in the kwargs
         # this has to be removed to prevent a duplication of arguments to
         # ModelHubMixin.save_pretrained
-        kwargs.pop('config', None)
+        kwargs.pop("config", None)
 
         super().save_pretrained(
             save_directory=save_directory,
@@ -130,8 +135,7 @@ class PyGModelHubMixin(ModelHubMixin):
             repo_id=repo_id,
             **kwargs,
         )
-        model_card = self.construct_model_card(self.model_name,
-                                               self.dataset_name)
+        model_card = self.construct_model_card(self.model_name, self.dataset_name)
         if push_to_hub:
             model_card.push_to_hub(repo_id)
 
@@ -146,9 +150,9 @@ class PyGModelHubMixin(ModelHubMixin):
         resume_download,
         local_files_only,
         token,
-        dataset_name='',
-        model_name='',
-        map_location='cpu',
+        dataset_name="",
+        model_name="",
+        map_location="cpu",
         strict=False,
         **model_kwargs,
     ):
@@ -169,7 +173,7 @@ class PyGModelHubMixin(ModelHubMixin):
                 local_files_only=local_files_only,
             )
 
-        config = model_kwargs.pop('config', None)
+        config = model_kwargs.pop("config", None)
         if config is not None:
             model_kwargs = {**model_kwargs, **config}
 

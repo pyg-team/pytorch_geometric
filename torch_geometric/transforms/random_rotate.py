@@ -10,7 +10,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
-@functional_transform('random_rotate')
+@functional_transform("random_rotate")
 class RandomRotate(BaseTransform):
     r"""Rotates node positions around a specific axis by a randomly sampled
     factor within a given interval (functional name: :obj:`random_rotate`).
@@ -22,8 +22,8 @@ class RandomRotate(BaseTransform):
             \mathrm{degrees}]`.
         axis (int, optional): The rotation axis. (default: :obj:`0`)
     """
-    def __init__(self, degrees: Union[Tuple[float, float], float],
-                 axis: int = 0):
+
+    def __init__(self, degrees: Union[Tuple[float, float], float], axis: int = 0):
         if isinstance(degrees, numbers.Number):
             degrees = (-abs(degrees), abs(degrees))
         assert isinstance(degrees, (tuple, list)) and len(degrees) == 2
@@ -46,5 +46,4 @@ class RandomRotate(BaseTransform):
         return LinearTransformation(torch.tensor(matrix))(data)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.degrees}, '
-                f'axis={self.axis})')
+        return f"{self.__class__.__name__}({self.degrees}, " f"axis={self.axis})"

@@ -50,7 +50,7 @@ class Amazon(InMemoryDataset):
           - 8
     """
 
-    url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
+    url = "https://github.com/shchur/gnn-benchmark/raw/master/data/npz/"
 
     def __init__(
         self,
@@ -60,25 +60,25 @@ class Amazon(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         self.name = name.lower()
-        assert self.name in ['computers', 'photo']
+        assert self.name in ["computers", "photo"]
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name.capitalize(), 'raw')
+        return osp.join(self.root, self.name.capitalize(), "raw")
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name.capitalize(), 'processed')
+        return osp.join(self.root, self.name.capitalize(), "processed")
 
     @property
     def raw_file_names(self) -> str:
-        return f'amazon_electronics_{self.name.lower()}.npz'
+        return f"amazon_electronics_{self.name.lower()}.npz"
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         download_url(self.url + self.raw_file_names, self.raw_dir)
@@ -89,4 +89,4 @@ class Amazon(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}{self.name.capitalize()}()'
+        return f"{self.__class__.__name__}{self.name.capitalize()}()"

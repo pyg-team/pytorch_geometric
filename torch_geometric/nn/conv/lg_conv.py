@@ -29,26 +29,37 @@ class LGConv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
+
     def __init__(self, normalize: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
         self.normalize = normalize
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
+    ) -> Tensor:
         if self.normalize and isinstance(edge_index, Tensor):
-            out = gcn_norm(edge_index, edge_weight, x.size(self.node_dim),
-                           add_self_loops=False, flow=self.flow, dtype=x.dtype)
+            out = gcn_norm(
+                edge_index,
+                edge_weight,
+                x.size(self.node_dim),
+                add_self_loops=False,
+                flow=self.flow,
+                dtype=x.dtype,
+            )
             edge_index, edge_weight = out
         elif self.normalize and isinstance(edge_index, SparseTensor):
-            edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
-                                  add_self_loops=False, flow=self.flow,
-                                  dtype=x.dtype)
+            edge_index = gcn_norm(
+                edge_index,
+                None,
+                x.size(self.node_dim),
+                add_self_loops=False,
+                flow=self.flow,
+                dtype=x.dtype,
+            )
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                              size=None)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j

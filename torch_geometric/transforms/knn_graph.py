@@ -5,7 +5,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
-@functional_transform('knn_graph')
+@functional_transform("knn_graph")
 class KNNGraph(BaseTransform):
     r"""Creates a k-NN graph based on node positions :obj:`data.pos`
     (functional name: :obj:`knn_graph`).
@@ -29,12 +29,13 @@ class KNNGraph(BaseTransform):
             effect in case :obj:`batch` is not :obj:`None`, or the input lies
             on the GPU. (default: :obj:`1`)
     """
+
     def __init__(
         self,
         k: int = 6,
         loop: bool = False,
         force_undirected: bool = False,
-        flow: str = 'source_to_target',
+        flow: str = "source_to_target",
         cosine: bool = False,
         num_workers: int = 1,
     ):
@@ -47,7 +48,7 @@ class KNNGraph(BaseTransform):
 
     def forward(self, data: Data) -> Data:
         data.edge_attr = None
-        batch = data.batch if 'batch' in data else None
+        batch = data.batch if "batch" in data else None
 
         edge_index = torch_geometric.nn.knn_graph(
             data.pos,
@@ -67,4 +68,4 @@ class KNNGraph(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(k={self.k})'
+        return f"{self.__class__.__name__}(k={self.k})"

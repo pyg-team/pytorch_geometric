@@ -21,8 +21,10 @@ def gini(w: torch.Tensor) -> torch.Tensor:
     s = 0
     for row in w:
         t = row.repeat(row.size(0), 1)
-        u = (t - t.T).abs().sum() / (2 * (row.size(-1)**2 - row.size(-1)) *
-                                     row.abs().mean() + torch.finfo().eps)
+        u = (t - t.T).abs().sum() / (
+            2 * (row.size(-1) ** 2 - row.size(-1)) * row.abs().mean()
+            + torch.finfo().eps
+        )
         s += u
     s /= w.shape[0]
     return s

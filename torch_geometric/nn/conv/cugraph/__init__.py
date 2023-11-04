@@ -4,8 +4,8 @@ from .gat_conv import CuGraphGATConv
 from .rgcn_conv import CuGraphRGCNConv
 
 __all__ = [
-    'CuGraphModule',
-    'CuGraphSAGEConv',
-    'CuGraphGATConv',
-    'CuGraphRGCNConv',
+    "CuGraphModule",
+    "CuGraphSAGEConv",
+    "CuGraphGATConv",
+    "CuGraphRGCNConv",
 ]

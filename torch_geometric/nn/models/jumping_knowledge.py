@@ -39,17 +39,26 @@ class JumpingKnowledge(torch.nn.Module):
         num_layers (int, optional): The number of layers to aggregate. Needs to
             be only set for LSTM-style aggregation. (default: :obj:`None`)
     """
-    def __init__(self, mode: str, channels: Optional[int] = None,
-                 num_layers: Optional[int] = None):
+
+    def __init__(
+        self,
+        mode: str,
+        channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
+    ):
         super().__init__()
         self.mode = mode.lower()
-        assert self.mode in ['cat', 'max', 'lstm']
+        assert self.mode in ["cat", "max", "lstm"]
 
-        if mode == 'lstm':
-            assert channels is not None, 'channels cannot be None for lstm'
-            assert num_layers is not None, 'num_layers cannot be None for lstm'
-            self.lstm = LSTM(channels, (num_layers * channels) // 2,
-                             bidirectional=True, batch_first=True)
+        if mode == "lstm":
+            assert channels is not None, "channels cannot be None for lstm"
+            assert num_layers is not None, "num_layers cannot be None for lstm"
+            self.lstm = LSTM(
+                channels,
+                (num_layers * channels) // 2,
+                bidirectional=True,
+                batch_first=True,
+            )
             self.att = Linear(2 * ((num_layers * channels) // 2), 1)
             self.channels = channels
             self.num_layers = num_layers
@@ -74,9 +83,9 @@ class JumpingKnowledge(torch.nn.Module):
             xs (List[torch.Tensor]): List containing the layer-wise
                 representations.
         """
-        if self.mode == 'cat':
+        if self.mode == "cat":
             return torch.cat(xs, dim=-1)
-        elif self.mode == 'max':
+        elif self.mode == "max":
             return torch.stack(xs, dim=-1).max(dim=-1)[0]
         else:  # self.mode == 'lstm'
             assert self.lstm is not None and self.att is not None
@@ -87,7 +96,9 @@ class JumpingKnowledge(torch.nn.Module):
             return (x * alpha.unsqueeze(-1)).sum(dim=1)
 
     def __repr__(self) -> str:
-        if self.mode == 'lstm':
-            return (f'{self.__class__.__name__}({self.mode}, '
-                    f'channels={self.channels}, layers={self.num_layers})')
-        return f'{self.__class__.__name__}({self.mode})'
+        if self.mode == "lstm":
+            return (
+                f"{self.__class__.__name__}({self.mode}, "
+                f"channels={self.channels}, layers={self.num_layers})"
+            )
+        return f"{self.__class__.__name__}({self.mode})"

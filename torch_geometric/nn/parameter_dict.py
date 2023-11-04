@@ -33,20 +33,20 @@ class ParameterDict(torch.nn.ParameterDict):
 
         # ParameterDict cannot handle keys that exists as class attributes:
         if hasattr(cls, key):
-            key = f'<{key}>'
+            key = f"<{key}>"
 
         # ParameterDict cannot handle dots in keys:
-        return key.replace('.', '#')
+        return key.replace(".", "#")
 
     @classmethod
     def to_external_key(cls, key: str) -> Key:
-        key = key.replace('#', '.')
+        key = key.replace("#", ".")
 
-        if key[0] == '<' and key[-1] == '>' and hasattr(cls, key[1:-1]):
+        if key[0] == "<" and key[-1] == ">" and hasattr(cls, key[1:-1]):
             key = key[1:-1]
 
-        if key[0] == '<' and key[-1] == '>' and '___' in key:
-            key = tuple(key[1:-1].split('___'))
+        if key[0] == "<" and key[-1] == ">" and "___" in key:
+            key = tuple(key[1:-1].split("___"))
 
         return key
 

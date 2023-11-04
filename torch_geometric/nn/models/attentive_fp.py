@@ -19,7 +19,7 @@ class GATEConv(MessagePassing):
         edge_dim: int,
         dropout: float = 0.0,
     ):
-        super().__init__(aggr='add', node_dim=0)
+        super().__init__(aggr="add", node_dim=0)
 
         self.dropout = dropout
 
@@ -49,9 +49,15 @@ class GATEConv(MessagePassing):
         out = out + self.bias
         return out
 
-    def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: Tensor,
-                    index: Tensor, ptr: OptTensor,
-                    size_i: Optional[int]) -> Tensor:
+    def edge_update(
+        self,
+        x_j: Tensor,
+        x_i: Tensor,
+        edge_attr: Tensor,
+        index: Tensor,
+        ptr: OptTensor,
+        size_i: Optional[int],
+    ) -> Tensor:
         x_j = F.leaky_relu_(self.lin1(torch.cat([x_j, edge_attr], dim=-1)))
         alpha_j = (x_j @ self.att_l.t()).squeeze(-1)
         alpha_i = (x_i @ self.att_r.t()).squeeze(-1)
@@ -83,6 +89,7 @@ class AttentiveFP(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
 
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -105,21 +112,29 @@ class AttentiveFP(torch.nn.Module):
 
         self.lin1 = Linear(in_channels, hidden_channels)
 
-        self.gate_conv = GATEConv(hidden_channels, hidden_channels, edge_dim,
-                                  dropout)
+        self.gate_conv = GATEConv(hidden_channels, hidden_channels, edge_dim, dropout)
         self.gru = GRUCell(hidden_channels, hidden_channels)
 
         self.atom_convs = torch.nn.ModuleList()
         self.atom_grus = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
-            conv = GATConv(hidden_channels, hidden_channels, dropout=dropout,
-                           add_self_loops=False, negative_slope=0.01)
+            conv = GATConv(
+                hidden_channels,
+                hidden_channels,
+                dropout=dropout,
+                add_self_loops=False,
+                negative_slope=0.01,
+            )
             self.atom_convs.append(conv)
             self.atom_grus.append(GRUCell(hidden_channels, hidden_channels))
 
-        self.mol_conv = GATConv(hidden_channels, hidden_channels,
-                                dropout=dropout, add_self_loops=False,
-                                negative_slope=0.01)
+        self.mol_conv = GATConv(
+            hidden_channels,
+            hidden_channels,
+            dropout=dropout,
+            add_self_loops=False,
+            negative_slope=0.01,
+        )
         self.mol_conv.explain = False  # Cannot explain global pooling.
         self.mol_gru = GRUCell(hidden_channels, hidden_channels)
 
@@ -139,8 +154,9 @@ class AttentiveFP(torch.nn.Module):
         self.mol_gru.reset_parameters()
         self.lin2.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Tensor, edge_attr: Tensor,
-                batch: Tensor) -> Tensor:
+    def forward(
+        self, x: Tensor, edge_index: Tensor, edge_attr: Tensor, batch: Tensor
+    ) -> Tensor:
         """"""
         # Atom Embedding:
         x = F.leaky_relu_(self.lin1(x))
@@ -168,19 +184,22 @@ class AttentiveFP(torch.nn.Module):
         out = F.dropout(out, p=self.dropout, training=self.training)
         return self.lin2(out)
 
-    def jittable(self) -> 'AttentiveFP':
+    def jittable(self) -> "AttentiveFP":
         self.gate_conv = self.gate_conv.jittable()
         self.atom_convs = torch.nn.ModuleList(
-            [conv.jittable() for conv in self.atom_convs])
+            [conv.jittable() for conv in self.atom_convs]
+        )
         self.mol_conv = self.mol_conv.jittable()
         return self
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}('
-                f'in_channels={self.in_channels}, '
-                f'hidden_channels={self.hidden_channels}, '
-                f'out_channels={self.out_channels}, '
-                f'edge_dim={self.edge_dim}, '
-                f'num_layers={self.num_layers}, '
-                f'num_timesteps={self.num_timesteps}'
-                f')')
+        return (
+            f"{self.__class__.__name__}("
+            f"in_channels={self.in_channels}, "
+            f"hidden_channels={self.hidden_channels}, "
+            f"out_channels={self.out_channels}, "
+            f"edge_dim={self.edge_dim}, "
+            f"num_layers={self.num_layers}, "
+            f"num_timesteps={self.num_timesteps}"
+            f")"
+        )

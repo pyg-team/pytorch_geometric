@@ -48,7 +48,6 @@ def grid_index(
     width: int,
     device: Optional[torch.device] = None,
 ) -> Tensor:
-
     w = width
     kernel = [-w - 1, -1, w - 1, -w, 0, w, -w + 1, 1, w + 1]
     kernel = torch.tensor(kernel, device=device)
@@ -74,7 +73,6 @@ def grid_pos(
     dtype: Optional[torch.dtype] = None,
     device: Optional[torch.device] = None,
 ) -> Tensor:
-
     dtype = torch.float if dtype is None else dtype
     x = torch.arange(width, dtype=dtype, device=device)
     y = (height - 1) - torch.arange(height, dtype=dtype, device=device)

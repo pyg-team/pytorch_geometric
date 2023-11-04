@@ -6,7 +6,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('random_scale')
+@functional_transform("random_scale")
 class RandomScale(BaseTransform):
     r"""Scales node positions by a randomly sampled factor :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
@@ -26,6 +26,7 @@ class RandomScale(BaseTransform):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
+
     def __init__(self, scales: Tuple[float, float]):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
@@ -36,4 +37,4 @@ class RandomScale(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.scales})'
+        return f"{self.__class__.__name__}({self.scales})"

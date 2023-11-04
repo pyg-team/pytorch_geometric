@@ -64,7 +64,8 @@ def index_select(
             numel = math.prod(size)
             if torch_geometric.typing.WITH_PT20:
                 storage = value.untyped_storage()._new_shared(
-                    numel * value.element_size())
+                    numel * value.element_size()
+                )
             else:
                 storage = value.storage()._new_shared(numel)
             out = value.new(storage).view(size)
@@ -78,15 +79,15 @@ def index_select(
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
 
-    raise ValueError(f"Encountered invalid feature tensor type "
-                     f"(got '{type(value)}')")
+    raise ValueError(
+        f"Encountered invalid feature tensor type " f"(got '{type(value)}')"
+    )
 
 
-def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
-                       index: Tensor):
+def filter_node_store_(store: NodeStorage, out_store: NodeStorage, index: Tensor):
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
-        if key == 'num_nodes':
+        if key == "num_nodes":
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
@@ -98,16 +99,22 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store[key] = index_select(value, index, dim=dim)
 
 
-def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
-                       col: Tensor, index: OptTensor, perm: OptTensor = None):
+def filter_edge_store_(
+    store: EdgeStorage,
+    out_store: EdgeStorage,
+    row: Tensor,
+    col: Tensor,
+    index: OptTensor,
+    perm: OptTensor = None,
+):
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
-        if key == 'edge_index':
+        if key == "edge_index":
             edge_index = torch.stack([row, col], dim=0)
             out_store.edge_index = edge_index.to(value.device)
 
-        elif key == 'adj_t':
+        elif key == "adj_t":
             # NOTE: We expect `(row, col)` to be sorted by `col` (CSC layout).
             row = row.to(value.device())
             col = col.to(value.device())
@@ -121,9 +128,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
-            out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
-                                           sparse_sizes=sparse_sizes,
-                                           is_sorted=False, trust_data=True)
+            out_store.adj_t = SparseTensor(
+                row=col,
+                col=row,
+                value=edge_attr,
+                sparse_sizes=sparse_sizes,
+                is_sorted=False,
+                trust_data=True,
+            )
 
         elif store.is_edge_attr(key):
             if index is None:
@@ -149,8 +161,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                 )
 
 
-def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
-                edge: OptTensor, perm: OptTensor = None) -> Data:
+def filter_data(
+    data: Data,
+    node: Tensor,
+    row: Tensor,
+    col: Tensor,
+    edge: OptTensor,
+    perm: OptTensor = None,
+) -> Data:
     # Filters a data object to only hold nodes in `node` and edges in `edge`:
     out = copy.copy(data)
     filter_node_store_(data._store, out._store, node)
@@ -175,8 +193,7 @@ def filter_hetero_data(
         if node_type not in node_dict:
             node_dict[node_type] = torch.empty(0, dtype=torch.long)
 
-        filter_node_store_(data[node_type], out[node_type],
-                           node_dict[node_type])
+        filter_node_store_(data[node_type], out[node_type], node_dict[node_type])
 
     for edge_type in out.edge_types:
         # Handle the case of disconneted graph sampling:
@@ -296,7 +313,8 @@ def get_input_nodes(
 
         if isinstance(input_nodes, str):
             num_nodes = remote_backend_utils.num_nodes(  #
-                feature_store, graph_store, input_nodes)
+                feature_store, graph_store, input_nodes
+            )
             return input_nodes, torch.arange(num_nodes), None
 
         if isinstance(input_nodes, (list, tuple)):
@@ -306,7 +324,8 @@ def get_input_nodes(
             node_type, input_nodes = input_nodes
             if input_nodes is None:
                 num_nodes = remote_backend_utils.num_nodes(  #
-                    feature_store, graph_store, input_nodes)
+                    feature_store, graph_store, input_nodes
+                )
                 return node_type, torch.arange(num_nodes), None
 
             return node_type, *to_index(input_nodes, input_id)
@@ -369,6 +388,8 @@ def infer_filter_per_worker(data: Any) -> bool:
     out = True
     if isinstance(data, (Data, HeteroData)) and data.is_cuda:
         out = False
-    logging.debug(f"Inferred 'filter_per_worker={out}' option for feature "
-                  f"fetching routines of the data loader")
+    logging.debug(
+        f"Inferred 'filter_per_worker={out}' option for feature "
+        f"fetching routines of the data loader"
+    )
     return out

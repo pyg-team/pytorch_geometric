@@ -9,7 +9,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_networkx
 
 
-@functional_transform('node_property_split')
+@functional_transform("node_property_split")
 class NodePropertySplit(BaseTransform):
     r"""Creates a node-level split with distributional shift based on a given
     node property, as proposed in the `"Evaluating Robustness and Uncertainty
@@ -59,19 +59,18 @@ class NodePropertySplit(BaseTransform):
 
         data = transform(data)
     """
+
     def __init__(
         self,
         property_name: str,
         ratios: List[float],
         ascending: bool = True,
     ):
-        if property_name not in {'popularity', 'locality', 'density'}:
-            raise ValueError(f"Unexpected 'property_name' "
-                             f"(got '{property_name}')")
+        if property_name not in {"popularity", "locality", "density"}:
+            raise ValueError(f"Unexpected 'property_name' " f"(got '{property_name}')")
 
         if len(ratios) != 5:
-            raise ValueError(f"'ratios' must contain 5 values "
-                             f"(got {len(ratios)})")
+            raise ValueError(f"'ratios' must contain 5 values " f"(got {len(ratios)})")
 
         if sum(ratios) != 1.0:
             raise ValueError(f"'ratios' must sum to 1.0 (got {sum(ratios)})")
@@ -110,7 +109,8 @@ class NodePropertySplit(BaseTransform):
         personalization[int(pagerank_values.argmax())] = 1.0
 
         property_values = torch.tensor(
-            list(A.pagerank(G, personalization=personalization).values()))
+            list(A.pagerank(G, personalization=personalization).values())
+        )
         property_values *= -1 if ascending else 1
         return property_values
 
@@ -127,7 +127,6 @@ class NodePropertySplit(BaseTransform):
         property_values: Tensor,
         ratios: List[float],
     ) -> Dict[str, Tensor]:
-
         num_nodes = property_values.size(0)
         sizes = (num_nodes * torch.tensor(ratios)).round().long()
         sizes[-1] -= sizes.sum() - num_nodes
@@ -139,11 +138,11 @@ class NodePropertySplit(BaseTransform):
 
         node_splits = perm.split(sizes.tolist())
         names = [
-            'id_train_mask',
-            'id_val_mask',
-            'id_test_mask',
-            'ood_val_mask',
-            'ood_test_mask',
+            "id_train_mask",
+            "id_val_mask",
+            "id_test_mask",
+            "ood_val_mask",
+            "ood_test_mask",
         ]
 
         split_masks = {}
@@ -154,11 +153,11 @@ class NodePropertySplit(BaseTransform):
         return split_masks
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.property_name})'
+        return f"{self.__class__.__name__}({self.property_name})"
 
 
 _property_name_to_compute_fn = {
-    'popularity': NodePropertySplit._compute_popularity_property,
-    'locality': NodePropertySplit._compute_locality_property,
-    'density': NodePropertySplit._compute_density_property,
+    "popularity": NodePropertySplit._compute_popularity_property,
+    "locality": NodePropertySplit._compute_locality_property,
+    "density": NodePropertySplit._compute_density_property,
 }

@@ -54,6 +54,7 @@ def profileit():  # pragma: no cover
 
         loss, stats = train(model, x, edge_index, y)
     """
+
     def decorator(func):
         def wrapper(*args, **kwargs) -> Tuple[Any, Stats]:
             from pytorch_memlab import LineProfiler
@@ -61,7 +62,8 @@ def profileit():  # pragma: no cover
             model = args[0]
             if not isinstance(model, torch.nn.Module):
                 raise AttributeError(
-                    'First argument for profiling needs to be torch.nn.Module')
+                    "First argument for profiling needs to be torch.nn.Module"
+                )
 
             device = None
             for arg in list(args) + list(kwargs.values()):
@@ -71,11 +73,13 @@ def profileit():  # pragma: no cover
             if device is None:
                 raise AttributeError(
                     "Could not infer CUDA device from the args in the "
-                    "function being profiled")
+                    "function being profiled"
+                )
             if device == -1:
                 raise RuntimeError(
                     "The profiling decorator does not support profiling "
-                    "on non CUDA devices")
+                    "on non CUDA devices"
+                )
 
             # Init `pytorch_memlab` for analyzing the model forward pass:
             line_profiler = LineProfiler(target_gpu=device)
@@ -98,11 +102,16 @@ def profileit():  # pragma: no cover
             line_profiler.disable()
 
             # Get additional information from `nvidia-smi`:
-            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(
-                device=device)
+            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(device=device)
 
-            stats = Stats(time, max_allocated_cuda, max_reserved_cuda,
-                          max_active_cuda, free_cuda, used_cuda)
+            stats = Stats(
+                time,
+                max_allocated_cuda,
+                max_reserved_cuda,
+                max_active_cuda,
+                free_cuda,
+                used_cuda,
+            )
 
             return out, stats
 
@@ -133,6 +142,7 @@ class timeit(ContextDecorator):
             calculating the average of runtimes within a for-loop.
             (default: :obj:`0`)
     """
+
     def __init__(self, log: bool = True, avg_time_divisor: int = 0):
         self.log = log
         self.avg_time_divisor = avg_time_divisor
@@ -151,7 +161,7 @@ class timeit(ContextDecorator):
         if self.avg_time_divisor > 1:
             self.duration = self.duration / self.avg_time_divisor
         if self.log:  # pragma: no cover
-            print(f'Time: {self.duration:.8f}s', flush=True)
+            print(f"Time: {self.duration:.8f}s", flush=True)
 
     def reset(self):
         r"""Prints the duration and resets current timer."""
@@ -179,10 +189,8 @@ def get_stats_summary(stats_list: List[Stats]):  # pragma: no cover
         max_allocated_cuda=max([s.max_allocated_cuda for s in stats_list]),
         max_reserved_cuda=max([s.max_reserved_cuda for s in stats_list]),
         max_active_cuda=max([s.max_active_cuda for s in stats_list]),
-        min_nvidia_smi_free_cuda=min(
-            [s.nvidia_smi_free_cuda for s in stats_list]),
-        max_nvidia_smi_used_cuda=max(
-            [s.nvidia_smi_used_cuda for s in stats_list]),
+        min_nvidia_smi_free_cuda=min([s.nvidia_smi_free_cuda for s in stats_list]),
+        max_nvidia_smi_used_cuda=max([s.nvidia_smi_used_cuda for s in stats_list]),
     )
 
 
@@ -195,40 +203,39 @@ def read_from_memlab(line_profiler: Any) -> List[float]:  # pragma: no cover
     # See: https://pytorch.org/docs/stable/cuda.html#torch.cuda.memory_stats
 
     track_stats = [  # Different statistic can be collected as needed.
-        'allocated_bytes.all.peak',
-        'reserved_bytes.all.peak',
-        'active_bytes.all.peak',
+        "allocated_bytes.all.peak",
+        "reserved_bytes.all.peak",
+        "active_bytes.all.peak",
     ]
 
-    records = LineRecords(line_profiler._raw_line_records,
-                          line_profiler._code_infos)
+    records = LineRecords(line_profiler._raw_line_records, line_profiler._code_infos)
     stats = records.display(None, track_stats)._line_records
     return [byte_to_megabyte(x) for x in stats.values.max(axis=0).tolist()]
 
 
 def trace_handler(p):
     print_time_total(p)
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'timeline' + '.json'
+    profile_dir = str(pathlib.Path.cwd()) + "/"
+    timeline_file = profile_dir + "timeline" + ".json"
     p.export_chrome_trace(timeline_file)
 
 
 def print_time_total(p):
     if torch.cuda.is_available():
-        profile_sort = 'self_cuda_time_total'
+        profile_sort = "self_cuda_time_total"
     else:
-        profile_sort = 'self_cpu_time_total'
+        profile_sort = "self_cpu_time_total"
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
 
 
 def rename_profile_file(*args):
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'profile'
+    profile_dir = str(pathlib.Path.cwd()) + "/"
+    timeline_file = profile_dir + "profile"
     for arg in args:
-        timeline_file += '-' + arg
-    timeline_file += '.json'
-    os.rename('timeline.json', timeline_file)
+        timeline_file += "-" + arg
+    timeline_file += ".json"
+    os.rename("timeline.json", timeline_file)
 
 
 @contextmanager
@@ -250,17 +257,19 @@ def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
         yield
         p.step()
 
-    if csv_data is not None and write_csv == 'prof':
+    if csv_data is not None and write_csv == "prof":
         if use_cuda:
-            profile_sort = 'self_cuda_time_total'
+            profile_sort = "self_cuda_time_total"
         else:
-            profile_sort = 'self_cpu_time_total'
+            profile_sort = "self_cpu_time_total"
         events = EventList(
             sorted(
                 p.key_averages(),
                 key=lambda evt: getattr(evt, profile_sort),
                 reverse=True,
-            ), use_cuda=use_cuda)
+            ),
+            use_cuda=use_cuda,
+        )
 
         save_profile_data(csv_data, events, use_cuda)
 
@@ -269,9 +278,9 @@ def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
 def xpu_profile(export_chrome_trace=True):
     with torch.autograd.profiler_legacy.profile(use_xpu=True) as profile:
         yield
-    print(profile.key_averages().table(sort_by='self_xpu_time_total'))
+    print(profile.key_averages().table(sort_by="self_xpu_time_total"))
     if export_chrome_trace:
-        profile.export_chrome_trace('timeline.json')
+        profile.export_chrome_trace("timeline.json")
 
 
 def format_prof_time(time):
@@ -280,27 +289,28 @@ def format_prof_time(time):
 
 
 def save_profile_data(csv_data, events, use_cuda):
-    sum_self_cpu_time_total = sum(
-        [event.self_cpu_time_total for event in events])
+    sum_self_cpu_time_total = sum([event.self_cpu_time_total for event in events])
     sum_cpu_time_total = sum([event.self_cpu_time_total for event in events])
-    sum_self_cuda_time_total = sum(
-        [event.self_cuda_time_total for event in events]) if use_cuda else 0
+    sum_self_cuda_time_total = (
+        sum([event.self_cuda_time_total for event in events]) if use_cuda else 0
+    )
 
     for e in events[:5]:  # Save top 5 most time consuming operations:
-        csv_data['NAME'].append(e.key)
-        csv_data['SELF CPU %'].append(
-            round(e.self_cpu_time_total * 100.0 / sum_self_cpu_time_total, 3))
-        csv_data['SELF CPU'].append(format_prof_time(e.self_cpu_time_total))
-        csv_data['CPU TOTAL %'].append(
-            round(e.cpu_time_total * 100.0 / sum_cpu_time_total, 3))
-        csv_data['CPU TOTAL'].append(format_prof_time(e.cpu_time_total))
-        csv_data['CPU TIME AVG'].append(format_prof_time(e.cpu_time_total))
+        csv_data["NAME"].append(e.key)
+        csv_data["SELF CPU %"].append(
+            round(e.self_cpu_time_total * 100.0 / sum_self_cpu_time_total, 3)
+        )
+        csv_data["SELF CPU"].append(format_prof_time(e.self_cpu_time_total))
+        csv_data["CPU TOTAL %"].append(
+            round(e.cpu_time_total * 100.0 / sum_cpu_time_total, 3)
+        )
+        csv_data["CPU TOTAL"].append(format_prof_time(e.cpu_time_total))
+        csv_data["CPU TIME AVG"].append(format_prof_time(e.cpu_time_total))
         if use_cuda:
-            csv_data['SELF CUDA %'].append(e.self_cuda_time_total * 100.0 /
-                                           sum_self_cuda_time_total)
-            csv_data['SELF CUDA'].append(
-                format_prof_time(e.self_cuda_time_total))
-            csv_data['CUDA TOTAL'].append(format_prof_time(e.cpu_time_total))
-            csv_data['CUDA TIME AVG'].append(format_prof_time(
-                e.cpu_time_total))
-        csv_data['# OF CALLS'].append(e.count)
+            csv_data["SELF CUDA %"].append(
+                e.self_cuda_time_total * 100.0 / sum_self_cuda_time_total
+            )
+            csv_data["SELF CUDA"].append(format_prof_time(e.self_cuda_time_total))
+            csv_data["CUDA TOTAL"].append(format_prof_time(e.cpu_time_total))
+            csv_data["CUDA TIME AVG"].append(format_prof_time(e.cpu_time_total))
+        csv_data["# OF CALLS"].append(e.count)

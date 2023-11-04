@@ -72,6 +72,7 @@ class MLP(torch.nn.Module):
             bias per layer. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
+
     supports_norm_batch: Final[bool]
 
     def __init__(
@@ -82,7 +83,7 @@ class MLP(torch.nn.Module):
         hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
-        dropout: Union[float, List[float]] = 0.,
+        dropout: Union[float, List[float]] = 0.0,
         act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
@@ -98,9 +99,11 @@ class MLP(torch.nn.Module):
         act_first = act_first or kwargs.get("relu_first", False)
         batch_norm = kwargs.get("batch_norm", None)
         if batch_norm is not None and isinstance(batch_norm, bool):
-            warnings.warn("Argument `batch_norm` is deprecated, "
-                          "please use `norm` to specify normalization layer.")
-            norm = 'batch_norm' if batch_norm else None
+            warnings.warn(
+                "Argument `batch_norm` is deprecated, "
+                "please use `norm` to specify normalization layer."
+            )
+            norm = "batch_norm" if batch_norm else None
             batch_norm_kwargs = kwargs.get("batch_norm_kwargs", None)
             norm_kwargs = batch_norm_kwargs or {}
 
@@ -111,8 +114,10 @@ class MLP(torch.nn.Module):
             if num_layers is None:
                 raise ValueError("Argument `num_layers` must be given")
             if num_layers > 1 and hidden_channels is None:
-                raise ValueError(f"Argument `hidden_channels` must be given "
-                                 f"for `num_layers={num_layers}`")
+                raise ValueError(
+                    f"Argument `hidden_channels` must be given "
+                    f"for `num_layers={num_layers}`"
+                )
             if out_channels is None:
                 raise ValueError("Argument `out_channels` must be given")
 
@@ -130,12 +135,13 @@ class MLP(torch.nn.Module):
         if isinstance(dropout, float):
             dropout = [dropout] * (len(channel_list) - 1)
             if plain_last:
-                dropout[-1] = 0.
+                dropout[-1] = 0.0
         if len(dropout) != len(channel_list) - 1:
             raise ValueError(
                 f"Number of dropout values provided ({len(dropout)} does not "
                 f"match the number of layers specified "
-                f"({len(channel_list)-1})")
+                f"({len(channel_list)-1})"
+            )
         self.dropout = dropout
 
         if isinstance(bias, bool):
@@ -143,7 +149,8 @@ class MLP(torch.nn.Module):
         if len(bias) != len(channel_list) - 1:
             raise ValueError(
                 f"Number of bias values provided ({len(bias)}) does not match "
-                f"the number of layers specified ({len(channel_list)-1})")
+                f"the number of layers specified ({len(channel_list)-1})"
+            )
 
         self.lins = torch.nn.ModuleList()
         iterator = zip(channel_list[:-1], channel_list[1:], bias)
@@ -164,9 +171,9 @@ class MLP(torch.nn.Module):
             self.norms.append(norm_layer)
 
         self.supports_norm_batch = False
-        if len(self.norms) > 0 and hasattr(self.norms[0], 'forward'):
+        if len(self.norms) > 0 and hasattr(self.norms[0], "forward"):
             norm_params = inspect.signature(self.norms[0].forward).parameters
-            self.supports_norm_batch = 'batch' in norm_params
+            self.supports_norm_batch = "batch" in norm_params
 
         self.reset_parameters()
 
@@ -190,7 +197,7 @@ class MLP(torch.nn.Module):
         for lin in self.lins:
             lin.reset_parameters()
         for norm in self.norms:
-            if hasattr(norm, 'reset_parameters'):
+            if hasattr(norm, "reset_parameters"):
                 norm.reset_parameters()
 
     def forward(
@@ -246,4 +253,4 @@ class MLP(torch.nn.Module):
         return (x, emb) if isinstance(return_emb, bool) else x
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
+        return f"{self.__class__.__name__}({str(self.channel_list)[1:-1]})"

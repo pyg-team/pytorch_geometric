@@ -49,7 +49,7 @@ class NELL(InMemoryDataset):
           - 186
     """
 
-    url = 'http://www.cs.cmu.edu/~zhiliny/data/nell_data.tar.gz'
+    url = "http://www.cs.cmu.edu/~zhiliny/data/nell_data.tar.gz"
 
     def __init__(
         self,
@@ -62,21 +62,21 @@ class NELL(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
-        return [f'ind.nell.0.001.{name}' for name in names]
+        names = ["x", "tx", "allx", "y", "ty", "ally", "graph", "test.index"]
+        return [f"ind.nell.0.001.{name}" for name in names]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_tar(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, 'nell_data'), self.raw_dir)
+        os.rename(osp.join(self.root, "nell_data"), self.raw_dir)
 
     def process(self):
-        data = read_planetoid_data(self.raw_dir, 'nell.0.001')
+        data = read_planetoid_data(self.raw_dir, "nell.0.001")
         data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])

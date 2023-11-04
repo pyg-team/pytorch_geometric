@@ -32,8 +32,9 @@ class KNNIndex:
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
+
     def __init__(self, index_factory: str, emb: Optional[Tensor] = None):
-        warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
+        warnings.filterwarnings("ignore", ".*TypedStorage is deprecated.*")
 
         import faiss
 
@@ -46,6 +47,7 @@ class KNNIndex:
 
     def _create_index(self, channels: int):
         import faiss
+
         return faiss.index_factory(channels, self.index_factory)
 
     def add(self, emb: Tensor):
@@ -58,13 +60,14 @@ class KNNIndex:
         import faiss.contrib.torch_utils
 
         if emb.dim() != 2:
-            raise ValueError(f"'emb' needs to be two-dimensional "
-                             f"(got {emb.dim()} dimensions)")
+            raise ValueError(
+                f"'emb' needs to be two-dimensional " f"(got {emb.dim()} dimensions)"
+            )
 
         if self.index is None:
             self.index = self._create_index(emb.size(1))
 
-            if emb.device != torch.device('cpu'):
+            if emb.device != torch.device("cpu"):
                 self.index = faiss.index_cpu_to_gpu(
                     faiss.StandardGpuResources(),
                     emb.device.index,
@@ -84,20 +87,25 @@ class KNNIndex:
             k (int): The number of nearest neighbors to return.
         """
         if self.index is None:
-            raise RuntimeError(f"'{self.__class__.__name__}' is not yet "
-                               "initialized. Please call `add(...)` first.")
+            raise RuntimeError(
+                f"'{self.__class__.__name__}' is not yet "
+                "initialized. Please call `add(...)` first."
+            )
 
         if emb.dim() != 2:
-            raise ValueError(f"'emb' needs to be two-dimensional "
-                             f"(got {emb.dim()} dimensions)")
+            raise ValueError(
+                f"'emb' needs to be two-dimensional " f"(got {emb.dim()} dimensions)"
+            )
 
         return KNNOutput(*self.index.search(emb.detach(), k))
 
     def get_emb(self) -> Tensor:
         r"""Returns the data points stored in the :class:`KNNIndex`."""
         if self.index is None:
-            raise RuntimeError(f"'{self.__class__.__name__}' is not yet "
-                               "initialized. Please call `add(...)` first.")
+            raise RuntimeError(
+                f"'{self.__class__.__name__}' is not yet "
+                "initialized. Please call `add(...)` first."
+            )
 
         return self.index.reconstruct_n(0, self.numel)
 
@@ -110,11 +118,13 @@ class L2KNNIndex(KNNIndex):
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
+
     def __init__(self, emb: Optional[Tensor] = None):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
         import faiss
+
         return faiss.IndexFlatL2(channels)
 
 
@@ -126,9 +136,11 @@ class MIPSKNNIndex(KNNIndex):
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
+
     def __init__(self, emb: Optional[Tensor] = None):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
         import faiss
+
         return faiss.IndexFlatIP(channels)

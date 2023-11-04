@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple, Union
 
 from torch import Tensor
 
-METRICS = ['accuracy', 'recall', 'precision', 'f1_score', 'auroc']
+METRICS = ["accuracy", "recall", "precision", "f1_score", "auroc"]
 
 
 def groundtruth_metrics(
@@ -34,8 +34,10 @@ def groundtruth_metrics(
         metrics = [metrics]
 
     if not isinstance(metrics, (tuple, list)):
-        raise ValueError(f"Expected metrics to be a string or a list of "
-                         f"strings (got {type(metrics)})")
+        raise ValueError(
+            f"Expected metrics to be a string or a list of "
+            f"strings (got {type(metrics)})"
+        )
 
     pred_mask = pred_mask.view(-1)
     target_mask = (target_mask >= threshold).view(-1)
@@ -46,10 +48,10 @@ def groundtruth_metrics(
             raise ValueError(f"Encountered invalid metric {metric}")
 
         fn = getattr(torchmetrics.functional, metric)
-        if metric in {'auroc'}:
-            out = fn(pred_mask, target_mask, 'binary')
+        if metric in {"auroc"}:
+            out = fn(pred_mask, target_mask, "binary")
         else:
-            out = fn(pred_mask, target_mask, 'binary', threshold)
+            out = fn(pred_mask, target_mask, "binary", threshold)
 
         outs.append(float(out))
 

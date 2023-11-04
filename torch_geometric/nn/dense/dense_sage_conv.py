@@ -16,6 +16,7 @@ class DenseSAGEConv(torch.nn.Module):
         If you want to make use of weighted dense adjacency matrices, please
         use :class:`torch_geometric.nn.dense.DenseGraphConv` instead.
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -39,8 +40,7 @@ class DenseSAGEConv(torch.nn.Module):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, adj: Tensor,
-                mask: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, adj: Tensor, mask: OptTensor = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): Node feature tensor
@@ -72,5 +72,4 @@ class DenseSAGEConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels})')
+        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"

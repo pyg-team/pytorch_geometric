@@ -6,8 +6,9 @@ from torch import Tensor
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
-def degree(index: Tensor, num_nodes: Optional[int] = None,
-           dtype: Optional[torch.dtype] = None) -> Tensor:
+def degree(
+    index: Tensor, num_nodes: Optional[int] = None, dtype: Optional[torch.dtype] = None
+) -> Tensor:
     r"""Computes the (unweighted) degree of a given one-dimensional index
     tensor.
 
@@ -27,6 +28,6 @@ def degree(index: Tensor, num_nodes: Optional[int] = None,
         tensor([3, 1, 1])
     """
     N = maybe_num_nodes(index, num_nodes)
-    out = torch.zeros((N, ), dtype=dtype, device=index.device)
-    one = torch.ones((index.size(0), ), dtype=out.dtype, device=out.device)
+    out = torch.zeros((N,), dtype=dtype, device=index.device)
+    one = torch.ones((index.size(0),), dtype=out.dtype, device=out.device)
     return out.scatter_add_(0, index, one)

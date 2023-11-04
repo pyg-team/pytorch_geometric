@@ -41,10 +41,9 @@ class PANConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, filter_size: int,
-                 **kwargs):
 
-        kwargs.setdefault('aggr', 'add')
+    def __init__(self, in_channels: int, out_channels: int, filter_size: int, **kwargs):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -66,23 +65,25 @@ class PANConv(MessagePassing):
         x: Tensor,
         edge_index: Adj,
     ) -> Tuple[Tensor, SparseTensor]:
-
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):
             if is_torch_sparse_tensor(edge_index):
                 # TODO Handle PyTorch sparse tensor directly.
                 if edge_index.layout == torch.sparse_coo:
-                    adj_t = SparseTensor.from_torch_sparse_coo_tensor(
-                        edge_index)
+                    adj_t = SparseTensor.from_torch_sparse_coo_tensor(edge_index)
                 elif edge_index.layout == torch.sparse_csr:
-                    adj_t = SparseTensor.from_torch_sparse_csr_tensor(
-                        edge_index)
+                    adj_t = SparseTensor.from_torch_sparse_csr_tensor(edge_index)
                 else:
-                    raise ValueError(f"Unexpected sparse tensor layout "
-                                     f"(got '{edge_index.layout}')")
+                    raise ValueError(
+                        f"Unexpected sparse tensor layout "
+                        f"(got '{edge_index.layout}')"
+                    )
             else:
-                adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                     sparse_sizes=(x.size(0), x.size(0)))
+                adj_t = SparseTensor(
+                    row=edge_index[1],
+                    col=edge_index[0],
+                    sparse_sizes=(x.size(0), x.size(0)),
+                )
 
         elif isinstance(edge_index, SparseTensor):
             adj_t = edge_index.set_value(None)
@@ -91,7 +92,7 @@ class PANConv(MessagePassing):
 
         deg = adj_t.storage.rowcount().to(x.dtype)
         deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.
+        deg_inv_sqrt[deg_inv_sqrt == float("inf")] = 0.0
         M = deg_inv_sqrt.view(1, -1) * adj_t * deg_inv_sqrt.view(-1, 1)
 
         out = self.propagate(M, x=x, edge_weight=None, size=None)
@@ -104,31 +105,39 @@ class PANConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
-    def panentropy(self, adj_t: SparseTensor,
-                   dtype: Optional[int] = None) -> SparseTensor:
-
+    def panentropy(
+        self, adj_t: SparseTensor, dtype: Optional[int] = None
+    ) -> SparseTensor:
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1.0)
 
-        tmp = SparseTensor.eye(adj_t.size(0), adj_t.size(1), has_value=True,
-                               dtype=dtype, device=adj_t.device())
-        tmp = tmp.mul_nnz(self.weight[0], layout='coo')
+        tmp = SparseTensor.eye(
+            adj_t.size(0),
+            adj_t.size(1),
+            has_value=True,
+            dtype=dtype,
+            device=adj_t.device(),
+        )
+        tmp = tmp.mul_nnz(self.weight[0], layout="coo")
 
         outs = [tmp]
         for i in range(1, self.filter_size + 1):
             tmp = tmp @ adj_t
-            tmp = tmp.mul_nnz(self.weight[i], layout='coo')
+            tmp = tmp.mul_nnz(self.weight[i], layout="coo")
             outs += [tmp]
 
         row = torch.cat([out.storage.row() for out in outs], dim=0)
         col = torch.cat([out.storage.col() for out in outs], dim=0)
         value = torch.cat([out.storage.value() for out in outs], dim=0)
 
-        out = SparseTensor(row=row, col=col, value=value,
-                           sparse_sizes=adj_t.sparse_sizes()).coalesce()
+        out = SparseTensor(
+            row=row, col=col, value=value, sparse_sizes=adj_t.sparse_sizes()
+        ).coalesce()
 
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, filter_size={self.filter_size})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, filter_size={self.filter_size})"
+        )

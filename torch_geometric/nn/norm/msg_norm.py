@@ -20,6 +20,7 @@ class MessageNorm(torch.nn.Module):
             scaling factor :math:`s` of message normalization.
             (default: :obj:`False`)
     """
+
     def __init__(self, learn_scale: bool = False):
         super().__init__()
         self.scale = Parameter(torch.empty(1), requires_grad=learn_scale)
@@ -42,5 +43,4 @@ class MessageNorm(torch.nn.Module):
         return msg * x_norm * self.scale
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}'
-                f'(learn_scale={self.scale.requires_grad})')
+        return f"{self.__class__.__name__}" f"(learn_scale={self.scale.requires_grad})"

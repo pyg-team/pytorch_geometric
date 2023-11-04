@@ -51,9 +51,16 @@ class CGConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F)` or
           :math:`(|\mathcal{V_t}|, F_{t})` if bipartite
     """
-    def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
-                 aggr: str = 'add', batch_norm: bool = False,
-                 bias: bool = True, **kwargs):
+
+    def __init__(
+        self,
+        channels: Union[int, Tuple[int, int]],
+        dim: int = 0,
+        aggr: str = "add",
+        batch_norm: bool = False,
+        bias: bool = True,
+        **kwargs,
+    ):
         super().__init__(aggr=aggr, **kwargs)
         self.channels = channels
         self.dim = dim
@@ -78,9 +85,9 @@ class CGConv(MessagePassing):
         if self.bn is not None:
             self.bn.reset_parameters()
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_attr: OptTensor = None
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -98,4 +105,4 @@ class CGConv(MessagePassing):
         return self.lin_f(z).sigmoid() * F.softplus(self.lin_s(z))
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.channels}, dim={self.dim})'
+        return f"{self.__class__.__name__}({self.channels}, dim={self.dim})"

@@ -40,8 +40,7 @@ class S3DIS(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = ('https://shapenet.cs.stanford.edu/media/'
-           'indoor3d_sem_seg_hdf5_data.zip')
+    url = "https://shapenet.cs.stanford.edu/media/" "indoor3d_sem_seg_hdf5_data.zip"
 
     # In case `shapenet.cs.stanford.edu` is offline, try to download the data
     # from here:
@@ -64,36 +63,36 @@ class S3DIS(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['all_files.txt', 'room_filelist.txt']
+        return ["all_files.txt", "room_filelist.txt"]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
+        return [f"{split}_{self.test_area}.pt" for split in ["train", "test"]]
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        name = self.url.split('/')[-1].split('.')[0]
+        name = self.url.split("/")[-1].split(".")[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
     def process(self):
         import h5py
 
-        with open(self.raw_paths[0], 'r') as f:
-            filenames = [x.split('/')[-1] for x in f.read().split('\n')[:-1]]
+        with open(self.raw_paths[0], "r") as f:
+            filenames = [x.split("/")[-1] for x in f.read().split("\n")[:-1]]
 
-        with open(self.raw_paths[1], 'r') as f:
-            rooms = f.read().split('\n')[:-1]
+        with open(self.raw_paths[1], "r") as f:
+            rooms = f.read().split("\n")[:-1]
 
         xs, ys = [], []
         for filename in filenames:
             f = h5py.File(osp.join(self.raw_dir, filename))
-            xs += torch.from_numpy(f['data'][:]).unbind(0)
-            ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
+            xs += torch.from_numpy(f["data"][:]).unbind(0)
+            ys += torch.from_numpy(f["label"][:]).to(torch.long).unbind(0)
 
-        test_area = f'Area_{self.test_area}'
+        test_area = f"Area_{self.test_area}"
         train_data_list, test_data_list = [], []
         for i, (x, y) in enumerate(zip(xs, ys)):
             data = Data(pos=x[:, :3], x=x[:, 3:], y=y)

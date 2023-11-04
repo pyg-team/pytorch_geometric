@@ -47,6 +47,7 @@ class ClusterData(torch.utils.data.Dataset):
         keep_inter_cluster_edges (bool, optional): If set to :obj:`True`,
             will keep inter-cluster edge connections. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         data,
@@ -62,14 +63,14 @@ class ClusterData(torch.utils.data.Dataset):
         self.recursive = recursive
         self.keep_inter_cluster_edges = keep_inter_cluster_edges
 
-        recursive_str = '_recursive' if recursive else ''
-        filename = f'metis_{num_parts}{recursive_str}.pt'
-        path = osp.join(save_dir or '', filename)
+        recursive_str = "_recursive" if recursive else ""
+        filename = f"metis_{num_parts}{recursive_str}.pt"
+        path = osp.join(save_dir or "", filename)
         if save_dir is not None and osp.exists(path):
             self.partition = torch.load(path)
         else:
             if log:  # pragma: no cover
-                print('Computing METIS partitioning...', file=sys.stderr)
+                print("Computing METIS partitioning...", file=sys.stderr)
 
             cluster = self._metis(data.edge_index, data.num_nodes)
             self.partition = self._partition(data.edge_index, cluster)
@@ -78,7 +79,7 @@ class ClusterData(torch.utils.data.Dataset):
                 torch.save(self.partition, path)
 
             if log:  # pragma: no cover
-                print('Done!', file=sys.stderr)
+                print("Done!", file=sys.stderr)
 
         self.data = self._permute_data(data, self.partition)
 
@@ -113,8 +114,10 @@ class ClusterData(torch.utils.data.Dataset):
             ).to(edge_index.device)
 
         if cluster is None:
-            raise ImportError(f"'{self.__class__.__name__}' requires either "
-                              f"'pyg-lib' or 'torch-sparse'")
+            raise ImportError(
+                f"'{self.__class__.__name__}' requires either "
+                f"'pyg-lib' or 'torch-sparse'"
+            )
 
         return cluster
 
@@ -129,8 +132,7 @@ class ClusterData(torch.utils.data.Dataset):
         # Permute `edge_index` based on node permutation:
         edge_perm = torch.arange(edge_index.size(1), device=edge_index.device)
         arange = torch.empty_like(node_perm)
-        arange[node_perm] = torch.arange(cluster.numel(),
-                                         device=cluster.device)
+        arange[node_perm] = torch.arange(cluster.numel(), device=cluster.device)
         edge_index = arange[edge_index]
 
         # Compute final CSR representation:
@@ -148,7 +150,7 @@ class ClusterData(torch.utils.data.Dataset):
         # calculated permutations in `Partition`:
         out = copy.copy(data)
         for key, value in data.items():
-            if key == 'edge_index':
+            if key == "edge_index":
                 continue
             elif data.is_node_attr(key):
                 cat_dim = data.__cat_dim__(key, value)
@@ -168,7 +170,7 @@ class ClusterData(torch.utils.data.Dataset):
         node_end = int(self.partition.partptr[idx + 1])
         node_length = node_end - node_start
 
-        rowptr = self.partition.rowptr[node_start:node_end + 1]
+        rowptr = self.partition.rowptr[node_start : node_end + 1]
         edge_start = int(rowptr[0])
         edge_end = int(rowptr[-1])
         edge_length = edge_end - edge_start
@@ -183,7 +185,7 @@ class ClusterData(torch.utils.data.Dataset):
         out = copy.copy(self.data)
 
         for key, value in self.data.items():
-            if key == 'num_nodes':
+            if key == "num_nodes":
                 out.num_nodes = node_length
             elif self.data.is_node_attr(key):
                 cat_dim = self.data.__cat_dim__(key, value)
@@ -199,7 +201,7 @@ class ClusterData(torch.utils.data.Dataset):
         return out
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.num_parts})'
+        return f"{self.__class__.__name__}({self.num_parts})"
 
 
 class ClusterLoader(torch.utils.data.DataLoader):
@@ -227,6 +229,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(self, cluster_data, **kwargs):
         self.cluster_data = cluster_data
         iterator = range(len(cluster_data))
@@ -253,10 +256,10 @@ class ClusterLoader(torch.utils.data.DataLoader):
         rows, cols, nodes, cumsum = [], [], [], 0
         for i in range(batch.numel()):
             nodes.append(torch.arange(node_start[i], node_end[i]))
-            rowptr = global_rowptr[node_start[i]:node_end[i] + 1]
+            rowptr = global_rowptr[node_start[i] : node_end[i] + 1]
             rowptr = rowptr - edge_start[i]
             row = ptr2index(rowptr) + cumsum
-            col = global_col[edge_start[i]:edge_end[i]]
+            col = global_col[edge_start[i] : edge_end[i]]
             rows.append(row)
             cols.append(col)
             cumsum += rowptr.numel() - 1
@@ -274,20 +277,26 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
         # Slice node-level and edge-level attributes according to its offsets:
         for key, value in self.cluster_data.data.items():
-            if key == 'num_nodes':
+            if key == "num_nodes":
                 out.num_nodes = cumsum
             elif self.cluster_data.data.is_node_attr(key):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
-                out[key] = torch.cat([
-                    narrow(out[key], cat_dim, s, e - s)
-                    for s, e in zip(node_start, node_end)
-                ], dim=cat_dim)
+                out[key] = torch.cat(
+                    [
+                        narrow(out[key], cat_dim, s, e - s)
+                        for s, e in zip(node_start, node_end)
+                    ],
+                    dim=cat_dim,
+                )
             elif self.cluster_data.data.is_edge_attr(key):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
-                value = torch.cat([
-                    narrow(out[key], cat_dim, s, e - s)
-                    for s, e in zip(edge_start, edge_end)
-                ], dim=cat_dim)
+                value = torch.cat(
+                    [
+                        narrow(out[key], cat_dim, s, e - s)
+                        for s, e in zip(edge_start, edge_end)
+                    ],
+                    dim=cat_dim,
+                )
                 out[key] = select(value, edge_mask, dim=cat_dim)
 
         out.edge_index = torch.stack([row, col], dim=0)

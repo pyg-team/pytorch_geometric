@@ -9,7 +9,7 @@ from torch_geometric.data.storage import NodeStorage
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('random_node_split')
+@functional_transform("random_node_split")
 class RandomNodeSplit(BaseTransform):
     r"""Performs a node-level random split by adding :obj:`train_mask`,
     :obj:`val_mask` and :obj:`test_mask` attributes to the
@@ -52,6 +52,7 @@ class RandomNodeSplit(BaseTransform):
             labels. By default, will only add node-level splits for node-level
             storages in which :obj:`key` is present. (default: :obj:`"y"`).
     """
+
     def __init__(
         self,
         split: str = "train_rest",
@@ -61,7 +62,7 @@ class RandomNodeSplit(BaseTransform):
         num_test: Union[int, float] = 1000,
         key: Optional[str] = "y",
     ):
-        assert split in ['train_rest', 'test_rest', 'random']
+        assert split in ["train_rest", "test_rest", "random"]
         self.split = split
         self.num_splits = num_splits
         self.num_train_per_class = num_train_per_class
@@ -78,7 +79,8 @@ class RandomNodeSplit(BaseTransform):
                 continue
 
             train_masks, val_masks, test_masks = zip(
-                *[self._split(store) for _ in range(self.num_splits)])
+                *[self._split(store) for _ in range(self.num_splits)]
+            )
 
             store.train_mask = torch.stack(train_masks, dim=-1).squeeze(-1)
             store.val_mask = torch.stack(val_masks, dim=-1).squeeze(-1)
@@ -103,18 +105,18 @@ class RandomNodeSplit(BaseTransform):
         else:
             num_test = self.num_test
 
-        if self.split == 'train_rest':
+        if self.split == "train_rest":
             perm = torch.randperm(num_nodes)
             val_mask[perm[:num_val]] = True
-            test_mask[perm[num_val:num_val + num_test]] = True
-            train_mask[perm[num_val + num_test:]] = True
+            test_mask[perm[num_val : num_val + num_test]] = True
+            train_mask[perm[num_val + num_test :]] = True
         else:
             y = getattr(store, self.key)
             num_classes = int(y.max().item()) + 1
             for c in range(num_classes):
                 idx = (y == c).nonzero(as_tuple=False).view(-1)
                 idx = idx[torch.randperm(idx.size(0))]
-                idx = idx[:self.num_train_per_class]
+                idx = idx[: self.num_train_per_class]
                 train_mask[idx] = True
 
             remaining = (~train_mask).nonzero(as_tuple=False).view(-1)
@@ -122,12 +124,12 @@ class RandomNodeSplit(BaseTransform):
 
             val_mask[remaining[:num_val]] = True
 
-            if self.split == 'test_rest':
+            if self.split == "test_rest":
                 test_mask[remaining[num_val:]] = True
-            elif self.split == 'random':
-                test_mask[remaining[num_val:num_val + num_test]] = True
+            elif self.split == "random":
+                test_mask[remaining[num_val : num_val + num_test]] = True
 
         return train_mask, val_mask, test_mask
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(split={self.split})'
+        return f"{self.__class__.__name__}(split={self.split})"

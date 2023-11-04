@@ -64,6 +64,7 @@ class ExplainerDataset(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         graph_generator: Union[GraphGenerator, str],
@@ -77,8 +78,10 @@ class ExplainerDataset(InMemoryDataset):
         super().__init__(root=None, transform=transform)
 
         if num_motifs <= 0:
-            raise ValueError(f"At least one motif needs to be attached to the "
-                             f"graph (got {num_motifs})")
+            raise ValueError(
+                f"At least one motif needs to be attached to the "
+                f"graph (got {num_motifs})"
+            )
 
         self.graph_generator = GraphGenerator.resolve(
             graph_generator,
@@ -103,7 +106,7 @@ class ExplainerDataset(InMemoryDataset):
         edge_masks = [torch.zeros(data.num_edges)]
         ys = [torch.zeros(num_nodes, dtype=torch.long)]
 
-        connecting_nodes = torch.randperm(num_nodes)[:self.num_motifs]
+        connecting_nodes = torch.randperm(num_nodes)[: self.num_motifs]
         for i in connecting_nodes.tolist():
             motif = self.motif_generator()
 
@@ -113,11 +116,11 @@ class ExplainerDataset(InMemoryDataset):
             edge_masks.append(torch.ones(motif.num_edges))
 
             # Add random motif connection to the graph.
-            j = int(torch.randint(0, motif.num_nodes, (1, ))) + num_nodes
+            j = int(torch.randint(0, motif.num_nodes, (1,))) + num_nodes
             edge_indices.append(torch.tensor([[i, j], [j, i]]))
             edge_masks.append(torch.zeros(2))
 
-            if 'y' in motif:
+            if "y" in motif:
                 ys.append(motif.y + 1 if motif.y.min() == 0 else motif.y)
 
             num_nodes += motif.num_nodes
@@ -130,7 +133,9 @@ class ExplainerDataset(InMemoryDataset):
         )
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({len(self)}, '
-                f'graph_generator={self.graph_generator}, '
-                f'motif_generator={self.motif_generator}, '
-                f'num_motifs={self.num_motifs})')
+        return (
+            f"{self.__class__.__name__}({len(self)}, "
+            f"graph_generator={self.graph_generator}, "
+            f"motif_generator={self.motif_generator}, "
+            f"num_motifs={self.num_motifs})"
+        )

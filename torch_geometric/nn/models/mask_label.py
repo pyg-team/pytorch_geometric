@@ -26,14 +26,15 @@ class MaskLabel(torch.nn.Module):
             needs to be identical to the input dimensionality of node features.
             (default: :obj:`"add"`)
     """
-    def __init__(self, num_classes: int, out_channels: int,
-                 method: str = "add"):
+
+    def __init__(self, num_classes: int, out_channels: int, method: str = "add"):
         super().__init__()
 
         self.method = method
         if method not in ["add", "concat"]:
             raise ValueError(
-                f"'method' must be either 'add' or 'concat' (got '{method}')")
+                f"'method' must be either 'add' or 'concat' (got '{method}')"
+            )
 
         self.emb = torch.nn.Embedding(num_classes, out_channels)
         self.reset_parameters()
@@ -68,4 +69,4 @@ class MaskLabel(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"

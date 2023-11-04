@@ -17,6 +17,7 @@ class ConstantWithWarmupLR(LambdaLR):
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -52,6 +53,7 @@ class LinearWithWarmupLR(LambdaLR):
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -76,8 +78,8 @@ class LinearWithWarmupLR(LambdaLR):
             return float(current_step) / float(max(1, num_warmup_steps))
         return max(
             0.0,
-            float(num_training_steps - current_step) /
-            float(max(1, num_training_steps - num_warmup_steps)),
+            float(num_training_steps - current_step)
+            / float(max(1, num_training_steps - num_warmup_steps)),
         )
 
 
@@ -97,6 +99,7 @@ class CosineWithWarmupLR(LambdaLR):
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -123,11 +126,11 @@ class CosineWithWarmupLR(LambdaLR):
         if current_step < num_warmup_steps:
             return float(current_step) / float(max(1, num_warmup_steps))
         progress = float(current_step - num_warmup_steps) / float(
-            max(1, num_training_steps - num_warmup_steps))
+            max(1, num_training_steps - num_warmup_steps)
+        )
         return max(
             0.0,
-            0.5 *
-            (1.0 + math.cos(math.pi * float(num_cycles) * 2.0 * progress)),
+            0.5 * (1.0 + math.cos(math.pi * float(num_cycles) * 2.0 * progress)),
         )
 
 
@@ -147,6 +150,7 @@ class CosineWithWarmupRestartsLR(LambdaLR):
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -173,13 +177,13 @@ class CosineWithWarmupRestartsLR(LambdaLR):
         if current_step < num_warmup_steps:
             return float(current_step) / float(max(1, num_warmup_steps))
         progress = float(current_step - num_warmup_steps) / float(
-            max(1, num_training_steps - num_warmup_steps))
+            max(1, num_training_steps - num_warmup_steps)
+        )
         if progress >= 1.0:
             return 0.0
         return max(
             0.0,
-            0.5 * (1.0 + math.cos(math.pi *
-                                  ((float(num_cycles) * progress) % 1.0))),
+            0.5 * (1.0 + math.cos(math.pi * ((float(num_cycles) * progress) % 1.0))),
         )
 
 
@@ -199,6 +203,7 @@ class PolynomialWithWarmupLR(LambdaLR):
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -210,8 +215,10 @@ class PolynomialWithWarmupLR(LambdaLR):
     ):
         lr_init = optimizer.defaults["lr"]
         if not (lr_init > lr_end):
-            raise ValueError(f"`lr_end` ({lr_end}) must be smaller than the "
-                             f"initial lr ({lr_init})")
+            raise ValueError(
+                f"`lr_end` ({lr_end}) must be smaller than the "
+                f"initial lr ({lr_init})"
+            )
 
         lr_lambda = functools.partial(
             self._lr_lambda,

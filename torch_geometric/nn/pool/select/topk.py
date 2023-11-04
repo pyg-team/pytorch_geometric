@@ -19,17 +19,17 @@ def topk(
 ) -> Tensor:
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
-        scores_max = scatter(x, batch, reduce='max')[batch] - tol
+        scores_max = scatter(x, batch, reduce="max")[batch] - tol
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero().view(-1)
         return perm
 
     if ratio is not None:
-        num_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce='sum')
+        num_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce="sum")
 
         if ratio >= 1:
-            k = num_nodes.new_full((num_nodes.size(0), ), int(ratio))
+            k = num_nodes.new_full((num_nodes.size(0),), int(ratio))
         else:
             k = (float(ratio) * num_nodes.to(x.dtype)).ceil().to(torch.long)
 
@@ -44,8 +44,9 @@ def topk(
 
         return x_perm[batch_perm[mask]]
 
-    raise ValueError("At least one of the 'ratio' and 'min_score' parameters "
-                     "must be specified")
+    raise ValueError(
+        "At least one of the 'ratio' and 'min_score' parameters " "must be specified"
+    )
 
 
 class SelectTopK(Select):
@@ -89,19 +90,22 @@ class SelectTopK(Select):
         act (str or callable, optional): The non-linearity :math:`\sigma`.
             (default: :obj:`"tanh"`)
     """
+
     def __init__(
         self,
         in_channels: int,
         ratio: Union[int, float] = 0.5,
         min_score: Optional[float] = None,
-        act: Union[str, Callable] = 'tanh',
+        act: Union[str, Callable] = "tanh",
     ):
         super().__init__()
 
         if ratio is None and min_score is None:
-            raise ValueError(f"At least one of the 'ratio' and 'min_score' "
-                             f"parameters must be specified in "
-                             f"'{self.__class__.__name__}'")
+            raise ValueError(
+                f"At least one of the 'ratio' and 'min_score' "
+                f"parameters must be specified in "
+                f"'{self.__class__.__name__}'"
+            )
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -144,7 +148,7 @@ class SelectTopK(Select):
 
     def __repr__(self) -> str:
         if self.min_score is None:
-            arg = f'ratio={self.ratio}'
+            arg = f"ratio={self.ratio}"
         else:
-            arg = f'min_score={self.min_score}'
-        return f'{self.__class__.__name__}({self.in_channels}, {arg})'
+            arg = f"min_score={self.min_score}"
+        return f"{self.__class__.__name__}({self.in_channels}, {arg})"

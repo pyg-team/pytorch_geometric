@@ -38,7 +38,7 @@ class LayerConfig:
     # activation parameters.
     has_act: bool = True
     final_act: bool = True
-    act: str = 'relu'
+    act: str = "relu"
 
     # other parameters.
     keep_edge: float = 0.5
@@ -91,6 +91,7 @@ class GeneralLayer(torch.nn.Module):
         layer_config (LayerConfig): The configuration of the layer.
         **kwargs (optional): Additional keyword arguments.
     """
+
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.has_l2norm = layer_config.has_l2norm
@@ -104,13 +105,15 @@ class GeneralLayer(torch.nn.Module):
                     layer_config.dim_out,
                     eps=layer_config.bn_eps,
                     momentum=layer_config.bn_mom,
-                ))
+                )
+            )
         if layer_config.dropout > 0:
             layer_wrapper.append(
                 torch.nn.Dropout(
                     p=layer_config.dropout,
                     inplace=layer_config.mem_inplace,
-                ))
+                )
+            )
         if layer_config.has_act:
             layer_wrapper.append(register.act_dict[layer_config.act]())
         self.post_layer = torch.nn.Sequential(*layer_wrapper)
@@ -136,6 +139,7 @@ class GeneralMultiLayer(torch.nn.Module):
         layer_config (LayerConfig): The configuration of the layer.
         **kwargs (optional): Additional keyword arguments.
     """
+
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
         if layer_config.dim_inner:
@@ -145,16 +149,18 @@ class GeneralMultiLayer(torch.nn.Module):
 
         for i in range(layer_config.num_layers):
             d_in = layer_config.dim_in if i == 0 else dim_inner
-            d_out = layer_config.dim_out \
-                if i == layer_config.num_layers - 1 else dim_inner
-            has_act = layer_config.final_act \
-                if i == layer_config.num_layers - 1 else True
+            d_out = (
+                layer_config.dim_out if i == layer_config.num_layers - 1 else dim_inner
+            )
+            has_act = (
+                layer_config.final_act if i == layer_config.num_layers - 1 else True
+            )
             inter_layer_config = copy.deepcopy(layer_config)
             inter_layer_config.dim_in = d_in
             inter_layer_config.dim_out = d_out
             inter_layer_config.has_act = has_act
             layer = GeneralLayer(name, inter_layer_config, **kwargs)
-            self.add_module(f'Layer_{i}', layer)
+            self.add_module(f"Layer_{i}", layer)
 
     def forward(self, batch):
         for layer in self.children():
@@ -165,7 +171,7 @@ class GeneralMultiLayer(torch.nn.Module):
 # ---------- Core basic layers. Input: batch; Output: batch ----------------- #
 
 
-@register_layer('linear')
+@register_layer("linear")
 class Linear(torch.nn.Module):
     r"""A basic Linear layer.
 
@@ -173,6 +179,7 @@ class Linear(torch.nn.Module):
         layer_config (LayerConfig): The configuration of the layer.
         **kwargs (optional): Additional keyword arguments.
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = Linear_pyg(
@@ -195,6 +202,7 @@ class BatchNorm1dNode(torch.nn.Module):
     Args:
         layer_config (LayerConfig): The configuration of the layer.
     """
+
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
         self.bn = torch.nn.BatchNorm1d(
@@ -214,6 +222,7 @@ class BatchNorm1dEdge(torch.nn.Module):
     Args:
         layer_config (LayerConfig): The configuration of the layer.
     """
+
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
         self.bn = torch.nn.BatchNorm1d(
@@ -227,7 +236,7 @@ class BatchNorm1dEdge(torch.nn.Module):
         return batch
 
 
-@register_layer('mlp')
+@register_layer("mlp")
 class MLP(torch.nn.Module):
     """A basic MLP model.
 
@@ -235,6 +244,7 @@ class MLP(torch.nn.Module):
         layer_config (LayerConfig): The configuration of the layer.
         **kwargs (optional): Additional keyword arguments.
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         if layer_config.dim_inner:
@@ -247,9 +257,12 @@ class MLP(torch.nn.Module):
         if layer_config.num_layers > 1:
             sub_layer_config = LayerConfig(
                 num_layers=layer_config.num_layers - 1,
-                dim_in=layer_config.dim_in, dim_out=dim_inner,
-                dim_inner=dim_inner, final_act=True)
-            layers.append(GeneralMultiLayer('linear', sub_layer_config))
+                dim_in=layer_config.dim_in,
+                dim_out=dim_inner,
+                dim_inner=dim_inner,
+                final_act=True,
+            )
+            layers.append(GeneralMultiLayer("linear", sub_layer_config))
             layer_config = replace(layer_config, dim_in=dim_inner)
             layers.append(Linear(layer_config))
         else:
@@ -264,9 +277,10 @@ class MLP(torch.nn.Module):
         return batch
 
 
-@register_layer('gcnconv')
+@register_layer("gcnconv")
 class GCNConv(torch.nn.Module):
     r"""A Graph Convolutional Network (GCN) layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.GCNConv(
@@ -280,9 +294,10 @@ class GCNConv(torch.nn.Module):
         return batch
 
 
-@register_layer('sageconv')
+@register_layer("sageconv")
 class SAGEConv(torch.nn.Module):
     r"""A GraphSAGE layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.SAGEConv(
@@ -296,9 +311,10 @@ class SAGEConv(torch.nn.Module):
         return batch
 
 
-@register_layer('gatconv')
+@register_layer("gatconv")
 class GATConv(torch.nn.Module):
     r"""A Graph Attention Network (GAT) layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.GATConv(
@@ -312,9 +328,10 @@ class GATConv(torch.nn.Module):
         return batch
 
 
-@register_layer('ginconv')
+@register_layer("ginconv")
 class GINConv(torch.nn.Module):
     r"""A Graph Isomorphism Network (GIN) layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         gin_nn = torch.nn.Sequential(
@@ -329,9 +346,10 @@ class GINConv(torch.nn.Module):
         return batch
 
 
-@register_layer('splineconv')
+@register_layer("splineconv")
 class SplineConv(torch.nn.Module):
     r"""A SplineCNN layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.SplineConv(
@@ -347,9 +365,10 @@ class SplineConv(torch.nn.Module):
         return batch
 
 
-@register_layer('generalconv')
+@register_layer("generalconv")
 class GeneralConv(torch.nn.Module):
     r"""A general GNN layer."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralConvLayer(
@@ -363,9 +382,10 @@ class GeneralConv(torch.nn.Module):
         return batch
 
 
-@register_layer('generaledgeconv')
+@register_layer("generaledgeconv")
 class GeneralEdgeConv(torch.nn.Module):
     r"""A general GNN layer with edge feature support."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralEdgeConvLayer(
@@ -376,14 +396,14 @@ class GeneralEdgeConv(torch.nn.Module):
         )
 
     def forward(self, batch):
-        batch.x = self.model(batch.x, batch.edge_index,
-                             edge_feature=batch.edge_attr)
+        batch.x = self.model(batch.x, batch.edge_index, edge_feature=batch.edge_attr)
         return batch
 
 
-@register_layer('generalsampleedgeconv')
+@register_layer("generalsampleedgeconv")
 class GeneralSampleEdgeConv(torch.nn.Module):
     r"""A general GNN layer that supports edge features and edge sampling."""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralEdgeConvLayer(

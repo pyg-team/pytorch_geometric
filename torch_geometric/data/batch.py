@@ -17,12 +17,12 @@ class DynamicInheritance(type):
     # * `Batch(Data)` in case `Data` objects are batched together
     # * `Batch(HeteroData)` in case `HeteroData` objects are batched together
     def __call__(cls, *args, **kwargs):
-        base_cls = kwargs.pop('_base_cls', Data)
+        base_cls = kwargs.pop("_base_cls", Data)
 
         if issubclass(base_cls, Batch):
             new_cls = base_cls
         else:
-            name = f'{base_cls.__name__}{cls.__name__}'
+            name = f"{base_cls.__name__}{cls.__name__}"
 
             # NOTE `MetaResolver` is necessary to resolve metaclass conflict
             # problems between `DynamicInheritance` and the metaclass of
@@ -37,7 +37,7 @@ class DynamicInheritance(type):
 
         params = list(inspect.signature(base_cls.__init__).parameters.items())
         for i, (k, v) in enumerate(params[1:]):
-            if k == 'args' or k == 'kwargs':
+            if k == "args" or k == "kwargs":
                 continue
             if i < len(args) or k in kwargs:
                 continue
@@ -78,10 +78,14 @@ class Batch(metaclass=DynamicInheritance):
     Furthermore, :meth:`~Data.__cat_dim__` defines in which dimension graph
     tensors of the same attribute should be concatenated together.
     """
+
     @classmethod
-    def from_data_list(cls, data_list: List[BaseData],
-                       follow_batch: Optional[List[str]] = None,
-                       exclude_keys: Optional[List[str]] = None):
+    def from_data_list(
+        cls,
+        data_list: List[BaseData],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
+    ):
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
         list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects.
@@ -112,10 +116,13 @@ class Batch(metaclass=DynamicInheritance):
         via :meth:`from_data_list` in order to be able to reconstruct the
         initial object."""
 
-        if not hasattr(self, '_slice_dict'):
+        if not hasattr(self, "_slice_dict"):
             raise RuntimeError(
-                ("Cannot reconstruct 'Data' object from 'Batch' because "
-                 "'Batch' was not created via 'Batch.from_data_list()'"))
+                (
+                    "Cannot reconstruct 'Data' object from 'Batch' because "
+                    "'Batch' was not created via 'Batch.from_data_list()'"
+                )
+            )
 
         data = separate(
             cls=self.__class__.__bases__[-1],
@@ -160,17 +167,21 @@ class Batch(metaclass=DynamicInheritance):
             raise IndexError(
                 f"Only slices (':'), list, tuples, torch.tensor and "
                 f"np.ndarray of dtype long or bool are valid indices (got "
-                f"'{type(idx).__name__}')")
+                f"'{type(idx).__name__}')"
+            )
 
         return [self.get_example(i) for i in idx]
 
     def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
-        if (isinstance(idx, (int, np.integer))
-                or (isinstance(idx, Tensor) and idx.dim() == 0)
-                or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
+        if (
+            isinstance(idx, (int, np.integer))
+            or (isinstance(idx, Tensor) and idx.dim() == 0)
+            or (isinstance(idx, np.ndarray) and np.isscalar(idx))
+        ):
             return self.get_example(idx)
-        elif isinstance(idx, str) or (isinstance(idx, tuple)
-                                      and isinstance(idx[0], str)):
+        elif isinstance(idx, str) or (
+            isinstance(idx, tuple) and isinstance(idx[0], str)
+        ):
             # Accessing attributes or node/edge types:
             return super().__getitem__(idx)
         else:
@@ -188,11 +199,11 @@ class Batch(metaclass=DynamicInheritance):
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        if hasattr(self, '_num_graphs'):
+        if hasattr(self, "_num_graphs"):
             return self._num_graphs
-        elif hasattr(self, 'ptr'):
+        elif hasattr(self, "ptr"):
             return self.ptr.numel() - 1
-        elif hasattr(self, 'batch'):
+        elif hasattr(self, "batch"):
             return int(self.batch.max()) + 1
         else:
             raise ValueError("Can not infer the number of graphs")

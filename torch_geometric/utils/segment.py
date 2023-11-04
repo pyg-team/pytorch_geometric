@@ -4,7 +4,7 @@ import torch_geometric.typing
 from torch_geometric.typing import torch_scatter
 
 
-def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
+def segment(src: Tensor, ptr: Tensor, reduce: str = "sum") -> Tensor:
     r"""Reduces all values in the first dimension of the :obj:`src` tensor
     within the ranges specified in the :obj:`ptr`. See the `documentation
     <https://pytorch-scatter.readthedocs.io/en/latest/functions/

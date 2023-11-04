@@ -37,7 +37,7 @@ def erdos_renyi_graph(
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
     else:
-        warnings.filterwarnings('ignore', '.*pass the indexing argument.*')
+        warnings.filterwarnings("ignore", ".*pass the indexing argument.*")
         idx = torch.combinations(torch.arange(num_nodes), r=2)
 
     # Filter edges.
@@ -45,7 +45,7 @@ def erdos_renyi_graph(
     idx = idx[mask]
 
     if directed:
-        row = idx.div(num_nodes, rounding_mode='floor')
+        row = idx.div(num_nodes, rounding_mode="floor")
         col = idx % num_nodes
         edge_index = torch.stack([row, col], dim=0)
     else:
@@ -99,7 +99,7 @@ def stochastic_blockmodel_graph(
     if not directed:
         assert torch.allclose(prob, prob.t())
 
-    node_idx = torch.cat([size.new_full((b, ), i) for i, b in enumerate(size)])
+    node_idx = torch.cat([size.new_full((b,), i) for i, b in enumerate(size)])
     num_nodes = node_idx.size(0)
 
     if directed:
@@ -107,7 +107,7 @@ def stochastic_blockmodel_graph(
         idx = idx.view(num_nodes - 1, num_nodes)
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
-        row = idx.div(num_nodes, rounding_mode='floor')
+        row = idx.div(num_nodes, rounding_mode="floor")
         col = idx % num_nodes
     else:
         row, col = torch.combinations(torch.arange(num_nodes), r=2).t()
@@ -143,7 +143,7 @@ def barabasi_albert_graph(num_nodes: int, num_edges: int) -> torch.Tensor:
     row, col = torch.arange(num_edges), torch.randperm(num_edges)
 
     for i in range(num_edges, num_nodes):
-        row = torch.cat([row, torch.full((num_edges, ), i, dtype=torch.long)])
+        row = torch.cat([row, torch.full((num_edges,), i, dtype=torch.long)])
         choice = np.random.choice(torch.cat([row, col]).numpy(), num_edges)
         col = torch.cat([col, torch.from_numpy(choice)])
 

@@ -16,6 +16,7 @@ from torch_geometric.typing import EdgeType, NodeType
 
 class Padding(ABC):
     r"""An abstract class for specifying padding values."""
+
     @abstractmethod
     def get_value(
         self,
@@ -33,14 +34,16 @@ class UniformPadding(Padding):
         value (int or float, optional): The value to be used for padding.
             (default: :obj:`0.0`)
     """
+
     value: Union[int, float] = 0.0
 
     def __init__(self, value: Union[int, float] = 0.0):
         self.value = value
 
         if not isinstance(self.value, (int, float)):
-            raise ValueError(f"Expected 'value' to be an integer or float "
-                             f"(got '{type(value)}'")
+            raise ValueError(
+                f"Expected 'value' to be an integer or float " f"(got '{type(value)}'"
+            )
 
     def get_value(
         self,
@@ -53,6 +56,7 @@ class UniformPadding(Padding):
 @dataclass(init=False)
 class MappingPadding(Padding):
     r"""An abstract class for specifying different padding values."""
+
     values: Dict[Any, Padding] = field(default_factory=dict)
     default: UniformPadding = 0.0
 
@@ -62,8 +66,9 @@ class MappingPadding(Padding):
         default: Union[int, float] = 0.0,
     ):
         if not isinstance(values, dict):
-            raise ValueError(f"Expected 'values' to be a dictionary "
-                             f"(got '{type(values)}'")
+            raise ValueError(
+                f"Expected 'values' to be a dictionary " f"(got '{type(values)}'"
+            )
 
         self.values = {
             key: UniformPadding(val) if isinstance(val, (int, float)) else val
@@ -87,14 +92,19 @@ class AttrNamePadding(MappingPadding):
             attribute names not specified in :obj:`values`.
             (default: :obj:`0.0`)
     """
+
     def validate_key_value(self, key: Any, value: Any):
         if not isinstance(key, str):
-            raise ValueError(f"Expected the attribute name '{key}' to be a "
-                             f"string (got '{type(key)}')")
+            raise ValueError(
+                f"Expected the attribute name '{key}' to be a "
+                f"string (got '{type(key)}')"
+            )
 
         if not isinstance(value, UniformPadding):
-            raise ValueError(f"Expected the value of '{key}' to be of "
-                             f"type 'UniformPadding' (got '{type(value)}')")
+            raise ValueError(
+                f"Expected the value of '{key}' to be of "
+                f"type 'UniformPadding' (got '{type(value)}')"
+            )
 
     def get_value(
         self,
@@ -113,15 +123,19 @@ class NodeTypePadding(MappingPadding):
         default (int or float, optional): The padding value to use for node
             types not specified in :obj:`values`. (default: :obj:`0.0`)
     """
+
     def validate_key_value(self, key: Any, value: Any):
         if not isinstance(key, str):
-            raise ValueError(f"Expected the node type '{key}' to be a string "
-                             f"(got '{type(key)}')")
+            raise ValueError(
+                f"Expected the node type '{key}' to be a string " f"(got '{type(key)}')"
+            )
 
         if not isinstance(value, (UniformPadding, AttrNamePadding)):
-            raise ValueError(f"Expected the value of '{key}' to be of "
-                             f"type 'UniformPadding' or 'AttrNamePadding' "
-                             f"(got '{type(value)}')")
+            raise ValueError(
+                f"Expected the value of '{key}' to be of "
+                f"type 'UniformPadding' or 'AttrNamePadding' "
+                f"(got '{type(value)}')"
+            )
 
     def get_value(
         self,
@@ -140,19 +154,25 @@ class EdgeTypePadding(MappingPadding):
         default (int or float, optional): The padding value to use for edge
             types not specified in :obj:`values`. (default: :obj:`0.0`)
     """
+
     def validate_key_value(self, key: Any, value: Any):
         if not isinstance(key, tuple):
-            raise ValueError(f"Expected the edge type '{key}' to be a tuple "
-                             f"(got '{type(key)}')")
+            raise ValueError(
+                f"Expected the edge type '{key}' to be a tuple " f"(got '{type(key)}')"
+            )
 
         if len(key) != 3:
-            raise ValueError(f"Expected the edge type '{key}' to hold exactly "
-                             f"three elements (got {len(key)})")
+            raise ValueError(
+                f"Expected the edge type '{key}' to hold exactly "
+                f"three elements (got {len(key)})"
+            )
 
         if not isinstance(value, (UniformPadding, AttrNamePadding)):
-            raise ValueError(f"Expected the value of '{key}' to be of "
-                             f"type 'UniformPadding' or 'AttrNamePadding' "
-                             f"(got '{type(value)}')")
+            raise ValueError(
+                f"Expected the value of '{key}' to be of "
+                f"type 'UniformPadding' or 'AttrNamePadding' "
+                f"(got '{type(value)}')"
+            )
 
     def get_value(
         self,
@@ -163,7 +183,7 @@ class EdgeTypePadding(MappingPadding):
         return padding.get_value(attr_name=attr_name)
 
 
-@functional_transform('pad')
+@functional_transform("pad")
 class Pad(BaseTransform):
     r"""Applies padding to enforce consistent tensor shapes
     (functional name: :obj:`pad`).
@@ -274,6 +294,7 @@ class Pad(BaseTransform):
         exclude_keys ([str], optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         max_num_nodes: Union[int, Dict[NodeType, int]],
@@ -296,8 +317,7 @@ class Pad(BaseTransform):
             self.edge_pad = UniformPadding(self.edge_pad)
 
         self.node_additional_attrs_pad = {
-            key: mask_pad_value
-            for key in ['train_mask', 'val_mask', 'test_mask']
+            key: mask_pad_value for key in ["train_mask", "val_mask", "test_mask"]
         }
 
         self.add_pad_mask = add_pad_mask
@@ -317,9 +337,10 @@ class Pad(BaseTransform):
 
     class _NumNodes(_IntOrDict):
         def __init__(self, value):
-            assert isinstance(value, (int, dict)), \
-                f'Parameter `max_num_nodes` must be of type int or dict ' \
-                f'but is {type(value)}.'
+            assert isinstance(value, (int, dict)), (
+                f"Parameter `max_num_nodes` must be of type int or dict "
+                f"but is {type(value)}."
+            )
             super().__init__(value)
 
         def get_value(self, key: Optional[NodeType] = None) -> int:
@@ -328,16 +349,19 @@ class Pad(BaseTransform):
                 return self.value
 
             assert isinstance(key, str)
-            assert key in self.value.keys(), \
-                f'The number of {key} nodes was not specified for padding.'
+            assert (
+                key in self.value.keys()
+            ), f"The number of {key} nodes was not specified for padding."
             return self.value[key]
 
     class _NumEdges(_IntOrDict):
-        def __init__(self, value: Union[int, Dict[EdgeType, int], None],
-                     num_nodes: '_NumNodes'):  # noqa: F821
-            assert value is None or isinstance(value, (int, dict)), \
-                f'If provided, parameter `max_num_edges` must be of type ' \
-                f'int or dict but is {type(value)}.'
+        def __init__(
+            self, value: Union[int, Dict[EdgeType, int], None], num_nodes: "_NumNodes"
+        ):  # noqa: F821
+            assert value is None or isinstance(value, (int, dict)), (
+                f"If provided, parameter `max_num_edges` must be of type "
+                f"int or dict but is {type(value)}."
+            )
 
             if value is not None:
                 if isinstance(value, int):
@@ -366,8 +390,9 @@ class Pad(BaseTransform):
                 if edge_type in self.value[src_v, dst_v]:
                     return self.value[src_v, dst_v][edge_type]
 
-            max_num_edges = self.num_nodes.get_value(
-                src_v) * self.num_nodes.get_value(dst_v)
+            max_num_edges = self.num_nodes.get_value(src_v) * self.num_nodes.get_value(
+                dst_v
+            )
             self.value[src_v, dst_v][edge_type] = max_num_edges
             return self.value[src_v, dst_v][edge_type]
 
@@ -381,29 +406,28 @@ class Pad(BaseTransform):
     def __should_pad_edge_attr(self, attr_name: str) -> bool:
         if self.max_num_edges.is_none():
             return False
-        if attr_name == 'edge_index':
+        if attr_name == "edge_index":
             return True
         if self.exclude_keys is None or attr_name not in self.exclude_keys:
             return True
         return False
 
     def __get_node_padding(
-            self, attr_name: str,
-            node_type: Optional[NodeType] = None) -> Union[int, float]:
+        self, attr_name: str, node_type: Optional[NodeType] = None
+    ) -> Union[int, float]:
         if attr_name in self.node_additional_attrs_pad:
             return self.node_additional_attrs_pad[attr_name]
         return self.node_pad.get_value(node_type, attr_name)
 
     def __get_edge_padding(
-            self, attr_name: str,
-            edge_type: Optional[EdgeType] = None) -> Union[int, float]:
+        self, attr_name: str, edge_type: Optional[EdgeType] = None
+    ) -> Union[int, float]:
         return self.edge_pad.get_value(edge_type, attr_name)
 
     def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
-
         if isinstance(data, Data):
             assert isinstance(self.node_pad, (UniformPadding, AttrNamePadding))
             assert isinstance(self.edge_pad, (UniformPadding, AttrNamePadding))
@@ -416,76 +440,84 @@ class Pad(BaseTransform):
             data.num_nodes = self.max_num_nodes.get_value()
         else:
             assert isinstance(
-                self.node_pad,
-                (UniformPadding, AttrNamePadding, NodeTypePadding))
+                self.node_pad, (UniformPadding, AttrNamePadding, NodeTypePadding)
+            )
             assert isinstance(
-                self.edge_pad,
-                (UniformPadding, AttrNamePadding, EdgeTypePadding))
+                self.edge_pad, (UniformPadding, AttrNamePadding, EdgeTypePadding)
+            )
 
             for edge_type, store in data.edge_items():
                 for key in self.exclude_keys:
                     del store[key]
 
                 src_node_type, _, dst_node_type = edge_type
-                self.__pad_edge_store(store, data.__cat_dim__,
-                                      (data[src_node_type].num_nodes,
-                                       data[dst_node_type].num_nodes),
-                                      edge_type)
+                self.__pad_edge_store(
+                    store,
+                    data.__cat_dim__,
+                    (data[src_node_type].num_nodes, data[dst_node_type].num_nodes),
+                    edge_type,
+                )
 
             for node_type, store in data.node_items():
                 for key in self.exclude_keys:
                     del store[key]
                 self.__pad_node_store(store, data.__cat_dim__, node_type)
-                data[node_type].num_nodes = self.max_num_nodes.get_value(
-                    node_type)
+                data[node_type].num_nodes = self.max_num_nodes.get_value(node_type)
 
         return data
 
-    def __pad_node_store(self, store: NodeStorage, get_dim_fn: Callable,
-                         node_type: Optional[str] = None):
-
+    def __pad_node_store(
+        self, store: NodeStorage, get_dim_fn: Callable, node_type: Optional[str] = None
+    ):
         attrs_to_pad = [key for key in store if store.is_node_attr(key)]
 
         if not attrs_to_pad:
             return
 
         num_target_nodes = self.max_num_nodes.get_value(node_type)
-        assert num_target_nodes >= store.num_nodes, \
-            f'The number of nodes after padding ({num_target_nodes}) cannot ' \
-            f'be lower than the number of nodes in the data object ' \
-            f'({store.num_nodes}).'
+        assert num_target_nodes >= store.num_nodes, (
+            f"The number of nodes after padding ({num_target_nodes}) cannot "
+            f"be lower than the number of nodes in the data object "
+            f"({store.num_nodes})."
+        )
         num_pad_nodes = num_target_nodes - store.num_nodes
 
         if self.add_pad_mask:
             pad_node_mask = torch.ones(num_target_nodes, dtype=torch.bool)
-            pad_node_mask[store.num_nodes:] = False
+            pad_node_mask[store.num_nodes :] = False
             store.pad_node_mask = pad_node_mask
 
         for attr_name in attrs_to_pad:
             attr = store[attr_name]
             pad_value = self.__get_node_padding(attr_name, node_type)
             dim = get_dim_fn(attr_name, attr)
-            store[attr_name] = self._pad_tensor_dim(attr, dim, num_pad_nodes,
-                                                    pad_value)
+            store[attr_name] = self._pad_tensor_dim(attr, dim, num_pad_nodes, pad_value)
 
-    def __pad_edge_store(self, store: EdgeStorage, get_dim_fn: Callable,
-                         num_nodes: Union[int, Tuple[int, int]],
-                         edge_type: Optional[str] = None):
+    def __pad_edge_store(
+        self,
+        store: EdgeStorage,
+        get_dim_fn: Callable,
+        num_nodes: Union[int, Tuple[int, int]],
+        edge_type: Optional[str] = None,
+    ):
         attrs_to_pad = set(
-            attr for attr in store.keys()
-            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr))
+            attr
+            for attr in store.keys()
+            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr)
+        )
         if not attrs_to_pad:
             return
         num_target_edges = self.max_num_edges.get_value(edge_type)
-        assert num_target_edges >= store.num_edges, \
-            f'The number of edges after padding ({num_target_edges}) cannot ' \
-            f'be lower than the number of edges in the data object ' \
-            f'({store.num_edges}).'
+        assert num_target_edges >= store.num_edges, (
+            f"The number of edges after padding ({num_target_edges}) cannot "
+            f"be lower than the number of edges in the data object "
+            f"({store.num_edges})."
+        )
         num_pad_edges = num_target_edges - store.num_edges
 
         if self.add_pad_mask:
             pad_edge_mask = torch.ones(num_target_edges, dtype=torch.bool)
-            pad_edge_mask[store.num_edges:] = False
+            pad_edge_mask[store.num_edges :] = False
             store.pad_edge_mask = pad_edge_mask
 
         if isinstance(num_nodes, tuple):
@@ -496,40 +528,44 @@ class Pad(BaseTransform):
         for attr_name in attrs_to_pad:
             attr = store[attr_name]
             dim = get_dim_fn(attr_name, attr)
-            if attr_name == 'edge_index':
+            if attr_name == "edge_index":
                 store[attr_name] = self._pad_edge_index(
-                    attr, num_pad_edges, src_pad_value, dst_pad_value)
+                    attr, num_pad_edges, src_pad_value, dst_pad_value
+                )
             else:
                 pad_value = self.__get_edge_padding(attr_name, edge_type)
                 store[attr_name] = self._pad_tensor_dim(
-                    attr, dim, num_pad_edges, pad_value)
+                    attr, dim, num_pad_edges, pad_value
+                )
 
     @staticmethod
-    def _pad_tensor_dim(input: torch.Tensor, dim: int, length: int,
-                        pad_value: float) -> torch.Tensor:
+    def _pad_tensor_dim(
+        input: torch.Tensor, dim: int, length: int, pad_value: float
+    ) -> torch.Tensor:
         r"""Pads the input tensor in the specified dim with a constant value of
         the given length.
         """
         pads = [0] * (2 * input.ndim)
         pads[-2 * dim - 1] = length
-        return F.pad(input, pads, 'constant', pad_value)
+        return F.pad(input, pads, "constant", pad_value)
 
     @staticmethod
-    def _pad_edge_index(input: torch.Tensor, length: int, src_pad_value: float,
-                        dst_pad_value: float) -> torch.Tensor:
+    def _pad_edge_index(
+        input: torch.Tensor, length: int, src_pad_value: float, dst_pad_value: float
+    ) -> torch.Tensor:
         r"""Pads the edges :obj:`edge_index` feature with values specified
         separately for src and dst nodes.
         """
         pads = [0, length, 0, 0]
-        padded = F.pad(input, pads, 'constant', src_pad_value)
+        padded = F.pad(input, pads, "constant", src_pad_value)
         if src_pad_value != dst_pad_value:
-            padded[1, input.shape[1]:] = dst_pad_value
+            padded[1, input.shape[1] :] = dst_pad_value
         return padded
 
     def __repr__(self) -> str:
-        s = f'{self.__class__.__name__}('
-        s += f'max_num_nodes={self.max_num_nodes.value}, '
-        s += f'max_num_edges={self.max_num_edges.value}, '
-        s += f'node_pad_value={self.node_pad}, '
-        s += f'edge_pad_value={self.edge_pad})'
+        s = f"{self.__class__.__name__}("
+        s += f"max_num_nodes={self.max_num_nodes.value}, "
+        s += f"max_num_edges={self.max_num_edges.value}, "
+        s += f"node_pad_value={self.node_pad}, "
+        s += f"edge_pad_value={self.edge_pad})"
         return s

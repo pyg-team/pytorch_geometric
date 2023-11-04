@@ -27,13 +27,14 @@ class PMLP(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, the module
             will not learn additive biases. (default: :obj:`True`)
     """
+
     def __init__(
         self,
         in_channels: int,
         hidden_channels: int,
         out_channels: int,
         num_layers: int,
-        dropout: float = 0.,
+        dropout: float = 0.0,
         norm: bool = True,
         bias: bool = True,
     ):
@@ -61,7 +62,7 @@ class PMLP(torch.nn.Module):
                 track_running_stats=False,
             )
 
-        self.conv = SimpleConv(aggr='mean', combine_root='self_loop')
+        self.conv = SimpleConv(aggr="mean", combine_root="self_loop")
 
         self.reset_parameters()
 
@@ -79,8 +80,10 @@ class PMLP(torch.nn.Module):
     ) -> torch.Tensor:
         """"""
         if not self.training and edge_index is None:
-            raise ValueError(f"'edge_index' needs to be present during "
-                             f"inference in '{self.__class__.__name__}'")
+            raise ValueError(
+                f"'edge_index' needs to be present during "
+                f"inference in '{self.__class__.__name__}'"
+            )
 
         for i in range(self.num_layers):
             x = x @ self.lins[i].weight.t()
@@ -97,5 +100,7 @@ class PMLP(torch.nn.Module):
         return x
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, num_layers={self.num_layers})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, num_layers={self.num_layers})"
+        )

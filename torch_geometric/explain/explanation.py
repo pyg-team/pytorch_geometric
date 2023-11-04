@@ -15,29 +15,33 @@ class ExplanationMixin:
     @property
     def available_explanations(self) -> List[str]:
         """Returns the available explanation masks."""
-        return [key for key in self.keys() if key.endswith('_mask')]
+        return [key for key in self.keys() if key.endswith("_mask")]
 
     def validate_masks(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the :class:`Explanation` masks."""
         status = True
 
         for store in self.node_stores:
-            if 'node_mask' not in store:
+            if "node_mask" not in store:
                 continue
 
             if store.node_mask.dim() != 2:
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with two dimensions (got "
-                    f"{store.node_mask.dim()} dimensions)", raise_on_error)
+                    f"{store.node_mask.dim()} dimensions)",
+                    raise_on_error,
+                )
 
             if store.node_mask.size(0) not in {1, store.num_nodes}:
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with {store.num_nodes} nodes "
-                    f"(got {store.node_mask.size(0)} nodes)", raise_on_error)
+                    f"(got {store.node_mask.size(0)} nodes)",
+                    raise_on_error,
+                )
 
-            if 'x' in store:
+            if "x" in store:
                 num_features = store.x.size(-1)
             else:
                 num_features = store.node_mask.size(-1)
@@ -46,23 +50,29 @@ class ExplanationMixin:
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with {num_features} features ("
-                    f"got {store.node_mask.size(1)} features)", raise_on_error)
+                    f"got {store.node_mask.size(1)} features)",
+                    raise_on_error,
+                )
 
         for store in self.edge_stores:
-            if 'edge_mask' not in store:
+            if "edge_mask" not in store:
                 continue
 
             if store.edge_mask.dim() != 1:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with one dimension (got "
-                    f"{store.edge_mask.dim()} dimensions)", raise_on_error)
+                    f"{store.edge_mask.dim()} dimensions)",
+                    raise_on_error,
+                )
 
             if store.edge_mask.size(0) != store.num_edges:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
-                    f"(got {store.edge_mask.size(0)} edges)", raise_on_error)
+                    f"(got {store.edge_mask.size(0)} edges)",
+                    raise_on_error,
+                )
 
         return status
 
@@ -71,7 +81,6 @@ class ExplanationMixin:
         mask: Optional[Tensor],
         threshold_config: ThresholdConfig,
     ) -> Optional[Tensor]:
-
         if mask is None:
             return None
 
@@ -79,8 +88,8 @@ class ExplanationMixin:
             return (mask > threshold_config.value).float()
 
         if threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
+            ThresholdType.topk,
+            ThresholdType.topk_hard,
         ]:
             if threshold_config.value >= mask.numel():
                 if threshold_config.type == ThresholdType.topk:
@@ -106,7 +115,7 @@ class ExplanationMixin:
         self,
         *args,
         **kwargs,
-    ) -> Union['Explanation', 'HeteroExplanation']:
+    ) -> Union["Explanation", "HeteroExplanation"]:
         """Thresholds the explanation masks according to the thresholding
         method.
 
@@ -122,12 +131,14 @@ class ExplanationMixin:
         out = copy.copy(self)
 
         for store in out.node_stores:
-            store.node_mask = self._threshold_mask(store.get('node_mask'),
-                                                   threshold_config)
+            store.node_mask = self._threshold_mask(
+                store.get("node_mask"), threshold_config
+            )
 
         for store in out.edge_stores:
-            store.edge_mask = self._threshold_mask(store.get('edge_mask'),
-                                                   threshold_config)
+            store.edge_mask = self._threshold_mask(
+                store.get("edge_mask"), threshold_config
+            )
 
         return out
 
@@ -147,30 +158,31 @@ class Explanation(Data, ExplanationMixin):
             :obj:`[num_edges]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
+
     def validate(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the :class:`Explanation` object."""
         status = super().validate(raise_on_error)
         status &= self.validate_masks(raise_on_error)
         return status
 
-    def get_explanation_subgraph(self) -> 'Explanation':
+    def get_explanation_subgraph(self) -> "Explanation":
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
-        node_mask = self.get('node_mask')
+        node_mask = self.get("node_mask")
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) > 0
-        edge_mask = self.get('edge_mask')
+        edge_mask = self.get("edge_mask")
         if edge_mask is not None:
             edge_mask = edge_mask > 0
         return self._apply_masks(node_mask, edge_mask)
 
-    def get_complement_subgraph(self) -> 'Explanation':
+    def get_complement_subgraph(self) -> "Explanation":
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
-        node_mask = self.get('node_mask')
+        node_mask = self.get("node_mask")
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) == 0
-        edge_mask = self.get('edge_mask')
+        edge_mask = self.get("edge_mask")
         if edge_mask is not None:
             edge_mask = edge_mask == 0
         return self._apply_masks(node_mask, edge_mask)
@@ -179,12 +191,12 @@ class Explanation(Data, ExplanationMixin):
         self,
         node_mask: Optional[Tensor] = None,
         edge_mask: Optional[Tensor] = None,
-    ) -> 'Explanation':
+    ) -> "Explanation":
         out = copy.copy(self)
 
         if edge_mask is not None:
             for key, value in self.items():
-                if key == 'edge_index':
+                if key == "edge_index":
                     out.edge_index = value[:, edge_mask]
                 elif self.is_edge_attr(key):
                     out[key] = value[edge_mask]
@@ -212,15 +224,19 @@ class Explanation(Data, ExplanationMixin):
             top_k (int, optional): Top k features to plot. If :obj:`None`
                 plots all features. (default: :obj:`None`)
         """
-        node_mask = self.get('node_mask')
+        node_mask = self.get("node_mask")
         if node_mask is None:
-            raise ValueError(f"The attribute 'node_mask' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")
+            raise ValueError(
+                f"The attribute 'node_mask' is not available "
+                f"in '{self.__class__.__name__}' "
+                f"(got {self.available_explanations})"
+            )
         if node_mask.dim() != 2 or node_mask.size(1) <= 1:
-            raise ValueError(f"Cannot compute feature importance for "
-                             f"object-level 'node_mask' "
-                             f"(got shape {node_mask.size()})")
+            raise ValueError(
+                f"Cannot compute feature importance for "
+                f"object-level 'node_mask' "
+                f"(got shape {node_mask.size()})"
+            )
 
         if feat_labels is None:
             feat_labels = range(node_mask.size(1))
@@ -229,8 +245,9 @@ class Explanation(Data, ExplanationMixin):
 
         return _visualize_score(score, feat_labels, path, top_k)
 
-    def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None):
+    def visualize_graph(
+        self, path: Optional[str] = None, backend: Optional[str] = None
+    ):
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -244,11 +261,13 @@ class Explanation(Data, ExplanationMixin):
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
         """
-        edge_mask = self.get('edge_mask')
+        edge_mask = self.get("edge_mask")
         if edge_mask is None:
-            raise ValueError(f"The attribute 'edge_mask' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")
+            raise ValueError(
+                f"The attribute 'edge_mask' is not available "
+                f"in '{self.__class__.__name__}' "
+                f"(got {self.available_explanations})"
+            )
         visualize_graph(self.edge_index, edge_mask, path, backend)
 
 
@@ -259,37 +278,36 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
     and can hold node attributions and edge attributions.
     It can also hold the original graph if needed.
     """
+
     def validate(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the :class:`Explanation` object."""
         status = super().validate(raise_on_error)
         status &= self.validate_masks(raise_on_error)
         return status
 
-    def get_explanation_subgraph(self) -> 'HeteroExplanation':
+    def get_explanation_subgraph(self) -> "HeteroExplanation":
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) > 0
-                for key, mask in self.collect('node_mask', True).items()
+                for key, mask in self.collect("node_mask", True).items()
             },
             edge_mask_dict={
-                key: mask > 0
-                for key, mask in self.collect('edge_mask', True).items()
+                key: mask > 0 for key, mask in self.collect("edge_mask", True).items()
             },
         )
 
-    def get_complement_subgraph(self) -> 'HeteroExplanation':
+    def get_complement_subgraph(self) -> "HeteroExplanation":
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) == 0
-                for key, mask in self.collect('node_mask', True).items()
+                for key, mask in self.collect("node_mask", True).items()
             },
             edge_mask_dict={
-                key: mask == 0
-                for key, mask in self.collect('edge_mask', True).items()
+                key: mask == 0 for key, mask in self.collect("edge_mask", True).items()
             },
         )
 
@@ -297,12 +315,12 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         self,
         node_mask_dict: Dict[NodeType, Tensor],
         edge_mask_dict: Dict[EdgeType, Tensor],
-    ) -> 'HeteroExplanation':
+    ) -> "HeteroExplanation":
         out = copy.copy(self)
 
         for edge_type, edge_mask in edge_mask_dict.items():
             for key, value in self[edge_type].items():
-                if key == 'edge_index':
+                if key == "edge_index":
                     out[edge_type].edge_index = value[:, edge_mask]
                 elif self[edge_type].is_edge_attr(key):
                     out[edge_type][key] = value[edge_mask]
@@ -330,9 +348,11 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         node_mask_dict = self.node_mask_dict
         for node_mask in node_mask_dict.values():
             if node_mask.dim() != 2 or node_mask.size(1) <= 1:
-                raise ValueError(f"Cannot compute feature importance for "
-                                 f"object-level 'node_mask' "
-                                 f"(got shape {node_mask_dict.size()})")
+                raise ValueError(
+                    f"Cannot compute feature importance for "
+                    f"object-level 'node_mask' "
+                    f"(got shape {node_mask_dict.size()})"
+                )
 
         if feat_labels is None:
             feat_labels = {}
@@ -340,13 +360,13 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                 feat_labels[node_type] = range(node_mask.size(1))
 
         score = torch.cat(
-            [node_mask.sum(dim=0) for node_mask in node_mask_dict.values()],
-            dim=0)
+            [node_mask.sum(dim=0) for node_mask in node_mask_dict.values()], dim=0
+        )
 
         all_feat_labels = []
         for node_type in node_mask_dict.keys():
             all_feat_labels += [
-                f'{node_type}#{label}' for label in feat_labels[node_type]
+                f"{node_type}#{label}" for label in feat_labels[node_type]
             ]
 
         return _visualize_score(score, all_feat_labels, path, top_k)
@@ -362,13 +382,15 @@ def _visualize_score(
     import pandas as pd
 
     if len(labels) != score.numel():
-        raise ValueError(f"The number of labels (got {len(labels)}) must "
-                         f"match the number of scores (got {score.numel()})")
+        raise ValueError(
+            f"The number of labels (got {len(labels)}) must "
+            f"match the number of scores (got {score.numel()})"
+        )
 
     score = score.cpu().numpy()
 
-    df = pd.DataFrame({'score': score}, index=labels)
-    df = df.sort_values('score', ascending=False)
+    df = pd.DataFrame({"score": score}, index=labels)
+    df = df.sort_values("score", ascending=False)
     df = df.round(decimals=3)
 
     if top_k is not None:
@@ -378,15 +400,15 @@ def _visualize_score(
         title = f"Feature importance for {len(df)} features"
 
     ax = df.plot(
-        kind='barh',
+        kind="barh",
         figsize=(10, 7),
         title=title,
-        ylabel='Feature label',
-        xlim=[0, float(df['score'].max()) + 0.3],
+        ylabel="Feature label",
+        xlim=[0, float(df["score"].max()) + 0.3],
         legend=False,
     )
     plt.gca().invert_yaxis()
-    ax.bar_label(container=ax.containers[0], label_type='edge')
+    ax.bar_label(container=ax.containers[0], label_type="edge")
 
     if path is not None:
         plt.savefig(path)

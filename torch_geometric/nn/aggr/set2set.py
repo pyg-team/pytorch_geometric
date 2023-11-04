@@ -29,6 +29,7 @@ class Set2Set(Aggregation):
         processing_steps (int): Number of iterations :math:`T`.
         **kwargs (optional): Additional arguments of :class:`torch.nn.LSTM`.
     """
+
     def __init__(self, in_channels: int, processing_steps: int, **kwargs):
         super().__init__()
         self.in_channels = in_channels
@@ -40,15 +41,21 @@ class Set2Set(Aggregation):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         self.assert_index_present(index)
         self.assert_two_dimensional_input(x, dim)
 
-        h = (x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))),
-             x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))))
+        h = (
+            x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))),
+            x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))),
+        )
         q_star = x.new_zeros(dim_size, self.out_channels)
 
         for _ in range(self.processing_steps):
@@ -56,11 +63,10 @@ class Set2Set(Aggregation):
             q = q.view(dim_size, self.in_channels)
             e = (x * q[index]).sum(dim=-1, keepdim=True)
             a = softmax(e, index, ptr, dim_size, dim)
-            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='sum')
+            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce="sum")
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels})')
+        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"

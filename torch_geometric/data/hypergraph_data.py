@@ -49,16 +49,23 @@ class HyperGraphData(Data):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
-                 edge_attr: OptTensor = None, y: OptTensor = None,
-                 pos: OptTensor = None, **kwargs):
-        super().__init__(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y,
-                         pos=pos, **kwargs)
+
+    def __init__(
+        self,
+        x: OptTensor = None,
+        edge_index: OptTensor = None,
+        edge_attr: OptTensor = None,
+        y: OptTensor = None,
+        pos: OptTensor = None,
+        **kwargs,
+    ):
+        super().__init__(
+            x=x, edge_index=edge_index, edge_attr=edge_attr, y=y, pos=pos, **kwargs
+        )
 
     @property
     def num_edges(self) -> int:
-        r"""Returns the number of hyperedges in the hypergraph.
-        """
+        r"""Returns the number of hyperedges in the hypergraph."""
         if self.edge_index is None:
             return 0
         return max(self.edge_index[1]) + 1
@@ -71,7 +78,7 @@ class HyperGraphData(Data):
         # does not contain node indicies. Therefore,
         # the below code is to prevent the `num_nodes`
         # being estimated as the number of hyperedges.
-        if (self.edge_index is not None and num_nodes == self.num_edges):
+        if self.edge_index is not None and num_nodes == self.num_edges:
             return max(self.edge_index[0]) + 1
         return num_nodes
 
@@ -81,12 +88,12 @@ class HyperGraphData(Data):
             return key in self and self[key].size(0) == self.num_edges
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if key == 'edge_index':
+        if key == "edge_index":
             return torch.tensor([[self.num_nodes], [self.num_edges]])
         else:
             return super().__inc__(key, value, *args, **kwargs)
 
-    def subgraph(self, subset: Tensor) -> 'HyperGraphData':
+    def subgraph(self, subset: Tensor) -> "HyperGraphData":
         r"""Returns the induced subgraph given by the node indices
         :obj:`subset`.
 
@@ -114,16 +121,21 @@ class HyperGraphData(Data):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = hyper_subgraph(subset, self.edge_index, relabel_nodes=True,
-                             num_nodes=self.num_nodes, return_edge_mask=True)
+        out = hyper_subgraph(
+            subset,
+            self.edge_index,
+            relabel_nodes=True,
+            num_nodes=self.num_nodes,
+            return_edge_mask=True,
+        )
         edge_index, _, edge_mask = out
 
         data = copy.copy(self)
 
         for key, value in self:
-            if key == 'edge_index':
+            if key == "edge_index":
                 data.edge_index = edge_index
-            elif key == 'num_nodes':
+            elif key == "num_nodes":
                 if subset.dtype == torch.bool:
                     data.num_nodes = int(subset.sum())
                 else:
@@ -137,7 +149,7 @@ class HyperGraphData(Data):
 
         return data
 
-    def edge_subgraph(self, subset: Tensor) -> 'Data':
+    def edge_subgraph(self, subset: Tensor) -> "Data":
         raise NotImplementedError
 
     def to_heterogeneous(
@@ -171,31 +183,34 @@ class HyperGraphData(Data):
         num_nodes = self.num_nodes
         if num_nodes is None:
             status = False
-            warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
-                          raise_on_error)
+            warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'", raise_on_error)
 
-        if 'edge_index' in self:
+        if "edge_index" in self:
             if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
                 status = False
                 warn_or_raise(
                     f"'edge_index' needs to be of shape [2, num_edges] in "
                     f"'{cls_name}' (found {self.edge_index.size()})",
-                    raise_on_error)
+                    raise_on_error,
+                )
 
-        if 'edge_index' in self and self.edge_index.numel() > 0:
+        if "edge_index" in self and self.edge_index.numel() > 0:
             if self.edge_index.min() < 0:
                 status = False
                 warn_or_raise(
                     f"'edge_index' contains negative indices in "
                     f"'{cls_name}' (found {int(self.edge_index.min())})",
-                    raise_on_error)
+                    raise_on_error,
+                )
 
             if num_nodes is not None and self.edge_index[0].max() >= num_nodes:
                 status = False
                 warn_or_raise(
                     f"'edge_index' contains larger indices than the number "
                     f"of nodes ({num_nodes}) in '{cls_name}' "
-                    f"(found {int(self.edge_index.max())})", raise_on_error)
+                    f"(found {int(self.edge_index.max())})",
+                    raise_on_error,
+                )
 
         return status
 

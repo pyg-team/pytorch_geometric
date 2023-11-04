@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.typing import WITH_TORCH_SPARSE, SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 
-SPARSE_LAYOUTS = ['torch_sparse', torch.sparse_csc, torch.sparse_coo]
+SPARSE_LAYOUTS = ["torch_sparse", torch.sparse_csc, torch.sparse_coo]
 
 
 def assert_module(
@@ -55,17 +55,22 @@ def assert_module(
             will be considered equal. (default: :obj:`False`)
     """
     if sparse_size is None:
-        if 'size' in kwargs:
-            sparse_size = kwargs['size']
+        if "size" in kwargs:
+            sparse_size = kwargs["size"]
         elif isinstance(x, Tensor):
             sparse_size = (x.size(0), x.size(0))
-        elif (isinstance(x, (tuple, list)) and isinstance(x[0], Tensor)
-              and isinstance(x[1], Tensor)):
+        elif (
+            isinstance(x, (tuple, list))
+            and isinstance(x[0], Tensor)
+            and isinstance(x[1], Tensor)
+        ):
             sparse_size = (x[0].size(0), x[1].size(0))
 
     if len(test_sparse_layouts) > 0 and sparse_size is None:
-        raise ValueError(f"Got sparse layouts {test_sparse_layouts}, but no "
-                         f"'sparse_size' were specified")
+        raise ValueError(
+            f"Got sparse layouts {test_sparse_layouts}, but no "
+            f"'sparse_size' were specified"
+        )
 
     expected = module(x, edge_index=edge_index, **kwargs)
     assert expected.size() == expected_size
@@ -82,9 +87,9 @@ def assert_module(
     if test_node_permutation:
         raise NotImplementedError
 
-    for layout in (test_sparse_layouts or []):
+    for layout in test_sparse_layouts or []:
         # TODO Add support for values.
-        if layout == 'torch_sparse':
+        if layout == "torch_sparse":
             if not WITH_TORCH_SPARSE:
                 continue
 
@@ -99,7 +104,7 @@ def assert_module(
             adj_t = adj.t()
 
         elif layout == torch.sparse_coo:
-            warnings.filterwarnings('ignore', ".*to CSR format.*")
+            warnings.filterwarnings("ignore", ".*to CSR format.*")
             adj = to_torch_coo_tensor(edge_index, size=sparse_size)
             adj_t = adj.t().coalesce()
 

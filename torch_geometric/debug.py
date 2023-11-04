@@ -1,13 +1,13 @@
-__debug_flag__ = {'enabled': False}
+__debug_flag__ = {"enabled": False}
 
 
 def is_debug_enabled():
     r"""Returns :obj:`True` if the debug mode is enabled."""
-    return __debug_flag__['enabled']
+    return __debug_flag__["enabled"]
 
 
 def set_debug_enabled(mode: bool):
-    __debug_flag__['enabled'] = mode
+    __debug_flag__["enabled"] = mode
 
 
 class debug:
@@ -19,6 +19,7 @@ class debug:
         with torch_geometric.debug():
             out = model(data.x, data.edge_index)
     """
+
     def __init__(self):
         self.prev = is_debug_enabled()
 
@@ -38,6 +39,7 @@ class set_debug:
 
     See :class:`debug` above for more details.
     """
+
     def __init__(self, mode: bool):
         self.prev = is_debug_enabled()
         set_debug_enabled(mode)

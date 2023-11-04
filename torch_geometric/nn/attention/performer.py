@@ -10,7 +10,7 @@ def _orthogonal_matrix(dim: int) -> Tensor:
     # Random matrix from normal distribution
     mat = torch.randn((dim, dim))
     # QR decomposition to two orthogonal matrices
-    q, _ = torch.linalg.qr(mat.cpu(), mode='reduced')
+    q, _ = torch.linalg.qr(mat.cpu(), mode="reduced")
     return q.t()
 
 
@@ -46,15 +46,15 @@ def linear_attention(q: Tensor, k: Tensor, v: Tensor) -> Tensor:
     D_inv = 1.0 / (q @ k.sum(dim=-2).unsqueeze(-1))
     kv = k.transpose(-2, -1) @ v
     qkv = q @ kv
-    out = torch.einsum('...L,...Ld->...Ld', D_inv.squeeze(-1), qkv)
+    out = torch.einsum("...L,...Ld->...Ld", D_inv.squeeze(-1), qkv)
     return out
 
 
 def generalized_kernel(
-        x: Tensor,
-        mat: Tensor,
-        kernel: Callable = torch.nn.ReLU(),
-        epsilon: float = 0.001,
+    x: Tensor,
+    mat: Tensor,
+    kernel: Callable = torch.nn.ReLU(),
+    epsilon: float = 0.001,
 ) -> Tensor:
     batch_size, num_heads = x.size()[:2]
     projection = mat.t().expand(batch_size, num_heads, -1, -1)
@@ -76,6 +76,7 @@ class PerformerProjection(torch.nn.Module):
             If not specified, `ReLU` kernel will be used.
             (default: :obj:`torch.nn.ReLU()`)
     """
+
     def __init__(self, num_cols: int, kernel: Callable = torch.nn.ReLU()):
         super().__init__()
         num_rows = int(num_cols * math.log(num_cols))
@@ -84,7 +85,7 @@ class PerformerProjection(torch.nn.Module):
         # Generate an orthogonal projection matrix
         # with the shape (num_rows, num_cols)
         projection_matrix = orthogonal_matrix(self.num_rows, self.num_cols)
-        self.register_buffer('projection_matrix', projection_matrix)
+        self.register_buffer("projection_matrix", projection_matrix)
         assert kernel is not None
         self.kernel = kernel
 
@@ -116,6 +117,7 @@ class PerformerAttention(torch.nn.Module):
             attention output. (default: :obj:`0.0`)
 
     """
+
     def __init__(
         self,
         channels: int,
@@ -140,8 +142,7 @@ class PerformerAttention(torch.nn.Module):
         self.q = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
         self.k = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
         self.v = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
-        self.attn_out = torch.nn.Linear(inner_channels, channels,
-                                        bias=attn_out_bias)
+        self.attn_out = torch.nn.Linear(inner_channels, channels, bias=attn_out_bias)
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
@@ -162,10 +163,13 @@ class PerformerAttention(torch.nn.Module):
         # (B, N, num_heads * head_channels) to (b, num_heads, n, head_channels)
         q, k, v = map(
             lambda t: t.reshape(B, N, self.heads, self.head_channels).permute(
-                0, 2, 1, 3), (q, k, v))
+                0, 2, 1, 3
+            ),
+            (q, k, v),
+        )
         if mask is not None:
             mask = mask[:, None, :, None]
-            v.masked_fill_(~mask, 0.)
+            v.masked_fill_(~mask, 0.0)
         out = self.fast_attn(q, k, v)
         out = out.permute(0, 2, 1, 3).reshape(B, N, -1)
         out = self.attn_out(out)
@@ -190,7 +194,9 @@ class PerformerAttention(torch.nn.Module):
         self.redraw_projection_matrix()
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}('
-                f'heads={self.heads}, '
-                f'head_channels={self.head_channels} '
-                f'kernel={self.kernel})')
+        return (
+            f"{self.__class__.__name__}("
+            f"heads={self.heads}, "
+            f"head_channels={self.head_channels} "
+            f"kernel={self.kernel})"
+        )

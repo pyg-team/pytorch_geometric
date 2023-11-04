@@ -49,16 +49,26 @@ class SHREC2016(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    train_url = ('http://www.dais.unive.it/~shrec2016/data/'
-                 'shrec2016_PartialDeformableShapes.zip')
-    test_url = ('http://www.dais.unive.it/~shrec2016/data/'
-                'shrec2016_PartialDeformableShapes_TestSet.zip')
+    train_url = (
+        "http://www.dais.unive.it/~shrec2016/data/"
+        "shrec2016_PartialDeformableShapes.zip"
+    )
+    test_url = (
+        "http://www.dais.unive.it/~shrec2016/data/"
+        "shrec2016_PartialDeformableShapes_TestSet.zip"
+    )
 
     categories = [
-        'cat', 'centaur', 'david', 'dog', 'horse', 'michael', 'victoria',
-        'wolf'
+        "cat",
+        "centaur",
+        "david",
+        "dog",
+        "horse",
+        "michael",
+        "victoria",
+        "wolf",
     ]
-    partialities = ['holes', 'cuts']
+    partialities = ["holes", "cuts"]
 
     def __init__(
         self,
@@ -88,52 +98,50 @@ class SHREC2016(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['training', 'test']
+        return ["training", "test"]
 
     @property
     def processed_file_names(self) -> List[str]:
-        name = f'{self.part}_{self.cat}.pt'
-        return [f'{i}_{name}' for i in ['ref', 'training', 'test']]
+        name = f"{self.part}_{self.cat}.pt"
+        return [f"{i}_{name}" for i in ["ref", "training", "test"]]
 
     def download(self):
         path = download_url(self.train_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
-        path = osp.join(self.raw_dir, 'shrec2016_PartialDeformableShapes')
-        os.rename(path, osp.join(self.raw_dir, 'training'))
+        path = osp.join(self.raw_dir, "shrec2016_PartialDeformableShapes")
+        os.rename(path, osp.join(self.raw_dir, "training"))
 
         path = download_url(self.test_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
-        path = osp.join(self.raw_dir,
-                        'shrec2016_PartialDeformableShapes_TestSet')
-        os.rename(path, osp.join(self.raw_dir, 'test'))
+        path = osp.join(self.raw_dir, "shrec2016_PartialDeformableShapes_TestSet")
+        os.rename(path, osp.join(self.raw_dir, "test"))
 
     def process(self):
-        ref_data = read_off(
-            osp.join(self.raw_paths[0], 'null', f'{self.cat}.off'))
+        ref_data = read_off(osp.join(self.raw_paths[0], "null", f"{self.cat}.off"))
 
         train_list = []
-        name = f'{self.part}_{self.cat}_*.off'
+        name = f"{self.part}_{self.cat}_*.off"
         paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
         for path in paths:
-            data = read_off(f'{path}.off')
-            y = read_txt_array(f'{path}.baryc_gt')
+            data = read_off(f"{path}.off")
+            y = read_txt_array(f"{path}.baryc_gt")
             data.y = y[:, 0].to(torch.long) - 1
             data.y_baryc = y[:, 1:]
             train_list.append(data)
 
         test_list = []
-        name = f'{self.part}_{self.cat}_*.off'
+        name = f"{self.part}_{self.cat}_*.off"
         paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
         for path in paths:
-            test_list.append(read_off(f'{path}.off'))
+            test_list.append(read_off(f"{path}.off"))
 
         if self.pre_filter is not None:
             train_list = [d for d in train_list if self.pre_filter(d)]
@@ -149,5 +157,7 @@ class SHREC2016(InMemoryDataset):
         self.save(test_list, self.processed_paths[2])
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({len(self)}, '
-                f'partiality={self.part}, category={self.cat})')
+        return (
+            f"{self.__class__.__name__}({len(self)}, "
+            f"partiality={self.part}, category={self.cat})"
+        )

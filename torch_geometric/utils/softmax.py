@@ -55,17 +55,17 @@ def softmax(
         size = ([1] * dim) + [-1]
         count = ptr[1:] - ptr[:-1]
         ptr = ptr.view(size)
-        src_max = segment(src.detach(), ptr, reduce='max')
+        src_max = segment(src.detach(), ptr, reduce="max")
         src_max = src_max.repeat_interleave(count, dim=dim)
         out = (src - src_max).exp()
-        out_sum = segment(out, ptr, reduce='sum') + 1e-16
+        out_sum = segment(out, ptr, reduce="sum") + 1e-16
         out_sum = out_sum.repeat_interleave(count, dim=dim)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
-        src_max = scatter(src.detach(), index, dim, dim_size=N, reduce='max')
+        src_max = scatter(src.detach(), index, dim, dim_size=N, reduce="max")
         out = src - src_max.index_select(dim, index)
         out = out.exp()
-        out_sum = scatter(out, index, dim, dim_size=N, reduce='sum') + 1e-16
+        out_sum = scatter(out, index, dim, dim_size=N, reduce="sum") + 1e-16
         out_sum = out_sum.index_select(dim, index)
     else:
         raise NotImplementedError

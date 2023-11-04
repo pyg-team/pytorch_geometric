@@ -7,10 +7,15 @@ from .neighbor_loader import NeighborLoader
 from .link_neighbor_loader import LinkNeighborLoader
 from .hgt_loader import HGTLoader
 from .cluster import ClusterData, ClusterLoader
-from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
-                          GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
+from .graph_saint import (
+    GraphSAINTSampler,
+    GraphSAINTNodeSampler,
+    GraphSAINTEdgeSampler,
+    GraphSAINTRandomWalkSampler,
+)
 from .shadow import ShaDowKHopSampler
 from .random_node_loader import RandomNodeLoader
+
 # from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 from .zip_loader import ZipLoader
 from .data_list_loader import DataListLoader
@@ -24,35 +29,35 @@ from .cache import CachedLoader
 from .mixin import AffinityMixin
 
 __all__ = classes = [
-    'DataLoader',
-    'NodeLoader',
-    'LinkLoader',
-    'NeighborLoader',
-    'LinkNeighborLoader',
-    'HGTLoader',
-    'ClusterData',
-    'ClusterLoader',
-    'GraphSAINTSampler',
-    'GraphSAINTNodeSampler',
-    'GraphSAINTEdgeSampler',
-    'GraphSAINTRandomWalkSampler',
-    'ShaDowKHopSampler',
-    'RandomNodeLoader',
+    "DataLoader",
+    "NodeLoader",
+    "LinkLoader",
+    "NeighborLoader",
+    "LinkNeighborLoader",
+    "HGTLoader",
+    "ClusterData",
+    "ClusterLoader",
+    "GraphSAINTSampler",
+    "GraphSAINTNodeSampler",
+    "GraphSAINTEdgeSampler",
+    "GraphSAINTRandomWalkSampler",
+    "ShaDowKHopSampler",
+    "RandomNodeLoader",
     # 'IBMBBatchLoader',
     # 'IBMBNodeLoader',
-    'ZipLoader',
-    'DataListLoader',
-    'DenseDataLoader',
-    'TemporalDataLoader',
-    'NeighborSampler',
-    'ImbalancedSampler',
-    'DynamicBatchSampler',
-    'PrefetchLoader',
-    'CachedLoader',
-    'AffinityMixin',
+    "ZipLoader",
+    "DataListLoader",
+    "DenseDataLoader",
+    "TemporalDataLoader",
+    "NeighborSampler",
+    "ImbalancedSampler",
+    "DynamicBatchSampler",
+    "PrefetchLoader",
+    "CachedLoader",
+    "AffinityMixin",
 ]
 
 RandomNodeSampler = deprecated(
     details="use 'loader.RandomNodeLoader' instead",
-    func_name='loader.RandomNodeSampler',
+    func_name="loader.RandomNodeSampler",
 )(RandomNodeLoader)

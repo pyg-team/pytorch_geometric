@@ -22,12 +22,13 @@ class Linear(torch.nn.Module):
         self.groups = groups
 
         self.weight = Parameter(
-            torch.empty(groups, in_channels // groups, out_channels // groups))
+            torch.empty(groups, in_channels // groups, out_channels // groups)
+        )
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -45,7 +46,7 @@ class Linear(torch.nn.Module):
             src = src.transpose(0, 1).contiguous()
             out = torch.matmul(src, self.weight)
             out = out.transpose(1, 0).contiguous()
-            out = out.view(size + (self.out_channels, ))
+            out = out.view(size + (self.out_channels,))
         else:
             out = torch.matmul(src, self.weight.squeeze(0))
 
@@ -55,12 +56,14 @@ class Linear(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:  # pragma: no cover
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, groups={self.groups})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, groups={self.groups})"
+        )
 
 
-def restricted_softmax(src, dim: int = -1, margin: float = 0.):
-    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0.)
+def restricted_softmax(src, dim: int = -1, margin: float = 0.0):
+    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0.0)
     out = (src - src_max).exp()
     out = out / (out.sum(dim=dim, keepdim=True) + (margin - src_max).exp())
     return out
@@ -93,12 +96,13 @@ class Attention(torch.nn.Module):
         return torch.matmul(score, value)
 
     def __repr__(self) -> str:  # pragma: no cover
-        return f'{self.__class__.__name__}(dropout={self.dropout})'
+        return f"{self.__class__.__name__}(dropout={self.dropout})"
 
 
 class MultiHead(Attention):
-    def __init__(self, in_channels, out_channels, heads=1, groups=1, dropout=0,
-                 bias=True):
+    def __init__(
+        self, in_channels, out_channels, heads=1, groups=1, dropout=0, bias=True
+    ):
         super().__init__(dropout)
 
         self.in_channels = in_channels
@@ -161,10 +165,12 @@ class MultiHead(Attention):
         return out
 
     def __repr__(self) -> str:  # pragma: no cover
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, heads={self.heads}, '
-                f'groups={self.groups}, dropout={self.droput}, '
-                f'bias={self.bias})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, heads={self.heads}, "
+            f"groups={self.groups}, dropout={self.droput}, "
+            f"bias={self.bias})"
+        )
 
 
 class DNAConv(MessagePassing):
@@ -230,11 +236,19 @@ class DNAConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels: int, heads: int = 1, groups: int = 1,
-                 dropout: float = 0., cached: bool = False,
-                 normalize: bool = True, add_self_loops: bool = True,
-                 bias: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+    def __init__(
+        self,
+        channels: int,
+        heads: int = 1,
+        groups: int = 1,
+        dropout: float = 0.0,
+        cached: bool = False,
+        normalize: bool = True,
+        add_self_loops: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(node_dim=0, **kwargs)
 
         self.bias = bias
@@ -245,8 +259,7 @@ class DNAConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.multi_head = MultiHead(channels, channels, heads, groups, dropout,
-                                    bias)
+        self.multi_head = MultiHead(channels, channels, heads, groups, dropout, bias)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -255,8 +268,9 @@ class DNAConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(
+        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
@@ -264,16 +278,23 @@ class DNAConv(MessagePassing):
                 :obj:`[num_nodes, num_layers, channels]`.
         """
         if x.dim() != 3:
-            raise ValueError('Feature shape must be [num_nodes, num_layers, '
-                             'channels].')
+            raise ValueError(
+                "Feature shape must be [num_nodes, num_layers, " "channels]."
+            )
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, self.flow, dtype=x.dtype)
+                        edge_index,
+                        edge_weight,
+                        x.size(self.node_dim),
+                        False,
+                        self.add_self_loops,
+                        self.flow,
+                        dtype=x.dtype,
+                    )
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -283,16 +304,21 @@ class DNAConv(MessagePassing):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, self.flow, dtype=x.dtype)
+                        edge_index,
+                        edge_weight,
+                        x.size(self.node_dim),
+                        False,
+                        self.add_self_loops,
+                        self.flow,
+                        dtype=x.dtype,
+                    )
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                              size=None)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         x_i = x_i[:, -1:]  # [num_edges, 1, channels]
@@ -300,6 +326,8 @@ class DNAConv(MessagePassing):
         return edge_weight.view(-1, 1) * out.squeeze(1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.multi_head.in_channels}, '
-                f'heads={self.multi_head.heads}, '
-                f'groups={self.multi_head.groups})')
+        return (
+            f"{self.__class__.__name__}({self.multi_head.in_channels}, "
+            f"heads={self.multi_head.heads}, "
+            f"groups={self.multi_head.groups})"
+        )

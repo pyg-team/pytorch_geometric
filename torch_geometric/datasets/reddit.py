@@ -47,7 +47,7 @@ class Reddit(InMemoryDataset):
           - 41
     """
 
-    url = 'https://data.dgl.ai/dataset/reddit.zip'
+    url = "https://data.dgl.ai/dataset/reddit.zip"
 
     def __init__(
         self,
@@ -60,11 +60,11 @@ class Reddit(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['reddit_data.npz', 'reddit_graph.npz']
+        return ["reddit_data.npz", "reddit_graph.npz"]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -72,12 +72,12 @@ class Reddit(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
-        x = torch.from_numpy(data['feature']).to(torch.float)
-        y = torch.from_numpy(data['label']).to(torch.long)
-        split = torch.from_numpy(data['node_types'])
+        data = np.load(osp.join(self.raw_dir, "reddit_data.npz"))
+        x = torch.from_numpy(data["feature"]).to(torch.float)
+        y = torch.from_numpy(data["label"]).to(torch.long)
+        split = torch.from_numpy(data["node_types"])
 
-        adj = sp.load_npz(osp.join(self.raw_dir, 'reddit_graph.npz'))
+        adj = sp.load_npz(osp.join(self.raw_dir, "reddit_graph.npz"))
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)

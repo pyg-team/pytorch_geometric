@@ -12,32 +12,32 @@ def string_to_python(string):
 
 
 def dict_to_json(dict, fname):
-    '''
+    """
     Dump a :python:`Python` dictionary to a JSON file.
 
     Args:
         dict (dict): The :python:`Python` dictionary.
         fname (str): The output file name.
 
-    '''
-    with open(fname, 'a') as f:
+    """
+    with open(fname, "a") as f:
         json.dump(dict, f)
-        f.write('\n')
+        f.write("\n")
 
 
 def dict_list_to_json(dict_list, fname):
-    '''
+    """
     Dump a list of :python:`Python` dictionaries to a JSON file.
 
     Args:
         dict_list (list of dict): List of :python:`Python` dictionaries.
         fname (str): the output file name.
 
-    '''
-    with open(fname, 'a') as f:
+    """
+    with open(fname, "a") as f:
         for dict in dict_list:
             json.dump(dict, f)
-            f.write('\n')
+            f.write("\n")
 
 
 def json_to_dict_list(fname):
@@ -48,14 +48,14 @@ def json_to_dict_list(fname):
         for line in lines:
             line = line.rstrip()
             dict = json.loads(line)
-            if dict['epoch'] not in epoch_set:
+            if dict["epoch"] not in epoch_set:
                 dict_list.append(dict)
-            epoch_set.add(dict['epoch'])
+            epoch_set.add(dict["epoch"])
     return dict_list
 
 
 def dict_to_tb(dict, writer, epoch):
-    '''
+    """
     Add a dictionary of statistics to a Tensorboard writer
 
     Args:
@@ -64,15 +64,15 @@ def dict_to_tb(dict, writer, epoch):
         writer: Tensorboard writer object
         epoch (int): The current epoch
 
-    '''
+    """
     for key in dict:
         writer.add_scalar(key, dict[key], epoch)
 
 
 def dict_list_to_tb(dict_list, writer):
     for dict in dict_list:
-        assert 'epoch' in dict, 'Key epoch must exist in stats dict'
-        dict_to_tb(dict, writer, dict['epoch'])
+        assert "epoch" in dict, "Key epoch must exist in stats dict"
+        dict_to_tb(dict, writer, dict["epoch"])
 
 
 def makedirs(dir):
@@ -80,7 +80,7 @@ def makedirs(dir):
 
 
 def makedirs_rm_exist(dir):
-    '''
+    """
     Make a directory, remove any existing data.
 
     Args:
@@ -88,7 +88,7 @@ def makedirs_rm_exist(dir):
 
     Returns:
 
-    '''
+    """
     if os.path.isdir(dir):
         shutil.rmtree(dir)
     os.makedirs(dir, exist_ok=True)

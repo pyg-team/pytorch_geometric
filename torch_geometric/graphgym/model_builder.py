@@ -10,15 +10,14 @@ from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.register import network_dict, register_network
 
-register_network('gnn', GNN)
+register_network("gnn", GNN)
 
 
 class GraphGymModule(LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
         self.cfg = cfg
-        self.model = network_dict[cfg.model.type](dim_in=dim_in,
-                                                  dim_out=dim_out)
+        self.model = network_dict[cfg.model.type](dim_in=dim_in, dim_out=dim_out)
 
     def forward(self, *args, **kwargs):
         return self.model(*args, **kwargs)
@@ -33,8 +32,12 @@ class GraphGymModule(LightningModule):
         pred, true = self(batch)
         loss, pred_score = compute_loss(pred, true)
         step_end_time = time.time()
-        return dict(loss=loss, true=true, pred_score=pred_score.detach(),
-                    step_end_time=step_end_time)
+        return dict(
+            loss=loss,
+            true=true,
+            pred_score=pred_score.detach(),
+            step_end_time=step_end_time,
+        )
 
     def training_step(self, batch, *args, **kwargs):
         return self._shared_step(batch, split="train")
@@ -79,7 +82,7 @@ def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
     dim_in = cfg.share.dim_in if dim_in is None else dim_in
     dim_out = cfg.share.dim_out if dim_out is None else dim_out
     # binary classification, output dim = 1
-    if 'classification' == cfg.dataset.task_type and dim_out == 2:
+    if "classification" == cfg.dataset.task_type and dim_out == 2:
         dim_out = 1
 
     model = GraphGymModule(dim_in, dim_out, cfg)

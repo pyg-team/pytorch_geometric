@@ -31,6 +31,7 @@ class ZipLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(
         self,
         loaders: Union[List[NodeLoader], List[LinkLoader]],
@@ -41,16 +42,20 @@ class ZipLoader(torch.utils.data.DataLoader):
             filter_per_worker = infer_filter_per_worker(loaders[0].data)
 
         # Remove for PyTorch Lightning:
-        kwargs.pop('dataset', None)
-        kwargs.pop('collate_fn', None)
+        kwargs.pop("dataset", None)
+        kwargs.pop("collate_fn", None)
 
         for loader in loaders:
-            if not callable(getattr(loader, 'collate_fn', None)):
-                raise ValueError("'{loader.__class__.__name__}' does not have "
-                                 "a 'collate_fn' method")
-            if not callable(getattr(loader, 'filter_fn', None)):
-                raise ValueError("'{loader.__class__.__name__}' does not have "
-                                 "a 'filter_fn' method")
+            if not callable(getattr(loader, "collate_fn", None)):
+                raise ValueError(
+                    "'{loader.__class__.__name__}' does not have "
+                    "a 'collate_fn' method"
+                )
+            if not callable(getattr(loader, "filter_fn", None)):
+                raise ValueError(
+                    "'{loader.__class__.__name__}' does not have "
+                    "a 'filter_fn' method"
+                )
             loader.filter_per_worker = filter_per_worker
 
         iterator = range(min([len(loader.dataset) for loader in loaders]))
@@ -80,4 +85,4 @@ class ZipLoader(torch.utils.data.DataLoader):
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(loaders={self.loaders})'
+        return f"{self.__class__.__name__}(loaders={self.loaders})"

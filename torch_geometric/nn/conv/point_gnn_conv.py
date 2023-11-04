@@ -47,6 +47,7 @@ class PointGNNConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
         - **output:** node features :math:`(|\mathcal{V}|, F_{in})`
     """
+
     def __init__(
         self,
         mlp_h: torch.nn.Module,
@@ -54,7 +55,7 @@ class PointGNNConv(MessagePassing):
         mlp_g: torch.nn.Module,
         **kwargs,
     ):
-        kwargs.setdefault('aggr', 'max')
+        kwargs.setdefault("aggr", "max")
         super().__init__(**kwargs)
 
         self.mlp_h = mlp_h
@@ -75,15 +76,16 @@ class PointGNNConv(MessagePassing):
         out = self.mlp_g(out)
         return x + out
 
-    def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor,
-                x_j: Tensor) -> Tensor:
+    def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
         delta = self.mlp_h(x_i)
         e = torch.cat([pos_j - pos_i + delta, x_j], dim=-1)
         return self.mlp_f(e)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(\n'
-                f'  mlp_h={self.mlp_h},\n'
-                f'  mlp_f={self.mlp_f},\n'
-                f'  mlp_g={self.mlp_g},\n'
-                f')')
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  mlp_h={self.mlp_h},\n"
+            f"  mlp_f={self.mlp_f},\n"
+            f"  mlp_g={self.mlp_g},\n"
+            f")"
+        )

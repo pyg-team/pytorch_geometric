@@ -7,7 +7,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('to_dense')
+@functional_transform("to_dense")
 class ToDense(BaseTransform):
     r"""Converts a sparse adjacency matrix to a dense adjacency matrix with
     shape :obj:`[num_nodes, num_nodes, *]` (functional name: :obj:`to_dense`).
@@ -17,6 +17,7 @@ class ToDense(BaseTransform):
             the number of nodes will get automatically inferred.
             (default: :obj:`None`)
     """
+
     def __init__(self, num_nodes: Optional[int] = None):
         self.num_nodes = num_nodes
 
@@ -60,5 +61,5 @@ class ToDense(BaseTransform):
 
     def __repr__(self) -> str:
         if self.num_nodes is None:
-            return f'{self.__class__.__name__}()'
-        return f'{self.__class__.__name__}(num_nodes={self.num_nodes})'
+            return f"{self.__class__.__name__}()"
+        return f"{self.__class__.__name__}(num_nodes={self.num_nodes})"

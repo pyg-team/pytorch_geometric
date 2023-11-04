@@ -15,7 +15,7 @@ def get_laplacian(
     dtype: Optional[torch.dtype] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, OptTensor]:
-    r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
+    r"""Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 
     Args:
@@ -57,43 +57,46 @@ def get_laplacian(
     """
 
     if normalization is not None:
-        assert normalization in ['sym', 'rw']  # 'Invalid normalization'
+        assert normalization in ["sym", "rw"]  # 'Invalid normalization'
 
     edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
     if edge_weight is None:
-        edge_weight = torch.ones(edge_index.size(1), dtype=dtype,
-                                 device=edge_index.device)
+        edge_weight = torch.ones(
+            edge_index.size(1), dtype=dtype, device=edge_index.device
+        )
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     row, col = edge_index[0], edge_index[1]
-    deg = scatter(edge_weight, row, 0, dim_size=num_nodes, reduce='sum')
+    deg = scatter(edge_weight, row, 0, dim_size=num_nodes, reduce="sum")
 
     if normalization is None:
         # L = D - A.
         edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
         edge_weight = torch.cat([-edge_weight, deg], dim=0)
-    elif normalization == 'sym':
+    elif normalization == "sym":
         # Compute A_norm = -D^{-1/2} A D^{-1/2}.
         deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float("inf"), 0)
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
         # L = I - A_norm.
-        edge_index, tmp = add_self_loops(edge_index, -edge_weight,
-                                         fill_value=1., num_nodes=num_nodes)
+        edge_index, tmp = add_self_loops(
+            edge_index, -edge_weight, fill_value=1.0, num_nodes=num_nodes
+        )
         assert tmp is not None
         edge_weight = tmp
     else:
         # Compute A_norm = -D^{-1} A.
         deg_inv = 1.0 / deg
-        deg_inv.masked_fill_(deg_inv == float('inf'), 0)
+        deg_inv.masked_fill_(deg_inv == float("inf"), 0)
         edge_weight = deg_inv[row] * edge_weight
 
         # L = I - A_norm.
-        edge_index, tmp = add_self_loops(edge_index, -edge_weight,
-                                         fill_value=1., num_nodes=num_nodes)
+        edge_index, tmp = add_self_loops(
+            edge_index, -edge_weight, fill_value=1.0, num_nodes=num_nodes
+        )
         assert tmp is not None
         edge_weight = tmp
 

@@ -1,5 +1,6 @@
-class dummy_context():
-    '''Default context manager that does nothing'''
+class dummy_context:
+    """Default context manager that does nothing"""
+
     def __enter__(self):
         return None
 

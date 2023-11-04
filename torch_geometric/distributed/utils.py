@@ -18,6 +18,7 @@ class NodeDict:
     2) The nodes with duplicates that are further needed to create COO output
     3) The output nodes without duplicates
     """
+
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
     out: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -32,6 +33,7 @@ class BatchDict:
        output
     3) The output subgraph IDs without duplicates
     """
+
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)
     out: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -43,7 +45,6 @@ def remove_duplicates(
     batch: Optional[Tensor] = None,
     disjoint: bool = False,
 ) -> Tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor]]:
-
     num_nodes = node.numel()
     node_combined = torch.cat([node, out.node])
 

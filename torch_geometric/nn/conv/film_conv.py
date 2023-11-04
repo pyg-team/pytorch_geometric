@@ -68,15 +68,16 @@ class FiLMConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
+
     def __init__(
-            self,
-            in_channels: Union[int, Tuple[int, int]],
-            out_channels: int,
-            num_relations: int = 1,
-            nn: Optional[Callable] = None,
-            act: Optional[Callable] = ReLU(),
-            aggr: str = 'mean',
-            **kwargs,
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        num_relations: int = 1,
+        nn: Optional[Callable] = None,
+        act: Optional[Callable] = ReLU(),
+        aggr: str = "mean",
+        **kwargs,
     ):
         super().__init__(aggr=aggr, **kwargs)
 
@@ -100,8 +101,7 @@ class FiLMConv(MessagePassing):
 
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
         if nn is None:
-            self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
-                                    bias=False)
+            self.film_skip = Linear(in_channels[1], 2 * self.out_channels, bias=False)
         else:
             self.film_skip = copy.deepcopy(nn)
 
@@ -115,9 +115,9 @@ class FiLMConv(MessagePassing):
         self.lin_skip.reset_parameters()
         reset(self.film_skip)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_type: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_type: OptTensor = None
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -129,8 +129,9 @@ class FiLMConv(MessagePassing):
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
-            out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
-                                       beta=beta, gamma=gamma, size=None)
+            out = out + self.propagate(
+                edge_index, x=self.lins[0](x[0]), beta=beta, gamma=gamma, size=None
+            )
         else:
             for i, (lin, film) in enumerate(zip(self.lins, self.films)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
@@ -139,14 +140,21 @@ class FiLMConv(MessagePassing):
                     assert edge_type is not None
                     mask = edge_type == i
                     adj_t = torch_sparse.masked_select_nnz(
-                        edge_index, mask, layout='coo')
-                    out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
-                                               gamma=gamma, size=None)
+                        edge_index, mask, layout="coo"
+                    )
+                    out = out + self.propagate(
+                        adj_t, x=lin(x[0]), beta=beta, gamma=gamma, size=None
+                    )
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
-                    out = out + self.propagate(edge_index[:, mask], x=lin(
-                        x[0]), beta=beta, gamma=gamma, size=None)
+                    out = out + self.propagate(
+                        edge_index[:, mask],
+                        x=lin(x[0]),
+                        beta=beta,
+                        gamma=gamma,
+                        size=None,
+                    )
 
         return out
 
@@ -157,5 +165,7 @@ class FiLMConv(MessagePassing):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, num_relations={self.num_relations})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, num_relations={self.num_relations})"
+        )

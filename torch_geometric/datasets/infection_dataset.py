@@ -62,6 +62,7 @@ class InfectionDataset(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         graph_generator: Union[GraphGenerator, str],
@@ -76,8 +77,11 @@ class InfectionDataset(InMemoryDataset):
         assert isinstance(num_infected_nodes, (int, list))
         assert isinstance(max_path_length, (int, list))
 
-        if (num_graphs is None and isinstance(num_infected_nodes, int)
-                and isinstance(max_path_length, int)):
+        if (
+            num_graphs is None
+            and isinstance(num_infected_nodes, int)
+            and isinstance(max_path_length, int)
+        ):
             num_graphs = 1
 
         if num_graphs is None and isinstance(num_infected_nodes, list):
@@ -101,22 +105,30 @@ class InfectionDataset(InMemoryDataset):
             max_path_length = [max_path_length] * num_graphs
 
         if len(num_infected_nodes) != num_graphs:
-            raise ValueError(f"The length of 'num_infected_nodes' "
-                             f"(got {len(num_infected_nodes)} does not match "
-                             f"with the number of graphs (got {num_graphs})")
+            raise ValueError(
+                f"The length of 'num_infected_nodes' "
+                f"(got {len(num_infected_nodes)} does not match "
+                f"with the number of graphs (got {num_graphs})"
+            )
 
         if len(max_path_length) != num_graphs:
-            raise ValueError(f"The length of 'max_path_length' "
-                             f"(got {len(max_path_length)} does not match "
-                             f"with the number of graphs (got {num_graphs})")
+            raise ValueError(
+                f"The length of 'max_path_length' "
+                f"(got {len(max_path_length)} does not match "
+                f"with the number of graphs (got {num_graphs})"
+            )
 
         if any(num_infected_nodes) <= 0:
-            raise ValueError(f"'num_infected_nodes' needs to be positive "
-                             f"(got {min(num_infected_nodes)})")
+            raise ValueError(
+                f"'num_infected_nodes' needs to be positive "
+                f"(got {min(num_infected_nodes)})"
+            )
 
         if any(max_path_length) <= 0:
-            raise ValueError(f"'max_path_length' needs to be positive "
-                             f"(got {min(max_path_length)})")
+            raise ValueError(
+                f"'max_path_length' needs to be positive "
+                f"(got {min(max_path_length)})"
+            )
 
         data_list: List[Explanation] = []
         for N, L in zip(num_infected_nodes, max_path_length):
@@ -124,8 +136,7 @@ class InfectionDataset(InMemoryDataset):
 
         self.data, self.slices = self.collate(data_list)
 
-    def get_graph(self, num_infected_nodes: int,
-                  max_path_length: int) -> Explanation:
+    def get_graph(self, num_infected_nodes: int, max_path_length: int) -> Explanation:
         data = self.graph_generator()
 
         perm = torch.randperm(data.num_nodes)
@@ -140,9 +151,13 @@ class InfectionDataset(InMemoryDataset):
         edge_mask = torch.zeros(data.num_edges, dtype=torch.bool)
         for num_hops in range(1, max_path_length + 1):
             sub_node_index, _, _, sub_edge_mask = k_hop_subgraph(
-                perm[:num_infected_nodes], num_hops, data.edge_index,
-                num_nodes=data.num_nodes, flow='target_to_source',
-                directed=True)
+                perm[:num_infected_nodes],
+                num_hops,
+                data.edge_index,
+                num_nodes=data.num_nodes,
+                flow="target_to_source",
+                directed=True,
+            )
 
             value = torch.full_like(sub_node_index, fill_value=num_hops)
             y[sub_node_index] = torch.min(y[sub_node_index], value)
@@ -156,7 +171,9 @@ class InfectionDataset(InMemoryDataset):
         )
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({len(self)}, '
-                f'graph_generator={self.graph_generator}, '
-                f'num_infected_nodes={self.num_infected_nodes}, '
-                f'max_path_length={self.max_path_length})')
+        return (
+            f"{self.__class__.__name__}({len(self)}, "
+            f"graph_generator={self.graph_generator}, "
+            f"num_infected_nodes={self.num_infected_nodes}, "
+            f"max_path_length={self.max_path_length})"
+        )

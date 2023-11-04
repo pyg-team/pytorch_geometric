@@ -36,13 +36,18 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size` or
             :obj:`num_workers`.
     """
-    def __init__(self, data: Data, depth: int, num_neighbors: int,
-                 node_idx: Optional[Tensor] = None, replace: bool = False,
-                 **kwargs):
 
+    def __init__(
+        self,
+        data: Data,
+        depth: int,
+        num_neighbors: int,
+        node_idx: Optional[Tensor] = None,
+        replace: bool = False,
+        **kwargs,
+    ):
         if not WITH_TORCH_SPARSE:
-            raise ImportError(
-                f"'{self.__class__.__name__}' requires 'torch-sparse'")
+            raise ImportError(f"'{self.__class__.__name__}' requires 'torch-sparse'")
 
         self.data = copy.copy(data)
         self.depth = depth
@@ -53,8 +58,11 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             self.is_sparse_tensor = False
             row, col = data.edge_index.cpu()
             self.adj_t = SparseTensor(
-                row=row, col=col, value=torch.arange(col.size(0)),
-                sparse_sizes=(data.num_nodes, data.num_nodes)).t()
+                row=row,
+                col=col,
+                value=torch.arange(col.size(0)),
+                sparse_sizes=(data.num_nodes, data.num_nodes),
+            ).t()
         else:
             self.is_sparse_tensor = True
             self.adj_t = data.adj_t.cpu()
@@ -65,24 +73,27 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             node_idx = node_idx.nonzero(as_tuple=False).view(-1)
         self.node_idx = node_idx
 
-        super().__init__(node_idx.tolist(), collate_fn=self.__collate__,
-                         **kwargs)
+        super().__init__(node_idx.tolist(), collate_fn=self.__collate__, **kwargs)
 
     def __collate__(self, n_id):
         n_id = torch.tensor(n_id)
 
         rowptr, col, value = self.adj_t.csr()
         out = torch.ops.torch_sparse.ego_k_hop_sample_adj(
-            rowptr, col, n_id, self.depth, self.num_neighbors, self.replace)
+            rowptr, col, n_id, self.depth, self.num_neighbors, self.replace
+        )
         rowptr, col, n_id, e_id, ptr, root_n_id = out
 
-        adj_t = SparseTensor(rowptr=rowptr, col=col,
-                             value=value[e_id] if value is not None else None,
-                             sparse_sizes=(n_id.numel(), n_id.numel()),
-                             is_sorted=True, trust_data=True)
+        adj_t = SparseTensor(
+            rowptr=rowptr,
+            col=col,
+            value=value[e_id] if value is not None else None,
+            sparse_sizes=(n_id.numel(), n_id.numel()),
+            is_sorted=True,
+            trust_data=True,
+        )
 
-        batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()),
-                      ptr=ptr)
+        batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()), ptr=ptr)
         batch.root_n_id = root_n_id
 
         if self.is_sparse_tensor:
@@ -92,9 +103,9 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             batch.edge_index = torch.stack([row, col], dim=0)
 
         for k, v in self.data:
-            if k in ['edge_index', 'adj_t', 'num_nodes', 'batch', 'ptr']:
+            if k in ["edge_index", "adj_t", "num_nodes", "batch", "ptr"]:
                 continue
-            if k == 'y' and v.size(0) == self.data.num_nodes:
+            if k == "y" and v.size(0) == self.data.num_nodes:
                 batch[k] = v[n_id][root_n_id]
             elif isinstance(v, Tensor) and v.size(0) == self.data.num_nodes:
                 batch[k] = v[n_id]

@@ -38,10 +38,9 @@ def maybe_num_nodes(
 
         if torch.jit.is_tracing():
             # Avoid non-traceable if-check for empty `edge_index` tensor:
-            tmp = torch.concat([
-                edge_index.view(-1),
-                edge_index.new_full((1, ), fill_value=-1)
-            ])
+            tmp = torch.concat(
+                [edge_index.view(-1), edge_index.new_full((1,), fill_value=-1)]
+            )
             return tmp.max() + 1
 
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
@@ -65,7 +64,6 @@ def maybe_num_nodes_dict(
     found_types = list(num_nodes_dict.keys())
 
     for keys, edge_index in edge_index_dict.items():
-
         key = keys[0]
         if key not in found_types:
             N = int(edge_index[0].max() + 1)

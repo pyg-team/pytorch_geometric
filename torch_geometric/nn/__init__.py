@@ -19,13 +19,13 @@ from .models import *  # noqa
 from .functional import *  # noqa
 
 __all__ = [
-    'Reshape',
-    'Sequential',
-    'DataParallel',
-    'to_hetero',
-    'to_hetero_with_bases',
-    'to_fixed_size',
-    'PositionalEncoding',
-    'TemporalEncoding',
-    'summary',
+    "Reshape",
+    "Sequential",
+    "DataParallel",
+    "to_hetero",
+    "to_hetero_with_bases",
+    "to_fixed_size",
+    "PositionalEncoding",
+    "TemporalEncoding",
+    "summary",
 ]

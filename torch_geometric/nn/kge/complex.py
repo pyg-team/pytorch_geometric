@@ -32,6 +32,7 @@ class ComplEx(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -42,8 +43,7 @@ class ComplEx(KGEModel):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
 
         self.node_emb_im = Embedding(num_nodes, hidden_channels, sparse=sparse)
-        self.rel_emb_im = Embedding(num_relations, hidden_channels,
-                                    sparse=sparse)
+        self.rel_emb_im = Embedding(num_relations, hidden_channels, sparse=sparse)
 
         self.reset_parameters()
 
@@ -59,7 +59,6 @@ class ComplEx(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-
         head_re = self.node_emb(head_index)
         head_im = self.node_emb_im(head_index)
         rel_re = self.rel_emb(rel_type)
@@ -67,10 +66,12 @@ class ComplEx(KGEModel):
         tail_re = self.node_emb(tail_index)
         tail_im = self.node_emb_im(tail_index)
 
-        return (triple_dot(head_re, rel_re, tail_re) +
-                triple_dot(head_im, rel_re, tail_im) +
-                triple_dot(head_re, rel_im, tail_im) -
-                triple_dot(head_im, rel_im, tail_re))
+        return (
+            triple_dot(head_re, rel_re, tail_re)
+            + triple_dot(head_im, rel_re, tail_im)
+            + triple_dot(head_re, rel_im, tail_im)
+            - triple_dot(head_im, rel_im, tail_re)
+        )
 
     def loss(
         self,
@@ -78,7 +79,6 @@ class ComplEx(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
         scores = torch.cat([pos_score, neg_score], dim=0)

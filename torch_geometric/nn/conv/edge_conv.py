@@ -44,7 +44,8 @@ class EdgeConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
+
+    def __init__(self, nn: Callable, aggr: str = "max", **kwargs):
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
@@ -63,7 +64,7 @@ class EdgeConv(MessagePassing):
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(nn={self.nn})'
+        return f"{self.__class__.__name__}(nn={self.nn})"
 
 
 class DynamicEdgeConv(MessagePassing):
@@ -98,12 +99,14 @@ class DynamicEdgeConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: Callable, k: int, aggr: str = 'max',
-                 num_workers: int = 1, **kwargs):
-        super().__init__(aggr=aggr, flow='source_to_target', **kwargs)
+
+    def __init__(
+        self, nn: Callable, k: int, aggr: str = "max", num_workers: int = 1, **kwargs
+    ):
+        super().__init__(aggr=aggr, flow="source_to_target", **kwargs)
 
         if knn is None:
-            raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
+            raise ImportError("`DynamicEdgeConv` requires `torch-cluster`.")
 
         self.nn = nn
         self.k = k
@@ -114,8 +117,10 @@ class DynamicEdgeConv(MessagePassing):
         reset(self.nn)
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
         # type: (Tensor, OptTensor) -> Tensor  # noqa
         # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
 
@@ -141,4 +146,4 @@ class DynamicEdgeConv(MessagePassing):
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(nn={self.nn}, k={self.k})'
+        return f"{self.__class__.__name__}(nn={self.nn}, k={self.k})"

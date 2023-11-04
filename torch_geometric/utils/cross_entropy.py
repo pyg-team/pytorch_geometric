@@ -28,12 +28,16 @@ class SparseCrossEntropy(torch.autograd.Function):
 
         grad_out = grad_out / inputs.size(0)
 
-        grad_logsumexp = scatter(grad_out.expand(edge_label_index.size(1)),
-                                 edge_label_index[0], dim=0,
-                                 dim_size=inputs.size(0), reduce='sum')
+        grad_logsumexp = scatter(
+            grad_out.expand(edge_label_index.size(1)),
+            edge_label_index[0],
+            dim=0,
+            dim_size=inputs.size(0),
+            reduce="sum",
+        )
 
         # Gradient computation of `logsumexp`: `grad * (self - result).exp()`
-        grad_input = (inputs - logsumexp.view(-1, 1))
+        grad_input = inputs - logsumexp.view(-1, 1)
         grad_input.exp_()
         grad_input.mul_(grad_logsumexp.view(-1, 1))
 

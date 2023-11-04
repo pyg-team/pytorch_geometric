@@ -47,30 +47,40 @@ class QuantileAggregation(Aggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
-    interpolations = {'linear', 'lower', 'higher', 'nearest', 'midpoint'}
 
-    def __init__(self, q: Union[float, List[float]],
-                 interpolation: str = 'linear', fill_value: float = 0.0):
+    interpolations = {"linear", "lower", "higher", "nearest", "midpoint"}
+
+    def __init__(
+        self,
+        q: Union[float, List[float]],
+        interpolation: str = "linear",
+        fill_value: float = 0.0,
+    ):
         super().__init__()
 
         qs = [q] if not isinstance(q, (list, tuple)) else q
         if len(qs) == 0:
             raise ValueError("Provide at least one quantile value for `q`.")
-        if not all(0. <= quantile <= 1. for quantile in qs):
+        if not all(0.0 <= quantile <= 1.0 for quantile in qs):
             raise ValueError("`q` must be in the range [0, 1].")
         if interpolation not in self.interpolations:
-            raise ValueError(f"Invalid interpolation method "
-                             f"got ('{interpolation}')")
+            raise ValueError(
+                f"Invalid interpolation method " f"got ('{interpolation}')"
+            )
 
         self._q = q
-        self.register_buffer('q', torch.tensor(qs).view(-1, 1))
+        self.register_buffer("q", torch.tensor(qs).view(-1, 1))
         self.interpolation = interpolation
         self.fill_value = fill_value
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         dim = x.dim() + dim if dim < 0 else dim
 
         self.assert_index_present(index)
@@ -99,17 +109,17 @@ class QuantileAggregation(Aggregation):
         x = x.take_along_dim(index_perm, dim=dim)
 
         # Compute the quantile interpolations:
-        if self.interpolation == 'lower':
+        if self.interpolation == "lower":
             quantile = x.index_select(dim, q_point.floor().long())
-        elif self.interpolation == 'higher':
+        elif self.interpolation == "higher":
             quantile = x.index_select(dim, q_point.ceil().long())
-        elif self.interpolation == 'nearest':
+        elif self.interpolation == "nearest":
             quantile = x.index_select(dim, q_point.round().long())
         else:
             l_quant = x.index_select(dim, q_point.floor().long())
             r_quant = x.index_select(dim, q_point.ceil().long())
 
-            if self.interpolation == 'linear':
+            if self.interpolation == "linear":
                 q_frac = q_point.frac().view(shape)
                 quantile = l_quant + (r_quant - l_quant) * q_frac
             else:  # 'midpoint'
@@ -117,20 +127,22 @@ class QuantileAggregation(Aggregation):
 
         # If the number of elements is zero, fill with pre-defined value:
         repeats = self.q.numel()
-        mask = (count == 0).repeat_interleave(
-            repeats, output_size=repeats * count.numel()).view(shape)
+        mask = (
+            (count == 0)
+            .repeat_interleave(repeats, output_size=repeats * count.numel())
+            .view(shape)
+        )
         out = quantile.masked_fill(mask, self.fill_value)
 
         if self.q.numel() > 1:
             shape = list(out.shape)
-            shape = (shape[:dim] + [shape[dim] // self.q.numel(), -1] +
-                     shape[dim + 2:])
+            shape = shape[:dim] + [shape[dim] // self.q.numel(), -1] + shape[dim + 2 :]
             out = out.view(shape)
 
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(q={self._q})')
+        return f"{self.__class__.__name__}(q={self._q})"
 
 
 class MedianAggregation(QuantileAggregation):
@@ -152,8 +164,9 @@ class MedianAggregation(QuantileAggregation):
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
+
     def __init__(self, fill_value: float = 0.0):
-        super().__init__(0.5, 'lower', fill_value)
+        super().__init__(0.5, "lower", fill_value)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}()"

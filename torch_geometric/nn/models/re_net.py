@@ -44,6 +44,7 @@ class RENet(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -51,7 +52,7 @@ class RENet(torch.nn.Module):
         hidden_channels: int,
         seq_len: int,
         num_layers: int = 1,
-        dropout: float = 0.,
+        dropout: float = 0.0,
         bias: bool = True,
     ):
         super().__init__()
@@ -65,10 +66,20 @@ class RENet(torch.nn.Module):
         self.ent = Parameter(torch.empty(num_nodes, hidden_channels))
         self.rel = Parameter(torch.empty(num_rels, hidden_channels))
 
-        self.sub_gru = GRU(3 * hidden_channels, hidden_channels, num_layers,
-                           batch_first=True, bias=bias)
-        self.obj_gru = GRU(3 * hidden_channels, hidden_channels, num_layers,
-                           batch_first=True, bias=bias)
+        self.sub_gru = GRU(
+            3 * hidden_channels,
+            hidden_channels,
+            num_layers,
+            batch_first=True,
+            bias=bias,
+        )
+        self.obj_gru = GRU(
+            3 * hidden_channels,
+            hidden_channels,
+            num_layers,
+            batch_first=True,
+            bias=bias,
+        )
 
         self.sub_lin = Linear(3 * hidden_channels, num_nodes, bias=bias)
         self.obj_lin = Linear(3 * hidden_channels, num_nodes, bias=bias)
@@ -94,6 +105,7 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
+
         class PreTransform:
             def __init__(self, seq_len: int):
                 self.seq_len = seq_len
@@ -116,9 +128,10 @@ class RENet(torch.nn.Module):
                 for s in range(seq_len):
                     h = hist[node][s]
                     hists += h
-                    ts.append(torch.full((len(h), ), s, dtype=torch.long))
-                node, r = torch.tensor(hists, dtype=torch.long).view(
-                    -1, 2).t().contiguous()
+                    ts.append(torch.full((len(h),), s, dtype=torch.long))
+                node, r = (
+                    torch.tensor(hists, dtype=torch.long).view(-1, 2).t().contiguous()
+                )
                 node = node[r == rel]
                 t = torch.cat(ts, dim=0)[r == rel]
                 return node, t
@@ -143,10 +156,8 @@ class RENet(torch.nn.Module):
                     self.t_last = t
 
                 # Save history in data object.
-                data.h_sub, data.h_sub_t = self.get_history(
-                    self.sub_hist, sub, rel)
-                data.h_obj, data.h_obj_t = self.get_history(
-                    self.obj_hist, obj, rel)
+                data.h_sub, data.h_sub_t = self.get_history(self.sub_hist, sub, rel)
+                data.h_obj, data.h_obj_t = self.get_history(self.obj_hist, obj, rel)
 
                 # Add new event to history.
                 self.sub_hist[sub][-1].append([obj, rel])
@@ -155,7 +166,7 @@ class RENet(torch.nn.Module):
                 return data
 
             def __repr__(self) -> str:  # pragma: no cover
-                return f'{self.__class__.__name__}(seq_len={self.seq_len})'
+                return f"{self.__class__.__name__}(seq_len={self.seq_len})"
 
         return PreTransform(seq_len)
 
@@ -174,18 +185,26 @@ class RENet(torch.nn.Module):
                 :obj:`h_obj_t`, :obj:`h_obj_batch`).
         """
 
-        assert 'h_sub_batch' in data and 'h_obj_batch' in data
+        assert "h_sub_batch" in data and "h_obj_batch" in data
         batch_size, seq_len = data.sub.size(0), self.seq_len
 
         h_sub_t = data.h_sub_t + data.h_sub_batch * seq_len
         h_obj_t = data.h_obj_t + data.h_obj_batch * seq_len
 
-        h_sub = scatter(self.ent[data.h_sub], h_sub_t, dim=0,
-                        dim_size=batch_size * seq_len,
-                        reduce='mean').view(batch_size, seq_len, -1)
-        h_obj = scatter(self.ent[data.h_obj], h_obj_t, dim=0,
-                        dim_size=batch_size * seq_len,
-                        reduce='mean').view(batch_size, seq_len, -1)
+        h_sub = scatter(
+            self.ent[data.h_sub],
+            h_sub_t,
+            dim=0,
+            dim_size=batch_size * seq_len,
+            reduce="mean",
+        ).view(batch_size, seq_len, -1)
+        h_obj = scatter(
+            self.ent[data.h_obj],
+            h_obj_t,
+            dim=0,
+            dim_size=batch_size * seq_len,
+            reduce="mean",
+        ).view(batch_size, seq_len, -1)
 
         sub = self.ent[data.sub].unsqueeze(1).repeat(1, seq_len, 1)
         rel = self.rel[data.rel].unsqueeze(1).repeat(1, seq_len, 1)
@@ -195,10 +214,8 @@ class RENet(torch.nn.Module):
         _, h_obj = self.obj_gru(torch.cat([obj, h_obj, rel], dim=-1))
         h_sub, h_obj = h_sub.squeeze(0), h_obj.squeeze(0)
 
-        h_sub = torch.cat([self.ent[data.sub], h_sub, self.rel[data.rel]],
-                          dim=-1)
-        h_obj = torch.cat([self.ent[data.obj], h_obj, self.rel[data.rel]],
-                          dim=-1)
+        h_sub = torch.cat([self.ent[data.sub], h_sub, self.rel[data.rel]], dim=-1)
+        h_obj = torch.cat([self.ent[data.obj], h_obj, self.rel[data.rel]], dim=-1)
 
         h_sub = F.dropout(h_sub, p=self.dropout, training=self.training)
         h_obj = F.dropout(h_obj, p=self.dropout, training=self.training)
@@ -213,7 +230,7 @@ class RENet(torch.nn.Module):
         and Hits at 1/3/10."""
 
         _, perm = logits.sort(dim=1, descending=True)
-        mask = (y.view(-1, 1) == perm)
+        mask = y.view(-1, 1) == perm
 
         nnz = mask.nonzero(as_tuple=False)
         mrr = (1 / (nnz[:, -1] + 1).to(torch.float)).mean().item()

@@ -10,6 +10,7 @@ class Compose(BaseTransform):
     Args:
         transforms (List[Callable]): List of transforms to compose.
     """
+
     def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
@@ -25,8 +26,8 @@ class Compose(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        args = [f'  {transform}' for transform in self.transforms]
-        return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
+        args = [f"  {transform}" for transform in self.transforms]
+        return "{}([\n{}\n])".format(self.__class__.__name__, ",\n".join(args))
 
 
 class ComposeFilters:
@@ -35,6 +36,7 @@ class ComposeFilters:
     Args:
         filters (List[Callable]): List of filters to compose.
     """
+
     def __init__(self, filters: List[Callable]):
         self.filters = filters
 
@@ -51,5 +53,5 @@ class ComposeFilters:
         return True
 
     def __repr__(self) -> str:
-        args = [f'  {filter_fn}' for filter_fn in self.filters]
-        return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
+        args = [f"  {filter_fn}" for filter_fn in self.filters]
+        return "{}([\n{}\n])".format(self.__class__.__name__, ",\n".join(args))

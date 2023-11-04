@@ -5,7 +5,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('remove_training_classes')
+@functional_transform("remove_training_classes")
 class RemoveTrainingClasses(BaseTransform):
     r"""Removes classes from the node-level training set as given by
     :obj:`data.train_mask`, *e.g.*, in order to get a zero-shot label scenario
@@ -14,6 +14,7 @@ class RemoveTrainingClasses(BaseTransform):
     Args:
         classes (List[int]): The classes to remove from the training set.
     """
+
     def __init__(self, classes: List[int]):
         self.classes = classes
 
@@ -24,4 +25,4 @@ class RemoveTrainingClasses(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.classes})'
+        return f"{self.__class__.__name__}({self.classes})"

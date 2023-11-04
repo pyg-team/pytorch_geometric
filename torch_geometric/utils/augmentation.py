@@ -60,20 +60,22 @@ def shuffle_node(
     if batch is None:
         perm = torch.randperm(x.size(0), device=x.device)
         return x[perm], perm
-    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0, reduce='sum')
+    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0, reduce="sum")
     ptr = cumsum(num_nodes)
-    perm = torch.cat([
-        torch.randperm(n, device=x.device) + offset
-        for offset, n in zip(ptr[:-1], num_nodes)
-    ])
+    perm = torch.cat(
+        [
+            torch.randperm(n, device=x.device) + offset
+            for offset, n in zip(ptr[:-1], num_nodes)
+        ]
+    )
     return x[perm], perm
 
 
 def mask_feature(
     x: Tensor,
     p: float = 0.5,
-    mode: str = 'col',
-    fill_value: float = 0.,
+    mode: str = "col",
+    fill_value: float = 0.0,
     training: bool = True,
 ) -> Tuple[Tensor, Tensor]:
     r"""Randomly masks feature from the feature matrix
@@ -135,17 +137,16 @@ def mask_feature(
                 [True, False,  True],
                 [False, False,  True]])
     """
-    if p < 0. or p > 1.:
-        raise ValueError(f'Masking ratio has to be between 0 and 1 '
-                         f'(got {p}')
+    if p < 0.0 or p > 1.0:
+        raise ValueError(f"Masking ratio has to be between 0 and 1 " f"(got {p}")
     if not training or p == 0.0:
         return x, torch.ones_like(x, dtype=torch.bool)
-    assert mode in ['row', 'col', 'all']
+    assert mode in ["row", "col", "all"]
 
-    if mode == 'row':
+    if mode == "row":
         mask = torch.rand(x.size(0), device=x.device) >= p
         mask = mask.view(-1, 1)
-    elif mode == 'col':
+    elif mode == "col":
         mask = torch.rand(x.size(1), device=x.device) >= p
         mask = mask.view(1, -1)
     else:
@@ -218,12 +219,14 @@ def add_random_edge(
         tensor([[3, 4, 1],
                 [1, 3, 2]])
     """
-    if p < 0. or p > 1.:
-        raise ValueError(f"Ratio of added edges has to be between 0 and 1 "
-                         f"(got '{p}')")
+    if p < 0.0 or p > 1.0:
+        raise ValueError(
+            f"Ratio of added edges has to be between 0 and 1 " f"(got '{p}')"
+        )
     if force_undirected and isinstance(num_nodes, (tuple, list)):
-        raise RuntimeError("'force_undirected' is not supported for "
-                           "bipartite graphs")
+        raise RuntimeError(
+            "'force_undirected' is not supported for " "bipartite graphs"
+        )
 
     device = edge_index.device
     if not training or p == 0.0:

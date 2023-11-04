@@ -122,16 +122,27 @@ class SuperGATConv(MessagePassing):
           negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})`
     """
+
     att_x: OptTensor
     att_y: OptTensor
 
-    def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
-                 concat: bool = True, negative_slope: float = 0.2,
-                 dropout: float = 0.0, add_self_loops: bool = True,
-                 bias: bool = True, attention_type: str = 'MX',
-                 neg_sample_ratio: float = 0.5, edge_sample_ratio: float = 1.0,
-                 is_undirected: bool = False, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        heads: int = 1,
+        concat: bool = True,
+        negative_slope: float = 0.2,
+        dropout: float = 0.0,
+        add_self_loops: bool = True,
+        bias: bool = True,
+        attention_type: str = "MX",
+        neg_sample_ratio: float = 0.5,
+        edge_sample_ratio: float = 1.0,
+        is_undirected: bool = False,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -146,18 +157,19 @@ class SuperGATConv(MessagePassing):
         self.edge_sample_ratio = edge_sample_ratio
         self.is_undirected = is_undirected
 
-        assert attention_type in ['MX', 'SD']
+        assert attention_type in ["MX", "SD"]
         assert 0.0 < neg_sample_ratio and 0.0 < edge_sample_ratio <= 1.0
 
-        self.lin = Linear(in_channels, heads * out_channels, bias=False,
-                          weight_initializer='glorot')
+        self.lin = Linear(
+            in_channels, heads * out_channels, bias=False, weight_initializer="glorot"
+        )
 
-        if self.attention_type == 'MX':
+        if self.attention_type == "MX":
             self.att_l = Parameter(torch.empty(1, heads, out_channels))
             self.att_r = Parameter(torch.empty(1, heads, out_channels))
         else:  # self.attention_type == 'SD'
-            self.register_parameter('att_l', None)
-            self.register_parameter('att_r', None)
+            self.register_parameter("att_l", None)
+            self.register_parameter("att_r", None)
 
         self.att_x = self.att_y = None  # x/y for self-supervision
 
@@ -166,7 +178,7 @@ class SuperGATConv(MessagePassing):
         elif bias and not concat:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -177,9 +189,13 @@ class SuperGATConv(MessagePassing):
         glorot(self.att_r)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                neg_edge_index: OptTensor = None,
-                batch: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        neg_edge_index: OptTensor = None,
+        batch: OptTensor = None,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
@@ -191,7 +207,7 @@ class SuperGATConv(MessagePassing):
 
         if self.add_self_loops:
             if isinstance(edge_index, SparseTensor):
-                edge_index = torch_sparse.fill_diag(edge_index, 1.)
+                edge_index = torch_sparse.fill_diag(edge_index, 1.0)
             else:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=N)
@@ -228,7 +244,7 @@ class SuperGATConv(MessagePassing):
 
             self.att_x = torch.cat([pos_att, neg_att], dim=0)
             self.att_y = self.att_x.new_zeros(self.att_x.size(0))
-            self.att_y[:pos_edge_index.size(1)] = 1.
+            self.att_y[: pos_edge_index.size(1)] = 1.0
 
         if self.concat is True:
             out = out.view(-1, self.heads * self.out_channels)
@@ -240,42 +256,51 @@ class SuperGATConv(MessagePassing):
 
         return out
 
-    def message(self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor,
-                size_i: Optional[int]) -> Tensor:
+    def message(
+        self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor, size_i: Optional[int]
+    ) -> Tensor:
         alpha = self.get_attention(edge_index_i, x_i, x_j, num_nodes=size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.view(-1, self.heads, 1)
 
-    def negative_sampling(self, edge_index: Tensor, num_nodes: int,
-                          batch: OptTensor = None) -> Tensor:
-
-        num_neg_samples = int(self.neg_sample_ratio * self.edge_sample_ratio *
-                              edge_index.size(1))
+    def negative_sampling(
+        self, edge_index: Tensor, num_nodes: int, batch: OptTensor = None
+    ) -> Tensor:
+        num_neg_samples = int(
+            self.neg_sample_ratio * self.edge_sample_ratio * edge_index.size(1)
+        )
 
         if not self.is_undirected and not is_undirected(
-                edge_index, num_nodes=num_nodes):
+            edge_index, num_nodes=num_nodes
+        ):
             edge_index = to_undirected(edge_index, num_nodes=num_nodes)
 
         if batch is None:
-            neg_edge_index = negative_sampling(edge_index, num_nodes,
-                                               num_neg_samples=num_neg_samples)
+            neg_edge_index = negative_sampling(
+                edge_index, num_nodes, num_neg_samples=num_neg_samples
+            )
         else:
             neg_edge_index = batched_negative_sampling(
-                edge_index, batch, num_neg_samples=num_neg_samples)
+                edge_index, batch, num_neg_samples=num_neg_samples
+            )
 
         return neg_edge_index
 
     def positive_sampling(self, edge_index: Tensor) -> Tensor:
-        pos_edge_index, _ = dropout_edge(edge_index,
-                                         p=1. - self.edge_sample_ratio,
-                                         training=self.training)
+        pos_edge_index, _ = dropout_edge(
+            edge_index, p=1.0 - self.edge_sample_ratio, training=self.training
+        )
         return pos_edge_index
 
-    def get_attention(self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor,
-                      num_nodes: Optional[int],
-                      return_logits: bool = False) -> Tensor:
-
-        if self.attention_type == 'MX':
+    def get_attention(
+        self,
+        edge_index_i: Tensor,
+        x_i: Tensor,
+        x_j: Tensor,
+        num_nodes: Optional[int],
+        return_logits: bool = False,
+    ) -> Tensor:
+        if self.attention_type == "MX":
             logits = (x_i * x_j).sum(dim=-1)
             if return_logits:
                 return logits
@@ -303,6 +328,8 @@ class SuperGATConv(MessagePassing):
         )
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, heads={self.heads}, '
-                f'type={self.attention_type})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, heads={self.heads}, "
+            f"type={self.attention_type})"
+        )

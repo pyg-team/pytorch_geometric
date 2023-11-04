@@ -75,12 +75,13 @@ def Sequential(
     except ImportError:
         raise ModuleNotFoundError(
             "No module named 'jinja2' found on this machine. "
-            "Run 'pip install jinja2' to install the library.")
+            "Run 'pip install jinja2' to install the library."
+        )
 
-    input_args = [x.strip() for x in input_args.split(',')]
+    input_args = [x.strip() for x in input_args.split(",")]
 
     if not isinstance(modules, dict):
-        modules = {f'module_{i}': module for i, module in enumerate(modules)}
+        modules = {f"module_{i}": module for i, module in enumerate(modules)}
 
     # We require the first entry of the input list to define arguments:
     assert len(modules) > 0
@@ -103,10 +104,10 @@ def Sequential(
         calls.append((name, module, in_desc, out_desc))
 
     root = os.path.dirname(osp.realpath(__file__))
-    with open(osp.join(root, 'sequential.jinja'), 'r') as f:
+    with open(osp.join(root, "sequential.jinja"), "r") as f:
         template = Template(f.read())
 
-    cls_name = f'Sequential_{uuid1().hex[:6]}'
+    cls_name = f"Sequential_{uuid1().hex[:6]}"
     module_repr = template.render(
         cls_name=cls_name,
         input_args=input_args,
@@ -125,7 +126,7 @@ def Sequential(
 
 
 def parse_desc(desc: str) -> Tuple[List[str], List[str]]:
-    in_desc, out_desc = desc.split('->')
-    in_desc = [x.strip() for x in in_desc.split(',')]
-    out_desc = [x.strip() for x in out_desc.split(',')]
+    in_desc, out_desc = desc.split("->")
+    in_desc = [x.strip() for x in in_desc.split(",")]
+    out_desc = [x.strip() for x in out_desc.split(",")]
     return in_desc, out_desc

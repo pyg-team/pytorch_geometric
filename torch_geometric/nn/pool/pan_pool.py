@@ -38,13 +38,14 @@ class PANPooling(torch.nn.Module):
         nonlinearity (str or callable, optional): The non-linearity to use.
             (default: :obj:`"tanh"`)
     """
+
     def __init__(
         self,
         in_channels: int,
         ratio: float = 0.5,
         min_score: Optional[float] = None,
         multiplier: float = 1.0,
-        nonlinearity: Union[str, Callable] = 'tanh',
+        nonlinearity: Union[str, Callable] = "tanh",
     ):
         super().__init__()
 
@@ -87,7 +88,7 @@ class PANPooling(torch.nn.Module):
         assert edge_weight is not None
 
         score1 = (x * self.p).sum(dim=-1)
-        score2 = scatter(edge_weight, col, 0, dim_size=x.size(0), reduce='sum')
+        score2 = scatter(edge_weight, col, 0, dim_size=x.size(0), reduce="sum")
         score = self.beta[0] * score1 + self.beta[1] * score2
 
         select_out = self.select(score, batch)
@@ -104,14 +105,15 @@ class PANPooling(torch.nn.Module):
         edge_weight = connect_out.edge_attr
         assert edge_weight is not None
 
-        return (x, connect_out.edge_index, edge_weight, connect_out.batch,
-                perm, score)
+        return (x, connect_out.edge_index, edge_weight, connect_out.batch, perm, score)
 
     def __repr__(self) -> str:
         if self.min_score is None:
-            ratio = f'ratio={self.ratio}'
+            ratio = f"ratio={self.ratio}"
         else:
-            ratio = f'min_score={self.min_score}'
+            ratio = f"min_score={self.min_score}"
 
-        return (f'{self.__class__.__name__}({self.in_channels}, {ratio}, '
-                f'multiplier={self.multiplier})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, {ratio}, "
+            f"multiplier={self.multiplier})"
+        )

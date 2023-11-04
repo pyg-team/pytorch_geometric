@@ -16,20 +16,23 @@ class DeviceHelper:
 
         if device is None:
             if with_cuda:
-                device = 'cuda'
+                device = "cuda"
             elif with_xpu:
-                device = 'xpu'
+                device = "xpu"
             else:
-                device = 'cpu'
+                device = "cpu"
 
         self.device = torch.device(device)
-        self.is_gpu = self.device.type in ['cuda', 'xpu']
+        self.is_gpu = self.device.type in ["cuda", "xpu"]
 
-        if ((self.device.type == 'cuda' and not with_cuda)
-                or (self.device.type == 'xpu' and not with_xpu)):
-            warnings.warn(f"Requested device '{self.device.type}' is not "
-                          f"available, falling back to CPU")
-            self.device = torch.device('cpu')
+        if (self.device.type == "cuda" and not with_cuda) or (
+            self.device.type == "xpu" and not with_xpu
+        ):
+            warnings.warn(
+                f"Requested device '{self.device.type}' is not "
+                f"available, falling back to CPU"
+            )
+            self.device = torch.device("cpu")
 
         self.stream = None
         self.stream_context = nullcontext
@@ -57,6 +60,7 @@ class PrefetchLoader:
         device (torch.device, optional): The device to load the data to.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         loader: DataLoader,
@@ -81,7 +85,6 @@ class PrefetchLoader:
         self.device_helper.maybe_init_stream()
 
         for next_batch in self.loader:
-
             with self.device_helper.stream_context():
                 next_batch = self.non_blocking_transfer(next_batch)
 
@@ -100,4 +103,4 @@ class PrefetchLoader:
         return len(self.loader)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.loader})'
+        return f"{self.__class__.__name__}({self.loader})"

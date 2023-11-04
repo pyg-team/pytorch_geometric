@@ -14,8 +14,8 @@ class GaussianFilter(torch.nn.Module):
     def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
-        self.coeff = -0.5 / (float(offset[1]) - float(offset[0]))**2
-        self.register_buffer('offset', offset)
+        self.coeff = -0.5 / (float(offset[1]) - float(offset[0])) ** 2
+        self.register_buffer("offset", offset)
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -29,8 +29,9 @@ class GaussianFilter(torch.nn.Module):
 class NodeBlock(torch.nn.Module):
     def __init__(self, hidden_node_channels: int, hidden_edge_channels: int):
         super().__init__()
-        self.lin_c1 = Linear(hidden_node_channels + hidden_edge_channels,
-                             2 * hidden_node_channels)
+        self.lin_c1 = Linear(
+            hidden_node_channels + hidden_edge_channels, 2 * hidden_node_channels
+        )
 
         # BN was added based on previous studies.
         # ref: https://github.com/txie-93/cgcnn/blob/master/cgcnn/model.py
@@ -48,8 +49,9 @@ class NodeBlock(torch.nn.Module):
         c1_filter, c1_core = c1.chunk(2, dim=1)
         c1_filter = c1_filter.sigmoid()
         c1_core = c1_core.tanh()
-        c1_emb = scatter(c1_filter * c1_core, i, dim=0,
-                         dim_size=node_emb.size(0), reduce='sum')
+        c1_emb = scatter(
+            c1_filter * c1_core, i, dim=0, dim_size=node_emb.size(0), reduce="sum"
+        )
         c1_emb = self.bn(c1_emb)
 
         return (node_emb + c1_emb).tanh()
@@ -98,19 +100,23 @@ class EdgeBlock(torch.nn.Module):
         c2_core = c2_core.tanh()
         c2_emb = self.bn_c2_2(c2_filter * c2_core)
 
-        c3 = torch.cat([
-            node_emb[idx_i],
-            node_emb[idx_j],
-            node_emb[idx_k],
-            edge_emb[idx_ji],
-            edge_emb[idx_kj],
-        ], dim=1)
+        c3 = torch.cat(
+            [
+                node_emb[idx_i],
+                node_emb[idx_j],
+                node_emb[idx_k],
+                edge_emb[idx_ji],
+                edge_emb[idx_kj],
+            ],
+            dim=1,
+        )
         c3 = self.bn_c3(self.lin_c3(c3))
         c3_filter, c3_core = c3.chunk(2, dim=1)
         c3_filter = c3_filter.sigmoid()
         c3_core = c3_core.tanh()
-        c3_emb = scatter(c3_filter * c3_core, idx_ji, dim=0,
-                         dim_size=edge_emb.size(0), reduce='sum')
+        c3_emb = scatter(
+            c3_filter * c3_core, idx_ji, dim=0, dim_size=edge_emb.size(0), reduce="sum"
+        )
         c3_emb = self.bn_c3_2(c3_emb)
 
         return (edge_emb + c2_emb + c3_emb).tanh()
@@ -136,6 +142,7 @@ class GNNFF(torch.nn.Module):
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
     """
+
     def __init__(
         self,
         hidden_node_channels: int,
@@ -158,14 +165,18 @@ class GNNFF(torch.nn.Module):
         )
         self.edge_emb = GaussianFilter(0.0, 5.0, hidden_edge_channels)
 
-        self.node_blocks = ModuleList([
-            NodeBlock(hidden_node_channels, hidden_edge_channels)
-            for _ in range(num_layers)
-        ])
-        self.edge_blocks = ModuleList([
-            EdgeBlock(hidden_node_channels, hidden_edge_channels)
-            for _ in range(num_layers)
-        ])
+        self.node_blocks = ModuleList(
+            [
+                NodeBlock(hidden_node_channels, hidden_edge_channels)
+                for _ in range(num_layers)
+            ]
+        )
+        self.edge_blocks = ModuleList(
+            [
+                EdgeBlock(hidden_node_channels, hidden_edge_channels)
+                for _ in range(num_layers)
+            ]
+        )
 
         self.force_predictor = Sequential(
             Linear(hidden_edge_channels, hidden_edge_channels),
@@ -184,14 +195,15 @@ class GNNFF(torch.nn.Module):
             edge_block.reset_parameters()
         reset(self.force_predictor)
 
-    def forward(self, z: Tensor, pos: Tensor,
-                batch: OptTensor = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
-        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                  max_num_neighbors=self.max_num_neighbors)
+        edge_index = radius_graph(
+            pos, r=self.cutoff, batch=batch, max_num_neighbors=self.max_num_neighbors
+        )
 
         i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = triplets(
-            edge_index, num_nodes=z.size(0))
+            edge_index, num_nodes=z.size(0)
+        )
 
         # Calculate distances and unit vector:
         dist = (pos[i] - pos[j]).pow(2).sum(dim=-1).sqrt()
@@ -204,10 +216,11 @@ class GNNFF(torch.nn.Module):
         # Message passing blocks:
         for node_block, edge_block in zip(self.node_blocks, self.edge_blocks):
             node_emb = node_block(node_emb, edge_emb, i)
-            edge_emb = edge_block(node_emb, edge_emb, i, j, idx_i, idx_j,
-                                  idx_k, idx_ji, idx_kj)
+            edge_emb = edge_block(
+                node_emb, edge_emb, i, j, idx_i, idx_j, idx_k, idx_ji, idx_kj
+            )
 
         # Force prediction block:
         force = self.force_predictor(edge_emb) * unit_vec
 
-        return scatter(force, i, dim=0, reduce='sum')
+        return scatter(force, i, dim=0, reduce="sum")

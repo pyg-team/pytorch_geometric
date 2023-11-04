@@ -48,6 +48,7 @@ class MetaPath2Vec(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         edge_index_dict: Dict[EdgeType, Tensor],
@@ -87,13 +88,15 @@ class MetaPath2Vec(torch.nn.Module):
                 raise ValueError(
                     "Found invalid metapath. Ensure that the destination node "
                     "type matches with the source node type across all "
-                    "consecutive edge types.")
+                    "consecutive edge types."
+                )
 
         assert walk_length + 1 >= context_size
         if walk_length > len(metapath) and metapath[0][0] != metapath[-1][-1]:
             raise AttributeError(
                 "The 'walk_length' is longer than the given 'metapath', but "
-                "the 'metapath' does not denote a cycle")
+                "the 'metapath' does not denote a cycle"
+            )
 
         self.embedding_dim = embedding_dim
         self.metapath = metapath
@@ -114,9 +117,10 @@ class MetaPath2Vec(torch.nn.Module):
             self.end[key] = count
 
         offset = [self.start[metapath[0][0]]]
-        offset += [self.start[keys[-1]] for keys in metapath
-                   ] * int((walk_length / len(metapath)) + 1)
-        offset = offset[:walk_length + 1]
+        offset += [self.start[keys[-1]] for keys in metapath] * int(
+            (walk_length / len(metapath)) + 1
+        )
+        offset = offset[: walk_length + 1]
         assert len(offset) == walk_length + 1
         self.offset = torch.tensor(offset)
 
@@ -133,7 +137,7 @@ class MetaPath2Vec(torch.nn.Module):
     def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
         :obj:`node_type`."""
-        emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
+        emb = self.embedding.weight[self.start[node_type] : self.end[node_type]]
         return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
@@ -146,8 +150,11 @@ class MetaPath2Vec(torch.nn.Module):
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last` or
                 :obj:`num_workers`.
         """
-        return DataLoader(range(self.num_nodes_dict[self.metapath[0][0]]),
-                          collate_fn=self._sample, **kwargs)
+        return DataLoader(
+            range(self.num_nodes_dict[self.metapath[0][0]]),
+            collate_fn=self._sample,
+            **kwargs,
+        )
 
     def _pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
@@ -172,7 +179,7 @@ class MetaPath2Vec(torch.nn.Module):
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
         for j in range(num_walks_per_rw):
-            walks.append(rw[:, j:j + self.context_size])
+            walks.append(rw[:, j : j + self.context_size])
         return torch.cat(walks, dim=0)
 
     def _neg_sample(self, batch: Tensor) -> Tensor:
@@ -181,8 +188,9 @@ class MetaPath2Vec(torch.nn.Module):
         rws = [batch]
         for i in range(self.walk_length):
             keys = self.metapath[i % len(self.metapath)]
-            batch = torch.randint(0, self.num_nodes_dict[keys[-1]],
-                                  (batch.size(0), ), dtype=torch.long)
+            batch = torch.randint(
+                0, self.num_nodes_dict[keys[-1]], (batch.size(0),), dtype=torch.long
+            )
             rws.append(batch)
 
         rw = torch.stack(rws, dim=-1)
@@ -191,7 +199,7 @@ class MetaPath2Vec(torch.nn.Module):
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
         for j in range(num_walks_per_rw):
-            walks.append(rw[:, j:j + self.context_size])
+            walks.append(rw[:, j : j + self.context_size])
         return torch.cat(walks, dim=0)
 
     def _sample(self, batch: List[int]) -> Tuple[Tensor, Tensor]:
@@ -205,10 +213,10 @@ class MetaPath2Vec(torch.nn.Module):
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
-        h_start = self.embedding(start).view(pos_rw.size(0), 1,
-                                             self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(pos_rw.size(0), -1,
-                                                    self.embedding_dim)
+        h_start = self.embedding(start).view(pos_rw.size(0), 1, self.embedding_dim)
+        h_rest = self.embedding(rest.view(-1)).view(
+            pos_rw.size(0), -1, self.embedding_dim
+        )
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         pos_loss = -torch.log(torch.sigmoid(out) + EPS).mean()
@@ -216,38 +224,52 @@ class MetaPath2Vec(torch.nn.Module):
         # Negative loss.
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
 
-        h_start = self.embedding(start).view(neg_rw.size(0), 1,
-                                             self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(neg_rw.size(0), -1,
-                                                    self.embedding_dim)
+        h_start = self.embedding(start).view(neg_rw.size(0), 1, self.embedding_dim)
+        h_rest = self.embedding(rest.view(-1)).view(
+            neg_rw.size(0), -1, self.embedding_dim
+        )
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS).mean()
 
         return pos_loss + neg_loss
 
-    def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
-             test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
-             *args, **kwargs) -> float:
+    def test(
+        self,
+        train_z: Tensor,
+        train_y: Tensor,
+        test_z: Tensor,
+        test_y: Tensor,
+        solver: str = "lbfgs",
+        multi_class: str = "auto",
+        *args,
+        **kwargs,
+    ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
-                                 **kwargs).fit(train_z.detach().cpu().numpy(),
-                                               train_y.detach().cpu().numpy())
-        return clf.score(test_z.detach().cpu().numpy(),
-                         test_y.detach().cpu().numpy())
+        clf = LogisticRegression(
+            solver=solver, multi_class=multi_class, *args, **kwargs
+        ).fit(train_z.detach().cpu().numpy(), train_y.detach().cpu().numpy())
+        return clf.score(test_z.detach().cpu().numpy(), test_y.detach().cpu().numpy())
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}('
-                f'{self.embedding.weight.size(0) - 1}, '
-                f'{self.embedding.weight.size(1)})')
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.embedding.weight.size(0) - 1}, "
+            f"{self.embedding.weight.size(1)})"
+        )
 
 
-def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
-           num_neighbors: int, dummy_idx: int) -> Tensor:
-
+def sample(
+    rowptr: Tensor,
+    col: Tensor,
+    rowcount: Tensor,
+    subset: Tensor,
+    num_neighbors: int,
+    dummy_idx: int,
+) -> Tensor:
     mask = subset >= dummy_idx
     subset = subset.clamp(min=0, max=rowptr.numel() - 2)
     count = rowcount[subset]

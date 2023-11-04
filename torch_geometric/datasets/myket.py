@@ -41,8 +41,11 @@ class MyketDataset(InMemoryDataset):
           - 33
           - 1
     """
-    url = ('https://raw.githubusercontent.com/erfanloghmani/'
-           'myket-android-application-market-dataset/main/data_int_index')
+
+    url = (
+        "https://raw.githubusercontent.com/erfanloghmani/"
+        "myket-android-application-market-dataset/main/data_int_index"
+    )
 
     def __init__(
         self,
@@ -55,15 +58,15 @@ class MyketDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['myket.csv', 'app_info_sample.npy']
+        return ["myket.csv", "app_info_sample.npy"]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         for file_name in self.raw_file_names:
-            download_url(f'{self.url}/{file_name}', self.raw_dir)
+            download_url(f"{self.url}/{file_name}", self.raw_dir)
 
     def process(self):
         import pandas as pd

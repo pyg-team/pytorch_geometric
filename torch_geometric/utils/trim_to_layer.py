@@ -15,8 +15,7 @@ from torch_geometric.typing import (
 )
 
 
-def filter_empty_entries(
-        input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
+def filter_empty_entries(input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
     r"""Removes empty tensors from a dictionary. This avoids unnecessary
     computation when some node/edge types are non-reachable after trimming."""
     out_dict = copy.copy(input_dict)
@@ -33,8 +32,9 @@ def trim_to_layer(
     x: MaybeHeteroNodeTensor,
     edge_index: MaybeHeteroEdgeTensor,
     edge_attr: Optional[MaybeHeteroEdgeTensor] = None,
-) -> Tuple[MaybeHeteroNodeTensor, MaybeHeteroEdgeTensor,
-           Optional[MaybeHeteroEdgeTensor]]:
+) -> Tuple[
+    MaybeHeteroNodeTensor, MaybeHeteroEdgeTensor, Optional[MaybeHeteroEdgeTensor]
+]:
     r"""Trims the :obj:`edge_index` representation, node features :obj:`x` and
     edge features :obj:`edge_attr` to a minimal-sized representation for the
     current GNN layer :obj:`layer` in directed
@@ -61,15 +61,11 @@ def trim_to_layer(
         return x, edge_index, edge_attr
 
     if isinstance(num_sampled_edges_per_hop, dict):
-        x = {
-            k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
-            for k, v in x.items()
-        }
+        x = {k: trim_feat(v, layer, num_sampled_nodes_per_hop[k]) for k, v in x.items()}
         x = filter_empty_entries(x)
 
         edge_index = {
-            k:
-            trim_adj(
+            k: trim_adj(
                 v,
                 layer,
                 num_sampled_nodes_per_hop[k[0]],
@@ -114,12 +110,13 @@ class TrimToLayer(torch.nn.Module):
         edge_index: Adj,
         edge_attr: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Adj, Optional[Tensor]]:
-
-        if (not isinstance(num_sampled_nodes_per_hop, list)
-                and isinstance(num_sampled_edges_per_hop, list)):
+        if not isinstance(num_sampled_nodes_per_hop, list) and isinstance(
+            num_sampled_edges_per_hop, list
+        ):
             raise ValueError("'num_sampled_nodes_per_hop' needs to be given")
-        if (not isinstance(num_sampled_edges_per_hop, list)
-                and isinstance(num_sampled_nodes_per_hop, list)):
+        if not isinstance(num_sampled_edges_per_hop, list) and isinstance(
+            num_sampled_nodes_per_hop, list
+        ):
             raise ValueError("'num_sampled_edges_per_hop' needs to be given")
 
         if num_sampled_nodes_per_hop is None:
@@ -158,7 +155,6 @@ def trim_adj(
     num_sampled_dst_nodes_per_hop: List[int],
     num_sampled_edges_per_hop: List[int],
 ) -> Adj:
-
     if layer <= 0:
         return edge_index
 
@@ -182,8 +178,9 @@ def trim_adj(
     raise ValueError(f"Unsupported 'edge_index' type '{type(edge_index)}'")
 
 
-def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
-                       num_seed_nodes: int) -> SparseTensor:
+def trim_sparse_tensor(
+    src: SparseTensor, size: Tuple[int, int], num_seed_nodes: int
+) -> SparseTensor:
     r"""Trims a :class:`SparseTensor` along both dimensions to only contain
     the upper :obj:`num_nodes` in both dimensions.
 
@@ -200,7 +197,7 @@ def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
     rowptr, col, value = src.csr()
 
     rowptr = torch.narrow(rowptr, 0, 0, size[0] + 1).clone()
-    rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
+    rowptr[num_seed_nodes + 1 :] = rowptr[num_seed_nodes]
 
     col = torch.narrow(col, 0, 0, rowptr[-1])
 

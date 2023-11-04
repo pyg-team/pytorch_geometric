@@ -96,73 +96,104 @@ class GEDDataset(InMemoryDataset):
           - 0
     """
 
-    url = 'https://drive.google.com/uc?export=download&id={}'
+    url = "https://drive.google.com/uc?export=download&id={}"
 
     datasets = {
-        'AIDS700nef': {
-            'id': '10czBPJDEzEDI2tq7Z7mkBjLhj55F-a2z',
-            'extract': extract_zip,
-            'pickle': '1OpV4bCHjBkdpqI6H5Mg0-BqlA2ee2eBW',
+        "AIDS700nef": {
+            "id": "10czBPJDEzEDI2tq7Z7mkBjLhj55F-a2z",
+            "extract": extract_zip,
+            "pickle": "1OpV4bCHjBkdpqI6H5Mg0-BqlA2ee2eBW",
         },
-        'LINUX': {
-            'id': '1nw0RRVgyLpit4V4XFQyDy0pI6wUEXSOI',
-            'extract': extract_tar,
-            'pickle': '14FDm3NSnrBvB7eNpLeGy5Bz6FjuCSF5v',
+        "LINUX": {
+            "id": "1nw0RRVgyLpit4V4XFQyDy0pI6wUEXSOI",
+            "extract": extract_tar,
+            "pickle": "14FDm3NSnrBvB7eNpLeGy5Bz6FjuCSF5v",
         },
-        'ALKANE': {
-            'id': '1-LmxaWW3KulLh00YqscVEflbqr0g4cXt',
-            'extract': extract_tar,
-            'pickle': '15BpvMuHx77-yUGYgM27_sQett02HQNYu',
+        "ALKANE": {
+            "id": "1-LmxaWW3KulLh00YqscVEflbqr0g4cXt",
+            "extract": extract_tar,
+            "pickle": "15BpvMuHx77-yUGYgM27_sQett02HQNYu",
         },
-        'IMDBMulti': {
-            'id': '12QxZ7EhYA7pJiF4cO-HuE8szhSOWcfST',
-            'extract': extract_zip,
-            'pickle': '1wy9VbZvZodkixxVIOuRllC-Lp-0zdoYZ',
+        "IMDBMulti": {
+            "id": "12QxZ7EhYA7pJiF4cO-HuE8szhSOWcfST",
+            "extract": extract_zip,
+            "pickle": "1wy9VbZvZodkixxVIOuRllC-Lp-0zdoYZ",
         },
     }
 
     # List of atoms contained in the AIDS700nef dataset:
     types = [
-        'O', 'S', 'C', 'N', 'Cl', 'Br', 'B', 'Si', 'Hg', 'I', 'Bi', 'P', 'F',
-        'Cu', 'Ho', 'Pd', 'Ru', 'Pt', 'Sn', 'Li', 'Ga', 'Tb', 'As', 'Co', 'Pb',
-        'Sb', 'Se', 'Ni', 'Te'
+        "O",
+        "S",
+        "C",
+        "N",
+        "Cl",
+        "Br",
+        "B",
+        "Si",
+        "Hg",
+        "I",
+        "Bi",
+        "P",
+        "F",
+        "Cu",
+        "Ho",
+        "Pd",
+        "Ru",
+        "Pt",
+        "Sn",
+        "Li",
+        "Ga",
+        "Tb",
+        "As",
+        "Co",
+        "Pb",
+        "Sb",
+        "Se",
+        "Ni",
+        "Te",
     ]
 
-    def __init__(self, root: str, name: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.name = name
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
-        path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
+        path = osp.join(self.processed_dir, f"{self.name}_ged.pt")
         self.ged = torch.load(path)
-        path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
+        path = osp.join(self.processed_dir, f"{self.name}_norm_ged.pt")
         self.norm_ged = torch.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
         # Returns, e.g., ['LINUX/train', 'LINUX/test']
-        return [osp.join(self.name, s) for s in ['train', 'test']]
+        return [osp.join(self.name, s) for s in ["train", "test"]]
 
     @property
     def processed_file_names(self) -> List[str]:
         # Returns, e.g., ['LINUX_training.pt', 'LINUX_test.pt']
-        return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
+        return [f"{self.name}_{s}.pt" for s in ["training", "test"]]
 
     def download(self):
         # Downloads the .tar/.zip file of the graphs and extracts them:
-        name = self.datasets[self.name]['id']
+        name = self.datasets[self.name]["id"]
         path = download_url(self.url.format(name), self.raw_dir)
-        self.datasets[self.name]['extract'](path, self.raw_dir)
+        self.datasets[self.name]["extract"](path, self.raw_dir)
         os.unlink(path)
 
         # Downloads the pickle file containing pre-computed GEDs:
-        name = self.datasets[self.name]['pickle']
+        name = self.datasets[self.name]["pickle"]
         path = download_url(self.url.format(name), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
+        os.rename(path, osp.join(self.raw_dir, self.name, "ged.pickle"))
 
     def process(self):
         import networkx as nx
@@ -171,7 +202,7 @@ class GEDDataset(InMemoryDataset):
         # Iterating over paths for raw and processed data (train + test):
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
             # Find the paths of all raw graphs:
-            names = glob.glob(osp.join(r_path, '*.gexf'))
+            names = glob.glob(osp.join(r_path, "*.gexf"))
             # Get sorted graph IDs given filename: 123.gexf -> 123
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
@@ -180,7 +211,7 @@ class GEDDataset(InMemoryDataset):
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
                 # Reading the raw `*.gexf` graph:
-                G = nx.read_gexf(osp.join(r_path, f'{idx}.gexf'))
+                G = nx.read_gexf(osp.join(r_path, f"{idx}.gexf"))
                 # Mapping of nodes in `G` to a contiguous number:
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
@@ -196,10 +227,10 @@ class GEDDataset(InMemoryDataset):
 
                 # Create a one-hot encoded feature matrix denoting the atom
                 # type (for the `AIDS700nef` dataset):
-                if self.name == 'AIDS700nef':
+                if self.name == "AIDS700nef":
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
-                        x[int(node)] = self.types.index(info['type'])
+                        x[int(node)] = self.types.index(info["type"])
                     data.x = one_hot(x, num_classes=len(self.types))
 
                 if self.pre_filter is not None and not self.pre_filter(data):
@@ -216,10 +247,10 @@ class GEDDataset(InMemoryDataset):
         assoc.update({idx: i + len(ids[0]) for i, idx in enumerate(ids[1])})
 
         # Extracting ground-truth GEDs from the GED pickle file
-        path = osp.join(self.raw_dir, self.name, 'ged.pickle')
+        path = osp.join(self.raw_dir, self.name, "ged.pickle")
         # Initialize GEDs as float('inf'):
-        mat = torch.full((len(assoc), len(assoc)), float('inf'))
-        with open(path, 'rb') as f:
+        mat = torch.full((len(assoc), len(assoc)), float("inf"))
+        with open(path, "rb") as f:
             obj = pickle.load(f)
             xs, ys, gs = [], [], []
             for (x, y), g in obj.items():
@@ -232,15 +263,15 @@ class GEDDataset(InMemoryDataset):
             ged = torch.tensor(gs, dtype=torch.float)
             mat[x, y], mat[y, x] = ged, ged
 
-        path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
+        path = osp.join(self.processed_dir, f"{self.name}_ged.pt")
         torch.save(mat, path)
 
         # Calculate the normalized GEDs:
         N = torch.tensor(Ns, dtype=torch.float)
         norm_mat = mat / (0.5 * (N.view(-1, 1) + N.view(1, -1)))
 
-        path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
+        path = osp.join(self.processed_dir, f"{self.name}_norm_ged.pt")
         torch.save(norm_mat, path)
 
     def __repr__(self) -> str:
-        return f'{self.name}({len(self)})'
+        return f"{self.name}({len(self)})"

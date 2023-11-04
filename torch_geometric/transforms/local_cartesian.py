@@ -8,7 +8,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import scatter
 
 
-@functional_transform('local_cartesian')
+@functional_transform("local_cartesian")
 class LocalCartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
     attributes (functional name: :obj:`local_cartesian`). Each coordinate gets
@@ -23,11 +23,12 @@ class LocalCartesian(BaseTransform):
         interval ((float, float), optional): A tuple specifying the lower and
             upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
+
     def __init__(
-            self,
-            norm: bool = True,
-            cat: bool = True,
-            interval: Tuple[float, float] = (0.0, 1.0),
+        self,
+        norm: bool = True,
+        cat: bool = True,
+        interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.cat = cat
@@ -40,7 +41,7 @@ class LocalCartesian(BaseTransform):
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
         if self.norm:
-            max_value = scatter(cart.abs(), col, 0, pos.size(0), reduce='max')
+            max_value = scatter(cart.abs(), col, 0, pos.size(0), reduce="max")
             max_value = max_value.max(dim=-1, keepdim=True)[0]
 
             length = self.interval[1] - self.interval[0]

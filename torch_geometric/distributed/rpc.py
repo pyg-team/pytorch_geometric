@@ -13,11 +13,12 @@ _rpc_init_lock = threading.RLock()
 
 def rpc_is_initialized() -> bool:
     from torch._C._distributed_rpc import _is_current_rpc_agent_set
+
     return _is_current_rpc_agent_set()
 
 
 def rpc_require_initialized(func: Callable) -> Callable:
-    if hasattr(rpc, 'api'):
+    if hasattr(rpc, "api"):
         return rpc.api._require_initialized(func)
     return func
 
@@ -32,7 +33,7 @@ def global_all_gather(obj, timeout: Optional[int] = None):
 
 @rpc_require_initialized
 def global_barrier(timeout: Optional[int] = None):
-    r""" Block until all local and remote RPC processes."""
+    r"""Block until all local and remote RPC processes."""
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
@@ -55,11 +56,11 @@ def init_rpc(
             raise RuntimeError("'dist_context' has not been set in 'init_rpc'")
 
         options = rpc.TensorPipeRpcBackendOptions(
-            _transports=['ibv', 'uv'],
-            _channels=['mpt_uv', 'basic'],
+            _transports=["ibv", "uv"],
+            _channels=["mpt_uv", "basic"],
             num_worker_threads=num_rpc_threads,
             rpc_timeout=rpc_timeout,
-            init_method=f'tcp://{master_addr}:{master_port}',
+            init_method=f"tcp://{master_addr}:{master_port}",
         )
 
         rpc.init_rpc(
@@ -80,8 +81,10 @@ def init_rpc(
                 worker_list = [None for _ in range(world_size)]
             else:
                 if len(worker_list) != world_size:
-                    raise RuntimeError(f"Inconsistent world size found in "
-                                       f"'init_rpc' (got {len(worker_list)})")
+                    raise RuntimeError(
+                        f"Inconsistent world size found in "
+                        f"'init_rpc' (got {len(worker_list)})"
+                    )
 
             worker_list[rank] = worker_name
             rpc_worker_names[role] = worker_list
@@ -99,6 +102,7 @@ atexit.register(shutdown_rpc, False)
 
 class RPCRouter:
     r"""A router to get the worker based on the partition ID."""
+
     def __init__(self, partition_to_workers: List[List[str]]):
         for pid, rpc_worker_list in enumerate(partition_to_workers):
             if len(rpc_worker_list) == 0:
@@ -110,8 +114,7 @@ class RPCRouter:
         rpc_worker_list = self.partition_to_workers[partition_idx]
         worker_idx = self.rpc_worker_indices[partition_idx]
         router_worker = rpc_worker_list[worker_idx]
-        self.rpc_worker_indices[partition_idx] = ((worker_idx + 1) %
-                                                  len(rpc_worker_list))
+        self.rpc_worker_indices[partition_idx] = (worker_idx + 1) % len(rpc_worker_list)
         return router_worker
 
 
@@ -126,7 +129,8 @@ def rpc_partition_to_workers(
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
-        (ctx.role, num_partitions, current_partition_idx))
+        (ctx.role, num_partitions, current_partition_idx)
+    )
     for worker_name, (role, nparts, idx) in gathered_results.items():
         partition_to_workers[idx].append(worker_name)
     return partition_to_workers
@@ -134,6 +138,7 @@ def rpc_partition_to_workers(
 
 class RPCCallBase(ABC):
     r"""A wrapper base class for RPC calls in remote processes."""
+
     @abstractmethod
     def rpc_sync(self, *args, **kwargs):
         pass
@@ -164,7 +169,7 @@ def rpc_register(call: RPCCallBase) -> int:
 
 
 def _rpc_async_call(call_id: int, *args, **kwargs):
-    r""" Entry point for RPC requests."""
+    r"""Entry point for RPC requests."""
     return _rpc_call_pool.get(call_id).rpc_async(*args, **kwargs)
 
 

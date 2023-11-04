@@ -44,6 +44,7 @@ class PGMExplainer(ExplainerAlgorithm):
             :obj:`[0, 1]`) to consider the output from a perturbed data to be
             different from the original. (default: :obj:`0.1`)
     """
+
     def __init__(
         self,
         feature_index: Optional[List] = None,
@@ -81,38 +82,41 @@ class PGMExplainer(ExplainerAlgorithm):
         epsilon = 0.05 * torch.max(x, dim=0).values
 
         if self.perturbation_mode == "randint":
-            perturb_array = torch.randint(high=2, size=perturb_array.size(),
-                                          device=x.device)
+            perturb_array = torch.randint(
+                high=2, size=perturb_array.size(), device=x.device
+            )
         elif self.perturbation_mode == "mean":
-            perturb_array[:, self.feature_index] = torch.mean(
-                x[:, self.feature_index])
+            perturb_array[:, self.feature_index] = torch.mean(x[:, self.feature_index])
         elif self.perturbation_mode == "zero":
             perturb_array[:, self.feature_index] = 0
         elif self.perturbation_mode == "max":
-            perturb_array[:, self.feature_index] = torch.max(
-                x[:, self.feature_index])
+            perturb_array[:, self.feature_index] = torch.max(x[:, self.feature_index])
         elif self.perturbation_mode == "uniform":
-            random_perturbations = torch.rand(
-                perturb_array.shape) * 2 * epsilon - epsilon
-            perturb_array[:, self.feature_index] = perturb_array[
-                self.feature_index] + random_perturbations
+            random_perturbations = (
+                torch.rand(perturb_array.shape) * 2 * epsilon - epsilon
+            )
+            perturb_array[:, self.feature_index] = (
+                perturb_array[self.feature_index] + random_perturbations
+            )
             perturb_array.clamp(min=0, max=torch.max(x, dim=0))
 
         if self.is_perturbation_scaled:
-            perturb_array = torch.multiply(
-                perturb_array, torch.rand(size=perturb_array.size())) * 2
+            perturb_array = (
+                torch.multiply(perturb_array, torch.rand(size=perturb_array.size())) * 2
+            )
 
         x_perturb[index] = perturb_array.type(x_perturb.dtype)
         return x_perturb
 
     def _batch_perturb_features_on_node(
-            self,
-            model: torch.nn.Module,
-            x: Tensor,
-            edge_index: Tensor,
-            indices_to_perturb: np.array,
-            percentage: float = 50.,  # % time node gets perturbed
-            **kwargs) -> Tensor:
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        indices_to_perturb: np.array,
+        percentage: float = 50.0,  # % time node gets perturbed
+        **kwargs,
+    ) -> Tensor:
         r"""Perturbs the node features of a batch of graphs for graph
         classification tasks.
 
@@ -143,8 +147,7 @@ class PGMExplainer(ExplainerAlgorithm):
             sample[perturbed_node_indexes] = 1
 
             pred_perturb_torch = model(x_perturb, edge_index, **kwargs)
-            soft_pred_perturb = torch.softmax(pred_perturb_torch,
-                                              dim=1).squeeze()
+            soft_pred_perturb = torch.softmax(pred_perturb_torch, dim=1).squeeze()
 
             pred_change = torch.max(soft_pred) - soft_pred_perturb[pred_label]
 
@@ -208,20 +211,30 @@ class PGMExplainer(ExplainerAlgorithm):
         p_values = []
         for node in range(num_nodes):
             chi2, p, _ = chi_square(
-                node, int(target.detach().cpu()), [], data, boolean=False,
-                significance_level=self.significance_threshold)
+                node,
+                int(target.detach().cpu()),
+                [],
+                data,
+                boolean=False,
+                significance_level=self.significance_threshold,
+            )
             p_values.append(p)
 
         # the original code uses number_candidates_nodes = int(top_nodes * 4)
         # if we consider 'top nodes' to equate to max number of nodes
         # it seems more correct to limit number_candidates_nodes to this
-        candidate_nodes = np.argpartition(
-            p_values, self.max_subgraph_size)[0:self.max_subgraph_size]
+        candidate_nodes = np.argpartition(p_values, self.max_subgraph_size)[
+            0 : self.max_subgraph_size
+        ]
 
         # Round 2
         samples = self._batch_perturb_features_on_node(
-            indices_to_perturb=candidate_nodes, x=x, edge_index=edge_index,
-            model=model, **kwargs)
+            indices_to_perturb=candidate_nodes,
+            x=x,
+            edge_index=edge_index,
+            model=model,
+            **kwargs,
+        )
 
         # note: the PC estimator is in the original code, ie. est= PC(data)
         # but as it does nothing it is not included here
@@ -233,8 +246,13 @@ class PGMExplainer(ExplainerAlgorithm):
         target = num_nodes
         for node in range(num_nodes):
             _, p, _ = chi_square(
-                node, target, [], data, boolean=False,
-                significance_level=self.significance_threshold)
+                node,
+                target,
+                [],
+                data,
+                boolean=False,
+                significance_level=self.significance_threshold,
+            )
             p_values.append(p)
             if p < self.significance_threshold:
                 dependent_nodes.append(node)
@@ -298,7 +316,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
         for _ in range(self.num_samples):
             # A subset of neighbors are selected randomly for perturbing:
-            seeds = np.random.choice([1, 0], size=(len(neighbors), ))
+            seeds = np.random.choice([1, 0], size=(len(neighbors),))
             x_perturb = self._perturb_features_on_nodes(
                 x=x,
                 index=neighbors[seeds == 1],
@@ -307,10 +325,13 @@ class PGMExplainer(ExplainerAlgorithm):
             # prediction after perturbation
             pred_perturb = model(x_perturb, edge_index, **kwargs)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
-            sample_bool = np.ones(shape=(len(neighbors), ))
-            sample_bool[((softmax_pred_perturb[neighbors, target] +
-                          self.pred_threshold)
-                         >= softmax_pred[neighbors, target]).cpu()] = 0
+            sample_bool = np.ones(shape=(len(neighbors),))
+            sample_bool[
+                (
+                    (softmax_pred_perturb[neighbors, target] + self.pred_threshold)
+                    >= softmax_pred[neighbors, target]
+                ).cpu()
+            ] = 0
 
             samples.append(seeds)
             pred_samples.append(sample_bool)
@@ -321,14 +342,11 @@ class PGMExplainer(ExplainerAlgorithm):
 
         neighbors = np.array(neighbors.detach().cpu())
         data_pgm = pd.DataFrame(combine_samples)
-        data_pgm = data_pgm.rename(columns={
-            0: "A",
-            1: "B"
-        })  # Trick to use chi_square test on first two data columns
-        index_original_to_subgraph = dict(
-            zip(neighbors, list(data_pgm.columns)))
-        index_subgraph_to_original = dict(
-            zip(list(data_pgm.columns), neighbors))
+        data_pgm = data_pgm.rename(
+            columns={0: "A", 1: "B"}
+        )  # Trick to use chi_square test on first two data columns
+        index_original_to_subgraph = dict(zip(neighbors, list(data_pgm.columns)))
+        index_subgraph_to_original = dict(zip(list(data_pgm.columns), neighbors))
         p_values = []
 
         dependent_neighbors = []
@@ -341,9 +359,12 @@ class PGMExplainer(ExplainerAlgorithm):
             else:
                 _, p, _ = chi_square(
                     index_original_to_subgraph[node],
-                    index_original_to_subgraph[index], [], data_pgm,
+                    index_original_to_subgraph[index],
+                    [],
+                    data_pgm,
                     boolean=False,
-                    significance_level=self.significance_threshold)
+                    significance_level=self.significance_threshold,
+                )
             p_values.append(p)
             if p < self.significance_threshold:
                 dependent_neighbors.append(node)
@@ -359,9 +380,7 @@ class PGMExplainer(ExplainerAlgorithm):
         else:
             top_p = np.min((self.max_subgraph_size, len(neighbors) - 1))
             ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
-            pgm_nodes = [
-                index_subgraph_to_original[node] for node in ind_top_p
-            ]
+            pgm_nodes = [index_subgraph_to_original[node] for node in ind_top_p]
         node_mask[pgm_nodes] = 1
         return node_mask, pgm_stats
 
@@ -375,7 +394,6 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,  # node index
         **kwargs,
     ) -> Explanation:
-
         if self.feature_index is None:
             self.feature_index = list(range(x.shape[-1]))
 
@@ -383,7 +401,8 @@ class PGMExplainer(ExplainerAlgorithm):
             if index.numel() > 1:
                 raise NotImplementedError(
                     f"'{self.__class__.__name}' only supports a single "
-                    f"`index` for now")
+                    f"`index` for now"
+                )
             index = index.item()
 
         if self.model_config.task_level == ModelTaskLevel.node:

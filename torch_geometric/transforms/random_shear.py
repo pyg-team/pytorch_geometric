@@ -7,7 +7,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
-@functional_transform('random_shear')
+@functional_transform("random_shear")
 class RandomShear(BaseTransform):
     r"""Shears node positions by randomly sampled factors :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
@@ -26,6 +26,7 @@ class RandomShear(BaseTransform):
         shear (float or int): maximum shearing factor defining the range
             :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
     """
+
     def __init__(self, shear: Union[float, int]):
         self.shear = abs(shear)
 
@@ -39,4 +40,4 @@ class RandomShear(BaseTransform):
         return LinearTransformation(matrix)(data)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.shear})'
+        return f"{self.__class__.__name__}({self.shear})"

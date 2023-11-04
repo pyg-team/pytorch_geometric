@@ -43,6 +43,7 @@ class GraphMultisetTransformer(Aggregation):
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)
     """
+
     def __init__(
         self,
         channels: int,
@@ -60,14 +61,14 @@ class GraphMultisetTransformer(Aggregation):
         self.layer_norm = layer_norm
         self.dropout = dropout
 
-        self.pma1 = PoolingByMultiheadAttention(channels, k, heads, layer_norm,
-                                                dropout)
-        self.encoders = torch.nn.ModuleList([
-            SetAttentionBlock(channels, heads, layer_norm, dropout)
-            for _ in range(num_encoder_blocks)
-        ])
-        self.pma2 = PoolingByMultiheadAttention(channels, 1, heads, layer_norm,
-                                                dropout)
+        self.pma1 = PoolingByMultiheadAttention(channels, k, heads, layer_norm, dropout)
+        self.encoders = torch.nn.ModuleList(
+            [
+                SetAttentionBlock(channels, heads, layer_norm, dropout)
+                for _ in range(num_encoder_blocks)
+            ]
+        )
+        self.pma2 = PoolingByMultiheadAttention(channels, 1, heads, layer_norm, dropout)
 
     def reset_parameters(self):
         self.pma1.reset_parameters()
@@ -75,7 +76,7 @@ class GraphMultisetTransformer(Aggregation):
             encoder.reset_parameters()
         self.pma2.reset_parameters()
 
-    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
+    @disable_dynamic_shapes(required_args=["dim_size", "max_num_elements"])
     def forward(
         self,
         x: Tensor,
@@ -85,9 +86,9 @@ class GraphMultisetTransformer(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                      max_num_elements=max_num_elements)
+        x, mask = self.to_dense_batch(
+            x, index, ptr, dim_size, dim, max_num_elements=max_num_elements
+        )
 
         x = self.pma1(x, mask)
 
@@ -99,7 +100,9 @@ class GraphMultisetTransformer(Aggregation):
         return x.squeeze(1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.channels}, '
-                f'k={self.k}, heads={self.heads}, '
-                f'layer_norm={self.layer_norm}, '
-                f'dropout={self.dropout})')
+        return (
+            f"{self.__class__.__name__}({self.channels}, "
+            f"k={self.k}, heads={self.heads}, "
+            f"layer_norm={self.layer_norm}, "
+            f"dropout={self.dropout})"
+        )

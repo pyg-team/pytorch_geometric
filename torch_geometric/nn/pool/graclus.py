@@ -8,8 +8,9 @@ except ImportError:
     graclus_cluster = None
 
 
-def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
-            num_nodes: Optional[int] = None):
+def graclus(
+    edge_index: Tensor, weight: Optional[Tensor] = None, num_nodes: Optional[int] = None
+):
     r"""A greedy clustering algorithm from the `"Weighted Graph Cuts without
     Eigenvectors: A Multilevel Approach" <http://www.cs.utexas.edu/users/
     inderjit/public_papers/multilevel_pami.pdf>`_ paper of picking an unmarked
@@ -30,6 +31,6 @@ def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
     """
 
     if graclus_cluster is None:
-        raise ImportError('`graclus` requires `torch-cluster`.')
+        raise ImportError("`graclus` requires `torch-cluster`.")
 
     return graclus_cluster(edge_index[0], edge_index[1], weight, num_nodes)

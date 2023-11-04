@@ -40,8 +40,9 @@ class WLConvContinuous(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F)` or
           :math:`(|\mathcal{V}_t|, F)` if bipartite
     """
+
     def __init__(self, **kwargs):
-        super().__init__(aggr='add', **kwargs)
+        super().__init__(aggr="add", **kwargs)
 
     def forward(
         self,
@@ -50,13 +51,11 @@ class WLConvContinuous(MessagePassing):
         edge_weight: OptTensor = None,
         size: Size = None,
     ) -> Tensor:
-
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=size)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=size)
 
         if isinstance(edge_index, SparseTensor):
             assert edge_weight is None
@@ -67,9 +66,9 @@ class WLConvContinuous(MessagePassing):
         if edge_weight is None:
             edge_weight = x[0].new_ones(dst_index.numel())
 
-        deg = scatter(edge_weight, dst_index, 0, out.size(0), reduce='sum')
-        deg_inv = 1. / deg
-        deg_inv.masked_fill_(deg_inv == float('inf'), 0)
+        deg = scatter(edge_weight, dst_index, 0, out.size(0), reduce="sum")
+        deg_inv = 1.0 / deg
+        deg_inv.masked_fill_(deg_inv == float("inf"), 0)
         out = deg_inv.view(-1, 1) * out
 
         x_dst = x[1]

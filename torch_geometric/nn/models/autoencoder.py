@@ -20,8 +20,8 @@ class InnerProductDecoder(torch.nn.Module):
 
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
     space produced by the encoder."""
-    def forward(self, z: Tensor, edge_index: Tensor,
-                sigmoid: bool = True) -> Tensor:
+
+    def forward(self, z: Tensor, edge_index: Tensor, sigmoid: bool = True) -> Tensor:
         r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
 
@@ -60,6 +60,7 @@ class GAE(torch.nn.Module):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder: Module, decoder: Optional[Module] = None):
         super().__init__()
         self.encoder = encoder
@@ -83,8 +84,9 @@ class GAE(torch.nn.Module):
         r"""Runs the decoder and computes edge probabilities."""
         return self.decoder(*args, **kwargs)
 
-    def recon_loss(self, z: Tensor, pos_edge_index: Tensor,
-                   neg_edge_index: Optional[Tensor] = None) -> Tensor:
+    def recon_loss(
+        self, z: Tensor, pos_edge_index: Tensor, neg_edge_index: Optional[Tensor] = None
+    ) -> Tensor:
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and negative
         sampled edges.
@@ -97,18 +99,20 @@ class GAE(torch.nn.Module):
                 calculate negative edges. (default: :obj:`None`)
         """
         pos_loss = -torch.log(
-            self.decoder(z, pos_edge_index, sigmoid=True) + EPS).mean()
+            self.decoder(z, pos_edge_index, sigmoid=True) + EPS
+        ).mean()
 
         if neg_edge_index is None:
             neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
-        neg_loss = -torch.log(1 -
-                              self.decoder(z, neg_edge_index, sigmoid=True) +
-                              EPS).mean()
+        neg_loss = -torch.log(
+            1 - self.decoder(z, neg_edge_index, sigmoid=True) + EPS
+        ).mean()
 
         return pos_loss + neg_loss
 
-    def test(self, z: Tensor, pos_edge_index: Tensor,
-             neg_edge_index: Tensor) -> Tuple[Tensor, Tensor]:
+    def test(
+        self, z: Tensor, pos_edge_index: Tensor, neg_edge_index: Tensor
+    ) -> Tuple[Tensor, Tensor]:
         r"""Given latent variables :obj:`z`, positive edges
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`,
         computes area under the ROC curve (AUC) and average precision (AP)
@@ -149,6 +153,7 @@ class VGAE(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder: Module, decoder: Optional[Module] = None):
         super().__init__(encoder, decoder)
 
@@ -165,8 +170,9 @@ class VGAE(GAE):
         z = self.reparametrize(self.__mu__, self.__logstd__)
         return z
 
-    def kl_loss(self, mu: Optional[Tensor] = None,
-                logstd: Optional[Tensor] = None) -> Tensor:
+    def kl_loss(
+        self, mu: Optional[Tensor] = None, logstd: Optional[Tensor] = None
+    ) -> Tensor:
         r"""Computes the KL loss, either for the passed arguments :obj:`mu`
         and :obj:`logstd`, or based on latent variables from last encoding.
 
@@ -179,10 +185,10 @@ class VGAE(GAE):
                 computation of :math:`\log\sigma^2`. (default: :obj:`None`)
         """
         mu = self.__mu__ if mu is None else mu
-        logstd = self.__logstd__ if logstd is None else logstd.clamp(
-            max=MAX_LOGSTD)
+        logstd = self.__logstd__ if logstd is None else logstd.clamp(max=MAX_LOGSTD)
         return -0.5 * torch.mean(
-            torch.sum(1 + 2 * logstd - mu**2 - logstd.exp()**2, dim=1))
+            torch.sum(1 + 2 * logstd - mu**2 - logstd.exp() ** 2, dim=1)
+        )
 
 
 class ARGA(GAE):
@@ -198,6 +204,7 @@ class ARGA(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         encoder: Module,
@@ -249,6 +256,7 @@ class ARGVA(ARGA):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         encoder: Module,

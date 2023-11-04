@@ -38,29 +38,36 @@ class Wikidata5M(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         root: str,
-        setting: str = 'transductive',
+        setting: str = "transductive",
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
     ):
-        if setting not in {'transductive', 'inductive'}:
+        if setting not in {"transductive", "inductive"}:
             raise ValueError(f"Invalid 'setting' argument (got '{setting}')")
 
         self.setting = setting
 
         self.urls = [
-            ('https://www.dropbox.com/s/7jp4ib8zo3i6m10/'
-             'wikidata5m_text.txt.gz?dl=1'),
-            'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download',
+            (
+                "https://www.dropbox.com/s/7jp4ib8zo3i6m10/"
+                "wikidata5m_text.txt.gz?dl=1"
+            ),
+            "https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download",
         ]
-        if self.setting == 'inductive':
-            self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/'
-                             'wikidata5m_inductive.tar.gz?dl=1')
+        if self.setting == "inductive":
+            self.urls.append(
+                "https://www.dropbox.com/s/csed3cgal3m7rzo/"
+                "wikidata5m_inductive.tar.gz?dl=1"
+            )
         else:
-            self.urls.append('https://www.dropbox.com/s/6sbhm0rwo4l73jq/'
-                             'wikidata5m_transductive.tar.gz?dl=1')
+            self.urls.append(
+                "https://www.dropbox.com/s/6sbhm0rwo4l73jq/"
+                "wikidata5m_transductive.tar.gz?dl=1"
+            )
 
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
@@ -68,21 +75,21 @@ class Wikidata5M(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            'wikidata5m_text.txt.gz',
-            'download',
-            f'wikidata5m_{self.setting}_train.txt',
-            f'wikidata5m_{self.setting}_valid.txt',
-            f'wikidata5m_{self.setting}_test.txt',
+            "wikidata5m_text.txt.gz",
+            "download",
+            f"wikidata5m_{self.setting}_train.txt",
+            f"wikidata5m_{self.setting}_valid.txt",
+            f"wikidata5m_{self.setting}_test.txt",
         ]
 
     @property
     def processed_file_names(self) -> str:
-        return f'{self.setting}_data.pt'
+        return f"{self.setting}_data.pt"
 
     def download(self):
         for url in self.urls:
             download_url(url, self.raw_dir)
-        path = osp.join(self.raw_dir, f'wikidata5m_{self.setting}.tar.gz')
+        path = osp.join(self.raw_dir, f"wikidata5m_{self.setting}.tar.gz")
         extract_tar(path, self.raw_dir)
         os.remove(path)
 
@@ -90,9 +97,9 @@ class Wikidata5M(InMemoryDataset):
         import gzip
 
         entity_to_id: Dict[str, int] = {}
-        with gzip.open(self.raw_paths[0], 'rt') as f:
+        with gzip.open(self.raw_paths[0], "rt") as f:
             for i, line in enumerate(f):
-                values = line.strip().split('\t')
+                values = line.strip().split("\t")
                 entity_to_id[values[0]] = i
 
         x = torch.load(self.raw_paths[1])
@@ -103,9 +110,9 @@ class Wikidata5M(InMemoryDataset):
 
         rel_to_id: Dict[str, int] = {}
         for split, path in enumerate(self.raw_paths[2:]):
-            with open(path, 'r') as f:
+            with open(path, "r") as f:
                 for line in f:
-                    head, rel, tail = line[:-1].split('\t')
+                    head, rel, tail = line[:-1].split("\t")
                     edge_index.append([entity_to_id[head], entity_to_id[tail]])
                     if rel not in rel_to_id:
                         rel_to_id[rel] = len(rel_to_id)

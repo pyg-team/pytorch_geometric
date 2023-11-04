@@ -13,7 +13,7 @@ def _avg_pool_x(
     x: Tensor,
     size: Optional[int] = None,
 ) -> Tensor:
-    return scatter(x, cluster, dim=0, dim_size=size, reduce='mean')
+    return scatter(x, cluster, dim=0, dim_size=size, reduce="mean")
 
 
 def avg_pool_x(
@@ -95,7 +95,7 @@ def avg_pool(
 
 def avg_pool_neighbor_x(
     data: Data,
-    flow: Optional[str] = 'source_to_target',
+    flow: Optional[str] = "source_to_target",
 ) -> Data:
     r"""Average pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the average feature values from the central
@@ -106,8 +106,7 @@ def avg_pool_neighbor_x(
     edge_index, _ = add_self_loops(edge_index, num_nodes=data.num_nodes)
 
     row, col = edge_index
-    row, col = (row, col) if flow == 'source_to_target' else (col, row)
+    row, col = (row, col) if flow == "source_to_target" else (col, row)
 
-    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes,
-                     reduce='mean')
+    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes, reduce="mean")
     return data

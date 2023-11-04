@@ -47,6 +47,7 @@ class MixHopConv(MessagePassing):
         - **output:**
           node features :math:`(|\mathcal{V}|, |P| \cdot F_{out})`
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -56,7 +57,7 @@ class MixHopConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         if powers is None:
@@ -67,43 +68,57 @@ class MixHopConv(MessagePassing):
         self.powers = powers
         self.add_self_loops = add_self_loops
 
-        self.lins = torch.nn.ModuleList([
-            Linear(in_channels, out_channels, bias=False)
-            if p in powers else torch.nn.Identity()
-            for p in range(max(powers) + 1)
-        ])
+        self.lins = torch.nn.ModuleList(
+            [
+                Linear(in_channels, out_channels, bias=False)
+                if p in powers
+                else torch.nn.Identity()
+                for p in range(max(powers) + 1)
+            ]
+        )
 
         if bias:
             self.bias = Parameter(torch.empty(len(powers) * out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         for lin in self.lins:
-            if hasattr(lin, 'reset_parameters'):
+            if hasattr(lin, "reset_parameters"):
                 lin.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
+    ) -> Tensor:
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
-                edge_index, edge_weight, x.size(self.node_dim), False,
-                self.add_self_loops, self.flow, x.dtype)
+                edge_index,
+                edge_weight,
+                x.size(self.node_dim),
+                False,
+                self.add_self_loops,
+                self.flow,
+                x.dtype,
+            )
         elif isinstance(edge_index, SparseTensor):
             edge_index = gcn_norm(  # yapf: disable
-                edge_index, edge_weight, x.size(self.node_dim), False,
-                self.add_self_loops, self.flow, x.dtype)
+                edge_index,
+                edge_weight,
+                x.size(self.node_dim),
+                False,
+                self.add_self_loops,
+                self.flow,
+                x.dtype,
+            )
 
         outs = [self.lins[0](x)]
 
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                               size=None)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
             outs.append(lin.forward(x))
 
@@ -121,5 +136,7 @@ class MixHopConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, powers={self.powers})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, powers={self.powers})"
+        )

@@ -7,7 +7,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import scatter
 
 
-@functional_transform('to_slic')
+@functional_transform("to_slic")
 class ToSLIC(BaseTransform):
     r"""Converts an image to a superpixel representation using the
     :meth:`skimage.segmentation.slic` algorithm, resulting in a
@@ -36,6 +36,7 @@ class ToSLIC(BaseTransform):
             <https://scikit-image.org/docs/dev/api/skimage.segmentation.html
             #skimage.segmentation.slic>`_ for an overview.
     """
+
     def __init__(self, add_seg: bool = False, add_img: bool = False, **kwargs):
         self.add_seg = add_seg
         self.add_img = add_img
@@ -50,7 +51,7 @@ class ToSLIC(BaseTransform):
         seg = slic(img.to(torch.double).numpy(), start_label=0, **self.kwargs)
         seg = torch.from_numpy(seg)
 
-        x = scatter(img.view(h * w, c), seg.view(h * w), dim=0, reduce='mean')
+        x = scatter(img.view(h * w, c), seg.view(h * w), dim=0, reduce="mean")
 
         pos_y = torch.arange(h, dtype=torch.float)
         pos_y = pos_y.view(-1, 1).repeat(1, w).view(h * w)
@@ -58,7 +59,7 @@ class ToSLIC(BaseTransform):
         pos_x = pos_x.view(1, -1).repeat(h, 1).view(h * w)
 
         pos = torch.stack([pos_x, pos_y], dim=-1)
-        pos = scatter(pos, seg.view(h * w), dim=0, reduce='mean')
+        pos = scatter(pos, seg.view(h * w), dim=0, reduce="mean")
 
         data = Data(x=x, pos=pos)
 

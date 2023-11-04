@@ -51,6 +51,7 @@ class AntiSymmetricConv(torch.nn.Module):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{in})`
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -58,7 +59,7 @@ class AntiSymmetricConv(torch.nn.Module):
         num_iters: int = 1,
         epsilon: float = 0.1,
         gamma: float = 0.1,
-        act: Union[str, Callable, None] = 'tanh',
+        act: Union[str, Callable, None] = "tanh",
         act_kwargs: Optional[Dict[str, Any]] = None,
         bias: bool = True,
     ):
@@ -74,13 +75,13 @@ class AntiSymmetricConv(torch.nn.Module):
             phi = GCNConv(in_channels, in_channels, bias=False)
 
         self.W = Parameter(torch.empty(in_channels, in_channels))
-        self.register_buffer('eye', torch.eye(in_channels))
+        self.register_buffer("eye", torch.eye(in_channels))
         self.phi = phi
 
         if bias:
             self.bias = Parameter(torch.empty(in_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -109,9 +110,11 @@ class AntiSymmetricConv(torch.nn.Module):
         return x
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}('
-                f'{self.in_channels}, '
-                f'phi={self.phi}, '
-                f'num_iters={self.num_iters}, '
-                f'epsilon={self.epsilon}, '
-                f'gamma={self.gamma})')
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.in_channels}, "
+            f"phi={self.phi}, "
+            f"num_iters={self.num_iters}, "
+            f"epsilon={self.epsilon}, "
+            f"gamma={self.gamma})"
+        )

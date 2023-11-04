@@ -6,7 +6,7 @@ from torch_geometric.graphgym.register import (
 )
 
 
-@register_node_encoder('Integer')
+@register_node_encoder("Integer")
 class IntegerFeatureEncoder(torch.nn.Module):
     r"""Provides an encoder for integer node features.
 
@@ -21,6 +21,7 @@ class IntegerFeatureEncoder(torch.nn.Module):
         >>> encoder(batch).size()
         torch.Size([10, 16])
     """
+
     def __init__(self, emb_dim: int, num_classes: int):
         super().__init__()
 
@@ -34,7 +35,7 @@ class IntegerFeatureEncoder(torch.nn.Module):
         return batch
 
 
-@register_node_encoder('Atom')
+@register_node_encoder("Atom")
 class AtomEncoder(torch.nn.Module):
     r"""The atom encoder used in OGB molecule dataset.
 
@@ -48,6 +49,7 @@ class AtomEncoder(torch.nn.Module):
         >>> encoder(batch).size()
         torch.Size([10, 16])
     """
+
     def __init__(self, emb_dim, *args, **kwargs):
         super().__init__()
 
@@ -69,7 +71,7 @@ class AtomEncoder(torch.nn.Module):
         return batch
 
 
-@register_edge_encoder('Bond')
+@register_edge_encoder("Bond")
 class BondEncoder(torch.nn.Module):
     r"""The bond encoder used in OGB molecule dataset.
 
@@ -83,6 +85,7 @@ class BondEncoder(torch.nn.Module):
         >>> encoder(batch).size()
         torch.Size([10, 16])
     """
+
     def __init__(self, emb_dim: int):
         super().__init__()
 

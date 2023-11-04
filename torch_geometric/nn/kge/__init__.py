@@ -5,9 +5,9 @@ from .distmult import DistMult
 from .rotate import RotatE
 
 __all__ = classes = [
-    'KGEModel',
-    'TransE',
-    'ComplEx',
-    'DistMult',
-    'RotatE',
+    "KGEModel",
+    "TransE",
+    "ComplEx",
+    "DistMult",
+    "RotatE",
 ]

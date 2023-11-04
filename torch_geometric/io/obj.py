@@ -7,15 +7,15 @@ def yield_file(in_file):
     f = open(in_file)
     buf = f.read()
     f.close()
-    for b in buf.split('\n'):
-        if b.startswith('v '):
-            yield ['v', [float(x) for x in b.split(" ")[1:]]]
-        elif b.startswith('f '):
-            triangles = b.split(' ')[1:]
+    for b in buf.split("\n"):
+        if b.startswith("v "):
+            yield ["v", [float(x) for x in b.split(" ")[1:]]]
+        elif b.startswith("f "):
+            triangles = b.split(" ")[1:]
             # -1 as .obj is base 1 but the Data class expects base 0 indices
-            yield ['f', [int(t.split("/")[0]) - 1 for t in triangles]]
+            yield ["f", [int(t.split("/")[0]) - 1 for t in triangles]]
         else:
-            yield ['', ""]
+            yield ["", ""]
 
 
 def read_obj(in_file):
@@ -23,9 +23,9 @@ def read_obj(in_file):
     faces = []
 
     for k, v in yield_file(in_file):
-        if k == 'v':
+        if k == "v":
             vertices.append(v)
-        elif k == 'f':
+        elif k == "f":
             faces.append(v)
 
     if not len(faces) or not len(vertices):

@@ -30,16 +30,19 @@ class PairNorm(torch.nn.Module):
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
     """
-    def __init__(self, scale: float = 1., scale_individually: bool = False,
-                 eps: float = 1e-5):
+
+    def __init__(
+        self, scale: float = 1.0, scale_individually: bool = False, eps: float = 1e-5
+    ):
         super().__init__()
 
         self.scale = scale
         self.scale_individually = scale_individually
         self.eps = eps
 
-    def forward(self, x: Tensor, batch: OptTensor = None,
-                batch_size: Optional[int] = None) -> Tensor:
+    def forward(
+        self, x: Tensor, batch: OptTensor = None, batch_size: Optional[int] = None
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -60,15 +63,26 @@ class PairNorm(torch.nn.Module):
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 
         else:
-            mean = scatter(x, batch, dim=0, dim_size=batch_size, reduce='mean')
+            mean = scatter(x, batch, dim=0, dim_size=batch_size, reduce="mean")
             x = x - mean.index_select(0, batch)
 
             if not self.scale_individually:
-                return scale * x / torch.sqrt(self.eps + scatter(
-                    x.pow(2).sum(-1, keepdim=True), batch, dim=0,
-                    dim_size=batch_size, reduce='mean').index_select(0, batch))
+                return (
+                    scale
+                    * x
+                    / torch.sqrt(
+                        self.eps
+                        + scatter(
+                            x.pow(2).sum(-1, keepdim=True),
+                            batch,
+                            dim=0,
+                            dim_size=batch_size,
+                            reduce="mean",
+                        ).index_select(0, batch)
+                    )
+                )
             else:
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 
     def __repr__(self):
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"

@@ -46,47 +46,46 @@ class PCPNetDataset(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'http://geometry.cs.ucl.ac.uk/projects/2018/pcpnet/pclouds.zip'
+    url = "http://geometry.cs.ucl.ac.uk/projects/2018/pcpnet/pclouds.zip"
 
     category_files_train = {
-        'NoNoise': 'trainingset_no_noise.txt',
-        'Noisy': 'trainingset_whitenoise.txt',
-        'VarDensity': 'trainingset_vardensity.txt',
-        'NoisyAndVarDensity': 'trainingset_vardensity_whitenoise.txt'
+        "NoNoise": "trainingset_no_noise.txt",
+        "Noisy": "trainingset_whitenoise.txt",
+        "VarDensity": "trainingset_vardensity.txt",
+        "NoisyAndVarDensity": "trainingset_vardensity_whitenoise.txt",
     }
 
     category_files_val = {
-        'NoNoise': 'validationset_no_noise.txt',
-        'Noisy': 'validationset_whitenoise.txt',
-        'VarDensity': 'validationset_vardensity.txt',
-        'NoisyAndVarDensity': 'validationset_vardensity_whitenoise.txt'
+        "NoNoise": "validationset_no_noise.txt",
+        "Noisy": "validationset_whitenoise.txt",
+        "VarDensity": "validationset_vardensity.txt",
+        "NoisyAndVarDensity": "validationset_vardensity_whitenoise.txt",
     }
 
     category_files_test = {
-        'All': 'testset_all.txt',
-        'NoNoise': 'testset_no_noise.txt',
-        'LowNoise': 'testset_low_noise.txt',
-        'MedNoise': 'testset_med_noise.txt',
-        'HighNoise': 'testset_high_noise.txt',
-        'VarDensityStriped': 'testset_vardensity_striped.txt',
-        'VarDensityGradient': 'testset_vardensity_gradient.txt'
+        "All": "testset_all.txt",
+        "NoNoise": "testset_no_noise.txt",
+        "LowNoise": "testset_low_noise.txt",
+        "MedNoise": "testset_med_noise.txt",
+        "HighNoise": "testset_high_noise.txt",
+        "VarDensityStriped": "testset_vardensity_striped.txt",
+        "VarDensityGradient": "testset_vardensity_gradient.txt",
     }
 
     def __init__(
         self,
         root: str,
         category: str,
-        split: str = 'train',
+        split: str = "train",
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
     ):
+        assert split in ["train", "val", "test"]
 
-        assert split in ['train', 'val', 'test']
-
-        if split == 'train':
+        if split == "train":
             assert category in self.category_files_train.keys()
-        elif split == 'val':
+        elif split == "val":
             assert category in self.category_files_val.keys()
         else:
             assert category in self.category_files_test.keys()
@@ -99,16 +98,16 @@ class PCPNetDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        if self.split == 'train':
+        if self.split == "train":
             return self.category_files_train[self.category]
-        elif self.split == 'val':
+        elif self.split == "val":
             return self.category_files_val[self.category]
         else:
             return self.category_files_test[self.category]
 
     @property
     def processed_file_names(self) -> str:
-        return self.split + '_' + self.category + '.pt'
+        return self.split + "_" + self.category + ".pt"
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -118,13 +117,13 @@ class PCPNetDataset(InMemoryDataset):
     def process(self):
         path_file = self.raw_paths
         with open(path_file[0], "r") as f:
-            filenames = f.read().split('\n')[:-1]
+            filenames = f.read().split("\n")[:-1]
         data_list = []
         for filename in filenames:
-            pos_path = osp.join(self.raw_dir, filename + '.xyz')
-            normal_path = osp.join(self.raw_dir, filename + '.normals')
-            curv_path = osp.join(self.raw_dir, filename + '.curv')
-            idx_path = osp.join(self.raw_dir, filename + '.pidx')
+            pos_path = osp.join(self.raw_dir, filename + ".xyz")
+            normal_path = osp.join(self.raw_dir, filename + ".normals")
+            curv_path = osp.join(self.raw_dir, filename + ".curv")
+            idx_path = osp.join(self.raw_dir, filename + ".pidx")
             pos = read_txt_array(pos_path)
             normals = read_txt_array(normal_path)
             curv = read_txt_array(curv_path)
@@ -141,5 +140,4 @@ class PCPNetDataset(InMemoryDataset):
         self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({len(self)}, '
-                f'category={self.category})')
+        return f"{self.__class__.__name__}({len(self)}, " f"category={self.category})"

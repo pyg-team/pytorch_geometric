@@ -18,9 +18,10 @@ from torch_geometric.utils.mixin import CastMixin
 
 class DataType(Enum):
     r"""The data type a sampler is operating on."""
-    homogeneous = 'homogeneous'
-    heterogeneous = 'heterogeneous'
-    remote = 'remote'
+
+    homogeneous = "homogeneous"
+    heterogeneous = "heterogeneous"
+    remote = "remote"
 
     @classmethod
     def from_data(cls, data: Any):
@@ -28,21 +29,27 @@ class DataType(Enum):
             return cls.homogeneous
         elif isinstance(data, HeteroData):
             return cls.heterogeneous
-        elif (isinstance(data, (list, tuple)) and len(data) == 2
-              and isinstance(data[0], FeatureStore)
-              and isinstance(data[1], GraphStore)):
+        elif (
+            isinstance(data, (list, tuple))
+            and len(data) == 2
+            and isinstance(data[0], FeatureStore)
+            and isinstance(data[1], GraphStore)
+        ):
             return cls.remote
 
-        raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
-                         f"'FeatureStore' and 'GraphStore' "
-                         f"(got '{type(data)}')")
+        raise ValueError(
+            f"Expected a 'Data', 'HeteroData', or a tuple of "
+            f"'FeatureStore' and 'GraphStore' "
+            f"(got '{type(data)}')"
+        )
 
 
 class SubgraphType(Enum):
     r"""The type of the returned subgraph."""
-    directional = 'directional'
-    bidirectional = 'bidirectional'
-    induced = 'induced'
+
+    directional = "directional"
+    bidirectional = "bidirectional"
+    induced = "induced"
 
 
 @dataclass(init=False)
@@ -59,6 +66,7 @@ class NodeSamplerInput(CastMixin):
         input_type (str, optional): The input node type (in case of sampling in
             a heterogeneous graph). (default: :obj:`None`)
     """
+
     input_id: OptTensor
     node: Tensor
     time: OptTensor = None
@@ -82,7 +90,7 @@ class NodeSamplerInput(CastMixin):
         self.time = time
         self.input_type = input_type
 
-    def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
+    def __getitem__(self, index: Union[Tensor, Any]) -> "NodeSamplerInput":
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
@@ -113,6 +121,7 @@ class EdgeSamplerInput(CastMixin):
         input_type (Tuple[str, str, str], optional): The input edge type (in
             case of sampling in a heterogeneous graph). (default: :obj:`None`)
     """
+
     input_id: OptTensor
     row: Tensor
     col: Tensor
@@ -145,7 +154,7 @@ class EdgeSamplerInput(CastMixin):
         self.time = time
         self.input_type = input_type
 
-    def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
+    def __getitem__(self, index: Union[Tensor, Any]) -> "EdgeSamplerInput":
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
@@ -186,6 +195,7 @@ class SamplerOutput(CastMixin):
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
+
     node: Tensor
     row: Tensor
     col: Tensor
@@ -197,7 +207,7 @@ class SamplerOutput(CastMixin):
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(self) -> "SamplerOutput":
         r"""Converts the sampled subgraph into a bidirectional variant, in
         which all sampled edges are guaranteed to be bidirectional."""
         out = copy.copy(self)
@@ -250,6 +260,7 @@ class HeteroSamplerOutput(CastMixin):
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
+
     node: Dict[NodeType, Tensor]
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
@@ -261,7 +272,7 @@ class HeteroSamplerOutput(CastMixin):
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(self) -> "SamplerOutput":
         r"""Converts the sampled subgraph into a bidirectional variant, in
         which all sampled edges are guaranteed to be bidirectional."""
         out = copy.copy(self)
@@ -271,10 +282,10 @@ class HeteroSamplerOutput(CastMixin):
 
         src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
-        edge_types = [k for k in edge_types if not k[1].startswith('rev_')]
+        edge_types = [k for k in edge_types if not k[1].startswith("rev_")]
         for edge_type in edge_types:
             src, rel, dst = edge_type
-            rev_edge_type = (dst, f'rev_{rel}', src)
+            rev_edge_type = (dst, f"rev_{rel}", src)
 
             if src == dst and rev_edge_type not in self.row:
                 out.row[edge_type], out.col[edge_type], _ = to_bidirectional(
@@ -319,9 +330,11 @@ class HeteroSamplerOutput(CastMixin):
                         out.edge[edge_type] = None
 
                 else:
-                    warnings.warn(f"Cannot convert to bidirectional graph "
-                                  f"since the edge type {edge_type} does not "
-                                  f"seem to have a reverse edge type")
+                    warnings.warn(
+                        f"Cannot convert to bidirectional graph "
+                        f"since the edge type {edge_type} does not "
+                        f"seem to have a reverse edge type"
+                    )
 
         out.num_sampled_nodes = out.num_sampled_edges = None
 
@@ -343,6 +356,7 @@ class NumNeighbors:
         default (List[int], optional): The default number of neighbors for edge
             types not specified in :obj:`values`. (default: :obj:`None`)
     """
+
     values: Union[List[int], Dict[EdgeTypeStr, List[int]]]
     default: Optional[List[int]] = None
 
@@ -352,23 +366,24 @@ class NumNeighbors:
         default: Optional[List[int]] = None,
     ):
         if isinstance(values, (tuple, list)) and default is not None:
-            raise ValueError(f"'default' must be set to 'None' in case a "
-                             f"single list is given as the number of "
-                             f"neighbors (got '{type(default)})'")
+            raise ValueError(
+                f"'default' must be set to 'None' in case a "
+                f"single list is given as the number of "
+                f"neighbors (got '{type(default)})'"
+            )
 
         if isinstance(values, dict):
             values = {EdgeTypeStr(key): value for key, value in values.items()}
 
         # Write to `__dict__` since dataclass is annotated with `frozen=True`:
-        self.__dict__['values'] = values
-        self.__dict__['default'] = default
+        self.__dict__["values"] = values
+        self.__dict__["default"] = default
 
     def _get_values(
         self,
         edge_types: Optional[List[EdgeType]] = None,
         mapped: bool = False,
     ) -> Union[List[int], Dict[Union[EdgeType, EdgeTypeStr], List[int]]]:
-
         if edge_types is not None:
             if isinstance(self.values, (tuple, list)):
                 default = self.values
@@ -381,12 +396,15 @@ class NumNeighbors:
             for edge_type in edge_types:
                 edge_type_str = EdgeTypeStr(edge_type)
                 if edge_type_str in self.values:
-                    out[edge_type_str if mapped else edge_type] = (
-                        self.values[edge_type_str])
+                    out[edge_type_str if mapped else edge_type] = self.values[
+                        edge_type_str
+                    ]
                 else:
                     if default is None:
-                        raise ValueError(f"Missing number of neighbors for "
-                                         f"edge type '{edge_type}'")
+                        raise ValueError(
+                            f"Missing number of neighbors for "
+                            f"edge type '{edge_type}'"
+                        )
                     out[edge_type_str if mapped else edge_type] = default
 
         elif isinstance(self.values, dict) and not mapped:
@@ -398,9 +416,11 @@ class NumNeighbors:
         if isinstance(out, dict):
             num_hops = set(len(v) for v in out.values())
             if len(num_hops) > 1:
-                raise ValueError(f"Number of hops must be the same across all "
-                                 f"edge types (got {len(num_hops)} different "
-                                 f"number of hops)")
+                raise ValueError(
+                    f"Number of hops must be the same across all "
+                    f"edge types (got {len(num_hops)} different "
+                    f"number of hops)"
+                )
 
         return out
 
@@ -414,12 +434,12 @@ class NumNeighbors:
             edge_types (List[Tuple[str, str, str]], optional): The edge types
                 to generate the number of neighbors for. (default: :obj:`None`)
         """
-        if '_values' in self.__dict__:
-            return self.__dict__['_values']
+        if "_values" in self.__dict__:
+            return self.__dict__["_values"]
 
         values = self._get_values(edge_types, mapped=False)
 
-        self.__dict__['_values'] = values
+        self.__dict__["_values"] = values
         return values
 
     def get_mapped_values(
@@ -434,19 +454,19 @@ class NumNeighbors:
             edge_types (List[Tuple[str, str, str]], optional): The edge types
                 to generate the number of neighbors for. (default: :obj:`None`)
         """
-        if '_mapped_values' in self.__dict__:
-            return self.__dict__['_mapped_values']
+        if "_mapped_values" in self.__dict__:
+            return self.__dict__["_mapped_values"]
 
         values = self._get_values(edge_types, mapped=True)
 
-        self.__dict__['_mapped_values'] = values
+        self.__dict__["_mapped_values"] = values
         return values
 
     @property
     def num_hops(self) -> int:
         r"""Returns the number of hops."""
-        if '_num_hops' in self.__dict__:
-            return self.__dict__['_num_hops']
+        if "_num_hops" in self.__dict__:
+            return self.__dict__["_num_hops"]
 
         if isinstance(self.values, (tuple, list)):
             num_hops = max(len(self.values), len(self.default or []))
@@ -454,7 +474,7 @@ class NumNeighbors:
             num_hops = max([0] + [len(v) for v in self.values.values()])
             num_hops = max(num_hops, len(self.default or []))
 
-        self.__dict__['_num_hops'] = num_hops
+        self.__dict__["_num_hops"] = num_hops
         return num_hops
 
     def __len__(self) -> int:
@@ -464,10 +484,10 @@ class NumNeighbors:
 
 class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
-    binary = 'binary'
+    binary = "binary"
     # 'triplet': Randomly sample negative destination nodes for each positive
     # source node.
-    triplet = 'triplet'
+    triplet = "triplet"
 
 
 @dataclass
@@ -490,6 +510,7 @@ class NegativeSampling(CastMixin):
             If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)
     """
+
     mode: NegativeSamplingMode
     amount: Union[int, float] = 1
     weight: Optional[Tensor] = None
@@ -505,16 +526,20 @@ class NegativeSampling(CastMixin):
         self.weight = weight
 
         if self.amount <= 0:
-            raise ValueError(f"The attribute 'amount' needs to be positive "
-                             f"for '{self.__class__.__name__}' "
-                             f"(got {self.amount})")
+            raise ValueError(
+                f"The attribute 'amount' needs to be positive "
+                f"for '{self.__class__.__name__}' "
+                f"(got {self.amount})"
+            )
 
         if self.is_triplet():
             if self.amount != math.ceil(self.amount):
-                raise ValueError(f"The attribute 'amount' needs to be an "
-                                 f"integer for '{self.__class__.__name__}' "
-                                 f"with 'triplet' negative sampling "
-                                 f"(got {self.amount}).")
+                raise ValueError(
+                    f"The attribute 'amount' needs to be an "
+                    f"integer for '{self.__class__.__name__}' "
+                    f"with 'triplet' negative sampling "
+                    f"(got {self.amount})."
+                )
             self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
@@ -523,21 +548,22 @@ class NegativeSampling(CastMixin):
     def is_triplet(self) -> bool:
         return self.mode == NegativeSamplingMode.triplet
 
-    def sample(self, num_samples: int,
-               num_nodes: Optional[int] = None) -> Tensor:
+    def sample(self, num_samples: int, num_nodes: Optional[int] = None) -> Tensor:
         r"""Generates :obj:`num_samples` negative samples."""
         if self.weight is None:
             if num_nodes is None:
                 raise ValueError(
                     f"Cannot sample negatives in '{self.__class__.__name__}' "
-                    f"without passing the 'num_nodes' argument")
-            return torch.randint(num_nodes, (num_samples, ))
+                    f"without passing the 'num_nodes' argument"
+                )
+            return torch.randint(num_nodes, (num_samples,))
 
         if num_nodes is not None and self.weight.numel() != num_nodes:
             raise ValueError(
                 f"The 'weight' attribute in '{self.__class__.__name__}' "
                 f"needs to match the number of nodes {num_nodes} "
-                f"(got {self.weight.numel()})")
+                f"(got {self.weight.numel()})"
+            )
         return torch.multinomial(self.weight, num_samples, replacement=True)
 
 
@@ -553,6 +579,7 @@ class BaseSampler(ABC):
         As such, it is recommended to limit the amount of information stored in
         the sampler.
     """
+
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,

@@ -53,33 +53,39 @@ class EllipticBitcoinDataset(InMemoryDataset):
           - 165
           - 2
     """
-    url = 'https://data.pyg.org/datasets/elliptic'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    url = "https://data.pyg.org/datasets/elliptic"
+
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            'elliptic_txs_features.csv',
-            'elliptic_txs_edgelist.csv',
-            'elliptic_txs_classes.csv',
+            "elliptic_txs_features.csv",
+            "elliptic_txs_edgelist.csv",
+            "elliptic_txs_classes.csv",
         ]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         for file_name in self.raw_file_names:
-            path = download_url(f'{self.url}/{file_name}.zip', self.raw_dir)
+            path = download_url(f"{self.url}/{file_name}.zip", self.raw_dir)
             extract_zip(path, self.raw_dir)
             os.remove(path)
 
-    def _process_df(self, feat_df: Any, edge_df: Any,
-                    class_df: Any) -> Tuple[Any, Any, Any]:
+    def _process_df(
+        self, feat_df: Any, edge_df: Any, class_df: Any
+    ) -> Tuple[Any, Any, Any]:
         return feat_df, edge_df, class_df
 
     def process(self):
@@ -89,7 +95,7 @@ class EllipticBitcoinDataset(InMemoryDataset):
         edge_df = pd.read_csv(self.raw_paths[1])
         class_df = pd.read_csv(self.raw_paths[2])
 
-        columns = {0: 'txId', 1: 'time_step'}
+        columns = {0: "txId", 1: "time_step"}
         feat_df = feat_df.rename(columns=columns)
 
         feat_df, edge_df, class_df = self._process_df(
@@ -102,23 +108,24 @@ class EllipticBitcoinDataset(InMemoryDataset):
 
         # There exists 3 different classes in the dataset:
         # 0=licit,  1=illicit, 2=unknown
-        mapping = {'unknown': 2, '1': 1, '2': 0}
-        class_df['class'] = class_df['class'].map(mapping)
-        y = torch.from_numpy(class_df['class'].values)
+        mapping = {"unknown": 2, "1": 1, "2": 0}
+        class_df["class"] = class_df["class"].map(mapping)
+        y = torch.from_numpy(class_df["class"].values)
 
-        mapping = {idx: i for i, idx in enumerate(feat_df['txId'].values)}
-        edge_df['txId1'] = edge_df['txId1'].map(mapping)
-        edge_df['txId2'] = edge_df['txId2'].map(mapping)
+        mapping = {idx: i for i, idx in enumerate(feat_df["txId"].values)}
+        edge_df["txId1"] = edge_df["txId1"].map(mapping)
+        edge_df["txId2"] = edge_df["txId2"].map(mapping)
         edge_index = torch.from_numpy(edge_df.values).t().contiguous()
 
         # Timestamp based split:
         # train_mask: 1 - 34 time_step, test_mask: 35-49 time_step
-        time_step = torch.from_numpy(feat_df['time_step'].values)
+        time_step = torch.from_numpy(feat_df["time_step"].values)
         train_mask = (time_step < 35) & (y != 2)
         test_mask = (time_step >= 35) & (y != 2)
 
-        data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask,
-                    test_mask=test_mask)
+        data = Data(
+            x=x, edge_index=edge_index, y=y, train_mask=train_mask, test_mask=test_mask
+        )
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

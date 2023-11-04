@@ -26,22 +26,28 @@ from torch_geometric.utils import is_torch_sparse_tensor, to_edge_index
 
 
 class MLP(Sequential):
-    def __init__(self, channels: List[int], norm: Optional[str] = None,
-                 bias: bool = True, dropout: float = 0.):
+    def __init__(
+        self,
+        channels: List[int],
+        norm: Optional[str] = None,
+        bias: bool = True,
+        dropout: float = 0.0,
+    ):
         m = []
         for i in range(1, len(channels)):
             m.append(Linear(channels[i - 1], channels[i], bias=bias))
 
             if i < len(channels) - 1:
-                if norm and norm == 'batch':
+                if norm and norm == "batch":
                     m.append(BatchNorm1d(channels[i], affine=True))
-                elif norm and norm == 'layer':
+                elif norm and norm == "layer":
                     m.append(LayerNorm(channels[i], elementwise_affine=True))
-                elif norm and norm == 'instance':
+                elif norm and norm == "instance":
                     m.append(InstanceNorm1d(channels[i], affine=False))
                 elif norm:
                     raise NotImplementedError(
-                        f'Normalization layer "{norm}" not supported.')
+                        f'Normalization layer "{norm}" not supported.'
+                    )
                 m.append(ReLU())
                 m.append(Dropout(dropout))
 
@@ -119,18 +125,19 @@ class GENConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
-        aggr: Optional[Union[str, List[str], Aggregation]] = 'softmax',
+        aggr: Optional[Union[str, List[str], Aggregation]] = "softmax",
         t: float = 1.0,
         learn_t: bool = False,
         p: float = 1.0,
         learn_p: bool = False,
         msg_norm: bool = False,
         learn_msg_scale: bool = False,
-        norm: str = 'batch',
+        norm: str = "batch",
         num_layers: int = 2,
         expansion: int = 2,
         eps: float = 1e-7,
@@ -138,19 +145,17 @@ class GENConv(MessagePassing):
         edge_dim: Optional[int] = None,
         **kwargs,
     ):
-
         # Backward compatibility:
-        semi_grad = True if aggr == 'softmax_sg' else False
-        aggr = 'softmax' if aggr == 'softmax_sg' else aggr
-        aggr = 'powermean' if aggr == 'power' else aggr
+        semi_grad = True if aggr == "softmax_sg" else False
+        aggr = "softmax" if aggr == "softmax_sg" else aggr
+        aggr = "powermean" if aggr == "power" else aggr
 
         # Override args of aggregator if `aggr_kwargs` is specified
-        if 'aggr_kwargs' not in kwargs:
-            if aggr == 'softmax':
-                kwargs['aggr_kwargs'] = dict(t=t, learn=learn_t,
-                                             semi_grad=semi_grad)
-            elif aggr == 'powermean':
-                kwargs['aggr_kwargs'] = dict(p=p, learn=learn_p)
+        if "aggr_kwargs" not in kwargs:
+            if aggr == "softmax":
+                kwargs["aggr_kwargs"] = dict(t=t, learn=learn_t, semi_grad=semi_grad)
+            elif aggr == "powermean":
+                kwargs["aggr_kwargs"] = dict(p=p, learn=learn_p)
 
         super().__init__(aggr=aggr, **kwargs)
 
@@ -173,8 +178,7 @@ class GENConv(MessagePassing):
             aggr_out_channels = out_channels
 
         if aggr_out_channels != out_channels:
-            self.lin_aggr_out = Linear(aggr_out_channels, out_channels,
-                                       bias=bias)
+            self.lin_aggr_out = Linear(aggr_out_channels, out_channels, bias=bias)
 
         if in_channels[1] != out_channels:
             self.lin_dst = Linear(in_channels[1], out_channels, bias=bias)
@@ -191,24 +195,28 @@ class GENConv(MessagePassing):
     def reset_parameters(self):
         super().reset_parameters()
         reset(self.mlp)
-        if hasattr(self, 'msg_norm'):
+        if hasattr(self, "msg_norm"):
             self.msg_norm.reset_parameters()
-        if hasattr(self, 'lin_src'):
+        if hasattr(self, "lin_src"):
             self.lin_src.reset_parameters()
-        if hasattr(self, 'lin_edge'):
+        if hasattr(self, "lin_edge"):
             self.lin_edge.reset_parameters()
-        if hasattr(self, 'lin_aggr_out'):
+        if hasattr(self, "lin_aggr_out"):
             self.lin_aggr_out.reset_parameters()
-        if hasattr(self, 'lin_dst'):
+        if hasattr(self, "lin_dst"):
             self.lin_dst.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        if hasattr(self, 'lin_src'):
+        if hasattr(self, "lin_src"):
             x = (self.lin_src(x[0]), x[1])
 
         if isinstance(edge_index, SparseTensor):
@@ -218,7 +226,7 @@ class GENConv(MessagePassing):
             if value.dim() > 1 or not value.all():
                 edge_attr = value
 
-        if edge_attr is not None and hasattr(self, 'lin_edge'):
+        if edge_attr is not None and hasattr(self, "lin_edge"):
             edge_attr = self.lin_edge(edge_attr)
 
         # Node and edge feature dimensionalites need to match.
@@ -228,17 +236,17 @@ class GENConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
-        if hasattr(self, 'lin_aggr_out'):
+        if hasattr(self, "lin_aggr_out"):
             out = self.lin_aggr_out(out)
 
-        if hasattr(self, 'msg_norm'):
+        if hasattr(self, "msg_norm"):
             h = x[1] if x[1] is not None else x[0]
             assert h is not None
             out = self.msg_norm(h, out)
 
         x_dst = x[1]
         if x_dst is not None:
-            if hasattr(self, 'lin_dst'):
+            if hasattr(self, "lin_dst"):
                 x_dst = self.lin_dst(x_dst)
             out = out + x_dst
 
@@ -249,5 +257,7 @@ class GENConv(MessagePassing):
         return msg.relu() + self.eps
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, aggr={self.aggr})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, aggr={self.aggr})"
+        )

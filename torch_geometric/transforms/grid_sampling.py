@@ -11,7 +11,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import one_hot, scatter
 
 
-@functional_transform('grid_sampling')
+@functional_transform("grid_sampling")
 class GridSampling(BaseTransform):
     r"""Clusters points into fixed-sized voxels
     (functional name: :obj:`grid_sampling`).
@@ -29,9 +29,13 @@ class GridSampling(BaseTransform):
             maximum coordinates found in :obj:`data.pos`.
             (default: :obj:`None`)
     """
-    def __init__(self, size: Union[float, List[float], Tensor],
-                 start: Optional[Union[float, List[float], Tensor]] = None,
-                 end: Optional[Union[float, List[float], Tensor]] = None):
+
+    def __init__(
+        self,
+        size: Union[float, List[float], Tensor],
+        start: Optional[Union[float, List[float], Tensor]] = None,
+        end: Optional[Union[float, List[float], Tensor]] = None,
+    ):
         self.size = size
         self.start = start
         self.end = end
@@ -39,27 +43,27 @@ class GridSampling(BaseTransform):
     def forward(self, data: Data) -> Data:
         num_nodes = data.num_nodes
 
-        batch = data.get('batch', None)
+        batch = data.get("batch", None)
 
-        c = torch_geometric.nn.voxel_grid(data.pos, self.size, batch,
-                                          self.start, self.end)
+        c = torch_geometric.nn.voxel_grid(
+            data.pos, self.size, batch, self.start, self.end
+        )
         c, perm = torch_geometric.nn.pool.consecutive.consecutive_cluster(c)
 
         for key, item in data:
-            if bool(re.search('edge', key)):
-                raise ValueError(
-                    'GridSampling does not support coarsening of edges')
+            if bool(re.search("edge", key)):
+                raise ValueError("GridSampling does not support coarsening of edges")
 
             if torch.is_tensor(item) and item.size(0) == num_nodes:
-                if key == 'y':
-                    item = scatter(one_hot(item), c, dim=0, reduce='sum')
+                if key == "y":
+                    item = scatter(one_hot(item), c, dim=0, reduce="sum")
                     data[key] = item.argmax(dim=-1)
-                elif key == 'batch':
+                elif key == "batch":
                     data[key] = item[perm]
                 else:
-                    data[key] = scatter(item, c, dim=0, reduce='mean')
+                    data[key] = scatter(item, c, dim=0, reduce="mean")
 
         return data
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(size={self.size})'
+        return f"{self.__class__.__name__}(size={self.size})"

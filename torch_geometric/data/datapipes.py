@@ -16,7 +16,7 @@ except ImportError:
         return lambda cls: cls
 
 
-@functional_datapipe('batch_graphs')
+@functional_datapipe("batch_graphs")
 class Batcher(IterBatcher):
     def __init__(
         self,
@@ -32,12 +32,12 @@ class Batcher(IterBatcher):
         )
 
 
-@functional_datapipe('parse_smiles')
+@functional_datapipe("parse_smiles")
 class SMILESParser(IterDataPipe):
     def __init__(
         self,
         dp: IterDataPipe,
-        smiles_key: str = 'smiles',
+        smiles_key: str = "smiles",
         target_key: Optional[str] = None,
     ):
         super().__init__()
@@ -54,12 +54,13 @@ class SMILESParser(IterDataPipe):
                 if self.target_key is not None:
                     y = d.get(self.target_key, None)
                     if y is not None:
-                        y = float(y) if len(y) > 0 else float('NaN')
+                        y = float(y) if len(y) > 0 else float("NaN")
                         data.y = torch.tensor([y], dtype=torch.float)
             else:
                 raise ValueError(
                     f"'{self.__class__.__name__}' expected either a string or "
-                    f"a dict as input (got '{type(d)}')")
+                    f"a dict as input (got '{type(d)}')"
+                )
 
             yield data
 

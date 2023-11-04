@@ -27,8 +27,7 @@ def set_masks(
             # Convert mask to a param if it was previously registered as one.
             # This is a workaround for the fact that PyTorch does not allow
             # assignments of pure tensors to parameter attributes:
-            if (not isinstance(mask, Parameter)
-                    and '_edge_mask' in module._parameters):
+            if not isinstance(mask, Parameter) and "_edge_mask" in module._parameters:
                 mask = Parameter(mask)
 
             module.explain = True
@@ -50,8 +49,8 @@ def set_hetero_masks(
             for edge_type in mask_dict.keys():
                 if edge_type in module:
                     edge_level_module = module[edge_type]
-                elif '__'.join(edge_type) in module:
-                    edge_level_module = module['__'.join(edge_type)]
+                elif "__".join(edge_type) in module:
+                    edge_level_module = module["__".join(edge_type)]
                 else:
                     continue
 

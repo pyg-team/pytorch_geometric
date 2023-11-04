@@ -7,8 +7,9 @@ from typing import Optional
 from torch_geometric.data.makedirs import makedirs
 
 
-def download_url(url: str, folder: str, log: bool = True,
-                 filename: Optional[str] = None):
+def download_url(
+    url: str, folder: str, log: bool = True, filename: Optional[str] = None
+):
     r"""Downloads the content of an URL to a specific folder.
 
     Args:
@@ -19,25 +20,25 @@ def download_url(url: str, folder: str, log: bool = True,
     """
 
     if filename is None:
-        filename = url.rpartition('/')[2]
-        filename = filename if filename[0] == '?' else filename.split('?')[0]
+        filename = url.rpartition("/")[2]
+        filename = filename if filename[0] == "?" else filename.split("?")[0]
 
     path = osp.join(folder, filename)
 
     if osp.exists(path):  # pragma: no cover
-        if log and 'pytest' not in sys.modules:
-            print(f'Using existing file {filename}', file=sys.stderr)
+        if log and "pytest" not in sys.modules:
+            print(f"Using existing file {filename}", file=sys.stderr)
         return path
 
-    if log and 'pytest' not in sys.modules:
-        print(f'Downloading {url}', file=sys.stderr)
+    if log and "pytest" not in sys.modules:
+        print(f"Downloading {url}", file=sys.stderr)
 
     makedirs(folder)
 
     context = ssl._create_unverified_context()
     data = urllib.request.urlopen(url, context=context)
 
-    with open(path, 'wb') as f:
+    with open(path, "wb") as f:
         # workaround for https://bugs.python.org/issue42853
         while True:
             chunk = data.read(10 * 1024 * 1024)

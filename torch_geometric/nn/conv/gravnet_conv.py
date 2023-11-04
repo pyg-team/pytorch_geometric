@@ -49,19 +49,27 @@ class GravNetConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 space_dimensions: int, propagate_dimensions: int, k: int,
-                 num_workers: Optional[int] = None, **kwargs):
-        super().__init__(aggr=['mean', 'max'], flow='source_to_target',
-                         **kwargs)
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        space_dimensions: int,
+        propagate_dimensions: int,
+        k: int,
+        num_workers: Optional[int] = None,
+        **kwargs,
+    ):
+        super().__init__(aggr=["mean", "max"], flow="source_to_target", **kwargs)
 
         if knn is None:
-            raise ImportError('`GravNetConv` requires `torch-cluster`.')
+            raise ImportError("`GravNetConv` requires `torch-cluster`.")
 
         if num_workers is not None:
             warnings.warn(
                 "'num_workers' attribute in '{self.__class__.__name__}' is "
-                "deprecated and will be removed in a future release")
+                "deprecated and will be removed in a future release"
+            )
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -83,8 +91,10 @@ class GravNetConv(MessagePassing):
         self.lin_out2.reset_parameters()
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
         # type: (Tensor, OptTensor) -> Tensor  # noqa
         # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
 
@@ -111,12 +121,15 @@ class GravNetConv(MessagePassing):
         edge_index = knn(s_l, s_r, self.k, b[0], b[1]).flip([0])
 
         edge_weight = (s_l[edge_index[0]] - s_r[edge_index[1]]).pow(2).sum(-1)
-        edge_weight = torch.exp(-10. * edge_weight)  # 10 gives a better spread
+        edge_weight = torch.exp(-10.0 * edge_weight)  # 10 gives a better spread
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=(h_l, None),
-                             edge_weight=edge_weight,
-                             size=(s_l.size(0), s_r.size(0)))
+        out = self.propagate(
+            edge_index,
+            x=(h_l, None),
+            edge_weight=edge_weight,
+            size=(s_l.size(0), s_r.size(0)),
+        )
 
         return self.lin_out1(x[1]) + self.lin_out2(out)
 
@@ -124,5 +137,7 @@ class GravNetConv(MessagePassing):
         return x_j * edge_weight.unsqueeze(1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, k={self.k})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, k={self.k})"
+        )

@@ -9,7 +9,7 @@ import torch
 
 
 def get_numa_nodes_cores() -> Dict[str, Any]:
-    """ Returns numa nodes info in format:
+    """Returns numa nodes info in format:
 
     ..code-block::
 
@@ -21,7 +21,7 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
 
     If not available, returns an empty dictionary.
     """
-    numa_node_paths = glob.glob('/sys/devices/system/node/node[0-9]*')
+    numa_node_paths = glob.glob("/sys/devices/system/node/node[0-9]*")
 
     if not numa_node_paths:
         return {}
@@ -32,29 +32,29 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
             numa_node_id = int(os.path.basename(node_path)[4:])
 
             thread_siblings = {}
-            for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
+            for cpu_dir in glob.glob(os.path.join(node_path, "cpu[0-9]*")):
                 cpu_id = int(os.path.basename(cpu_dir)[3:])
                 if cpu_id > 0:
-                    with open(os.path.join(cpu_dir,
-                                           'online')) as core_online_file:
-                        core_online = int(
-                            core_online_file.read().splitlines()[0])
+                    with open(os.path.join(cpu_dir, "online")) as core_online_file:
+                        core_online = int(core_online_file.read().splitlines()[0])
                 else:
                     core_online = 1  # cpu0 is always online (special case)
                 if core_online == 1:
-                    with open(os.path.join(cpu_dir, 'topology',
-                                           'core_id')) as core_id_file:
+                    with open(
+                        os.path.join(cpu_dir, "topology", "core_id")
+                    ) as core_id_file:
                         core_id = int(core_id_file.read().strip())
                         if core_id in thread_siblings:
                             thread_siblings[core_id].append(cpu_id)
                         else:
                             thread_siblings[core_id] = [cpu_id]
 
-            nodes[numa_node_id] = sorted([(k, sorted(v))
-                                          for k, v in thread_siblings.items()])
+            nodes[numa_node_id] = sorted(
+                [(k, sorted(v)) for k, v in thread_siblings.items()]
+            )
 
     except (OSError, ValueError, IndexError, IOError):
-        Warning('Failed to read NUMA info')
+        Warning("Failed to read NUMA info")
         return {}
 
     return nodes
@@ -63,6 +63,7 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
 class WorkerInitWrapper:
     r"""Wraps the :attr:`worker_init_fn` argument for
     :class:`torch.utils.data.DataLoader` workers."""
+
     def __init__(self, func):
         self.func = func
 
@@ -100,6 +101,7 @@ class AffinityMixin:
             for batch in loader:
                 pass
     """
+
     @contextmanager
     def enable_cpu_affinity(self, loader_cores: Optional[List[int]] = None):
         r"""Enables CPU affinity.
@@ -113,13 +115,15 @@ class AffinityMixin:
         if not self.num_workers > 0:
             raise ValueError(
                 f"'enable_cpu_affinity' should be used with at least one "
-                f"worker (got {self.num_workers})")
+                f"worker (got {self.num_workers})"
+            )
 
         if loader_cores and len(loader_cores) != self.num_workers:
             raise ValueError(
                 f"The number of loader cores (got {len(loader_cores)}) "
                 f"in 'enable_cpu_affinity' should match with the number "
-                f"of workers (got {self.num_workers})")
+                f"of workers (got {self.num_workers})"
+            )
         worker_init_fn_old = WorkerInitWrapper(self.worker_init_fn)
         affinity_old = psutil.Process().cpu_affinity()
         nthreads_old = torch.get_num_threads()
@@ -129,13 +133,14 @@ class AffinityMixin:
             try:
                 psutil.Process().cpu_affinity([loader_cores[worker_id]])
             except IndexError:
-                raise ValueError(f"Cannot use CPU affinity for worker ID "
-                                 f"{worker_id} on CPU {loader_cores}")
+                raise ValueError(
+                    f"Cannot use CPU affinity for worker ID "
+                    f"{worker_id} on CPU {loader_cores}"
+                )
 
             worker_init_fn_old(worker_id)
 
         if loader_cores is None:
-
             numa_info = get_numa_nodes_cores()
 
             if numa_info and len(numa_info[0]) > self.num_workers:
@@ -148,16 +153,19 @@ class AffinityMixin:
             if len(node0_cores) < self.num_workers:
                 raise ValueError(
                     f"More workers (got {self.num_workers}) than available "
-                    f"cores (got {len(node0_cores)})")
+                    f"cores (got {len(node0_cores)})"
+                )
 
             # Set default loader core IDs:
-            loader_cores = node0_cores[:self.num_workers]
+            loader_cores = node0_cores[: self.num_workers]
 
         try:
             # Set CPU affinity for dataloader:
             self.worker_init_fn = init_fn
-            logging.debug(f"{self.num_workers} data loader workers are "
-                          f"assigned to CPUs {loader_cores}")
+            logging.debug(
+                f"{self.num_workers} data loader workers are "
+                f"assigned to CPUs {loader_cores}"
+            )
             yield
         finally:
             # Restore omp_num_threads and cpu affinity:

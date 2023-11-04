@@ -43,9 +43,16 @@ class MFConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, max_degree: int = 10, bias=True, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        max_degree: int = 10,
+        bias=True,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -55,15 +62,19 @@ class MFConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lins_l = ModuleList([
-            Linear(in_channels[0], out_channels, bias=bias)
-            for _ in range(max_degree + 1)
-        ])
+        self.lins_l = ModuleList(
+            [
+                Linear(in_channels[0], out_channels, bias=bias)
+                for _ in range(max_degree + 1)
+            ]
+        )
 
-        self.lins_r = ModuleList([
-            Linear(in_channels[1], out_channels, bias=False)
-            for _ in range(max_degree + 1)
-        ])
+        self.lins_r = ModuleList(
+            [
+                Linear(in_channels[1], out_channels, bias=False)
+                for _ in range(max_degree + 1)
+            ]
+        )
 
         self.reset_parameters()
 
@@ -74,9 +85,9 @@ class MFConv(MessagePassing):
         for lin in self.lins_r:
             lin.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
-
+    def forward(
+        self, x: Union[Tensor, OptPairTensor], edge_index: Adj, size: Size = None
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_r = x[1]
@@ -85,7 +96,7 @@ class MFConv(MessagePassing):
         if isinstance(edge_index, SparseTensor):
             deg = edge_index.storage.rowcount()
         elif isinstance(edge_index, Tensor):
-            i = 1 if self.flow == 'source_to_target' else 0
+            i = 1 if self.flow == "source_to_target" else 0
             N = x[0].size(self.node_dim)
             N = size[1] if size is not None else N
             N = x_r.size(self.node_dim) if x_r is not None else N
@@ -110,7 +121,6 @@ class MFConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor) -> Tensor:
         adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)

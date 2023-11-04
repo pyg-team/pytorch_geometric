@@ -50,8 +50,8 @@ def fidelity(
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")
 
-    node_mask = explanation.get('node_mask')
-    edge_mask = explanation.get('edge_mask')
+    node_mask = explanation.get("node_mask")
+    edge_mask = explanation.get("edge_mask")
     kwargs = {key: explanation[key] for key in explanation._model_args}
 
     y = explanation.target
@@ -75,13 +75,13 @@ def fidelity(
     complement_y_hat = explainer.get_masked_prediction(
         explanation.x,
         explanation.edge_index,
-        1. - node_mask if node_mask is not None else None,
-        1. - edge_mask if edge_mask is not None else None,
+        1.0 - node_mask if node_mask is not None else None,
+        1.0 - edge_mask if edge_mask is not None else None,
         **kwargs,
     )
     complement_y_hat = explainer.get_target(complement_y_hat)
 
-    if explanation.get('index') is not None:
+    if explanation.get("index") is not None:
         y = y[explanation.index]
         if explainer.explanation_type == ExplanationType.phenomenon:
             y_hat = y_hat[explanation.index]
@@ -89,13 +89,15 @@ def fidelity(
         complement_y_hat = complement_y_hat[explanation.index]
 
     if explainer.explanation_type == ExplanationType.model:
-        pos_fidelity = 1. - (complement_y_hat == y).float().mean()
-        neg_fidelity = 1. - (explain_y_hat == y).float().mean()
+        pos_fidelity = 1.0 - (complement_y_hat == y).float().mean()
+        neg_fidelity = 1.0 - (explain_y_hat == y).float().mean()
     else:
-        pos_fidelity = ((y_hat == y).float() -
-                        (complement_y_hat == y).float()).abs().mean()
-        neg_fidelity = ((y_hat == y).float() -
-                        (explain_y_hat == y).float()).abs().mean()
+        pos_fidelity = (
+            ((y_hat == y).float() - (complement_y_hat == y).float()).abs().mean()
+        )
+        neg_fidelity = (
+            ((y_hat == y).float() - (explain_y_hat == y).float()).abs().mean()
+        )
 
     return float(pos_fidelity), float(neg_fidelity)
 
@@ -125,11 +127,12 @@ def characterization_score(
             :math:`\textrm{fid}_{-}`. (default: :obj:`0.5`)
     """
     if (pos_weight + neg_weight) != 1.0:
-        raise ValueError(f"The weights need to sum up to 1 "
-                         f"(got {pos_weight} and {neg_weight})")
+        raise ValueError(
+            f"The weights need to sum up to 1 " f"(got {pos_weight} and {neg_weight})"
+        )
 
-    denom = (pos_weight / pos_fidelity) + (neg_weight / (1. - neg_fidelity))
-    return 1. / denom
+    denom = (pos_weight / pos_fidelity) + (neg_weight / (1.0 - neg_fidelity))
+    return 1.0 / denom
 
 
 def fidelity_curve_auc(
@@ -155,10 +158,12 @@ def fidelity_curve_auc(
             Needs to be sorted in ascending order.
     """
     if torch.any(neg_fidelity == 1):
-        raise ValueError("There exists negative fidelity values containing 1, "
-                         "leading to a division by zero")
+        raise ValueError(
+            "There exists negative fidelity values containing 1, "
+            "leading to a division by zero"
+        )
 
-    y = pos_fidelity / (1. - neg_fidelity)
+    y = pos_fidelity / (1.0 - neg_fidelity)
     return auc(x, y)
 
 

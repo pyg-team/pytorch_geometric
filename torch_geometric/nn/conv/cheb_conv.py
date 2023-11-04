@@ -70,33 +70,38 @@ class ChebConv(MessagePassing):
           maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
         K: int,
-        normalization: Optional[str] = 'sym',
+        normalization: Optional[str] = "sym",
         bias: bool = True,
         **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         assert K > 0
-        assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
+        assert normalization in [None, "sym", "rw"], "Invalid normalization"
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalization = normalization
-        self.lins = torch.nn.ModuleList([
-            Linear(in_channels, out_channels, bias=False,
-                   weight_initializer='glorot') for _ in range(K)
-        ])
+        self.lins = torch.nn.ModuleList(
+            [
+                Linear(
+                    in_channels, out_channels, bias=False, weight_initializer="glorot"
+                )
+                for _ in range(K)
+            ]
+        )
 
         if bias:
             self.bias = Parameter(Tensor(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -116,23 +121,22 @@ class ChebConv(MessagePassing):
         dtype: Optional[int] = None,
         batch: OptTensor = None,
     ):
-        edge_index, edge_weight = get_laplacian(edge_index, edge_weight,
-                                                normalization, dtype,
-                                                num_nodes)
+        edge_index, edge_weight = get_laplacian(
+            edge_index, edge_weight, normalization, dtype, num_nodes
+        )
         assert edge_weight is not None
 
         if lambda_max is None:
             lambda_max = 2.0 * edge_weight.max()
         elif not isinstance(lambda_max, Tensor):
-            lambda_max = torch.tensor(lambda_max, dtype=dtype,
-                                      device=edge_index.device)
+            lambda_max = torch.tensor(lambda_max, dtype=dtype, device=edge_index.device)
         assert lambda_max is not None
 
         if batch is not None and lambda_max.numel() > 1:
             lambda_max = lambda_max[batch[edge_index[0]]]
 
         edge_weight = (2.0 * edge_weight) / lambda_max
-        edge_weight.masked_fill_(edge_weight == float('inf'), 0)
+        edge_weight.masked_fill_(edge_weight == float("inf"), 0)
 
         loop_mask = edge_index[0] == edge_index[1]
         edge_weight[loop_mask] -= 1
@@ -147,7 +151,6 @@ class ChebConv(MessagePassing):
         batch: OptTensor = None,
         lambda_max: OptTensor = None,
     ) -> Tensor:
-
         edge_index, norm = self.__norm__(
             edge_index,
             x.size(self.node_dim),
@@ -169,7 +172,7 @@ class ChebConv(MessagePassing):
 
         for lin in self.lins[2:]:
             Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm, size=None)
-            Tx_2 = 2. * Tx_2 - Tx_0
+            Tx_2 = 2.0 * Tx_2 - Tx_0
             out = out + lin.forward(Tx_2)
             Tx_0, Tx_1 = Tx_1, Tx_2
 
@@ -182,6 +185,8 @@ class ChebConv(MessagePassing):
         return norm.view(-1, 1) * x_j
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, K={len(self.lins)}, '
-                f'normalization={self.normalization})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, K={len(self.lins)}, "
+            f"normalization={self.normalization})"
+        )

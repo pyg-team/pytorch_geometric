@@ -27,6 +27,7 @@ class BaseTransform(ABC):
         data = TUDataset(path, name='MUTAG')[0]
         data = transform(data)  # Explicitly transform data.
     """
+
     def __call__(self, data: Any) -> Any:
         # Shallow-copy the data so that we prevent in-place data modification.
         return self.forward(copy.copy(data))
@@ -35,4 +36,4 @@ class BaseTransform(ABC):
         pass
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"

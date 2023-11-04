@@ -31,6 +31,7 @@ class DegreeScalerAggregation(Aggregation):
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         aggr: Union[str, List[str], Aggregation],
@@ -46,9 +47,11 @@ class DegreeScalerAggregation(Aggregation):
         elif isinstance(aggr, (tuple, list)):
             self.aggr = MultiAggregation(aggr, aggr_kwargs)
         else:
-            raise ValueError(f"Only strings, list, tuples and instances of"
-                             f"`torch_geometric.nn.aggr.Aggregation` are "
-                             f"valid aggregation schemes (got '{type(aggr)}')")
+            raise ValueError(
+                f"Only strings, list, tuples and instances of"
+                f"`torch_geometric.nn.aggr.Aggregation` are "
+                f"valid aggregation schemes (got '{type(aggr)}')"
+            )
 
         self.scaler = [scaler] if isinstance(aggr, str) else scaler
 
@@ -63,8 +66,8 @@ class DegreeScalerAggregation(Aggregation):
             self.avg_deg_lin = torch.nn.Parameter(torch.empty(1))
             self.avg_deg_log = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('avg_deg_lin', torch.empty(1))
-            self.register_buffer('avg_deg_log', torch.empty(1))
+            self.register_buffer("avg_deg_lin", torch.empty(1))
+            self.register_buffer("avg_deg_log", torch.empty(1))
 
         self.reset_parameters()
 
@@ -72,10 +75,14 @@ class DegreeScalerAggregation(Aggregation):
         self.avg_deg_lin.data.fill_(self.init_avg_deg_lin)
         self.avg_deg_log.data.fill_(self.init_avg_deg_log)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         # TODO Currently, `degree` can only operate on `index`:
         self.assert_index_present(index)
 
@@ -89,17 +96,16 @@ class DegreeScalerAggregation(Aggregation):
 
         outs = []
         for scaler in self.scaler:
-            if scaler == 'identity':
+            if scaler == "identity":
                 out_scaler = out
-            elif scaler == 'amplification':
+            elif scaler == "amplification":
                 out_scaler = out * (torch.log(deg + 1) / self.avg_deg_log)
-            elif scaler == 'attenuation':
+            elif scaler == "attenuation":
                 # Clamp minimum degree to one to avoid dividing by zero:
-                out_scaler = out * (self.avg_deg_log /
-                                    torch.log(deg.clamp(min=1) + 1))
-            elif scaler == 'linear':
+                out_scaler = out * (self.avg_deg_log / torch.log(deg.clamp(min=1) + 1))
+            elif scaler == "linear":
                 out_scaler = out * (deg / self.avg_deg_lin)
-            elif scaler == 'inverse_linear':
+            elif scaler == "inverse_linear":
                 # Clamp minimum degree to one to avoid dividing by zero:
                 out_scaler = out * (self.avg_deg_lin / deg.clamp(min=1))
             else:

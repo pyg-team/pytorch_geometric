@@ -6,10 +6,12 @@ import torch
 
 import torch_geometric.typing
 
-JIT_WARNING = ("Could not convert the 'model' into a jittable version. "
-               "As such, 'torch.compile' may currently fail to correctly "
-               "optimize your model. 'MessagePassing.jittable()' reported "
-               "the following error: {error}")
+JIT_WARNING = (
+    "Could not convert the 'model' into a jittable version. "
+    "As such, 'torch.compile' may currently fail to correctly "
+    "optimize your model. 'MessagePassing.jittable()' reported "
+    "the following error: {error}"
+)
 
 
 def to_jittable(model: torch.nn.Module) -> torch.nn.Module:
@@ -72,20 +74,20 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     # Disable the usage of external extension packages:
     # TODO (matthias) Disable only temporarily
     prev_state = {
-        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
+        "WITH_INDEX_SORT": torch_geometric.typing.WITH_INDEX_SORT,
+        "WITH_TORCH_SCATTER": torch_geometric.typing.WITH_TORCH_SCATTER,
     }
-    warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
+    warnings.filterwarnings("ignore", ".*the 'torch-scatter' package.*")
     for key in prev_state.keys():
         setattr(torch_geometric.typing, key, False)
 
     # Adjust the logging level of `torch.compile`:
     # TODO (matthias) Disable only temporarily
     prev_log_level = {
-        'torch._dynamo': logging.getLogger('torch._dynamo').level,
-        'torch._inductor': logging.getLogger('torch._inductor').level,
+        "torch._dynamo": logging.getLogger("torch._dynamo").level,
+        "torch._inductor": logging.getLogger("torch._inductor").level,
     }
-    log_level = kwargs.pop('log_level', logging.WARNING)
+    log_level = kwargs.pop("log_level", logging.WARNING)
     for key in prev_log_level.keys():
         logging.getLogger(key).setLevel(log_level)
 

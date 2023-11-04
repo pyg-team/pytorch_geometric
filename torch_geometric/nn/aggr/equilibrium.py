@@ -9,25 +9,35 @@ from torch_geometric.utils import scatter
 
 
 class ResNetPotential(torch.nn.Module):
-    def __init__(self, in_channels: int, out_channels: int,
-                 num_layers: List[int]):
-
+    def __init__(self, in_channels: int, out_channels: int, num_layers: List[int]):
         super().__init__()
         sizes = [in_channels] + num_layers + [out_channels]
-        self.layers = torch.nn.ModuleList([
-            torch.nn.Sequential(torch.nn.Linear(in_size, out_size),
-                                torch.nn.LayerNorm(out_size), torch.nn.Tanh())
-            for in_size, out_size in zip(sizes[:-2], sizes[1:-1])
-        ])
+        self.layers = torch.nn.ModuleList(
+            [
+                torch.nn.Sequential(
+                    torch.nn.Linear(in_size, out_size),
+                    torch.nn.LayerNorm(out_size),
+                    torch.nn.Tanh(),
+                )
+                for in_size, out_size in zip(sizes[:-2], sizes[1:-1])
+            ]
+        )
         self.layers.append(torch.nn.Linear(sizes[-2], sizes[-1]))
 
-        self.res_trans = torch.nn.ModuleList([
-            torch.nn.Linear(in_channels, layer_size)
-            for layer_size in num_layers + [out_channels]
-        ])
+        self.res_trans = torch.nn.ModuleList(
+            [
+                torch.nn.Linear(in_channels, layer_size)
+                for layer_size in num_layers + [out_channels]
+            ]
+        )
 
-    def forward(self, x: Tensor, y: Tensor, index: Optional[Tensor],
-                dim_size: Optional[int] = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        y: Tensor,
+        index: Optional[Tensor],
+        dim_size: Optional[int] = None,
+    ) -> Tensor:
         if index is None:
             inp = torch.cat([x, y.expand(x.size(0), -1)], dim=1)
         else:
@@ -44,7 +54,7 @@ class ResNetPotential(torch.nn.Module):
         if dim_size is None:
             dim_size = int(index.max().item() + 1)
 
-        return scatter(h, index, 0, dim_size, reduce='mean').sum()
+        return scatter(h, index, 0, dim_size, reduce="mean").sum()
 
 
 class MomentumOptimizer(torch.nn.Module):
@@ -59,16 +69,16 @@ class MomentumOptimizer(torch.nn.Module):
             :obj:`momentum` will be learnable parameters. If False they
             are fixed. (default: :obj:`True`)
     """
-    def __init__(self, learning_rate: float = 0.1, momentum: float = 0.9,
-                 learnable: bool = True):
+
+    def __init__(
+        self, learning_rate: float = 0.1, momentum: float = 0.9, learnable: bool = True
+    ):
         super().__init__()
 
         self._initial_lr = learning_rate
         self._initial_mom = momentum
-        self._lr = torch.nn.Parameter(Tensor([learning_rate]),
-                                      requires_grad=learnable)
-        self._mom = torch.nn.Parameter(Tensor([momentum]),
-                                       requires_grad=learnable)
+        self._lr = torch.nn.Parameter(Tensor([learning_rate]), requires_grad=learnable)
+        self._mom = torch.nn.Parameter(Tensor([momentum]), requires_grad=learnable)
         self.softplus = torch.nn.Softplus()
         self.sigmoid = torch.nn.Sigmoid()
 
@@ -93,12 +103,10 @@ class MomentumOptimizer(torch.nn.Module):
         func: Callable[[Tensor, Tensor, Optional[Tensor]], Tensor],
         iterations: int = 5,
     ) -> Tuple[Tensor, float]:
-
         momentum_buffer = torch.zeros_like(y)
         for _ in range(iterations):
             val = func(x, y, index, dim_size)
-            grad = torch.autograd.grad(val, y, create_graph=True,
-                                       retain_graph=True)[0]
+            grad = torch.autograd.grad(val, y, create_graph=True, retain_graph=True)[0]
             delta = self.learning_rate * grad
             momentum_buffer = self.momentum * momentum_buffer - delta
             y = y + momentum_buffer
@@ -131,12 +139,18 @@ class EquilibriumAggregation(Aggregation):
         lamb (float): The initial regularization constant.
             (default: :obj:`0.1`)
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 num_layers: List[int], grad_iter: int = 5, lamb: float = 0.1):
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_layers: List[int],
+        grad_iter: int = 5,
+        lamb: float = 0.1,
+    ):
         super().__init__()
 
-        self.potential = ResNetPotential(in_channels + out_channels, 1,
-                                         num_layers)
+        self.potential = ResNetPotential(in_channels + out_channels, 1, num_layers)
         self.optimizer = MomentumOptimizer()
         self.initial_lamb = lamb
         self.lamb = torch.nn.Parameter(Tensor(1), requires_grad=True)
@@ -151,29 +165,45 @@ class EquilibriumAggregation(Aggregation):
         reset(self.potential)
 
     def init_output(self, dim_size: int) -> Tensor:
-        return torch.zeros(dim_size, self.output_dim, requires_grad=True,
-                           device=self.lamb.device).float()
+        return torch.zeros(
+            dim_size, self.output_dim, requires_grad=True, device=self.lamb.device
+        ).float()
 
     def reg(self, y: Tensor) -> Tensor:
         return self.softplus(self.lamb) * y.square().sum(dim=-1).mean()
 
-    def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor],
-               dim_size: Optional[int] = None):
+    def energy(
+        self,
+        x: Tensor,
+        y: Tensor,
+        index: Optional[Tensor],
+        dim_size: Optional[int] = None,
+    ):
         return self.potential(x, y, index, dim_size) + self.reg(y)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         self.assert_index_present(index)
 
         dim_size = int(index.max()) + 1 if dim_size is None else dim_size
 
         with torch.enable_grad():
-            y = self.optimizer(x, self.init_output(dim_size), index, dim_size,
-                               self.energy, iterations=self.grad_iter)
+            y = self.optimizer(
+                x,
+                self.init_output(dim_size),
+                index,
+                dim_size,
+                self.energy,
+                iterations=self.grad_iter,
+            )
 
         return y
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}()')
+        return f"{self.__class__.__name__}()"

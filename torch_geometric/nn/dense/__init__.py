@@ -9,17 +9,17 @@ from .mincut_pool import dense_mincut_pool
 from .dmon_pool import DMoNPooling
 
 __all__ = [
-    'Linear',
-    'HeteroLinear',
-    'HeteroDictLinear',
-    'DenseGCNConv',
-    'DenseGINConv',
-    'DenseGraphConv',
-    'DenseSAGEConv',
-    'DenseGATConv',
-    'dense_diff_pool',
-    'dense_mincut_pool',
-    'DMoNPooling',
+    "Linear",
+    "HeteroLinear",
+    "HeteroDictLinear",
+    "DenseGCNConv",
+    "DenseGINConv",
+    "DenseGraphConv",
+    "DenseSAGEConv",
+    "DenseGATConv",
+    "dense_diff_pool",
+    "dense_mincut_pool",
+    "DMoNPooling",
 ]
 
 lin_classes = __all__[:3]

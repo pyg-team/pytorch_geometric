@@ -21,6 +21,7 @@ class GraphGymDataModule(LightningDataModule):
     can be accessed through the :meth:`train_dataloader`,
     :meth:`val_dataloader`, and :meth:`test_dataloader` methods, respectively.
     """
+
     def __init__(self):
         self.loaders = create_loader()
         super().__init__(has_val=True, has_test=True)
@@ -52,7 +53,7 @@ def train(
             (default: :obj:`True`)
         trainer_config (dict, optional): Additional trainer configuration.
     """
-    warnings.filterwarnings('ignore', '.*use `CSVLogger` as the default.*')
+    warnings.filterwarnings("ignore", ".*use `CSVLogger` as the default.*")
 
     callbacks = []
     if logger:
@@ -69,7 +70,7 @@ def train(
         default_root_dir=cfg.out_dir,
         max_epochs=cfg.optim.max_epoch,
         accelerator=cfg.accelerator,
-        devices='auto' if not torch.cuda.is_available() else cfg.devices,
+        devices="auto" if not torch.cuda.is_available() else cfg.devices,
     )
 
     trainer.fit(model, datamodule=datamodule)

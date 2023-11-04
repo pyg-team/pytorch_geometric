@@ -18,7 +18,7 @@ class MappingView:
 
     def __repr__(self) -> str:
         mapping = {key: self._mapping[key] for key in self._keys()}
-        return f'{self.__class__.__name__}({mapping})'
+        return f"{self.__class__.__name__}({mapping})"
 
     __class_getitem__ = classmethod(type([]))
 

@@ -69,6 +69,7 @@ class SAGPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
+
     def __init__(
         self,
         in_channels: int,
@@ -76,7 +77,7 @@ class SAGPooling(torch.nn.Module):
         GNN: torch.nn.Module = GraphConv,
         min_score: Optional[float] = None,
         multiplier: float = 1.0,
-        nonlinearity: Union[str, Callable] = 'tanh',
+        nonlinearity: Union[str, Callable] = "tanh",
         **kwargs,
     ):
         super().__init__()
@@ -136,14 +137,22 @@ class SAGPooling(torch.nn.Module):
 
         connect_out = self.connect(select_out, edge_index, edge_attr, batch)
 
-        return (x, connect_out.edge_index, connect_out.edge_attr,
-                connect_out.batch, perm, score)
+        return (
+            x,
+            connect_out.edge_index,
+            connect_out.edge_attr,
+            connect_out.batch,
+            perm,
+            score,
+        )
 
     def __repr__(self) -> str:
         if self.min_score is None:
-            ratio = f'ratio={self.ratio}'
+            ratio = f"ratio={self.ratio}"
         else:
-            ratio = f'min_score={self.min_score}'
+            ratio = f"min_score={self.min_score}"
 
-        return (f'{self.__class__.__name__}({self.gnn.__class__.__name__}, '
-                f'{self.in_channels}, {ratio}, multiplier={self.multiplier})')
+        return (
+            f"{self.__class__.__name__}({self.gnn.__class__.__name__}, "
+            f"{self.in_channels}, {ratio}, multiplier={self.multiplier})"
+        )

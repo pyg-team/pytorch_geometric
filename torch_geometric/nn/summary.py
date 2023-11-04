@@ -14,7 +14,7 @@ def summary(
     model: torch.nn.Module,
     *args,
     max_depth: int = 3,
-    leaf_module: Optional[Union[Module, List[Module]]] = 'MessagePassing',
+    leaf_module: Optional[Union[Module, List[Module]]] = "MessagePassing",
     **kwargs,
 ) -> str:
     r"""Summarizes a given :class:`torch.nn.Module`.
@@ -57,13 +57,13 @@ def summary(
         **kwargs: Additional arguments of the :obj:`model`.
     """
     # NOTE This is just for the doc-string to render nicely:
-    if leaf_module == 'MessagePassing':
+    if leaf_module == "MessagePassing":
         leaf_module = MessagePassing
 
     def register_hook(info):
         def hook(module, inputs, output):
-            info['input_shape'].append(get_shape(inputs))
-            info['output_shape'].append(get_shape(output))
+            info["input_shape"].append(get_shape(inputs))
+            info["output_shape"].append(get_shape(output))
 
         return hook
 
@@ -78,37 +78,39 @@ def summary(
         name, module, depth = stack.pop()
         module_id = id(module)
 
-        if name.startswith('(_'):  # Do not summarize private modules.
+        if name.startswith("(_"):  # Do not summarize private modules.
             continue
 
         if module_id in hooks:  # Avoid duplicated hooks.
             hooks[module_id].remove()
 
         info = {}
-        info['name'] = name
-        info['input_shape'] = input_shape[module_id]
-        info['output_shape'] = output_shape[module_id]
-        info['depth'] = depth
+        info["name"] = name
+        info["input_shape"] = input_shape[module_id]
+        info["output_shape"] = output_shape[module_id]
+        info["depth"] = depth
         if any([is_uninitialized_parameter(p) for p in module.parameters()]):
-            info['#param'] = '-1'
+            info["#param"] = "-1"
         else:
             num_params = sum(p.numel() for p in module.parameters())
-            info['#param'] = f'{num_params:,}' if num_params > 0 else '--'
+            info["#param"] = f"{num_params:,}" if num_params > 0 else "--"
         info_list.append(info)
 
         if not isinstance(module, ScriptModule):
-            hooks[module_id] = module.register_forward_hook(
-                register_hook(info))
+            hooks[module_id] = module.register_forward_hook(register_hook(info))
 
         if depth >= max_depth:
             continue
 
-        if (leaf_module is not None and isinstance(module, leaf_module)):
+        if leaf_module is not None and isinstance(module, leaf_module):
             continue
 
         module_items = reversed(module._modules.items())
-        stack += [(f"({name}){mod.__class__.__name__}", mod, depth + 1)
-                  for name, mod in module_items if mod is not None]
+        stack += [
+            (f"({name}){mod.__class__.__name__}", mod, depth + 1)
+            for name, mod in module_items
+            if mod is not None
+        ]
 
     training = model.training
     model.eval()
@@ -127,44 +129,47 @@ def summary(
 
 def get_shape(inputs: Any) -> str:
     if not isinstance(inputs, (tuple, list)):
-        inputs = (inputs, )
+        inputs = (inputs,)
 
     out = []
     for x in inputs:
         if isinstance(x, SparseTensor):
             out.append(str(list(x.sizes())))
-        elif hasattr(x, 'size'):
+        elif hasattr(x, "size"):
             out.append(str(list(x.size())))
-    return ', '.join(out)
+    return ", ".join(out)
 
 
 def postprocess(info_list: List[dict]) -> List[dict]:
     for idx, info in enumerate(info_list):
-        depth = info['depth']
+        depth = info["depth"]
         if idx > 0:  # root module (0) is exclued
             if depth == 1:
-                prefix = '├─'
+                prefix = "├─"
             else:
                 prefix = f"{'│    '*(depth-1)}└─"
-            info['name'] = prefix + info['name']
+            info["name"] = prefix + info["name"]
 
-        if info['input_shape']:
-            info['input_shape'] = info['input_shape'].pop(0)
-            info['output_shape'] = info['output_shape'].pop(0)
+        if info["input_shape"]:
+            info["input_shape"] = info["input_shape"].pop(0)
+            info["output_shape"] = info["output_shape"].pop(0)
         else:
-            info['input_shape'] = '--'
-            info['output_shape'] = '--'
+            info["input_shape"] = "--"
+            info["output_shape"] = "--"
     return info_list
 
 
 def make_table(info_list: List[dict], max_depth: int) -> str:
     from tabulate import tabulate
-    content = [['Layer', 'Input Shape', 'Output Shape', '#Param']]
+
+    content = [["Layer", "Input Shape", "Output Shape", "#Param"]]
     for info in info_list:
-        content.append([
-            info['name'],
-            info['input_shape'],
-            info['output_shape'],
-            info['#param'],
-        ])
-    return tabulate(content, headers='firstrow', tablefmt='psql')
+        content.append(
+            [
+                info["name"],
+                info["input_shape"],
+                info["output_shape"],
+                info["#param"],
+            ]
+        )
+    return tabulate(content, headers="firstrow", tablefmt="psql")

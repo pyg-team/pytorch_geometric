@@ -17,6 +17,7 @@ class GridGraph(GraphGenerator):
         dtype (:obj:`torch.dtype`, optional): The desired data type of the
             returned position tensor. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         height: int,
@@ -29,10 +30,10 @@ class GridGraph(GraphGenerator):
         self.dtype = dtype
 
     def __call__(self) -> Data:
-        edge_index, pos = grid(height=self.height, width=self.width,
-                               dtype=self.dtype)
+        edge_index, pos = grid(height=self.height, width=self.width, dtype=self.dtype)
         return Data(edge_index=edge_index, pos=pos)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(height={self.height}, '
-                f'width={self.width})')
+        return (
+            f"{self.__class__.__name__}(height={self.height}, " f"width={self.width})"
+        )

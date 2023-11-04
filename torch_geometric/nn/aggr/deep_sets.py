@@ -24,6 +24,7 @@ class DeepSetsAggregation(Aggregation):
             :class:`torch.nn.Sequential` or
             :class:`torch_geometric.nn.models.MLP`. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         local_nn: Optional[torch.nn.Module] = None,
@@ -39,16 +40,23 @@ class DeepSetsAggregation(Aggregation):
         if self.global_nn is not None:
             reset(self.global_nn)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+    ) -> Tensor:
         if self.local_nn is not None:
             x = self.local_nn(x)
-        x = self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
+        x = self.reduce(x, index, ptr, dim_size, dim, reduce="sum")
         if self.global_nn is not None:
             x = self.global_nn(x)
         return x
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
-                f'global_nn={self.global_nn})')
+        return (
+            f"{self.__class__.__name__}(local_nn={self.local_nn}, "
+            f"global_nn={self.global_nn})"
+        )

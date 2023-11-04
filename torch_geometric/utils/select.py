@@ -42,8 +42,9 @@ def select(
     raise ValueError(f"Encountered invalid input type (got '{type(src)}')")
 
 
-def narrow(src: Union[Tensor, List[Any]], dim: int, start: int,
-           length: int) -> Union[Tensor, List[Any]]:
+def narrow(
+    src: Union[Tensor, List[Any]], dim: int, start: int, length: int
+) -> Union[Tensor, List[Any]]:
     r"""Narrows the input tensor or input list to the specified range.
 
     Args:
@@ -63,6 +64,6 @@ def narrow(src: Union[Tensor, List[Any]], dim: int, start: int,
     if isinstance(src, list):
         if dim != 0:
             raise ValueError("Cannot narrow along dimension other than 0")
-        return src[start:start + length]
+        return src[start : start + length]
 
     raise ValueError(f"Encountered invalid input type (got '{type(src)}')")

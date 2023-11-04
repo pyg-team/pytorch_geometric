@@ -50,11 +50,12 @@ class GraphConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
-        aggr: str = 'add',
+        aggr: str = "add",
         bias: bool = True,
         **kwargs,
     ):
@@ -76,15 +77,18 @@ class GraphConv(MessagePassing):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_weight: OptTensor = None, size: Size = None) -> Tensor:
-
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=size)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=size)
         out = self.lin_rel(out)
 
         x_r = x[1]
@@ -96,6 +100,5 @@ class GraphConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)

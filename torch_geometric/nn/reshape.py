@@ -13,5 +13,5 @@ class Reshape(torch.nn.Module):
         return x
 
     def __repr__(self) -> str:
-        shape = ', '.join([str(dim) for dim in self.shape])
-        return f'{self.__class__.__name__}({shape})'
+        shape = ", ".join([str(dim) for dim in self.shape])
+        return f"{self.__class__.__name__}({shape})"

@@ -59,9 +59,17 @@ class NNConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, nn: Callable, aggr: str = 'add',
-                 root_weight: bool = True, bias: bool = True, **kwargs):
+
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        nn: Callable,
+        aggr: str = "add",
+        root_weight: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
         super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
@@ -75,13 +83,14 @@ class NNConv(MessagePassing):
         self.in_channels_l = in_channels[0]
 
         if root_weight:
-            self.lin = Linear(in_channels[1], out_channels, bias=False,
-                              weight_initializer='uniform')
+            self.lin = Linear(
+                in_channels[1], out_channels, bias=False, weight_initializer="uniform"
+            )
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -92,9 +101,13 @@ class NNConv(MessagePassing):
             self.lin.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -116,5 +129,7 @@ class NNConv(MessagePassing):
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, aggr={self.aggr}, nn={self.nn})')
+        return (
+            f"{self.__class__.__name__}({self.in_channels}, "
+            f"{self.out_channels}, aggr={self.aggr}, nn={self.nn})"
+        )

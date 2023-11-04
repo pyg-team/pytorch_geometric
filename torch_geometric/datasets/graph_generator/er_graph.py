@@ -11,6 +11,7 @@ class ERGraph(GraphGenerator):
         num_nodes (int): The number of nodes.
         edge_prob (float): Probability of an edge.
     """
+
     def __init__(self, num_nodes: int, edge_prob: float):
         super().__init__()
         self.num_nodes = num_nodes
@@ -21,5 +22,7 @@ class ERGraph(GraphGenerator):
         return Data(num_nodes=self.num_nodes, edge_index=edge_index)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(num_nodes={self.num_nodes}, '
-                f'edge_prob={self.edge_prob})')
+        return (
+            f"{self.__class__.__name__}(num_nodes={self.num_nodes}, "
+            f"edge_prob={self.edge_prob})"
+        )

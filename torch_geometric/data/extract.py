@@ -7,11 +7,11 @@ import zipfile
 
 
 def maybe_log(path, log=True):
-    if log and 'pytest' not in sys.modules:
-        print(f'Extracting {path}', file=sys.stderr)
+    if log and "pytest" not in sys.modules:
+        print(f"Extracting {path}", file=sys.stderr)
 
 
-def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True):
+def extract_tar(path: str, folder: str, mode: str = "r:gz", log: bool = True):
     r"""Extracts a tar archive to a specific folder.
 
     Args:
@@ -36,7 +36,7 @@ def extract_zip(path: str, folder: str, log: bool = True):
             console. (default: :obj:`True`)
     """
     maybe_log(path, log)
-    with zipfile.ZipFile(path, 'r') as f:
+    with zipfile.ZipFile(path, "r") as f:
         f.extractall(folder)
 
 
@@ -51,8 +51,8 @@ def extract_bz2(path: str, folder: str, log: bool = True):
     """
     maybe_log(path, log)
     path = osp.abspath(path)
-    with bz2.open(path, 'r') as r:
-        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+    with bz2.open(path, "r") as r:
+        with open(osp.join(folder, ".".join(path.split(".")[:-1])), "wb") as w:
             w.write(r.read())
 
 
@@ -67,6 +67,6 @@ def extract_gz(path: str, folder: str, log: bool = True):
     """
     maybe_log(path, log)
     path = osp.abspath(path)
-    with gzip.open(path, 'r') as r:
-        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+    with gzip.open(path, "r") as r:
+        with open(osp.join(folder, ".".join(path.split(".")[:-1])), "wb") as w:
             w.write(r.read())

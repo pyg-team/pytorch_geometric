@@ -41,7 +41,7 @@ def voxel_grid(
     """
 
     if grid_cluster is None:
-        raise ImportError('`voxel_grid` requires `torch-cluster`.')
+        raise ImportError("`voxel_grid` requires `torch-cluster`.")
 
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
     dim = pos.size(1)

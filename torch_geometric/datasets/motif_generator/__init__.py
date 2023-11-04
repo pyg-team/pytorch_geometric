@@ -4,8 +4,8 @@ from .house import HouseMotif
 from .cycle import CycleMotif
 
 __all__ = classes = [
-    'MotifGenerator',
-    'CustomMotif',
-    'HouseMotif',
-    'CycleMotif',
+    "MotifGenerator",
+    "CustomMotif",
+    "HouseMotif",
+    "CycleMotif",
 ]

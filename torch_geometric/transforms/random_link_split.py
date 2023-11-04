@@ -13,7 +13,7 @@ from torch_geometric.typing import EdgeType
 from torch_geometric.utils import negative_sampling
 
 
-@functional_transform('random_link_split')
+@functional_transform("random_link_split")
 class RandomLinkSplit(BaseTransform):
     r"""Performs an edge-level random split into training, validation and test
     sets of a :class:`~torch_geometric.data.Data` or a
@@ -85,12 +85,13 @@ class RandomLinkSplit(BaseTransform):
             Can be :obj:`None` in case no reverse connection exists.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         num_val: Union[int, float] = 0.1,
         num_test: Union[int, float] = 0.2,
         is_undirected: bool = False,
-        key: str = 'edge_label',
+        key: str = "edge_label",
         split_labels: bool = False,
         add_negative_train_samples: bool = True,
         neg_sampling_ratio: float = 1.0,
@@ -129,7 +130,8 @@ class RandomLinkSplit(BaseTransform):
             if edge_types is None:
                 raise ValueError(
                     "The 'RandomLinkSplit' transform expects 'edge_types' to "
-                    "be specified when operating on 'HeteroData' objects")
+                    "be specified when operating on 'HeteroData' objects"
+                )
 
             if not isinstance(edge_types, list):
                 edge_types = [edge_types]
@@ -146,14 +148,14 @@ class RandomLinkSplit(BaseTransform):
             val_stores = [val_data._store]
             test_stores = [test_data._store]
 
-        for item in zip(stores, train_stores, val_stores, test_stores,
-                        rev_edge_types):
+        for item in zip(stores, train_stores, val_stores, test_stores, rev_edge_types):
             store, train_store, val_store, test_store, rev_edge_type = item
 
             is_undirected = self.is_undirected
             is_undirected &= not store.is_bipartite()
-            is_undirected &= (rev_edge_type is None
-                              or store._key == data[rev_edge_type]._key)
+            is_undirected &= (
+                rev_edge_type is None or store._key == data[rev_edge_type]._key
+            )
 
             edge_index = store.edge_index
             if is_undirected:
@@ -177,9 +179,9 @@ class RandomLinkSplit(BaseTransform):
                 raise ValueError("Insufficient number of edges for training")
 
             train_edges = perm[:num_train]
-            val_edges = perm[num_train:num_train + num_val]
-            test_edges = perm[num_train + num_val:]
-            train_val_edges = perm[:num_train + num_val]
+            val_edges = perm[num_train : num_train + num_val]
+            test_edges = perm[num_train + num_val :]
+            train_val_edges = perm[: num_train + num_val]
 
             num_disjoint = self.disjoint_train_ratio
             if isinstance(num_disjoint, float):
@@ -188,11 +190,11 @@ class RandomLinkSplit(BaseTransform):
                 raise ValueError("Insufficient number of edges for training")
 
             # Create data splits:
-            self._split(train_store, train_edges[num_disjoint:], is_undirected,
-                        rev_edge_type)
+            self._split(
+                train_store, train_edges[num_disjoint:], is_undirected, rev_edge_type
+            )
             self._split(val_store, train_edges, is_undirected, rev_edge_type)
-            self._split(test_store, train_val_edges, is_undirected,
-                        rev_edge_type)
+            self._split(test_store, train_val_edges, is_undirected, rev_edge_type)
 
             # Create negative samples:
             num_neg_train = 0
@@ -209,9 +211,9 @@ class RandomLinkSplit(BaseTransform):
             size = store.size()
             if store._key is None or store._key[0] == store._key[-1]:
                 size = size[0]
-            neg_edge_index = negative_sampling(edge_index, size,
-                                               num_neg_samples=num_neg,
-                                               method='sparse')
+            neg_edge_index = negative_sampling(
+                edge_index, size, num_neg_samples=num_neg, method="sparse"
+            )
 
             # Adjust ratio if not enough negative edges exist
             if neg_edge_index.size(1) < num_neg:
@@ -220,7 +222,8 @@ class RandomLinkSplit(BaseTransform):
                 warnings.warn(
                     f"There are not enough negative edges to satisfy "
                     "the provided sampling ratio. The ratio will be "
-                    f"adjusted to {ratio:.2f}.")
+                    f"adjusted to {ratio:.2f}."
+                )
                 num_neg_train = int((num_neg_train / num_neg) * num_neg_found)
                 num_neg_val = int((num_neg_val / num_neg) * num_neg_found)
                 num_neg_test = num_neg_found - num_neg_train - num_neg_val
@@ -231,7 +234,7 @@ class RandomLinkSplit(BaseTransform):
             self._create_label(
                 store,
                 train_edges,
-                neg_edge_index[:, num_neg_val + num_neg_test:],
+                neg_edge_index[:, num_neg_val + num_neg_test :],
                 out=train_store,
             )
             self._create_label(
@@ -243,7 +246,7 @@ class RandomLinkSplit(BaseTransform):
             self._create_label(
                 store,
                 test_edges,
-                neg_edge_index[:, num_neg_val:num_neg_val + num_neg_test],
+                neg_edge_index[:, num_neg_val : num_neg_val + num_neg_test],
                 out=test_store,
             )
 
@@ -256,10 +259,9 @@ class RandomLinkSplit(BaseTransform):
         is_undirected: bool,
         rev_edge_type: EdgeType,
     ) -> EdgeStorage:
-
         edge_attrs = {key for key in store.keys() if store.is_edge_attr(key)}
         for key, value in store.items():
-            if key == 'edge_index':
+            if key == "edge_index":
                 continue
 
             if key in edge_attrs:
@@ -278,7 +280,7 @@ class RandomLinkSplit(BaseTransform):
             for key in rev_store.keys():
                 if key not in store:
                     del rev_store[key]  # We delete all outdated attributes.
-                elif key == 'edge_index':
+                elif key == "edge_index":
                     rev_store.edge_index = store.edge_index.flip([0])
                 else:
                     rev_store[key] = store[key]
@@ -292,7 +294,6 @@ class RandomLinkSplit(BaseTransform):
         neg_edge_index: Tensor,
         out: EdgeStorage,
     ) -> EdgeStorage:
-
         edge_index = store.edge_index[:, index]
 
         if hasattr(store, self.key):
@@ -310,25 +311,28 @@ class RandomLinkSplit(BaseTransform):
             edge_label = torch.ones(index.numel(), device=index.device)
 
         if neg_edge_index.numel() > 0:
-            neg_edge_label = edge_label.new_zeros((neg_edge_index.size(1), ) +
-                                                  edge_label.size()[1:])
+            neg_edge_label = edge_label.new_zeros(
+                (neg_edge_index.size(1),) + edge_label.size()[1:]
+            )
 
         if self.split_labels:
-            out[f'pos_{self.key}'] = edge_label
-            out[f'pos_{self.key}_index'] = edge_index
+            out[f"pos_{self.key}"] = edge_label
+            out[f"pos_{self.key}_index"] = edge_index
             if neg_edge_index.numel() > 0:
-                out[f'neg_{self.key}'] = neg_edge_label
-                out[f'neg_{self.key}_index'] = neg_edge_index
+                out[f"neg_{self.key}"] = neg_edge_label
+                out[f"neg_{self.key}_index"] = neg_edge_index
 
         else:
             if neg_edge_index.numel() > 0:
                 edge_label = torch.cat([edge_label, neg_edge_label], dim=0)
                 edge_index = torch.cat([edge_index, neg_edge_index], dim=-1)
             out[self.key] = edge_label
-            out[f'{self.key}_index'] = edge_index
+            out[f"{self.key}_index"] = edge_index
 
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(num_val={self.num_val}, '
-                f'num_test={self.num_test})')
+        return (
+            f"{self.__class__.__name__}(num_val={self.num_val}, "
+            f"num_test={self.num_test})"
+        )

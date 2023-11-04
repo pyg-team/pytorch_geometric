@@ -7,7 +7,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('cartesian')
+@functional_transform("cartesian")
 class Cartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
     attributes (functional name: :obj:`cartesian`). Each coordinate gets
@@ -24,12 +24,13 @@ class Cartesian(BaseTransform):
         interval ((float, float), optional): A tuple specifying the lower and
             upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
+
     def __init__(
-            self,
-            norm: bool = True,
-            max_value: Optional[float] = None,
-            cat: bool = True,
-            interval: Tuple[float, float] = (0.0, 1.0),
+        self,
+        norm: bool = True,
+        max_value: Optional[float] = None,
+        cat: bool = True,
+        interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.max = max_value
@@ -58,5 +59,4 @@ class Cartesian(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(norm={self.norm}, '
-                f'max_value={self.max})')
+        return f"{self.__class__.__name__}(norm={self.norm}, " f"max_value={self.max})"

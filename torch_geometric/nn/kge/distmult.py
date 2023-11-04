@@ -33,6 +33,7 @@ class DistMult(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -57,7 +58,6 @@ class DistMult(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
@@ -70,7 +70,6 @@ class DistMult(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 

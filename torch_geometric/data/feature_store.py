@@ -73,14 +73,14 @@ class TensorAttr(CastMixin):
         r"""Whether the :obj:`TensorAttr` has no unset fields."""
         return all([self.is_set(key) for key in self.__dataclass_fields__])
 
-    def fully_specify(self) -> 'TensorAttr':
+    def fully_specify(self) -> "TensorAttr":
         r"""Sets all :obj:`UNSET` fields to :obj:`None`."""
         for key in self.__dataclass_fields__:
             if not self.is_set(key):
                 setattr(self, key, None)
         return self
 
-    def update(self, attr: 'TensorAttr') -> 'TensorAttr':
+    def update(self, attr: "TensorAttr") -> "TensorAttr":
         r"""Updates an :class:`TensorAttr` with set attributes from another
         :class:`TensorAttr`."""
         for key in self.__dataclass_fields__:
@@ -114,13 +114,14 @@ class AttrView(CastMixin):
         store[group_name].feat[index]
         store[group_name, feat][index]
     """
-    def __init__(self, store: 'FeatureStore', attr: TensorAttr):
-        self.__dict__['_store'] = store
-        self.__dict__['_attr'] = attr
+
+    def __init__(self, store: "FeatureStore", attr: TensorAttr):
+        self.__dict__["_store"] = store
+        self.__dict__["_attr"] = attr
 
     # Advanced indexing #######################################################
 
-    def __getattr__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
+    def __getattr__(self, key: Any) -> Union["AttrView", FeatureTensorType]:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute.
         This allows for :class:`AttrView` to be indexed by different values of
@@ -144,9 +145,11 @@ class AttrView(CastMixin):
                 break
 
         if attr_name is None:
-            raise AttributeError(f"Cannot access attribute '{key}' on view "
-                                 f"'{out}' as all attributes have already "
-                                 f"been set in this view")
+            raise AttributeError(
+                f"Cannot access attribute '{key}' on view "
+                f"'{out}' as all attributes have already "
+                f"been set in this view"
+            )
 
         setattr(out._attr, attr_name, key)
 
@@ -155,7 +158,7 @@ class AttrView(CastMixin):
 
         return out
 
-    def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
+    def __getitem__(self, key: Any) -> Union["AttrView", FeatureTensorType]:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute via indexing.
         This allows for :class:`AttrView` to be indexed by different values of
@@ -185,9 +188,11 @@ class AttrView(CastMixin):
             view.index = torch.tensor([1, 2, 3])
         """
         if key not in self._attr.__dataclass_fields__:
-            raise ValueError(f"Attempted to set nonexistent attribute '{key}' "
-                             f"(acceptable attributes are "
-                             f"{self._attr.__dataclass_fields__})")
+            raise ValueError(
+                f"Attempted to set nonexistent attribute '{key}' "
+                f"(acceptable attributes are "
+                f"{self._attr.__dataclass_fields__})"
+            )
 
         setattr(self._attr, key, value)
 
@@ -223,11 +228,11 @@ class AttrView(CastMixin):
         out._attr.fully_specify()
         return out._store.get_tensor(out._attr)
 
-    def __copy__(self) -> 'AttrView':
+    def __copy__(self) -> "AttrView":
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out.__dict__['_attr'] = copy.copy(out.__dict__['_attr'])
+        out.__dict__["_attr"] = copy.copy(out.__dict__["_attr"])
         return out
 
     def __eq__(self, obj: Any) -> bool:
@@ -239,8 +244,7 @@ class AttrView(CastMixin):
         return self._store == obj._store and self._attr == obj._attr
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(store={self._store}, '
-                f'attr={self._attr})')
+        return f"{self.__class__.__name__}(store={self._store}, " f"attr={self._attr})"
 
 
 # TODO (manan, matthias) Ideally, we want to let `FeatureStore` inherit from
@@ -259,9 +263,10 @@ class FeatureStore:
             their ordering to unique identify tensor values.
             (default: :obj:`None`)
     """
+
     def __init__(self, tensor_attr_cls: Optional[Any] = None):
         super().__init__()
-        self.__dict__['_tensor_attr_cls'] = tensor_attr_cls or TensorAttr
+        self.__dict__["_tensor_attr_cls"] = tensor_attr_cls or TensorAttr
 
     # Core (CRUD) #############################################################
 
@@ -287,9 +292,11 @@ class FeatureStore:
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
-                             f"specified. Please fully-specify the input by "
-                             f"specifying all 'UNSET' fields")
+            raise ValueError(
+                f"The input TensorAttr '{attr}' is not fully "
+                f"specified. Please fully-specify the input by "
+                f"specifying all 'UNSET' fields"
+            )
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
@@ -322,9 +329,11 @@ class FeatureStore:
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
-                             f"specified. Please fully-specify the input by "
-                             f"specifying all 'UNSET' fields.")
+            raise ValueError(
+                f"The input TensorAttr '{attr}' is not fully "
+                f"specified. Please fully-specify the input by "
+                f"specifying all 'UNSET' fields."
+            )
 
         tensor = self._get_tensor(attr)
         if tensor is None:
@@ -372,13 +381,15 @@ class FeatureStore:
             raise ValueError(
                 f"The input TensorAttr(s) '{bad_attrs}' are not fully "
                 f"specified. Please fully-specify them by specifying all "
-                f"'UNSET' fields")
+                f"'UNSET' fields"
+            )
 
         tensors = self._multi_get_tensor(attrs)
         if any(v is None for v in tensors):
             bad_attrs = [attrs[i] for i, v in enumerate(tensors) if v is None]
-            raise KeyError(f"Tensors corresponding to attributes "
-                           f"'{bad_attrs}' were not found")
+            raise KeyError(
+                f"Tensors corresponding to attributes " f"'{bad_attrs}' were not found"
+            )
 
         return [
             self._to_type(attr, tensor) if convert_type else tensor
@@ -405,13 +416,14 @@ class FeatureStore:
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
-                             f"specified. Please fully-specify the input by "
-                             f"specifying all 'UNSET' fields.")
+            raise ValueError(
+                f"The input TensorAttr '{attr}' is not fully "
+                f"specified. Please fully-specify the input by "
+                f"specifying all 'UNSET' fields."
+            )
         return self._remove_tensor(attr)
 
-    def update_tensor(self, tensor: FeatureTensorType, *args,
-                      **kwargs) -> bool:
+    def update_tensor(self, tensor: FeatureTensorType, *args, **kwargs) -> bool:
         r"""Updates a :obj:`tensor` in the :class:`FeatureStore` with a new
         value. Returns whether the update was succesful.
 
@@ -440,14 +452,13 @@ class FeatureStore:
         r"""Obtains the size of a tensor given its :class:`TensorAttr`, or
         :obj:`None` if the tensor does not exist."""
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        if not attr.is_set('index'):
+        if not attr.is_set("index"):
             attr.index = None
         return self._get_tensor_size(attr)
 
     @abstractmethod
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
-        r"""Obtains all tensor attributes stored in this :class:`FeatureStore`.
-        """
+        r"""Obtains all tensor attributes stored in this :class:`FeatureStore`."""
         pass
 
     # `AttrView` methods ######################################################
@@ -465,11 +476,9 @@ class FeatureStore:
         attr: TensorAttr,
         tensor: FeatureTensorType,
     ) -> FeatureTensorType:
-        if (isinstance(attr.index, torch.Tensor)
-                and isinstance(tensor, np.ndarray)):
+        if isinstance(attr.index, torch.Tensor) and isinstance(tensor, np.ndarray):
             return torch.from_numpy(tensor)
-        if (isinstance(attr.index, np.ndarray)
-                and isinstance(tensor, torch.Tensor)):
+        if isinstance(attr.index, np.ndarray) and isinstance(tensor, torch.Tensor):
             return tensor.detach().cpu().numpy()
         return tensor
 
@@ -522,4 +531,4 @@ class FeatureStore:
         pass
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f"{self.__class__.__name__}()"

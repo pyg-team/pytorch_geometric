@@ -9,6 +9,7 @@ from torch_geometric.typing import OptTensor
 
 class DenseGCNConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GCNConv`."""
+
     def __init__(
         self,
         in_channels: int,
@@ -22,13 +23,14 @@ class DenseGCNConv(torch.nn.Module):
         self.out_channels = out_channels
         self.improved = improved
 
-        self.lin = Linear(in_channels, out_channels, bias=False,
-                          weight_initializer='glorot')
+        self.lin = Linear(
+            in_channels, out_channels, bias=False, weight_initializer="glorot"
+        )
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -37,8 +39,9 @@ class DenseGCNConv(torch.nn.Module):
         self.lin.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x: Tensor, adj: Tensor, mask: OptTensor = None,
-                add_loop: bool = True) -> Tensor:
+    def forward(
+        self, x: Tensor, adj: Tensor, mask: OptTensor = None, add_loop: bool = True
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): Node feature tensor
@@ -80,5 +83,4 @@ class DenseGCNConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels})')
+        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"

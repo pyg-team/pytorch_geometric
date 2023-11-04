@@ -8,7 +8,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
 
 
-@functional_transform('target_indegree')
+@functional_transform("target_indegree")
 class TargetIndegree(BaseTransform):
     r"""Saves the globally normalized degree of target nodes
     (functional name: :obj:`target_indegree`)
@@ -23,6 +23,7 @@ class TargetIndegree(BaseTransform):
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
     """
+
     def __init__(
         self,
         norm: bool = True,
@@ -53,5 +54,4 @@ class TargetIndegree(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(norm={self.norm}, '
-                f'max_value={self.max})')
+        return f"{self.__class__.__name__}(norm={self.norm}, " f"max_value={self.max})"

@@ -52,7 +52,10 @@ def approx_knn(
     x, y = x - min_xy, y - min_xy
 
     max_xy = max(x.max(), y.max())
-    x, y, = x / max_xy, y / max_xy
+    (
+        x,
+        y,
+    ) = x / max_xy, y / max_xy
 
     # Concat batch/features to ensure no cross-links between examples exist:
     x = torch.cat([x, 2 * x.size(1) * batch_x.view(-1, 1).to(x.dtype)], dim=-1)
@@ -75,7 +78,7 @@ def approx_knn_graph(
     k: int,
     batch: Tensor = None,
     loop: bool = False,
-    flow: str = 'source_to_target',
+    flow: str = "source_to_target",
 ) -> Tensor:  # pragma: no cover
     r"""Computes graph edges to the nearest approximated :obj:`k` points.
 
@@ -99,9 +102,9 @@ def approx_knn_graph(
 
     :rtype: :class:`torch.Tensor`
     """
-    assert flow in ['source_to_target', 'target_to_source']
+    assert flow in ["source_to_target", "target_to_source"]
     row, col = approx_knn(x, x, k if loop else k + 1, batch, batch)
-    row, col = (col, row) if flow == 'source_to_target' else (row, col)
+    row, col = (col, row) if flow == "source_to_target" else (row, col)
     if not loop:
         mask = row != col
         row, col = row[mask], col[mask]

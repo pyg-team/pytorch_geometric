@@ -44,9 +44,10 @@ class OnDiskDataset(Dataset):
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
     """
+
     BACKENDS = {
-        'sqlite': SQLiteDatabase,
-        'rocksdb': RocksDatabase,
+        "sqlite": SQLiteDatabase,
+        "rocksdb": RocksDatabase,
     }
 
     def __init__(
@@ -54,14 +55,16 @@ class OnDiskDataset(Dataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-        backend: str = 'sqlite',
+        backend: str = "sqlite",
         schema: Schema = object,
         log: bool = True,
     ):
         if backend not in self.BACKENDS:
-            raise ValueError(f"Database backend must be one of "
-                             f"{set(self.BACKENDS.keys())} "
-                             f"(got '{backend}')")
+            raise ValueError(
+                f"Database backend must be one of "
+                f"{set(self.BACKENDS.keys())} "
+                f"(got '{backend}')"
+            )
 
         self.backend = backend
         self.schema = schema
@@ -73,7 +76,7 @@ class OnDiskDataset(Dataset):
 
     @property
     def processed_file_names(self) -> str:
-        return f'{self.backend}.db'
+        return f"{self.backend}.db"
 
     @property
     def db(self) -> Database:
@@ -84,7 +87,7 @@ class OnDiskDataset(Dataset):
         kwargs = {}
         cls = self.BACKENDS[self.backend]
         if issubclass(cls, SQLiteDatabase):
-            kwargs['name'] = self.__class__.__name__
+            kwargs["name"] = self.__class__.__name__
 
         os.makedirs(self.processed_dir, exist_ok=True)
         path = self.processed_paths[0]
@@ -103,9 +106,11 @@ class OnDiskDataset(Dataset):
         schema."""
         if self.schema == object:
             return data
-        raise NotImplementedError(f"`{self.__class__.__name__}.serialize()` "
-                                  f"needs to be overridden in case a "
-                                  f"non-default schema was passed")
+        raise NotImplementedError(
+            f"`{self.__class__.__name__}.serialize()` "
+            f"needs to be overridden in case a "
+            f"non-default schema was passed"
+        )
 
     def deserialize(self, data: Any) -> BaseData:
         r"""Deserializes the DB entry into a
@@ -113,9 +118,11 @@ class OnDiskDataset(Dataset):
         :class:`~torch_geometric.data.HeteroData` object."""
         if self.schema == object:
             return data
-        raise NotImplementedError(f"`{self.__class__.__name__}.deserialize()` "
-                                  f"needs to be overridden in case a "
-                                  f"non-default schema was passed")
+        raise NotImplementedError(
+            f"`{self.__class__.__name__}.deserialize()` "
+            f"needs to be overridden in case a "
+            f"non-default schema was passed"
+        )
 
     def append(self, data: BaseData):
         r"""Appends the data object to the dataset."""
@@ -133,7 +140,7 @@ class OnDiskDataset(Dataset):
         end = start + len(data_list)
         data_list = [self.serialize(data) for data in data_list]
         self.db.multi_insert(range(start, end), data_list, batch_size)
-        self._numel += (end - start)
+        self._numel += end - start
 
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
@@ -158,4 +165,4 @@ class OnDiskDataset(Dataset):
         return self._numel
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({len(self)})'
+        return f"{self.__class__.__name__}({len(self)})"

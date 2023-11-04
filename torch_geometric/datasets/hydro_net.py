@@ -51,6 +51,7 @@ class HydroNet(InMemoryDataset):
         use_processed (bool): Option to use a pre-processed version of the
             original :obj:`xyz` dataset. (default: :obj:`True`)
     """
+
     def __init__(
         self,
         root: str,
@@ -70,14 +71,14 @@ class HydroNet(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [f'W{c}_geoms_all.zip' for c in range(3, 31)]
+        return [f"W{c}_geoms_all.zip" for c in range(3, 31)]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [f'W{c}_geoms_all.npz' for c in range(3, 31)]
+        return [f"W{c}_geoms_all.npz" for c in range(3, 31)]
 
     def download(self):
-        token_file = Path(osp.join(self.raw_dir, 'use_processed'))
+        token_file = Path(osp.join(self.raw_dir, "use_processed"))
         if self.use_processed and token_file.exists():
             return
 
@@ -93,7 +94,7 @@ class HydroNet(InMemoryDataset):
         file = RemoteFile.raw_dataset()
         file.unpack_to(self.raw_dir)
         folder_name, _ = osp.splitext(file.name)
-        files = glob(osp.join(self.raw_dir, folder_name, '*.zip'))
+        files = glob(osp.join(self.raw_dir, folder_name, "*.zip"))
 
         for f in files:
             dst = osp.join(self.raw_dir, osp.basename(f))
@@ -116,12 +117,12 @@ class HydroNet(InMemoryDataset):
         )
 
     def _unpack_processed(self):
-        files = glob(osp.join(self.raw_dir, '*.npz'))
+        files = glob(osp.join(self.raw_dir, "*.npz"))
         for f in files:
             dst = osp.join(self.processed_dir, osp.basename(f))
             os.rename(f, dst)
 
-    def _create_partitions(self, file) -> 'Partition':
+    def _create_partitions(self, file) -> "Partition":
         name = osp.basename(file)
         name, _ = osp.splitext(name)
         return Partition(self.root, name, self.transform, self.pre_transform)
@@ -129,7 +130,7 @@ class HydroNet(InMemoryDataset):
     def select_clusters(
         self,
         clusters: Optional[Union[int, List[int]]],
-    ) -> 'Optional[List[Partition]]':
+    ) -> "Optional[List[Partition]]":
         if self.name is not None:
             clusters = self._validate_name(clusters)
 
@@ -145,7 +146,8 @@ class HydroNet(InMemoryDataset):
 
         if not all([is_valid_cluster(x) for x in clusters]):
             raise ValueError(
-                "Selected clusters must be an integer in the range [3, 30]")
+                "Selected clusters must be an integer in the range [3, 30]"
+            )
 
         self._partitions = [self._partitions[c - 3] for c in clusters]
 
@@ -153,9 +155,11 @@ class HydroNet(InMemoryDataset):
         if clusters is not None:
             raise ValueError("'name' and 'clusters' are mutually exclusive")
 
-        if self.name not in ['small', 'medium']:
-            raise ValueError(f"Invalid subset name '{self.name}'. "
-                             f"Must be either 'small' or 'medium'")
+        if self.name not in ["small", "medium"]:
+            raise ValueError(
+                f"Invalid subset name '{self.name}'. "
+                f"Must be either 'small' or 'medium'"
+            )
 
         return range(3, 26)
 
@@ -169,10 +173,10 @@ class HydroNet(InMemoryDataset):
         return dataset
 
     def _load_small_split(self, dataset: ConcatDataset) -> Subset:
-        split_file = osp.join(self.processed_dir, 'split_00_small.npz')
+        split_file = osp.join(self.processed_dir, "split_00_small.npz")
         with np.load(split_file) as split:
-            train_idx = split['train_idx']
-            val_idx = split['val_idx']
+            train_idx = split["train_idx"]
+            val_idx = split["val_idx"]
             all_idx = np.concatenate([train_idx, val_idx])
             dataset = Subset(dataset, all_idx)
         return dataset
@@ -186,7 +190,7 @@ class HydroNet(InMemoryDataset):
 
 def get_num_clusters(filepath) -> int:
     name = osp.basename(filepath)
-    return int(name[1:name.find('_')])
+    return int(name[1 : name.find("_")])
 
 
 def read_energy(file: str, chunk_size: int) -> np.ndarray:
@@ -197,13 +201,18 @@ def read_energy(file: str, chunk_size: int) -> np.ndarray:
 
     if chunk_size - 2 == 11 * 3:
         # Manually handle bad lines in W11
-        df = pd.read_table(file, header=None, dtype="string",
-                           skiprows=skipatoms)
+        df = pd.read_table(file, header=None, dtype="string", skiprows=skipatoms)
         df = df[0].str.split().str[-1].astype(np.float32)
     else:
-        df = pd.read_table(file, sep=r'\s+', names=["label", "energy"],
-                           dtype=np.float32, skiprows=skipatoms,
-                           usecols=['energy'], memory_map=True)
+        df = pd.read_table(
+            file,
+            sep=r"\s+",
+            names=["label", "energy"],
+            dtype=np.float32,
+            skiprows=skipatoms,
+            usecols=["energy"],
+            memory_map=True,
+        )
 
     return df.to_numpy().squeeze()
 
@@ -214,19 +223,20 @@ def read_atoms(file: str, chunk_size: int) -> Tuple[np.ndarray, np.ndarray]:
     def skipheaders(i: int):
         return i % chunk_size == 0 or (i - 1) % chunk_size == 0
 
-    dtypes = {
-        'atom': 'string',
-        'x': np.float16,
-        'y': np.float16,
-        'z': np.float16
-    }
-    df = pd.read_table(file, sep=r'\s+', names=list(dtypes.keys()),
-                       dtype=dtypes, skiprows=skipheaders, memory_map=True)
+    dtypes = {"atom": "string", "x": np.float16, "y": np.float16, "z": np.float16}
+    df = pd.read_table(
+        file,
+        sep=r"\s+",
+        names=list(dtypes.keys()),
+        dtype=dtypes,
+        skiprows=skipheaders,
+        memory_map=True,
+    )
 
     z = np.ones(len(df), dtype=np.int8)
-    z[(df.atom == 'O').to_numpy(dtype=np.bool_)] = 8
+    z[(df.atom == "O").to_numpy(dtype=np.bool_)] = 8
     pos = df.iloc[:, 1:4].to_numpy()
-    num_nodes = (chunk_size - 2)
+    num_nodes = chunk_size - 2
     num_graphs = z.shape[0] // num_nodes
     z.shape = (num_graphs, num_nodes)
     pos.shape = (num_graphs, num_nodes, 3)
@@ -244,22 +254,25 @@ class RemoteFile:
         os.unlink(file)
 
     @staticmethod
-    def raw_dataset() -> 'RemoteFile':
+    def raw_dataset() -> "RemoteFile":
         return RemoteFile(
-            url='https://figshare.com/ndownloader/files/38063847',
-            name='W3-W30_all_geoms_TTM2.1-F.zip')
+            url="https://figshare.com/ndownloader/files/38063847",
+            name="W3-W30_all_geoms_TTM2.1-F.zip",
+        )
 
     @staticmethod
-    def processed_dataset() -> 'RemoteFile':
+    def processed_dataset() -> "RemoteFile":
         return RemoteFile(
-            url='https://figshare.com/ndownloader/files/38075781',
-            name='W3-W30_pyg_processed.zip')
+            url="https://figshare.com/ndownloader/files/38075781",
+            name="W3-W30_pyg_processed.zip",
+        )
 
     @staticmethod
-    def hydronet_splits() -> 'RemoteFile':
+    def hydronet_splits() -> "RemoteFile":
         return RemoteFile(
             url="https://figshare.com/ndownloader/files/38075904",
-            name="hydronet_splits.zip")
+            name="hydronet_splits.zip",
+        )
 
 
 class Partition(InMemoryDataset):
@@ -272,8 +285,7 @@ class Partition(InMemoryDataset):
     ):
         self.name = name
         self.num_clusters = get_num_clusters(name)
-        super().__init__(root, transform, pre_transform, pre_filter=None,
-                         log=False)
+        super().__init__(root, transform, pre_transform, pre_filter=None, log=False)
         self.is_loaded = False
 
     @property
@@ -282,25 +294,24 @@ class Partition(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [self.name + '.npz']
+        return [self.name + ".npz"]
 
     def process(self):
         num_nodes = self.num_clusters * 3
         chunk_size = num_nodes + 2
         z, pos = read_atoms(self.raw_paths[0], chunk_size)
         y = read_energy(self.raw_paths[0], chunk_size)
-        np.savez(self.processed_paths[0], z=z, pos=pos, y=y,
-                 num_graphs=z.shape[0])
+        np.savez(self.processed_paths[0], z=z, pos=pos, y=y, num_graphs=z.shape[0])
 
     def load(self):
         if self.is_loaded:
             return
 
         with np.load(self.processed_paths[0]) as npzfile:
-            self.z = npzfile['z']
-            self.pos = npzfile['pos']
-            self.y = npzfile['y']
-            num_graphs = int(npzfile['num_graphs'])
+            self.z = npzfile["z"]
+            self.pos = npzfile["pos"]
+            self.y = npzfile["y"]
+            num_graphs = int(npzfile["num_graphs"])
 
         self._data_list = num_graphs * [None]
         self.is_loaded = True
@@ -308,7 +319,7 @@ class Partition(InMemoryDataset):
     @cached_property
     def num_graphs(self) -> int:
         with np.load(self.processed_paths[0]) as npzfile:
-            return int(npzfile['num_graphs'])
+            return int(npzfile["num_graphs"])
 
     def len(self) -> int:
         return self.num_graphs

@@ -15,13 +15,17 @@ from torch_geometric.utils.hetero import get_unused_node_types
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
-    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
+    GraphModule, Graph, Node = "GraphModule", "Graph", "Node"
 
 
-def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
-                         in_channels: Optional[Dict[str, int]] = None,
-                         input_map: Optional[Dict[str, str]] = None,
-                         debug: bool = False) -> GraphModule:
+def to_hetero_with_bases(
+    module: Module,
+    metadata: Metadata,
+    num_bases: int,
+    in_channels: Optional[Dict[str, int]] = None,
+    input_map: Optional[Dict[str, str]] = None,
+    debug: bool = False,
+) -> GraphModule:
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent
     via the basis-decomposition technique introduced in the
     `"Modeling Relational Data with Graph Convolutional Networks"
@@ -128,8 +132,9 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-    transformer = ToHeteroWithBasesTransformer(module, metadata, num_bases,
-                                               in_channels, input_map, debug)
+    transformer = ToHeteroWithBasesTransformer(
+        module, metadata, num_bases, in_channels, input_map, debug
+    )
     return transformer.transform()
 
 
@@ -164,7 +169,8 @@ class ToHeteroWithBasesTransformer(Transformer):
                 f"There exist node types ({unused_node_types}) whose "
                 f"representations do not get updated during message passing "
                 f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behavior.")
+                f"This may lead to unexpected behavior."
+            )
 
         names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
         for name in names:
@@ -173,7 +179,8 @@ class ToHeteroWithBasesTransformer(Transformer):
                     f"The type '{name}' contains invalid characters which "
                     f"may lead to unexpected behavior. To avoid any issues, "
                     f"ensure that your types only contain letters, numbers "
-                    f"and underscores.")
+                    f"and underscores."
+                )
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False
@@ -198,59 +205,75 @@ class ToHeteroWithBasesTransformer(Transformer):
         # output data.
         if self.is_edge_level(node) and not self._edge_offset_dict_initialized:
             self.graph.inserting_after(out)
-            out = self.graph.create_node('call_function',
-                                         target=get_edge_offset_dict,
-                                         args=(node, self.edge_type2id),
-                                         name='edge_offset_dict')
+            out = self.graph.create_node(
+                "call_function",
+                target=get_edge_offset_dict,
+                args=(node, self.edge_type2id),
+                name="edge_offset_dict",
+            )
             self._edge_offset_dict_initialized = True
 
         elif not self._node_offset_dict_initialized:
             self.graph.inserting_after(out)
-            out = self.graph.create_node('call_function',
-                                         target=get_node_offset_dict,
-                                         args=(node, self.node_type2id),
-                                         name='node_offset_dict')
+            out = self.graph.create_node(
+                "call_function",
+                target=get_node_offset_dict,
+                args=(node, self.node_type2id),
+                name="node_offset_dict",
+            )
             self._node_offset_dict_initialized = True
 
         # Create a `edge_type` tensor used as input to `HeteroBasisConv`:
         if self.is_edge_level(node) and not self._edge_type_initialized:
             self.graph.inserting_after(out)
-            out = self.graph.create_node('call_function', target=get_edge_type,
-                                         args=(node, self.edge_type2id),
-                                         name='edge_type')
+            out = self.graph.create_node(
+                "call_function",
+                target=get_edge_type,
+                args=(node, self.edge_type2id),
+                name="edge_type",
+            )
             self._edge_type_initialized = True
 
         # Add `Linear` operation to align features to the same dimensionality:
         if name in self.in_channels:
             self.graph.inserting_after(out)
-            out = self.graph.create_node('call_module',
-                                         target=f'align_lin__{name}',
-                                         args=(node, ),
-                                         name=f'{name}__aligned')
+            out = self.graph.create_node(
+                "call_module",
+                target=f"align_lin__{name}",
+                args=(node,),
+                name=f"{name}__aligned",
+            )
             self._state[out.name] = self._state[name]
 
-            lin = LinearAlign(self.metadata[int(self.is_edge_level(node))],
-                              self.in_channels[name])
-            setattr(self.module, f'align_lin__{name}', lin)
+            lin = LinearAlign(
+                self.metadata[int(self.is_edge_level(node))], self.in_channels[name]
+            )
+            setattr(self.module, f"align_lin__{name}", lin)
 
         # Perform grouping of type-wise values into a single tensor:
         if self.is_edge_level(node):
             self.graph.inserting_after(out)
             out = self.graph.create_node(
-                'call_function', target=group_edge_placeholder,
-                args=(out if name in self.in_channels else node,
-                      self.edge_type2id,
-                      self.find_by_name('node_offset_dict')),
-                name=f'{name}__grouped')
-            self._state[out.name] = 'edge'
+                "call_function",
+                target=group_edge_placeholder,
+                args=(
+                    out if name in self.in_channels else node,
+                    self.edge_type2id,
+                    self.find_by_name("node_offset_dict"),
+                ),
+                name=f"{name}__grouped",
+            )
+            self._state[out.name] = "edge"
 
         else:
             self.graph.inserting_after(out)
             out = self.graph.create_node(
-                'call_function', target=group_node_placeholder,
-                args=(out if name in self.in_channels else node,
-                      self.node_type2id), name=f'{name}__grouped')
-            self._state[out.name] = 'node'
+                "call_function",
+                target=group_node_placeholder,
+                args=(out if name in self.in_channels else node, self.node_type2id),
+                name=f"{name}__grouped",
+            )
+            self._state[out.name] = "node"
 
         self.replace_all_uses_with(node, out)
 
@@ -258,7 +281,7 @@ class ToHeteroWithBasesTransformer(Transformer):
         # Call the `HeteroBasisConv` wrapper instead instead of a single
         # message passing layer. We need to inject the `edge_type` as first
         # argument in order to do so.
-        node.args = (self.find_by_name('edge_type'), ) + node.args
+        node.args = (self.find_by_name("edge_type"),) + node.args
 
     def output(self, node: Node, target: Any, name: str):
         # Split the output to dictionaries, holding either node type-wise or
@@ -267,17 +290,21 @@ class ToHeteroWithBasesTransformer(Transformer):
             if isinstance(value, Node) and self.is_edge_level(value):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(
-                    'call_function', target=split_output,
-                    args=(value, self.find_by_name('edge_offset_dict')),
-                    name=f'{value.name}__split')
+                    "call_function",
+                    target=split_output,
+                    args=(value, self.find_by_name("edge_offset_dict")),
+                    name=f"{value.name}__split",
+                )
 
                 pass
             elif isinstance(value, Node):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(
-                    'call_function', target=split_output,
-                    args=(value, self.find_by_name('node_offset_dict')),
-                    name=f'{value.name}__split')
+                    "call_function",
+                    target=split_output,
+                    args=(value, self.find_by_name("node_offset_dict")),
+                    name=f"{value.name}__split",
+                )
 
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
@@ -295,7 +322,7 @@ class ToHeteroWithBasesTransformer(Transformer):
         else:
             node.type = None
 
-        node.args = (_recurse(node.args[0]), )
+        node.args = (_recurse(node.args[0]),)
 
     def init_submodule(self, module: Module, target: str) -> Module:
         if not isinstance(module, MessagePassing):
@@ -311,8 +338,7 @@ class ToHeteroWithBasesTransformer(Transformer):
 class HeteroBasisConv(torch.nn.Module):
     # A wrapper layer that applies the basis-decomposition technique to a
     # heterogeneous graph.
-    def __init__(self, module: MessagePassing, num_relations: int,
-                 num_bases: int):
+    def __init__(self, module: MessagePassing, num_relations: int, num_bases: int):
         super().__init__()
 
         self.num_relations = num_relations
@@ -330,13 +356,14 @@ class HeteroBasisConv(torch.nn.Module):
                     f"with the number of original edges "
                     f"({module._edge_type.size(0)}). Does your message "
                     f"passing layer create additional self-loops? Try to "
-                    f"remove them via 'add_self_loops=False'")
+                    f"remove them via 'add_self_loops=False'"
+                )
             weight = module.edge_type_weight.view(-1)[module._edge_type]
             weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
             return weight * output
 
         params = list(module.parameters())
-        device = params[0].device if len(params) > 0 else 'cpu'
+        device = params[0].device if len(params) > 0 else "cpu"
 
         self.convs = torch.nn.ModuleList()
         for _ in range(num_bases):
@@ -345,7 +372,8 @@ class HeteroBasisConv(torch.nn.Module):
             # We learn a single scalar weight for each individual edge type,
             # which is used to weight the output message based on edge type:
             conv.edge_type_weight = Parameter(
-                torch.empty(1, num_relations, device=device))
+                torch.empty(1, num_relations, device=device)
+            )
             conv.register_message_forward_hook(hook)
             self.convs.append(conv)
 
@@ -354,13 +382,14 @@ class HeteroBasisConv(torch.nn.Module):
 
     def reset_parameters(self):
         for conv in self.convs:
-            if hasattr(conv, 'reset_parameters'):
+            if hasattr(conv, "reset_parameters"):
                 conv.reset_parameters()
             elif sum([p.numel() for p in conv.parameters()]) > 0:
                 warnings.warn(
                     f"'{conv}' will be duplicated, but its parameters cannot "
                     f"be reset. To suppress this warning, add a "
-                    f"'reset_parameters()' method to '{conv}'")
+                    f"'reset_parameters()' method to '{conv}'"
+                )
             torch.nn.init.xavier_uniform_(conv.edge_type_weight)
 
     def forward(self, edge_type: Tensor, *args, **kwargs) -> Tensor:
@@ -374,16 +403,17 @@ class HeteroBasisConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(num_relations='
-                f'{self.num_relations}, num_bases={self.num_bases})')
+        return (
+            f"{self.__class__.__name__}(num_relations="
+            f"{self.num_relations}, num_bases={self.num_bases})"
+        )
 
 
 class LinearAlign(torch.nn.Module):
     # Aligns representions to the same dimensionality. Note that this will
     # create lazy modules, and as such requires a forward pass in order to
     # initialize parameters.
-    def __init__(self, keys: List[Union[NodeType, EdgeType]],
-                 out_channels: int):
+    def __init__(self, keys: List[Union[NodeType, EdgeType]], out_channels: int):
         super().__init__()
         self.out_channels = out_channels
         self.lins = torch.nn.ModuleDict()
@@ -396,8 +426,10 @@ class LinearAlign(torch.nn.Module):
         return {key: self.lins[key2str(key)](x) for key, x in x_dict.items()}
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(num_relations={len(self.lins)}, '
-                f'out_channels={self.out_channels})')
+        return (
+            f"{self.__class__.__name__}(num_relations={len(self.lins)}, "
+            f"out_channels={self.out_channels})"
+        )
 
 
 ###############################################################################
@@ -447,18 +479,16 @@ def get_edge_type(
     input_dict: Dict[EdgeType, Union[Tensor, SparseTensor]],
     type2id: Dict[EdgeType, int],
 ) -> Tensor:
-
     inputs = [input_dict[key] for key in type2id.keys()]
     outs = []
 
     for i, value in enumerate(inputs):
         if value.size(0) == 2 and value.dtype == torch.long:  # edge_index
-            out = value.new_full((value.size(-1), ), i, dtype=torch.long)
+            out = value.new_full((value.size(-1),), i, dtype=torch.long)
         elif isinstance(value, SparseTensor):
-            out = torch.full((value.nnz(), ), i, dtype=torch.long,
-                             device=value.device())
+            out = torch.full((value.nnz(),), i, dtype=torch.long, device=value.device())
         else:
-            out = value.new_full((value.size(-2), ), i, dtype=torch.long)
+            out = value.new_full((value.size(-2),), i, dtype=torch.long)
         outs.append(out)
 
     return outs[0] if len(outs) == 1 else torch.cat(outs, dim=0)
@@ -470,9 +500,9 @@ def get_edge_type(
 # unfied single representation.
 
 
-def group_node_placeholder(input_dict: Dict[NodeType, Tensor],
-                           type2id: Dict[NodeType, int]) -> Tensor:
-
+def group_node_placeholder(
+    input_dict: Dict[NodeType, Tensor], type2id: Dict[NodeType, int]
+) -> Tensor:
     inputs = [input_dict[key] for key in type2id.keys()]
     return inputs[0] if len(inputs) == 1 else torch.cat(inputs, dim=-2)
 
@@ -482,7 +512,6 @@ def group_edge_placeholder(
     type2id: Dict[EdgeType, int],
     offset_dict: Dict[NodeType, int] = None,
 ) -> Union[Tensor, SparseTensor]:
-
     inputs = [input_dict[key] for key in type2id.keys()]
 
     if len(inputs) == 1:
@@ -495,7 +524,8 @@ def group_edge_placeholder(
             raise AttributeError(
                 "Can not infer node-level offsets. Please ensure that there "
                 "exists a node-level argument before the 'edge_index' "
-                "argument in your forward header.")
+                "argument in your forward header."
+            )
 
         outputs = []
         for value, (src_type, _, dst_type) in zip(inputs, type2id):
@@ -511,7 +541,8 @@ def group_edge_placeholder(
             raise AttributeError(
                 "Can not infer node-level offsets. Please ensure that there "
                 "exists a node-level argument before the 'SparseTensor' "
-                "argument in your forward header.")
+                "argument in your forward header."
+            )
 
         # For grouping a list of SparseTensors, we convert them into a
         # unified `edge_index` representation in order to avoid conflicts
@@ -541,7 +572,6 @@ def split_output(
     output: Tensor,
     offset_dict: Union[Dict[NodeType, int], Dict[EdgeType, int]],
 ) -> Union[Dict[NodeType, Tensor], Dict[EdgeType, Tensor]]:
-
     cumsums = list(offset_dict.values()) + [output.size(-2)]
     sizes = [cumsums[i + 1] - cumsums[i] for i in range(len(offset_dict))]
     outputs = output.split(sizes, dim=-2)
@@ -552,5 +582,5 @@ def split_output(
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
-    key = '__'.join(key) if isinstance(key, tuple) else key
-    return key.replace(' ', '_').replace('-', '_').replace(':', '_')
+    key = "__".join(key) if isinstance(key, tuple) else key
+    return key.replace(" ", "_").replace("-", "_").replace(":", "_")

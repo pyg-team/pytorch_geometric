@@ -53,6 +53,7 @@ class ResGatedGraphConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -63,8 +64,7 @@ class ResGatedGraphConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -84,12 +84,12 @@ class ResGatedGraphConv(MessagePassing):
         if root_weight:
             self.lin_skip = Linear(in_channels[1], out_channels, bias=False)
         else:
-            self.register_parameter('lin_skip', None)
+            self.register_parameter("lin_skip", None)
 
         if bias:
             self.bias = Parameter(Tensor(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -103,9 +103,9 @@ class ResGatedGraphConv(MessagePassing):
         if self.bias is not None:
             zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None) -> Tensor:
-
+    def forward(
+        self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_attr: OptTensor = None
+    ) -> Tensor:
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -119,8 +119,7 @@ class ResGatedGraphConv(MessagePassing):
             k, q, v = x[1], x[0], x[0]
 
         # propagate_type: (k: Tensor, q: Tensor, v: Tensor, edge_attr: OptTensor)  # noqa
-        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
-                             size=None)
+        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr, size=None)
 
         if self.root_weight:
             out = out + self.lin_skip(x[1])
@@ -130,9 +129,9 @@ class ResGatedGraphConv(MessagePassing):
 
         return out
 
-    def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor,
-                edge_attr: OptTensor) -> Tensor:
-
+    def message(
+        self, k_i: Tensor, q_j: Tensor, v_j: Tensor, edge_attr: OptTensor
+    ) -> Tensor:
         assert (edge_attr is not None) == (self.edge_dim is not None)
 
         if edge_attr is not None:

@@ -10,7 +10,7 @@ except ImportError:
 
 def read_ply(path):
     if openmesh is None:
-        raise ImportError('`read_ply` requires the `openmesh` package.')
+        raise ImportError("`read_ply` requires the `openmesh` package.")
 
     mesh = openmesh.read_trimesh(path)
     pos = torch.from_numpy(mesh.points()).to(torch.float)
