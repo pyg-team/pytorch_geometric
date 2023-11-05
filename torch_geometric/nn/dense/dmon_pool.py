@@ -143,9 +143,8 @@ class DMoNPooling(torch.nn.Module):
         ortho_loss = torch.mean(ortho_loss)
 
         # Cluster loss:
-        cluster_loss = torch.norm(torch.einsum('ijk->ij', ss)) / torch.sqrt(
-            torch.tensor(s.size(0))).to(
-                x.device) / mask.sum(axis=1) * torch.norm(i_s) - 1
+        cluster_size = torch.einsum('ijk->ik', s)  # B x C
+        cluster_loss = torch.norm(cluster_size) / mask.sum(1) * torch.norm(i_s) - 1
         cluster_loss = torch.mean(cluster_loss)
 
         # Fix and normalize coarsened adjacency matrix:
