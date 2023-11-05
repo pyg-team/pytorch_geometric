@@ -9,6 +9,10 @@ repos:
     hooks:
       - id: no-commit-to-branch
         name: No commits to master
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
       - id: end-of-file-fixer
         name: End-of-file fixer
       - id: trailing-whitespace
@@ -36,3 +40,23 @@ repos:
   #     - id: pyroma
   #       name: Check packaging
   #       args: [--min=10, .]
+
+  - repo: https://github.com/google/yapf
+    rev: v0.40.2
+    hooks:
+      - id: yapf
+        name: Format code
+        additional_dependencies: [toml]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: Sort imports
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        name: Check PEP8
+        additional_dependencies: [Flake8-pyproject]
