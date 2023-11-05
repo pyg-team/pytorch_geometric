@@ -53,8 +53,8 @@ class TransformerBlock(torch.nn.Module):
 
 class TransitionDown(torch.nn.Module):
     '''
-        Samples the input point cloud by a ratio percentage to reduce
-        cardinality and uses an mlp to augment features dimensionnality
+    Samples the input point cloud by a ratio percentage to reduce
+    cardinality and uses an mlp to augment features dimensionnality
     '''
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
         super().__init__()
