@@ -162,7 +162,6 @@ class InvertibleModule(torch.nn.Module, ABC):
         self.num_bwd_passes = num_bwd_passes
 
     def forward(self, *args):
-        """"""
         return self._fn_apply(args, self._forward, self._inverse)
 
     def inverse(self, *args):

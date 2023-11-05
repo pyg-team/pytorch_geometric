@@ -171,7 +171,6 @@ class DistNeighborSampler:
             In case of distributed training it is required to synchronize the
             results between machines after each layer.
         """
-
         input_type = inputs.input_type
         self.input_type = input_type
         batch_size = inputs.input_id.size()[0]

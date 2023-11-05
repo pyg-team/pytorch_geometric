@@ -66,7 +66,6 @@ class RECT_L(torch.nn.Module):
         edge_index: Adj,
         edge_weight: OptTensor = None,
     ) -> Tensor:
-        """"""
         x = self.conv(x, edge_index, edge_weight)
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)

@@ -186,7 +186,6 @@ class GNNFF(torch.nn.Module):
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        """"""
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 

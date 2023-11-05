@@ -8,7 +8,6 @@ class Reshape(torch.nn.Module):
         self.shape = shape
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
         x = x.view(*self.shape)
         return x
 

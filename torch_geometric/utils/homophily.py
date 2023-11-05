@@ -63,7 +63,6 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             (default: :obj:`"edge"`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 3],
         ...                            [1, 2, 0, 4]])
         >>> y = torch.tensor([0, 0, 0, 0, 1])

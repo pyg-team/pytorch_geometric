@@ -43,7 +43,6 @@ class MaskLabel(torch.nn.Module):
         self.emb.reset_parameters()
 
     def forward(self, x: Tensor, y: Tensor, mask: Tensor) -> Tensor:
-        """"""
         if self.method == "concat":
             out = x.new_zeros(y.size(0), self.emb.weight.size(-1))
             out[mask] = self.emb(y[mask])

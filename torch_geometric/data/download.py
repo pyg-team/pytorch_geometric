@@ -17,7 +17,6 @@ def download_url(url: str, folder: str, log: bool = True,
         log (bool, optional): If :obj:`False`, will not print anything to the
             console. (default: :obj:`True`)
     """
-
     if filename is None:
         filename = url.rpartition('/')[2]
         filename = filename if filename[0] == '?' else filename.split('?')[0]

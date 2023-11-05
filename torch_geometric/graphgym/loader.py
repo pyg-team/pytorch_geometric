@@ -207,7 +207,6 @@ def set_dataset_info(dataset):
         dataset: PyG dataset object
 
     """
-
     # get dim_in and dim_out
     try:
         cfg.share.dim_in = dataset._data.x.shape[1]

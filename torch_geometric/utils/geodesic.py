@@ -48,7 +48,6 @@ def geodesic_distance(
     :rtype: :class:`Tensor`
 
     Example:
-
         >>> pos = torch.tensor([[0.0, 0.0, 0.0],
         ...                     [2.0, 0.0, 0.0],
         ...                     [0.0, 2.0, 0.0],

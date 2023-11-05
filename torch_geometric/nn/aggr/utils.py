@@ -55,7 +55,6 @@ class MultiheadAttentionBlock(torch.nn.Module):
 
     def forward(self, x: Tensor, y: Tensor, x_mask: Optional[Tensor] = None,
                 y_mask: Optional[Tensor] = None) -> Tensor:
-        """"""
         if y_mask is not None:
             y_mask = ~y_mask
 

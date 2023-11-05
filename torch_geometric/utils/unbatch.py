@@ -27,7 +27,6 @@ def unbatch(
     :rtype: :class:`List[Tensor]`
 
     Example:
-
         >>> src = torch.arange(7)
         >>> batch = torch.tensor([0, 0, 0, 1, 1, 2, 2])
         >>> unbatch(src, batch)
@@ -54,7 +53,6 @@ def unbatch_edge_index(
     :rtype: :class:`List[Tensor]`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6],
         ...                            [1, 0, 2, 1, 3, 2, 5, 4, 6, 5]])
         >>> batch = torch.tensor([0, 0, 0, 0, 1, 1, 1])

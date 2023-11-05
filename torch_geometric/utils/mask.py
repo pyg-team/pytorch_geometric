@@ -47,7 +47,6 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
             minimal sized output mask is returned.
 
     Example:
-
         >>> index = torch.tensor([1, 3, 5])
         >>> index_to_mask(index)
         tensor([False,  True, False,  True, False,  True])
@@ -69,7 +68,6 @@ def mask_to_index(mask: Tensor) -> Tensor:
         mask (Tensor): The mask.
 
     Example:
-
         >>> mask = torch.tensor([False, True, False])
         >>> mask_to_index(mask)
         tensor([1])

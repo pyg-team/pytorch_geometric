@@ -15,7 +15,6 @@ def get_num_hops(model: torch.nn.Module) -> int:
     from.
 
     Example:
-
         >>> class GNN(torch.nn.Module):
         ...     def __init__(self):
         ...         super().__init__()
@@ -66,7 +65,6 @@ def subgraph(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
         ...                            [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5]])
         >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
@@ -83,7 +81,6 @@ def subgraph(
         tensor([False, False, False, False, False, False,  True,
                 True,  True,  True,  False, False]))
     """
-
     device = edge_index.device
 
     if isinstance(subset, (list, tuple)):
@@ -145,7 +142,6 @@ def bipartite_subgraph(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
         ...                            [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
         >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
@@ -163,7 +159,6 @@ def bipartite_subgraph(
         tensor([False, False,  True,  True, False, False, False, False,
                 True,  True,  False]))
     """
-
     device = edge_index.device
 
     src_subset, dst_subset = subset
@@ -248,7 +243,6 @@ def k_hop_subgraph(
              :class:`BoolTensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],
         ...                            [2, 2, 4, 4, 6, 6]])
 
@@ -285,7 +279,6 @@ def k_hop_subgraph(
         >>> subset[mapping]
         tensor([0, 6])
     """
-
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     assert flow in ['source_to_target', 'target_to_source']
@@ -362,7 +355,6 @@ def hyper_subgraph(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 1, 2, 3, 0, 2, 3],
         ...                            [0, 0, 0, 1, 1, 1, 2, 2, 2]])
         >>> edge_attr = torch.tensor([3, 2, 6])

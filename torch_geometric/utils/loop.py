@@ -24,7 +24,6 @@ def contains_self_loops(edge_index: Tensor) -> bool:
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> contains_self_loops(edge_index)
@@ -54,7 +53,6 @@ def remove_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_attr = [[1, 2], [3, 4], [5, 6]]
@@ -106,7 +104,6 @@ def segregate_self_loops(
         :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 0, 1],
         ...                            [0, 1, 0]])
         >>> (edge_index, edge_attr,
@@ -116,7 +113,6 @@ def segregate_self_loops(
         tensor([[0],
                 [0]])
     """
-
     mask = edge_index[0] != edge_index[1]
     inv_mask = ~mask
 
@@ -197,7 +193,6 @@ def add_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_weight = torch.tensor([0.5, 0.5, 0.5])
@@ -327,7 +322,6 @@ def add_remaining_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1],
         ...                            [1, 0]])
         >>> edge_weight = torch.tensor([0.5, 0.5])
@@ -393,7 +387,6 @@ def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
     :rtype: :class:`Tensor`
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_weight = torch.tensor([0.2, 0.3, 0.5])

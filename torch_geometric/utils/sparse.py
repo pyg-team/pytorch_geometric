@@ -27,7 +27,6 @@ def dense_to_sparse(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> # For a single adjacency matrix:
         >>> adj = torch.tensor([[3, 1],
         ...                     [2, 0]])
@@ -166,7 +165,6 @@ def to_torch_coo_tensor(
     :rtype: :class:`torch.sparse.Tensor`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> to_torch_coo_tensor(edge_index)
@@ -232,7 +230,6 @@ def to_torch_csr_tensor(
     :rtype: :class:`torch.sparse.Tensor`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> to_torch_csr_tensor(edge_index)
@@ -298,7 +295,6 @@ def to_torch_csc_tensor(
     :rtype: :class:`torch.sparse.Tensor`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> to_torch_csc_tensor(edge_index)
@@ -391,7 +387,6 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> adj = to_torch_coo_tensor(edge_index)

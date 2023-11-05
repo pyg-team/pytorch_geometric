@@ -141,7 +141,6 @@ class AttentiveFP(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor, edge_attr: Tensor,
                 batch: Tensor) -> Tensor:
-        """"""
         # Atom Embedding:
         x = F.leaky_relu_(self.lin1(x))
 
