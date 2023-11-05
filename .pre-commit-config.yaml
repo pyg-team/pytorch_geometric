@@ -9,10 +9,6 @@ repos:
     hooks:
       - id: no-commit-to-branch
         name: No commits to master
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
       - id: end-of-file-fixer
         name: End-of-file fixer
       - id: trailing-whitespace
@@ -60,3 +56,9 @@ repos:
       - id: flake8
         name: Check PEP8
         additional_dependencies: [Flake8-pyproject]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.4
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
