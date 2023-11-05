@@ -68,7 +68,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         self.kwargs.update(kwargs)
 
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def processed_dir(self) -> str:
@@ -112,7 +112,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
 
 class RandomPartitionGraphDataset(StochasticBlockModelDataset):
@@ -174,7 +174,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
 
         super().__init__(root, block_sizes, edge_probs, num_channels,
                          is_undirected, transform, pre_transform, **kwargs)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:

@@ -68,7 +68,7 @@ class FAUST(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> str:
@@ -98,7 +98,7 @@ class FAUST(InMemoryDataset):
                 data = self.pre_transform(data)
             data_list.append(data)
 
-        torch.save(self.collate(data_list[:80]), self.processed_paths[0])
-        torch.save(self.collate(data_list[80:]), self.processed_paths[1])
+        self.save(data_list[:80], self.processed_paths[0])
+        self.save(data_list[80:], self.processed_paths[1])
 
         shutil.rmtree(osp.join(self.raw_dir, 'MPI-FAUST'))

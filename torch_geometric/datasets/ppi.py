@@ -75,11 +75,11 @@ class PPI(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.load(self.processed_paths[0])
         elif split == 'val':
-            self.data, self.slices = torch.load(self.processed_paths[1])
+            self.load(self.processed_paths[1])
         elif split == 'test':
-            self.data, self.slices = torch.load(self.processed_paths[2])
+            self.load(self.processed_paths[2])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -134,4 +134,4 @@ class PPI(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
-            torch.save(self.collate(data_list), self.processed_paths[s])
+            self.save(data_list, self.processed_paths[s])

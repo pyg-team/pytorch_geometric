@@ -59,7 +59,7 @@ class OGB_MAG(InMemoryDataset):
         self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def num_classes(self) -> int:
@@ -167,7 +167,7 @@ class OGB_MAG(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return 'ogbn-mag()'
