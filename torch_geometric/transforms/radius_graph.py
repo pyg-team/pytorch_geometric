@@ -4,7 +4,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("radius_graph")
+@functional_transform('radius_graph')
 class RadiusGraph(BaseTransform):
     r"""Creates edges based on node positions :obj:`data.pos` to all points
     within a given distance (functional name: :obj:`radius_graph`).
@@ -23,13 +23,12 @@ class RadiusGraph(BaseTransform):
             effect in case :obj:`batch` is not :obj:`None`, or the input lies
             on the GPU. (default: :obj:`1`)
     """
-
     def __init__(
         self,
         r: float,
         loop: bool = False,
         max_num_neighbors: int = 32,
-        flow: str = "source_to_target",
+        flow: str = 'source_to_target',
         num_workers: int = 1,
     ):
         self.r = r
@@ -40,7 +39,7 @@ class RadiusGraph(BaseTransform):
 
     def forward(self, data: Data) -> Data:
         data.edge_attr = None
-        batch = data.batch if "batch" in data else None
+        batch = data.batch if 'batch' in data else None
 
         data.edge_index = torch_geometric.nn.radius_graph(
             data.pos,
@@ -55,4 +54,4 @@ class RadiusGraph(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(r={self.r})"
+        return f'{self.__class__.__name__}(r={self.r})'

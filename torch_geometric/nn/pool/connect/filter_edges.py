@@ -15,12 +15,14 @@ def filter_adj(
     cluster_index: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
+
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if cluster_index is None:
-        cluster_index = torch.arange(node_index.size(0), device=node_index.device)
+        cluster_index = torch.arange(node_index.size(0),
+                                     device=node_index.device)
 
-    mask = node_index.new_full((num_nodes,), -1)
+    mask = node_index.new_full((num_nodes, ), -1)
     mask[node_index] = cluster_index
 
     row, col = edge_index[0], edge_index[1]
@@ -43,7 +45,6 @@ class FilterEdges(Connect):
     where :math:`\mathbf{i}` denotes the set of retained nodes.
     It is assumed that each cluster contains only one node.
     """
-
     def forward(
         self,
         select_output: SelectOutput,
@@ -51,14 +52,11 @@ class FilterEdges(Connect):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
-        if (
-            not torch.jit.is_scripting()
-            and select_output.num_clusters != select_output.cluster_index.size(0)
-        ):
-            raise ValueError(
-                f"'{self.__class__.__name__}' requires each "
-                f"cluster to contain only one node"
-            )
+
+        if (not torch.jit.is_scripting() and select_output.num_clusters
+                != select_output.cluster_index.size(0)):
+            raise ValueError(f"'{self.__class__.__name__}' requires each "
+                             f"cluster to contain only one node")
 
         edge_index, edge_attr = filter_adj(
             edge_index,

@@ -110,22 +110,16 @@ class NeighborSampler(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+    def __init__(self, edge_index: Union[Tensor, SparseTensor],
+                 sizes: List[int], node_idx: Optional[Tensor] = None,
+                 num_nodes: Optional[int] = None, return_e_id: bool = True,
+                 transform: Callable = None, **kwargs):
 
-    def __init__(
-        self,
-        edge_index: Union[Tensor, SparseTensor],
-        sizes: List[int],
-        node_idx: Optional[Tensor] = None,
-        num_nodes: Optional[int] = None,
-        return_e_id: bool = True,
-        transform: Callable = None,
-        **kwargs,
-    ):
-        edge_index = edge_index.to("cpu")
+        edge_index = edge_index.to('cpu')
 
         # Remove for PyTorch Lightning:
-        kwargs.pop("dataset", None)
-        kwargs.pop("collate_fn", None)
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         # Save for Pytorch Lightning < 1.6:
         self.edge_index = edge_index
@@ -140,34 +134,25 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         # Obtain a *transposed* `SparseTensor` instance.
         if not self.is_sparse_tensor:
-            if (
-                num_nodes is None
-                and node_idx is not None
-                and node_idx.dtype == torch.bool
-            ):
+            if (num_nodes is None and node_idx is not None
+                    and node_idx.dtype == torch.bool):
                 num_nodes = node_idx.size(0)
-            if (
-                num_nodes is None
-                and node_idx is not None
-                and node_idx.dtype == torch.long
-            ):
+            if (num_nodes is None and node_idx is not None
+                    and node_idx.dtype == torch.long):
                 num_nodes = max(int(edge_index.max()), int(node_idx.max())) + 1
             if num_nodes is None:
                 num_nodes = int(edge_index.max()) + 1
 
             value = torch.arange(edge_index.size(1)) if return_e_id else None
-            self.adj_t = SparseTensor(
-                row=edge_index[0],
-                col=edge_index[1],
-                value=value,
-                sparse_sizes=(num_nodes, num_nodes),
-            ).t()
+            self.adj_t = SparseTensor(row=edge_index[0], col=edge_index[1],
+                                      value=value,
+                                      sparse_sizes=(num_nodes, num_nodes)).t()
         else:
             adj_t = edge_index
             if return_e_id:
                 self.__val__ = adj_t.storage.value()
                 value = torch.arange(adj_t.nnz())
-                adj_t = adj_t.set_value(value, layout="coo")
+                adj_t = adj_t.set_value(value, layout='coo')
             self.adj_t = adj_t
 
         self.adj_t.storage.rowptr()
@@ -177,7 +162,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
         elif node_idx.dtype == torch.bool:
             node_idx = node_idx.nonzero(as_tuple=False).view(-1)
 
-        super().__init__(node_idx.view(-1).tolist(), collate_fn=self.sample, **kwargs)
+        super().__init__(
+            node_idx.view(-1).tolist(), collate_fn=self.sample, **kwargs)
 
     def sample(self, batch):
         if not isinstance(batch, Tensor):
@@ -192,7 +178,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
             e_id = adj_t.storage.value()
             size = adj_t.sparse_sizes()[::-1]
             if self.__val__ is not None:
-                adj_t.set_value_(self.__val__[e_id], layout="coo")
+                adj_t.set_value_(self.__val__[e_id], layout='coo')
 
             if self.is_sparse_tensor:
                 adjs.append(Adj(adj_t, e_id, size))
@@ -207,4 +193,4 @@ class NeighborSampler(torch.utils.data.DataLoader):
         return out
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(sizes={self.sizes})"
+        return f'{self.__class__.__name__}(sizes={self.sizes})'

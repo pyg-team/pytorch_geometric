@@ -7,7 +7,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csc_tensor
 
 
-@functional_transform("feature_propagation")
+@functional_transform('feature_propagation')
 class FeaturePropagation(BaseTransform):
     r"""The feature propagation operator from the `"On the Unreasonable
     Effectiveness of Feature propagation in Learning on Graphs with Missing
@@ -36,25 +36,25 @@ class FeaturePropagation(BaseTransform):
         num_iterations (int, optional): The number of propagations.
             (default: :obj:`40`)
     """
-
     def __init__(self, missing_mask: Tensor, num_iterations: int = 40):
         self.missing_mask = missing_mask
         self.num_iterations = num_iterations
 
     def forward(self, data: Data) -> Data:
-        assert "edge_index" in data or "adj_t" in data
+        assert 'edge_index' in data or 'adj_t' in data
         assert data.x.size() == self.missing_mask.size()
         gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
 
         missing_mask = self.missing_mask.to(data.x.device)
         known_mask = ~missing_mask
 
-        if "edge_index" in data:
+        if 'edge_index' in data:
             edge_weight = data.edge_attr
-            if "edge_weight" in data:
+            if 'edge_weight' in data:
                 edge_weight = data.edge_weight
             edge_index = data.edge_index
-            adj_t = to_torch_csc_tensor(edge_index, edge_weight, size=data.size()).t()
+            adj_t = to_torch_csc_tensor(edge_index, edge_weight,
+                                        size=data.size()).t()
             adj_t, _ = gcn_norm(adj_t, add_self_loops=False)
         elif is_torch_sparse_tensor(data.adj_t):
             adj_t, _ = gcn_norm(data.adj_t, add_self_loops=False)
@@ -62,7 +62,7 @@ class FeaturePropagation(BaseTransform):
             adj_t = gcn_norm(data.adj_t, add_self_loops=False)
 
         x = data.x.clone()
-        x[missing_mask] = 0.0
+        x[missing_mask] = 0.
 
         out = x
         for _ in range(self.num_iterations):
@@ -74,8 +74,6 @@ class FeaturePropagation(BaseTransform):
 
     def __repr__(self) -> str:
         na_values = int(self.missing_mask.sum()) / self.missing_mask.numel()
-        return (
-            f"{self.__class__.__name__}("
-            f"missing_features={100 * na_values:.1f}%, "
-            f"num_iterations={self.num_iterations})"
-        )
+        return (f'{self.__class__.__name__}('
+                f'missing_features={100 * na_values:.1f}%, '
+                f'num_iterations={self.num_iterations})')

@@ -33,11 +33,8 @@ class RCDD(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
-    url = (
-        "https://s3.cn-north-1.amazonaws.com.cn/dgl-data/dataset/"
-        "openhgnn/AliRCD_ICDM.zip"
-    )
+    url = ('https://s3.cn-north-1.amazonaws.com.cn/dgl-data/dataset/'
+           'openhgnn/AliRCD_ICDM.zip')
 
     def __init__(
         self,
@@ -51,15 +48,15 @@ class RCDD(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            "AliRCD_ICDM_nodes.csv",
-            "AliRCD_ICDM_edges.csv",
-            "AliRCD_ICDM_train_labels.csv",
-            "AliRCD_ICDM_test_labels.csv",
+            'AliRCD_ICDM_nodes.csv',
+            'AliRCD_ICDM_edges.csv',
+            'AliRCD_ICDM_train_labels.csv',
+            'AliRCD_ICDM_test_labels.csv',
         ]
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -78,65 +75,63 @@ class RCDD(InMemoryDataset):
         node_df = pd.read_csv(  # AliRCD_ICDM_nodes.csv:
             self.raw_paths[0],
             header=None,
-            names=["node_id", "node_type", "node_feat"],
+            names=['node_id', 'node_type', 'node_feat'],
         )
         # Map global node IDs to local ones for each node type:
         mapping = torch.empty(len(node_df), dtype=torch.long)
-        for node_type in node_df["node_type"].unique():
-            mask = node_df["node_type"] == node_type
+        for node_type in node_df['node_type'].unique():
+            mask = node_df['node_type'] == node_type
             mask = torch.from_numpy(mask.values)
             num_nodes = int(mask.sum())
             mapping[mask] = torch.arange(num_nodes)
             data[node_type].num_nodes = num_nodes
-            x = np.vstack(
-                [
-                    np.asarray(f.split(":"), dtype=np.float32)
-                    for f in node_df["node_feat"][mask.numpy()]
-                ]
-            )
+            x = np.vstack([
+                np.asarray(f.split(':'), dtype=np.float32)
+                for f in node_df['node_feat'][mask.numpy()]
+            ])
             data[node_type].x = torch.from_numpy(x)
 
         edge_df = pd.read_csv(  # AliRCD_ICDM_edges.csv:
             self.raw_paths[1],
             header=None,
-            names=["src_id", "dst_id", "src_type", "dst_type", "edge_type"],
+            names=['src_id', 'dst_id', 'src_type', 'dst_type', 'edge_type'],
         )
-        for edge_type in edge_df["edge_type"].unique():
-            edge_type_df = edge_df[edge_df["edge_type"] == edge_type]
-            src_type = edge_type_df["src_type"].iloc[0]
-            dst_type = edge_type_df["dst_type"].iloc[0]
-            src = mapping[torch.from_numpy(edge_type_df["src_id"].values)]
-            dst = mapping[torch.from_numpy(edge_type_df["dst_id"].values)]
+        for edge_type in edge_df['edge_type'].unique():
+            edge_type_df = edge_df[edge_df['edge_type'] == edge_type]
+            src_type = edge_type_df['src_type'].iloc[0]
+            dst_type = edge_type_df['dst_type'].iloc[0]
+            src = mapping[torch.from_numpy(edge_type_df['src_id'].values)]
+            dst = mapping[torch.from_numpy(edge_type_df['dst_id'].values)]
             edge_index = torch.stack([src, dst], dim=0)
             data[src_type, edge_type, dst_type].edge_index = edge_index
 
         train_df = pd.read_csv(  # AliRCD_ICDM_train_labels.csv:
             self.raw_paths[2],
             header=None,
-            names=["node_id", "label"],
+            names=['node_id', 'label'],
             dtype=int,
         )
         test_df = pd.read_csv(  # AliRCD_ICDM_test_labels.csv:
             self.raw_paths[3],
             header=None,
-            sep="\t",
-            names=["node_id", "label"],
+            sep='\t',
+            names=['node_id', 'label'],
             dtype=int,
         )
 
-        train_idx = mapping[torch.from_numpy(train_df["node_id"].values)]
-        test_idx = mapping[torch.from_numpy(test_df["node_id"].values)]
+        train_idx = mapping[torch.from_numpy(train_df['node_id'].values)]
+        test_idx = mapping[torch.from_numpy(test_df['node_id'].values)]
 
-        y = torch.full((data["item"].num_nodes,), -1, dtype=torch.long)
-        y[train_idx] = torch.from_numpy(train_df["label"].values)
-        y[test_idx] = torch.from_numpy(test_df["label"].values)
+        y = torch.full((data['item'].num_nodes, ), -1, dtype=torch.long)
+        y[train_idx] = torch.from_numpy(train_df['label'].values)
+        y[test_idx] = torch.from_numpy(test_df['label'].values)
 
-        train_mask = index_to_mask(train_idx, data["item"].num_nodes)
-        test_mask = index_to_mask(test_idx, data["item"].num_nodes)
+        train_mask = index_to_mask(train_idx, data['item'].num_nodes)
+        test_mask = index_to_mask(test_idx, data['item'].num_nodes)
 
-        data["item"].y = y
-        data["item"].train_mask = train_mask
-        data["item"].test_mask = test_mask
+        data['item'].y = y
+        data['item'].train_mask = train_mask
+        data['item'].test_mask = test_mask
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

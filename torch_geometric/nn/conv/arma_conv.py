@@ -57,20 +57,12 @@ class ARMAConv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        num_stacks: int = 1,
-        num_layers: int = 1,
-        shared_weights: bool = False,
-        act: Optional[Callable] = ReLU(),
-        dropout: float = 0.0,
-        bias: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "add")
+    def __init__(self, in_channels: int, out_channels: int,
+                 num_stacks: int = 1, num_layers: int = 1,
+                 shared_weights: bool = False,
+                 act: Optional[Callable] = ReLU(), dropout: float = 0.,
+                 bias: bool = True, **kwargs):
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -91,12 +83,13 @@ class ARMAConv(MessagePassing):
         else:
             self.init_weight = torch.nn.parameter.UninitializedParameter()
             self.root_weight = torch.nn.parameter.UninitializedParameter()
-            self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
 
         if bias:
             self.bias = Parameter(torch.empty(T, K, 1, F_out))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -108,28 +101,18 @@ class ARMAConv(MessagePassing):
             glorot(self.root_weight)
         zeros(self.bias)
 
-    def forward(
-        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
-                edge_index,
-                edge_weight,
-                x.size(self.node_dim),
-                add_self_loops=False,
-                flow=self.flow,
-                dtype=x.dtype,
-            )
+                edge_index, edge_weight, x.size(self.node_dim),
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         elif isinstance(edge_index, SparseTensor):
             edge_index = gcn_norm(  # yapf: disable
-                edge_index,
-                edge_weight,
-                x.size(self.node_dim),
-                add_self_loops=False,
-                flow=self.flow,
-                dtype=x.dtype,
-            )
+                edge_index, edge_weight, x.size(self.node_dim),
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         x = x.unsqueeze(-3)
         out = x
@@ -140,7 +123,8 @@ class ARMAConv(MessagePassing):
                 out = out @ self.weight[0 if self.shared_weights else t - 1]
 
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=out, edge_weight=edge_weight, size=None)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
+                                 size=None)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
             root = root @ self.root_weight[0 if self.shared_weights else t]
@@ -171,11 +155,9 @@ class ARMAConv(MessagePassing):
             glorot(self.root_weight)
 
         module._hook.remove()
-        delattr(module, "_hook")
+        delattr(module, '_hook')
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, num_stacks={self.num_stacks}, "
-            f"num_layers={self.num_layers})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_stacks={self.num_stacks}, '
+                f'num_layers={self.num_layers})')

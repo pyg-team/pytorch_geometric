@@ -28,7 +28,6 @@ class RandomNodeLoader(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData],

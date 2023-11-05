@@ -36,7 +36,6 @@ class LCMAggregation(Aggregation):
             linear transformation followed by an activation function before
             aggregation. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -46,10 +45,8 @@ class LCMAggregation(Aggregation):
         super().__init__()
 
         if in_channels != out_channels and not project:
-            raise ValueError(
-                f"Inputs of '{self.__class__.__name__}' must be "
-                f"projected if `in_channels != out_channels`"
-            )
+            raise ValueError(f"Inputs of '{self.__class__.__name__}' must be "
+                             f"projected if `in_channels != out_channels`")
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -67,7 +64,7 @@ class LCMAggregation(Aggregation):
             self.lin.reset_parameters()
         self.gru_cell.reset_parameters()
 
-    @disable_dynamic_shapes(required_args=["dim_size", "max_num_elements"])
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,
@@ -77,12 +74,12 @@ class LCMAggregation(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
+
         if self.project:
             x = self.lin(x).relu()
 
-        x, _ = self.to_dense_batch(
-            x, index, ptr, dim_size, dim, max_num_elements=max_num_elements
-        )
+        x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                   max_num_elements=max_num_elements)
 
         x = x.permute(1, 0, 2)  # [num_neighbors, num_nodes, num_features]
         _, num_nodes, num_features = x.size()
@@ -118,7 +115,5 @@ class LCMAggregation(Aggregation):
         return x.squeeze(0)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, project={self.project})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, project={self.project})')

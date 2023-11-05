@@ -31,7 +31,6 @@ def get_num_hops(model: torch.nn.Module) -> int:
         2
     """
     from torch_geometric.nn.conv import MessagePassing
-
     num_hops = 0
     for module in model.modules():
         if isinstance(module, MessagePassing):
@@ -194,12 +193,10 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        src_index, _ = map_index(
-            edge_index[0], src_subset, max_index=src_size, inclusive=True
-        )
-        dst_index, _ = map_index(
-            edge_index[1], dst_subset, max_index=dst_size, inclusive=True
-        )
+        src_index, _ = map_index(edge_index[0], src_subset, max_index=src_size,
+                                 inclusive=True)
+        dst_index, _ = map_index(edge_index[1], dst_subset, max_index=dst_size,
+                                 inclusive=True)
         edge_index = torch.stack([src_index, dst_index], dim=0)
 
     if return_edge_mask:
@@ -214,7 +211,7 @@ def k_hop_subgraph(
     edge_index: Tensor,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
-    flow: str = "source_to_target",
+    flow: str = 'source_to_target',
     directed: bool = False,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
@@ -291,8 +288,8 @@ def k_hop_subgraph(
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    assert flow in ["source_to_target", "target_to_source"]
-    if flow == "target_to_source":
+    assert flow in ['source_to_target', 'target_to_source']
+    if flow == 'target_to_source':
         row, col = edge_index
     else:
         col, row = edge_index
@@ -314,7 +311,7 @@ def k_hop_subgraph(
         subsets.append(col[edge_mask])
 
     subset, inv = torch.cat(subsets).unique(return_inverse=True)
-    inv = inv[: node_idx.numel()]
+    inv = inv[:node_idx.numel()]
 
     node_mask.fill_(False)
     node_mask[subset] = True
@@ -325,7 +322,7 @@ def k_hop_subgraph(
     edge_index = edge_index[:, edge_mask]
 
     if relabel_nodes:
-        node_idx = row.new_full((num_nodes,), -1)
+        node_idx = row.new_full((num_nodes, ), -1)
         node_idx[subset] = torch.arange(subset.size(0), device=row.device)
         edge_index = node_idx[edge_index]
 
@@ -395,18 +392,16 @@ def hyper_subgraph(
 
     # Mask all connections that contain a node not in the subset
     hyper_edge_connection_mask = node_mask[
-        edge_index[0]
-    ]  # num_edges*num_nodes_per_edge
+        edge_index[0]]  # num_edges*num_nodes_per_edge
 
     # Mask hyperedges that contain one or less nodes from the subset
-    edge_mask = (
-        scatter(hyper_edge_connection_mask.to(torch.long), edge_index[1], reduce="sum")
-        > 1
-    )
+    edge_mask = scatter(hyper_edge_connection_mask.to(torch.long),
+                        edge_index[1], reduce='sum') > 1
 
     # Mask connections if hyperedge contains one or less nodes from the subset
     # or is connected to a node not in the subset
-    hyper_edge_connection_mask = hyper_edge_connection_mask & edge_mask[edge_index[1]]
+    hyper_edge_connection_mask = hyper_edge_connection_mask & edge_mask[
+        edge_index[1]]
 
     edge_index = edge_index[:, hyper_edge_connection_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
@@ -415,15 +410,15 @@ def hyper_subgraph(
     edge_idx = torch.zeros(edge_mask.size(0), dtype=torch.long, device=device)
     edge_idx[edge_mask] = torch.arange(edge_mask.sum().item(), device=device)
     edge_index = torch.cat(
-        [edge_index[0].unsqueeze(0), edge_idx[edge_index[1]].unsqueeze(0)], 0
-    )
+        [edge_index[0].unsqueeze(0), edge_idx[edge_index[1]].unsqueeze(0)], 0)
 
     if relabel_nodes:
-        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long, device=device)
+        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
+                               device=device)
         node_idx[subset] = torch.arange(node_mask.sum().item(), device=device)
         edge_index = torch.cat(
-            [node_idx[edge_index[0]].unsqueeze(0), edge_index[1].unsqueeze(0)], 0
-        )
+            [node_idx[edge_index[0]].unsqueeze(0), edge_index[1].unsqueeze(0)],
+            0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask

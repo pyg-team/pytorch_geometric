@@ -41,11 +41,9 @@ class AGNNConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
-
-    def __init__(
-        self, requires_grad: bool = True, add_self_loops: bool = True, **kwargs
-    ):
-        kwargs.setdefault("aggr", "add")
+    def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
+                 **kwargs):
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.requires_grad = requires_grad
@@ -54,7 +52,7 @@ class AGNNConv(MessagePassing):
         if requires_grad:
             self.beta = Parameter(torch.empty(1))
         else:
-            self.register_buffer("beta", torch.ones(1))
+            self.register_buffer('beta', torch.ones(1))
 
         self.reset_parameters()
 
@@ -67,26 +65,19 @@ class AGNNConv(MessagePassing):
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(
-                    edge_index, num_nodes=x.size(self.node_dim)
-                )
+                edge_index, _ = add_self_loops(edge_index,
+                                               num_nodes=x.size(self.node_dim))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
-        x_norm = F.normalize(x, p=2.0, dim=-1)
+        x_norm = F.normalize(x, p=2., dim=-1)
 
         # propagate_type: (x: Tensor, x_norm: Tensor)
         return self.propagate(edge_index, x=x, x_norm=x_norm, size=None)
 
-    def message(
-        self,
-        x_j: Tensor,
-        x_norm_i: Tensor,
-        x_norm_j: Tensor,
-        index: Tensor,
-        ptr: OptTensor,
-        size_i: Optional[int],
-    ) -> Tensor:
+    def message(self, x_j: Tensor, x_norm_i: Tensor, x_norm_j: Tensor,
+                index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
         alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         return x_j * alpha.view(-1, 1)

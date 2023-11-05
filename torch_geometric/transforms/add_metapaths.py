@@ -11,9 +11,9 @@ from torch_geometric.typing import EdgeType, SparseTensor
 from torch_geometric.utils import coalesce, degree
 
 
-@functional_transform("add_metapaths")
+@functional_transform('add_metapaths')
 class AddMetaPaths(BaseTransform):
-    r"""Adds additional edge types to a
+    r""" Adds additional edge types to a
     :class:`~torch_geometric.data.HeteroData` object between the source node
     type and the destination node type of a given :obj:`metapath`, as described
     in the `"Heterogenous Graph Attention Networks"
@@ -95,7 +95,6 @@ class AddMetaPaths(BaseTransform):
             the start to the end of the metapath edge.
             (default :obj:`False`)
     """
-
     def __init__(
         self,
         metapaths: List[List[EdgeType]],
@@ -106,24 +105,22 @@ class AddMetaPaths(BaseTransform):
         weighted: bool = False,
         **kwargs,
     ):
-        if "drop_orig_edges" in kwargs:
-            warnings.warn(
-                "'drop_orig_edges' is dprecated. Use " "'drop_orig_edge_types' instead"
-            )
-            drop_orig_edge_types = kwargs["drop_orig_edges"]
 
-        if "drop_unconnected_nodes" in kwargs:
-            warnings.warn(
-                "'drop_unconnected_nodes' is dprecated. Use "
-                "'drop_unconnected_node_types' instead"
-            )
-            drop_unconnected_node_types = kwargs["drop_unconnected_nodes"]
+        if 'drop_orig_edges' in kwargs:
+            warnings.warn("'drop_orig_edges' is dprecated. Use "
+                          "'drop_orig_edge_types' instead")
+            drop_orig_edge_types = kwargs['drop_orig_edges']
+
+        if 'drop_unconnected_nodes' in kwargs:
+            warnings.warn("'drop_unconnected_nodes' is dprecated. Use "
+                          "'drop_unconnected_node_types' instead")
+            drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
-            assert all(
-                [j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])]
-            ), f"Invalid sequence of node types in '{path}'"
+            assert all([
+                j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])
+            ]), f"Invalid sequence of node types in '{path}'"
 
         self.metapaths = metapaths
         self.drop_orig_edge_types = drop_orig_edge_types
@@ -138,17 +135,14 @@ class AddMetaPaths(BaseTransform):
 
         for j, metapath in enumerate(self.metapaths):
             for edge_type in metapath:
-                assert (
-                    data._to_canonical(edge_type) in edge_types
-                ), f"'{edge_type}' not present"
+                assert data._to_canonical(
+                    edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
             edge_weight = self._get_edge_weight(data, edge_type)
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
-                sparse_sizes=data[edge_type].size(),
-                edge_attr=edge_weight,
-            )
+                sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
 
             if self.max_sample is not None:
                 adj1 = self.sample_adj(adj1)
@@ -157,9 +151,7 @@ class AddMetaPaths(BaseTransform):
                 edge_weight = self._get_edge_weight(data, edge_type)
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=data[edge_type].edge_index,
-                    sparse_sizes=data[edge_type].size(),
-                    edge_attr=edge_weight,
-                )
+                    sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
 
                 adj1 = adj1 @ adj2
 
@@ -167,45 +159,41 @@ class AddMetaPaths(BaseTransform):
                     adj1 = self.sample_adj(adj1)
 
             row, col, edge_weight = adj1.coo()
-            new_edge_type = (metapath[0][0], f"metapath_{j}", metapath[-1][-1])
+            new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = torch.vstack([row, col])
             if self.weighted:
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
 
-        postprocess(
-            data,
-            edge_types,
-            self.drop_orig_edge_types,
-            self.keep_same_node_type,
-            self.drop_unconnected_node_types,
-        )
+        postprocess(data, edge_types, self.drop_orig_edge_types,
+                    self.keep_same_node_type, self.drop_unconnected_node_types)
 
         return data
 
     def sample_adj(self, adj: SparseTensor) -> SparseTensor:
         row, col, _ = adj.coo()
         deg = degree(row, num_nodes=adj.size(0))
-        prob = (self.max_sample * (1.0 / deg))[row]
+        prob = (self.max_sample * (1. / deg))[row]
         mask = torch.rand_like(prob) < prob
-        return adj.masked_select_nnz(mask, layout="coo")
+        return adj.masked_select_nnz(mask, layout='coo')
 
-    def _get_edge_weight(self, data: HeteroData, edge_type: EdgeType) -> torch.Tensor:
+    def _get_edge_weight(self, data: HeteroData,
+                         edge_type: EdgeType) -> torch.Tensor:
         if self.weighted:
-            edge_weight = data[edge_type].get("edge_weight", None)
+            edge_weight = data[edge_type].get('edge_weight', None)
             if edge_weight is None:
                 edge_weight = torch.ones(
-                    data[edge_type].num_edges, device=data[edge_type].edge_index.device
-                )
+                    data[edge_type].num_edges,
+                    device=data[edge_type].edge_index.device)
             assert edge_weight.ndim == 1
         else:
             edge_weight = None
         return edge_weight
 
 
-@functional_transform("add_random_metapaths")
+@functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r"""Adds additional edge types similar to :class:`AddMetaPaths`.
+    r""" Adds additional edge types similar to :class:`AddMetaPaths`.
     The key difference is that the added edge type is given by
     multiple random walks along the metapath.
     One might want to increase the number of random walks
@@ -230,7 +218,6 @@ class AddRandomMetaPaths(BaseTransform):
         sample_ratio (float, optional): The ratio of source nodes to start
             random walks from. (default: :obj:`1.0`)
     """
-
     def __init__(
         self,
         metapaths: List[List[EdgeType]],
@@ -240,11 +227,12 @@ class AddRandomMetaPaths(BaseTransform):
         walks_per_node: Union[int, List[int]] = 1,
         sample_ratio: float = 1.0,
     ):
+
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
-            assert all(
-                [j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])]
-            ), f"Invalid sequence of node types in '{path}'"
+            assert all([
+                j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])
+            ]), f"Invalid sequence of node types in '{path}'"
 
         self.metapaths = metapaths
         self.drop_orig_edge_types = drop_orig_edge_types
@@ -262,39 +250,29 @@ class AddRandomMetaPaths(BaseTransform):
 
         for j, metapath in enumerate(self.metapaths):
             for edge_type in metapath:
-                assert (
-                    data._to_canonical(edge_type) in edge_types
-                ), f"'{edge_type}' not present"
+                assert data._to_canonical(
+                    edge_type) in edge_types, f"'{edge_type}' not present"
 
             src_node = metapath[0][0]
             num_nodes = data[src_node].num_nodes
             num_starts = round(num_nodes * self.sample_ratio)
             row = start = torch.randperm(num_nodes)[:num_starts].repeat(
-                self.walks_per_node[j]
-            )
+                self.walks_per_node[j])
 
             for i, edge_type in enumerate(metapath):
                 edge_index = data[edge_type].edge_index
-                adj = SparseTensor(
-                    row=edge_index[0],
-                    col=edge_index[1],
-                    sparse_sizes=data[edge_type].size(),
-                )
+                adj = SparseTensor(row=edge_index[0], col=edge_index[1],
+                                   sparse_sizes=data[edge_type].size())
                 col, mask = self.sample(adj, start)
                 row, col = row[mask], col[mask]
                 start = col
 
-            new_edge_type = (metapath[0][0], f"metapath_{j}", metapath[-1][-1])
+            new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = coalesce(torch.vstack([row, col]))
             data.metapath_dict[new_edge_type] = metapath
 
-        postprocess(
-            data,
-            edge_types,
-            self.drop_orig_edge_types,
-            self.keep_same_node_type,
-            self.drop_unconnected_node_types,
-        )
+        postprocess(data, edge_types, self.drop_orig_edge_types,
+                    self.keep_same_node_type, self.drop_unconnected_node_types)
 
         return data
 
@@ -315,20 +293,15 @@ class AddRandomMetaPaths(BaseTransform):
         return col, mask
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}("
-            f"sample_ratio={self.sample_ratio}, "
-            f"walks_per_node={self.walks_per_node})"
-        )
+        return (f'{self.__class__.__name__}('
+                f'sample_ratio={self.sample_ratio}, '
+                f'walks_per_node={self.walks_per_node})')
 
 
-def postprocess(
-    data: HeteroData,
-    edge_types: List[EdgeType],
-    drop_orig_edge_types: bool,
-    keep_same_node_type: bool,
-    drop_unconnected_node_types: bool,
-):
+def postprocess(data: HeteroData, edge_types: List[EdgeType],
+                drop_orig_edge_types: bool, keep_same_node_type: bool,
+                drop_unconnected_node_types: bool):
+
     if drop_orig_edge_types:
         for i in edge_types:
             if keep_same_node_type and i[0] == i[-1]:

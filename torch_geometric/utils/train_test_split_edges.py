@@ -9,10 +9,10 @@ from torch_geometric.utils import to_undirected
 
 @deprecated("use 'transforms.RandomLinkSplit' instead")
 def train_test_split_edges(
-    data: "torch_geometric.data.Data",
+    data: 'torch_geometric.data.Data',
     val_ratio: float = 0.05,
     test_ratio: float = 0.1,
-) -> "torch_geometric.data.Data":
+) -> 'torch_geometric.data.Data':
     r"""Splits the edges of a :class:`torch_geometric.data.Data` object
     into positive and negative train/val/test edges.
     As such, it will replace the :obj:`edge_index` attribute with
@@ -39,7 +39,7 @@ def train_test_split_edges(
     :rtype: :class:`torch_geometric.data.Data`
     """
 
-    assert "batch" not in data  # No batch-mode.
+    assert 'batch' not in data  # No batch-mode.
 
     num_nodes = data.num_nodes
     row, col = data.edge_index
@@ -67,15 +67,15 @@ def train_test_split_edges(
     if edge_attr is not None:
         data.val_pos_edge_attr = edge_attr[:n_v]
 
-    r, c = row[n_v : n_v + n_t], col[n_v : n_v + n_t]
+    r, c = row[n_v:n_v + n_t], col[n_v:n_v + n_t]
     data.test_pos_edge_index = torch.stack([r, c], dim=0)
     if edge_attr is not None:
-        data.test_pos_edge_attr = edge_attr[n_v : n_v + n_t]
+        data.test_pos_edge_attr = edge_attr[n_v:n_v + n_t]
 
-    r, c = row[n_v + n_t :], col[n_v + n_t :]
+    r, c = row[n_v + n_t:], col[n_v + n_t:]
     data.train_pos_edge_index = torch.stack([r, c], dim=0)
     if edge_attr is not None:
-        out = to_undirected(data.train_pos_edge_index, edge_attr[n_v + n_t :])
+        out = to_undirected(data.train_pos_edge_index, edge_attr[n_v + n_t:])
         data.train_pos_edge_index, data.train_pos_edge_attr = out
     else:
         data.train_pos_edge_index = to_undirected(data.train_pos_edge_index)
@@ -86,7 +86,7 @@ def train_test_split_edges(
     neg_adj_mask[row, col] = 0
 
     neg_row, neg_col = neg_adj_mask.nonzero(as_tuple=False).t()
-    perm = torch.randperm(neg_row.size(0))[: n_v + n_t]
+    perm = torch.randperm(neg_row.size(0))[:n_v + n_t]
     neg_row, neg_col = neg_row[perm], neg_col[perm]
 
     neg_adj_mask[neg_row, neg_col] = 0
@@ -95,7 +95,7 @@ def train_test_split_edges(
     row, col = neg_row[:n_v], neg_col[:n_v]
     data.val_neg_edge_index = torch.stack([row, col], dim=0)
 
-    row, col = neg_row[n_v : n_v + n_t], neg_col[n_v : n_v + n_t]
+    row, col = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
     data.test_neg_edge_index = torch.stack([row, col], dim=0)
 
     return data

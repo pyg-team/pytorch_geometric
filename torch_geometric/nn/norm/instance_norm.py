@@ -37,7 +37,6 @@ class InstanceNorm(_InstanceNorm):
             uses instance statistics in both training and eval modes.
             (default: :obj:`False`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -46,15 +45,15 @@ class InstanceNorm(_InstanceNorm):
         affine: bool = False,
         track_running_stats: bool = False,
     ):
-        super().__init__(in_channels, eps, momentum, affine, track_running_stats)
+        super().__init__(in_channels, eps, momentum, affine,
+                         track_running_stats)
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         super().reset_parameters()
 
-    def forward(
-        self, x: Tensor, batch: OptTensor = None, batch_size: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -66,15 +65,9 @@ class InstanceNorm(_InstanceNorm):
         """
         if batch is None:
             out = F.instance_norm(
-                x.t().unsqueeze(0),
-                self.running_mean,
-                self.running_var,
-                self.weight,
-                self.bias,
-                self.training or not self.track_running_stats,
-                self.momentum,
-                self.eps,
-            )
+                x.t().unsqueeze(0), self.running_mean, self.running_var,
+                self.weight, self.bias, self.training
+                or not self.track_running_stats, self.momentum, self.eps)
             return out.squeeze(0).t()
 
         if batch_size is None:
@@ -87,19 +80,20 @@ class InstanceNorm(_InstanceNorm):
             norm = norm.view(-1, 1)
             unbiased_norm = (norm - 1).clamp_(min=1)
 
-            mean = scatter(x, batch, dim=0, dim_size=batch_size, reduce="sum") / norm
+            mean = scatter(x, batch, dim=0, dim_size=batch_size,
+                           reduce='sum') / norm
 
             x = x - mean.index_select(0, batch)
 
-            var = scatter(x * x, batch, dim=0, dim_size=batch_size, reduce="sum")
+            var = scatter(x * x, batch, dim=0, dim_size=batch_size,
+                          reduce='sum')
             unbiased_var = var / unbiased_norm
             var = var / norm
 
             momentum = self.momentum
             if self.running_mean is not None:
                 self.running_mean = (
-                    1 - momentum
-                ) * self.running_mean + momentum * mean.mean(0)
+                    1 - momentum) * self.running_mean + momentum * mean.mean(0)
             if self.running_var is not None:
                 self.running_var = (
                     1 - momentum
@@ -120,4 +114,4 @@ class InstanceNorm(_InstanceNorm):
         return out
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.num_features})"
+        return f'{self.__class__.__name__}({self.num_features})'

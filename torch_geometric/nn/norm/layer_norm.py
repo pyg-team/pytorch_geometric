@@ -36,13 +36,12 @@ class LayerNorm(torch.nn.Module):
             normalized. If `"node"` is used, each node will be considered as
             an element to be normalized. (default: :obj:`"graph"`)
     """
-
     def __init__(
         self,
         in_channels: int,
         eps: float = 1e-5,
         affine: bool = True,
-        mode: str = "graph",
+        mode: str = 'graph',
     ):
         super().__init__()
 
@@ -55,8 +54,8 @@ class LayerNorm(torch.nn.Module):
             self.weight = Parameter(torch.empty(in_channels))
             self.bias = Parameter(torch.empty(in_channels))
         else:
-            self.register_parameter("weight", None)
-            self.register_parameter("bias", None)
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -65,9 +64,8 @@ class LayerNorm(torch.nn.Module):
         ones(self.weight)
         zeros(self.bias)
 
-    def forward(
-        self, x: Tensor, batch: OptTensor = None, batch_size: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -77,7 +75,7 @@ class LayerNorm(torch.nn.Module):
             batch_size (int, optional): The number of examples :math:`B`.
                 Automatically calculated if not given. (default: :obj:`None`)
         """
-        if self.mode == "graph":
+        if self.mode == 'graph':
             if batch is None:
                 x = x - x.mean()
                 out = x / (x.std(unbiased=False) + self.eps)
@@ -89,18 +87,13 @@ class LayerNorm(torch.nn.Module):
                 norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
 
-                mean = (
-                    scatter(x, batch, dim=0, dim_size=batch_size, reduce="sum").sum(
-                        dim=-1, keepdim=True
-                    )
-                    / norm
-                )
+                mean = scatter(x, batch, dim=0, dim_size=batch_size,
+                               reduce='sum').sum(dim=-1, keepdim=True) / norm
 
                 x = x - mean.index_select(0, batch)
 
-                var = scatter(
-                    x * x, batch, dim=0, dim_size=batch_size, reduce="sum"
-                ).sum(dim=-1, keepdim=True)
+                var = scatter(x * x, batch, dim=0, dim_size=batch_size,
+                              reduce='sum').sum(dim=-1, keepdim=True)
                 var = var / norm
 
                 out = x / (var + self.eps).sqrt().index_select(0, batch)
@@ -110,18 +103,15 @@ class LayerNorm(torch.nn.Module):
 
             return out
 
-        if self.mode == "node":
-            return F.layer_norm(
-                x, (self.in_channels,), self.weight, self.bias, self.eps
-            )
+        if self.mode == 'node':
+            return F.layer_norm(x, (self.in_channels, ), self.weight,
+                                self.bias, self.eps)
 
         raise ValueError(f"Unknow normalization mode: {self.mode}")
 
     def __repr__(self):
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"affine={self.affine}, mode={self.mode})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'affine={self.affine}, mode={self.mode})')
 
 
 class HeteroLayerNorm(torch.nn.Module):
@@ -144,17 +134,16 @@ class HeteroLayerNorm(torch.nn.Module):
             be considered as an element to be normalized.
             (default: :obj:`"node"`)
     """
-
     def __init__(
         self,
         in_channels: int,
         num_types: int,
         eps: float = 1e-5,
         affine: bool = True,
-        mode: str = "node",
+        mode: str = 'node',
     ):
         super().__init__()
-        assert mode == "node"
+        assert mode == 'node'
 
         self.in_channels = in_channels
         self.num_types = num_types
@@ -165,8 +154,8 @@ class HeteroLayerNorm(torch.nn.Module):
             self.weight = Parameter(torch.empty(num_types, in_channels))
             self.bias = Parameter(torch.empty(num_types, in_channels))
         else:
-            self.register_parameter("weight", None)
-            self.register_parameter("bias", None)
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -198,7 +187,7 @@ class HeteroLayerNorm(torch.nn.Module):
         if type_vec is None and type_ptr is None:
             raise ValueError("Either 'type_vec' or 'type_ptr' must be given")
 
-        out = F.layer_norm(x, (self.in_channels,), None, None, self.eps)
+        out = F.layer_norm(x, (self.in_channels, ), None, None, self.eps)
 
         if self.affine:
             # TODO Revisit this logic completely as it performs worse than just
@@ -215,7 +204,5 @@ class HeteroLayerNorm(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"num_types={self.num_types})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'num_types={self.num_types})')

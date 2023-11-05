@@ -75,9 +75,8 @@ class BA2MotifDataset(InMemoryDataset):
           - 10
           - 2
     """
-
-    url = "https://github.com/flyingdoog/PGExplainer/raw/master/dataset"
-    filename = "BA-2motif.pkl"
+    url = 'https://github.com/flyingdoog/PGExplainer/raw/master/dataset'
+    filename = 'BA-2motif.pkl'
 
     def __init__(
         self,
@@ -93,13 +92,13 @@ class BA2MotifDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
-        download_url(f"{self.url}/{self.filename}", self.raw_dir)
+        download_url(f'{self.url}/{self.filename}', self.raw_dir)
 
     def process(self):
-        with open(self.raw_paths[0], "rb") as f:
+        with open(self.raw_paths[0], 'rb') as f:
             adj, x, y = pickle.load(f)
 
         adjs = torch.from_numpy(adj)

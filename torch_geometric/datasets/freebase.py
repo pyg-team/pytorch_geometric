@@ -35,44 +35,37 @@ class FB15k_237(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
+    url = ('https://raw.githubusercontent.com/villmow/'
+           'datasets_knowledge_embedding/master/FB15k-237')
 
-    url = (
-        "https://raw.githubusercontent.com/villmow/"
-        "datasets_knowledge_embedding/master/FB15k-237"
-    )
-
-    def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
 
-        if split not in {"train", "val", "test"}:
+        if split not in {'train', 'val', 'test'}:
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
-        path = self.processed_paths[["train", "val", "test"].index(split)]
+        path = self.processed_paths[['train', 'val', 'test'].index(split)]
         self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["train.txt", "valid.txt", "test.txt"]
+        return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["train_data.pt", "val_data.pt", "test_data.pt"]
+        return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f"{self.url}/{filename}", self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process(self):
         data_list, node_dict, rel_dict = [], {}, {}
         for path in self.raw_paths:
-            with open(path, "r") as f:
-                data = [x.split("\t") for x in f.read().split("\n")[:-1]]
+            with open(path, 'r') as f:
+                data = [x.split('\t') for x in f.read().split('\n')[:-1]]
 
             edge_index = torch.empty((2, len(data)), dtype=torch.long)
             edge_type = torch.empty(len(data), dtype=torch.long)

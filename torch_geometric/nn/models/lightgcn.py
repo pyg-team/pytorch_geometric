@@ -61,7 +61,6 @@ class LightGCN(torch.nn.Module):
         **kwargs (optional): Additional arguments of the underlying
             :class:`~torch_geometric.nn.conv.LGConv` layers.
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -77,13 +76,13 @@ class LightGCN(torch.nn.Module):
         self.num_layers = num_layers
 
         if alpha is None:
-            alpha = 1.0 / (num_layers + 1)
+            alpha = 1. / (num_layers + 1)
 
         if isinstance(alpha, Tensor):
             assert alpha.size(0) == num_layers + 1
         else:
             alpha = torch.tensor([alpha] * (num_layers + 1))
-        self.register_buffer("alpha", alpha)
+        self.register_buffer('alpha', alpha)
 
         self.embedding = Embedding(num_nodes, embedding_dim)
         self.convs = ModuleList([LGConv(**kwargs) for _ in range(num_layers)])
@@ -198,7 +197,8 @@ class LightGCN(torch.nn.Module):
 
         return top_index
 
-    def link_pred_loss(self, pred: Tensor, edge_label: Tensor, **kwargs) -> Tensor:
+    def link_pred_loss(self, pred: Tensor, edge_label: Tensor,
+                       **kwargs) -> Tensor:
         r"""Computes the model loss for a link prediction objective via the
         :class:`torch.nn.BCEWithLogitsLoss`.
 
@@ -247,10 +247,8 @@ class LightGCN(torch.nn.Module):
         return loss_fn(pos_edge_rank, neg_edge_rank, emb)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.num_nodes}, "
-            f"{self.embedding_dim}, num_layers={self.num_layers})"
-        )
+        return (f'{self.__class__.__name__}({self.num_nodes}, '
+                f'{self.embedding_dim}, num_layers={self.num_layers})')
 
 
 class BPRLoss(_Loss):
@@ -274,17 +272,15 @@ class BPRLoss(_Loss):
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch.nn.modules.loss._Loss` class.
     """
-
-    __constants__ = ["lambda_reg"]
+    __constants__ = ['lambda_reg']
     lambda_reg: float
 
     def __init__(self, lambda_reg: float = 0, **kwargs):
         super().__init__(None, None, "sum", **kwargs)
         self.lambda_reg = lambda_reg
 
-    def forward(
-        self, positives: Tensor, negatives: Tensor, parameters: Tensor = None
-    ) -> Tensor:
+    def forward(self, positives: Tensor, negatives: Tensor,
+                parameters: Tensor = None) -> Tensor:
         r"""Compute the mean Bayesian Personalized Ranking (BPR) loss.
 
         .. note::

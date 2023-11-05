@@ -108,8 +108,10 @@ def knn(
     :rtype: :class:`torch.Tensor`
     """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers)
-    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers, batch_size)
+        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
+                                 num_workers)
+    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
+                             batch_size)
 
 
 def knn_graph(
@@ -117,7 +119,7 @@ def knn_graph(
     k: int,
     batch: OptTensor = None,
     loop: bool = False,
-    flow: str = "source_to_target",
+    flow: str = 'source_to_target',
     cosine: bool = False,
     num_workers: int = 1,
     batch_size: Optional[int] = None,
@@ -157,17 +159,15 @@ def knn_graph(
     :rtype: :class:`torch.Tensor`
     """
     if batch is not None and x.device != batch.device:
-        warnings.warn(
-            "Input tensor 'x' and 'batch' are on different devices "
-            "in 'knn_graph'. Performing blocking device transfer"
-        )
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'knn_graph'. Performing blocking device transfer")
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine, num_workers)
-    return torch_cluster.knn_graph(
-        x, k, batch, loop, flow, cosine, num_workers, batch_size
-    )
+        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                       num_workers)
+    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                   num_workers, batch_size)
 
 
 def radius(
@@ -217,12 +217,10 @@ def radius(
     :rtype: :class:`torch.Tensor`
     """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.radius(
-            x, y, r, batch_x, batch_y, max_num_neighbors, num_workers
-        )
-    return torch_cluster.radius(
-        x, y, r, batch_x, batch_y, max_num_neighbors, num_workers, batch_size
-    )
+        return torch_cluster.radius(x, y, r, batch_x, batch_y,
+                                    max_num_neighbors, num_workers)
+    return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
+                                num_workers, batch_size)
 
 
 def radius_graph(
@@ -231,7 +229,7 @@ def radius_graph(
     batch: OptTensor = None,
     loop: bool = False,
     max_num_neighbors: int = 32,
-    flow: str = "source_to_target",
+    flow: str = 'source_to_target',
     num_workers: int = 1,
     batch_size: Optional[int] = None,
 ) -> Tensor:
@@ -269,19 +267,15 @@ def radius_graph(
     :rtype: :class:`torch.Tensor`
     """
     if batch is not None and x.device != batch.device:
-        warnings.warn(
-            "Input tensor 'x' and 'batch' are on different devices "
-            "in 'radius_graph'. Performing blocking device transfer"
-        )
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'radius_graph'. Performing blocking device transfer")
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.radius_graph(
-            x, r, batch, loop, max_num_neighbors, flow, num_workers
-        )
-    return torch_cluster.radius_graph(
-        x, r, batch, loop, max_num_neighbors, flow, num_workers, batch_size
-    )
+        return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                          flow, num_workers)
+    return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                      flow, num_workers, batch_size)
 
 
 def nearest(
@@ -322,34 +316,34 @@ def nearest(
 
 
 __all__ = [
-    "global_add_pool",
-    "global_mean_pool",
-    "global_max_pool",
-    "KNNIndex",
-    "L2KNNIndex",
-    "MIPSKNNIndex",
-    "TopKPooling",
-    "SAGPooling",
-    "EdgePooling",
-    "ASAPooling",
-    "PANPooling",
-    "MemPooling",
-    "max_pool",
-    "avg_pool",
-    "max_pool_x",
-    "max_pool_neighbor_x",
-    "avg_pool_x",
-    "avg_pool_neighbor_x",
-    "graclus",
-    "voxel_grid",
-    "fps",
-    "knn",
-    "knn_graph",
-    "approx_knn",
-    "approx_knn_graph",
-    "radius",
-    "radius_graph",
-    "nearest",
+    'global_add_pool',
+    'global_mean_pool',
+    'global_max_pool',
+    'KNNIndex',
+    'L2KNNIndex',
+    'MIPSKNNIndex',
+    'TopKPooling',
+    'SAGPooling',
+    'EdgePooling',
+    'ASAPooling',
+    'PANPooling',
+    'MemPooling',
+    'max_pool',
+    'avg_pool',
+    'max_pool_x',
+    'max_pool_neighbor_x',
+    'avg_pool_x',
+    'avg_pool_neighbor_x',
+    'graclus',
+    'voxel_grid',
+    'fps',
+    'knn',
+    'knn_graph',
+    'approx_knn',
+    'approx_knn_graph',
+    'radius',
+    'radius_graph',
+    'nearest',
 ]
 
 classes = __all__

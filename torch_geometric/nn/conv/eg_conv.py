@@ -81,7 +81,7 @@ class EGConv(MessagePassing):
         self,
         in_channels: int,
         out_channels: int,
-        aggregators: List[str] = ["symnorm"],
+        aggregators: List[str] = ['symnorm'],
         num_heads: int = 8,
         num_bases: int = 4,
         cached: bool = False,
@@ -92,14 +92,12 @@ class EGConv(MessagePassing):
         super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
-            raise ValueError(
-                f"'out_channels' (got {out_channels}) must be "
-                f"divisible by the number of heads "
-                f"(got {num_heads})"
-            )
+            raise ValueError(f"'out_channels' (got {out_channels}) must be "
+                             f"divisible by the number of heads "
+                             f"(got {num_heads})")
 
         for a in aggregators:
-            if a not in ["sum", "mean", "symnorm", "min", "max", "var", "std"]:
+            if a not in ['sum', 'mean', 'symnorm', 'min', 'max', 'var', 'std']:
                 raise ValueError(f"Unsupported aggregator: '{a}'")
 
         self.in_channels = in_channels
@@ -110,18 +108,16 @@ class EGConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.aggregators = aggregators
 
-        self.bases_lin = Linear(
-            in_channels,
-            (out_channels // num_heads) * num_bases,
-            bias=False,
-            weight_initializer="glorot",
-        )
-        self.comb_lin = Linear(in_channels, num_heads * num_bases * len(aggregators))
+        self.bases_lin = Linear(in_channels,
+                                (out_channels // num_heads) * num_bases,
+                                bias=False, weight_initializer='glorot')
+        self.comb_lin = Linear(in_channels,
+                               num_heads * num_bases * len(aggregators))
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -140,14 +136,9 @@ class EGConv(MessagePassing):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, symnorm_weight = gcn_norm(  # yapf: disable
-                        edge_index,
-                        None,
-                        num_nodes=x.size(self.node_dim),
-                        improved=False,
-                        add_self_loops=self.add_self_loops,
-                        flow=self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, None, num_nodes=x.size(self.node_dim),
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, symnorm_weight)
                 else:
@@ -157,14 +148,9 @@ class EGConv(MessagePassing):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
-                        edge_index,
-                        None,
-                        num_nodes=x.size(self.node_dim),
-                        improved=False,
-                        add_self_loops=self.add_self_loops,
-                        flow=self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, None, num_nodes=x.size(self.node_dim),
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -196,13 +182,11 @@ class EGConv(MessagePassing):
 
         # [num_nodes, num_aggregators, (out_channels // num_heads) * num_bases]
         # propagate_type: (x: Tensor, symnorm_weight: OptTensor)
-        aggregated = self.propagate(
-            edge_index, x=bases, symnorm_weight=symnorm_weight, size=None
-        )
+        aggregated = self.propagate(edge_index, x=bases,
+                                    symnorm_weight=symnorm_weight, size=None)
 
-        weightings = weightings.view(
-            -1, self.num_heads, self.num_bases * len(self.aggregators)
-        )
+        weightings = weightings.view(-1, self.num_heads,
+                                     self.num_bases * len(self.aggregators))
         aggregated = aggregated.view(
             -1,
             len(self.aggregators) * self.num_bases,
@@ -221,31 +205,22 @@ class EGConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def aggregate(
-        self,
-        inputs: Tensor,
-        index: Tensor,
-        dim_size: Optional[int] = None,
-        symnorm_weight: OptTensor = None,
-    ) -> Tensor:
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  dim_size: Optional[int] = None,
+                  symnorm_weight: OptTensor = None) -> Tensor:
+
         outs = []
         for aggr in self.aggregators:
-            if aggr == "symnorm":
+            if aggr == 'symnorm':
                 assert symnorm_weight is not None
-                out = scatter(
-                    inputs * symnorm_weight.view(-1, 1),
-                    index,
-                    0,
-                    dim_size,
-                    reduce="sum",
-                )
-            elif aggr == "var" or aggr == "std":
-                mean = scatter(inputs, index, 0, dim_size, reduce="mean")
-                mean_squares = scatter(
-                    inputs * inputs, index, 0, dim_size, reduce="mean"
-                )
+                out = scatter(inputs * symnorm_weight.view(-1, 1), index, 0,
+                              dim_size, reduce='sum')
+            elif aggr == 'var' or aggr == 'std':
+                mean = scatter(inputs, index, 0, dim_size, reduce='mean')
+                mean_squares = scatter(inputs * inputs, index, 0, dim_size,
+                                       reduce='mean')
                 out = mean_squares - mean * mean
-                if aggr == "std":
+                if aggr == 'std':
                     out = out.clamp(min=1e-5).sqrt()
             else:
                 out = scatter(inputs, index, 0, dim_size, reduce=aggr)
@@ -256,7 +231,7 @@ class EGConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t_2 = adj_t
-        if len(self.aggregators) > 1 and "symnorm" in self.aggregators:
+        if len(self.aggregators) > 1 and 'symnorm' in self.aggregators:
             if isinstance(adj_t, SparseTensor):
                 adj_t_2 = adj_t.set_value(None)
             else:
@@ -265,13 +240,13 @@ class EGConv(MessagePassing):
 
         outs = []
         for aggr in self.aggregators:
-            if aggr == "symnorm":
-                out = spmm(adj_t, x, reduce="sum")
-            elif aggr in ["var", "std"]:
-                mean = spmm(adj_t_2, x, reduce="mean")
-                mean_sq = spmm(adj_t_2, x * x, reduce="mean")
+            if aggr == 'symnorm':
+                out = spmm(adj_t, x, reduce='sum')
+            elif aggr in ['var', 'std']:
+                mean = spmm(adj_t_2, x, reduce='mean')
+                mean_sq = spmm(adj_t_2, x * x, reduce='mean')
                 out = mean_sq - mean * mean
-                if aggr == "std":
+                if aggr == 'std':
                     out = torch.sqrt(out.relu_() + 1e-5)
             else:
                 out = spmm(adj_t_2, x, reduce=aggr)
@@ -281,7 +256,5 @@ class EGConv(MessagePassing):
         return torch.stack(outs, dim=1) if len(outs) > 1 else outs[0]
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, aggregators={self.aggregators})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggregators={self.aggregators})')

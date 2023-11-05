@@ -40,7 +40,6 @@ class DiffGroupNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -58,9 +57,8 @@ class DiffGroupNorm(torch.nn.Module):
         self.lamda = lamda
 
         self.lin = Linear(in_channels, groups, bias=False)
-        self.norm = BatchNorm1d(
-            groups * in_channels, eps, momentum, affine, track_running_stats
-        )
+        self.norm = BatchNorm1d(groups * in_channels, eps, momentum, affine,
+                                track_running_stats)
 
         self.reset_parameters()
 
@@ -102,14 +100,14 @@ class DiffGroupNorm(torch.nn.Module):
         """
         num_classes = int(y.max()) + 1
 
-        numerator = 0.0
+        numerator = 0.
         for i in range(num_classes):
             mask = y == i
             dist = torch.cdist(x[mask].unsqueeze(0), x[~mask].unsqueeze(0))
             numerator += (1 / dist.numel()) * float(dist.sum())
-        numerator *= 1 / (num_classes - 1) ** 2
+        numerator *= 1 / (num_classes - 1)**2
 
-        denominator = 0.0
+        denominator = 0.
         for i in range(num_classes):
             mask = y == i
             dist = torch.cdist(x[mask].unsqueeze(0), x[mask].unsqueeze(0))
@@ -119,6 +117,5 @@ class DiffGroupNorm(torch.nn.Module):
         return numerator / (denominator + eps)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, " f"groups={self.groups})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'groups={self.groups})')

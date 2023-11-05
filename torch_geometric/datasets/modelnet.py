@@ -78,20 +78,21 @@ class ModelNet(InMemoryDataset):
     """
 
     urls = {
-        "10": "http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip",
-        "40": "http://modelnet.cs.princeton.edu/ModelNet40.zip",
+        '10':
+        'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip',
+        '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
     def __init__(
         self,
         root: str,
-        name: str = "10",
+        name: str = '10',
         train: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
     ):
-        assert name in ["10", "40"]
+        assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
@@ -100,47 +101,39 @@ class ModelNet(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            "bathtub",
-            "bed",
-            "chair",
-            "desk",
-            "dresser",
-            "monitor",
-            "night_stand",
-            "sofa",
-            "table",
-            "toilet",
+            'bathtub', 'bed', 'chair', 'desk', 'dresser', 'monitor',
+            'night_stand', 'sofa', 'table', 'toilet'
         ]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["training.pt", "test.pt"]
+        return ['training.pt', 'test.pt']
 
     def download(self):
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        folder = osp.join(self.root, f"ModelNet{self.name}")
+        folder = osp.join(self.root, f'ModelNet{self.name}')
         shutil.rmtree(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
         # Delete osx metadata generated during compression of ModelNet10
-        metadata_folder = osp.join(self.root, "__MACOSX")
+        metadata_folder = osp.join(self.root, '__MACOSX')
         if osp.exists(metadata_folder):
             shutil.rmtree(metadata_folder)
 
     def process(self):
-        self.save(self.process_set("train"), self.processed_paths[0])
-        self.save(self.process_set("test"), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
-        categories = glob.glob(osp.join(self.raw_dir, "*", ""))
+        categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob(f"{folder}/{category}_*.off")
+            paths = glob.glob(f'{folder}/{category}_*.off')
             for path in paths:
                 data = read_off(path)
                 data.y = torch.tensor([target])
@@ -155,4 +148,4 @@ class ModelNet(InMemoryDataset):
         return data_list
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}{self.name}({len(self)})"
+        return f'{self.__class__.__name__}{self.name}({len(self)})'

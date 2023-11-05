@@ -30,7 +30,6 @@ class WLConv(torch.nn.Module):
           edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node coloring :math:`(|\mathcal{V}|)` *(integer-based)*
     """
-
     def __init__(self):
         super().__init__()
         self.hashmap = {}
@@ -52,9 +51,8 @@ class WLConv(torch.nn.Module):
             col = col_and_row[0]
             row = col_and_row[1]
         else:
-            edge_index = sort_edge_index(
-                edge_index, num_nodes=x.size(0), sort_by_row=False
-            )
+            edge_index = sort_edge_index(edge_index, num_nodes=x.size(0),
+                                         sort_by_row=False)
             row, col = edge_index[0], edge_index[1]
 
         # `col` is sorted, so we can use it to `split` neighbors to groups:
@@ -69,9 +67,8 @@ class WLConv(torch.nn.Module):
 
         return torch.tensor(out, device=x.device)
 
-    def histogram(
-        self, x: Tensor, batch: Optional[Tensor] = None, norm: bool = False
-    ) -> Tensor:
+    def histogram(self, x: Tensor, batch: Optional[Tensor] = None,
+                  norm: bool = False) -> Tensor:
         r"""Given a node coloring :obj:`x`, computes the color histograms of
         the respective graphs (separated by :obj:`batch`)."""
 
@@ -82,13 +79,8 @@ class WLConv(torch.nn.Module):
         batch_size = int(batch.max()) + 1
 
         index = batch * num_colors + x
-        out = scatter(
-            torch.ones_like(index),
-            index,
-            dim=0,
-            dim_size=num_colors * batch_size,
-            reduce="sum",
-        )
+        out = scatter(torch.ones_like(index), index, dim=0,
+                      dim_size=num_colors * batch_size, reduce='sum')
         out = out.view(batch_size, num_colors)
 
         if norm:

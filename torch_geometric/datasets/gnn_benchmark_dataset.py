@@ -96,81 +96,71 @@ class GNNBenchmarkDataset(InMemoryDataset):
           - 10
     """
 
-    names = ["PATTERN", "CLUSTER", "MNIST", "CIFAR10", "TSP", "CSL"]
+    names = ['PATTERN', 'CLUSTER', 'MNIST', 'CIFAR10', 'TSP', 'CSL']
 
-    root_url = "https://data.pyg.org/datasets/benchmarking-gnns"
+    root_url = 'https://data.pyg.org/datasets/benchmarking-gnns'
     urls = {
-        "PATTERN": f"{root_url}/PATTERN_v2.zip",
-        "CLUSTER": f"{root_url}/CLUSTER_v2.zip",
-        "MNIST": f"{root_url}/MNIST_v2.zip",
-        "CIFAR10": f"{root_url}/CIFAR10_v2.zip",
-        "TSP": f"{root_url}/TSP_v2.zip",
-        "CSL": "https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1",
+        'PATTERN': f'{root_url}/PATTERN_v2.zip',
+        'CLUSTER': f'{root_url}/CLUSTER_v2.zip',
+        'MNIST': f'{root_url}/MNIST_v2.zip',
+        'CIFAR10': f'{root_url}/CIFAR10_v2.zip',
+        'TSP': f'{root_url}/TSP_v2.zip',
+        'CSL': 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1',
     }
 
-    def __init__(
-        self,
-        root: str,
-        name: str,
-        split: str = "train",
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, name: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         self.name = name
         assert self.name in self.names
 
-        if self.name == "CSL" and split != "train":
-            split = "train"
+        if self.name == 'CSL' and split != 'train':
+            split = 'train'
             logging.warning(
-                (
-                    "Dataset 'CSL' does not provide a standardized splitting. "
-                    "Instead, it is recommended to perform 5-fold cross "
-                    "validation with stratifed sampling"
-                )
-            )
+                ("Dataset 'CSL' does not provide a standardized splitting. "
+                 "Instead, it is recommended to perform 5-fold cross "
+                 "validation with stratifed sampling"))
 
         super().__init__(root, transform, pre_transform, pre_filter)
 
-        if split == "train":
+        if split == 'train':
             path = self.processed_paths[0]
-        elif split == "val":
+        elif split == 'val':
             path = self.processed_paths[1]
-        elif split == "test":
+        elif split == 'test':
             path = self.processed_paths[2]
         else:
-            raise ValueError(
-                f"Split '{split}' found, but expected either "
-                f"'train', 'val', or 'test'"
-            )
+            raise ValueError(f"Split '{split}' found, but expected either "
+                             f"'train', 'val', or 'test'")
 
         self.load(path)
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, "raw")
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, "processed")
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
-        if self.name == "CSL":
+        if self.name == 'CSL':
             return [
-                "graphs_Kary_Deterministic_Graphs.pkl",
-                "y_Kary_Deterministic_Graphs.pt",
+                'graphs_Kary_Deterministic_Graphs.pkl',
+                'y_Kary_Deterministic_Graphs.pt'
             ]
         else:
-            name = self.urls[self.name].split("/")[-1][:-4]
-            return [f"{name}.pt"]
+            name = self.urls[self.name].split('/')[-1][:-4]
+            return [f'{name}.pt']
 
     @property
     def processed_file_names(self) -> List[str]:
-        if self.name == "CSL":
-            return ["data.pt"]
+        if self.name == 'CSL':
+            return ['data.pt']
         else:
-            return ["train_data.pt", "val_data.pt", "test_data.pt"]
+            return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def download(self):
         path = download_url(self.urls[self.name], self.raw_dir)
@@ -178,7 +168,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        if self.name == "CSL":
+        if self.name == 'CSL':
             data_list = self.process_CSL()
             self.save(data_list, self.processed_paths[0])
         else:
@@ -195,7 +185,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
                 self.save(data_list, self.processed_paths[i])
 
     def process_CSL(self) -> List[Data]:
-        with open(self.raw_paths[0], "rb") as f:
+        with open(self.raw_paths[0], 'rb') as f:
             adjs = pickle.load(f)
 
         ys = torch.load(self.raw_paths[1]).tolist()
@@ -214,4 +204,4 @@ class GNNBenchmarkDataset(InMemoryDataset):
         return data_list
 
     def __repr__(self) -> str:
-        return f"{self.name}({len(self)})"
+        return f'{self.name}({len(self)})'

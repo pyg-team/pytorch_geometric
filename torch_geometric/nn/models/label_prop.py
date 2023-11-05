@@ -34,9 +34,8 @@ class LabelPropagation(MessagePassing):
         num_layers (int): The number of propagations.
         alpha (float): The :math:`\alpha` coefficient.
     """
-
     def __init__(self, num_layers: int, alpha: float):
-        super().__init__(aggr="add")
+        super().__init__(aggr='add')
         self.num_layers = num_layers
         self.alpha = alpha
 
@@ -75,19 +74,19 @@ class LabelPropagation(MessagePassing):
         if isinstance(edge_index, SparseTensor) and not edge_index.has_value():
             edge_index = gcn_norm(edge_index, add_self_loops=False)
         elif isinstance(edge_index, Tensor) and edge_weight is None:
-            edge_index, edge_weight = gcn_norm(
-                edge_index, num_nodes=y.size(0), add_self_loops=False
-            )
+            edge_index, edge_weight = gcn_norm(edge_index, num_nodes=y.size(0),
+                                               add_self_loops=False)
 
         res = (1 - self.alpha) * out
         for _ in range(self.num_layers):
             # propagate_type: (y: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=out, edge_weight=edge_weight, size=None)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
+                                 size=None)
             out.mul_(self.alpha).add_(res)
             if post_step is not None:
                 out = post_step(out)
             else:
-                out.clamp_(0.0, 1.0)
+                out.clamp_(0., 1.)
 
         return out
 
@@ -98,7 +97,5 @@ class LabelPropagation(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(num_layers={self.num_layers}, "
-            f"alpha={self.alpha})"
-        )
+        return (f'{self.__class__.__name__}(num_layers={self.num_layers}, '
+                f'alpha={self.alpha})')

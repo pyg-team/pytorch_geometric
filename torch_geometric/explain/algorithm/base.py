@@ -18,7 +18,6 @@ from torch_geometric.utils import k_hop_subgraph
 
 class ExplainerAlgorithm(torch.nn.Module):
     r"""An abstract base class for implementing explainer algorithms."""
-
     @abstractmethod
     def forward(
         self,
@@ -57,25 +56,23 @@ class ExplainerAlgorithm(torch.nn.Module):
     @property
     def explainer_config(self) -> ExplainerConfig:
         r"""Returns the connected explainer configuration."""
-        if not hasattr(self, "_explainer_config"):
+        if not hasattr(self, '_explainer_config'):
             raise ValueError(
                 f"The explanation algorithm '{self.__class__.__name__}' is "
                 f"not yet connected to any explainer configuration. Please "
                 f"call `{self.__class__.__name__}.connect(...)` before "
-                f"proceeding."
-            )
+                f"proceeding.")
         return self._explainer_config
 
     @property
     def model_config(self) -> ModelConfig:
         r"""Returns the connected model configuration."""
-        if not hasattr(self, "_model_config"):
+        if not hasattr(self, '_model_config'):
             raise ValueError(
                 f"The explanation algorithm '{self.__class__.__name__}' is "
                 f"not yet connected to any model configuration. Please call "
                 f"`{self.__class__.__name__}.connect(...)` before "
-                f"proceeding."
-            )
+                f"proceeding.")
         return self._model_config
 
     def connect(
@@ -91,8 +88,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         if not self.supports():
             raise ValueError(
                 f"The explanation algorithm '{self.__class__.__name__}' does "
-                f"not support the given explanation settings."
-            )
+                f"not support the given explanation settings.")
 
     # Helper functions ########################################################
 
@@ -102,7 +98,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         hard_mask: Optional[Tensor] = None,
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
-        r""" "Post processes any mask to not include any attributions of
+        r""""Post processes any mask to not include any attributions of
         elements not involved during message passing."""
         if mask is None:
             return mask
@@ -113,7 +109,7 @@ class ExplainerAlgorithm(torch.nn.Module):
             mask = mask.sigmoid()
 
         if hard_mask is not None and mask.size(0) == hard_mask.size(0):
-            mask[~hard_mask] = 0.0
+            mask[~hard_mask] = 0.
 
         return mask
 
@@ -159,7 +155,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
-        return "source_to_target"
+        return 'source_to_target'
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.return_type == ModelReturnType.raw:
@@ -193,4 +189,4 @@ class ExplainerAlgorithm(torch.nn.Module):
         return F.mse_loss(y_hat, y)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f'{self.__class__.__name__}()'

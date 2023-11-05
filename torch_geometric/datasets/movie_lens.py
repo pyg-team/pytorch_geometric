@@ -33,15 +33,14 @@ class MovieLens(InMemoryDataset):
             features. The model comes from the`Huggingface SentenceTransformer
             <https://huggingface.co/sentence-transformers>`_.
     """
-
-    url = "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
+    url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
     def __init__(
         self,
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        model_name: Optional[str] = "all-MiniLM-L6-v2",
+        model_name: Optional[str] = 'all-MiniLM-L6-v2',
     ):
         self.model_name = model_name
         super().__init__(root, transform, pre_transform)
@@ -50,13 +49,13 @@ class MovieLens(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            osp.join("ml-latest-small", "movies.csv"),
-            osp.join("ml-latest-small", "ratings.csv"),
+            osp.join('ml-latest-small', 'movies.csv'),
+            osp.join('ml-latest-small', 'ratings.csv'),
         ]
 
     @property
     def processed_file_names(self) -> str:
-        return f"data_{self.model_name}.pt"
+        return f'data_{self.model_name}.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -69,31 +68,30 @@ class MovieLens(InMemoryDataset):
 
         data = HeteroData()
 
-        df = pd.read_csv(self.raw_paths[0], index_col="movieId")
+        df = pd.read_csv(self.raw_paths[0], index_col='movieId')
         movie_mapping = {idx: i for i, idx in enumerate(df.index)}
 
-        genres = df["genres"].str.get_dummies("|").values
+        genres = df['genres'].str.get_dummies('|').values
         genres = torch.from_numpy(genres).to(torch.float)
 
         model = SentenceTransformer(self.model_name)
         with torch.no_grad():
-            emb = model.encode(
-                df["title"].values, show_progress_bar=True, convert_to_tensor=True
-            ).cpu()
+            emb = model.encode(df['title'].values, show_progress_bar=True,
+                               convert_to_tensor=True).cpu()
 
-        data["movie"].x = torch.cat([emb, genres], dim=-1)
+        data['movie'].x = torch.cat([emb, genres], dim=-1)
 
         df = pd.read_csv(self.raw_paths[1])
-        user_mapping = {idx: i for i, idx in enumerate(df["userId"].unique())}
-        data["user"].num_nodes = len(user_mapping)
+        user_mapping = {idx: i for i, idx in enumerate(df['userId'].unique())}
+        data['user'].num_nodes = len(user_mapping)
 
-        src = [user_mapping[idx] for idx in df["userId"]]
-        dst = [movie_mapping[idx] for idx in df["movieId"]]
+        src = [user_mapping[idx] for idx in df['userId']]
+        dst = [movie_mapping[idx] for idx in df['movieId']]
         edge_index = torch.tensor([src, dst])
 
-        rating = torch.from_numpy(df["rating"].values).to(torch.long)
-        data["user", "rates", "movie"].edge_index = edge_index
-        data["user", "rates", "movie"].edge_label = rating
+        rating = torch.from_numpy(df['rating'].values).to(torch.long)
+        data['user', 'rates', 'movie'].edge_index = edge_index
+        data['user', 'rates', 'movie'].edge_label = rating
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

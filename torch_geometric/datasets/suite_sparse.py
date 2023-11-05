@@ -25,7 +25,7 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = "https://sparse.tamu.edu/mat/{}/{}.mat"
+    url = 'https://sparse.tamu.edu/mat/{}/{}.mat'
 
     def __init__(
         self,
@@ -42,19 +42,19 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.group, self.name, "raw")
+        return osp.join(self.root, self.group, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.group, self.name, "processed")
+        return osp.join(self.root, self.group, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> str:
-        return f"{self.name}.mat"
+        return f'{self.name}.mat'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         url = self.url.format(self.group, self.name)
@@ -63,14 +63,14 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
     def process(self):
         from scipy.io import loadmat
 
-        mat = loadmat(self.raw_paths[0])["Problem"][0][0][2].tocsr().tocoo()
+        mat = loadmat(self.raw_paths[0])['Problem'][0][0][2].tocsr().tocoo()
 
         row = torch.from_numpy(mat.row).to(torch.long)
         col = torch.from_numpy(mat.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
         edge_attr = torch.from_numpy(mat.data).to(torch.float)
-        if torch.all(edge_attr == 1.0):
+        if torch.all(edge_attr == 1.):
             edge_attr = None
 
         size = torch.Size(mat.shape)
@@ -79,9 +79,8 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
         num_nodes = mat.shape[0]
 
-        data = Data(
-            edge_index=edge_index, edge_attr=edge_attr, size=size, num_nodes=num_nodes
-        )
+        data = Data(edge_index=edge_index, edge_attr=edge_attr, size=size,
+                    num_nodes=num_nodes)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
@@ -89,4 +88,5 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(group={self.group}, " f"name={self.name})"
+        return (f'{self.__class__.__name__}(group={self.group}, '
+                f'name={self.name})')

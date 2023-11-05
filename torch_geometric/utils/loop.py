@@ -80,9 +80,9 @@ def remove_self_loops(
     if layout is not None:
         assert edge_attr is not None
         edge_attr = edge_attr[mask]
-        if str(layout) == "torch.sparse_coo":  # str(...) for TorchScript :(
+        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
             return to_torch_coo_tensor(edge_index, edge_attr, size, True), None
-        elif str(layout) == "torch.sparse_csr":
+        elif str(layout) == 'torch.sparse_csr':
             return to_torch_csr_tensor(edge_index, edge_attr, size, True), None
         raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
@@ -246,10 +246,11 @@ def add_self_loops(
 
     if edge_attr is not None:
         if fill_value is None:
-            loop_attr = edge_attr.new_full((N,) + edge_attr.size()[1:], 1.0)
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
         elif isinstance(fill_value, (int, float)):
-            loop_attr = edge_attr.new_full((N,) + edge_attr.size()[1:], fill_value)
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
+                                           fill_value)
         elif isinstance(fill_value, Tensor):
             loop_attr = fill_value.to(edge_attr.device, edge_attr.dtype)
             if edge_attr.dim() != loop_attr.dim():
@@ -267,34 +268,31 @@ def add_self_loops(
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
     if is_sparse:
-        if str(layout) == "torch.sparse_coo":  # str(...) for TorchScript :(
+        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
             return to_torch_coo_tensor(edge_index, edge_attr, size), None
-        elif str(layout) == "torch.sparse_csr":
+        elif str(layout) == 'torch.sparse_csr':
             return to_torch_csr_tensor(edge_index, edge_attr, size), None
         raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
     return edge_index, edge_attr
 
 
 @torch.jit._overload
-def add_remaining_self_loops(
-    edge_index, edge_attr=None, fill_value=None, num_nodes=None
-):
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
     # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 # @torch.jit._overload
-def add_remaining_self_loops(
-    edge_index, edge_attr=None, fill_value=None, num_nodes=None
-):
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
     # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_remaining_self_loops(
-    edge_index, edge_attr=None, fill_value=None, num_nodes=None
-):
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
     # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
@@ -346,10 +344,11 @@ def add_remaining_self_loops(
 
     if edge_attr is not None:
         if fill_value is None:
-            loop_attr = edge_attr.new_full((N,) + edge_attr.size()[1:], 1.0)
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
         elif isinstance(fill_value, (int, float)):
-            loop_attr = edge_attr.new_full((N,) + edge_attr.size()[1:], fill_value)
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
+                                           fill_value)
         elif isinstance(fill_value, Tensor):
             loop_attr = fill_value.to(edge_attr.device, edge_attr.dtype)
             if edge_attr.dim() != loop_attr.dim():
@@ -358,9 +357,8 @@ def add_remaining_self_loops(
             loop_attr = loop_attr.repeat(*sizes)
 
         elif isinstance(fill_value, str):
-            loop_attr = scatter(
-                edge_attr, edge_index[1], dim=0, dim_size=N, reduce=fill_value
-            )
+            loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
+                                reduce=fill_value)
         else:
             raise AttributeError("No valid 'fill_value' provided")
 
@@ -373,9 +371,8 @@ def add_remaining_self_loops(
     return edge_index, edge_attr
 
 
-def get_self_loop_attr(
-    edge_index: Tensor, edge_attr: OptTensor = None, num_nodes: Optional[int] = None
-) -> Tensor:
+def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
+                       num_nodes: Optional[int] = None) -> Tensor:
     r"""Returns the edge features or weights of self-loops
     :math:`(i, i)` of every node :math:`i \in \mathcal{V}` in the
     graph given by :attr:`edge_index`. Edge features of missing self-loops not
@@ -415,7 +412,7 @@ def get_self_loop_attr(
         loop_attr = torch.ones_like(loop_index, dtype=torch.float)
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    full_loop_attr = loop_attr.new_zeros((num_nodes,) + loop_attr.size()[1:])
+    full_loop_attr = loop_attr.new_zeros((num_nodes, ) + loop_attr.size()[1:])
     full_loop_attr[loop_index] = loop_attr
 
     return full_loop_attr

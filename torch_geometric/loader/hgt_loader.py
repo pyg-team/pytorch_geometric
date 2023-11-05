@@ -101,7 +101,6 @@ class HGTLoader(NodeLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -117,7 +116,7 @@ class HGTLoader(NodeLoader):
             data,
             num_samples=num_samples,
             is_sorted=is_sorted,
-            share_memory=kwargs.get("num_workers", 0) > 0,
+            share_memory=kwargs.get('num_workers', 0) > 0,
         )
 
         super().__init__(

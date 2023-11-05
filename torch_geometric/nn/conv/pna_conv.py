@@ -88,7 +88,6 @@ class PNAConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -106,6 +105,7 @@ class PNAConv(MessagePassing):
         train_norm: bool = False,
         **kwargs,
     ):
+
         aggr = DegreeScalerAggregation(aggregators, scalers, deg, train_norm)
         super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
@@ -155,9 +155,9 @@ class PNAConv(MessagePassing):
             reset(nn)
         self.lin.reset_parameters()
 
-    def forward(
-        self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_attr: OptTensor = None) -> Tensor:
+
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
         else:
@@ -172,7 +172,9 @@ class PNAConv(MessagePassing):
 
         return self.lin(out)
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
+    def message(self, x_i: Tensor, x_j: Tensor,
+                edge_attr: OptTensor) -> Tensor:
+
         h: Tensor = x_i  # Dummy.
         if edge_attr is not None:
             edge_attr = self.edge_encoder(edge_attr)
@@ -186,11 +188,9 @@ class PNAConv(MessagePassing):
         return torch.stack(hs, dim=1)
 
     def __repr__(self):
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, towers={self.towers}, "
-            f"edge_dim={self.edge_dim})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, towers={self.towers}, '
+                f'edge_dim={self.edge_dim})')
 
     @staticmethod
     def get_degree_histogram(loader: DataLoader) -> Tensor:
@@ -198,11 +198,12 @@ class PNAConv(MessagePassing):
         argument in :class:`PNAConv`."""
         deg_histogram = torch.zeros(1, dtype=torch.long)
         for data in loader:
-            deg = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
+            deg = degree(data.edge_index[1], num_nodes=data.num_nodes,
+                         dtype=torch.long)
             deg_bincount = torch.bincount(deg, minlength=deg_histogram.numel())
             deg_histogram = deg_histogram.to(deg_bincount.device)
             if deg_bincount.numel() > deg_histogram.numel():
-                deg_bincount[: deg_histogram.size(0)] += deg_histogram
+                deg_bincount[:deg_histogram.size(0)] += deg_histogram
                 deg_histogram = deg_bincount
             else:
                 assert deg_bincount.numel() == deg_histogram.numel()

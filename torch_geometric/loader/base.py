@@ -19,12 +19,11 @@ class DataLoaderIterator:
       with full parallelization power (which usually executes faster).
     * It lets us naturally support data already being present on the GPU.
     """
-
     def __init__(self, iterator: _BaseDataLoaderIter, transform_fn: Callable):
         self.iterator = iterator
         self.transform_fn = transform_fn
 
-    def __iter__(self) -> "DataLoaderIterator":
+    def __iter__(self) -> 'DataLoaderIterator':
         return self
 
     def _reset(self, loader: Any, first_iter: bool = False):

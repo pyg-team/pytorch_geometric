@@ -47,17 +47,10 @@ class ASAPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the
             graph neural network layer.
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        ratio: Union[float, int] = 0.5,
-        GNN: Optional[Callable] = None,
-        dropout: float = 0.0,
-        negative_slope: float = 0.2,
-        add_self_loops: bool = False,
-        **kwargs,
-    ):
+    def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
+                 GNN: Optional[Callable] = None, dropout: float = 0.0,
+                 negative_slope: float = 0.2, add_self_loops: bool = False,
+                 **kwargs):
         super().__init__()
 
         self.in_channels = in_channels
@@ -71,7 +64,8 @@ class ASAPooling(torch.nn.Module):
         self.att = Linear(2 * in_channels, 1)
         self.gnn_score = LEConv(self.in_channels, 1)
         if self.GNN is not None:
-            self.gnn_intra_cluster = GNN(self.in_channels, self.in_channels, **kwargs)
+            self.gnn_intra_cluster = GNN(self.in_channels, self.in_channels,
+                                         **kwargs)
         else:
             self.gnn_intra_cluster = None
 
@@ -117,8 +111,7 @@ class ASAPooling(torch.nn.Module):
         N = x.size(0)
 
         edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value=1.0, num_nodes=N
-        )
+            edge_index, edge_weight, fill_value=1., num_nodes=N)
 
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
@@ -127,12 +120,11 @@ class ASAPooling(torch.nn.Module):
 
         x_pool = x
         if self.gnn_intra_cluster is not None:
-            x_pool = self.gnn_intra_cluster(
-                x=x, edge_index=edge_index, edge_weight=edge_weight
-            )
+            x_pool = self.gnn_intra_cluster(x=x, edge_index=edge_index,
+                                            edge_weight=edge_weight)
 
         x_pool_j = x_pool[edge_index[0]]
-        x_q = scatter(x_pool_j, edge_index[1], dim=0, reduce="max")
+        x_q = scatter(x_pool_j, edge_index[1], dim=0, reduce='max')
         x_q = self.lin(x_q)[edge_index[1]]
 
         score = self.att(torch.cat([x_q, x_pool_j], dim=-1)).view(-1)
@@ -143,7 +135,7 @@ class ASAPooling(torch.nn.Module):
         score = F.dropout(score, p=self.dropout, training=self.training)
 
         v_j = x[edge_index[0]] * score.view(-1, 1)
-        x = scatter(v_j, edge_index[1], dim=0, reduce="sum")
+        x = scatter(v_j, edge_index[1], dim=0, reduce='sum')
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
@@ -164,15 +156,15 @@ class ASAPooling(torch.nn.Module):
 
         if self.add_self_loops:
             edge_index, edge_weight = add_remaining_self_loops(
-                edge_index, edge_weight, num_nodes=A.size(0)
-            )
+                edge_index, edge_weight, num_nodes=A.size(0))
         else:
-            edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
+            edge_index, edge_weight = remove_self_loops(
+                edge_index, edge_weight)
 
         return x, edge_index, edge_weight, batch, perm
 
     @torch.jit.unused
-    def jittable(self) -> "ASAPooling":
+    def jittable(self) -> 'ASAPooling':
         out = copy.deepcopy(self)
         out.gnn_score = out.gnn_score.jittable()
         if out.gnn_intra_cluster is not None:
@@ -180,4 +172,5 @@ class ASAPooling(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.in_channels}, " f"ratio={self.ratio})"
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'ratio={self.ratio})')

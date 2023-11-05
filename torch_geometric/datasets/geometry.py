@@ -58,27 +58,23 @@ class GeometricShapes(InMemoryDataset):
           - 40
     """
 
-    url = "https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip"
+    url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
 
-    def __init__(
-        self,
-        root: str,
-        train: bool = True,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, train: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
 
     @property
     def raw_file_names(self) -> str:
-        return "2d_circle"
+        return '2d_circle'
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["training.pt", "test.pt"]
+        return ['training.pt', 'test.pt']
 
     def download(self):
         path = download_url(self.url, self.root)
@@ -86,17 +82,17 @@ class GeometricShapes(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        self.save(self.process_set("train"), self.processed_paths[0])
-        self.save(self.process_set("test"), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str):
-        categories = glob.glob(osp.join(self.raw_dir, "*", ""))
+        categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob(f"{folder}/*.off")
+            paths = glob.glob(f'{folder}/*.off')
             for path in paths:
                 data = read_off(path)
                 data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)

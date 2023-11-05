@@ -66,7 +66,6 @@ class Explainer:
             See :class:`~torch_geometric.explain.config.ThresholdConfig` for
             available options. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         model: torch.nn.Module,
@@ -137,7 +136,8 @@ class Explainer:
         if isinstance(edge_mask, Tensor):
             set_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
         elif isinstance(edge_mask, dict):
-            set_hetero_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
+            set_hetero_masks(self.model, edge_mask, edge_index,
+                             apply_sigmoid=False)
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
@@ -186,14 +186,12 @@ class Explainer:
             if target is None:
                 raise ValueError(
                     f"The 'target' has to be provided for the explanation "
-                    f"type '{self.explanation_type.value}'"
-                )
+                    f"type '{self.explanation_type.value}'")
         elif self.explanation_type == ExplanationType.model:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'"
-                )
+                    f"type '{self.explanation_type.value}'")
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
@@ -233,17 +231,17 @@ class Explainer:
             # TODO Add `explanation._model_args`
 
             assert isinstance(x, dict)
-            explanation.set_value_dict("x", x)
+            explanation.set_value_dict('x', x)
 
             assert isinstance(edge_index, dict)
-            explanation.set_value_dict("edge_index", edge_index)
+            explanation.set_value_dict('edge_index', edge_index)
 
             for key, arg in kwargs.items():  # Add remaining `kwargs`:
                 if isinstance(arg, dict):
                     # Keyword arguments are likely named `{attr_name}_dict`
                     # while we only want to assign the `{attr_name}` to the
                     # `HeteroExplanation` object:
-                    key = key[:-5] if key.endswith("_dict") else key
+                    key = key[:-5] if key.endswith('_dict') else key
                     explanation.set_value_dict(key, arg)
                 else:
                     explanation[key] = arg

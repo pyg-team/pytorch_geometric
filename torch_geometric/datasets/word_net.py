@@ -36,10 +36,8 @@ class WordNet18(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = (
-        "https://raw.githubusercontent.com/villmow/"
-        "datasets_knowledge_embedding/master/WN18/original"
-    )
+    url = ('https://raw.githubusercontent.com/villmow/'
+           'datasets_knowledge_embedding/master/WN18/original')
 
     def __init__(
         self,
@@ -52,20 +50,20 @@ class WordNet18(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["train.txt", "valid.txt", "test.txt"]
+        return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f"{self.url}/{filename}", self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process(self):
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
-            with open(path, "r") as f:
+            with open(path, 'r') as f:
                 data = [int(x) for x in f.read().split()[1:]]
                 data = torch.tensor(data, dtype=torch.long)
                 srcs.append(data[::3])
@@ -77,11 +75,11 @@ class WordNet18(InMemoryDataset):
         edge_type = torch.cat(edge_types, dim=0)
 
         train_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        train_mask[: srcs[0].size(0)] = True
+        train_mask[:srcs[0].size(0)] = True
         val_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        val_mask[srcs[0].size(0) : srcs[0].size(0) + srcs[1].size(0)] = True
+        val_mask[srcs[0].size(0):srcs[0].size(0) + srcs[1].size(0)] = True
         test_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        test_mask[srcs[0].size(0) + srcs[1].size(0) :] = True
+        test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
         _, perm = index_sort(num_nodes * src + dst)
@@ -92,14 +90,9 @@ class WordNet18(InMemoryDataset):
         val_mask = val_mask[perm]
         test_mask = test_mask[perm]
 
-        data = Data(
-            edge_index=edge_index,
-            edge_type=edge_type,
-            train_mask=train_mask,
-            val_mask=val_mask,
-            test_mask=test_mask,
-            num_nodes=num_nodes,
-        )
+        data = Data(edge_index=edge_index, edge_type=edge_type,
+                    train_mask=train_mask, val_mask=val_mask,
+                    test_mask=test_mask, num_nodes=num_nodes)
 
         if self.pre_transform is not None:
             data = self.pre_filter(data)
@@ -124,23 +117,21 @@ class WordNet18RR(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = (
-        "https://raw.githubusercontent.com/villmow/"
-        "datasets_knowledge_embedding/master/WN18RR/original"
-    )
+    url = ('https://raw.githubusercontent.com/villmow/'
+           'datasets_knowledge_embedding/master/WN18RR/original')
 
     edge2id = {
-        "_also_see": 0,
-        "_derivationally_related_form": 1,
-        "_has_part": 2,
-        "_hypernym": 3,
-        "_instance_hypernym": 4,
-        "_member_meronym": 5,
-        "_member_of_domain_region": 6,
-        "_member_of_domain_usage": 7,
-        "_similar_to": 8,
-        "_synset_domain_topic_of": 9,
-        "_verb_group": 10,
+        '_also_see': 0,
+        '_derivationally_related_form': 1,
+        '_has_part': 2,
+        '_hypernym': 3,
+        '_instance_hypernym': 4,
+        '_member_meronym': 5,
+        '_member_of_domain_region': 6,
+        '_member_of_domain_usage': 7,
+        '_similar_to': 8,
+        '_synset_domain_topic_of': 9,
+        '_verb_group': 10,
     }
 
     def __init__(
@@ -154,22 +145,22 @@ class WordNet18RR(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["train.txt", "valid.txt", "test.txt"]
+        return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f"{self.url}/{filename}", self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process(self):
         node2id, idx = {}, 0
 
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
-            with open(path, "r") as f:
+            with open(path, 'r') as f:
                 data = f.read().split()
 
                 src = data[::3]
@@ -194,11 +185,11 @@ class WordNet18RR(InMemoryDataset):
         edge_type = torch.cat(edge_types, dim=0)
 
         train_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        train_mask[: srcs[0].size(0)] = True
+        train_mask[:srcs[0].size(0)] = True
         val_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        val_mask[srcs[0].size(0) : srcs[0].size(0) + srcs[1].size(0)] = True
+        val_mask[srcs[0].size(0):srcs[0].size(0) + srcs[1].size(0)] = True
         test_mask = torch.zeros(src.size(0), dtype=torch.bool)
-        test_mask[srcs[0].size(0) + srcs[1].size(0) :] = True
+        test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
         _, perm = index_sort(num_nodes * src + dst)
@@ -209,14 +200,9 @@ class WordNet18RR(InMemoryDataset):
         val_mask = val_mask[perm]
         test_mask = test_mask[perm]
 
-        data = Data(
-            edge_index=edge_index,
-            edge_type=edge_type,
-            train_mask=train_mask,
-            val_mask=val_mask,
-            test_mask=test_mask,
-            num_nodes=num_nodes,
-        )
+        data = Data(edge_index=edge_index, edge_type=edge_type,
+                    train_mask=train_mask, val_mask=val_mask,
+                    test_mask=test_mask, num_nodes=num_nodes)
 
         if self.pre_transform is not None:
             data = self.pre_filter(data)

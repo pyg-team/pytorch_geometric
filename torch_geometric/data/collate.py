@@ -71,6 +71,7 @@ def collate(
         key = out_store._key
         stores = key_to_stores[key]
         for attr in stores[0].keys():
+
             if attr in exclude_keys:  # Do not include top-level attribute.
                 continue
 
@@ -78,17 +79,18 @@ def collate(
 
             # The `num_nodes` attribute needs special treatment, as we need to
             # sum their values up instead of merging them to a list:
-            if attr == "num_nodes":
+            if attr == 'num_nodes':
                 out_store._num_nodes = values
                 out_store.num_nodes = sum(values)
                 continue
 
             # Skip batching of `ptr` vectors for now:
-            if attr == "ptr":
+            if attr == 'ptr':
                 continue
 
             # Collate attributes into a unified representation:
-            value, slices, incs = _collate(attr, values, data_list, stores, increment)
+            value, slices, incs = _collate(attr, values, data_list, stores,
+                                           increment)
 
             if isinstance(value, Tensor) and value.is_cuda:
                 device = value.device
@@ -104,15 +106,12 @@ def collate(
             # Add an additional batch vector for the given attribute:
             if attr in follow_batch:
                 batch, ptr = _batch_and_ptr(slices, device)
-                out_store[f"{attr}_batch"] = batch
-                out_store[f"{attr}_ptr"] = ptr
+                out_store[f'{attr}_batch'] = batch
+                out_store[f'{attr}_ptr'] = ptr
 
         # In case the storage holds node, we add a top-level batch vector it:
-        if (
-            add_batch
-            and isinstance(stores[0], NodeStorage)
-            and stores[0].can_infer_num_nodes
-        ):
+        if (add_batch and isinstance(stores[0], NodeStorage)
+                and stores[0].can_infer_num_nodes):
             repeats = [store.num_nodes for store in stores]
             out_store.batch = repeat_interleave(repeats, device=device)
             out_store.ptr = cumsum(torch.tensor(repeats, device=device))
@@ -127,6 +126,7 @@ def _collate(
     stores: List[BaseStorage],
     increment: bool,
 ) -> Tuple[Any, Any, Any]:
+
     elem = values[0]
 
     if isinstance(elem, Tensor) and not is_sparse(elem):
@@ -142,12 +142,13 @@ def _collate(
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
                 values = [
-                    value + inc.to(value.device) for value, inc in zip(values, incs)
+                    value + inc.to(value.device)
+                    for value, inc in zip(values, incs)
                 ]
         else:
             incs = None
 
-        if getattr(elem, "is_nested", False):
+        if getattr(elem, 'is_nested', False):
             tensors = []
             for nested_tensor in values:
                 tensors.extend(nested_tensor.unbind())
@@ -161,8 +162,7 @@ def _collate(
             numel = sum(value.numel() for value in values)
             if torch_geometric.typing.WITH_PT20:
                 storage = elem.untyped_storage()._new_shared(
-                    numel * elem.element_size(), device=elem.device
-                )
+                    numel * elem.element_size(), device=elem.device)
             elif torch_geometric.typing.WITH_PT112:
                 storage = elem.storage()._new_shared(numel, device=elem.device)
             else:
@@ -182,7 +182,7 @@ def _collate(
         key = str(key)
         sizes = torch.tensor([value.num_rows for value in values])
         slices = cumsum(sizes)
-        value = torch_frame.cat(values, along="row")
+        value = torch_frame.cat(values, along='row')
         return value, slices, None
 
     elif is_sparse(elem) and increment:
@@ -190,7 +190,7 @@ def _collate(
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
-        cat_dims = (cat_dim,) if isinstance(cat_dim, int) else cat_dim
+        cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(torch.tensor(repeats))
         if is_torch_sparse_tensor(elem):
@@ -216,22 +216,16 @@ def _collate(
         value_dict, slice_dict, inc_dict = {}, {}, {}
         for key in elem.keys():
             value_dict[key], slice_dict[key], inc_dict[key] = _collate(
-                key, [v[key] for v in values], data_list, stores, increment
-            )
+                key, [v[key] for v in values], data_list, stores, increment)
         return value_dict, slice_dict, inc_dict
 
-    elif (
-        isinstance(elem, Sequence)
-        and not isinstance(elem, str)
-        and len(elem) > 0
-        and isinstance(elem[0], (Tensor, SparseTensor))
-    ):
+    elif (isinstance(elem, Sequence) and not isinstance(elem, str)
+          and len(elem) > 0 and isinstance(elem[0], (Tensor, SparseTensor))):
         # Recursively collate elements of lists.
         value_list, slice_list, inc_list = [], [], []
         for i in range(len(elem)):
-            value, slices, incs = _collate(
-                key, [v[i] for v in values], data_list, stores, increment
-            )
+            value, slices, incs = _collate(key, [v[i] for v in values],
+                                           data_list, stores, increment)
             value_list.append(value)
             slice_list.append(slices)
             inc_list.append(incs)
@@ -247,7 +241,7 @@ def _batch_and_ptr(
     slices: Any,
     device: Optional[torch.device] = None,
 ) -> Tuple[Any, Any]:
-    if isinstance(slices, Tensor) and slices.dim() == 1:
+    if (isinstance(slices, Tensor) and slices.dim() == 1):
         # Default case, turn slices tensor into batch.
         repeats = slices[1:] - slices[:-1]
         batch = repeat_interleave(repeats.tolist(), device=device)
@@ -261,11 +255,8 @@ def _batch_and_ptr(
             batch[k], ptr[k] = _batch_and_ptr(v, device)
         return batch, ptr
 
-    elif (
-        isinstance(slices, Sequence)
-        and not isinstance(slices, str)
-        and isinstance(slices[0], Tensor)
-    ):
+    elif (isinstance(slices, Sequence) and not isinstance(slices, str)
+          and isinstance(slices[0], Tensor)):
         # Recursively batch elements of lists.
         batch, ptr = [], []
         for s in slices:
@@ -286,13 +277,12 @@ def repeat_interleave(
     repeats: List[int],
     device: Optional[torch.device] = None,
 ) -> Tensor:
-    outs = [torch.full((n,), i, device=device) for i, n in enumerate(repeats)]
+    outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
     return torch.cat(outs, dim=0)
 
 
-def get_incs(
-    key, values: List[Any], data_list: List[BaseData], stores: List[BaseStorage]
-) -> Tensor:
+def get_incs(key, values: List[Any], data_list: List[BaseData],
+             stores: List[BaseStorage]) -> Tensor:
     repeats = [
         data.__inc__(key, value, store)
         for value, data, store in zip(values, data_list, stores)

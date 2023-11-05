@@ -5,9 +5,8 @@ from torch import Tensor
 from torch_geometric.utils import scatter
 
 
-def global_add_pool(
-    x: Tensor, batch: Optional[Tensor], size: Optional[int] = None
-) -> Tensor:
+def global_add_pool(x: Tensor, batch: Optional[Tensor],
+                    size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by adding node features
     across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -31,12 +30,11 @@ def global_add_pool(
 
     if batch is None:
         return x.sum(dim=dim, keepdim=x.dim() <= 2)
-    return scatter(x, batch, dim=dim, dim_size=size, reduce="sum")
+    return scatter(x, batch, dim=dim, dim_size=size, reduce='sum')
 
 
-def global_mean_pool(
-    x: Tensor, batch: Optional[Tensor], size: Optional[int] = None
-) -> Tensor:
+def global_mean_pool(x: Tensor, batch: Optional[Tensor],
+                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by averaging node features
     across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -60,12 +58,11 @@ def global_mean_pool(
 
     if batch is None:
         return x.mean(dim=dim, keepdim=x.dim() <= 2)
-    return scatter(x, batch, dim=dim, dim_size=size, reduce="mean")
+    return scatter(x, batch, dim=dim, dim_size=size, reduce='mean')
 
 
-def global_max_pool(
-    x: Tensor, batch: Optional[Tensor], size: Optional[int] = None
-) -> Tensor:
+def global_max_pool(x: Tensor, batch: Optional[Tensor],
+                    size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
     maximum across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -89,4 +86,4 @@ def global_max_pool(
 
     if batch is None:
         return x.max(dim=dim, keepdim=x.dim() <= 2)[0]
-    return scatter(x, batch, dim=dim, dim_size=size, reduce="max")
+    return scatter(x, batch, dim=dim, dim_size=size, reduce='max')

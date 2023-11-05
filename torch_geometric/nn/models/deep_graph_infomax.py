@@ -23,7 +23,6 @@ class DeepGraphInfomax(torch.nn.Module):
         summary (callable): The readout function :math:`\mathcal{R}`.
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
-
     def __init__(
         self,
         hidden_channels: int,
@@ -53,10 +52,10 @@ class DeepGraphInfomax(torch.nn.Module):
         pos_z = self.encoder(*args, **kwargs)
 
         cor = self.corruption(*args, **kwargs)
-        cor = cor if isinstance(cor, tuple) else (cor,)
-        cor_args = cor[: len(args)]
+        cor = cor if isinstance(cor, tuple) else (cor, )
+        cor_args = cor[:len(args)]
         cor_kwargs = copy.copy(kwargs)
-        for key, value in zip(kwargs.keys(), cor[len(args) :]):
+        for key, value in zip(kwargs.keys(), cor[len(args):]):
             cor_kwargs[key] = value
 
         neg_z = self.encoder(*cor_args, **cor_kwargs)
@@ -65,7 +64,8 @@ class DeepGraphInfomax(torch.nn.Module):
 
         return pos_z, neg_z, summary
 
-    def discriminate(self, z: Tensor, summary: Tensor, sigmoid: bool = True) -> Tensor:
+    def discriminate(self, z: Tensor, summary: Tensor,
+                     sigmoid: bool = True) -> Tensor:
         r"""Given the patch-summary pair :obj:`z` and :obj:`summary`, computes
         the probability scores assigned to this patch-summary pair.
 
@@ -83,11 +83,10 @@ class DeepGraphInfomax(torch.nn.Module):
     def loss(self, pos_z: Tensor, neg_z: Tensor, summary: Tensor) -> Tensor:
         r"""Computes the mutual information maximization objective."""
         pos_loss = -torch.log(
-            self.discriminate(pos_z, summary, sigmoid=True) + EPS
-        ).mean()
-        neg_loss = -torch.log(
-            1 - self.discriminate(neg_z, summary, sigmoid=True) + EPS
-        ).mean()
+            self.discriminate(pos_z, summary, sigmoid=True) + EPS).mean()
+        neg_loss = -torch.log(1 -
+                              self.discriminate(neg_z, summary, sigmoid=True) +
+                              EPS).mean()
 
         return pos_loss + neg_loss
 
@@ -97,8 +96,8 @@ class DeepGraphInfomax(torch.nn.Module):
         train_y: Tensor,
         test_z: Tensor,
         test_y: Tensor,
-        solver: str = "lbfgs",
-        multi_class: str = "auto",
+        solver: str = 'lbfgs',
+        multi_class: str = 'auto',
         *args,
         **kwargs,
     ) -> float:
@@ -106,10 +105,11 @@ class DeepGraphInfomax(torch.nn.Module):
         task."""
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(
-            solver=solver, multi_class=multi_class, *args, **kwargs
-        ).fit(train_z.detach().cpu().numpy(), train_y.detach().cpu().numpy())
-        return clf.score(test_z.detach().cpu().numpy(), test_y.detach().cpu().numpy())
+        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+                                 **kwargs).fit(train_z.detach().cpu().numpy(),
+                                               train_y.detach().cpu().numpy())
+        return clf.score(test_z.detach().cpu().numpy(),
+                         test_y.detach().cpu().numpy())
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.hidden_channels})"
+        return f'{self.__class__.__name__}({self.hidden_channels})'

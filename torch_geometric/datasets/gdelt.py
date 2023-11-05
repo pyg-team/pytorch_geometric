@@ -32,20 +32,16 @@ class GDELT(EventDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = "https://github.com/INK-USC/RE-Net/raw/master/data/GDELT"
+    url = 'https://github.com/INK-USC/RE-Net/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
-    def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-    ):
-        assert split in ["train", "val", "test"]
+    def __init__(self, root: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
-        idx = self.processed_file_names.index(f"{split}.pt")
+        idx = self.processed_file_names.index(f'{split}.pt')
         self.load(self.processed_paths[idx])
 
     @property
@@ -58,20 +54,20 @@ class GDELT(EventDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [f"{name}.txt" for name in ["train", "valid", "test"]]
+        return [f'{name}.txt' for name in ['train', 'valid', 'test']]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["train.pt", "val.pt", "test.pt"]
+        return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url(f"{self.url}/{filename}", self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process_events(self) -> torch.Tensor:
         events = []
         for path in self.raw_paths:
-            data = read_txt_array(path, sep="\t", end=4, dtype=torch.long)
+            data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
             data[:, 3] = data[:, 3] // 15
             events += [data]
         return torch.cat(events, dim=0)
@@ -79,6 +75,6 @@ class GDELT(EventDataset):
     def process(self):
         s = self.splits
         data_list = super().process()
-        self.save(data_list[s[0] : s[1]], self.processed_paths[0])
-        self.save(data_list[s[1] : s[2]], self.processed_paths[1])
-        self.save(data_list[s[2] : s[3]], self.processed_paths[2])
+        self.save(data_list[s[0]:s[1]], self.processed_paths[0])
+        self.save(data_list[s[1]:s[2]], self.processed_paths[1])
+        self.save(data_list[s[2]:s[3]], self.processed_paths[2])

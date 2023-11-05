@@ -7,15 +7,14 @@ from torch.nn import Linear
 
 class DenseGraphConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GraphConv`."""
-
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
-        aggr: str = "add",
+        aggr: str = 'add',
         bias: bool = True,
     ):
-        assert aggr in ["add", "mean", "max"]
+        assert aggr in ['add', 'mean', 'max']
         super().__init__()
 
         self.in_channels = in_channels
@@ -32,7 +31,8 @@ class DenseGraphConv(torch.nn.Module):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+    def forward(self, x: Tensor, adj: Tensor,
+                mask: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): Node feature tensor
@@ -51,17 +51,17 @@ class DenseGraphConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, C = x.size()
 
-        if self.aggr == "add":
+        if self.aggr == 'add':
             out = torch.matmul(adj, x)
-        elif self.aggr == "mean":
+        elif self.aggr == 'mean':
             out = torch.matmul(adj, x)
             out = out / adj.sum(dim=-1, keepdim=True).clamp_(min=1)
-        elif self.aggr == "max":
+        elif self.aggr == 'max':
             out = x.unsqueeze(-2).repeat(1, 1, N, 1)
             adj = adj.unsqueeze(-1).expand(B, N, N, C)
-            out[adj == 0] = float("-inf")
+            out[adj == 0] = float('-inf')
             out = out.max(dim=-3)[0]
-            out[out == float("-inf")] = 0.0
+            out[out == float('-inf')] = 0.
         else:
             raise NotImplementedError
 
@@ -74,4 +74,5 @@ class DenseGraphConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

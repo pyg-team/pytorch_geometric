@@ -30,7 +30,7 @@ def compute_loss(pred, true):
         if value is not None:
             return value
 
-    if cfg.model.loss_fun == "cross_entropy":
+    if cfg.model.loss_fun == 'cross_entropy':
         # multiclass
         if pred.ndim > 1 and true.ndim == 1:
             pred = F.log_softmax(pred, dim=-1)
@@ -39,7 +39,7 @@ def compute_loss(pred, true):
         else:
             true = true.float()
             return bce_loss(pred, true), torch.sigmoid(pred)
-    elif cfg.model.loss_fun == "mse":
+    elif cfg.model.loss_fun == 'mse':
         true = true.float()
         return mse_loss(pred, true), pred
     else:

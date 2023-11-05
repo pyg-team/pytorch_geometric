@@ -40,14 +40,13 @@ def to_csc(
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
 
-    if hasattr(data, "adj"):
+    if hasattr(data, 'adj'):
         if src_node_time is not None:
-            raise NotImplementedError(
-                "Temporal sampling via 'SparseTensor' " "format not yet supported"
-            )
+            raise NotImplementedError("Temporal sampling via 'SparseTensor' "
+                                      "format not yet supported")
         colptr, row, _ = data.adj.csc()
 
-    elif hasattr(data, "adj_t"):
+    elif hasattr(data, 'adj_t'):
         if src_node_time is not None:
             # TODO (matthias) This only works when instantiating a
             # `SparseTensor` with `is_sorted=True`. Otherwise, the
@@ -68,7 +67,8 @@ def to_csc(
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
-        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long, device=device)
+        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
+                             device=device)
 
     colptr = colptr.to(device)
     row = row.to(device)
@@ -112,26 +112,27 @@ def to_bidirectional(
     edge_id: OptTensor = None,
     rev_edge_id: OptTensor = None,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
+
     assert row.numel() == col.numel()
     assert rev_row.numel() == rev_col.numel()
 
     edge_index = row.new_empty(2, row.numel() + rev_row.numel())
-    edge_index[0, : row.numel()] = row
-    edge_index[1, : row.numel()] = col
-    edge_index[0, row.numel() :] = rev_col
-    edge_index[1, row.numel() :] = rev_row
+    edge_index[0, :row.numel()] = row
+    edge_index[1, :row.numel()] = col
+    edge_index[0, row.numel():] = rev_col
+    edge_index[1, row.numel():] = rev_row
 
     if edge_id is not None:
         edge_id = torch.cat([edge_id, rev_edge_id], dim=0)
 
-    (row, col), edge_id = coalesce(edge_index, edge_id, reduce="any")
+    (row, col), edge_id = coalesce(edge_index, edge_id, reduce='any')
 
     return row, col, edge_id
 
 
 ###############################################################################
 
-X, Y = TypeVar("X"), TypeVar("Y")
+X, Y = TypeVar('X'), TypeVar('Y')
 
 
 def remap_keys(
@@ -140,4 +141,7 @@ def remap_keys(
     exclude: Optional[List[X]] = None,
 ) -> Dict[Union[X, Y], Any]:
     exclude = exclude or []
-    return {k if k in exclude else mapping.get(k, k): v for k, v in inputs.items()}
+    return {
+        k if k in exclude else mapping.get(k, k): v
+        for k, v in inputs.items()
+    }

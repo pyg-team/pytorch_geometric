@@ -64,15 +64,13 @@ def geodesic_distance(
     """
     import gdist
 
-    if "dest" in kwargs:
-        dst = kwargs["dest"]
-        warnings.warn(
-            "'dest' attribute in 'geodesic_distance' is deprecated "
-            "and will be removed in a future release. Use the 'dst' "
-            "argument instead."
-        )
+    if 'dest' in kwargs:
+        dst = kwargs['dest']
+        warnings.warn("'dest' attribute in 'geodesic_distance' is deprecated "
+                      "and will be removed in a future release. Use the 'dst' "
+                      "argument instead.")
 
-    max_distance = float("inf") if max_distance is None else max_distance
+    max_distance = float('inf') if max_distance is None else max_distance
 
     if norm:
         area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]])
@@ -86,7 +84,8 @@ def geodesic_distance(
     face = face.detach().t().cpu().to(torch.int).numpy()
 
     if src is None and dst is None:
-        out = gdist.local_gdist_matrix(pos, face, max_distance * norm).toarray() / norm
+        out = gdist.local_gdist_matrix(pos, face,
+                                       max_distance * norm).toarray() / norm
         return torch.from_numpy(out).to(dtype)
 
     if src is None:
@@ -97,8 +96,8 @@ def geodesic_distance(
     dst = None if dst is None else dst.detach().cpu().to(torch.int).numpy()
 
     def _parallel_loop(pos, face, src, dst, max_distance, norm, i, dtype):
-        s = src[i : i + 1]
-        d = None if dst is None else dst[i : i + 1]
+        s = src[i:i + 1]
+        d = None if dst is None else dst[i:i + 1]
         out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
         return torch.from_numpy(out).to(dtype)
 
@@ -107,11 +106,8 @@ def geodesic_distance(
         with mp.Pool(num_workers) as pool:
             outs = pool.starmap(
                 _parallel_loop,
-                [
-                    (pos, face, src, dst, max_distance, norm, i, dtype)
-                    for i in range(len(src))
-                ],
-            )
+                [(pos, face, src, dst, max_distance, norm, i, dtype)
+                 for i in range(len(src))])
     else:
         outs = [
             _parallel_loop(pos, face, src, dst, max_distance, norm, i, dtype)

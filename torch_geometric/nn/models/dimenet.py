@@ -19,17 +19,17 @@ from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
 qm9_target_dict: Dict[int, str] = {
-    0: "mu",
-    1: "alpha",
-    2: "homo",
-    3: "lumo",
-    5: "r2",
-    6: "zpve",
-    7: "U0",
-    8: "U",
-    9: "H",
-    10: "G",
-    11: "Cv",
+    0: 'mu',
+    1: 'alpha',
+    2: 'homo',
+    3: 'lumo',
+    5: 'r2',
+    6: 'zpve',
+    7: 'U0',
+    8: 'U',
+    9: 'H',
+    10: 'G',
+    11: 'Cv',
 }
 
 
@@ -46,15 +46,13 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return (1.0 / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2) * (x < 1.0).to(
-            x.dtype
-        )
+        return (1.0 / x + a * x_pow_p0 + b * x_pow_p1 +
+                c * x_pow_p2) * (x < 1.0).to(x.dtype)
 
 
 class BesselBasisLayer(torch.nn.Module):
-    def __init__(
-        self, num_radial: int, cutoff: float = 5.0, envelope_exponent: int = 5
-    ):
+    def __init__(self, num_radial: int, cutoff: float = 5.0,
+                 envelope_exponent: int = 5):
         super().__init__()
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
@@ -100,8 +98,8 @@ class SphericalBasisLayer(torch.nn.Module):
         self.sph_funcs = []
         self.bessel_funcs = []
 
-        x, theta = sym.symbols("x theta")
-        modules = {"sin": torch.sin, "cos": torch.cos}
+        x, theta = sym.symbols('x theta')
+        modules = {'sin': torch.sin, 'cos': torch.cos}
         for i in range(num_spherical):
             if i == 0:
                 sph1 = sym.lambdify([theta], sph_harm_forms[i][0], modules)(0)
@@ -185,23 +183,23 @@ class InteractionBlock(torch.nn.Module):
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
-        self.lin_sbf = Linear(num_spherical * num_radial, num_bilinear, bias=False)
+        self.lin_sbf = Linear(num_spherical * num_radial, num_bilinear,
+                              bias=False)
 
         # Dense transformations of input messages.
         self.lin_kj = Linear(hidden_channels, hidden_channels)
         self.lin_ji = Linear(hidden_channels, hidden_channels)
 
         self.W = torch.nn.Parameter(
-            torch.empty(hidden_channels, num_bilinear, hidden_channels)
-        )
+            torch.empty(hidden_channels, num_bilinear, hidden_channels))
 
-        self.layers_before_skip = torch.nn.ModuleList(
-            [ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)]
-        )
+        self.layers_before_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)
+        ])
         self.lin = Linear(hidden_channels, hidden_channels)
-        self.layers_after_skip = torch.nn.ModuleList(
-            [ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)]
-        )
+        self.layers_after_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)
+        ])
 
         self.reset_parameters()
 
@@ -220,17 +218,16 @@ class InteractionBlock(torch.nn.Module):
         for res_layer in self.layers_after_skip:
             res_layer.reset_parameters()
 
-    def forward(
-        self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor, idx_ji: Tensor
-    ) -> Tensor:
+    def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,
+                idx_ji: Tensor) -> Tensor:
         rbf = self.lin_rbf(rbf)
         sbf = self.lin_sbf(sbf)
 
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
         x_kj = x_kj * rbf
-        x_kj = torch.einsum("wj,wl,ijl->wi", sbf, x_kj[idx_kj], self.W)
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce="sum")
+        x_kj = torch.einsum('wj,wl,ijl->wi', sbf, x_kj[idx_kj], self.W)
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
 
         h = x_ji + x_kj
         for layer in self.layers_before_skip:
@@ -261,7 +258,8 @@ class InteractionPPBlock(torch.nn.Module):
         self.lin_rbf1 = Linear(num_radial, basis_emb_size, bias=False)
         self.lin_rbf2 = Linear(basis_emb_size, hidden_channels, bias=False)
 
-        self.lin_sbf1 = Linear(num_spherical * num_radial, basis_emb_size, bias=False)
+        self.lin_sbf1 = Linear(num_spherical * num_radial, basis_emb_size,
+                               bias=False)
         self.lin_sbf2 = Linear(basis_emb_size, int_emb_size, bias=False)
 
         # Hidden transformation of input message:
@@ -273,13 +271,13 @@ class InteractionPPBlock(torch.nn.Module):
         self.lin_up = Linear(int_emb_size, hidden_channels, bias=False)
 
         # Residual layers before and after skip connection:
-        self.layers_before_skip = torch.nn.ModuleList(
-            [ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)]
-        )
+        self.layers_before_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)
+        ])
         self.lin = Linear(hidden_channels, hidden_channels)
-        self.layers_after_skip = torch.nn.ModuleList(
-            [ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)]
-        )
+        self.layers_after_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)
+        ])
 
         self.reset_parameters()
 
@@ -304,9 +302,8 @@ class InteractionPPBlock(torch.nn.Module):
         for res_layer in self.layers_after_skip:
             res_layer.reset_parameters()
 
-    def forward(
-        self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor, idx_ji: Tensor
-    ) -> Tensor:
+    def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,
+                idx_ji: Tensor) -> Tensor:
         # Initial transformation:
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
@@ -325,7 +322,7 @@ class InteractionPPBlock(torch.nn.Module):
         x_kj = x_kj[idx_kj] * sbf
 
         # Aggregate interactions and up-project embeddings:
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce="sum")
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
         x_kj = self.act(self.lin_up(x_kj))
 
         h = x_ji + x_kj
@@ -346,9 +343,9 @@ class OutputBlock(torch.nn.Module):
         out_channels: int,
         num_layers: int,
         act: Callable,
-        output_initializer: str = "zeros",
+        output_initializer: str = 'zeros',
     ):
-        assert output_initializer in {"zeros", "glorot_orthogonal"}
+        assert output_initializer in {'zeros', 'glorot_orthogonal'}
 
         super().__init__()
 
@@ -368,16 +365,15 @@ class OutputBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        if self.output_initializer == "zeros":
+        if self.output_initializer == 'zeros':
             self.lin.weight.data.fill_(0)
-        elif self.output_initializer == "glorot_orthogonal":
+        elif self.output_initializer == 'glorot_orthogonal':
             glorot_orthogonal(self.lin.weight, scale=2.0)
 
-    def forward(
-        self, x: Tensor, rbf: Tensor, i: Tensor, num_nodes: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
+                num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce="sum")
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
@@ -392,9 +388,9 @@ class OutputPPBlock(torch.nn.Module):
         out_channels: int,
         num_layers: int,
         act: Callable,
-        output_initializer: str = "zeros",
+        output_initializer: str = 'zeros',
     ):
-        assert output_initializer in {"zeros", "glorot_orthogonal"}
+        assert output_initializer in {'zeros', 'glorot_orthogonal'}
 
         super().__init__()
 
@@ -418,16 +414,15 @@ class OutputPPBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        if self.output_initializer == "zeros":
+        if self.output_initializer == 'zeros':
             self.lin.weight.data.fill_(0)
-        elif self.output_initializer == "glorot_orthogonal":
+        elif self.output_initializer == 'glorot_orthogonal':
             glorot_orthogonal(self.lin.weight, scale=2.0)
 
-    def forward(
-        self, x: Tensor, rbf: Tensor, i: Tensor, num_nodes: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
+                num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce="sum")
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
@@ -441,9 +436,8 @@ def triplets(
     row, col = edge_index  # j->i
 
     value = torch.arange(row.size(0), device=row.device)
-    adj_t = SparseTensor(
-        row=col, col=row, value=value, sparse_sizes=(num_nodes, num_nodes)
-    )
+    adj_t = SparseTensor(row=col, col=row, value=value,
+                         sparse_sizes=(num_nodes, num_nodes))
     adj_t_row = adj_t[row]
     num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
 
@@ -502,7 +496,8 @@ class DimeNet(torch.nn.Module):
             (default: :obj:`"zeros"`)
     """
 
-    url = "https://github.com/klicperajo/dimenet/raw/master/pretrained/" "dimenet"
+    url = ('https://github.com/klicperajo/dimenet/raw/master/pretrained/'
+           'dimenet')
 
     def __init__(
         self,
@@ -518,8 +513,8 @@ class DimeNet(torch.nn.Module):
         num_before_skip: int = 1,
         num_after_skip: int = 2,
         num_output_layers: int = 3,
-        act: Union[str, Callable] = "swish",
-        output_initializer: str = "zeros",
+        act: Union[str, Callable] = 'swish',
+        output_initializer: str = 'zeros',
     ):
         super().__init__()
 
@@ -533,40 +528,33 @@ class DimeNet(torch.nn.Module):
         self.num_blocks = num_blocks
 
         self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
-        self.sbf = SphericalBasisLayer(
-            num_spherical, num_radial, cutoff, envelope_exponent
-        )
+        self.sbf = SphericalBasisLayer(num_spherical, num_radial, cutoff,
+                                       envelope_exponent)
 
         self.emb = EmbeddingBlock(num_radial, hidden_channels, act)
 
-        self.output_blocks = torch.nn.ModuleList(
-            [
-                OutputBlock(
-                    num_radial,
-                    hidden_channels,
-                    out_channels,
-                    num_output_layers,
-                    act,
-                    output_initializer,
-                )
-                for _ in range(num_blocks + 1)
-            ]
-        )
+        self.output_blocks = torch.nn.ModuleList([
+            OutputBlock(
+                num_radial,
+                hidden_channels,
+                out_channels,
+                num_output_layers,
+                act,
+                output_initializer,
+            ) for _ in range(num_blocks + 1)
+        ])
 
-        self.interaction_blocks = torch.nn.ModuleList(
-            [
-                InteractionBlock(
-                    hidden_channels,
-                    num_bilinear,
-                    num_spherical,
-                    num_radial,
-                    num_before_skip,
-                    num_after_skip,
-                    act,
-                )
-                for _ in range(num_blocks)
-            ]
-        )
+        self.interaction_blocks = torch.nn.ModuleList([
+            InteractionBlock(
+                hidden_channels,
+                num_bilinear,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
+        ])
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -583,28 +571,28 @@ class DimeNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple["DimeNet", Dataset, Dataset, Dataset]:  # pragma: no cover
+    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, "pretrained_dimenet", qm9_target_dict[target])
+        path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
 
         makedirs(path)
-        url = f"{cls.url}/{qm9_target_dict[target]}"
+        url = f'{cls.url}/{qm9_target_dict[target]}'
 
-        if not osp.exists(osp.join(path, "checkpoint")):
-            download_url(f"{url}/checkpoint", path)
-            download_url(f"{url}/ckpt.data-00000-of-00002", path)
-            download_url(f"{url}/ckpt.data-00001-of-00002", path)
-            download_url(f"{url}/ckpt.index", path)
+        if not osp.exists(osp.join(path, 'checkpoint')):
+            download_url(f'{url}/checkpoint', path)
+            download_url(f'{url}/ckpt.data-00000-of-00002', path)
+            download_url(f'{url}/ckpt.data-00001-of-00002', path)
+            download_url(f'{url}/ckpt.index', path)
 
-        path = osp.join(path, "ckpt")
+        path = osp.join(path, 'ckpt')
         reader = tf.train.load_checkpoint(path)
 
         model = cls(
@@ -622,70 +610,54 @@ class DimeNet(torch.nn.Module):
         )
 
         def copy_(src, name, transpose=False):
-            init = reader.get_tensor(f"{name}/.ATTRIBUTES/VARIABLE_VALUE")
+            init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
             init = torch.from_numpy(init)
-            if name[-6:] == "kernel":
+            if name[-6:] == 'kernel':
                 init = init.t()
             src.data.copy_(init)
 
-        copy_(model.rbf.freq, "rbf_layer/frequencies")
-        copy_(model.emb.emb.weight, "emb_block/embeddings")
-        copy_(model.emb.lin_rbf.weight, "emb_block/dense_rbf/kernel")
-        copy_(model.emb.lin_rbf.bias, "emb_block/dense_rbf/bias")
-        copy_(model.emb.lin.weight, "emb_block/dense/kernel")
-        copy_(model.emb.lin.bias, "emb_block/dense/bias")
+        copy_(model.rbf.freq, 'rbf_layer/frequencies')
+        copy_(model.emb.emb.weight, 'emb_block/embeddings')
+        copy_(model.emb.lin_rbf.weight, 'emb_block/dense_rbf/kernel')
+        copy_(model.emb.lin_rbf.bias, 'emb_block/dense_rbf/bias')
+        copy_(model.emb.lin.weight, 'emb_block/dense/kernel')
+        copy_(model.emb.lin.bias, 'emb_block/dense/bias')
 
         for i, block in enumerate(model.output_blocks):
-            copy_(block.lin_rbf.weight, f"output_blocks/{i}/dense_rbf/kernel")
+            copy_(block.lin_rbf.weight, f'output_blocks/{i}/dense_rbf/kernel')
             for j, lin in enumerate(block.lins):
-                copy_(lin.weight, f"output_blocks/{i}/dense_layers/{j}/kernel")
-                copy_(lin.bias, f"output_blocks/{i}/dense_layers/{j}/bias")
-            copy_(block.lin.weight, f"output_blocks/{i}/dense_final/kernel")
+                copy_(lin.weight, f'output_blocks/{i}/dense_layers/{j}/kernel')
+                copy_(lin.bias, f'output_blocks/{i}/dense_layers/{j}/bias')
+            copy_(block.lin.weight, f'output_blocks/{i}/dense_final/kernel')
 
         for i, block in enumerate(model.interaction_blocks):
-            copy_(block.lin_rbf.weight, f"int_blocks/{i}/dense_rbf/kernel")
-            copy_(block.lin_sbf.weight, f"int_blocks/{i}/dense_sbf/kernel")
-            copy_(block.lin_kj.weight, f"int_blocks/{i}/dense_kj/kernel")
-            copy_(block.lin_kj.bias, f"int_blocks/{i}/dense_kj/bias")
-            copy_(block.lin_ji.weight, f"int_blocks/{i}/dense_ji/kernel")
-            copy_(block.lin_ji.bias, f"int_blocks/{i}/dense_ji/bias")
-            copy_(block.W, f"int_blocks/{i}/bilinear")
+            copy_(block.lin_rbf.weight, f'int_blocks/{i}/dense_rbf/kernel')
+            copy_(block.lin_sbf.weight, f'int_blocks/{i}/dense_sbf/kernel')
+            copy_(block.lin_kj.weight, f'int_blocks/{i}/dense_kj/kernel')
+            copy_(block.lin_kj.bias, f'int_blocks/{i}/dense_kj/bias')
+            copy_(block.lin_ji.weight, f'int_blocks/{i}/dense_ji/kernel')
+            copy_(block.lin_ji.bias, f'int_blocks/{i}/dense_ji/bias')
+            copy_(block.W, f'int_blocks/{i}/bilinear')
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel",
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/bias",
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel",
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/bias",
-                )
-            copy_(block.lin.weight, f"int_blocks/{i}/final_before_skip/kernel")
-            copy_(block.lin.bias, f"int_blocks/{i}/final_before_skip/bias")
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
+            copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
+            copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel",
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/bias",
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel",
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/bias",
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
 
         # Use the same random seed as the official DimeNet` implementation.
         random_state = np.random.RandomState(seed=42)
@@ -713,13 +685,11 @@ class DimeNet(torch.nn.Module):
                 to a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
-        edge_index = radius_graph(
-            pos, r=self.cutoff, batch=batch, max_num_neighbors=self.max_num_neighbors
-        )
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
 
         i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = triplets(
-            edge_index, num_nodes=z.size(0)
-        )
+            edge_index, num_nodes=z.size(0))
 
         # Calculate distances.
         dist = (pos[i] - pos[j]).pow(2).sum(dim=-1).sqrt()
@@ -743,16 +713,15 @@ class DimeNet(torch.nn.Module):
         P = self.output_blocks[0](x, rbf, i, num_nodes=pos.size(0))
 
         # Interaction blocks.
-        for interaction_block, output_block in zip(
-            self.interaction_blocks, self.output_blocks[1:]
-        ):
+        for interaction_block, output_block in zip(self.interaction_blocks,
+                                                   self.output_blocks[1:]):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
             P = P + output_block(x, rbf, i, num_nodes=pos.size(0))
 
         if batch is None:
             return P.sum(dim=0)
         else:
-            return scatter(P, batch, dim=0, reduce="sum")
+            return scatter(P, batch, dim=0, reduce='sum')
 
 
 class DimeNetPlusPlus(DimeNet):
@@ -792,10 +761,8 @@ class DimeNetPlusPlus(DimeNet):
             (default: :obj:`"zeros"`)
     """
 
-    url = (
-        "https://raw.githubusercontent.com/gasteigerjo/dimenet/"
-        "master/pretrained/dimenet_pp"
-    )
+    url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
+           'master/pretrained/dimenet_pp')
 
     def __init__(
         self,
@@ -813,8 +780,8 @@ class DimeNetPlusPlus(DimeNet):
         num_before_skip: int = 1,
         num_after_skip: int = 2,
         num_output_layers: int = 3,
-        act: Union[str, Callable] = "swish",
-        output_initializer: str = "zeros",
+        act: Union[str, Callable] = 'swish',
+        output_initializer: str = 'zeros',
     ):
         act = activation_resolver(act)
 
@@ -840,36 +807,30 @@ class DimeNetPlusPlus(DimeNet):
         # Hence, it is to be noted that in the above initalization, the
         # variable `num_bilinear` does not have any purpose as it is used
         # solely in the `OutputBlock` of DimeNet:
-        self.output_blocks = torch.nn.ModuleList(
-            [
-                OutputPPBlock(
-                    num_radial,
-                    hidden_channels,
-                    out_emb_channels,
-                    out_channels,
-                    num_output_layers,
-                    act,
-                    output_initializer,
-                )
-                for _ in range(num_blocks + 1)
-            ]
-        )
+        self.output_blocks = torch.nn.ModuleList([
+            OutputPPBlock(
+                num_radial,
+                hidden_channels,
+                out_emb_channels,
+                out_channels,
+                num_output_layers,
+                act,
+                output_initializer,
+            ) for _ in range(num_blocks + 1)
+        ])
 
-        self.interaction_blocks = torch.nn.ModuleList(
-            [
-                InteractionPPBlock(
-                    hidden_channels,
-                    int_emb_size,
-                    basis_emb_size,
-                    num_spherical,
-                    num_radial,
-                    num_before_skip,
-                    num_after_skip,
-                    act,
-                )
-                for _ in range(num_blocks)
-            ]
-        )
+        self.interaction_blocks = torch.nn.ModuleList([
+            InteractionPPBlock(
+                hidden_channels,
+                int_emb_size,
+                basis_emb_size,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
+        ])
 
         self.reset_parameters()
 
@@ -879,28 +840,29 @@ class DimeNetPlusPlus(DimeNet):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple["DimeNetPlusPlus", Dataset, Dataset, Dataset]:  # pragma: no cover
+    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset,
+               Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, "pretrained_dimenet_pp", qm9_target_dict[target])
+        path = osp.join(root, 'pretrained_dimenet_pp', qm9_target_dict[target])
 
         makedirs(path)
-        url = f"{cls.url}/{qm9_target_dict[target]}"
+        url = f'{cls.url}/{qm9_target_dict[target]}'
 
-        if not osp.exists(osp.join(path, "checkpoint")):
-            download_url(f"{url}/checkpoint", path)
-            download_url(f"{url}/ckpt.data-00000-of-00002", path)
-            download_url(f"{url}/ckpt.data-00001-of-00002", path)
-            download_url(f"{url}/ckpt.index", path)
+        if not osp.exists(osp.join(path, 'checkpoint')):
+            download_url(f'{url}/checkpoint', path)
+            download_url(f'{url}/ckpt.data-00000-of-00002', path)
+            download_url(f'{url}/ckpt.data-00001-of-00002', path)
+            download_url(f'{url}/ckpt.index', path)
 
-        path = osp.join(path, "ckpt")
+        path = osp.join(path, 'ckpt')
         reader = tf.train.load_checkpoint(path)
 
         # Configuration from DimeNet++:
@@ -923,79 +885,65 @@ class DimeNetPlusPlus(DimeNet):
         )
 
         def copy_(src, name, transpose=False):
-            init = reader.get_tensor(f"{name}/.ATTRIBUTES/VARIABLE_VALUE")
+            init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
             init = torch.from_numpy(init)
-            if name[-6:] == "kernel":
+            if name[-6:] == 'kernel':
                 init = init.t()
             src.data.copy_(init)
 
-        copy_(model.rbf.freq, "rbf_layer/frequencies")
-        copy_(model.emb.emb.weight, "emb_block/embeddings")
-        copy_(model.emb.lin_rbf.weight, "emb_block/dense_rbf/kernel")
-        copy_(model.emb.lin_rbf.bias, "emb_block/dense_rbf/bias")
-        copy_(model.emb.lin.weight, "emb_block/dense/kernel")
-        copy_(model.emb.lin.bias, "emb_block/dense/bias")
+        copy_(model.rbf.freq, 'rbf_layer/frequencies')
+        copy_(model.emb.emb.weight, 'emb_block/embeddings')
+        copy_(model.emb.lin_rbf.weight, 'emb_block/dense_rbf/kernel')
+        copy_(model.emb.lin_rbf.bias, 'emb_block/dense_rbf/bias')
+        copy_(model.emb.lin.weight, 'emb_block/dense/kernel')
+        copy_(model.emb.lin.bias, 'emb_block/dense/bias')
 
         for i, block in enumerate(model.output_blocks):
-            copy_(block.lin_rbf.weight, f"output_blocks/{i}/dense_rbf/kernel")
-            copy_(block.lin_up.weight, f"output_blocks/{i}/up_projection/kernel")
+            copy_(block.lin_rbf.weight, f'output_blocks/{i}/dense_rbf/kernel')
+            copy_(block.lin_up.weight,
+                  f'output_blocks/{i}/up_projection/kernel')
             for j, lin in enumerate(block.lins):
-                copy_(lin.weight, f"output_blocks/{i}/dense_layers/{j}/kernel")
-                copy_(lin.bias, f"output_blocks/{i}/dense_layers/{j}/bias")
-            copy_(block.lin.weight, f"output_blocks/{i}/dense_final/kernel")
+                copy_(lin.weight, f'output_blocks/{i}/dense_layers/{j}/kernel')
+                copy_(lin.bias, f'output_blocks/{i}/dense_layers/{j}/bias')
+            copy_(block.lin.weight, f'output_blocks/{i}/dense_final/kernel')
 
         for i, block in enumerate(model.interaction_blocks):
-            copy_(block.lin_rbf1.weight, f"int_blocks/{i}/dense_rbf1/kernel")
-            copy_(block.lin_rbf2.weight, f"int_blocks/{i}/dense_rbf2/kernel")
-            copy_(block.lin_sbf1.weight, f"int_blocks/{i}/dense_sbf1/kernel")
-            copy_(block.lin_sbf2.weight, f"int_blocks/{i}/dense_sbf2/kernel")
+            copy_(block.lin_rbf1.weight, f'int_blocks/{i}/dense_rbf1/kernel')
+            copy_(block.lin_rbf2.weight, f'int_blocks/{i}/dense_rbf2/kernel')
+            copy_(block.lin_sbf1.weight, f'int_blocks/{i}/dense_sbf1/kernel')
+            copy_(block.lin_sbf2.weight, f'int_blocks/{i}/dense_sbf2/kernel')
 
-            copy_(block.lin_ji.weight, f"int_blocks/{i}/dense_ji/kernel")
-            copy_(block.lin_ji.bias, f"int_blocks/{i}/dense_ji/bias")
-            copy_(block.lin_kj.weight, f"int_blocks/{i}/dense_kj/kernel")
-            copy_(block.lin_kj.bias, f"int_blocks/{i}/dense_kj/bias")
+            copy_(block.lin_ji.weight, f'int_blocks/{i}/dense_ji/kernel')
+            copy_(block.lin_ji.bias, f'int_blocks/{i}/dense_ji/bias')
+            copy_(block.lin_kj.weight, f'int_blocks/{i}/dense_kj/kernel')
+            copy_(block.lin_kj.bias, f'int_blocks/{i}/dense_kj/bias')
 
-            copy_(block.lin_down.weight, f"int_blocks/{i}/down_projection/kernel")
-            copy_(block.lin_up.weight, f"int_blocks/{i}/up_projection/kernel")
+            copy_(block.lin_down.weight,
+                  f'int_blocks/{i}/down_projection/kernel')
+            copy_(block.lin_up.weight, f'int_blocks/{i}/up_projection/kernel')
 
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel",
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/bias",
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel",
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/bias",
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
 
-            copy_(block.lin.weight, f"int_blocks/{i}/final_before_skip/kernel")
-            copy_(block.lin.bias, f"int_blocks/{i}/final_before_skip/bias")
+            copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
+            copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
 
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel",
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/bias",
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel",
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/bias",
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
 
         random_state = np.random.RandomState(seed=42)
         perm = torch.from_numpy(random_state.permutation(np.arange(130831)))

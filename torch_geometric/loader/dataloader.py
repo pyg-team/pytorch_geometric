@@ -33,7 +33,7 @@ class Collater:
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
         elif isinstance(elem, TensorFrame):
-            return torch_frame.cat(batch, along="row")
+            return torch_frame.cat(batch, along='row')
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
@@ -42,7 +42,7 @@ class Collater:
             return batch
         elif isinstance(elem, Mapping):
             return {key: self([data[key] for data in batch]) for key in elem}
-        elif isinstance(elem, tuple) and hasattr(elem, "_fields"):
+        elif isinstance(elem, tuple) and hasattr(elem, '_fields'):
             return type(elem)(*(self(s) for s in zip(*batch)))
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
             return [self(s) for s in zip(*batch)]
@@ -74,7 +74,6 @@ class DataLoader(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
-
     def __init__(
         self,
         dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
@@ -85,7 +84,7 @@ class DataLoader(torch.utils.data.DataLoader):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        kwargs.pop("collate_fn", None)
+        kwargs.pop('collate_fn', None)
 
         # Save for PyTorch Lightning < 1.6:
         self.follow_batch = follow_batch

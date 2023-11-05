@@ -122,7 +122,6 @@ class GATv2Conv(MessagePassing):
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
           (|\mathcal{E}|, H)))` if bipartite
     """
-
     _alpha: OptTensor
 
     def __init__(
@@ -135,7 +134,7 @@ class GATv2Conv(MessagePassing):
         dropout: float = 0.0,
         add_self_loops: bool = True,
         edge_dim: Optional[int] = None,
-        fill_value: Union[float, Tensor, str] = "mean",
+        fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         share_weights: bool = False,
         **kwargs,
@@ -154,44 +153,27 @@ class GATv2Conv(MessagePassing):
         self.share_weights = share_weights
 
         if isinstance(in_channels, int):
-            self.lin_l = Linear(
-                in_channels,
-                heads * out_channels,
-                bias=bias,
-                weight_initializer="glorot",
-            )
+            self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
+                                weight_initializer='glorot')
             if share_weights:
                 self.lin_r = self.lin_l
             else:
-                self.lin_r = Linear(
-                    in_channels,
-                    heads * out_channels,
-                    bias=bias,
-                    weight_initializer="glorot",
-                )
+                self.lin_r = Linear(in_channels, heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
         else:
-            self.lin_l = Linear(
-                in_channels[0],
-                heads * out_channels,
-                bias=bias,
-                weight_initializer="glorot",
-            )
+            self.lin_l = Linear(in_channels[0], heads * out_channels,
+                                bias=bias, weight_initializer='glorot')
             if share_weights:
                 self.lin_r = self.lin_l
             else:
-                self.lin_r = Linear(
-                    in_channels[1],
-                    heads * out_channels,
-                    bias=bias,
-                    weight_initializer="glorot",
-                )
+                self.lin_r = Linear(in_channels[1], heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
 
         self.att = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
-            self.lin_edge = Linear(
-                edge_dim, heads * out_channels, bias=False, weight_initializer="glorot"
-            )
+            self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
+                                   weight_initializer='glorot')
         else:
             self.lin_edge = None
 
@@ -200,7 +182,7 @@ class GATv2Conv(MessagePassing):
         elif bias and not concat:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self._alpha = None
 
@@ -215,13 +197,9 @@ class GATv2Conv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(
-        self,
-        x: Union[Tensor, PairTensor],
-        edge_index: Adj,
-        edge_attr: OptTensor = None,
-        return_attention_weights: bool = None,
-    ):
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+                edge_attr: OptTensor = None,
+                return_attention_weights: bool = None):
         # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
@@ -260,13 +238,11 @@ class GATv2Conv(MessagePassing):
                 num_nodes = x_l.size(0)
                 if x_r is not None:
                     num_nodes = min(num_nodes, x_r.size(0))
-                edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
-                    edge_index,
-                    edge_attr,
-                    fill_value=self.fill_value,
-                    num_nodes=num_nodes,
-                )
+                    edge_index, edge_attr, fill_value=self.fill_value,
+                    num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 if self.edge_dim is None:
                     edge_index = torch_sparse.set_diag(edge_index)
@@ -274,11 +250,11 @@ class GATv2Conv(MessagePassing):
                     raise NotImplementedError(
                         "The usage of 'edge_attr' and 'add_self_loops' "
                         "simultaneously is currently not yet supported for "
-                        "'edge_index' in a 'SparseTensor' form"
-                    )
+                        "'edge_index' in a 'SparseTensor' form")
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr, size=None)
+        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
+                             size=None)
 
         alpha = self._alpha
         assert alpha is not None
@@ -301,19 +277,13 @@ class GATv2Conv(MessagePassing):
                 else:
                     return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
-                return out, edge_index.set_value(alpha, layout="coo")
+                return out, edge_index.set_value(alpha, layout='coo')
         else:
             return out
 
-    def message(
-        self,
-        x_j: Tensor,
-        x_i: Tensor,
-        edge_attr: OptTensor,
-        index: Tensor,
-        ptr: OptTensor,
-        size_i: Optional[int],
-    ) -> Tensor:
+    def message(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
+                index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
         x = x_i + x_j
 
         if edge_attr is not None:
@@ -332,7 +302,5 @@ class GATv2Conv(MessagePassing):
         return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, heads={self.heads})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

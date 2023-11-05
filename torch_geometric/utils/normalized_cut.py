@@ -32,7 +32,7 @@ def normalized_cut(
     """
 
     row, col = edge_index[0], edge_index[1]
-    deg = 1.0 / degree(col, num_nodes, edge_attr.dtype)
+    deg = 1. / degree(col, num_nodes, edge_attr.dtype)
     deg = deg[row] + deg[col]
     cut = edge_attr * deg
     return cut

@@ -9,7 +9,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("random_jitter")
+@functional_transform('random_jitter')
 class RandomJitter(BaseTransform):
     r"""Translates node positions by randomly sampled translation values
     within a given interval (functional name: :obj:`random_jitter`).
@@ -23,7 +23,6 @@ class RandomJitter(BaseTransform):
             If :obj:`translate` is a number instead of a sequence, the same
             range is used for each dimension.
     """
-
     def __init__(self, translate: Union[float, int, Sequence]):
         self.translate = translate
 
@@ -41,4 +40,4 @@ class RandomJitter(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.translate})"
+        return f'{self.__class__.__name__}({self.translate})'

@@ -16,22 +16,21 @@ from torch_geometric.utils.sparse import index2ptr
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
-    if not hasattr(torch.nn.parameter, "UninitializedParameter"):
+    if not hasattr(torch.nn.parameter, 'UninitializedParameter'):
         return False
     return isinstance(x, torch.nn.parameter.UninitializedParameter)
 
 
-def reset_weight_(
-    weight: Tensor, in_channels: int, initializer: Optional[str] = None
-) -> Tensor:
+def reset_weight_(weight: Tensor, in_channels: int,
+                  initializer: Optional[str] = None) -> Tensor:
     if in_channels <= 0:
         pass
-    elif initializer == "glorot":
+    elif initializer == 'glorot':
         inits.glorot(weight)
-    elif initializer == "uniform":
+    elif initializer == 'uniform':
         bound = 1.0 / math.sqrt(in_channels)
         torch.nn.init.uniform_(weight.data, -bound, bound)
-    elif initializer == "kaiming_uniform":
+    elif initializer == 'kaiming_uniform':
         inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
     elif initializer is None:
         inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
@@ -41,12 +40,11 @@ def reset_weight_(
     return weight
 
 
-def reset_bias_(
-    bias: Optional[Tensor], in_channels: int, initializer: Optional[str] = None
-) -> Optional[Tensor]:
+def reset_bias_(bias: Optional[Tensor], in_channels: int,
+                initializer: Optional[str] = None) -> Optional[Tensor]:
     if bias is None or in_channels <= 0:
         pass
-    elif initializer == "zeros":
+    elif initializer == 'zeros':
         inits.zeros(bias)
     elif initializer is None:
         inits.uniform(in_channels, bias)
@@ -86,7 +84,6 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -105,12 +102,13 @@ class Linear(torch.nn.Module):
             self.weight = Parameter(torch.empty(out_channels, in_channels))
         else:
             self.weight = torch.nn.parameter.UninitializedParameter()
-            self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -152,46 +150,42 @@ class Linear(torch.nn.Module):
             self.weight.materialize((self.out_channels, self.in_channels))
             self.reset_parameters()
         self._hook.remove()
-        delattr(self, "_hook")
+        delattr(self, '_hook')
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
-        if (
-            is_uninitialized_parameter(self.weight)
-            or torch.onnx.is_in_onnx_export()
-            or keep_vars
-        ):
-            destination[prefix + "weight"] = self.weight
+        if (is_uninitialized_parameter(self.weight)
+                or torch.onnx.is_in_onnx_export() or keep_vars):
+            destination[prefix + 'weight'] = self.weight
         else:
-            destination[prefix + "weight"] = self.weight.detach()
+            destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
             if torch.onnx.is_in_onnx_export() or keep_vars:
-                destination[prefix + "bias"] = self.bias
+                destination[prefix + 'bias'] = self.bias
             else:
-                destination[prefix + "bias"] = self.bias.detach()
+                destination[prefix + 'bias'] = self.bias.detach()
 
     def _load_from_state_dict(self, state_dict, prefix, *args, **kwargs):
-        weight = state_dict.get(prefix + "weight", None)
+        weight = state_dict.get(prefix + 'weight', None)
 
         if weight is not None and is_uninitialized_parameter(weight):
             self.in_channels = -1
             self.weight = torch.nn.parameter.UninitializedParameter()
-            if not hasattr(self, "_hook"):
-                self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+            if not hasattr(self, '_hook'):
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
 
         elif weight is not None and is_uninitialized_parameter(self.weight):
             self.in_channels = weight.size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
-            if hasattr(self, "_hook"):
+            if hasattr(self, '_hook'):
                 self._hook.remove()
-                delattr(self, "_hook")
+                delattr(self, '_hook')
 
         super()._load_from_state_dict(state_dict, prefix, *args, **kwargs)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, bias={self.bias is not None})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, bias={self.bias is not None})')
 
 
 class HeteroLinear(torch.nn.Module):
@@ -224,7 +218,6 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -245,25 +238,23 @@ class HeteroLinear(torch.nn.Module):
 
         if self.in_channels == -1:
             self.weight = torch.nn.parameter.UninitializedParameter()
-            self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
         else:
             self.weight = torch.nn.Parameter(
-                torch.empty(num_types, in_channels, out_channels)
-            )
-        if kwargs.get("bias", True):
+                torch.empty(num_types, in_channels, out_channels))
+        if kwargs.get('bias', True):
             self.bias = Parameter(torch.empty(num_types, out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        reset_weight_(
-            self.weight, self.in_channels, self.kwargs.get("weight_initializer", None)
-        )
-        reset_bias_(
-            self.bias, self.in_channels, self.kwargs.get("bias_initializer", None)
-        )
+        reset_weight_(self.weight, self.in_channels,
+                      self.kwargs.get('weight_initializer', None))
+        reset_bias_(self.bias, self.in_channels,
+                    self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
@@ -277,12 +268,8 @@ class HeteroLinear(torch.nn.Module):
         # observed input sizes:
         if use_segment_matmul is None:
             if self._use_segment_matmul_heuristic_output is None:
-                segment_count = scatter(
-                    torch.ones_like(type_vec),
-                    type_vec,
-                    dim_size=self.num_types,
-                    reduce="sum",
-                )
+                segment_count = scatter(torch.ones_like(type_vec), type_vec,
+                                        dim_size=self.num_types, reduce='sum')
 
                 self._use_segment_matmul_heuristic_output = (
                     torch_geometric.backend.use_segment_matmul_heuristic(
@@ -290,8 +277,7 @@ class HeteroLinear(torch.nn.Module):
                         max_segment_size=int(segment_count.max()),
                         in_channels=self.weight.size(1),
                         out_channels=self.weight.size(2),
-                    )
-                )
+                    ))
 
             assert self._use_segment_matmul_heuristic_output is not None
             use_segment_matmul = self._use_segment_matmul_heuristic_output
@@ -333,18 +319,15 @@ class HeteroLinear(torch.nn.Module):
         if is_uninitialized_parameter(self.weight):
             self.in_channels = input[0].size(-1)
             self.weight.materialize(
-                (self.num_types, self.in_channels, self.out_channels)
-            )
+                (self.num_types, self.in_channels, self.out_channels))
             self.reset_parameters()
         self._hook.remove()
-        delattr(self, "_hook")
+        delattr(self, '_hook')
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({self.in_channels}, '
-            f'{self.out_channels}, num_types={self.num_types}, '
-            f'bias={self.kwargs.get("bias", True)})'
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_types={self.num_types}, '
+                f'bias={self.kwargs.get("bias", True)})')
 
 
 class HeteroDictLinear(torch.nn.Module):
@@ -368,7 +351,6 @@ class HeteroDictLinear(torch.nn.Module):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
-
     def __init__(
         self,
         in_channels: Union[int, Dict[Any, int]],
@@ -382,23 +364,21 @@ class HeteroDictLinear(torch.nn.Module):
             self.types = list(in_channels.keys())
 
             if any([i == -1 for i in in_channels.values()]):
-                self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
 
             if types is not None and set(self.types) != set(types):
-                raise ValueError(
-                    "The provided 'types' do not match with the "
-                    "keys in the 'in_channels' dictionary"
-                )
+                raise ValueError("The provided 'types' do not match with the "
+                                 "keys in the 'in_channels' dictionary")
 
         else:
             if types is None:
-                raise ValueError(
-                    "Please provide a list of 'types' if passing "
-                    "'in_channels' as an integer"
-                )
+                raise ValueError("Please provide a list of 'types' if passing "
+                                 "'in_channels' as an integer")
 
             if in_channels == -1:
-                self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
 
             self.types = types
             in_channels = {node_type: in_channels for node_type in types}
@@ -407,12 +387,11 @@ class HeteroDictLinear(torch.nn.Module):
         self.out_channels = out_channels
         self.kwargs = kwargs
 
-        self.lins = torch.nn.ModuleDict(
-            {
-                key: Linear(channels, self.out_channels, **kwargs)
-                for key, channels in self.in_channels.items()
-            }
-        )
+        self.lins = torch.nn.ModuleDict({
+            key:
+            Linear(channels, self.out_channels, **kwargs)
+            for key, channels in self.in_channels.items()
+        })
 
         self.reset_parameters()
 
@@ -438,11 +417,8 @@ class HeteroDictLinear(torch.nn.Module):
         if use_segment_matmul is None:
             use_segment_matmul = len(x_dict) >= 10
 
-        if (
-            use_segment_matmul
-            and torch_geometric.typing.WITH_GMM
-            and not torch.jit.is_scripting()
-        ):
+        if (use_segment_matmul and torch_geometric.typing.WITH_GMM
+                and not torch.jit.is_scripting()):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
@@ -470,10 +446,8 @@ class HeteroDictLinear(torch.nn.Module):
         self.reset_parameters()
         self._hook.remove()
         self.in_channels = {key: x.size(-1) for key, x in input[0].items()}
-        delattr(self, "_hook")
+        delattr(self, '_hook')
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({self.in_channels}, '
-            f'{self.out_channels}, bias={self.kwargs.get("bias", True)})'
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, bias={self.kwargs.get("bias", True)})')

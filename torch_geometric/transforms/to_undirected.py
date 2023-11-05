@@ -9,7 +9,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
-@functional_transform("to_undirected")
+@functional_transform('to_undirected')
 class ToUndirected(BaseTransform):
     r"""Converts a homogeneous or heterogeneous graph to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge
@@ -30,7 +30,6 @@ class ToUndirected(BaseTransform):
             :class:`~torch_geometric.data.HeteroData` graph data.
             (default: :obj:`True`)
     """
-
     def __init__(self, reduce: str = "add", merge: bool = True):
         self.reduce = reduce
         self.merge = merge
@@ -40,24 +39,23 @@ class ToUndirected(BaseTransform):
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
-            if "edge_index" not in store:
+            if 'edge_index' not in store:
                 continue
 
             nnz = store.edge_index.size(1)
 
-            if isinstance(data, HeteroData) and (
-                store.is_bipartite() or not self.merge
-            ):
+            if isinstance(data, HeteroData) and (store.is_bipartite()
+                                                 or not self.merge):
                 src, rel, dst = store._key
 
                 # Just reverse the connectivity and add edge attributes:
                 row, col = store.edge_index
                 rev_edge_index = torch.stack([col, row], dim=0)
 
-                inv_store = data[dst, f"rev_{rel}", src]
+                inv_store = data[dst, f'rev_{rel}', src]
                 inv_store.edge_index = rev_edge_index
                 for key, value in store.items():
-                    if key == "edge_index":
+                    if key == 'edge_index':
                         continue
                     if isinstance(value, Tensor) and value.size(0) == nnz:
                         inv_store[key] = value
@@ -65,7 +63,7 @@ class ToUndirected(BaseTransform):
             else:
                 keys, values = [], []
                 for key, value in store.items():
-                    if key == "edge_index":
+                    if key == 'edge_index':
                         continue
 
                     if store.is_edge_attr(key):
@@ -73,8 +71,7 @@ class ToUndirected(BaseTransform):
                         values.append(value)
 
                 store.edge_index, values = to_undirected(
-                    store.edge_index, values, reduce=self.reduce
-                )
+                    store.edge_index, values, reduce=self.reduce)
 
                 for key, value in zip(keys, values):
                     store[key] = value

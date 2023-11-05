@@ -62,14 +62,13 @@ class TopKPooling(torch.nn.Module):
         nonlinearity (str or callable, optional): The non-linearity
             :math:`\sigma`. (default: :obj:`"tanh"`)
     """
-
     def __init__(
         self,
         in_channels: int,
         ratio: Union[int, float] = 0.5,
         min_score: Optional[float] = None,
-        multiplier: float = 1.0,
-        nonlinearity: Union[str, Callable] = "tanh",
+        multiplier: float = 1.,
+        nonlinearity: Union[str, Callable] = 'tanh',
     ):
         super().__init__()
 
@@ -123,22 +122,14 @@ class TopKPooling(torch.nn.Module):
 
         connect_out = self.connect(select_out, edge_index, edge_attr, batch)
 
-        return (
-            x,
-            connect_out.edge_index,
-            connect_out.edge_attr,
-            connect_out.batch,
-            perm,
-            score,
-        )
+        return (x, connect_out.edge_index, connect_out.edge_attr,
+                connect_out.batch, perm, score)
 
     def __repr__(self) -> str:
         if self.min_score is None:
-            ratio = f"ratio={self.ratio}"
+            ratio = f'ratio={self.ratio}'
         else:
-            ratio = f"min_score={self.min_score}"
+            ratio = f'min_score={self.min_score}'
 
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, {ratio}, "
-            f"multiplier={self.multiplier})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, {ratio}, '
+                f'multiplier={self.multiplier})')

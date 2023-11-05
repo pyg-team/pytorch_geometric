@@ -59,18 +59,17 @@ class GPSConv(torch.nn.Module):
         attn_kwargs (Dict[str, Any], optional): Arguments passed to the
             attention layer. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         channels: int,
         conv: Optional[MessagePassing],
         heads: int = 1,
         dropout: float = 0.0,
-        act: str = "relu",
+        act: str = 'relu',
         act_kwargs: Optional[Dict[str, Any]] = None,
-        norm: Optional[str] = "batch_norm",
+        norm: Optional[str] = 'batch_norm',
         norm_kwargs: Optional[Dict[str, Any]] = None,
-        attn_type: str = "multihead",
+        attn_type: str = 'multihead',
         attn_kwargs: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
@@ -82,14 +81,14 @@ class GPSConv(torch.nn.Module):
         self.attn_type = attn_type
 
         attn_kwargs = attn_kwargs or {}
-        if attn_type == "multihead":
+        if attn_type == 'multihead':
             self.attn = torch.nn.MultiheadAttention(
                 channels,
                 heads,
                 batch_first=True,
                 **attn_kwargs,
             )
-        elif attn_type == "performer":
+        elif attn_type == 'performer':
             self.attn = PerformerAttention(
                 channels=channels,
                 heads=heads,
@@ -97,7 +96,7 @@ class GPSConv(torch.nn.Module):
             )
         else:
             # TODO: Support BigBird
-            raise ValueError(f"{attn_type} is not supported")
+            raise ValueError(f'{attn_type} is not supported')
 
         self.mlp = Sequential(
             Linear(channels, channels * 2),
@@ -115,7 +114,7 @@ class GPSConv(torch.nn.Module):
         self.norm_with_batch = False
         if self.norm1 is not None:
             signature = inspect.signature(self.norm1.forward)
-            self.norm_with_batch = "batch" in signature.parameters
+            self.norm_with_batch = 'batch' in signature.parameters
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -154,7 +153,8 @@ class GPSConv(torch.nn.Module):
         h, mask = to_dense_batch(x, batch)
 
         if isinstance(self.attn, torch.nn.MultiheadAttention):
-            h, _ = self.attn(h, h, h, key_padding_mask=~mask, need_weights=False)
+            h, _ = self.attn(h, h, h, key_padding_mask=~mask,
+                             need_weights=False)
         elif isinstance(self.attn, PerformerAttention):
             h = self.attn(h, mask=mask)
 
@@ -180,8 +180,6 @@ class GPSConv(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.channels}, "
-            f"conv={self.conv}, heads={self.heads}, "
-            f"attn_type={self.attn_type})"
-        )
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'conv={self.conv}, heads={self.heads}, '
+                f'attn_type={self.attn_type})')

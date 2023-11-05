@@ -37,8 +37,8 @@ class Taobao(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
 
     """
-
-    url = "https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/" "UserBehavior.csv.zip"
+    url = ('https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/'
+           'UserBehavior.csv.zip')
 
     def __init__(
         self,
@@ -51,11 +51,11 @@ class Taobao(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        return "UserBehavior.csv"
+        return 'UserBehavior.csv'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -65,7 +65,7 @@ class Taobao(InMemoryDataset):
     def process(self):
         import pandas as pd
 
-        cols = ["userId", "itemId", "categoryId", "behaviorType", "timestamp"]
+        cols = ['userId', 'itemId', 'categoryId', 'behaviorType', 'timestamp']
         df = pd.read_csv(self.raw_paths[0], names=cols)
 
         # Time representation (YYYY.MM.DD-HH:MM:SS -> Integer)
@@ -77,32 +77,32 @@ class Taobao(InMemoryDataset):
 
         df = df.drop_duplicates()
 
-        behavior_dict = {"pv": 0, "cart": 1, "buy": 2, "fav": 3}
-        df["behaviorType"] = df["behaviorType"].map(behavior_dict)
+        behavior_dict = {'pv': 0, 'cart': 1, 'buy': 2, 'fav': 3}
+        df['behaviorType'] = df['behaviorType'].map(behavior_dict)
 
         num_entries = {}
-        for col in ["userId", "itemId", "categoryId"]:
+        for col in ['userId', 'itemId', 'categoryId']:
             # Map IDs to consecutive integers:
             value, df[col] = np.unique(df[[col]].values, return_inverse=True)
             num_entries[col] = value.shape[0]
 
         data = HeteroData()
 
-        data["user"].num_nodes = num_entries["userId"]
-        data["item"].num_nodes = num_entries["itemId"]
-        data["category"].num_nodes = num_entries["categoryId"]
+        data['user'].num_nodes = num_entries['userId']
+        data['item'].num_nodes = num_entries['itemId']
+        data['category'].num_nodes = num_entries['categoryId']
 
-        row = torch.from_numpy(df["userId"].values)
-        col = torch.from_numpy(df["itemId"].values)
-        data["user", "item"].edge_index = torch.stack([row, col], dim=0)
-        data["user", "item"].time = torch.from_numpy(df["timestamp"].values)
-        behavior = torch.from_numpy(df["behaviorType"].values)
-        data["user", "item"].behavior = behavior
+        row = torch.from_numpy(df['userId'].values)
+        col = torch.from_numpy(df['itemId'].values)
+        data['user', 'item'].edge_index = torch.stack([row, col], dim=0)
+        data['user', 'item'].time = torch.from_numpy(df['timestamp'].values)
+        behavior = torch.from_numpy(df['behaviorType'].values)
+        data['user', 'item'].behavior = behavior
 
-        df = df[["itemId", "categoryId"]].drop_duplicates()
-        row = torch.from_numpy(df["itemId"].values)
-        col = torch.from_numpy(df["categoryId"].values)
-        data["item", "category"].edge_index = torch.stack([row, col], dim=0)
+        df = df[['itemId', 'categoryId']].drop_duplicates()
+        row = torch.from_numpy(df['itemId'].values)
+        col = torch.from_numpy(df['categoryId'].values)
+        data['item', 'category'].edge_index = torch.stack([row, col], dim=0)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 

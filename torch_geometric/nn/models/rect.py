@@ -32,14 +32,8 @@ class RECT_L(torch.nn.Module):
         dropout (float, optional): The dropout probability.
             (default: :obj:`0.0`)
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        normalize: bool = True,
-        dropout: float = 0.0,
-    ):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 normalize: bool = True, dropout: float = 0.0):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -105,7 +99,7 @@ class RECT_L(torch.nn.Module):
         r"""Replaces the original labels by their class-centers."""
         with torch.no_grad():
             y = y[mask]
-            mean = scatter(x[mask], y, dim=0, reduce="mean")
+            mean = scatter(x[mask], y, dim=0, reduce='mean')
             return mean[y]
 
     def jittable(self, use_sparse_tensor: bool = False) -> torch.nn.Module:
@@ -190,6 +184,5 @@ class RECT_L(torch.nn.Module):
         return EdgeIndexJittable(self)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, " f"{self.hidden_channels})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels})')

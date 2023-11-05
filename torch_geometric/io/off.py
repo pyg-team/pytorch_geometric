@@ -9,16 +9,16 @@ from torch_geometric.io import parse_txt_array
 
 def parse_off(src):
     # Some files may contain a bug and do not have a carriage return after OFF.
-    if src[0] == "OFF":
+    if src[0] == 'OFF':
         src = src[1:]
     else:
         src[0] = src[0][3:]
 
     num_nodes, num_faces = [int(item) for item in src[0].split()[:2]]
 
-    pos = parse_txt_array(src[1 : 1 + num_nodes])
+    pos = parse_txt_array(src[1:1 + num_nodes])
 
-    face = src[1 + num_nodes : 1 + num_nodes + num_faces]
+    face = src[1 + num_nodes:1 + num_nodes + num_faces]
     face = face_to_tri(face)
 
     data = Data(pos=pos)
@@ -51,8 +51,8 @@ def read_off(path):
     Args:
         path (str): The path to the file.
     """
-    with open(path, "r") as f:
-        src = f.read().split("\n")[:-1]
+    with open(path, 'r') as f:
+        src = f.read().split('\n')[:-1]
     return parse_off(src)
 
 
@@ -72,18 +72,18 @@ def write_off(data, path):
     face = torch.cat([num_vertices, face], dim=-1)
 
     threshold = PRINT_OPTS.threshold
-    torch.set_printoptions(threshold=float("inf"))
+    torch.set_printoptions(threshold=float('inf'))
 
-    pos_repr = re.sub(",", "", _tensor_str(pos, indent=0))
-    pos_repr = "\n".join([x[2:-1] for x in pos_repr.split("\n")])[:-1]
+    pos_repr = re.sub(',', '', _tensor_str(pos, indent=0))
+    pos_repr = '\n'.join([x[2:-1] for x in pos_repr.split('\n')])[:-1]
 
-    face_repr = re.sub(",", "", _tensor_str(face, indent=0))
-    face_repr = "\n".join([x[2:-1] for x in face_repr.split("\n")])[:-1]
+    face_repr = re.sub(',', '', _tensor_str(face, indent=0))
+    face_repr = '\n'.join([x[2:-1] for x in face_repr.split('\n')])[:-1]
 
-    with open(path, "w") as f:
-        f.write(f"OFF\n{num_nodes} {num_faces} 0\n")
+    with open(path, 'w') as f:
+        f.write(f'OFF\n{num_nodes} {num_faces} 0\n')
         f.write(pos_repr)
-        f.write("\n")
+        f.write('\n')
         f.write(face_repr)
-        f.write("\n")
+        f.write('\n')
     torch.set_printoptions(threshold=threshold)

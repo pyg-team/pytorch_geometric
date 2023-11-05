@@ -40,17 +40,15 @@ def unfaithfulness(
         raise ValueError("Fidelity not defined for 'regression' models")
 
     if top_k is not None and explainer.node_mask_type == MaskType.object:
-        raise ValueError(
-            "Cannot apply top-k feature selection based on a "
-            "node mask of type 'object'"
-        )
+        raise ValueError("Cannot apply top-k feature selection based on a "
+                         "node mask of type 'object'")
 
-    node_mask = explanation.get("node_mask")
-    edge_mask = explanation.get("edge_mask")
+    node_mask = explanation.get('node_mask')
+    edge_mask = explanation.get('edge_mask')
     x, edge_index = explanation.x, explanation.edge_index
     kwargs = {key: explanation[key] for key in explanation._model_args}
 
-    y = explanation.get("prediction")
+    y = explanation.get('prediction')
     if y is None:  # == ExplanationType.phenomenon
         y = explainer.get_prediction(x, edge_index, **kwargs)
 
@@ -60,11 +58,10 @@ def unfaithfulness(
         node_mask = torch.zeros_like(node_mask)
         node_mask[:, top_k_index] = 1.0
 
-    y_hat = explainer.get_masked_prediction(
-        x, edge_index, node_mask, edge_mask, **kwargs
-    )
+    y_hat = explainer.get_masked_prediction(x, edge_index, node_mask,
+                                            edge_mask, **kwargs)
 
-    if explanation.get("index") is not None:
+    if explanation.get('index') is not None:
         y, y_hat = y[explanation.index], y_hat[explanation.index]
 
     if explainer.model_config.return_type == ModelReturnType.raw:
@@ -72,5 +69,5 @@ def unfaithfulness(
     elif explainer.model_config.return_type == ModelReturnType.log_probs:
         y, y_hat = y.exp(), y_hat.exp()
 
-    kl_div = F.kl_div(y.log(), y_hat, reduction="batchmean")
+    kl_div = F.kl_div(y.log(), y_hat, reduction='batchmean')
     return 1 - float(torch.exp(-kl_div))

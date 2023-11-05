@@ -5,7 +5,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("normalize_features")
+@functional_transform('normalize_features')
 class NormalizeFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
     (functional name: :obj:`normalize_features`).
@@ -14,7 +14,6 @@ class NormalizeFeatures(BaseTransform):
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)
     """
-
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
@@ -26,6 +25,6 @@ class NormalizeFeatures(BaseTransform):
             for key, value in store.items(*self.attrs):
                 if value.numel() > 0:
                     value = value - value.min()
-                    value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.0))
+                    value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.))
                     store[key] = value
         return data

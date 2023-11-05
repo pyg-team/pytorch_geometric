@@ -29,16 +29,9 @@ class InvertibleFunction(torch.autograd.Function):
         num_inputs (int): The number of inputs to the forward function.
         *args (tuple): Inputs and weights.
     """
-
     @staticmethod
-    def forward(
-        ctx,
-        fn: torch.nn.Module,
-        fn_inverse: torch.nn.Module,
-        num_bwd_passes: int,
-        num_inputs: int,
-        *args,
-    ):
+    def forward(ctx, fn: torch.nn.Module, fn_inverse: torch.nn.Module,
+                num_bwd_passes: int, num_inputs: int, *args):
         ctx.fn = fn
         ctx.fn_inverse = fn_inverse
         ctx.weights = args[num_inputs:]
@@ -59,7 +52,7 @@ class InvertibleFunction(torch.autograd.Function):
             outputs = ctx.fn(*x)
 
         if not isinstance(outputs, tuple):
-            outputs = (outputs,)
+            outputs = (outputs, )
 
         # Detaches outputs in-place, allows discarding the intermedate result:
         detached_outputs = tuple(element.detach_() for element in outputs)
@@ -82,8 +75,7 @@ class InvertibleFunction(torch.autograd.Function):
             raise RuntimeError(
                 f"Trying to perform a backward pass on the "
                 f"'InvertibleFunction' for more than '{ctx.num_bwd_passes}' "
-                f"times. Try raising 'num_bwd_passes'."
-            )
+                f"times. Try raising 'num_bwd_passes'.")
 
         inputs = ctx.inputs.pop()
         outputs = ctx.outputs.pop()
@@ -99,13 +91,13 @@ class InvertibleFunction(torch.autograd.Function):
                         element.storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
-                inputs_inverted = (inputs_inverted,)
+                inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
                 if torch_geometric.typing.WITH_PT20:
                     elem_orig.untyped_storage().resize_(
-                        int(np.prod(elem_orig.size())) * elem_orig.element_size()
-                    )
+                        int(np.prod(elem_orig.size())) *
+                        elem_orig.element_size())
                 else:  # pragma: no cover
                     elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
                 elem_orig.set_(elem_inv)
@@ -125,14 +117,14 @@ class InvertibleFunction(torch.autograd.Function):
             tmp_output = ctx.fn(*detached_inputs)
 
         if not isinstance(tmp_output, tuple):
-            tmp_output = (tmp_output,)
+            tmp_output = (tmp_output, )
 
         filtered_detached_inputs = tuple(
             filter(
-                lambda x: x.requires_grad if isinstance(x, torch.Tensor) else False,
+                lambda x: x.requires_grad
+                if isinstance(x, torch.Tensor) else False,
                 detached_inputs,
-            )
-        )
+            ))
         gradients = torch.autograd.grad(
             outputs=tmp_output,
             inputs=filtered_detached_inputs + ctx.weights,
@@ -148,7 +140,7 @@ class InvertibleFunction(torch.autograd.Function):
             else:
                 input_gradients.append(None)
 
-        gradients = tuple(input_gradients) + gradients[-len(ctx.weights) :]
+        gradients = tuple(input_gradients) + gradients[-len(ctx.weights):]
 
         return (None, None, None, None) + gradients
 
@@ -164,7 +156,6 @@ class InvertibleModule(torch.nn.Module, ABC):
             link with the output. After the last backward pass the output is
             discarded and memory is freed. (default: :obj:`1`)
     """
-
     def __init__(self, disable: bool = False, num_bwd_passes: int = 1):
         super().__init__()
         self.disable = disable
@@ -245,7 +236,6 @@ class GroupAddRev(InvertibleModule):
             link with the output. After the last backward pass the output is
             discarded and memory is freed. (default: :obj:`1`)
     """
-
     def __init__(
         self,
         conv: Union[torch.nn.Module, torch.nn.ModuleList],
@@ -264,15 +254,13 @@ class GroupAddRev(InvertibleModule):
             self.convs = torch.nn.ModuleList([conv])
             for i in range(num_groups - 1):
                 conv = copy.deepcopy(self.convs[0])
-                if hasattr(conv, "reset_parameters"):
+                if hasattr(conv, 'reset_parameters'):
                     conv.reset_parameters()
                 self.convs.append(conv)
 
         if len(self.convs) < 2:
-            raise ValueError(
-                f"The number of groups should not be smaller "
-                f"than '2' (got '{self.num_groups}'))"
-            )
+            raise ValueError(f"The number of groups should not be smaller "
+                             f"than '2' (got '{self.num_groups}'))")
 
     @property
     def num_groups(self) -> int:
@@ -326,7 +314,5 @@ class GroupAddRev(InvertibleModule):
         return torch.chunk(x, self.num_groups, dim=self.split_dim)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.convs[0]}, "
-            f"num_groups={self.num_groups})"
-        )
+        return (f'{self.__class__.__name__}({self.convs[0]}, '
+                f'num_groups={self.num_groups})')

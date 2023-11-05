@@ -45,15 +45,8 @@ class GatedGraphConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
 
     """
-
-    def __init__(
-        self,
-        out_channels: int,
-        num_layers: int,
-        aggr: str = "add",
-        bias: bool = True,
-        **kwargs,
-    ):
+    def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
+                 bias: bool = True, **kwargs):
         super().__init__(aggr=aggr, **kwargs)
 
         self.out_channels = out_channels
@@ -69,14 +62,12 @@ class GatedGraphConv(MessagePassing):
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(
-        self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+
         if x.size(-1) > self.out_channels:
-            raise ValueError(
-                "The number of input channels is not allowed to "
-                "be larger than the number of output channels"
-            )
+            raise ValueError('The number of input channels is not allowed to '
+                             'be larger than the number of output channels')
 
         if x.size(-1) < self.out_channels:
             zero = x.new_zeros(x.size(0), self.out_channels - x.size(-1))
@@ -85,7 +76,8 @@ class GatedGraphConv(MessagePassing):
         for i in range(self.num_layers):
             m = torch.matmul(x, self.weight[i])
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight, size=None)
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight,
+                               size=None)
             x = self.rnn(m, x)
 
         return x
@@ -97,7 +89,5 @@ class GatedGraphConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.out_channels}, "
-            f"num_layers={self.num_layers})"
-        )
+        return (f'{self.__class__.__name__}({self.out_channels}, '
+                f'num_layers={self.num_layers})')

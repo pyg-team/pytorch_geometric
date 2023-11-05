@@ -6,23 +6,20 @@ import torch
 import torch.profiler as torch_profiler
 
 # predefined namedtuple for variable setting (global template)
-Trace = namedtuple("Trace", ["path", "leaf", "module"])
+Trace = namedtuple('Trace', ['path', 'leaf', 'module'])
 
 # the metrics returned from the torch profiler
-Measure = namedtuple(
-    "Measure",
-    [
-        "self_cpu_total",
-        "cpu_total",
-        "self_cuda_total",
-        "cuda_total",
-        "self_cpu_memory",
-        "cpu_memory",
-        "self_cuda_memory",
-        "cuda_memory",
-        "occurrences",
-    ],
-)
+Measure = namedtuple('Measure', [
+    'self_cpu_total',
+    'cpu_total',
+    'self_cuda_total',
+    'cuda_total',
+    'self_cpu_memory',
+    'cpu_memory',
+    'self_cuda_memory',
+    'cuda_memory',
+    'occurrences',
+])
 
 
 class Profiler:
@@ -41,7 +38,6 @@ class Profiler:
         paths ([str], optional): Pre-defined paths for fast loading.
             (default: :obj:`None`)
     """
-
     def __init__(
         self,
         model: torch.nn.Module,
@@ -98,9 +94,8 @@ class Profiler:
 
         # the id of the model  is guaranteed to be unique
         _id = id(module)
-        if (self.paths is not None and path in self.paths) or (
-            self.paths is None and leaf
-        ):
+        if (self.paths is not None
+                and path in self.paths) or (self.paths is None and leaf):
             if _id in self._ids:
                 # already wrapped
                 return trace
@@ -110,18 +105,20 @@ class Profiler:
 
             @functools.wraps(_forward)
             def wrap_forward(*args, **kwargs):
-                """The forward pass is decorated and profiled here"""
+                """The forward pass is decorated and profiled here
+                """
                 # only torch 1.8.1+ is supported
                 torch_version = torch.__version__
-                if torch_version <= "1.8.1":
-                    raise NotImplementedError("Profiler requires at least torch 1.8.1")
+                if torch_version <= '1.8.1':
+                    raise NotImplementedError(
+                        "Profiler requires at least torch 1.8.1")
 
                 activities = [torch.profiler.ProfilerActivity.CPU]
                 if self.use_cuda:
                     activities.append(torch.profiler.ProfilerActivity.CUDA)
                 with torch_profiler.profile(
-                    activities=activities,
-                    profile_memory=self.profile_memory,
+                        activities=activities,
+                        profile_memory=self.profile_memory,
                 ) as prof:
                     res = _forward(*args, **kwargs)
 
@@ -136,27 +133,27 @@ class Profiler:
         return trace
 
     def _remove_hook_trace(self, trace):
-        """Clean it up after the profiling is done."""
+        """Clean it up after the profiling is done.
+        """
         [path, leaf, module] = trace
         _id = id(module)
         if _id in self._ids:
             self._ids.discard(_id)
         else:
             return
-        if (self.paths is not None and path in self.paths) or (
-            self.paths is None and leaf
-        ):
+        if (self.paths is not None
+                and path in self.paths) or (self.paths is None and leaf):
             module.forward = self._forwards[path]
 
 
 def _layer_trace(
-    traces: NamedTuple,
-    trace_events: Any,
-    show_events: bool = True,
-    paths: List[str] = None,
-    use_cuda: bool = False,
-    profile_memory: bool = False,
-    dt: Tuple[str, ...] = ("-", "-", "-", " "),
+        traces: NamedTuple,
+        trace_events: Any,
+        show_events: bool = True,
+        paths: List[str] = None,
+        use_cuda: bool = False,
+        profile_memory: bool = False,
+        dt: Tuple[str, ...] = ('-', '-', '-', ' '),
 ) -> object:
     """Construct human readable output of the profiler traces and events. The
     information is presented in layers, and each layer contains its underlying
@@ -187,20 +184,20 @@ def _layer_trace(
         for depth, name in enumerate(path, 1):
             if name not in current_tree:
                 current_tree[name] = OrderedDict()
-            if depth == len(path) and (
-                (paths is None and leaf) or (paths is not None and path in paths)
-            ):
+            if depth == len(path) and ((paths is None and leaf) or
+                                       (paths is not None and path in paths)):
                 # tree measurements have key None, avoiding name conflict
                 if show_events:
-                    for event_name, event_group in _group_by(events, lambda e: e.name):
+                    for event_name, event_group in _group_by(
+                            events, lambda e: e.name):
                         event_group = list(event_group)
                         current_tree[name][event_name] = {
-                            None: _build_measure_tuple(event_group, len(event_group))
+                            None:
+                            _build_measure_tuple(event_group, len(event_group))
                         }
                 else:
                     current_tree[name][None] = _build_measure_tuple(
-                        events, len(trace_events[path])
-                    )
+                        events, len(trace_events[path]))
             current_tree = current_tree[name]
     tree_lines = _flatten_tree(tree)
 
@@ -215,10 +212,11 @@ def _layer_trace(
     for idx, tree_line in enumerate(tree_lines):
         depth, name, measures = tree_line
 
-        next_depths = [pl[0] for pl in tree_lines[idx + 1 :]]
+        next_depths = [pl[0] for pl in tree_lines[idx + 1:]]
         pre = "-"
         if depth > 0:
-            pre = dt[1] if depth in next_depths and next_depths[0] >= depth else dt[2]
+            pre = dt[1] if depth in next_depths and next_depths[
+                0] >= depth else dt[2]
             depth -= 1
         while depth > 0:
             pre = (dt[0] + pre) if depth in next_depths else (dt[3] + pre)
@@ -226,28 +224,22 @@ def _layer_trace(
 
         format_lines.append([pre + name, *_format_measure_tuple(measures)])
         if measures:
-            has_self_cuda_total = (
-                has_self_cuda_total or measures.self_cuda_total is not None
-            )
-            has_self_cpu_memory = (
-                has_self_cpu_memory or measures.self_cpu_memory is not None
-            )
+            has_self_cuda_total = (has_self_cuda_total
+                                   or measures.self_cuda_total is not None)
+            has_self_cpu_memory = (has_self_cpu_memory
+                                   or measures.self_cpu_memory is not None)
             has_cpu_memory = has_cpu_memory or measures.cpu_memory is not None
-            has_self_cuda_memory = (
-                has_self_cuda_memory or measures.self_cuda_memory is not None
-            )
-            has_cuda_memory = has_cuda_memory or measures.cuda_memory is not None
+            has_self_cuda_memory = (has_self_cuda_memory
+                                    or measures.self_cuda_memory is not None)
+            has_cuda_memory = (has_cuda_memory
+                               or measures.cuda_memory is not None)
 
             raw_results[name] = [
-                measures.self_cpu_total,
-                measures.cpu_total,
-                measures.self_cuda_total,
-                measures.cuda_total,
-                measures.self_cpu_memory,
-                measures.cpu_memory,
-                measures.self_cuda_memory,
-                measures.cuda_memory,
-                measures.occurrences,
+                measures.self_cpu_total, measures.cpu_total,
+                measures.self_cuda_total, measures.cuda_total,
+                measures.self_cpu_memory, measures.cpu_memory,
+                measures.self_cuda_memory, measures.cuda_memory,
+                measures.occurrences
             ]
 
     # construct the table (this is pretty ugly and can probably be optimized)
@@ -290,41 +282,27 @@ def _layer_trace(
     heading_list = list(heading)
 
     display = (  # table heading
-        " | ".join(
-            [
-                "{:<{}s}".format(heading[keep_index], max_lens[keep_index])
-                for keep_index in keep_indexes
-            ]
-        )
-        + "\n"
-    )
+        " | ".join([
+            "{:<{}s}".format(heading[keep_index], max_lens[keep_index])
+            for keep_index in keep_indexes
+        ]) + "\n")
     display += (  # separator
-        "-|-".join(
-            [
-                "-" * max_len
-                for val_idx, max_len in enumerate(max_lens)
-                if val_idx in keep_indexes
-            ]
-        )
-        + "\n"
-    )
+        "-|-".join([
+            "-" * max_len for val_idx, max_len in enumerate(max_lens)
+            if val_idx in keep_indexes
+        ]) + "\n")
     for format_line in format_lines:  # body
-        display += (
-            " | ".join(
-                [
-                    "{:<{}s}".format(value, max_lens[val_idx])
-                    for val_idx, value in enumerate(format_line)
-                    if val_idx in keep_indexes
-                ]
-            )
-            + "\n"
-        )
+        display += (" | ".join([
+            "{:<{}s}".format(value, max_lens[val_idx])
+            for val_idx, value in enumerate(format_line)
+            if val_idx in keep_indexes
+        ]) + "\n")
     # layer information readable
     key_dict = {}
     layer_names = []
     layer_stats = []
     for format_line in format_lines:  # body
-        if format_line[1] == "":  # key line
+        if format_line[1] == '':  # key line
             key_dict[format_line[0].count("-")] = format_line[0]
         else:  # must print
             # get current line's level
@@ -351,19 +329,21 @@ def _flatten_tree(t, depth=0):
 def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
     # memory profiling supported in torch >= 1.6
     self_cpu_memory = None
-    has_self_cpu_memory = any(hasattr(e, "self_cpu_memory_usage") for e in events)
+    has_self_cpu_memory = any(
+        hasattr(e, "self_cpu_memory_usage") for e in events)
     if has_self_cpu_memory:
-        self_cpu_memory = sum([getattr(e, "self_cpu_memory_usage", 0) for e in events])
+        self_cpu_memory = sum(
+            [getattr(e, "self_cpu_memory_usage", 0) for e in events])
     cpu_memory = None
     has_cpu_memory = any(hasattr(e, "cpu_memory_usage") for e in events)
     if has_cpu_memory:
         cpu_memory = sum([getattr(e, "cpu_memory_usage", 0) for e in events])
     self_cuda_memory = None
-    has_self_cuda_memory = any(hasattr(e, "self_cuda_memory_usage") for e in events)
+    has_self_cuda_memory = any(
+        hasattr(e, "self_cuda_memory_usage") for e in events)
     if has_self_cuda_memory:
         self_cuda_memory = sum(
-            [getattr(e, "self_cuda_memory_usage", 0) for e in events]
-        )
+            [getattr(e, "self_cuda_memory_usage", 0) for e in events])
     cuda_memory = None
     has_cuda_memory = any(hasattr(e, "cuda_memory_usage") for e in events)
     if has_cuda_memory:
@@ -371,9 +351,11 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
 
     # self CUDA time supported in torch >= 1.7
     self_cuda_total = None
-    has_self_cuda_time = any(hasattr(e, "self_cuda_time_total") for e in events)
+    has_self_cuda_time = any(
+        hasattr(e, "self_cuda_time_total") for e in events)
     if has_self_cuda_time:
-        self_cuda_total = sum([getattr(e, "self_cuda_time_total", 0) for e in events])
+        self_cuda_total = sum(
+            [getattr(e, "self_cuda_time_total", 0) for e in events])
 
     return Measure(
         self_cpu_total=sum([e.self_cpu_time_total for e in events]),
@@ -389,34 +371,19 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
 
 
 def _format_measure_tuple(measure: NamedTuple) -> NamedTuple:
-    self_cpu_total = format_time(measure.self_cpu_total) if measure else ""
+    self_cpu_total = (format_time(measure.self_cpu_total) if measure else "")
     cpu_total = format_time(measure.cpu_total) if measure else ""
-    self_cuda_total = (
-        format_time(measure.self_cuda_total)
-        if measure and measure.self_cuda_total is not None
-        else ""
-    )
+    self_cuda_total = (format_time(measure.self_cuda_total) if measure
+                       and measure.self_cuda_total is not None else "")
     cuda_total = format_time(measure.cuda_total) if measure else ""
-    self_cpu_memory = (
-        format_memory(measure.self_cpu_memory)
-        if measure and measure.self_cpu_memory is not None
-        else ""
-    )
-    cpu_memory = (
-        format_memory(measure.cpu_memory)
-        if measure and measure.cpu_memory is not None
-        else ""
-    )
-    self_cuda_memory = (
-        format_memory(measure.self_cuda_memory)
-        if measure and measure.self_cuda_memory is not None
-        else ""
-    )
-    cuda_memory = (
-        format_memory(measure.cuda_memory)
-        if measure and measure.cuda_memory is not None
-        else ""
-    )
+    self_cpu_memory = (format_memory(measure.self_cpu_memory) if measure
+                       and measure.self_cpu_memory is not None else "")
+    cpu_memory = (format_memory(measure.cpu_memory)
+                  if measure and measure.cpu_memory is not None else "")
+    self_cuda_memory = (format_memory(measure.self_cuda_memory) if measure
+                        and measure.self_cuda_memory is not None else "")
+    cuda_memory = (format_memory(measure.cuda_memory)
+                   if measure and measure.cuda_memory is not None else "")
     occurrences = str(measure.occurrences) if measure else ""
 
     return Measure(
@@ -454,7 +421,7 @@ def _walk_modules(module, name: str = "", path=()):
 
     # it builds the path of the structure
     # for instance, ('GCN', 'conv1', 'lin')
-    path = path + (name,)
+    path = path + (name, )
 
     # create namedtuple [path, (whether has) leaf, module]
     yield Trace(path, len(named_children) == 0, module)
@@ -469,10 +436,10 @@ def format_time(time_us: int) -> str:
     US_IN_SECOND = 1000.0 * 1000.0
     US_IN_MS = 1000.0
     if time_us >= US_IN_SECOND:
-        return "{:.3f}s".format(time_us / US_IN_SECOND)
+        return '{:.3f}s'.format(time_us / US_IN_SECOND)
     if time_us >= US_IN_MS:
-        return "{:.3f}ms".format(time_us / US_IN_MS)
-    return "{:.3f}us".format(time_us)
+        return '{:.3f}ms'.format(time_us / US_IN_MS)
+    return '{:.3f}us'.format(time_us)
 
 
 def format_memory(nbytes: int) -> str:
@@ -480,11 +447,11 @@ def format_memory(nbytes: int) -> str:
     KB = 1024
     MB = 1024 * KB
     GB = 1024 * MB
-    if abs(nbytes) >= GB:
-        return "{:.2f} Gb".format(nbytes * 1.0 / GB)
-    elif abs(nbytes) >= MB:
-        return "{:.2f} Mb".format(nbytes * 1.0 / MB)
-    elif abs(nbytes) >= KB:
-        return "{:.2f} Kb".format(nbytes * 1.0 / KB)
+    if (abs(nbytes) >= GB):
+        return '{:.2f} Gb'.format(nbytes * 1.0 / GB)
+    elif (abs(nbytes) >= MB):
+        return '{:.2f} Mb'.format(nbytes * 1.0 / MB)
+    elif (abs(nbytes) >= KB):
+        return '{:.2f} Kb'.format(nbytes * 1.0 / KB)
     else:
-        return str(nbytes) + " b"
+        return str(nbytes) + ' b'

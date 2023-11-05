@@ -19,4 +19,4 @@ def pool_batch(perm, batch):
 
 
 def pool_pos(cluster, pos):
-    return scatter(pos, cluster, dim=0, reduce="mean")
+    return scatter(pos, cluster, dim=0, reduce='mean')

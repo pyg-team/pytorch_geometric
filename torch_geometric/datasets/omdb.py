@@ -29,40 +29,35 @@ class OMDB(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = "https://omdb.mathub.io/dataset"
+    url = 'https://omdb.mathub.io/dataset'
 
-    def __init__(
-        self,
-        root: str,
-        train: bool = True,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, train: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
 
     @property
     def raw_file_names(self) -> str:
-        return "OMDB-GAP1_v1.1.tar.gz"
+        return 'OMDB-GAP1_v1.1.tar.gz'
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["train_data.pt", "test_data.pt"]
+        return ['train_data.pt', 'test_data.pt']
 
     def download(self):
         raise RuntimeError(
             f"Dataset not found. Please download '{self.raw_file_names}' from "
-            f"'{self.url}' and move it to '{self.raw_dir}'"
-        )
+            f"'{self.url}' and move it to '{self.raw_dir}'")
 
     def process(self):
         from ase.io import read
 
         extract_tar(self.raw_paths[0], self.raw_dir, log=False)
-        materials = read(osp.join(self.raw_dir, "structures.xyz"), index=":")
-        bandgaps = np.loadtxt(osp.join(self.raw_dir, "bandgaps.csv"))
+        materials = read(osp.join(self.raw_dir, 'structures.xyz'), index=':')
+        bandgaps = np.loadtxt(osp.join(self.raw_dir, 'bandgaps.csv'))
 
         data_list = []
         for material, bandgap in zip(materials, bandgaps):

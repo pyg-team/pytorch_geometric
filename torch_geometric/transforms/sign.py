@@ -6,7 +6,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import scatter, to_torch_csc_tensor
 
 
-@functional_transform("sign")
+@functional_transform('sign')
 class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
@@ -31,7 +31,6 @@ class SIGN(BaseTransform):
     Args:
         K (int): The number of hops/layer.
     """
-
     def __init__(self, K: int):
         self.K = K
 
@@ -44,9 +43,9 @@ class SIGN(BaseTransform):
         if edge_weight is None:
             edge_weight = torch.ones(data.num_edges, device=row.device)
 
-        deg = scatter(edge_weight, col, dim_size=N, reduce="sum")
+        deg = scatter(edge_weight, col, dim_size=N, reduce='sum')
         deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float("inf"), 0)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         adj = to_torch_csc_tensor(data.edge_index, edge_weight, size=(N, N))
         adj_t = adj.t()
@@ -55,9 +54,9 @@ class SIGN(BaseTransform):
         xs = [data.x]
         for i in range(1, self.K + 1):
             xs += [adj_t @ xs[-1]]
-            data[f"x{i}"] = xs[-1]
+            data[f'x{i}'] = xs[-1]
 
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(K={self.K})"
+        return f'{self.__class__.__name__}(K={self.K})'

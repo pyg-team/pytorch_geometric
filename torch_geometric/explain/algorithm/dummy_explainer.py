@@ -13,7 +13,6 @@ from torch_geometric.typing import EdgeType, NodeType
 class DummyExplainer(ExplainerAlgorithm):
     r"""A dummy explainer that returns random explanations (useful for testing
     purposes)."""
-
     def forward(
         self,
         model: torch.nn.Module,
@@ -56,7 +55,7 @@ class DummyExplainer(ExplainerAlgorithm):
                 elif node_mask_type == MaskType.attributes:
                     node_mask = torch.rand_like(v)
                 if node_mask is not None:
-                    node_dict[k]["node_mask"] = node_mask
+                    node_dict[k]['node_mask'] = node_mask
 
             edge_dict = defaultdict(dict)
             for k, v in edge_index.items():
@@ -64,7 +63,7 @@ class DummyExplainer(ExplainerAlgorithm):
                 if edge_mask_type == MaskType.object:
                     edge_mask = torch.rand(v.size(1), device=v.device)
                 if edge_mask is not None:
-                    edge_dict[k]["edge_mask"] = edge_mask
+                    edge_dict[k]['edge_mask'] = edge_mask
 
             return HeteroExplanation({**node_dict, **edge_dict})
 

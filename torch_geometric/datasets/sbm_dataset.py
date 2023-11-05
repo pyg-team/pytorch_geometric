@@ -38,7 +38,6 @@ class StochasticBlockModelDataset(InMemoryDataset):
             :meth:`sklearn.datasets.make_classification` method for drawing
             node features.
     """
-
     def __init__(
         self,
         root: str,
@@ -61,10 +60,10 @@ class StochasticBlockModelDataset(InMemoryDataset):
         self.is_undirected = is_undirected
 
         self.kwargs = {
-            "n_informative": num_channels,
-            "n_redundant": 0,
-            "flip_y": 0.0,
-            "shuffle": False,
+            'n_informative': num_channels,
+            'n_redundant': 0,
+            'flip_y': 0.0,
+            'shuffle': False,
         }
         self.kwargs.update(kwargs)
 
@@ -73,24 +72,23 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.__class__.__name__, "processed")
+        return os.path.join(self.root, self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self) -> str:
         block_sizes = self.block_sizes.view(-1).tolist()
-        hash1 = "-".join([f"{x:.1f}" for x in block_sizes])
+        hash1 = '-'.join([f'{x:.1f}' for x in block_sizes])
 
         edge_probs = self.edge_probs.view(-1).tolist()
-        hash2 = "-".join([f"{x:.1f}" for x in edge_probs])
+        hash2 = '-'.join([f'{x:.1f}' for x in edge_probs])
 
-        return f"data_{self.num_channels}_{hash1}_{hash2}.pt"
+        return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
 
     def process(self):
         from sklearn.datasets import make_classification
 
         edge_index = stochastic_blockmodel_graph(
-            self.block_sizes, self.edge_probs, directed=not self.is_undirected
-        )
+            self.block_sizes, self.edge_probs, directed=not self.is_undirected)
 
         num_samples = int(self.block_sizes.sum())
         num_classes = self.block_sizes.size(0)
@@ -150,20 +148,13 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             to :meth:`sklearn.datasets.make_classification` method in
             drawing node features.
     """
+    def __init__(self, root, num_classes: int, num_nodes_per_class: int,
+                 node_homophily_ratio: float, average_degree: float,
+                 num_channels: Optional[int] = None,
+                 is_undirected: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None, **kwargs):
 
-    def __init__(
-        self,
-        root,
-        num_classes: int,
-        num_nodes_per_class: int,
-        node_homophily_ratio: float,
-        average_degree: float,
-        num_channels: Optional[int] = None,
-        is_undirected: bool = True,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        **kwargs,
-    ):
         self._num_classes = num_classes
         self.num_nodes_per_class = num_nodes_per_class
         self.node_homophily_ratio = node_homophily_ratio
@@ -176,29 +167,20 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         p_out = (ec_over_v2 - p_in) / (num_classes - 1)
 
         block_sizes = [num_nodes_per_class for _ in range(num_classes)]
-        edge_probs = [[p_out for _ in range(num_classes)] for _ in range(num_classes)]
+        edge_probs = [[p_out for _ in range(num_classes)]
+                      for _ in range(num_classes)]
         for r in range(num_classes):
             edge_probs[r][r] = p_in
 
-        super().__init__(
-            root,
-            block_sizes,
-            edge_probs,
-            num_channels,
-            is_undirected,
-            transform,
-            pre_transform,
-            **kwargs,
-        )
+        super().__init__(root, block_sizes, edge_probs, num_channels,
+                         is_undirected, transform, pre_transform, **kwargs)
         self.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:
-        return (
-            f"data_{self.num_channels}_{self._num_classes}_"
-            f"{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_"
-            f"{self.average_degree:.1f}.pt"
-        )
+        return (f'data_{self.num_channels}_{self._num_classes}_'
+                f'{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_'
+                f'{self.average_degree:.1f}.pt')
 
     def process(self):
         return super().process()

@@ -25,7 +25,7 @@ def get_mask_size(attr: str, store: BaseStorage, size: Optional[int]) -> int:
     return store.num_edges if store.is_edge_attr(attr) else store.num_nodes
 
 
-@functional_transform("index_to_mask")
+@functional_transform('index_to_mask')
 class IndexToMask(BaseTransform):
     r"""Converts indices to a mask representation
     (functional name: :obj:`index_to_mask`).
@@ -42,7 +42,6 @@ class IndexToMask(BaseTransform):
         replace (bool, optional): if set to :obj:`True` replaces the index
             attributes with mask tensors. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         attrs: Optional[Union[str, List[str]]] = None,
@@ -58,7 +57,7 @@ class IndexToMask(BaseTransform):
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.stores:
-            attrs = get_attrs_with_suffix(self.attrs, store, "_index")
+            attrs = get_attrs_with_suffix(self.attrs, store, '_index')
 
             sizes = self.sizes or ([None] * len(attrs))
             if isinstance(sizes, int):
@@ -67,30 +66,27 @@ class IndexToMask(BaseTransform):
             if len(attrs) != len(sizes):
                 raise ValueError(
                     f"The number of attributes (got {len(attrs)}) must match "
-                    f"the number of sizes provided (got {len(sizes)})."
-                )
+                    f"the number of sizes provided (got {len(sizes)}).")
 
             for attr, size in zip(attrs, sizes):
-                if "edge_index" in attr:
+                if 'edge_index' in attr:
                     continue
                 if attr not in store:
                     continue
                 size = get_mask_size(attr, store, size)
                 mask = index_to_mask(store[attr], size=size)
-                store[f"{attr[:-6]}_mask"] = mask
+                store[f'{attr[:-6]}_mask'] = mask
                 if self.replace:
                     del store[attr]
 
         return data
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(attrs={self.attrs}, "
-            f"sizes={self.sizes}, replace={self.replace})"
-        )
+        return (f'{self.__class__.__name__}(attrs={self.attrs}, '
+                f'sizes={self.sizes}, replace={self.replace})')
 
 
-@functional_transform("mask_to_index")
+@functional_transform('mask_to_index')
 class MaskToIndex(BaseTransform):
     r"""Converts a mask to an index representation
     (functional name: :obj:`mask_to_index`).
@@ -102,7 +98,6 @@ class MaskToIndex(BaseTransform):
         replace (bool, optional): if set to :obj:`True` replaces the mask
             attributes with index tensors. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         attrs: Optional[Union[str, List[str]]] = None,
@@ -116,19 +111,18 @@ class MaskToIndex(BaseTransform):
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.stores:
-            attrs = get_attrs_with_suffix(self.attrs, store, "_mask")
+            attrs = get_attrs_with_suffix(self.attrs, store, '_mask')
 
             for attr in attrs:
                 if attr not in store:
                     continue
                 index = mask_to_index(store[attr])
-                store[f"{attr[:-5]}_index"] = index
+                store[f'{attr[:-5]}_index'] = index
                 if self.replace:
                     del store[attr]
 
         return data
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(attrs={self.attrs}, " f"replace={self.replace})"
-        )
+        return (f'{self.__class__.__name__}(attrs={self.attrs}, '
+                f'replace={self.replace})')

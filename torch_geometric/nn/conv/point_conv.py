@@ -61,15 +61,10 @@ class PointNetConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-
-    def __init__(
-        self,
-        local_nn: Optional[Callable] = None,
-        global_nn: Optional[Callable] = None,
-        add_self_loops: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "max")
+    def __init__(self, local_nn: Optional[Callable] = None,
+                 global_nn: Optional[Callable] = None,
+                 add_self_loops: bool = True, **kwargs):
+        kwargs.setdefault('aggr', 'max')
         super().__init__(**kwargs)
 
         self.local_nn = local_nn
@@ -83,12 +78,9 @@ class PointNetConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(
-        self,
-        x: Union[OptTensor, PairOptTensor],
-        pos: Union[Tensor, PairTensor],
-        edge_index: Adj,
-    ) -> Tensor:
+    def forward(self, x: Union[OptTensor, PairOptTensor],
+                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 
@@ -99,8 +91,7 @@ class PointNetConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(
-                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0))
-                )
+                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
@@ -112,7 +103,8 @@ class PointNetConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Optional[Tensor], pos_i: Tensor, pos_j: Tensor) -> Tensor:
+    def message(self, x_j: Optional[Tensor], pos_i: Tensor,
+                pos_j: Tensor) -> Tensor:
         msg = pos_j - pos_i
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)
@@ -121,7 +113,5 @@ class PointNetConv(MessagePassing):
         return msg
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(local_nn={self.local_nn}, "
-            f"global_nn={self.global_nn})"
-        )
+        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
+                f'global_nn={self.global_nn})')

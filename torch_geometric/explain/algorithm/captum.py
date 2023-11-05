@@ -19,10 +19,9 @@ from torch_geometric.typing import EdgeType, Metadata, NodeType
 
 class MaskLevelType(Enum):
     """Enum class for the mask level type."""
-
-    node = "node"
-    edge = "edge"
-    node_and_edge = "node_and_edge"
+    node = 'node'
+    edge = 'edge'
+    node_and_edge = 'node_and_edge'
 
     @property
     def with_edge(self) -> bool:
@@ -60,9 +59,11 @@ class CaptumModel(torch.nn.Module):
 
         # Set edge mask:
         if self.mask_type == MaskLevelType.edge:
-            set_masks(self.model, mask.squeeze(0), args[1], apply_sigmoid=False)
+            set_masks(self.model, mask.squeeze(0), args[1],
+                      apply_sigmoid=False)
         elif self.mask_type == MaskLevelType.node_and_edge:
-            set_masks(self.model, args[0].squeeze(0), args[1], apply_sigmoid=False)
+            set_masks(self.model, args[0].squeeze(0), args[1],
+                      apply_sigmoid=False)
             args = args[1:]
 
         if self.mask_type == MaskLevelType.edge:
@@ -79,14 +80,13 @@ class CaptumModel(torch.nn.Module):
 
         if self.output_idx is not None:  # Filter by output index:
             x = x[self.output_idx]
-            if isinstance(self.output_idx, int) or self.output_idx.dim() == 0:
+            if (isinstance(self.output_idx, int)
+                    or self.output_idx.dim() == 0):
                 x = x.unsqueeze(0)
 
         # Convert binary classification to multi-class classification:
-        if (
-            self.model_config is not None
-            and self.model_config.mode == ModelMode.binary_classification
-        ):
+        if (self.model_config is not None
+                and self.model_config.mode == ModelMode.binary_classification):
             assert self.model_config.return_type == ModelReturnType.probs
             x = x.view(-1, 1)
             x = torch.cat([1 - x, x], dim=-1)
@@ -112,28 +112,26 @@ class CaptumHeteroModel(CaptumModel):
 
     def _captum_data_to_hetero_data(
         self, *args
-    ) -> Tuple[
-        Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[EdgeType, Tensor]]
-    ]:
+    ) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[
+            EdgeType, Tensor]]]:
         """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
         `edge_mask_dict`."""
 
         if self.mask_type == MaskLevelType.node:
-            node_tensors = args[: self.num_node_types]
+            node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
             edge_index_dict = args[self.num_node_types]
         elif self.mask_type == MaskLevelType.edge:
-            edge_mask_tensors = args[: self.num_edge_types]
+            edge_mask_tensors = args[:self.num_edge_types]
             x_dict = args[self.num_edge_types]
             edge_index_dict = args[self.num_edge_types + 1]
         else:
-            node_tensors = args[: self.num_node_types]
+            node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
-            edge_mask_tensors = args[
-                self.num_node_types : self.num_node_types + self.num_edge_types
-            ]
+            edge_mask_tensors = args[self.num_node_types:self.num_node_types +
+                                     self.num_edge_types]
             edge_index_dict = args[self.num_node_types + self.num_edge_types]
 
         if self.mask_type.with_edge:
@@ -153,21 +151,20 @@ class CaptumHeteroModel(CaptumModel):
             len_remaining_args = len(args) - (self.num_edge_types + 2)
         else:
             assert len(args) >= self.num_node_types + self.num_edge_types + 1
-            len_remaining_args = len(args) - (
-                self.num_node_types + self.num_edge_types + 1
-            )
+            len_remaining_args = len(args) - (self.num_node_types +
+                                              self.num_edge_types + 1)
 
         # Get main args:
-        (x_dict, edge_index_dict, edge_mask_dict) = self._captum_data_to_hetero_data(
-            *args
-        )
+        (x_dict, edge_index_dict,
+         edge_mask_dict) = self._captum_data_to_hetero_data(*args)
 
         if self.mask_type.with_edge:
             set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
 
         if len_remaining_args > 0:
             # If there are args other than `x_dict` and `edge_index_dict`
-            x = self.model(x_dict, edge_index_dict, *args[-len_remaining_args:])
+            x = self.model(x_dict, edge_index_dict,
+                           *args[-len_remaining_args:])
         else:
             x = self.model(x_dict, edge_index_dict)
 
@@ -239,8 +236,7 @@ def to_captum_input(
     else:
         raise ValueError(
             "'x' and 'edge_index' need to be either"
-            f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})"
-        )
+            f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})")
     additional_forward_args.extend(args)
     return tuple(inputs), tuple(additional_forward_args)
 
@@ -291,8 +287,8 @@ def captum_output_to_dicts(
         edge_attr_dict = dict(zip(edge_types, captum_attrs))
     elif mask_type == MaskLevelType.node_and_edge:
         assert len(edge_types) + len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs[: len(node_types)]))
-        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types) :]))
+        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
+        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
     return x_attr_dict, edge_attr_dict
 
 

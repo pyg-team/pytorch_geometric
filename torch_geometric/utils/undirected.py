@@ -7,7 +7,7 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import coalesce, sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-MISSING = "???"
+MISSING = '???'
 
 
 @torch.jit._overload
@@ -111,7 +111,7 @@ def to_undirected(
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = "add",
+    reduce: str = 'add',
 ) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     r"""Converts the graph given by :attr:`edge_index` to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in

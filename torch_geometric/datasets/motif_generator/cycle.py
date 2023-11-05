@@ -12,7 +12,6 @@ class CycleMotif(CustomMotif):
     Args:
         num_nodes (int): The number of nodes in the cycle.
     """
-
     def __init__(self, num_nodes: int):
         self.num_nodes = num_nodes
 
@@ -29,4 +28,4 @@ class CycleMotif(CustomMotif):
         super().__init__(structure)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.num_nodes})"
+        return f'{self.__class__.__name__}({self.num_nodes})'

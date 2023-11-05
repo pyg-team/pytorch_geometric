@@ -8,7 +8,7 @@ from torch.nn import Module, ModuleDict, ModuleList, Sequential
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
-    GraphModule, Graph, Node = "GraphModule", "Graph", "Node"
+    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
 class Transformer:
@@ -64,7 +64,6 @@ class Transformer:
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         module: Module,
@@ -118,8 +117,8 @@ class Transformer:
         if self.debug:
             self.graph.print_tabular()
             print()
-            code = self.graph.python_code("self")
-            print(code.src if hasattr(code, "src") else code)
+            code = self.graph.python_code('self')
+            print(code.src if hasattr(code, 'src') else code)
 
         # We create a private dictionary `self._state` which holds information
         # about whether a node returns node-level or edge-level information:
@@ -129,32 +128,30 @@ class Transformer:
         # We iterate over each node and determine its output level
         # (node-level, edge-level) by filling `self._state`:
         for node in list(self.graph.nodes):
-            if node.op == "call_function" and "training" in node.kwargs:
-                warnings.warn(
-                    f"Found function '{node.name}' with keyword "
-                    f"argument 'training'. During FX tracing, this "
-                    f"will likely be baked in as a constant value. "
-                    f"Consider replacing this function by a module "
-                    f"to properly encapsulate its training flag."
-                )
+            if node.op == 'call_function' and 'training' in node.kwargs:
+                warnings.warn(f"Found function '{node.name}' with keyword "
+                              f"argument 'training'. During FX tracing, this "
+                              f"will likely be baked in as a constant value. "
+                              f"Consider replacing this function by a module "
+                              f"to properly encapsulate its training flag.")
 
-            if node.op == "placeholder":
+            if node.op == 'placeholder':
                 if node.name not in self._state:
-                    if "edge" in node.name or "adj" in node.name:
-                        self._state[node.name] = "edge"
+                    if 'edge' in node.name or 'adj' in node.name:
+                        self._state[node.name] = 'edge'
                     else:
-                        self._state[node.name] = "node"
+                        self._state[node.name] = 'node'
             elif is_message_passing_op(self.module, node.op, node.target):
-                self._state[node.name] = "node"
+                self._state[node.name] = 'node'
             elif is_global_pooling_op(self.module, node.op, node.target):
-                self._state[node.name] = "graph"
-            elif node.op in ["call_module", "call_method", "call_function"]:
+                self._state[node.name] = 'graph'
+            elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
-                    self._state[node.name] = "edge"
+                    self._state[node.name] = 'edge'
                 elif self.has_node_level_arg(node):
-                    self._state[node.name] = "node"
+                    self._state[node.name] = 'node'
                 else:
-                    self._state[node.name] = "graph"
+                    self._state[node.name] = 'graph'
 
         # We iterate over each node and may transform it:
         for node in list(self.graph.nodes):
@@ -162,9 +159,9 @@ class Transformer:
             # e.g.: `call_module(...)`, `call_function(...)`, ...
             op = node.op
             if is_message_passing_op(self.module, op, node.target):
-                op = "call_message_passing_module"
+                op = 'call_message_passing_module'
             elif is_global_pooling_op(self.module, op, node.target):
-                op = "call_global_pooling_module"
+                op = 'call_global_pooling_module'
             getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
@@ -175,7 +172,7 @@ class Transformer:
         # are no users of that node left in the computation graph.
         for node in reversed(list(self.graph.nodes)):
             try:
-                if node.op not in ["placeholder", "output"]:
+                if node.op not in ['placeholder', 'output']:
                     self.graph.erase_node(node)
             except RuntimeError:
                 pass
@@ -188,8 +185,8 @@ class Transformer:
         if self.debug:
             self.gm.graph.print_tabular()
             print()
-            code = self.graph.python_code("self")
-            print(code.src if hasattr(code, "src") else code)
+            code = self.graph.python_code('self')
+            print(code.src if hasattr(code, 'src') else code)
 
         self.gm.graph.lint()
         self.gm.recompile()
@@ -198,19 +195,16 @@ class Transformer:
 
     def _init_submodule(self, module: Module, target: str) -> Module:
         if isinstance(module, ModuleList) or isinstance(module, Sequential):
-            return ModuleList(
-                [
-                    self._init_submodule(submodule, f"{target}.{i}")
-                    for i, submodule in enumerate(module)
-                ]
-            )
+            return ModuleList([
+                self._init_submodule(submodule, f'{target}.{i}')
+                for i, submodule in enumerate(module)
+            ])
         elif isinstance(module, ModuleDict):
-            return ModuleDict(
-                {
-                    key: self._init_submodule(submodule, f"{target}.{key}")
-                    for key, submodule in module.items()
-                }
-            )
+            return ModuleDict({
+                key:
+                self._init_submodule(submodule, f'{target}.{key}')
+                for key, submodule in module.items()
+            })
         else:
             return self.init_submodule(module, target)
 
@@ -220,7 +214,7 @@ class Transformer:
     def _has_level_arg(self, node: Node, name: str) -> bool:
         def _recurse(value: Any) -> bool:
             if isinstance(value, Node):
-                return getattr(self, f"is_{name}_level")(value)
+                return getattr(self, f'is_{name}_level')(value)
             elif isinstance(value, dict):
                 return any([_recurse(v) for v in value.values()])
             elif isinstance(value, (list, tuple)):
@@ -228,27 +222,26 @@ class Transformer:
             else:
                 return False
 
-        return any([_recurse(value) for value in node.args]) or any(
-            [_recurse(value) for value in node.kwargs.values()]
-        )
+        return (any([_recurse(value) for value in node.args])
+                or any([_recurse(value) for value in node.kwargs.values()]))
 
     def is_node_level(self, node: Node) -> bool:
-        return self._is_level(node, name="node")
+        return self._is_level(node, name='node')
 
     def is_edge_level(self, node: Node) -> bool:
-        return self._is_level(node, name="edge")
+        return self._is_level(node, name='edge')
 
     def is_graph_level(self, node: Node) -> bool:
-        return self._is_level(node, name="graph")
+        return self._is_level(node, name='graph')
 
     def has_node_level_arg(self, node: Node) -> bool:
-        return self._has_level_arg(node, name="node")
+        return self._has_level_arg(node, name='node')
 
     def has_edge_level_arg(self, node: Node) -> bool:
-        return self._has_level_arg(node, name="edge")
+        return self._has_level_arg(node, name='edge')
 
     def has_graph_level_arg(self, node: Node) -> bool:
-        return self._has_level_arg(node, name="graph")
+        return self._has_level_arg(node, name='graph')
 
     def find_by_name(self, name: str) -> Optional[Node]:
         for node in self.graph.nodes:
@@ -267,15 +260,16 @@ class Transformer:
             return replace_with if n == to_replace else n
 
         node = replace_with.next
-        while node.op != "root":
+        while node.op != 'root':
             node.args = torch.fx.map_arg(node.args, maybe_replace_node)
             node.kwargs = torch.fx.map_arg(node.kwargs, maybe_replace_node)
             node = node.next
 
 
 def symbolic_trace(
-    module: Module, concrete_args: Optional[Dict[str, Any]] = None
-) -> GraphModule:
+        module: Module,
+        concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
+
     # This is to support compatibility with pytorch version 1.9 and lower
     try:
         import torch.fx._symbolic_trace as st
@@ -295,28 +289,32 @@ def symbolic_trace(
         # details on the rationale
         # TODO: Revisit https://github.com/pyg-team/pytorch_geometric/pull/5021
         @st.compatibility(is_backward_compatible=True)
-        def trace(
-            self,
-            root: st.Union[torch.nn.Module, st.Callable[..., Any]],
-            concrete_args: Optional[Dict[str, Any]] = None,
-        ) -> Graph:
+        def trace(self, root: st.Union[torch.nn.Module, st.Callable[..., Any]],
+                  concrete_args: Optional[Dict[str, Any]] = None) -> Graph:
+
             if isinstance(root, torch.nn.Module):
                 self.root = root
                 fn = type(root).forward
-                self.submodule_paths = {mod: name for name, mod in root.named_modules()}
+                self.submodule_paths = {
+                    mod: name
+                    for name, mod in root.named_modules()
+                }
             else:
                 self.root = torch.nn.Module()
                 fn = root
 
-            tracer_cls: Optional[st.Type["Tracer"]] = getattr(self, "__class__", None)
+            tracer_cls: Optional[st.Type['Tracer']] = getattr(
+                self, '__class__', None)
             self.graph = Graph(tracer_cls=tracer_cls)
 
-            self.tensor_attrs: Dict[st.Union[torch.Tensor, st.ScriptObject], str] = {}
+            self.tensor_attrs: Dict[st.Union[torch.Tensor, st.ScriptObject],
+                                    str] = {}
 
-            def collect_tensor_attrs(m: torch.nn.Module, prefix_atoms: st.List[str]):
+            def collect_tensor_attrs(m: torch.nn.Module,
+                                     prefix_atoms: st.List[str]):
                 for k, v in m.__dict__.items():
                     if isinstance(v, (torch.Tensor, st.ScriptObject)):
-                        self.tensor_attrs[v] = ".".join(prefix_atoms + [k])
+                        self.tensor_attrs[v] = '.'.join(prefix_atoms + [k])
                 for k, v in m.named_children():
                     collect_tensor_attrs(v, prefix_atoms + [k])
 
@@ -326,21 +324,20 @@ def symbolic_trace(
 
             fn_globals = fn.__globals__  # run before it gets patched
             fn, args = self.create_args_for_root(
-                fn, isinstance(root, torch.nn.Module), concrete_args
-            )
+                fn, isinstance(root, torch.nn.Module), concrete_args)
 
-            parameter_proxy_cache: Dict[
-                str, st.Proxy
-            ] = {}  # Reduce number of get_attr calls
+            parameter_proxy_cache: Dict[str, st.Proxy] = {
+            }  # Reduce number of get_attr calls
 
             @st.functools.wraps(st._orig_module_getattr)
             def module_getattr_wrapper(mod, attr):
                 attr_val = st._orig_module_getattr(mod, attr)
                 # Support for PyTorch > 1.12, see:
                 # https://github.com/pytorch/pytorch/pull/84011
-                if hasattr(self, "getattr"):
+                if hasattr(self, 'getattr'):
                     return self.getattr(attr, attr_val, parameter_proxy_cache)
-                return self._module_getattr(attr, attr_val, parameter_proxy_cache)
+                return self._module_getattr(attr, attr_val,
+                                            parameter_proxy_cache)
 
             @st.functools.wraps(st._orig_module_call)
             def module_call_wrapper(mod, *args, **kwargs):
@@ -350,37 +347,26 @@ def symbolic_trace(
                 st._autowrap_check(
                     patcher,
                     getattr(getattr(mod, "forward", mod), "__globals__", {}),
-                    self._autowrap_function_ids,
-                )
+                    self._autowrap_function_ids)
                 return self.call_module(mod, forward, args, kwargs)
 
             with st._Patcher() as patcher:
                 # allow duplicate patches to support the case of nested calls
-                patcher.patch_method(
-                    torch.nn.Module,
-                    "__getattr__",
-                    module_getattr_wrapper,
-                    deduplicate=False,
-                )
-                patcher.patch_method(
-                    torch.nn.Module, "__call__", module_call_wrapper, deduplicate=False
-                )
-                patcher.patch_method(
-                    Aggregation, "__call__", module_call_wrapper, deduplicate=False
-                )
+                patcher.patch_method(torch.nn.Module, "__getattr__",
+                                     module_getattr_wrapper, deduplicate=False)
+                patcher.patch_method(torch.nn.Module, "__call__",
+                                     module_call_wrapper, deduplicate=False)
+                patcher.patch_method(Aggregation, "__call__",
+                                     module_call_wrapper, deduplicate=False)
                 st._patch_wrapped_functions(patcher)
-                st._autowrap_check(patcher, fn_globals, self._autowrap_function_ids)
+                st._autowrap_check(patcher, fn_globals,
+                                   self._autowrap_function_ids)
                 for module in self._autowrap_search:
-                    st._autowrap_check(
-                        patcher, module.__dict__, self._autowrap_function_ids
-                    )
+                    st._autowrap_check(patcher, module.__dict__,
+                                       self._autowrap_function_ids)
                 self.create_node(
-                    "output",
-                    "output",
-                    (self.create_arg(fn(*args)),),
-                    {},
-                    type_expr=fn.__annotations__.get("return", None),
-                )
+                    'output', 'output', (self.create_arg(fn(*args)), ), {},
+                    type_expr=fn.__annotations__.get('return', None))
 
             self.submodule_paths = None
 
@@ -391,22 +377,20 @@ def symbolic_trace(
 
 def get_submodule(module: Module, target: str) -> Module:
     out = module
-    for attr in target.split("."):
+    for attr in target.split('.'):
         out = getattr(out, attr)
     return out
 
 
 def is_message_passing_op(module: Module, op: str, target: str) -> bool:
     from torch_geometric.nn import MessagePassing
-
-    if op == "call_module":
+    if op == 'call_module':
         return isinstance(get_submodule(module, target), MessagePassing)
     return False
 
 
 def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
     from torch_geometric.nn import Aggregation
-
-    if op == "call_module":
+    if op == 'call_module':
         return isinstance(get_submodule(module, target), Aggregation)
     return False

@@ -23,38 +23,30 @@ def use_segment_matmul_heuristic(
     :meth:`segment_matmul` can speed up computation."""
     # NOTE This heuristic was learned on an A100 via sklearn using a simple
     # StandardScaler() -> LinearSVC() model.
-    x = torch.tensor(
-        [
-            num_segments,
-            max_segment_size,
-            in_channels,
-            out_channels,
-        ]
-    )
-    mean = torch.tensor(
-        [
-            125.11603189,
-            12133.21523472,
-            163.81222321,
-            32.43755536,
-        ]
-    )
-    std = torch.tensor(
-        [
-            163.34480422,
-            27572.94543809,
-            177.6426489,
-            56.82103934,
-        ]
-    )
-    weight = torch.tensor(
-        [
-            2.43877659e00,
-            1.67583047e00,
-            -5.20527282e-04,
-            3.43925501e-01,
-        ]
-    )
+    x = torch.tensor([
+        num_segments,
+        max_segment_size,
+        in_channels,
+        out_channels,
+    ])
+    mean = torch.tensor([
+        125.11603189,
+        12133.21523472,
+        163.81222321,
+        32.43755536,
+    ])
+    std = torch.tensor([
+        163.34480422,
+        27572.94543809,
+        177.6426489,
+        56.82103934,
+    ])
+    weight = torch.tensor([
+        2.43877659e+00,
+        1.67583047e+00,
+        -5.20527282e-04,
+        3.43925501e-01,
+    ])
     bias = 1.20236999
 
     x = (x - mean) / std

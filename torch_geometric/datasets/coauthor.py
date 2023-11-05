@@ -49,7 +49,7 @@ class Coauthor(InMemoryDataset):
           - 5
     """
 
-    url = "https://github.com/shchur/gnn-benchmark/raw/master/data/npz/"
+    url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
 
     def __init__(
         self,
@@ -58,26 +58,26 @@ class Coauthor(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
     ):
-        assert name.lower() in ["cs", "physics"]
-        self.name = "CS" if name.lower() == "cs" else "Physics"
+        assert name.lower() in ['cs', 'physics']
+        self.name = 'CS' if name.lower() == 'cs' else 'Physics'
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, "raw")
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, "processed")
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> str:
-        return f"ms_academic_{self.name[:3].lower()}.npz"
+        return f'ms_academic_{self.name[:3].lower()}.npz'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         download_url(self.url + self.raw_file_names, self.raw_dir)
@@ -88,4 +88,4 @@ class Coauthor(InMemoryDataset):
         self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}{self.name}()"
+        return f'{self.__class__.__name__}{self.name}()'

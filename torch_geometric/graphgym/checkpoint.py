@@ -7,9 +7,9 @@ import torch
 
 from torch_geometric.graphgym.config import cfg
 
-MODEL_STATE = "model_state"
-OPTIMIZER_STATE = "optimizer_state"
-SCHEDULER_STATE = "scheduler_state"
+MODEL_STATE = 'model_state'
+OPTIMIZER_STATE = 'optimizer_state'
+SCHEDULER_STATE = 'scheduler_state'
 
 
 def load_ckpt(
@@ -68,16 +68,16 @@ def clean_ckpt():
 
 
 def get_ckpt_dir() -> str:
-    return osp.join(cfg.run_dir, "ckpt")
+    return osp.join(cfg.run_dir, 'ckpt')
 
 
 def get_ckpt_path(epoch: Union[int, str]) -> str:
-    return osp.join(get_ckpt_dir(), f"{epoch}.ckpt")
+    return osp.join(get_ckpt_dir(), f'{epoch}.ckpt')
 
 
 def get_ckpt_epochs() -> List[int]:
-    paths = glob.glob(get_ckpt_path("*"))
-    return sorted([int(osp.basename(path).split(".")[0]) for path in paths])
+    paths = glob.glob(get_ckpt_path('*'))
+    return sorted([int(osp.basename(path).split('.')[0]) for path in paths])
 
 
 def get_ckpt_epoch(epoch: int) -> int:

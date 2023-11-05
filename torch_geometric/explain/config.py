@@ -7,49 +7,43 @@ from torch_geometric.utils.mixin import CastMixin
 
 class ExplanationType(Enum):
     """Enum class for the explanation type."""
-
-    model = "model"
-    phenomenon = "phenomenon"
+    model = 'model'
+    phenomenon = 'phenomenon'
 
 
 class MaskType(Enum):
     """Enum class for the mask type."""
-
-    object = "object"
-    common_attributes = "common_attributes"
-    attributes = "attributes"
+    object = 'object'
+    common_attributes = 'common_attributes'
+    attributes = 'attributes'
 
 
 class ModelMode(Enum):
     """Enum class for the model return type."""
-
-    binary_classification = "binary_classification"
-    multiclass_classification = "multiclass_classification"
-    regression = "regression"
+    binary_classification = 'binary_classification'
+    multiclass_classification = 'multiclass_classification'
+    regression = 'regression'
 
 
 class ModelTaskLevel(Enum):
     """Enum class for the model task level."""
-
-    node = "node"
-    edge = "edge"
-    graph = "graph"
+    node = 'node'
+    edge = 'edge'
+    graph = 'graph'
 
 
 class ModelReturnType(Enum):
     """Enum class for the model return type."""
-
-    raw = "raw"
-    probs = "probs"
-    log_probs = "log_probs"
+    raw = 'raw'
+    probs = 'probs'
+    log_probs = 'log_probs'
 
 
 class ThresholdType(Enum):
     """Enum class for the threshold type."""
-
-    hard = "hard"
-    topk = "topk"
-    topk_hard = "topk_hard"
+    hard = 'hard'
+    topk = 'topk'
+    topk_hard = 'topk_hard'
     # connected = 'connected'  # TODO
 
 
@@ -86,7 +80,6 @@ class ExplainerConfig(CastMixin):
             on edges. Has the sample possible values as :obj:`node_mask_type`.
             (default: :obj:`None`)
     """
-
     explanation_type: ExplanationType
     node_mask_type: Optional[MaskType]
     edge_mask_type: Optional[MaskType]
@@ -103,15 +96,12 @@ class ExplainerConfig(CastMixin):
             edge_mask_type = MaskType(edge_mask_type)
 
         if edge_mask_type is not None and edge_mask_type != MaskType.object:
-            raise ValueError(
-                f"'edge_mask_type' needs be None or of type "
-                f"'object' (got '{edge_mask_type.value}')"
-            )
+            raise ValueError(f"'edge_mask_type' needs be None or of type "
+                             f"'object' (got '{edge_mask_type.value}')")
 
         if node_mask_type is None and edge_mask_type is None:
-            raise ValueError(
-                "Either 'node_mask_type' or 'edge_mask_type' " "must be provided"
-            )
+            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
+                             "must be provided")
 
         self.explanation_type = ExplanationType(explanation_type)
         self.node_mask_type = node_mask_type
@@ -152,7 +142,6 @@ class ModelConfig(CastMixin):
 
                 - :obj:`"log_probs"`: The model returns log-probabilities.
     """
-
     mode: ModelMode
     task_level: ModelTaskLevel
     return_type: ModelReturnType
@@ -171,23 +160,16 @@ class ModelConfig(CastMixin):
 
         self.return_type = ModelReturnType(return_type)
 
-        if (
-            self.mode == ModelMode.regression
-            and self.return_type != ModelReturnType.raw
-        ):
-            raise ValueError(
-                f"A model for regression needs to return raw "
-                f"outputs (got {self.return_type.value})"
-            )
+        if (self.mode == ModelMode.regression
+                and self.return_type != ModelReturnType.raw):
+            raise ValueError(f"A model for regression needs to return raw "
+                             f"outputs (got {self.return_type.value})")
 
-        if self.mode == ModelMode.binary_classification and self.return_type not in [
-            ModelReturnType.raw,
-            ModelReturnType.probs,
-        ]:
+        if (self.mode == ModelMode.binary_classification and self.return_type
+                not in [ModelReturnType.raw, ModelReturnType.probs]):
             raise ValueError(
                 f"A model for binary classification needs to return raw "
-                f"outputs or probabilities (got {self.return_type.value})"
-            )
+                f"outputs or probabilities (got {self.return_type.value})")
 
 
 @dataclass
@@ -214,7 +196,6 @@ class ThresholdConfig(CastMixin):
         value (int or float, optional): The value to use when thresholding.
             (default: :obj:`None`)
     """
-
     type: ThresholdType
     value: Union[float, int]
 
@@ -227,22 +208,18 @@ class ThresholdConfig(CastMixin):
         self.value = value
 
         if not isinstance(self.value, (int, float)):
-            raise ValueError(
-                f"Threshold value must be a float or int " f"(got {type(self.value)})."
-            )
+            raise ValueError(f"Threshold value must be a float or int "
+                             f"(got {type(self.value)}).")
 
-        if self.type == ThresholdType.hard and (self.value < 0 or self.value > 1):
-            raise ValueError(
-                f"Threshold value must be between 0 and 1 " f"(got {self.value})"
-            )
+        if (self.type == ThresholdType.hard
+                and (self.value < 0 or self.value > 1)):
+            raise ValueError(f"Threshold value must be between 0 and 1 "
+                             f"(got {self.value})")
 
         if self.type in [ThresholdType.topk, ThresholdType.topk_hard]:
             if not isinstance(self.value, int):
-                raise ValueError(
-                    f"Threshold value needs to be an integer "
-                    f"(got {type(self.value)})."
-                )
+                raise ValueError(f"Threshold value needs to be an integer "
+                                 f"(got {type(self.value)}).")
             if self.value <= 0:
-                raise ValueError(
-                    f"Threshold value needs to be positive " f"(got {self.value})."
-                )
+                raise ValueError(f"Threshold value needs to be positive "
+                                 f"(got {self.value}).")

@@ -8,7 +8,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("polar")
+@functional_transform('polar')
 class Polar(BaseTransform):
     r"""Saves the polar coordinates of linked nodes in its edge attributes
     (functional name: :obj:`polar`).
@@ -23,7 +23,6 @@ class Polar(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         norm: bool = True,
@@ -60,4 +59,5 @@ class Polar(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(norm={self.norm}, " f"max_value={self.max})"
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

@@ -7,9 +7,8 @@ from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import degree, scatter
 
 
-def homophily(
-    edge_index: Adj, y: Tensor, batch: OptTensor = None, method: str = "edge"
-) -> Union[float, Tensor]:
+def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
+              method: str = 'edge') -> Union[float, Tensor]:
     r"""The homophily of a graph characterizes how likely nodes with the same
     label are near each other in a graph.
     There are many measures of homophily that fits this definition.
@@ -80,7 +79,7 @@ def homophily(
         >>> homophily(edge_index, y, method='edge_insensitive')
         0.19999998807907104
     """
-    assert method in {"edge", "node", "edge_insensitive"}
+    assert method in {'edge', 'node', 'edge_insensitive'}
     y = y.squeeze(-1) if y.dim() > 1 else y
 
     if isinstance(edge_index, SparseTensor):
@@ -88,25 +87,25 @@ def homophily(
     else:
         row, col = edge_index
 
-    if method == "edge":
+    if method == 'edge':
         out = torch.zeros(row.size(0), device=row.device)
-        out[y[row] == y[col]] = 1.0
+        out[y[row] == y[col]] = 1.
         if batch is None:
             return float(out.mean())
         else:
             dim_size = int(batch.max()) + 1
-            return scatter(out, batch[col], 0, dim_size, reduce="mean")
+            return scatter(out, batch[col], 0, dim_size, reduce='mean')
 
-    elif method == "node":
+    elif method == 'node':
         out = torch.zeros(row.size(0), device=row.device)
-        out[y[row] == y[col]] = 1.0
-        out = scatter(out, col, 0, dim_size=y.size(0), reduce="mean")
+        out[y[row] == y[col]] = 1.
+        out = scatter(out, col, 0, dim_size=y.size(0), reduce='mean')
         if batch is None:
             return float(out.mean())
         else:
-            return scatter(out, batch, dim=0, reduce="mean")
+            return scatter(out, batch, dim=0, reduce='mean')
 
-    elif method == "edge_insensitive":
+    elif method == 'edge_insensitive':
         assert y.dim() == 1
         num_classes = int(y.max()) + 1
         assert num_classes >= 2
@@ -115,7 +114,7 @@ def homophily(
         num_graphs = num_nodes.numel()
         batch = num_classes * batch + y
 
-        h = homophily(edge_index, y, batch, method="edge")
+        h = homophily(edge_index, y, batch, method='edge')
         h = h.view(num_graphs, num_classes)
 
         counts = batch.bincount(minlength=num_classes * num_graphs)

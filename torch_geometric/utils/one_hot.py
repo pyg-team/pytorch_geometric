@@ -33,5 +33,6 @@ def one_hot(
     if num_classes is None:
         num_classes = int(index.max()) + 1
 
-    out = torch.zeros((index.size(0), num_classes), dtype=dtype, device=index.device)
+    out = torch.zeros((index.size(0), num_classes), dtype=dtype,
+                      device=index.device)
     return out.scatter_(1, index.unsqueeze(1), 1)

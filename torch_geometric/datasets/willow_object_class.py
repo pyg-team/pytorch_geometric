@@ -44,13 +44,10 @@ class WILLOWObjectClass(InMemoryDataset):
             processing the raw data. If set to :obj:`None`, will utilize
             GPU-processing if available. (default: :obj:`None`)
     """
+    url = ('http://www.di.ens.fr/willow/research/graphlearning/'
+           'WILLOW-ObjectClass_dataset.zip')
 
-    url = (
-        "http://www.di.ens.fr/willow/research/graphlearning/"
-        "WILLOW-ObjectClass_dataset.zip"
-    )
-
-    categories = ["face", "motorbike", "car", "duck", "winebottle"]
+    categories = ['face', 'motorbike', 'car', 'duck', 'winebottle']
 
     batch_size = 32
 
@@ -64,7 +61,7 @@ class WILLOWObjectClass(InMemoryDataset):
         device: Optional[str] = None,
     ):
         if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         assert category.lower() in self.categories
         self.category = category
@@ -74,11 +71,11 @@ class WILLOWObjectClass(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, "raw")
+        return osp.join(self.root, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.category.capitalize(), "processed")
+        return osp.join(self.root, self.category.capitalize(), 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -86,16 +83,16 @@ class WILLOWObjectClass(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        os.unlink(osp.join(self.root, "README"))
-        os.unlink(osp.join(self.root, "demo_showAnno.m"))
+        os.unlink(osp.join(self.root, 'README'))
+        os.unlink(osp.join(self.root, 'demo_showAnno.m'))
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, "WILLOW-ObjectClass"), self.raw_dir)
+        os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
         import torchvision.models as models
@@ -104,29 +101,27 @@ class WILLOWObjectClass(InMemoryDataset):
         from scipy.io import loadmat
 
         category = self.category.capitalize()
-        names = glob.glob(osp.join(self.raw_dir, category, "*.png"))
+        names = glob.glob(osp.join(self.raw_dir, category, '*.png'))
         names = sorted([name[:-4] for name in names])
 
         vgg16_outputs = []
 
         def hook(module, x, y):
-            vgg16_outputs.append(y.to("cpu"))
+            vgg16_outputs.append(y.to('cpu'))
 
         vgg16 = models.vgg16(pretrained=True).to(self.device)
         vgg16.eval()
         vgg16.features[20].register_forward_hook(hook)  # relu4_2
         vgg16.features[25].register_forward_hook(hook)  # relu5_1
 
-        transform = T.Compose(
-            [
-                T.ToTensor(),
-                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            ]
-        )
+        transform = T.Compose([
+            T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
 
         data_list = []
         for name in names:
-            pos = loadmat(f"{name}.mat")["pts_coord"]
+            pos = loadmat(f'{name}.mat')['pts_coord']
             x, y = torch.from_numpy(pos).to(torch.float)
             pos = torch.stack([x, y], dim=1)
 
@@ -135,8 +130,8 @@ class WILLOWObjectClass(InMemoryDataset):
             if pos.size(0) != 10:
                 continue
 
-            with open(f"{name}.png", "rb") as f:
-                img = Image.open(f).convert("RGB")
+            with open(f'{name}.png', 'rb') as f:
+                img = Image.open(f).convert('RGB')
 
             # Rescale keypoints.
             pos[:, 0] = pos[:, 0] * 256.0 / (img.size[0])
@@ -156,18 +151,16 @@ class WILLOWObjectClass(InMemoryDataset):
             with torch.no_grad():
                 vgg16(batch_img.to(self.device))
 
-            out1 = F.interpolate(
-                vgg16_outputs[0], (256, 256), mode="bilinear", align_corners=False
-            )
-            out2 = F.interpolate(
-                vgg16_outputs[1], (256, 256), mode="bilinear", align_corners=False
-            )
+            out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+            out2 = F.interpolate(vgg16_outputs[1], (256, 256), mode='bilinear',
+                                 align_corners=False)
 
             for j in range(out1.size(0)):
                 data = data_list[i * self.batch_size + j]
                 idx = data.pos.round().long().clamp(0, 255)
-                x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to("cpu")
-                x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to("cpu")
+                x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to('cpu')
                 data.img = None
                 data.x = torch.cat([x_1.t(), x_2.t()], dim=-1)
             del out1
@@ -182,4 +175,5 @@ class WILLOWObjectClass(InMemoryDataset):
         self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({len(self)}, " f"category={self.category})"
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'category={self.category})')

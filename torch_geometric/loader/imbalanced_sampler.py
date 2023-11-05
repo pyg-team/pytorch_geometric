@@ -61,13 +61,13 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
             epoch. If set to :obj:`None`, will sample as much elements as there
             exists in the underlying data. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         dataset: Union[Dataset, Data, List[Data], Tensor],
         input_nodes: Optional[Tensor] = None,
         num_samples: Optional[int] = None,
     ):
+
         if isinstance(dataset, Data):
             y = dataset.y.view(-1)
             assert dataset.num_nodes == y.numel()
@@ -93,7 +93,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
 
         num_samples = y.numel() if num_samples is None else num_samples
 
-        class_weight = 1.0 / y.bincount()
+        class_weight = 1. / y.bincount()
         weight = class_weight[y]
 
         return super().__init__(weight, num_samples, replacement=True)

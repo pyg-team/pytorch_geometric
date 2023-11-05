@@ -5,6 +5,6 @@ from torch_geometric.nn import (
     global_mean_pool,
 )
 
-register_pooling("add", global_add_pool)
-register_pooling("mean", global_mean_pool)
-register_pooling("max", global_max_pool)
+register_pooling('add', global_add_pool)
+register_pooling('mean', global_mean_pool)
+register_pooling('max', global_max_pool)

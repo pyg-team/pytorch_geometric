@@ -8,7 +8,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import add_remaining_self_loops
 
 
-@functional_transform("add_remaining_self_loops")
+@functional_transform('add_remaining_self_loops')
 class AddRemainingSelfLoops(BaseTransform):
     r"""Adds remaining self-loops to the given homogeneous or heterogeneous
     graph (functional name: :obj:`add_remaining_self_loops`).
@@ -27,12 +27,8 @@ class AddRemainingSelfLoops(BaseTransform):
             according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`1.`)
     """
-
-    def __init__(
-        self,
-        attr: Optional[str] = "edge_weight",
-        fill_value: Union[float, Tensor, str] = 1.0,
-    ):
+    def __init__(self, attr: Optional[str] = 'edge_weight',
+                 fill_value: Union[float, Tensor, str] = 1.0):
         self.attr = attr
         self.fill_value = fill_value
 
@@ -41,15 +37,12 @@ class AddRemainingSelfLoops(BaseTransform):
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
-            if store.is_bipartite() or "edge_index" not in store:
+            if store.is_bipartite() or 'edge_index' not in store:
                 continue
 
             store.edge_index, edge_weight = add_remaining_self_loops(
-                store.edge_index,
-                getattr(store, self.attr, None),
-                fill_value=self.fill_value,
-                num_nodes=store.size(0),
-            )
+                store.edge_index, getattr(store, self.attr, None),
+                fill_value=self.fill_value, num_nodes=store.size(0))
 
             setattr(store, self.attr, edge_weight)
 

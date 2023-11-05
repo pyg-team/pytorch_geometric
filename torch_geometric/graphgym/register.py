@@ -18,9 +18,8 @@ train_dict: Dict[str, Any] = {}
 metric_dict: Dict[str, Any] = {}
 
 
-def register_base(
-    mapping: Dict[str, Any], key: str, module: Any = None
-) -> Union[None, Callable]:
+def register_base(mapping: Dict[str, Any], key: str,
+                  module: Any = None) -> Union[None, Callable]:
     r"""Base function for registering a module in GraphGym.
 
     Args:

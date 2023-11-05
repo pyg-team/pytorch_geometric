@@ -18,7 +18,7 @@ def cumsum(x: Tensor, dim: int = 0) -> Tensor:
         tensor([0, 2, 6, 7])
 
     """
-    size = x.size()[:dim] + (x.size(dim) + 1,) + x.size()[dim + 1 :]
+    size = x.size()[:dim] + (x.size(dim) + 1, ) + x.size()[dim + 1:]
     out = x.new_empty(size)
 
     out.narrow(dim, 0, 1).zero_()

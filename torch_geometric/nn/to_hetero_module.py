@@ -52,10 +52,12 @@ class ToHeteroLinear(torch.nn.Module):
         self,
         x_dict: Dict[Union[NodeType, EdgeType], Tensor],
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
+
         if not torch_geometric.typing.WITH_PYG_LIB:
             return {
-                key: F.linear(x_dict[key], self.hetero_module.weight[i].t())
-                + self.hetero_module.bias[i]
+                key:
+                F.linear(x_dict[key], self.hetero_module.weight[i].t()) +
+                self.hetero_module.bias[i]
                 for i, key in enumerate(self.types)
             }
 
@@ -72,15 +74,15 @@ class ToHeteroLinear(torch.nn.Module):
         x: Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]],
         type_vec: Optional[Tensor] = None,
     ) -> Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]]:
+
         if isinstance(x, dict):
             return self.dict_forward(x)
 
         elif isinstance(x, Tensor) and type_vec is not None:
             return self.fused_forward(x, type_vec)
 
-        raise ValueError(
-            f"Encountered invalid forward types in " f"'{self.__class__.__name__}'"
-        )
+        raise ValueError(f"Encountered invalid forward types in "
+                         f"'{self.__class__.__name__}'")
 
 
 class ToHeteroMessagePassing(torch.nn.Module):
@@ -89,7 +91,7 @@ class ToHeteroMessagePassing(torch.nn.Module):
         module: torch.nn.Module,
         node_types: List[NodeType],
         edge_types: List[NodeType],
-        aggr: str = "sum",
+        aggr: str = 'sum',
     ):
         from torch_geometric.nn import HeteroConv, MessagePassing
 
@@ -100,45 +102,29 @@ class ToHeteroMessagePassing(torch.nn.Module):
         self.edge_types = edge_types
 
         if not isinstance(module, MessagePassing):
-            raise ValueError(
-                f"Expected 'MessagePassing' module " f"(got '{type(module)}'"
-            )
+            raise ValueError(f"Expected 'MessagePassing' module "
+                             f"(got '{type(module)}'")
 
-        if (
-            not hasattr(module, "reset_parameters")
-            and sum([p.numel() for p in module.parameters()]) > 0
-        ):
-            warnings.warn(
-                f"'{module}' will be duplicated, but its parameters "
-                f"cannot be reset. To suppress this warning, add a "
-                f"'reset_parameters()' method to '{module}'"
-            )
+        if (not hasattr(module, 'reset_parameters')
+                and sum([p.numel() for p in module.parameters()]) > 0):
+            warnings.warn(f"'{module}' will be duplicated, but its parameters "
+                          f"cannot be reset. To suppress this warning, add a "
+                          f"'reset_parameters()' method to '{module}'")
 
         convs = {edge_type: copy.deepcopy(module) for edge_type in edge_types}
         self.hetero_module = HeteroConv(convs, aggr)
         self.hetero_module.reset_parameters()
 
-    def fused_forward(
-        self, x: Tensor, edge_index: Tensor, node_type: Tensor, edge_type: Tensor
-    ) -> Tensor:
+    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor,
+                      edge_type: Tensor) -> Tensor:
         # TODO This currently does not fuse at all :(
         # TODO We currently assume that `x` and `edge_index` are both sorted
         # according to `type`.
 
-        node_sizes = scatter(
-            torch.ones_like(node_type),
-            node_type,
-            dim=0,
-            dim_size=len(self.node_types),
-            reduce="sum",
-        )
-        edge_sizes = scatter(
-            torch.ones_like(edge_type),
-            edge_type,
-            dim=0,
-            dim_size=len(self.edge_types),
-            reduce="sum",
-        )
+        node_sizes = scatter(torch.ones_like(node_type), node_type, dim=0,
+                             dim_size=len(self.node_types), reduce='sum')
+        edge_sizes = scatter(torch.ones_like(edge_type), edge_type, dim=0,
+                             dim_size=len(self.edge_types), reduce='sum')
 
         ptr = cumsum(node_sizes)
 
@@ -175,22 +161,18 @@ class ToHeteroMessagePassing(torch.nn.Module):
         edge_type: OptTensor = None,
         **kwargs,
     ) -> Union[Tensor, Dict[NodeType, Tensor]]:
+
         if isinstance(x, dict) and isinstance(edge_index, dict):
             return self.dict_forward(x, edge_index, **kwargs)
 
-        elif (
-            isinstance(x, Tensor)
-            and isinstance(edge_index, Tensor)
-            and node_type is not None
-            and edge_type is not None
-        ):
+        elif (isinstance(x, Tensor) and isinstance(edge_index, Tensor)
+              and node_type is not None and edge_type is not None):
+
             if len(kwargs) > 0:
-                raise ValueError(
-                    "Additional forward arguments not yet " "supported in fused mode"
-                )
+                raise ValueError("Additional forward arguments not yet "
+                                 "supported in fused mode")
 
             return self.fused_forward(x, edge_index, node_type, edge_type)
 
-        raise ValueError(
-            f"Encountered invalid forward types in " f"'{self.__class__.__name__}'"
-        )
+        raise ValueError(f"Encountered invalid forward types in "
+                         f"'{self.__class__.__name__}'")

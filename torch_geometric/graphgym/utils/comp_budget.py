@@ -5,13 +5,13 @@ from torch_geometric.graphgym.model_builder import create_model
 
 
 def params_count(model):
-    """
+    '''
     Computes the number of parameters.
 
     Args:
         model (nn.Module): PyTorch model
 
-    """
+    '''
     return sum([p.numel() for p in model.parameters()])
 
 
@@ -20,17 +20,18 @@ def get_stats():
     return params_count(model)
 
 
-def match_computation(stats_baseline, key=["gnn", "dim_inner"], mode="sqrt"):
-    """Match computation budget by modifying cfg.gnn.dim_inner"""
+def match_computation(stats_baseline, key=['gnn', 'dim_inner'], mode='sqrt'):
+    '''Match computation budget by modifying cfg.gnn.dim_inner'''
     stats = get_stats()
     if stats != stats_baseline:
         # Phase 1: fast approximation
         while True:
-            if mode == "sqrt":
+            if mode == 'sqrt':
                 scale = math.sqrt(stats_baseline / stats)
-            elif mode == "linear":
+            elif mode == 'linear':
                 scale = stats_baseline / stats
-            step = int(round(cfg[key[0]][key[1]] * scale)) - cfg[key[0]][key[1]]
+            step = int(round(cfg[key[0]][key[1]] * scale)) \
+                - cfg[key[0]][key[1]]
             cfg[key[0]][key[1]] += step
             stats = get_stats()
             if abs(step) <= 1:
@@ -58,7 +59,6 @@ def match_computation(stats_baseline, key=["gnn", "dim_inner"], mode="sqrt"):
 
 def dict_to_stats(cfg_dict):
     from yacs.config import CfgNode as CN
-
     set_cfg(cfg)
     cfg_new = CN(cfg_dict)
     cfg.merge_from_other_cfg(cfg_new)
@@ -68,7 +68,7 @@ def dict_to_stats(cfg_dict):
 
 
 def match_baseline_cfg(cfg_dict, cfg_dict_baseline, verbose=True):
-    """
+    '''
     Match the computational budget of a given baseline model. THe current
     configuration dictionary will be modifed and returned.
 
@@ -78,22 +78,19 @@ def match_baseline_cfg(cfg_dict, cfg_dict_baseline, verbose=True):
         verbose (str, optional): If printing matched paramter conunts
 
 
-    """
+    '''
     from yacs.config import CfgNode as CN
-
     stats_baseline = dict_to_stats(cfg_dict_baseline)
     set_cfg(cfg)
     cfg_new = CN(cfg_dict)
     cfg.merge_from_other_cfg(cfg_new)
-    stats = match_computation(stats_baseline, key=["gnn", "dim_inner"])
-    if "gnn" in cfg_dict:
-        cfg_dict["gnn"]["dim_inner"] = cfg.gnn.dim_inner
+    stats = match_computation(stats_baseline, key=['gnn', 'dim_inner'])
+    if 'gnn' in cfg_dict:
+        cfg_dict['gnn']['dim_inner'] = cfg.gnn.dim_inner
     else:
-        cfg_dict["gnn"] = {"dim_inner", cfg.gnn.dim_inner}
+        cfg_dict['gnn'] = {'dim_inner', cfg.gnn.dim_inner}
     set_cfg(cfg)
     if verbose:
-        print(
-            f"Computational budget has matched - Baseline params: "
-            f"{stats_baseline}, Current params: {stats}"
-        )
+        print(f"Computational budget has matched - Baseline params: "
+              f"{stats_baseline}, Current params: {stats}")
     return cfg_dict

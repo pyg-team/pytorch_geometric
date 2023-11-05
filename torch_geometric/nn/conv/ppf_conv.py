@@ -18,23 +18,18 @@ from torch_geometric.utils import add_self_loops, remove_self_loops
 
 def get_angle(v1: Tensor, v2: Tensor) -> Tensor:
     return torch.atan2(
-        torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1)
-    )
+        torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
 
 
-def point_pair_features(
-    pos_i: Tensor, pos_j: Tensor, normal_i: Tensor, normal_j: Tensor
-) -> Tensor:
+def point_pair_features(pos_i: Tensor, pos_j: Tensor, normal_i: Tensor,
+                        normal_j: Tensor) -> Tensor:
     pseudo = pos_j - pos_i
-    return torch.stack(
-        [
-            pseudo.norm(p=2, dim=1),
-            get_angle(normal_i, pseudo),
-            get_angle(normal_j, pseudo),
-            get_angle(normal_i, normal_j),
-        ],
-        dim=1,
-    )
+    return torch.stack([
+        pseudo.norm(p=2, dim=1),
+        get_angle(normal_i, pseudo),
+        get_angle(normal_j, pseudo),
+        get_angle(normal_i, normal_j)
+    ], dim=1)
 
 
 class PPFConv(MessagePassing):
@@ -84,15 +79,10 @@ class PPFConv(MessagePassing):
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
 
     """
-
-    def __init__(
-        self,
-        local_nn: Optional[Callable] = None,
-        global_nn: Optional[Callable] = None,
-        add_self_loops: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "max")
+    def __init__(self, local_nn: Optional[Callable] = None,
+                 global_nn: Optional[Callable] = None,
+                 add_self_loops: bool = True, **kwargs):
+        kwargs.setdefault('aggr', 'max')
         super().__init__(**kwargs)
 
         self.local_nn = local_nn
@@ -113,6 +103,7 @@ class PPFConv(MessagePassing):
         normal: Union[Tensor, PairTensor],
         edge_index: Adj,
     ) -> Tensor:
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 
@@ -125,26 +116,22 @@ class PPFConv(MessagePassing):
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index, num_nodes=pos[1].size(0))
+                edge_index, _ = add_self_loops(edge_index,
+                                               num_nodes=pos[1].size(0))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor, normal: PairTensor)  # noqa
-        out = self.propagate(edge_index, x=x, pos=pos, normal=normal, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos, normal=normal,
+                             size=None)
 
         if self.global_nn is not None:
             out = self.global_nn(out)
 
         return out
 
-    def message(
-        self,
-        x_j: OptTensor,
-        pos_i: Tensor,
-        pos_j: Tensor,
-        normal_i: Tensor,
-        normal_j: Tensor,
-    ) -> Tensor:
+    def message(self, x_j: OptTensor, pos_i: Tensor, pos_j: Tensor,
+                normal_i: Tensor, normal_j: Tensor) -> Tensor:
         msg = point_pair_features(pos_i, pos_j, normal_i, normal_j)
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)
@@ -153,7 +140,5 @@ class PPFConv(MessagePassing):
         return msg
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(local_nn={self.local_nn}, "
-            f"global_nn={self.global_nn})"
-        )
+        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
+                f'global_nn={self.global_nn})')

@@ -28,7 +28,6 @@ class SignedGCN(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -44,12 +43,13 @@ class SignedGCN(torch.nn.Module):
         self.num_layers = num_layers
         self.lamb = lamb
 
-        self.conv1 = SignedConv(in_channels, hidden_channels // 2, first_aggr=True)
+        self.conv1 = SignedConv(in_channels, hidden_channels // 2,
+                                first_aggr=True)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                SignedConv(hidden_channels // 2, hidden_channels // 2, first_aggr=False)
-            )
+                SignedConv(hidden_channels // 2, hidden_channels // 2,
+                           first_aggr=False))
 
         self.lin = torch.nn.Linear(2 * hidden_channels, 3)
 
@@ -75,7 +75,7 @@ class SignedGCN(torch.nn.Module):
                 (default: :obj:`0.2`)
         """
         mask = torch.ones(edge_index.size(1), dtype=torch.bool)
-        mask[torch.randperm(mask.size(0))[: int(test_ratio * mask.size(0))]] = 0
+        mask[torch.randperm(mask.size(0))[:int(test_ratio * mask.size(0))]] = 0
 
         train_edge_index = edge_index[:, mask]
         test_edge_index = edge_index[:, ~mask]
@@ -102,10 +102,10 @@ class SignedGCN(torch.nn.Module):
 
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
         N = edge_index.max().item() + 1 if num_nodes is None else num_nodes
-        edge_index = edge_index.to(torch.device("cpu"))
+        edge_index = edge_index.to(torch.device('cpu'))
 
-        pos_val = torch.full((pos_edge_index.size(1),), 2, dtype=torch.float)
-        neg_val = torch.full((neg_edge_index.size(1),), 0, dtype=torch.float)
+        pos_val = torch.full((pos_edge_index.size(1), ), 2, dtype=torch.float)
+        neg_val = torch.full((neg_edge_index.size(1), ), 0, dtype=torch.float)
         val = torch.cat([pos_val, neg_val], dim=0)
 
         row, col = edge_index
@@ -179,16 +179,13 @@ class SignedGCN(torch.nn.Module):
         nll_loss = 0
         nll_loss += F.nll_loss(
             self.discriminate(z, pos_edge_index),
-            pos_edge_index.new_full((pos_edge_index.size(1),), 0),
-        )
+            pos_edge_index.new_full((pos_edge_index.size(1), ), 0))
         nll_loss += F.nll_loss(
             self.discriminate(z, neg_edge_index),
-            neg_edge_index.new_full((neg_edge_index.size(1),), 1),
-        )
+            neg_edge_index.new_full((neg_edge_index.size(1), ), 1))
         nll_loss += F.nll_loss(
             self.discriminate(z, none_edge_index),
-            none_edge_index.new_full((none_edge_index.size(1),), 2),
-        )
+            none_edge_index.new_full((none_edge_index.size(1), ), 2))
         return nll_loss / 3.0
 
     def pos_embedding_loss(
@@ -259,16 +256,16 @@ class SignedGCN(torch.nn.Module):
             pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
             neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]
         pred = (1 - torch.cat([pos_p, neg_p])).cpu()
-        y = torch.cat([pred.new_ones((pos_p.size(0))), pred.new_zeros(neg_p.size(0))])
+        y = torch.cat(
+            [pred.new_ones((pos_p.size(0))),
+             pred.new_zeros(neg_p.size(0))])
         pred, y = pred.numpy(), y.numpy()
 
         auc = roc_auc_score(y, pred)
-        f1 = f1_score(y, pred, average="binary") if pred.sum() > 0 else 0
+        f1 = f1_score(y, pred, average='binary') if pred.sum() > 0 else 0
 
         return auc, f1
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.hidden_channels}, num_layers={self.num_layers})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels}, num_layers={self.num_layers})')

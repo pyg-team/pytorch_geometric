@@ -6,7 +6,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("normalize_rotation")
+@functional_transform('normalize_rotation')
 class NormalizeRotation(BaseTransform):
     r"""Rotates all points according to the eigenvectors of the point cloud
     (functional name: :obj:`normalize_rotation`).
@@ -20,7 +20,6 @@ class NormalizeRotation(BaseTransform):
         sort (bool, optional): If set to :obj:`True`, will sort eigenvectors
             according to their eigenvalues. (default: :obj:`False`)
     """
-
     def __init__(self, max_points: int = -1, sort: bool = False):
         self.max_points = max_points
         self.sort = sort
@@ -30,7 +29,7 @@ class NormalizeRotation(BaseTransform):
 
         if self.max_points > 0 and pos.size(0) > self.max_points:
             perm = torch.randperm(pos.size(0))
-            pos = pos[perm[: self.max_points]]
+            pos = pos[perm[:self.max_points]]
 
         pos = pos - pos.mean(dim=0, keepdim=True)
         C = torch.matmul(pos.t(), pos)
@@ -43,7 +42,7 @@ class NormalizeRotation(BaseTransform):
 
         data.pos = torch.matmul(data.pos, v)
 
-        if "normal" in data:
+        if 'normal' in data:
             data.normal = F.normalize(torch.matmul(data.normal, v))
 
         return data

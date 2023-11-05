@@ -54,7 +54,6 @@ class FusedAggregation(Aggregation):
     Args:
         aggrs (list): The list of aggregation schemes to use.
     """
-
     # We can fuse all aggregations together that rely on `scatter` directives.
     FUSABLE_AGGRS = {
         SumAggregation,
@@ -75,47 +74,43 @@ class FusedAggregation(Aggregation):
 
     # Map aggregations to `reduce` options in `scatter` directives.
     REDUCE = {
-        "SumAggregation": "sum",
-        "MeanAggregation": "sum",
-        "MinAggregation": "min",
-        "MaxAggregation": "max",
-        "MulAggregation": "mul",
-        "VarAggregation": "pow_sum",
-        "StdAggregation": "pow_sum",
+        'SumAggregation': 'sum',
+        'MeanAggregation': 'sum',
+        'MinAggregation': 'min',
+        'MaxAggregation': 'max',
+        'MulAggregation': 'mul',
+        'VarAggregation': 'pow_sum',
+        'StdAggregation': 'pow_sum',
     }
 
     def __init__(self, aggrs: List[Union[Aggregation, str]]):
         super().__init__()
 
         if not isinstance(aggrs, (list, tuple)):
-            raise ValueError(
-                f"'aggrs' of '{self.__class__.__name__}' should "
-                f"be a list or tuple (got '{type(aggrs)}')."
-            )
+            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
+                             f"be a list or tuple (got '{type(aggrs)}').")
 
         if len(aggrs) == 0:
-            raise ValueError(
-                f"'aggrs' of '{self.__class__.__name__}' should " f"not be empty."
-            )
+            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
+                             f"not be empty.")
 
         aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
         aggr_classes = [aggr.__class__ for aggr in aggrs]
         self.aggr_names = [cls.__name__ for cls in aggr_classes]
         self.aggr_index: Dict[str, int] = {
-            name: i for i, name in enumerate(self.aggr_names)
+            name: i
+            for i, name in enumerate(self.aggr_names)
         }
 
         for cls in aggr_classes:
             if cls not in self.FUSABLE_AGGRS:
-                raise ValueError(
-                    f"Received aggregation '{cls.__name__}' in "
-                    f"'{self.__class__.__name__}' which is not "
-                    f"fusable"
-                )
+                raise ValueError(f"Received aggregation '{cls.__name__}' in "
+                                 f"'{self.__class__.__name__}' which is not "
+                                 f"fusable")
 
         self.semi_grad = False
         for aggr in aggrs:
-            if hasattr(aggr, "semi_grad"):
+            if hasattr(aggr, 'semi_grad'):
                 self.semi_grad = self.semi_grad or aggr.semi_grad
 
         # Check whether we need to compute degree information:
@@ -132,67 +127,55 @@ class FusedAggregation(Aggregation):
         lookup_ops: List[Optional[Tuple[str, int]]] = []
 
         for name in self.aggr_names:
-            if name == "MeanAggregation":
+            if name == 'MeanAggregation':
                 # Directly use output of `SumAggregation`:
-                if "SumAggregation" in self.aggr_index:
+                if 'SumAggregation' in self.aggr_index:
                     reduce_ops.append(None)
-                    lookup_ops.append(
-                        (
-                            "SumAggregation",
-                            self.aggr_index["SumAggregation"],
-                        )
-                    )
+                    lookup_ops.append((
+                        'SumAggregation',
+                        self.aggr_index['SumAggregation'],
+                    ))
                 else:
                     reduce_ops.append(self.REDUCE[name])
                     lookup_ops.append(None)
 
-            elif name == "VarAggregation":
-                if "MeanAggregation" in self.aggr_index:
+            elif name == 'VarAggregation':
+                if 'MeanAggregation' in self.aggr_index:
                     reduce_ops.append(self.REDUCE[name])
-                    lookup_ops.append(
-                        (
-                            "MeanAggregation",
-                            self.aggr_index["MeanAggregation"],
-                        )
-                    )
-                elif "SumAggregation" in self.aggr_index:
+                    lookup_ops.append((
+                        'MeanAggregation',
+                        self.aggr_index['MeanAggregation'],
+                    ))
+                elif 'SumAggregation' in self.aggr_index:
                     reduce_ops.append(self.REDUCE[name])
-                    lookup_ops.append(
-                        (
-                            "SumAggregation",
-                            self.aggr_index["SumAggregation"],
-                        )
-                    )
+                    lookup_ops.append((
+                        'SumAggregation',
+                        self.aggr_index['SumAggregation'],
+                    ))
                 else:
                     reduce_ops.append(self.REDUCE[name])
                     lookup_ops.append(None)
 
-            elif name == "StdAggregation":
+            elif name == 'StdAggregation':
                 # Directly use output of `VarAggregation`:
-                if "VarAggregation" in self.aggr_index:
+                if 'VarAggregation' in self.aggr_index:
                     reduce_ops.append(None)
-                    lookup_ops.append(
-                        (
-                            "VarAggregation",
-                            self.aggr_index["VarAggregation"],
-                        )
-                    )
-                elif "MeanAggregation" in self.aggr_index:
+                    lookup_ops.append((
+                        'VarAggregation',
+                        self.aggr_index['VarAggregation'],
+                    ))
+                elif 'MeanAggregation' in self.aggr_index:
                     reduce_ops.append(self.REDUCE[name])
-                    lookup_ops.append(
-                        (
-                            "MeanAggregation",
-                            self.aggr_index["MeanAggregation"],
-                        )
-                    )
-                elif "SumAggregation" in self.aggr_index:
+                    lookup_ops.append((
+                        'MeanAggregation',
+                        self.aggr_index['MeanAggregation'],
+                    ))
+                elif 'SumAggregation' in self.aggr_index:
                     reduce_ops.append(self.REDUCE[name])
-                    lookup_ops.append(
-                        (
-                            "SumAggregation",
-                            self.aggr_index["SumAggregation"],
-                        )
-                    )
+                    lookup_ops.append((
+                        'SumAggregation',
+                        self.aggr_index['SumAggregation'],
+                    ))
                 else:
                     reduce_ops.append(self.REDUCE[name])
                     lookup_ops.append(None)
@@ -204,14 +187,10 @@ class FusedAggregation(Aggregation):
         self.reduce_ops: List[Optional[str]] = reduce_ops
         self.lookup_ops: List[Optional[Tuple[str, int]]] = lookup_ops
 
-    def forward(
-        self,
-        x: Tensor,
-        index: Optional[Tensor] = None,
-        ptr: Optional[Tensor] = None,
-        dim_size: Optional[int] = None,
-        dim: int = -2,
-    ) -> List[Tensor]:
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> List[Tensor]:
+
         # Assert two-dimensional input for now to simplify computation:
         # TODO refactor this to support any dimension.
         self.assert_index_present(index)
@@ -242,13 +221,12 @@ class FusedAggregation(Aggregation):
                 continue
             assert isinstance(reduce, str)
 
-            if reduce == "pow_sum":
+            if reduce == 'pow_sum':
                 if self.semi_grad:
-                    out = scatter(
-                        x.detach() * x.detach(), index, 0, dim_size, reduce="sum"
-                    )
+                    out = scatter(x.detach() * x.detach(), index, 0, dim_size,
+                                  reduce='sum')
                 else:
-                    out = scatter(x * x, index, 0, dim_size, reduce="sum")
+                    out = scatter(x * x, index, 0, dim_size, reduce='sum')
             else:
                 out = scatter(x, index, 0, dim_size, reduce=reduce)
 
@@ -257,7 +235,7 @@ class FusedAggregation(Aggregation):
         #######################################################################
 
         # Compute `MeanAggregation` first to be able to re-use it:
-        i = self.aggr_index.get("MeanAggregation")
+        i = self.aggr_index.get('MeanAggregation')
         if i is not None:
             assert count is not None
 
@@ -267,7 +245,7 @@ class FusedAggregation(Aggregation):
                 lookup_op = self.lookup_ops[i]
                 assert lookup_op is not None
                 tmp_aggr, j = lookup_op
-                assert tmp_aggr == "SumAggregation"
+                assert tmp_aggr == 'SumAggregation'
 
                 sum_ = outs[j]
 
@@ -275,23 +253,23 @@ class FusedAggregation(Aggregation):
             outs[i] = sum_ / count
 
         # Compute `VarAggregation` second to be able to re-use it:
-        i = self.aggr_index.get("VarAggregation")
+        i = self.aggr_index.get('VarAggregation')
         if i is not None:
             assert count is not None
 
             if self.lookup_ops[i] is None:
-                sum_ = scatter(x, index, 0, dim_size, reduce="sum")
+                sum_ = scatter(x, index, 0, dim_size, reduce='sum')
                 mean = sum_ / count
             else:
                 lookup_op = self.lookup_ops[i]
                 assert lookup_op is not None
                 tmp_aggr, j = lookup_op
 
-                if tmp_aggr == "SumAggregation":
+                if tmp_aggr == 'SumAggregation':
                     sum_ = outs[j]
                     assert sum_ is not None
                     mean = sum_ / count
-                elif tmp_aggr == "MeanAggregation":
+                elif tmp_aggr == 'MeanAggregation':
                     mean = outs[j]
                 else:
                     raise NotImplementedError
@@ -303,7 +281,7 @@ class FusedAggregation(Aggregation):
             outs[i] = (pow_sum / count) - (mean * mean)
 
         # Compute `StdAggregation` last:
-        i = self.aggr_index.get("StdAggregation")
+        i = self.aggr_index.get('StdAggregation')
         if i is not None:
             var: Optional[Tensor] = None
             pow_sum: Optional[Tensor] = None
@@ -311,7 +289,7 @@ class FusedAggregation(Aggregation):
 
             if self.lookup_ops[i] is None:
                 pow_sum = outs[i]
-                sum_ = scatter(x, index, 0, dim_size, reduce="sum")
+                sum_ = scatter(x, index, 0, dim_size, reduce='sum')
                 assert count is not None
                 mean = sum_ / count
             else:
@@ -319,15 +297,15 @@ class FusedAggregation(Aggregation):
                 assert lookup_op is not None
                 tmp_aggr, j = lookup_op
 
-                if tmp_aggr == "VarAggregation":
+                if tmp_aggr == 'VarAggregation':
                     var = outs[j]
-                elif tmp_aggr == "SumAggregation":
+                elif tmp_aggr == 'SumAggregation':
                     pow_sum = outs[i]
                     sum_ = outs[j]
                     assert sum_ is not None
                     assert count is not None
                     mean = sum_ / count
-                elif tmp_aggr == "MeanAggregation":
+                elif tmp_aggr == 'MeanAggregation':
                     pow_sum = outs[i]
                     mean = outs[j]
                 else:

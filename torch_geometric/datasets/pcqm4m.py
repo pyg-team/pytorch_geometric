@@ -36,33 +36,31 @@ class PCQM4Mv2(OnDiskDataset):
         backend (str): The :class:`Database` backend to use.
             (default: :obj:`"sqlite"`)
     """
-
-    url = (
-        "https://dgl-data.s3-accelerate.amazonaws.com/dataset/OGB-LSC/" "pcqm4m-v2.zip"
-    )
+    url = ('https://dgl-data.s3-accelerate.amazonaws.com/dataset/OGB-LSC/'
+           'pcqm4m-v2.zip')
 
     split_mapping = {
-        "train": "train",
-        "val": "valid",
-        "test": "test-dev",
-        "holdout": "test-challenge",
+        'train': 'train',
+        'val': 'valid',
+        'test': 'test-dev',
+        'holdout': 'test-challenge',
     }
 
     def __init__(
         self,
         root: str,
-        split: str = "train",
+        split: str = 'train',
         transform: Optional[Callable] = None,
-        backend: str = "sqlite",
+        backend: str = 'sqlite',
     ):
-        assert split in ["train", "val", "test", "holdout"]
+        assert split in ['train', 'val', 'test', 'holdout']
 
         schema = {
-            "x": dict(dtype=torch.int64, size=(-1, 9)),
-            "edge_index": dict(dtype=torch.int64, size=(2, -1)),
-            "edge_attr": dict(dtype=torch.int64, size=(-1, 3)),
-            "smiles": str,
-            "y": float,
+            'x': dict(dtype=torch.int64, size=(-1, 9)),
+            'edge_index': dict(dtype=torch.int64, size=(2, -1)),
+            'edge_attr': dict(dtype=torch.int64, size=(-1, 3)),
+            'smiles': str,
+            'y': float,
         }
 
         super().__init__(root, transform, backend=backend, schema=schema)
@@ -73,8 +71,8 @@ class PCQM4Mv2(OnDiskDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            osp.join("pcqm4m-v2", "raw", "data.csv.gz"),
-            osp.join("pcqm4m-v2", "split_dict.pt"),
+            osp.join('pcqm4m-v2', 'raw', 'data.csv.gz'),
+            osp.join('pcqm4m-v2', 'split_dict.pt'),
         ]
 
     def download(self):
@@ -88,7 +86,7 @@ class PCQM4Mv2(OnDiskDataset):
         df = pd.read_csv(self.raw_paths[0])
 
         data_list: List[Data] = []
-        iterator = enumerate(zip(df["smiles"], df["homolumogap"]))
+        iterator = enumerate(zip(df['smiles'], df['homolumogap']))
         for i, (smiles, y) in tqdm(iterator, total=len(df)):
             data = from_smiles(smiles)
             data.y = y

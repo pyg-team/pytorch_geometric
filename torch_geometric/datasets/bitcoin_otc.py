@@ -50,26 +50,22 @@ class BitcoinOTC(InMemoryDataset):
           - 0
     """
 
-    url = "https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz"
+    url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(
-        self,
-        root: str,
-        edge_window_size: int = 10,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, edge_window_size: int = 10,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.edge_window_size = edge_window_size
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
-        return "soc-sign-bitcoinotc.csv"
+        return 'soc-sign-bitcoinotc.csv'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     @property
     def num_nodes(self) -> int:
@@ -81,9 +77,9 @@ class BitcoinOTC(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        with open(self.raw_paths[0], "r") as f:
-            data = f.read().split("\n")[:-1]
-            data = [[x for x in line.split(",")] for line in data]
+        with open(self.raw_paths[0], 'r') as f:
+            data = f.read().split('\n')[:-1]
+            data = [[x for x in line.split(',')] for line in data]
 
             edge_index = [[int(line[0]), int(line[1])] for line in data]
             edge_index = torch.tensor(edge_index, dtype=torch.long)

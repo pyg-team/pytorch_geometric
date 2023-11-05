@@ -56,8 +56,7 @@ class BrcaTcga(InMemoryDataset):
           - 271,771
           - 1,082
     """
-
-    url = "https://zenodo.org/record/8251328/files/brca_tcga.zip?download=1"
+    url = 'https://zenodo.org/record/8251328/files/brca_tcga.zip?download=1'
 
     def __init__(
         self,
@@ -71,25 +70,25 @@ class BrcaTcga(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["graph_idx.csv", "graph_labels.csv", "edge_index.pt"]
+        return ['graph_idx.csv', 'graph_labels.csv', 'edge_index.pt']
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, "brca_tcga"), self.raw_dir)
+        os.rename(osp.join(self.root, 'brca_tcga'), self.raw_dir)
 
     def process(self):
         import pandas as pd
 
         graph_feat = pd.read_csv(self.raw_paths[0], index_col=0).values
         graph_feat = torch.from_numpy(graph_feat).to(torch.float)
-        graph_label = np.loadtxt(self.raw_paths[1], delimiter=",")
+        graph_label = np.loadtxt(self.raw_paths[1], delimiter=',')
         graph_label = torch.from_numpy(graph_label).to(torch.float)
         edge_index = torch.load(self.raw_paths[2])
 

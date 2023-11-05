@@ -7,7 +7,7 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-MISSING = "???"
+MISSING = '???'
 
 
 @torch.jit._overload
@@ -32,7 +32,7 @@ def coalesce(
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = "add",
+    reduce: str = 'add',
     is_sorted: bool = False,
     sort_by_row: bool = True,
 ) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:

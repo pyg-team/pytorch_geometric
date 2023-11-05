@@ -41,33 +41,13 @@ class PascalPF(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
-    url = (
-        "https://www.di.ens.fr/willow/research/proposalflow/dataset/"
-        "PF-dataset-PASCAL.zip"
-    )
+    url = ('https://www.di.ens.fr/willow/research/proposalflow/dataset/'
+           'PF-dataset-PASCAL.zip')
 
     categories = [
-        "aeroplane",
-        "bicycle",
-        "bird",
-        "boat",
-        "bottle",
-        "bus",
-        "car",
-        "cat",
-        "chair",
-        "cow",
-        "diningtable",
-        "dog",
-        "horse",
-        "motorbike",
-        "person",
-        "pottedplant",
-        "sheep",
-        "sofa",
-        "train",
-        "tvmonitor",
+        'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat',
+        'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person',
+        'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
     ]
 
     def __init__(
@@ -86,30 +66,30 @@ class PascalPF(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["Annotations", "parsePascalVOC.mat"]
+        return ['Annotations', 'parsePascalVOC.mat']
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [f"{self.category}.pt", f"{self.category}_pairs.pt"]
+        return [f'{self.category}.pt', f'{self.category}_pairs.pt']
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, "PF-dataset-PASCAL"), self.raw_dir)
+        os.rename(osp.join(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
 
     def process(self):
         from scipy.io import loadmat
 
-        path = osp.join(self.raw_dir, "Annotations", self.category, "*.mat")
+        path = osp.join(self.raw_dir, 'Annotations', self.category, '*.mat')
         filenames = glob.glob(path)
 
         names = []
         data_list = []
         for filename in filenames:
-            name = filename.split(os.sep)[-1].split(".")[0]
+            name = filename.split(os.sep)[-1].split('.')[0]
 
-            pos = torch.from_numpy(loadmat(filename)["kps"]).to(torch.float)
+            pos = torch.from_numpy(loadmat(filename)['kps']).to(torch.float)
             mask = ~torch.isnan(pos[:, 0])
             pos = pos[mask]
 
@@ -129,10 +109,9 @@ class PascalPF(InMemoryDataset):
             names.append(name)
             data_list.append(data)
 
-        pairs = loadmat(osp.join(self.raw_dir, "parsePascalVOC.mat"))
-        pairs = pairs["PascalVOC"]["pair"][0, 0][
-            0, self.categories.index(self.category)
-        ]
+        pairs = loadmat(osp.join(self.raw_dir, 'parsePascalVOC.mat'))
+        pairs = pairs['PascalVOC']['pair'][0, 0][
+            0, self.categories.index(self.category)]
 
         pairs = [(names.index(x[0][0]), names.index(x[1][0])) for x in pairs]
 
@@ -140,4 +119,5 @@ class PascalPF(InMemoryDataset):
         torch.save(pairs, self.processed_paths[1])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({len(self)}, " f"category={self.category})"
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'category={self.category})')

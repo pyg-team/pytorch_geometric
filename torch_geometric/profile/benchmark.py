@@ -8,11 +8,8 @@ from torch_geometric.utils import is_torch_sparse_tensor
 
 
 def require_grad(x: Any, requires_grad: bool = True) -> Any:
-    if (
-        isinstance(x, Tensor)
-        and x.is_floating_point()
-        and not is_torch_sparse_tensor(x)
-    ):
+    if (isinstance(x, Tensor) and x.is_floating_point()
+            and not is_torch_sparse_tensor(x)):
         return x.detach().requires_grad_(requires_grad)
     elif isinstance(x, list):
         return [require_grad(v, requires_grad) for v in x]
@@ -59,23 +56,19 @@ def benchmark(
     from tabulate import tabulate
 
     if num_steps <= 0:
-        raise ValueError(
-            f"'num_steps' must be a positive integer " f"(got {num_steps})"
-        )
+        raise ValueError(f"'num_steps' must be a positive integer "
+                         f"(got {num_steps})")
 
     if num_warmups <= 0:
-        raise ValueError(
-            f"'num_warmups' must be a positive integer " f"(got {num_warmups})"
-        )
+        raise ValueError(f"'num_warmups' must be a positive integer "
+                         f"(got {num_warmups})")
 
     if func_names is None:
         func_names = [get_func_name(func) for func in funcs]
 
     if len(funcs) != len(func_names):
-        raise ValueError(
-            f"Length of 'funcs' (got {len(funcs)}) and "
-            f"'func_names' (got {len(func_names)}) must be equal"
-        )
+        raise ValueError(f"Length of 'funcs' (got {len(funcs)}) and "
+                         f"'func_names' (got {len(func_names)}) must be equal")
 
     # Zero-copy `args` for each function (if necessary):
     args_list = [args] * len(funcs) if not isinstance(args, list) else args
@@ -83,7 +76,6 @@ def benchmark(
     iterator = zip(funcs, args_list, func_names)
     if progress_bar:
         from tqdm import tqdm
-
         iterator = tqdm(iterator, total=len(funcs))
 
     ts: List[List[str]] = []
@@ -122,27 +114,27 @@ def benchmark(
                     t_backward += time.perf_counter() - t_start
 
         if per_step:
-            ts.append([name, f"{t_forward/num_steps:.6f}s"])
+            ts.append([name, f'{t_forward/num_steps:.6f}s'])
         else:
-            ts.append([name, f"{t_forward:.4f}s"])
+            ts.append([name, f'{t_forward:.4f}s'])
         if backward:
             if per_step:
-                ts[-1].append(f"{t_backward/num_steps:.6f}s")
-                ts[-1].append(f"{(t_forward + t_backward)/num_steps:.6f}s")
+                ts[-1].append(f'{t_backward/num_steps:.6f}s')
+                ts[-1].append(f'{(t_forward + t_backward)/num_steps:.6f}s')
             else:
-                ts[-1].append(f"{t_backward:.4f}s")
-                ts[-1].append(f"{t_forward + t_backward:.4f}s")
+                ts[-1].append(f'{t_backward:.4f}s')
+                ts[-1].append(f'{t_forward + t_backward:.4f}s')
 
-    header = ["Name", "Forward"]
+    header = ['Name', 'Forward']
     if backward:
-        header.extend(["Backward", "Total"])
+        header.extend(['Backward', 'Total'])
 
-    print(tabulate(ts, headers=header, tablefmt="psql"))
+    print(tabulate(ts, headers=header, tablefmt='psql'))
 
 
 def get_func_name(func: Callable) -> str:
-    if hasattr(func, "__name__"):
+    if hasattr(func, '__name__'):
         return func.__name__
-    elif hasattr(func, "__class__"):
+    elif hasattr(func, '__class__'):
         return func.__class__.__name__
     raise ValueError("Could not infer name for function '{func}'")

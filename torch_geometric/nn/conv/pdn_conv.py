@@ -44,18 +44,10 @@ class PDNConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+    def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
+                 hidden_channels: int, add_self_loops: bool = True,
+                 normalize: bool = True, bias: bool = True, **kwargs):
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        edge_dim: int,
-        hidden_channels: int,
-        add_self_loops: bool = True,
-        normalize: bool = True,
-        bias: bool = True,
-        **kwargs,
-    ):
         kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
@@ -91,9 +83,9 @@ class PDNConv(MessagePassing):
         zeros(self.mlp[2].bias)
         zeros(self.bias)
 
-    def forward(
-        self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_attr: OptTensor = None) -> Tensor:
+
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
 
@@ -101,29 +93,18 @@ class PDNConv(MessagePassing):
             edge_attr = self.mlp(edge_attr).squeeze(-1)
 
         if isinstance(edge_index, SparseTensor):
-            edge_index = edge_index.set_value(edge_attr, layout="coo")
+            edge_index = edge_index.set_value(edge_attr, layout='coo')
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
-                edge_index, edge_attr = gcn_norm(
-                    edge_index,
-                    edge_attr,
-                    x.size(self.node_dim),
-                    False,
-                    self.add_self_loops,
-                    self.flow,
-                    x.dtype,
-                )
+                edge_index, edge_attr = gcn_norm(edge_index, edge_attr,
+                                                 x.size(self.node_dim), False,
+                                                 self.add_self_loops,
+                                                 self.flow, x.dtype)
             elif isinstance(edge_index, SparseTensor):
-                edge_index = gcn_norm(
-                    edge_index,
-                    None,
-                    x.size(self.node_dim),
-                    False,
-                    self.add_self_loops,
-                    self.flow,
-                    x.dtype,
-                )
+                edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
+                                      False, self.add_self_loops, self.flow,
+                                      x.dtype)
 
         x = self.lin(x)
 
@@ -142,4 +123,5 @@ class PDNConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

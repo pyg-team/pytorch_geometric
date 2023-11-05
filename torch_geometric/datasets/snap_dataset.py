@@ -18,9 +18,9 @@ from torch_geometric.utils import coalesce
 
 class EgoData(Data):
     def __inc__(self, key: str, value: Any, *args, **kwargs):
-        if key == "circle":
+        if key == 'circle':
             return self.num_nodes
-        elif key == "circle_batch":
+        elif key == 'circle_batch':
             return int(value.max()) + 1 if value.numel() > 0 else 0
         return super().__inc__(key, value, *args, **kwargs)
 
@@ -30,15 +30,14 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
     all_featnames = []
     files = [
-        x
-        for x in files
-        if x.split(".")[-1] in ["circles", "edges", "egofeat", "feat", "featnames"]
+        x for x in files if x.split('.')[-1] in
+        ['circles', 'edges', 'egofeat', 'feat', 'featnames']
     ]
     for i in range(4, len(files), 5):
         featnames_file = files[i]
-        with open(featnames_file, "r") as f:
-            featnames = f.read().split("\n")[:-1]
-            featnames = [" ".join(x.split(" ")[1:]) for x in featnames]
+        with open(featnames_file, 'r') as f:
+            featnames = f.read().split('\n')[:-1]
+            featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             all_featnames += featnames
     all_featnames = sorted(list(set(all_featnames)))
     all_featnames = {key: i for i, key in enumerate(all_featnames)}
@@ -52,27 +51,27 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         featnames_file = files[i + 4]
 
         x = None
-        if name != "gplus":  # Don't read node features on g-plus:
-            x_ego = pd.read_csv(egofeat_file, sep=" ", header=None, dtype=np.float32)
+        if name != 'gplus':  # Don't read node features on g-plus:
+            x_ego = pd.read_csv(egofeat_file, sep=' ', header=None,
+                                dtype=np.float32)
             x_ego = torch.from_numpy(x_ego.values)
 
-            x = pd.read_csv(feat_file, sep=" ", header=None, dtype=np.float32)
+            x = pd.read_csv(feat_file, sep=' ', header=None, dtype=np.float32)
             x = torch.from_numpy(x.values)[:, 1:]
 
             x_all = torch.cat([x, x_ego], dim=0)
 
             # Reorder `x` according to `featnames` ordering.
             x_all = torch.zeros(x.size(0), len(all_featnames))
-            with open(featnames_file, "r") as f:
-                featnames = f.read().split("\n")[:-1]
-                featnames = [" ".join(x.split(" ")[1:]) for x in featnames]
+            with open(featnames_file, 'r') as f:
+                featnames = f.read().split('\n')[:-1]
+                featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             indices = [all_featnames[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
 
-        idx = pd.read_csv(
-            feat_file, sep=" ", header=None, dtype=str, usecols=[0]
-        ).squeeze()
+        idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
+                          usecols=[0]).squeeze()
 
         idx_assoc = {}
         for i, j in enumerate(idx):
@@ -80,8 +79,8 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
         circles = []
         circles_batch = []
-        with open(circles_file, "r") as f:
-            for i, circle in enumerate(f.read().split("\n")[:-1]):
+        with open(circles_file, 'r') as f:
+            for i, circle in enumerate(f.read().split('\n')[:-1]):
                 circle = [idx_assoc[c] for c in circle.split()[1:]]
                 circles += circle
                 circles_batch += [i] * len(circle)
@@ -89,12 +88,10 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         circle_batch = torch.tensor(circles_batch)
 
         try:
-            row = pd.read_csv(
-                edges_file, sep=" ", header=None, dtype=str, usecols=[0]
-            ).squeeze()
-            col = pd.read_csv(
-                edges_file, sep=" ", header=None, dtype=str, usecols=[1]
-            ).squeeze()
+            row = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                              usecols=[0]).squeeze()
+            col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                              usecols=[1]).squeeze()
         except:  # noqa
             continue
 
@@ -104,7 +101,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         N = max(int(row.max()), int(col.max())) + 2
         N = x.size(0) if x is not None else N
 
-        row_ego = torch.full((N - 1,), N - 1, dtype=torch.long)
+        row_ego = torch.full((N - 1, ), N - 1, dtype=torch.long)
         col_ego = torch.arange(N - 1)
 
         # Ego node should be connected to every other node.
@@ -113,9 +110,8 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         edge_index = torch.stack([row, col], dim=0)
         edge_index = coalesce(edge_index, num_nodes=N)
 
-        data = EgoData(
-            x=x, edge_index=edge_index, circle=circle, circle_batch=circle_batch
-        )
+        data = EgoData(x=x, edge_index=edge_index, circle=circle,
+                       circle_batch=circle_batch)
 
         data_list.append(data)
 
@@ -126,12 +122,11 @@ def read_soc(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
     skiprows = 4
-    if name == "pokec":
+    if name == 'pokec':
         skiprows = 0
 
-    edge_index = pd.read_csv(
-        files[0], sep="\t", header=None, skiprows=skiprows, dtype=np.int64
-    )
+    edge_index = pd.read_csv(files[0], sep='\t', header=None,
+                             skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
     num_nodes = edge_index.max().item() + 1
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
@@ -142,13 +137,12 @@ def read_soc(files: List[str], name: str) -> List[Data]:
 def read_wiki(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
-    edge_index = pd.read_csv(
-        files[0], sep="\t", header=None, skiprows=4, dtype=np.int64
-    )
+    edge_index = pd.read_csv(files[0], sep='\t', header=None, skiprows=4,
+                             dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
-    idx_assoc = torch.full((edge_index.max() + 1,), -1, dtype=torch.long)
+    idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
     idx_assoc[idx] = torch.arange(idx.size(0))
 
     edge_index = idx_assoc[edge_index]
@@ -179,20 +173,20 @@ class SNAPDataset(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = "https://snap.stanford.edu/data"
+    url = 'https://snap.stanford.edu/data'
 
     available_datasets = {
-        "ego-facebook": ["facebook.tar.gz"],
-        "ego-gplus": ["gplus.tar.gz"],
-        "ego-twitter": ["twitter.tar.gz"],
-        "soc-ca-astroph": ["ca-AstroPh.txt.gz"],
-        "soc-ca-grqc": ["ca-GrQc.txt.gz"],
-        "soc-epinions1": ["soc-Epinions1.txt.gz"],
-        "soc-livejournal1": ["soc-LiveJournal1.txt.gz"],
-        "soc-pokec": ["soc-pokec-relationships.txt.gz"],
-        "soc-slashdot0811": ["soc-Slashdot0811.txt.gz"],
-        "soc-slashdot0922": ["soc-Slashdot0902.txt.gz"],
-        "wiki-vote": ["wiki-Vote.txt.gz"],
+        'ego-facebook': ['facebook.tar.gz'],
+        'ego-gplus': ['gplus.tar.gz'],
+        'ego-twitter': ['twitter.tar.gz'],
+        'soc-ca-astroph': ['ca-AstroPh.txt.gz'],
+        'soc-ca-grqc': ['ca-GrQc.txt.gz'],
+        'soc-epinions1': ['soc-Epinions1.txt.gz'],
+        'soc-livejournal1': ['soc-LiveJournal1.txt.gz'],
+        'soc-pokec': ['soc-pokec-relationships.txt.gz'],
+        'soc-slashdot0811': ['soc-Slashdot0811.txt.gz'],
+        'soc-slashdot0922': ['soc-Slashdot0902.txt.gz'],
+        'wiki-vote': ['wiki-Vote.txt.gz'],
     }
 
     def __init__(
@@ -210,15 +204,15 @@ class SNAPDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, "raw")
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, "processed")
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def _download(self):
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
@@ -229,10 +223,10 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self):
         for name in self.available_datasets[self.name]:
-            path = download_url(f"{self.url}/{name}", self.raw_dir)
-            if name.endswith(".tar.gz"):
+            path = download_url(f'{self.url}/{name}', self.raw_dir)
+            if name.endswith('.tar.gz'):
                 extract_tar(path, self.raw_dir)
-            elif name.endswith(".gz"):
+            elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
             os.unlink(path)
 
@@ -244,11 +238,11 @@ class SNAPDataset(InMemoryDataset):
 
         raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
 
-        if self.name[:4] == "ego-":
+        if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
-        elif self.name[:4] == "soc-":
+        elif self.name[:4] == 'soc-':
             data_list = read_soc(raw_files, self.name[:4])
-        elif self.name[:5] == "wiki-":
+        elif self.name[:5] == 'wiki-':
             data_list = read_wiki(raw_files, self.name[5:])
         else:
             raise NotImplementedError
@@ -262,4 +256,4 @@ class SNAPDataset(InMemoryDataset):
         self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f"SNAP-{self.name}({len(self)})"
+        return f'SNAP-{self.name}({len(self)})'

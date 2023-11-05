@@ -5,7 +5,7 @@ _wandb_initialized: bool = False
 
 
 def init_wandb(name: str, **kwargs):
-    if "--wandb" not in sys.argv:
+    if '--wandb' not in sys.argv:
         return
 
     from datetime import datetime
@@ -14,8 +14,8 @@ def init_wandb(name: str, **kwargs):
 
     wandb.init(
         project=name,
-        entity="pytorch-geometric",
-        name=datetime.now().strftime("%Y-%m-%d_%H:%M"),
+        entity='pytorch-geometric',
+        name=datetime.now().strftime('%Y-%m-%d_%H:%M'),
         config=kwargs,
     )
 
@@ -26,14 +26,13 @@ def init_wandb(name: str, **kwargs):
 def log(**kwargs):
     def _map(value: Any) -> str:
         if isinstance(value, int) and not isinstance(value, bool):
-            return f"{value:03d}"
+            return f'{value:03d}'
         if isinstance(value, float):
-            return f"{value:.4f}"
+            return f'{value:.4f}'
         return value
 
-    print(", ".join(f"{key}: {_map(value)}" for key, value in kwargs.items()))
+    print(', '.join(f'{key}: {_map(value)}' for key, value in kwargs.items()))
 
     if _wandb_initialized:
         import wandb
-
         wandb.log(kwargs)

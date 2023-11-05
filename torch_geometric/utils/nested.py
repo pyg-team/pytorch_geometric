@@ -72,11 +72,9 @@ def from_nested_tensor(
 
     for dim, (a, b) in enumerate(zip(sizes[0, 1:], sizes.t()[1:])):
         if not torch.equal(a.expand_as(b), b):
-            raise ValueError(
-                f"Not all nested tensors have the same size "
-                f"in dimension {dim + 1} "
-                f"(expected size {a.item()} for all tensors)"
-            )
+            raise ValueError(f"Not all nested tensors have the same size "
+                             f"in dimension {dim + 1} "
+                             f"(expected size {a.item()} for all tensors)")
 
     out = x.contiguous().values()
     out = out.view(-1, *sizes[0, 1:].tolist())

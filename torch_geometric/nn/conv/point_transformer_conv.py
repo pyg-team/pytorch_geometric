@@ -74,17 +74,11 @@ class PointTransformerConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-
-    def __init__(
-        self,
-        in_channels: Union[int, Tuple[int, int]],
-        out_channels: int,
-        pos_nn: Optional[Callable] = None,
-        attn_nn: Optional[Callable] = None,
-        add_self_loops: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "add")
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, pos_nn: Optional[Callable] = None,
+                 attn_nn: Optional[Callable] = None,
+                 add_self_loops: bool = True, **kwargs):
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -114,12 +108,9 @@ class PointTransformerConv(MessagePassing):
         self.lin_src.reset_parameters()
         self.lin_dst.reset_parameters()
 
-    def forward(
-        self,
-        x: Union[Tensor, PairTensor],
-        pos: Union[Tensor, PairTensor],
-        edge_index: Adj,
-    ) -> Tensor:
+    def forward(self, x: Union[Tensor, PairTensor],
+                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+
         if isinstance(x, Tensor):
             alpha = (self.lin_src(x), self.lin_dst(x))
             x: PairTensor = (self.lin(x), x)
@@ -134,8 +125,7 @@ class PointTransformerConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(
-                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0))
-                )
+                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
@@ -143,17 +133,10 @@ class PointTransformerConv(MessagePassing):
         out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha, size=None)
         return out
 
-    def message(
-        self,
-        x_j: Tensor,
-        pos_i: Tensor,
-        pos_j: Tensor,
-        alpha_i: Tensor,
-        alpha_j: Tensor,
-        index: Tensor,
-        ptr: OptTensor,
-        size_i: Optional[int],
-    ) -> Tensor:
+    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
+                alpha_i: Tensor, alpha_j: Tensor, index: Tensor,
+                ptr: OptTensor, size_i: Optional[int]) -> Tensor:
+
         delta = self.pos_nn(pos_i - pos_j)
         alpha = alpha_i - alpha_j + delta
         if self.attn_nn is not None:
@@ -162,4 +145,5 @@ class PointTransformerConv(MessagePassing):
         return alpha * (x_j + delta)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.in_channels}, " f"{self.out_channels})"
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

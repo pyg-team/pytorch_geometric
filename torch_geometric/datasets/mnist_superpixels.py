@@ -53,7 +53,7 @@ class MNISTSuperpixels(InMemoryDataset):
           - 10
     """
 
-    url = "https://data.pyg.org/datasets/MNISTSuperpixels.zip"
+    url = 'https://data.pyg.org/datasets/MNISTSuperpixels.zip'
 
     def __init__(
         self,
@@ -69,11 +69,11 @@ class MNISTSuperpixels(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        return "MNISTSuperpixels.pt"
+        return 'MNISTSuperpixels.pt'
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["train_data.pt", "test_data.pt"]
+        return ['train_data.pt', 'test_data.pt']
 
     def download(self):
         path = download_url(self.url, self.raw_dir)

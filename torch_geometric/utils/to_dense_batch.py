@@ -10,7 +10,7 @@ from torch_geometric.experimental import (
 from torch_geometric.utils import cumsum, scatter
 
 
-@disable_dynamic_shapes(required_args=["batch_size", "max_num_nodes"])
+@disable_dynamic_shapes(required_args=['batch_size', 'max_num_nodes'])
 def to_dense_batch(
     x: Tensor,
     batch: Optional[Tensor] = None,
@@ -104,13 +104,13 @@ def to_dense_batch(
     if batch_size is None:
         batch_size = int(batch.max()) + 1
 
-    num_nodes = scatter(
-        batch.new_ones(x.size(0)), batch, dim=0, dim_size=batch_size, reduce="sum"
-    )
+    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0,
+                        dim_size=batch_size, reduce='sum')
     cum_nodes = cumsum(num_nodes)
 
     filter_nodes = False
-    dynamic_shapes_disabled = is_experimental_mode_enabled("disable_dynamic_shapes")
+    dynamic_shapes_disabled = is_experimental_mode_enabled(
+        'disable_dynamic_shapes')
 
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
@@ -129,7 +129,8 @@ def to_dense_batch(
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
-    mask = torch.zeros(batch_size * max_num_nodes, dtype=torch.bool, device=x.device)
+    mask = torch.zeros(batch_size * max_num_nodes, dtype=torch.bool,
+                       device=x.device)
     mask[idx] = 1
     mask = mask.view(batch_size, max_num_nodes)
 

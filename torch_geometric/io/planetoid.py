@@ -16,14 +16,14 @@ except ImportError:
 
 
 def read_planetoid_data(folder, prefix):
-    names = ["x", "tx", "allx", "y", "ty", "ally", "graph", "test.index"]
+    names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
     items = [read_file(folder, prefix, name) for name in names]
     x, tx, allx, y, ty, ally, graph, test_index = items
     train_index = torch.arange(y.size(0), dtype=torch.long)
     val_index = torch.arange(y.size(0), y.size(0) + 500, dtype=torch.long)
     sorted_test_index = test_index.sort()[0]
 
-    if prefix.lower() == "citeseer":
+    if prefix.lower() == 'citeseer':
         # There are some isolated nodes in the Citeseer graph, resulting in
         # none consecutive test indices. We need to identify them and add them
         # as zero vectors to `tx` and `ty`.
@@ -36,7 +36,7 @@ def read_planetoid_data(folder, prefix):
 
         tx, ty = tx_ext, ty_ext
 
-    if prefix.lower() == "nell.0.001":
+    if prefix.lower() == 'nell.0.001':
         tx_ext = torch.zeros(len(graph) - allx.size(0), x.size(1))
         tx_ext[sorted_test_index - allx.size(0)] = tx
 
@@ -53,17 +53,17 @@ def read_planetoid_data(folder, prefix):
         rows, cols, values = [row], [col], [value]
 
         mask1 = index_to_mask(test_index, size=len(graph))
-        mask2 = index_to_mask(torch.arange(allx.size(0), len(graph)), size=len(graph))
+        mask2 = index_to_mask(torch.arange(allx.size(0), len(graph)),
+                              size=len(graph))
         mask = ~mask1 | ~mask2
-        isolated_index = mask.nonzero(as_tuple=False).view(-1)[allx.size(0) :]
+        isolated_index = mask.nonzero(as_tuple=False).view(-1)[allx.size(0):]
 
         rows += [isolated_index]
         cols += [torch.arange(isolated_index.size(0)) + x.size(1)]
         values += [torch.ones(isolated_index.size(0))]
 
-        x = SparseTensor(
-            row=torch.cat(rows), col=torch.cat(cols), value=torch.cat(values)
-        )
+        x = SparseTensor(row=torch.cat(rows), col=torch.cat(cols),
+                         value=torch.cat(values))
     else:
         x = torch.cat([allx, tx], dim=0)
         x[test_index] = x[sorted_test_index]
@@ -86,19 +86,19 @@ def read_planetoid_data(folder, prefix):
 
 
 def read_file(folder, prefix, name):
-    path = osp.join(folder, f"ind.{prefix.lower()}.{name}")
+    path = osp.join(folder, f'ind.{prefix.lower()}.{name}')
 
-    if name == "test.index":
+    if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)
 
-    with open(path, "rb") as f:
-        warnings.filterwarnings("ignore", ".*`scipy.sparse.csr` name.*")
-        out = pickle.load(f, encoding="latin1")
+    with open(path, 'rb') as f:
+        warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
+        out = pickle.load(f, encoding='latin1')
 
-    if name == "graph":
+    if name == 'graph':
         return out
 
-    out = out.todense() if hasattr(out, "todense") else out
+    out = out.todense() if hasattr(out, 'todense') else out
     out = torch.from_numpy(out).to(torch.float)
     return out
 

@@ -68,28 +68,20 @@ class GCN2Conv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
-
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(
-        self,
-        channels: int,
-        alpha: float,
-        theta: float = None,
-        layer: int = None,
-        shared_weights: bool = True,
-        cached: bool = False,
-        add_self_loops: bool = True,
-        normalize: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "add")
+    def __init__(self, channels: int, alpha: float, theta: float = None,
+                 layer: int = None, shared_weights: bool = True,
+                 cached: bool = False, add_self_loops: bool = True,
+                 normalize: bool = True, **kwargs):
+
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.channels = channels
         self.alpha = alpha
-        self.beta = 1.0
+        self.beta = 1.
         if theta is not None or layer is not None:
             assert theta is not None and layer is not None
             self.beta = log(theta / layer + 1)
@@ -103,7 +95,7 @@ class GCN2Conv(MessagePassing):
         self.weight1 = Parameter(torch.empty(channels, channels))
 
         if shared_weights:
-            self.register_parameter("weight2", None)
+            self.register_parameter('weight2', None)
         else:
             self.weight2 = Parameter(torch.empty(channels, channels))
 
@@ -116,22 +108,16 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(
-        self, x: Tensor, x_0: Tensor, edge_index: Adj, edge_weight: OptTensor = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index,
-                        edge_weight,
-                        x.size(self.node_dim),
-                        False,
-                        self.add_self_loops,
-                        self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, edge_weight, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -141,14 +127,8 @@ class GCN2Conv(MessagePassing):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
-                        edge_index,
-                        edge_weight,
-                        x.size(self.node_dim),
-                        False,
-                        self.add_self_loops,
-                        self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, edge_weight, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -158,18 +138,17 @@ class GCN2Conv(MessagePassing):
         x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
         x.mul_(1 - self.alpha)
-        x_0 = self.alpha * x_0[: x.size(0)]
+        x_0 = self.alpha * x_0[:x.size(0)]
 
         if self.weight2 is None:
             out = x.add_(x_0)
-            out = torch.addmm(
-                out, out, self.weight1, beta=1.0 - self.beta, alpha=self.beta
-            )
+            out = torch.addmm(out, out, self.weight1, beta=1. - self.beta,
+                              alpha=self.beta)
         else:
-            out = torch.addmm(x, x, self.weight1, beta=1.0 - self.beta, alpha=self.beta)
-            out = out + torch.addmm(
-                x_0, x_0, self.weight2, beta=1.0 - self.beta, alpha=self.beta
-            )
+            out = torch.addmm(x, x, self.weight1, beta=1. - self.beta,
+                              alpha=self.beta)
+            out = out + torch.addmm(x_0, x_0, self.weight2,
+                                    beta=1. - self.beta, alpha=self.beta)
 
         return out
 
@@ -180,7 +159,5 @@ class GCN2Conv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.channels}, "
-            f"alpha={self.alpha}, beta={self.beta})"
-        )
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'alpha={self.alpha}, beta={self.beta})')

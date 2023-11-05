@@ -41,7 +41,6 @@ class TransE(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -59,15 +58,11 @@ class TransE(KGEModel):
         self.reset_parameters()
 
     def reset_parameters(self):
-        bound = 6.0 / math.sqrt(self.hidden_channels)
+        bound = 6. / math.sqrt(self.hidden_channels)
         torch.nn.init.uniform_(self.node_emb.weight, -bound, bound)
         torch.nn.init.uniform_(self.rel_emb.weight, -bound, bound)
-        F.normalize(
-            self.rel_emb.weight.data,
-            p=self.p_norm,
-            dim=-1,
-            out=self.rel_emb.weight.data,
-        )
+        F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
+                    out=self.rel_emb.weight.data)
 
     def forward(
         self,
@@ -75,6 +70,7 @@ class TransE(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
+
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
@@ -91,6 +87,7 @@ class TransE(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
+
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 

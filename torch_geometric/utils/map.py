@@ -57,12 +57,11 @@ def map_index(
     if src.is_floating_point():
         raise ValueError(f"Expected 'src' to be an index (got '{src.dtype}')")
     if index.is_floating_point():
-        raise ValueError(f"Expected 'index' to be an index (got " f"'{index.dtype}')")
+        raise ValueError(f"Expected 'index' to be an index (got "
+                         f"'{index.dtype}')")
     if src.device != index.device:
-        raise ValueError(
-            f"Both 'src' and 'index' must be on the same device "
-            f"(got '{src.device}' and '{index.device}')"
-        )
+        raise ValueError(f"Both 'src' and 'index' must be on the same device "
+                         f"(got '{src.device}' and '{index.device}')")
 
     if max_index is None:
         max_index = max(src.max(), index.max())
@@ -76,8 +75,9 @@ def map_index(
         if inclusive:
             assoc = src.new_empty(max_index + 1)
         else:
-            assoc = src.new_full((max_index + 1,), -1)
-        assoc[index] = torch.arange(index.numel(), dtype=src.dtype, device=src.device)
+            assoc = src.new_full((max_index + 1, ), -1)
+        assoc[index] = torch.arange(index.numel(), dtype=src.dtype,
+                                    device=src.device)
         out = assoc[src]
 
         if inclusive:
@@ -90,40 +90,33 @@ def map_index(
     if src.is_cuda:
         try:
             import cudf
-
             WITH_CUDF = True
         except ImportError:
             import pandas as pd
-
-            warnings.warn(
-                "Using CPU-based processing within 'map_index' "
-                "which may cause slowdowns and device "
-                "synchronization. Consider installing 'cudf' to "
-                "accelerate computation"
-            )
+            warnings.warn("Using CPU-based processing within 'map_index' "
+                          "which may cause slowdowns and device "
+                          "synchronization. Consider installing 'cudf' to "
+                          "accelerate computation")
     else:
         import pandas as pd
 
     if not WITH_CUDF:
-        left_ser = pd.Series(src.cpu().numpy(), name="left_ser")
+        left_ser = pd.Series(src.cpu().numpy(), name='left_ser')
         right_ser = pd.Series(
             index=index.cpu().numpy(),
             data=pd.RangeIndex(0, index.size(0)),
-            name="right_ser",
+            name='right_ser',
         )
 
-        result = pd.merge(
-            left_ser, right_ser, how="left", left_on="left_ser", right_index=True
-        )
+        result = pd.merge(left_ser, right_ser, how='left', left_on='left_ser',
+                          right_index=True)
 
-        out = torch.from_numpy(result["right_ser"].values).to(index.device)
+        out = torch.from_numpy(result['right_ser'].values).to(index.device)
 
         if out.is_floating_point() and inclusive:
-            raise ValueError(
-                "Found invalid entries in 'src' that do not have "
-                "a corresponding entry in 'index'. Set "
-                "`inclusive=False` to ignore these entries."
-            )
+            raise ValueError("Found invalid entries in 'src' that do not have "
+                             "a corresponding entry in 'index'. Set "
+                             "`inclusive=False` to ignore these entries.")
 
         if out.is_floating_point():
             mask = torch.isnan(out).logical_not_()
@@ -137,33 +130,25 @@ def map_index(
             return out[mask], mask
 
     else:
-        left_ser = cudf.Series(src, name="left_ser")
+        left_ser = cudf.Series(src, name='left_ser')
         right_ser = cudf.Series(
             index=index,
             data=cudf.RangeIndex(0, index.size(0)),
-            name="right_ser",
+            name='right_ser',
         )
 
-        result = cudf.merge(
-            left_ser,
-            right_ser,
-            how="left",
-            left_on="left_ser",
-            right_index=True,
-            sort=True,
-        )
+        result = cudf.merge(left_ser, right_ser, how='left',
+                            left_on='left_ser', right_index=True, sort=True)
 
         if inclusive:
             try:
-                out = from_dlpack(result["right_ser"].to_dlpack())
+                out = from_dlpack(result['right_ser'].to_dlpack())
             except ValueError:
-                raise ValueError(
-                    "Found invalid entries in 'src' that do not "
-                    "have a corresponding entry in 'index'. Set "
-                    "`inclusive=False` to ignore these entries."
-                )
+                raise ValueError("Found invalid entries in 'src' that do not "
+                                 "have a corresponding entry in 'index'. Set "
+                                 "`inclusive=False` to ignore these entries.")
         else:
-            out = from_dlpack(result["right_ser"].fillna(-1).to_dlpack())
+            out = from_dlpack(result['right_ser'].fillna(-1).to_dlpack())
 
         out = out[src.argsort().argsort()]  # Restore original order.
 

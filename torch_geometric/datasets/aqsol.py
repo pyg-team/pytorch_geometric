@@ -65,46 +65,38 @@ class AQSOL(InMemoryDataset):
           - 1
           - 1
     """
+    url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 
-    url = "https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1"
-
-    def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-    ):
-        assert split in ["train", "val", "test"]
+    def __init__(self, root: str, split: str = 'train',
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
-        path = osp.join(self.processed_dir, f"{split}.pt")
+        path = osp.join(self.processed_dir, f'{split}.pt')
         self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            "train.pickle",
-            "val.pickle",
-            "test.pickle",
-            "atom_dict.pickle",
-            "bond_dict.pickle",
+            'train.pickle', 'val.pickle', 'test.pickle', 'atom_dict.pickle',
+            'bond_dict.pickle'
         ]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["train.pt", "val.pt", "test.pt"]
+        return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         shutil.rmtree(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.rename(osp.join(self.root, "asqol_graph_raw"), self.raw_dir)
+        os.rename(osp.join(self.root, 'asqol_graph_raw'), self.raw_dir)
         os.unlink(path)
 
     def process(self):
         for raw_path, path in zip(self.raw_paths, self.processed_paths):
-            with open(raw_path, "rb") as f:
+            with open(raw_path, 'rb') as f:
                 graphs = pickle.load(f)
 
             data_list: List[Data] = []
@@ -119,7 +111,8 @@ class AQSOL(InMemoryDataset):
                 if edge_index.numel() == 0:
                     continue  # Skipping for graphs with no bonds/edges.
 
-                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                            y=y)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
@@ -133,72 +126,13 @@ class AQSOL(InMemoryDataset):
 
     def atoms(self) -> List[str]:
         return [
-            "Br",
-            "C",
-            "N",
-            "O",
-            "Cl",
-            "Zn",
-            "F",
-            "P",
-            "S",
-            "Na",
-            "Al",
-            "Si",
-            "Mo",
-            "Ca",
-            "W",
-            "Pb",
-            "B",
-            "V",
-            "Co",
-            "Mg",
-            "Bi",
-            "Fe",
-            "Ba",
-            "K",
-            "Ti",
-            "Sn",
-            "Cd",
-            "I",
-            "Re",
-            "Sr",
-            "H",
-            "Cu",
-            "Ni",
-            "Lu",
-            "Pr",
-            "Te",
-            "Ce",
-            "Nd",
-            "Gd",
-            "Zr",
-            "Mn",
-            "As",
-            "Hg",
-            "Sb",
-            "Cr",
-            "Se",
-            "La",
-            "Dy",
-            "Y",
-            "Pd",
-            "Ag",
-            "In",
-            "Li",
-            "Rh",
-            "Nb",
-            "Hf",
-            "Cs",
-            "Ru",
-            "Au",
-            "Sm",
-            "Ta",
-            "Pt",
-            "Ir",
-            "Be",
-            "Ge",
+            'Br', 'C', 'N', 'O', 'Cl', 'Zn', 'F', 'P', 'S', 'Na', 'Al', 'Si',
+            'Mo', 'Ca', 'W', 'Pb', 'B', 'V', 'Co', 'Mg', 'Bi', 'Fe', 'Ba', 'K',
+            'Ti', 'Sn', 'Cd', 'I', 'Re', 'Sr', 'H', 'Cu', 'Ni', 'Lu', 'Pr',
+            'Te', 'Ce', 'Nd', 'Gd', 'Zr', 'Mn', 'As', 'Hg', 'Sb', 'Cr', 'Se',
+            'La', 'Dy', 'Y', 'Pd', 'Ag', 'In', 'Li', 'Rh', 'Nb', 'Hf', 'Cs',
+            'Ru', 'Au', 'Sm', 'Ta', 'Pt', 'Ir', 'Be', 'Ge'
         ]
 
     def bonds(self) -> List[str]:
-        return ["NONE", "SINGLE", "DOUBLE", "AROMATIC", "TRIPLE"]
+        return ['NONE', 'SINGLE', 'DOUBLE', 'AROMATIC', 'TRIPLE']

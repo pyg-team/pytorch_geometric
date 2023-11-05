@@ -19,7 +19,7 @@ from torch_geometric.utils import (
 )
 
 
-@functional_transform("gdc")
+@functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
     `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
@@ -74,14 +74,14 @@ class GDC(BaseTransform):
 
     :rtype: :class:`torch_geometric.data.Data`
     """
-
     def __init__(
         self,
-        self_loop_weight: float = 1.0,
-        normalization_in: str = "sym",
-        normalization_out: str = "col",
-        diffusion_kwargs: Dict[str, Any] = dict(method="ppr", alpha=0.15),
-        sparsification_kwargs: Dict[str, Any] = dict(method="threshold", avg_degree=64),
+        self_loop_weight: float = 1.,
+        normalization_in: str = 'sym',
+        normalization_out: str = 'col',
+        diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
+        sparsification_kwargs: Dict[str, Any] = dict(method='threshold',
+                                                     avg_degree=64),
         exact: bool = True,
     ):
         self.self_loop_weight = self_loop_weight
@@ -99,7 +99,8 @@ class GDC(BaseTransform):
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:
-            edge_weight = torch.ones(edge_index.size(1), device=edge_index.device)
+            edge_weight = torch.ones(edge_index.size(1),
+                                     device=edge_index.device)
         else:
             edge_weight = data.edge_attr
             assert self.exact
@@ -107,37 +108,28 @@ class GDC(BaseTransform):
 
         if self.self_loop_weight:
             edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=self.self_loop_weight, num_nodes=N
-            )
+                edge_index, edge_weight, fill_value=self.self_loop_weight,
+                num_nodes=N)
 
         edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
 
         if self.exact:
             edge_index, edge_weight = self.transition_matrix(
-                edge_index, edge_weight, N, self.normalization_in
-            )
-            diff_mat = self.diffusion_matrix_exact(
-                edge_index, edge_weight, N, **self.diffusion_kwargs
-            )
+                edge_index, edge_weight, N, self.normalization_in)
+            diff_mat = self.diffusion_matrix_exact(edge_index, edge_weight, N,
+                                                   **self.diffusion_kwargs)
             edge_index, edge_weight = self.sparsify_dense(
-                diff_mat, **self.sparsification_kwargs
-            )
+                diff_mat, **self.sparsification_kwargs)
         else:
             edge_index, edge_weight = self.diffusion_matrix_approx(
-                edge_index,
-                edge_weight,
-                N,
-                self.normalization_in,
-                **self.diffusion_kwargs,
-            )
+                edge_index, edge_weight, N, self.normalization_in,
+                **self.diffusion_kwargs)
             edge_index, edge_weight = self.sparsify_sparse(
-                edge_index, edge_weight, N, **self.sparsification_kwargs
-            )
+                edge_index, edge_weight, N, **self.sparsification_kwargs)
 
         edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
         edge_index, edge_weight = self.transition_matrix(
-            edge_index, edge_weight, N, self.normalization_out
-        )
+            edge_index, edge_weight, N, self.normalization_out)
 
         data.edge_index = edge_index
         data.edge_attr = edge_weight
@@ -171,30 +163,29 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        if normalization == "sym":
+        if normalization == 'sym':
             row, col = edge_index
-            deg = scatter(edge_weight, col, 0, num_nodes, reduce="sum")
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv_sqrt = deg.pow(-0.5)
-            deg_inv_sqrt[deg_inv_sqrt == float("inf")] = 0
+            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
-        elif normalization == "col":
+        elif normalization == 'col':
             _, col = edge_index
-            deg = scatter(edge_weight, col, 0, num_nodes, reduce="sum")
-            deg_inv = 1.0 / deg
-            deg_inv[deg_inv == float("inf")] = 0
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
-        elif normalization == "row":
+        elif normalization == 'row':
             row, _ = edge_index
-            deg = scatter(edge_weight, row, 0, num_nodes, reduce="sum")
-            deg_inv = 1.0 / deg
-            deg_inv[deg_inv == float("inf")] = 0
+            deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
         elif normalization is None:
             pass
         else:
             raise ValueError(
-                f"Transition matrix normalization '{normalization}' unknown"
-            )
+                f"Transition matrix normalization '{normalization}' unknown")
 
         return edge_index, edge_weight
 
@@ -238,31 +229,32 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`Tensor`)
         """
-        if method == "ppr":
+        if method == 'ppr':
             # α (I_n + (α - 1) A)^-1
-            edge_weight = (kwargs["alpha"] - 1) * edge_weight
-            edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=1, num_nodes=num_nodes
-            )
+            edge_weight = (kwargs['alpha'] - 1) * edge_weight
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=1,
+                                                     num_nodes=num_nodes)
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
-            diff_matrix = kwargs["alpha"] * torch.inverse(mat)
+            diff_matrix = kwargs['alpha'] * torch.inverse(mat)
 
-        elif method == "heat":
+        elif method == 'heat':
             # exp(t (A - I_n))
-            edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=-1, num_nodes=num_nodes
-            )
-            edge_weight = kwargs["t"] * edge_weight
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=-1,
+                                                     num_nodes=num_nodes)
+            edge_weight = kwargs['t'] * edge_weight
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
             undirected = is_undirected(edge_index, edge_weight, num_nodes)
             diff_matrix = self.__expm__(mat, undirected)
 
-        elif method == "coeff":
-            adj_matrix = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
+        elif method == 'coeff':
+            adj_matrix = to_dense_adj(edge_index,
+                                      edge_attr=edge_weight).squeeze()
             mat = torch.eye(num_nodes, device=edge_index.device)
 
-            diff_matrix = kwargs["coeffs"][0] * mat
-            for coeff in kwargs["coeffs"][1:]:
+            diff_matrix = kwargs['coeffs'][0] * mat
+            for coeff in kwargs['coeffs'][1:]:
                 mat = mat @ adj_matrix
                 diff_matrix += coeff * mat
         else:
@@ -303,25 +295,24 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        if method == "ppr":
-            if normalization == "sym":
+        if method == 'ppr':
+            if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                deg = scatter(edge_weight, col, 0, num_nodes, reduce="sum")
+                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
             edge_index, edge_weight = get_ppr(
                 edge_index,
-                alpha=kwargs["alpha"],
-                eps=kwargs["eps"],
+                alpha=kwargs['alpha'],
+                eps=kwargs['eps'],
                 num_nodes=num_nodes,
             )
 
-            if normalization == "col":
+            if normalization == 'col':
                 edge_index, edge_weight = sort_edge_index(
-                    edge_index.flip([0]), edge_weight, num_nodes
-                )
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
-            if normalization == "sym":
+            if normalization == 'sym':
                 # We can change the normalization from row-normalized to
                 # symmetric by multiplying the resulting matrix with D^{1/2}
                 # from the left and D^{-1/2} from the right.
@@ -331,25 +322,21 @@ class GDC(BaseTransform):
                 row, col = edge_index
                 deg_inv = deg.sqrt()
                 deg_inv_sqrt = deg.pow(-0.5)
-                deg_inv_sqrt[deg_inv_sqrt == float("inf")] = 0
+                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
                 edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
-            elif normalization in ["col", "row"]:
+            elif normalization in ['col', 'row']:
                 pass
             else:
                 raise ValueError(
                     f"Transition matrix normalization '{normalization}' not "
-                    f"implemented for non-exact GDC computation"
-                )
+                    f"implemented for non-exact GDC computation")
 
-        elif method == "heat":
+        elif method == 'heat':
             raise NotImplementedError(
-                (
-                    "Currently no fast heat kernel is implemented. You are "
-                    "welcome to create one yourself, e.g., based on "
-                    '"Kloster and Gleich: Heat kernel based community detection '
-                    '(KDD 2014)."'
-                )
-            )
+                ('Currently no fast heat kernel is implemented. You are '
+                 'welcome to create one yourself, e.g., based on '
+                 '"Kloster and Gleich: Heat kernel based community detection '
+                 '(KDD 2014)."'))
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 
@@ -391,29 +378,33 @@ class GDC(BaseTransform):
         assert matrix.shape[0] == matrix.shape[1]
         N = matrix.shape[1]
 
-        if method == "threshold":
-            if "eps" not in kwargs.keys():
-                kwargs["eps"] = self.__calculate_eps__(matrix, N, kwargs["avg_degree"])
+        if method == 'threshold':
+            if 'eps' not in kwargs.keys():
+                kwargs['eps'] = self.__calculate_eps__(matrix, N,
+                                                       kwargs['avg_degree'])
 
-            edge_index = (matrix >= kwargs["eps"]).nonzero(as_tuple=False).t()
+            edge_index = (matrix >= kwargs['eps']).nonzero(as_tuple=False).t()
             edge_index_flat = edge_index[0] * N + edge_index[1]
             edge_weight = matrix.flatten()[edge_index_flat]
 
-        elif method == "topk":
-            k, dim = min(N, kwargs["k"]), kwargs["dim"]
+        elif method == 'topk':
+            k, dim = min(N, kwargs['k']), kwargs['dim']
             assert dim in [0, 1]
             sort_idx = torch.argsort(matrix, dim=dim, descending=True)
             if dim == 0:
                 top_idx = sort_idx[:k]
-                edge_weight = torch.gather(matrix, dim=dim, index=top_idx).flatten()
+                edge_weight = torch.gather(matrix, dim=dim,
+                                           index=top_idx).flatten()
 
                 row_idx = torch.arange(0, N, device=matrix.device).repeat(k)
                 edge_index = torch.stack([top_idx.flatten(), row_idx], dim=0)
             else:
                 top_idx = sort_idx[:, :k]
-                edge_weight = torch.gather(matrix, dim=dim, index=top_idx).flatten()
+                edge_weight = torch.gather(matrix, dim=dim,
+                                           index=top_idx).flatten()
 
-                col_idx = torch.arange(0, N, device=matrix.device).repeat_interleave(k)
+                col_idx = torch.arange(
+                    0, N, device=matrix.device).repeat_interleave(k)
                 edge_index = torch.stack([col_idx, top_idx.flatten()], dim=0)
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
@@ -448,19 +439,18 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        if method == "threshold":
-            if "eps" not in kwargs.keys():
-                kwargs["eps"] = self.__calculate_eps__(
-                    edge_weight, num_nodes, kwargs["avg_degree"]
-                )
+        if method == 'threshold':
+            if 'eps' not in kwargs.keys():
+                kwargs['eps'] = self.__calculate_eps__(edge_weight, num_nodes,
+                                                       kwargs['avg_degree'])
 
-            remaining_edge_idx = (
-                (edge_weight >= kwargs["eps"]).nonzero(as_tuple=False).flatten()
-            )
+            remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
+                as_tuple=False).flatten()
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
-        elif method == "topk":
-            raise NotImplementedError("Sparse topk sparsification not implemented")
+        elif method == 'topk':
+            raise NotImplementedError(
+                'Sparse topk sparsification not implemented')
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
 
@@ -476,7 +466,7 @@ class GDC(BaseTransform):
         :rtype: (:class:`Tensor`)
         """
         if symmetric:
-            e, V = torch.linalg.eigh(matrix, UPLO="U")
+            e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
             diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))

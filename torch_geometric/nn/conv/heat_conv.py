@@ -57,25 +57,14 @@ class HEATConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+    def __init__(self, in_channels: int, out_channels: int,
+                 num_node_types: int, num_edge_types: int,
+                 edge_type_emb_dim: int, edge_dim: int, edge_attr_emb_dim: int,
+                 heads: int = 1, concat: bool = True,
+                 negative_slope: float = 0.2, dropout: float = 0.0,
+                 root_weight: bool = True, bias: bool = True, **kwargs):
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        num_node_types: int,
-        num_edge_types: int,
-        edge_type_emb_dim: int,
-        edge_dim: int,
-        edge_attr_emb_dim: int,
-        heads: int = 1,
-        concat: bool = True,
-        negative_slope: float = 0.2,
-        dropout: float = 0.0,
-        root_weight: bool = True,
-        bias: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "add")
+        kwargs.setdefault('aggr', 'add')
         super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -86,20 +75,18 @@ class HEATConv(MessagePassing):
         self.dropout = dropout
         self.root_weight = root_weight
 
-        self.hetero_lin = HeteroLinear(
-            in_channels, out_channels, num_node_types, bias=bias
-        )
+        self.hetero_lin = HeteroLinear(in_channels, out_channels,
+                                       num_node_types, bias=bias)
 
         self.edge_type_emb = Embedding(num_edge_types, edge_type_emb_dim)
         self.edge_attr_emb = Linear(edge_dim, edge_attr_emb_dim, bias=False)
 
         self.att = Linear(
             2 * out_channels + edge_type_emb_dim + edge_attr_emb_dim,
-            self.heads,
-            bias=False,
-        )
+            self.heads, bias=False)
 
-        self.lin = Linear(out_channels + edge_attr_emb_dim, out_channels, bias=bias)
+        self.lin = Linear(out_channels + edge_attr_emb_dim, out_channels,
+                          bias=bias)
 
         self.reset_parameters()
 
@@ -111,22 +98,17 @@ class HEATConv(MessagePassing):
         self.att.reset_parameters()
         self.lin.reset_parameters()
 
-    def forward(
-        self,
-        x: Tensor,
-        edge_index: Adj,
-        node_type: Tensor,
-        edge_type: Tensor,
-        edge_attr: OptTensor = None,
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
+                edge_type: Tensor, edge_attr: OptTensor = None) -> Tensor:
+
         x = self.hetero_lin(x, node_type)
 
-        edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type), self.negative_slope)
+        edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),
+                                     self.negative_slope)
 
         # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
-        out = self.propagate(
-            edge_index, x=x, edge_type_emb=edge_type_emb, edge_attr=edge_attr, size=None
-        )
+        out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
+                             edge_attr=edge_attr, size=None)
 
         if self.concat:
             if self.root_weight:
@@ -139,17 +121,12 @@ class HEATConv(MessagePassing):
 
         return out
 
-    def message(
-        self,
-        x_i: Tensor,
-        x_j: Tensor,
-        edge_type_emb: Tensor,
-        edge_attr: Tensor,
-        index: Tensor,
-        ptr: OptTensor,
-        size_i: Optional[int],
-    ) -> Tensor:
-        edge_attr = F.leaky_relu(self.edge_attr_emb(edge_attr), self.negative_slope)
+    def message(self, x_i: Tensor, x_j: Tensor, edge_type_emb: Tensor,
+                edge_attr: Tensor, index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
+
+        edge_attr = F.leaky_relu(self.edge_attr_emb(edge_attr),
+                                 self.negative_slope)
 
         alpha = torch.cat([x_i, x_j, edge_type_emb, edge_attr], dim=-1)
         alpha = F.leaky_relu(self.att(alpha), self.negative_slope)
@@ -160,7 +137,5 @@ class HEATConv(MessagePassing):
         return out * alpha.unsqueeze(-1)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, heads={self.heads})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

@@ -64,7 +64,6 @@ class Partitioner:
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData],
@@ -95,14 +94,14 @@ class Partitioner:
         r"""Generates the partition."""
         os.makedirs(self.root, exist_ok=True)
 
-        logging.info("Saving metadata")
+        logging.info('Saving metadata')
         meta = {
-            "num_parts": self.num_parts,
-            "is_hetero": self.is_hetero,
-            "node_types": self.node_types,
-            "edge_types": self.edge_types,
+            'num_parts': self.num_parts,
+            'is_hetero': self.is_hetero,
+            'node_types': self.node_types,
+            'edge_types': self.edge_types,
         }
-        with open(osp.join(self.root, "META.json"), "w") as f:
+        with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
 
         data = self.data.to_homogeneous() if self.is_hetero else self.data
@@ -136,15 +135,15 @@ class Partitioner:
 
             edge_start = 0
             for pid in range(self.num_parts):
-                logging.info(f"Saving graph partition {pid}")
-                path = osp.join(self.root, f"part_{pid}")
+                logging.info(f'Saving graph partition {pid}')
+                path = osp.join(self.root, f'part_{pid}')
                 os.makedirs(path, exist_ok=True)
 
                 part_data = cluster_data[pid]
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start : edge_start + num_edges]
+                edge_id = edge_perm[edge_start:edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += +num_edges
 
@@ -162,63 +161,63 @@ class Partitioner:
                     global_rows = node_id[rows]
                     global_cols = node_perm[cols]
                     out[edge_type] = {
-                        "edge_id": edge_id[mask],
-                        "row": global_rows,
-                        "col": global_cols,
-                        "size": size,
+                        'edge_id': edge_id[mask],
+                        'row': global_rows,
+                        'col': global_cols,
+                        'size': size,
                     }
-                torch.save(out, osp.join(path, "graph.pt"))
+                torch.save(out, osp.join(path, 'graph.pt'))
 
                 out = {}
                 for i, node_type in enumerate(self.node_types):
                     mask = part_data.node_type == i
-                    x = part_data.x[mask] if "x" in part_data else None
+                    x = part_data.x[mask] if 'x' in part_data else None
                     out[node_type] = {
-                        "global_id": node_id[mask],
-                        "feats": dict(x=x),
+                        'global_id': node_id[mask],
+                        'feats': dict(x=x),
                     }
-                torch.save(out, osp.join(path, "node_feats.pt"))
+                torch.save(out, osp.join(path, 'node_feats.pt'))
 
                 out = {}
                 for i, edge_type in enumerate(self.edge_types):
                     mask = part_data.edge_type == i
                     edge_attr = None
-                    if "edge_attr" in part_data:
+                    if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask]
                     out[edge_type] = {
-                        "global_id": edge_id[mask],
-                        "feats": dict(edge_attr=edge_attr),
+                        'global_id': edge_id[mask],
+                        'feats': dict(edge_attr=edge_attr),
                     }
-                torch.save(out, osp.join(path, "edge_feats.pt"))
+                torch.save(out, osp.join(path, 'edge_feats.pt'))
 
-            logging.info("Saving partition mapping info")
+            logging.info('Saving partition mapping info')
 
-            path = osp.join(self.root, "node_map")
+            path = osp.join(self.root, 'node_map')
             os.makedirs(path, exist_ok=True)
             for i, node_type in enumerate(self.node_types):
                 mask = data.node_type == i
-                torch.save(node_map[mask], osp.join(path, f"{node_type}.pt"))
+                torch.save(node_map[mask], osp.join(path, f'{node_type}.pt'))
 
-            path = osp.join(self.root, "edge_map")
+            path = osp.join(self.root, 'edge_map')
             os.makedirs(path, exist_ok=True)
             for i, edge_type in enumerate(self.edge_types):
                 mask = data.edge_type == i
-                torch.save(
-                    edge_map[mask], osp.join(path, f"{EdgeTypeStr(edge_type)}.pt")
-                )
+                torch.save(edge_map[mask],
+                           osp.join(path, f'{EdgeTypeStr(edge_type)}.pt'))
 
         else:  # `if not self.is_hetero:`
+
             edge_start = 0
             for pid in range(self.num_parts):
-                logging.info(f"Saving graph partition {pid}")
-                path = osp.join(self.root, f"part_{pid}")
+                logging.info(f'Saving graph partition {pid}')
+                path = osp.join(self.root, f'part_{pid}')
                 os.makedirs(path, exist_ok=True)
 
                 part_data = cluster_data[pid]
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start : edge_start + num_edges]
+                edge_id = edge_perm[edge_start:edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += num_edges
 
@@ -231,30 +230,24 @@ class Partitioner:
 
                 torch.save(
                     {
-                        "edge_id": edge_id,
-                        "row": global_rows,
-                        "col": global_cols,
-                        "size": (data.num_nodes, data.num_nodes),
-                    },
-                    osp.join(path, "graph.pt"),
-                )
+                        'edge_id': edge_id,
+                        'row': global_rows,
+                        'col': global_cols,
+                        'size': (data.num_nodes, data.num_nodes),
+                    }, osp.join(path, 'graph.pt'))
 
                 torch.save(
                     {
-                        "global_id": node_id,
-                        "feats": dict(x=part_data.x),
-                    },
-                    osp.join(path, "node_feats.pt"),
-                )
+                        'global_id': node_id,
+                        'feats': dict(x=part_data.x),
+                    }, osp.join(path, 'node_feats.pt'))
 
                 torch.save(
                     {
-                        "global_id": edge_id,
-                        "feats": dict(edge_attr=part_data.edge_attr),
-                    },
-                    osp.join(path, "edge_feats.pt"),
-                )
+                        'global_id': edge_id,
+                        'feats': dict(edge_attr=part_data.edge_attr),
+                    }, osp.join(path, 'edge_feats.pt'))
 
-            logging.info("Saving partition mapping info")
-            torch.save(node_map, osp.join(self.root, "node_map.pt"))
-            torch.save(edge_map, osp.join(self.root, "edge_map.pt"))
+            logging.info('Saving partition mapping info')
+            torch.save(node_map, osp.join(self.root, 'node_map.pt'))
+            torch.save(edge_map, osp.join(self.root, 'edge_map.pt'))

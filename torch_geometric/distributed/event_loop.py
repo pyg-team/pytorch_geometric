@@ -11,7 +11,8 @@ import torch
 
 
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
-    r"""Convert a :class:`torch.futures.Future` to a standard asyncio future."""
+    r"""Convert a :class:`torch.futures.Future` to a standard asyncio future.
+    """
     loop = asyncio.get_event_loop()
     asyncio_future = loop.create_future()
 
@@ -34,7 +35,6 @@ class ConcurrentEventLoop:
     Args:
         concurrency: max processing concurrency.
     """
-
     def __init__(self, concurrency: int):
         self._concurrency = concurrency
         self._sem = BoundedSemaphore(concurrency)
@@ -70,7 +70,6 @@ class ConcurrentEventLoop:
 
         Note that any result returned by :obj:`callback` will be ignored.
         """
-
         def on_done(f: asyncio.futures.Future):
             try:
                 res = f.result()

@@ -10,7 +10,6 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 try:
     import numba
-
     WITH_NUMBA = True
 except Exception:  # pragma: no cover
     WITH_NUMBA = False
@@ -23,10 +22,11 @@ def _get_ppr(  # pragma: no cover
     eps: float,
     target: Optional[np.ndarray] = None,
 ) -> Tuple[List[List[int]], List[List[float]]]:
+
     num_nodes = len(rowptr) - 1 if target is None else len(target)
     alpha_eps = alpha * eps
     js = [[0]] * num_nodes
-    vals = [[0.0]] * num_nodes
+    vals = [[0.]] * num_nodes
 
     for inode_uint in numba.prange(num_nodes):
         if target is None:

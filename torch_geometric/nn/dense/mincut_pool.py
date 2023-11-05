@@ -80,9 +80,10 @@ def dense_mincut_pool(
 
     # MinCut regularization.
     mincut_num = _rank3_trace(out_adj)
-    d_flat = torch.einsum("ijk->ij", adj)
+    d_flat = torch.einsum('ijk->ij', adj)
     d = _rank3_diag(d_flat)
-    mincut_den = _rank3_trace(torch.matmul(torch.matmul(s.transpose(1, 2), d), s))
+    mincut_den = _rank3_trace(
+        torch.matmul(torch.matmul(s.transpose(1, 2), d), s))
     mincut_loss = -(mincut_num / mincut_den)
     mincut_loss = torch.mean(mincut_loss)
 
@@ -90,9 +91,8 @@ def dense_mincut_pool(
     ss = torch.matmul(s.transpose(1, 2), s)
     i_s = torch.eye(k).type_as(ss)
     ortho_loss = torch.norm(
-        ss / torch.norm(ss, dim=(-1, -2), keepdim=True) - i_s / torch.norm(i_s),
-        dim=(-1, -2),
-    )
+        ss / torch.norm(ss, dim=(-1, -2), keepdim=True) -
+        i_s / torch.norm(i_s), dim=(-1, -2))
     ortho_loss = torch.mean(ortho_loss)
 
     EPS = 1e-15
@@ -100,7 +100,7 @@ def dense_mincut_pool(
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
     out_adj[:, ind, ind] = 0
-    d = torch.einsum("ijk->ij", out_adj)
+    d = torch.einsum('ijk->ij', out_adj)
     d = torch.sqrt(d)[:, None] + EPS
     out_adj = (out_adj / d) / d.transpose(1, 2)
 
@@ -108,7 +108,7 @@ def dense_mincut_pool(
 
 
 def _rank3_trace(x: Tensor) -> Tensor:
-    return torch.einsum("ijj->i", x)
+    return torch.einsum('ijj->i', x)
 
 
 def _rank3_diag(x: Tensor) -> Tensor:

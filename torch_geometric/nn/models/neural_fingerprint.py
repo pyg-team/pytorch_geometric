@@ -21,7 +21,6 @@ class NeuralFingerprint(torch.nn.Module):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MFConv`.
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -69,7 +68,5 @@ class NeuralFingerprint(torch.nn.Module):
         return sum(outs)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, num_layers={self.num_layers})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_layers={self.num_layers})')

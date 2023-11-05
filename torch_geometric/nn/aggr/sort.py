@@ -26,12 +26,11 @@ class SortAggregation(Aggregation):
     Args:
         k (int): The number of nodes to hold for each graph.
     """
-
     def __init__(self, k: int):
         super().__init__()
         self.k = k
 
-    @disable_dynamic_shapes(required_args=["dim_size", "max_num_elements"])
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,
@@ -41,16 +40,11 @@ class SortAggregation(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
+
         fill_value = x.detach().min() - 1
-        batch_x, _ = self.to_dense_batch(
-            x,
-            index,
-            ptr,
-            dim_size,
-            dim,
-            fill_value=fill_value,
-            max_num_elements=max_num_elements,
-        )
+        batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                         fill_value=fill_value,
+                                         max_num_elements=max_num_elements)
         B, N, D = batch_x.size()
 
         _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
@@ -62,7 +56,7 @@ class SortAggregation(Aggregation):
         batch_x = batch_x.view(B, N, D)
 
         if N >= self.k:
-            batch_x = batch_x[:, : self.k].contiguous()
+            batch_x = batch_x[:, :self.k].contiguous()
         else:
             expand_batch_x = batch_x.new_full((B, self.k - N, D), fill_value)
             batch_x = torch.cat([batch_x, expand_batch_x], dim=1)
@@ -73,4 +67,4 @@ class SortAggregation(Aggregation):
         return x
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(k={self.k})"
+        return (f'{self.__class__.__name__}(k={self.k})')

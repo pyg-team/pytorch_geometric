@@ -43,7 +43,7 @@ class QM7b(InMemoryDataset):
           - 14
     """
 
-    url = "https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat"
+    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat'
 
     def __init__(
         self,
@@ -57,11 +57,11 @@ class QM7b(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        return "qm7b.mat"
+        return 'qm7b.mat'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         download_url(self.url, self.raw_dir)
@@ -70,12 +70,13 @@ class QM7b(InMemoryDataset):
         from scipy.io import loadmat
 
         data = loadmat(self.raw_paths[0])
-        coulomb_matrix = torch.from_numpy(data["X"])
-        target = torch.from_numpy(data["T"]).to(torch.float)
+        coulomb_matrix = torch.from_numpy(data['X'])
+        target = torch.from_numpy(data['T']).to(torch.float)
 
         data_list = []
         for i in range(target.shape[0]):
-            edge_index = coulomb_matrix[i].nonzero(as_tuple=False).t().contiguous()
+            edge_index = coulomb_matrix[i].nonzero(
+                as_tuple=False).t().contiguous()
             edge_attr = coulomb_matrix[i, edge_index[0], edge_index[1]]
             y = target[i].view(1, -1)
             data = Data(edge_index=edge_index, edge_attr=edge_attr, y=y)

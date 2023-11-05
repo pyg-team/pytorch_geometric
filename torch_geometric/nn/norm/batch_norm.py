@@ -40,7 +40,6 @@ class BatchNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -53,14 +52,11 @@ class BatchNorm(torch.nn.Module):
         super().__init__()
 
         if allow_single_element and not track_running_stats:
-            raise ValueError(
-                "'allow_single_element' requires "
-                "'track_running_stats' to be set to `True`"
-            )
+            raise ValueError("'allow_single_element' requires "
+                             "'track_running_stats' to be set to `True`")
 
-        self.module = torch.nn.BatchNorm1d(
-            in_channels, eps, momentum, affine, track_running_stats
-        )
+        self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
+                                           track_running_stats)
         self.in_channels = in_channels
         self.allow_single_element = allow_single_element
 
@@ -91,7 +87,7 @@ class BatchNorm(torch.nn.Module):
         return self.module(x)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.module.num_features})"
+        return f'{self.__class__.__name__}({self.module.num_features})'
 
 
 class HeteroBatchNorm(torch.nn.Module):
@@ -118,7 +114,6 @@ class HeteroBatchNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -141,19 +136,21 @@ class HeteroBatchNorm(torch.nn.Module):
             self.weight = Parameter(torch.empty(num_types, in_channels))
             self.bias = Parameter(torch.empty(num_types, in_channels))
         else:
-            self.register_parameter("weight", None)
-            self.register_parameter("bias", None)
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
 
         if self.track_running_stats:
-            self.register_buffer("running_mean", torch.empty(num_types, in_channels))
-            self.register_buffer("running_var", torch.empty(num_types, in_channels))
-            self.register_buffer("num_batches_tracked", torch.tensor(0))
+            self.register_buffer('running_mean',
+                                 torch.empty(num_types, in_channels))
+            self.register_buffer('running_var',
+                                 torch.empty(num_types, in_channels))
+            self.register_buffer('num_batches_tracked', torch.tensor(0))
         else:
-            self.register_buffer("running_mean", None)
-            self.register_buffer("running_var", None)
-            self.register_buffer("num_batches_tracked", None)
+            self.register_buffer('running_mean', None)
+            self.register_buffer('running_var', None)
+            self.register_buffer('num_batches_tracked', None)
 
-        self.mean_var = FusedAggregation(["mean", "var"])
+        self.mean_var = FusedAggregation(['mean', 'var'])
 
         self.reset_parameters()
 
@@ -194,11 +191,11 @@ class HeteroBatchNorm(torch.nn.Module):
                 type_index = torch.unique(type_vec)
 
                 self.running_mean[type_index] = (
-                    1.0 - exp_avg_factor
-                ) * self.running_mean[type_index] + exp_avg_factor * mean[type_index]
+                    (1.0 - exp_avg_factor) * self.running_mean[type_index] +
+                    exp_avg_factor * mean[type_index])
                 self.running_var[type_index] = (
-                    1.0 - exp_avg_factor
-                ) * self.running_var[type_index] + exp_avg_factor * var[type_index]
+                    (1.0 - exp_avg_factor) * self.running_var[type_index] +
+                    exp_avg_factor * var[type_index])
 
         out = (x - mean[type_vec]) / var.clamp(self.eps).sqrt()[type_vec]
 
@@ -208,7 +205,5 @@ class HeteroBatchNorm(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"num_types={self.num_types})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'num_types={self.num_types})')

@@ -31,21 +31,10 @@ class DataListLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`drop_last` or
             :obj:`num_workers`.
     """
-
-    def __init__(
-        self,
-        dataset: Union[Dataset, List[BaseData]],
-        batch_size: int = 1,
-        shuffle: bool = False,
-        **kwargs,
-    ):
+    def __init__(self, dataset: Union[Dataset, List[BaseData]],
+                 batch_size: int = 1, shuffle: bool = False, **kwargs):
         # Remove for PyTorch Lightning:
-        kwargs.pop("collate_fn", None)
+        kwargs.pop('collate_fn', None)
 
-        super().__init__(
-            dataset,
-            batch_size=batch_size,
-            shuffle=shuffle,
-            collate_fn=collate_fn,
-            **kwargs,
-        )
+        super().__init__(dataset, batch_size=batch_size, shuffle=shuffle,
+                         collate_fn=collate_fn, **kwargs)

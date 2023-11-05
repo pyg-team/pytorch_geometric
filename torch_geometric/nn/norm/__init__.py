@@ -9,17 +9,17 @@ from .msg_norm import MessageNorm
 from .diff_group_norm import DiffGroupNorm
 
 __all__ = [
-    "BatchNorm",
-    "HeteroBatchNorm",
-    "InstanceNorm",
-    "LayerNorm",
-    "HeteroLayerNorm",
-    "GraphNorm",
-    "GraphSizeNorm",
-    "PairNorm",
-    "MeanSubtractionNorm",
-    "MessageNorm",
-    "DiffGroupNorm",
+    'BatchNorm',
+    'HeteroBatchNorm',
+    'InstanceNorm',
+    'LayerNorm',
+    'HeteroLayerNorm',
+    'GraphNorm',
+    'GraphSizeNorm',
+    'PairNorm',
+    'MeanSubtractionNorm',
+    'MessageNorm',
+    'DiffGroupNorm',
 ]
 
 classes = __all__

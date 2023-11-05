@@ -42,24 +42,17 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size` or
             :obj:`num_workers`.
     """
+    def __init__(self, data, batch_size: int, num_steps: int = 1,
+                 sample_coverage: int = 0, save_dir: Optional[str] = None,
+                 log: bool = True, **kwargs):
 
-    def __init__(
-        self,
-        data,
-        batch_size: int,
-        num_steps: int = 1,
-        sample_coverage: int = 0,
-        save_dir: Optional[str] = None,
-        log: bool = True,
-        **kwargs,
-    ):
         # Remove for PyTorch Lightning:
-        kwargs.pop("dataset", None)
-        kwargs.pop("collate_fn", None)
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         assert data.edge_index is not None
-        assert "node_norm" not in data
-        assert "edge_norm" not in data
+        assert 'node_norm' not in data
+        assert 'edge_norm' not in data
         assert not data.edge_index.is_cuda
 
         self.num_steps = num_steps
@@ -72,18 +65,17 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         self.E = data.num_edges
 
         self.adj = SparseTensor(
-            row=data.edge_index[0],
-            col=data.edge_index[1],
+            row=data.edge_index[0], col=data.edge_index[1],
             value=torch.arange(self.E, device=data.edge_index.device),
-            sparse_sizes=(N, N),
-        )
+            sparse_sizes=(N, N))
 
         self.data = data
 
-        super().__init__(self, batch_size=1, collate_fn=self._collate, **kwargs)
+        super().__init__(self, batch_size=1, collate_fn=self._collate,
+                         **kwargs)
 
         if self.sample_coverage > 0:
-            path = osp.join(save_dir or "", self._filename)
+            path = osp.join(save_dir or '', self._filename)
             if save_dir is not None and osp.exists(path):  # pragma: no cover
                 self.node_norm, self.edge_norm = torch.load(path)
             else:
@@ -93,7 +85,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
     @property
     def _filename(self):
-        return f"{self.__class__.__name__.lower()}_{self.sample_coverage}.pt"
+        return f'{self.__class__.__name__.lower()}_{self.sample_coverage}.pt'
 
     def __len__(self):
         return self.num_steps
@@ -116,7 +108,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
-            if key in ["edge_index", "num_nodes"]:
+            if key in ['edge_index', 'num_nodes']:
                 continue
             if isinstance(item, torch.Tensor) and item.size(0) == self.N:
                 data[key] = item[node_idx]
@@ -135,13 +127,13 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         node_count = torch.zeros(self.N, dtype=torch.float)
         edge_count = torch.zeros(self.E, dtype=torch.float)
 
-        loader = torch.utils.data.DataLoader(
-            self, batch_size=200, collate_fn=lambda x: x, num_workers=self.num_workers
-        )
+        loader = torch.utils.data.DataLoader(self, batch_size=200,
+                                             collate_fn=lambda x: x,
+                                             num_workers=self.num_workers)
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.N * self.sample_coverage)
-            pbar.set_description("Compute GraphSAINT normalization")
+            pbar.set_description('Compute GraphSAINT normalization')
 
         num_samples = total_sampled_nodes = 0
         while total_sampled_nodes < self.N * self.sample_coverage:
@@ -174,11 +166,9 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
     r"""The GraphSAINT node sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
-
     def _sample_nodes(self, batch_size):
-        edge_sample = torch.randint(
-            0, self.E, (batch_size, self.batch_size), dtype=torch.long
-        )
+        edge_sample = torch.randint(0, self.E, (batch_size, self.batch_size),
+                                    dtype=torch.long)
 
         return self.adj.storage.row()[edge_sample]
 
@@ -187,13 +177,12 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     r"""The GraphSAINT edge sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
-
     def _sample_nodes(self, batch_size):
         row, col, _ = self.adj.coo()
 
-        deg_in = 1.0 / self.adj.storage.colcount()
-        deg_out = 1.0 / self.adj.storage.rowcount()
-        prob = (1.0 / deg_in[row]) + (1.0 / deg_out[col])
+        deg_in = 1. / self.adj.storage.colcount()
+        deg_out = 1. / self.adj.storage.rowcount()
+        prob = (1. / deg_in[row]) + (1. / deg_out[col])
 
         # Parallel multinomial sampling (without replacement)
         # https://github.com/pytorch/pytorch/issues/11931#issuecomment-625882503
@@ -213,31 +202,19 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     Args:
         walk_length (int): The length of each random walk.
     """
-
-    def __init__(
-        self,
-        data,
-        batch_size: int,
-        walk_length: int,
-        num_steps: int = 1,
-        sample_coverage: int = 0,
-        save_dir: Optional[str] = None,
-        log: bool = True,
-        **kwargs,
-    ):
+    def __init__(self, data, batch_size: int, walk_length: int,
+                 num_steps: int = 1, sample_coverage: int = 0,
+                 save_dir: Optional[str] = None, log: bool = True, **kwargs):
         self.walk_length = walk_length
-        super().__init__(
-            data, batch_size, num_steps, sample_coverage, save_dir, log, **kwargs
-        )
+        super().__init__(data, batch_size, num_steps, sample_coverage,
+                         save_dir, log, **kwargs)
 
     @property
     def _filename(self):
-        return (
-            f"{self.__class__.__name__.lower()}_{self.walk_length}_"
-            f"{self.sample_coverage}.pt"
-        )
+        return (f'{self.__class__.__name__.lower()}_{self.walk_length}_'
+                f'{self.sample_coverage}.pt')
 
     def _sample_nodes(self, batch_size):
-        start = torch.randint(0, self.N, (batch_size,), dtype=torch.long)
+        start = torch.randint(0, self.N, (batch_size, ), dtype=torch.long)
         node_idx = self.adj.random_walk(start.flatten(), self.walk_length)
         return node_idx.view(-1)

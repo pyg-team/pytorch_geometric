@@ -5,76 +5,80 @@ import torch
 import torch_geometric
 
 x_map = {
-    "atomic_num": list(range(0, 119)),
-    "chirality": [
-        "CHI_UNSPECIFIED",
-        "CHI_TETRAHEDRAL_CW",
-        "CHI_TETRAHEDRAL_CCW",
-        "CHI_OTHER",
-        "CHI_TETRAHEDRAL",
-        "CHI_ALLENE",
-        "CHI_SQUAREPLANAR",
-        "CHI_TRIGONALBIPYRAMIDAL",
-        "CHI_OCTAHEDRAL",
+    'atomic_num':
+    list(range(0, 119)),
+    'chirality': [
+        'CHI_UNSPECIFIED',
+        'CHI_TETRAHEDRAL_CW',
+        'CHI_TETRAHEDRAL_CCW',
+        'CHI_OTHER',
+        'CHI_TETRAHEDRAL',
+        'CHI_ALLENE',
+        'CHI_SQUAREPLANAR',
+        'CHI_TRIGONALBIPYRAMIDAL',
+        'CHI_OCTAHEDRAL',
     ],
-    "degree": list(range(0, 11)),
-    "formal_charge": list(range(-5, 7)),
-    "num_hs": list(range(0, 9)),
-    "num_radical_electrons": list(range(0, 5)),
-    "hybridization": [
-        "UNSPECIFIED",
-        "S",
-        "SP",
-        "SP2",
-        "SP3",
-        "SP3D",
-        "SP3D2",
-        "OTHER",
+    'degree':
+    list(range(0, 11)),
+    'formal_charge':
+    list(range(-5, 7)),
+    'num_hs':
+    list(range(0, 9)),
+    'num_radical_electrons':
+    list(range(0, 5)),
+    'hybridization': [
+        'UNSPECIFIED',
+        'S',
+        'SP',
+        'SP2',
+        'SP3',
+        'SP3D',
+        'SP3D2',
+        'OTHER',
     ],
-    "is_aromatic": [False, True],
-    "is_in_ring": [False, True],
+    'is_aromatic': [False, True],
+    'is_in_ring': [False, True],
 }
 
 e_map = {
-    "bond_type": [
-        "UNSPECIFIED",
-        "SINGLE",
-        "DOUBLE",
-        "TRIPLE",
-        "QUADRUPLE",
-        "QUINTUPLE",
-        "HEXTUPLE",
-        "ONEANDAHALF",
-        "TWOANDAHALF",
-        "THREEANDAHALF",
-        "FOURANDAHALF",
-        "FIVEANDAHALF",
-        "AROMATIC",
-        "IONIC",
-        "HYDROGEN",
-        "THREECENTER",
-        "DATIVEONE",
-        "DATIVE",
-        "DATIVEL",
-        "DATIVER",
-        "OTHER",
-        "ZERO",
+    'bond_type': [
+        'UNSPECIFIED',
+        'SINGLE',
+        'DOUBLE',
+        'TRIPLE',
+        'QUADRUPLE',
+        'QUINTUPLE',
+        'HEXTUPLE',
+        'ONEANDAHALF',
+        'TWOANDAHALF',
+        'THREEANDAHALF',
+        'FOURANDAHALF',
+        'FIVEANDAHALF',
+        'AROMATIC',
+        'IONIC',
+        'HYDROGEN',
+        'THREECENTER',
+        'DATIVEONE',
+        'DATIVE',
+        'DATIVEL',
+        'DATIVER',
+        'OTHER',
+        'ZERO',
     ],
-    "stereo": [
-        "STEREONONE",
-        "STEREOANY",
-        "STEREOZ",
-        "STEREOE",
-        "STEREOCIS",
-        "STEREOTRANS",
+    'stereo': [
+        'STEREONONE',
+        'STEREOANY',
+        'STEREOZ',
+        'STEREOE',
+        'STEREOCIS',
+        'STEREOTRANS',
     ],
-    "is_conjugated": [False, True],
+    'is_conjugated': [False, True],
 }
 
 
-def from_smiles(
-    smiles: str, with_hydrogen: bool = False, kekulize: bool = False
-) -> "torch_geometric.data.Data":
+def from_smiles(smiles: str, with_hydrogen: bool = False,
+                kekulize: bool = False) -> 'torch_geometric.data.Data':
     r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
     instance.
 
@@ -89,12 +93,12 @@ def from_smiles(
 
     from torch_geometric.data import Data
 
-    RDLogger.DisableLog("rdApp.*")
+    RDLogger.DisableLog('rdApp.*')
 
     mol = Chem.MolFromSmiles(smiles)
 
     if mol is None:
-        mol = Chem.MolFromSmiles("")
+        mol = Chem.MolFromSmiles('')
     if with_hydrogen:
         mol = Chem.AddHs(mol)
     if kekulize:
@@ -103,15 +107,16 @@ def from_smiles(
     xs = []
     for atom in mol.GetAtoms():
         x = []
-        x.append(x_map["atomic_num"].index(atom.GetAtomicNum()))
-        x.append(x_map["chirality"].index(str(atom.GetChiralTag())))
-        x.append(x_map["degree"].index(atom.GetTotalDegree()))
-        x.append(x_map["formal_charge"].index(atom.GetFormalCharge()))
-        x.append(x_map["num_hs"].index(atom.GetTotalNumHs()))
-        x.append(x_map["num_radical_electrons"].index(atom.GetNumRadicalElectrons()))
-        x.append(x_map["hybridization"].index(str(atom.GetHybridization())))
-        x.append(x_map["is_aromatic"].index(atom.GetIsAromatic()))
-        x.append(x_map["is_in_ring"].index(atom.IsInRing()))
+        x.append(x_map['atomic_num'].index(atom.GetAtomicNum()))
+        x.append(x_map['chirality'].index(str(atom.GetChiralTag())))
+        x.append(x_map['degree'].index(atom.GetTotalDegree()))
+        x.append(x_map['formal_charge'].index(atom.GetFormalCharge()))
+        x.append(x_map['num_hs'].index(atom.GetTotalNumHs()))
+        x.append(x_map['num_radical_electrons'].index(
+            atom.GetNumRadicalElectrons()))
+        x.append(x_map['hybridization'].index(str(atom.GetHybridization())))
+        x.append(x_map['is_aromatic'].index(atom.GetIsAromatic()))
+        x.append(x_map['is_in_ring'].index(atom.IsInRing()))
         xs.append(x)
 
     x = torch.tensor(xs, dtype=torch.long).view(-1, 9)
@@ -122,9 +127,9 @@ def from_smiles(
         j = bond.GetEndAtomIdx()
 
         e = []
-        e.append(e_map["bond_type"].index(str(bond.GetBondType())))
-        e.append(e_map["stereo"].index(str(bond.GetStereo())))
-        e.append(e_map["is_conjugated"].index(bond.GetIsConjugated()))
+        e.append(e_map['bond_type'].index(str(bond.GetBondType())))
+        e.append(e_map['stereo'].index(str(bond.GetStereo())))
+        e.append(e_map['is_conjugated'].index(bond.GetIsConjugated()))
 
         edge_indices += [[i, j], [j, i]]
         edge_attrs += [e, e]
@@ -140,7 +145,8 @@ def from_smiles(
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, smiles=smiles)
 
 
-def to_smiles(data: "torch_geometric.data.Data", kekulize: bool = False) -> Any:
+def to_smiles(data: 'torch_geometric.data.Data',
+              kekulize: bool = False) -> Any:
     """Converts a :class:`torch_geometric.data.Data` instance to a SMILES
     string.
 
@@ -156,10 +162,12 @@ def to_smiles(data: "torch_geometric.data.Data", kekulize: bool = False) -> Any:
     for i in range(data.num_nodes):
         atom = Chem.Atom(data.x[i, 0].item())
         atom.SetChiralTag(Chem.rdchem.ChiralType.values[data.x[i, 1].item()])
-        atom.SetFormalCharge(x_map["formal_charge"][data.x[i, 3].item()])
-        atom.SetNumExplicitHs(x_map["num_hs"][data.x[i, 4].item()])
-        atom.SetNumRadicalElectrons(x_map["num_radical_electrons"][data.x[i, 5].item()])
-        atom.SetHybridization(Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
+        atom.SetFormalCharge(x_map['formal_charge'][data.x[i, 3].item()])
+        atom.SetNumExplicitHs(x_map['num_hs'][data.x[i, 4].item()])
+        atom.SetNumRadicalElectrons(
+            x_map['num_radical_electrons'][data.x[i, 5].item()])
+        atom.SetHybridization(
+            Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
         atom.SetIsAromatic(data.x[i, 7].item())
         mol.AddAtom(atom)
 

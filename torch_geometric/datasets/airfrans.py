@@ -83,9 +83,8 @@ class AirfRANS(InMemoryDataset):
           - 5
           - 4
     """
-
-    url = "https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip"
-    tasks = ["full", "scarce", "reynolds", "aoa"]
+    url = 'https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip'
+    tasks = ['full', 'scarce', 'reynolds', 'aoa']
 
     def __init__(
         self,
@@ -97,25 +96,26 @@ class AirfRANS(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
     ):
         if task not in self.tasks:
-            raise ValueError(f"Expected 'task' to be in {self.tasks} " f"got '{task}'")
+            raise ValueError(f"Expected 'task' to be in {self.tasks} "
+                             f"got '{task}'")
 
-        self.task = "full" if task == "scarce" and not train else task
-        self.split = "train" if train else "test"
+        self.task = 'full' if task == 'scarce' and not train else task
+        self.split = 'train' if train else 'test'
 
         super().__init__(root, transform, pre_transform, pre_filter)
         self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["AirfRANS.pt", "manifest.json"]
+        return ['AirfRANS.pt', 'manifest.json']
 
     @property
     def process(self) -> List[str]:
-        return ["AirfRANS.pt", "manifest.json"]
+        return ['AirfRANS.pt', 'manifest.json']
 
     @property
     def processed_file_names(self) -> str:
-        return f"{self.task}_{self.split}.pt"
+        return f'{self.task}_{self.split}.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -123,10 +123,10 @@ class AirfRANS(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        with open(self.raw_paths[1], "r") as f:
+        with open(self.raw_paths[1], 'r') as f:
             manifest = json.load(f)
-        total = manifest["full_train"] + manifest["full_test"]
-        partial = set(manifest[f"{self.task}_{self.split}"])
+        total = manifest['full_train'] + manifest['full_test']
+        partial = set(manifest[f'{self.task}_{self.split}'])
 
         data_list = []
         raw_data = torch.load(self.raw_paths[0])
@@ -144,7 +144,5 @@ class AirfRANS(InMemoryDataset):
         self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({len(self)}, "
-            f"task={self.task}, split={self.split})"
-        )
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'task={self.task}, split={self.split})')

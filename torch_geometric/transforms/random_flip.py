@@ -5,7 +5,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("random_flip")
+@functional_transform('random_flip')
 class RandomFlip(BaseTransform):
     """Flips node positions along a given axis randomly with a given
     probability (functional name: :obj:`random_flip`).
@@ -15,7 +15,6 @@ class RandomFlip(BaseTransform):
         p (float, optional): Probability that node positions will be flipped.
             (default: :obj:`0.5`)
     """
-
     def __init__(self, axis: int, p: float = 0.5):
         self.axis = axis
         self.p = p
@@ -28,4 +27,4 @@ class RandomFlip(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(axis={self.axis}, p={self.p})"
+        return f'{self.__class__.__name__}(axis={self.axis}, p={self.p})'

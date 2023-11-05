@@ -18,7 +18,6 @@ class KGEModel(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -87,7 +86,7 @@ class KGEModel(torch.nn.Module):
                 :class:`torch.utils.data.DataLoader`, such as
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last`
                 or :obj:`num_workers`.
-        """
+            """
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     @torch.no_grad()
@@ -124,9 +123,8 @@ class KGEModel(torch.nn.Module):
             tail_indices = torch.arange(self.num_nodes, device=t.device)
             for ts in tail_indices.split(batch_size):
                 scores.append(self(h.expand_as(ts), r.expand_as(ts), ts))
-            rank = int(
-                (torch.cat(scores).argsort(descending=True) == t).nonzero().view(-1)
-            )
+            rank = int((torch.cat(scores).argsort(
+                descending=True) == t).nonzero().view(-1))
             mean_ranks.append(rank)
             reciprocal_ranks.append(1 / (rank + 1))
             hits_at_k.append(rank < k)
@@ -154,9 +152,8 @@ class KGEModel(torch.nn.Module):
         """
         # Random sample either `head_index` or `tail_index` (but not both):
         num_negatives = head_index.numel() // 2
-        rnd_index = torch.randint(
-            self.num_nodes, head_index.size(), device=head_index.device
-        )
+        rnd_index = torch.randint(self.num_nodes, head_index.size(),
+                                  device=head_index.device)
 
         head_index = head_index.clone()
         head_index[:num_negatives] = rnd_index[:num_negatives]
@@ -166,8 +163,6 @@ class KGEModel(torch.nn.Module):
         return head_index, rel_type, tail_index
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.num_nodes}, "
-            f"num_relations={self.num_relations}, "
-            f"hidden_channels={self.hidden_channels})"
-        )
+        return (f'{self.__class__.__name__}({self.num_nodes}, '
+                f'num_relations={self.num_relations}, '
+                f'hidden_channels={self.hidden_channels})')

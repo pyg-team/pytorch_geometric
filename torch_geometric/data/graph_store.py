@@ -40,15 +40,14 @@ from torch_geometric.utils.sparse import index2ptr, ptr2index
 #     CSR, or the col pointer for CSC
 #   * The perm dictionary contains the permutation of edges that was applied
 #     in converting between formats, if applicable.
-ConversionOutputType = Tuple[
-    Dict[EdgeType, Tensor], Dict[EdgeType, Tensor], Dict[EdgeType, OptTensor]
-]
+ConversionOutputType = Tuple[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor],
+                             Dict[EdgeType, OptTensor]]
 
 
 class EdgeLayout(Enum):
-    COO = "coo"
-    CSC = "csc"
-    CSR = "csr"
+    COO = 'coo'
+    CSC = 'csc'
+    CSR = 'csr'
 
 
 @dataclass
@@ -88,9 +87,8 @@ class EdgeAttr(CastMixin):
         layout = EdgeLayout(layout)
 
         if layout == EdgeLayout.CSR and is_sorted:
-            raise ValueError(
-                "Cannot create a 'CSR' edge attribute with " "option 'is_sorted=True'"
-            )
+            raise ValueError("Cannot create a 'CSR' edge attribute with "
+                             "option 'is_sorted=True'")
 
         if layout == EdgeLayout.CSC:
             is_sorted = True
@@ -109,19 +107,20 @@ class GraphStore:
             :class:`EdgeAttr` class to customize the required attributes and
             their ordering to uniquely identify edges. (default: :obj:`None`)
     """
-
     def __init__(self, edge_attr_cls: Optional[Any] = None):
         super().__init__()
-        self.__dict__["_edge_attr_cls"] = edge_attr_cls or EdgeAttr
+        self.__dict__['_edge_attr_cls'] = edge_attr_cls or EdgeAttr
 
     # Core (CRUD) #############################################################
 
     @abstractmethod
-    def _put_edge_index(self, edge_index: EdgeTensorType, edge_attr: EdgeAttr) -> bool:
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
         pass
 
-    def put_edge_index(self, edge_index: EdgeTensorType, *args, **kwargs) -> bool:
+    def put_edge_index(self, edge_index: EdgeTensorType, *args,
+                       **kwargs) -> bool:
         r"""Synchronously adds an :obj:`edge_index` tuple to the
         :class:`GraphStore`.
         Returns whether insertion was successful.
@@ -252,7 +251,7 @@ class GraphStore:
         return self.remove_edge_index(key)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f'{self.__class__.__name__}()'
 
     # Helper methods ##########################################################
 
@@ -262,6 +261,7 @@ class GraphStore:
         layout: EdgeLayout,
         store: bool = False,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
+
         (row, col), perm = self.get_edge_index(attr), None
 
         if layout == EdgeLayout.COO:  # COO output requested:
@@ -306,6 +306,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
+
         # Obtain all edge attributes, grouped by type:
         edge_type_attrs: Dict[EdgeType, List[EdgeAttr]] = defaultdict(list)
         for attr in self.get_all_edge_attrs():
@@ -315,13 +316,12 @@ class GraphStore:
         if edge_types is not None:
             for edge_type in edge_types:
                 if edge_type not in edge_type_attrs:
-                    raise ValueError(
-                        f"The 'edge_index' of type '{edge_type}' "
-                        f"was not found in the graph store."
-                    )
+                    raise ValueError(f"The 'edge_index' of type '{edge_type}' "
+                                     f"was not found in the graph store.")
 
             edge_type_attrs = {
-                key: attr for key, attr in edge_type_attrs.items() if key in edge_types
+                key: attr
+                for key, attr in edge_type_attrs.items() if key in edge_types
             }
 
         # Convert layout from its most favorable original layout:
@@ -338,10 +338,7 @@ class GraphStore:
             elif EdgeLayout.CSR in layouts:
                 attr = attrs[layouts.index(EdgeLayout.CSR)]
 
-            (
-                row_dict[edge_type],
-                col_dict[edge_type],
-                perm_dict[edge_type],
-            ) = self._edge_to_layout(attr, layout, store)
+            row_dict[edge_type], col_dict[edge_type], perm_dict[edge_type] = (
+                self._edge_to_layout(attr, layout, store))
 
         return row_dict, col_dict, perm_dict

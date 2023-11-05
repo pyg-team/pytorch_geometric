@@ -15,10 +15,8 @@ class MeanSubtractionNorm(torch.nn.Module):
         \mathbf{x}_i = \mathbf{x}_i - \frac{1}{|\mathcal{V}|}
         \sum_{j \in \mathcal{V}} \mathbf{x}_j
     """
-
-    def forward(
-        self, x: Tensor, batch: Optional[Tensor] = None, dim_size: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                dim_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -31,8 +29,8 @@ class MeanSubtractionNorm(torch.nn.Module):
         if batch is None:
             return x - x.mean(dim=0, keepdim=True)
 
-        mean = scatter(x, batch, dim=0, dim_size=dim_size, reduce="mean")
+        mean = scatter(x, batch, dim=0, dim_size=dim_size, reduce='mean')
         return x - mean[batch]
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f'{self.__class__.__name__}()'

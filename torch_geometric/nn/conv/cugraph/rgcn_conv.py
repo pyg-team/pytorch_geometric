@@ -10,11 +10,11 @@ from torch_geometric.nn.inits import glorot, zeros
 
 try:
     if LEGACY_MODE:
-        from pylibcugraphops.torch.autograd import agg_hg_basis_n2n_post as RGCNConvAgg
+        from pylibcugraphops.torch.autograd import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
     else:
-        from pylibcugraphops.pytorch.operators import (
-            agg_hg_basis_n2n_post as RGCNConvAgg,
-        )
+        from pylibcugraphops.pytorch.operators import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
 except ImportError:
     pass
 
@@ -29,24 +29,14 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
     package that fuses message passing computation for accelerated execution
     and lower memory footprint.
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        num_relations: int,
-        num_bases: Optional[int] = None,
-        aggr: str = "mean",
-        root_weight: bool = True,
-        bias: bool = True,
-    ):
+    def __init__(self, in_channels: int, out_channels: int, num_relations: int,
+                 num_bases: Optional[int] = None, aggr: str = 'mean',
+                 root_weight: bool = True, bias: bool = True):
         super().__init__()
 
-        if aggr not in ["sum", "add", "mean"]:
-            raise ValueError(
-                f"Aggregation function must be either 'mean' "
-                f"or 'sum' (got '{aggr}')"
-            )
+        if aggr not in ['sum', 'add', 'mean']:
+            raise ValueError(f"Aggregation function must be either 'mean' "
+                             f"or 'sum' (got '{aggr}')")
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -59,19 +49,19 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.empty(num_bases + dim_root_weight, in_channels, out_channels)
-            )
+                torch.empty(num_bases + dim_root_weight, in_channels,
+                            out_channels))
             self.comp = Parameter(torch.empty(num_relations, num_bases))
         else:
             self.weight = Parameter(
-                torch.empty(num_relations + dim_root_weight, in_channels, out_channels)
-            )
-            self.register_parameter("comp", None)
+                torch.empty(num_relations + dim_root_weight, in_channels,
+                            out_channels))
+            self.register_parameter('comp', None)
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -105,17 +95,11 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        graph = self.get_typed_cugraph(
-            csc, edge_type, self.num_relations, max_num_neighbors
-        )
+        graph = self.get_typed_cugraph(csc, edge_type, self.num_relations,
+                                       max_num_neighbors)
 
-        out = RGCNConvAgg(
-            x,
-            self.comp,
-            graph,
-            concat_own=self.root_weight,
-            norm_by_out_degree=bool(self.aggr == "mean"),
-        )
+        out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,
+                          norm_by_out_degree=bool(self.aggr == 'mean'))
 
         out = out @ self.weight.view(-1, self.out_channels)
 
@@ -125,7 +109,5 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
         return out
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, num_relations={self.num_relations})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_relations={self.num_relations})')

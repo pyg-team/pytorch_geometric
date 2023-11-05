@@ -52,14 +52,13 @@ class DeepGCNLayer(torch.nn.Module):
             memory. Set this to :obj:`True` in case you encounter out-of-memory
             errors while going deep. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         conv: Optional[Module] = None,
         norm: Optional[Module] = None,
         act: Optional[Module] = None,
-        block: str = "res+",
-        dropout: float = 0.0,
+        block: str = 'res+',
+        dropout: float = 0.,
         ckpt_grad: bool = False,
     ):
         super().__init__()
@@ -68,7 +67,7 @@ class DeepGCNLayer(torch.nn.Module):
         self.norm = norm
         self.act = act
         self.block = block.lower()
-        assert self.block in ["res+", "res", "dense", "plain"]
+        assert self.block in ['res+', 'res', 'dense', 'plain']
         self.dropout = dropout
         self.ckpt_grad = ckpt_grad
 
@@ -82,7 +81,7 @@ class DeepGCNLayer(torch.nn.Module):
         args = list(args)
         x = args.pop(0)
 
-        if self.block == "res+":
+        if self.block == 'res+':
             h = x
             if self.norm is not None:
                 h = self.norm(h)
@@ -90,7 +89,8 @@ class DeepGCNLayer(torch.nn.Module):
                 h = self.act(h)
             h = F.dropout(h, p=self.dropout, training=self.training)
             if self.conv is not None and self.ckpt_grad and h.requires_grad:
-                h = checkpoint(self.conv, h, *args, use_reentrant=True, **kwargs)
+                h = checkpoint(self.conv, h, *args, use_reentrant=True,
+                               **kwargs)
             else:
                 h = self.conv(h, *args, **kwargs)
 
@@ -98,7 +98,8 @@ class DeepGCNLayer(torch.nn.Module):
 
         else:
             if self.conv is not None and self.ckpt_grad and x.requires_grad:
-                h = checkpoint(self.conv, x, *args, use_reentrant=True, **kwargs)
+                h = checkpoint(self.conv, x, *args, use_reentrant=True,
+                               **kwargs)
             else:
                 h = self.conv(x, *args, **kwargs)
             if self.norm is not None:
@@ -106,14 +107,14 @@ class DeepGCNLayer(torch.nn.Module):
             if self.act is not None:
                 h = self.act(h)
 
-            if self.block == "res":
+            if self.block == 'res':
                 h = x + h
-            elif self.block == "dense":
+            elif self.block == 'dense':
                 h = torch.cat([x, h], dim=-1)
-            elif self.block == "plain":
+            elif self.block == 'plain':
                 pass
 
             return F.dropout(h, p=self.dropout, training=self.training)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(block={self.block})"
+        return f'{self.__class__.__name__}(block={self.block})'

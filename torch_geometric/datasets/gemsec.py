@@ -29,43 +29,39 @@ class GemsecDeezer(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = "https://graphmining.ai/datasets/ptg/gemsec"
+    url = 'https://graphmining.ai/datasets/ptg/gemsec'
 
-    def __init__(
-        self,
-        root: str,
-        name: str,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name
-        assert self.name in ["HU", "HR", "RO"]
+        assert self.name in ['HU', 'HR', 'RO']
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, "raw")
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, "processed")
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> str:
-        return f"{self.name}.npz"
+        return f'{self.name}.npz'
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
-        download_url(osp.join(self.url, self.name + ".npz"), self.raw_dir)
+        download_url(osp.join(self.url, self.name + '.npz'), self.raw_dir)
 
     def process(self):
-        data = np.load(self.raw_paths[0], "r", allow_pickle=True)
-        y = torch.from_numpy(data["target"]).to(torch.long)
-        edge_index = torch.from_numpy(data["edges"]).to(torch.long)
+        data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
+        y = torch.from_numpy(data['target']).to(torch.long)
+        edge_index = torch.from_numpy(data['edges']).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
         data = Data(y=y, edge_index=edge_index)

@@ -50,24 +50,20 @@ class PolBlogs(InMemoryDataset):
           - 2
     """
 
-    url = "https://netset.telecom-paris.fr/datasets/polblogs.tar.gz"
+    url = 'https://netset.telecom-paris.fr/datasets/polblogs.tar.gz'
 
-    def __init__(
-        self,
-        root: str,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["adjacency.tsv", "labels.tsv"]
+        return ['adjacency.tsv', 'labels.tsv']
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -77,12 +73,11 @@ class PolBlogs(InMemoryDataset):
     def process(self):
         import pandas as pd
 
-        edge_index = pd.read_csv(
-            self.raw_paths[0], header=None, sep="\t", usecols=[0, 1]
-        )
+        edge_index = pd.read_csv(self.raw_paths[0], header=None, sep='\t',
+                                 usecols=[0, 1])
         edge_index = torch.from_numpy(edge_index.values).t().contiguous()
 
-        y = pd.read_csv(self.raw_paths[1], header=None, sep="\t")
+        y = pd.read_csv(self.raw_paths[1], header=None, sep='\t')
         y = torch.from_numpy(y.values).view(-1)
 
         data = Data(edge_index=edge_index, y=y, num_nodes=y.size(0))

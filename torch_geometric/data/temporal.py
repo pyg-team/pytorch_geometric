@@ -86,7 +86,6 @@ class TemporalData(BaseData):
         The shape of :obj:`src`, :obj:`dst`, :obj:`t` and the first dimension
         of :obj`msg` should be the same (:obj:`num_events`).
     """
-
     def __init__(
         self,
         src: Optional[Tensor] = None,
@@ -96,7 +95,7 @@ class TemporalData(BaseData):
         **kwargs,
     ):
         super().__init__()
-        self.__dict__["_store"] = GlobalStorage(_parent=self)
+        self.__dict__['_store'] = GlobalStorage(_parent=self)
 
         self.src = src
         self.dst = dst
@@ -107,12 +106,12 @@ class TemporalData(BaseData):
             setattr(self, key, value)
 
     @classmethod
-    def from_dict(cls, mapping: Dict[str, Any]) -> "TemporalData":
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
         r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
         a Python dictionary."""
         return cls(**mapping)
 
-    def index_select(self, idx: Any) -> "TemporalData":
+    def index_select(self, idx: Any) -> 'TemporalData':
         idx = prepare_idx(idx)
         data = copy.copy(self)
         for key, value in data._store.items():
@@ -134,13 +133,12 @@ class TemporalData(BaseData):
             del self._store[key]
 
     def __getattr__(self, key: str) -> Any:
-        if "_store" not in self.__dict__:
+        if '_store' not in self.__dict__:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
-                "root folder and try again."
-            )
+                "root folder and try again.")
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
@@ -164,7 +162,7 @@ class TemporalData(BaseData):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out.__dict__["_store"] = copy.copy(self._store)
+        out.__dict__['_store'] = copy.copy(self._store)
         out._store._parent = out
         return out
 
@@ -175,7 +173,7 @@ class TemporalData(BaseData):
         out._store._parent = out
         return out
 
-    def stores_as(self, data: "TemporalData"):
+    def stores_as(self, data: 'TemporalData'):
         return self
 
     @property
@@ -223,13 +221,12 @@ class TemporalData(BaseData):
     @property
     def edge_index(self) -> Tensor:
         r"""Returns the edge indices of the graph."""
-        if "edge_index" in self:
-            return self._store["edge_index"]
+        if 'edge_index' in self:
+            return self._store['edge_index']
         if self.src is not None and self.dst is not None:
             return torch.stack([self.src, self.dst], dim=0)
-        raise ValueError(
-            f"{self.__class__.__name__} does not contain " f"'edge_index' information"
-        )
+        raise ValueError(f"{self.__class__.__name__} does not contain "
+                         f"'edge_index' information")
 
     def size(
         self, dim: Optional[int] = None
@@ -242,21 +239,22 @@ class TemporalData(BaseData):
         return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if "batch" in key:
+        if 'batch' in key:
             return int(value.max()) + 1
-        elif key in ["src", "dst"]:
+        elif key in ['src', 'dst']:
             return self.num_nodes
         else:
             return 0
 
     def __repr__(self) -> str:
         cls = self.__class__.__name__
-        info = ", ".join([size_repr(k, v) for k, v in self._store.items()])
-        return f"{cls}({info})"
+        info = ', '.join([size_repr(k, v) for k, v in self._store.items()])
+        return f'{cls}({info})'
 
     ###########################################################################
 
-    def train_val_test_split(self, val_ratio: float = 0.15, test_ratio: float = 0.15):
+    def train_val_test_split(self, val_ratio: float = 0.15,
+                             test_ratio: float = 0.15):
         r"""Splits the data in training, validation and test sets according to
         time.
 
@@ -268,8 +266,8 @@ class TemporalData(BaseData):
                 dataset to include in the test split. (default: :obj:`0.15`)
         """
         val_time, test_time = np.quantile(
-            self.t.cpu().numpy(), [1.0 - val_ratio - test_ratio, 1.0 - test_ratio]
-        )
+            self.t.cpu().numpy(),
+            [1. - val_ratio - test_ratio, 1. - test_ratio])
 
         val_idx = int((self.t <= val_time).sum())
         test_idx = int((self.t <= test_time).sum())
@@ -311,5 +309,4 @@ def prepare_idx(idx):
 
     raise IndexError(
         f"Only strings, integers, slices (`:`), list, tuples, and long or "
-        f"bool tensors are valid indices (got '{type(idx).__name__}')"
-    )
+        f"bool tensors are valid indices (got '{type(idx).__name__}')")

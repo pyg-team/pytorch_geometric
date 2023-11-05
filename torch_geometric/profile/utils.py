@@ -30,7 +30,7 @@ def get_model_size(model: torch.nn.Module) -> int:
     Args:
         model (torch model): The model.
     """
-    path = f"{random.randrange(sys.maxsize)}.pt"
+    path = f'{random.randrange(sys.maxsize)}.pt'
     torch.save(model.state_dict(), path)
     model_size = osp.getsize(path)
     os.remove(path)
@@ -69,7 +69,7 @@ def get_data_size(data: BaseData) -> int:
 def get_cpu_memory_from_gc() -> int:
     r"""Returns the used CPU memory in bytes, as reported by the
     :python:`Python` garbage collector."""
-    warnings.filterwarnings("ignore", ".*torch.distributed.reduce_op.*")
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
 
     mem = 0
     for obj in gc.get_objects():
@@ -88,7 +88,7 @@ def get_gpu_memory_from_gc(device: int = 0) -> int:  # pragma: no cover
     Args:
         device (int, optional): The GPU device identifier. (default: :obj:`1`)
     """
-    warnings.filterwarnings("ignore", ".*torch.distributed.reduce_op.*")
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
 
     mem = 0
     for obj in gc.get_objects():
@@ -118,14 +118,15 @@ def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
         digits (int): The number of decimals to use for megabytes.
             (default: :obj:`2`)
     """
-    CMD = "nvidia-smi --query-gpu=memory.free --format=csv"
-    free_out = sp.check_output(CMD.split()).decode("utf-8").split("\n")[1:-1]
+    CMD = 'nvidia-smi --query-gpu=memory.free --format=csv'
+    free_out = sp.check_output(CMD.split()).decode('utf-8').split('\n')[1:-1]
 
-    CMD = "nvidia-smi --query-gpu=memory.used --format=csv"
-    used_out = sp.check_output(CMD.split()).decode("utf-8").split("\n")[1:-1]
+    CMD = 'nvidia-smi --query-gpu=memory.used --format=csv'
+    used_out = sp.check_output(CMD.split()).decode('utf-8').split('\n')[1:-1]
 
     if device < 0 or device >= len(free_out):
-        raise AttributeError(f"GPU {device} not available (found {len(free_out)} GPUs)")
+        raise AttributeError(
+            f'GPU {device} not available (found {len(free_out)} GPUs)')
 
     free_mem = medibyte_to_megabyte(int(free_out[device].split()[0]), digits)
     used_mem = medibyte_to_megabyte(int(used_out[device].split()[0]), digits)

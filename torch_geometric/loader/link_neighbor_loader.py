@@ -200,7 +200,6 @@ class LinkNeighborLoader(LinkLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -209,9 +208,9 @@ class LinkNeighborLoader(LinkLoader):
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
         replace: bool = False,
-        subgraph_type: Union[SubgraphType, str] = "directional",
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
-        temporal_strategy: str = "uniform",
+        temporal_strategy: str = 'uniform',
         neg_sampling: Optional[NegativeSampling] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
@@ -231,8 +230,7 @@ class LinkNeighborLoader(LinkLoader):
                 f"{'set' if edge_label_time is not None else 'not set'} "
                 f"while 'time_attr' is "
                 f"{'set' if time_attr is not None else 'not set'}. "
-                f"Both arguments must be provided for temporal sampling."
-            )
+                f"Both arguments must be provided for temporal sampling.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -245,7 +243,7 @@ class LinkNeighborLoader(LinkLoader):
                 time_attr=time_attr,
                 weight_attr=weight_attr,
                 is_sorted=is_sorted,
-                share_memory=kwargs.get("num_workers", 0) > 0,
+                share_memory=kwargs.get('num_workers', 0) > 0,
                 directed=directed,
             )
 

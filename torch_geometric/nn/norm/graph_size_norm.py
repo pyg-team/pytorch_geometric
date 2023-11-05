@@ -16,13 +16,11 @@ class GraphSizeNorm(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x}_i}{\sqrt{|\mathcal{V}|}}
     """
-
     def __init__(self):
         super().__init__()
 
-    def forward(
-        self, x: Tensor, batch: OptTensor = None, batch_size: Optional[int] = None
-    ) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -40,4 +38,4 @@ class GraphSizeNorm(torch.nn.Module):
         return x * inv_sqrt_deg.index_select(0, batch).view(-1, 1)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f'{self.__class__.__name__}()'

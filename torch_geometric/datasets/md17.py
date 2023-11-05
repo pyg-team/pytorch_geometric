@@ -300,39 +300,37 @@ class MD17(InMemoryDataset):
           - 2
     """  # noqa: E501
 
-    gdml_url = "http://quantum-machine.org/gdml/data/npz"
-    revised_url = (
-        "https://archive.materialscloud.org/record/"
-        "file?filename=rmd17.tar.bz2&record_id=466"
-    )
+    gdml_url = 'http://quantum-machine.org/gdml/data/npz'
+    revised_url = ('https://archive.materialscloud.org/record/'
+                   'file?filename=rmd17.tar.bz2&record_id=466')
 
     file_names = {
-        "benzene": "md17_benzene2017.npz",
-        "uracil": "md17_uracil.npz",
-        "naphtalene": "md17_naphthalene.npz",
-        "aspirin": "md17_aspirin.npz",
-        "salicylic acid": "md17_salicylic.npz",
-        "malonaldehyde": "md17_malonaldehyde.npz",
-        "ethanol": "md17_ethanol.npz",
-        "toluene": "md17_toluene.npz",
-        "paracetamol": "paracetamol_dft.npz",
-        "azobenzene": "azobenzene_dft.npz",
-        "revised benzene": "rmd17_benzene.npz",
-        "revised uracil": "rmd17_uracil.npz",
-        "revised naphthalene": "rmd17_naphthalene.npz",
-        "revised aspirin": "rmd17_aspirin.npz",
-        "revised salicylic acid": "rmd17_salicylic.npz",
-        "revised malonaldehyde": "rmd17_malonaldehyde.npz",
-        "revised ethanol": "rmd17_ethanol.npz",
-        "revised toluene": "rmd17_toluene.npz",
-        "revised paracetamol": "rmd17_paracetamol.npz",
-        "revised azobenzene": "rmd17_azobenzene.npz",
-        "benzene CCSD(T)": "benzene_ccsd_t.zip",
-        "aspirin CCSD": "aspirin_ccsd.zip",
-        "malonaldehyde CCSD(T)": "malonaldehyde_ccsd_t.zip",
-        "ethanol CCSD(T)": "ethanol_ccsd_t.zip",
-        "toluene CCSD(T)": "toluene_ccsd_t.zip",
-        "benzene FHI-aims": "benzene2018_dft.npz",
+        'benzene': 'md17_benzene2017.npz',
+        'uracil': 'md17_uracil.npz',
+        'naphtalene': 'md17_naphthalene.npz',
+        'aspirin': 'md17_aspirin.npz',
+        'salicylic acid': 'md17_salicylic.npz',
+        'malonaldehyde': 'md17_malonaldehyde.npz',
+        'ethanol': 'md17_ethanol.npz',
+        'toluene': 'md17_toluene.npz',
+        'paracetamol': 'paracetamol_dft.npz',
+        'azobenzene': 'azobenzene_dft.npz',
+        'revised benzene': 'rmd17_benzene.npz',
+        'revised uracil': 'rmd17_uracil.npz',
+        'revised naphthalene': 'rmd17_naphthalene.npz',
+        'revised aspirin': 'rmd17_aspirin.npz',
+        'revised salicylic acid': 'rmd17_salicylic.npz',
+        'revised malonaldehyde': 'rmd17_malonaldehyde.npz',
+        'revised ethanol': 'rmd17_ethanol.npz',
+        'revised toluene': 'rmd17_toluene.npz',
+        'revised paracetamol': 'rmd17_paracetamol.npz',
+        'revised azobenzene': 'rmd17_azobenzene.npz',
+        'benzene CCSD(T)': 'benzene_ccsd_t.zip',
+        'aspirin CCSD': 'aspirin_ccsd.zip',
+        'malonaldehyde CCSD(T)': 'malonaldehyde_ccsd_t.zip',
+        'ethanol CCSD(T)': 'ethanol_ccsd_t.zip',
+        'toluene CCSD(T)': 'toluene_ccsd_t.zip',
+        'benzene FHI-aims': 'benzene2018_dft.npz',
     }
 
     def __init__(
@@ -348,21 +346,19 @@ class MD17(InMemoryDataset):
             raise ValueError(f"Unknown dataset name '{name}'")
 
         self.name = name
-        self.revised = "revised" in name
-        self.ccsd = "CCSD" in self.name
+        self.revised = 'revised' in name
+        self.ccsd = 'CCSD' in self.name
 
         super().__init__(root, transform, pre_transform, pre_filter)
 
         if len(self.processed_file_names) == 1 and train is not None:
             raise ValueError(
                 f"'{self.name}' dataset does not provide pre-defined splits "
-                f"but the 'train' argument is set to '{train}'"
-            )
+                f"but the 'train' argument is set to '{train}'")
         elif len(self.processed_file_names) == 2 and train is None:
             raise ValueError(
                 f"'{self.name}' dataset does provide pre-defined splits but "
-                f"the 'train' argument was not specified"
-            )
+                f"the 'train' argument was not specified")
 
         idx = 0 if train is None or train else 1
         self.load(self.processed_paths[idx])
@@ -373,36 +369,36 @@ class MD17(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         if self.revised:
-            return osp.join(self.root, "raw")
-        return osp.join(self.root, self.name, "raw")
+            return osp.join(self.root, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, "processed")
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> str:
         name = self.file_names[self.name]
         if self.revised:
-            return osp.join("rmd17", "npz_data", name)
+            return osp.join('rmd17', 'npz_data', name)
         elif self.ccsd:
-            return name[:-4] + "-train.npz", name[:-4] + "-test.npz"
+            return name[:-4] + '-train.npz', name[:-4] + '-test.npz'
         return name
 
     @property
     def processed_file_names(self) -> List[str]:
         if self.ccsd:
-            return ["train.pt", "test.pt"]
+            return ['train.pt', 'test.pt']
         else:
-            return ["data.pt"]
+            return ['data.pt']
 
     def download(self):
         if self.revised:
             path = download_url(self.revised_url, self.raw_dir)
-            extract_tar(path, self.raw_dir, mode="r:bz2")
+            extract_tar(path, self.raw_dir, mode='r:bz2')
             os.unlink(path)
         else:
-            url = f"{self.gdml_url}/{self.file_names[self.name]}"
+            url = f'{self.gdml_url}/{self.file_names[self.name]}'
             path = download_url(url, self.raw_dir)
             if self.ccsd:
                 extract_zip(path, self.raw_dir)
@@ -414,15 +410,15 @@ class MD17(InMemoryDataset):
             raw_data = np.load(raw_path)
 
             if self.revised:
-                z = torch.from_numpy(raw_data["nuclear_charges"]).long()
-                pos = torch.from_numpy(raw_data["coords"]).float()
-                energy = torch.from_numpy(raw_data["energies"]).float()
-                force = torch.from_numpy(raw_data["forces"]).float()
+                z = torch.from_numpy(raw_data['nuclear_charges']).long()
+                pos = torch.from_numpy(raw_data['coords']).float()
+                energy = torch.from_numpy(raw_data['energies']).float()
+                force = torch.from_numpy(raw_data['forces']).float()
             else:
-                z = torch.from_numpy(raw_data["z"]).long()
-                pos = torch.from_numpy(raw_data["R"]).float()
-                energy = torch.from_numpy(raw_data["E"]).float()
-                force = torch.from_numpy(raw_data["F"]).float()
+                z = torch.from_numpy(raw_data['z']).long()
+                pos = torch.from_numpy(raw_data['R']).float()
+                energy = torch.from_numpy(raw_data['E']).float()
+                force = torch.from_numpy(raw_data['F']).float()
 
             data_list = []
             for i in range(pos.size(0)):

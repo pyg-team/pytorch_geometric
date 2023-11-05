@@ -35,16 +35,9 @@ class TGNMemory(torch.nn.Module):
             which aggregates messages to the same destination into a single
             representation.
     """
-
-    def __init__(
-        self,
-        num_nodes: int,
-        raw_msg_dim: int,
-        memory_dim: int,
-        time_dim: int,
-        message_module: Callable,
-        aggregator_module: Callable,
-    ):
+    def __init__(self, num_nodes: int, raw_msg_dim: int, memory_dim: int,
+                 time_dim: int, message_module: Callable,
+                 aggregator_module: Callable):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -58,10 +51,11 @@ class TGNMemory(torch.nn.Module):
         self.time_enc = TimeEncoder(time_dim)
         self.gru = GRUCell(message_module.out_channels, memory_dim)
 
-        self.register_buffer("memory", torch.empty(num_nodes, memory_dim))
+        self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
         last_update = torch.empty(self.num_nodes, dtype=torch.long)
-        self.register_buffer("last_update", last_update)
-        self.register_buffer("_assoc", torch.empty(num_nodes, dtype=torch.long))
+        self.register_buffer('last_update', last_update)
+        self.register_buffer('_assoc', torch.empty(num_nodes,
+                                                   dtype=torch.long))
 
         self.msg_s_store = {}
         self.msg_d_store = {}
@@ -74,11 +68,11 @@ class TGNMemory(torch.nn.Module):
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        if hasattr(self.msg_s_module, "reset_parameters"):
+        if hasattr(self.msg_s_module, 'reset_parameters'):
             self.msg_s_module.reset_parameters()
-        if hasattr(self.msg_d_module, "reset_parameters"):
+        if hasattr(self.msg_d_module, 'reset_parameters'):
             self.msg_d_module.reset_parameters()
-        if hasattr(self.aggr_module, "reset_parameters"):
+        if hasattr(self.aggr_module, 'reset_parameters'):
             self.aggr_module.reset_parameters()
         self.time_enc.reset_parameters()
         self.gru.reset_parameters()
@@ -104,7 +98,8 @@ class TGNMemory(torch.nn.Module):
 
         return memory, last_update
 
-    def update_state(self, src: Tensor, dst: Tensor, t: Tensor, raw_msg: Tensor):
+    def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
+                     raw_msg: Tensor):
         """Updates the memory with newly encountered interactions
         :obj:`(src, dst, t, raw_msg)`."""
         n_id = torch.cat([src, dst]).unique()
@@ -119,7 +114,7 @@ class TGNMemory(torch.nn.Module):
             self._update_memory(n_id)
 
     def _reset_message_store(self):
-        i = self.memory.new_empty((0,), device=self.device, dtype=torch.long)
+        i = self.memory.new_empty((0, ), device=self.device, dtype=torch.long)
         msg = self.memory.new_empty((0, self.raw_msg_dim), device=self.device)
         # Message store format: (src, dst, t, msg)
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
@@ -134,14 +129,12 @@ class TGNMemory(torch.nn.Module):
         self._assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
         # Compute messages (src -> dst).
-        msg_s, t_s, src_s, dst_s = self._compute_msg(
-            n_id, self.msg_s_store, self.msg_s_module
-        )
+        msg_s, t_s, src_s, dst_s = self._compute_msg(n_id, self.msg_s_store,
+                                                     self.msg_s_module)
 
         # Compute messages (dst -> src).
-        msg_d, t_d, src_d, dst_d = self._compute_msg(
-            n_id, self.msg_d_store, self.msg_d_module
-        )
+        msg_d, t_d, src_d, dst_d = self._compute_msg(n_id, self.msg_d_store,
+                                                     self.msg_d_module)
 
         # Aggregate messages.
         idx = torch.cat([src_s, src_d], dim=0)
@@ -154,26 +147,19 @@ class TGNMemory(torch.nn.Module):
 
         # Get local copy of updated `last_update`.
         dim_size = self.last_update.size(0)
-        last_update = scatter(t, idx, 0, dim_size, reduce="max")[n_id]
+        last_update = scatter(t, idx, 0, dim_size, reduce='max')[n_id]
 
         return memory, last_update
 
-    def _update_msg_store(
-        self,
-        src: Tensor,
-        dst: Tensor,
-        t: Tensor,
-        raw_msg: Tensor,
-        msg_store: TGNMessageStoreType,
-    ):
+    def _update_msg_store(self, src: Tensor, dst: Tensor, t: Tensor,
+                          raw_msg: Tensor, msg_store: TGNMessageStoreType):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
-    def _compute_msg(
-        self, n_id: Tensor, msg_store: TGNMessageStoreType, msg_module: Callable
-    ):
+    def _compute_msg(self, n_id: Tensor, msg_store: TGNMessageStoreType,
+                     msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
         src, dst, t, raw_msg = list(zip(*data))
         src = torch.cat(src, dim=0)
@@ -191,7 +177,8 @@ class TGNMemory(torch.nn.Module):
         """Sets the module in training mode."""
         if self.training and not mode:
             # Flush message store to memory in case we just entered eval mode.
-            self._update_memory(torch.arange(self.num_nodes, device=self.memory.device))
+            self._update_memory(
+                torch.arange(self.num_nodes, device=self.memory.device))
             self._reset_message_store()
         super().train(mode)
 
@@ -201,7 +188,8 @@ class IdentityMessage(torch.nn.Module):
         super().__init__()
         self.out_channels = raw_msg_dim + 2 * memory_dim + time_dim
 
-    def forward(self, z_src: Tensor, z_dst: Tensor, raw_msg: Tensor, t_enc: Tensor):
+    def forward(self, z_src: Tensor, z_dst: Tensor, raw_msg: Tensor,
+                t_enc: Tensor):
         return torch.cat([z_src, z_dst, raw_msg, t_enc], dim=-1)
 
 
@@ -216,7 +204,7 @@ class LastAggregator(torch.nn.Module):
 
 class MeanAggregator(torch.nn.Module):
     def forward(self, msg: Tensor, index: Tensor, t: Tensor, dim_size: int):
-        return scatter(msg, index, dim=0, dim_size=dim_size, reduce="mean")
+        return scatter(msg, index, dim=0, dim_size=dim_size, reduce='mean')
 
 
 class TimeEncoder(torch.nn.Module):
@@ -236,8 +224,10 @@ class LastNeighborLoader:
     def __init__(self, num_nodes: int, size: int, device=None):
         self.size = size
 
-        self.neighbors = torch.empty((num_nodes, size), dtype=torch.long, device=device)
-        self.e_id = torch.empty((num_nodes, size), dtype=torch.long, device=device)
+        self.neighbors = torch.empty((num_nodes, size), dtype=torch.long,
+                                     device=device)
+        self.e_id = torch.empty((num_nodes, size), dtype=torch.long,
+                                device=device)
         self._assoc = torch.empty(num_nodes, dtype=torch.long, device=device)
 
         self.reset_state()
@@ -265,9 +255,8 @@ class LastNeighborLoader:
         # Collect central nodes, their neighbors and the current event ids.
         neighbors = torch.cat([src, dst], dim=0)
         nodes = torch.cat([dst, src], dim=0)
-        e_id = torch.arange(
-            self.cur_e_id, self.cur_e_id + src.size(0), device=src.device
-        ).repeat(2)
+        e_id = torch.arange(self.cur_e_id, self.cur_e_id + src.size(0),
+                            device=src.device).repeat(2)
         self.cur_e_id += src.numel()
 
         # Convert newly encountered interaction ids so that they point to
@@ -281,7 +270,7 @@ class LastNeighborLoader:
         dense_id = torch.arange(nodes.size(0), device=nodes.device) % self.size
         dense_id += self._assoc[nodes].mul_(self.size)
 
-        dense_e_id = e_id.new_full((n_id.numel() * self.size,), -1)
+        dense_e_id = e_id.new_full((n_id.numel() * self.size, ), -1)
         dense_e_id[dense_id] = e_id
         dense_e_id = dense_e_id.view(-1, self.size)
 
@@ -290,10 +279,9 @@ class LastNeighborLoader:
         dense_neighbors = dense_neighbors.view(-1, self.size)
 
         # Collect new and old interactions...
-        e_id = torch.cat([self.e_id[n_id, : self.size], dense_e_id], dim=-1)
+        e_id = torch.cat([self.e_id[n_id, :self.size], dense_e_id], dim=-1)
         neighbors = torch.cat(
-            [self.neighbors[n_id, : self.size], dense_neighbors], dim=-1
-        )
+            [self.neighbors[n_id, :self.size], dense_neighbors], dim=-1)
 
         # And sort them based on `e_id`.
         e_id, perm = e_id.topk(self.size, dim=-1)

@@ -43,7 +43,6 @@ class Node2Vec(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         edge_index: Tensor,
@@ -65,16 +64,12 @@ class Node2Vec(torch.nn.Module):
             self.random_walk_fn = torch.ops.torch_cluster.random_walk
         else:
             if p == 1.0 and q == 1.0:
-                raise ImportError(
-                    f"'{self.__class__.__name__}' "
-                    f"requires either the 'pyg-lib' or "
-                    f"'torch-cluster' package"
-                )
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires either the 'pyg-lib' or "
+                                  f"'torch-cluster' package")
             else:
-                raise ImportError(
-                    f"'{self.__class__.__name__}' "
-                    f"requires the 'torch-cluster' package"
-                )
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires the 'torch-cluster' package")
 
         self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -92,7 +87,8 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = Embedding(self.num_nodes, embedding_dim, sparse=sparse)
+        self.embedding = Embedding(self.num_nodes, embedding_dim,
+                                   sparse=sparse)
 
         self.reset_parameters()
 
@@ -106,39 +102,35 @@ class Node2Vec(torch.nn.Module):
         return emb if batch is None else emb[batch]
 
     def loader(self, **kwargs) -> DataLoader:
-        return DataLoader(range(self.num_nodes), collate_fn=self.sample, **kwargs)
+        return DataLoader(range(self.num_nodes), collate_fn=self.sample,
+                          **kwargs)
 
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rw = self.random_walk_fn(
-            self.rowptr, self.col, batch, self.walk_length, self.p, self.q
-        )
+        rw = self.random_walk_fn(self.rowptr, self.col, batch,
+                                 self.walk_length, self.p, self.q)
         if not isinstance(rw, Tensor):
             rw = rw[0]
 
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
         for j in range(num_walks_per_rw):
-            walks.append(rw[:, j : j + self.context_size])
+            walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
     @torch.jit.export
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        rw = torch.randint(
-            self.num_nodes,
-            (batch.size(0), self.walk_length),
-            dtype=batch.dtype,
-            device=batch.device,
-        )
+        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length),
+                           dtype=batch.dtype, device=batch.device)
         rw = torch.cat([batch.view(-1, 1), rw], dim=-1)
 
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
         for j in range(num_walks_per_rw):
-            walks.append(rw[:, j : j + self.context_size])
+            walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
     @torch.jit.export
@@ -154,10 +146,10 @@ class Node2Vec(torch.nn.Module):
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
-        h_start = self.embedding(start).view(pos_rw.size(0), 1, self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(
-            pos_rw.size(0), -1, self.embedding_dim
-        )
+        h_start = self.embedding(start).view(pos_rw.size(0), 1,
+                                             self.embedding_dim)
+        h_rest = self.embedding(rest.view(-1)).view(pos_rw.size(0), -1,
+                                                    self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         pos_loss = -torch.log(torch.sigmoid(out) + self.EPS).mean()
@@ -165,10 +157,10 @@ class Node2Vec(torch.nn.Module):
         # Negative loss.
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
 
-        h_start = self.embedding(start).view(neg_rw.size(0), 1, self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(
-            neg_rw.size(0), -1, self.embedding_dim
-        )
+        h_start = self.embedding(start).view(neg_rw.size(0), 1,
+                                             self.embedding_dim)
+        h_rest = self.embedding(rest.view(-1)).view(neg_rw.size(0), -1,
+                                                    self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         neg_loss = -torch.log(1 - torch.sigmoid(out) + self.EPS).mean()
@@ -181,8 +173,8 @@ class Node2Vec(torch.nn.Module):
         train_y: Tensor,
         test_z: Tensor,
         test_y: Tensor,
-        solver: str = "lbfgs",
-        multi_class: str = "auto",
+        solver: str = 'lbfgs',
+        multi_class: str = 'auto',
         *args,
         **kwargs,
     ) -> float:
@@ -190,13 +182,12 @@ class Node2Vec(torch.nn.Module):
         task."""
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(
-            solver=solver, multi_class=multi_class, *args, **kwargs
-        ).fit(train_z.detach().cpu().numpy(), train_y.detach().cpu().numpy())
-        return clf.score(test_z.detach().cpu().numpy(), test_y.detach().cpu().numpy())
+        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+                                 **kwargs).fit(train_z.detach().cpu().numpy(),
+                                               train_y.detach().cpu().numpy())
+        return clf.score(test_z.detach().cpu().numpy(),
+                         test_y.detach().cpu().numpy())
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.embedding.weight.size(0)}, "
-            f"{self.embedding.weight.size(1)})"
-        )
+        return (f'{self.__class__.__name__}({self.embedding.weight.size(0)}, '
+                f'{self.embedding.weight.size(1)})')

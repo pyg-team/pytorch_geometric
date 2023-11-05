@@ -115,22 +115,16 @@ class TUDataset(InMemoryDataset):
           -
     """
 
-    url = "https://www.chrsmrrs.com/graphkerneldatasets"
-    cleaned_url = (
-        "https://raw.githubusercontent.com/nd7141/" "graph_datasets/master/datasets"
-    )
+    url = 'https://www.chrsmrrs.com/graphkerneldatasets'
+    cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
+                   'graph_datasets/master/datasets')
 
-    def __init__(
-        self,
-        root: str,
-        name: str,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        use_node_attr: bool = False,
-        use_edge_attr: bool = False,
-        cleaned: bool = False,
-    ):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None,
+                 use_node_attr: bool = False, use_edge_attr: bool = False,
+                 cleaned: bool = False):
         self.name = name
         self.cleaned = cleaned
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -141,8 +135,7 @@ class TUDataset(InMemoryDataset):
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
-                "root folder and try again."
-            )
+                "root folder and try again.")
         data, self.slices, self.sizes = out
         self.data = Data.from_dict(data) if isinstance(data, dict) else data
 
@@ -165,33 +158,33 @@ class TUDataset(InMemoryDataset):
 
     @property
     def num_node_labels(self) -> int:
-        return self.sizes["num_node_labels"]
+        return self.sizes['num_node_labels']
 
     @property
     def num_node_attributes(self) -> int:
-        return self.sizes["num_node_attributes"]
+        return self.sizes['num_node_attributes']
 
     @property
     def num_edge_labels(self) -> int:
-        return self.sizes["num_edge_labels"]
+        return self.sizes['num_edge_labels']
 
     @property
     def num_edge_attributes(self) -> int:
-        return self.sizes["num_edge_attributes"]
+        return self.sizes['num_edge_attributes']
 
     @property
     def raw_file_names(self) -> List[str]:
-        names = ["A", "graph_indicator"]
-        return [f"{self.name}_{name}.txt" for name in names]
+        names = ['A', 'graph_indicator']
+        return [f'{self.name}_{name}.txt' for name in names]
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
         folder = osp.join(self.root, self.name)
-        path = download_url(f"{url}/{self.name}.zip", folder)
+        path = download_url(f'{url}/{self.name}.zip', folder)
         extract_zip(path, folder)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
@@ -212,7 +205,8 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self._data.to_dict(), self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data.to_dict(), self.slices, sizes),
+                   self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f"{self.name}({len(self)})"
+        return f'{self.name}({len(self)})'

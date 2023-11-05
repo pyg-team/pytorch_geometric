@@ -17,10 +17,8 @@ def _internal_num_nodes(
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
     in the feature and graph stores that reveal this number."""
-
-    def _matches_node_type(
-        query: Union[NodeType, EdgeType], node_type: NodeType
-    ) -> bool:
+    def _matches_node_type(query: Union[NodeType, EdgeType],
+                           node_type: NodeType) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType
             return query[0] == node_type or query[-1] == node_type
         else:
@@ -50,7 +48,8 @@ def _internal_num_nodes(
     # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
     matching_attrs = [
-        attr for attr in tensor_attrs if _matches_node_type(query, attr.group_name)
+        attr for attr in tensor_attrs
+        if _matches_node_type(query, attr.group_name)
     ]
     if node_query:
         if len(matching_attrs) > 0:
@@ -63,18 +62,15 @@ def _internal_num_nodes(
             attr for attr in matching_attrs if attr.group_name == query[-1]
         ]
         if len(matching_src_attrs) > 0 and len(matching_dst_attrs) > 0:
-            return (
-                feature_store.get_tensor_size(matching_src_attrs[0])[0],
-                feature_store.get_tensor_size(matching_dst_attrs[0])[0],
-            )
+            return (feature_store.get_tensor_size(matching_src_attrs[0])[0],
+                    feature_store.get_tensor_size(matching_dst_attrs[0])[0])
 
     raise ValueError(
         f"Unable to accurately infer the number of nodes corresponding to "
         f"query {query} from feature store {feature_store} and graph store "
         f"{graph_store}. Please consider either adding an edge containing "
         f"the nodes in this query or feature tensors for the nodes in this "
-        f"query."
-    )
+        f"query.")
 
 
 def num_nodes(

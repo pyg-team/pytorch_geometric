@@ -20,7 +20,6 @@ class ConnectOutput:
         batch (torch.Tensor, optional): The pooled batch vector of the
             coarsened graph. (default: :obj:`None`)
     """
-
     edge_index: Tensor
     edge_attr: Optional[Tensor] = None
     batch: Optional[Tensor] = None
@@ -32,24 +31,18 @@ class ConnectOutput:
         batch: Optional[Tensor] = None,
     ):
         if edge_index.dim() != 2:
-            raise ValueError(
-                f"Expected 'edge_index' to be two-dimensional "
-                f"(got {edge_index.dim()} dimensions)"
-            )
+            raise ValueError(f"Expected 'edge_index' to be two-dimensional "
+                             f"(got {edge_index.dim()} dimensions)")
 
         if edge_index.size(0) != 2:
-            raise ValueError(
-                f"Expected 'edge_index' to have size '2' in the "
-                f"first dimension (got '{edge_index.size(0)}')"
-            )
+            raise ValueError(f"Expected 'edge_index' to have size '2' in the "
+                             f"first dimension (got '{edge_index.size(0)}')")
 
         if edge_attr is not None and edge_attr.size(0) != edge_index.size(1):
-            raise ValueError(
-                f"Expected 'edge_index' and 'edge_attr' to "
-                f"hold the same number of edges (got "
-                f"{edge_index.size(1)} and {edge_attr.size(0)} "
-                f"edges)"
-            )
+            raise ValueError(f"Expected 'edge_index' and 'edge_attr' to "
+                             f"hold the same number of edges (got "
+                             f"{edge_index.size(1)} and {edge_attr.size(0)} "
+                             f"edges)")
 
         self.edge_index = edge_index
         self.edge_attr = edge_attr
@@ -71,7 +64,6 @@ class Connect(torch.nn.Module):
     The operator also computes pooled edge features and batch vectors
     (if present).
     """
-
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         pass
@@ -112,9 +104,8 @@ class Connect(torch.nn.Module):
             return batch
 
         out = torch.arange(select_output.num_clusters, device=batch.device)
-        return out.scatter_(
-            0, select_output.cluster_index, batch[select_output.node_index]
-        )
+        return out.scatter_(0, select_output.cluster_index,
+                            batch[select_output.node_index])
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f'{self.__class__.__name__}()'

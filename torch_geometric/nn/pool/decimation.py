@@ -28,16 +28,15 @@ def decimation_indices(
     if decimation_factor < 1:
         raise ValueError(
             f"The argument `decimation_factor` should be higher than (or "
-            f"equal to) 1 for downsampling. (got {decimation_factor})"
-        )
+            f"equal to) 1 for downsampling. (got {decimation_factor})")
 
     batch_size = ptr.size(0) - 1
     count = ptr[1:] - ptr[:-1]
-    decim_count = torch.div(count, decimation_factor, rounding_mode="floor")
+    decim_count = torch.div(count, decimation_factor, rounding_mode='floor')
     decim_count.clamp_(min=1)  # Prevent empty examples.
 
     decim_indices = [
-        ptr[i] + torch.randperm(count[i], device=ptr.device)[: decim_count[i]]
+        ptr[i] + torch.randperm(count[i], device=ptr.device)[:decim_count[i]]
         for i in range(batch_size)
     ]
     decim_indices = torch.cat(decim_indices, dim=0)

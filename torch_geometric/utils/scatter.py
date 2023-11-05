@@ -9,15 +9,11 @@ from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
-    warnings.filterwarnings("ignore", ".*is in beta and the API may change.*")
 
-    def scatter(
-        src: Tensor,
-        index: Tensor,
-        dim: int = 0,
-        dim_size: Optional[int] = None,
-        reduce: str = "sum",
-    ) -> Tensor:
+    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
+
+    def scatter(src: Tensor, index: Tensor, dim: int = 0,
+                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -39,18 +35,14 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                 :obj:`"any"`). (default: :obj:`"sum"`)
         """
         if isinstance(index, Tensor) and index.dim() != 1:
-            raise ValueError(
-                f"The `index` argument must be one-dimensional "
-                f"(got {index.dim()} dimensions)"
-            )
+            raise ValueError(f"The `index` argument must be one-dimensional "
+                             f"(got {index.dim()} dimensions)")
 
         dim = src.dim() + dim if dim < 0 else dim
 
         if isinstance(src, Tensor) and (dim < 0 or dim >= src.dim()):
-            raise ValueError(
-                f"The `dim` argument must lay between 0 and "
-                f"{src.dim() - 1} (got {dim})"
-            )
+            raise ValueError(f"The `dim` argument must lay between 0 and "
+                             f"{src.dim() - 1} (got {dim})")
 
         if dim_size is None:
             dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
@@ -65,19 +57,19 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         # indices, but is therefore way slower in its backward implementation.
         # More insights can be found in `test/utils/test_scatter.py`.
 
-        size = src.size()[:dim] + (dim_size,) + src.size()[dim + 1 :]
+        size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
 
         # For "any" reduction, we use regular `scatter_`:
-        if reduce == "any":
+        if reduce == 'any':
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_(dim, index, src)
 
         # For "sum" and "mean" reduction, we make use of `scatter_add_`:
-        if reduce == "sum" or reduce == "add":
+        if reduce == 'sum' or reduce == 'add':
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_add_(dim, index, src)
 
-        if reduce == "mean":
+        if reduce == 'mean':
             count = src.new_zeros(dim_size)
             count.scatter_add_(0, index, src.new_ones(src.size(dim)))
             count = count.clamp(min=1)
@@ -89,59 +81,46 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
         # For "min" and "max" reduction, we prefer `scatter_reduce_` on CPU or
         # in case the input does not require gradients:
-        if reduce == "min" or reduce == "max":
-            if (
-                not torch_geometric.typing.WITH_TORCH_SCATTER
-                or not src.is_cuda
-                or not src.requires_grad
-            ):
+        if reduce == 'min' or reduce == 'max':
+            if (not torch_geometric.typing.WITH_TORCH_SCATTER
+                    or not src.is_cuda or not src.requires_grad):
+
                 if src.is_cuda and src.requires_grad:
-                    warnings.warn(
-                        f"The usage of `scatter(reduce='{reduce}')` "
-                        f"can be accelerated via the 'torch-scatter'"
-                        f" package, but it was not found"
-                    )
+                    warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
+                                  f"can be accelerated via the 'torch-scatter'"
+                                  f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
-                    dim, index, src, reduce=f"a{reduce}", include_self=False
-                )
+                    dim, index, src, reduce=f'a{reduce}', include_self=False)
 
-            return torch_scatter.scatter(
-                src, index, dim, dim_size=dim_size, reduce=reduce
-            )
+            return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                         reduce=reduce)
 
         # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
-        if reduce == "mul":
-            if not torch_geometric.typing.WITH_TORCH_SCATTER or not src.is_cuda:
+        if reduce == 'mul':
+            if (not torch_geometric.typing.WITH_TORCH_SCATTER
+                    or not src.is_cuda):
+
                 if src.is_cuda:
-                    warnings.warn(
-                        f"The usage of `scatter(reduce='{reduce}')` "
-                        f"can be accelerated via the 'torch-scatter'"
-                        f" package, but it was not found"
-                    )
+                    warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
+                                  f"can be accelerated via the 'torch-scatter'"
+                                  f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 # We initialize with `one` here to match `scatter_mul` output:
                 return src.new_ones(size).scatter_reduce_(
-                    dim, index, src, reduce="prod", include_self=True
-                )
+                    dim, index, src, reduce='prod', include_self=True)
 
-            return torch_scatter.scatter(
-                src, index, dim, dim_size=dim_size, reduce="mul"
-            )
+            return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                         reduce='mul')
 
         raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
 
 else:  # pragma: no cover
 
-    def scatter(
-        src: Tensor,
-        index: Tensor,
-        dim: int = 0,
-        dim_size: Optional[int] = None,
-        reduce: str = "sum",
-    ) -> Tensor:
+    def scatter(src: Tensor, index: Tensor, dim: int = 0,
+                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -162,30 +141,31 @@ else:  # pragma: no cover
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
                 (default: :obj:`"sum"`)
         """
-        if reduce == "any":
+        if reduce == 'any':
             dim = src.dim() + dim if dim < 0 else dim
 
             if dim_size is None:
                 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
-            size = src.size()[:dim] + (dim_size,) + src.size()[dim + 1 :]
+            size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
 
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_(dim, index, src)
 
         if not torch_geometric.typing.WITH_TORCH_SCATTER:
             raise ImportError("'scatter' requires the 'torch-scatter' package")
-        return torch_scatter.scatter(src, index, dim, dim_size=dim_size, reduce=reduce)
+        return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                     reduce=reduce)
 
 
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
-    size = ((1,) * dim) + (-1,) + ((1,) * (ref.dim() - dim - 1))
+    size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
 
 
-def scatter_argmax(
-    src: Tensor, index: Tensor, dim: int = 0, dim_size: Optional[int] = None
-) -> Tensor:
+def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
+                   dim_size: Optional[int] = None) -> Tensor:
+
     if torch_geometric.typing.WITH_TORCH_SCATTER:
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
         return out[1]
@@ -200,15 +180,15 @@ def scatter_argmax(
 
     if torch_geometric.typing.WITH_PT112:
         res = src.new_empty(dim_size)
-        res.scatter_reduce_(0, index, src.detach(), reduce="amax", include_self=False)
+        res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                            include_self=False)
     elif torch_geometric.typing.WITH_PT111:
-        res = torch.scatter_reduce(
-            src.detach(), 0, index, reduce="amax", output_size=dim_size
-        )
+        res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
+                                   output_size=dim_size)
     else:
         raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
 
-    out = index.new_full((dim_size,), fill_value=dim_size - 1)
+    out = index.new_full((dim_size, ), fill_value=dim_size - 1)
     nonzero = (src == res[index]).nonzero().view(-1)
     out[index[nonzero]] = nonzero
 
@@ -260,10 +240,8 @@ def group_argsort(
     else:
         perm = src.argsort(descending=descending)
         if stable:
-            warnings.warn(
-                "Ignoring option `stable=True` in 'group_argsort' "
-                "since it requires PyTorch >= 1.13.0"
-            )
+            warnings.warn("Ignoring option `stable=True` in 'group_argsort' "
+                          "since it requires PyTorch >= 1.13.0")
     out = torch.empty_like(index)
     out[perm] = torch.arange(index.numel(), device=index.device)
 
@@ -271,9 +249,8 @@ def group_argsort(
         return out
 
     # Compute cumulative sum of number of entries with the same index:
-    count = scatter(
-        torch.ones_like(index), index, dim=dim, dim_size=num_groups, reduce="sum"
-    )
+    count = scatter(torch.ones_like(index), index, dim=dim,
+                    dim_size=num_groups, reduce='sum')
     ptr = cumsum(count)
 
     return out - ptr[index]

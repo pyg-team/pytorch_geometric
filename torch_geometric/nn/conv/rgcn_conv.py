@@ -35,7 +35,7 @@ def masked_edge_index(edge_index, edge_mask):
 def masked_edge_index(edge_index, edge_mask):
     if isinstance(edge_index, Tensor):
         return edge_index[:, edge_mask]
-    return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout="coo")
+    return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout='coo')
 
 
 class RGCNConv(MessagePassing):
@@ -101,7 +101,6 @@ class RGCNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -109,20 +108,18 @@ class RGCNConv(MessagePassing):
         num_relations: int,
         num_bases: Optional[int] = None,
         num_blocks: Optional[int] = None,
-        aggr: str = "mean",
+        aggr: str = 'mean',
         root_weight: bool = True,
         is_sorted: bool = False,
         bias: bool = True,
         **kwargs,
     ):
-        kwargs.setdefault("aggr", aggr)
+        kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
 
         if num_bases is not None and num_blocks is not None:
-            raise ValueError(
-                "Can not apply both basis-decomposition and "
-                "block-diagonal-decomposition at the same time."
-            )
+            raise ValueError('Can not apply both basis-decomposition and '
+                             'block-diagonal-decomposition at the same time.')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -139,37 +136,32 @@ class RGCNConv(MessagePassing):
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.empty(num_bases, in_channels[0], out_channels)
-            )
+                torch.empty(num_bases, in_channels[0], out_channels))
             self.comp = Parameter(torch.empty(num_relations, num_bases))
 
         elif num_blocks is not None:
-            assert in_channels[0] % num_blocks == 0 and out_channels % num_blocks == 0
+            assert (in_channels[0] % num_blocks == 0
+                    and out_channels % num_blocks == 0)
             self.weight = Parameter(
-                torch.empty(
-                    num_relations,
-                    num_blocks,
-                    in_channels[0] // num_blocks,
-                    out_channels // num_blocks,
-                )
-            )
-            self.register_parameter("comp", None)
+                torch.empty(num_relations, num_blocks,
+                            in_channels[0] // num_blocks,
+                            out_channels // num_blocks))
+            self.register_parameter('comp', None)
 
         else:
             self.weight = Parameter(
-                torch.empty(num_relations, in_channels[0], out_channels)
-            )
-            self.register_parameter("comp", None)
+                torch.empty(num_relations, in_channels[0], out_channels))
+            self.register_parameter('comp', None)
 
         if root_weight:
             self.root = Param(torch.empty(in_channels[1], out_channels))
         else:
-            self.register_parameter("root", None)
+            self.register_parameter('root', None)
 
         if bias:
             self.bias = Param(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -180,12 +172,8 @@ class RGCNConv(MessagePassing):
         glorot(self.root)
         zeros(self.bias)
 
-    def forward(
-        self,
-        x: Union[OptTensor, Tuple[OptTensor, Tensor]],
-        edge_index: Adj,
-        edge_type: OptTensor = None,
-    ):
+    def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
+                edge_index: Adj, edge_type: OptTensor = None):
         r"""Runs the forward pass of the module.
 
         Args:
@@ -226,32 +214,31 @@ class RGCNConv(MessagePassing):
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
             weight = (self.comp @ weight.view(self.num_bases, -1)).view(
-                self.num_relations, self.in_channels_l, self.out_channels
-            )
+                self.num_relations, self.in_channels_l, self.out_channels)
 
         if self.num_blocks is not None:  # Block-diagonal-decomposition =====
-            if not torch.is_floating_point(x_r) and self.num_blocks is not None:
-                raise ValueError(
-                    "Block-diagonal decomposition not supported "
-                    "for non-continuous input features."
-                )
+
+            if not torch.is_floating_point(
+                    x_r) and self.num_blocks is not None:
+                raise ValueError('Block-diagonal decomposition not supported '
+                                 'for non-continuous input features.')
 
             for i in range(self.num_relations):
                 tmp = masked_edge_index(edge_index, edge_type == i)
                 h = self.propagate(tmp, x=x_l, edge_type_ptr=None, size=size)
                 h = h.view(-1, weight.size(1), weight.size(2))
-                h = torch.einsum("abc,bcd->abd", h, weight[i])
+                h = torch.einsum('abc,bcd->abd', h, weight[i])
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
+
             use_segment_matmul = torch_geometric.backend.use_segment_matmul
             # If `use_segment_matmul` is not specified, use a simple heuristic
             # to determine whether `segment_matmul` can speed up computation
             # given the observed input sizes:
             if use_segment_matmul is None:
-                segment_count = scatter(
-                    torch.ones_like(edge_type), edge_type, dim_size=self.num_relations
-                )
+                segment_count = scatter(torch.ones_like(edge_type), edge_type,
+                                        dim_size=self.num_relations)
 
                 self._use_segment_matmul_heuristic_output = (
                     torch_geometric.backend.use_segment_matmul_heuristic(
@@ -259,29 +246,23 @@ class RGCNConv(MessagePassing):
                         max_segment_size=int(segment_count.max()),
                         in_channels=self.weight.size(1),
                         out_channels=self.weight.size(2),
-                    )
-                )
+                    ))
 
                 assert self._use_segment_matmul_heuristic_output is not None
                 use_segment_matmul = self._use_segment_matmul_heuristic_output
 
-            if (
-                use_segment_matmul
-                and torch_geometric.typing.WITH_SEGMM
-                and self.num_bases is None
-                and x_l.is_floating_point()
-                and isinstance(edge_index, Tensor)
-            ):
+            if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
+                    and self.num_bases is None and x_l.is_floating_point()
+                    and isinstance(edge_index, Tensor)):
+
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
-                            edge_type, max_value=self.num_relations
-                        )
+                            edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
-                out = self.propagate(
-                    edge_index, x=x_l, edge_type_ptr=edge_type_ptr, size=size
-                )
+                out = self.propagate(edge_index, x=x_l,
+                                     edge_type_ptr=edge_type_ptr, size=size)
             else:
                 for i in range(self.num_relations):
                     tmp = masked_edge_index(edge_index, edge_type == i)
@@ -294,7 +275,8 @@ class RGCNConv(MessagePassing):
                             size=size,
                         )
                     else:
-                        h = self.propagate(tmp, x=x_l, edge_type_ptr=None, size=size)
+                        h = self.propagate(tmp, x=x_l, edge_type_ptr=None,
+                                           size=size)
                         out = out + (h @ weight[i])
 
         root = self.root
@@ -321,23 +303,17 @@ class RGCNConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, num_relations={self.num_relations})"
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_relations={self.num_relations})')
 
 
 class FastRGCNConv(RGCNConv):
     r"""See :class:`RGCNConv`."""
+    def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
+                edge_index: Adj, edge_type: OptTensor = None):
 
-    def forward(
-        self,
-        x: Union[OptTensor, Tuple[OptTensor, Tensor]],
-        edge_index: Adj,
-        edge_type: OptTensor = None,
-    ):
         self.fuse = False
-        assert self.aggr in ["add", "sum", "mean"]
+        assert self.aggr in ['add', 'sum', 'mean']
 
         # Convert input features to a pair of node features or node indices.
         x_l: OptTensor = None
@@ -369,19 +345,17 @@ class FastRGCNConv(RGCNConv):
 
         return out
 
-    def message(self, x_j: Tensor, edge_type: Tensor, edge_index_j: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_type: Tensor,
+                edge_index_j: Tensor) -> Tensor:
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
             weight = (self.comp @ weight.view(self.num_bases, -1)).view(
-                self.num_relations, self.in_channels_l, self.out_channels
-            )
+                self.num_relations, self.in_channels_l, self.out_channels)
 
         if self.num_blocks is not None:  # Block-diagonal-decomposition =======
             if not torch.is_floating_point(x_j):
-                raise ValueError(
-                    "Block-diagonal decomposition not supported "
-                    "for non-continuous input features."
-                )
+                raise ValueError('Block-diagonal decomposition not supported '
+                                 'for non-continuous input features.')
 
             weight = weight[edge_type].view(-1, weight.size(2), weight.size(3))
             x_j = x_j.view(-1, 1, weight.size(1))
@@ -394,19 +368,15 @@ class FastRGCNConv(RGCNConv):
 
             return torch.bmm(x_j.unsqueeze(-2), weight[edge_type]).squeeze(-2)
 
-    def aggregate(
-        self,
-        inputs: Tensor,
-        edge_type: Tensor,
-        index: Tensor,
-        dim_size: Optional[int] = None,
-    ) -> Tensor:
+    def aggregate(self, inputs: Tensor, edge_type: Tensor, index: Tensor,
+                  dim_size: Optional[int] = None) -> Tensor:
+
         # Compute normalization in separation for each `edge_type`.
-        if self.aggr == "mean":
+        if self.aggr == 'mean':
             norm = one_hot(edge_type, self.num_relations, dtype=inputs.dtype)
             norm = scatter(norm, index, dim=0, dim_size=dim_size)[index]
             norm = torch.gather(norm, 1, edge_type.view(-1, 1))
-            norm = 1.0 / norm.clamp_(1.0)
+            norm = 1. / norm.clamp_(1.)
             inputs = norm * inputs
 
         return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size)

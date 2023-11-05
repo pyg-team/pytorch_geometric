@@ -7,7 +7,7 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform("distance")
+@functional_transform('distance')
 class Distance(BaseTransform):
     r"""Saves the Euclidean distance of linked nodes in its edge attributes
     (functional name: :obj:`distance`). Each distance gets globally normalized
@@ -24,13 +24,12 @@ class Distance(BaseTransform):
         interval ((float, float), optional): A tuple specifying the lower and
             upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
-
     def __init__(
-        self,
-        norm: bool = True,
-        max_value: Optional[float] = None,
-        cat: bool = True,
-        interval: Tuple[float, float] = (0.0, 1.0),
+            self,
+            norm: bool = True,
+            max_value: Optional[float] = None,
+            cat: bool = True,
+            interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.max = max_value
@@ -57,4 +56,5 @@ class Distance(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(norm={self.norm}, " f"max_value={self.max})"
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

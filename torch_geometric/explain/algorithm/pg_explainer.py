@@ -55,10 +55,10 @@ class PGExplainer(ExplainerAlgorithm):
     """
 
     coeffs = {
-        "edge_size": 0.05,
-        "edge_ent": 1.0,
-        "temp": [5.0, 2.0],
-        "bias": 0.0,
+        'edge_size': 0.05,
+        'edge_ent': 1.0,
+        'temp': [5.0, 2.0],
+        'bias': 0.0,
     }
 
     def __init__(self, epochs: int, lr: float = 0.003, **kwargs):
@@ -108,23 +108,17 @@ class PGExplainer(ExplainerAlgorithm):
                 :obj:`model`.
         """
         if isinstance(x, dict) or isinstance(edge_index, dict):
-            raise ValueError(
-                f"Heterogeneous graphs not yet supported in "
-                f"'{self.__class__.__name__}'"
-            )
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
 
         if self.model_config.task_level == ModelTaskLevel.node:
             if index is None:
-                raise ValueError(
-                    f"The 'index' argument needs to be provided "
-                    f"in '{self.__class__.__name__}' for "
-                    f"node-level explanations"
-                )
+                raise ValueError(f"The 'index' argument needs to be provided "
+                                 f"in '{self.__class__.__name__}' for "
+                                 f"node-level explanations")
             if isinstance(index, Tensor) and index.numel() > 1:
-                raise ValueError(
-                    f"Only scalars are supported for the 'index' "
-                    f"argument in '{self.__class__.__name__}'"
-                )
+                raise ValueError(f"Only scalars are supported for the 'index' "
+                                 f"argument in '{self.__class__.__name__}'")
 
         z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
@@ -137,9 +131,8 @@ class PGExplainer(ExplainerAlgorithm):
         set_masks(model, edge_mask, edge_index, apply_sigmoid=True)
 
         if self.model_config.task_level == ModelTaskLevel.node:
-            _, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0)
-            )
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
             edge_mask = edge_mask[hard_edge_mask]
 
         y_hat, y = model(x, edge_index, **kwargs), target
@@ -167,84 +160,69 @@ class PGExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
         if isinstance(x, dict) or isinstance(edge_index, dict):
-            raise ValueError(
-                f"Heterogeneous graphs not yet supported in "
-                f"'{self.__class__.__name__}'"
-            )
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
 
         if self._curr_epoch < self.epochs - 1:  # Safety check:
-            raise ValueError(
-                f"'{self.__class__.__name__}' is not yet fully "
-                f"trained (got {self._curr_epoch + 1} epochs "
-                f"from {self.epochs} epochs). Please first train "
-                f"the underlying explainer model by running "
-                f"`explainer.algorithm.train(...)`."
-            )
+            raise ValueError(f"'{self.__class__.__name__}' is not yet fully "
+                             f"trained (got {self._curr_epoch + 1} epochs "
+                             f"from {self.epochs} epochs). Please first train "
+                             f"the underlying explainer model by running "
+                             f"`explainer.algorithm.train(...)`.")
 
         hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
             if index is None:
-                raise ValueError(
-                    f"The 'index' argument needs to be provided "
-                    f"in '{self.__class__.__name__}' for "
-                    f"node-level explanations"
-                )
+                raise ValueError(f"The 'index' argument needs to be provided "
+                                 f"in '{self.__class__.__name__}' for "
+                                 f"node-level explanations")
             if isinstance(index, Tensor) and index.numel() > 1:
-                raise ValueError(
-                    f"Only scalars are supported for the 'index' "
-                    f"argument in '{self.__class__.__name__}'"
-                )
+                raise ValueError(f"Only scalars are supported for the 'index' "
+                                 f"argument in '{self.__class__.__name__}'")
 
             # We need to compute hard masks to properly clean up edges and
             # nodes attributions not involved during message passing:
-            _, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0)
-            )
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
 
         z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         inputs = self._get_inputs(z, edge_index, index)
         logits = self.mlp(inputs).view(-1)
 
-        edge_mask = self._post_process_mask(logits, hard_edge_mask, apply_sigmoid=True)
+        edge_mask = self._post_process_mask(logits, hard_edge_mask,
+                                            apply_sigmoid=True)
 
         return Explanation(edge_mask=edge_mask)
 
     def supports(self) -> bool:
         explanation_type = self.explainer_config.explanation_type
         if explanation_type != ExplanationType.phenomenon:
-            logging.error(
-                f"'{self.__class__.__name__}' only supports "
-                f"phenomenon explanations "
-                f"got (`explanation_type={explanation_type.value}`)"
-            )
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"phenomenon explanations "
+                          f"got (`explanation_type={explanation_type.value}`)")
             return False
 
         task_level = self.model_config.task_level
         if task_level not in {ModelTaskLevel.node, ModelTaskLevel.graph}:
-            logging.error(
-                f"'{self.__class__.__name__}' only supports "
-                f"node-level or graph-level explanations "
-                f"got (`task_level={task_level.value}`)"
-            )
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"node-level or graph-level explanations "
+                          f"got (`task_level={task_level.value}`)")
             return False
 
         node_mask_type = self.explainer_config.node_mask_type
         if node_mask_type is not None:
-            logging.error(
-                f"'{self.__class__.__name__}' does not support "
-                f"explaining input node features "
-                f"got (`node_mask_type={node_mask_type.value}`)"
-            )
+            logging.error(f"'{self.__class__.__name__}' does not support "
+                          f"explaining input node features "
+                          f"got (`node_mask_type={node_mask_type.value}`)")
             return False
 
         return True
 
     ###########################################################################
 
-    def _get_inputs(
-        self, embedding: Tensor, edge_index: Tensor, index: Optional[int] = None
-    ) -> Tensor:
+    def _get_inputs(self, embedding: Tensor, edge_index: Tensor,
+                    index: Optional[int] = None) -> Tensor:
         zs = [embedding[edge_index[0]], embedding[edge_index[1]]]
         if self.model_config.task_level == ModelTaskLevel.node:
             assert index is not None
@@ -252,11 +230,12 @@ class PGExplainer(ExplainerAlgorithm):
         return torch.cat(zs, dim=-1)
 
     def _get_temperature(self, epoch: int) -> float:
-        temp = self.coeffs["temp"]
+        temp = self.coeffs['temp']
         return temp[0] * pow(temp[1] / temp[0], epoch / self.epochs)
 
-    def _concrete_sample(self, logits: Tensor, temperature: float = 1.0) -> Tensor:
-        bias = self.coeffs["bias"]
+    def _concrete_sample(self, logits: Tensor,
+                         temperature: float = 1.0) -> Tensor:
+        bias = self.coeffs['bias']
         eps = (1 - 2 * bias) * torch.rand_like(logits) + bias
         return (eps.log() - (1 - eps).log() + logits) / temperature
 
@@ -270,9 +249,9 @@ class PGExplainer(ExplainerAlgorithm):
 
         # Regularization loss:
         mask = edge_mask.sigmoid()
-        size_loss = mask.sum() * self.coeffs["edge_size"]
+        size_loss = mask.sum() * self.coeffs['edge_size']
         mask = 0.99 * mask + 0.005
         mask_ent = -mask * mask.log() - (1 - mask) * (1 - mask).log()
-        mask_ent_loss = mask_ent.mean() * self.coeffs["edge_ent"]
+        mask_ent_loss = mask_ent.mean() * self.coeffs['edge_ent']
 
         return loss + size_loss + mask_ent_loss

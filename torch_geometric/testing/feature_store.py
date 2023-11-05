@@ -38,14 +38,12 @@ class MyFeatureStore(FeatureStore):
             return tensor
 
         # Empty slices return the whole tensor:
-        if isinstance(attr.index, slice) and attr.index == slice(None, None, None):
+        if (isinstance(attr.index, slice)
+                and attr.index == slice(None, None, None)):
             return tensor
 
-        idx = (
-            torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
-            if attr.index.numel() > 0
-            else []
-        )
+        idx = (torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
+               if attr.index.numel() > 0 else [])
         return tensor[idx]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:

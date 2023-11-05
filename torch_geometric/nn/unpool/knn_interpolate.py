@@ -5,15 +5,9 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
 
 
-def knn_interpolate(
-    x: torch.Tensor,
-    pos_x: torch.Tensor,
-    pos_y: torch.Tensor,
-    batch_x: OptTensor = None,
-    batch_y: OptTensor = None,
-    k: int = 3,
-    num_workers: int = 1,
-):
+def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
+                    batch_x: OptTensor = None, batch_y: OptTensor = None,
+                    k: int = 3, num_workers: int = 1):
     r"""The k-NN interpolation from the `"PointNet++: Deep Hierarchical
     Feature Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper.
@@ -50,15 +44,14 @@ def knn_interpolate(
     """
 
     with torch.no_grad():
-        assign_index = knn(
-            pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y, num_workers=num_workers
-        )
+        assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y,
+                           num_workers=num_workers)
         y_idx, x_idx = assign_index[0], assign_index[1]
         diff = pos_x[x_idx] - pos_y[y_idx]
         squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
         weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
 
-    y = scatter(x[x_idx] * weights, y_idx, 0, pos_y.size(0), reduce="sum")
-    y = y / scatter(weights, y_idx, 0, pos_y.size(0), reduce="sum")
+    y = scatter(x[x_idx] * weights, y_idx, 0, pos_y.size(0), reduce='sum')
+    y = y / scatter(weights, y_idx, 0, pos_y.size(0), reduce='sum')
 
     return y

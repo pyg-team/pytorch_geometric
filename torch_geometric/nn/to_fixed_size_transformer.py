@@ -7,10 +7,11 @@ from torch_geometric.nn.fx import Transformer
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
-    GraphModule, Graph, Node = "GraphModule", "Graph", "Node"
+    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
-def to_fixed_size(module: Module, batch_size: int, debug: bool = False) -> GraphModule:
+def to_fixed_size(module: Module, batch_size: int,
+                  debug: bool = False) -> GraphModule:
     r"""Converts a model and injects a pre-computed and fixed batch size to all
     global pooling operators.
 
@@ -31,5 +32,5 @@ class ToFixedSizeTransformer(Transformer):
 
     def call_global_pooling_module(self, node: Node, target: Any, name: str):
         kwargs = node.kwargs.copy()
-        kwargs["dim_size"] = self.batch_size
+        kwargs['dim_size'] = self.batch_size
         node.kwargs = kwargs

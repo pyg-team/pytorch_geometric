@@ -82,9 +82,11 @@ class Summary:
 
             if per_type and isinstance(data, HeteroData):
                 for node_type in data.node_types:
-                    num_nodes_per_type[node_type].append(data[node_type].num_nodes)
+                    num_nodes_per_type[node_type].append(
+                        data[node_type].num_nodes)
                 for edge_type in data.edge_types:
-                    num_edges_per_type[edge_type].append(data[edge_type].num_edges)
+                    num_edges_per_type[edge_type].append(
+                        data[edge_type].num_edges)
 
         if len(num_nodes_per_type) > 0:
             num_nodes_per_type = {
@@ -114,29 +116,30 @@ class Summary:
     def __repr__(self) -> str:
         from tabulate import tabulate
 
-        body = f"{self.name} (#graphs={self.num_graphs}):\n"
+        body = f'{self.name} (#graphs={self.num_graphs}):\n'
 
-        content = [["", "#nodes", "#edges"]]
+        content = [['', '#nodes', '#edges']]
         stats = [self.num_nodes, self.num_edges]
         for field in Stats.__dataclass_fields__:
-            row = [field] + [f"{getattr(s, field):.1f}" for s in stats]
+            row = [field] + [f'{getattr(s, field):.1f}' for s in stats]
             content.append(row)
-        body += tabulate(content, headers="firstrow", tablefmt="psql")
+        body += tabulate(content, headers='firstrow', tablefmt='psql')
 
         if self.num_nodes_per_type is not None:
-            content = [[""]]
+            content = [['']]
             content[0] += list(self.num_nodes_per_type.keys())
 
             for field in Stats.__dataclass_fields__:
                 row = [field] + [
-                    f"{getattr(s, field):.1f}" for s in self.num_nodes_per_type.values()
+                    f'{getattr(s, field):.1f}'
+                    for s in self.num_nodes_per_type.values()
                 ]
                 content.append(row)
             body += "\nNumber of nodes per node type:\n"
-            body += tabulate(content, headers="firstrow", tablefmt="psql")
+            body += tabulate(content, headers='firstrow', tablefmt='psql')
 
         if self.num_edges_per_type is not None:
-            content = [[""]]
+            content = [['']]
             content[0] += [
                 f"({', '.join(edge_type)})"
                 for edge_type in self.num_edges_per_type.keys()
@@ -144,10 +147,11 @@ class Summary:
 
             for field in Stats.__dataclass_fields__:
                 row = [field] + [
-                    f"{getattr(s, field):.1f}" for s in self.num_edges_per_type.values()
+                    f'{getattr(s, field):.1f}'
+                    for s in self.num_edges_per_type.values()
                 ]
                 content.append(row)
             body += "\nNumber of edges per edge type:\n"
-            body += tabulate(content, headers="firstrow", tablefmt="psql")
+            body += tabulate(content, headers='firstrow', tablefmt='psql')
 
         return body

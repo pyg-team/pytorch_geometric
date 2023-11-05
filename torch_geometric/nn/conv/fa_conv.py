@@ -63,22 +63,15 @@ class FAConv(MessagePassing):
           :math:`((|\mathcal{V}|, F), ((2, |\mathcal{E}|),
           (|\mathcal{E}|)))` if :obj:`return_attention_weights=True`
     """
-
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
     _alpha: OptTensor
 
-    def __init__(
-        self,
-        channels: int,
-        eps: float = 0.1,
-        dropout: float = 0.0,
-        cached: bool = False,
-        add_self_loops: bool = True,
-        normalize: bool = True,
-        **kwargs,
-    ):
-        kwargs.setdefault("aggr", "add")
+    def __init__(self, channels: int, eps: float = 0.1, dropout: float = 0.0,
+                 cached: bool = False, add_self_loops: bool = True,
+                 normalize: bool = True, **kwargs):
+
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.channels = channels
@@ -104,14 +97,8 @@ class FAConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(
-        self,
-        x: Tensor,
-        x_0: Tensor,
-        edge_index: Adj,
-        edge_weight: OptTensor = None,
-        return_attention_weights=None,
-    ):
+    def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None, return_attention_weights=None):
         # type: (Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
@@ -130,14 +117,8 @@ class FAConv(MessagePassing):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index,
-                        None,
-                        x.size(self.node_dim),
-                        False,
-                        self.add_self_loops,
-                        self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, None, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -148,22 +129,15 @@ class FAConv(MessagePassing):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
-                        edge_index,
-                        None,
-                        x.size(self.node_dim),
-                        False,
-                        self.add_self_loops,
-                        self.flow,
-                        dtype=x.dtype,
-                    )
+                        edge_index, None, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
         else:
-            if isinstance(edge_index, Tensor) and not is_torch_sparse_tensor(
-                edge_index
-            ):
+            if isinstance(edge_index,
+                          Tensor) and not is_torch_sparse_tensor(edge_index):
                 assert edge_weight is not None
             elif isinstance(edge_index, SparseTensor):
                 assert edge_index.has_value()
@@ -172,13 +146,8 @@ class FAConv(MessagePassing):
         alpha_r = self.att_r(x)
 
         # propagate_type: (x: Tensor, alpha: PairTensor, edge_weight: OptTensor)  # noqa
-        out = self.propagate(
-            edge_index,
-            x=x,
-            alpha=(alpha_l, alpha_r),
-            edge_weight=edge_weight,
-            size=None,
-        )
+        out = self.propagate(edge_index, x=x, alpha=(alpha_l, alpha_r),
+                             edge_weight=edge_weight, size=None)
 
         alpha = self._alpha
         self._alpha = None
@@ -196,13 +165,12 @@ class FAConv(MessagePassing):
                 else:
                     return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
-                return out, edge_index.set_value(alpha, layout="coo")
+                return out, edge_index.set_value(alpha, layout='coo')
         else:
             return out
 
-    def message(
-        self, x_j: Tensor, alpha_j: Tensor, alpha_i: Tensor, edge_weight: OptTensor
-    ) -> Tensor:
+    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: Tensor,
+                edge_weight: OptTensor) -> Tensor:
         assert edge_weight is not None
         alpha = (alpha_j + alpha_i).tanh().squeeze(-1)
         self._alpha = alpha
@@ -210,4 +178,4 @@ class FAConv(MessagePassing):
         return x_j * (alpha * edge_weight).view(-1, 1)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.channels}, eps={self.eps})"
+        return f'{self.__class__.__name__}({self.channels}, eps={self.eps})'

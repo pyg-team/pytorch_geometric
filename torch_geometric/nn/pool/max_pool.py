@@ -13,7 +13,7 @@ def _max_pool_x(
     x: Tensor,
     size: Optional[int] = None,
 ) -> Tensor:
-    return scatter(x, cluster, dim=0, dim_size=size, reduce="max")
+    return scatter(x, cluster, dim=0, dim_size=size, reduce='max')
 
 
 def max_pool_x(
@@ -99,7 +99,7 @@ def max_pool(
 
 def max_pool_neighbor_x(
     data: Data,
-    flow: Optional[str] = "source_to_target",
+    flow: Optional[str] = 'source_to_target',
 ) -> Data:
     r"""Max pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the feature value with the maximum value from
@@ -110,7 +110,7 @@ def max_pool_neighbor_x(
     edge_index, _ = add_self_loops(edge_index, num_nodes=data.num_nodes)
 
     row, col = edge_index
-    row, col = (row, col) if flow == "source_to_target" else (col, row)
+    row, col = (row, col) if flow == 'source_to_target' else (col, row)
 
-    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes, reduce="max")
+    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes, reduce='max')
     return data

@@ -15,7 +15,7 @@ from torch_geometric.utils import (
 )
 
 
-@functional_transform("to_sparse_tensor")
+@functional_transform('to_sparse_tensor')
 class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a **transposed**
@@ -52,16 +52,16 @@ class ToSparseTensor(BaseTransform):
             :class:`torch.sparse.Tensor` object with layout
             :obj:`torch.sparse_csr`. (default: :obj:`None`)
     """
-
     def __init__(
         self,
-        attr: Optional[str] = "edge_weight",
+        attr: Optional[str] = 'edge_weight',
         remove_edge_index: bool = True,
         fill_cache: bool = True,
         layout: Optional[int] = None,
     ):
         if layout not in {None, torch.sparse_coo, torch.sparse_csr}:
-            raise ValueError(f"Unexpected sparse tensor layout " f"(got '{layout}')")
+            raise ValueError(f"Unexpected sparse tensor layout "
+                             f"(got '{layout}')")
 
         self.attr = attr
         self.remove_edge_index = remove_edge_index
@@ -72,13 +72,14 @@ class ToSparseTensor(BaseTransform):
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
+
         for store in data.edge_stores:
-            if "edge_index" not in store:
+            if 'edge_index' not in store:
                 continue
 
             keys, values = [], []
             for key, value in store.items():
-                if key == "edge_index":
+                if key == 'edge_index':
                     continue
 
                 if store.is_edge_attr(key):
@@ -111,7 +112,8 @@ class ToSparseTensor(BaseTransform):
                 )
 
             # TODO Multi-dimensional edge attributes only supported for COO.
-            elif (value is not None and value.dim() > 1) or layout == torch.sparse_coo:
+            elif ((value is not None and value.dim() > 1)
+                  or layout == torch.sparse_coo):
                 store.adj_t = to_torch_coo_tensor(
                     store.edge_index.flip([0]),
                     edge_attr=value,
@@ -126,7 +128,7 @@ class ToSparseTensor(BaseTransform):
                 )
 
             if self.remove_edge_index:
-                del store["edge_index"]
+                del store['edge_index']
                 if self.attr is not None and self.attr in store:
                     del store[self.attr]
 
@@ -138,4 +140,5 @@ class ToSparseTensor(BaseTransform):
         return data
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(attr={self.attr}, " f"layout={self.layout})"
+        return (f'{self.__class__.__name__}(attr={self.attr}, '
+                f'layout={self.layout})')

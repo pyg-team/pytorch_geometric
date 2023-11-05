@@ -54,7 +54,6 @@ class EdgePooling(torch.nn.Module):
             computed edge score. Adding this greatly helps with unpooling
             stability. (default: :obj:`0.5`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -132,7 +131,8 @@ class EdgePooling(torch.nn.Module):
         e = self.compute_edge_score(e, edge_index, x.size(0))
         e = e + self.add_to_edge_score
 
-        x, edge_index, batch, unpool_info = self._merge_edges(x, edge_index, batch, e)
+        x, edge_index, batch, unpool_info = self._merge_edges(
+            x, edge_index, batch, e)
 
         return x, edge_index, batch, unpool_info
 
@@ -143,6 +143,7 @@ class EdgePooling(torch.nn.Module):
         batch: Tensor,
         edge_score: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, UnpoolInfo]:
+
         cluster = torch.empty_like(batch)
         perm: List[int] = torch.argsort(edge_score, descending=True).tolist()
 
@@ -179,10 +180,11 @@ class EdgePooling(torch.nn.Module):
         i += j
 
         # We compute the new features as an addition of the old ones.
-        new_x = scatter(x, cluster, dim=0, dim_size=i, reduce="sum")
+        new_x = scatter(x, cluster, dim=0, dim_size=i, reduce='sum')
         new_edge_score = edge_score[new_edge_indices]
         if int(mask.sum()) > 0:
-            remaining_score = x.new_ones((new_x.size(0) - len(new_edge_indices),))
+            remaining_score = x.new_ones(
+                (new_x.size(0) - len(new_edge_indices), ))
             new_edge_score = torch.cat([new_edge_score, remaining_score])
         new_x = new_x * new_edge_score.view(-1, 1)
 
@@ -190,12 +192,8 @@ class EdgePooling(torch.nn.Module):
         new_batch = x.new_empty(new_x.size(0), dtype=torch.long)
         new_batch = new_batch.scatter_(0, cluster, batch)
 
-        unpool_info = UnpoolInfo(
-            edge_index=edge_index,
-            cluster=cluster,
-            batch=batch,
-            new_edge_score=new_edge_score,
-        )
+        unpool_info = UnpoolInfo(edge_index=edge_index, cluster=cluster,
+                                 batch=batch, new_edge_score=new_edge_score)
 
         return new_x, new_edge_index, new_batch, unpool_info
 
@@ -225,4 +223,4 @@ class EdgePooling(torch.nn.Module):
         return new_x, unpool_info.edge_index, unpool_info.batch
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.in_channels})"
+        return f'{self.__class__.__name__}({self.in_channels})'

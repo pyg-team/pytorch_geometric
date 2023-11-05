@@ -13,7 +13,6 @@ class CustomMotif(MotifGenerator):
         structure (torch_geometric.data.Data or networkx.Graph): The structure
             to use as a motif.
     """
-
     def __init__(self, structure: Any):
         super().__init__()
 
@@ -23,18 +22,15 @@ class CustomMotif(MotifGenerator):
         else:
             try:
                 import networkx as nx
-
                 if isinstance(structure, nx.Graph):
                     self.structure = from_networkx(structure)
             except ImportError:
                 pass
 
         if self.structure is None:
-            raise ValueError(
-                f"Expected a motif structure of type "
-                f"'torch_geometric.data.Data' or 'networkx.Graph'"
-                f"(got {type(structure)})"
-            )
+            raise ValueError(f"Expected a motif structure of type "
+                             f"'torch_geometric.data.Data' or 'networkx.Graph'"
+                             f"(got {type(structure)})")
 
     def __call__(self) -> Data:
         return self.structure

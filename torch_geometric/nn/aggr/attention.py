@@ -35,8 +35,8 @@ class AttentionalAggregation(Aggregation):
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
-
-    def __init__(self, gate_nn: torch.nn.Module, nn: Optional[torch.nn.Module] = None):
+    def __init__(self, gate_nn: torch.nn.Module,
+                 nn: Optional[torch.nn.Module] = None):
         super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
@@ -46,14 +46,10 @@ class AttentionalAggregation(Aggregation):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(
-        self,
-        x: Tensor,
-        index: Optional[Tensor] = None,
-        ptr: Optional[Tensor] = None,
-        dim_size: Optional[int] = None,
-        dim: int = -2,
-    ) -> Tensor:
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+
         self.assert_two_dimensional_input(x, dim)
 
         if isinstance(self.gate_nn, torch_geometric.nn.MLP):
@@ -70,4 +66,5 @@ class AttentionalAggregation(Aggregation):
         return self.reduce(gate * x, index, ptr, dim_size, dim)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(gate_nn={self.gate_nn}, " f"nn={self.nn})"
+        return (f'{self.__class__.__name__}(gate_nn={self.gate_nn}, '
+                f'nn={self.nn})')

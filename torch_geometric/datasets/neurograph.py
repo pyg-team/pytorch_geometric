@@ -56,14 +56,13 @@ class NeuroGraphDataset(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
-    url = "https://vanderbilt.box.com/shared/static"
+    url = 'https://vanderbilt.box.com/shared/static'
     filenames = {
-        "HCPGender": "r6hlz2arm7yiy6v6981cv2nzq3b0meax.zip",
-        "HCPActivity": "b4g59ibn8itegr0rpcd16m9ajb2qyddf.zip",
-        "HCPAge": "static/lzzks4472czy9f9vc8aikp7pdbknmtfe.zip",
-        "HCPWM": "xtmpa6712fidi94x6kevpsddf9skuoxy.zip",
-        "HCPFI": "g2md9h9snh7jh6eeay02k1kr9m4ido9f.zip",
+        'HCPGender': 'r6hlz2arm7yiy6v6981cv2nzq3b0meax.zip',
+        'HCPActivity': 'b4g59ibn8itegr0rpcd16m9ajb2qyddf.zip',
+        'HCPAge': 'static/lzzks4472czy9f9vc8aikp7pdbknmtfe.zip',
+        'HCPWM': 'xtmpa6712fidi94x6kevpsddf9skuoxy.zip',
+        'HCPFI': 'g2md9h9snh7jh6eeay02k1kr9m4ido9f.zip',
     }
 
     def __init__(
@@ -82,41 +81,40 @@ class NeuroGraphDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, "raw")
+        return os.path.join(self.root, self.name, 'raw')
 
     @property
     def raw_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, "processed")
+        return os.path.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
-        return "data.pt"
+        return 'data.pt'
 
     def download(self):
-        url = f"{self.url}/{self.filenames[self.name]}"
+        url = f'{self.url}/{self.filenames[self.name]}'
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
         os.rename(
-            osp.join(self.raw_dir, self.name, "processed", f"{self.name}.pt"),
-            osp.join(self.raw_dir, "data.pt"),
-        )
+            osp.join(self.raw_dir, self.name, 'processed', f'{self.name}.pt'),
+            osp.join(self.raw_dir, 'data.pt'))
         shutil.rmtree(osp.join(self.raw_dir, self.name))
 
     def process(self):
         data, slices = torch.load(self.raw_paths[0])
 
-        num_samples = slices["x"].size(0) - 1
+        num_samples = slices['x'].size(0) - 1
         data_list: List[Data] = []
         for i in range(num_samples):
-            x = data.x[slices["x"][i] : slices["x"][i + 1]]
+            x = data.x[slices['x'][i]:slices['x'][i + 1]]
             edge_index = data.edge_index[
                 :,
-                slices["edge_index"][i] : slices["edge_index"][i + 1],
+                slices['edge_index'][i]:slices['edge_index'][i + 1],
             ]
             sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 

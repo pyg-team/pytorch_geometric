@@ -13,7 +13,7 @@ from torch_geometric.utils import spmm
 
 class SparseLinear(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True):
-        super().__init__(aggr="add")
+        super().__init__(aggr='add')
         self.in_channels = in_channels
         self.out_channels = out_channels
 
@@ -21,12 +21,13 @@ class SparseLinear(MessagePassing):
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        inits.kaiming_uniform(self.weight, fan=self.in_channels, a=math.sqrt(5))
+        inits.kaiming_uniform(self.weight, fan=self.in_channels,
+                              a=math.sqrt(5))
         inits.uniform(self.in_channels, self.bias)
 
     @torch.jit._overload_method
@@ -45,9 +46,8 @@ class SparseLinear(MessagePassing):
         edge_weight: OptTensor = None,
     ) -> Tensor:
         # propagate_type: (weight: Tensor, edge_weight: OptTensor)
-        out = self.propagate(
-            edge_index, weight=self.weight, edge_weight=edge_weight, size=None
-        )
+        out = self.propagate(edge_index, weight=self.weight,
+                             edge_weight=edge_weight, size=None)
 
         if self.bias is not None:
             out = out + self.bias
@@ -60,7 +60,8 @@ class SparseLinear(MessagePassing):
         else:
             return edge_weight.view(-1, 1) * weight_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, weight: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              weight: Tensor) -> Tensor:
         return spmm(adj_t, weight, reduce=self.aggr)
 
 
@@ -97,7 +98,6 @@ class LINKX(torch.nn.Module):
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.0`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -121,13 +121,13 @@ class LINKX(torch.nn.Module):
         if self.num_edge_layers > 1:
             self.edge_norm = BatchNorm1d(hidden_channels)
             channels = [hidden_channels] * num_edge_layers
-            self.edge_mlp = MLP(channels, dropout=0.0, act_first=True)
+            self.edge_mlp = MLP(channels, dropout=0., act_first=True)
         else:
             self.edge_norm = None
             self.edge_mlp = None
 
         channels = [in_channels] + [hidden_channels] * num_node_layers
-        self.node_mlp = MLP(channels, dropout=0.0, act_first=True)
+        self.node_mlp = MLP(channels, dropout=0., act_first=True)
 
         self.cat_lin1 = torch.nn.Linear(hidden_channels, hidden_channels)
         self.cat_lin2 = torch.nn.Linear(hidden_channels, hidden_channels)
@@ -229,8 +229,6 @@ class LINKX(torch.nn.Module):
         return EdgeIndexJittable(self)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(num_nodes={self.num_nodes}, "
-            f"in_channels={self.in_channels}, "
-            f"out_channels={self.out_channels})"
-        )
+        return (f'{self.__class__.__name__}(num_nodes={self.num_nodes}, '
+                f'in_channels={self.in_channels}, '
+                f'out_channels={self.out_channels})')

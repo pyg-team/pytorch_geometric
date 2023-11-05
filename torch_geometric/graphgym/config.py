@@ -13,18 +13,15 @@ from torch_geometric.data.makedirs import makedirs
 
 try:  # Define global config object
     from yacs.config import CfgNode as CN
-
     cfg = CN()
 except ImportError:
     cfg = None
-    warnings.warn(
-        "Could not define global config object. Please install "
-        "'yacs' via 'pip install yacs' in order to use GraphGym"
-    )
+    warnings.warn("Could not define global config object. Please install "
+                  "'yacs' via 'pip install yacs' in order to use GraphGym")
 
 
 def set_cfg(cfg):
-    r"""
+    r'''
     This function sets the default config value.
     1) Note that for an experiment, only part of the arguments will be used
     The remaining unused arguments won't affect anything.
@@ -32,7 +29,7 @@ def set_cfg(cfg):
     2) We support *at most* two levels of configs, e.g., cfg.dataset.name
 
     :return: configuration use by the experiment.
-    """
+    '''
     if cfg is None:
         return cfg
 
@@ -41,19 +38,19 @@ def set_cfg(cfg):
     # ----------------------------------------------------------------------- #
 
     # Set print destination: stdout / file / both
-    cfg.print = "both"
+    cfg.print = 'both'
 
     # Select device: 'cpu', 'cuda', 'auto'
-    cfg.accelerator = "auto"
+    cfg.accelerator = 'auto'
 
     # number of devices: eg. for 2 GPU set cfg.devices=2
     cfg.devices = 1
 
     # Output directory
-    cfg.out_dir = "results"
+    cfg.out_dir = 'results'
 
     # Config name (in out_dir)
-    cfg.cfg_dest = "config.yaml"
+    cfg.cfg_dest = 'config.yaml'
 
     # Names of registered custom metric funcs to be used (use defaults if none)
     cfg.custom_metrics = []
@@ -77,10 +74,10 @@ def set_cfg(cfg):
     cfg.num_threads = 6
 
     # The metric for selecting the best epoch for each run
-    cfg.metric_best = "auto"
+    cfg.metric_best = 'auto'
 
     # argmax or argmin in aggregating results
-    cfg.metric_agg = "argmax"
+    cfg.metric_agg = 'argmax'
 
     # If visualize embedding.
     cfg.view_emb = False
@@ -114,22 +111,22 @@ def set_cfg(cfg):
     cfg.dataset = CN()
 
     # Name of the dataset
-    cfg.dataset.name = "Cora"
+    cfg.dataset.name = 'Cora'
 
     # if PyG: look for it in Pytorch Geometric dataset
     # if NetworkX/nx: load data in NetworkX format
-    cfg.dataset.format = "PyG"
+    cfg.dataset.format = 'PyG'
 
     # Dir to load the dataset. If the dataset is downloaded, this is the
     # cache dir
-    cfg.dataset.dir = "./datasets"
+    cfg.dataset.dir = './datasets'
 
     # Task: node, edge, graph, link_pred
-    cfg.dataset.task = "node"
+    cfg.dataset.task = 'node'
 
     # Type of task: classification, regression, classification_binary
     # classification_multi
-    cfg.dataset.task_type = "classification"
+    cfg.dataset.task_type = 'classification'
 
     # Transductive / Inductive
     # Graph classification is always inductive
@@ -142,13 +139,13 @@ def set_cfg(cfg):
     cfg.dataset.shuffle_split = True
 
     # Whether random split or use custom split: random / custom
-    cfg.dataset.split_mode = "random"
+    cfg.dataset.split_mode = 'random'
 
     # Whether to use an encoder for general attribute features
     cfg.dataset.encoder = True
 
     # Name of general encoder
-    cfg.dataset.encoder_name = "db"
+    cfg.dataset.encoder_name = 'db'
 
     # If add batchnorm after general encoder
     cfg.dataset.encoder_bn = True
@@ -157,7 +154,7 @@ def set_cfg(cfg):
     cfg.dataset.node_encoder = False
 
     # Name of node encoder
-    cfg.dataset.node_encoder_name = "Atom"
+    cfg.dataset.node_encoder_name = 'Atom'
 
     # If add batchnorm after node encoder
     cfg.dataset.node_encoder_bn = True
@@ -166,7 +163,7 @@ def set_cfg(cfg):
     cfg.dataset.edge_encoder = False
 
     # Name of edge encoder
-    cfg.dataset.edge_encoder_name = "Bond"
+    cfg.dataset.edge_encoder_name = 'Bond'
 
     # If add batchnorm after edge encoder
     cfg.dataset.edge_encoder_bn = True
@@ -182,7 +179,7 @@ def set_cfg(cfg):
     # ============== Link/edge tasks only
 
     # all or disjoint
-    cfg.dataset.edge_train_mode = "all"
+    cfg.dataset.edge_train_mode = 'all'
 
     # Used in disjoint edge_train_mode. The proportion of edges used for
     # message-passing
@@ -198,7 +195,7 @@ def set_cfg(cfg):
     cfg.dataset.resample_negative = False
 
     # What transformation function is applied to the dataset
-    cfg.dataset.transform = "none"
+    cfg.dataset.transform = 'none'
 
     # Whether cache the splitted dataset
     # NOTE: it should be cautiouslly used, as cached dataset may not have
@@ -216,13 +213,13 @@ def set_cfg(cfg):
     cfg.dataset.to_undirected = False
 
     # dataset location: local, snowflake
-    cfg.dataset.location = "local"
+    cfg.dataset.location = 'local'
 
     # Define label: Table name
-    cfg.dataset.label_table = "none"
+    cfg.dataset.label_table = 'none'
 
     # Define label: Column name
-    cfg.dataset.label_column = "none"
+    cfg.dataset.label_column = 'none'
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -233,7 +230,7 @@ def set_cfg(cfg):
     cfg.train.batch_size = 16
 
     # Sampling strategy for a train loader
-    cfg.train.sampler = "full_batch"
+    cfg.train.sampler = 'full_batch'
 
     # Minibatch node
     cfg.train.sample_node = False
@@ -242,7 +239,7 @@ def set_cfg(cfg):
     cfg.train.node_per_graph = 32
 
     # Radius: same, extend. same: same as cfg.gnn.layers_mp, extend: layers+1
-    cfg.train.radius = "extend"
+    cfg.train.radius = 'extend'
 
     # Evaluate model on test data every eval period epochs
     cfg.train.eval_period = 10
@@ -283,13 +280,13 @@ def set_cfg(cfg):
     cfg.val.sample_node = False
 
     # Sampling strategy for a val/test loader
-    cfg.val.sampler = "full_batch"
+    cfg.val.sampler = 'full_batch'
 
     # Num of sampled node per graph
     cfg.val.node_per_graph = 32
 
     # Radius: same, extend. same: same as cfg.gnn.layers_mp, extend: layers+1
-    cfg.val.radius = "extend"
+    cfg.val.radius = 'extend'
 
     # ----------------------------------------------------------------------- #
     # Model options
@@ -297,16 +294,16 @@ def set_cfg(cfg):
     cfg.model = CN()
 
     # Model type to use
-    cfg.model.type = "gnn"
+    cfg.model.type = 'gnn'
 
     # Auto match computational budget, match upper bound / lower bound
     cfg.model.match_upper = True
 
     # Loss function: cross_entropy, mse
-    cfg.model.loss_fun = "cross_entropy"
+    cfg.model.loss_fun = 'cross_entropy'
 
     # size average for loss function. 'mean' or 'sum'
-    cfg.model.size_average = "mean"
+    cfg.model.size_average = 'mean'
 
     # Threshold for binary classification
     cfg.model.thresh = 0.5
@@ -318,7 +315,7 @@ def set_cfg(cfg):
     #   binary)
     #   - concat: use u||v followed by an nn.Linear to obtain edge embedding
     #   (multi-class)
-    cfg.model.edge_decoding = "dot"
+    cfg.model.edge_decoding = 'dot'
     # ===================================
 
     # ================== Graph tasks only
@@ -326,7 +323,7 @@ def set_cfg(cfg):
     #   - add: global add pool
     #   - mean: global mean pool
     #   - max: global max pool
-    cfg.model.graph_pooling = "add"
+    cfg.model.graph_pooling = 'add'
     # ===================================
 
     # ----------------------------------------------------------------------- #
@@ -335,7 +332,7 @@ def set_cfg(cfg):
     cfg.gnn = CN()
 
     # Prediction head. Use cfg.dataset.task by default
-    cfg.gnn.head = "default"
+    cfg.gnn.head = 'default'
 
     # Number of layers before message passing
     cfg.gnn.layers_pre_mp = 0
@@ -350,10 +347,10 @@ def set_cfg(cfg):
     cfg.gnn.dim_inner = 16
 
     # Type of graph conv: generalconv, gcnconv, sageconv, gatconv, ...
-    cfg.gnn.layer_type = "generalconv"
+    cfg.gnn.layer_type = 'generalconv'
 
     # Stage type: 'stack', 'skipsum', 'skipconcat'
-    cfg.gnn.stage_type = "stack"
+    cfg.gnn.stage_type = 'stack'
 
     # How many layers to skip each time
     cfg.gnn.skip_every = 1
@@ -362,7 +359,7 @@ def set_cfg(cfg):
     cfg.gnn.batchnorm = True
 
     # Activation
-    cfg.gnn.act = "relu"
+    cfg.gnn.act = 'relu'
 
     # Dropout
     cfg.gnn.dropout = 0.0
@@ -370,16 +367,16 @@ def set_cfg(cfg):
     # Aggregation type: add, mean, max
     # Note: only for certain layers that explicitly set aggregation type
     # e.g., when cfg.gnn.layer_type = 'generalconv'
-    cfg.gnn.agg = "add"
+    cfg.gnn.agg = 'add'
 
     # Normalize adj
     cfg.gnn.normalize_adj = False
 
     # Message direction: single, both
-    cfg.gnn.msg_direction = "single"
+    cfg.gnn.msg_direction = 'single'
 
     # Whether add message from node itself: none, add, cat
-    cfg.gnn.self_msg = "concat"
+    cfg.gnn.self_msg = 'concat'
 
     # Number of attention heads
     cfg.gnn.att_heads = 1
@@ -405,7 +402,7 @@ def set_cfg(cfg):
     cfg.optim = CN()
 
     # optimizer: sgd, adam
-    cfg.optim.optimizer = "adam"
+    cfg.optim.optimizer = 'adam'
 
     # Base learning rate
     cfg.optim.base_lr = 0.01
@@ -417,7 +414,7 @@ def set_cfg(cfg):
     cfg.optim.momentum = 0.9
 
     # scheduler: none, steps, cos
-    cfg.optim.scheduler = "cos"
+    cfg.optim.scheduler = 'cos'
 
     # Steps for 'steps' policy (in epochs)
     cfg.optim.steps = [30, 60, 90]
@@ -454,24 +451,26 @@ def set_cfg(cfg):
 
 def assert_cfg(cfg):
     r"""Checks config values, do necessary post processing to the configs"""
-    if cfg.dataset.task not in ["node", "edge", "graph", "link_pred"]:
-        raise ValueError(
-            f"Task '{cfg.dataset.task}' not supported. Must be "
-            f"one of node, edge, graph, link_pred"
-        )
-    if "classification" in cfg.dataset.task_type and cfg.model.loss_fun == "mse":
-        cfg.model.loss_fun = "cross_entropy"
-        logging.warning("model.loss_fun changed to cross_entropy for classification.")
-    if cfg.dataset.task_type == "regression" and cfg.model.loss_fun == "cross_entropy":
-        cfg.model.loss_fun = "mse"
-        logging.warning("model.loss_fun changed to mse for regression.")
-    if cfg.dataset.task == "graph" and cfg.dataset.transductive:
+    if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
+        raise ValueError(f"Task '{cfg.dataset.task}' not supported. Must be "
+                         f"one of node, edge, graph, link_pred")
+    if 'classification' in cfg.dataset.task_type and cfg.model.loss_fun == \
+            'mse':
+        cfg.model.loss_fun = 'cross_entropy'
+        logging.warning(
+            'model.loss_fun changed to cross_entropy for classification.')
+    if cfg.dataset.task_type == 'regression' and cfg.model.loss_fun == \
+            'cross_entropy':
+        cfg.model.loss_fun = 'mse'
+        logging.warning('model.loss_fun changed to mse for regression.')
+    if cfg.dataset.task == 'graph' and cfg.dataset.transductive:
         cfg.dataset.transductive = False
-        logging.warning("dataset.transductive changed " "to False for graph task.")
+        logging.warning('dataset.transductive changed '
+                        'to False for graph task.')
     if cfg.gnn.layers_post_mp < 1:
         cfg.gnn.layers_post_mp = 1
-        logging.warning("Layers after message passing should be >=1")
-    if cfg.gnn.head == "default":
+        logging.warning('Layers after message passing should be >=1')
+    if cfg.gnn.head == 'default':
         cfg.gnn.head = cfg.dataset.task
     cfg.run_dir = cfg.out_dir
 
@@ -486,7 +485,7 @@ def dump_cfg(cfg):
     """
     makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
-    with open(cfg_file, "w") as f:
+    with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
 
@@ -517,9 +516,9 @@ def get_fname(fname):
         fname (str): Filename for the yaml format configuration file
     """
     fname = os.path.basename(fname)
-    if fname.endswith(".yaml"):
+    if fname.endswith('.yaml'):
         fname = fname[:-5]
-    elif fname.endswith(".yml"):
+    elif fname.endswith('.yml'):
         fname = fname[:-4]
     return fname
 
@@ -573,7 +572,7 @@ def from_config(func):
         if cfg is not None:
             cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
 
-            iterator = zip(arg_names[len(args) :], has_defaults[len(args) :])
+            iterator = zip(arg_names[len(args):], has_defaults[len(args):])
             for arg_name, has_default in iterator:
                 if arg_name in kwargs:
                     continue

@@ -39,7 +39,6 @@ class RotatE(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -66,6 +65,7 @@ class RotatE(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
+
         head_re = self.node_emb(head_index)
         head_im = self.node_emb_im(head_index)
         tail_re = self.node_emb(tail_index)
@@ -87,6 +87,7 @@ class RotatE(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
+
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
         scores = torch.cat([pos_score, neg_score], dim=0)
