@@ -1,5 +1,4 @@
-"""
-An implementation of RandLA-Net based on the paper:
+"""An implementation of RandLA-Net based on the paper:
 RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
 Reference: https://arxiv.org/abs/1911.11236
 """
