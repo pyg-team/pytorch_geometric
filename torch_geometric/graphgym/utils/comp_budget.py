@@ -9,7 +9,6 @@ def params_count(model):
 
     Args:
         model (nn.Module): PyTorch model
-
     """
     return sum([p.numel() for p in model.parameters()])
 
