@@ -124,20 +124,21 @@ def filter_dist_store(
     return data
 
 
-def as_str(type: Union[NodeType, EdgeType]) -> str:
-    if isinstance(type, NodeType):
-        return type
-    elif isinstance(type, (list, tuple)) and len(type) == 3:
-        return '__'.join(type)
+def as_str(inputs: Union[NodeType, EdgeType]) -> str:
+    if isinstance(inputs, NodeType):
+        return inputs
+    elif isinstance(inputs, (list, tuple)) and len(inputs) == 3:
+        return '__'.join(inputs)
     return ''
 
 
-def reverse_edge_type(etype: EdgeType):
-    src, edge, dst = etype
-    if not src == dst:
-        if edge.split("_",
-                      1)[0] == 'rev':  # undirected edge with `rev_` prefix.
-            edge = edge.split("_", 1)[1]
+def reverse_edge_type(etype: EdgeType) -> EdgeType:
+    src, rel, dst = etype
+    if src != dst:
+        if rel.split('_', 1)[0] == 'rev':
+            # undirected edge with `rev_` prefix.
+            rel = rel.split('_', 1)[1]
         else:
-            edge = 'rev_' + edge
-    return (dst, edge, src)
+            rel = 'rev_' + rel
+
+    return dst, rel, src

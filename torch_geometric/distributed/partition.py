@@ -102,7 +102,7 @@ class Partitioner:
             'is_hetero': self.is_hetero,
             'node_types': self.node_types,
             'edge_types': self.edge_types,
-            'is_sorted': True,  # on col / dst node
+            'is_sorted': True,  # Based on col/destination.
         }
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
@@ -165,8 +165,8 @@ class Partitioner:
                     global_row = node_id[rows]
                     global_col = node_perm[col]
 
-                    # Sort on col to avoid additional perm in neighbor_sampler
-                    # when converting to CSC format
+                    # Sort on col to avoid keeping track of permuations in
+                    # NeighborSampler when converting to CSC format:
                     num_cols = col.size()[0]
                     global_col, perm = index_sort(global_col,
                                                   max_value=num_cols)
@@ -244,8 +244,8 @@ class Partitioner:
                 global_row = node_id[rows]  # part_ids -> global
                 global_col = node_perm[col]
 
-                # Sort on col to avoid additional perm in neighbor_sampler when
-                # converting to CSC format
+                # Sort on col to avoid keeping track of permuations in
+                # NeighborSampler when converting to CSC format:
                 global_col, perm = index_sort(global_col, max_value=num_cols)
                 global_row = global_row[perm]
                 edge_id = edge_id[perm]
