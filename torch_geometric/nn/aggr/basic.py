@@ -23,7 +23,8 @@ class SumAggregation(Aggregation):
 
 
 class MeanAggregation(Aggregation):
-    r"""An aggregation operator that averages features across a set of elements.
+    r"""An aggregation operator that averages features across a set of
+    elements.
 
     .. math::
         \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}

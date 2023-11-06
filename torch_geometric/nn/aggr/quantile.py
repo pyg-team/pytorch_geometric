@@ -136,7 +136,8 @@ class QuantileAggregation(Aggregation):
 
 class MedianAggregation(QuantileAggregation):
     r"""An aggregation operator that returns the feature-wise median of a set.
-    That is, for every feature :math:`d`, it computes.
+
+    That is, for every feature :math:`d`, it computes
 
     .. math::
         {\mathrm{median}(\mathcal{X})}_d = x_{\pi_i,d}
