@@ -27,7 +27,7 @@ class MemPooling(torch.nn.Module):
         \mathbf{X}^{\prime} &= \mathbf{S}^{\top} \mathbf{X} \mathbf{W} \in
         \mathbb{R}^{K \times F^{\prime}}
 
-    Where :math:`H` denotes the number of heads, and :math:`K` denotes the
+    where :math:`H` denotes the number of heads, and :math:`K` denotes the
     number of clusters.
 
     Args:

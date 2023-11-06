@@ -60,9 +60,8 @@ class Linear(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
 
-    similar to :class:`torch.nn.Linear`.
-    It supports lazy initialization and customizable weight and bias
-    initialization.
+    In contrast to :class:`torch.nn.Linear`, it supports lazy initialization
+    and customizable weight and bias initialization.
 
     Args:
         in_channels (int): Size of each input sample. Will be initialized
@@ -193,11 +192,12 @@ class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
     to types.
 
+    For type :math:`\kappa`, it computes
+
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -335,11 +335,12 @@ class HeteroLinear(torch.nn.Module):
 class HeteroDictLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data dictionary.
 
+    For key :math:`\kappa`, it computes
+
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 

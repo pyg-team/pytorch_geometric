@@ -19,9 +19,10 @@ class AddMetaPaths(BaseTransform):
     in the `"Heterogenous Graph Attention Networks"
     <https://arxiv.org/abs/1903.07293>`_ paper
     (functional name: :obj:`add_metapaths`).
+
     Meta-path based neighbors can exploit different aspects of structure
     information in heterogeneous graphs.
-    Formally, a metapath is a path of the form.
+    Formally, a metapath is a path of the form
 
     .. math::
 

@@ -16,8 +16,9 @@ from torch_geometric.utils.sparse import set_sparse_value
 class RGATConv(MessagePassing):
     r"""The relational graph attentional operator from the `"Relational Graph
     Attention Networks" <https://arxiv.org/abs/1904.05811>`_ paper.
+
     Here, attention logits :math:`\mathbf{a}^{(r)}_{i,j}` are computed for each
-    relation type :math:`r` with the help of both query and key kernels, *i.e.*.
+    relation type :math:`r` with the help of both query and key kernels, *i.e.*
 
     .. math::
         \mathbf{q}^{(r)}_i = \mathbf{W}_1^{(r)}\mathbf{x}_{i} \cdot
