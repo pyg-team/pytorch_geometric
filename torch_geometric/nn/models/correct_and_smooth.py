@@ -13,7 +13,7 @@ class CorrectAndSmooth(torch.nn.Module):
     <https://arxiv.org/abs/2010.13993>`_ paper, where soft predictions
     :math:`\mathbf{Z}` (obtained from a simple base predictor) are
     first corrected based on ground-truth training
-    label information :math:`\mathbf{Y}` and residual propagation
+    label information :math:`\mathbf{Y}` and residual propagation.
 
     .. math::
         \mathbf{e}^{(0)}_i &= \begin{cases}

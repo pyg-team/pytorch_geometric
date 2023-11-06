@@ -14,7 +14,7 @@ from torch_geometric.utils import scatter, softmax
 
 class HypergraphConv(MessagePassing):
     r"""The hypergraph convolutional operator from the `"Hypergraph Convolution
-    and Hypergraph Attention" <https://arxiv.org/abs/1901.08150>`_ paper
+    and Hypergraph Attention" <https://arxiv.org/abs/1901.08150>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{D}^{-1} \mathbf{H} \mathbf{W}

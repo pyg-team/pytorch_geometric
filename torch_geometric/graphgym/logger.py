@@ -15,7 +15,7 @@ from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 
 def set_printing():
-    """Set up printing options
+    """Set up printing options.
 
     """
     logging.root.handlers = []

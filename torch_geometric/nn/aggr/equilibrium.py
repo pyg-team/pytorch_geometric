@@ -109,7 +109,7 @@ class EquilibriumAggregation(Aggregation):
     Encoding Sets via Optimization" <https://arxiv.org/abs/2202.12795>`_ paper.
     The output of this layer :math:`\mathbf{y}` is defined implicitly via a
     potential function :math:`F(\mathbf{x}, \mathbf{y})`, a regularization term
-    :math:`R(\mathbf{y})`, and the condition
+    :math:`R(\mathbf{y})`, and the condition.
 
     .. math::
         \mathbf{y} = \min_\mathbf{y} R(\mathbf{y}) + \sum_{i}

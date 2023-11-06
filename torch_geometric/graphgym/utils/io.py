@@ -51,7 +51,7 @@ def json_to_dict_list(fname):
 
 
 def dict_to_tb(dict, writer, epoch):
-    """Add a dictionary of statistics to a Tensorboard writer
+    """Add a dictionary of statistics to a Tensorboard writer.
 
     Args:
         dict (dict): Statistics of experiments, the keys are attribute names,

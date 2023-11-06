@@ -28,7 +28,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 class GATConv(MessagePassing):
     r"""The graph attentional operator from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper
+    <https://arxiv.org/abs/1710.10903>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +

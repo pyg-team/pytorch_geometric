@@ -17,7 +17,7 @@ from torch_geometric.utils import degree
 class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
-    <https://arxiv.org/abs/2004.05718>`_ paper
+    <https://arxiv.org/abs/2004.05718>`_ paper.
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left(

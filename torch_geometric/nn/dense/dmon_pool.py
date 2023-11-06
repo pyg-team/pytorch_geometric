@@ -11,7 +11,7 @@ EPS = 1e-15
 
 class DMoNPooling(torch.nn.Module):
     r"""The spectral modularity pooling operator from the `"Graph Clustering
-    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
+    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot

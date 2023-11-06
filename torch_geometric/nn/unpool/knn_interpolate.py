@@ -12,7 +12,7 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
     Feature Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper.
     For each point :math:`y` with position :math:`\mathbf{p}(y)`, its
-    interpolated features :math:`\mathbf{f}(y)` are given by
+    interpolated features :math:`\mathbf{f}(y)` are given by.
 
     .. math::
         \mathbf{f}(y) = \frac{\sum_{i=1}^k w(x_i) \mathbf{f}(x_i)}{\sum_{i=1}^k

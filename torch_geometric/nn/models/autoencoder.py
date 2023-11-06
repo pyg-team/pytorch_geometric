@@ -13,7 +13,7 @@ MAX_LOGSTD = 10
 
 class InnerProductDecoder(torch.nn.Module):
     r"""The inner product decoder from the `"Variational Graph Auto-Encoders"
-    <https://arxiv.org/abs/1611.07308>`_ paper
+    <https://arxiv.org/abs/1611.07308>`_ paper.
 
     .. math::
         \sigma(\mathbf{Z}\mathbf{Z}^{\top})

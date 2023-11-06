@@ -52,7 +52,7 @@ def ptr2ind(ptr: Tensor) -> Tensor:
 
 
 class MessagePassing(torch.nn.Module):
-    r"""Base class for creating message passing layers of the form
+    r"""Base class for creating message passing layers of the form.
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,

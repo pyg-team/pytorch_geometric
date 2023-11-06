@@ -11,7 +11,7 @@ from torch_geometric.utils import scatter
 class GraphNorm(torch.nn.Module):
     r"""Applies graph normalization over individual graphs as described in the
     `"GraphNorm: A Principled Approach to Accelerating Graph Neural Network
-    Training" <https://arxiv.org/abs/2009.03294>`_ paper
+    Training" <https://arxiv.org/abs/2009.03294>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} - \alpha \odot

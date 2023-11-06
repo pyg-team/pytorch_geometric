@@ -8,7 +8,7 @@ from torch.nn import LayerNorm, Linear, MultiheadAttention, Parameter
 class MultiheadAttentionBlock(torch.nn.Module):
     r"""The Multihead Attention Block (MAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -86,7 +86,7 @@ class MultiheadAttentionBlock(torch.nn.Module):
 class SetAttentionBlock(torch.nn.Module):
     r"""The Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -123,7 +123,7 @@ class SetAttentionBlock(torch.nn.Module):
 class InducedSetAttentionBlock(torch.nn.Module):
     r"""The Induced Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -174,7 +174,7 @@ class InducedSetAttentionBlock(torch.nn.Module):
 class PoolingByMultiheadAttention(torch.nn.Module):
     r"""The Pooling by Multihead Attention (PMA) layer from the `"Set
     Transformer: A Framework for Attention-based Permutation-Invariant Neural
-    Networks" <https://arxiv.org/abs/1810.00825>`_ paper
+    Networks" <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 

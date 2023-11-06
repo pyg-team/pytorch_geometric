@@ -10,7 +10,7 @@ from torch_geometric.utils import cumsum
 class QuantileAggregation(Aggregation):
     r"""An aggregation operator that returns the feature-wise :math:`q`-th
     quantile of a set :math:`\mathcal{X}`. That is, for every feature
-    :math:`d`, it computes
+    :math:`d`, it computes.
 
     .. math::
         {\mathrm{Q}_q(\mathcal{X})}_d = \begin{cases}
@@ -135,7 +135,7 @@ class QuantileAggregation(Aggregation):
 
 class MedianAggregation(QuantileAggregation):
     r"""An aggregation operator that returns the feature-wise median of a set.
-    That is, for every feature :math:`d`, it computes
+    That is, for every feature :math:`d`, it computes.
 
     .. math::
         {\mathrm{median}(\mathcal{X})}_d = x_{\pi_i,d}

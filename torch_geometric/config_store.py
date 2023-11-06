@@ -185,7 +185,7 @@ def to_dataclass(
     strict: bool = False,
 ) -> Any:
     r"""Converts the input arguments of a given class :obj:`cls` to a
-    :obj:`dataclass` schema, *e.g.*,
+    :obj:`dataclass` schema, *e.g.*,.
 
     .. code-block:: python
 

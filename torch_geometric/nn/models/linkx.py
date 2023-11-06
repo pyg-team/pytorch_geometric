@@ -68,7 +68,7 @@ class SparseLinear(MessagePassing):
 class LINKX(torch.nn.Module):
     r"""The LINKX model from the `"Large Scale Learning on Non-Homophilous
     Graphs: New Benchmarks and Strong Simple Methods"
-    <https://arxiv.org/abs/2110.14446>`_ paper
+    <https://arxiv.org/abs/2110.14446>`_ paper.
 
     .. math::
         \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A})

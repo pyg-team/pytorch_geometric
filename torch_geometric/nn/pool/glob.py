@@ -9,7 +9,7 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by adding node features
     across the node dimension, so that for a single graph
-    :math:`\mathcal{G}_i` its output is computed by
+    :math:`\mathcal{G}_i` its output is computed by.
 
     .. math::
         \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n.
@@ -37,7 +37,7 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
                      size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by averaging node features
     across the node dimension, so that for a single graph
-    :math:`\mathcal{G}_i` its output is computed by
+    :math:`\mathcal{G}_i` its output is computed by.
 
     .. math::
         \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n.
@@ -65,7 +65,7 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
     maximum across the node dimension, so that for a single graph
-    :math:`\mathcal{G}_i` its output is computed by
+    :math:`\mathcal{G}_i` its output is computed by.
 
     .. math::
         \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n.

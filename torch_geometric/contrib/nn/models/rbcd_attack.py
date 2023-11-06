@@ -320,7 +320,7 @@ class PRBCDAttack(torch.nn.Module):
     def _get_modified_adj(self, edge_index: Tensor, edge_weight: Tensor,
                           block_edge_index: Tensor,
                           block_edge_weight: Tensor) -> Tuple[Tensor, Tensor]:
-        """Merges adjacency matrix with current block (incl. weights)"""
+        """Merges adjacency matrix with current block (incl. weights)."""
         if self.is_undirected:
             block_edge_index, block_edge_weight = to_undirected(
                 block_edge_index, block_edge_weight, num_nodes=self.num_nodes,

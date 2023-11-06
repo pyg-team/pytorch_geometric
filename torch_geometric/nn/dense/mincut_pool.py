@@ -13,7 +13,7 @@ def dense_mincut_pool(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot

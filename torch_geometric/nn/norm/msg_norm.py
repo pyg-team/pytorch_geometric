@@ -7,7 +7,7 @@ from torch.nn import Parameter
 class MessageNorm(torch.nn.Module):
     r"""Applies message normalization over the aggregated messages as described
     in the `"DeeperGCNs: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
 

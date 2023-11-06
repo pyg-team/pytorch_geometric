@@ -12,7 +12,7 @@ class InstanceNorm(_InstanceNorm):
     r"""Applies instance normalization over each individual example in a batch
     of node features as described in the `"Instance Normalization: The Missing
     Ingredient for Fast Stylization" <https://arxiv.org/abs/1607.08022>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -

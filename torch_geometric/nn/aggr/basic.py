@@ -10,7 +10,7 @@ from torch_geometric.utils import softmax
 
 
 class SumAggregation(Aggregation):
-    r"""An aggregation operator that sums up features across a set of elements
+    r"""An aggregation operator that sums up features across a set of elements.
 
     .. math::
         \mathrm{sum}(\mathcal{X}) = \sum_{\mathbf{x}_i \in \mathcal{X}}
@@ -23,7 +23,7 @@ class SumAggregation(Aggregation):
 
 
 class MeanAggregation(Aggregation):
-    r"""An aggregation operator that averages features across a set of elements
+    r"""An aggregation operator that averages features across a set of elements.
 
     .. math::
         \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
@@ -37,7 +37,7 @@ class MeanAggregation(Aggregation):
 
 class MaxAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise maximum across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{max}(\mathcal{X}) = \max_{\mathbf{x}_i \in \mathcal{X}}
@@ -51,7 +51,7 @@ class MaxAggregation(Aggregation):
 
 class MinAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise minimum across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{min}(\mathcal{X}) = \min_{\mathbf{x}_i \in \mathcal{X}}
@@ -65,7 +65,7 @@ class MinAggregation(Aggregation):
 
 class MulAggregation(Aggregation):
     r"""An aggregation operator that multiples features across a set of
-    elements
+    elements.
 
     .. math::
         \mathrm{mul}(\mathcal{X}) = \prod_{\mathbf{x}_i \in \mathcal{X}}
@@ -81,7 +81,7 @@ class MulAggregation(Aggregation):
 
 class VarAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise variance across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
@@ -112,7 +112,7 @@ class VarAggregation(Aggregation):
 
 class StdAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise standard deviation
-    across a set of elements
+    across a set of elements.
 
     .. math::
         \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
@@ -141,7 +141,7 @@ class StdAggregation(Aggregation):
 class SoftmaxAggregation(Aggregation):
     r"""The softmax aggregation operator based on a temperature term, as
     described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
         \mathrm{softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
@@ -220,7 +220,7 @@ class SoftmaxAggregation(Aggregation):
 class PowerMeanAggregation(Aggregation):
     r"""The powermean aggregation operator based on a power term, as
     described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
         \mathrm{powermean}(\mathcal{X}|p) = \left(\frac{1}{|\mathcal{X}|}

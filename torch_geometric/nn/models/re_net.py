@@ -13,7 +13,7 @@ from torch_geometric.utils import scatter
 class RENet(torch.nn.Module):
     r"""The Recurrent Event Network model from the `"Recurrent Event Network
     for Reasoning over Temporal Knowledge Graphs"
-    <https://arxiv.org/abs/1904.05530>`_ paper
+    <https://arxiv.org/abs/1904.05530>`_ paper.
 
     .. math::
         f_{\mathbf{\Theta}}(\mathbf{e}_s, \mathbf{e}_r,
@@ -86,7 +86,7 @@ class RENet(torch.nn.Module):
 
     @staticmethod
     def pre_transform(seq_len: int) -> Callable:
-        r"""Precomputes history objects
+        r"""Precomputes history objects.
 
         .. math::
             \{ \mathcal{O}^{(t-k-1)}_r(s), \ldots, \mathcal{O}^{(t-1)}_r(s) \}

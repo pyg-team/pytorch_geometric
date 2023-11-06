@@ -14,7 +14,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 class FAConv(MessagePassing):
     r"""The Frequency Adaptive Graph Convolution operator from the
     `"Beyond Low-Frequency Information in Graph Convolutional Networks"
-    <https://arxiv.org/abs/2101.00797>`_ paper
+    <https://arxiv.org/abs/2101.00797>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i= \epsilon \cdot \mathbf{x}^{(0)}_i +

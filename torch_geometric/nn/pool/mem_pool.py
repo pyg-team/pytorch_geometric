@@ -12,7 +12,7 @@ EPS = 1e-15
 class MemPooling(torch.nn.Module):
     r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
-    representation based on soft cluster assignments
+    representation based on soft cluster assignments.
 
     .. math::
         S_{i,j}^{(h)} &= \frac{
@@ -60,7 +60,7 @@ class MemPooling(torch.nn.Module):
 
     @staticmethod
     def kl_loss(S: Tensor) -> Tensor:
-        r"""The additional KL divergence-based loss
+        r"""The additional KL divergence-based loss.
 
         .. math::
             P_{i,j} &= \frac{S_{i,j}^2 / \sum_{n=1}^N S_{n,j}}{\sum_{k=1}^K

@@ -9,7 +9,7 @@ class JumpingKnowledge(torch.nn.Module):
     r"""The Jumping Knowledge layer aggregation module from the
     `"Representation Learning on Graphs with Jumping Knowledge Networks"
     <https://arxiv.org/abs/1806.03536>`_ paper based on either
-    **concatenation** (:obj:`"cat"`)
+    **concatenation** (:obj:`"cat"`).
 
     .. math::
 
