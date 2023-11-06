@@ -729,7 +729,8 @@ class DistNeighborSampler:
 
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
-    processes."""
+    processes.
+    """
     def __init__(self, sampler: DistNeighborSampler):
         super().__init__()
         self.sampler = sampler
