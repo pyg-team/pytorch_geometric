@@ -2,9 +2,8 @@ import math
 from typing import Optional, Tuple
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, nn
 from torch.autograd import grad
 
 from torch_geometric.nn import MessagePassing, radius_graph
