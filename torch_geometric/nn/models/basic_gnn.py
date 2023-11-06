@@ -214,7 +214,8 @@ class BasicGNN(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
     ):
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor or SparseTensor): The edge indices.

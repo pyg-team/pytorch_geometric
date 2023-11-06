@@ -69,7 +69,8 @@ class JumpingKnowledge(torch.nn.Module):
             self.att.reset_parameters()
 
     def forward(self, xs: List[Tensor]) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             xs (List[torch.Tensor]): List containing the layer-wise
                 representations.

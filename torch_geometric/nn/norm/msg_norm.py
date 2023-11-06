@@ -30,7 +30,8 @@ class MessageNorm(torch.nn.Module):
         self.scale.data.fill_(1.0)
 
     def forward(self, x: Tensor, msg: Tensor, p: float = 2.0) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             msg (torch.Tensor): The message tensor :math:`\mathbf{M}`.

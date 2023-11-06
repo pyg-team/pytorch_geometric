@@ -69,7 +69,8 @@ class BatchNorm(torch.nn.Module):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
         """
@@ -169,7 +170,8 @@ class HeteroBatchNorm(torch.nn.Module):
             torch.nn.init.zeros_(self.bias)
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.

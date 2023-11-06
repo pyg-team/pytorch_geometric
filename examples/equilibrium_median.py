@@ -1,5 +1,4 @@
-r"""
-Replicates the experiment from `"Deep Graph Infomax"
+r"""Replicates the experiment from `"Deep Graph Infomax"
 <https://arxiv.org/abs/1809.10341>`_ to try and teach
 `EquilibriumAggregation` to learn to take the median of
 a set of numbers

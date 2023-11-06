@@ -1,5 +1,4 @@
-r"""
-This class defines the abstraction for a backend-agnostic graph store. The
+r"""This class defines the abstraction for a backend-agnostic graph store. The
 goal of the graph store is to abstract away all graph edge index memory
 management so that varying implementations can allow for independent scale-out.
 

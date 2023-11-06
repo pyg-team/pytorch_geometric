@@ -72,7 +72,8 @@ class PANPooling(torch.nn.Module):
         M: SparseTensor,
         batch: OptTensor = None,
     ) -> Tuple[Tensor, Tensor, Tensor, OptTensor, Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node feature matrix.
             M (SparseTensor): The MET matrix :math:`\mathbf{M}`.

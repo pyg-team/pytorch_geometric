@@ -131,7 +131,6 @@ ignore = [
     "D107",  # TODO: Don't ignore "Missing docstring in __init__"
     "D200",  # Ignore "One-line docstring should fit on one line"
     "D205",  # Ignore "1 blank line required between summary line and description"
-    "D212",  # Ignore "Multi-line docstring summary should start at the first line"
     "D415",  # Ignore "First line should end with a period, question mark, or exclamation point"
 
 ]

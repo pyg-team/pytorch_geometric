@@ -17,7 +17,8 @@ class MeanSubtractionNorm(torch.nn.Module):
     """
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
                 dim_size: Optional[int] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector

@@ -1,5 +1,4 @@
-"""
-An adaptation of RandLA-Net to the classification task, which was not
+"""An adaptation of RandLA-Net to the classification task, which was not
 addressed in the paper:
 RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
 Reference: https://arxiv.org/abs/1911.11236

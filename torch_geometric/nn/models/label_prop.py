@@ -48,7 +48,8 @@ class LabelPropagation(MessagePassing):
         edge_weight: OptTensor = None,
         post_step: Optional[Callable[[Tensor], Tensor]] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             y (torch.Tensor): The ground-truth label information
                 :math:`\mathbf{Y}`.

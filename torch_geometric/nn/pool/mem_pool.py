@@ -86,7 +86,8 @@ class MemPooling(torch.nn.Module):
         max_num_nodes: Optional[int] = None,
         batch_size: Optional[int] = None,
     ) -> Tuple[Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node feature tensor of shape
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or

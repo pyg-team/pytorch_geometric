@@ -37,7 +37,8 @@ class NodeEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The edge indices.
@@ -98,7 +99,8 @@ class _MLPMixer(torch.nn.Module):
         self.head_lin.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): Tensor of size
                 :obj:`[*, num_tokens, in_channels]`.
@@ -230,7 +232,8 @@ class LinkEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor): The edge features of shape

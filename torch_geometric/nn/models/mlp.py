@@ -200,7 +200,8 @@ class MLP(torch.nn.Module):
         batch_size: Optional[int] = None,
         return_emb: NoneType = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector

@@ -68,7 +68,8 @@ class Aggregation(torch.nn.Module):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             index (torch.Tensor, optional): The indices of elements for

@@ -145,7 +145,7 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
 
         Args:
             x (torch.Tensor): Node feature tensor
