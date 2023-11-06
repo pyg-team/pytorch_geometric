@@ -50,7 +50,7 @@ def sparse_cross_entropy(inputs: Tensor, edge_label_index: Tensor) -> Tensor:
     Args:
         inputs (torch.Tensor): The predicted unnormalized logits of shape
             :obj:`[batch_size, num_classes]`.
-        edge_index (torch.Tensor): The sparse ground-truth indices of
+        edge_label_index (torch.Tensor): The sparse ground-truth indices of
             shape :obj:`[2, num_labels]`.
 
     :rtype: :class:`torch.Tensor`

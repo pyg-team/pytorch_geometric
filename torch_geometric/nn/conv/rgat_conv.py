@@ -312,13 +312,19 @@ class RGATConv(MessagePassing):
             glorot(self.lin_edge)
             glorot(self.e)
 
-    def forward(self, x: Tensor, edge_index: Adj, edge_type: OptTensor = None,
-                edge_attr: OptTensor = None, size: Size = None,
-                return_attention_weights=None):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_type: OptTensor = None,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights=None,
+    ):
         r"""Runs the forward pass of the module.
 
         Args:
-            x (torch.Tensor or tuple, optional): The input node features.
+            x (torch.Tensor): The input node features.
                 Can be either a :obj:`[num_nodes, in_channels]` node feature
                 matrix, or an optional one-dimensional node index tensor (in
                 which case input features are treated as trainable node
@@ -330,6 +336,8 @@ class RGATConv(MessagePassing):
                 :class:`torch_sparse.SparseTensor` or
                 :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            size ((int, int), optional): The shape of the adjacency matrix.
                 (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple

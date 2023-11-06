@@ -106,13 +106,14 @@ class PGMExplainer(ExplainerAlgorithm):
         return x_perturb
 
     def _batch_perturb_features_on_node(
-            self,
-            model: torch.nn.Module,
-            x: Tensor,
-            edge_index: Tensor,
-            indices_to_perturb: np.array,
-            percentage: float = 50.,  # % time node gets perturbed
-            **kwargs) -> Tensor:
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        indices_to_perturb: np.array,
+        percentage: float = 50.,  # % time node gets perturbed
+        **kwargs,
+    ) -> Tensor:
         r"""Perturbs the node features of a batch of graphs for graph
         classification tasks.
 
@@ -123,6 +124,8 @@ class PGMExplainer(ExplainerAlgorithm):
             indices_to_perturb (np.array): The indices of nodes to perturb.
             percentage (float, optional): The percentage of times a node gets
                 perturbed. (default: :obj:`50.`)
+            **kwargs (optional): Additional arguments passed to
+                :meth:`model.forward`.
         """
         pred_torch = model(x, edge_index, **kwargs)
         soft_pred = torch.softmax(pred_torch, dim=1)
@@ -179,7 +182,10 @@ class PGMExplainer(ExplainerAlgorithm):
             model (torch.nn.Module): The model to explain.
             x (torch.Tensor): The node features.
             edge_index (torch.Tensor): The edge indices of the input graph.
-            target (torch.Tensor): The predicted label from the model.
+            target (torch.Tensor, optional): The predicted label from the
+                model. (default: :obj:`None`)
+            **kwargs (optional): Additional arguments passed to
+                :meth:`model.forward`.
 
         Returns:
             pgm_nodes (List): The neighbor nodes that are significant in the
@@ -265,8 +271,10 @@ class PGMExplainer(ExplainerAlgorithm):
             x (torch.Tensor): The node features.
             edge_index (torch.Tensor): The edge indices of the input graph.
             target (torch.Tensor): The predicted label from the model.
-            index (torch.Tensor): The index of the node that the
-                explanations are generated for.
+            index (int): The index of the node for which the explanations is
+                generated.
+            **kwargs (optional): Additional arguments passed to
+                :meth:`model.forward`.
 
         Returns:
             node_mask (torch.Tensor): A hard node mask corresponding to whether
