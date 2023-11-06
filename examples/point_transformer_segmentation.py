@@ -34,7 +34,7 @@ test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
 
 class TransitionUp(torch.nn.Module):
     """Reduce features dimensionnality and interpolate back to higher
-    resolution and cardinality
+    resolution and cardinality.
     """
     def __init__(self, in_channels, out_channels):
         super().__init__()

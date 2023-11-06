@@ -20,7 +20,7 @@ def get_stats():
 
 
 def match_computation(stats_baseline, key=['gnn', 'dim_inner'], mode='sqrt'):
-    """Match computation budget by modifying cfg.gnn.dim_inner"""
+    """Match computation budget by modifying :obj:`cfg.gnn.dim_inner`."""
     stats = get_stats()
     if stats != stats_baseline:
         # Phase 1: fast approximation
