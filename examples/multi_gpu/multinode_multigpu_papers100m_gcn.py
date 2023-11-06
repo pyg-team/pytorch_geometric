@@ -1,5 +1,4 @@
-"""
-To run:
+"""To run:
 srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
 --container-name=cont --container-image=<image_url> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
