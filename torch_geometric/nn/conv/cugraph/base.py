@@ -56,7 +56,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
         Args:
             edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
+            size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)

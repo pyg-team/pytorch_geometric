@@ -40,9 +40,25 @@ from torch_geometric.typing import EdgeType, NodeType
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
+class RPCSamplingCallee(RPCCallBase):
+    r"""A wrapper for RPC callee that will perform RPC sampling from remote
+    processes.
+    """
+    def __init__(self, sampler: NeighborSampler):
+        super().__init__()
+        self.sampler = sampler
+
+    def rpc_async(self, *args, **kwargs) -> Any:
+        return self.sampler._sample_one_hop(*args, **kwargs)
+
+    def rpc_sync(self, *args, **kwargs) -> Any:
+        pass
+
+
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
-    used by :class:`~torch_geometric.distributed.DistNeighborLoader`."""
+    used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
+    """
     def __init__(
             self,
             current_ctx: DistContext,
@@ -114,8 +130,10 @@ class DistNeighborSampler:
     # Node-based distributed sampling #########################################
 
     def sample_from_nodes(
-            self, inputs: NodeSamplerInput,
-            **kwargs) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+        self,
+        inputs: NodeSamplerInput,
+        **kwargs,
+    ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
         inputs = NodeSamplerInput.cast(inputs)
         if self.channel is None:
             # synchronous sampling
@@ -156,7 +174,6 @@ class DistNeighborSampler:
             In case of distributed training it is required to synchronize the
             results between machines after each layer.
         """
-
         input_type = inputs.input_type
         self.input_type = input_type
         batch_size = inputs.node.size()[0]
@@ -457,6 +474,8 @@ class DistNeighborSampler:
             outputs (List[SamplerOutput]): List of all samplers outputs.
             one_hop_num (int): Max number of neighbors sampled in the current
                 layer.
+            src_batch (torch.Tensor, optional): The batch assignment of seed
+                nodes. (default: :obj:`None`)
 
         Returns :obj:`SamplerOutput` containing all merged outputs.
         """
@@ -699,9 +718,6 @@ class DistNeighborSampler:
                 efeats = None
 
         output.metadata = (*output.metadata, nfeats, nlabels, efeats)
-        if self.is_hetero:
-            output.row = remap_keys(output.row, self._sampler.to_edge_type)
-            output.col = remap_keys(output.col, self._sampler.to_edge_type)
         return output
 
     def __repr__(self) -> str:

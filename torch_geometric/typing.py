@@ -273,7 +273,8 @@ EDGE_TYPE_STR_SPLIT = '__'
 
 class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
-    type tuple into a single string."""
+    type tuple into a single string.
+    """
     def __new__(cls, *args):
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:

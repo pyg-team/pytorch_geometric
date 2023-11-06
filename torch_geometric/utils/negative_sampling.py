@@ -41,7 +41,6 @@ def negative_sampling(
     :rtype: LongTensor
 
     Examples:
-
         >>> # Standard usage
         >>> edge_index = torch.as_tensor([[0, 0, 1, 2],
         ...                               [0, 1, 2, 3]])
@@ -141,7 +140,6 @@ def batched_negative_sampling(
     :rtype: LongTensor
 
     Examples:
-
         >>> # Standard usage
         >>> edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
         >>> edge_index = torch.cat([edge_index, edge_index + 4], dim=1)
@@ -219,7 +217,6 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
     :rtype: (LongTensor, LongTensor, LongTensor)
 
     Example:
-
         >>> edge_index = torch.as_tensor([[0, 0, 1, 2],
         ...                               [0, 1, 2, 3]])
         >>> structured_negative_sampling(edge_index)
@@ -272,7 +269,6 @@ def structured_negative_sampling_feasible(
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
         ...                                [1, 2, 0, 2, 0, 1, 1]])
         >>> structured_negative_sampling_feasible(edge_index, 3, False)

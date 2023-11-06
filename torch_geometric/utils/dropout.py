@@ -48,7 +48,6 @@ def dropout_adj(
             no-op. (default: :obj:`True`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6])
@@ -63,7 +62,6 @@ def dropout_adj(
                 [1, 2, 3, 0, 1, 2]]),
         tensor([1, 3, 5, 1, 3, 5]))
     """
-
     if p < 0. or p > 1.:
         raise ValueError(f'Dropout probability has to be between 0 and 1 '
                          f'(got {p}')
@@ -114,7 +112,6 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
     :rtype: (:class:`LongTensor`, :class:`BoolTensor`, :class:`BoolTensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask, node_mask = dropout_node(edge_index)
@@ -168,7 +165,6 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     :rtype: (:class:`LongTensor`, :class:`BoolTensor` or :class:`LongTensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_edge(edge_index)
@@ -240,7 +236,6 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     :rtype: (:class:`LongTensor`, :class:`BoolTensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_path(edge_index)
@@ -250,7 +245,6 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
         >>> edge_mask # masks indicating which edges are retained
         tensor([False, False,  True, False,  True, False])
     """
-
     if p < 0. or p > 1.:
         raise ValueError(f'Sample probability has to be between 0 and 1 '
                          f'(got {p}')

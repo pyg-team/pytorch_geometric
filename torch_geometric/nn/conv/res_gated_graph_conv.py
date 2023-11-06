@@ -12,7 +12,8 @@ from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 class ResGatedGraphConv(MessagePassing):
     r"""The residual gated graph convolutional operator from the
-    `"Residual Gated Graph ConvNets" <https://arxiv.org/abs/1711.07553>`_ paper
+    `"Residual Gated Graph ConvNets" <https://arxiv.org/abs/1711.07553>`_
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +

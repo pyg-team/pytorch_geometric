@@ -68,7 +68,7 @@ class SparseLinear(MessagePassing):
 class LINKX(torch.nn.Module):
     r"""The LINKX model from the `"Large Scale Learning on Non-Homophilous
     Graphs: New Benchmarks and Strong Simple Methods"
-    <https://arxiv.org/abs/2110.14446>`_ paper
+    <https://arxiv.org/abs/2110.14446>`_ paper.
 
     .. math::
         \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A})
@@ -165,7 +165,7 @@ class LINKX(torch.nn.Module):
         edge_index: Adj,
         edge_weight: OptTensor = None,
     ) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         out = self.edge_lin(edge_index, edge_weight)
 
         if self.edge_norm is not None and self.edge_mlp is not None:

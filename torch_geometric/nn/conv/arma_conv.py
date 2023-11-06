@@ -14,7 +14,8 @@ from torch_geometric.utils import spmm
 
 class ARMAConv(MessagePassing):
     r"""The ARMA graph convolutional operator from the `"Graph Neural Networks
-    with Convolutional ARMA Filters" <https://arxiv.org/abs/1901.01343>`_ paper
+    with Convolutional ARMA Filters" <https://arxiv.org/abs/1901.01343>`_
+    paper.
 
     .. math::
         \mathbf{X}^{\prime} = \frac{1}{K} \sum_{k=1}^K \mathbf{X}_k^{(T)},

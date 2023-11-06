@@ -12,6 +12,7 @@ class BAMultiShapesDataset(InMemoryDataset):
     evaluating explainabilty algorithms, as described in the
     `"Global Explainability of GNNs via Logic Combination of Learned Concepts"
     <https://arxiv.org/abs/2210.07147>`_ paper.
+
     Given three atomic motifs, namely House (H), Wheel (W), and Grid (G),
     :class:`~torch_geometric.datasets.BAMultiShapesDataset` contains 1,000
     graphs where each graph is obtained by attaching the motifs to a random

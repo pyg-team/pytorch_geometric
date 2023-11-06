@@ -33,7 +33,8 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 class NeighborSampler(BaseSampler):
     r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
-    by :class:`~torch_geometric.loader.NeighborLoader`."""
+    by :class:`~torch_geometric.loader.NeighborLoader`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -280,7 +281,8 @@ class NeighborSampler(BaseSampler):
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
-        installed) or :obj:`torch-sparse` (if installed) sampling routines."""
+        installed) or :obj:`torch-sparse` (if installed) sampling routines.
+        """
         if isinstance(seed, dict):  # Heterogeneous sampling:
             # TODO Support induced subgraph sampling in `pyg-lib`.
             if (torch_geometric.typing.WITH_PYG_LIB
@@ -445,7 +447,8 @@ def node_sample(
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
-    input. Returns the output of this sampling procedure."""
+    input. Returns the output of this sampling procedure.
+    """
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
         seed_time = None
@@ -470,7 +473,8 @@ def edge_sample(
     neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
-    function of the same signature as `node_sample`."""
+    function of the same signature as `node_sample`.
+    """
     input_id = inputs.input_id
     src = inputs.row
     dst = inputs.col

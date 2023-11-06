@@ -108,7 +108,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classification with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper
+    <https://arxiv.org/abs/1609.02907>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}

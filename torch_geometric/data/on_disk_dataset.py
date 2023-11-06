@@ -100,7 +100,8 @@ class OnDiskDataset(Dataset):
     def serialize(self, data: BaseData) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
-        schema."""
+        schema.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.serialize()` "
@@ -110,7 +111,8 @@ class OnDiskDataset(Dataset):
     def deserialize(self, data: Any) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
-        :class:`~torch_geometric.data.HeteroData` object."""
+        :class:`~torch_geometric.data.HeteroData` object.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.deserialize()` "

@@ -19,6 +19,7 @@ from torch_geometric.utils import scatter
 
 class FusedAggregation(Aggregation):
     r"""Helper class to fuse computation of multiple aggregations together.
+
     Used internally in :class:`~torch_geometric.nn.aggr.MultiAggregation` to
     speed-up computation.
     Currently, the following optimizations are performed:

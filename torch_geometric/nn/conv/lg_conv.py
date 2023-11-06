@@ -9,7 +9,7 @@ from torch_geometric.utils import spmm
 class LGConv(MessagePassing):
     r"""The Light Graph Convolution (LGC) operator from the `"LightGCN:
     Simplifying and Powering Graph Convolution Network for Recommendation"
-    <https://arxiv.org/abs/2002.02126>`_ paper
+    <https://arxiv.org/abs/2002.02126>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
