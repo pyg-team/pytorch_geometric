@@ -44,6 +44,7 @@ class CaptumModel(torch.nn.Module):
         self.model_config = model_config
 
     def forward(self, mask, *args):
+        """"""  # noqa: D419
         # The mask tensor, which comes from Captum's attribution methods,
         # contains the number of samples in dimension 0. Since we are
         # working with only one sample, we squeeze the tensors below.

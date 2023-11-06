@@ -159,6 +159,7 @@ class VGAE(GAE):
             return mu
 
     def encode(self, *args, **kwargs) -> Tensor:
+        """"""  # noqa: D419
         self.__mu__, self.__logstd__ = self.encoder(*args, **kwargs)
         self.__logstd__ = self.__logstd__.clamp(max=MAX_LOGSTD)
         z = self.reparametrize(self.__mu__, self.__logstd__)
@@ -269,6 +270,7 @@ class ARGVA(ARGA):
         return self.VGAE.reparametrize(mu, logstd)
 
     def encode(self, *args, **kwargs) -> Tensor:
+        """"""  # noqa: D419
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(

@@ -165,6 +165,7 @@ class LINKX(torch.nn.Module):
         edge_index: Adj,
         edge_weight: OptTensor = None,
     ) -> Tensor:
+        """"""  # noqa: D419
         out = self.edge_lin(edge_index, edge_weight)
 
         if self.edge_norm is not None and self.edge_mlp is not None:
