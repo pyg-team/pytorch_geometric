@@ -69,8 +69,10 @@ class BatchNorm(torch.nn.Module):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The source tensor.
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The source tensor.
         """
         if self.allow_single_element and x.size(0) <= 1:
             return torch.nn.functional.batch_norm(

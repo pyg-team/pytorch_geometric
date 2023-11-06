@@ -32,21 +32,23 @@ class DenseGINConv(torch.nn.Module):
 
     def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
                 add_loop: bool = True) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): Node feature tensor
-        :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
-        batch-size :math:`B`, (maximum) number of nodes :math:`N` for
-        each graph, and feature dimension :math:`F`.
-        adj (torch.Tensor): Adjacency tensor
-        :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
-        The adjacency tensor is broadcastable in the batch dimension,
-        resulting in a shared adjacency matrix for the complete batch.
-        mask (torch.Tensor, optional): Mask matrix
-        :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
-        the valid nodes for each graph. (default: :obj:`None`)
-        add_loop (bool, optional): If set to :obj:`False`, the layer will
-        not automatically add self-loops to the adjacency matrices.
-        (default: :obj:`True`)
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            adj (torch.Tensor): Adjacency tensor
+                :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
+                The adjacency tensor is broadcastable in the batch dimension,
+                resulting in a shared adjacency matrix for the complete batch.
+            mask (torch.Tensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+            add_loop (bool, optional): If set to :obj:`False`, the layer will
+                not automatically add self-loops to the adjacency matrices.
+                (default: :obj:`True`)
         """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj

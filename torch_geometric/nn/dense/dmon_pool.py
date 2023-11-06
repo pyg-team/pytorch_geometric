@@ -81,7 +81,9 @@ class DMoNPooling(torch.nn.Module):
         adj: Tensor,
         mask: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        r"""Args:
+        r"""Forward pass.
+
+        Args:
             x (torch.Tensor): Node feature tensor
                 :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
                 batch-size :math:`B`, (maximum) number of nodes :math:`N` for

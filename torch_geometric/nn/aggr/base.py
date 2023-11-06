@@ -68,22 +68,24 @@ class Aggregation(torch.nn.Module):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The source tensor.
-        index (torch.Tensor, optional): The indices of elements for
-        applying the aggregation.
-        One of :obj:`index` or :obj:`ptr` must be defined.
-        (default: :obj:`None`)
-        ptr (torch.Tensor, optional): If given, computes the aggregation
-        based on sorted inputs in CSR representation.
-        One of :obj:`index` or :obj:`ptr` must be defined.
-        (default: :obj:`None`)
-        dim_size (int, optional): The size of the output tensor at
-        dimension :obj:`dim` after aggregation. (default: :obj:`None`)
-        dim (int, optional): The dimension in which to aggregate.
-        (default: :obj:`-2`)
-        max_num_elements: (int, optional): The maximum number of elements
-        within a single aggregation group. (default: :obj:`None`)
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The source tensor.
+            index (torch.Tensor, optional): The indices of elements for
+                applying the aggregation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            ptr (torch.Tensor, optional): If given, computes the aggregation
+                based on sorted inputs in CSR representation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim` after aggregation. (default: :obj:`None`)
+            dim (int, optional): The dimension in which to aggregate.
+                (default: :obj:`-2`)
+            max_num_elements: (int, optional): The maximum number of elements
+                within a single aggregation group. (default: :obj:`None`)
         """
         pass
 

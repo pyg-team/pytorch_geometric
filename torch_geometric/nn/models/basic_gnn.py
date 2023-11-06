@@ -214,34 +214,36 @@ class BasicGNN(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
     ):
-        r"""Args:
-        x (torch.Tensor): The input node features.
-        edge_index (torch.Tensor or SparseTensor): The edge indices.
-        edge_weight (torch.Tensor, optional): The edge weights (if
-        supported by the underlying GNN layer). (default: :obj:`None`)
-        edge_attr (torch.Tensor, optional): The edge features (if supported
-        by the underlying GNN layer). (default: :obj:`None`)
-        batch (torch.Tensor, optional): The batch vector
-        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-        each element to a specific example.
-        Only needs to be passed in case the underlying normalization
-        layers require the :obj:`batch` information.
-        (default: :obj:`None`)
-        batch_size (int, optional): The number of examples :math:`B`.
-        Automatically calculated if not given.
-        Only needs to be passed in case the underlying normalization
-        layers require the :obj:`batch` information.
-        (default: :obj:`None`)
-        num_sampled_nodes_per_hop (List[int], optional): The number of
-        sampled nodes per hop.
-        Useful in :class:`~torch_geometric.loader.NeighborLoader`
-        scenarios to only operate on minimal-sized representations.
-        (default: :obj:`None`)
-        num_sampled_edges_per_hop (List[int], optional): The number of
-        sampled edges per hop.
-        Useful in :class:`~torch_geometric.loader.NeighborLoader`
-        scenarios to only operate on minimal-sized representations.
-        (default: :obj:`None`)
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights (if
+                supported by the underlying GNN layer). (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the underlying GNN layer). (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            num_sampled_nodes_per_hop (List[int], optional): The number of
+                sampled nodes per hop.
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
+            num_sampled_edges_per_hop (List[int], optional): The number of
+                sampled edges per hop.
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
         """
         if (num_sampled_nodes_per_hop is not None
                 and isinstance(edge_weight, Tensor)
