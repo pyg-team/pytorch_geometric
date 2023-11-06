@@ -25,7 +25,6 @@ class CosineCutoff(nn.Module):
         cutoff (float): A scalar that determines the point
             at which the cutoff is applied.
     """
-
     def __init__(self, cutoff: float):
         super(CosineCutoff, self).__init__()
         self.cutoff = cutoff
@@ -60,10 +59,8 @@ class ExpNormalSmearing(nn.Module):
         trainable (bool): If True, the means and betas of the RBFs
             are trainable parameters.
     """
-
-    def __init__(
-        self, cutoff: float = 5.0, num_rbf: int = 128, trainable: bool = True
-    ):
+    def __init__(self, cutoff: float = 5.0, num_rbf: int = 128,
+                 trainable: bool = True):
         super(ExpNormalSmearing, self).__init__()
         self.cutoff = cutoff
         self.num_rbf = num_rbf
@@ -90,9 +87,8 @@ class ExpNormalSmearing(nn.Module):
         """
         start_value = torch.exp(torch.scalar_tensor(-self.cutoff))
         means = torch.linspace(start_value, 1, self.num_rbf)
-        betas = torch.tensor(
-            [(2 / self.num_rbf * (1 - start_value)) ** -2] * self.num_rbf
-        )
+        betas = torch.tensor([(2 / self.num_rbf * (1 - start_value))**-2] *
+                             self.num_rbf)
         return means, betas
 
     def reset_parameters(self):
@@ -113,8 +109,7 @@ class ExpNormalSmearing(nn.Module):
         """
         dist = dist.unsqueeze(-1)
         smeared_dist = self.cutoff_fn(dist) * torch.exp(
-            -self.betas * (torch.exp(self.alpha * (-dist)) - self.means) ** 2
-        )
+            -self.betas * (torch.exp(self.alpha * (-dist)) - self.means)**2)
         return smeared_dist
 
 
@@ -131,7 +126,6 @@ class Sphere(nn.Module):
     Args:
         lmax (int): The maximum degree of the spherical harmonics.
     """
-
     def __init__(self, lmax: int = 2):
         super(Sphere, self).__init__()
         self.lmax = lmax
@@ -146,15 +140,13 @@ class Sphere(nn.Module):
             edge_sh (torch.Tensor): The spherical harmonics
                 of the input tensor.
         """
-        edge_sh = self._spherical_harmonics(
-            self.lmax, edge_vec[..., 0], edge_vec[..., 1], edge_vec[..., 2]
-        )
+        edge_sh = self._spherical_harmonics(self.lmax, edge_vec[..., 0],
+                                            edge_vec[..., 1], edge_vec[..., 2])
         return edge_sh
 
     @staticmethod
-    def _spherical_harmonics(
-        lmax: int, x: Tensor, y: Tensor, z: Tensor
-    ) -> Tensor:
+    def _spherical_harmonics(lmax: int, x: Tensor, y: Tensor,
+                             z: Tensor) -> Tensor:
         r"""Computes the spherical harmonics
         up to degree `lmax` of the input vectors.
 
@@ -210,10 +202,8 @@ class VecLayerNorm(nn.Module):
         norm_type (str): The type of normalization to apply.
             Can be "max_min" or "none".
     """
-
-    def __init__(
-        self, hidden_channels: int, trainable: bool, norm_type: str = "max_min"
-    ):
+    def __init__(self, hidden_channels: int, trainable: bool,
+                 norm_type: str = "max_min"):
         super(VecLayerNorm, self).__init__()
 
         self.hidden_channels = hidden_channels
@@ -319,18 +309,15 @@ class Distance(nn.Module):
             considered for each point.
         loop (bool): Whether self-loops are included.
     """
-
-    def __init__(
-        self, cutoff: float, max_num_neighbors: int = 32, loop: bool = True
-    ):
+    def __init__(self, cutoff: float, max_num_neighbors: int = 32,
+                 loop: bool = True):
         super(Distance, self).__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
         self.loop = loop
 
-    def forward(
-        self, pos: Tensor, batch: Tensor
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+    def forward(self, pos: Tensor,
+                batch: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         r"""Computes the pairwise distances between atoms in the molecule.
 
         Args:
@@ -379,7 +366,6 @@ class NeighborEmbedding(MessagePassing):
         cutoff (float): The cutoff distance.
         max_z (int): The maximum atomic numbers.
     """
-
     def __init__(
         self,
         hidden_channels: int,
@@ -454,7 +440,6 @@ class EdgeEmbedding(MessagePassing):
         hidden_channels (int):
             The number of hidden channels in the node embeddings.
     """
-
     def __init__(self, num_rbf: int, hidden_channels: int):
         super(EdgeEmbedding, self).__init__(aggr=None)
         self.edge_proj = nn.Linear(num_rbf, hidden_channels)
@@ -465,9 +450,8 @@ class EdgeEmbedding(MessagePassing):
         nn.init.xavier_uniform_(self.edge_proj.weight)
         self.edge_proj.bias.data.fill_(0)
 
-    def forward(
-        self, edge_index: Tensor, edge_attr: Tensor, x: Tensor
-    ) -> Tensor:
+    def forward(self, edge_index: Tensor, edge_attr: Tensor,
+                x: Tensor) -> Tensor:
         r"""Computes the edge embeddings of the graph.
 
         Args:
@@ -507,7 +491,6 @@ class ViS_MP(MessagePassing):
         last_layer (bool): Whether this is the last layer
             in the model.
     """
-
     def __init__(
         self,
         num_heads: int,
@@ -521,8 +504,7 @@ class ViS_MP(MessagePassing):
         assert hidden_channels % num_heads == 0, (
             f"The number of hidden channels ({hidden_channels}) "
             f"must be evenly divisible by the number of "
-            f"attention heads ({num_heads})"
-        )
+            f"attention heads ({num_heads})")
 
         self.num_heads = num_heads
         self.hidden_channels = hidden_channels
@@ -541,9 +523,8 @@ class ViS_MP(MessagePassing):
 
         self.cutoff = CosineCutoff(cutoff)
 
-        self.vec_proj = nn.Linear(
-            hidden_channels, hidden_channels * 3, bias=False
-        )
+        self.vec_proj = nn.Linear(hidden_channels, hidden_channels * 3,
+                                  bias=False)
 
         self.q_proj = nn.Linear(hidden_channels, hidden_channels)
         self.k_proj = nn.Linear(hidden_channels, hidden_channels)
@@ -554,12 +535,10 @@ class ViS_MP(MessagePassing):
         self.s_proj = nn.Linear(hidden_channels, hidden_channels * 2)
         if not self.last_layer:
             self.f_proj = nn.Linear(hidden_channels, hidden_channels)
-            self.w_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
-            self.w_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
+            self.w_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.w_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
 
         self.o_proj = nn.Linear(hidden_channels, hidden_channels * 3)
 
@@ -641,16 +620,13 @@ class ViS_MP(MessagePassing):
         q = self.q_proj(x).reshape(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).reshape(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        dk = self.act(self.dk_proj(f_ij)).reshape(
-            -1, self.num_heads, self.head_dim
-        )
-        dv = self.act(self.dv_proj(f_ij)).reshape(
-            -1, self.num_heads, self.head_dim
-        )
+        dk = self.act(self.dk_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
+        dv = self.act(self.dv_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
 
-        vec1, vec2, vec3 = torch.split(
-            self.vec_proj(vec), self.hidden_channels, dim=-1
-        )
+        vec1, vec2, vec3 = torch.split(self.vec_proj(vec),
+                                       self.hidden_channels, dim=-1)
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(
@@ -670,9 +646,8 @@ class ViS_MP(MessagePassing):
         dx = vec_dot * o2 + o3
         dvec = vec3 * o1.unsqueeze(1) + vec_out
         if not self.last_layer:
-            df_ij = self.edge_updater(
-                edge_index, vec=vec, d_ij=d_ij, f_ij=f_ij
-            )
+            df_ij = self.edge_updater(edge_index, vec=vec, d_ij=d_ij,
+                                      f_ij=f_ij)
             return dx, dvec, df_ij
         else:
             return dx, dvec, None
@@ -694,9 +669,8 @@ class ViS_MP(MessagePassing):
         v_j = v_j * dv
         v_j = (v_j * attn.unsqueeze(2)).view(-1, self.hidden_channels)
 
-        s1, s2 = torch.split(
-            self.act(self.s_proj(v_j)), self.hidden_channels, dim=1
-        )
+        s1, s2 = torch.split(self.act(self.s_proj(v_j)), self.hidden_channels,
+                             dim=1)
         vec_j = vec_j * s1.unsqueeze(1) + s2.unsqueeze(1) * d_ij.unsqueeze(2)
 
         return v_j, vec_j
@@ -746,7 +720,6 @@ class ViS_MP_Vertex(MessagePassing):
         last_layer (bool): Whether this is the last layer
             in the model.
     """
-
     def __init__(
         self,
         num_heads: int,
@@ -760,8 +733,7 @@ class ViS_MP_Vertex(MessagePassing):
         assert hidden_channels % num_heads == 0, (
             f"The number of hidden channels ({hidden_channels}) "
             f"must be evenly divisible by the number of "
-            f"attention heads ({num_heads})"
-        )
+            f"attention heads ({num_heads})")
 
         self.num_heads = num_heads
         self.hidden_channels = hidden_channels
@@ -780,9 +752,8 @@ class ViS_MP_Vertex(MessagePassing):
 
         self.cutoff = CosineCutoff(cutoff)
 
-        self.vec_proj = nn.Linear(
-            hidden_channels, hidden_channels * 3, bias=False
-        )
+        self.vec_proj = nn.Linear(hidden_channels, hidden_channels * 3,
+                                  bias=False)
 
         self.q_proj = nn.Linear(hidden_channels, hidden_channels)
         self.k_proj = nn.Linear(hidden_channels, hidden_channels)
@@ -793,18 +764,14 @@ class ViS_MP_Vertex(MessagePassing):
         self.s_proj = nn.Linear(hidden_channels, hidden_channels * 2)
         if not self.last_layer:
             self.f_proj = nn.Linear(hidden_channels, hidden_channels * 2)
-            self.w_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
-            self.w_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
-            self.t_src_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
-            self.t_trg_proj = nn.Linear(
-                hidden_channels, hidden_channels, bias=False
-            )
+            self.w_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.w_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.t_src_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
+            self.t_trg_proj = nn.Linear(hidden_channels, hidden_channels,
+                                        bias=False)
 
         self.o_proj = nn.Linear(hidden_channels, hidden_channels * 3)
 
@@ -888,16 +855,13 @@ class ViS_MP_Vertex(MessagePassing):
         q = self.q_proj(x).reshape(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).reshape(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        dk = self.act(self.dk_proj(f_ij)).reshape(
-            -1, self.num_heads, self.head_dim
-        )
-        dv = self.act(self.dv_proj(f_ij)).reshape(
-            -1, self.num_heads, self.head_dim
-        )
+        dk = self.act(self.dk_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
+        dv = self.act(self.dv_proj(f_ij)).reshape(-1, self.num_heads,
+                                                  self.head_dim)
 
-        vec1, vec2, vec3 = torch.split(
-            self.vec_proj(vec), self.hidden_channels, dim=-1
-        )
+        vec1, vec2, vec3 = torch.split(self.vec_proj(vec),
+                                       self.hidden_channels, dim=-1)
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(
@@ -917,9 +881,8 @@ class ViS_MP_Vertex(MessagePassing):
         dx = vec_dot * o2 + o3
         dvec = vec3 * o1.unsqueeze(1) + vec_out
         if not self.last_layer:
-            df_ij = self.edge_updater(
-                edge_index, vec=vec, d_ij=d_ij, f_ij=f_ij
-            )
+            df_ij = self.edge_updater(edge_index, vec=vec, d_ij=d_ij,
+                                      f_ij=f_ij)
             return dx, dvec, df_ij
         else:
             return dx, dvec, None
@@ -941,9 +904,8 @@ class ViS_MP_Vertex(MessagePassing):
         v_j = v_j * dv
         v_j = (v_j * attn.unsqueeze(2)).view(-1, self.hidden_channels)
 
-        s1, s2 = torch.split(
-            self.act(self.s_proj(v_j)), self.hidden_channels, dim=1
-        )
+        s1, s2 = torch.split(self.act(self.s_proj(v_j)), self.hidden_channels,
+                             dim=1)
         vec_j = vec_j * s1.unsqueeze(1) + s2.unsqueeze(1) * d_ij.unsqueeze(2)
 
         return v_j, vec_j
@@ -963,9 +925,8 @@ class ViS_MP_Vertex(MessagePassing):
         t2 = self.vector_rejection(self.t_src_proj(vec_i), -d_ij)
         t_dot = (t1 * t2).sum(dim=1)
 
-        f1, f2 = torch.split(
-            self.act(self.f_proj(f_ij)), self.hidden_channels, dim=-1
-        )
+        f1, f2 = torch.split(self.act(self.f_proj(f_ij)), self.hidden_channels,
+                             dim=-1)
 
         return f1 * w_dot + f2 * t_dot
 
@@ -1009,7 +970,6 @@ class ViSNetBlock(nn.Module):
             considered for each atom.
         vertex (bool): Whether to use vertex geometric features.
     """
-
     def __init__(
         self,
         lmax: int = 1,
@@ -1039,16 +999,13 @@ class ViSNetBlock(nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
         self.embedding = nn.Embedding(max_z, hidden_channels)
-        self.distance = Distance(
-            cutoff, max_num_neighbors=max_num_neighbors, loop=True
-        )
+        self.distance = Distance(cutoff, max_num_neighbors=max_num_neighbors,
+                                 loop=True)
         self.sphere = Sphere(lmax=lmax)
-        self.distance_expansion = ExpNormalSmearing(
-            cutoff, num_rbf, trainable_rbf
-        )
-        self.neighbor_embedding = NeighborEmbedding(
-            hidden_channels, num_rbf, cutoff, max_z
-        )
+        self.distance_expansion = ExpNormalSmearing(cutoff, num_rbf,
+                                                    trainable_rbf)
+        self.neighbor_embedding = NeighborEmbedding(hidden_channels, num_rbf,
+                                                    cutoff, max_z)
         self.edge_embedding = EdgeEmbedding(num_rbf, hidden_channels)
 
         self.vis_mp_layers = nn.ModuleList()
@@ -1064,8 +1021,7 @@ class ViSNetBlock(nn.Module):
             layer = vis_mp_class(last_layer=False, **vis_mp_kwargs)
             self.vis_mp_layers.append(layer)
         self.vis_mp_layers.append(
-            vis_mp_class(last_layer=True, **vis_mp_kwargs)
-        )
+            vis_mp_class(last_layer=True, **vis_mp_kwargs))
 
         self.out_norm = nn.LayerNorm(hidden_channels)
         self.vec_out_norm = VecLayerNorm(
@@ -1103,27 +1059,23 @@ class ViSNetBlock(nn.Module):
         edge_index, edge_weight, edge_vec = self.distance(pos, batch)
         edge_attr = self.distance_expansion(edge_weight)
         mask = edge_index[0] != edge_index[1]
-        edge_vec[mask] = edge_vec[mask] / torch.norm(
-            edge_vec[mask], dim=1
-        ).unsqueeze(1)
+        edge_vec[mask] = edge_vec[mask] / torch.norm(edge_vec[mask],
+                                                     dim=1).unsqueeze(1)
         edge_vec = self.sphere(edge_vec)
         x = self.neighbor_embedding(z, x, edge_index, edge_weight, edge_attr)
-        vec = torch.zeros(
-            x.size(0), ((self.lmax + 1) ** 2) - 1, x.size(1), device=x.device
-        )
+        vec = torch.zeros(x.size(0), ((self.lmax + 1)**2) - 1, x.size(1),
+                          device=x.device)
         edge_attr = self.edge_embedding(edge_index, edge_attr, x)
 
         for attn in self.vis_mp_layers[:-1]:
-            dx, dvec, dedge_attr = attn(
-                x, vec, edge_index, edge_weight, edge_attr, edge_vec
-            )
+            dx, dvec, dedge_attr = attn(x, vec, edge_index, edge_weight,
+                                        edge_attr, edge_vec)
             x = x + dx
             vec = vec + dvec
             edge_attr = edge_attr + dedge_attr
 
-        dx, dvec, _ = self.vis_mp_layers[-1](
-            x, vec, edge_index, edge_weight, edge_attr, edge_vec
-        )
+        dx, dvec, _ = self.vis_mp_layers[-1](x, vec, edge_index, edge_weight,
+                                             edge_attr, edge_vec)
         x = x + dx
         vec = vec + dvec
 
@@ -1150,7 +1102,6 @@ class GatedEquivariantBlock(nn.Module):
         scalar_activation (bool): Whether to apply
             a scalar activation function to the output node features.
     """
-
     def __init__(
         self,
         hidden_channels: int,
@@ -1164,9 +1115,8 @@ class GatedEquivariantBlock(nn.Module):
         if intermediate_channels is None:
             intermediate_channels = hidden_channels
 
-        self.vec1_proj = nn.Linear(
-            hidden_channels, hidden_channels, bias=False
-        )
+        self.vec1_proj = nn.Linear(hidden_channels, hidden_channels,
+                                   bias=False)
         self.vec2_proj = nn.Linear(hidden_channels, out_channels, bias=False)
 
         self.update_net = nn.Sequential(
@@ -1218,23 +1168,20 @@ class EquivariantScalar(nn.Module):
         hidden_channels (int): The number of hidden channels
             in the node embeddings.
     """
-
     def __init__(self, hidden_channels: int):
         super(EquivariantScalar, self).__init__()
-        self.output_network = nn.ModuleList(
-            [
-                GatedEquivariantBlock(
-                    hidden_channels,
-                    hidden_channels // 2,
-                    scalar_activation=True,
-                ),
-                GatedEquivariantBlock(
-                    hidden_channels // 2,
-                    1,
-                    scalar_activation=False,
-                ),
-            ]
-        )
+        self.output_network = nn.ModuleList([
+            GatedEquivariantBlock(
+                hidden_channels,
+                hidden_channels // 2,
+                scalar_activation=True,
+            ),
+            GatedEquivariantBlock(
+                hidden_channels // 2,
+                1,
+                scalar_activation=False,
+            ),
+        ])
 
         self.reset_parameters()
 
@@ -1267,7 +1214,6 @@ class Atomref(nn.Module):
             or None if not provided.
         max_z (int): The maximum atomic numbers.
     """
-
     def __init__(self, atomref: Optional[Tensor] = None, max_z: int = 100):
         super(Atomref, self).__init__()
         if atomref is None:
@@ -1335,7 +1281,6 @@ class ViSNet(nn.Module):
         derivative (bool): Whether to compute the derivative of the output
             with respect to the positions.
     """
-
     def __init__(
         self,
         lmax: int = 1,
@@ -1378,15 +1323,11 @@ class ViSNet(nn.Module):
         self.reduce_op = reduce_op
         self.derivative = derivative
 
-        mean = (
-            torch.scalar_tensor(0)
-            if mean is None
-            else torch.scalar_tensor(mean)
-        )
+        mean = (torch.scalar_tensor(0)
+                if mean is None else torch.scalar_tensor(mean))
         self.register_buffer("mean", mean)
-        std = (
-            torch.scalar_tensor(1) if std is None else torch.scalar_tensor(std)
-        )
+        std = (torch.scalar_tensor(1)
+               if std is None else torch.scalar_tensor(std))
         self.register_buffer("std", std)
 
         self.reset_parameters()
@@ -1441,7 +1382,6 @@ class ViSNet(nn.Module):
             )[0]
             if dy is None:
                 raise RuntimeError(
-                    "Autograd returned None for the force prediction."
-                )
+                    "Autograd returned None for the force prediction.")
             return y, -dy
         return y, None
