@@ -61,4 +61,5 @@ repos:
     rev: v0.1.4
     hooks:
       - id: ruff
+        name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
