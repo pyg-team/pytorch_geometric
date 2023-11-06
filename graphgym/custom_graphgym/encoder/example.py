@@ -13,7 +13,8 @@ class ExampleNodeEncoder(torch.nn.Module):
     Provides an encoder for integer node features.
 
     Args:
-        num_classes (int): The number of classes for the embedding mapping to learn.
+        num_classes (int): The number of classes for the embedding mapping to
+            learn.
     """
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
