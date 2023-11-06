@@ -26,8 +26,9 @@ def assert_module(
     equal_nan: bool = False,
     **kwargs,
 ):
-    r"""Asserts that the output of a :obj:`module` is correct. Specifically,
-    this method tests that:
+    r"""Asserts that the output of a :obj:`module` is correct.
+
+    Specifically, this method tests that:
 
     1. The module output has the correct shape.
     2. The module is invariant to the permutation of edges.

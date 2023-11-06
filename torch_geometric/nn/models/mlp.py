@@ -17,6 +17,7 @@ from torch_geometric.typing import NoneType
 
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
+
     There exists two ways to instantiate an :class:`MLP`:
 
     1. By specifying explicit channel sizes, *e.g.*,

@@ -9,7 +9,7 @@ import torch
 
 
 def get_numa_nodes_cores() -> Dict[str, Any]:
-    """Returns numa nodes info in format:
+    """Parses numa nodes information into a dictionary.
 
     ..code-block::
 

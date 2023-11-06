@@ -14,7 +14,7 @@ from torch_geometric.utils import softmax
 class TransformerConv(MessagePassing):
     r"""The graph transformer operator from the `"Masked Label Prediction:
     Unified Message Passing Model for Semi-Supervised Classification"
-    <https://arxiv.org/abs/2009.03509>`_ paper
+    <https://arxiv.org/abs/2009.03509>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +

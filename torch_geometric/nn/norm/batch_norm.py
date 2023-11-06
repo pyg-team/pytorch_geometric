@@ -11,7 +11,7 @@ class BatchNorm(torch.nn.Module):
     r"""Applies batch normalization over a batch of features as described in
     the `"Batch Normalization: Accelerating Deep Network Training by
     Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -

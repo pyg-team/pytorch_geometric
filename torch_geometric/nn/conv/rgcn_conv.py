@@ -41,7 +41,7 @@ def masked_edge_index(edge_index, edge_mask):
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
     Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper
+    <https://arxiv.org/abs/1703.06103>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot

@@ -36,7 +36,7 @@ class SchNet(torch.nn.Module):
     r"""The continuous-filter convolutional neural network SchNet from the
     `"SchNet: A Continuous-filter Convolutional Neural Network for Modeling
     Quantum Interactions" <https://arxiv.org/abs/1706.08566>`_ paper that uses
-    the interactions blocks of the form
+    the interactions blocks of the form.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \odot

@@ -14,6 +14,7 @@ class PANPooling(torch.nn.Module):
     r"""The path integral based pooling operator from the
     `"Path Integral Based Convolution and Pooling for Graph Neural Networks"
     <https://arxiv.org/abs/2006.16811>`_ paper.
+
     PAN pooling performs top-:math:`k` pooling where global node importance is
     measured based on node features and the MET matrix:
 

@@ -52,7 +52,9 @@ def ptr2ind(ptr: Tensor) -> Tensor:
 
 
 class MessagePassing(torch.nn.Module):
-    r"""Base class for creating message passing layers of the form
+    r"""Base class for creating message passing layers.
+
+    Message passing layers follow the form
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
@@ -639,6 +641,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
+
         The hook will be called every time before :meth:`propagate` is invoked.
         It should have the following signature:
 
@@ -660,6 +663,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_hook(self,
                                         hook: Callable) -> RemovableHandle:
         r"""Registers a forward hook on the module.
+
         The hook will be called every time after :meth:`propagate` has computed
         an output.
         It should have the following signature:

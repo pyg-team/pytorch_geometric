@@ -6,7 +6,7 @@ from torch import Tensor
 
 class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from the `"Attention Is All You Need"
-    <https://arxiv.org/pdf/1706.03762.pdf>`_ paper
+    <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
 
     .. math::
 
@@ -62,9 +62,10 @@ class TemporalEncoding(torch.nn.Module):
     r"""The time-encoding function from the `"Do We Really Need Complicated
     Model Architectures for Temporal Networks?"
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
+
     It first maps each entry to a vector with exponentially decreasing values,
     and then uses the cosine function to project all values to range
-    :math:`[-1, 1]`
+    :math:`[-1, 1]`.
 
     .. math::
         y_{i} = \cos \left(x \cdot \sqrt{d}^{-(i - 1)/\sqrt{d}} \right)

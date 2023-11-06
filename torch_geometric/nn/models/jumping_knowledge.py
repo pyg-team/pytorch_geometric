@@ -8,18 +8,20 @@ from torch.nn import LSTM, Linear
 class JumpingKnowledge(torch.nn.Module):
     r"""The Jumping Knowledge layer aggregation module from the
     `"Representation Learning on Graphs with Jumping Knowledge Networks"
-    <https://arxiv.org/abs/1806.03536>`_ paper based on either
-    **concatenation** (:obj:`"cat"`)
+    <https://arxiv.org/abs/1806.03536>`_ paper.
+
+    Jumping knowledge is performed based on either **concatenation**
+    (:obj:`"cat"`)
 
     .. math::
 
-        \mathbf{x}_v^{(1)} \, \Vert \, \ldots \, \Vert \, \mathbf{x}_v^{(T)}
+        \mathbf{x}_v^{(1)} \, \Vert \, \ldots \, \Vert \, \mathbf{x}_v^{(T)},
 
     **max pooling** (:obj:`"max"`)
 
     .. math::
 
-        \max \left( \mathbf{x}_v^{(1)}, \ldots, \mathbf{x}_v^{(T)} \right)
+        \max \left( \mathbf{x}_v^{(1)}, \ldots, \mathbf{x}_v^{(T)} \right),
 
     or **weighted summation**
 

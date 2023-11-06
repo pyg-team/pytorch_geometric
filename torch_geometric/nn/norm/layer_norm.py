@@ -13,7 +13,7 @@ from torch_geometric.utils import degree, scatter
 class LayerNorm(torch.nn.Module):
     r"""Applies layer normalization over each individual example in a batch
     of features as described in the `"Layer Normalization"
-    <https://arxiv.org/abs/1607.06450>`_ paper
+    <https://arxiv.org/abs/1607.06450>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -

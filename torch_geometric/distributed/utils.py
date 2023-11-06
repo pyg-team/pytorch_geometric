@@ -16,7 +16,7 @@ class NodeDict:
     r"""Class used during heterogeneous sampling:
     1) The nodes to serve as source nodes in the next layer
     2) The nodes with duplicates that are further needed to create COO output
-    3) The output nodes without duplicates
+    3) The output nodes without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -30,7 +30,7 @@ class BatchDict:
        layer
     2) The subgraph IDs with duplicates that are further needed to create COO
        output
-    3) The output subgraph IDs without duplicates
+    3) The output subgraph IDs without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)

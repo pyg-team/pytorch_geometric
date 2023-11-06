@@ -19,6 +19,7 @@ from torch_geometric.utils import one_hot, to_undirected
 class GEDDataset(InMemoryDataset):
     r"""The GED datasets from the `"Graph Edit Distance Computation via Graph
     Neural Networks" <https://arxiv.org/abs/1808.05689>`_ paper.
+
     GEDs can be accessed via the global attributes :obj:`ged` and
     :obj:`norm_ged` for all train/train graph pairs and all train/test graph
     pairs:

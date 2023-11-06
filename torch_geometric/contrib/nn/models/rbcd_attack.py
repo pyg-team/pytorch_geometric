@@ -320,7 +320,7 @@ class PRBCDAttack(torch.nn.Module):
     def _get_modified_adj(self, edge_index: Tensor, edge_weight: Tensor,
                           block_edge_index: Tensor,
                           block_edge_weight: Tensor) -> Tuple[Tensor, Tensor]:
-        """Merges adjacency matrix with current block (incl. weights)"""
+        """Merges adjacency matrix with current block (incl. weights)."""
         if self.is_undirected:
             block_edge_index, block_edge_weight = to_undirected(
                 block_edge_index, block_edge_weight, num_nodes=self.num_nodes,
@@ -539,7 +539,7 @@ class PRBCDAttack(torch.nn.Module):
     def _margin_loss(score: Tensor, labels: Tensor,
                      idx_mask: Optional[Tensor] = None,
                      reduce: Optional[str] = None) -> Tensor:
-        r"""Margin loss between true score and highest non-target score:
+        r"""Margin loss between true score and highest non-target score.
 
         .. math::
             m = - s_{y} + max_{y' \ne y} s_{y'}

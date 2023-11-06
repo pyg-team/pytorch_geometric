@@ -15,7 +15,7 @@ from torch_geometric.utils import spmm
 class MixHopConv(MessagePassing):
     r"""The Mix-Hop graph convolutional operator from the
     `"MixHop: Higher-Order Graph Convolutional Architecturesvia Sparsified
-    Neighborhood Mixing" <https://arxiv.org/abs/1905.00067>`_ paper
+    Neighborhood Mixing" <https://arxiv.org/abs/1905.00067>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime}={\Bigg\Vert}_{p\in P}

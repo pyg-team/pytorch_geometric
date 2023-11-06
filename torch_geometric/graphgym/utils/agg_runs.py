@@ -45,7 +45,7 @@ def join_list(l1, l2):
 def agg_dict_list(dict_list):
     """Aggregate a list of dictionaries: mean + std
     Args:
-        dict_list: list of dictionaries
+        dict_list: list of dictionaries.
 
     """
     dict_agg = {'epoch': dict_list[0]['epoch']}
@@ -79,7 +79,7 @@ def rm_keys(dict, keys):
 
 
 def agg_runs(dir, metric_best='auto'):
-    r"""Aggregate over different random seeds of a single experiment
+    r"""Aggregate over different random seeds of a single experiment.
 
     Args:
         dir (str): Directory of the results, containing 1 experiment
@@ -159,7 +159,7 @@ def agg_runs(dir, metric_best='auto'):
 
 
 def agg_batch(dir, metric_best='auto'):
-    r"""Aggregate across results from multiple experiments via grid search
+    r"""Aggregate across results from multiple experiments via grid search.
 
     Args:
         dir (str): Directory of the results, containing multiple experiments
