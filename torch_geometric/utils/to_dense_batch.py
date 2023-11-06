@@ -38,12 +38,11 @@ def to_dense_batch(
             resulting dense output tensor. (default: :obj:`0`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
-        batch_size (int, optional) The batch size. (default: :obj:`None`)
+        batch_size (int, optional): The batch size. (default: :obj:`None`)
 
     :rtype: (:class:`Tensor`, :class:`BoolTensor`)
 
     Examples:
-
         >>> x = torch.arange(12).view(6, 2)
         >>> x
         tensor([[ 0,  1],

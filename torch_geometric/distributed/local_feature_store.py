@@ -45,7 +45,8 @@ class LocalTensorAttr(TensorAttr):
 
 class LocalFeatureStore(FeatureStore):
     r"""This class implements the :class:`torch_geometric.data.FeatureStore`
-    interface to act as a local feature store for distributed training."""
+    interface to act as a local feature store for distributed training.
+    """
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
         self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
@@ -196,8 +197,7 @@ class LocalFeatureStore(FeatureStore):
         is_node_feat: bool = True,
         input_type: Optional[Union[NodeType, EdgeType]] = None,
     ) -> Tuple[Tensor, Tensor]:
-        r"""lookup the features in local nodes based on node/edge ids"""
-
+        r"""Lookup the features in local nodes based on node/edge IDs."""
         feat = self
         if is_node_feat is True:
             pb = self.node_feat_pb
@@ -238,8 +238,7 @@ class LocalFeatureStore(FeatureStore):
         is_node_feat: bool = True,
         input_type: Optional[Union[NodeType, EdgeType]] = None,
     ) -> torch.futures.Future:
-        r"""Fetch the remote features with the remote node/edge ids"""
-
+        r"""Fetch the remote features with the remote node/edge IDs."""
         if is_node_feat is True:
             pb = self.node_feat_pb
         else:

@@ -68,7 +68,8 @@ def get_data_size(data: BaseData) -> int:
 
 def get_cpu_memory_from_gc() -> int:
     r"""Returns the used CPU memory in bytes, as reported by the
-    :python:`Python` garbage collector."""
+    :python:`Python` garbage collector.
+    """
     warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
 
     mem = 0

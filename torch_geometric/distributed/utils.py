@@ -16,7 +16,7 @@ class NodeDict:
     r"""Class used during heterogeneous sampling:
     1) The nodes to serve as source nodes in the next layer
     2) The nodes with duplicates that are further needed to create COO output
-    3) The output nodes without duplicates
+    3) The output nodes without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -30,7 +30,7 @@ class BatchDict:
        layer
     2) The subgraph IDs with duplicates that are further needed to create COO
        output
-    3) The output subgraph IDs without duplicates
+    3) The output subgraph IDs without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -85,7 +85,8 @@ def filter_dist_store(
     r"""Constructs a :class:`HeteroData` object from a feature store that only
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are provided as metadata from
-    :class:`DistNeighborSampler`."""
+    :class:`DistNeighborSampler`.
+    """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
     nfeats, nlabels, efeats = meta[-3:]

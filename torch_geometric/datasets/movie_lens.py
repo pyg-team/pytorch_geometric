@@ -44,7 +44,7 @@ class MovieLens(InMemoryDataset):
     ):
         self.model_name = model_name
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -96,4 +96,4 @@ class MovieLens(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

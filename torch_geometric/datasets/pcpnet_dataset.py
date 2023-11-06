@@ -95,7 +95,7 @@ class PCPNetDataset(InMemoryDataset):
         self.split = split
 
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -138,7 +138,7 @@ class PCPNetDataset(InMemoryDataset):
                 data = self.pre_transform(data)
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

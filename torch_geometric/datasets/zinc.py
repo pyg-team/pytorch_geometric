@@ -99,7 +99,7 @@ class ZINC(InMemoryDataset):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -166,5 +166,4 @@ class ZINC(InMemoryDataset):
 
             pbar.close()
 
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+            self.save(data_list, osp.join(self.processed_dir, f'{split}.pt'))

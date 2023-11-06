@@ -12,7 +12,8 @@ from torch_geometric.utils import sort_edge_index
 
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
-    interface to act as a local graph store for distributed training."""
+    interface to act as a local graph store for distributed training.
+    """
     def __init__(self):
         super().__init__()
         self._edge_index: Dict[Tuple, EdgeTensorType] = {}

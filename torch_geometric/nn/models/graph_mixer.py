@@ -37,7 +37,8 @@ class NodeEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The edge indices.
@@ -98,7 +99,8 @@ class _MLPMixer(torch.nn.Module):
         self.head_lin.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): Tensor of size
                 :obj:`[*, num_tokens, in_channels]`.
@@ -142,7 +144,8 @@ def get_latest_k_edge_attr(
     r"""Returns the latest :obj:`k` incoming edge attributes by
     :obj:`edge_time` for each node.
     The shape of the output tensor is :obj:`[num_nodes, k, edge_attr_dim]`.
-    Nodes with fewer than :obj:`k` incoming edges are zero-padded."""
+    Nodes with fewer than :obj:`k` incoming edges are zero-padded.
+    """
     _, col = edge_index
 
     if not is_sorted:
@@ -229,7 +232,8 @@ class LinkEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor): The edge features of shape

@@ -12,6 +12,7 @@ class BAMultiShapesDataset(InMemoryDataset):
     evaluating explainabilty algorithms, as described in the
     `"Global Explainability of GNNs via Logic Combination of Learned Concepts"
     <https://arxiv.org/abs/2210.07147>`_ paper.
+
     Given three atomic motifs, namely House (H), Wheel (W), and Grid (G),
     :class:`~torch_geometric.datasets.BAMultiShapesDataset` contains 1,000
     graphs where each graph is obtained by attaching the motifs to a random
@@ -66,7 +67,7 @@ class BAMultiShapesDataset(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -98,4 +99,4 @@ class BAMultiShapesDataset(InMemoryDataset):
 
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
