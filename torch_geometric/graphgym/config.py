@@ -22,12 +22,14 @@ except ImportError:
 
 def set_cfg(cfg):
     r"""This function sets the default config value.
-    1) Note that for an experiment, only part of the arguments will be used
-    The remaining unused arguments won't affect anything.
-    So feel free to register any argument in graphgym.contrib.config
-    2) We support *at most* two levels of configs, e.g., cfg.dataset.name.
 
-    :return: configuration use by the experiment.
+    1) Note that for an experiment, only part of the arguments will be used
+       The remaining unused arguments won't affect anything.
+       So feel free to register any argument in graphgym.contrib.config
+    2) We support *at most* two levels of configs, *e.g.*,
+       :obj:`cfg.dataset.name`.
+
+    :return: Configuration use by the experiment.
     """
     if cfg is None:
         return cfg

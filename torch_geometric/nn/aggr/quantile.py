@@ -9,8 +9,9 @@ from torch_geometric.utils import cumsum
 
 class QuantileAggregation(Aggregation):
     r"""An aggregation operator that returns the feature-wise :math:`q`-th
-    quantile of a set :math:`\mathcal{X}`. That is, for every feature
-    :math:`d`, it computes.
+    quantile of a set :math:`\mathcal{X}`.
+
+    That is, for every feature :math:`d`, it computes
 
     .. math::
         {\mathrm{Q}_q(\mathcal{X})}_d = \begin{cases}
