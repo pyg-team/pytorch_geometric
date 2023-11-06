@@ -115,7 +115,8 @@ class CaptumHeteroModel(CaptumModel):
     ) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[
             EdgeType, Tensor]]]:
         """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
-        `edge_mask_dict`."""
+        `edge_mask_dict`.
+        """
         if self.mask_type == MaskLevelType.node:
             node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]

@@ -175,7 +175,8 @@ class SchNet(torch.nn.Module):
     ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`SchNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         import ase
         import schnetpack as spk  # noqa
 

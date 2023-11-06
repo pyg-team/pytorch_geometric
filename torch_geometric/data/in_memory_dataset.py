@@ -132,7 +132,8 @@ class InMemoryDataset(Dataset, ABC):
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
         r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal
-        storage format of :class:`~torch_geometric.data.InMemoryDataset`."""
+        storage format of :class:`~torch_geometric.data.InMemoryDataset`.
+        """
         if len(data_list) == 1:
             return data_list[0], None
 

@@ -88,7 +88,8 @@ class Batch(metaclass=DynamicInheritance):
         The assignment vector :obj:`batch` is created on the fly.
         In addition, creates assignment vectors for each key in
         :obj:`follow_batch`.
-        Will exclude any keys given in :obj:`exclude_keys`."""
+        Will exclude any keys given in :obj:`exclude_keys`.
+        """
         batch, slice_dict, inc_dict = collate(
             cls,
             data_list=data_list,
@@ -109,7 +110,8 @@ class Batch(metaclass=DynamicInheritance):
         :class:`~torch_geometric.data.HeteroData` object at index :obj:`idx`.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial object."""
+        initial object.
+        """
         if not hasattr(self, '_slice_dict'):
             raise RuntimeError(
                 ("Cannot reconstruct 'Data' object from 'Batch' because "
@@ -135,7 +137,8 @@ class Batch(metaclass=DynamicInheritance):
         long or bool.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial objects."""
+        initial objects.
+        """
         if isinstance(idx, slice):
             idx = list(range(self.num_graphs)[idx])
 
@@ -180,7 +183,8 @@ class Batch(metaclass=DynamicInheritance):
         :class:`~torch_geometric.data.Batch` object.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial objects."""
+        initial objects.
+        """
         return [self.get_example(i) for i in range(self.num_graphs)]
 
     @property

@@ -574,7 +574,8 @@ class DimeNet(torch.nn.Module):
     ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -844,7 +845,8 @@ class DimeNetPlusPlus(DimeNet):
                Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 

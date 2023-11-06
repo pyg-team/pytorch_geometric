@@ -19,7 +19,8 @@ class InnerProductDecoder(torch.nn.Module):
         \sigma(\mathbf{Z}\mathbf{Z}^{\top})
 
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
-    space produced by the encoder."""
+    space produced by the encoder.
+    """
     def forward(self, z: Tensor, edge_index: Tensor,
                 sigmoid: bool = True) -> Tensor:
         r"""Decodes the latent variables :obj:`z` into edge probabilities for

@@ -42,8 +42,8 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
     r"""Converts indices to a mask representation.
 
     Args:
-        idx (Tensor): The indices.
-        size (int, optional). The size of the mask. If set to :obj:`None`, a
+        index (Tensor): The indices.
+        size (int, optional): The size of the mask. If set to :obj:`None`, a
             minimal sized output mask is returned.
 
     Example:

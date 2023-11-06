@@ -70,7 +70,8 @@ class WLConv(torch.nn.Module):
     def histogram(self, x: Tensor, batch: Optional[Tensor] = None,
                   norm: bool = False) -> Tensor:
         r"""Given a node coloring :obj:`x`, computes the color histograms of
-        the respective graphs (separated by :obj:`batch`)."""
+        the respective graphs (separated by :obj:`batch`).
+        """
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 

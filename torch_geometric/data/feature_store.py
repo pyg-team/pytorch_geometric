@@ -82,7 +82,8 @@ class TensorAttr(CastMixin):
 
     def update(self, attr: 'TensorAttr') -> 'TensorAttr':
         r"""Updates an :class:`TensorAttr` with set attributes from another
-        :class:`TensorAttr`."""
+        :class:`TensorAttr`.
+        """
         for key in self.__dataclass_fields__:
             if attr.is_set(key):
                 setattr(self, key, getattr(attr, key))
@@ -233,7 +234,8 @@ class AttrView(CastMixin):
     def __eq__(self, obj: Any) -> bool:
         r"""Compares two :class:`AttrView` objects by checking equality of
         their :class:`FeatureStore` references and :class:`TensorAttr`
-        attributes."""
+        attributes.
+        """
         if not isinstance(obj, AttrView):
             return False
         return self._store == obj._store and self._attr == obj._attr
@@ -438,7 +440,8 @@ class FeatureStore:
 
     def get_tensor_size(self, *args, **kwargs) -> Optional[Tuple[int, ...]]:
         r"""Obtains the size of a tensor given its :class:`TensorAttr`, or
-        :obj:`None` if the tensor does not exist."""
+        :obj:`None` if the tensor does not exist.
+        """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_set('index'):
             attr.index = None
@@ -454,7 +457,8 @@ class FeatureStore:
 
     def view(self, *args, **kwargs) -> AttrView:
         r"""Returns a view of the :class:`FeatureStore` given a not yet
-        fully-specified :class:`TensorAttr`."""
+        fully-specified :class:`TensorAttr`.
+        """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         return AttrView(self, attr)
 

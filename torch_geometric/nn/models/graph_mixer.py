@@ -142,7 +142,8 @@ def get_latest_k_edge_attr(
     r"""Returns the latest :obj:`k` incoming edge attributes by
     :obj:`edge_time` for each node.
     The shape of the output tensor is :obj:`[num_nodes, k, edge_attr_dim]`.
-    Nodes with fewer than :obj:`k` incoming edges are zero-padded."""
+    Nodes with fewer than :obj:`k` incoming edges are zero-padded.
+    """
     _, col = edge_index
 
     if not is_sorted:

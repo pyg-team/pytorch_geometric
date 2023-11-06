@@ -45,7 +45,8 @@ class LocalTensorAttr(TensorAttr):
 
 class LocalFeatureStore(FeatureStore):
     r"""This class implements the :class:`torch_geometric.data.FeatureStore`
-    interface to act as a local feature store for distributed training."""
+    interface to act as a local feature store for distributed training.
+    """
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
 

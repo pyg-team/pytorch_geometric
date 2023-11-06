@@ -151,7 +151,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         training: bool = True,
     ) -> Tuple[Tensor, Tensor]:
         r"""Helps to set the edge mask while sampling its values from the
-        hard-concrete distribution."""
+        hard-concrete distribution.
+        """
         input_element = input_element + loc_bias
 
         if training:
@@ -292,13 +293,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
     def _freeze_model(self, module: torch.nn.Module):
         r"""Freezes the parameters of the original GNN model by disabling
-        their gradients."""
+        their gradients.
+        """
         for param in module.parameters():
             param.requires_grad = False
 
     def _set_flags(self, model: torch.nn.Module):
         r"""Initializes the underlying explainer model's parameters for each
-        layer of the original GNN model."""
+        layer of the original GNN model.
+        """
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.explain_message = explain_message.__get__(
@@ -313,7 +316,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         set: bool = False,
     ):
         r"""Injects the computed messages into each layer of the original GNN
-        model."""
+        model.
+        """
         i = 0
         for module in model.modules():
             if isinstance(module, MessagePassing):

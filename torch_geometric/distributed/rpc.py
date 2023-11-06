@@ -122,7 +122,8 @@ def rpc_partition_to_workers(
     current_partition_idx: int,
 ):
     r"""Performs an :obj:`all_gather` to get the mapping between partition and
-    workers."""
+    workers.
+    """
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
