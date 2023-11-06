@@ -22,7 +22,6 @@ def assortativity(edge_index: Adj) -> float:
         graph :math:`\in [-1, 1]`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 2],
         ...                            [1, 2, 0, 1, 3]])
         >>> assortativity(edge_index)

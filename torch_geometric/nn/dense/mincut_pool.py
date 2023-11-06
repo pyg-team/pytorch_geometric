@@ -62,7 +62,6 @@ def dense_mincut_pool(
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
         :class:`torch.Tensor`, :class:`torch.Tensor`)
     """
-
     x = x.unsqueeze(0) if x.dim() == 2 else x
     adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
     s = s.unsqueeze(0) if s.dim() == 2 else s

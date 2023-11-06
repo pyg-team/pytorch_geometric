@@ -163,7 +163,6 @@ class TransformerConv(MessagePassing):
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-
         H, C = self.heads, self.out_channels
 
         if isinstance(x, Tensor):

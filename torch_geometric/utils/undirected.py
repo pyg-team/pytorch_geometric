@@ -42,7 +42,6 @@ def is_undirected(
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                         [1, 0, 0]])
         >>> weight = torch.tensor([0, 0, 1])
@@ -139,7 +138,6 @@ def to_undirected(
         it is set to :obj:`None`).
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1],
         ...                            [1, 0, 2]])
         >>> to_undirected(edge_index)

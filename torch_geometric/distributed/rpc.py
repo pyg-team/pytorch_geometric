@@ -32,7 +32,7 @@ def global_all_gather(obj, timeout: Optional[int] = None):
 
 @rpc_require_initialized
 def global_barrier(timeout: Optional[int] = None):
-    r""" Block until all local and remote RPC processes."""
+    r"""Block until all local and remote RPC processes."""
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
@@ -164,7 +164,7 @@ def rpc_register(call: RPCCallBase) -> int:
 
 
 def _rpc_async_call(call_id: int, *args, **kwargs):
-    r""" Entry point for RPC requests."""
+    r"""Entry point for RPC requests."""
     return _rpc_call_pool.get(call_id).rpc_async(*args, **kwargs)
 
 

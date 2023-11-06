@@ -274,7 +274,6 @@ class PGMExplainer(ExplainerAlgorithm):
             pgm_stats (torch.Tensor): The :math:`p`-values of all the nodes in
                 the graph, ordered by node index.
         """
-
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 

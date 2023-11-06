@@ -49,7 +49,7 @@ class PositionalEncoding(torch.nn.Module):
         pass
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         x = x / self.granularity if self.granularity != 1.0 else x
         out = x.view(-1, 1) * self.frequency.view(1, -1)
         return torch.cat([torch.sin(out), torch.cos(out)], dim=-1)
@@ -89,7 +89,7 @@ class TemporalEncoding(torch.nn.Module):
         pass
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         return torch.cos(x.view(-1, 1) @ self.weight)
 
     def __repr__(self) -> str:

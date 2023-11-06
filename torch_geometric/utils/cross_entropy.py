@@ -56,7 +56,6 @@ def sparse_cross_entropy(inputs: Tensor, edge_label_index: Tensor) -> Tensor:
     :rtype: :class:`torch.Tensor`
 
     Example:
-
         >>> inputs = torch.randn(2, 3)
         >>> edge_label_index = torch.tensor([[0, 0, 1],
         ...                                  [0, 1, 2]])

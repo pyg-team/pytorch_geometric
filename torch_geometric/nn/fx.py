@@ -113,7 +113,6 @@ class Transformer:
     def transform(self) -> GraphModule:
         r"""Transforms :obj:`self.module` and returns a transformed
         :class:`torch.fx.GraphModule`."""
-
         if self.debug:
             self.graph.print_tabular()
             print()

@@ -80,7 +80,7 @@ def rm_keys(dict, keys):
 
 
 def agg_runs(dir, metric_best='auto'):
-    r'''
+    r"""
     Aggregate over different random seeds of a single experiment
 
     Args:
@@ -88,7 +88,7 @@ def agg_runs(dir, metric_best='auto'):
         metric_best (str, optional): The metric for selecting the best
         validation performance. Options: auto, accuracy, auc.
 
-    '''
+    """
     results = {'train': None, 'val': None}
     results_best = {'train': None, 'val': None}
     for seed in os.listdir(dir):
@@ -161,7 +161,7 @@ def agg_runs(dir, metric_best='auto'):
 
 
 def agg_batch(dir, metric_best='auto'):
-    r'''
+    r"""
     Aggregate across results from multiple experiments via grid search
 
     Args:
@@ -169,7 +169,7 @@ def agg_batch(dir, metric_best='auto'):
         metric_best (str, optional): The metric for selecting the best
         validation performance. Options: auto, accuracy, auc.
 
-    '''
+    """
     import pandas as pd
     results = {'train': [], 'val': [], 'test': []}
     for run in os.listdir(dir):

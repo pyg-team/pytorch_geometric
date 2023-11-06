@@ -26,7 +26,6 @@ def grid(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> (row, col), pos = grid(height=2, width=2)
         >>> row
         tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3])

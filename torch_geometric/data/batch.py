@@ -89,7 +89,6 @@ class Batch(metaclass=DynamicInheritance):
         In addition, creates assignment vectors for each key in
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`."""
-
         batch, slice_dict, inc_dict = collate(
             cls,
             data_list=data_list,
@@ -111,7 +110,6 @@ class Batch(metaclass=DynamicInheritance):
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
         initial object."""
-
         if not hasattr(self, '_slice_dict'):
             raise RuntimeError(
                 ("Cannot reconstruct 'Data' object from 'Batch' because "

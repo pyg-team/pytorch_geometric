@@ -70,7 +70,7 @@ class LocalFeatureAggregation(MessagePassing):
             index (Tensor): index of centroid positions
                 (e.g. [0,...,0,1,...,1,...,N,...,N])
 
-        returns:
+        Returns:
             (Tensor): locSE weighted by feature attention scores.
 
         """

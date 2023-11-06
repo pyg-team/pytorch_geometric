@@ -32,7 +32,6 @@ def softmax(
     :rtype: :class:`Tensor`
 
     Examples:
-
         >>> src = torch.tensor([1., 1., 1., 1.])
         >>> index = torch.tensor([0, 0, 1, 2])
         >>> ptr = torch.tensor([0, 2, 3, 4])

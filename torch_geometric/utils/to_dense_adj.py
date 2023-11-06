@@ -34,7 +34,6 @@ def to_dense_adj(
     :rtype: :class:`Tensor`
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 0, 1, 2, 3],
         ...                            [0, 1, 0, 3, 0]])
         >>> batch = torch.tensor([0, 0, 1, 1])

@@ -92,7 +92,6 @@ class CorrectAndSmooth(torch.nn.Module):
             edge_weight (torch.Tensor, optional): The edge weights.
                 (default: :obj:`None`)
         """
-
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 

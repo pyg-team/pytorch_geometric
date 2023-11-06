@@ -26,7 +26,6 @@ def to_scipy_sparse_matrix(
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -57,7 +56,6 @@ def from_scipy_sparse_matrix(
         A (scipy.sparse): A sparse matrix.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -115,7 +113,6 @@ def to_networkx(
             include self-loops in the resulting graph. (default: :obj:`False`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -201,7 +198,6 @@ def from_networkx(
         be numeric.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -372,7 +368,6 @@ def to_trimesh(data):
         data (torch_geometric.data.Data): The data object.
 
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -394,10 +389,7 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
 
-Example:
-
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -483,7 +475,6 @@ def to_dgl(
             The data object.
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
         >>> x = torch.randn(5, 3)
         >>> edge_attr = torch.randn(6, 2)
@@ -564,7 +555,6 @@ def from_dgl(
         g (dgl.DGLGraph): The :obj:`dgl` graph object.
 
     Example:
-
         >>> g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
         >>> g.ndata['x'] = torch.randn(g.num_nodes(), 3)
         >>> g.edata['edge_attr'] = torch.randn(g.num_edges(), 2)
