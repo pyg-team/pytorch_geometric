@@ -111,7 +111,8 @@ class ExplanationMixin:
         method.
 
         Args:
-            threshold_config (ThresholdConfig): The threshold configuration.
+            *args: Arguments passed to :class:`ThresholdConfig`.
+            **kwargs: Keyword arguments passed to :class:`ThresholdConfig`.
         """
         threshold_config = ThresholdConfig.cast(*args, **kwargs)
 

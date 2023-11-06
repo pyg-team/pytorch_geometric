@@ -129,10 +129,8 @@ class GraphStore:
             edge_index (Tuple[torch.Tensor, torch.Tensor]): The
                 :obj:`edge_index` tuple in a format specified in
                 :class:`EdgeAttr`.
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._put_edge_index(edge_index, edge_attr)
@@ -147,10 +145,8 @@ class GraphStore:
         :class:`GraphStore`.
 
         Args:
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
 
         Raises:
             KeyError: If the :obj:`edge_index` corresponding to the input
@@ -173,10 +169,8 @@ class GraphStore:
         Returns whether deletion was successful.
 
         Args:
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._remove_edge_index(edge_attr)

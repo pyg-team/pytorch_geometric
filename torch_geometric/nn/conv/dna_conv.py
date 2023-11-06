@@ -255,13 +255,20 @@ class DNAConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
             x (torch.Tensor): The input node features of shape
                 :obj:`[num_nodes, num_layers, channels]`.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
         """
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '

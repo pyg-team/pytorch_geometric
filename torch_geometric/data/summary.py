@@ -56,11 +56,11 @@ class Summary:
 
         Args:
             dataset (Dataset): The dataset.
-            progress_bar (bool, optional). If set to :obj:`True`, will show a
+            progress_bar (bool, optional): If set to :obj:`True`, will show a
                 progress bar during stats computation. If set to :obj:`None`,
                 will automatically decide whether to show a progress bar based
                 on dataset size. (default: :obj:`None`)
-            per_type (bool, optional). If set to :obj:`True`, will separate
+            per_type (bool, optional): If set to :obj:`True`, will separate
                 statistics per node and edge type (only applicable in
                 heterogeneous graph datasets). (default: :obj:`True`)
         """

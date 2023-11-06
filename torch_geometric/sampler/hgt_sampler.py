@@ -57,7 +57,6 @@ class HGTSampler(BaseSampler):
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
-        **kwargs,
     ) -> HeteroSamplerOutput:
 
         node, row, col, edge = torch.ops.torch_sparse.hgt_sample(

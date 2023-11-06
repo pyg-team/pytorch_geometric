@@ -279,9 +279,8 @@ class FeatureStore:
         Args:
             tensor (torch.Tensor or np.ndarray): The feature tensor to be
                 added.
-            **kwargs (TensorAttr): Any relevant tensor attributes that
-                correspond to the feature tensor. See the :class:`TensorAttr`
-                documentation for required and optional attributes.
+            *args: Arguments passed to :class:`TensorAttr`.
+            **kwargs: Keyword arguments passed to :class:`TensorAttr`.
 
         Raises:
             ValueError: If the input :class:`TensorAttr` is not fully
@@ -309,12 +308,11 @@ class FeatureStore:
         :class:`FeatureStore`.
 
         Args:
-            **kwargs (TensorAttr): Any relevant tensor attributes that
-                correspond to the feature tensor. See the :class:`TensorAttr`
-                documentation for required and optional attributes.
+            *args: Arguments passed to :class:`TensorAttr`.
             convert_type (bool, optional): Whether to convert the type of the
                 output tensor to the type of the attribute index.
                 (default: :obj:`False`)
+            **kwargs: Keyword arguments passed to :class:`TensorAttr`.
 
         Raises:
             ValueError: If the input :class:`TensorAttr` is not fully
@@ -397,9 +395,8 @@ class FeatureStore:
         Returns whether deletion was successful.
 
         Args:
-            **kwargs (TensorAttr): Any relevant tensor attributes that
-                correspond to the feature tensor. See the :class:`TensorAttr`
-                documentation for required and optional attributes.
+            *args: Arguments passed to :class:`TensorAttr`.
+            **kwargs: Keyword arguments passed to :class:`TensorAttr`.
 
         Raises:
             ValueError: If the input :class:`TensorAttr` is not fully
@@ -424,9 +421,8 @@ class FeatureStore:
         Args:
             tensor (torch.Tensor or np.ndarray): The feature tensor to be
                 updated.
-            **kwargs (TensorAttr): Any relevant tensor attributes that
-                correspond to the feature tensor. See the :class:`TensorAttr`
-                documentation for required and optional attributes.
+            *args: Arguments passed to :class:`TensorAttr`.
+            **kwargs: Keyword arguments passed to :class:`TensorAttr`.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         self.remove_tensor(attr)

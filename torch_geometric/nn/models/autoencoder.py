@@ -21,13 +21,18 @@ class InnerProductDecoder(torch.nn.Module):
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
     space produced by the encoder.
     """
-    def forward(self, z: Tensor, edge_index: Tensor,
-                sigmoid: bool = True) -> Tensor:
+    def forward(
+        self,
+        z: Tensor,
+        edge_index: Tensor,
+        sigmoid: bool = True,
+    ) -> Tensor:
         r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
 
         Args:
             z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
+            edge_index (torch.Tensor): The edge indices.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)

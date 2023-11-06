@@ -177,15 +177,26 @@ class SuperGATConv(MessagePassing):
         glorot(self.att_r)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                neg_edge_index: OptTensor = None,
-                batch: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        neg_edge_index: OptTensor = None,
+        batch: OptTensor = None,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
             neg_edge_index (torch.Tensor, optional): The negative edges to
                 train against. If not given, uses negative sampling to
                 calculate negative edges. (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Used when sampling negatives on-the-fly in mini-batch
+                scenarios. (default: :obj:`None`)
         """
         N, H, C = x.size(0), self.heads, self.out_channels
 

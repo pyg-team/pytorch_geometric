@@ -131,8 +131,10 @@ class DistNeighborSampler:
     # Node-based distributed sampling #########################################
 
     def sample_from_nodes(
-            self, inputs: NodeSamplerInput,
-            **kwargs) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+        self,
+        inputs: NodeSamplerInput,
+        **kwargs,
+    ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
         inputs = NodeSamplerInput.cast(inputs)
         if self.channel is None:
             # synchronous sampling
@@ -464,6 +466,8 @@ class DistNeighborSampler:
             outputs (List[SamplerOutput]): List of all samplers outputs.
             one_hop_num (int): Max number of neighbors sampled in the current
                 layer.
+            src_batch (torch.Tensor, optional): The batch assignment of seed
+                nodes. (default: :obj:`None`)
 
         Returns :obj:`SamplerOutput` containing all merged outputs.
         """

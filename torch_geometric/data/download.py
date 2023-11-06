@@ -7,8 +7,12 @@ from typing import Optional
 from torch_geometric.data.makedirs import makedirs
 
 
-def download_url(url: str, folder: str, log: bool = True,
-                 filename: Optional[str] = None):
+def download_url(
+    url: str,
+    folder: str,
+    log: bool = True,
+    filename: Optional[str] = None,
+):
     r"""Downloads the content of an URL to a specific folder.
 
     Args:
@@ -16,6 +20,9 @@ def download_url(url: str, folder: str, log: bool = True,
         folder (str): The folder.
         log (bool, optional): If :obj:`False`, will not print anything to the
             console. (default: :obj:`True`)
+        filename (str, optional): The filename of the downloaded file. If set
+            to :obj:`None`, will correspond to the filename given by the URL.
+            (default: :obj:`None`)
     """
     if filename is None:
         filename = url.rpartition('/')[2]

@@ -18,10 +18,10 @@ def grid(
     Args:
         height (int): The height of the grid.
         width (int): The width of the grid.
-        dtype (:obj:`torch.dtype`, optional): The desired data type of the
-            returned position tensor.
-        dtype (:obj:`torch.device`, optional): The desired device of the
-            returned tensors.
+        dtype (torch.dtype, optional): The desired data type of the returned
+            position tensor. (default: :obj:`None`)
+        device (torch.device, optional): The desired device of the returned
+            tensors. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 

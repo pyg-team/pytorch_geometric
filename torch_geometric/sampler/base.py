@@ -571,6 +571,7 @@ class BaseSampler(ABC):
 
         Args:
             index (NodeSamplerInput): The node sampler input object.
+            **kwargs (optional): Additional keyword arguments.
         """
         raise NotImplementedError
 
