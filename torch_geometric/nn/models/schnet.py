@@ -269,14 +269,16 @@ class SchNet(torch.nn.Module):
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        r"""Args:
-        z (torch.Tensor): Atomic number of each atom with shape
-        :obj:`[num_atoms]`.
-        pos (torch.Tensor): Coordinates of each atom with shape
-        :obj:`[num_atoms, 3]`.
-        batch (torch.Tensor, optional): Batch indices assigning each atom
-        to a separate molecule with shape :obj:`[num_atoms]`.
-        (default: :obj:`None`)
+        r"""Forward pass.
+
+        Args:
+            z (torch.Tensor): Atomic number of each atom with shape
+                :obj:`[num_atoms]`.
+            pos (torch.Tensor): Coordinates of each atom with shape
+                :obj:`[num_atoms, 3]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
+                (default: :obj:`None`)
         """
         batch = torch.zeros_like(z) if batch is None else batch
 
@@ -341,7 +343,9 @@ class RadiusInteractionGraph(torch.nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
     def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
-        r"""Args:
+        r"""Forward pass.
+
+        Args:
             pos (Tensor): Coordinates of each atom.
             batch (LongTensor, optional): Batch indices assigning each atom to
                 a separate molecule.

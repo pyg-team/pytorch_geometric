@@ -200,22 +200,24 @@ class MLP(torch.nn.Module):
         batch_size: Optional[int] = None,
         return_emb: NoneType = None,
     ) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The source tensor.
-        batch (torch.Tensor, optional): The batch vector
-        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-        each element to a specific example.
-        Only needs to be passed in case the underlying normalization
-        layers require the :obj:`batch` information.
-        (default: :obj:`None`)
-        batch_size (int, optional): The number of examples :math:`B`.
-        Automatically calculated if not given.
-        Only needs to be passed in case the underlying normalization
-        layers require the :obj:`batch` information.
-        (default: :obj:`None`)
-        return_emb (bool, optional): If set to :obj:`True`, will
-        additionally return the embeddings before execution of the
-        final output layer. (default: :obj:`False`)
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            return_emb (bool, optional): If set to :obj:`True`, will
+                additionally return the embeddings before execution of the
+                final output layer. (default: :obj:`False`)
         """
         # `return_emb` is annotated here as `NoneType` to be compatible with
         # TorchScript, which does not support different return types based on

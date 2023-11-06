@@ -110,7 +110,9 @@ class EdgePooling(torch.nn.Module):
         edge_index: Tensor,
         batch: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, UnpoolInfo]:
-        r"""Args:
+        r"""Forward pass.
+
+        Args:
             x (torch.Tensor): The node features.
             edge_index (torch.Tensor): The edge indices.
             batch (torch.Tensor): The batch vector

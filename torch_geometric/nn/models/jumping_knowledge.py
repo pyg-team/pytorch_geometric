@@ -69,9 +69,11 @@ class JumpingKnowledge(torch.nn.Module):
             self.att.reset_parameters()
 
     def forward(self, xs: List[Tensor]) -> Tensor:
-        r"""Args:
-        xs (List[torch.Tensor]): List containing the layer-wise
-        representations.
+        r"""Forward pass.
+
+        Args:
+            xs (List[torch.Tensor]): List containing the layer-wise
+                representations.
         """
         if self.mode == 'cat':
             return torch.cat(xs, dim=-1)

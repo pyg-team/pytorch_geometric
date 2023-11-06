@@ -68,8 +68,10 @@ class DiffGroupNorm(torch.nn.Module):
         self.norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The source tensor.
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The source tensor.
         """
         F, G = self.in_channels, self.groups
 

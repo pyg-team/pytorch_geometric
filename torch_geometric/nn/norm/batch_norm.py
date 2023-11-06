@@ -170,9 +170,11 @@ class HeteroBatchNorm(torch.nn.Module):
             torch.nn.init.zeros_(self.bias)
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The input features.
-        type_vec (torch.Tensor): A vector that maps each entry to a type.
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if not self.training and self.track_running_stats:
             mean, var = self.running_mean, self.running_var

@@ -75,14 +75,16 @@ class Connect(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
-        r"""Args:
-        select_output (SelectOutput): The output of :class:`Select`.
-        edge_index (torch.Tensor): The edge indices.
-        edge_attr (torch.Tensor, optional): The edge features.
-        (default: :obj:`None`)
-        batch (torch.Tensor, optional): The batch vector
-        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-        each node to a specific graph. (default: :obj:`None`)
+        r"""Forward pass.
+
+        Args:
+            select_output (SelectOutput): The output of :class:`Select`.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific graph. (default: :obj:`None`)
         """
         raise NotImplementedError
 
