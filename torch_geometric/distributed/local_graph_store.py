@@ -97,7 +97,6 @@ class LocalGraphStore(GraphStore):
             is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
                 (CSC format)
         """
-
         graph_store = cls()
         if not is_sorted:
             edge_index, edge_id = sort_edge_index(edge_index, edge_id,
@@ -132,7 +131,6 @@ class LocalGraphStore(GraphStore):
             is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
                 (CSC format)
         """
-
         graph_store = cls()
         graph_store.meta = {'is_hetero': True}
 
