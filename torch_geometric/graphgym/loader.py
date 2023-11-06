@@ -49,8 +49,7 @@ register.register_dataset('PPI', PPI)
 
 
 def load_pyg(name, dataset_dir):
-    """
-    Load PyG dataset objects. (More PyG datasets will be supported)
+    """Load PyG dataset objects. (More PyG datasets will be supported)
 
     Args:
         name (str): dataset name
@@ -101,9 +100,7 @@ def set_dataset_attr(dataset, name, value, size):
 
 
 def load_ogb(name, dataset_dir):
-    r"""
-
-    Load OGB dataset objects.
+    r"""Load OGB dataset objects.
 
 
     Args:
@@ -173,9 +170,7 @@ def load_ogb(name, dataset_dir):
 
 
 def load_dataset():
-    r"""
-
-    Load dataset objects.
+    r"""Load dataset objects.
 
     Returns: PyG dataset object
 
@@ -200,8 +195,7 @@ def load_dataset():
 
 
 def set_dataset_info(dataset):
-    r"""
-    Set global dataset information
+    r"""Set global dataset information
 
     Args:
         dataset: PyG dataset object
@@ -233,8 +227,7 @@ def set_dataset_info(dataset):
 
 
 def create_dataset():
-    r"""
-    Create dataset object
+    r"""Create dataset object
 
     Returns: PyG dataset object
 
@@ -311,8 +304,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
 
 
 def create_loader():
-    """
-    Create data loader object
+    """Create data loader object
 
     Returns: List of PyTorch data loaders
 

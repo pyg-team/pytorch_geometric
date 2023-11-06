@@ -48,20 +48,19 @@ class LabelPropagation(MessagePassing):
         edge_weight: OptTensor = None,
         post_step: Optional[Callable[[Tensor], Tensor]] = None,
     ) -> Tensor:
-        r"""
-        Args:
-            y (torch.Tensor): The ground-truth label information
-                :math:`\mathbf{Y}`.
-            edge_index (torch.Tensor or SparseTensor): The edge connectivity.
-            mask (torch.Tensor, optional): A mask or index tensor denoting
-                which nodes are used for label propagation.
-                (default: :obj:`None`)
-            edge_weight (torch.Tensor, optional): The edge weights.
-                (default: :obj:`None`)
-            post_step (callable, optional): A post step function specified
-                to apply after label propagation. If no post step function
-                is specified, the output will be clamped between 0 and 1.
-                (default: :obj:`None`)
+        r"""Args:
+        y (torch.Tensor): The ground-truth label information
+        :math:`\mathbf{Y}`.
+        edge_index (torch.Tensor or SparseTensor): The edge connectivity.
+        mask (torch.Tensor, optional): A mask or index tensor denoting
+        which nodes are used for label propagation.
+        (default: :obj:`None`)
+        edge_weight (torch.Tensor, optional): The edge weights.
+        (default: :obj:`None`)
+        post_step (callable, optional): A post step function specified
+        to apply after label propagation. If no post step function
+        is specified, the output will be clamped between 0 and 1.
+        (default: :obj:`None`)
         """
         if y.dtype == torch.long and y.size(0) == y.numel():
             y = one_hot(y.view(-1))

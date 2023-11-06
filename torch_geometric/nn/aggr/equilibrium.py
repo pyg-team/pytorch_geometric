@@ -48,8 +48,7 @@ class ResNetPotential(torch.nn.Module):
 
 
 class MomentumOptimizer(torch.nn.Module):
-    r"""
-    Provides an inner loop optimizer for the implicitly defined output
+    r"""Provides an inner loop optimizer for the implicitly defined output
     layer. It is based on an unrolled Nesterov momentum algorithm.
 
     Args:

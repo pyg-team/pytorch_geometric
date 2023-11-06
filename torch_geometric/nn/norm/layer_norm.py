@@ -66,14 +66,13 @@ class LayerNorm(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: OptTensor = None,
                 batch_size: Optional[int] = None) -> Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The source tensor.
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each element to a specific example. (default: :obj:`None`)
-            batch_size (int, optional): The number of examples :math:`B`.
-                Automatically calculated if not given. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): The source tensor.
+        batch (torch.Tensor, optional): The batch vector
+        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+        each element to a specific example. (default: :obj:`None`)
+        batch_size (int, optional): The number of examples :math:`B`.
+        Automatically calculated if not given. (default: :obj:`None`)
         """
         if self.mode == 'graph':
             if batch is None:
@@ -171,8 +170,7 @@ class HeteroLayerNorm(torch.nn.Module):
         type_vec: OptTensor = None,
         type_ptr: Optional[Union[Tensor, List[int]]] = None,
     ) -> Tensor:
-        r"""
-        .. note::
+        r""".. note::
             Either :obj:`type_vec` or :obj:`type_ptr` needs to be specified.
             In general, relying on :obj:`type_ptr` is more efficient in case
             the input tensor is sorted by types.

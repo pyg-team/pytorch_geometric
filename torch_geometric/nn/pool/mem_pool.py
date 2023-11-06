@@ -86,28 +86,27 @@ class MemPooling(torch.nn.Module):
         max_num_nodes: Optional[int] = None,
         batch_size: Optional[int] = None,
     ) -> Tuple[Tensor, Tensor]:
-        r"""
-        Args:
-            x (torch.Tensor): The node feature tensor of shape
-                :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
-                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each node to a specific example.
-                Should not be provided in case node features already have shape
-                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
-                (default: :obj:`None`)
-            mask (torch.Tensor, optional): A mask matrix
-                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}`, which
-                indicates valid nodes for each graph when using
-                node features of shape
-                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
-                (default: :obj:`None`)
-            max_num_nodes (int, optional): The size of the :math:`B` node
-                dimension. Automatically calculated if not given.
-                (default: :obj:`None`)
-            batch_size (int, optional): The number of examples :math:`B`.
-                Automatically calculated if not given. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): The node feature tensor of shape
+        :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
+        :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+        batch (torch.Tensor, optional): The batch vector
+        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+        each node to a specific example.
+        Should not be provided in case node features already have shape
+        :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+        (default: :obj:`None`)
+        mask (torch.Tensor, optional): A mask matrix
+        :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}`, which
+        indicates valid nodes for each graph when using
+        node features of shape
+        :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+        (default: :obj:`None`)
+        max_num_nodes (int, optional): The size of the :math:`B` node
+        dimension. Automatically calculated if not given.
+        (default: :obj:`None`)
+        batch_size (int, optional): The number of examples :math:`B`.
+        Automatically calculated if not given. (default: :obj:`None`)
         """
         if x.dim() <= 2:
             x, mask = to_dense_batch(x, batch, max_num_nodes=max_num_nodes,

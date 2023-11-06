@@ -123,17 +123,16 @@ class MetaLayer(torch.nn.Module):
         u: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
-        r"""
-        Args:
-            x (torch.Tensor): The node features.
-            edge_index (torch.Tensor): The edge indices.
-            edge_attr (torch.Tensor, optional): The edge features.
-                (default: :obj:`None`)
-            u (torch.Tensor, optional): The global graph features.
-                (default: :obj:`None`)
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each node to a specific graph. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): The node features.
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor, optional): The edge features.
+        (default: :obj:`None`)
+        u (torch.Tensor, optional): The global graph features.
+        (default: :obj:`None`)
+        batch (torch.Tensor, optional): The batch vector
+        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+        each node to a specific graph. (default: :obj:`None`)
         """
         row = edge_index[0]
         col = edge_index[1]

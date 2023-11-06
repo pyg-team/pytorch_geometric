@@ -1,5 +1,4 @@
-r"""
-This class defines the abstraction for a backend-agnostic feature store. The
+r"""This class defines the abstraction for a backend-agnostic feature store. The
 goal of the feature store is to abstract away all node and edge feature memory
 management so that varying implementations can allow for independent scale-out.
 

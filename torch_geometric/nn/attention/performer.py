@@ -145,16 +145,14 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-        r"""
-
-        Args:
-            x (torch.Tensor): Node feature tensor
-                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
-                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
-                each graph, and feature dimension :math:`F`.
-            mask (torch.Tensor, optional): Mask matrix
-                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
-                the valid nodes for each graph. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): Node feature tensor
+        :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+        batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+        each graph, and feature dimension :math:`F`.
+        mask (torch.Tensor, optional): Mask matrix
+        :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+        the valid nodes for each graph. (default: :obj:`None`)
         """
         B, N, *_ = x.shape
         q, k, v = self.q(x), self.k(x), self.v(x)

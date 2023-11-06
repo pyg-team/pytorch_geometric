@@ -37,13 +37,12 @@ class NodeEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The edge indices.
-            edge_time (torch.Tensor): The timestamp attached to every edge.
-            seed_time (torch.Tensor): The seed time :math:`t_0` for every
-                destination node.
+        r"""Args:
+        x (torch.Tensor): The input node features.
+        edge_index (torch.Tensor): The edge indices.
+        edge_time (torch.Tensor): The timestamp attached to every edge.
+        seed_time (torch.Tensor): The seed time :math:`t_0` for every
+        destination node.
         """
         mask = ((edge_time <= seed_time[edge_index[1]]) &
                 (edge_time > seed_time[edge_index[1]] - self.time_window))
@@ -98,8 +97,7 @@ class _MLPMixer(torch.nn.Module):
         self.head_lin.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
-        Args:
+        r"""Args:
             x (torch.Tensor): Tensor of size
                 :obj:`[*, num_tokens, in_channels]`.
 
@@ -230,8 +228,7 @@ class LinkEncoder(torch.nn.Module):
         edge_time: Tensor,
         seed_time: Tensor,
     ) -> Tensor:
-        r"""
-        Args:
+        r"""Args:
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor): The edge features of shape
                 :obj:`[num_edges, in_channels]`.

@@ -80,17 +80,16 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def correct(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                 edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-        r"""
-        Args:
-            y_soft (torch.Tensor): The soft predictions :math:`\mathbf{Z}`
-                obtained from a simple base predictor.
-            y_true (torch.Tensor): The ground-truth label information
-                :math:`\mathbf{Y}` of training nodes.
-            mask (torch.Tensor): A mask or index tensor denoting which nodes
-                were used for training.
-            edge_index (torch.Tensor or SparseTensor): The edge connectivity.
-            edge_weight (torch.Tensor, optional): The edge weights.
-                (default: :obj:`None`)
+        r"""Args:
+        y_soft (torch.Tensor): The soft predictions :math:`\mathbf{Z}`
+        obtained from a simple base predictor.
+        y_true (torch.Tensor): The ground-truth label information
+        :math:`\mathbf{Y}` of training nodes.
+        mask (torch.Tensor): A mask or index tensor denoting which nodes
+        were used for training.
+        edge_index (torch.Tensor or SparseTensor): The edge connectivity.
+        edge_weight (torch.Tensor, optional): The edge weights.
+        (default: :obj:`None`)
         """
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
@@ -124,17 +123,16 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def smooth(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-        r"""
-        Args:
-            y_soft (torch.Tensor): The corrected predictions :math:`\mathbf{Z}`
-                obtained from :meth:`correct`.
-            y_true (torch.Tensor): The ground-truth label information
-                :math:`\mathbf{Y}` of training nodes.
-            mask (torch.Tensor): A mask or index tensor denoting which nodes
-                were used for training.
-            edge_index (torch.Tensor or SparseTensor): The edge connectivity.
-            edge_weight (torch.Tensor, optional): The edge weights.
-                (default: :obj:`None`)
+        r"""Args:
+        y_soft (torch.Tensor): The corrected predictions :math:`\mathbf{Z}`
+        obtained from :meth:`correct`.
+        y_true (torch.Tensor): The ground-truth label information
+        :math:`\mathbf{Y}` of training nodes.
+        mask (torch.Tensor): A mask or index tensor denoting which nodes
+        were used for training.
+        edge_index (torch.Tensor or SparseTensor): The edge connectivity.
+        edge_weight (torch.Tensor, optional): The edge weights.
+        (default: :obj:`None`)
         """
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel

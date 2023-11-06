@@ -40,14 +40,13 @@ class PairNorm(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: OptTensor = None,
                 batch_size: Optional[int] = None) -> Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The source tensor.
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each element to a specific example. (default: :obj:`None`)
-            batch_size (int, optional): The number of examples :math:`B`.
-                Automatically calculated if not given. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): The source tensor.
+        batch (torch.Tensor, optional): The batch vector
+        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+        each element to a specific example. (default: :obj:`None`)
+        batch_size (int, optional): The number of examples :math:`B`.
+        Automatically calculated if not given. (default: :obj:`None`)
         """
         scale = self.scale
 

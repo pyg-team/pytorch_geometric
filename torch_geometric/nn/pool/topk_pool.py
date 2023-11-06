@@ -94,18 +94,17 @@ class TopKPooling(torch.nn.Module):
         batch: Optional[Tensor] = None,
         attn: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, OptTensor, OptTensor, Tensor, Tensor]:
-        r"""
-        Args:
-            x (torch.Tensor): The node feature matrix.
-            edge_index (torch.Tensor): The edge indices.
-            edge_attr (torch.Tensor, optional): The edge features.
-                (default: :obj:`None`)
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each node to a specific example. (default: :obj:`None`)
-            attn (torch.Tensor, optional): Optional node-level matrix to use
-                for computing attention scores instead of using the node
-                feature matrix :obj:`x`. (default: :obj:`None`)
+        r"""Args:
+        x (torch.Tensor): The node feature matrix.
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor, optional): The edge features.
+        (default: :obj:`None`)
+        batch (torch.Tensor, optional): The batch vector
+        :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+        each node to a specific example. (default: :obj:`None`)
+        attn (torch.Tensor, optional): Optional node-level matrix to use
+        for computing attention scores instead of using the node
+        feature matrix :obj:`x`. (default: :obj:`None`)
         """
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
