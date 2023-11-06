@@ -84,7 +84,8 @@ def filter_dist_store(
     r"""Constructs a :class:`HeteroData` object from a feature store that only
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are provided as metadata from
-    :class:`DistNeighborSampler`."""
+    :class:`DistNeighborSampler`.
+    """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
     nfeats, nlabels, efeats = meta[-3:]

@@ -62,7 +62,8 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
 
 class WorkerInitWrapper:
     r"""Wraps the :attr:`worker_init_fn` argument for
-    :class:`torch.utils.data.DataLoader` workers."""
+    :class:`torch.utils.data.DataLoader` workers.
+    """
     def __init__(self, func):
         self.func = func
 

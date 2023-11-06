@@ -410,7 +410,8 @@ class BasicGNN(torch.nn.Module):
 
     def jittable(self, use_sparse_tensor: bool = False) -> 'BasicGNN':
         r"""Produces a new jittable instance module that can be used in
-        combination with :meth:`torch.jit.script`."""
+        combination with :meth:`torch.jit.script`.
+        """
         class EdgeIndexJittable(torch.nn.Module):
             def __init__(self, child: BasicGNN):
                 super().__init__()

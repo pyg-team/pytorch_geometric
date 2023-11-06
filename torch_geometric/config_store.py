@@ -51,13 +51,15 @@ try:
 
     def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the :obj:`dataclass` of a class registered in the global
-        configuration store."""
+        configuration store.
+        """
         node = get_node(cls)
         return node._metadata.object_type if node is not None else None
 
     def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the original class of a :obj:`dataclass` registered in the
-        global configuration store."""
+        global configuration store.
+        """
         node = get_node(cls)
         return node._metadata.orig_type if node is not None else None
 
@@ -139,13 +141,15 @@ except ImportError:
 
     def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the :obj:`dataclass` of a class registered in the global
-        configuration store."""
+        configuration store.
+        """
         node = get_node(cls)
         return node.node if node is not None else None
 
     def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
         r"""Returns the original class of a :obj:`dataclass` registered in the
-        global configuration store."""
+        global configuration store.
+        """
         node = get_node(cls)
         return node._metadata.orig_type if node is not None else None
 

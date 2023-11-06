@@ -19,7 +19,8 @@ def is_full_test() -> bool:
 
 def onlyFullTest(func: Callable) -> Callable:
     r"""A decorator to specify that this function belongs to the full test
-    suite."""
+    suite.
+    """
     import pytest
     return pytest.mark.skipif(
         not is_full_test(),
@@ -29,7 +30,8 @@ def onlyFullTest(func: Callable) -> Callable:
 
 def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
-    Linux systems."""
+    Linux systems.
+    """
     import pytest
     return pytest.mark.skipif(
         sys.platform != 'linux',
@@ -39,7 +41,8 @@ def onlyLinux(func: Callable) -> Callable:
 
 def noWindows(func: Callable) -> Callable:
     r"""A decorator to specify that this function should not execute on
-    Windows systems."""
+    Windows systems.
+    """
     import pytest
     return pytest.mark.skipif(
         os.name == 'nt',
@@ -87,7 +90,8 @@ def onlyXPU(func: Callable) -> Callable:
 
 def onlyOnline(func: Callable):
     r"""A decorator to skip tests if there exists no connection to the
-    internet."""
+    internet.
+    """
     import http.client as httplib
 
     import pytest
@@ -109,7 +113,8 @@ def onlyOnline(func: Callable):
 
 def onlyGraphviz(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute in case
-    :obj:`graphviz` is installed."""
+    :obj:`graphviz` is installed.
+    """
     import pytest
     return pytest.mark.skipif(
         not has_graphviz(),
@@ -119,7 +124,8 @@ def onlyGraphviz(func: Callable) -> Callable:
 
 def onlyNeighborSampler(func: Callable):
     r"""A decorator to skip tests if no neighborhood sampler package is
-    installed."""
+    installed.
+    """
     import pytest
     return pytest.mark.skipif(
         not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
@@ -150,7 +156,8 @@ def has_package(package: str) -> bool:
 
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
-    Also supports version specification."""
+    Also supports version specification.
+    """
     na_packages = set(package for package in args if not has_package(package))
 
     def decorator(func: Callable) -> Callable:
@@ -188,7 +195,8 @@ def withCUDA(func: Callable):
 def disableExtensions(func: Callable):
     r"""A decorator to temporarily disable the usage of the
     :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
-    packages."""
+    packages.
+    """
     import pytest
 
     return pytest.mark.usefixtures('disable_extensions')(func)
