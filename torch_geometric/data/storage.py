@@ -288,6 +288,7 @@ class BaseStorage(MutableMapping):
 
 
 class NodeStorage(BaseStorage):
+    r"""A storage for node-level information."""
     @property
     def _key(self) -> NodeType:
         key = self.__dict__.get('_key', None)
@@ -412,7 +413,9 @@ class NodeStorage(BaseStorage):
 
 
 class EdgeStorage(BaseStorage):
-    r"""We support multiple ways to store edge connectivity in a
+    r"""A storage for edge-level information.
+
+    We support multiple ways to store edge connectivity in a
     :class:`EdgeStorage` object:
 
     * :obj:`edge_index`: A :class:`torch.LongTensor` holding edge indices in
@@ -624,6 +627,7 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
+    r"""A storage for both node-level and edge-level information."""
     @property
     def _key(self) -> Any:
         return None

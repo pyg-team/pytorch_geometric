@@ -539,7 +539,7 @@ class PRBCDAttack(torch.nn.Module):
     def _margin_loss(score: Tensor, labels: Tensor,
                      idx_mask: Optional[Tensor] = None,
                      reduce: Optional[str] = None) -> Tensor:
-        r"""Margin loss between true score and highest non-target score:
+        r"""Margin loss between true score and highest non-target score.
 
         .. math::
             m = - s_{y} + max_{y' \ne y} s_{y'}

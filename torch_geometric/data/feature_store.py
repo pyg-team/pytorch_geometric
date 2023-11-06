@@ -124,6 +124,7 @@ class AttrView(CastMixin):
     def __getattr__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute.
+
         This allows for :class:`AttrView` to be indexed by different values of
         attributes, in order.
         In particular, for a feature store that we want to index by
@@ -159,6 +160,7 @@ class AttrView(CastMixin):
     def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
         r"""Sets the first unset field of the backing :class:`TensorAttr`
         object to the attribute via indexing.
+
         This allows for :class:`AttrView` to be indexed by different values of
         attributes, in order.
         In particular, for a feature store that we want to index by
@@ -176,9 +178,12 @@ class AttrView(CastMixin):
 
     def __setattr__(self, key: str, value: Any):
         r"""Supports attribute assignment to the backing :class:`TensorAttr` of
-        an :class:`AttrView`. This allows for :class:`AttrView` objects to set
-        their backing attribute values. In particular, the following operation
-        sets the :obj:`index` of an :class:`AttrView`:
+        an :class:`AttrView`.
+
+        This allows for :class:`AttrView` objects to set their backing
+        attribute values.
+        In particular, the following operation sets the :obj:`index` of an
+        :class:`AttrView`:
 
         .. code-block:: python
 
@@ -194,9 +199,12 @@ class AttrView(CastMixin):
 
     def __setitem__(self, key: str, value: Any):
         r"""Supports attribute assignment to the backing :class:`TensorAttr` of
-        an :class:`AttrView` via indexing. This allows for :class:`AttrView`
-        objects to set their backing attribute values. In particular, the
-        following operation sets the `index` of an :class:`AttrView`:
+        an :class:`AttrView` via indexing.
+
+        This allows for :class:`AttrView` objects to set their backing
+        attribute values.
+        In particular, the following operation sets the `index` of an
+        :class:`AttrView`:
 
         .. code-block:: python
 
@@ -209,9 +217,11 @@ class AttrView(CastMixin):
 
     def __call__(self) -> FeatureTensorType:
         r"""Supports :class:`AttrView` as a callable to force retrieval from
-        the currently specified attributes. In particular, this passes the
-        current :class:`TensorAttr` object to a GET call, regardless of whether
-        all attributes have been specified. It returns the result of this call.
+        the currently specified attributes.
+
+        In particular, this passes the current :class:`TensorAttr` object to a
+        GET call, regardless of whether all attributes have been specified.
+        It returns the result of this call.
         In particular, the following operation returns a tensor by performing a
         GET operation on the backing feature store:
 
@@ -487,6 +497,7 @@ class FeatureStore:
 
     def __getitem__(self, key: TensorAttr) -> Any:
         r"""Supports pythonic indexing into the :class:`FeatureStore`.
+
         In particular, the following rules are followed for indexing:
 
         * A fully-specified :obj:`key` will produce a tensor output.
