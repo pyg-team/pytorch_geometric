@@ -1,6 +1,7 @@
-r"""This class defines the abstraction for a backend-agnostic feature store. The
-goal of the feature store is to abstract away all node and edge feature memory
-management so that varying implementations can allow for independent scale-out.
+r"""This class defines the abstraction for a backend-agnostic feature store.
+The goal of the feature store is to abstract away all node and edge feature
+memory management so that varying implementations can allow for independent
+scale-out.
 
 This particular feature store abstraction makes a few key assumptions:
 * The features we care about storing are node and edge features of a graph.
