@@ -15,5 +15,5 @@ __all__ = classes = [
     'PGExplainer',
     'AttentionExplainer',
     'GraphMaskExplainer',
-    'XGNNExplainer'
+    'XGNNExplainer',
 ]

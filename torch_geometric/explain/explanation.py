@@ -399,3 +399,26 @@ def _visualize_score(
         plt.show()
 
     plt.close()
+    
+    
+class GenerativeExplanation(Data):
+    r"""Holds all the obtained explanations of a homogeneous graph.
+
+    The explanation object is a :obj:`~torch_geometric.data.Data` object and
+    can hold node attributions and edge attributions.
+    It can also hold the original graph if needed.
+
+    Args:
+        node_mask (Tensor, optional): Node-level mask with shape
+            :obj:`[num_nodes, 1]`, :obj:`[1, num_features]` or
+            :obj:`[num_nodes, num_features]`. (default: :obj:`None`)
+        edge_mask (Tensor, optional): Edge-level mask with shape
+            :obj:`[num_edges]`. (default: :obj:`None`)
+        **kwargs (optional): Additional attributes.
+    """
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the :class:`Explanation` object."""
+        status = super().validate(raise_on_error)
+        status &= self.validate_masks(raise_on_error)
+        return status
+
