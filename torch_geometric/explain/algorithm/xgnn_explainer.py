@@ -15,7 +15,8 @@ class XGNNGenerator(torch.nn.Module):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         pass
-    def train(self, model):
+    def train(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
+        # TODO: throw errors, this is a base class
         pass
     
 class XGNNExplainer(ExplainerAlgorithm):
@@ -43,25 +44,13 @@ class XGNNExplainer(ExplainerAlgorithm):
             settings in
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
     """
-
-    # coeffs = {
-    #     'edge_size': 0.005,
-    #     'edge_reduction': 'sum',
-    #     'node_feat_size': 1.0,
-    #     'node_feat_reduction': 'mean',
-    #     'edge_ent': 1.0,
-    #     'node_feat_ent': 0.1,
-    #     'EPS': 1e-15,
-    # }
+    
     def __init__(self, generative_model : XGNNGenerator, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.generative_model = generative_model
         self.epochs = epochs
         self.lr = lr
-        # TODO: add argument such that XGNN gets XGNNGenerator as an argument.
         print("debug: xgnn init")
-
-        # self.coeffs.update(kwargs)
 
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> Tensor:
@@ -104,13 +93,17 @@ class XGNNExplainer(ExplainerAlgorithm):
         if 'explained_class' not in kwargs:
             raise ValueError(f"Expected 'explained_class' to be set "
                              f"'{self.__class__.__name__}'")
-        model_to_explain = model    
+
         explained_class = kwargs.get('explained_class')
-        generative_model_for_label = self.train_generative_model(model_to_explain, for_class=explained_class, **kwargs) 
+        generative_model_for_label = self.generative_model.train(model, 
+                                                                 for_class = explained_class, 
+                                                                 num_epochs = 100, 
+                                                                 learning_rate = 0.01, 
+                                                                 **kwargs)
         # self._clean_model(model)
         return GenerativeExplanation(model = model, 
-                                     generative_model=generative_model_for_label, 
-                                     for_class=explained_class)
+                                     generative_model = generative_model_for_label, 
+                                     for_class = explained_class)
 
     def supports(self) -> bool:
         return True
