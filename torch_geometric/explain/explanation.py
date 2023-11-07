@@ -408,11 +408,10 @@ class GenerativeExplanation(Data):
     holds the generative model for a specific predicted class.
 
     Args:
-        node_mask (Tensor, optional): Node-level mask with shape
-            :obj:`[num_nodes, 1]`, :obj:`[1, num_features]` or
-            :obj:`[num_nodes, num_features]`. (default: :obj:`None`)
-        edge_mask (Tensor, optional): Edge-level mask with shape
-            :obj:`[num_edges]`. (default: :obj:`None`)
+        generative_model (torch.nn.Module, required):
+            The generative model used to generate the explanation graphs. (default: :obj:`None`)
+        for_class (int, required):
+            Class for which the explanation is computed. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def validate(self, raise_on_error: bool = True) -> bool:

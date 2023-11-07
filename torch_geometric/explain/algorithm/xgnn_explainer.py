@@ -20,7 +20,7 @@ class XGNNGenerator(torch.nn.Module):
     
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
-    <https://arxiv.org/abs/2006.02587`_ paper for training a graph generator so that 
+    <https://arxiv.org/abs/2006.02587>`_ paper for training a graph generator so that
     the generated graph patterns maximize a certain prediction of the model.
 
     .. note::
