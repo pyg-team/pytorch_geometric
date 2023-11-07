@@ -15,8 +15,8 @@ class XGNNGenerator(torch.nn.Module):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         pass
-    def forward(self, x, edge_index):
-        return 1
+    def train(self, model):
+        pass
     
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
@@ -26,8 +26,8 @@ class XGNNExplainer(ExplainerAlgorithm):
     .. note::
 
         For an example of using :class:`XGNNExplainer`, see
-        `examples/explain/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/explain/gnn_explainer.py>`_,
+        `examples/explain/xgnn_explainer.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/explain/xgnn_explainer.py>`_,
         `examples/explain/gnn_explainer_ba_shapes.py <https://github.com/
         pyg-team/pytorch_geometric/blob/master/examples/
         explain/gnn_explainer_ba_shapes.py>`_, and `examples/explain/
@@ -53,11 +53,12 @@ class XGNNExplainer(ExplainerAlgorithm):
     #     'node_feat_ent': 0.1,
     #     'EPS': 1e-15,
     # }
-    def __init__(self, epochs: int = 100, lr: float = 0.01, **kwargs):
+    def __init__(self, generative_model : XGNNGenerator, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
+        self.generative_model = generative_model
         self.epochs = epochs
         self.lr = lr
-        self.generative_models = dict()
+        # TODO: add argument such that XGNN gets XGNNGenerator as an argument.
         print("debug: xgnn init")
 
         # self.coeffs.update(kwargs)
