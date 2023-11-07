@@ -8,6 +8,8 @@ from torch_geometric.explain import (
     ExplainerAlgorithm,
     Explanation,
     HeteroExplanation,
+    GenerativeExplanation,
+    
 )
 from torch_geometric.explain.algorithm.utils import (
     clear_masks,
@@ -152,7 +154,7 @@ class Explainer:
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Union[Explanation, HeteroExplanation]:
+    ) -> Union[Explanation, HeteroExplanation, GenerativeExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
         target.
 
@@ -246,6 +248,11 @@ class Explainer:
                     explanation.set_value_dict(key, arg)
                 else:
                     explanation[key] = arg
+
+        elif isinstance(explanation, GenerativeExplanation):
+            ### TODO Everything ###
+            pass
+
 
         explanation.validate_masks()
         return explanation.threshold(self.threshold_config)
