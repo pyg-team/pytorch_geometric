@@ -405,8 +405,7 @@ class GenerativeExplanation(Data):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
-    can hold node attributions and edge attributions.
-    It can also hold the original graph if needed.
+    holds the generative model for a specific predicted class.
 
     Args:
         node_mask (Tensor, optional): Node-level mask with shape
@@ -440,7 +439,11 @@ class GenerativeExplanation(Data):
                              f"(got {self.available_explanations})")  
         
         for _ in range(n):
-            generative_model.sample()
-            model
+            h, edge_index = generative_model.sample()
+            y_hat, y = model(h, edge_index), for_class
+
+            # if index is not None:
+            #     y_hat, y = y_hat[index], y[index]
+            # loss = self._loss(y_hat, y)
             
-            
+        return (h, edge_index), y_hat

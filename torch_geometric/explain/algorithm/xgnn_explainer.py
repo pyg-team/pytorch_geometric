@@ -107,7 +107,9 @@ class XGNNExplainer(ExplainerAlgorithm):
         explained_class = kwargs.get('explained_class')
         generative_model_for_label = self.train_generative_model(model_to_explain, for_class=explained_class, **kwargs) 
         # self._clean_model(model)
-        return GenerativeExplanation(model = model, generative_model=generative_model_for_label, for_class=explained_class)
+        return GenerativeExplanation(model = model, 
+                                     generative_model=generative_model_for_label, 
+                                     for_class=explained_class)
 
     def supports(self) -> bool:
         return True
