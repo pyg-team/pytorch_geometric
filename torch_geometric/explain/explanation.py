@@ -420,29 +420,24 @@ class GenerativeExplanation(Data):
         status &= self.validate_masks(raise_on_error)
         return status
 
-    def sample(self, n=1):
+    def sample(self, n=1, class_index=None):
         model = self.get('model')
-        generative_model = self.get('generative_model')
-        for_class = self.get('for_class')
+        generative_models = self.get('generative_models')
+        if class_index is None or class_index not in generative_models:
+            raise ValueError(f"The argument 'class_index' is expected to be one of the possible targets.")
+        
         if model is not None:
             raise ValueError(f"The attribute 'model' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
-        if generative_model is not None:
-            raise ValueError(f"The attribute 'generative_model' is not available "
+            
+        if generative_models is not None:
+            raise ValueError(f"The attribute 'generative_models' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")   
-        if for_class is not None:
-            raise ValueError(f"The attribute 'for_class' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")  
-        
-        for _ in range(n):
-            h, edge_index = generative_model.sample()
-            y_hat, y = model(h, edge_index), for_class
 
-            # if index is not None:
-            #     y_hat, y = y_hat[index], y[index]
-            # loss = self._loss(y_hat, y)
-            
+        for _ in range(n):
+            h, edge_index = generative_models[class_index].sample()
+            y_hat = model(h, edge_index)
+                
         return (h, edge_index), y_hat

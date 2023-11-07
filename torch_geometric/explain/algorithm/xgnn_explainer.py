@@ -90,20 +90,17 @@ class XGNNExplainer(ExplainerAlgorithm):
         if isinstance(x, dict) or isinstance(edge_index, dict):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
-        if 'explained_class' not in kwargs:
-            raise ValueError(f"Expected 'explained_class' to be set "
-                             f"'{self.__class__.__name__}'")
-
-        explained_class = kwargs.get('explained_class')
-        generative_model_for_label = self.generative_model.train(model, 
-                                                                 for_class = explained_class, 
-                                                                 num_epochs = 100, 
-                                                                 learning_rate = 0.01, 
-                                                                 **kwargs)
+        # for each class get a model
+        
+        generative_models = dict()
+        for t in torch.unique(target):
+            generative_models[t] = self.generative_model.train(model, 
+                                                               for_class = t, 
+                                                               num_epochs = 100, 
+                                                               learning_rate = 0.01, 
+                                                               **kwargs)
         # self._clean_model(model)
-        return GenerativeExplanation(model = model, 
-                                     generative_model = generative_model_for_label, 
-                                     for_class = explained_class)
+        return GenerativeExplanation(model = model, generative_models = generative_models)
 
     def supports(self) -> bool:
         return True
