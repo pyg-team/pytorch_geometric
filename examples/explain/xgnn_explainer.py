@@ -61,12 +61,4 @@ explanation = explainer(data.x, data.edge_index, index=class_index)
 print(f'Generated explanations in {explanation.available_explanations}') # ??
 
 path = "explanation_graph.png"
-explanation.visualize_subgraph(path, )
-
-path = 'feature_importance.png'
-explanation.visualize_feature_importance(path, top_k=10)
-print(f"Feature importance plot has been saved to '{path}'")
-
-path = 'subgraph.pdf'
-explanation.visualize_graph(path)
-print(f"Subgraph visualization plot has been saved to '{path}'")
+explanation.sample_subgraph(path, return_score=True)
