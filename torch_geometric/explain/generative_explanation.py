@@ -130,3 +130,4 @@ class GenerativeExplanation(Data):
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
         visualize_graph(self.edge_index, edge_mask, path, backend)
+
