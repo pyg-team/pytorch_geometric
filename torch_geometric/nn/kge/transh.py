@@ -12,23 +12,22 @@ class TransH(KGEModel):
     on Hyperplanes" <https://www.researchgate.net/publication/
     319207032_Knowledge_Graph_Embedding_by_Translating_on_Hyperplanes>`_ paper.
 
-    :class:`TransH` models relations as a translation from head to tail
-    entities such that
+    :class:`TransH` models relations as a translation from projected head to tail
+    entities such that 
 
     .. math::
-        \mathbf{e}_h + \mathbf{e}_r \approx \mathbf{e}_t,
+        \mathbf{e}_{h_{\perp}} + \mathbf{d}_r \approx \mathbf{e}_{t_{\perp}},
 
     resulting in the scoring function:
 
     .. math::
-        d(h, r, t) = - {\| \mathbf{e}_h + \mathbf{e}_r - \mathbf{e}_t \|}_p
-
+        - || (\mathbf{e_h} - \mathbf{w}_r^T\mathbf{e_hw}_r) + \mathbf{d}_r - (\mathbf{e_t} - \mathbf{w}_r^T\mathbf{e_tw}_r) ||_2^2 
     .. note::
 
-        For an example of using the :class:`TransE` model, see
-        `examples/kge_fb15k_237.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        kge_fb15k_237.py>`_.
+        For an example of using the :class:`TransH` model, see #TODO.
+        # `examples/kge_fb15k_237.py
+        # <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        # kge_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
