@@ -98,6 +98,7 @@ class LocalGraphStore(GraphStore):
                 (CSC format). (default: :obj:`False`)
         """
         graph_store = cls()
+        graph_store.meta = {'is_hetero': False}
 
         if not is_sorted:
             edge_index, edge_id = sort_edge_index(
