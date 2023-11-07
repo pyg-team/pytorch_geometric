@@ -101,6 +101,9 @@ class XGNNExplainer(ExplainerAlgorithm):
                                                                  learning_rate = 0.01, 
                                                                  **kwargs)
         # self._clean_model(model)
+
+        print("debug: xgnn forward")
+
         return GenerativeExplanation(model = model, 
                                      generative_model = generative_model_for_label, 
                                      for_class = explained_class)
@@ -128,6 +131,8 @@ class XGNNExplainer(ExplainerAlgorithm):
             parameters.append(self.edge_mask)
 
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
+
+        print("debug: xgnn train")
 
         for i in range(self.epochs):
             optimizer.zero_grad()
@@ -168,6 +173,8 @@ class XGNNExplainer(ExplainerAlgorithm):
         data = data.to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=self.lr, weight_decay=5e-4)
 
+        print("debug: xgnn train generative model")
+
         for _ in range(self.epochs):
             model.train()
             optimizer.zero_grad()
@@ -205,9 +212,13 @@ class XGNNExplainer(ExplainerAlgorithm):
                 1 - m) * torch.log(1 - m + self.coeffs['EPS'])
             loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
+        print("debug: xgnn loss")
+
         return loss
 
     def _clean_model(self, model):
         clear_masks(model)
         self.node_mask = self.hard_node_mask = None
         self.edge_mask = self.hard_edge_mask = None
+
+        print("debug: xgnn clean model")

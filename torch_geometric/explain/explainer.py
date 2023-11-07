@@ -95,6 +95,8 @@ class Explainer:
 
         self.algorithm.connect(explainer_config, self.model_config)
 
+        print("1. INITIALIZING EXPLAINER")
+
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
@@ -117,6 +119,8 @@ class Explainer:
             out = self.model(*args, **kwargs)
 
         self.model.train(training)
+
+        print("2. GETTING PREDICTION")
 
         return out
 
@@ -144,6 +148,9 @@ class Explainer:
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
+
+        print("3. GETTING MASKED PREDICTION")
+
         return out
 
     def __call__(
@@ -204,6 +211,8 @@ class Explainer:
         training = self.model.training
         self.model.eval()
 
+        print("4. CALLING EXPLAINER")
+
         explanation = self.algorithm(
             self.model,
             x,
@@ -251,6 +260,8 @@ class Explainer:
 
         elif isinstance(explanation, GenerativeExplanation):
             ### TODO Everything ###
+
+            print("5. GENERATING EXPLANATION")
             pass
 
 
@@ -276,5 +287,7 @@ class Explainer:
 
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)
+        
+        print("6. GETTING TARGET")
 
         return prediction
