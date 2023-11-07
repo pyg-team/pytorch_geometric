@@ -10,8 +10,6 @@ from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
-
-
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
     <https://arxiv.org/abs/2006.02587`_ paper for training a graph generator so that 
@@ -27,18 +25,6 @@ class XGNNExplainer(ExplainerAlgorithm):
         explain/gnn_explainer_ba_shapes.py>`_, and `examples/explain/
         gnn_explainer_link_pred.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/explain/gnn_explainer_link_pred.py>`_.
-
-    .. note::
-
-        The :obj:`edge_size` coefficient is multiplied by the number of nodes
-        in the explanation at every iteration, and the resulting value is added
-        to the loss as a regularization term, with the goal of producing
-        compact explanations.
-        A higher value will push the algorithm towards explanations with less
-        elements.
-        Consider adjusting the :obj:`edge_size` coefficient according to the
-        average node degree in the dataset, especially if this value is bigger
-        than in the datasets used in the original paper.
 
     Args:
         epochs (int, optional): The number of epochs to train.
