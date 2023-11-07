@@ -4,12 +4,20 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn.parameter import Parameter
+import torch.nn.functional as F
 
-from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
+from torch_geometric.explain import ExplainerConfig, GenerativeExplanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
+class XGNNGenerator(torch.nn.Module):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        pass
+    def forward(self, x, edge_index):
+        return 1
+    
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
     <https://arxiv.org/abs/2006.02587`_ paper for training a graph generator so that 
@@ -36,24 +44,48 @@ class XGNNExplainer(ExplainerAlgorithm):
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
     """
 
-    coeffs = {
-        'edge_size': 0.005,
-        'edge_reduction': 'sum',
-        'node_feat_size': 1.0,
-        'node_feat_reduction': 'mean',
-        'edge_ent': 1.0,
-        'node_feat_ent': 0.1,
-        'EPS': 1e-15,
-    }
-
+    # coeffs = {
+    #     'edge_size': 0.005,
+    #     'edge_reduction': 'sum',
+    #     'node_feat_size': 1.0,
+    #     'node_feat_reduction': 'mean',
+    #     'edge_ent': 1.0,
+    #     'node_feat_ent': 0.1,
+    #     'EPS': 1e-15,
+    # }
     def __init__(self, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
-        self.coeffs.update(kwargs)
+        self.generative_models = dict()
+        print("debug: xgnn init")
 
-        self.node_mask = self.hard_node_mask = None
-        self.edge_mask = self.hard_edge_mask = None
+        # self.coeffs.update(kwargs)
+
+    @torch.no_grad()
+    def get_prediction(self, *args, **kwargs) -> Tensor:
+        r"""Returns the prediction of the model on the input graph.
+
+        If the model mode is :obj:`"regression"`, the prediction is returned as
+        a scalar value.
+        If the model mode is :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
+
+        Args:
+            *args: Arguments passed to the model.
+            **kwargs (optional): Additional keyword arguments passed to the
+                model.
+        """
+        training = self.model.training
+        self.model.eval()
+
+        with torch.no_grad():
+            out = self.model(*args, **kwargs)
+
+        self.model.train(training)
+
+        return out
 
     def forward(
         self,
@@ -64,27 +96,18 @@ class XGNNExplainer(ExplainerAlgorithm):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> GenerativeExplanation:
         if isinstance(x, dict) or isinstance(edge_index, dict):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
-
-        self._train(model, x, edge_index, target=target, index=index, **kwargs)
-
-        node_mask = self._post_process_mask(
-            self.node_mask,
-            self.hard_node_mask,
-            apply_sigmoid=True,
-        )
-        edge_mask = self._post_process_mask(
-            self.edge_mask,
-            self.hard_edge_mask,
-            apply_sigmoid=True,
-        )
-
-        self._clean_model(model)
-
-        return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+        if 'explained_class' not in kwargs:
+            raise ValueError(f"Expected 'explained_class' to be set "
+                             f"'{self.__class__.__name__}'")
+        model_to_explain = model    
+        explained_class = kwargs.get('explained_class')
+        generative_model_for_label = self.train_generative_model(model_to_explain, for_class=explained_class, **kwargs) 
+        # self._clean_model(model)
+        return GenerativeExplanation(model = model, generative_model=generative_model_for_label, for_class=explained_class)
 
     def supports(self) -> bool:
         return True
@@ -142,32 +165,21 @@ class XGNNExplainer(ExplainerAlgorithm):
                                      "disable it via `edge_mask_type=None`.")
                 self.hard_edge_mask = self.edge_mask.grad != 0.0
 
-    def _initialize_masks(self, x: Tensor, edge_index: Tensor):
-        node_mask_type = self.explainer_config.node_mask_type
-        edge_mask_type = self.explainer_config.edge_mask_type
+    def train_generative_model(self):
+        self.generative_model = XGNNGenerator()
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model = self.generative_model.to(device)
+        data = data.to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=self.lr, weight_decay=5e-4)
 
-        device = x.device
-        (N, F), E = x.size(), edge_index.size(1)
-
-        std = 0.1
-        if node_mask_type is None:
-            self.node_mask = None
-        elif node_mask_type == MaskType.object:
-            self.node_mask = Parameter(torch.randn(N, 1, device=device) * std)
-        elif node_mask_type == MaskType.attributes:
-            self.node_mask = Parameter(torch.randn(N, F, device=device) * std)
-        elif node_mask_type == MaskType.common_attributes:
-            self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
-        else:
-            assert False
-
-        if edge_mask_type is None:
-            self.edge_mask = None
-        elif edge_mask_type == MaskType.object:
-            std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
-            self.edge_mask = Parameter(torch.randn(E, device=device) * std)
-        else:
-            assert False
+        for _ in range(self.epochs):
+            model.train()
+            optimizer.zero_grad()
+            out = model(data.x, data.edge_index)
+            loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
+            loss.backward()
+            optimizer.step()
+    
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:

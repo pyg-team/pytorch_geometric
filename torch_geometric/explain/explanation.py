@@ -422,3 +422,25 @@ class GenerativeExplanation(Data):
         status &= self.validate_masks(raise_on_error)
         return status
 
+    def sample(self, n=1):
+        model = self.get('model')
+        generative_model = self.get('generative_model')
+        for_class = self.get('for_class')
+        if model is not None:
+            raise ValueError(f"The attribute 'model' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        if generative_model is not None:
+            raise ValueError(f"The attribute 'generative_model' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")   
+        if for_class is not None:
+            raise ValueError(f"The attribute 'for_class' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")  
+        
+        for _ in range(n):
+            generative_model.sample()
+            model
+            
+            
