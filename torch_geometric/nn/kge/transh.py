@@ -46,13 +46,16 @@ class TransH(KGEModel):
         num_relations: int,
         hidden_channels: int,
         margin: float = 1.0,
-        p_norm: float = 1.0,
+        p_norm: float = 2.0,
         sparse: bool = False,
     ):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
 
         self.p_norm = p_norm
         self.margin = margin
+
+        self.w_rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
+        self.d_rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
 
         self.reset_parameters()
 
@@ -71,14 +74,19 @@ class TransH(KGEModel):
     ) -> Tensor:
 
         head = self.node_emb(head_index)
-        rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
+        
+        w_rel = F.normalize(self.w_rel_emb(rel_type), p=self.p_norm)
+        d_rel = self.d_rel_emb(rel_type)
 
-        head = F.normalize(head, p=self.p_norm, dim=-1)
-        tail = F.normalize(tail, p=self.p_norm, dim=-1)
+        proj_head = head - w_rel.T * head * w_rel
+        proj_tail = tail - w_rel.T * tail * w_rel
 
-        # Calculate *negative* TransE norm:
-        return -((head + rel) - tail).norm(p=self.p_norm, dim=-1)
+        proj_head = F.normalize(proj_head, p=self.p_norm, dim=-1)
+        proj_tail = F.normalize(proj_tail, p=self.p_norm, dim=-1)
+
+        # Calculate *negative* TransH norm:
+        return -(((proj_head + d_rel) - proj_tail).norm(p=self.p_norm, dim=-1))**2
 
     def loss(
         self,
