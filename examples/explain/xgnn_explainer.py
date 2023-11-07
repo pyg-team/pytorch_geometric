@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, GNNExplainer, XGNNExplainer
+from torch_geometric.explain import Explainer, XGNNExplainer, XGNNGenerator
 from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
@@ -25,8 +25,13 @@ class GCN(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
-
-
+    
+class RLGraphGen(XGNNGenerator):
+    def __init__(self):
+        super().__init__()
+    def train(self, model):
+        pass
+        
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GCN().to(device)
 data = data.to(device)
@@ -44,7 +49,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=XGNNExplainer(epochs=200),
+    algorithm=XGNNExplainer(generative_model = RLGraphGen, epochs = 200),
     explanation_type='model',
     # node_mask_type='attributes',
     # edge_mask_type='object',
@@ -57,8 +62,18 @@ explainer = Explainer(
 )
 
 class_index = 1
-explanation = explainer(data.x, data.edge_index, index=class_index)
-print(f'Generated explanations in {explanation.available_explanations}') # ??
+explanation = explainer(data.x, data.edge_index) # explained_class=class_index
+print(explanation)
 
-path = "explanation_graph.png"
-explanation.sample_subgraph(path, return_score=True)
+# print(f'Generated explanations in {explanation.available_explanations}') # ??
+
+# path = "explanation_graph.png"
+# explanation.visualize_subgraph(path, )
+
+# path = 'feature_importance.png'
+# explanation.visualize_feature_importance(path, top_k=10)
+# print(f"Feature importance plot has been saved to '{path}'")
+
+# path = 'subgraph.pdf'
+# explanation.visualize_graph(path)
+# print(f"Subgraph visualization plot has been saved to '{path}'")
