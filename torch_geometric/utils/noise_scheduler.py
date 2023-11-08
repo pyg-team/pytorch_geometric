@@ -26,7 +26,7 @@ def get_smld_sigma_schedule(sigma_min: float, sigma_max: float,
         from `sigma_max` to `sigma_min` on a logarithmic scale.
 
     Example:
-        >>> get_sigmas(0.01, 1.0, 10)
+        >>> get_smld_sigma_schedule(0.01, 1.0, 10)
         array([1.        , 0.59948425, 0.35938137, 0.21544347, 0.12915497,
                0.07742637, 0.04641589, 0.02782559, 0.01668101, 0.01      ])
     """
@@ -64,7 +64,7 @@ def get_diffusion_beta_schedule(schedule_type: str, beta_start: float,
         strategies.
 
     Examples:
-        >>> get_beta_schedule("linear", beta_start=0.1,
+        >>> get_diffusion_beta_schedule("linear", beta_start=0.1,
         beta_end=0.2, num_diffusion_timesteps=10)
         array([0.1, 0.111, ..., 0.2])
     """
