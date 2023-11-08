@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import (
     GATConv,
@@ -11,7 +12,13 @@ from torch_geometric.nn import (
     MessagePassing,
     SAGEConv,
 )
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import (
+    disableExtensions,
+    get_random_edge_index,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 
 
 @pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', 'cat', None])
@@ -167,3 +174,34 @@ def test_hetero_conv_with_dot_syntax_node_types():
     assert len(out_dict) == 2
     assert out_dict['src.paper'].size() == (50, 64)
     assert out_dict['author'].size() == (30, 64)
+
+
+@withCUDA
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile_hetero_conv_graph_breaks(device):
+    import torch._dynamo as dynamo
+
+    data = HeteroData()
+    data['a'].x = torch.randn(50, 16, device=device)
+    data['b'].x = torch.randn(50, 16, device=device)
+    edge_index = get_random_edge_index(50, 50, 100, device=device)
+    data['a', 'to', 'b'].edge_index = edge_index
+    data['b', 'to', 'a'].edge_index = edge_index.flip([0])
+
+    conv = HeteroConv({
+        ('a', 'to', 'b'): SAGEConv(16, 32).jittable(),
+        ('b', 'to', 'a'): SAGEConv(16, 32).jittable(),
+    }).to(device)
+
+    explanation = dynamo.explain(conv)(data.x_dict, data.edge_index_dict)
+    assert explanation.graph_break_count == 0
+
+    compiled_conv = torch_geometric.compile(conv)
+
+    expected = conv(data.x_dict, data.edge_index_dict)
+    out = compiled_conv(data.x_dict, data.edge_index_dict)
+    assert len(out) == len(expected)
+    for key in expected.keys():
+        assert torch.allclose(out[key], expected[key])
