@@ -6,7 +6,7 @@ def get_smld_sigma_schedule(sigma_min: float, sigma_max: float,
     r"""Generates a set of noise values on a logarithmic scale
     for "Score Matching with Langevin Dynamics" from the
     `"Generative Modeling by Estimating Gradients of the Data Distribution"
-    <https://arxiv.org/abs/1907.05600>`_paper.
+    <https://arxiv.org/abs/1907.05600>`_ paper.
 
     This function creates a numpy array of sigma values that define the
     schedule of noise levels used during Score Matching with Langevin Dynamics.
@@ -40,7 +40,9 @@ def get_diffusion_beta_schedule(schedule_type: str, beta_start: float,
                                 beta_end: float,
                                 num_diffusion_timesteps: int) -> np.ndarray:
     r"""Generates a schedule of beta values according to the specified
-    strategy.
+    strategy for the diffusion process from the
+    `"Denoising Diffusion Probabilistic Models"
+    <https://arxiv.org/abs/2006.11239>`_ paper.
 
     Beta values are used to scale the noise added during the diffusion
     process in generative models. This function creates an array of beta values
