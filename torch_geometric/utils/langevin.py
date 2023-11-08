@@ -1,3 +1,12 @@
+"""Annealed Langevin dynamics sampling, also called Langevin Monte Carlo.
+This is used to sample score-based generative models, such as EDP-GNN.
+The method iteratively samples from a series of noise-conditional score models
+with varying noise levels.
+
+TODO: do we need to specify the device/GPU?
+TODO: do we need node_flags?
+"""
+
 import numpy as np
 import torch
 from torch import Tensor
