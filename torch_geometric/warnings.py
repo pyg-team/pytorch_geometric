@@ -1,13 +1,14 @@
 import warnings
 
+import torch
+
 import torch_geometric
 
-if torch_geometric.typing.WITH_PT20:  # pragma: no cover
-    from torch._dynamo import is_compiling as _is_compiling
-else:
 
-    def _is_compiling() -> bool:  # pragma: no cover
-        return False
+def _is_compiling() -> bool:  # pragma: no cover
+    if torch_geometric.typing.WITH_PT20:
+        return torch._dynamo.is_compiling()
+    return False
 
 
 def warn(message: str):
