@@ -56,7 +56,6 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             (default: :obj:`1e-8`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 2, 3, 4],
         ...                            [1, 2, 0, 3, 4, 5]])
         >>> y = torch.tensor([0, 0, 0, 0, 1, 1])
