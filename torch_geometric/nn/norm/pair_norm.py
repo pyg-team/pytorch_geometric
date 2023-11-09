@@ -10,7 +10,7 @@ from torch_geometric.utils import scatter
 class PairNorm(torch.nn.Module):
     r"""Applies pair normalization over node features as described in the
     `"PairNorm: Tackling Oversmoothing in GNNs"
-    <https://arxiv.org/abs/1909.12223>`_ paper
+    <https://arxiv.org/abs/1909.12223>`_ paper.
 
     .. math::
         \mathbf{x}_i^c &= \mathbf{x}_i - \frac{1}{n}
@@ -40,7 +40,8 @@ class PairNorm(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: OptTensor = None,
                 batch_size: Optional[int] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector

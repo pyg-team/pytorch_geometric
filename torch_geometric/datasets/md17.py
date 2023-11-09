@@ -361,7 +361,7 @@ class MD17(InMemoryDataset):
                 f"the 'train' argument was not specified")
 
         idx = 0 if train is None or train else 1
-        self.data, self.slices = torch.load(self.processed_paths[idx])
+        self.load(self.processed_paths[idx])
 
     def mean(self) -> float:
         return float(self._data.energy.mean())
@@ -429,7 +429,7 @@ class MD17(InMemoryDataset):
                     data = self.pre_transform(data)
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), processed_path)
+            self.save(data_list, processed_path)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({len(self)}, name='{self.name}')"

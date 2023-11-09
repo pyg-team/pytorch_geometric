@@ -138,7 +138,7 @@ class LRGBDataset(InMemoryDataset):
 
         super().__init__(root, transform, pre_transform, pre_filter)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -235,8 +235,8 @@ class LRGBDataset(InMemoryDataset):
 
                     data_list.append(data)
 
-                torch.save(self.collate(data_list),
-                           osp.join(self.processed_dir, f'{split}.pt'))
+                path = osp.join(self.processed_dir, f'{split}.pt')
+                self.save(data_list, path)
 
     def label_remap_coco(self):
         # Util function for name 'COCO-SP'
@@ -294,5 +294,4 @@ class LRGBDataset(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+            self.save(data_list, osp.join(self.processed_dir, f'{split}.pt'))

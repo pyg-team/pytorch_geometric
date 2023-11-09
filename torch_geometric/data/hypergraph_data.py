@@ -13,6 +13,7 @@ from torch_geometric.utils.subgraph import hyper_subgraph
 
 class HyperGraphData(Data):
     r"""A data object describing a hypergraph.
+
     The data object can hold node-level, link-level and graph-level attributes.
     This object differs from a standard :obj:`~torch_geometric.data.Data`
     object by having hyperedges, i.e. edges that connect more

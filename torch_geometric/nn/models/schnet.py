@@ -36,7 +36,7 @@ class SchNet(torch.nn.Module):
     r"""The continuous-filter convolutional neural network SchNet from the
     `"SchNet: A Continuous-filter Convolutional Neural Network for Modeling
     Quantum Interactions" <https://arxiv.org/abs/1706.08566>`_ paper that uses
-    the interactions blocks of the form
+    the interactions blocks of the form.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \odot
@@ -175,7 +175,8 @@ class SchNet(torch.nn.Module):
     ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`SchNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         import ase
         import schnetpack as spk  # noqa
 
@@ -268,7 +269,8 @@ class SchNet(torch.nn.Module):
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
@@ -341,7 +343,8 @@ class RadiusInteractionGraph(torch.nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
     def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             pos (Tensor): Coordinates of each atom.
             batch (LongTensor, optional): Batch indices assigning each atom to

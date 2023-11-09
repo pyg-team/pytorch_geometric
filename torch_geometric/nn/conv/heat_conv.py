@@ -14,8 +14,9 @@ from torch_geometric.utils import softmax
 class HEATConv(MessagePassing):
     r"""The heterogeneous edge-enhanced graph attentional operator from the
     `"Heterogeneous Edge-Enhanced Graph Attention Network For Multi-Agent
-    Trajectory Prediction" <https://arxiv.org/abs/2106.07161>`_ paper, which
-    enhances :class:`~torch_geometric.nn.conv.GATConv` by:
+    Trajectory Prediction" <https://arxiv.org/abs/2106.07161>`_ paper.
+
+    :class:`HEATConv` enhances :class:`~torch_geometric.nn.conv.GATConv` by:
 
     1. type-specific transformations of nodes of different types
     2. edge type and edge feature incorporation, in which edges are assumed to

@@ -36,6 +36,7 @@ Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
 
 class Database(ABC):
     r"""Base class for inserting and retrieving data from a database.
+
     A database acts as a persisted, out-of-memory and index-based key/value
     store for tensor and custom data:
 

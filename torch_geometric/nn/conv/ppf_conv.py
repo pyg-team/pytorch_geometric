@@ -35,7 +35,7 @@ def point_pair_features(pos_i: Tensor, pos_j: Tensor, normal_i: Tensor,
 class PPFConv(MessagePassing):
     r"""The PPFNet operator from the `"PPFNet: Global Context Aware Local
     Features for Robust 3D Point Matching" <https://arxiv.org/abs/1802.02669>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in

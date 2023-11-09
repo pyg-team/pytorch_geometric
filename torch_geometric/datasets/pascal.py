@@ -91,7 +91,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         self.device = device
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -255,8 +255,8 @@ class PascalVOCKeypoints(InMemoryDataset):
             train_set = [self.pre_transform(data) for data in train_set]
             test_set = [self.pre_transform(data) for data in test_set]
 
-        torch.save(self.collate(train_set), self.processed_paths[0])
-        torch.save(self.collate(test_set), self.processed_paths[1])
+        self.save(train_set, self.processed_paths[0])
+        self.save(test_set, self.processed_paths[1])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

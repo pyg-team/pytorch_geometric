@@ -26,7 +26,8 @@ def get_options(options: Options) -> List[str]:
 def is_experimental_mode_enabled(options: Options = None) -> bool:
     r"""Returns :obj:`True` if the experimental mode is enabled. See
     :class:`torch_geometric.experimental_mode` for a list of (optional)
-    options."""
+    options.
+    """
     if torch.jit.is_scripting() or torch.jit.is_tracing():
         return False
     options = get_options(options)
@@ -94,7 +95,8 @@ class set_experimental_mode:
 def disable_dynamic_shapes(required_args: List[str]) -> Callable:
     r"""A decorator that disables the usage of dynamic shapes for the given
     arguments, i.e., it will raise an error in case :obj:`required_args` are
-    not passed and needs to be automatically inferred."""
+    not passed and needs to be automatically inferred.
+    """
     def decorator(func: Callable) -> Callable:
         spec = inspect.getfullargspec(func)
 

@@ -66,7 +66,6 @@ def coalesce(
         it is set to :obj:`None`).
 
     Example:
-
         >>> edge_index = torch.tensor([[1, 1, 2, 3],
         ...                            [3, 3, 1, 2]])
         >>> edge_attr = torch.tensor([1., 1., 1., 1.])

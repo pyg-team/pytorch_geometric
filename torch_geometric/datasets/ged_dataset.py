@@ -19,6 +19,7 @@ from torch_geometric.utils import one_hot, to_undirected
 class GEDDataset(InMemoryDataset):
     r"""The GED datasets from the `"Graph Edit Distance Computation via Graph
     Neural Networks" <https://arxiv.org/abs/1808.05689>`_ paper.
+
     GEDs can be accessed via the global attributes :obj:`ged` and
     :obj:`norm_ged` for all train/train graph pairs and all train/test graph
     pairs:
@@ -136,7 +137,7 @@ class GEDDataset(InMemoryDataset):
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         self.ged = torch.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
@@ -210,7 +211,7 @@ class GEDDataset(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), p_path)
+            self.save(data_list, p_path)
 
         assoc = {idx: i for i, idx in enumerate(ids[0])}
         assoc.update({idx: i + len(ids[0]) for i, idx in enumerate(ids[1])})

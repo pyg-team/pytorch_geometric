@@ -74,7 +74,7 @@ class TOSCA(InMemoryDataset):
             assert cat in self.categories
         self.categories = categories
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -108,4 +108,4 @@ class TOSCA(InMemoryDataset):
                     data = self.pre_transform(data)
                 data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

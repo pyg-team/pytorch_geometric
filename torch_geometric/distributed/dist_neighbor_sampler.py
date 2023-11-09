@@ -50,7 +50,8 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
-    processes."""
+    processes.
+    """
     def __init__(self, sampler: NeighborSampler):
         super().__init__()
         self.sampler = sampler
@@ -64,7 +65,8 @@ class RPCSamplingCallee(RPCCallBase):
 
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
-    used by :class:`~torch_geometric.distributed.DistNeighborLoader`."""
+    used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
+    """
     def __init__(
         self,
         current_ctx: DistContext,
@@ -98,7 +100,6 @@ class DistNeighborSampler:
         self.temporal_strategy = temporal_strategy
         self.time_attr = time_attr
         self.with_edge_attr = self.dist_feature.has_edge_attr()
-        _, _, self.edge_permutation = self.dist_graph.csc()
         self.csc = True
 
     def register_sampler_rpc(self) -> None:
@@ -119,6 +120,8 @@ class DistNeighborSampler:
             temporal_strategy=self.temporal_strategy,
             time_attr=self.time_attr,
         )
+        self.edge_permutation = self._sampler.perm
+
         rpc_sample_callee = RPCSamplingCallee(self._sampler)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
@@ -129,8 +132,10 @@ class DistNeighborSampler:
     # Node-based distributed sampling #########################################
 
     def sample_from_nodes(
-            self, inputs: NodeSamplerInput,
-            **kwargs) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+        self,
+        inputs: NodeSamplerInput,
+        **kwargs,
+    ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
         inputs = NodeSamplerInput.cast(inputs)
         if self.channel is None:
             # synchronous sampling
@@ -171,7 +176,6 @@ class DistNeighborSampler:
             In case of distributed training it is required to synchronize the
             results between machines after each layer.
         """
-
         input_type = inputs.input_type
         self.input_type = input_type
         batch_size = inputs.input_id.size()[0]
@@ -463,6 +467,8 @@ class DistNeighborSampler:
             outputs (List[SamplerOutput]): List of all samplers outputs.
             one_hop_num (int): Max number of neighbors sampled in the current
                 layer.
+            src_batch (torch.Tensor, optional): The batch assignment of seed
+                nodes. (default: :obj:`None`)
 
         Returns :obj:`SamplerOutput` containing all merged outputs.
         """
@@ -655,9 +661,6 @@ class DistNeighborSampler:
                 efeats = None
 
         output.metadata = (*output.metadata, nfeats, nlabels, efeats)
-        if self.is_hetero:
-            output.row = remap_keys(output.row, self._sampler.to_edge_type)
-            output.col = remap_keys(output.col, self._sampler.to_edge_type)
         return output
 
     def __repr__(self) -> str:

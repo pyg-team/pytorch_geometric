@@ -21,7 +21,6 @@ def degree(index: Tensor, num_nodes: Optional[int] = None,
     :rtype: :class:`Tensor`
 
     Example:
-
         >>> row = torch.tensor([0, 1, 0, 2, 0])
         >>> degree(row, dtype=torch.long)
         tensor([3, 1, 1])
