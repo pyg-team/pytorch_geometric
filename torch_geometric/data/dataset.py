@@ -44,8 +44,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
-        force_reload (bool, optional): Whether to re-process and reload
-            the dataset. (default: :obj:`False`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -224,7 +224,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
                 "The `pre_transform` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
                 "make use of another pre-processing technique, pass "
-                "'force_reload=True' explicitly to reload the dataset.")
+                "`force_reload=True` explicitly to reload the dataset.")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
@@ -232,10 +232,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
                 "make use of another pre-fitering technique, pass "
-                "'force_reload=True' explicitly to reload the dataset.")
+                "`force_reload=True` explicitly to reload the dataset.")
 
-        if not self.force_reload and files_exist(
-                self.processed_paths):  # pragma: no cover
+        if not self.force_reload and files_exist(self.processed_paths):
             return
 
         if self.log and 'pytest' not in sys.modules:

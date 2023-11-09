@@ -56,8 +56,8 @@ class InMemoryDataset(Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
-        force_reload (bool, optional): Whether to re-process and reload
-            the dataset. (default: :obj:`False`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:

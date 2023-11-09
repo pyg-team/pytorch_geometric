@@ -28,8 +28,8 @@ class Actor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process and reload
-            the dataset. (default: :obj:`False`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
