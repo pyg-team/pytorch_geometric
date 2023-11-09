@@ -38,9 +38,8 @@ class SAGE(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(
-        self, x_all: Tensor, device: torch.device, subgraph_loader: NeighborLoader
-    ) -> Tensor:
+    def inference(self, x_all: Tensor, device: torch.device,
+                  subgraph_loader: NeighborLoader) -> Tensor:
         pbar = tqdm(total=len(subgraph_loader) * len(self.convs))
         pbar.set_description("Evaluating")
 
@@ -52,7 +51,7 @@ class SAGE(torch.nn.Module):
             for batch in subgraph_loader:
                 x = x_all[batch.node_id.to(x_all.device)].to(device)
                 x = conv(x, batch.edge_index.to(device))
-                x = x[: batch.batch_size]
+                x = x[:batch.batch_size]
                 if i < len(self.convs) - 1:
                     x = x.relu_()
                 xs.append(x.cpu())
@@ -71,7 +70,8 @@ def run(world_size, rank, local_rank):
 
     dataset = Reddit("../../data/Reddit")
     data = dataset[0]
-    data = data.to(local_rank, "x", "y")  # Move to device for faster feature fetch.
+    data = data.to(local_rank, "x",
+                   "y")  # Move to device for faster feature fetch.
 
     # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
@@ -88,9 +88,8 @@ def run(world_size, rank, local_rank):
     )
 
     if rank == 0:  # Create single-hop evaluation neighbor loader:
-        subgraph_loader = NeighborLoader(
-            copy.copy(data), num_neighbors=[-1], shuffle=False, **kwargs
-        )
+        subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
+                                         shuffle=False, **kwargs)
         # No need to maintain these features during evaluation:
         del subgraph_loader.data.x, subgraph_loader.data.y
         # Add global node index information:
@@ -105,8 +104,9 @@ def run(world_size, rank, local_rank):
         model.train()
         for batch in train_loader:
             optimizer.zero_grad()
-            out = model(batch.x, batch.edge_index.to(local_rank))[: batch.batch_size]
-            loss = F.cross_entropy(out, batch.y[: batch.batch_size])
+            out = model(batch.x,
+                        batch.edge_index.to(local_rank))[:batch.batch_size]
+            loss = F.cross_entropy(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
 
@@ -118,7 +118,8 @@ def run(world_size, rank, local_rank):
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
             with torch.no_grad():
-                out = model.module.inference(data.x, local_rank, subgraph_loader)
+                out = model.module.inference(data.x, local_rank,
+                                             subgraph_loader)
             res = out.argmax(dim=-1) == data.y.to(out.device)
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
@@ -132,8 +133,10 @@ def run(world_size, rank, local_rank):
 
 if __name__ == "__main__":
     # get the world_size from the world_size-variable or directly from slurm
-    world_size = int(os.environ.get("WORLD_SIZE", os.environ.get("SLURM_NTASKS")))
+    world_size = int(
+        os.environ.get("WORLD_SIZE", os.environ.get("SLURM_NTASKS")))
     # likewise for RANK/LOCAL_RANK
     rank = int(os.environ.get("RANK", os.environ.get("SLURM_PROCID")))
-    local_rank = int(os.environ.get("LOCAL_RANK", os.environ.get("SLURM_LOCALID")))
+    local_rank = int(
+        os.environ.get("LOCAL_RANK", os.environ.get("SLURM_LOCALID")))
     run(world_size, rank, local_rank)
