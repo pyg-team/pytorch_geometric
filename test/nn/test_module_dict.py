@@ -97,7 +97,6 @@ def test_compile_module_dict(device):
             x = self.module_dict[key](x)
             return x
 
-
     x = torch.randn(1, 1, device=device)
     module = TestModule().to(device)
     explanation = dynamo.explain(module)(x)
