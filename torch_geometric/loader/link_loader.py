@@ -264,7 +264,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
             else:  # Tuple[FeatureStore, GraphStore]
                 # Hack to detect whether we are in a distributed setting.
-                if (self.node_sampler.__class__.__name__ ==
+                if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
                     data = dist.utils.filter_dist_store(
