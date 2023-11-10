@@ -129,7 +129,6 @@ ignore = [
     "D105",  # TODO: Don't ignore "Missing docstring in magic method"
     "D106",  # TODO: Don't ignore "Missing docstring in public nested class"
     "D107",  # TODO: Don't ignore "Missing docstring in __init__"
-    "D200",  # Ignore "One-line docstring should fit on one line"
     "D205",  # Ignore "1 blank line required between summary line and description"
 
 ]

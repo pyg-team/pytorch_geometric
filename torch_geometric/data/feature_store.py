@@ -455,8 +455,7 @@ class FeatureStore:
 
     @abstractmethod
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
-        r"""Obtains all tensor attributes stored in this :class:`FeatureStore`.
-        """
+        r"""Obtains all registered tensor attributes."""
         pass
 
     # `AttrView` methods ######################################################
