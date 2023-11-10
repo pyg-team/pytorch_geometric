@@ -104,9 +104,6 @@ based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
 
-[tool.flake8]
-ignore = ["F811", "W503", "W504"]
-
 [tool.pyright]
 include = ["torch_geometric/utils/*"]
 
