@@ -23,14 +23,12 @@ def normalized_cut(
     :rtype: :class:`Tensor`
 
     Example:
-
         >>> edge_index = torch.tensor([[1, 1, 2, 3],
         ...                            [3, 3, 1, 2]])
         >>> edge_attr = torch.tensor([1., 1., 1., 1.])
         >>> normalized_cut(edge_index, edge_attr)
         tensor([1.5000, 1.5000, 2.0000, 1.5000])
     """
-
     row, col = edge_index[0], edge_index[1]
     deg = 1. / degree(col, num_nodes, edge_attr.dtype)
     deg = deg[row] + deg[col]

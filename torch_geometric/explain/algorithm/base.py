@@ -48,7 +48,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config`, :obj:`self.model_config`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`.
+        """
         pass
 
     ###########################################################################
@@ -81,7 +82,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         model_config: ModelConfig,
     ):
         r"""Connects an explainer and model configuration to the explainer
-        algorithm."""
+        algorithm.
+        """
         self._explainer_config = ExplainerConfig.cast(explainer_config)
         self._model_config = ModelConfig.cast(model_config)
 
@@ -99,7 +101,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
         r""""Post processes any mask to not include any attributions of
-        elements not involved during message passing."""
+        elements not involved during message passing.
+        """
         if mask is None:
             return mask
 
@@ -121,7 +124,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         num_nodes: int,
     ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
         r"""Returns hard node and edge masks that only include the nodes and
-        edges visited during message passing."""
+        edges visited during message passing.
+        """
         if node_index is None:
             return None, None  # Consider all nodes and edges.
 

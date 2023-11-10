@@ -28,7 +28,6 @@ def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
 
     :rtype: :class:`torch.Tensor`
     """
-
     if graclus_cluster is None:
         raise ImportError('`graclus` requires `torch-cluster`.')
 

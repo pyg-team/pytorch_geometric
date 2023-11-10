@@ -57,7 +57,7 @@ class BitcoinOTC(InMemoryDataset):
                  pre_transform: Optional[Callable] = None):
         self.edge_window_size = edge_window_size
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -115,5 +115,4 @@ class BitcoinOTC(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

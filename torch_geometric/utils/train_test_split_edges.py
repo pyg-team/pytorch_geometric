@@ -38,7 +38,6 @@ def train_test_split_edges(
 
     :rtype: :class:`torch_geometric.data.Data`
     """
-
     assert 'batch' not in data  # No batch-mode.
 
     num_nodes = data.num_nodes

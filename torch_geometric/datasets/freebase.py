@@ -47,7 +47,7 @@ class FB15k_237(InMemoryDataset):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -86,4 +86,4 @@ class FB15k_237(InMemoryDataset):
 
         for data, path in zip(data_list, self.processed_paths):
             data.num_nodes = len(node_dict)
-            torch.save(self.collate([data]), path)
+            self.save([data], path)

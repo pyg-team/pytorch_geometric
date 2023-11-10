@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Tuple
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.typing import Dict, NodeType, Optional
+from torch_geometric.typing import EdgeType, NodeType
 
 
 @dataclass
@@ -16,7 +16,7 @@ class NodeDict:
     r"""Class used during heterogeneous sampling:
     1) The nodes to serve as source nodes in the next layer
     2) The nodes with duplicates that are further needed to create COO output
-    3) The output nodes without duplicates
+    3) The output nodes without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -30,7 +30,7 @@ class BatchDict:
        layer
     2) The subgraph IDs with duplicates that are further needed to create COO
        output
-    3) The output subgraph IDs without duplicates
+    3) The output subgraph IDs without duplicates.
     """
     src: Dict[NodeType, Tensor] = field(default_factory=dict)
     with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)
@@ -85,7 +85,8 @@ def filter_dist_store(
     r"""Constructs a :class:`HeteroData` object from a feature store that only
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are provided as metadata from
-    :class:`DistNeighborSampler`."""
+    :class:`DistNeighborSampler`.
+    """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
     nfeats, nlabels, efeats = meta[-3:]
@@ -121,3 +122,23 @@ def filter_dist_store(
         data[input_type].y = nlabels
 
     return data
+
+
+def as_str(inputs: Union[NodeType, EdgeType]) -> str:
+    if isinstance(inputs, NodeType):
+        return inputs
+    elif isinstance(inputs, (list, tuple)) and len(inputs) == 3:
+        return '__'.join(inputs)
+    return ''
+
+
+def reverse_edge_type(etype: EdgeType) -> EdgeType:
+    src, rel, dst = etype
+    if src != dst:
+        if rel.split('_', 1)[0] == 'rev':
+            # undirected edge with `rev_` prefix.
+            rel = rel.split('_', 1)[1]
+        else:
+            rel = 'rev_' + rel
+
+    return dst, rel, src

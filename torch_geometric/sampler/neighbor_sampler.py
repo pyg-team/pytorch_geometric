@@ -33,7 +33,8 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 class NeighborSampler(BaseSampler):
     r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
-    by :class:`~torch_geometric.loader.NeighborLoader`."""
+    by :class:`~torch_geometric.loader.NeighborLoader`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -118,7 +119,10 @@ class NeighborSampler(BaseSampler):
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
+            node_attrs = [
+                attr for attr in feature_store.get_all_tensor_attrs()
+                if isinstance(attr.group_name, NodeType)
+            ]
             self.node_types = list(set(attr.group_name for attr in node_attrs))
 
             edge_attrs = graph_store.get_all_edge_attrs()
@@ -157,10 +161,10 @@ class NeighborSampler(BaseSampler):
                 self.edge_weight: Optional[Tensor] = None
 
                 self.node_time: Optional[Tensor] = None
-                if time_attr is not None and len(time_attrs) != 1:
-                    raise ValueError("Temporal sampling specified but did "
-                                     "not find any temporal data")
-
+                if time_attr is not None:
+                    if len(time_attrs) != 1:
+                        raise ValueError("Temporal sampling specified but did "
+                                         "not find any temporal data")
                     time_attrs[0].index = None  # Reset index for full data.
                     time_tensor = feature_store.get_tensor(time_attrs[0])
                     self.node_time = time_tensor
@@ -223,7 +227,7 @@ class NeighborSampler(BaseSampler):
             return True
 
         # self.data_type == DataType.remote
-        return self.node_types != [None]
+        return self.edge_types != [None]
 
     @property
     def is_temporal(self) -> bool:
@@ -276,7 +280,8 @@ class NeighborSampler(BaseSampler):
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
-        installed) or :obj:`torch-sparse` (if installed) sampling routines."""
+        installed) or :obj:`torch-sparse` (if installed) sampling routines.
+        """
         if isinstance(seed, dict):  # Heterogeneous sampling:
             # TODO Support induced subgraph sampling in `pyg-lib`.
             if (torch_geometric.typing.WITH_PYG_LIB
@@ -431,56 +436,6 @@ class NeighborSampler(BaseSampler):
                 num_sampled_edges=num_sampled_edges,
             )
 
-    def _sample_one_hop(
-        self,
-        input_nodes: Tensor,
-        num_neighbors: int,
-        seed_time: Optional[Tensor] = None,
-        edge_type: Optional[EdgeType] = None,
-    ) -> SamplerOutput:
-        r"""Implements one-hop neighbor sampling for a set of input nodes for a
-        specific edge type.
-        """
-        rel_type = '__'.join(edge_type) if self.is_hetero else None
-
-        if not self.is_hetero:
-            colptr = self.colptr
-            row = self.row
-            node_time = self.node_time
-        else:
-            rel_type = '__'.join(edge_type)
-            colptr = self.colptr_dict[rel_type]
-            row = self.row_dict[rel_type]
-            node_time = self.node_time.get(edge_type[2], None)
-
-        out = torch.ops.pyg.dist_neighbor_sample(
-            colptr,
-            row,
-            input_nodes.to(colptr.dtype),
-            num_neighbors,
-            node_time,
-            seed_time,
-            None,  # TODO: edge_weight
-            True,  # csc
-            self.replace,
-            self.subgraph_type != SubgraphType.induced,
-            self.disjoint and node_time is not None,
-            self.temporal_strategy,
-        )
-        node, edge, cumsum_neighbors_per_node = out
-
-        if self.disjoint:
-            batch, node = node.t().contiguous()
-
-        return SamplerOutput(
-            node=node,
-            row=None,
-            col=None,
-            edge=edge,
-            batch=batch,
-            metadata=(cumsum_neighbors_per_node, ),
-        )
-
 
 # Sampling Utilities ##########################################################
 
@@ -491,7 +446,8 @@ def node_sample(
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
-    input. Returns the output of this sampling procedure."""
+    input. Returns the output of this sampling procedure.
+    """
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
         seed_time = None
@@ -516,7 +472,8 @@ def edge_sample(
     neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
-    function of the same signature as `node_sample`."""
+    function of the same signature as `node_sample`.
+    """
     input_id = inputs.input_id
     src = inputs.row
     dst = inputs.col

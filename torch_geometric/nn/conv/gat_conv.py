@@ -28,7 +28,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 class GATConv(MessagePassing):
     r"""The graph attentional operator from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper
+    <https://arxiv.org/abs/1710.10903>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
@@ -191,9 +191,14 @@ class GATConv(MessagePassing):
         glorot(self.att_edge)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None,
-                return_attention_weights=None):
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights=None,
+    ):
         # type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
@@ -201,6 +206,13 @@ class GATConv(MessagePassing):
         r"""Runs the forward pass of the module.
 
         Args:
+            x (torch.Tensor or (torch.Tensor, torch.Tensor)): The input node
+                features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            size ((int, int), optional): The shape of the adjacency matrix.
+                (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed

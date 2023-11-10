@@ -150,7 +150,7 @@ class SignedGCN(torch.nn.Module):
         negative or non-existent.
 
         Args:
-            x (torch.Tensor): The input node features.
+            z (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The edge indices.
         """
         value = torch.cat([z[edge_index[0]], z[edge_index[1]]], dim=1)
@@ -172,7 +172,6 @@ class SignedGCN(torch.nn.Module):
             pos_edge_index (torch.Tensor): The positive edge indices.
             neg_edge_index (torch.Tensor): The negative edge indices.
         """
-
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
         none_edge_index = negative_sampling(edge_index, z.size(0))
 
