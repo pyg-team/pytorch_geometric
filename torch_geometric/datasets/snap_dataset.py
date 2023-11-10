@@ -92,7 +92,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
                               usecols=[0]).squeeze()
             col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
                               usecols=[1]).squeeze()
-        except:  # noqa
+        except Exception:
             continue
 
         row = torch.tensor([idx_assoc[i] for i in row])
