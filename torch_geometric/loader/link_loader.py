@@ -283,7 +283,9 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if edge is not None and 'e_id' not in data[key]:
                     edge = edge.to(torch.long)
                     perm = self.link_sampler.edge_permutation
-                    data[key].e_id = perm[edge] if perm is not None else edge
+                    if perm is not None and perm.get(key, None) is not None:
+                        edge = perm[key][edge]
+                    data[key].e_id = edge
 
             data.set_value_dict('batch', out.batch)
             data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)

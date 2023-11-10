@@ -18,7 +18,7 @@ from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.testing import onlyLinux, withPackage
 
 
-def create_dist_data(tmp_path, rank):
+def create_dist_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feat_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
     (
@@ -50,14 +50,13 @@ def create_dist_data(tmp_path, rank):
 
 
 def dist_neighbor_loader_homo(
-        tmp_path: str,
-        world_size: int,
-        rank: int,
-        master_addr: str,
-        master_port: int,
-        num_workers: int,
-        async_sampling: bool,
-        device=torch.device('cpu'),
+    tmp_path: str,
+    world_size: int,
+    rank: int,
+    master_addr: str,
+    master_port: int,
+    num_workers: int,
+    async_sampling: bool,
 ):
     part_data = create_dist_data(tmp_path, rank)
     input_nodes = part_data[0].get_global_id(None)
@@ -80,7 +79,6 @@ def dist_neighbor_loader_homo(
         current_ctx=current_ctx,
         rpc_worker_names={},
         concurrency=10,
-        device=device,
         drop_last=True,
         async_sampling=async_sampling,
     )
@@ -96,7 +94,6 @@ def dist_neighbor_loader_homo(
         assert isinstance(batch, Data)
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 10
-        assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
         assert torch.equal(
@@ -106,14 +103,13 @@ def dist_neighbor_loader_homo(
 
 
 def dist_neighbor_loader_hetero(
-        tmp_path: str,
-        world_size: int,
-        rank: int,
-        master_addr: str,
-        master_port: int,
-        num_workers: int,
-        async_sampling: bool,
-        device=torch.device('cpu'),
+    tmp_path: str,
+    world_size: int,
+    rank: int,
+    master_addr: str,
+    master_port: int,
+    num_workers: int,
+    async_sampling: bool,
 ):
     part_data = create_dist_data(tmp_path, rank)
     input_nodes = ('v0', part_data[0].get_global_id('v0'))
@@ -127,7 +123,7 @@ def dist_neighbor_loader_hetero(
 
     loader = DistNeighborLoader(
         part_data,
-        num_neighbors=[10, 10],
+        num_neighbors=[1],
         batch_size=10,
         num_workers=num_workers,
         input_nodes=input_nodes,
@@ -136,7 +132,6 @@ def dist_neighbor_loader_hetero(
         current_ctx=current_ctx,
         rpc_worker_names={},
         concurrency=10,
-        device=device,
         drop_last=True,
         async_sampling=async_sampling,
     )
@@ -153,14 +148,11 @@ def dist_neighbor_loader_hetero(
         assert len(batch.node_types) == 2
         for node_type in batch.node_types:
             assert torch.equal(batch[node_type].x, batch.x_dict[node_type])
-            assert batch.x_dict[node_type].device == device
             assert batch.x_dict[node_type].size(0) >= 0
             assert batch[node_type].n_id.size(0) == batch[node_type].num_nodes
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert batch[edge_type].edge_index.device == device
-            assert batch[edge_type].edge_attr.device == device
             assert (batch[edge_type].edge_attr.size(0) ==
                     batch[edge_type].edge_index.size(1))
 

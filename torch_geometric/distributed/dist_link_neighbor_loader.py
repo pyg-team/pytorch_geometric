@@ -36,9 +36,6 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
 
-        All other Args follow the input type of the standard
-        torch_geometric.loader.LinkLoader.
-
         All other arguments follow the interface of
         :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
