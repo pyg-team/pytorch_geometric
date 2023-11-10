@@ -16,6 +16,7 @@ from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 
 class DistNeighborLoader(NodeLoader, DistLoader):
     r"""A distributed loader that preform sampling from nodes.
+
     Args:
         data: A (:class:`~torch_geometric.data.FeatureStore`,
             :class:`~torch_geometric.data.GraphStore`) data object.
