@@ -30,9 +30,8 @@ class ModuleDict(torch.nn.ModuleDict):
             key = f"<{'___'.join(key)}>"
         assert isinstance(key, str)
 
-        # ModuleDict cannot handle keys that exists as class attributes:
-        # if hasattr(cls, key):
-        #     key = f'<{key}>'
+        # Always wrap key with <> to avoid conflicts with class attributes
+        key = f'<{key}>'
 
         # ModuleDict cannot handle dots in keys:
         return key.replace('.', '#')
