@@ -717,6 +717,10 @@ class DistNeighborSampler:
         output.metadata = (*output.metadata, nfeats, nlabels, efeats)
         return output
 
+    @property
+    def edge_permutation(self) -> None:
+        return None
+
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(pid={mp.current_process().pid})'
 
