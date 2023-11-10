@@ -119,10 +119,11 @@ class NeighborSampler(BaseSampler):
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
-            self.node_types = list(
-                set(attr.group_name for attr in node_attrs
-                    if isinstance(attr.group_name, NodeType)))
+            node_attrs = [
+                attr for attr in feature_store.get_all_tensor_attrs()
+                if isinstance(attr.group_name, NodeType)
+            ]
+            self.node_types = list(set(attr.group_name for attr in node_attrs))
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
@@ -164,11 +165,9 @@ class NeighborSampler(BaseSampler):
                     if len(time_attrs) != 1:
                         raise ValueError("Temporal sampling specified but did "
                                          "not find any temporal data")
-                    else:
-                        time_attrs[
-                            0].index = None  # Reset index for full data.
-                        time_tensor = feature_store.get_tensor(time_attrs[0])
-                        self.node_time = time_tensor
+                    time_attrs[0].index = None  # Reset index for full data.
+                    time_tensor = feature_store.get_tensor(time_attrs[0])
+                    self.node_time = time_tensor
 
                 self.row, self.colptr, self.perm = graph_store.csc()
 

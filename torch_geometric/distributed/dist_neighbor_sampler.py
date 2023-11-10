@@ -186,8 +186,10 @@ class DistNeighborSampler:
             seed = inputs.node.to(self.device)
             seed_time = None
             if self.time_attr is not None:
-                seed_time = (inputs.time.to(self.device) if inputs.time
-                             is not None else self.node_time[seed])
+                if inputs.time is not None:
+                    seed_time = inputs.time.to(self.device)
+                else:
+                    seed_time = self.node_time[seed]
             src_batch = torch.arange(batch_size) if self.disjoint else None
             metadata = (seed, seed_time)
 
@@ -213,7 +215,7 @@ class DistNeighborSampler:
             if input_type is None:
                 raise ValueError("Input type should be defined")
 
-            seed_dict = {input_type: seed}
+            seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
             seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
 
             node_dict = NodeDict()
@@ -385,8 +387,8 @@ class DistNeighborSampler:
                     batch_with_dupl.append(out.batch)
 
                 if seed_time is not None and i < self.num_hops - 1:
-                    # get seed_time for the next layer based on the previous
-                    # seed_time and sampled neighbors per node info
+                    # Get the seed time for the next layer based on the
+                    # previous seed_time and sampled neighbors per node info:
                     seed_time = torch.repeat_interleave(
                         seed_time, torch.as_tensor(out.metadata[0]))
 
@@ -562,25 +564,20 @@ class DistNeighborSampler:
 
             if p_srcs.shape[0] > 0:
                 if p_id == self.graph_store.partition_idx:
-                    # sample on a local machine
+                    # Sample for one hop on a local machine:
                     p_nbr_out = self._sample_one_hop(p_srcs, one_hop_num,
                                                      p_seed_time, edge_type)
                     p_outputs.pop(p_id)
                     p_outputs.insert(p_id, p_nbr_out)
-                else:
-                    # sample on a remote machine
+
+                else:  # Sample on a remote machine:
                     local_only = False
                     to_worker = self.rpc_router.get_to_worker(p_id)
                     futs.append(
                         rpc_async(
                             to_worker,
                             self.rpc_sample_callee_id,
-                            args=(
-                                p_srcs,
-                                one_hop_num,
-                                p_seed_time,
-                                edge_type,
-                            ),
+                            args=(p_srcs, one_hop_num, p_seed_time, edge_type),
                         ))
 
         if not local_only:
@@ -725,21 +722,6 @@ class DistNeighborSampler:
 
 
 # Sampling Utilities ##########################################################
-
-
-class RPCSamplingCallee(RPCCallBase):
-    r"""A wrapper for RPC callee that will perform RPC sampling from remote
-    processes.
-    """
-    def __init__(self, sampler: DistNeighborSampler):
-        super().__init__()
-        self.sampler = sampler
-
-    def rpc_async(self, *args, **kwargs) -> Any:
-        return self.sampler._sample_one_hop(*args, **kwargs)
-
-    def rpc_sync(self, *args, **kwargs) -> Any:
-        pass
 
 
 def close_sampler(worker_id: int, sampler: DistNeighborSampler):

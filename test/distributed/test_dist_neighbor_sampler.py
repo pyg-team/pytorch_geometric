@@ -14,56 +14,47 @@ from torch_geometric.distributed.dist_neighbor_sampler import (
 from torch_geometric.distributed.rpc import init_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyLinux, withPackage
 
 
-def create_data(rank, world_size, temporal=False):
-    num_nodes = 10
-    # create dist data
-    if rank == 0:
-        # partition 0
+def create_data(rank: int, world_size: int, temporal: bool = False):
+    if rank == 0:  # Partition 0:
         node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
-        # sorted by dst
-        edge_index = torch.tensor([
+        edge_index = torch.tensor([  # Sorted by destination.
             [1, 2, 3, 4, 5, 0, 0],
             [0, 1, 2, 3, 4, 4, 9],
         ])
-    else:
-        # partition 1
+    else:  # Partition 1:
         node_id = torch.tensor([0, 4, 5, 6, 7, 8, 9])
-        # sorted by dst
-        edge_index = torch.tensor([
+        edge_index = torch.tensor([  # Sorted by destination.
             [5, 6, 7, 8, 9, 5, 0],
             [4, 5, 6, 7, 8, 9, 9],
         ])
 
     feature_store = LocalFeatureStore.from_data(node_id)
-    graph_store = LocalGraphStore.from_data(None, edge_index,
-                                            num_nodes=num_nodes,
-                                            is_sorted=True)
+    graph_store = LocalGraphStore.from_data(
+        edge_id=None,
+        edge_index=edge_index,
+        num_nodes=10,
+        is_sorted=True,
+    )
 
     graph_store.node_pb = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
     graph_store.meta.update({'num_parts': 2})
     graph_store.partition_idx = rank
     graph_store.num_partitions = world_size
 
-    dist_data = (feature_store, graph_store)
-
-    # create reference data
-    edge_index = torch.tensor([
+    edge_index = torch.tensor([  # Create reference data:
         [1, 2, 3, 4, 5, 0, 5, 6, 7, 8, 9, 0],
         [0, 1, 2, 3, 4, 4, 9, 5, 6, 7, 8, 9],
     ])
-    data = Data(x=None, y=None, edge_index=edge_index, num_nodes=num_nodes)
+    data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
-    if temporal:
-        # create time data sorted by edge_index srcs
-        data_time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
-        feature_store.put_tensor(data_time, group_name=None, attr_name="time")
+    if temporal:  # Create time data:
+        data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
+        feature_store.put_tensor(data.time, group_name=None, attr_name='time')
 
-        data.time = data_time
-
-    return (dist_data, data)
+    return (feature_store, graph_store), data
 
 
 def dist_neighbor_sampler(
@@ -79,23 +70,22 @@ def dist_neighbor_sampler(
         global_rank=rank,
         world_size=world_size,
         global_world_size=world_size,
-        group_name="dist-sampler-test",
+        group_name='dist-sampler-test',
     )
 
-    # Initialize training process group of PyTorch.
+    # Initialize training process group of PyTorch:
     torch.distributed.init_process_group(
-        backend="gloo",
+        backend='gloo',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
-        init_method="tcp://{}:{}".format('localhost', master_port),
+        init_method=f'tcp://localhost:{master_port}',
     )
 
-    num_neighbors = [-1, -1]
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
         rpc_worker_names={},
-        num_neighbors=num_neighbors,
+        num_neighbors=[-1, -1],
         shuffle=False,
         disjoint=disjoint,
     )
@@ -110,34 +100,33 @@ def dist_neighbor_sampler(
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
 
-    # close RPC & worker group at exit:
+    # Close RPC & worker group at exit:
     atexit.register(close_sampler, 0, dist_sampler)
     torch.distributed.barrier()
 
-    # seed nodes
-    if rank == 0:
-        input_node = torch.tensor([1, 6], dtype=torch.int64)
+    if rank == 0:  # Seed nodes:
+        input_node = torch.tensor([1, 6])
     else:
-        input_node = torch.tensor([4, 9], dtype=torch.int64)
+        input_node = torch.tensor([4, 9])
 
-    inputs = NodeSamplerInput(
-        input_id=None,
-        node=input_node,
-    )
+    inputs = NodeSamplerInput(input_id=None, node=input_node)
 
-    # evaluate distributed node sample function
+    # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
 
     torch.distributed.barrier()
 
-    sampler = NeighborSampler(data=data, num_neighbors=num_neighbors,
-                              disjoint=disjoint)
+    sampler = NeighborSampler(
+        data=data,
+        num_neighbors=[-1, -1],
+        disjoint=disjoint,
+    )
 
-    # evaluate node sample function
+    # Evaluate node sample function:
     out = node_sample(inputs, sampler._sample)
 
-    # compare distributed output with single machine output
+    # Compare distributed output with single machine output:
     assert torch.equal(out_dist.node, out.node)
     assert torch.equal(out_dist.row, out.row)
     assert torch.equal(out_dist.col, out.col)
@@ -163,15 +152,15 @@ def dist_neighbor_sampler_temporal(
         global_rank=rank,
         world_size=world_size,
         global_world_size=world_size,
-        group_name="dist-sampler-test",
+        group_name='dist-sampler-test',
     )
 
-    # Initialize training process group of PyTorch.
+    # Initialize training process group of PyTorch:
     torch.distributed.init_process_group(
-        backend="gloo",
+        backend='gloo',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
-        init_method="tcp://{}:{}".format('localhost', master_port),
+        init_method=f'tcp://localhost:{master_port}',
     )
 
     num_neighbors = [-1, -1] if temporal_strategy == 'uniform' else [1, 1]
@@ -196,12 +185,11 @@ def dist_neighbor_sampler_temporal(
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
 
-    # close RPC & worker group at exit:
+    # Close RPC & worker group at exit:
     atexit.register(close_sampler, 0, dist_sampler)
     torch.distributed.barrier()
 
-    # seed nodes
-    if rank == 0:
+    if rank == 0:  # Seed nodes:
         input_node = torch.tensor([1, 6], dtype=torch.int64)
     else:
         input_node = torch.tensor([4, 9], dtype=torch.int64)
@@ -212,21 +200,24 @@ def dist_neighbor_sampler_temporal(
         time=seed_time,
     )
 
-    # evaluate distributed node sample function
+    # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
 
     torch.distributed.barrier()
 
-    sampler = NeighborSampler(data=data, num_neighbors=num_neighbors,
-                              disjoint=True,
-                              temporal_strategy=temporal_strategy,
-                              time_attr='time')
+    sampler = NeighborSampler(
+        data=data,
+        num_neighbors=num_neighbors,
+        disjoint=True,
+        temporal_strategy=temporal_strategy,
+        time_attr='time',
+    )
 
-    # evaluate node sample function
+    # Evaluate node sample function:
     out = node_sample(inputs, sampler._sample)
 
-    # compare distributed output with single machine output
+    # Compare distributed output with single machine output:
     assert torch.equal(out_dist.node, out.node)
     assert torch.equal(out_dist.row, out.row)
     assert torch.equal(out_dist.col, out.col)
@@ -237,12 +228,13 @@ def dist_neighbor_sampler_temporal(
     torch.distributed.barrier()
 
 
+@onlyLinux
 @withPackage('pyg_lib')
-@pytest.mark.parametrize("disjoint", [False, True])
+@pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler(disjoint):
-    mp_context = torch.multiprocessing.get_context("spawn")
+    mp_context = torch.multiprocessing.get_context('spawn')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(("127.0.0.1", 0))
+    s.bind(('127.0.0.1', 0))
     port = s.getsockname()[1]
     s.close()
 
@@ -263,13 +255,14 @@ def test_dist_neighbor_sampler(disjoint):
     w1.join()
 
 
+@onlyLinux
 @withPackage('pyg_lib')
-@pytest.mark.parametrize("seed_time", [None, torch.tensor([3, 6])])
-@pytest.mark.parametrize("temporal_strategy", ['uniform', 'last'])
+@pytest.mark.parametrize('seed_time', [None, torch.tensor([3, 6])])
+@pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
-    mp_context = torch.multiprocessing.get_context("spawn")
+    mp_context = torch.multiprocessing.get_context('spawn')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(("127.0.0.1", 0))
+    s.bind(('127.0.0.1', 0))
     port = s.getsockname()[1]
     s.close()
 
