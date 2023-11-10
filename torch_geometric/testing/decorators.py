@@ -51,7 +51,7 @@ def noWindows(func: Callable) -> Callable:
 
 
 def onlyPython(*args) -> Callable:
-    r"""A decorator to run tests for specific :python:`Python` versions."""
+    r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
