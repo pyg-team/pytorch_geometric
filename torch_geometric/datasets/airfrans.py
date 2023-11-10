@@ -114,10 +114,6 @@ class AirfRANS(InMemoryDataset):
         return ['AirfRANS.pt', 'manifest.json']
 
     @property
-    def process(self) -> List[str]:
-        return ['AirfRANS.pt', 'manifest.json']
-
-    @property
     def processed_file_names(self) -> str:
         return f'{self.task}_{self.split}.pt'
 
