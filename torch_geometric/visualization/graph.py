@@ -7,7 +7,7 @@ from torch import Tensor
 BACKENDS = {'graphviz', 'networkx'}
 
 
-def _has_graphviz() -> bool:
+def has_graphviz() -> bool:
     try:
         import graphviz
     except ImportError:
@@ -55,7 +55,7 @@ def visualize_graph(
         edge_weight = torch.ones(edge_index.size(1))
 
     if backend is None:
-        backend = 'graphviz' if _has_graphviz() else 'networkx'
+        backend = 'graphviz' if has_graphviz() else 'networkx'
 
     if backend.lower() == 'networkx':
         return _visualize_graph_via_networkx(edge_index, edge_weight, path)

@@ -115,8 +115,7 @@ multi_line_output = 3
 include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
-[tool.ruff]
-# https://docs.astral.sh/ruff/rules/
+[tool.ruff]  # https://docs.astral.sh/ruff/rules
 select = [
     "D",  # pydocstyle
 ]
