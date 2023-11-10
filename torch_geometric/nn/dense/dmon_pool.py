@@ -144,7 +144,7 @@ class DMoNPooling(torch.nn.Module):
 
         # Cluster loss:
         cluster_size = torch.einsum('ijk->ik', s)  # B x C
-        cluster_loss = torch.norm(cluster_size) / mask.sum(1) * torch.norm(
+        cluster_loss = torch.norm(input=cluster_size, dim=1) / mask.sum(1) * torch.norm(
             i_s) - 1
         cluster_loss = torch.mean(cluster_loss)
 
