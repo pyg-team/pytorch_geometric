@@ -1,3 +1,5 @@
+r"""GNN utility package."""
+
 from .cheatsheet import paper_title, paper_link
 from .cheatsheet import supports_sparse_tensor
 from .cheatsheet import supports_edge_weights

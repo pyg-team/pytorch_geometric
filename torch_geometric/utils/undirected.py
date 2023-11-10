@@ -12,13 +12,13 @@ MISSING = '???'
 
 @torch.jit._overload
 def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
+    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool
     pass
 
 
 @torch.jit._overload
 def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
+    # type: (Tensor, List[Tensor], Optional[int]) -> bool
     pass
 
 
@@ -90,7 +90,7 @@ def is_undirected(
 
 @torch.jit._overload
 def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, str, Optional[int], str) -> Tensor  # noqa
+    # type: (Tensor, str, Optional[int], str) -> Tensor
     pass
 
 
