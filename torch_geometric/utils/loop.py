@@ -125,42 +125,42 @@ def segregate_self_loops(
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[float], Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, OptTensor, Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[str], Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
-def add_self_loops(
+def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
@@ -272,27 +272,27 @@ def add_self_loops(
 
 
 @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr=None, fill_value=None, num_nodes=None):
     # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
-# @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+@torch.jit._overload
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr=None, fill_value=None, num_nodes=None):
     # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr=None, fill_value=None, num_nodes=None):
     # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
-def add_remaining_self_loops(
+def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
