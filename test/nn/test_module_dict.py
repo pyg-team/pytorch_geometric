@@ -1,6 +1,12 @@
 import torch
 
 from torch_geometric.nn.module_dict import ModuleDict
+from torch_geometric.testing import (
+    disableExtensions,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 
 
 def test_internal_external_key_conversion():
@@ -68,3 +74,37 @@ def test_reserved_keys():
 
     del module_dict['type']
     assert 'type' not in module_dict
+
+
+@withCUDA
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile_module_dict(device):
+    import torch._dynamo as dynamo
+
+    edge_type = ("a", "to", "b")
+
+    class TestModule(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.module_dict = ModuleDict({
+                edge_type: torch.nn.Linear(1, 1),
+            })
+
+        def forward(self, x):
+            key = ModuleDict.to_internal_key(edge_type)
+            x = self.module_dict[key](x)
+            return x
+
+
+    x = torch.randn(1, 1, device=device)
+    module = TestModule().to(device)
+    explanation = dynamo.explain(module)(x)
+    assert explanation.graph_break_count == 0
+
+    # compiled_conv = torch_geometric.compile(conv)
+
+    # expected = conv(x, edge_index)
+    # out = compiled_conv(x, edge_index)
+    # assert torch.allclose(out, expected)
