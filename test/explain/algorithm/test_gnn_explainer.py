@@ -10,7 +10,7 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.nn import ChebConv, GCNConv, global_add_pool
+from torch_geometric.nn import AttentiveFP, ChebConv, GCNConv, global_add_pool
 
 
 class GCN(torch.nn.Module):
@@ -63,6 +63,7 @@ edge_index = torch.tensor([
     [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
     [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
 ])
+edge_attr = torch.randn(edge_index.size(1), 5)
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
@@ -246,6 +247,30 @@ def test_gnn_explainer_cheb_conv(check_explanation):
     )
 
     explanation = explainer(x, edge_index)
+
+    assert explainer.algorithm.node_mask is None
+    assert explainer.algorithm.edge_mask is None
+
+    check_explanation(explanation, MaskType.object, MaskType.object)
+
+
+def test_gnn_explainer_attentive_fp(check_explanation):
+    model = AttentiveFP(3, 16, 1, edge_dim=5, num_layers=2, num_timesteps=2)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=2),
+        explanation_type='model',
+        node_mask_type='object',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='binary_classification',
+            task_level='node',
+            return_type='raw',
+        ),
+    )
+
+    explanation = explainer(x, edge_index, edge_attr=edge_attr, batch=batch)
 
     assert explainer.algorithm.node_mask is None
     assert explainer.algorithm.edge_mask is None

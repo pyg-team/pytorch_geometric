@@ -1,5 +1,4 @@
 import os
-from abc import ABC
 from typing import Any, Callable, Iterable, List, Optional, Union
 
 from torch import Tensor
@@ -10,7 +9,7 @@ from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
 
 
-class OnDiskDataset(Dataset, ABC):
+class OnDiskDataset(Dataset):
     r"""Dataset base class for creating large graph datasets which do not
     easily fit into CPU memory at once by leveraging a :class:`Database`
     backend for on-disk storage and access of data objects.
@@ -101,7 +100,8 @@ class OnDiskDataset(Dataset, ABC):
     def serialize(self, data: BaseData) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
-        schema."""
+        schema.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.serialize()` "
@@ -111,7 +111,8 @@ class OnDiskDataset(Dataset, ABC):
     def deserialize(self, data: Any) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
-        :class:`~torch_geometric.data.HeteroData` object."""
+        :class:`~torch_geometric.data.HeteroData` object.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.deserialize()` "

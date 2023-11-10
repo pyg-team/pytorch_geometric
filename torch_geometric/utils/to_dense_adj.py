@@ -29,12 +29,11 @@ def to_dense_adj(
             duplicated edges. (default: :obj:`None`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
-        batch_size (int, optional) The batch size. (default: :obj:`None`)
+        batch_size (int, optional): The batch size. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 0, 1, 2, 3],
         ...                            [0, 1, 0, 3, 0]])
         >>> batch = torch.tensor([0, 0, 1, 1])

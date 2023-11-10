@@ -35,8 +35,7 @@ class Net(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers):
             self.convs.append(
-                DNAConv(hidden_channels, heads, groups, dropout=0.8,
-                        cached=True))
+                DNAConv(hidden_channels, heads, groups, dropout=0.8))
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
     def reset_parameters(self):

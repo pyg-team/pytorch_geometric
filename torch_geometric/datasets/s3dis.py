@@ -38,6 +38,8 @@ class S3DIS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
@@ -55,12 +57,14 @@ class S3DIS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -108,5 +112,5 @@ class S3DIS(InMemoryDataset):
             else:
                 test_data_list.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+        self.save(train_data_list, self.processed_paths[0])
+        self.save(test_data_list, self.processed_paths[1])

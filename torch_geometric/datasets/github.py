@@ -45,7 +45,7 @@ class GitHub(InMemoryDataset):
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -70,4 +70,4 @@ class GitHub(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

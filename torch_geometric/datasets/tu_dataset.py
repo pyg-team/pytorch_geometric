@@ -50,6 +50,8 @@ class TUDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node attributes (if present).
             (default: :obj:`False`)
@@ -119,15 +121,22 @@ class TUDataset(InMemoryDataset):
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 use_node_attr: bool = False, use_edge_attr: bool = False,
-                 cleaned: bool = False):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        use_node_attr: bool = False,
+        use_edge_attr: bool = False,
+        cleaned: bool = False,
+    ):
         self.name = name
         self.cleaned = cleaned
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         out = torch.load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:

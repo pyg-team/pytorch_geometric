@@ -189,7 +189,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def diffusion_matrix_exact(
+    def diffusion_matrix_exact(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -262,7 +262,7 @@ class GDC(BaseTransform):
 
         return diff_matrix
 
-    def diffusion_matrix_approx(
+    def diffusion_matrix_approx(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -342,7 +342,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_dense(
+    def sparsify_dense(  # noqa: D417
         self,
         matrix: Tensor,
         method: str,
@@ -411,7 +411,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_sparse(
+    def sparsify_sparse(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -422,8 +422,8 @@ class GDC(BaseTransform):
         r"""Sparsifies a given sparse graph further.
 
         Args:
-            edge_index (LongTensor): The edge indices.
-            edge_weight (Tensor): One-dimensional edge weights.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification:
 
@@ -441,8 +441,11 @@ class GDC(BaseTransform):
         """
         if method == 'threshold':
             if 'eps' not in kwargs.keys():
-                kwargs['eps'] = self.__calculate_eps__(edge_weight, num_nodes,
-                                                       kwargs['avg_degree'])
+                kwargs['eps'] = self.__calculate_eps__(
+                    edge_weight,
+                    num_nodes,
+                    kwargs['avg_degree'],
+                )
 
             remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
                 as_tuple=False).flatten()

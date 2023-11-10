@@ -1,4 +1,6 @@
 import inspect
+import os
+import platform
 import sys
 import warnings
 from typing import Dict, List, Optional, Tuple, Union
@@ -12,6 +14,9 @@ WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
+
+WITH_WINDOWS = os.name == 'nt'
+WITH_ARM = platform.machine() != 'x86_64'
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = -1
@@ -29,7 +34,7 @@ try:
         try:
             x = torch.randn(3, 4, device='cuda')
             ptr = torch.tensor([0, 2, 3], device='cuda')
-            weight = torch.tensor([2, 4, 4], device='cuda')
+            weight = torch.randn(2, 4, 4, device='cuda')
             out = pyg_lib.ops.segment_matmul(x, ptr, weight)
         except RuntimeError:
             WITH_GMM = False
@@ -212,6 +217,18 @@ except Exception as e:
 
 
 try:
+    import torch_frame  # noqa
+    WITH_TORCH_FRAME = True
+    from torch_frame import TensorFrame
+except Exception:
+    torch_frame = object
+    WITH_TORCH_FRAME = False
+
+    class TensorFrame:
+        pass
+
+
+try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True
 except Exception:
@@ -256,7 +273,8 @@ EDGE_TYPE_STR_SPLIT = '__'
 
 class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
-    type tuple into a single string."""
+    type tuple into a single string.
+    """
     def __new__(cls, *args):
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:

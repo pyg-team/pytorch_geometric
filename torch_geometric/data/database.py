@@ -36,6 +36,7 @@ Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
 
 class Database(ABC):
     r"""Base class for inserting and retrieving data from a database.
+
     A database acts as a persisted, out-of-memory and index-based key/value
     store for tensor and custom data:
 
@@ -62,7 +63,7 @@ class Database(ABC):
         >>> {'x': torch.tensor(...), 'y': 0, 'z': 'id_0'}
 
     In addition, databases support batch-wise insert and get, and support
-    syntactic sugar known from indexing Python lists, *e.g.*:
+    syntactic sugar known from indexing :python:`Python` lists, *e.g.*:
 
     .. code-block:: python
 
@@ -409,7 +410,7 @@ class SQLiteDatabase(Database):
     def _to_sql_type(self, type_info: Any) -> str:
         if type_info == int:
             return 'INTEGER'
-        if type_info == int:
+        if type_info == float:
             return 'FLOAT'
         if type_info == str:
             return 'TEXT'

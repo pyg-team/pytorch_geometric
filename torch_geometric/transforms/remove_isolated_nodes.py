@@ -12,7 +12,8 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('remove_isolated_nodes')
 class RemoveIsolatedNodes(BaseTransform):
     r"""Removes isolated nodes from the graph
-    (functional name: :obj:`remove_isolated_nodes`)."""
+    (functional name: :obj:`remove_isolated_nodes`).
+    """
     def forward(
         self,
         data: Union[Data, HeteroData],

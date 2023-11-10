@@ -34,7 +34,7 @@ class TemporalData(BaseData):
     represented with these four values.
 
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
-    the behavior of a regular Python dictionary.
+    the behavior of a regular :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -108,7 +108,8 @@ class TemporalData(BaseData):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
         r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
-        a Python dictionary."""
+        a Python dictionary.
+        """
         return cls(**mapping)
 
     def index_select(self, idx: Any) -> 'TemporalData':

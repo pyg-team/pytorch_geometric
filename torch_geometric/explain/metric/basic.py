@@ -17,7 +17,7 @@ def groundtruth_metrics(
     Args:
         pred_mask (torch.Tensor): The prediction mask to evaluate.
         target_mask (torch.Tensor): The ground-truth target mask.
-        metrics (str or List[str], optional). The metrics to return
+        metrics (str or List[str], optional): The metrics to return
             (:obj:`"accuracy"`, :obj:`"recall"`, :obj:`"precision"`,
             :obj:`"f1_score"`, :obj:`"auroc"`). (default: :obj:`["accuracy",
             "recall", "precision", "f1_score", "auroc"]`)

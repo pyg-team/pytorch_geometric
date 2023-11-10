@@ -1,7 +1,6 @@
 import copy
 import logging
 import math
-from collections.abc import Sequence
 from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
@@ -26,6 +25,7 @@ from torch_geometric.typing import (
     NodeType,
     OptTensor,
     SparseTensor,
+    TensorFrame,
 )
 
 
@@ -71,6 +71,10 @@ def index_select(
 
         return torch.index_select(value, dim, index, out=out)
 
+    if isinstance(value, TensorFrame):
+        assert dim == 0
+        return value[index]
+
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
 
@@ -86,7 +90,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            if isinstance(value, Tensor):
+            if isinstance(value, (Tensor, TensorFrame)):
                 index = index.to(value.device)
             elif isinstance(value, np.ndarray):
                 index = index.cpu()
@@ -127,14 +131,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                 continue
 
             dim = store._parent().__cat_dim__(key, value, store)
-            if isinstance(value, Tensor):
+            if isinstance(value, (Tensor, TensorFrame)):
                 index = index.to(value.device)
             elif isinstance(value, np.ndarray):
                 index = index.cpu()
             if perm is None:
                 out_store[key] = index_select(value, index, dim=dim)
             else:
-                if isinstance(value, Tensor):
+                if isinstance(value, (Tensor, TensorFrame)):
                     perm = perm.to(value.device)
                 elif isinstance(value, np.ndarray):
                     perm = perm.cpu()
@@ -206,8 +210,8 @@ def filter_custom_store(
 ) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds
     nodes in `node` end edges in `edge` for each node and edge type,
-    respectively."""
-
+    respectively.
+    """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
 
@@ -244,24 +248,35 @@ def filter_custom_store(
 def get_input_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
-) -> Tuple[Optional[str], Sequence]:
-    def to_index(tensor):
-        if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
-            return tensor.nonzero(as_tuple=False).view(-1)
-        if not isinstance(tensor, Tensor):
-            return torch.tensor(tensor, dtype=torch.long)
-        return tensor
+    input_id: Optional[Tensor],
+) -> Tuple[Optional[str], Tensor, Optional[Tensor]]:
+    def to_index(nodes, input_id) -> Tuple[Tensor, Optional[Tensor]]:
+        if isinstance(nodes, Tensor) and nodes.dtype == torch.bool:
+            nodes = nodes.nonzero(as_tuple=False).view(-1)
+            if input_id is not None:
+                assert input_id.numel() == nodes.numel()
+            else:
+                input_id = nodes
+            return nodes, input_id
+
+        if not isinstance(nodes, Tensor):
+            nodes = torch.tensor(nodes, dtype=torch.long)
+
+        if input_id is not None:
+            assert input_id.numel() == nodes.numel()
+
+        return nodes, input_id
 
     if isinstance(data, Data):
         if input_nodes is None:
-            return None, torch.arange(data.num_nodes)
-        return None, to_index(input_nodes)
+            return None, torch.arange(data.num_nodes), None
+        return None, *to_index(input_nodes, input_id)
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
 
         if isinstance(input_nodes, str):
-            return input_nodes, torch.arange(data[input_nodes].num_nodes)
+            return input_nodes, torch.arange(data[input_nodes].num_nodes), None
 
         assert isinstance(input_nodes, (list, tuple))
         assert len(input_nodes) == 2
@@ -269,20 +284,20 @@ def get_input_nodes(
 
         node_type, input_nodes = input_nodes
         if input_nodes is None:
-            return node_type, torch.arange(data[node_type].num_nodes)
-        return node_type, to_index(input_nodes)
+            return node_type, torch.arange(data[node_type].num_nodes), None
+        return node_type, *to_index(input_nodes, input_id)
 
     else:  # Tuple[FeatureStore, GraphStore]
         feature_store, graph_store = data
         assert input_nodes is not None
 
         if isinstance(input_nodes, Tensor):
-            return None, to_index(input_nodes)
+            return None, *to_index(input_nodes, input_id)
 
         if isinstance(input_nodes, str):
-            return input_nodes, torch.arange(
-                remote_backend_utils.num_nodes(feature_store, graph_store,
-                                               input_nodes))
+            num_nodes = remote_backend_utils.num_nodes(  #
+                feature_store, graph_store, input_nodes)
+            return input_nodes, torch.arange(num_nodes), None
 
         if isinstance(input_nodes, (list, tuple)):
             assert len(input_nodes) == 2
@@ -290,10 +305,11 @@ def get_input_nodes(
 
             node_type, input_nodes = input_nodes
             if input_nodes is None:
-                return node_type, torch.arange(
-                    remote_backend_utils.num_nodes(feature_store, graph_store,
-                                                   input_nodes))
-            return node_type, to_index(input_nodes)
+                num_nodes = remote_backend_utils.num_nodes(  #
+                    feature_store, graph_store, input_nodes)
+                return node_type, torch.arange(num_nodes), None
+
+            return node_type, *to_index(input_nodes, input_id)
 
 
 def get_edge_label_index(

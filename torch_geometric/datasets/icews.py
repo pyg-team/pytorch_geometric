@@ -13,8 +13,10 @@ class EventDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
     @property
     def num_nodes(self) -> int:
@@ -66,6 +68,8 @@ class ICEWS18(EventDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
@@ -78,11 +82,13 @@ class ICEWS18(EventDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         idx = self.processed_file_names.index(f'{split}.pt')
-        self.data, self.slices = torch.load(self.processed_paths[idx])
+        self.load(self.processed_paths[idx])
 
     @property
     def num_nodes(self) -> int:
@@ -115,6 +121,6 @@ class ICEWS18(EventDataset):
     def process(self):
         s = self.splits
         data_list = super().process()
-        torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
-        torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
-        torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])
+        self.save(data_list[s[0]:s[1]], self.processed_paths[0])
+        self.save(data_list[s[1]:s[2]], self.processed_paths[1])
+        self.save(data_list[s[2]:s[3]], self.processed_paths[2])
