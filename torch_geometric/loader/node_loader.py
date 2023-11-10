@@ -94,8 +94,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             filter_per_worker = infer_filter_per_worker(data)
 
         # Remove for PyTorch Lightning:
-        kwargs.pop("dataset", None)
-        kwargs.pop("collate_fn", None)
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes, input_id = get_input_nodes(
