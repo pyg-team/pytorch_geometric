@@ -129,7 +129,6 @@ ignore = [
     "D105",  # Ignore "Missing docstring in magic method"
     "D107",  # Ignore "Missing docstring in __init__"
     "D205",  # Ignore "blank line required between summary line and description"
-
 ]
 src = ["torch_geometric"]
 line-length = 80
