@@ -12,7 +12,9 @@ def get_mesh_laplacian(
     normalization: Optional[str] = None,
 ) -> Tuple[Tensor, Tensor]:
     r"""Computes the mesh Laplacian of a mesh given by :obj:`pos` and
-    :obj:`face`. Computation is based on the cotangent matrix defined as
+    :obj:`face`.
+
+    Computation is based on the cotangent matrix defined as
 
     .. math::
         \mathbf{C}_{ij} = \begin{cases}

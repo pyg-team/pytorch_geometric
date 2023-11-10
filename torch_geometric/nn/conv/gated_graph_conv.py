@@ -10,7 +10,7 @@ from torch_geometric.utils import spmm
 
 class GatedGraphConv(MessagePassing):
     r"""The gated graph convolution operator from the `"Gated Graph Sequence
-    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper
+    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper.
 
     .. math::
         \mathbf{h}_i^{(0)} &= \mathbf{x}_i \, \Vert \, \mathbf{0}

@@ -9,11 +9,11 @@ from torch_geometric.graphgym.register import (
 
 @register_node_encoder('example')
 class ExampleNodeEncoder(torch.nn.Module):
-    """
-        Provides an encoder for integer node features
+    """Provides an encoder for integer node features.
 
-        Parameters:
-        num_classes - the number of classes for the embedding mapping to learn
+    Args:
+        num_classes (int): The number of classes for the embedding mapping to
+            learn.
     """
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()

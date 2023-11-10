@@ -68,7 +68,8 @@ def get_data_size(data: BaseData) -> int:
 
 def get_cpu_memory_from_gc() -> int:
     r"""Returns the used CPU memory in bytes, as reported by the
-    :python:`Python` garbage collector."""
+    :python:`Python` garbage collector.
+    """
     warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
 
     mem = 0
@@ -76,7 +77,7 @@ def get_cpu_memory_from_gc() -> int:
         try:
             if isinstance(obj, Tensor) and not obj.is_cuda:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 
@@ -95,7 +96,7 @@ def get_gpu_memory_from_gc(device: int = 0) -> int:  # pragma: no cover
         try:
             if isinstance(obj, Tensor) and obj.get_device() == device:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 

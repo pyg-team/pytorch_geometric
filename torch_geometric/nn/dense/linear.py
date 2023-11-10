@@ -55,14 +55,13 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data
+    r"""Applies a linear tranformation to the incoming data.
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
 
-    similar to :class:`torch.nn.Linear`.
-    It supports lazy initialization and customizable weight and bias
-    initialization.
+    In contrast to :class:`torch.nn.Linear`, it supports lazy initialization
+    and customizable weight and bias initialization.
 
     Args:
         in_channels (int): Size of each input sample. Will be initialized
@@ -137,7 +136,8 @@ class Linear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
         """
@@ -190,13 +190,14 @@ class Linear(torch.nn.Module):
 
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
-    to types
+    to types.
+
+    For type :math:`\kappa`, it computes
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -257,7 +258,8 @@ class HeteroLinear(torch.nn.Module):
                     self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
@@ -331,13 +333,14 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary
+    r"""Applies separate linear tranformations to the incoming data dictionary.
+
+    For key :math:`\kappa`, it computes
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -404,7 +407,8 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.

@@ -14,7 +14,7 @@ class RandomJitter(BaseTransform):
     r"""Translates node positions by randomly sampled translation values
     within a given interval (functional name: :obj:`random_jitter`).
     In contrast to other random transformations,
-    translation is applied separately at each position
+    translation is applied separately at each position.
 
     Args:
         translate (sequence or float or int): Maximum translation in each

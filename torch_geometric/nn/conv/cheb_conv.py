@@ -14,7 +14,7 @@ from torch_geometric.utils import get_laplacian
 class ChebConv(MessagePassing):
     r"""The chebyshev spectral graph convolutional operator from the
     `"Convolutional Neural Networks on Graphs with Fast Localized Spectral
-    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper
+    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=1}^{K} \mathbf{Z}^{(k)} \cdot

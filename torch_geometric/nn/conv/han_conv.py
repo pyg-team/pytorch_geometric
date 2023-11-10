@@ -31,8 +31,7 @@ def group(
 
 
 class HANConv(MessagePassing):
-    r"""
-    The Heterogenous Graph Attention Operator from the
+    r"""The Heterogenous Graph Attention Operator from the
     `"Heterogenous Graph Attention Network"
     <https://arxiv.org/pdf/1903.07293.pdf>`_ paper.
 

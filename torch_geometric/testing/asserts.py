@@ -26,8 +26,9 @@ def assert_module(
     equal_nan: bool = False,
     **kwargs,
 ):
-    r"""Asserts that the output of a :obj:`module` is correct. Specifically,
-    this method tests that:
+    r"""Asserts that the output of a :obj:`module` is correct.
+
+    Specifically, this method tests that:
 
     1. The module output has the correct shape.
     2. The module is invariant to the permutation of edges.
@@ -53,6 +54,8 @@ def assert_module(
         rtol (float, optional): Relative tolerance. (default: :obj:`1e-05`)
         equal_nan (bool, optional): If set to :obj:`True`, then two :obj:`NaN`s
             will be considered equal. (default: :obj:`False`)
+        **kwargs (optional): Additional arguments passed to
+            :meth:`module.forward`.
     """
     if sparse_size is None:
         if 'size' in kwargs:

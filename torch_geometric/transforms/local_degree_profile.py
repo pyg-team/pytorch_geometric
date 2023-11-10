@@ -11,7 +11,7 @@ class LocalDegreeProfile(BaseTransform):
     r"""Appends the Local Degree Profile (LDP) from the `"A Simple yet
     Effective Baseline for Non-attribute Graph Classification"
     <https://arxiv.org/abs/1811.03508>`_ paper
-    (functional name: :obj:`local_degree_profile`)
+    (functional name: :obj:`local_degree_profile`).
 
     .. math::
         \mathbf{x}_i = \mathbf{x}_i \, \Vert \, (\deg(i), \min(DN(i)),
