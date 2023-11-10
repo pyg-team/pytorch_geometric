@@ -7,14 +7,12 @@ import torch.multiprocessing as mp
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.distributed import (
+    DistContext,
+    DistNeighborLoader,
+    DistNeighborSampler,
     LocalFeatureStore,
     LocalGraphStore,
     Partitioner,
-)
-from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.dist_neighbor_loader import DistNeighborLoader
-from torch_geometric.distributed.dist_neighbor_sampler import (
-    DistNeighborSampler,
 )
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.testing import onlyLinux
@@ -148,10 +146,10 @@ def dist_neighbor_loader_hetero(
         async_sampling=async_sampling,
     )
 
-    assert "DistNeighborLoader()" in str(loader)
+    assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
     assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
-    assert part_data[0].meta["is_hetero"] == True
+    assert part_data[0].meta["is_hetero"] is True
 
     for batch in loader:
         assert isinstance(batch, HeteroData)

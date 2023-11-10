@@ -2,20 +2,20 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.distributed.dist_context import DistContext, DistRole
-from torch_geometric.distributed.dist_loader import DistLoader
-from torch_geometric.distributed.dist_neighbor_sampler import (
+from torch_geometric.distributed import (
+    DistLoader,
     DistNeighborSampler,
+    LocalFeatureStore,
+    LocalGraphStore,
 )
-from torch_geometric.distributed.local_feature_store import LocalFeatureStore
-from torch_geometric.distributed.local_graph_store import LocalGraphStore
-from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.loader import NodeLoader
 from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 
 
 class DistNeighborLoader(NodeLoader, DistLoader):
-    r"""A distributed loader that preform sampling from nodes.
+    r"""A distributed loader that preforms sampling from nodes.
 
     Args:
         data: A (:class:`~torch_geometric.data.FeatureStore`,
@@ -25,43 +25,19 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-        current_ctx (DistContext): Distributed context info of the current
-            process.
-        rpc_worker_names (Dict[DistRole, List[str]]): RPC workers identifiers.
-        master_addr (str): RPC address for distributed loaders communication,
-            IP of the master node.
+        master_addr (str): RPC address for distributed loader communication,
+            *i.e.* the IP address of the master node.
         master_port (Union[int, str]): Open port for RPC communication with
             the master node.
-        channel (mp.Queue): A communication channel for sample messages that
-            allows for asynchronous processing of the sampler calls.
-            num_rpc_threads (Optional[int], optional): The number of threads
-            in the thread-pool used by
-            :class:`~torch.distributed.rpc.TensorPipeAgent` to execute
-            requests (default: 16).
-        rpc_timeout (Optional[int], optional): The default timeout,
-            in seconds, for RPC requests (default: 60 seconds). If the RPC
-            has not completed in this timeframe, an exception indicating so
-            will be raised. Callers can override this timeout for individual
-            RPCs in :meth:`~torch.distributed.rpc.rpc_sync` and
-            :meth:`~torch.distributed.rpc.rpc_async` if necessary.
-            (default: 180)
-        concurrency (Optional[int], optional): RPC concurrency used for
-            defining max size of asynchronous processing queue.
-        input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
-            indices of nodes for which neighbors are sampled to create
-            mini-batches.
-            Needs to be either given as a :obj:`torch.LongTensor` or
-            :obj:`torch.BoolTensor`.
-            If set to :obj:`None`, all nodes will be considered.
-            In heterogeneous graphs, needs to be passed as a tuple that holds
-            the node type and node indices. (default: :obj:`None`)
+        current_ctx (DistContext): Distributed context information of the
+            current process.
+        rpc_worker_names (Dict[DistRole, List[str]]): RPC worker identifiers.
+        concurrency (int, optional): RPC concurrency used for defining the
+            maximum size of the asynchronous processing queue.
+            (default: :obj:`1`)
 
-        All other Args follow the input type of the standard
-        torch_geometric.loader.NodeLoader.
-
-        **kwargs (optional): Additional arguments of
-            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
-            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
+        All other arguments follow the interface of
+        :class:`torch_geometric.loader.NeighborLoader`.
     """
     def __init__(
             self,
@@ -81,7 +57,6 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             time_attr: Optional[str] = None,
             transform: Optional[Callable] = None,
             is_sorted: bool = False,
-            directed: bool = True,  # Deprecated.
             with_edge: bool = True,
             concurrency: int = 1,
             filter_per_worker: Optional[bool] = False,
@@ -89,12 +64,9 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             device: torch.device = torch.device("cpu"),
             **kwargs,
     ):
-        assert isinstance(data[0], LocalFeatureStore) and (
-            data[1],
-            LocalGraphStore,
-        ), "Data needs to be Tuple[LocalFeatureStore, LocalGraphStore]"
-
-        assert concurrency >= 1, "RPC concurrency must be greater than 1."
+        assert isinstance(data[0], LocalFeatureStore)
+        assert isinstance(data[1], LocalGraphStore)
+        assert concurrency >= 1, "RPC concurrency must be greater than 1"
 
         if input_time is not None and time_attr is None:
             raise ValueError("Received conflicting 'input_time' and "
@@ -116,12 +88,12 @@ class DistNeighborLoader(NodeLoader, DistLoader):
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
-                share_memory=kwargs.get("num_workers", 0) > 0,
-                directed=directed,
+                share_memory=kwargs.get('num_workers', 0) > 0,
                 device=device,
                 channel=channel,
                 concurrency=concurrency,
             )
+
         self.neighbor_sampler = neighbor_sampler
 
         DistLoader.__init__(
@@ -146,5 +118,5 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             **kwargs,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return DistLoader.__repr__(self)
