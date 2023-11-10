@@ -1,3 +1,5 @@
+r"""Model package."""
+
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
 from .jumping_knowledge import JumpingKnowledge

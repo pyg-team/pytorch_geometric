@@ -126,10 +126,9 @@ ignore = [
     "D102",  # TODO: Don't ignore "Missing docstring in public method"
     "D103",  # TODO: Don't ignore "Missing docstring in public function"
     "D104",  # TODO: Don't ignore "Missing docstring in public package"
-    "D105",  # TODO: Don't ignore "Missing docstring in magic method"
-    "D106",  # TODO: Don't ignore "Missing docstring in public nested class"
-    "D107",  # TODO: Don't ignore "Missing docstring in __init__"
-    "D205",  # Ignore "1 blank line required between summary line and description"
+    "D105",  # Ignore "Missing docstring in magic method"
+    "D107",  # Ignore "Missing docstring in __init__"
+    "D205",  # Ignore "blank line required between summary line and description"
 
 ]
 src = ["torch_geometric"]
