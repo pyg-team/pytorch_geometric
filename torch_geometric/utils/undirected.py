@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union, overload
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -10,13 +10,13 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 MISSING = '???'
 
 
-@overload
+@torch.jit._overload
 def is_undirected(edge_index, edge_attr, num_nodes):
     # type: (Tensor, Optional[Tensor], Optional[int]) -> bool
     pass
 
 
-@overload
+@torch.jit._overload
 def is_undirected(edge_index, edge_attr, num_nodes):
     # type: (Tensor, List[Tensor], Optional[int]) -> bool
     pass
@@ -90,7 +90,7 @@ def is_undirected(
 
 @torch.jit._overload
 def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, str, Optional[int], str) -> Tensor  # noqa
+    # type: (Tensor, str, Optional[int], str) -> Tensor
     pass
 
 

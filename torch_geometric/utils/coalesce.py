@@ -12,7 +12,7 @@ MISSING = '???'
 
 @torch.jit._overload
 def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor  # noqa
+    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor
     pass
 
 
