@@ -9,18 +9,22 @@ from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
 
 @torch.jit._overload
-def spmm(src, other, reduce):
+def spmm(src, other, reduce):  # noqa: F811
     # type: (Tensor, Tensor, str) -> Tensor
     pass
 
 
 @torch.jit._overload
-def spmm(src, other, reduce):
+def spmm(src, other, reduce):  # noqa: F811
     # type: (SparseTensor, Tensor, str) -> Tensor
     pass
 
 
-def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
+def spmm(  # noqa: F811
+        src: Adj,
+        other: Tensor,
+        reduce: str = "sum",
+) -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:

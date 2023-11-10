@@ -31,16 +31,16 @@ class SparseLinear(MessagePassing):
         inits.uniform(self.in_channels, self.bias)
 
     @torch.jit._overload_method
-    def forward(self, edge_index, edge_weight=None):  # noqa
+    def forward(self, edge_index, edge_weight=None):  # noqa: F811
         # type: (Tensor, OptTensor) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def forward(self, edge_index, edge_weight=None):  # noqa
+    def forward(self, edge_index, edge_weight=None):  # noqa: F811
         # type: (SparseTensor, OptTensor) -> Tensor
         pass
 
-    def forward(  # noqa
+    def forward(  # noqa: F811
         self,
         edge_index: Adj,
         edge_weight: OptTensor = None,
@@ -150,16 +150,16 @@ class LINKX(torch.nn.Module):
         self.final_mlp.reset_parameters()
 
     @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (OptTensor, SparseTensor, OptTensor) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (OptTensor, Tensor, OptTensor) -> Tensor
         pass
 
-    def forward(
+    def forward(  # noqa: F811
         self,
         x: OptTensor,
         edge_index: Adj,

@@ -176,7 +176,7 @@ class GraphStore:
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Obtains all edge attributes stored in the :class:`GraphStore`."""
+        r"""Returns all registered edge attributes."""
         pass
 
     # Layout Conversion #######################################################
@@ -186,8 +186,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in COO
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in COO format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -203,8 +202,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSR
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSR format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -220,8 +218,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSC
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSC format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
