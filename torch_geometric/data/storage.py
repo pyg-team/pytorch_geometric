@@ -750,7 +750,7 @@ def recursive_apply_(data: Any, func: Callable):
     else:
         try:
             func(data)
-        except:  # noqa
+        except Exception:
             pass
 
 
@@ -768,5 +768,5 @@ def recursive_apply(data: Any, func: Callable) -> Any:
     else:
         try:
             return func(data)
-        except:  # noqa
+        except Exception:
             return data

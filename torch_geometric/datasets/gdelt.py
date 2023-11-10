@@ -30,17 +30,25 @@ class GDELT(EventDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
-    def __init__(self, root: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         idx = self.processed_file_names.index(f'{split}.pt')
         self.load(self.processed_paths[idx])
 

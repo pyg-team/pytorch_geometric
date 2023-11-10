@@ -51,8 +51,7 @@ def noWindows(func: Callable) -> Callable:
 
 
 def onlyPython(*args) -> Callable:
-    r"""A decorator to skip tests for any :python:`Python` version not listed.
-    """
+    r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
@@ -174,9 +173,9 @@ def withCUDA(func: Callable):
     r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
 
-    devices = [torch.device('cpu')]
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
     if torch.cuda.is_available():
-        devices.append(torch.device('cuda:0'))
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
@@ -187,7 +186,7 @@ def withCUDA(func: Callable):
                           f"order to test against '{device}'")
         else:
             import_module(backend)
-            devices.append(torch.device(device))
+            devices.append(pytest.param(torch.device(device), id=device))
 
     return pytest.mark.parametrize('device', devices)(func)
 

@@ -40,6 +40,8 @@ class MalNetTiny(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     data_url = ('http://malnet.cc.gatech.edu/'
@@ -54,11 +56,13 @@ class MalNetTiny(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if split not in {'train', 'val', 'trainval', 'test', None}:
             raise ValueError(f'Split "{split}" found, but expected either '
                              f'"train", "val", "trainval", "test" or None')
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
         if split is not None:

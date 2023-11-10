@@ -56,6 +56,8 @@ class InMemoryDataset(Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -72,8 +74,10 @@ class InMemoryDataset(Dataset, ABC):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter, log)
+        super().__init__(root, transform, pre_transform, pre_filter, log,
+                         force_reload)
         self._data = None
         self.slices = None
         self._data_list: Optional[List[BaseData]] = None

@@ -72,6 +72,8 @@ class UPFD(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -89,11 +91,13 @@ class UPFD(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.root = root
         self.name = name
         self.feature = feature
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
