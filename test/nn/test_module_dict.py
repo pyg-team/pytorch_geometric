@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.testing import (
     disableExtensions,
@@ -94,16 +95,15 @@ def test_compile_module_dict(device):
 
         def forward(self, x):
             key = ModuleDict.to_internal_key(edge_type)
-            x = self.module_dict[key](x)
-            return x
+            return self.module_dict[key](x)
 
     x = torch.randn(1, 1, device=device)
     module = TestModule().to(device)
     explanation = dynamo.explain(module)(x)
     assert explanation.graph_break_count == 0
 
-    # compiled_conv = torch_geometric.compile(conv)
+    compiled_module = torch_geometric.compile(module)
 
-    # expected = conv(x, edge_index)
-    # out = compiled_conv(x, edge_index)
-    # assert torch.allclose(out, expected)
+    expected = module(x)
+    out = compiled_module(x)
+    assert torch.allclose(out, expected)
