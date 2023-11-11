@@ -6,3 +6,4 @@ Working with Graph Datasets
 
     create_dataset
     load_csv
+    dataset_splitting
