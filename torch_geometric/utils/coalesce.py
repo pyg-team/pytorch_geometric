@@ -11,24 +11,27 @@ MISSING = '???'
 
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor  # noqa
+def coalesce(  # noqa: F811
+        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
+    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor
     pass
 
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
+def coalesce(  # noqa: F811
+        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
     # type: (Tensor, Optional[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
+def coalesce(  # noqa: F811
+        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
     # type: (Tensor, List[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
-def coalesce(
+def coalesce(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,

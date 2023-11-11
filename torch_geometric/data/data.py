@@ -94,6 +94,7 @@ class BaseData:
 
     def update(self, data: 'BaseData') -> 'BaseData':
         r"""Updates the data object with the elements from another data object.
+        Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
 

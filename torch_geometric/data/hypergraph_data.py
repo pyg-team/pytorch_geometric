@@ -58,8 +58,7 @@ class HyperGraphData(Data):
 
     @property
     def num_edges(self) -> int:
-        r"""Returns the number of hyperedges in the hypergraph.
-        """
+        r"""Returns the number of hyperedges in the hypergraph."""
         if self.edge_index is None:
             return 0
         return max(self.edge_index[1]) + 1
