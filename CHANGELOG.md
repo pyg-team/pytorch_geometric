@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added a tutorial for multi-node multi-GPU training with pure PyTorch ([#8071](https://github.com/pyg-team/pytorch_geometric/pull/8071))
 - Added a multinode-multigpu example on `ogbn-papers100M` ([#8070](https://github.com/pyg-team/pytorch_geometric/pull/8070))
 - Added support for `to_hetero_with_bases` on static graphs ([#8247](https://github.com/pyg-team/pytorch_geometric/pull/8247))
-- Added the `utils.inductive_train_test_split()` and `utils.split_graph` to split graph according to given subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
+- Added the `utils.inductive_train_test_split()` and `utils.split_graph()` to split graph according to given subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
 
 - Added support for `to_hetero_with_bases` on static graphs ([#8247](https://github.com/pyg-team/pytorch_geometric/pull/8247))
 - Added the `utils.inductive_train_test_split()` and `utils.split_graph()` to split graph according to given two subsets of nodes([#8243](https://github.com/pyg-team/pytorch_geometric/pull/8243))
