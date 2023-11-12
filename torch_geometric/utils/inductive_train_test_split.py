@@ -44,7 +44,6 @@ def split_graph(
         :class:`OptTensor`) otherwise.
 
     Examples:
-
         >>> edge_index=torch.tensor(
         ...     [[0, 1, 1, 2, 2, 3, 3, 4, 3, 0, 4, 2],
         ...     [1, 0, 2, 1, 3, 2, 4, 3, 0, 3, 2, 4]]
@@ -71,7 +70,6 @@ def split_graph(
             torch.tensor([[6], [7]]),
         )
     """
-
     device = edge_index.device
 
     if isinstance(subset1, (list, tuple)):
@@ -158,7 +156,6 @@ def inductive_train_test_split(
     :rtype: (:class:`Data`, :class:`Data`)
 
     Examples:
-
         >>> input_graph = Data(
         ...     edge_index=torch.tensor(
         ...         [[0, 1, 1, 2, 2, 3, 3, 4, 3, 0, 4, 2],
@@ -203,7 +200,6 @@ def inductive_train_test_split(
             y=torch.tensor([3, 4]),
         ))
     """
-
     device = data.edge_index.device
 
     if isinstance(train_node, (list, tuple)):
