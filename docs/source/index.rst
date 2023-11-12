@@ -61,6 +61,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/contrib
    modules/graphgym
    modules/profile
+   modules/metrics
 
 .. toctree::
    :maxdepth: 1
