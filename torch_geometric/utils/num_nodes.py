@@ -9,24 +9,24 @@ from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
 
 @torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
+def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
     # type: (Tensor, Optional[int]) -> int
     pass
 
 
 @torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
+def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
     # type: (Tuple[Tensor, Tensor], Optional[int]) -> int
     pass
 
 
 @torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
+def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
     # type: (SparseTensor, Optional[int]) -> int
     pass
 
 
-def maybe_num_nodes(
+def maybe_num_nodes(  # noqa: F811
     edge_index: Union[Tensor, Tuple[Tensor, Tensor], SparseTensor],
     num_nodes: Optional[int] = None,
 ) -> int:

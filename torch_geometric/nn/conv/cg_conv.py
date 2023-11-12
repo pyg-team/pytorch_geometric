@@ -14,7 +14,7 @@ class CGConv(MessagePassing):
     `"Crystal Graph Convolutional Neural Networks for an
     Accurate and Interpretable Prediction of Material Properties"
     <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.145301>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i + \sum_{j \in \mathcal{N}(i)}

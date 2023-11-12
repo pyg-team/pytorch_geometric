@@ -13,7 +13,7 @@ from torch_geometric.utils import is_torch_sparse_tensor, spmm
 class PANConv(MessagePassing):
     r"""The path integral based convolutional operator from the
     `"Path Integral Based Convolution and Pooling for Graph Neural Networks"
-    <https://arxiv.org/abs/2006.16811>`_ paper
+    <https://arxiv.org/abs/2006.16811>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{M} \mathbf{X} \mathbf{W}

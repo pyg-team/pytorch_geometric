@@ -8,6 +8,7 @@ import torch
 
 from torch_geometric.data import (
     Data,
+    HeteroData,
     InMemoryDataset,
     download_url,
     extract_tar,
@@ -79,7 +80,10 @@ class Entities(InMemoryDataset):
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(
+            self.processed_paths[0],
+            data_cls=HeteroData if hetero else Data,
+        )
 
     @property
     def raw_dir(self) -> str:
@@ -198,7 +202,7 @@ class Entities(InMemoryDataset):
         if self.hetero:
             data = data.to_heterogeneous(node_type_names=['v'])
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.upper()}{self.__class__.__name__}()'

@@ -37,9 +37,17 @@ def test_lazy_linear(weight, bias, device):
     x = torch.randn(3, 4, 16, device=device)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
     lin = lin.to(device)
+    copied_lin = copy.deepcopy(lin)
+
+    assert lin.weight.device == device
+    assert lin.bias.device == device
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
+
+    assert copied_lin.weight.device == device
+    assert copied_lin.bias.device == device
+    assert copied_lin(x).size() == (3, 4, 32)
 
 
 @withCUDA
@@ -66,7 +74,8 @@ def test_load_lazy_linear(dim1, dim2, bias, device):
     if bias:
         assert isinstance(lin1.bias, torch.nn.Parameter)
         assert isinstance(lin2.bias, torch.nn.Parameter)
-        assert torch.allclose(lin1.bias, lin2.bias)
+        if dim1 != -1:  # Only check for equality on materialized bias:
+            assert torch.allclose(lin1.bias, lin2.bias)
     else:
         assert lin1.bias is None
         assert lin2.bias is None
@@ -267,7 +276,7 @@ if __name__ == '__main__':
     try:
         import dgl
         WITH_DLG = True
-    except:  # noqa
+    except Exception:
         WITH_DGL = False
 
     warnings.filterwarnings('ignore', '.*API of nested tensors.*')

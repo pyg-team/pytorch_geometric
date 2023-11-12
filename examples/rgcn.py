@@ -16,7 +16,9 @@ args = parser.parse_args()
 
 # Trade memory consumption for faster computation.
 if args.dataset in ['AIFB', 'MUTAG']:
-    RGCNConv = FastRGCNConv
+    Conv = FastRGCNConv
+else:
+    Conv = RGCNConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 dataset = Entities(path, args.dataset)
@@ -40,10 +42,10 @@ data.test_idx = mapping[data.train_idx.size(0):]
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = RGCNConv(data.num_nodes, 16, dataset.num_relations,
-                              num_bases=30)
-        self.conv2 = RGCNConv(16, dataset.num_classes, dataset.num_relations,
-                              num_bases=30)
+        self.conv1 = Conv(data.num_nodes, 16, dataset.num_relations,
+                          num_bases=30)
+        self.conv2 = Conv(16, dataset.num_classes, dataset.num_relations,
+                          num_bases=30)
 
     def forward(self, edge_index, edge_type):
         x = F.relu(self.conv1(None, edge_index, edge_type))
