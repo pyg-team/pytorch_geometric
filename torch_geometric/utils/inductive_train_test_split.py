@@ -127,8 +127,12 @@ def split_graph(
         )
 
 
-def inductive_train_test_split(data, train_node, test_node,
-                               bridge=True) -> Tuple[Data, Data]:
+def inductive_train_test_split(
+    data: Data,
+    train_node: Union[Tensor, List[int]],
+    test_node: Union[Tensor, List[int]],
+    bridge: bool = True,
+) -> Tuple[Data, Data]:
     r"""Given a graph and two node subsets, this function returns the train and
     test subgraphs data induced by the two subsets, as well as the bridge edges
     between them (if :attr:`bridge` = :obj:`True`) and also splits the node
@@ -137,10 +141,10 @@ def inductive_train_test_split(data, train_node, test_node,
 
     Args:
         data (Data): Data object to be split.
-        train_node (_type_): the train subset of nodes to keep. It should be a
-            boolean mask (Tensor) or a list of indices (List[int]).
-        test_node (_type_): the test subset of nodes to keep. It should be a
-            boolean mask (Tensor) or a list of indices (List[int]).
+        train_node (Union[Tensor, List[int]]): train subset of nodes to keep.
+        It should be a boolean mask (Tensor) or a list of indices (List[int]).
+        test_node (Union[Tensor, List[int]]): test subset of nodes to keep.
+        It should be a boolean mask (Tensor) or a list of indices (List[int]).
             train_node and test_node must be disjoint and cover all nodes.
         bridge (bool, optional): whether to return the bridge edges between
             the two subsets in test data features
@@ -253,6 +257,7 @@ def inductive_train_test_split(data, train_node, test_node,
             num_nodes=data.num_nodes,
             bridge=True,
         )
+
         train_data = Data(
             edge_index=train_edge_index,
             edge_attr=train_edge_attr,
