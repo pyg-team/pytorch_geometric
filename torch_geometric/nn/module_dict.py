@@ -24,10 +24,11 @@ class ModuleDict(torch.nn.ModuleDict):
 
     @classmethod
     def to_internal_key(cls, key: Key) -> str:
-        # ModuleDict cannot handle tuples as keys:
         if isinstance(key, tuple):
+            # ModuleDict cannot handle tuples as keys:
             assert len(key) > 1
             key = f"<{'___'.join(key)}>"
+
         assert isinstance(key, str)
 
         # Always wrap the key with <> to avoid collisions with class attributes
