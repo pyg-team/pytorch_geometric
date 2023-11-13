@@ -27,15 +27,14 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
     dim = dim + src.dim() if dim < 0 else dim
     assert dim >= 0 and dim < src.dim()
 
-    size = [1] * src.dim()
-    size[dim] = mask.numel()
+    if dim != 0:
+        src = src.transpose(0, dim)
 
-    out = src.masked_select(mask.view(size))
+    out = src[mask]
 
-    size = list(src.size())
-    size[dim] = -1
-
-    return out.view(size)
+    if dim != 0:
+        out = out.transpose(0, dim)
+    return out
 
 
 def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
