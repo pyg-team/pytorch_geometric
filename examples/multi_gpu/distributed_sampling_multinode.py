@@ -73,11 +73,11 @@ def run(world_size, rank, local_rank):
 
     # download and unzip only with one process
     if rank == 0:
-        dataset = Reddit(f"data/Reddit")
+        dataset = Reddit("data/Reddit")
     dist.barrier()
     # and then read from all the other processes
     if rank != 0:
-        dataset = Reddit(f"data/Reddit")
+        dataset = Reddit("data/Reddit")
     dist.barrier()
 
     data = dataset[0]
