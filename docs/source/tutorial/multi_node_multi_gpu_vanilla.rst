@@ -64,6 +64,7 @@ Using a cluster configured with pyxis-containers
 If your cluster supports the `pyxis`-plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
 Currently it is not yet publically available, but you can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
 Then, just replace the previous ``srun``-call in the sbatch-file:
+
 .. code-block:: console
 
     srun --container-name=pyg-test --container-image=<image_url> --container-mounts='.:/workspace' python3 distributed_sampling_multinode.py
