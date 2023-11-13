@@ -22,7 +22,6 @@ class SAGE(torch.nn.Module):
         num_layers: int = 2,
     ):
         super().__init__()
-
         self.convs = torch.nn.ModuleList()
         self.convs.append(SAGEConv(in_channels, hidden_channels))
         for _ in range(num_layers - 2):
@@ -38,8 +37,12 @@ class SAGE(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, x_all: Tensor, device: torch.device,
-                  subgraph_loader: NeighborLoader) -> Tensor:
+    def inference(
+        self,
+        x_all: Tensor,
+        device: torch.device,
+        subgraph_loader: NeighborLoader,
+    ) -> Tensor:
         pbar = tqdm(total=len(subgraph_loader) * len(self.convs))
         pbar.set_description("Evaluating")
 
@@ -70,9 +73,8 @@ def run(world_size, rank, local_rank):
 
     dataset = Reddit("../../data/Reddit")
     data = dataset[0]
-    data = data.to(local_rank, "x",
-                   "y")  # Move to device for faster feature fetch.
-
+    # Move to device for faster feature fetch.
+    data = data.to(local_rank, "x", "y")
     # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
@@ -88,8 +90,12 @@ def run(world_size, rank, local_rank):
     )
 
     if rank == 0:  # Create single-hop evaluation neighbor loader:
-        subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
-                                         shuffle=False, **kwargs)
+        subgraph_loader = NeighborLoader(
+            copy.copy(data),
+            num_neighbors=[-1],
+            shuffle=False,
+            **kwargs,
+        )
         # No need to maintain these features during evaluation:
         del subgraph_loader.data.x, subgraph_loader.data.y
         # Add global node index information:
@@ -118,8 +124,11 @@ def run(world_size, rank, local_rank):
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
             with torch.no_grad():
-                out = model.module.inference(data.x, local_rank,
-                                             subgraph_loader)
+                out = model.module.inference(
+                    data.x,
+                    local_rank,
+                    subgraph_loader,
+                )
             res = out.argmax(dim=-1) == data.y.to(out.device)
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
