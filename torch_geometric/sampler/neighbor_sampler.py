@@ -121,7 +121,8 @@ class NeighborSampler(BaseSampler):
             # Obtain graph metadata:
             node_attrs = [
                 attr for attr in feature_store.get_all_tensor_attrs()
-                if isinstance(attr.group_name, NodeType)
+                if isinstance(attr.group_name, NodeType)  # Heterogeneous ...
+                or attr.group_name is None  # ... or homogeneous.
             ]
             self.node_types = list(set(attr.group_name for attr in node_attrs))
 
