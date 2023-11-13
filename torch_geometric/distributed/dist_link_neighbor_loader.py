@@ -9,13 +9,13 @@ from torch_geometric.distributed import (
     LocalGraphStore,
 )
 from torch_geometric.distributed.dist_context import DistContext, DistRole
-from torch_geometric.loader import NodeLoader
-from torch_geometric.sampler.base import SubgraphType
-from torch_geometric.typing import EdgeType, InputNodes, OptTensor
+from torch_geometric.loader import LinkLoader
+from torch_geometric.sampler.base import NegativeSampling, SubgraphType
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
-class DistNeighborLoader(NodeLoader, DistLoader):
-    r"""A distributed loader that preforms sampling from nodes.
+class DistLinkNeighborLoader(LinkLoader, DistLoader):
+    r"""A distributed loader that preform sampling from edges.
 
     Args:
         data: A (:class:`~torch_geometric.data.FeatureStore`,
@@ -31,13 +31,13 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             the master node.
         current_ctx (DistContext): Distributed context information of the
             current process.
-        rpc_worker_names (Dict[DistRole, List[str]]): RPC worker identifiers.
+        rpc_worker_names (Dict[DistRole, List[str]]): RPC workers identifiers.
         concurrency (int, optional): RPC concurrency used for defining the
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
 
         All other arguments follow the interface of
-        :class:`torch_geometric.loader.NeighborLoader`.
+        :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
     def __init__(
         self,
@@ -47,17 +47,20 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         master_port: Union[int, str],
         current_ctx: DistContext,
         rpc_worker_names: Dict[DistRole, List[str]],
-        input_nodes: InputNodes = None,
-        input_time: OptTensor = None,
+        edge_label_index: InputEdges = None,
+        edge_label: OptTensor = None,
+        edge_label_time: OptTensor = None,
         neighbor_sampler: Optional[DistNeighborSampler] = None,
         replace: bool = False,
         subgraph_type: Union[SubgraphType, str] = "directional",
         disjoint: bool = False,
         temporal_strategy: str = "uniform",
+        neg_sampling: Optional[NegativeSampling] = None,
+        neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         concurrency: int = 1,
-        filter_per_worker: Optional[bool] = False,
+        filter_per_worker: Optional[bool] = None,
         async_sampling: bool = True,
         device: Optional[torch.device] = None,
         **kwargs,
@@ -66,10 +69,14 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         assert isinstance(data[1], LocalGraphStore)
         assert concurrency >= 1, "RPC concurrency must be greater than 1"
 
-        if input_time is not None and time_attr is None:
-            raise ValueError("Received conflicting 'input_time' and "
-                             "'time_attr' arguments: 'input_time' is set "
-                             "while 'time_attr' is not set.")
+        if (edge_label_time is not None) != (time_attr is not None):
+            raise ValueError(
+                f"Received conflicting 'edge_label_time' and 'time_attr' "
+                f"arguments: 'edge_label_time' is "
+                f"{'set' if edge_label_time is not None else 'not set'} "
+                f"while 'time_attr' is "
+                f"{'set' if time_attr is not None else 'not set'}. "
+                f"Both arguments must be provided for temporal sampling.")
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
 
@@ -100,16 +107,18 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             rpc_worker_names=rpc_worker_names,
             **kwargs,
         )
-        NodeLoader.__init__(
+        LinkLoader.__init__(
             self,
             data=data,
-            node_sampler=neighbor_sampler,
-            input_nodes=input_nodes,
-            input_time=input_time,
+            link_sampler=neighbor_sampler,
+            edge_label_index=edge_label_index,
+            edge_label=edge_label,
+            neg_sampling=neg_sampling,
+            neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
             filter_per_worker=filter_per_worker,
-            transform_sampler_output=self.channel_get,
             worker_init_fn=self.worker_init_fn,
+            transform_sampler_output=self.channel_get,
             **kwargs,
         )
 

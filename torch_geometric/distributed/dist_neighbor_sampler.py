@@ -60,20 +60,20 @@ class DistNeighborSampler:
     used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
     """
     def __init__(
-            self,
-            current_ctx: DistContext,
-            rpc_worker_names: Dict[DistRole, List[str]],
-            data: Tuple[LocalFeatureStore, LocalGraphStore],
-            num_neighbors: NumNeighborsType,
-            channel: Optional[mp.Queue] = None,
-            replace: bool = False,
-            subgraph_type: Union[SubgraphType, str] = 'directional',
-            disjoint: bool = False,
-            temporal_strategy: str = 'uniform',
-            time_attr: Optional[str] = None,
-            concurrency: int = 1,
-            device: Optional[torch.device] = torch.device('cpu'),
-            **kwargs,
+        self,
+        current_ctx: DistContext,
+        rpc_worker_names: Dict[DistRole, List[str]],
+        data: Tuple[LocalFeatureStore, LocalGraphStore],
+        num_neighbors: NumNeighborsType,
+        channel: Optional[mp.Queue] = None,
+        replace: bool = False,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
+        disjoint: bool = False,
+        temporal_strategy: str = 'uniform',
+        time_attr: Optional[str] = None,
+        concurrency: int = 1,
+        device: Optional[torch.device] = None,
+        **kwargs,
     ):
         self.current_ctx = current_ctx
         self.rpc_worker_names = rpc_worker_names
