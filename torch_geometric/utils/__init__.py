@@ -20,6 +20,7 @@ from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
 from .homophily import homophily
+from .independent_set import maximal_independent_set
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
@@ -87,6 +88,7 @@ __all__ = [
     'dropout_path',
     'dropout_adj',
     'homophily',
+    'maximal_independent_set',
     'assortativity',
     'get_laplacian',
     'get_mesh_laplacian',
