@@ -71,7 +71,15 @@ def run(world_size, rank, local_rank):
     # make sure, those are set!
     dist.init_process_group("nccl", world_size=world_size, rank=rank)
 
-    dataset = Reddit("../../data/Reddit")
+    # download and unzip only with one process
+    if rank == 0:
+        dataset = Reddit(f"data/Reddit")
+    dist.barrier()
+    # and then read from all the other processes
+    if rank != 0:
+        dataset = Reddit(f"data/Reddit")
+    dist.barrier()
+
     data = dataset[0]
     # Move to device for faster feature fetch.
     data = data.to(local_rank, "x", "y")

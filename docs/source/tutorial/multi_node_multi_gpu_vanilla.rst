@@ -61,17 +61,16 @@ Finally, to submit the `batch`-file itself into the work-queue you will use the 
 Using a cluster configured with pyxis-containers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If your cluster supports the `pyxis`-plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`:
-
+If your cluster supports the `pyxis`-plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
+Currently it is not yet publically available, but you can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
+Then, just replace the previous ``srun``-call in the sbatch-file:
 .. code-block:: console
 
-    srun -l --partition=<partitionname> -N<num_nodes> --ntasks=<number of GPUS in total> --gpus-per-task=1 --gpu-bind=none --container-name=cont --container-image=<image_url> --container-mounts=/ogb-papers100m/:/workspace/dataset python3 distributed_sampling_multinode.py
+    srun --container-name=pyg-test --container-image=<image_url> --container-mounts='.:/workspace' python3 distributed_sampling_multinode.py
 
-The container has all necessary environment-variables populated already.
-
-You can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
-General availability on `NVIDIA NGC <https://www.ngc.nvidia.com/>`_ is set for the end of 2023.
-Alternatively, see `docker.com <https://www.docker.com/>`_ for information on how to create your own container.
+Note that ``--container-mounts='.:/workspace'`` makes the current folder (which should include the example code) available in the default startup folder ``workspace`` of the container.
+If you want to eventually customize packages in the container without having access to ``docker`` (very likely on a public HPC), you can create your own image by following `this tutorial <http
+s://doku.lrz.de/9-creating-and-reusing-a-custom-enroot-container-image-10746637.html>`_.
 
 
 Modifying the training script
