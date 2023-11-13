@@ -55,7 +55,7 @@ Finally, to submit the `batch`-file itself into the work-queue you will use the 
 
 .. code-block:: console
 
-    $ sbatch distributed_sampling_multinode.sbatch
+    sbatch distributed_sampling_multinode.sbatch
 
 
 Using a cluster configured with pyxis-containers
