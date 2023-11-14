@@ -44,7 +44,7 @@ class NeighborSampler(BaseSampler):
         replace: bool = False,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
-        temporal_entity: Optional[str] = 'node',
+        temporal_entity: str = 'node',
         time_attr: Optional[str] = None,
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
