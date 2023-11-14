@@ -239,6 +239,7 @@ class LinkNeighborLoader(LinkLoader):
                 replace=replace,
                 subgraph_type=subgraph_type,
                 disjoint=disjoint,
+                temporal_entity='edge',
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
                 weight_attr=weight_attr,
