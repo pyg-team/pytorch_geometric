@@ -39,24 +39,26 @@ class MarginalSubgraphDataset(Dataset):
         self.device = self.X.device
 
         self.label = data.y
-        self.exclude_mask = (torch.tensor(exclude_mask).type(torch.float32).to(
-            self.device))
-        self.include_mask = (torch.tensor(include_mask).type(torch.float32).to(
-            self.device))
+        self.exclude_mask = (
+            torch.tensor(exclude_mask).type(torch.float32).to(self.device)
+        )
+        self.include_mask = (
+            torch.tensor(include_mask).type(torch.float32).to(self.device)
+        )
         self.subgraph_build_func = subgraph_build_func
 
-    def __len__(self):
+    def len(self):
         return self.exclude_mask.shape[0]
 
-    def __getitem__(self, idx):
+    def get(self, idx):
         exclude_graph_X, exclude_graph_edge_index = self.subgraph_build_func(
-            self.X, self.edge_index, self.exclude_mask[idx])
+            self.X, self.edge_index, self.exclude_mask[idx]
+        )
         include_graph_X, include_graph_edge_index = self.subgraph_build_func(
-            self.X, self.edge_index, self.include_mask[idx])
-        exclude_data = Data(x=exclude_graph_X,
-                            edge_index=exclude_graph_edge_index)
-        include_data = Data(x=include_graph_X,
-                            edge_index=include_graph_edge_index)
+            self.X, self.edge_index, self.include_mask[idx]
+        )
+        exclude_data = Data(x=exclude_graph_X, edge_index=exclude_graph_edge_index)
+        include_data = Data(x=include_graph_X, edge_index=include_graph_edge_index)
         return exclude_data, include_data
 
 
@@ -71,9 +73,11 @@ def marginal_contribution(
     Here exclude_mask and include_mask are node mask.
     """
     marginal_subgraph_dataset = MarginalSubgraphDataset(
-        data, exclude_mask, include_mask, subgraph_build_func)
-    dataloader = DataLoader(marginal_subgraph_dataset, batch_size=256,
-                            shuffle=False, num_workers=0)
+        data, exclude_mask, include_mask, subgraph_build_func
+    )
+    dataloader = DataLoader(
+        marginal_subgraph_dataset, batch_size=256, shuffle=False, num_workers=0
+    )
 
     marginal_contribution_list = []
 
@@ -128,18 +132,18 @@ def l_shapley(
     exclude_mask = np.stack(set_exclude_masks, axis=0)
     include_mask = np.stack(set_include_masks, axis=0)
     num_players = len(nodes_around) + 1
-    num_player_in_set = (num_players - 1 + len(coalition) -
-                         (1 - exclude_mask).sum(axis=1))
+    num_player_in_set = (
+        num_players - 1 + len(coalition) - (1 - exclude_mask).sum(axis=1)
+    )
     p = num_players
     S = num_player_in_set
     coeffs = torch.tensor(1.0 / comb(p, S) / (p - S + 1e-6))
 
-    marginal_contributions = marginal_contribution(data, exclude_mask,
-                                                   include_mask, value_func,
-                                                   subgraph_build_func)
+    marginal_contributions = marginal_contribution(
+        data, exclude_mask, include_mask, value_func, subgraph_build_func
+    )
 
-    l_shapley_value = (marginal_contributions.squeeze().cpu() *
-                       coeffs).sum().item()
+    l_shapley_value = (marginal_contributions.squeeze().cpu() * coeffs).sum().item()
     return l_shapley_value
 
 
@@ -160,15 +164,10 @@ def mc_shapley(
     set_include_masks = []
 
     for example_idx in range(sample_num):
-        subset_nodes_from = [
-            node for node in node_indices if node not in coalition
-        ]
-        random_nodes_permutation = np.array(subset_nodes_from +
-                                            [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(
-            random_nodes_permutation)
-        split_idx = np.where(
-            random_nodes_permutation == coalition_placeholder)[0][0]
+        subset_nodes_from = [node for node in node_indices if node not in coalition]
+        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
+        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
+        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.zeros(num_nodes)
         set_exclude_mask[selected_nodes] = 1.0
@@ -180,9 +179,9 @@ def mc_shapley(
 
     exclude_mask = np.stack(set_exclude_masks, axis=0)
     include_mask = np.stack(set_include_masks, axis=0)
-    marginal_contributions = marginal_contribution(data, exclude_mask,
-                                                   include_mask, value_func,
-                                                   subset_build_func)
+    marginal_contributions = marginal_contribution(
+        data, exclude_mask, include_mask, value_func, subset_build_func
+    )
     mc_shapley_value = marginal_contributions.mean().item()
 
     return mc_shapley_value
@@ -213,15 +212,10 @@ def mc_l_shapley(
     set_exclude_masks = []
     set_include_masks = []
     for example_idx in range(sample_num):
-        subset_nodes_from = [
-            node for node in local_region if node not in coalition
-        ]
-        random_nodes_permutation = np.array(subset_nodes_from +
-                                            [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(
-            random_nodes_permutation)
-        split_idx = np.where(
-            random_nodes_permutation == coalition_placeholder)[0][0]
+        subset_nodes_from = [node for node in local_region if node not in coalition]
+        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
+        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
+        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
         set_exclude_mask[local_region] = 0.0
@@ -234,9 +228,9 @@ def mc_l_shapley(
 
     exclude_mask = np.stack(set_exclude_masks, axis=0)
     include_mask = np.stack(set_include_masks, axis=0)
-    marginal_contributions = marginal_contribution(data, exclude_mask,
-                                                   include_mask, value_func,
-                                                   subgraph_build_func)
+    marginal_contributions = marginal_contribution(
+        data, exclude_mask, include_mask, value_func, subgraph_build_func
+    )
 
     mc_l_shapley_value = (marginal_contributions).mean().item()
     return mc_l_shapley_value
@@ -370,15 +364,10 @@ def NC_mc_l_shapley(
     set_exclude_masks = []
     set_include_masks = []
     for example_idx in range(sample_num):
-        subset_nodes_from = [
-            node for node in local_region if node not in coalition
-        ]
-        random_nodes_permutation = np.array(subset_nodes_from +
-                                            [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(
-            random_nodes_permutation)
-        split_idx = np.where(
-            random_nodes_permutation == coalition_placeholder)[0][0]
+        subset_nodes_from = [node for node in local_region if node not in coalition]
+        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
+        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
+        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
         set_exclude_mask[local_region] = 0.0
@@ -393,16 +382,15 @@ def NC_mc_l_shapley(
 
     exclude_mask = np.stack(set_exclude_masks, axis=0)
     include_mask = np.stack(set_include_masks, axis=0)
-    marginal_contributions = marginal_contribution(data, exclude_mask,
-                                                   include_mask, value_func,
-                                                   subgraph_build_func)
+    marginal_contributions = marginal_contribution(
+        data, exclude_mask, include_mask, value_func, subgraph_build_func
+    )
 
     mc_l_shapley_value = (marginal_contributions).mean().item()
     return mc_l_shapley_value
 
 
-def sparsity(coalition: list, data: Data,
-             subgraph_building_method="zero_filling"):
+def sparsity(coalition: list, data: Data, subgraph_building_method="zero_filling"):
     if subgraph_building_method == "zero_filling":
         return 1.0 - len(coalition) / data.num_nodes
 
@@ -416,6 +404,7 @@ def sparsity(coalition: list, data: Data,
 
 def GnnNetsGC2valueFunc(gnnNets, target_class):
     """Value Function for Graph Classification (GC) Task"""
+
     def value_func(batch):
         with torch.no_grad():
             logits = gnnNets(batch.x, batch.edge_index)
@@ -428,6 +417,7 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
 
 def GnnNetsNC2valueFunc(gnnNets_NC, node_idx, target_class):
     """Value Function for Node Classification (NC) Task"""
+
     def value_func(data):
         with torch.no_grad():
             logits = gnnNets_NC(data.x, data.edge_index)
