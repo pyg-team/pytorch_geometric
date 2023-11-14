@@ -63,7 +63,7 @@ for epoch in range(1, 21):
 
 explainer = Explainer(
     model=model,
-    algorithm=XGNNExplainer(generative_model = RLGraphGen, epochs = 200),
+    algorithm=XGNNExplainer(generative_model = XGNNGenerator(), epochs = 200),
     explanation_type='model',
     node_mask_type=None,
     edge_mask_type=None,

@@ -17,6 +17,7 @@ class XGNNGenerator(torch.nn.Module):
         pass
     def train(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
         # TODO: throw errors, this is a base class
+        print("debug: xgnn train")
         pass
     
 class XGNNExplainer(ExplainerAlgorithm):
@@ -91,6 +92,8 @@ class XGNNExplainer(ExplainerAlgorithm):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
         # for each class get a model
+
+        print("debug: xgnn forward")
         
         generative_models = dict()
         for t in torch.unique(target):
