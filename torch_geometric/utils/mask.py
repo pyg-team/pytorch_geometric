@@ -27,13 +27,14 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
     dim = dim + src.dim() if dim < 0 else dim
     assert dim >= 0 and dim < src.dim()
 
-    if dim != 0:
-        src = src.transpose(0, dim)
-
+    # Applying a 1-dimensional mask in the first dimension is significantly
+    # faster than broadcasting the mask and utilizing `masked_select`.
+    # As such, we transpose in the first dimension, perform the masking, and
+    # then transpose back to the original shape.
+    src = src.transpose(0, dim) if dim != 0 else src
     out = src[mask]
+    out = out.transpose(0, dim) if dim != 0 else out
 
-    if dim != 0:
-        out = out.transpose(0, dim)
     return out
 
 
