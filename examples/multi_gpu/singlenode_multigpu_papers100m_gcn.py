@@ -92,7 +92,7 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
-              split_idx, num_classes, cugraph_data_loader,
+              split_idx, num_classes, cugraph_data_loader, wall_clock_start,
               scheduler_address=None, tempdir=None):
     init_pytorch_worker(
         rank,
@@ -330,9 +330,9 @@ if __name__ == '__main__':
             run_train,
             args=(data, world_size, model, args.epochs, args.batch_size,
                   args.fan_out, split_idx, dataset.num_classes,
-                  args.cugraph_data_loader,
+                  args.cugraph_data_loader, wall_clock_start,
                   None if cluster is None else cluster.scheduler_address,
-                  tempdir, wall_clock_start), nprocs=world_size, join=True)
+                  tempdir), nprocs=world_size, join=True)
 
     if cluster is not None:
         cluster.close()
