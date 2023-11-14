@@ -1,6 +1,7 @@
 import copy
 import math
 import sys
+import time as time_measure
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -75,11 +76,12 @@ class NeighborSampler(BaseSampler):
                 self.node_time = data[time_attr]
             elif time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data[time_attr]
-            
+
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, src_node_time=self.node_time, edge_time=self.edge_time)
+                is_sorted=is_sorted, src_node_time=self.node_time,
+                edge_time=self.edge_time)
 
             self.edge_weight: Optional[Tensor] = None
             if time_attr is not None and temporal_entity == 'edge':
@@ -97,12 +99,12 @@ class NeighborSampler(BaseSampler):
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='node':
+            if time_attr is not None and temporal_entity == 'node':
                 self.node_time = data.collect(time_attr)
             self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='edge':
+            if time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data.collect(time_attr)
-            
+
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
             # to be converted into single strings.
@@ -111,18 +113,18 @@ class NeighborSampler(BaseSampler):
             # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, node_time_dict=self.node_time, edge_time_dict=self.edge_time)
+                is_sorted=is_sorted, node_time_dict=self.node_time,
+                edge_time_dict=self.edge_time)
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='edge':
+            if time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data.collect(time_attr)
                 for edge_type, edge_time in self.edge_time.items():
                     if self.perm.get(edge_type, None) is not None:
                         edge_time = edge_time[self.perm[edge_type]]
                         self.edge_time[edge_type] = edge_time
-                self.edge_time = remap_keys(self.edge_time,
-                                              self.to_rel_type)
+                self.edge_time = remap_keys(self.edge_time, self.to_rel_type)
             self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
             if weight_attr is not None:
                 self.edge_weight = data.collect(weight_attr)

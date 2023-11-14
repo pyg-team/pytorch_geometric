@@ -7,9 +7,9 @@ from torch.nn import Linear
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
+from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
-from torch_geometric.loader import LinkNeighborLoader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--profile_code', action='store_true',
@@ -52,35 +52,23 @@ train_data, val_data, test_data = T.RandomLinkSplit(
 )(data)
 
 train_dataloader = LinkNeighborLoader(
-    data=train_data,
-    num_neighbors=[5,5,5],
-    neg_sampling_ratio=1,
-    edge_label_index=(('user', 'rates', 'movie'), train_data[('user', 'rates', 'movie')].edge_index ),
+    data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      train_data[('user', 'rates', 'movie')].edge_index),
     edge_label_time=train_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096,
-    shuffle=True,
-    time_attr='timestamp'
-)
+    batch_size=4096, shuffle=True, time_attr='timestamp')
 val_dataloader = LinkNeighborLoader(
-    data=val_data,
-    num_neighbors=[5,5,5],
-    neg_sampling_ratio=1,
-    edge_label_index=(('user', 'rates', 'movie'), val_data[('user', 'rates', 'movie')].edge_index ),
+    data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      val_data[('user', 'rates', 'movie')].edge_index),
     edge_label_time=val_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096,
-    shuffle=True,
-    time_attr='timestamp'
-)
+    batch_size=4096, shuffle=True, time_attr='timestamp')
 test_dataloader = LinkNeighborLoader(
-    data=test_data,
-    num_neighbors=[5,5,5],
-    neg_sampling_ratio=1,
-    edge_label_index=(('user', 'rates', 'movie'), test_data[('user', 'rates', 'movie')].edge_index ),
+    data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      test_data[('user', 'rates', 'movie')].edge_index),
     edge_label_time=test_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096,
-    shuffle=True,
-    time_attr='timestamp'
-)
+    batch_size=4096, shuffle=True, time_attr='timestamp')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:
@@ -137,8 +125,11 @@ class Model(torch.nn.Module):
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-from tqdm import tqdm
 import time
+
+from tqdm import tqdm
+
+
 def train(train_dl, val_dl):
     model.train()
     pbar = tqdm(train_dl, desc='Train')
@@ -152,9 +143,9 @@ def train(train_dl, val_dl):
         loss = weighted_mse_loss(pred, target, weight)
         loss.backward()
         optimizer.step()
-        pbar.set_postfix({'loss':loss.item()})
+        pbar.set_postfix({'loss': loss.item()})
         t1 = time.time()
-        train_time +=t1-t0
+        train_time += t1 - t0
         t0 = time.time()
     if args.profile_code is True:
         print(f'train time = {train_time}')
@@ -175,7 +166,7 @@ def test(dl, desc='val'):
         target = batch['user', 'movie'].edge_label.float()
         rmse += F.mse_loss(pred, target).sqrt()
         t1 = time.time()
-        val_time +=t1-t0
+        val_time += t1 - t0
         t0 = time.time()
     if args.profile_code is True:
         print(f'{desc} time = {val_time}')
@@ -187,6 +178,6 @@ for epoch in range(1, 31):
     # train_rmse = test(val_dataloader)
     val_rmse = test(val_dataloader, 'val')
     # test_rmse = test(test_dataloader, 'test')
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},' 
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
           f'Val: {val_rmse:.4f}')
-        #   f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
+    #   f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')

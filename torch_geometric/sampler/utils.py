@@ -66,7 +66,8 @@ def to_csc(
     elif data.edge_index is not None:
         row, col = data.edge_index
         if not is_sorted:
-            row, col, perm = sort_csc(row, col, src_node_time=src_node_time, edge_time=edge_time)
+            row, col, perm = sort_csc(row, col, src_node_time=src_node_time,
+                                      edge_time=edge_time)
         colptr = index2ptr(col, data.size(1))
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
@@ -103,7 +104,8 @@ def to_hetero_csc(
     for edge_type, store in data.edge_items():
         src_node_time = (node_time_dict or {}).get(edge_type[0], None)
         edge_time = (edge_time_dict or {}).get(edge_type, None)
-        out = to_csc(store, device, share_memory, is_sorted, src_node_time=src_node_time, edge_time=edge_time)
+        out = to_csc(store, device, share_memory, is_sorted,
+                     src_node_time=src_node_time, edge_time=edge_time)
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
