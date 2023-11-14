@@ -108,7 +108,8 @@ class TemporalData(BaseData):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
         r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
-        a Python dictionary."""
+        a Python dictionary.
+        """
         return cls(**mapping)
 
     def index_select(self, idx: Any) -> 'TemporalData':

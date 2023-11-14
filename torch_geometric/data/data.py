@@ -94,6 +94,7 @@ class BaseData:
 
     def update(self, data: 'BaseData') -> 'BaseData':
         r"""Updates the data object with the elements from another data object.
+        Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
 
@@ -141,7 +142,8 @@ class BaseData:
 
     def __contains__(self, key: str) -> bool:
         r"""Returns :obj:`True` if the attribute :obj:`key` is present in the
-        data."""
+        data.
+        """
         return key in self.keys()
 
     def __getstate__(self) -> Dict[str, Any]:
@@ -184,7 +186,8 @@ class BaseData:
     def num_edges(self) -> int:
         r"""Returns the number of edges in the graph.
         For undirected graphs, this will return the number of bi-directional
-        edges, which is double the amount of unique edges."""
+        edges, which is double the amount of unique edges.
+        """
         return sum([v.num_edges for v in self.edge_stores])
 
     def node_attrs(self) -> List[str]:
@@ -206,7 +209,8 @@ class BaseData:
 
     def generate_ids(self):
         r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
-        each node and edge to a continuously ascending and unique ID."""
+        each node and edge to a continuously ascending and unique ID.
+        """
         for store in self.node_stores:
             store.n_id = torch.arange(store.num_nodes)
         for store in self.edge_stores:
@@ -239,12 +243,14 @@ class BaseData:
 
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
-        and do not contain duplicate entries."""
+        and do not contain duplicate entries.
+        """
         return all([store.is_coalesced() for store in self.edge_stores])
 
     def coalesce(self) -> 'Data':
         r"""Sorts and removes duplicated entries from edge indices
-        :obj:`edge_index`."""
+        :obj:`edge_index`.
+        """
         out = copy.copy(self)
         for store in out.edge_stores:
             store.coalesce()
@@ -268,44 +274,51 @@ class BaseData:
 
     def apply_(self, func: Callable, *args: str):
         r"""Applies the in-place function :obj:`func`, either to all attributes
-        or only the ones given in :obj:`*args`."""
+        or only the ones given in :obj:`*args`.
+        """
         for store in self.stores:
             store.apply_(func, *args)
         return self
 
     def apply(self, func: Callable, *args: str):
         r"""Applies the function :obj:`func`, either to all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         for store in self.stores:
             store.apply(func, *args)
         return self
 
     def clone(self, *args: str):
         r"""Performs cloning of tensors, either for all attributes or only the
-        ones given in :obj:`*args`."""
+        ones given in :obj:`*args`.
+        """
         return copy.copy(self).apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: str):
         r"""Ensures a contiguous memory layout, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor device conversion, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: str):
         r"""Copies attributes to CPU memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Optional[Union[int, str]] = None, *args: str,
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         # Some PyTorch tensor like objects require a default value for `cuda`:
         device = 'cuda' if device is None else device
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
@@ -313,41 +326,48 @@ class BaseData:
 
     def pin_memory(self, *args: str):
         r"""Copies attributes to pinned memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: str):
         r"""Moves attributes to shared memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: str):
         r"""Detaches attributes from the computation graph, either for all
-        attributes or only the ones given in :obj:`*args`."""
+        attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.detach_(), *args)
 
     def detach(self, *args: str):
         r"""Detaches attributes from the computation graph by creating a new
         tensor, either for all attributes or only the ones given in
-        :obj:`*args`."""
+        :obj:`*args`.
+        """
         return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: str, requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
-        ones given in :obj:`*args`."""
+        ones given in :obj:`*args`.
+        """
         return self.apply_(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def record_stream(self, stream: torch.cuda.Stream, *args: str):
         r"""Ensures that the tensor memory is not reused for another tensor
         until all current work queued on :obj:`stream` has been completed,
-        either for all attributes or only the ones given in :obj:`*args`."""
+        either for all attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.record_stream(stream), *args)
 
     @property
     def is_cuda(self) -> bool:
         r"""Returns :obj:`True` if any :class:`torch.Tensor` attribute is
-        stored on the GPU, :obj:`False` otherwise."""
+        stored on the GPU, :obj:`False` otherwise.
+        """
         for store in self.stores:
             for value in store.values():
                 if isinstance(value, Tensor) and value.is_cuda:
@@ -615,12 +635,14 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
-        node-level tensor attribute."""
+        node-level tensor attribute.
+        """
         return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        edge-level tensor attribute."""
+        edge-level tensor attribute.
+        """
         return self._store.is_edge_attr(key)
 
     def subgraph(self, subset: Tensor) -> 'Data':
@@ -812,7 +834,8 @@ class Data(BaseData, FeatureStore, GraphStore):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'Data':
         r"""Creates a :class:`~torch_geometric.data.Data` object from a
-        dictionary."""
+        dictionary.
+        """
         return cls(**mapping)
 
     @property
@@ -823,7 +846,8 @@ class Data(BaseData, FeatureStore, GraphStore):
     @property
     def num_features(self) -> int:
         r"""Returns the number of features per node in the graph.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -843,14 +867,16 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def __iter__(self) -> Iterable:
         r"""Iterates over all attributes in the data, yielding their attribute
-        names and values."""
+        names and values.
+        """
         for key, value in self._store.items():
             yield key, value
 
     def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
-        If :obj:`*args` is not given, will iterate over all attributes."""
+        If :obj:`*args` is not given, will iterate over all attributes.
+        """
         for key, value in self._store.items(*args):
             yield key, value
 

@@ -31,7 +31,8 @@ except ImportError:
 
 
 class CuGraphModule(torch.nn.Module):  # pragma: no cover
-    r"""An abstract base class for implementing cugraph message passing layers.
+    r"""An abstract base class for implementing :obj:`cugraph`-based message
+    passing layers.
     """
     def __init__(self):
         super().__init__()
@@ -56,7 +57,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
         Args:
             edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
+            size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)

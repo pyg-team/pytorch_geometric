@@ -1,3 +1,5 @@
+r"""Pooling package."""
+
 import warnings
 from typing import Optional
 from torch import Tensor

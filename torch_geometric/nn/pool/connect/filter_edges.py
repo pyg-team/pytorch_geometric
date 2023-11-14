@@ -37,7 +37,7 @@ def filter_adj(
 
 
 class FilterEdges(Connect):
-    r"""Filters out edges if their incident nodes are not in any cluster
+    r"""Filters out edges if their incident nodes are not in any cluster.
 
     .. math::
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},

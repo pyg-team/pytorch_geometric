@@ -1,3 +1,8 @@
+r"""Testing package.
+
+This package provides helper methods and decorators to ease testing.
+"""
+
 from .decorators import (
     is_full_test,
     onlyFullTest,

@@ -16,7 +16,8 @@ from torch_geometric.utils import (
 @functional_transform('two_hop')
 class TwoHop(BaseTransform):
     r"""Adds the two hop edges to the edge indices
-    (functional name: :obj:`two_hop`)."""
+    (functional name: :obj:`two_hop`).
+    """
     def forward(self, data: Data) -> Data:
         edge_index, edge_attr = data.edge_index, data.edge_attr
         N = data.num_nodes
