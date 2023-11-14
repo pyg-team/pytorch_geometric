@@ -1,9 +1,9 @@
 import copy
 import math
 import sys
+import time as time_measure
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
-import time as time_measure
 
 import torch
 from torch import Tensor
@@ -76,11 +76,12 @@ class NeighborSampler(BaseSampler):
                 self.node_time = data[time_attr]
             elif time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data[time_attr]
-            
+
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, src_node_time=self.node_time, edge_time=self.edge_time)
+                is_sorted=is_sorted, src_node_time=self.node_time,
+                edge_time=self.edge_time)
 
             self.edge_weight: Optional[Tensor] = None
             if time_attr is not None and temporal_entity == 'edge':
@@ -98,12 +99,12 @@ class NeighborSampler(BaseSampler):
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='node':
+            if time_attr is not None and temporal_entity == 'node':
                 self.node_time = data.collect(time_attr)
             self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='edge':
+            if time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data.collect(time_attr)
-            
+
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
             # to be converted into single strings.
@@ -112,18 +113,18 @@ class NeighborSampler(BaseSampler):
             # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, node_time_dict=self.node_time, edge_time_dict=self.edge_time)
+                is_sorted=is_sorted, node_time_dict=self.node_time,
+                edge_time_dict=self.edge_time)
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity=='edge':
+            if time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data.collect(time_attr)
                 for edge_type, edge_time in self.edge_time.items():
                     if self.perm.get(edge_type, None) is not None:
                         edge_time = edge_time[self.perm[edge_type]]
                         self.edge_time[edge_type] = edge_time
-                self.edge_time = remap_keys(self.edge_time,
-                                              self.to_rel_type)
+                self.edge_time = remap_keys(self.edge_time, self.to_rel_type)
             self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
             if weight_attr is not None:
                 self.edge_weight = data.collect(weight_attr)
@@ -309,6 +310,7 @@ class NeighborSampler(BaseSampler):
                 colptrs = list(self.colptr_dict.values())
                 dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 seed = {k: v.to(dtype) for k, v in seed.items()}
+
                 def check_temporal():
                     for k, edge_type_ in enumerate(self.colptr_dict.keys()):
                         # print('edge_type = ',edge_type_)
@@ -316,17 +318,18 @@ class NeighborSampler(BaseSampler):
                         row = self.row_dict[edge_type_]
                         for i in range(self.num_nodes[self.node_types[k]]):
                             col_start = colptr[i]
-                            col_end = colptr[i+1]
+                            col_end = colptr[i + 1]
                             # print(f'node = {i}')
                             # print('col_start = ', col_start)
                             # print('col_end = ', col_end)
-                            for j in range(col_start,col_end-1):
+                            for j in range(col_start, col_end - 1):
                                 # print(self.edge_time[edge_type_][j], ' ', self.edge_time[edge_type_][j+1])
                                 # print(f'col={i}, row={j}')
-                                assert self.edge_time[edge_type_][j] <=  self.edge_time[edge_type_][j+1]
-                                
+                                assert self.edge_time[edge_type_][
+                                    j] <= self.edge_time[edge_type_][j + 1]
+
                 #check_temporal()
-                # start_time = time_measure.time() 
+                # start_time = time_measure.time()
                 args = (
                     self.node_types,
                     self.edge_types,
