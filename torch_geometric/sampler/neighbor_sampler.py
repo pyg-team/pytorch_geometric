@@ -3,7 +3,6 @@ import math
 import sys
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
-import time as time_measure
 
 import torch
 from torch import Tensor
@@ -309,24 +308,7 @@ class NeighborSampler(BaseSampler):
                 colptrs = list(self.colptr_dict.values())
                 dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 seed = {k: v.to(dtype) for k, v in seed.items()}
-                def check_temporal():
-                    for k, edge_type_ in enumerate(self.colptr_dict.keys()):
-                        # print('edge_type = ',edge_type_)
-                        colptr = self.colptr_dict[edge_type_]
-                        row = self.row_dict[edge_type_]
-                        for i in range(self.num_nodes[self.node_types[k]]):
-                            col_start = colptr[i]
-                            col_end = colptr[i+1]
-                            # print(f'node = {i}')
-                            # print('col_start = ', col_start)
-                            # print('col_end = ', col_end)
-                            for j in range(col_start,col_end-1):
-                                # print(self.edge_time[edge_type_][j], ' ', self.edge_time[edge_type_][j+1])
-                                # print(f'col={i}, row={j}')
-                                assert self.edge_time[edge_type_][j] <=  self.edge_time[edge_type_][j+1]
-                                
-                #check_temporal()
-                # start_time = time_measure.time() 
+                
                 args = (
                     self.node_types,
                     self.edge_types,
@@ -352,8 +334,6 @@ class NeighborSampler(BaseSampler):
 
                 out = torch.ops.pyg.hetero_neighbor_sample(*args)
                 row, col, node, edge, batch = out[:4] + (None, )
-                # end_time = time_measure.time()
-                # print(f'Elapsed time per batch = {end_time-start_time}s')
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
                 num_sampled_nodes = num_sampled_edges = None
                 if len(out) >= 6:
