@@ -33,6 +33,7 @@ class ModuleDict(torch.nn.ModuleDict):
 
         assert isinstance(key, str)
 
+        # ModuleDict cannot handle keys that exists as class attributes:
         if key in cls._cls_attrs:
             key = f'<{key}>'
 
