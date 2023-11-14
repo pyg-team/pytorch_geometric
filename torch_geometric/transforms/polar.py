@@ -33,7 +33,7 @@ class Polar(BaseTransform):
         self.max = max_value
         self.cat = cat
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
         assert pos.dim() == 2 and pos.size(1) == 2
 

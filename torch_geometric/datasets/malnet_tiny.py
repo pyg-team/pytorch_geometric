@@ -21,9 +21,8 @@ class MalNetTiny(InMemoryDataset):
     call graphs across 5 different types. Each graph contains at most 5k nodes.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -41,6 +40,8 @@ class MalNetTiny(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     data_url = ('http://malnet.cc.gatech.edu/'
@@ -55,12 +56,14 @@ class MalNetTiny(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if split not in {'train', 'val', 'trainval', 'test', None}:
             raise ValueError(f'Split "{split}" found, but expected either '
                              f'"train", "val", "trainval", "test" or None')
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
         if split is not None:
             split_slices = torch.load(self.processed_paths[1])
@@ -120,5 +123,5 @@ class MalNetTiny(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
         torch.save(split_slices, self.processed_paths[1])

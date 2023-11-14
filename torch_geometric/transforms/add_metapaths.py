@@ -13,12 +13,13 @@ from torch_geometric.utils import coalesce, degree
 
 @functional_transform('add_metapaths')
 class AddMetaPaths(BaseTransform):
-    r""" Adds additional edge types to a
+    r"""Adds additional edge types to a
     :class:`~torch_geometric.data.HeteroData` object between the source node
     type and the destination node type of a given :obj:`metapath`, as described
     in the `"Heterogenous Graph Attention Networks"
     <https://arxiv.org/abs/1903.07293>`_ paper
     (functional name: :obj:`add_metapaths`).
+
     Meta-path based neighbors can exploit different aspects of structure
     information in heterogeneous graphs.
     Formally, a metapath is a path of the form
@@ -129,7 +130,7 @@ class AddMetaPaths(BaseTransform):
         self.max_sample = max_sample
         self.weighted = weighted
 
-    def __call__(self, data: HeteroData) -> HeteroData:
+    def forward(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
@@ -193,7 +194,7 @@ class AddMetaPaths(BaseTransform):
 
 @functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r""" Adds additional edge types similar to :class:`AddMetaPaths`.
+    r"""Adds additional edge types similar to :class:`AddMetaPaths`.
     The key difference is that the added edge type is given by
     multiple random walks along the metapath.
     One might want to increase the number of random walks
@@ -244,7 +245,7 @@ class AddRandomMetaPaths(BaseTransform):
         assert len(walks_per_node) == len(metapaths)
         self.walks_per_node = walks_per_node
 
-    def __call__(self, data: HeteroData) -> HeteroData:
+    def forward(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
@@ -278,8 +279,7 @@ class AddRandomMetaPaths(BaseTransform):
 
     @staticmethod
     def sample(adj: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
-        """Sample a neighbor form `adj` for each node in `subset`"""
-
+        """Sample a neighbor form :obj:`adj` for each node in :obj:`subset`."""
         rowcount = adj.storage.rowcount()[subset]
         mask = rowcount > 0
         offset = torch.zeros_like(subset)

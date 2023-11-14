@@ -2,7 +2,7 @@ import copy
 import os
 import os.path as osp
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cached_property
 from glob import glob
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple, Union
@@ -18,13 +18,6 @@ from torch_geometric.data import (
     extract_zip,
 )
 
-try:
-    from functools import cached_property
-except ImportError:  # Python 3.7 support.
-
-    def cached_property(func):
-        return property(fget=lru_cache(maxsize=1)(func))
-
 
 class HydroNet(InMemoryDataset):
     r"""The HydroNet dataest from the
@@ -35,8 +28,8 @@ class HydroNet(InMemoryDataset):
     provides atomic coordinates and total energy in kcal/mol for the cluster.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string, optional): Name of the subset of the full dataset to use:
+        root (str): Root directory where the dataset should be saved.
+        name (str, optional): Name of the subset of the full dataset to use:
             :obj:`"small"` uses 500k graphs sampled from the :obj:`"medium"`
             dataset, :obj:`"medium"` uses 2.7m graphs with maximum size of 75
             nodes.

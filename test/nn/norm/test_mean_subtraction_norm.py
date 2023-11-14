@@ -12,7 +12,6 @@ def test_mean_subtraction_norm():
     assert str(norm) == 'MeanSubtractionNorm()'
 
     if is_full_test():
-        print("DRIN")
         torch.jit.script(norm)
 
     out = norm(x)

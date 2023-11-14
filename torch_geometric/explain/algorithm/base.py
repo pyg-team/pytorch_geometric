@@ -2,17 +2,22 @@ from abc import abstractmethod
 from typing import Dict, Optional, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
-from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import ExplainerConfig, ModelConfig
+from torch_geometric.explain import Explanation, HeteroExplanation
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    ModelConfig,
+    ModelReturnType,
+)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    r"""Abstract base class for explainer algorithms."""
+    r"""An abstract base class for implementing explainer algorithms."""
     @abstractmethod
     def forward(
         self,
@@ -23,7 +28,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation.
 
         Args:
@@ -43,7 +48,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config`, :obj:`self.model_config`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`.
+        """
         pass
 
     ###########################################################################
@@ -76,7 +82,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         model_config: ModelConfig,
     ):
         r"""Connects an explainer and model configuration to the explainer
-        algorithm."""
+        algorithm.
+        """
         self._explainer_config = ExplainerConfig.cast(explainer_config)
         self._model_config = ModelConfig.cast(model_config)
 
@@ -90,12 +97,12 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _post_process_mask(
         mask: Optional[Tensor],
-        num_elems: int,
         hard_mask: Optional[Tensor] = None,
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
         r""""Post processes any mask to not include any attributions of
-        elements not involved during message passing."""
+        elements not involved during message passing.
+        """
         if mask is None:
             return mask
 
@@ -112,17 +119,18 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _get_hard_masks(
         model: torch.nn.Module,
-        index: Optional[Union[int, Tensor]],
+        node_index: Optional[Union[int, Tensor]],
         edge_index: Tensor,
         num_nodes: int,
     ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
         r"""Returns hard node and edge masks that only include the nodes and
-        edges visited during message passing."""
-        if index is None:
+        edges visited during message passing.
+        """
+        if node_index is None:
             return None, None  # Consider all nodes and edges.
 
         index, _, _, edge_mask = k_hop_subgraph(
-            index,
+            node_index,
             num_hops=ExplainerAlgorithm._num_hops(model),
             edge_index=edge_index,
             num_nodes=num_nodes,
@@ -152,3 +160,37 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.return_type == ModelReturnType.raw:
+            loss_fn = F.binary_cross_entropy_with_logits
+        elif self.model_config.return_type == ModelReturnType.probs:
+            loss_fn = F.binary_cross_entropy
+        else:
+            assert False
+
+        return loss_fn(y_hat.view_as(y), y.float())
+
+    def _loss_multiclass_classification(
+        self,
+        y_hat: Tensor,
+        y: Tensor,
+    ) -> Tensor:
+        if self.model_config.return_type == ModelReturnType.raw:
+            loss_fn = F.cross_entropy
+        elif self.model_config.return_type == ModelReturnType.probs:
+            loss_fn = F.nll_loss
+            y_hat = y_hat.log()
+        elif self.model_config.return_type == ModelReturnType.log_probs:
+            loss_fn = F.nll_loss
+        else:
+            assert False
+
+        return loss_fn(y_hat, y)
+
+    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        assert self.model_config.return_type == ModelReturnType.raw
+        return F.mse_loss(y_hat, y)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'

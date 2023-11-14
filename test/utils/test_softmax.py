@@ -1,5 +1,8 @@
+import pytest
 import torch
 
+import torch_geometric.typing
+from torch_geometric.profile import benchmark
 from torch_geometric.utils import softmax
 
 
@@ -10,12 +13,17 @@ def test_softmax():
 
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
-    assert softmax(src, None, ptr).tolist() == out.tolist()
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert softmax(src, None, ptr).tolist() == out.tolist()
+    else:
+        with pytest.raises(ImportError):
+            softmax(src, None, ptr)
 
     src = src.view(-1, 1)
     out = softmax(src, index)
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
-    assert softmax(src, None, ptr).tolist() == out.tolist()
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert softmax(src, None, ptr).tolist() == out.tolist()
 
     jit = torch.jit.script(softmax)
     assert torch.allclose(jit(src, index), out)
@@ -44,92 +52,48 @@ def test_softmax_dim():
 
     src = torch.randn(4)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 16)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 4)
     assert torch.allclose(softmax(src, index, dim=-1), src.softmax(dim=-1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(dim=-1))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(-1))
 
     src = torch.randn(4, 4, 16)
     assert torch.allclose(softmax(src, index, dim=1), src.softmax(dim=1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
 
 
 if __name__ == '__main__':
     import argparse
-    import time
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
-    num_nodes, num_edges, num_feats = 1000, 50000, 64
+    num_nodes, num_edges = 10_000, 200_000
+    x = torch.randn(num_edges, 64, device=args.device)
+    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
-    num_warmups, num_steps = 500, 1000
-    if args.device == 'cpu':
-        num_warmups, num_steps = num_warmups // 10, num_steps // 10
+    compiled_softmax = torch_geometric.compile(softmax)
 
-    index = torch.randint(num_nodes - 5, (num_edges, ), device=args.device)
-    out_grad = torch.randn(num_edges, num_feats, device=args.device)
+    def dense_softmax(x, index):
+        x = x.view(num_nodes, -1, x.size(-1))
+        return x.softmax(dim=-1)
 
-    t_forward = t_backward = 0
-    for i in range(num_warmups + num_steps):
-        x = torch.randn(num_nodes, num_edges // num_nodes, num_feats,
-                        device=args.device)
-        if args.backward:
-            x.requires_grad_(True)
-
-        torch.cuda.synchronize()
-        t_start = time.perf_counter()
-
-        out = x.softmax(dim=1)
-
-        torch.cuda.synchronize()
-        if i >= num_warmups:
-            t_forward += time.perf_counter() - t_start
-
-        if args.backward:
-            t_start = time.perf_counter()
-            out.backward(out_grad.view(num_nodes, -1, num_feats))
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_backward += time.perf_counter() - t_start
-
-    print(f'Dense forward:   {t_forward:.4f}s')
-    if args.backward:
-        print(f'Dense backward:  {t_backward:.4f}s')
-    print('========================')
-
-    t_forward = t_backward = 0
-    for i in range(num_warmups + num_steps):
-        x = torch.randn(num_edges, num_feats, device=args.device)
-        if args.backward:
-            x.requires_grad_(True)
-
-        torch.cuda.synchronize()
-        t_start = time.perf_counter()
-
-        out = softmax(x, index)
-
-        torch.cuda.synchronize()
-        if i >= num_warmups:
-            t_forward += time.perf_counter() - t_start
-
-        if args.backward:
-            t_start = time.perf_counter()
-            out.backward(out_grad)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_backward += time.perf_counter() - t_start
-
-    print(f'Sparse forward:  {t_forward:.4f}s')
-    if args.backward:
-        print(f'Sparse backward: {t_backward:.4f}s')
-    print('========================')
+    benchmark(
+        funcs=[dense_softmax, softmax, compiled_softmax],
+        func_names=['Dense Softmax', 'Vanilla', 'Compiled'],
+        args=(x, index),
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
+    )

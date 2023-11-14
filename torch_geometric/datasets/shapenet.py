@@ -24,9 +24,9 @@ class ShapeNet(InMemoryDataset):
     Each category is annotated with 2 to 6 parts.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        categories (string or [string], optional): The category of the CAD
-            models (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
+        root (str): Root directory where the dataset should be saved.
+        categories (str or [str], optional): The category of the CAD models
+            (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
             :obj:`"Cap"`, :obj:`"Car"`, :obj:`"Chair"`, :obj:`"Earphone"`,
             :obj:`"Guitar"`, :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
             :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`, :obj:`"Rocket"`,
@@ -37,8 +37,7 @@ class ShapeNet(InMemoryDataset):
             include normal vectors as input features to :obj:`data.x`.
             As a result, :obj:`data.x` will be :obj:`None`.
             (default: :obj:`True`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -55,26 +54,33 @@ class ShapeNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 16,881
-              - ~2,616.2
-              - 0
-              - 3
-              - 50
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 16,881
+          - ~2,616.2
+          - 0
+          - 3
+          - 50
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
            'shapenetcore_partanno_segmentation_benchmark_v0_normal.zip')
+
+    # In case `shapenet.cs.stanford.edu` is offline, try to download the data
+    # from Kaggle instead (requires login):
+    # https://www.kaggle.com/datasets/mitkir/shapenet/download?datasetVersionNumber=1
 
     category_ids = {
         'Airplane': '02691156',
@@ -123,6 +129,7 @@ class ShapeNet(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if categories is None:
             categories = list(self.category_ids.keys())
@@ -130,7 +137,8 @@ class ShapeNet(InMemoryDataset):
             categories = [categories]
         assert all(category in self.category_ids for category in categories)
         self.categories = categories
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -144,8 +152,8 @@ class ShapeNet(InMemoryDataset):
             raise ValueError((f'Split {split} found, but expected either '
                               'train, val, trainval or test'))
 
-        self.data, self.slices = torch.load(path)
-        self.data.x = self.data.x if include_normals else None
+        self.load(path)
+        self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
                                   dtype=torch.bool)
@@ -212,8 +220,8 @@ class ShapeNet(InMemoryDataset):
             data_list = self.process_filenames(filenames)
             if split == 'train' or split == 'val':
                 trainval += data_list
-            torch.save(self.collate(data_list), self.processed_paths[i])
-        torch.save(self.collate(trainval), self.processed_paths[3])
+            self.save(data_list, self.processed_paths[i])
+        self.save(trainval, self.processed_paths[3])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

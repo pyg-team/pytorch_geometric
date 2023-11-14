@@ -14,6 +14,7 @@ class NNConv(MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
     `"Neural Message Passing for Quantum Chemistry"
     <https://arxiv.org/abs/1704.01212>`_ paper.
+
     This convolution is also known as the edge-conditioned convolution from the
     `"Dynamic Edge-Conditioned Filters in Convolutional Neural Networks on
     Graphs" <https://arxiv.org/abs/1704.02901>`_ paper (see
@@ -38,7 +39,7 @@ class NNConv(MessagePassing):
             num_edge_features]` to shape
             :obj:`[-1, in_channels * out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -79,13 +80,14 @@ class NNConv(MessagePassing):
                               weight_initializer='uniform')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
         if self.root_weight:
             self.lin.reset_parameters()
@@ -93,7 +95,7 @@ class NNConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -117,6 +119,3 @@ class NNConv(MessagePassing):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, aggr={self.aggr}, nn={self.nn})')
-
-
-ECConv = NNConv

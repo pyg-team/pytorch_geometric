@@ -4,9 +4,10 @@ import torch
 from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
-from torch_sparse import SparseTensor
 
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.utils import sort_edge_index
+from torch_geometric.utils.sparse import index2ptr
 
 EPS = 1e-15
 
@@ -27,10 +28,10 @@ class MetaPath2Vec(torch.nn.Module):
         hetero/metapath2vec.py>`_.
 
     Args:
-        edge_index_dict (Dict[Tuple[str, str, str], Tensor]): Dictionary
+        edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): Dictionary
             holding edge indices for each
-            :obj:`(src_node_type, rel_type, dst_node_type)` present in the
-            heterogeneous graph.
+            :obj:`(src_node_type, rel_type, dst_node_type)` edge type present
+            in the heterogeneous graph.
         embedding_dim (int): The size of each embedding vector.
         metapath (List[Tuple[str, str, str]]): The metapath described as a list
             of :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
@@ -72,13 +73,21 @@ class MetaPath2Vec(torch.nn.Module):
                 N = int(edge_index[1].max() + 1)
                 num_nodes_dict[key] = max(N, num_nodes_dict.get(key, N))
 
-        adj_dict = {}
+        self.rowptr_dict, self.col_dict, self.rowcount_dict = {}, {}, {}
         for keys, edge_index in edge_index_dict.items():
             sizes = (num_nodes_dict[keys[0]], num_nodes_dict[keys[-1]])
-            row, col = edge_index
-            adj = SparseTensor(row=row, col=col, sparse_sizes=sizes)
-            adj = adj.to('cpu')
-            adj_dict[keys] = adj
+            row, col = sort_edge_index(edge_index, num_nodes=max(sizes)).cpu()
+            rowptr = index2ptr(row, size=sizes[0])
+            self.rowptr_dict[keys] = rowptr
+            self.col_dict[keys] = col
+            self.rowcount_dict[keys] = rowptr[1:] - rowptr[:-1]
+
+        for edge_type1, edge_type2 in zip(metapath[:-1], metapath[1:]):
+            if edge_type1[-1] != edge_type2[0]:
+                raise ValueError(
+                    "Found invalid metapath. Ensure that the destination node "
+                    "type matches with the source node type across all "
+                    "consecutive edge types.")
 
         assert walk_length + 1 >= context_size
         if walk_length > len(metapath) and metapath[0][0] != metapath[-1][-1]:
@@ -86,7 +95,6 @@ class MetaPath2Vec(torch.nn.Module):
                 "The 'walk_length' is longer than the given 'metapath', but "
                 "the 'metapath' does not denote a cycle")
 
-        self.adj_dict = adj_dict
         self.embedding_dim = embedding_dim
         self.metapath = metapath
         self.walk_length = walk_length
@@ -119,11 +127,13 @@ class MetaPath2Vec(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
 
     def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
-        :obj:`node_type`."""
+        :obj:`node_type`.
+        """
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
         return emb if batch is None else emb.index_select(0, batch)
 
@@ -145,10 +155,15 @@ class MetaPath2Vec(torch.nn.Module):
 
         rws = [batch]
         for i in range(self.walk_length):
-            keys = self.metapath[i % len(self.metapath)]
-            adj = self.adj_dict[keys]
-            batch = sample(adj, batch, num_neighbors=1,
-                           dummy_idx=self.dummy_idx).view(-1)
+            edge_type = self.metapath[i % len(self.metapath)]
+            batch = sample(
+                self.rowptr_dict[edge_type],
+                self.col_dict[edge_type],
+                self.rowcount_dict[edge_type],
+                batch,
+                num_neighbors=1,
+                dummy_idx=self.dummy_idx,
+            ).view(-1)
             rws.append(batch)
 
         rw = torch.stack(rws, dim=-1)
@@ -187,7 +202,6 @@ class MetaPath2Vec(torch.nn.Module):
 
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -216,7 +230,8 @@ class MetaPath2Vec(torch.nn.Module):
              test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
              *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
@@ -231,21 +246,17 @@ class MetaPath2Vec(torch.nn.Module):
                 f'{self.embedding.weight.size(1)})')
 
 
-def sample(src: SparseTensor, subset: Tensor, num_neighbors: int,
-           dummy_idx: int) -> Tensor:
+def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
+           num_neighbors: int, dummy_idx: int) -> Tensor:
 
-    mask = subset < dummy_idx
-    rowcount = torch.zeros_like(subset)
-    rowcount[mask] = src.storage.rowcount()[subset[mask]]
-    mask = mask & (rowcount > 0)
-    offset = torch.zeros_like(subset)
-    offset[mask] = src.storage.rowptr()[subset[mask]]
+    mask = subset >= dummy_idx
+    subset = subset.clamp(min=0, max=rowptr.numel() - 2)
+    count = rowcount[subset]
 
-    rand = torch.rand((rowcount.size(0), num_neighbors), device=subset.device)
-    rand.mul_(rowcount.to(rand.dtype).view(-1, 1))
-    rand = rand.to(torch.long)
-    rand.add_(offset.view(-1, 1))
+    rand = torch.rand((subset.size(0), num_neighbors), device=subset.device)
+    rand *= count.to(rand.dtype).view(-1, 1)
+    rand = rand.to(torch.long) + rowptr[subset].view(-1, 1)
 
-    col = src.storage.col()[rand]
-    col[~mask] = dummy_idx
+    col = col[rand] if col.numel() > 0 else rand
+    col[mask | (count == 0)] = dummy_idx
     return col

@@ -26,10 +26,10 @@ class SHREC2016(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        partiality (string): The partiality of the dataset (one of
-            :obj:`"Holes"`, :obj:`"Cuts"`).
-        category (string): The category of the dataset (one of
+        root (str): Root directory where the dataset should be saved.
+        partiality (str): The partiality of the dataset (one of :obj:`"Holes"`,
+            :obj:`"Cuts"`).
+        category (str): The category of the dataset (one of
             :obj:`"Cat"`, :obj:`"Centaur"`, :obj:`"David"`, :obj:`"Dog"`,
             :obj:`"Horse"`, :obj:`"Michael"`, :obj:`"Victoria"`,
             :obj:`"Wolf"`).
@@ -47,6 +47,8 @@ class SHREC2016(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     train_url = ('http://www.dais.unive.it/~shrec2016/data/'
@@ -69,15 +71,17 @@ class SHREC2016(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         assert partiality.lower() in self.partialities
         self.part = partiality.lower()
         assert category.lower() in self.categories
         self.cat = category.lower()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.__ref__ = torch.load(self.processed_paths[0])
         path = self.processed_paths[1] if train else self.processed_paths[2]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def ref(self) -> str:
@@ -145,8 +149,8 @@ class SHREC2016(InMemoryDataset):
             test_list = [self.pre_transform(d) for d in test_list]
 
         torch.save(ref_data, self.processed_paths[0])
-        torch.save(self.collate(train_list), self.processed_paths[1])
-        torch.save(self.collate(test_list), self.processed_paths[2])
+        self.save(train_list, self.processed_paths[1])
+        self.save(test_list, self.processed_paths[2])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

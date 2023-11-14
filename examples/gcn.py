@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -18,13 +19,24 @@ parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-init_wandb(name=f'GCN-{args.dataset}', lr=args.lr, epochs=args.epochs,
-           hidden_channels=args.hidden_channels, device=device)
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
+init_wandb(
+    name=f'GCN-{args.dataset}',
+    lr=args.lr,
+    epochs=args.epochs,
+    hidden_channels=args.hidden_channels,
+    device=device,
+)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
-data = dataset[0]
+data = dataset[0].to(device)
 
 if args.use_gdc:
     transform = T.GDC(
@@ -41,9 +53,9 @@ if args.use_gdc:
 class GCN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels, cached=True,
+        self.conv1 = GCNConv(in_channels, hidden_channels,
                              normalize=not args.use_gdc)
-        self.conv2 = GCNConv(hidden_channels, out_channels, cached=True,
+        self.conv2 = GCNConv(hidden_channels, out_channels,
                              normalize=not args.use_gdc)
 
     def forward(self, x, edge_index, edge_weight=None):
@@ -54,8 +66,12 @@ class GCN(torch.nn.Module):
         return x
 
 
-model = GCN(dataset.num_features, args.hidden_channels, dataset.num_classes)
-model, data = model.to(device), data.to(device)
+model = GCN(
+    in_channels=dataset.num_features,
+    hidden_channels=args.hidden_channels,
+    out_channels=dataset.num_classes,
+).to(device)
+
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),
     dict(params=model.conv2.parameters(), weight_decay=0)
@@ -83,11 +99,15 @@ def test():
     return accs
 
 
-best_val_acc = final_test_acc = 0
+best_val_acc = test_acc = 0
+times = []
 for epoch in range(1, args.epochs + 1):
+    start = time.time()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+    times.append(time.time() - start)
+print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')

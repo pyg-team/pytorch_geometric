@@ -18,15 +18,14 @@ def grid(
     Args:
         height (int): The height of the grid.
         width (int): The width of the grid.
-        dtype (:obj:`torch.dtype`, optional): The desired data type of the
-            returned position tensor.
-        dtype (:obj:`torch.device`, optional): The desired device of the
-            returned tensors.
+        dtype (torch.dtype, optional): The desired data type of the returned
+            position tensor. (default: :obj:`None`)
+        device (torch.device, optional): The desired device of the returned
+            tensors. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> (row, col), pos = grid(height=2, width=2)
         >>> row
         tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3])
@@ -64,7 +63,7 @@ def grid_index(
     row, col = row[mask], col[mask]
 
     edge_index = torch.stack([row, col], dim=0)
-    edge_index = coalesce(edge_index, None, height * width)
+    edge_index = coalesce(edge_index, num_nodes=height * width)
     return edge_index
 
 

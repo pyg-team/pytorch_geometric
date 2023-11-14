@@ -2,18 +2,19 @@ from typing import Optional
 
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+from torch_geometric.utils import is_torch_sparse_tensor
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class FAConv(MessagePassing):
     r"""The Frequency Adaptive Graph Convolution operator from the
     `"Beyond Low-Frequency Information in Graph Convolutional Networks"
-    <https://arxiv.org/abs/2101.00797>`_ paper
+    <https://arxiv.org/abs/2101.00797>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i= \epsilon \cdot \mathbf{x}^{(0)}_i +
@@ -71,7 +72,7 @@ class FAConv(MessagePassing):
                  normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(FAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.channels = channels
         self.eps = eps
@@ -90,19 +91,32 @@ class FAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.att_l.reset_parameters()
         self.att_r.reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, return_attention_weights=None):
+    def forward(
+        self,
+        x: Tensor,
+        x_0: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        return_attention_weights=None,
+    ):
         # type: (Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Tensor, Tensor, SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
+            x (torch.Tensor): The node features.
+            x_0 (torch.Tensor): The initial input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
@@ -133,7 +147,8 @@ class FAConv(MessagePassing):
                 else:
                     edge_index = cache
         else:
-            if isinstance(edge_index, Tensor):
+            if isinstance(edge_index,
+                          Tensor) and not is_torch_sparse_tensor(edge_index):
                 assert edge_weight is not None
             elif isinstance(edge_index, SparseTensor):
                 assert edge_index.has_value()
@@ -154,7 +169,12 @@ class FAConv(MessagePassing):
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:

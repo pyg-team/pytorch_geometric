@@ -4,20 +4,18 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.nn.inits import glorot
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 from torch_geometric.utils import spmm
-
-from ..inits import glorot
 
 
 class GCN2Conv(MessagePassing):
     r"""The graph convolutional operator with initial residual connections and
     identity mapping (GCNII) from the `"Simple and Deep Graph Convolutional
-    Networks" <https://arxiv.org/abs/2007.02133>`_ paper
+    Networks" <https://arxiv.org/abs/2007.02133>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( (1 - \alpha) \mathbf{\hat{P}}\mathbf{X} +
@@ -94,16 +92,17 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight1 = Parameter(torch.Tensor(channels, channels))
+        self.weight1 = Parameter(torch.empty(channels, channels))
 
         if shared_weights:
             self.register_parameter('weight2', None)
         else:
-            self.weight2 = Parameter(torch.Tensor(channels, channels))
+            self.weight2 = Parameter(torch.empty(channels, channels))
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight1)
         glorot(self.weight2)
         self._cached_edge_index = None
@@ -111,7 +110,6 @@ class GCN2Conv(MessagePassing):
 
     def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if self.normalize:
             if isinstance(edge_index, Tensor):

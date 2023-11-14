@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -94,9 +95,13 @@ def test():
     return train_f1, val_f1, test_f1
 
 
+times = []
 for epoch in range(1, 6):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     train_f1, val_f1, test_f1 = test()
     print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
           f'Test F1: {test_f1:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

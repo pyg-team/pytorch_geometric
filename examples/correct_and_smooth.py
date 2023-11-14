@@ -5,6 +5,10 @@ from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.nn import MLP, CorrectAndSmooth
+from torch_geometric.typing import WITH_TORCH_SPARSE
+
+if not WITH_TORCH_SPARSE:
+    quit("This example requires 'torch-sparse'")
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OGB')
 dataset = PygNodePropPredDataset('ogbn-products', root,

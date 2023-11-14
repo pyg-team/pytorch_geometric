@@ -3,26 +3,28 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import coalesce, sort_edge_index
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-from .num_nodes import maybe_num_nodes
+MISSING = '???'
 
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr=None, num_nodes=None):
-    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
+def is_undirected(edge_index, edge_attr, num_nodes):  # noqa: F811
+    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool
     pass
 
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr=None, num_nodes=None):
-    # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
+def is_undirected(edge_index, edge_attr, num_nodes):  # noqa: F811
+    # type: (Tensor, List[Tensor], Optional[int]) -> bool
     pass
 
 
-def is_undirected(
+def is_undirected(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
+    edge_attr: Union[OptTensor, List[Tensor]] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -35,12 +37,11 @@ def is_undirected(
             If given as a list, will check for equivalence in all its entries.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+            :obj:`max(edge_index) + 1`. (default: :obj:`None`)
 
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                         [1, 0, 0]])
         >>> weight = torch.tensor([0, 0, 1])
@@ -75,38 +76,42 @@ def is_undirected(
 
     if not torch.equal(edge_index1[0], edge_index2[1]):
         return False
+
     if not torch.equal(edge_index1[1], edge_index2[0]):
         return False
+
+    assert isinstance(edge_attrs1, list) and isinstance(edge_attrs2, list)
     for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2):
         if not torch.equal(edge_attr1, edge_attr2):
             return False
+
     return True
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
-    # type: (Tensor, Optional[bool], Optional[int], str) -> Tensor  # noqa
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
+    # type: (Tensor, str, Optional[int], str) -> Tensor
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
-    # type: (Tensor, Tensor, Optional[int], str) -> Tuple[Tensor, Tensor]  # noqa
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
+    # type: (Tensor, Optional[Tensor], Optional[int], str) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
     # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
-def to_undirected(
+def to_undirected(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = "add",
-) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+    reduce: str = 'add',
+) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     r"""Converts the graph given by :attr:`edge_index` to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
     \mathcal{E}`.
@@ -118,16 +123,21 @@ def to_undirected(
             If given as a list, will remove duplicates for all its entries.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        reduce (string, optional): The reduce operation to use for merging edge
+            :obj:`max(edge_index) + 1`. (default: :obj:`None`)
+        reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
 
-    :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
-        (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+    :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
+        (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
+
+    .. warning::
+
+        From :pyg:`PyG >= 2.3.0` onwards, this function will always return a
+        tuple whenever :obj:`edge_attr` is passed as an argument (even in case
+        it is set to :obj:`None`).
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1],
         ...                            [1, 0, 2]])
         >>> to_undirected(edge_index)
@@ -150,8 +160,8 @@ def to_undirected(
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
-        edge_attr = None
         num_nodes = edge_attr
+        edge_attr = MISSING
 
     row, col = edge_index[0], edge_index[1]
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)

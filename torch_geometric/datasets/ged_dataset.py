@@ -5,7 +5,6 @@ import pickle
 from typing import Callable, List, Optional
 
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import (
     Data,
@@ -14,12 +13,13 @@ from torch_geometric.data import (
     extract_tar,
     extract_zip,
 )
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import one_hot, to_undirected
 
 
 class GEDDataset(InMemoryDataset):
     r"""The GED datasets from the `"Graph Edit Distance Computation via Graph
     Neural Networks" <https://arxiv.org/abs/1808.05689>`_ paper.
+
     GEDs can be accessed via the global attributes :obj:`ged` and
     :obj:`norm_ged` for all train/train graph pairs and all train/test graph
     pairs:
@@ -41,8 +41,8 @@ class GEDDataset(InMemoryDataset):
         <https://github.com/yunshengb/SimGNN>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"AIDS700nef"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"AIDS700nef"`,
             :obj:`"LINUX"`, :obj:`"ALKANE"`, :obj:`"IMDBMulti"`).
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
@@ -58,42 +58,45 @@ class GEDDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - AIDS700nef
-              - 700
-              - ~8.9
-              - ~17.6
-              - 29
-              - 0
-            * - LINUX
-              - 1,000
-              - ~7.6
-              - ~13.9
-              - 0
-              - 0
-            * - ALKANE
-              - 150
-              - ~8.9
-              - ~15.8
-              - 0
-              - 0
-            * - IMDBMulti
-              - 1,500
-              - ~13.0
-              - ~131.9
-              - 0
-              - 0
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - AIDS700nef
+          - 700
+          - ~8.9
+          - ~17.6
+          - 29
+          - 0
+        * - LINUX
+          - 1,000
+          - ~7.6
+          - ~13.9
+          - 0
+          - 0
+        * - ALKANE
+          - 150
+          - ~8.9
+          - ~15.8
+          - 0
+          - 0
+        * - IMDBMulti
+          - 1,500
+          - ~13.0
+          - ~131.9
+          - 0
+          - 0
     """
 
     url = 'https://drive.google.com/uc?export=download&id={}'
@@ -128,15 +131,22 @@ class GEDDataset(InMemoryDataset):
         'Sb', 'Se', 'Ni', 'Te'
     ]
 
-    def __init__(self, root: str, name: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         self.ged = torch.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
@@ -200,8 +210,7 @@ class GEDDataset(InMemoryDataset):
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
-                    data.x = F.one_hot(x, num_classes=len(self.types)).to(
-                        torch.float)
+                    data.x = one_hot(x, num_classes=len(self.types))
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
@@ -211,7 +220,7 @@ class GEDDataset(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), p_path)
+            self.save(data_list, p_path)
 
         assoc = {idx: i for i, idx in enumerate(ids[0])}
         assoc.update({idx: i + len(ids[0]) for i, idx in enumerate(ids[1])})

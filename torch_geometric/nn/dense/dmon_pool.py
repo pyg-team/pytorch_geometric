@@ -11,7 +11,7 @@ EPS = 1e-15
 
 class DMoNPooling(torch.nn.Module):
     r"""The spectral modularity pooling operator from the `"Graph Clustering
-    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
+    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -72,6 +72,7 @@ class DMoNPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.mlp.reset_parameters()
 
     def forward(
@@ -80,23 +81,25 @@ class DMoNPooling(torch.nn.Module):
         adj: Tensor,
         mask: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
-            x (Tensor): Node feature tensor :math:`\mathbf{X} \in
-                \mathbb{R}^{B \times N \times F}` with batch-size
-                :math:`B`, (maximum) number of nodes :math:`N` for each graph,
-                and feature dimension :math:`F`.
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
                 Note that the cluster assignment matrix
                 :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
                 being created within this method.
-            adj (Tensor): Adjacency tensor
+            adj (torch.Tensor): Adjacency tensor
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
-            mask (BoolTensor, optional): Mask matrix
+            mask (torch.Tensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
 
-        :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
-            :class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
+        :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
+            :class:`torch.Tensor`, :class:`torch.Tensor`,
+            :class:`torch.Tensor`, :class:`torch.Tensor`)
         """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj

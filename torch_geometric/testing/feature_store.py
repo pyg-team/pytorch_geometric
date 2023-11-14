@@ -24,12 +24,12 @@ class MyFeatureStore(FeatureStore):
             index = torch.arange(0, tensor.shape[0])
 
         # Store the index:
-        self.store[MyFeatureStore.key(attr)] = (index, tensor)
+        self.store[self.key(attr)] = (index, tensor)
 
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        index, tensor = self.store.get(MyFeatureStore.key(attr), (None, None))
+        index, tensor = self.store.get(self.key(attr), (None, None))
         if tensor is None:
             return None
 
@@ -47,14 +47,13 @@ class MyFeatureStore(FeatureStore):
         return tensor[idx]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        del self.store[MyFeatureStore.key(attr)]
-        return True
+        return self.store.pop(self.key(attr), None) is not None
 
-    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple[int, ...]:
         return self._get_tensor(attr).size()
 
-    def get_all_tensor_attrs(self) -> List[str]:
-        return [TensorAttr(*key) for key in self.store.keys()]
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        return [self._tensor_attr_cls.cast(*key) for key in self.store.keys()]
 
     def __len__(self):
         raise NotImplementedError

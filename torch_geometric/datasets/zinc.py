@@ -34,13 +34,12 @@ class ZINC(InMemoryDataset):
     <https://proceedings.mlr.press/v70/kusner17a.html>`_ papers.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        subset (boolean, optional): If set to :obj:`True`, will only load a
+        root (str): Root directory where the dataset should be saved.
+        subset (bool, optional): If set to :obj:`True`, will only load a
             subset of the dataset (12,000 molecular graphs), following the
             `"Benchmarking Graph Neural Networks"
             <https://arxiv.org/abs/2003.00982>`_ paper. (default: :obj:`False`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)
@@ -56,30 +55,33 @@ class ZINC(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - ZINC Full
-              - 249,456
-              - ~23.2
-              - ~49.8
-              - 1
-              - 1
-            * - ZINC Subset
-              - 12,000
-              - ~23.2
-              - ~49.8
-              - 1
-              - 1
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - ZINC Full
+          - 249,456
+          - ~23.2
+          - ~49.8
+          - 1
+          - 1
+        * - ZINC Subset
+          - 12,000
+          - ~23.2
+          - ~49.8
+          - 1
+          - 1
     """
 
     url = 'https://www.dropbox.com/s/feo9qle74kg48gy/molecules.zip?dl=1'
@@ -94,12 +96,14 @@ class ZINC(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.subset = subset
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -166,5 +170,4 @@ class ZINC(InMemoryDataset):
 
             pbar.close()
 
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+            self.save(data_list, osp.join(self.processed_dir, f'{split}.pt'))

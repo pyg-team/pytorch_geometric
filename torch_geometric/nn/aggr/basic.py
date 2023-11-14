@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import torch
@@ -9,7 +10,7 @@ from torch_geometric.utils import softmax
 
 
 class SumAggregation(Aggregation):
-    r"""An aggregation operator that sums up features across a set of elements
+    r"""An aggregation operator that sums up features across a set of elements.
 
     .. math::
         \mathrm{sum}(\mathcal{X}) = \sum_{\mathbf{x}_i \in \mathcal{X}}
@@ -22,7 +23,8 @@ class SumAggregation(Aggregation):
 
 
 class MeanAggregation(Aggregation):
-    r"""An aggregation operator that averages features across a set of elements
+    r"""An aggregation operator that averages features across a set of
+    elements.
 
     .. math::
         \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
@@ -36,7 +38,7 @@ class MeanAggregation(Aggregation):
 
 class MaxAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise maximum across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{max}(\mathcal{X}) = \max_{\mathbf{x}_i \in \mathcal{X}}
@@ -50,7 +52,7 @@ class MaxAggregation(Aggregation):
 
 class MinAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise minimum across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{min}(\mathcal{X}) = \min_{\mathbf{x}_i \in \mathcal{X}}
@@ -64,7 +66,7 @@ class MinAggregation(Aggregation):
 
 class MulAggregation(Aggregation):
     r"""An aggregation operator that multiples features across a set of
-    elements
+    elements.
 
     .. math::
         \mathrm{mul}(\mathcal{X}) = \prod_{\mathbf{x}_i \in \mathcal{X}}
@@ -80,7 +82,7 @@ class MulAggregation(Aggregation):
 
 class VarAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise variance across a
-    set of elements
+    set of elements.
 
     .. math::
         \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
@@ -111,7 +113,7 @@ class VarAggregation(Aggregation):
 
 class StdAggregation(Aggregation):
     r"""An aggregation operator that takes the feature-wise standard deviation
-    across a set of elements
+    across a set of elements.
 
     .. math::
         \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
@@ -131,13 +133,16 @@ class StdAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         var = self.var_aggr(x, index, ptr, dim_size, dim)
-        return var.clamp(min=1e-5).sqrt()
+        # Allow "undefined" gradient at `sqrt(0.0)`:
+        out = var.clamp(min=1e-5).sqrt()
+        out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+        return out
 
 
 class SoftmaxAggregation(Aggregation):
     r"""The softmax aggregation operator based on a temperature term, as
     described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
         \mathrm{softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
@@ -181,7 +186,7 @@ class SoftmaxAggregation(Aggregation):
         self.semi_grad = semi_grad
         self.channels = channels
 
-        self.t = Parameter(torch.Tensor(channels)) if learn else t
+        self.t = Parameter(torch.empty(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -216,7 +221,7 @@ class SoftmaxAggregation(Aggregation):
 class PowerMeanAggregation(Aggregation):
     r"""The powermean aggregation operator based on a power term, as
     described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
         \mathrm{powermean}(\mathcal{X}|p) = \left(\frac{1}{|\mathcal{X}|}
@@ -247,7 +252,7 @@ class PowerMeanAggregation(Aggregation):
         self.learn = learn
         self.channels = channels
 
-        self.p = Parameter(torch.Tensor(channels)) if learn else p
+        self.p = Parameter(torch.empty(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):

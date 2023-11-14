@@ -38,12 +38,11 @@ class LRGBDataset(InMemoryDataset):
     +------------------------+-------------------+----------------------+
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"PascalVOC-SP"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"PascalVOC-SP"`,
             :obj:`"COCO-SP"`, :obj:`"PCQM-Contact"`, :obj:`"Peptides-func"`,
             :obj:`"Peptides-struct"`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)
@@ -59,42 +58,45 @@ class LRGBDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 15 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #classes
-            * - PascalVOC-SP
-              - 11,355
-              - ~479.40
-              - ~2,710.48
-              - 21
-            * - COCO-SP
-              - 123,286
-              - ~476.88
-              - ~2,693.67
-              - 81
-            * - PCQM-Contact
-              - 529,434
-              - ~30.14
-              - ~61.09
-              - 1
-            * - Peptides-func
-              - 15,535
-              - ~150.94
-              - ~307.30
-              - 10
-            * - Peptides-struct
-              - 15,535
-              - ~150.94
-              - ~307.30
-              - 11
+    .. list-table::
+        :widths: 15 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #classes
+        * - PascalVOC-SP
+          - 11,355
+          - ~479.40
+          - ~2,710.48
+          - 21
+        * - COCO-SP
+          - 123,286
+          - ~476.88
+          - ~2,693.67
+          - 81
+        * - PCQM-Contact
+          - 529,434
+          - ~30.14
+          - ~61.09
+          - 1
+        * - Peptides-func
+          - 15,535
+          - ~150.94
+          - ~307.30
+          - 10
+        * - Peptides-struct
+          - 15,535
+          - ~150.94
+          - ~307.30
+          - 11
     """
 
     names = [
@@ -131,14 +133,16 @@ class LRGBDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         assert self.name in self.names
         assert split in ['train', 'val', 'test']
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -235,8 +239,8 @@ class LRGBDataset(InMemoryDataset):
 
                     data_list.append(data)
 
-                torch.save(self.collate(data_list),
-                           osp.join(self.processed_dir, f'{split}.pt'))
+                path = osp.join(self.processed_dir, f'{split}.pt')
+                self.save(data_list, path)
 
     def label_remap_coco(self):
         # Util function for name 'COCO-SP'
@@ -294,5 +298,4 @@ class LRGBDataset(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+            self.save(data_list, osp.join(self.processed_dir, f'{split}.pt'))

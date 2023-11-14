@@ -1,9 +1,10 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.node_loader import NodeLoader
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
+from torch_geometric.sampler.base import SubgraphType
+from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 
 
 class NeighborLoader(NodeLoader):
@@ -90,17 +91,25 @@ class NeighborLoader(NodeLoader):
     The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
     where global node indices are mapped to local indices corresponding to this
     specific subgraph. However, often times it is desired to map the nodes of
-    the current subgraph back to the global node indices. A simple trick to
-    achieve this is to include this mapping as part of the :obj:`data` object:
+    the current subgraph back to the global node indices. The
+    :class:`~torch_geometric.loader.NeighborLoader` will include this mapping
+    as part of the :obj:`data` object:
 
     .. code-block:: python
 
-        # Assign each node its global node index:
-        data.n_id = torch.arange(data.num_nodes)
-
         loader = NeighborLoader(data, ...)
         sampled_data = next(iter(loader))
-        print(sampled_data.n_id)
+        print(sampled_data.n_id)  # Global node index of each node in batch.
+
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`batch_size` The number of seed nodes (first nodes in the batch)
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`input_nodes`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
 
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
@@ -109,9 +118,9 @@ class NeighborLoader(NodeLoader):
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -127,15 +136,23 @@ class NeighborLoader(NodeLoader):
             (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
-        directed (bool, optional): If set to :obj:`False`, will include all
-            edges between all sampled nodes. (default: :obj:`True`)
+        subgraph_type (SubgraphType or str, optional): The type of the returned
+            subgraph.
+            If set to :obj:`"directional"`, the returned subgraph only holds
+            the sampled (directed) edges which are necessary to compute
+            representations for the sampled seed nodes.
+            If set to :obj:`"bidirectional"`, sampled edges are converted to
+            bidirectional edges.
+            If set to :obj:`"induced"`, the returned subgraph contains the
+            induced subgraph of all sampled nodes.
+            (default: :obj:`"directional"`)
         disjoint (bool, optional): If set to :obj: `True`, each seed node will
             create its own disjoint subgraph.
             If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
             vector holding the mapping of nodes to their respective subgraph.
             Will get automatically set to :obj:`True` in case of temporal
             sampling. (default: :obj:`False`)
-        temporal_strategy (string, optional): The sampling strategy when using
+        temporal_strategy (str, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
             that fulfill temporal constraints.
@@ -146,11 +163,19 @@ class NeighborLoader(NodeLoader):
             timestamps for the nodes in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
-            an earlier timestamp than the center node. (default: :obj:`None`)
-        transform (Callable, optional): A function/transform that takes in
+            an earlier or equal timestamp than the center node.
+            (default: :obj:`None`)
+        weight_attr (str, optional): The name of the attribute that denotes
+            edge weights in the graph.
+            If set, weighted/biased sampling will be used such that neighbors
+            are more likely to get sampled the higher their edge weights are.
+            Edge weights do not need to sum to one, but must be non-negative,
+            finite and have a non-zero sum within local neighborhoods.
+            (default: :obj:`None`)
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        transform_sampler_output (Callable, optional): A function/transform
+        transform_sampler_output (callable, optional): A function/transform
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
@@ -160,14 +185,17 @@ class NeighborLoader(NodeLoader):
             This avoids internal re-sorting of the data and can improve
             runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
-            the returning data in each worker's subprocess rather than in the
-            main process.
-            Setting this to :obj:`True` for in-memory datasets is generally not
-            recommended:
-            (1) it may result in too many open file handles,
-            (2) it may slown down data loading,
-            (3) it requires operating on CPU tensors.
-            (default: :obj:`False`)
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -175,19 +203,21 @@ class NeighborLoader(NodeLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
         replace: bool = False,
-        directed: bool = True,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        weight_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
-        filter_per_worker: bool = False,
+        filter_per_worker: Optional[bool] = None,
         neighbor_sampler: Optional[NeighborSampler] = None,
+        directed: bool = True,  # Deprecated.
         **kwargs,
     ):
         if input_time is not None and time_attr is None:
@@ -200,12 +230,14 @@ class NeighborLoader(NodeLoader):
                 data,
                 num_neighbors=num_neighbors,
                 replace=replace,
-                directed=directed,
+                subgraph_type=subgraph_type,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
+                weight_attr=weight_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
+                directed=directed,
             )
 
         super().__init__(

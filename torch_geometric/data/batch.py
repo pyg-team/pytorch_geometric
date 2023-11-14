@@ -48,7 +48,7 @@ class DynamicInheritance(type):
         return super(DynamicInheritance, new_cls).__call__(*args, **kwargs)
 
 
-class DynamicInheritanceGetter(object):
+class DynamicInheritanceGetter:
     def __call__(self, cls, base_cls):
         return cls(_base_cls=base_cls)
 
@@ -60,19 +60,36 @@ class Batch(metaclass=DynamicInheritance):
     :class:`torch_geometric.data.HeteroData`.
     In addition, single graphs can be identified via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
+
+    :pyg:`PyG` allows modification to the underlying batching procedure by
+    overwriting the :meth:`~Data.__inc__` and :meth:`~Data.__cat_dim__`
+    functionalities.
+    The :meth:`~Data.__inc__` method defines the incremental count between two
+    consecutive graph attributes.
+    By default, :pyg:`PyG` increments attributes by the number of nodes
+    whenever their attribute names contain the substring :obj:`index`
+    (for historical reasons), which comes in handy for attributes such as
+    :obj:`edge_index` or :obj:`node_index`.
+    However, note that this may lead to unexpected behavior for attributes
+    whose names contain the substring :obj:`index` but should not be
+    incremented.
+    To make sure, it is best practice to always double-check the output of
+    batching.
+    Furthermore, :meth:`~Data.__cat_dim__` defines in which dimension graph
+    tensors of the same attribute should be concatenated together.
     """
     @classmethod
     def from_data_list(cls, data_list: List[BaseData],
                        follow_batch: Optional[List[str]] = None,
                        exclude_keys: Optional[List[str]] = None):
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
-        Python list of :class:`~torch_geometric.data.Data` or
+        list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects.
         The assignment vector :obj:`batch` is created on the fly.
         In addition, creates assignment vectors for each key in
         :obj:`follow_batch`.
-        Will exclude any keys given in :obj:`exclude_keys`."""
-
+        Will exclude any keys given in :obj:`exclude_keys`.
+        """
         batch, slice_dict, inc_dict = collate(
             cls,
             data_list=data_list,
@@ -93,8 +110,8 @@ class Batch(metaclass=DynamicInheritance):
         :class:`~torch_geometric.data.HeteroData` object at index :obj:`idx`.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial object."""
-
+        initial object.
+        """
         if not hasattr(self, '_slice_dict'):
             raise RuntimeError(
                 ("Cannot reconstruct 'Data' object from 'Batch' because "
@@ -120,7 +137,8 @@ class Batch(metaclass=DynamicInheritance):
         long or bool.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial objects."""
+        initial objects.
+        """
         if isinstance(idx, slice):
             idx = list(range(self.num_graphs)[idx])
 
@@ -165,7 +183,8 @@ class Batch(metaclass=DynamicInheritance):
         :class:`~torch_geometric.data.Batch` object.
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
-        initial objects."""
+        initial objects.
+        """
         return [self.get_example(i) for i in range(self.num_graphs)]
 
     @property
@@ -179,6 +198,11 @@ class Batch(metaclass=DynamicInheritance):
             return int(self.batch.max()) + 1
         else:
             raise ValueError("Can not infer the number of graphs")
+
+    @property
+    def batch_size(self) -> int:
+        r"""Alias for :obj:`num_graphs`."""
+        return self.num_graphs
 
     def __len__(self) -> int:
         return self.num_graphs

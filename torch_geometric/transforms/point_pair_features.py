@@ -9,7 +9,7 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('point_pair_features')
 class PointPairFeatures(BaseTransform):
     r"""Computes the rotation-invariant Point Pair Features
-    (functional name: :obj:`point_pair_features`)
+    (functional name: :obj:`point_pair_features`).
 
     .. math::
         \left( \| \mathbf{d_{j,i}} \|, \angle(\mathbf{n}_i, \mathbf{d_{j,i}}),
@@ -28,7 +28,7 @@ class PointPairFeatures(BaseTransform):
     def __init__(self, cat: bool = True):
         self.cat = cat
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         ppf_func = torch_geometric.nn.conv.ppf_conv.point_pair_features
 
         assert data.edge_index is not None

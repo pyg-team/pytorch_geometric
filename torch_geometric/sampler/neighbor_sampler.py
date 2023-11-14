@@ -1,6 +1,8 @@
 import copy
 import math
-from typing import Callable, Dict, Optional, Tuple, Union
+import sys
+import warnings
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -22,46 +24,73 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
+from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
-from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
+
+NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
 class NeighborSampler(BaseSampler):
     r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
-    by :class:`~torch_geometric.loader.NeighborLoader`."""
+    by :class:`~torch_geometric.loader.NeighborLoader`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: NumNeighborsType,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         replace: bool = False,
-        directed: bool = True,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        weight_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
+        # Deprecated:
+        directed: bool = True,
     ):
-        self.num_neighbors = num_neighbors
-        self.replace = replace
-        self.directed = directed
-        self._disjoint = disjoint
-        self.temporal_strategy = temporal_strategy
+        if not directed:
+            subgraph_type = SubgraphType.induced
+            warnings.warn(f"The usage of the 'directed' argument in "
+                          f"'{self.__class__.__name__}' is deprecated. Use "
+                          f"`subgraph_type='induced'` instead.")
 
-        if isinstance(data, Data):
-            if not isinstance(self.num_neighbors, (list, tuple)):
-                raise ValueError(f"Expected 'num_neighbors' to be a list or a "
-                                 f"tuple (got {type(self.num_neighbors)})")
+        if (not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux'
+                and subgraph_type != SubgraphType.induced):
+            warnings.warn(f"Using '{self.__class__.__name__}' without a "
+                          f"'pyg-lib' installation is deprecated and will be "
+                          f"removed soon. Please install 'pyg-lib' for "
+                          f"accelerated neighborhood sampling")
 
-            self.node_time = data[time_attr] if time_attr else None
+        self.data_type = DataType.from_data(data)
 
-            # Convert the graph data into a suitable format for sampling:
+        if self.data_type == DataType.homogeneous:
+            self.num_nodes = data.num_nodes
+
+            self.node_time: Optional[Tensor] = None
+            if time_attr is not None:
+                self.node_time = data[time_attr]
+
+            # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, src_node_time=self.node_time)
-            self.num_nodes = self.colptr.numel() - 1
 
-        elif isinstance(data, HeteroData):
+            self.edge_weight: Optional[Tensor] = None
+            if weight_attr is not None:
+                self.edge_weight = data[weight_attr]
+                if self.perm is not None:
+                    self.edge_weight = self.edge_weight[self.perm]
+
+        elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
+
+            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
+
+            self.node_time: Optional[Dict[NodeType, Tensor]] = None
+            if time_attr is not None:
+                self.node_time = data.collect(time_attr)
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
@@ -69,35 +98,43 @@ class NeighborSampler(BaseSampler):
             self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
             self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
 
-            self._process_hetero_num_neighbors()
-
-            self.node_time = data.collect(time_attr) if time_attr else None
-            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
-
-            # Convert the graph data into a suitable format for sampling:
+            # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time)
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
-        elif isinstance(data, tuple):
+            self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
+            if weight_attr is not None:
+                self.edge_weight = data.collect(weight_attr)
+                for edge_type, edge_weight in self.edge_weight.items():
+                    if self.perm.get(edge_type, None) is not None:
+                        edge_weight = edge_weight[self.perm[edge_type]]
+                        self.edge_weight[edge_type] = edge_weight
+                self.edge_weight = remap_keys(self.edge_weight,
+                                              self.to_rel_type)
+
+        else:  # self.data_type == DataType.remote
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
+            node_attrs = [
+                attr for attr in feature_store.get_all_tensor_attrs()
+                if isinstance(attr.group_name, NodeType)  # Heterogeneous ...
+                or attr.group_name is None  # ... or homogeneous.
+            ]
             self.node_types = list(set(attr.group_name for attr in node_attrs))
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
 
-            # Conversion to/from C++ string type (see above):
-            self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
-            self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+            if weight_attr is not None:
+                raise NotImplementedError(
+                    f"'weight_attr' argument not yet supported within "
+                    f"'{self.__class__.__name__}' for "
+                    f"'(FeatureStore, GraphStore)' inputs")
 
-            self._process_hetero_num_neighbors()
-
-            self.node_time = None
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -119,27 +156,79 @@ class NeighborSampler(BaseSampler):
                     copy.copy(attr) for attr in node_attrs
                     if attr.attr_name == time_attr
                 ]
-                for attr in time_attrs:
-                    attr.index = None  # Reset the index to obtain full data.
-                time_tensors = feature_store.multi_get_tensor(time_attrs)
-                self.node_time = {
-                    time_attr.group_name: time_tensor
-                    for time_attr, time_tensor in zip(time_attrs, time_tensors)
+
+            if not self.is_hetero:
+                self.num_nodes = max(edge_attrs[0].size)
+                self.edge_weight: Optional[Tensor] = None
+
+                self.node_time: Optional[Tensor] = None
+                if time_attr is not None:
+                    if len(time_attrs) != 1:
+                        raise ValueError("Temporal sampling specified but did "
+                                         "not find any temporal data")
+                    time_attrs[0].index = None  # Reset index for full data.
+                    time_tensor = feature_store.get_tensor(time_attrs[0])
+                    self.node_time = time_tensor
+
+                self.row, self.colptr, self.perm = graph_store.csc()
+
+            else:
+                self.num_nodes = {
+                    node_type: remote_backend_utils.size(*data, node_type)
+                    for node_type in self.node_types
                 }
+                self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
 
-            self.num_nodes = {
-                node_type: remote_backend_utils.size(*data, node_type)
-                for node_type in self.node_types
-            }
+                self.node_time: Optional[Dict[NodeType, Tensor]] = None
+                if time_attr is not None:
+                    for attr in time_attrs:  # Reset index for full data.
+                        attr.index = None
+                    time_tensors = feature_store.multi_get_tensor(time_attrs)
+                    self.node_time = {
+                        time_attr.group_name: time_tensor
+                        for time_attr, time_tensor in zip(
+                            time_attrs, time_tensors)
+                    }
 
-            # Obtain CSC representations for in-memory sampling:
-            row_dict, colptr_dict, self.perm = graph_store.csc()
-            self.row_dict = remap_keys(row_dict, self.to_rel_type)
-            self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+                # Conversion to/from C++ string type (see above):
+                self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
+                self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+                # Convert the graph data into CSC format for sampling:
+                row_dict, colptr_dict, self.perm = graph_store.csc()
+                self.row_dict = remap_keys(row_dict, self.to_rel_type)
+                self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
+        if (self.edge_weight is not None
+                and not torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE):
+            raise ImportError("Weighted neighbor sampling requires "
+                              "'pyg-lib>=0.3.0'")
+
+        self.num_neighbors = num_neighbors
+        self.replace = replace
+        self.subgraph_type = SubgraphType(subgraph_type)
+        self.disjoint = disjoint
+        self.temporal_strategy = temporal_strategy
+
+    @property
+    def num_neighbors(self) -> NumNeighbors:
+        return self._num_neighbors
+
+    @num_neighbors.setter
+    def num_neighbors(self, num_neighbors: NumNeighborsType):
+        if isinstance(num_neighbors, NumNeighbors):
+            self._num_neighbors = num_neighbors
         else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{type(data)}'")
+            self._num_neighbors = NumNeighbors(num_neighbors)
+
+    @property
+    def is_hetero(self) -> bool:
+        if self.data_type == DataType.homogeneous:
+            return False
+        if self.data_type == DataType.heterogeneous:
+            return True
+
+        # self.data_type == DataType.remote
+        return self.edge_types != [None]
 
     @property
     def is_temporal(self) -> bool:
@@ -149,22 +238,33 @@ class NeighborSampler(BaseSampler):
     def disjoint(self) -> bool:
         return self._disjoint or self.is_temporal
 
+    @disjoint.setter
+    def disjoint(self, disjoint: bool):
+        self._disjoint = disjoint
+
     # Node-based sampling #####################################################
 
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        return node_sample(inputs, self._sample)
+        out = node_sample(inputs, self._sample)
+        if self.subgraph_type == SubgraphType.bidirectional:
+            out = out.to_bidirectional()
+        return out
 
     # Edge-based sampling #####################################################
 
     def sample_from_edges(
-        self, inputs: EdgeSamplerInput,
-        neg_sampling: Optional[NegativeSampling] = None
+        self,
+        inputs: EdgeSamplerInput,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        return edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
-                           self.node_time, neg_sampling)
+        out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
+                          self.node_time, neg_sampling)
+        if self.subgraph_type == SubgraphType.bidirectional:
+            out = out.to_bidirectional()
+        return out
 
     # Other Utilities #########################################################
 
@@ -174,25 +274,6 @@ class NeighborSampler(BaseSampler):
 
     # Helper functions ########################################################
 
-    def _process_hetero_num_neighbors(self):
-        num_neighbors = self.num_neighbors
-
-        if isinstance(num_neighbors, (list, tuple)):
-            num_neighbors = {k: num_neighbors for k in self.edge_types}
-        if not isinstance(num_neighbors, dict):
-            raise ValueError(f"Expected 'num_neighbors' to be a dictionary "
-                             f"(got {type(self.num_neighbors)})")
-
-        # Add at least one element to the list to ensure `max` is well-defined:
-        self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
-
-        for edge_type, value in num_neighbors.items():
-            if len(value) != self.num_hops:
-                raise ValueError(f"Expected the edge type {edge_type} to have "
-                                 f"{self.num_hops} entries (got {len(value)})")
-
-        self.num_neighbors = remap_keys(num_neighbors, self.to_rel_type)
-
     def _sample(
         self,
         seed: Union[Tensor, Dict[NodeType, Tensor]],
@@ -200,56 +281,82 @@ class NeighborSampler(BaseSampler):
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
-        installed) or :obj:`torch-sparse` sampling routines."""
+        installed) or :obj:`torch-sparse` (if installed) sampling routines.
+        """
         if isinstance(seed, dict):  # Heterogeneous sampling:
-            if torch_geometric.typing.WITH_PYG_LIB:
-                # TODO (matthias) `return_edge_id` if edge features present
+            # TODO Support induced subgraph sampling in `pyg-lib`.
+            if (torch_geometric.typing.WITH_PYG_LIB
+                    and self.subgraph_type != SubgraphType.induced):
                 # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
                 colptrs = list(self.colptr_dict.values())
                 dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 seed = {k: v.to(dtype) for k, v in seed.items()}
 
-                out = torch.ops.pyg.hetero_neighbor_sample(
+                args = (
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
                     seed,
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
                     seed_time,
+                )
+                if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
+                    args += (self.edge_weight, )
+                args += (
                     True,  # csc
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
                     self.temporal_strategy,
+                    # TODO (matthias) `return_edge_id` if edge features present
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out + (None, )
+
+                out = torch.ops.pyg.hetero_neighbor_sample(*args)
+                row, col, node, edge, batch = out[:4] + (None, )
+
+                # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
+                num_sampled_nodes = num_sampled_edges = None
+                if len(out) >= 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:6]
+
                 if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
                     node = {k: v[1] for k, v in node.items()}
 
-            else:
+            elif torch_geometric.typing.WITH_TORCH_SPARSE:
                 if self.disjoint:
                     raise ValueError("'disjoint' sampling not supported for "
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
-                import torch_sparse  # noqa
+
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
                     seed,  # seed_dict
-                    self.num_neighbors,
-                    self.num_hops,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
+                    self.num_neighbors.num_hops,
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                 )
                 node, row, col, edge, batch = out + (None, )
+                num_sampled_nodes = num_sampled_edges = None
+
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' requires "
+                                  f"either 'pyg-lib' or 'torch-sparse'")
+
+            if num_sampled_edges is not None:
+                num_sampled_edges = remap_keys(
+                    num_sampled_edges,
+                    self.to_edge_type,
+                )
 
             return HeteroSamplerOutput(
                 node=node,
@@ -257,46 +364,68 @@ class NeighborSampler(BaseSampler):
                 col=remap_keys(col, self.to_edge_type),
                 edge=remap_keys(edge, self.to_edge_type),
                 batch=batch,
+                num_sampled_nodes=num_sampled_nodes,
+                num_sampled_edges=num_sampled_edges,
             )
 
         else:  # Homogeneous sampling:
-            if torch_geometric.typing.WITH_PYG_LIB:
-                # TODO (matthias) `return_edge_id` if edge features present
-                # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
-                out = torch.ops.pyg.neighbor_sample(
+            # TODO Support induced subgraph sampling in `pyg-lib`.
+            if (torch_geometric.typing.WITH_PYG_LIB
+                    and self.subgraph_type != SubgraphType.induced):
+
+                args = (
                     self.colptr,
                     self.row,
-                    seed.to(self.colptr.dtype),  # seed
-                    self.num_neighbors,
+                    # TODO (matthias) `seed` should inherit dtype from `colptr`
+                    seed.to(self.colptr.dtype),
+                    self.num_neighbors.get_mapped_values(),
                     self.node_time,
                     seed_time,
+                )
+                if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
+                    args += (self.edge_weight, )
+                args += (
                     True,  # csc
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
                     self.temporal_strategy,
+                    # TODO (matthias) `return_edge_id` if edge features present
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out + (None, )
+
+                out = torch.ops.pyg.neighbor_sample(*args)
+                row, col, node, edge, batch = out[:4] + (None, )
+
+                # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
+                num_sampled_nodes = num_sampled_edges = None
+                if len(out) >= 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:6]
+
                 if self.disjoint:
                     batch, node = node.t().contiguous()
 
-            else:
+            elif torch_geometric.typing.WITH_TORCH_SPARSE:
                 if self.disjoint:
                     raise ValueError("'disjoint' sampling not supported for "
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
-                import torch_sparse  # noqa
+
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,
                     seed,  # seed
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(),
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                 )
                 node, row, col, edge, batch = out + (None, )
+                num_sampled_nodes = num_sampled_edges = None
+
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' requires "
+                                  f"either 'pyg-lib' or 'torch-sparse'")
 
             return SamplerOutput(
                 node=node,
@@ -304,6 +433,8 @@ class NeighborSampler(BaseSampler):
                 col=col,
                 edge=edge,
                 batch=batch,
+                num_sampled_nodes=num_sampled_nodes,
+                num_sampled_edges=num_sampled_edges,
             )
 
 
@@ -316,7 +447,8 @@ def node_sample(
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
-    input. Returns the output of this sampling procedure."""
+    input. Returns the output of this sampling procedure.
+    """
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
         seed_time = None
@@ -341,7 +473,8 @@ def edge_sample(
     neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
-    function of the same signature as `node_sample`."""
+    function of the same signature as `node_sample`.
+    """
     input_id = inputs.input_id
     src = inputs.row
     dst = inputs.col
@@ -502,8 +635,13 @@ def edge_sample(
 
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
-                            src_time)
+            out.metadata = (
+                input_id,
+                src_index,
+                dst_pos_index,
+                dst_neg_index,
+                src_time,
+            )
 
     # Homogeneus Neighborhood Sampling ########################################
 
@@ -524,11 +662,11 @@ def edge_sample(
         if neg_sampling is None or neg_sampling.is_binary():
             if disjoint:
                 out.batch = out.batch % num_pos
-                edge_label_index = torch.arange(2 * seed.numel()).view(2, -1)
+                edge_label_index = torch.arange(seed.numel()).view(2, -1)
             else:
                 edge_label_index = inverse_seed.view(2, -1)
 
-            out.metadata = (input_id, edge_label_index, edge_label, seed_time)
+            out.metadata = (input_id, edge_label_index, edge_label, src_time)
 
         elif neg_sampling.is_triplet():
             if disjoint:
@@ -545,15 +683,24 @@ def edge_sample(
                 dst_neg_index = inverse_seed[2 * num_pos:]
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
-                            src_time)
+            out.metadata = (
+                input_id,
+                src_index,
+                dst_pos_index,
+                dst_neg_index,
+                src_time,
+            )
 
     return out
 
 
-def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
-               seed_time: Optional[Tensor],
-               node_time: Optional[Tensor]) -> Tensor:
+def neg_sample(
+    seed: Tensor,
+    neg_sampling: NegativeSampling,
+    num_nodes: int,
+    seed_time: Optional[Tensor],
+    node_time: Optional[Tensor],
+) -> Tensor:
     num_neg = math.ceil(seed.numel() * neg_sampling.amount)
 
     # TODO: Do not sample false negatives.
@@ -562,7 +709,7 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
 
     # If we are in a temporal-sampling scenario, we need to respect the
     # timestamp of the given nodes we can use as negative examples.
-    # That is, we can only sample nodes for which `node_time < seed_time`.
+    # That is, we can only sample nodes for which `node_time <= seed_time`.
     # For now, we use a greedy algorithm which randomly samples negative
     # nodes and discard any which do not respect the temporal constraint.
     # We iteratively repeat this process until we have sampled a valid node for
@@ -572,9 +719,9 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
     num_samples = math.ceil(neg_sampling.amount)
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
 
-    out = neg_sampling.sample(num_neg, num_nodes)
+    out = neg_sampling.sample(num_samples * seed.numel(), num_nodes)
     out = out.view(num_samples, seed.numel())
-    mask = node_time[out] >= seed_time  # holds all invalid samples.
+    mask = node_time[out] > seed_time  # holds all invalid samples.
     neg_sampling_complete = False
     for i in range(5):  # pragma: no cover
         num_invalid = int(mask.sum())

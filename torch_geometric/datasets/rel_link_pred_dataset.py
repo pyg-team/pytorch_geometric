@@ -14,8 +14,8 @@ class RelLinkPredDataset(InMemoryDataset):
     Training and test splits are given by sets of triplets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"FB15k-237"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"FB15k-237"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -25,19 +25,20 @@ class RelLinkPredDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 14,541
-              - 544,230
-              - 0
-              - 0
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 14,541
+          - 544,230
+          - 0
+          - 0
     """
 
     urls = {
@@ -51,11 +52,11 @@ class RelLinkPredDataset(InMemoryDataset):
         self.name = name
         assert name in ['FB15k-237']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def num_relations(self) -> int:
-        return int(self.data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1
 
     @property
     def raw_dir(self) -> str:
@@ -112,7 +113,7 @@ class RelLinkPredDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save((self.collate([data])), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}()'

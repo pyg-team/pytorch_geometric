@@ -5,7 +5,7 @@ from torch_geometric.transforms import ToUndirected
 
 
 def test_to_undirected():
-    assert ToUndirected().__repr__() == 'ToUndirected()'
+    assert str(ToUndirected()) == 'ToUndirected()'
 
     edge_index = torch.tensor([[2, 0, 2], [3, 1, 0]])
     edge_weight = torch.randn(edge_index.size(1))

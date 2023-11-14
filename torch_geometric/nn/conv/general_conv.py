@@ -30,7 +30,7 @@ class GeneralConv(MessagePassing):
         out_channels (int): Size of each output sample.
         in_edge_channels (int, optional): Size of each input edge.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         skip_linear (bool, optional): Whether apply linear function in skip
@@ -120,10 +120,10 @@ class GeneralConv(MessagePassing):
         if self.attention:
             if self.attention_type == 'additive':
                 self.att_msg = Parameter(
-                    torch.Tensor(1, self.heads, self.out_channels))
+                    torch.empty(1, self.heads, self.out_channels))
             elif self.attention_type == 'dot_product':
-                self.scaler = torch.sqrt(
-                    torch.tensor(out_channels, dtype=torch.float))
+                scaler = torch.tensor(out_channels, dtype=torch.float).sqrt()
+                self.register_buffer('scaler', scaler)
             else:
                 raise ValueError(
                     f"Attention type '{self.attention_type}' not supported")
@@ -131,6 +131,7 @@ class GeneralConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_msg.reset_parameters()
         if hasattr(self.lin_self, 'reset_parameters'):
             self.lin_self.reset_parameters()
@@ -141,7 +142,7 @@ class GeneralConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: Tensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]

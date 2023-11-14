@@ -13,7 +13,7 @@ def test_dense_gin_conv():
     sparse_conv = GINConv(nn)
     dense_conv = DenseGINConv(nn)
     dense_conv = DenseGINConv(nn, train_eps=True)
-    assert dense_conv.__repr__() == (
+    assert str(dense_conv) == (
         'DenseGINConv(nn=Sequential(\n'
         '  (0): Linear(in_features=16, out_features=16, bias=True)\n'
         '  (1): ReLU()\n'
@@ -28,16 +28,16 @@ def test_dense_gin_conv():
     assert sparse_out.size() == (5, channels)
 
     x = torch.cat([x, x.new_zeros(1, channels)], dim=0).view(2, 3, channels)
-    adj = torch.Tensor([
+    adj = torch.tensor([
         [
-            [0, 1, 1],
-            [1, 0, 1],
-            [1, 1, 0],
+            [0.0, 1.0, 1.0],
+            [1.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],
         ],
         [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, 0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
         ],
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
@@ -60,10 +60,10 @@ def test_dense_gin_conv_with_broadcasting():
     conv = DenseGINConv(nn)
 
     x = torch.randn(batch_size, num_nodes, channels)
-    adj = torch.Tensor([
-        [0, 1, 1],
-        [1, 0, 1],
-        [1, 1, 0],
+    adj = torch.tensor([
+        [0.0, 1.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0],
     ])
 
     assert conv(x, adj).size() == (batch_size, num_nodes, channels)

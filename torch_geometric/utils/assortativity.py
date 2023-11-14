@@ -1,9 +1,9 @@
 import torch
+from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import coalesce, degree
-
-from .to_dense_adj import to_dense_adj
+from torch_geometric.utils.to_dense_adj import to_dense_adj
 
 
 def assortativity(edge_index: Adj) -> float:
@@ -22,15 +22,16 @@ def assortativity(edge_index: Adj) -> float:
         graph :math:`\in [-1, 1]`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 2],
         ...                            [1, 2, 0, 1, 3]])
         >>> assortativity(edge_index)
         -0.666667640209198
     """
     if isinstance(edge_index, SparseTensor):
-        row, col, _ = edge_index.coo()
+        adj: SparseTensor = edge_index
+        row, col, _ = adj.coo()
     else:
+        assert isinstance(edge_index, Tensor)
         row, col = edge_index
 
     device = row.device

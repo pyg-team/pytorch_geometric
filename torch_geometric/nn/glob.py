@@ -4,22 +4,7 @@ from torch_geometric.nn import (
     global_max_pool,
     global_mean_pool,
 )
-from torch_geometric.nn.aggr import (
-    AttentionalAggregation,
-    GraphMultisetTransformer,
-    Set2Set,
-    SortAggregation,
-)
-
-Set2Set = deprecated(
-    details="use 'nn.aggr.Set2Set' instead",
-    func_name='nn.glob.Set2Set',
-)(Set2Set)
-
-GraphMultisetTransformer = deprecated(
-    details="use 'nn.aggr.GraphMultisetTransformer' instead",
-    func_name='nn.glob.GraphMultisetTransformer',
-)(GraphMultisetTransformer)
+from torch_geometric.nn.aggr import AttentionalAggregation, SortAggregation
 
 
 @deprecated(

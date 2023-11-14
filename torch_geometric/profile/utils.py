@@ -4,14 +4,15 @@ import os.path as osp
 import random
 import subprocess as sp
 import sys
+import warnings
 from collections.abc import Mapping, Sequence
 from typing import Any, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData
+from torch_geometric.typing import SparseTensor
 
 
 def count_parameters(model: torch.nn.Module) -> int:
@@ -66,37 +67,41 @@ def get_data_size(data: BaseData) -> int:
 
 
 def get_cpu_memory_from_gc() -> int:
-    r"""Returns the used CPU memory in bytes, as reported by the Python garbage
-    collector.
+    r"""Returns the used CPU memory in bytes, as reported by the
+    :python:`Python` garbage collector.
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
             if isinstance(obj, Tensor) and not obj.is_cuda:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 
 
-def get_gpu_memory_from_gc(device: int = 0) -> int:
-    r"""Returns the used GPU memory in bytes, as reported by the Python garbage
-    collector.
+def get_gpu_memory_from_gc(device: int = 0) -> int:  # pragma: no cover
+    r"""Returns the used GPU memory in bytes, as reported by the
+    :python:`Python` garbage collector.
 
     Args:
         device (int, optional): The GPU device identifier. (default: :obj:`1`)
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
             if isinstance(obj, Tensor) and obj.get_device() == device:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 
 
-def get_gpu_memory_from_nvidia_smi(
+def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
     device: int = 0,
     digits: int = 2,
 ) -> Tuple[float, float]:

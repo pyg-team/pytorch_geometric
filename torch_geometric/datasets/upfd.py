@@ -13,7 +13,7 @@ from torch_geometric.data import (
     extract_zip,
 )
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import coalesce
+from torch_geometric.utils import coalesce, cumsum
 
 
 class UPFD(InMemoryDataset):
@@ -39,11 +39,11 @@ class UPFD(InMemoryDataset):
         upfd.py>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the graph set (:obj:`"politifact"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the graph set (:obj:`"politifact"`,
             :obj:`"gossipcop"`).
-        feature (string): The node feature type (:obj:`"profile"`,
-            :obj:`"spacy"`, :obj:`"bert"`, :obj:`"content"`).
+        feature (str): The node feature type (:obj:`"profile"`, :obj:`"spacy"`,
+            :obj:`"bert"`, :obj:`"content"`).
             If set to :obj:`"profile"`, the 10-dimensional node feature
             is composed of ten Twitter user profile attributes.
             If set to :obj:`"spacy"`, the 300-dimensional node feature is
@@ -56,8 +56,7 @@ class UPFD(InMemoryDataset):
             If set to :obj:`"content"`, the 310-dimensional node feature is
             composed of a 300-dimensional "spacy" vector plus a
             10-dimensional "profile" vector.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)
@@ -73,6 +72,8 @@ class UPFD(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -90,15 +91,17 @@ class UPFD(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.root = root
         self.name = name
         self.feature = feature
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -140,10 +143,8 @@ class UPFD(InMemoryDataset):
         batch = np.load(osp.join(self.raw_dir, 'node_graph_id.npy'))
         batch = torch.from_numpy(batch).to(torch.long)
 
-        node_slice = torch.cumsum(batch.bincount(), 0)
-        node_slice = torch.cat([torch.tensor([0]), node_slice])
-        edge_slice = torch.cumsum(batch[edge_index[0]].bincount(), 0)
-        edge_slice = torch.cat([torch.tensor([0]), edge_slice])
+        node_slice = cumsum(batch.bincount())
+        edge_slice = cumsum(batch[edge_index[0].bincount()])
         graph_slice = torch.arange(y.size(0) + 1)
         self.slices = {
             'x': node_slice,
@@ -161,7 +162,7 @@ class UPFD(InMemoryDataset):
                 data_list = [d for d in data_list if self.pre_filter(d)]
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(d) for d in data_list]
-            torch.save(self.collate(data_list), path)
+            self.save(data_list, path)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, name={self.name}, '

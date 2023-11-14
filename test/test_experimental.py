@@ -7,8 +7,7 @@ from torch_geometric import (
 )
 
 
-@pytest.mark.skip(reason='No experimental options available right now.')
-@pytest.mark.parametrize('options', [None])
+@pytest.mark.parametrize('options', ['disable_dynamic_shapes'])
 def test_experimental_mode(options):
     assert is_experimental_mode_enabled(options) is False
     with experimental_mode(options):
