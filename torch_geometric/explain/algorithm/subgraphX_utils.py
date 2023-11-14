@@ -33,6 +33,7 @@ def find_closest_node_result(results, max_nodes):
 
 class MarginalSubgraphDataset(Dataset):
     def __init__(self, data, exclude_mask, include_mask, subgraph_build_func):
+        super(MarginalSubgraphDataset, self).__init__()
         self.num_nodes = data.num_nodes
         self.X = data.x
         self.edge_index = data.edge_index
