@@ -16,7 +16,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
     :meth:`sklearn.datasets.make_classification` method.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         block_sizes ([int] or LongTensor): The sizes of blocks.
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
@@ -68,7 +68,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         self.kwargs.update(kwargs)
 
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def processed_dir(self) -> str:
@@ -112,7 +112,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
 
 class RandomPartitionGraphDataset(StochasticBlockModelDataset):
@@ -126,7 +126,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
     :meth:`sklearn.datasets.make_classification` method.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         num_classes (int): The number of classes.
         num_nodes_per_class (int): The number of nodes per class.
         node_homophily_ratio (float): The degree of node homophily.
@@ -174,7 +174,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
 
         super().__init__(root, block_sizes, edge_probs, num_channels,
                          is_undirected, transform, pre_transform, **kwargs)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:

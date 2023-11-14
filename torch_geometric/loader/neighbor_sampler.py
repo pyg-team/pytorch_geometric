@@ -117,10 +117,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         edge_index = edge_index.to('cpu')
 
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         # Save for Pytorch Lightning < 1.6:
         self.edge_index = edge_index

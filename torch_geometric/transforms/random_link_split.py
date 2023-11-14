@@ -41,10 +41,10 @@ class RandomLinkSplit(BaseTransform):
             (default: :obj:`0.2`)
         is_undirected (bool): If set to :obj:`True`, the graph is assumed to be
             undirected, and positive and negative samples will not leak
-            (reverse) edge connectivity across different splits. Note that this
-            only affects the graph split, label data will not be returned
-            undirected.
-            (default: :obj:`False`)
+            (reverse) edge connectivity across different splits. This only
+            affects the graph split, label data will not be returned
+            undirected. This option is ignored for bipartite edge types or
+            whenever :obj:`edge_type != rev_edge_type`. (default: :obj:`False`)
         key (str, optional): The name of the attribute holding
             ground-truth labels.
             If :obj:`data[key]` does not exist, it will be automatically
@@ -116,7 +116,7 @@ class RandomLinkSplit(BaseTransform):
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
@@ -128,7 +128,7 @@ class RandomLinkSplit(BaseTransform):
         if isinstance(data, HeteroData):
             if edge_types is None:
                 raise ValueError(
-                    "The 'RandomLinkSplit' transform expects 'edge_types' to"
+                    "The 'RandomLinkSplit' transform expects 'edge_types' to "
                     "be specified when operating on 'HeteroData' objects")
 
             if not isinstance(edge_types, list):
@@ -257,11 +257,12 @@ class RandomLinkSplit(BaseTransform):
         rev_edge_type: EdgeType,
     ) -> EdgeStorage:
 
+        edge_attrs = {key for key in store.keys() if store.is_edge_attr(key)}
         for key, value in store.items():
             if key == 'edge_index':
                 continue
 
-            if store.is_edge_attr(key):
+            if key in edge_attrs:
                 value = value[index]
                 if is_undirected:
                     value = torch.cat([value, value], dim=0)
@@ -301,7 +302,7 @@ class RandomLinkSplit(BaseTransform):
             # in case no negative edges are added.
             if neg_edge_index.numel() > 0:
                 assert edge_label.dtype == torch.long
-                assert edge_label.size(0) == store.edge_index.size(1)
+                assert edge_label.size(0) == edge_index.size(1)
                 edge_label.add_(1)
             if hasattr(out, self.key):
                 delattr(out, self.key)

@@ -19,7 +19,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
     distribution, which are distinct for each class.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         homophily (float): The degree of homophily (one of :obj:`0.0`,
             :obj:`0.1`, ..., :obj:`0.9`).
         transform (callable, optional): A function/transform that takes in an
@@ -46,7 +46,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         super().__init__(root, transform, pre_transform)
 
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -95,7 +95,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(homophily={self.homophily:.1f})'

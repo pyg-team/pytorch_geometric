@@ -92,7 +92,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
                               usecols=[0]).squeeze()
             col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
                               usecols=[1]).squeeze()
-        except:  # noqa
+        except Exception:
             continue
 
         row = torch.tensor([idx_assoc[i] for i in row])
@@ -129,7 +129,7 @@ def read_soc(files: List[str], name: str) -> List[Data]:
                              skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
     num_nodes = edge_index.max().item() + 1
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
@@ -147,7 +147,7 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
 
     edge_index = idx_assoc[edge_index]
     num_nodes = edge_index.max().item() + 1
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
@@ -157,8 +157,8 @@ class SNAPDataset(InMemoryDataset):
     <https://snap.stanford.edu/data>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset.
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -171,6 +171,8 @@ class SNAPDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://snap.stanford.edu/data'
@@ -196,11 +198,13 @@ class SNAPDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -253,7 +257,7 @@ class SNAPDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'SNAP-{self.name}({len(self)})'

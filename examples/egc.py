@@ -12,6 +12,10 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import EGConv, global_mean_pool
+from torch_geometric.typing import WITH_TORCH_SPARSE
+
+if not WITH_TORCH_SPARSE:
+    quit("This example requires 'torch-sparse'")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_multi_aggregators', action='store_true',

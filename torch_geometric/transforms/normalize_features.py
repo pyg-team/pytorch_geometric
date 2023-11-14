@@ -17,13 +17,14 @@ class NormalizeFeatures(BaseTransform):
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.stores:
             for key, value in store.items(*self.attrs):
-                value = value - value.min()
-                value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.))
-                store[key] = value
+                if value.numel() > 0:
+                    value = value - value.min()
+                    value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.))
+                    store[key] = value
         return data

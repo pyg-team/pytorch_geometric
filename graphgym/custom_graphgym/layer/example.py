@@ -15,19 +15,17 @@ from torch_geometric.nn.inits import glorot, zeros
 # take 'batch' as input and 'batch' as output
 @register_layer('exampleconv1')
 class ExampleConv1(MessagePassing):
-    r"""Example GNN layer
-
-    """
+    r"""Example GNN layer."""
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -38,7 +36,6 @@ class ExampleConv1(MessagePassing):
         zeros(self.bias)
 
     def forward(self, batch):
-        """"""
         x, edge_index = batch.x, batch.edge_index
         x = torch.matmul(x, self.weight)
 
@@ -58,19 +55,17 @@ class ExampleConv1(MessagePassing):
 # Example 2: First define a PyG format Conv layer
 # Then wrap it to become GraphGym format
 class ExampleConv2Layer(MessagePassing):
-    r"""Example GNN layer
-
-    """
+    r"""Example GNN layer."""
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -81,7 +76,6 @@ class ExampleConv2Layer(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x, edge_index):
-        """"""
         x = torch.matmul(x, self.weight)
 
         return self.propagate(edge_index, x=x)

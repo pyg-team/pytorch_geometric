@@ -12,7 +12,7 @@ EPS = 1e-15
 class MemPooling(torch.nn.Module):
     r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
-    representation based on soft cluster assignments
+    representation based on soft cluster assignments.
 
     .. math::
         S_{i,j}^{(h)} &= \frac{
@@ -27,7 +27,7 @@ class MemPooling(torch.nn.Module):
         \mathbf{X}^{\prime} &= \mathbf{S}^{\top} \mathbf{X} \mathbf{W} \in
         \mathbb{R}^{K \times F^{\prime}}
 
-    Where :math:`H` denotes the number of heads, and :math:`K` denotes the
+    where :math:`H` denotes the number of heads, and :math:`K` denotes the
     number of clusters.
 
     Args:
@@ -46,20 +46,21 @@ class MemPooling(torch.nn.Module):
         self.num_clusters = num_clusters
         self.tau = tau
 
-        self.k = Parameter(torch.Tensor(heads, num_clusters, in_channels))
+        self.k = Parameter(torch.empty(heads, num_clusters, in_channels))
         self.conv = Conv2d(heads, 1, kernel_size=1, padding=0, bias=False)
         self.lin = Linear(in_channels, out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         torch.nn.init.uniform_(self.k.data, -1., 1.)
         self.conv.reset_parameters()
         self.lin.reset_parameters()
 
     @staticmethod
     def kl_loss(S: Tensor) -> Tensor:
-        r"""The additional KL divergence-based loss
+        r"""The additional KL divergence-based loss.
 
         .. math::
             P_{i,j} &= \frac{S_{i,j}^2 / \sum_{n=1}^N S_{n,j}}{\sum_{k=1}^K
@@ -77,26 +78,41 @@ class MemPooling(torch.nn.Module):
         loss = KLDivLoss(reduction='batchmean', log_target=False)
         return loss(S.clamp(EPS).log(), P.clamp(EPS))
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
-        r"""
+    def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+        mask: Optional[Tensor] = None,
+        max_num_nodes: Optional[int] = None,
+        batch_size: Optional[int] = None,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Forward pass.
+
         Args:
-            x (Tensor): Dense or sparse node feature tensor
+            x (torch.Tensor): The node feature tensor of shape
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
-                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`,
-                respectively.
-            batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in
-                {\{ 0, \ldots, B-1\}}^N`, which assigns each node to a
-                specific example.
-                This argument should be just to separate graphs when using
-                sparse node features. (default: :obj:`None`)
-            mask (BoolTensor, optional): Mask matrix
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example.
+                Should not be provided in case node features already have shape
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+                (default: :obj:`None`)
+            mask (torch.Tensor, optional): A mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}`, which
-                indicates valid nodes for each graph when using dense node
-                features. (default: :obj:`None`)
+                indicates valid nodes for each graph when using
+                node features of shape
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
+                (default: :obj:`None`)
+            max_num_nodes (int, optional): The size of the :math:`B` node
+                dimension. Automatically calculated if not given.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if x.dim() <= 2:
-            x, mask = to_dense_batch(x, batch)
+            x, mask = to_dense_batch(x, batch, max_num_nodes=max_num_nodes,
+                                     batch_size=batch_size)
         elif mask is None:
             mask = x.new_ones((x.size(0), x.size(1)), dtype=torch.bool)
 

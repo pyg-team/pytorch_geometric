@@ -7,7 +7,7 @@ class DiffGroupNorm(torch.nn.Module):
     r"""The differentiable group normalization layer from the `"Towards Deeper
     Graph Neural Networks with Differentiable Group Normalization"
     <https://arxiv.org/abs/2006.06972>`_ paper, which normalizes node features
-    group-wise via a learnable soft cluster assignment
+    group-wise via a learnable soft cluster assignment.
 
     .. math::
 
@@ -63,11 +63,16 @@ class DiffGroupNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin.reset_parameters()
         self.norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The source tensor.
+        """
         F, G = self.in_channels, self.groups
 
         s = self.lin(x).softmax(dim=-1)  # [N, G]
@@ -79,7 +84,7 @@ class DiffGroupNorm(torch.nn.Module):
     @staticmethod
     def group_distance_ratio(x: Tensor, y: Tensor, eps: float = 1e-5) -> float:
         r"""Measures the ratio of inter-group distance over intra-group
-        distance
+        distance.
 
         .. math::
             R_{\text{Group}} = \frac{\frac{1}{(C-1)^2} \sum_{i!=j}

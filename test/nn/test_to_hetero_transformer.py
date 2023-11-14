@@ -5,9 +5,17 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
-from torch_sparse import SparseTensor
 
-from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
+import torch_geometric.typing
+from torch_geometric.datasets import FakeHeteroDataset
+from torch_geometric.nn import (
+    GAT,
+    BatchNorm,
+    GATv2Conv,
+    GCNConv,
+    GINEConv,
+    GraphSAGE,
+)
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
     MeanAggregation,
@@ -16,6 +24,8 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
+from torch_geometric.testing import onlyCUDA, withPackage
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge
 
 torch.fx.wrap('dropout_edge')
@@ -144,7 +154,29 @@ class Net10(torch.nn.Module):
         return self.conv(x, edge_index)
 
 
-def test_to_hetero():
+class Net11(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 16)
+        self.num_layers = 3
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        xs = [x]
+        for _ in range(self.num_layers):
+            xs.append(self.conv(xs[-1], edge_index))
+        return torch.cat(xs, dim=-1)
+
+
+class Net12(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = Net8()
+
+    def forward(self, x: Tensor) -> Tensor:
+        return self.conv(x)
+
+
+def test_to_hetero_basic():
     x_dict = {
         'paper': torch.randn(100, 16),
         'author': torch.randn(100, 16),
@@ -157,15 +189,20 @@ def test_to_hetero():
         ('author', 'writes', 'paper'):
         torch.randint(100, (2, 200), dtype=torch.long),
     }
-    adj_t_dict = {}
-    for edge_type, (row, col) in edge_index_dict.items():
-        adj_t_dict[edge_type] = SparseTensor(row=col, col=row,
-                                             sparse_sizes=(100, 100))
     edge_attr_dict = {
         ('paper', 'cites', 'paper'): torch.randn(200, 8),
         ('paper', 'written_by', 'author'): torch.randn(200, 8),
         ('author', 'writes', 'paper'): torch.randn(200, 8),
     }
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t_dict = {}
+        for edge_type, (row, col) in edge_index_dict.items():
+            adj_t_dict[edge_type] = SparseTensor(
+                row=col,
+                col=row,
+                sparse_sizes=(100, 100),
+            )
 
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
@@ -192,10 +229,11 @@ def test_to_hetero():
         assert out1['paper'].size() == (100, 32)
         assert out1['author'].size() == (100, 32)
 
-        out2 = model(x_dict, adj_t_dict)
-        assert isinstance(out2, dict) and len(out2) == 2
-        for node_type in x_dict.keys():
-            assert torch.allclose(out1[node_type], out2[node_type], atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            out2 = model(x_dict, adj_t_dict)
+            assert isinstance(out2, dict) and len(out2) == 2
+            for key in x_dict.keys():
+                assert torch.allclose(out1[key], out2[key], atol=1e-6)
 
     model = Net3()
     model = to_hetero(model, metadata, debug=False)
@@ -247,11 +285,27 @@ def test_to_hetero():
     assert out['author'].size() == (8, 16)
 
     model = Net10()
-    model = to_hetero(model, metadata, debug=False)
+    with pytest.warns(UserWarning, match="with keyword argument 'training'"):
+        model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
+
+    model = Net11()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (100, 64)
+    assert out['author'].size() == (100, 64)
+
+    model = Net12()
+    with pytest.warns(UserWarning, match="parameters cannot be reset"):
+        model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 8), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 32)
+    assert out['author'].size() == (8, 32)
 
 
 class GCN(torch.nn.Module):
@@ -271,8 +325,8 @@ def test_to_hetero_with_gcn():
         'paper': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
-        ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'cites', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'rev_cites', 'paper'): torch.randint(100, (2, 200)),
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
@@ -334,6 +388,7 @@ class RGCN(torch.nn.Module):
         return self.lin(x) + self.conv(x, edge_index)
 
 
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 def test_to_hetero_and_rgcn_equal_output():
     torch.manual_seed(1234)
 
@@ -368,12 +423,13 @@ def test_to_hetero_and_rgcn_equal_output():
         edge_index[:, edge_type == 2] - torch.tensor([[6], [0]]),
     }
 
-    node_types, edge_types = list(x_dict.keys()), list(edge_index_dict.keys())
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t_dict = {
+            key: SparseTensor.from_edge_index(edge_index).t()
+            for key, edge_index in edge_index_dict.items()
+        }
 
-    adj_t_dict = {
-        key: SparseTensor.from_edge_index(edge_index).t()
-        for key, edge_index in edge_index_dict.items()
-    }
+    node_types, edge_types = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = to_hetero(RGCN(16, 32), (node_types, edge_types))
 
@@ -389,9 +445,10 @@ def test_to_hetero_and_rgcn_equal_output():
     out2 = torch.cat([out2['paper'], out2['author']], dim=0)
     assert torch.allclose(out1, out2, atol=1e-6)
 
-    out3 = model(x_dict, adj_t_dict)
-    out3 = torch.cat([out3['paper'], out3['author']], dim=0)
-    assert torch.allclose(out1, out3, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        out3 = model(x_dict, adj_t_dict)
+        out3 = torch.cat([out3['paper'], out3['author']], dim=0)
+        assert torch.allclose(out1, out3, atol=1e-6)
 
 
 class GraphLevelGNN(torch.nn.Module):
@@ -463,3 +520,47 @@ def test_to_hetero_validate():
 
     with pytest.warns(UserWarning, match="letters, numbers and underscores"):
         model = to_hetero(model, metadata, debug=False)
+
+
+def test_to_hetero_on_static_graphs():
+    x_dict = {
+        'paper': torch.randn(4, 100, 16),
+        'author': torch.randn(4, 100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'written_by', 'author'): torch.randint(100, (2, 200)),
+        ('author', 'writes', 'paper'): torch.randint(100, (2, 200)),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+    model = to_hetero(Net4(), metadata, debug=False)
+    out_dict = model(x_dict, edge_index_dict)
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (4, 100, 32)
+    assert out_dict['author'].size() == (4, 100, 32)
+
+
+@onlyCUDA
+def test_to_hetero_lazy_cuda():
+    class Model(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.conv = GATv2Conv(
+                (-1, -1),
+                out_channels=2,
+                add_self_loops=False,
+                edge_dim=-1,
+                heads=1,
+            ).to('cuda')
+
+        def forward(self, x, edge_index, edge_attr):
+            return self.conv(x, edge_index, edge_attr)
+
+    data = FakeHeteroDataset(edge_dim=10)[0].to('cuda')
+    model = to_hetero(Model(), data.metadata())
+    out_dict = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
+    assert len(out_dict) == len(data.node_types)
+    for out in out_dict.values():
+        assert out.is_cuda
+        assert out.size(-1) == 2

@@ -26,8 +26,8 @@ class DBP15K(InMemoryDataset):
     Matching Neural Network" <https://arxiv.org/abs/1905.11605>`_ paper.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        pair (string): The pair of languages (:obj:`"en_zh"`, :obj:`"en_fr"`,
+        root (str): Root directory where the dataset should be saved.
+        pair (str): The pair of languages (:obj:`"en_zh"`, :obj:`"en_fr"`,
             :obj:`"en_ja"`, :obj:`"zh_en"`, :obj:`"fr_en"`, :obj:`"ja_en"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -47,7 +47,7 @@ class DBP15K(InMemoryDataset):
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -93,7 +93,7 @@ class DBP15K(InMemoryDataset):
         data = Data(x1=x1, edge_index1=edge_index1, rel1=rel1, x2=x2,
                     edge_index2=edge_index2, rel2=rel2, train_y=train_y,
                     test_y=test_y)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def process_graph(
         self,

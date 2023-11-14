@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -99,9 +100,11 @@ def test(loader):
     return total_correct / len(loader.dataset)
 
 
+times = []
 patience = start_patience = 250
 test_acc = best_val_acc = 0.
 for epoch in range(1, 2001):
+    start = time.time()
     train()
     val_acc = test(val_loader)
     if epoch % 500 == 0:
@@ -115,3 +118,5 @@ for epoch in range(1, 2001):
     print(f'Epoch {epoch:02d}, Val: {val_acc:.3f}, Test: {test_acc:.3f}')
     if patience <= 0:
         break
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

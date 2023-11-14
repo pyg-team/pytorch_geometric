@@ -20,7 +20,7 @@ def fidelity(
     Fidelity evaluates the contribution of the produced explanatory subgraph
     to the initial prediction, either by giving only the subgraph to the model
     (fidelity-) or by removing it from the entire graph (fidelity+).
-    The fidelity scores capture how good an explanable model reproduces the
+    The fidelity scores capture how good an explainable model reproduces the
     natural phenomenon or the GNN model logic.
 
     For **phenomenon** explanations, the fidelity scores are given by:
@@ -50,7 +50,8 @@ def fidelity(
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")
 
-    node_mask, edge_mask = explanation.node_mask, explanation.edge_mask
+    node_mask = explanation.get('node_mask')
+    edge_mask = explanation.get('edge_mask')
     kwargs = {key: explanation[key] for key in explanation._model_args}
 
     y = explanation.target
@@ -80,7 +81,7 @@ def fidelity(
     )
     complement_y_hat = explainer.get_target(complement_y_hat)
 
-    if explanation.index is not None:
+    if explanation.get('index') is not None:
         y = y[explanation.index]
         if explainer.explanation_type == ExplanationType.phenomenon:
             y_hat = y_hat[explanation.index]
@@ -107,7 +108,7 @@ def characterization_score(
 ) -> Tensor:
     r"""Returns the componentwise characterization score as described in the
     `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for
-    Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper:
+    Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper.
 
     ..  math::
        \textrm{charact} = \frac{w_{+} + w_{-}}{\frac{w_{+}}{\textrm{fid}_{+}} +

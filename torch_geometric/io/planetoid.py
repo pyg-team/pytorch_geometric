@@ -1,5 +1,4 @@
 import os.path as osp
-import sys
 import warnings
 from itertools import repeat
 
@@ -7,6 +6,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, index_to_mask, remove_self_loops
 
 try:
@@ -29,16 +29,14 @@ def read_planetoid_data(folder, prefix):
         # as zero vectors to `tx` and `ty`.
         len_test_indices = (test_index.max() - test_index.min()).item() + 1
 
-        tx_ext = torch.zeros(len_test_indices, tx.size(1))
+        tx_ext = torch.zeros(len_test_indices, tx.size(1), dtype=tx.dtype)
         tx_ext[sorted_test_index - test_index.min(), :] = tx
-        ty_ext = torch.zeros(len_test_indices, ty.size(1))
+        ty_ext = torch.zeros(len_test_indices, ty.size(1), dtype=ty.dtype)
         ty_ext[sorted_test_index - test_index.min(), :] = ty
 
         tx, ty = tx_ext, ty_ext
 
     if prefix.lower() == 'nell.0.001':
-        from torch_sparse import SparseTensor
-
         tx_ext = torch.zeros(len(graph) - allx.size(0), x.size(1))
         tx_ext[sorted_test_index - allx.size(0)] = tx
 
@@ -94,17 +92,14 @@ def read_file(folder, prefix, name):
         return read_txt_array(path, dtype=torch.long)
 
     with open(path, 'rb') as f:
-        if sys.version_info > (3, 0):
-            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
-            out = pickle.load(f, encoding='latin1')
-        else:
-            out = pickle.load(f)
+        warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
+        out = pickle.load(f, encoding='latin1')
 
     if name == 'graph':
         return out
 
     out = out.todense() if hasattr(out, 'todense') else out
-    out = torch.Tensor(out)
+    out = torch.from_numpy(out).to(torch.float)
     return out
 
 

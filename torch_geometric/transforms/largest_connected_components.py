@@ -28,7 +28,7 @@ class LargestConnectedComponents(BaseTransform):
         self.num_components = num_components
         self.connection = connection
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         import numpy as np
         import scipy.sparse as sp
 

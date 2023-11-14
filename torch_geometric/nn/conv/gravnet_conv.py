@@ -76,6 +76,7 @@ class GravNetConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_s.reset_parameters()
         self.lin_h.reset_parameters()
         self.lin_out1.reset_parameters()
@@ -86,7 +87,6 @@ class GravNetConv(MessagePassing):
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
         # type: (Tensor, OptTensor) -> Tensor  # noqa
         # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
-        """"""
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):

@@ -23,7 +23,7 @@ class DGraphFin(InMemoryDataset):
 
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -33,19 +33,20 @@ class DGraphFin(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 3,700,550
-              - 4,300,999
-              - 17
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 3,700,550
+          - 4,300,999
+          - 17
+          - 2
     """
 
     url = "https://dgraph.xinye.com"
@@ -53,7 +54,7 @@ class DGraphFin(InMemoryDataset):
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     def download(self):
         raise RuntimeError(
@@ -95,5 +96,4 @@ class DGraphFin(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

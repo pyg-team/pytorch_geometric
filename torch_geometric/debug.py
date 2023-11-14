@@ -2,7 +2,7 @@ __debug_flag__ = {'enabled': False}
 
 
 def is_debug_enabled():
-    r"""Returns :obj:`True`, if the debug mode is enabled."""
+    r"""Returns :obj:`True` if the debug mode is enabled."""
     return __debug_flag__['enabled']
 
 
@@ -14,10 +14,10 @@ class debug:
     r"""Context-manager that enables the debug mode to help track down errors
     and separate usage errors from real bugs.
 
-    Example:
+    .. code-block:: python
 
-        >>> with torch_geometric.debug():
-        ...     out = model(data.x, data.edge_index)
+        with torch_geometric.debug():
+            out = model(data.x, data.edge_index)
     """
     def __init__(self):
         self.prev = is_debug_enabled()

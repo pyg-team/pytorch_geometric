@@ -30,9 +30,8 @@ class AQSOL(InMemoryDataset):
     the :class:`~torch_geometric.datasets.ZINC` dataset.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)
@@ -48,33 +47,42 @@ class AQSOL(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in
             the final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 9,833
-              - ~17.6
-              - ~35.8
-              - 1
-              - 1
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 9,833
+          - ~17.6
+          - ~35.8
+          - 1
+          - 1
     """
     url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 
-    def __init__(self, root: str, split: str = 'train',
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -122,7 +130,7 @@ class AQSOL(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), path)
+            self.save(data_list, path)
 
     def atoms(self) -> List[str]:
         return [

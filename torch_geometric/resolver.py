@@ -22,9 +22,7 @@ def resolver(classes: List[Any], class_dict: Dict[str, Any],
         if query_repr == key_repr:
             if inspect.isclass(cls):
                 obj = cls(*args, **kwargs)
-                assert callable(obj)
                 return obj
-            assert callable(cls)
             return cls
 
     for cls in classes:
@@ -32,9 +30,7 @@ def resolver(classes: List[Any], class_dict: Dict[str, Any],
         if query_repr in [cls_repr, cls_repr.replace(base_cls_repr, '')]:
             if inspect.isclass(cls):
                 obj = cls(*args, **kwargs)
-                assert callable(obj)
                 return obj
-            assert callable(cls)
             return cls
 
     choices = set(cls.__name__ for cls in classes) | set(class_dict.keys())

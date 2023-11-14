@@ -1,28 +1,45 @@
+# flake8: noqa
+
 from .feature_store import FeatureStore, TensorAttr
 from .graph_store import GraphStore, EdgeAttr
 from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
 from .temporal import TemporalData
+from .database import Database, SQLiteDatabase, RocksDatabase
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
+from .on_disk_dataset import OnDiskDataset
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
 from torch_geometric.lazy_loader import LazyLoader
 
-__all__ = classes = [
+data_classes = [
     'Data',
     'HeteroData',
     'Batch',
     'TemporalData',
     'Dataset',
     'InMemoryDataset',
+    'OnDiskDataset',
+]
+
+remote_backend_classes = [
     'FeatureStore',
-    'TensorAttr',
     'GraphStore',
+    'TensorAttr',
     'EdgeAttr',
+]
+
+database_classes = [
+    'Database',
+    'SQLiteDatabase',
+    'RocksDatabase',
+]
+
+helper_functions = [
     'makedirs',
     'download_url',
     'extract_tar',
@@ -31,22 +48,24 @@ __all__ = classes = [
     'extract_gz',
 ]
 
+__all__ = data_classes + remote_backend_classes + helper_functions
+
 lightning = LazyLoader('lightning', globals(),
                        'torch_geometric.data.lightning')
 
-from torch_geometric.deprecation import deprecated  # noqa
-from torch_geometric.loader import NeighborSampler  # noqa
-from torch_geometric.loader import ClusterData  # noqa
-from torch_geometric.loader import ClusterLoader  # noqa
-from torch_geometric.loader import GraphSAINTSampler  # noqa
-from torch_geometric.loader import GraphSAINTNodeSampler  # noqa
-from torch_geometric.loader import GraphSAINTEdgeSampler  # noqa
-from torch_geometric.loader import GraphSAINTRandomWalkSampler  # noqa
-from torch_geometric.loader import ShaDowKHopSampler  # noqa
-from torch_geometric.loader import RandomNodeLoader  # noqa
-from torch_geometric.loader import DataLoader  # noqa
-from torch_geometric.loader import DataListLoader  # noqa
-from torch_geometric.loader import DenseDataLoader  # noqa
+from torch_geometric.deprecation import deprecated
+from torch_geometric.loader import NeighborSampler
+from torch_geometric.loader import ClusterData
+from torch_geometric.loader import ClusterLoader
+from torch_geometric.loader import GraphSAINTSampler
+from torch_geometric.loader import GraphSAINTNodeSampler
+from torch_geometric.loader import GraphSAINTEdgeSampler
+from torch_geometric.loader import GraphSAINTRandomWalkSampler
+from torch_geometric.loader import ShaDowKHopSampler
+from torch_geometric.loader import RandomNodeLoader
+from torch_geometric.loader import DataLoader
+from torch_geometric.loader import DataListLoader
+from torch_geometric.loader import DenseDataLoader
 
 NeighborSampler = deprecated("use 'loader.NeighborSampler' instead",
                              'data.NeighborSampler')(NeighborSampler)

@@ -20,6 +20,7 @@ from torch_geometric.explain.config import (
     MaskType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
     ThresholdConfig,
 )
 from torch_geometric.typing import EdgeType, NodeType
@@ -126,7 +127,8 @@ class Explainer:
         **kwargs,
     ) -> Tensor:
         r"""Returns the prediction of the model on the input graph with node
-        and edge masks applied."""
+        and edge masks applied.
+        """
         if isinstance(x, Tensor) and node_mask is not None:
             x = node_mask * x
         elif isinstance(x, dict) and node_mask is not None:
@@ -149,7 +151,6 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -170,16 +171,14 @@ class Explainer:
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
-                set to :obj:`None` and will get automatically inferred.
+                set to :obj:`None` and will get automatically inferred. For
+                classification tasks, the target needs to contain the class
+                labels. (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The indices in the
+                first-dimension of the model output to explain.
+                Can be a single index or a tensor of indices.
+                If set to :obj:`None`, all model outputs will be explained.
                 (default: :obj:`None`)
-            index (Union[int, Tensor], optional): The index of the model
-                output to explain. Can be a single index or a tensor of
-                indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -197,6 +196,9 @@ class Explainer:
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
+        if isinstance(index, int):
+            index = torch.tensor([index])
+
         training = self.model.training
         self.model.eval()
 
@@ -206,7 +208,6 @@ class Explainer:
             edge_index,
             target=target,
             index=index,
-            target_index=target_index,
             **kwargs,
         )
 
@@ -217,7 +218,6 @@ class Explainer:
         explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
-        explanation.target_index = target_index
 
         # Add model inputs to the `Explanation` object:
         if isinstance(explanation, Explanation):
@@ -229,14 +229,13 @@ class Explainer:
                 explanation[key] = arg
 
         elif isinstance(explanation, HeteroExplanation):
-            assert isinstance(x, dict)
             # TODO Add `explanation._model_args`
-            for node_type, value in x.items():
-                explanation[node_type].x = value
+
+            assert isinstance(x, dict)
+            explanation.set_value_dict('x', x)
 
             assert isinstance(edge_index, dict)
-            for edge_type, value in edge_index.items():
-                explanation[edge_type].edge_index = value
+            explanation.set_value_dict('edge_index', edge_index)
 
             for key, arg in kwargs.items():  # Add remaining `kwargs`:
                 if isinstance(arg, dict):
@@ -244,8 +243,7 @@ class Explainer:
                     # while we only want to assign the `{attr_name}` to the
                     # `HeteroExplanation` object:
                     key = key[:-5] if key.endswith('_dict') else key
-                    for type_name, value in arg.items():
-                        explanation[type_name][key] = value
+                    explanation.set_value_dict(key, arg)
                 else:
                     explanation[key] = arg
 
@@ -263,9 +261,9 @@ class Explainer:
         """
         if self.model_config.mode == ModelMode.binary_classification:
             # TODO: Allow customization of the thresholds used below.
-            if self.model_config.return_type.value == 'raw':
+            if self.model_config.return_type == ModelReturnType.raw:
                 return (prediction > 0).long().view(-1)
-            if self.model_config.return_type.value == 'probs':
+            if self.model_config.return_type == ModelReturnType.probs:
                 return (prediction > 0.5).long().view(-1)
             assert False
 

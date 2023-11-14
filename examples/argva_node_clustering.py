@@ -15,7 +15,13 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import ARGVA, GCNConv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 transform = T.Compose([
     T.ToDevice(device),
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,

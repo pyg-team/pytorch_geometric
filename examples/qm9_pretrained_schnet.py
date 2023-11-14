@@ -14,7 +14,7 @@ parser.add_argument('--cutoff', type=float, default=10.0,
 args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
-dataset = QM9(osp.join())
+dataset = QM9(path)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

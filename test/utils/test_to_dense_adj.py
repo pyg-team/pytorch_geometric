@@ -33,7 +33,7 @@ def test_to_dense_adj():
     assert adj[0][:3, :3].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
     assert adj[1][:3, :3].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]
 
-    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
     adj = to_dense_adj(edge_index, batch, edge_attr)
     assert adj.size() == (2, 3, 3)
     assert adj[0].tolist() == [[1, 2, 0], [3, 0, 0], [0, 0, 0]]
@@ -93,8 +93,16 @@ def test_to_dense_adj_with_duplicate_entries():
     assert adj[0].tolist() == [[2, 1, 0], [1, 0, 0], [0, 0, 0]]
     assert adj[1].tolist() == [[0, 1, 0], [0, 0, 2], [1, 0, 0]]
 
-    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6, 7, 8])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
     adj = to_dense_adj(edge_index, batch, edge_attr)
     assert adj.size() == (2, 3, 3)
-    assert adj[0].tolist() == [[3, 3, 0], [4, 0, 0], [0, 0, 0]]
-    assert adj[1].tolist() == [[0, 5, 0], [0, 0, 13], [8, 0, 0]]
+    assert adj[0].tolist() == [
+        [3.0, 3.0, 0.0],
+        [4.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+    ]
+    assert adj[1].tolist() == [
+        [0.0, 5.0, 0.0],
+        [0.0, 0.0, 13.0],
+        [8.0, 0.0, 0.0],
+    ]

@@ -1,10 +1,9 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
 from scipy.linalg import expm
 from torch import Tensor
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -12,7 +11,10 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
     add_self_loops,
     coalesce,
+    get_ppr,
     is_undirected,
+    scatter,
+    sort_edge_index,
     to_dense_adj,
 )
 
@@ -82,9 +84,6 @@ class GDC(BaseTransform):
                                                      avg_degree=64),
         exact: bool = True,
     ):
-
-        self.__calc_ppr__ = get_calc_ppr()
-
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -96,7 +95,7 @@ class GDC(BaseTransform):
             assert exact or self_loop_weight == 1
 
     @torch.no_grad()
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:
@@ -166,19 +165,19 @@ class GDC(BaseTransform):
         """
         if normalization == 'sym':
             row, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
@@ -190,7 +189,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def diffusion_matrix_exact(
+    def diffusion_matrix_exact(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -263,7 +262,7 @@ class GDC(BaseTransform):
 
         return diff_matrix
 
-    def diffusion_matrix_approx(
+    def diffusion_matrix_approx(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -300,23 +299,18 @@ class GDC(BaseTransform):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            _, indptr, out_degree = np.unique(edge_index_np[0],
-                                              return_index=True,
-                                              return_counts=True)
-            indptr = np.append(indptr, len(edge_index_np[0]))
+            edge_index, edge_weight = get_ppr(
+                edge_index,
+                alpha=kwargs['alpha'],
+                eps=kwargs['eps'],
+                num_nodes=num_nodes,
+            )
 
-            neighbors, neighbor_weights = self.__calc_ppr__(
-                indptr, edge_index_np[1], out_degree, kwargs['alpha'],
-                kwargs['eps'])
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
+            if normalization == 'col':
+                edge_index, edge_weight = sort_edge_index(
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -348,7 +342,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_dense(
+    def sparsify_dense(  # noqa: D417
         self,
         matrix: Tensor,
         method: str,
@@ -417,7 +411,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_sparse(
+    def sparsify_sparse(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
@@ -428,8 +422,8 @@ class GDC(BaseTransform):
         r"""Sparsifies a given sparse graph further.
 
         Args:
-            edge_index (LongTensor): The edge indices.
-            edge_weight (Tensor): One-dimensional edge weights.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification:
 
@@ -447,8 +441,11 @@ class GDC(BaseTransform):
         """
         if method == 'threshold':
             if 'eps' not in kwargs.keys():
-                kwargs['eps'] = self.__calculate_eps__(edge_weight, num_nodes,
-                                                       kwargs['avg_degree'])
+                kwargs['eps'] = self.__calculate_eps__(
+                    edge_weight,
+                    num_nodes,
+                    kwargs['avg_degree'],
+                )
 
             remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
                 as_tuple=False).flatten()
@@ -475,8 +472,8 @@ class GDC(BaseTransform):
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            diff_mat_np = expm(matrix.cpu().numpy())
-            diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
+            diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))
+            diff_mat = diff_mat.to(matrix.device, matrix.dtype)
         return diff_mat
 
     def __calculate_eps__(
@@ -501,103 +498,3 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
-
-    def __neighbors_to_graph__(
-        self,
-        neighbors: List[List[int]],
-        neighbor_weights: List[List[float]],
-        normalization: str = 'row',
-        device: torch.device = 'cpu',
-    ) -> Tuple[Tensor, Tensor]:
-        r"""Combine a list of neighbors and neighbor weights to create a sparse
-        graph.
-
-        Args:
-            neighbors (List[List[int]]): List of neighbors for each node.
-            neighbor_weights (List[List[float]]): List of weights for the
-                neighbors of each node.
-            normalization (str): Normalization of resulting matrix
-                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
-            device (torch.device): Device to create output tensors on.
-                (default: :obj:`"cpu"`)
-
-        :rtype: (:class:`LongTensor`, :class:`Tensor`)
-        """
-        edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
-        i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=int))
-        j = np.concatenate(neighbors)
-        if normalization == 'col':
-            edge_index = torch.Tensor(np.vstack([j, i])).to(device)
-            N = len(neighbors)
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
-        elif normalization == 'row':
-            edge_index = torch.Tensor(np.vstack([i, j])).to(device)
-        else:
-            raise ValueError(
-                f"PPR matrix normalization {normalization} unknown.")
-        return edge_index, edge_weight
-
-
-def get_calc_ppr():
-    import numba
-
-    @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(
-        indptr: np.ndarray,
-        indices: np.ndarray,
-        out_degree: np.ndarray,
-        alpha: float,
-        eps: float,
-    ) -> Tuple[List[List[int]], List[List[float]]]:
-        r"""Calculate the personalized PageRank vector for all nodes
-        using a variant of the Andersen algorithm
-        (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
-
-        Args:
-            indptr (np.ndarray): Index pointer for the sparse matrix
-                (CSR-format).
-            indices (np.ndarray): Indices of the sparse matrix entries
-                (CSR-format).
-            out_degree (np.ndarray): Out-degree of each node.
-            alpha (float): Alpha of the PageRank to calculate.
-            eps (float): Threshold for PPR calculation stopping criterion
-                (:obj:`edge_weight >= eps * out_degree`).
-
-        :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
-        """
-
-        alpha_eps = alpha * eps
-        js = [[0]] * len(out_degree)
-        vals = [[0.]] * len(out_degree)
-        for inode_uint in numba.prange(len(out_degree)):
-            inode = numba.int64(inode_uint)
-            p = {inode: 0.0}
-            r = {}
-            r[inode] = alpha
-            q = [inode]
-            while len(q) > 0:
-                unode = q.pop()
-
-                res = r[unode] if unode in r else 0
-                if unode in p:
-                    p[unode] += res
-                else:
-                    p[unode] = res
-                r[unode] = 0
-                for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-                    _val = (1 - alpha) * res / out_degree[unode]
-                    if vnode in r:
-                        r[vnode] += _val
-                    else:
-                        r[vnode] = _val
-
-                    res_vnode = r[vnode] if vnode in r else 0
-                    if res_vnode >= alpha_eps * out_degree[vnode]:
-                        if vnode not in q:
-                            q.append(vnode)
-            js[inode] = list(p.keys())
-            vals[inode] = list(p.values())
-        return js, vals
-
-    return calc_ppr

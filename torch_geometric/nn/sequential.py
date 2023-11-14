@@ -1,11 +1,16 @@
 import os
 import os.path as osp
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, NamedTuple, Tuple, Union
 from uuid import uuid1
 
 import torch
 
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
+
+
+class HeaderDesc(NamedTuple):
+    args: List[str]
+    output: List[str]
 
 
 def Sequential(
@@ -14,6 +19,7 @@ def Sequential(
 ) -> torch.nn.Module:
     r"""An extension of the :class:`torch.nn.Sequential` container in order to
     define a sequential GNN model.
+
     Since GNN operators take in multiple input arguments,
     :class:`torch_geometric.nn.Sequential` expects both global input
     arguments, and function header definitions of individual operators.
@@ -110,6 +116,9 @@ def Sequential(
 
     # Instantiate a class from the rendered module representation.
     module = class_from_module_repr(cls_name, module_repr)()
+    module.module_headers = [
+        HeaderDesc(in_desc, out_desc) for _, _, in_desc, out_desc in calls
+    ]
     module._names = list(modules.keys())
     for name, submodule, _, _ in calls:
         setattr(module, name, submodule)

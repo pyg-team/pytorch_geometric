@@ -16,7 +16,7 @@ class Yelp(InMemoryDataset):
     containing customer reviewers and their friendship.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -26,19 +26,20 @@ class Yelp(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 716,847
-              - 13,954,819
-              - 300
-              - 100
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 716,847
+          - 13,954,819
+          - 300
+          - 100
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -54,7 +55,7 @@ class Yelp(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -112,4 +113,4 @@ class Yelp(InMemoryDataset):
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

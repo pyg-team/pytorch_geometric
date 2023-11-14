@@ -4,7 +4,7 @@ from typing import Any, Optional, Union
 import torch
 from torch import Tensor
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import ReduceLROnPlateau, _LRScheduler
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from torch_geometric.nn.lr_scheduler import (
     ConstantWithWarmupLR,
@@ -15,6 +15,11 @@ from torch_geometric.nn.lr_scheduler import (
 )
 from torch_geometric.resolver import normalize_string, resolver
 
+try:
+    from torch.optim.lr_scheduler import LRScheduler
+except ImportError:  # PyTorch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
+
 # Activation Resolver #########################################################
 
 
@@ -23,7 +28,6 @@ def swish(x: Tensor) -> Tensor:
 
 
 def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
-    import torch
     base_cls = torch.nn.Module
     base_cls_repr = 'Act'
     acts = [
@@ -42,8 +46,6 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
 
 
 def normalization_resolver(query: Union[Any, str], *args, **kwargs):
-    import torch
-
     import torch_geometric.nn.norm as norm
     base_cls = torch.nn.Module
     base_cls_repr = 'Norm'
@@ -61,6 +63,9 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
 
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     import torch_geometric.nn.aggr as aggr
+    if isinstance(query, (list, tuple)):
+        return aggr.MultiAggregation(query, *args, **kwargs)
+
     base_cls = aggr.Aggregation
     aggrs = [
         aggr for aggr in vars(aggr).values()
@@ -72,6 +77,18 @@ def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     return resolver(aggrs, aggr_dict, query, base_cls, None, *args, **kwargs)
 
 
+# Optimizer Resolver ##########################################################
+
+
+def optimizer_resolver(query: Union[Any, str], *args, **kwargs):
+    base_cls = Optimizer
+    optimizers = [
+        optimizer for optimizer in vars(torch.optim).values()
+        if isinstance(optimizer, type) and issubclass(optimizer, base_cls)
+    ]
+    return resolver(optimizers, {}, query, base_cls, None, *args, **kwargs)
+
+
 # Learning Rate Scheduler Resolver ############################################
 
 
@@ -81,7 +98,7 @@ def lr_scheduler_resolver(
     warmup_ratio_or_steps: Optional[Union[float, int]] = 0.1,
     num_training_steps: Optional[int] = None,
     **kwargs,
-) -> Union[_LRScheduler, ReduceLROnPlateau]:
+) -> Union[LRScheduler, ReduceLROnPlateau]:
     r"""A resolver to obtain a learning rate scheduler implemented in either
     PyG or PyTorch from its name or type.
 
@@ -117,7 +134,7 @@ def lr_scheduler_resolver(
         raise ValueError(f"Found invalid type of `warmup_ratio_or_steps` "
                          f"(got {type(warmup_ratio_or_steps)})")
 
-    base_cls = _LRScheduler
+    base_cls = LRScheduler
     classes = [
         scheduler for scheduler in vars(torch.optim.lr_scheduler).values()
         if isinstance(scheduler, type) and issubclass(scheduler, base_cls)
