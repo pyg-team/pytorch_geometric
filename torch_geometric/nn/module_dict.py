@@ -44,7 +44,7 @@ class ModuleDict(torch.nn.ModuleDict):
     def to_external_key(cls, key: str) -> Key:
         key = key.replace('#', '.')
 
-        if key[0] == '<' and key[-1] == '>' and key in cls._cls_attrs:
+        if key[0] == '<' and key[-1] == '>' and key[1:-1] in cls._cls_attrs:
             key = key[1:-1]
 
         if key[0] == '<' and key[-1] == '>' and '___' in key:
