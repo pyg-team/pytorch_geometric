@@ -102,7 +102,7 @@ class ExplainerConfig(CastMixin):
         if node_mask_type is None and edge_mask_type is None:
             # raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
             #                  "must be provided")
-            print("ADD CHECK FOR GENERATIVE EXPLANATION")
+            print("ADD CHECK FOR GENERATIVE EXPLANATION (file: config.py)")
 
         self.explanation_type = ExplanationType(explanation_type)
         self.node_mask_type = node_mask_type

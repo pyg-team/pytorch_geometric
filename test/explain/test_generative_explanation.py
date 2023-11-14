@@ -21,12 +21,12 @@ from torch_geometric.nn import GCNConv
 
 print("GENERATIVE EXPLANATION TEST")
 
+# TODO: Get our acyclic dataset
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, dataset)
 data = dataset[0]
 
-### REPLACE WITH BETTER DATASET EXAMPLE ################################
 
 class GCN(torch.nn.Module):
     def __init__(self):

@@ -95,7 +95,7 @@ class Explainer:
 
         self.algorithm.connect(explainer_config, self.model_config)
 
-        print("1. INITIALIZING EXPLAINER")
+        print("1. INITIALIZING EXPLAINER (file: explainer.py)")
 
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> Tensor:
@@ -120,7 +120,7 @@ class Explainer:
 
         self.model.train(training)
 
-        print("2. GETTING PREDICTION")
+        print("2. GETTING PREDICTION (file: explainer.py)")
 
         return out
 
@@ -149,7 +149,7 @@ class Explainer:
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
 
-        print("3. GETTING MASKED PREDICTION")
+        print("3. GETTING MASKED PREDICTION (file: explainer.py)")
 
         return out
 
@@ -211,7 +211,7 @@ class Explainer:
         training = self.model.training
         self.model.eval()
 
-        print("4. CALLING EXPLAINER")
+        print("4. CALLING EXPLAINER (file: explainer.py)")
 
         explanation = self.algorithm(
             self.model,
@@ -261,7 +261,7 @@ class Explainer:
         elif isinstance(explanation, GenerativeExplanation):
             ### TODO Everything ###
 
-            print("5. GENERATING EXPLANATION")
+            print("5. GENERATING EXPLANATION file(explainer.py)")
             pass
 
 
@@ -288,6 +288,6 @@ class Explainer:
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)
         
-        print("6. GETTING TARGET")
+        print("6. GETTING TARGET file(explainer.py)")
 
         return prediction
