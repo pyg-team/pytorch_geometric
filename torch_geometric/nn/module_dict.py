@@ -11,6 +11,8 @@ Key = Union[str, Tuple[str, ...]]
 # internal representation and converts it back to `.` in the external
 # representation. It also allows passing tuples as keys.
 class ModuleDict(torch.nn.ModuleDict):
+    _cls_attrs = dir(torch.nn.ModuleDict)
+
     def __init__(
         self,
         modules: Optional[Mapping[Union[str, Tuple[str, ...]], Module]] = None,
@@ -31,8 +33,7 @@ class ModuleDict(torch.nn.ModuleDict):
 
         assert isinstance(key, str)
 
-        # Always wrap the key with <> to avoid collisions with class attributes
-        if not (key.startswith('<') and key.endswith('>')):
+        if key in cls._cls_attrs:
             key = f'<{key}>'
 
         # ModuleDict cannot handle dots in keys:
