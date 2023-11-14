@@ -1,4 +1,4 @@
-from typing import Iterable, Mapping, Optional, Tuple, Union
+from typing import Final, Iterable, Mapping, Optional, Set, Tuple, Union
 
 import torch
 from torch.nn import Parameter
@@ -11,6 +11,8 @@ Key = Union[str, Tuple[str, ...]]
 # internal representation and converts it back to `.` in the external
 # representation. It also allows passing tuples as keys.
 class ParameterDict(torch.nn.ParameterDict):
+    CLASS_ATTRS: Final[Set[str]] = set(dir(torch.nn.ParameterDict))
+
     def __init__(
         self,
         parameters: Optional[Mapping[Key, Parameter]] = None,
@@ -25,14 +27,13 @@ class ParameterDict(torch.nn.ParameterDict):
 
     @classmethod
     def to_internal_key(cls, key: Key) -> str:
-        # ParameterDict cannot handle tuples as keys:
-        if isinstance(key, tuple):
+        if isinstance(key, tuple):  # ParameterDict can't handle tuples as keys
             assert len(key) > 1
             key = f"<{'___'.join(key)}>"
         assert isinstance(key, str)
 
         # ParameterDict cannot handle keys that exists as class attributes:
-        if hasattr(cls, key):
+        if key in cls.CLASS_ATTRS:
             key = f'<{key}>'
 
         # ParameterDict cannot handle dots in keys:
@@ -42,7 +43,7 @@ class ParameterDict(torch.nn.ParameterDict):
     def to_external_key(cls, key: str) -> Key:
         key = key.replace('#', '.')
 
-        if key[0] == '<' and key[-1] == '>' and hasattr(cls, key[1:-1]):
+        if key[0] == '<' and key[-1] == '>' and key[1:-1] in cls.CLASS_ATTRS:
             key = key[1:-1]
 
         if key[0] == '<' and key[-1] == '>' and '___' in key:

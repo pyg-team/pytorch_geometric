@@ -19,15 +19,15 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
 
 
-def get_num_workers(world_size: int) -> int:
+def get_num_workers() -> int:
     num_workers = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_workers = len(os.sched_getaffinity(0)) // (2 * world_size)
+            num_workers = len(os.sched_getaffinity(0)) // 2
         except Exception:
             pass
     if num_workers is None:
-        num_workers = os.cpu_count() // (2 * world_size)
+        num_workers = os.cpu_count() // 2
     return num_workers
 
 
@@ -64,7 +64,7 @@ def run(world_size, data, split_idx, model):
     kwargs = dict(
         data=data,
         batch_size=128,
-        num_workers=get_num_workers(world_size),
+        num_workers=get_num_workers(),
         num_neighbors=[50, 50],
     )
 
