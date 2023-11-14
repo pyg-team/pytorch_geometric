@@ -1,4 +1,4 @@
-from typing import Iterable, Mapping, Optional, Tuple, Union
+from typing import Final, Iterable, Mapping, Optional, Set, Tuple, Union
 
 import torch
 from torch.nn import Module
@@ -11,7 +11,7 @@ Key = Union[str, Tuple[str, ...]]
 # internal representation and converts it back to `.` in the external
 # representation. It also allows passing tuples as keys.
 class ModuleDict(torch.nn.ModuleDict):
-    CLASS_ATTRS = dir(torch.nn.ModuleDict)
+    CLASS_ATTRS: Final[Set[str]] = set(dir(torch.nn.ModuleDict))
 
     def __init__(
         self,
@@ -26,11 +26,9 @@ class ModuleDict(torch.nn.ModuleDict):
 
     @classmethod
     def to_internal_key(cls, key: Key) -> str:
-        if isinstance(key, tuple):
-            # ModuleDict cannot handle tuples as keys:
+        if isinstance(key, tuple):  # ModuleDict can't handle tuples as keys
             assert len(key) > 1
             key = f"<{'___'.join(key)}>"
-
         assert isinstance(key, str)
 
         # ModuleDict cannot handle keys that exists as class attributes:
