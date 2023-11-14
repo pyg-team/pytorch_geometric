@@ -14,8 +14,7 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 
 supported_sets = {
-    # TODO (DamianSzwichtenberg): cover heterogeneous cases
-    # 'ogbn-mag': ['rgat', 'rgcn'],
+    'ogbn-mag': ['rgat', 'rgcn'],
     'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
     'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
 }
@@ -178,14 +177,27 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
     model = get_model(args.model, params,
                       metadata=data.metadata() if hetero else None)
     model = model.to(device)
+
     if hetero:
-        # TODO (DamianSzwichtenberg):
-        # Provide fix for:
-        # RuntimeError: Modules with uninitialized parameters can't be used
-        # with `DistributedDataParallel`. Run a dummy forward pass to correctly
-        # initialize the modules.
-        pass
-    model = DDP(model, device_ids=[device])
+        model.eval()
+        x_keys = data.metadata()[0]
+        edge_index_keys = data.metadata()[1]
+        fake_x_dict = {
+            k: torch.rand((32, inputs_channels), device=device)
+            for k in x_keys
+        }
+        fake_edge_index_dict = {
+            k: torch.randint(0, 32, (2, 8), device=device)
+            for k in edge_index_keys
+        }
+        model.forward(fake_x_dict, fake_edge_index_dict)
+    if hetero and args.model == 'rgat':
+        for i in range(args.num_layers):
+            # `lin_dst` from GATConv is unitialized for paper-cites-paper relation
+            model.model.convs[i].paper__cites__paper.lin_dst(
+                torch.rand((32, inputs_channels), device=device))
+
+    model = DDP(model, device_ids=[device], find_unused_parameters=True)
     model.train()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
