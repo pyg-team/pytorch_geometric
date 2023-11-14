@@ -263,6 +263,9 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
                 print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+    if rank == 0:
+        print("Total Program Runtime =",
+              round(time.perf_counter() - wall_clock_start, 2), "seconds")
     dist.barrier()
 
     if cugraph_data_loader:
@@ -299,7 +302,7 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-
+    wall_clock_start = time.perf_counter()
     cluster = start_dask_cluster() if args.cugraph_data_loader else None
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
@@ -329,7 +332,7 @@ if __name__ == '__main__':
                   args.fan_out, split_idx, dataset.num_classes,
                   args.cugraph_data_loader,
                   None if cluster is None else cluster.scheduler_address,
-                  tempdir), nprocs=world_size, join=True)
+                  tempdir, wall_clock_start), nprocs=world_size, join=True)
 
     if cluster is not None:
         cluster.close()
