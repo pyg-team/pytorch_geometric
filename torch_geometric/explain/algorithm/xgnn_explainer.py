@@ -12,10 +12,31 @@ from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
 class XGNNGenerator(torch.nn.Module):
+    """
+    Serves as a wrapper for the graph generative model.
+
+    Args:
+        None
+    """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         pass
     def train(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
+        """
+        Trains the generative model.
+
+        Args:
+            model: predicitve model used to train the generative model
+            for_class: the class to train the generative model for
+            epochs (int, optional): The number of epochs to train.
+                (default: :obj:`100`)
+            learning_rate: lr (float, optional): The learning rate to apply.
+                (default: :obj:`0.01`)
+
+        Returns:
+            None
+        """
+
         # TODO: throw errors, this is a base class
         print("debug: xgnn train")
         pass
