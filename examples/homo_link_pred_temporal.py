@@ -178,9 +178,7 @@ def test(dl, desc='val'):
 
 for epoch in range(1, 31):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader)
-    # train_rmse = test(val_dataloader)
     val_rmse = test(val_dataloader, 'val')
-    # test_rmse = test(test_dataloader, 'test')
+    test_rmse = test(test_dataloader, 'test')
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
           f'Val: {val_rmse:.4f}')
-    #   f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
