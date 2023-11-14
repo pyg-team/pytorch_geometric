@@ -11,7 +11,7 @@ from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
-class XGNNGenerator(torch.nn.Module):
+class XGNNTrainer(torch.nn.Module):
     """
     Serves as a wrapper for the graph generative model.
 

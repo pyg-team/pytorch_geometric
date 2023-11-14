@@ -65,7 +65,7 @@ class GraphGenerator(torch.nn.Module):
 
         return (start_node, end_node), graph_state
 
-class RLGraphGen(XGNNGenerator):
+class RLGenTrainer(XGNNGenerator):
 
     def calculate_reward(graph_state, pre_trained_gnn):
         gnn_output = pre_trained_gnn(graph_state)
