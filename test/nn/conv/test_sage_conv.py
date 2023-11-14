@@ -138,7 +138,6 @@ def test_multi_aggr_sage_conv(aggr_kwargs):
 def test_compile_multi_aggr_sage_conv(device):
     import torch._dynamo as dynamo
 
-    device = None
     x = torch.randn(4, 8, device=device)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], device=device)
 
