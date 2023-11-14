@@ -67,7 +67,7 @@ class XGNNExplainer(ExplainerAlgorithm):
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
     """
     
-    def __init__(self, generative_model : XGNNGenerator, epochs: int = 100, lr: float = 0.01, **kwargs):
+    def __init__(self, generative_model : XGNNTrainer, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.generative_model = generative_model
         self.epochs = epochs
