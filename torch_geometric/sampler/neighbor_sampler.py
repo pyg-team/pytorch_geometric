@@ -310,7 +310,7 @@ class NeighborSampler(BaseSampler):
                 colptrs = list(self.colptr_dict.values())
                 dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 seed = {k: v.to(dtype) for k, v in seed.items()}
-                
+
                 args = (
                     self.node_types,
                     self.edge_types,
