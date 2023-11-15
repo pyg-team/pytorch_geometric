@@ -625,6 +625,7 @@ class DistNeighborSampler:
             input_nodes.to(colptr.dtype),
             num_neighbors,
             node_time,
+            None,  # edge_time
             seed_time,
             None,  # TODO: edge_weight
             True,  # csc
