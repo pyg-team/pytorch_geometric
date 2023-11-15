@@ -76,7 +76,8 @@ class NeighborSampler(BaseSampler):
             elif time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data[time_attr]
                 assert len(self.edge_time) == data.edge_index.size(1), \
-                "Number of elements in data.edge_index and self.edge_time are unequal"
+                    "Number of elements in data.edge_index and \
+                    self.edge_time are unequal"
 
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
@@ -108,8 +109,8 @@ class NeighborSampler(BaseSampler):
                 for edge_ in self.edge_types:
                     assert len(self.edge_time[edge_]) == \
                         data[edge_].edge_index.size(1), \
-                    "Number of elements in edge_index \
-                    and edge_time are unequal"
+                        "Number of elements in edge_index \
+                        and edge_time are unequal"
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
