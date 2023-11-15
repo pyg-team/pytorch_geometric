@@ -88,6 +88,11 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
     if args.device == 'xpu':
         import intel_extension_for_pytorch as ipex
         import oneccl_bindings_for_pytorch  # noqa
+    else:
+        # CUDA
+        os.environ['MASTER_ADDR'] = 'localhost'
+        os.environ['MASTER_PORT'] = '12355'
+        dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
     if not device_conditions[args.device]():
         raise RuntimeError(f'{args.device.upper()} is not available')
@@ -308,7 +313,7 @@ if __name__ == '__main__':
                                 world_size=world_size, rank=rank)
         run(rank, world_size, args)
     else:
-        # use mp spawn
+        import torch.multiprocessing as mp
         max_world_size = torch.cuda.device_count()
         chosen_world_size = args.n_gpus
         if chosen_world_size <= max_world_size:
