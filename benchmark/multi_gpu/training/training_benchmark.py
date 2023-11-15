@@ -84,7 +84,8 @@ def create_mask_per_rank(
         return mask_per_rank
 
 
-def run(rank: int, world_size: int, args: argparse.ArgumentParser, num_classes: int, data):
+def run(rank: int, world_size: int, args: argparse.ArgumentParser,
+        num_classes: int, data):
     if args.device == 'xpu':
         import intel_extension_for_pytorch as ipex
         import oneccl_bindings_for_pytorch  # noqa
@@ -296,7 +297,8 @@ if __name__ == '__main__':
         help='number of neighbors to sample per layer')
     add('--num-workers', default=0, type=int)
     add('--num-epochs', default=1, type=int)
-    add('--n-gpus', default=1, type=int,
+    add(
+        '--n-gpus', default=1, type=int,
         help="Only to be used with CUDA devices. \
         For XPU use mpirun to select number of devices")
     add('--evaluate', action='store_true')
@@ -309,7 +311,12 @@ if __name__ == '__main__':
         rank, world_size, init_method = get_dist_params()
         dist.init_process_group(backend="ccl", init_method=init_method,
                                 world_size=world_size, rank=rank)
-        run(rank, world_size, args, num_classes, )
+        run(
+            rank,
+            world_size,
+            args,
+            num_classes,
+        )
     else:
         import torch.multiprocessing as mp
         max_world_size = torch.cuda.device_count()
@@ -318,7 +325,7 @@ if __name__ == '__main__':
             world_size = chosen_world_size
         else:
             print("User selected", chosen_world_size, "GPUs but only",
-                max_world_size, "GPUs are available")
+                  max_world_size, "GPUs are available")
             world_size = max_world_size
         print('Let\'s use', world_size, 'GPUs!')
         mp.spawn(
@@ -327,4 +334,3 @@ if __name__ == '__main__':
             nprocs=world_size,
             join=True,
         )
-    
