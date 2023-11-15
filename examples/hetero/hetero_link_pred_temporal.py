@@ -59,8 +59,8 @@ val_dataloader = LinkNeighborLoader(
     data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       val_data[('user', 'rates', 'movie')].edge_index),
-    edge_label_time=val_data[('user', 'rates', 'movie')].time,
-    batch_size=4096, shuffle=True, time_attr='time')
+    edge_label_time=val_data[('user', 'rates', 'movie')].time, batch_size=4096,
+    shuffle=True, time_attr='time')
 test_dataloader = LinkNeighborLoader(
     data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
