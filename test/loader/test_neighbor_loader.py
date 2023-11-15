@@ -22,6 +22,7 @@ from torch_geometric.testing import (
     withPackage,
 )
 from torch_geometric.typing import (
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
     WITH_PYG_LIB,
     WITH_TORCH_SPARSE,
     WITH_WEIGHTED_NEIGHBOR_SAMPLE,
@@ -784,6 +785,64 @@ def test_weighted_hetero_neighbor_loader():
     assert batch['paper', 'paper'].num_edges == 2
     global_edge_index = batch['paper'].n_id[batch['paper', 'paper'].edge_index]
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
+
+
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_homo_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = Data(edge_index=edge_index, edge_time=edge_time, num_nodes=5)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch.edge_time.numel() == batch.num_edges
+        if batch.edge_time.numel() > 0:
+            assert batch.edge_time.max() <= 4
+
+
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_hetero_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = HeteroData()
+    data['A'].num_nodes = 5
+    data['A', 'A'].edge_index = edge_index
+    data['A', 'A'].edge_time = edge_time
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_nodes='A',
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch['A', 'A'].edge_time.numel() == batch['A', 'A'].num_edges
+        if batch['A', 'A'].edge_time.numel() > 0:
+            assert batch['A', 'A'].edge_time.max() <= 4
 
 
 @withCUDA
