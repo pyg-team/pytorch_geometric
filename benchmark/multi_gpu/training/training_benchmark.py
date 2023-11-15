@@ -4,8 +4,6 @@ import os
 from time import perf_counter
 from typing import Any, Tuple, Union
 
-import intel_extension_for_pytorch as ipex
-import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
@@ -87,6 +85,10 @@ def create_mask_per_rank(
 
 
 def run(rank: int, world_size: int, args: argparse.ArgumentParser):
+    if args.device == 'xpu':
+        import intel_extension_for_pytorch as ipex
+        import oneccl_bindings_for_pytorch  # noqa
+
     if not device_conditions[args.device]():
         raise RuntimeError(f'{args.device.upper()} is not available')
 
