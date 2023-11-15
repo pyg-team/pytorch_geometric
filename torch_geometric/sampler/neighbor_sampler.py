@@ -71,19 +71,25 @@ class NeighborSampler(BaseSampler):
 
             self.node_time: Optional[Tensor] = None
             self.edge_time: Optional[Tensor] = None
-            if time_attr is not None and temporal_entity == 'node':
-                self.node_time = data[time_attr]
-            elif time_attr is not None and temporal_entity == 'edge':
-                self.edge_time = data[time_attr]
-                assert len(self.edge_time) == data.edge_index.size(1), \
-                    "Number of elements in data.edge_index and \
-                    self.edge_time are unequal"
+
+            if time_attr is not None:
+                if data.is_node_attr(time_attr):
+                    self.node_time = data[time_attr]
+                elif data.is_edge_attr(time_attr):
+                    self.edge_time = data[time_attr]
+                else:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' is neither a "
+                        f"node-level or edge-level attribute")
 
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, src_node_time=self.node_time,
                 edge_time=self.edge_time)
+
+            if self.edge_time is not None and self.perm is not None:
+                self.edge_time = self.edge_time[self.perm]
 
             self.edge_weight: Optional[Tensor] = None
             if time_attr is not None and temporal_entity == 'edge':
@@ -102,15 +108,31 @@ class NeighborSampler(BaseSampler):
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
             self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity == 'node':
-                self.node_time = data.collect(time_attr)
-            elif time_attr is not None and temporal_entity == 'edge':
-                self.edge_time = data.collect(time_attr)
-                for edge_ in self.edge_types:
-                    assert len(self.edge_time[edge_]) == \
-                        data[edge_].edge_index.size(1), \
-                        "Number of elements in edge_index \
-                        and edge_time are unequal"
+
+            if time_attr is not None:
+                is_node_level_time = is_edge_level_time = False
+
+                for store in data.node_stores:
+                    if time_attr in store:
+                        is_node_level_time = True
+                for store in data.edge_stores:
+                    if time_attr in store:
+                        is_edge_level_time = True
+
+                if is_node_level_time and is_edge_level_time:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' holds both "
+                        f"node-level and edge-level information")
+
+                if not is_node_level_time and not is_edge_level_time:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' is neither a "
+                        f"node-level or edge-level attribute")
+
+                if is_node_level_time:
+                    self.node_time = data.collect(time_attr)
+                else:
+                    self.edge_time = data.collect(time_attr)
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
@@ -122,16 +144,17 @@ class NeighborSampler(BaseSampler):
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time,
                 edge_time_dict=self.edge_time)
+
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
-            self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity == 'edge':
-                self.edge_time = data.collect(time_attr)
+
+            if self.edge_time is not None:
                 for edge_type, edge_time in self.edge_time.items():
                     if self.perm.get(edge_type, None) is not None:
                         edge_time = edge_time[self.perm[edge_type]]
                         self.edge_time[edge_type] = edge_time
                 self.edge_time = remap_keys(self.edge_time, self.to_rel_type)
+
             self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
             if weight_attr is not None:
                 self.edge_weight = data.collect(weight_attr)
@@ -206,6 +229,8 @@ class NeighborSampler(BaseSampler):
                 self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
 
                 self.node_time: Optional[Dict[NodeType, Tensor]] = None
+                self.edge_time: Optional[Dict[NodeType, Tensor]] = None
+
                 if time_attr is not None:
                     for attr in time_attrs:  # Reset index for full data.
                         attr.index = None
@@ -223,6 +248,11 @@ class NeighborSampler(BaseSampler):
                 row_dict, colptr_dict, self.perm = graph_store.csc()
                 self.row_dict = remap_keys(row_dict, self.to_rel_type)
                 self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+
+        if (self.edge_time is not None
+                and not torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE):
+            raise ImportError("Edge-level temporal sampling requires a "
+                              "more recent 'pyg-lib' installation")
 
         if (self.edge_weight is not None
                 and not torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE):
@@ -326,9 +356,10 @@ class NeighborSampler(BaseSampler):
                     seed,
                     self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
-                    self.edge_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (self.edge_time, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
@@ -406,9 +437,10 @@ class NeighborSampler(BaseSampler):
                     seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
                     self.node_time,
-                    self.edge_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (self.edge_time, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
