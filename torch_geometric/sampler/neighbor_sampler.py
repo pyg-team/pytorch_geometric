@@ -300,8 +300,10 @@ class NeighborSampler(BaseSampler):
                     seed,
                     self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (None, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
@@ -380,8 +382,10 @@ class NeighborSampler(BaseSampler):
                     seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
                     self.node_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (None, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
