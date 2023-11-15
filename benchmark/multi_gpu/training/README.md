@@ -1,20 +1,19 @@
 # Training Benchmark
 
-## Environment setup
+## Running benchmark on CUDA GPU
 
-Optional, XPU only:
+Run benchmark, e.g. assuming you have n NVIDIA GPUs:
+```
+python training_benchmark.py --dataset ogbn-products --model edge_cnn --num-epochs 3 --device cuda --n_gpus <n>
+```
+
+## Running benchmark on Intel GPU
+
+## Environment setup
 ```
 install intel_extension_for_pytorch
 install oneccl_bindings_for_pytorch
 ```
-
-## Running benchmark
-
-Run benchmark, e.g. assuming you have 3 NVIDIA GPUs:
-```
-mpirun -np 3 python training_benchmark.py --dataset ogbn-products --model edge_cnn --num-epochs 3 --device cuda
-```
-
 
 Run benchmark, e.g. assuming you have 2 XPUs:
 ```

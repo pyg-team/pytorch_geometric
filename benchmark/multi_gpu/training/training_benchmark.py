@@ -296,14 +296,32 @@ if __name__ == '__main__':
         help='number of neighbors to sample per layer')
     add('--num-workers', default=0, type=int)
     add('--num-epochs', default=1, type=int)
+    add('--n-gpus', default=1, type=int,
+        help="Only to be used with CUDA devices. \
+        For XPU use mpirun to select number of devices")
     add('--evaluate', action='store_true')
 
     args = argparser.parse_args()
-    rank, world_size, init_method = get_dist_params()
     if args.device == 'xpu':
+        rank, world_size, init_method = get_dist_params()
         dist.init_process_group(backend="ccl", init_method=init_method,
                                 world_size=world_size, rank=rank)
+        run(rank, world_size, args)
     else:
-        dist.init_process_group(backend="nccl", init_method=init_method,
-                        world_size=world_size, rank=rank)
-    run(rank, world_size, args)
+        # use mp spawn
+        max_world_size = torch.cuda.device_count()
+        chosen_world_size = args.n_gpus
+        if chosen_world_size <= max_world_size:
+            world_size = chosen_world_size
+        else:
+            print("User selected", chosen_world_size, "GPUs but only",
+                max_world_size, "GPUs are available")
+            world_size = max_world_size
+        print('Let\'s use', world_size, 'GPUs!')
+        mp.spawn(
+            run,
+            args=(world_size, args),
+            nprocs=world_size,
+            join=True,
+        )
+    
