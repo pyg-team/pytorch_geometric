@@ -12,7 +12,7 @@ install oneccl_bindings_for_pytorch
 
 Run benchmark, e.g. assuming you have 3 NVIDIA GPUs:
 ```
-mpirun -np 3 python training_benchmark.py --dataset ogbn-products --model edge_cnn --num-epochs 3 --device xpu
+mpirun -np 3 python training_benchmark.py --dataset ogbn-products --model edge_cnn --num-epochs 3 --device cuda
 ```
 
 
