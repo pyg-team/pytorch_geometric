@@ -4,6 +4,8 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+import time
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -38,9 +40,11 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-#Add timestamp to the movie and users to be zeros.
-# data['movie']['node_time'] = torch.zeros(len(data['movie']['x']), dtype=torch.long)
-# data['user']['node_time'] = torch.zeros(len(data['user']['x']), dtype=torch.long)
+# Add timestamp to the movie and users to be zeros.
+# data['movie']['node_time'] = 
+#                   torch.zeros(len(data['movie']['x']), dtype=torch.long)
+# data['user']['node_time'] = 
+#                   torch.zeros(len(data['user']['x']), dtype=torch.long)
 
 # Perform a link-level split into training, validation, and test edges:
 train_data, val_data, test_data = T.RandomLinkSplit(
@@ -125,9 +129,6 @@ class Model(torch.nn.Module):
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-import time
-
-from tqdm import tqdm
 
 
 def train(train_dl, val_dl):

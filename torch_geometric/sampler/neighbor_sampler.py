@@ -1,7 +1,6 @@
 import copy
 import math
 import sys
-import time as time_measure
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -76,6 +75,8 @@ class NeighborSampler(BaseSampler):
                 self.node_time = data[time_attr]
             elif time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data[time_attr]
+                assert len(self.edge_time) == data.edge_index.size(1), \
+                "Number of elements in data.edge_index and self.edge_time are unequal"
 
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
@@ -99,11 +100,16 @@ class NeighborSampler(BaseSampler):
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
+            self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
             if time_attr is not None and temporal_entity == 'node':
                 self.node_time = data.collect(time_attr)
-            self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
-            if time_attr is not None and temporal_entity == 'edge':
+            elif time_attr is not None and temporal_entity == 'edge':
                 self.edge_time = data.collect(time_attr)
+                for edge_ in self.edge_types:
+                    assert len(self.edge_time[edge_]) == \
+                        data[edge_].edge_index.size(1), \
+                    "Number of elements in edge_index \
+                    and edge_time are unequal"
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
@@ -319,8 +325,8 @@ class NeighborSampler(BaseSampler):
                     seed,
                     self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
-                    seed_time,
                     self.edge_time,
+                    seed_time,
                 )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
@@ -399,8 +405,8 @@ class NeighborSampler(BaseSampler):
                     seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
                     self.node_time,
-                    seed_time,
                     self.edge_time,
+                    seed_time,
                 )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )

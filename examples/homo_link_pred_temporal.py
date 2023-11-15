@@ -4,12 +4,12 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+import time
+from tqdm import tqdm
 
-import torch_geometric as torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
-from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
 
 parser = argparse.ArgumentParser()
@@ -39,9 +39,11 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-#Add timestamp to the movie and users to be zeros.
-# data['movie']['node_time'] = torch.zeros(len(data['movie']['x']), dtype=torch.long)
-# data['user']['node_time'] = torch.zeros(len(data['user']['x']), dtype=torch.long)
+# Add timestamp to the movie and users to be zeros.
+# data['movie']['node_time'] = 
+#               torch.zeros(len(data['movie']['x']), dtype=torch.long)
+# data['user']['node_time'] = 
+#               torch.zeros(len(data['user']['x']), dtype=torch.long)
 # Perform a link-level split into training, validation, and test edges:
 train_data, val_data, test_data = T.RandomLinkSplit(
     num_val=0.1,
@@ -118,7 +120,6 @@ class Model(torch.nn.Module):
     def __init__(self, hidden_channels):
         super().__init__()
         self.encoder = GNNEncoder(hidden_channels, hidden_channels)
-        # self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
         self.decoder = EdgeDecoder(hidden_channels)
 
     def forward(self, x, edge_index, edge_label_index):
@@ -128,11 +129,7 @@ class Model(torch.nn.Module):
 
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-# model = torch_geometric.compile(model)
 
-import time
-
-from tqdm import tqdm
 
 
 def train(train_dl, val_dl):
