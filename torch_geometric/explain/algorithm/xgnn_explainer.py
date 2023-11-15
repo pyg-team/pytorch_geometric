@@ -13,7 +13,7 @@ from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
 class XGNNTrainer(torch.nn.Module):
     """
-    Serves as a wrapper for the graph generative model.
+    An abstract base class for training generative model.
 
     Args:
         None
@@ -50,12 +50,7 @@ class XGNNExplainer(ExplainerAlgorithm):
 
         For an example of using :class:`XGNNExplainer`, see
         `examples/explain/xgnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/explain/xgnn_explainer.py>`_,
-        `examples/explain/gnn_explainer_ba_shapes.py <https://github.com/
-        pyg-team/pytorch_geometric/blob/master/examples/
-        explain/gnn_explainer_ba_shapes.py>`_, and `examples/explain/
-        gnn_explainer_link_pred.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/explain/gnn_explainer_link_pred.py>`_.
+        pytorch_geometric/blob/master/examples/explain/xgnn_explainer.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
