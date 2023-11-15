@@ -43,7 +43,6 @@ class NeighborSampler(BaseSampler):
         replace: bool = False,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
-        temporal_entity: str = 'node',
         time_attr: Optional[str] = None,
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
@@ -92,10 +91,6 @@ class NeighborSampler(BaseSampler):
                 self.edge_time = self.edge_time[self.perm]
 
             self.edge_weight: Optional[Tensor] = None
-            if time_attr is not None and temporal_entity == 'edge':
-                self.edge_time = data[time_attr]
-                if self.perm is not None:
-                    self.edge_time = self.edge_time[self.perm]
             if weight_attr is not None:
                 self.edge_weight = data[weight_attr]
                 if self.perm is not None:
@@ -139,6 +134,7 @@ class NeighborSampler(BaseSampler):
             # to be converted into single strings.
             self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
             self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+
             # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
@@ -164,6 +160,7 @@ class NeighborSampler(BaseSampler):
                         self.edge_weight[edge_type] = edge_weight
                 self.edge_weight = remap_keys(self.edge_weight,
                                               self.to_rel_type)
+
         else:  # self.data_type == DataType.remote
             feature_store, graph_store = data
 
@@ -374,6 +371,7 @@ class NeighborSampler(BaseSampler):
 
                 out = torch.ops.pyg.hetero_neighbor_sample(*args)
                 row, col, node, edge, batch = out[:4] + (None, )
+
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
                 num_sampled_nodes = num_sampled_edges = None
                 if len(out) >= 6:
@@ -640,6 +638,7 @@ def edge_sample(
                 seed_time_dict = {
                     input_type[0]: torch.cat([src_time, dst_time], dim=0),
                 }
+
         out = sample_fn(seed_dict, seed_time_dict)
 
         # Enhance `out` by label information ##################################
