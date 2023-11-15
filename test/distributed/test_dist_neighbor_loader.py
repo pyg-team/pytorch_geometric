@@ -172,6 +172,7 @@ def dist_neighbor_loader_hetero(
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
+@pytest.mark.skip(reason="Breaks due to METIS timeout")
 def test_dist_neighbor_loader_homo(
     tmp_path,
     num_parts,
