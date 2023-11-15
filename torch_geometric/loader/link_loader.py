@@ -224,10 +224,20 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                     self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
-                # TODO Respect `custom_cls`.
-                # TODO Integrate features.
                 edge_index = torch.stack([out.row, out.col])
                 data = Data(edge_index=edge_index)
+
+                # TODO Respect `custom_cls`.
+                # TODO Integrate features.
+
+                # Hack to detect whether we are in a distributed setting.
+                if (self.link_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
+                    # Metadata entries are populated in
+                    # `DistributedNeighborSampler._collate_fn()`
+                    data.x = out.metadata[-3]
+                    data.y = out.metadata[-2]
+                    data.edge_attr = out.metadata[-1]
 
             if 'n_id' not in data:
                 data.n_id = out.node
