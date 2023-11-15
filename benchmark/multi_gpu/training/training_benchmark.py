@@ -84,7 +84,7 @@ def create_mask_per_rank(
         return mask_per_rank
 
 
-def run(rank: int, world_size: int, args: argparse.ArgumentParser):
+def run(rank: int, world_size: int, args: argparse.ArgumentParser, num_classes: int, data):
     if args.device == 'xpu':
         import intel_extension_for_pytorch as ipex
         import oneccl_bindings_for_pytorch  # noqa
@@ -102,13 +102,8 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
     if rank == 0:
         print('BENCHMARK STARTS')
         print(f'Running on {args.device.upper()}')
-
-    assert args.dataset in supported_sets.keys(
-    ), f"Dataset {args.dataset} isn't supported."
-    if rank == 0:
         print(f'Dataset: {args.dataset}')
 
-    data, num_classes = get_dataset(args.dataset, args.root)
     hetero = True if args.dataset == 'ogbn-mag' else False
     mask, val_mask, test_mask = get_split_masks(data, args.dataset)
     mask = create_mask_per_rank(mask, rank, world_size, hetero)
@@ -307,11 +302,14 @@ if __name__ == '__main__':
     add('--evaluate', action='store_true')
 
     args = argparser.parse_args()
+    assert args.dataset in supported_sets.keys(), \
+        f"Dataset {args.dataset} isn't supported."
+    data, num_classes = get_dataset(args.dataset, args.root)
     if args.device == 'xpu':
         rank, world_size, init_method = get_dist_params()
         dist.init_process_group(backend="ccl", init_method=init_method,
                                 world_size=world_size, rank=rank)
-        run(rank, world_size, args)
+        run(rank, world_size, args, num_classes, )
     else:
         import torch.multiprocessing as mp
         max_world_size = torch.cuda.device_count()
@@ -325,7 +323,7 @@ if __name__ == '__main__':
         print('Let\'s use', world_size, 'GPUs!')
         mp.spawn(
             run,
-            args=(world_size, args),
+            args=(world_size, args, num_classes, data),
             nprocs=world_size,
             join=True,
         )
