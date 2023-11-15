@@ -1,9 +1,11 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -38,10 +40,6 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-#Add timestamp to the movie and users to be zeros.
-# data['movie']['node_time'] = torch.zeros(len(data['movie']['x']), dtype=torch.long)
-# data['user']['node_time'] = torch.zeros(len(data['user']['x']), dtype=torch.long)
-
 # Perform a link-level split into training, validation, and test edges:
 train_data, val_data, test_data = T.RandomLinkSplit(
     num_val=0.1,
@@ -55,20 +53,20 @@ train_dataloader = LinkNeighborLoader(
     data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       train_data[('user', 'rates', 'movie')].edge_index),
-    edge_label_time=train_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096, shuffle=True, time_attr='timestamp')
+    edge_label_time=train_data[('user', 'rates', 'movie')].time,
+    batch_size=4096, shuffle=True, time_attr='time')
 val_dataloader = LinkNeighborLoader(
     data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       val_data[('user', 'rates', 'movie')].edge_index),
-    edge_label_time=val_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096, shuffle=True, time_attr='timestamp')
+    edge_label_time=val_data[('user', 'rates', 'movie')].time, batch_size=4096,
+    shuffle=True, time_attr='time')
 test_dataloader = LinkNeighborLoader(
     data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       test_data[('user', 'rates', 'movie')].edge_index),
-    edge_label_time=test_data[('user', 'rates', 'movie')].timestamp,
-    batch_size=4096, shuffle=True, time_attr='timestamp')
+    edge_label_time=test_data[('user', 'rates', 'movie')].time,
+    batch_size=4096, shuffle=True, time_attr='time')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:
@@ -124,10 +122,6 @@ class Model(torch.nn.Module):
 
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
-import time
-
-from tqdm import tqdm
 
 
 def train(train_dl, val_dl):
