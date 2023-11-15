@@ -24,6 +24,7 @@ supported_sets = {
 
 device_conditions = {
     'xpu': (lambda: torch.xpu.is_available()),
+    'cuda': (lambda: torch.cuda.is_available()),
 }
 
 
@@ -63,6 +64,8 @@ def train_hetero(model: Any, loader: NeighborLoader,
 def maybe_synchronize(device: str):
     if device == 'xpu' and torch.xpu.is_available():
         torch.xpu.synchronize()
+    if device == 'cuda' and torch.cuda.is_available():
+        torch.cuda.synchronize()
 
 
 def create_mask_per_rank(
@@ -269,15 +272,11 @@ def get_dist_params() -> Tuple[int, int, str]:
 
 
 if __name__ == '__main__':
-    rank, world_size, init_method = get_dist_params()
-    dist.init_process_group(backend="ccl", init_method=init_method,
-                            world_size=world_size, rank=rank)
-
     argparser = argparse.ArgumentParser(
         'GNN distributed (DDP) training benchmark')
     add = argparser.add_argument
 
-    add('--device', choices=['xpu'], default='xpu',
+    add('--device', choices=['cuda', 'xpu'], default='cuda',
         help='Device to run benchmark on')
     add('--dataset', choices=['ogbn-mag', 'ogbn-products', 'Reddit'],
         default='Reddit', type=str)
@@ -298,5 +297,11 @@ if __name__ == '__main__':
     add('--evaluate', action='store_true')
 
     args = argparser.parse_args()
-
+    rank, world_size, init_method = get_dist_params()
+    if args.device == 'xpu':
+        dist.init_process_group(backend="ccl", init_method=init_method,
+                                world_size=world_size, rank=rank)
+    else:
+        dist.init_process_group(backend="nccl", init_method=init_method,
+                        world_size=world_size, rank=rank)
     run(rank, world_size, args)
