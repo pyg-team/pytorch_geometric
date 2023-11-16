@@ -39,7 +39,8 @@ if __name__ == '__main__':
         world_size = chosen_world_size
     else:
         print(
-            f'User selected {chosen_world_size} GPUs but only {max_world_size} GPUs are available'
+            f'User selected {chosen_world_size} GPUs '
+            f'but only {max_world_size} GPUs are available'
         )
         world_size = max_world_size
     print(f'Let\'s use {world_size} GPUs!')
