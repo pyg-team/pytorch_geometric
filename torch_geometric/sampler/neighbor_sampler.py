@@ -461,7 +461,6 @@ class NeighborSampler(BaseSampler):
 
                 if self.disjoint:
                     batch, node = node.t().contiguous()
-
             elif torch_geometric.typing.WITH_TORCH_SPARSE:
                 if self.disjoint:
                     raise ValueError("'disjoint' sampling not supported for "

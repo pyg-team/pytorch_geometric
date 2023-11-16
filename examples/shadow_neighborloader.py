@@ -12,12 +12,19 @@ dataset = Flickr(path)
 data = dataset[0]
 
 kwargs = {'batch_size': 1024, 'num_workers': 10, 'persistent_workers': True}
+
+# Mimic ShadowGNN by setting the argument subgraph_type='induced'. 
+# This along with the num_neighbors argument will get the 
+# complete induced subgraph
 train_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                                 input_nodes=data.train_mask, subgraph_type='induced', **kwargs)
+                                 input_nodes=data.train_mask, 
+                                 subgraph_type='induced', **kwargs)
 val_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                               input_nodes=data.val_mask, subgraph_type='induced', **kwargs)
+                               input_nodes=data.val_mask, 
+                               subgraph_type='induced', **kwargs)
 test_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                                input_nodes=data.test_mask, subgraph_type='induced',  **kwargs)
+                                input_nodes=data.test_mask, 
+                                subgraph_type='induced',  **kwargs)
 
 
 class GNN(torch.nn.Module):
