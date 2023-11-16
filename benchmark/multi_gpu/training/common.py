@@ -1,17 +1,15 @@
 import argparse
 import ast
-import os
 from time import perf_counter
-from typing import Any, Tuple, Union
+from typing import Any, Callable, Tuple, Union
 
-import intel_extension_for_pytorch as ipex
-import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-from benchmark.utils import get_dataset, get_model, get_split_masks, test
+from benchmark.utils import get_model, get_split_masks, test
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 
@@ -24,6 +22,7 @@ supported_sets = {
 
 device_conditions = {
     'xpu': (lambda: torch.xpu.is_available()),
+    'cuda': (lambda: torch.cuda.is_available()),
 }
 
 
@@ -63,6 +62,8 @@ def train_hetero(model: Any, loader: NeighborLoader,
 def maybe_synchronize(device: str):
     if device == 'xpu' and torch.xpu.is_available():
         torch.xpu.synchronize()
+    if device == 'cuda' and torch.cuda.is_available():
+        torch.cuda.synchronize()
 
 
 def create_mask_per_rank(
@@ -83,7 +84,9 @@ def create_mask_per_rank(
         return mask_per_rank
 
 
-def run(rank: int, world_size: int, args: argparse.ArgumentParser):
+def run(rank: int, world_size: int, args: argparse.ArgumentParser,
+        num_classes: int, data: Union[Data, HeteroData],
+        custom_optimizer: Callable[[Any, Any], Tuple[Any, Any]] = None):
     if not device_conditions[args.device]():
         raise RuntimeError(f'{args.device.upper()} is not available')
 
@@ -92,13 +95,8 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
     if rank == 0:
         print('BENCHMARK STARTS')
         print(f'Running on {args.device.upper()}')
-
-    assert args.dataset in supported_sets.keys(
-    ), f"Dataset {args.dataset} isn't supported."
-    if rank == 0:
         print(f'Dataset: {args.dataset}')
 
-    data, num_classes = get_dataset(args.dataset, args.root)
     hetero = True if args.dataset == 'ogbn-mag' else False
     mask, val_mask, test_mask = get_split_masks(data, args.dataset)
     mask = create_mask_per_rank(mask, rank, world_size, hetero)
@@ -192,8 +190,8 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    if args.device == 'xpu':
-        model, optimizer = ipex.optimize(model, optimizer=optimizer)
+    if custom_optimizer:
+        model, optimizer = custom_optimizer(model, optimizer)
 
     train = train_hetero if hetero else train_homo
 
@@ -248,37 +246,11 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser):
     dist.destroy_process_group()
 
 
-def get_dist_params() -> Tuple[int, int, str]:
-    master_addr = "127.0.0.1"
-    master_port = "29500"
-    os.environ["MASTER_ADDR"] = master_addr
-    os.environ["MASTER_PORT"] = master_port
-
-    mpi_rank = int(os.environ.get("PMI_RANK", -1))
-    mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
-    rank = mpi_rank if mpi_world_size > 0 else os.environ.get("RANK", 0)
-    world_size = (mpi_world_size if mpi_world_size > 0 else os.environ.get(
-        "WORLD_SIZE", 1))
-
-    os.environ["RANK"] = str(rank)
-    os.environ["WORLD_SIZE"] = str(world_size)
-
-    init_method = f"tcp://{master_addr}:{master_port}"
-
-    return rank, world_size, init_method
-
-
-if __name__ == '__main__':
-    rank, world_size, init_method = get_dist_params()
-    dist.init_process_group(backend="ccl", init_method=init_method,
-                            world_size=world_size, rank=rank)
-
+def get_predefined_args() -> argparse.ArgumentParser:
     argparser = argparse.ArgumentParser(
         'GNN distributed (DDP) training benchmark')
     add = argparser.add_argument
 
-    add('--device', choices=['xpu'], default='xpu',
-        help='Device to run benchmark on')
     add('--dataset', choices=['ogbn-mag', 'ogbn-products', 'Reddit'],
         default='Reddit', type=str)
     add('--model',
@@ -297,6 +269,4 @@ if __name__ == '__main__':
     add('--num-epochs', default=1, type=int)
     add('--evaluate', action='store_true')
 
-    args = argparser.parse_args()
-
-    run(rank, world_size, args)
+    return argparser
