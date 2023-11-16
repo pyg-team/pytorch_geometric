@@ -26,7 +26,7 @@ pre_transform = RENet.pre_transform(args.seq_len)
 if args.dataset == 'ICEWS18':
     train_dataset = ICEWS18(path, pre_transform=pre_transform)
     test_dataset = ICEWS18(path, split='test', pre_transform=pre_transform)
-elif args.dataset == 'ICEWS18':
+else:
     train_dataset = GDELT(path, pre_transform=pre_transform)
     test_dataset = GDELT(path, split='test', pre_transform=pre_transform)
 
