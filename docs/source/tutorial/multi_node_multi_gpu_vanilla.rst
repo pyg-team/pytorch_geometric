@@ -63,7 +63,7 @@ Using a cluster configured with pyxis-containers
 
 If your cluster supports the `pyxis`-plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
 Currently it is not yet publically available, but you can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
-`Properly configured <https://github.com/pyg-team/pytorch_geometric/pull/8353#issuecomment-1811505091>`_ the container should set up all necessary environment variables and you can now directly run the example using ``srun`` from your command prompt:
+`Properly configured by your cluster administrator <https://github.com/pyg-team/pytorch_geometric/pull/8353#issuecomment-1811505091>`_ the container should set up all necessary environment variables and you can now directly run the example using ``srun`` from your command prompt:
 
 .. code-block:: console
 
