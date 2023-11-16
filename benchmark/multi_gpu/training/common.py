@@ -1,15 +1,15 @@
 import argparse
 import ast
-import os
 from time import perf_counter
-from typing import Any, Tuple, Union
+from typing import Any, Callable, Tuple, Union
 
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-from benchmark.utils import get_dataset, get_model, get_split_masks, test
+from benchmark.utils import get_model, get_split_masks, test
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 
@@ -85,16 +85,8 @@ def create_mask_per_rank(
 
 
 def run(rank: int, world_size: int, args: argparse.ArgumentParser,
-        num_classes: int, data):
-    if args.device == 'xpu':
-        import intel_extension_for_pytorch as ipex
-        import oneccl_bindings_for_pytorch  # noqa
-    else:
-        # CUDA
-        os.environ['MASTER_ADDR'] = 'localhost'
-        os.environ['MASTER_PORT'] = '12355'
-        dist.init_process_group('nccl', rank=rank, world_size=world_size)
-
+        num_classes: int, data: Union[Data, HeteroData],
+        custom_optimizer: Callable[[Any, Any], Tuple[Any, Any]] = None):
     if not device_conditions[args.device]():
         raise RuntimeError(f'{args.device.upper()} is not available')
 
@@ -198,8 +190,8 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    if args.device == 'xpu':
-        model, optimizer = ipex.optimize(model, optimizer=optimizer)
+    if custom_optimizer:
+        model, optimizer = custom_optimizer(model, optimizer)
 
     train = train_hetero if hetero else train_homo
 
@@ -254,33 +246,11 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
     dist.destroy_process_group()
 
 
-def get_dist_params() -> Tuple[int, int, str]:
-    master_addr = "127.0.0.1"
-    master_port = "29500"
-    os.environ["MASTER_ADDR"] = master_addr
-    os.environ["MASTER_PORT"] = master_port
-
-    mpi_rank = int(os.environ.get("PMI_RANK", -1))
-    mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
-    rank = mpi_rank if mpi_world_size > 0 else os.environ.get("RANK", 0)
-    world_size = (mpi_world_size if mpi_world_size > 0 else os.environ.get(
-        "WORLD_SIZE", 1))
-
-    os.environ["RANK"] = str(rank)
-    os.environ["WORLD_SIZE"] = str(world_size)
-
-    init_method = f"tcp://{master_addr}:{master_port}"
-
-    return rank, world_size, init_method
-
-
-if __name__ == '__main__':
+def get_predefined_args() -> argparse.ArgumentParser:
     argparser = argparse.ArgumentParser(
         'GNN distributed (DDP) training benchmark')
     add = argparser.add_argument
 
-    add('--device', choices=['cuda', 'xpu'], default='cuda',
-        help='Device to run benchmark on')
     add('--dataset', choices=['ogbn-mag', 'ogbn-products', 'Reddit'],
         default='Reddit', type=str)
     add('--model',
@@ -297,40 +267,6 @@ if __name__ == '__main__':
         help='number of neighbors to sample per layer')
     add('--num-workers', default=0, type=int)
     add('--num-epochs', default=1, type=int)
-    add(
-        '--n-gpus', default=1, type=int,
-        help="Only to be used with CUDA devices. \
-        For XPU use mpirun to select number of devices")
     add('--evaluate', action='store_true')
 
-    args = argparser.parse_args()
-    assert args.dataset in supported_sets.keys(), \
-        f"Dataset {args.dataset} isn't supported."
-    data, num_classes = get_dataset(args.dataset, args.root)
-    if args.device == 'xpu':
-        rank, world_size, init_method = get_dist_params()
-        dist.init_process_group(backend="ccl", init_method=init_method,
-                                world_size=world_size, rank=rank)
-        run(
-            rank,
-            world_size,
-            args,
-            num_classes,
-        )
-    else:
-        import torch.multiprocessing as mp
-        max_world_size = torch.cuda.device_count()
-        chosen_world_size = args.n_gpus
-        if chosen_world_size <= max_world_size:
-            world_size = chosen_world_size
-        else:
-            print("User selected", chosen_world_size, "GPUs but only",
-                  max_world_size, "GPUs are available")
-            world_size = max_world_size
-        print('Let\'s use', world_size, 'GPUs!')
-        mp.spawn(
-            run,
-            args=(world_size, args, num_classes, data),
-            nprocs=world_size,
-            join=True,
-        )
+    return argparser
