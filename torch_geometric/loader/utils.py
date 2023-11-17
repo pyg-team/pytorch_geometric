@@ -248,7 +248,7 @@ def filter_custom_store(
 def get_input_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
-    input_id: Optional[Tensor],
+    input_id: Optional[Tensor] = None,
 ) -> Tuple[Optional[str], Tensor, Optional[Tensor]]:
     def to_index(nodes, input_id) -> Tuple[Tensor, Optional[Tensor]]:
         if isinstance(nodes, Tensor) and nodes.dtype == torch.bool:
