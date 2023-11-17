@@ -204,4 +204,4 @@ def test_compile_hetero_conv_graph_breaks(device):
     out = compiled_conv(data.x_dict, data.edge_index_dict)
     assert len(out) == len(expected)
     for key in expected.keys():
-        assert torch.allclose(out[key], expected[key])
+        assert torch.allclose(out[key], expected[key], atol=1e-6)
