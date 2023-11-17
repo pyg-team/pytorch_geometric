@@ -255,9 +255,9 @@ class GATConv(MessagePassing):
             else:
                 assert self.lin_src is not None and self.lin_dst is not None
 
-            x_src = self.lin_src(x_src).view(-1, H, C)
-            if x_dst is not None:
-                x_dst = self.lin_dst(x_dst).view(-1, H, C)
+                x_src = self.lin_src(x_src).view(-1, H, C)
+                if x_dst is not None:
+                    x_dst = self.lin_dst(x_dst).view(-1, H, C)
 
         x = (x_src, x_dst)
 
