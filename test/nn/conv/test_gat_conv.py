@@ -3,7 +3,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import GATConv
-from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
