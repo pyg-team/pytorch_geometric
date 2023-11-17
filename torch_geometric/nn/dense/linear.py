@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -467,11 +467,11 @@ class HeteroDictLinear(torch.nn.Module):
                 f'{self.out_channels}, bias={self.kwargs.get("bias", True)})')
 
 
-def make_key_safe(key):
+def make_key_safe(key: Union[Tuple[str, str, str], str]) -> str:
     return '-'.join(key) if isinstance(key, tuple) else key
 
 
-def revert_key(key):
+def revert_key(key: str) -> Tuple[str, str, str]:
     splitkey = tuple(key.split('-'))
     if len(splitkey) == 3:
         return splitkey
