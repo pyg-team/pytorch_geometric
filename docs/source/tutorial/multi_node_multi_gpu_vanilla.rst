@@ -9,8 +9,8 @@ Please go there first to understand the basics if you are unfamiliar with the co
     The complete script of this tutorial can be found at `examples/multi_gpu/distributed_sampling_multinode.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling_multinode.py>`_.
     You can find the example :obj:`*.sbatch` file `next to it <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling_multinode.sbatch>`_ and tune it to your needs.
 
-A submission script to manage startup (bring your own environment)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A submission script to manage startup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As we are now running on multiple nodes, we can no longer use our :obj:`__main__` entrypoint and start processes from there.
 This is where the workload manager comes in as it allows us to prepare a special :obj:`*.sbatch` file.
