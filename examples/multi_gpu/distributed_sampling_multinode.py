@@ -44,7 +44,7 @@ class SAGE(torch.nn.Module):
         subgraph_loader: NeighborLoader,
     ) -> Tensor:
         pbar = tqdm(total=len(subgraph_loader) * len(self.convs))
-        pbar.set_description("Evaluating")
+        pbar.set_description('Evaluating')
 
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
@@ -65,24 +65,25 @@ class SAGE(torch.nn.Module):
         return x_all
 
 
-def run(world_size, rank, local_rank):
-    # will query the runtime environment for
-    # MASTER_ADDR, MASTER_PORT
-    # make sure, those are set!
-    dist.init_process_group("nccl", world_size=world_size, rank=rank)
+def run(world_size: int, rank: int, local_rank: int):
+    # Will query the runtime environment for `MASTER_ADDR` and `MASTER_PORT`.
+    # Make sure, those are set!
+    dist.init_process_group('nccl', world_size=world_size, rank=rank)
 
-    # download and unzip only with one process
+    # Download and unzip only with one process ...
     if rank == 0:
-        dataset = Reddit("data/Reddit")
+        dataset = Reddit('data/Reddit')
     dist.barrier()
-    # and then read from all the other processes
+    # ... and then read from all the other processes:
     if rank != 0:
-        dataset = Reddit("data/Reddit")
+        dataset = Reddit('data/Reddit')
     dist.barrier()
 
     data = dataset[0]
+
     # Move to device for faster feature fetch.
-    data = data.to(local_rank, "x", "y")
+    data = data.to(local_rank, 'x', 'y')
+
     # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
@@ -127,7 +128,7 @@ def run(world_size, rank, local_rank):
         dist.barrier()
 
         if rank == 0:
-            print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}")
+            print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
 
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
@@ -141,19 +142,19 @@ def run(world_size, rank, local_rank):
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
             acc3 = int(res[data.test_mask].sum()) / int(data.test_mask.sum())
-            print(f"Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}")
+            print(f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
 
         dist.barrier()
 
     dist.destroy_process_group()
 
 
-if __name__ == "__main__":
-    # get the world_size from the world_size-variable or directly from slurm
+if __name__ == '__main__':
+    # Get the world size from the WORLD_SIZE variable or directly from SLURM:
     world_size = int(
-        os.environ.get("WORLD_SIZE", os.environ.get("SLURM_NTASKS")))
-    # likewise for RANK/LOCAL_RANK
-    rank = int(os.environ.get("RANK", os.environ.get("SLURM_PROCID")))
+        os.environ.get('WORLD_SIZE', os.environ.get('SLURM_NTASKS')))
+    # Likewise for RANK and LOCAL_RANK:
+    rank = int(os.environ.get('RANK', os.environ.get('SLURM_PROCID')))
     local_rank = int(
-        os.environ.get("LOCAL_RANK", os.environ.get("SLURM_LOCALID")))
+        os.environ.get('LOCAL_RANK', os.environ.get('SLURM_LOCALID')))
     run(world_size, rank, local_rank)
