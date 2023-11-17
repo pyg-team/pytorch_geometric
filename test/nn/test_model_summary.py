@@ -8,7 +8,7 @@ import torch_geometric.typing
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 
 
 class GraphSAGE(torch.nn.Module):
@@ -195,7 +195,7 @@ def test_summary_with_to_hetero_model():
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
-
+    # flake8: noqa
     expected = """
 +---------------------------+---------------------+----------------+----------+
 | Layer                     | Input Shape         | Output Shape   | #Param   |
@@ -211,6 +211,27 @@ def test_summary_with_to_hetero_model():
 | ├─(lin2)ModuleDict        | --                  | --             | 2,112    |
 | │    └─(p)Linear          | [100, 32]           | [100, 32]      | 1,056    |
 | │    └─(a)Linear          | [100, 32]           | [100, 32]      | 1,056    |
++---------------------------+---------------------+----------------+----------+
+"""
+    assert summary(model, x_dict, edge_index_dict) == expected[1:-1]
+    model = to_hetero(GraphSAGE(), metadata, use_heterolinears=True)
+    expected = """
++---------------------------+---------------------+----------------+----------+
+| Layer                     | Input Shape         | Output Shape   | #Param   |
+|---------------------------+---------------------+----------------+----------|
+| GraphModule               |                     |                | 5,824    |
+| ├─(lin1)HeteroDictLinear  |                     |                | 544      |
+| │    └─(lins)ModuleDict   | --                  | --             | 544      |
+| │    │    └─(p)Linear     | [100, 16]           | [100, 16]      | 272      |
+| │    │    └─(a)Linear     | [100, 16]           | [100, 16]      | 272      |
+| ├─(conv1)ModuleDict       | --                  | --             | 3,168    |
+| │    └─(p__to__p)SAGEConv | [100, 16], [2, 200] | [100, 32]      | 1,056    |
+| │    └─(p__to__a)SAGEConv | [2, 200]            | [100, 32]      | 1,056    |
+| │    └─(a__to__p)SAGEConv | [2, 200]            | [100, 32]      | 1,056    |
+| ├─(lin2)HeteroDictLinear  |                     |                | 2,112    |
+| │    └─(lins)ModuleDict   | --                  | --             | 2,112    |
+| │    │    └─(p)Linear     | [100, 32]           | [100, 32]      | 1,056    |
+| │    │    └─(a)Linear     | [100, 32]           | [100, 32]      | 1,056    |
 +---------------------------+---------------------+----------------+----------+
 """
     assert summary(model, x_dict, edge_index_dict) == expected[1:-1]

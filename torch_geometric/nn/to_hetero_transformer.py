@@ -4,11 +4,22 @@ from collections import defaultdict, deque
 from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 from torch.nn import Module
 
-from torch_geometric.nn.dense.linear import is_uninitialized_parameter
+import torch_geometric
+from torch_geometric.nn.dense.linear import (
+    HeteroDictLinear,
+    is_uninitialized_parameter,
+)
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.nn.to_hetero_module import get_linear_channels
+from torch_geometric.typing import (
+    WITH_TO_HETERO_HETEROLIN,
+    EdgeType,
+    Metadata,
+    NodeType,
+)
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -25,8 +36,8 @@ def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
-              input_map: Optional[Dict[str, str]] = None,
-              debug: bool = False) -> GraphModule:
+              input_map: Optional[Dict[str, str]] = None, debug: bool = False,
+              use_heterolinears=False) -> GraphModule:
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent in
     which node representations are learned for each node type in
     :obj:`metadata[0]`, and messages are exchanged between each edge type in
@@ -115,8 +126,12 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
             (default: :obj:`None`)
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
+        use_heterolinears (bool, optional):
+            If set to :obj:`True`, to_hetero models use HeteroLinear
+            instead of ModuleDict of Linears. (default: :obj:`False`)
     """
-    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
+    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug,
+                                      use_heterolinears)
     return transformer.transform()
 
 
@@ -139,11 +154,13 @@ class ToHeteroTransformer(Transformer):
         aggr: str = 'sum',
         input_map: Optional[Dict[str, str]] = None,
         debug: bool = False,
+        use_heterolinears=False,
     ):
         super().__init__(module, input_map, debug)
 
         self.metadata = metadata
         self.aggr = aggr
+        self.use_heterolinears = use_heterolinears and WITH_TO_HETERO_HETEROLIN
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
@@ -288,26 +305,50 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
 
-        # Add calls to node type-wise or edge type-wise modules.
         self.graph.inserting_after(node)
-        for key in self.metadata[int(self.is_edge_level(node))]:
-            args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node('call_module',
-                                         target=f'{target}.{key2str(key)}',
-                                         args=args, kwargs=kwargs,
-                                         name=f'{name}__{key2str(key)}')
-            self.graph.inserting_after(out)
+        is_heterolin = False
+        if self.use_heterolinears:
+            if hasattr(self.module, name):
+                submod = getattr(self.module, name)
+                is_heterolin = is_linear(submod)
+            else:
+                split_name = name.split('_')
+                submod = getattr(self.module, '_'.join(split_name[:-1]))
+                # handle iterable Modules (dict/list/sequential) w/ Linear
+                if is_iterable_module(submod):
+                    try:
+                        selected_subsubmod = submod[split_name[-1]]
+                    except TypeError:
+                        selected_subsubmod = submod[int(split_name[-1])]
+                    is_heterolin = is_linear(selected_subsubmod)
+                else:
+                    is_heterolin = False
+        if is_heterolin:
+            self.add_heterolin_to_graph(node, target, name)
+        else:
+            # Add calls to node type-wise or edge type-wise modules.
+            self.add_nonlin_to_graph(node, target, name)
 
     def call_method(self, node: Node, target: Any, name: str):
+        # Add calls to node type-wise or edge type-wise methods.
         if self.is_graph_level(node):
             return
 
-        # Add calls to node type-wise or edge type-wise methods.
         self.graph.inserting_after(node)
+        if self.use_heterolinears:
+            # Addresses:
+            # "RuntimeError: Output 0 of SplitWithSizesBackward0
+            # is a view and is being modified inplace."
+            # Cause:
+            # split_with_sizes for pyg-lib.ops.segment_matmul returns a view.
+            # Using relu_ or other in place on this triggers the RuntimeError.
+            op, target = is_builtin_inplace(str(target))
+        else:
+            op = "call_method"
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node('call_method', target=target,
-                                         args=args, kwargs=kwargs,
+            out = self.graph.create_node(op, target=target, args=args,
+                                         kwargs=kwargs,
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
@@ -358,30 +399,44 @@ class ToHeteroTransformer(Transformer):
     def init_submodule(self, module: Module, target: str) -> Module:
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
+            self.find_by_name(
+                f'{target.replace(".", "_")}__{key2str(self.metadata[0][0])}')
+        ) or bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}'))
         has_edge_level_target = bool(
+            self.find_by_name(
+                f'{target.replace(".", "_")}__{key2str(self.metadata[1][0])}')
+        ) or bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
 
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        module_dict = torch.nn.ModuleDict()
-        for key in self.metadata[int(has_edge_level_target)]:
-            module_dict[key2str(key)] = copy.deepcopy(module)
-            if len(self.metadata[int(has_edge_level_target)]) <= 1:
-                continue
-            if hasattr(module, 'reset_parameters'):
-                module_dict[key2str(key)].reset_parameters()
-            elif sum([
-                    is_uninitialized_parameter(p) or p.numel()
-                    for p in module.parameters()
-            ]) > 0:
-                warnings.warn(
-                    f"'{target}' will be duplicated, but its parameters "
-                    f"cannot be reset. To suppress this warning, add a "
-                    f"'reset_parameters()' method to '{target}'")
+        if self.use_heterolinears and is_linear(module):
+            in_channels, out_channels = get_linear_channels(module)
+            return HeteroDictLinear(
+                in_channels, out_channels,
+                types=self.metadata[int(has_edge_level_target)]).to(
+                    module.weight.device)
+        else:
+            module_dict = torch.nn.ModuleDict()
+            for key in self.metadata[int(has_edge_level_target)]:
 
-        return module_dict
+                module_dict[key2str(key)] = copy.deepcopy(module)
+                if len(self.metadata[int(has_edge_level_target)]) <= 1:
+                    continue
+                if hasattr(module, 'reset_parameters'):
+                    module_dict[key2str(key)].reset_parameters()
+                elif sum([
+                        is_uninitialized_parameter(p) or p.numel()
+                        for p in module.parameters()
+                ]) > 0:
+                    warnings.warn(
+                        f"'{target}' will be duplicated, but its parameters "
+                        f"cannot be reset. To suppress this warning, add a "
+                        f"'reset_parameters()' method to '{target}'")
+
+            return module_dict
 
     # Helper methods ##########################################################
 
@@ -419,7 +474,64 @@ class ToHeteroTransformer(Transformer):
         kwargs = {k: _recurse(v) for k, v in node.kwargs.items()}
         return args, kwargs
 
+    def add_heterolin_to_graph(self, node: Node, target: Any, name: str):
+        kwargs_dict = {}
+        args_dict = {}
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            args_dict[key] = args[0]
+            kwargs_dict.update(kwargs)
+        if self.is_edge_level(node):
+            out_type = Dict[EdgeType, Tensor]
+        else:
+            out_type = Dict[NodeType, Tensor]
+        out_hetero = self.graph.create_node('call_module', target=f'{target}',
+                                            args=(args_dict, ),
+                                            kwargs=kwargs_dict,
+                                            name=f'{name}__hetero',
+                                            type_expr=out_type)
+        self.graph.inserting_after(out_hetero)
+        # extract tensors from dict
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            out = self.graph.create_node('call_method', target='get',
+                                         args=(out_hetero, key),
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
+
+    def add_nonlin_to_graph(self, node: Node, target: Any, name: str):
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_module',
+                                         target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
+
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
+
+
+def is_linear(module: torch.nn.Module) -> bool:
+    return isinstance(module, torch.nn.Linear) or isinstance(
+        module, torch_geometric.nn.dense.Linear)
+
+
+def is_iterable_module(module: torch.nn.Module) -> bool:
+    return isinstance(module, torch.nn.ModuleList) or isinstance(
+        module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
+
+
+def is_builtin_inplace(target_str: str) -> bool:
+    potential_outplace = inplace_2_outplace(target_str)
+    try:
+        target_op = eval(potential_outplace)
+        return "call_function", target_op
+    except Exception:
+        return "call_method", target_str
+
+
+def inplace_2_outplace(target_str: str) -> str:
+    # ex: for args.relu_() call torch.relu(args)
+    return 'torch.' + '_'.join(target_str.split('_')[:-1])

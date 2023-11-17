@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -384,12 +384,20 @@ class HeteroDictLinear(torch.nn.Module):
                     self.initialize_parameters)
 
             self.types = types
-            in_channels = {node_type: in_channels for node_type in types}
-
+            in_channels = {type_i: in_channels for type_i in types}
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kwargs = kwargs
-
+        # handle tuple keys since ModuleDict doesn't support tuple keys
+        new_in_channels = {}
+        self.using_tuple_keys = False
+        for key, val in self.in_channels.items():
+            if (not self.using_tuple_keys) and isinstance(key, tuple):
+                self.using_tuple_keys = True
+            if self.using_tuple_keys:
+                new_in_channels[make_key_safe(key)] = val
+        if self.using_tuple_keys:
+            self.in_channels = new_in_channels
         self.lins = torch.nn.ModuleDict({
             key:
             Linear(channels, self.out_channels, **kwargs)
@@ -414,6 +422,12 @@ class HeteroDictLinear(torch.nn.Module):
                 features for each individual type.
         """
         out_dict = {}
+        # handle tuple keys since ModuleDict doesn't support tuple keys
+        if self.using_tuple_keys:
+            new_x_dict = {}
+            for key, x in x_dict.items():
+                new_x_dict[make_key_safe(key)] = x
+            x_dict = new_x_dict
 
         # Only apply fused kernel for more than 10 types, otherwise use
         # sequential computation (which is generally faster for these cases).
@@ -433,17 +447,17 @@ class HeteroDictLinear(torch.nn.Module):
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             for key, out in zip(x_dict.keys(), outs):
                 if key in x_dict:
-                    out_dict[key] = out
+                    out_dict[revert_key(key)] = out
         else:
             for key, lin in self.lins.items():
                 if key in x_dict:
-                    out_dict[key] = lin(x_dict[key])
-
+                    out_dict[revert_key(key)] = lin(x_dict[key])
         return out_dict
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         for key, x in input[0].items():
+            key = make_key_safe(key)
             lin = self.lins[key]
             if is_uninitialized_parameter(lin.weight):
                 self.lins[key].initialize_parameters(None, x)
@@ -455,3 +469,15 @@ class HeteroDictLinear(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.kwargs.get("bias", True)})')
+
+
+def make_key_safe(key: Union[Tuple[str, str, str], str]) -> str:
+    return '-'.join(key) if isinstance(key, tuple) else key
+
+
+def revert_key(key: str) -> Tuple[str, str, str]:
+    splitkey = tuple(key.split('-'))
+    if len(splitkey) == 3:
+        return splitkey
+    else:
+        return key

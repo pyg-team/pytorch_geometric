@@ -24,8 +24,9 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import onlyCUDA, withPackage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import WITH_TO_HETERO_HETEROLIN, SparseTensor
 from torch_geometric.utils import dropout_edge
 
 torch.fx.wrap('dropout_edge')
@@ -522,6 +523,7 @@ def test_to_hetero_validate():
         model = to_hetero(model, metadata, debug=False)
 
 
+# (TODO) make to_hetero w/ HeteroLinear backend work for this
 def test_to_hetero_on_static_graphs():
     x_dict = {
         'paper': torch.randn(4, 100, 16),
@@ -564,3 +566,85 @@ def test_to_hetero_lazy_cuda():
     for out in out_dict.values():
         assert out.is_cuda
         assert out.size(-1) == 2
+
+
+if __name__ == '__main__':
+    import argparse
+
+    from torch_geometric import seed_everything
+    seed_everything(0)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    args = parser.parse_args()
+
+    class Net(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.lin_x_0 = Linear(64, 32)
+            self.lin_x_1 = Linear(32, 16)
+            self.lin_e_0 = Linear(64, 32)
+            self.lin_e_1 = Linear(32, 16)
+
+        def forward(self, x: Tensor, edge_attr: Tensor) -> Tensor:
+            x = self.lin_x_0(x)
+            x = self.lin_x_1(x)
+            edge_attr = self.lin_e_0(edge_attr)
+            edge_attr = self.lin_e_1(edge_attr)
+            return x, edge_attr
+
+    N = 10_000
+
+    def gen_homo_args():
+        x = torch.randn((N, 64), device=args.device)
+        edge_attr = torch.randn((N, 64), device=args.device)
+        return x, edge_attr
+
+    def gen_metadata(num_types):
+        node_types = ['N' + str(i) for i in range(num_types)]
+        edge_types = [
+            ('N' + str(i), 'E' + str(i), 'N' + str(i + 1))
+            for i in range(num_types - 1)
+        ] + [('N' + str(num_types - 1), 'E' + str(num_types - 1), 'N0')]
+        return node_types, edge_types
+
+    def gen_hetero_args(metadata):
+        node_types, edge_types = metadata
+        x_dict = {
+            node_type: torch.randn(N, 64, device=args.device)
+            for node_type in node_types
+        }
+        edge_attr_dict = {
+            edge_type: torch.randn(N, 64, device=args.device)
+            for edge_type in edge_types
+        }
+        return x_dict, edge_attr_dict
+
+    homo_model = Net().to(args.device)
+    print("Benchmarking Homo Model = ", homo_model)
+
+    benchmark(
+        funcs=[homo_model],
+        func_names=['Homogeneous'],
+        args=gen_homo_args,
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=False,
+    )
+
+    for num_types in [4, 8, 16, 32, 64]:
+        metadata = gen_metadata(num_types)
+        hetero_model = to_hetero(homo_model, metadata)
+        heterolinear_model = to_hetero(homo_model, metadata,
+                                       use_heterolinears=True)
+        benchmark(
+            funcs=[hetero_model, heterolinear_model],
+            func_names=[
+                'Vanilla to_hetero w/ num_types = ' + str(num_types),
+                'HeteroLinear to_hetero w/ num_types = ' + str(num_types)
+            ],
+            args=gen_hetero_args(metadata),
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=False,
+        )
