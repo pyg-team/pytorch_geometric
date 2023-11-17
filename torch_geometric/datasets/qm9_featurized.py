@@ -45,7 +45,7 @@ atomrefs = {
 
 
 class QM9_Featurized(InMemoryDataset):
-    r"""A featurized and slightly smaller version of 
+    r"""A featurized and slightly smaller version of
     the QM9 dataset from the `"MoleculeNet: A Benchmark for Molecular
     Machine Learning" <https://arxiv.org/abs/1703.00564>`_ paper, consisting of
     about 130,000 molecules with 19 regression targets.
@@ -53,13 +53,13 @@ class QM9_Featurized(InMemoryDataset):
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
-    This differs from QM9 as follows: (1) All Hydrogen atoms are included, 
+    This differs from QM9 as follows: (1) All Hydrogen atoms are included,
     correcting 25,715 chemically incomplete molecular graphs from QM9.
     (2) All atomic and edge features are set to correct values. In QM9, the
     hybridization state and aromaticity of all atoms, as well the aromaticity
     of all bonds, were uniformly set equal to zero. (3) These changes necessitate
     omitting 1,403 molecules from the original QM9 dataset.
-    
+
 
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | Target | Property                         | Description                                                                       | Unit                                        |
@@ -250,10 +250,10 @@ class QM9_Featurized(InMemoryDataset):
 
         data_list = []
         for i, mol in enumerate(tqdm(suppl)):
-            if i in skip or mol==None:
+            if i in skip or mol == None:
                 continue
-              
-            mol=Chem.AddHs(mol)
+
+            mol = Chem.AddHs(mol)
             N = mol.GetNumAtoms()
 
             conf = mol.GetConformer()
