@@ -15,7 +15,7 @@ except ImportError:
 
 class EdgeConv(MessagePassing):
     r"""The edge convolutional operator from the `"Dynamic Graph CNN for
-    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper
+    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}

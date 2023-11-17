@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 
 
-def geodesic_distance(
+def geodesic_distance(  # noqa: D417
     pos: Tensor,
     face: Tensor,
     src: Optional[Tensor] = None,
@@ -48,7 +48,6 @@ def geodesic_distance(
     :rtype: :class:`Tensor`
 
     Example:
-
         >>> pos = torch.tensor([[0.0, 0.0, 0.0],
         ...                     [2.0, 0.0, 0.0],
         ...                     [0.0, 2.0, 0.0],

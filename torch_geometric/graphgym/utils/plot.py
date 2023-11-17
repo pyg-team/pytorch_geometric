@@ -2,15 +2,13 @@ import os.path as osp
 
 
 def view_emb(emb, dir):
-    '''
-    Visualize a embedding matrix.
+    """Visualize a embedding matrix.
 
     Args:
         emb (torch.tensor): Embedding matrix with shape (N, D). D is the
         feature dimension.
         dir (str): Output directory for the embedding figure.
-
-    '''
+    """
     import matplotlib.pyplot as plt
     import seaborn as sns
     from sklearn.decomposition import PCA

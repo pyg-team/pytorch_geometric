@@ -65,6 +65,8 @@ class AirfRANS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -94,6 +96,7 @@ class AirfRANS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if task not in self.tasks:
             raise ValueError(f"Expected 'task' to be in {self.tasks} "
@@ -102,15 +105,12 @@ class AirfRANS(InMemoryDataset):
         self.task = 'full' if task == 'scarce' and not train else task
         self.split = 'train' if train else 'test'
 
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['AirfRANS.pt', 'manifest.json']
-
-    @property
-    def process(self) -> List[str]:
         return ['AirfRANS.pt', 'manifest.json']
 
     @property
@@ -141,7 +141,7 @@ class AirfRANS(InMemoryDataset):
 
                 data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

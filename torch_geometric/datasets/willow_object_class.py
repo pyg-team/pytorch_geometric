@@ -40,6 +40,8 @@ class WILLOWObjectClass(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         device (str or torch.device, optional): The device to use for
             processing the raw data. If set to :obj:`None`, will utilize
             GPU-processing if available. (default: :obj:`None`)
@@ -58,6 +60,7 @@ class WILLOWObjectClass(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
         device: Optional[str] = None,
     ):
         if device is None:
@@ -66,8 +69,9 @@ class WILLOWObjectClass(InMemoryDataset):
         assert category.lower() in self.categories
         self.category = category
         self.device = device
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -172,7 +176,7 @@ class WILLOWObjectClass(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

@@ -28,7 +28,6 @@ def map_index(
     :rtype: (:class:`torch.Tensor`, :class:`torch.BoolTensor`)
 
     Examples:
-
         >>> src = torch.tensor([2, 0, 1, 0, 3])
         >>> index = torch.tensor([3, 2, 0, 1])
 

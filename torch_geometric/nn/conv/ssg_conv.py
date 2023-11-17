@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class SSGConv(MessagePassing):
     r"""The simple spectral graph convolutional operator from the
     `"Simple Spectral Graph Convolution"
-    <https://openreview.net/forum?id=CYO5T-YjWZV>`_ paper
+    <https://openreview.net/forum?id=CYO5T-YjWZV>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \frac{1}{K} \sum_{k=1}^K\left((1-\alpha)

@@ -18,7 +18,7 @@ from torch_geometric.utils import add_self_loops, spmm
 
 class SimpleConv(MessagePassing):
     r"""A simple message passing operator that performs (non-trainable)
-    propagation
+    propagation.
 
     .. math::
         \mathbf{x}^{\prime}_i = \bigoplus_{j \in \mathcal{N(i)}} e_{ji} \cdot

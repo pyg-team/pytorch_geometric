@@ -15,7 +15,7 @@ from torch_geometric.utils import spmm
 class GCN2Conv(MessagePassing):
     r"""The graph convolutional operator with initial residual connections and
     identity mapping (GCNII) from the `"Simple and Deep Graph Convolutional
-    Networks" <https://arxiv.org/abs/2007.02133>`_ paper
+    Networks" <https://arxiv.org/abs/2007.02133>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( (1 - \alpha) \mathbf{\hat{P}}\mathbf{X} +
