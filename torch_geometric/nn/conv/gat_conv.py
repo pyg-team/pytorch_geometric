@@ -249,7 +249,7 @@ class GATConv(MessagePassing):
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
 
             if self.lin is not None:
-                x_src = self.lin(x).view(-1, H, C)
+                x_src = self.lin(x_src).view(-1, H, C)
                 if x_dst is not None:
                     x_dst = self.lin(x_dst).view(-1, H, C)
             else:
