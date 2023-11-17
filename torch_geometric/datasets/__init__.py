@@ -16,6 +16,7 @@ from .yelp import Yelp
 from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
+from .qm9_featurized import QM9_Featurized
 from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
@@ -124,6 +125,7 @@ homo_datasets = [
     'AmazonProducts',
     'QM7b',
     'QM9',
+    'QM9_Featurized',
     'MD17',
     'ZINC',
     'AQSOL',
