@@ -6,7 +6,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.dense.linear import Linear, is_uninitialized_parameter
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import NoneType  # noqa
 from torch_geometric.typing import (
@@ -146,6 +146,7 @@ class GATConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
         self.fill_value = fill_value
+        self.disable_unification = False
 
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
@@ -158,6 +159,12 @@ class GATConv(MessagePassing):
                                   weight_initializer='glorot')
             self.lin_dst = Linear(in_channels[1], heads * out_channels, False,
                                   weight_initializer='glorot')
+            # This hook will be called once, after first call to 'forward'.
+            # In hetero + DDP cases, there is a problem with uninitialized
+            # 'lin_dst', as we may have incosistency between 'in_channels'
+            # provided here, and features given at 'forward'.
+            self._hook = self.register_forward_hook(
+                self.maybe_unify_transformations)
 
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.empty(1, heads, out_channels))
@@ -237,6 +244,7 @@ class GATConv(MessagePassing):
             x_src, x_dst = x
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
             x_src = self.lin_src(x_src).view(-1, H, C)
+            self.disable_unification = x_dst is None
             if x_dst is not None:
                 x_dst = self.lin_dst(x_dst).view(-1, H, C)
 
@@ -320,6 +328,18 @@ class GATConv(MessagePassing):
 
     def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
         return alpha.unsqueeze(-1) * x_j
+
+    @torch.no_grad()
+    def maybe_unify_transformations(self, *args):
+        # In the following case:
+        # - 'in_channels' were provided for bipartite graph in ctor
+        # - only input node features were passed to 'forward'
+        # we will have a single linear transformation.
+        if not self.disable_unification and is_uninitialized_parameter(
+                self.lin_dst.weight):
+            self.lin_dst = self.lin_src
+        self._hook.remove()
+        delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

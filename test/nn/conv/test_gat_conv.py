@@ -3,6 +3,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import GATConv
+from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
@@ -153,3 +154,26 @@ def test_gat_conv_empty_edge_index(device):
     conv = GATConv(8, 32, heads=2).to(device)
     out = conv(x, edge_index)
     assert out.size() == (0, 64)
+
+
+def test_gat_unitialized_params():
+    x = torch.randn((0, 8))
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    conv = GATConv((-1, -1), 32, heads=2)
+    # Separate 'lin_dst' was created since we have passed tuple
+    # for 'input_channels'. This transformation is though
+    # expected to be lazily initialized.
+    assert is_uninitialized_parameter(conv.lin_dst.weight)
+    assert hasattr(conv, '_hook')
+
+    conv(x, edge_index)
+    # As we introduced incosistency via 'x', we expect linear transformations
+    # to be merged.
+    assert not is_uninitialized_parameter(conv.lin_dst.weight)
+    assert conv.lin_src is conv.lin_dst
+    assert not hasattr(conv, '_hook')
+
+    conv = GATConv((-1, -1), 32, heads=2)
+    conv((x, None), edge_index)
+    # Corner case, 'lin_dst' will not be initialized but should be kept.
+    assert is_uninitialized_parameter(conv.lin_dst.weight)
