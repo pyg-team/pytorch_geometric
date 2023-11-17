@@ -191,12 +191,6 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
             for k in edge_index_keys
         }
         model.forward(fake_x_dict, fake_edge_index_dict)
-    if hetero and args.model == 'rgat':
-        for i in range(args.num_layers):
-            # `lin_dst` from GATConv is unitialized for
-            # paper-cites-paper relation
-            model.model.convs[i].paper__cites__paper.lin_dst(
-                torch.rand((32, inputs_channels), device=device))
 
     model = DDP(model, device_ids=[device], find_unused_parameters=True)
     model.train()
