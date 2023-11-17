@@ -39,6 +39,8 @@ class GeometricShapes(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -60,13 +62,19 @@ class GeometricShapes(InMemoryDataset):
 
     url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
 
-    def __init__(self, root: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> str:
@@ -82,8 +90,8 @@ class GeometricShapes(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        torch.save(self.process_set('train'), self.processed_paths[0])
-        torch.save(self.process_set('test'), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
@@ -105,4 +113,4 @@ class GeometricShapes(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        return self.collate(data_list)
+        return data_list

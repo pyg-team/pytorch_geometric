@@ -44,17 +44,21 @@ class Dataset(torch.utils.data.Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
-        be present in order to skip downloading."""
+        be present in order to skip downloading.
+        """
         raise NotImplementedError
 
     @property
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
-        must be present in order to skip processing."""
+        must be present in order to skip processing.
+        """
         raise NotImplementedError
 
     def download(self):
@@ -82,6 +86,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        force_reload: bool = False,
     ):
         super().__init__()
 
@@ -94,6 +99,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         self.pre_filter = pre_filter
         self.log = log
         self._indices: Optional[Sequence] = None
+        self.force_reload = force_reload
 
         if self.has_download:
             self._download()
@@ -128,7 +134,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def num_features(self) -> int:
         r"""Returns the number of features per node in the dataset.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -172,7 +179,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
-        downloading."""
+        downloading.
+        """
         files = self.raw_file_names
         # Prevent a common source of error in which `file_names` are not
         # defined as a property.
@@ -183,7 +191,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
-        processing."""
+        processing.
+        """
         files = self.processed_file_names
         # Prevent a common source of error in which `file_names` are not
         # defined as a property.
@@ -212,20 +221,20 @@ class Dataset(torch.utils.data.Dataset, ABC):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
             warnings.warn(
-                f"The `pre_transform` argument differs from the one used in "
-                f"the pre-processed version of this dataset. If you want to "
-                f"make use of another pre-processing technique, make sure to "
-                f"delete '{self.processed_dir}' first")
+                "The `pre_transform` argument differs from the one used in "
+                "the pre-processed version of this dataset. If you want to "
+                "make use of another pre-processing technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
             warnings.warn(
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
-                "make use of another pre-fitering technique, make sure to "
-                "delete '{self.processed_dir}' first")
+                "make use of another pre-fitering technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
-        if files_exist(self.processed_paths):  # pragma: no cover
+        if not self.force_reload and files_exist(self.processed_paths):
             return
 
         if self.log and 'pytest' not in sys.modules:
@@ -255,7 +264,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
         present).
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
         tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type long or
-        bool, will return a subset of the dataset at the specified indices."""
+        bool, will return a subset of the dataset at the specified indices.
+        """
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
@@ -271,7 +281,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
         Indices :obj:`idx` can be a slicing object, *e.g.*, :obj:`[2:5]`, a
         list, a tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type
-        long or bool."""
+        long or bool.
+        """
         indices = self.indices()
 
         if isinstance(idx, slice):

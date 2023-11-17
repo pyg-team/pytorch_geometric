@@ -21,18 +21,18 @@ from torch_geometric.utils.sparse import index2ptr
 
 
 @torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index, edge_mask):  # noqa: F811
     # type: (Tensor, Tensor) -> Tensor
     pass
 
 
 @torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index, edge_mask):  # noqa: F811
     # type: (SparseTensor, Tensor) -> SparseTensor
     pass
 
 
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index: Adj, edge_mask: Tensor) -> Adj:  # noqa: F811
     if isinstance(edge_index, Tensor):
         return edge_index[:, edge_mask]
     return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout='coo')
@@ -41,7 +41,7 @@ def masked_edge_index(edge_index, edge_mask):
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
     Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper
+    <https://arxiv.org/abs/1703.06103>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot

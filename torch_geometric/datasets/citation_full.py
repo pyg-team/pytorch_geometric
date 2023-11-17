@@ -1,8 +1,6 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import torch
-
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -82,7 +80,7 @@ class CitationFull(InMemoryDataset):
         self.to_undirected = to_undirected
         assert self.name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -107,8 +105,7 @@ class CitationFull(InMemoryDataset):
     def process(self):
         data = read_npz(self.raw_paths[0], to_undirected=self.to_undirected)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}Full()'

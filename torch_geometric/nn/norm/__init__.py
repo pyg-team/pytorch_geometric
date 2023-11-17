@@ -1,3 +1,5 @@
+r"""Normalization package."""
+
 from .batch_norm import BatchNorm, HeteroBatchNorm
 from .instance_norm import InstanceNorm
 from .layer_norm import LayerNorm, HeteroLayerNorm

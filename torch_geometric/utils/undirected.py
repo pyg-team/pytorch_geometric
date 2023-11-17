@@ -11,18 +11,18 @@ MISSING = '???'
 
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
+def is_undirected(edge_index, edge_attr, num_nodes):  # noqa: F811
+    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool
     pass
 
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
+def is_undirected(edge_index, edge_attr, num_nodes):  # noqa: F811
+    # type: (Tensor, List[Tensor], Optional[int]) -> bool
     pass
 
 
-def is_undirected(
+def is_undirected(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor]] = None,
     num_nodes: Optional[int] = None,
@@ -42,7 +42,6 @@ def is_undirected(
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                         [1, 0, 0]])
         >>> weight = torch.tensor([0, 0, 1])
@@ -90,24 +89,24 @@ def is_undirected(
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, str, Optional[int], str) -> Tensor  # noqa
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
+    # type: (Tensor, str, Optional[int], str) -> Tensor
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
     # type: (Tensor, Optional[Tensor], Optional[int], str) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):  # noqa: F811
     # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
-def to_undirected(
+def to_undirected(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
@@ -139,7 +138,6 @@ def to_undirected(
         it is set to :obj:`None`).
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1],
         ...                            [1, 0, 2]])
         >>> to_undirected(edge_index)

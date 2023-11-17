@@ -132,7 +132,8 @@ class MetaPath2Vec(torch.nn.Module):
 
     def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
-        :obj:`node_type`."""
+        :obj:`node_type`.
+        """
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
         return emb if batch is None else emb.index_select(0, batch)
 
@@ -201,7 +202,6 @@ class MetaPath2Vec(torch.nn.Module):
 
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -230,7 +230,8 @@ class MetaPath2Vec(torch.nn.Module):
              test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
              *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,

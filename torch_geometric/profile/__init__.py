@@ -1,3 +1,5 @@
+r"""GNN profiling package."""
+
 from .profile import profileit, timeit, get_stats_summary
 from .profile import (
     trace_handler,

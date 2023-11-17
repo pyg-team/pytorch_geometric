@@ -40,6 +40,8 @@ class PascalPF(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://www.di.ens.fr/willow/research/proposalflow/dataset/'
            'PF-dataset-PASCAL.zip')
@@ -57,11 +59,13 @@ class PascalPF(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.category = category.lower()
         assert self.category in self.categories
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
         self.pairs = torch.load(self.processed_paths[1])
 
     @property
@@ -115,7 +119,7 @@ class PascalPF(InMemoryDataset):
 
         pairs = [(names.index(x[0][0]), names.index(x[1][0])) for x in pairs]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
         torch.save(pairs, self.processed_paths[1])
 
     def __repr__(self) -> str:

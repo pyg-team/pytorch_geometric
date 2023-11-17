@@ -51,37 +51,37 @@ class RECT_L(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.lin.weight.data)
 
     @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):  # noqa
+    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (Tensor, Tensor, OptTensor) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):  # noqa
+    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (Tensor, SparseTensor, OptTensor) -> Tensor
         pass
 
-    def forward(  # noqa
+    def forward(  # noqa: F811
         self,
         x: Tensor,
         edge_index: Adj,
         edge_weight: OptTensor = None,
     ) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         x = self.conv(x, edge_index, edge_weight)
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)
 
     @torch.jit._overload_method
-    def embed(self, x, edge_index, edge_weight=None):  # noqa
+    def embed(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (Tensor, Tensor, OptTensor) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def embed(self, x, edge_index, edge_weight=None):  # noqa
+    def embed(self, x, edge_index, edge_weight=None):  # noqa: F811
         # type: (Tensor, SparseTensor, OptTensor) -> Tensor
         pass
 
-    def embed(  # noqa
+    def embed(  # noqa: F811
         self,
         x: Tensor,
         edge_index: Adj,
