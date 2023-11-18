@@ -240,6 +240,8 @@ class GATConv(MessagePassing):
             if self.lin is not None:
                 x_src = x_dst = self.lin(x).view(-1, H, C)
             else:
+                # If the module is initialized as bipartite, transform source
+                # and destination node features separately:
                 assert self.lin_src is not None and self.lin_dst is not None
                 x_src = self.lin_src(x).view(-1, H, C)
                 x_dst = self.lin_dst(x).view(-1, H, C)
@@ -249,6 +251,9 @@ class GATConv(MessagePassing):
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
 
             if self.lin is not None:
+                # If the module is initialized as non-bipartite, we expect that
+                # source and destination node features have the same shape and
+                # that they their transformations are shared:
                 x_src = self.lin(x_src).view(-1, H, C)
                 if x_dst is not None:
                     x_dst = self.lin(x_dst).view(-1, H, C)
