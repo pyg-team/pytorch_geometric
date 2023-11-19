@@ -156,6 +156,8 @@ class QM9(InMemoryDataset):
         force_reload: bool = False,
         featurize: bool = False
     ):
+        self.featurize = featurize
+        
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
@@ -164,7 +166,6 @@ class QM9(InMemoryDataset):
         else:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
         
-        self.featurize = featurize
         self.load(self.processed_paths[0])
 
     def mean(self, target: int) -> float:
