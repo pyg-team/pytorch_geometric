@@ -159,7 +159,7 @@ class QM9(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-        featurize: bool = False,
+        featurize: bool = False
     ):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
