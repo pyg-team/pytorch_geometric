@@ -54,7 +54,13 @@ class QM9(InMemoryDataset):
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
     The default version of this dataset contains missing features and chemical
     inaccuracies, so it is best used for benchmarking rather than model development.
-    For a more chemically complete version of the dataset, set featurized to True.
+    For a more chemically complete version of the dataset, set featurize to True.
+    This differs from QM9 as follows: (1) All Hydrogen atoms are included,
+    correcting 25,715 chemically incomplete molecular graphs from QM9.
+    (2) All atomic and edge features are set to correct values. In QM9, the
+    hybridization state and aromaticity of all atoms, as well the aromaticity
+    of all bonds, were uniformly set equal to zero. (3) These changes necessitate
+    omitting 1,403 molecules from the original QM9 dataset.
 
 
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
@@ -122,7 +128,7 @@ class QM9(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
         featurize (bool, optional): Whether to include completed and
-            corrected chemical features. Stats for the featurized dataset
+            corrected chemical graphs and features. Stats for the featurized dataset
             are given in parentheses below. (default: :obj:`False`)
 
     **STATS:**
@@ -136,9 +142,9 @@ class QM9(InMemoryDataset):
           - #edges
           - #features
           - #tasks
-        * - 130,831
-          - ~18.0
-          - ~37.3
+        * - 130,831 (129,428)
+          - ~18.0 (~18.3)
+          - ~37.3 (~37.9)
           - 11
           - 19
     """  # noqa: E501
