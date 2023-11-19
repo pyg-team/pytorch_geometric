@@ -55,7 +55,7 @@ class QM9(InMemoryDataset):
     The default version of this dataset contains missing features and chemical
     inaccuracies, so it is best used for benchmarking rather than model development.
     For a more chemically complete version of the dataset, set featurized to True.
-    
+
 
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | Target | Property                         | Description                                                                       | Unit                                        |
@@ -121,8 +121,8 @@ class QM9(InMemoryDataset):
             final dataset. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
-        featurize (bool, optional): Whether to include completed and 
-            corrected chemical features. Stats for the featurized dataset 
+        featurize (bool, optional): Whether to include completed and
+            corrected chemical features. Stats for the featurized dataset
             are given in parentheses below. (default: :obj:`False`)
 
     **STATS:**
