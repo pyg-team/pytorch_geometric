@@ -52,9 +52,10 @@ class QM9(InMemoryDataset):
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
-    It should be noted that this dataset contains missing features and chemical
+    The default version of this dataset contains missing features and chemical
     inaccuracies, so it is best used for benchmarking rather than model development.
-    For a more chemically complete version of the dataset, see QM9Featurized.
+    For a more chemically complete version of the dataset, set featurized to True.
+    
 
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | Target | Property                         | Description                                                                       | Unit                                        |
@@ -120,6 +121,9 @@ class QM9(InMemoryDataset):
             final dataset. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        featurize (bool, optional): Whether to include completed and 
+            corrected chemical features. Stats for the featurized dataset 
+            are given in parentheses below. (default: :obj:`False`)
 
     **STATS:**
 
@@ -142,7 +146,11 @@ class QM9(InMemoryDataset):
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
-    processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
+
+    if self.featurize:
+        processed_url = 'https://data.pyg.org/datasets/qm9_v3_featurized.zip'
+    else:
+        processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
 
     def __init__(
         self,
@@ -151,9 +159,11 @@ class QM9(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
+        featurize: bool = False,
     ):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
+        self.featurize = featurize
         self.load(self.processed_paths[0])
 
     def mean(self, target: int) -> float:
@@ -241,12 +251,15 @@ class QM9(InMemoryDataset):
             skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
-                                   sanitize=False)
+                                   sanitize=self.featurize)
 
         data_list = []
         for i, mol in enumerate(tqdm(suppl)):
-            if i in skip:
+            if i in skip or mol == None:
                 continue
+
+            if self.featurize:
+                mol = Chem.AddHs(mol)
 
             N = mol.GetNumAtoms()
 
