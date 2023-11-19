@@ -3,6 +3,7 @@ import torch
 
 import torch_geometric
 from torch_geometric.data import HeteroData
+from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.nn import (
     GATConv,
     GCN2Conv,
@@ -12,6 +13,7 @@ from torch_geometric.nn import (
     MessagePassing,
     SAGEConv,
 )
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
     get_random_edge_index,
@@ -205,3 +207,46 @@ def test_compile_hetero_conv_graph_breaks(device):
     assert len(out) == len(expected)
     for key in expected.keys():
         assert torch.allclose(out[key], expected[key], atol=1e-6)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
+    args = parser.parse_args()
+
+    dataset = FakeHeteroDataset(num_graphs=10).to(args.device)
+
+    class Model(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.conv = HeteroConv({
+                edge_type:
+                SAGEConv(
+                    in_channels=(
+                        dataset.num_features[edge_type[0]],
+                        dataset.num_features[edge_type[-1]],
+                    ),
+                    out_channels=32,
+                )
+                for edge_type in dataset[0].edge_types
+            })
+            self.lin = Linear(32, 1)
+
+        def forward(self, x_dict, edge_index_dict):
+            x_dict = self.conv(x_dict)
+            return self.lin(x_dict['v0'])
+
+    model = Model()
+    compiled_model = torch_geometric.compile(model)
+
+    benchmark(
+        funcs=[model, compiled_model],
+        func_names=['Vanilla', 'Compiled'],
+        args=gen_args,
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
+    )
