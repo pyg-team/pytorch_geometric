@@ -17,8 +17,8 @@ class FakeDataset(InMemoryDataset):
         num_graphs (int, optional): The number of graphs. (default: :obj:`1`)
         avg_num_nodes (int, optional): The average number of nodes in a graph.
             (default: :obj:`1000`)
-        avg_degree (int, optional): The average degree per node.
-            (default: :obj:`10`)
+        avg_degree (float, optional): The average degree per node.
+            (default: :obj:`10.0`)
         num_channels (int, optional): The number of node features.
             (default: :obj:`64`)
         edge_dim (int, optional): The number of edge features.
@@ -43,7 +43,7 @@ class FakeDataset(InMemoryDataset):
         self,
         num_graphs: int = 1,
         avg_num_nodes: int = 1000,
-        avg_degree: int = 10,
+        avg_degree: float = 10.0,
         num_channels: int = 64,
         edge_dim: int = 0,
         num_classes: int = 10,
@@ -53,13 +53,13 @@ class FakeDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs,
     ):
-        super().__init__('.', transform)
+        super().__init__(None, transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
         assert task in ['node', 'graph']
 
-        self.avg_num_nodes = max(avg_num_nodes, avg_degree)
+        self.avg_num_nodes = max(avg_num_nodes, int(avg_degree))
         self.avg_degree = max(avg_degree, 1)
         self.num_channels = num_channels
         self.edge_dim = edge_dim
@@ -115,8 +115,8 @@ class FakeHeteroDataset(InMemoryDataset):
             (default: :obj:`6`)
         avg_num_nodes (int, optional): The average number of nodes in a graph.
             (default: :obj:`1000`)
-        avg_degree (int, optional): The average degree per node.
-            (default: :obj:`10`)
+        avg_degree (float, optional): The average degree per node.
+            (default: :obj:`10.0`)
         avg_num_channels (int, optional): The average number of node features.
             (default: :obj:`64`)
         edge_dim (int, optional): The number of edge features.
@@ -141,7 +141,7 @@ class FakeHeteroDataset(InMemoryDataset):
         num_node_types: int = 3,
         num_edge_types: int = 6,
         avg_num_nodes: int = 1000,
-        avg_degree: int = 10,
+        avg_degree: float = 10.0,
         avg_num_channels: int = 64,
         edge_dim: int = 0,
         num_classes: int = 10,
@@ -150,7 +150,7 @@ class FakeHeteroDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs,
     ):
-        super().__init__('.', transform)
+        super().__init__(None, transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
@@ -171,7 +171,7 @@ class FakeHeteroDataset(InMemoryDataset):
             count[edge_type] += 1
             self.edge_types.append((edge_type[0], rel, edge_type[1]))
 
-        self.avg_num_nodes = max(avg_num_nodes, avg_degree)
+        self.avg_num_nodes = max(avg_num_nodes, int(avg_degree))
         self.avg_degree = max(avg_degree, 1)
         self.num_channels = [
             get_num_channels(avg_num_channels) for _ in self.node_types
@@ -231,8 +231,8 @@ class FakeHeteroDataset(InMemoryDataset):
 ###############################################################################
 
 
-def get_num_nodes(avg_num_nodes: int, avg_degree: int) -> int:
-    min_num_nodes = max(3 * avg_num_nodes // 4, avg_degree)
+def get_num_nodes(avg_num_nodes: int, avg_degree: float) -> int:
+    min_num_nodes = max(3 * avg_num_nodes // 4, int(avg_degree))
     max_num_nodes = 5 * avg_num_nodes // 4
     return random.randint(min_num_nodes, max_num_nodes)
 
@@ -243,10 +243,10 @@ def get_num_channels(num_channels) -> int:
     return random.randint(min_num_channels, max_num_channels)
 
 
-def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: int,
+def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: float,
                    is_undirected: bool = False,
                    remove_loops: bool = False) -> torch.Tensor:
-    num_edges = num_src_nodes * avg_degree
+    num_edges = int(num_src_nodes * avg_degree)
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.int64)
     col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.int64)
     edge_index = torch.stack([row, col], dim=0)
