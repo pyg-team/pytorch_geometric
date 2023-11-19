@@ -147,17 +147,12 @@ class QM9(InMemoryDataset):
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
 
-    def __init__(
-        self,
-        root: str,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        force_reload: bool = False,
-        featurize: bool = False
-    ):
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None,
+                 force_reload: bool = False, featurize: bool = False):
         self.featurize = featurize
-        
+
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
@@ -165,7 +160,7 @@ class QM9(InMemoryDataset):
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_featurized.zip'
         else:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
-        
+
         self.load(self.processed_paths[0])
 
     def mean(self, target: int) -> float:
