@@ -1,12 +1,14 @@
 import os.path as osp
 
 import numpy as np
+import pytest
 import torch
 
 import torch_geometric
 from torch_geometric.data import Batch, Data, HeteroData
 from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import to_edge_index, to_torch_sparse_tensor
 
 
 def test_batch_basic():
@@ -416,8 +418,7 @@ def test_pair_data_batching():
                 return self.x_s.size(0)
             if key == 'edge_index_t':
                 return self.x_t.size(0)
-            else:
-                return super().__inc__(key, value, *args, **kwargs)
+            return super().__inc__(key, value, *args, **kwargs)
 
     x_s = torch.randn(5, 16)
     edge_index_s = torch.tensor([
@@ -467,12 +468,10 @@ def test_nested_follow_batch():
     d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)], a={"aa": tr(8, 3)},
               x=tr(8, 5))
 
-    # Dataset
     data_list = [d1, d2, d3, d4]
 
     batch = Batch.from_data_list(data_list, follow_batch=['xs', 'a'])
 
-    # assert shapes
     assert batch.xs[0].shape == (19, 3)
     assert batch.xs[1].shape == (56, 4)
     assert batch.xs[2].shape == (7, 2)
@@ -481,7 +480,6 @@ def test_nested_follow_batch():
     assert len(batch.xs_batch) == 3
     assert len(batch.a_batch) == 1
 
-    # assert _batch
     assert batch.xs_batch[0].tolist() == \
            [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
     assert batch.xs_batch[1].tolist() == \
@@ -491,3 +489,57 @@ def test_nested_follow_batch():
 
     assert batch.a_batch['aa'].tolist() == \
            [0] * 11 + [1] * 2 + [2] * 4 + [3] * 8
+
+
+@withPackage('torch>=2.0.0')
+@pytest.mark.parametrize('layout', [
+    torch.sparse_coo,
+    torch.sparse_csr,
+    torch.sparse_csc,
+])
+def test_torch_sparse_batch(layout):
+    x_dense = torch.randn(3, 4)
+    x = x_dense.to_sparse(layout=layout)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    edge_attr = torch.rand(4)
+    adj = to_torch_sparse_tensor(edge_index, edge_attr, layout=layout)
+
+    data = Data(x=x, adj=adj)
+
+    batch = Batch.from_data_list([data, data])
+
+    assert batch.x.size() == (6, 4)
+    assert batch.x.layout == layout
+    assert torch.equal(batch.x.to_dense(), torch.cat([x_dense, x_dense], 0))
+
+    assert batch.adj.size() == (6, 6)
+    assert batch.adj.layout == layout
+    out = to_edge_index(batch.adj.to_sparse(layout=torch.sparse_csr))
+    assert torch.equal(out[0], torch.cat([edge_index, edge_index + 3], 1))
+    assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
+
+
+@withPackage('torch>=1.13.0')
+def test_torch_nested_batch():
+    from torch.nested import nested_tensor
+
+    class MyData(Data):
+        def __inc__(self, key, value, *args, **kwargs) -> int:
+            return 2
+
+    x1 = nested_tensor([torch.randn(3), torch.randn(4)])
+    data1 = MyData(x=x1)
+    assert str(data1) == 'MyData(x=[2, 4])'
+
+    x2 = nested_tensor([torch.randn(3), torch.randn(4), torch.randn(5)])
+    data2 = MyData(x=x2)
+    assert str(data2) == 'MyData(x=[3, 5])'
+
+    batch = Batch.from_data_list([data1, data2])
+    assert str(batch) == 'MyDataBatch(x=[5, 5], batch=[5], ptr=[3])'
+
+    expected = nested_tensor(list(x1.unbind() + (x2 + 2).unbind()))
+    assert torch.equal(
+        batch.x.to_padded_tensor(0.0),
+        expected.to_padded_tensor(0.0),
+    )

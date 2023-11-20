@@ -15,7 +15,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops
 class FeaStConv(MessagePassing):
     r"""The (translation-invariant) feature-steered convolutional operator from
     the `"FeaStNet: Feature-Steered Graph Convolutions for 3D Shape Analysis"
-    <https://arxiv.org/abs/1706.05206>`_ paper
+    <https://arxiv.org/abs/1706.05206>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
@@ -63,10 +63,10 @@ class FeaStConv(MessagePassing):
                           weight_initializer='uniform')
         self.u = Linear(in_channels, heads, bias=False,
                         weight_initializer='uniform')
-        self.c = Parameter(torch.Tensor(heads))
+        self.c = Parameter(torch.empty(heads))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

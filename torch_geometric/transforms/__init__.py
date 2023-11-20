@@ -10,6 +10,7 @@ from .svd_feature_reduction import SVDFeatureReduction
 from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
+from .node_property_split import NodePropertySplit
 from .mask import IndexToMask, MaskToIndex
 from .pad import Pad
 
@@ -18,6 +19,7 @@ from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
+from .add_remaining_self_loops import AddRemainingSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
 from .remove_duplicated_edges import RemoveDuplicatedEdges
 from .knn_graph import KNNGraph
@@ -35,6 +37,7 @@ from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .feature_propagation import FeaturePropagation
+from .half_hop import HalfHop
 
 from .distance import Distance
 from .cartesian import Cartesian
@@ -71,6 +74,7 @@ general_transforms = [
     'RemoveTrainingClasses',
     'RandomNodeSplit',
     'RandomLinkSplit',
+    'NodePropertySplit',
     'IndexToMask',
     'MaskToIndex',
     'Pad',
@@ -82,6 +86,7 @@ graph_transforms = [
     'TargetIndegree',
     'LocalDegreeProfile',
     'AddSelfLoops',
+    'AddRemainingSelfLoops',
     'RemoveIsolatedNodes',
     'RemoveDuplicatedEdges',
     'KNNGraph',
@@ -102,6 +107,7 @@ graph_transforms = [
     'AddLaplacianEigenvectorPE',
     'AddRandomWalkPE',
     'FeaturePropagation',
+    'HalfHop',
 ]
 
 vision_transforms = [

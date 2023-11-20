@@ -12,8 +12,10 @@ from torch_geometric.utils import to_torch_csc_tensor
 
 class RootedSubgraphData(Data):
     r"""A data object describing a homogeneous graph together with each node's
-    rooted subgraph. It contains several additional properties that hold the
-    information to map to batch of every node's rooted subgraph:
+    rooted subgraph.
+
+    It contains several additional properties that hold the information to map
+    to batch of every node's rooted subgraph:
 
     * :obj:`sub_edge_index` (Tensor): The edge indices of all combined rooted
       subgraphs.
@@ -92,7 +94,7 @@ class RootedSubgraph(BaseTransform, ABC):
 
         return sub_edge_index, n_id, e_id, n_sub_batch, e_sub_batch
 
-    def __call__(self, data: Data) -> RootedSubgraphData:
+    def forward(self, data: Data) -> RootedSubgraphData:
         out = self.extract(data)
         d = RootedSubgraphData.from_dict(data.to_dict())
         d.sub_edge_index, d.n_id, d.e_id, d.n_sub_batch, d.e_sub_batch = out

@@ -51,7 +51,6 @@ from .eg_conv import EGConv
 from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
-from .fast_hgt_conv import FastHGTConv
 from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
@@ -60,6 +59,8 @@ from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
 from .antisymmetric_conv import AntiSymmetricConv
+from .dir_gnn_conv import DirGNNConv
+from .mixhop_conv import MixHopConv
 
 __all__ = [
     'MessagePassing',
@@ -119,7 +120,6 @@ __all__ = [
     'PDNConv',
     'GeneralConv',
     'HGTConv',
-    'FastHGTConv',
     'HEATConv',
     'HeteroConv',
     'HANConv',
@@ -127,6 +127,8 @@ __all__ = [
     'PointGNNConv',
     'GPSConv',
     'AntiSymmetricConv',
+    'DirGNNConv',
+    'MixHopConv',
 ]
 
 classes = __all__

@@ -42,7 +42,7 @@ def load_edge_csv(path, src_index_col, src_mapping, dst_index_col, dst_mapping,
     return edge_index, edge_attr
 
 
-class SequenceEncoder(object):
+class SequenceEncoder:
     # The 'SequenceEncoder' encodes raw column strings into embeddings.
     def __init__(self, model_name='all-MiniLM-L6-v2', device=None):
         self.device = device
@@ -55,7 +55,7 @@ class SequenceEncoder(object):
         return x.cpu()
 
 
-class GenresEncoder(object):
+class GenresEncoder:
     # The 'GenreEncoder' splits the raw column strings by 'sep' and converts
     # individual elements to categorical labels.
     def __init__(self, sep='|'):
@@ -72,7 +72,7 @@ class GenresEncoder(object):
         return x
 
 
-class IdentityEncoder(object):
+class IdentityEncoder:
     # The 'IdentityEncoder' takes the raw column values and converts them to
     # PyTorch tensors.
     def __init__(self, dtype=None):

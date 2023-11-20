@@ -33,15 +33,18 @@ class MovieLens(InMemoryDataset):
             features. The model comes from the`Huggingface SentenceTransformer
             <https://huggingface.co/sentence-transformers>`_.
     """
-
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
-    def __init__(self, root, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 model_name: Optional[str] = "all-MiniLM-L6-v2"):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        model_name: Optional[str] = 'all-MiniLM-L6-v2',
+    ):
         self.model_name = model_name
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -87,10 +90,13 @@ class MovieLens(InMemoryDataset):
         edge_index = torch.tensor([src, dst])
 
         rating = torch.from_numpy(df['rating'].values).to(torch.long)
+        time = torch.from_numpy(df['timestamp'].values).to(torch.long)
+
         data['user', 'rates', 'movie'].edge_index = edge_index
         data['user', 'rates', 'movie'].edge_label = rating
+        data['user', 'rates', 'movie'].time = time
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

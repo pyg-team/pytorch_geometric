@@ -1,3 +1,4 @@
+import copy
 from typing import Callable, Tuple
 
 import torch
@@ -35,7 +36,7 @@ class DeepGraphInfomax(torch.nn.Module):
         self.summary = summary
         self.corruption = corruption
 
-        self.weight = Parameter(torch.Tensor(hidden_channels, hidden_channels))
+        self.weight = Parameter(torch.empty(hidden_channels, hidden_channels))
 
         self.reset_parameters()
 
@@ -47,12 +48,21 @@ class DeepGraphInfomax(torch.nn.Module):
 
     def forward(self, *args, **kwargs) -> Tuple[Tensor, Tensor, Tensor]:
         """Returns the latent space for the input arguments, their
-        corruptions and their summary representation."""
+        corruptions and their summary representation.
+        """
         pos_z = self.encoder(*args, **kwargs)
+
         cor = self.corruption(*args, **kwargs)
         cor = cor if isinstance(cor, tuple) else (cor, )
-        neg_z = self.encoder(*cor)
+        cor_args = cor[:len(args)]
+        cor_kwargs = copy.copy(kwargs)
+        for key, value in zip(kwargs.keys(), cor[len(args):]):
+            cor_kwargs[key] = value
+
+        neg_z = self.encoder(*cor_args, **cor_kwargs)
+
         summary = self.summary(pos_z, *args, **kwargs)
+
         return pos_z, neg_z, summary
 
     def discriminate(self, z: Tensor, summary: Tensor,
@@ -93,7 +103,8 @@ class DeepGraphInfomax(torch.nn.Module):
         **kwargs,
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,

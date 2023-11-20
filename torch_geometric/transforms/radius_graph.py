@@ -37,7 +37,7 @@ class RadiusGraph(BaseTransform):
         self.flow = flow
         self.num_workers = num_workers
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
 

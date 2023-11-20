@@ -9,19 +9,31 @@ from torch_geometric.transforms import NormalizeRotation
 def test_normalize_rotation():
     assert str(NormalizeRotation()) == 'NormalizeRotation()'
 
-    pos = torch.Tensor([[-2, -2], [-1, -1], [0, 0], [1, 1], [2, 2]])
-    normal = torch.Tensor([[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]])
+    pos = torch.tensor([
+        [-2.0, -2.0],
+        [-1.0, -1.0],
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+    ])
+    normal = torch.tensor([
+        [-1.0, 1.0],
+        [-1.0, 1.0],
+        [-1.0, 1.0],
+        [-1.0, 1.0],
+        [-1.0, 1.0],
+    ])
     data = Data(pos=pos)
     data.normal = normal
     data = NormalizeRotation()(data)
     assert len(data) == 2
 
-    expected_pos = torch.Tensor([
-        [-2 * sqrt(2), 0],
-        [-sqrt(2), 0],
-        [0, 0],
-        [sqrt(2), 0],
-        [2 * sqrt(2), 0],
+    expected_pos = torch.tensor([
+        [-2 * sqrt(2), 0.0],
+        [-sqrt(2), 0.0],
+        [0.0, 0.0],
+        [sqrt(2), 0.0],
+        [2 * sqrt(2), 0.0],
     ])
     expected_normal = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
 

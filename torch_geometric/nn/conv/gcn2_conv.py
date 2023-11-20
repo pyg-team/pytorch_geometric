@@ -15,7 +15,7 @@ from torch_geometric.utils import spmm
 class GCN2Conv(MessagePassing):
     r"""The graph convolutional operator with initial residual connections and
     identity mapping (GCNII) from the `"Simple and Deep Graph Convolutional
-    Networks" <https://arxiv.org/abs/2007.02133>`_ paper
+    Networks" <https://arxiv.org/abs/2007.02133>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( (1 - \alpha) \mathbf{\hat{P}}\mathbf{X} +
@@ -92,12 +92,12 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight1 = Parameter(torch.Tensor(channels, channels))
+        self.weight1 = Parameter(torch.empty(channels, channels))
 
         if shared_weights:
             self.register_parameter('weight2', None)
         else:
-            self.weight2 = Parameter(torch.Tensor(channels, channels))
+            self.weight2 = Parameter(torch.empty(channels, channels))
 
         self.reset_parameters()
 

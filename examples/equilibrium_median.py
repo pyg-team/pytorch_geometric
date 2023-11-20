@@ -1,8 +1,6 @@
-r"""
-Replicates the experiment from `"Deep Graph Infomax"
-<https://arxiv.org/abs/1809.10341>`_ to try and teach
-`EquilibriumAggregation` to learn to take the median of
-a set of numbers
+r"""Replicates the experiment from `"Deep Graph Infomax"
+<https://arxiv.org/abs/1809.10341>`_ to try and teach `EquilibriumAggregation`
+to learn to take the median of a set of numbers.
 
 This example converges slowly to being able to predict the
 median similar to what is observed in the paper.
@@ -27,7 +25,7 @@ uniform = torch.distributions.uniform.Uniform(0, 1)
 total_loss = 0
 n_loss = 0
 
-for i in range(steps):
+for i in range(1, steps + 1):
     optimizer.zero_grad()
     dist = np.random.choice([norm, gamma, uniform])
     x = dist.sample((input_size, 1))
@@ -37,5 +35,5 @@ for i in range(steps):
     optimizer.step()
     total_loss += loss
     n_loss += 1
-    if i % eval_each == (eval_each - 1):
-        print(f"Average loss at epoc {i} is {total_loss / n_loss}")
+    if i % eval_each == 0:
+        print(f"Epoch: {i}, Loss {total_loss / n_loss:.6f}")

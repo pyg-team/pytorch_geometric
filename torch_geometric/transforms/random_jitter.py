@@ -14,7 +14,7 @@ class RandomJitter(BaseTransform):
     r"""Translates node positions by randomly sampled translation values
     within a given interval (functional name: :obj:`random_jitter`).
     In contrast to other random transformations,
-    translation is applied separately at each position
+    translation is applied separately at each position.
 
     Args:
         translate (sequence or float or int): Maximum translation in each
@@ -26,7 +26,7 @@ class RandomJitter(BaseTransform):
     def __init__(self, translate: Union[float, int, Sequence]):
         self.translate = translate
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         (n, dim), t = data.pos.size(), self.translate
         if isinstance(t, numbers.Number):
             t = list(repeat(t, times=dim))

@@ -41,6 +41,8 @@ class FAUST(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -62,13 +64,19 @@ class FAUST(InMemoryDataset):
 
     url = 'http://faust.is.tue.mpg.de/'
 
-    def __init__(self, root: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> str:
@@ -98,7 +106,7 @@ class FAUST(InMemoryDataset):
                 data = self.pre_transform(data)
             data_list.append(data)
 
-        torch.save(self.collate(data_list[:80]), self.processed_paths[0])
-        torch.save(self.collate(data_list[80:]), self.processed_paths[1])
+        self.save(data_list[:80], self.processed_paths[0])
+        self.save(data_list[80:], self.processed_paths[1])
 
         shutil.rmtree(osp.join(self.raw_dir, 'MPI-FAUST'))

@@ -7,11 +7,11 @@ from torch_geometric.transforms import AddSelfLoops
 def test_add_self_loops():
     assert str(AddSelfLoops()) == 'AddSelfLoops()'
 
+    assert len(AddSelfLoops()(Data())) == 0
+
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     edge_weight = torch.tensor([1, 2, 3, 4])
     edge_attr = torch.tensor([[1, 2], [3, 4], [5, 6], [7, 8]])
-
-    assert len(AddSelfLoops()(Data())) == 0
 
     data = Data(edge_index=edge_index, num_nodes=3)
     data = AddSelfLoops()(data)
@@ -34,6 +34,14 @@ def test_add_self_loops():
     assert data.num_nodes == 3
     assert data.edge_attr.tolist() == [[1, 2], [3, 4], [5, 6], [7, 8], [3, 4],
                                        [8, 10], [5, 6]]
+
+
+def test_add_self_loops_with_existing_self_loops():
+    edge_index = torch.tensor([[0, 1, 2], [0, 1, 2]])
+    data = Data(edge_index=edge_index, num_nodes=3)
+    data = AddSelfLoops()(data)
+    assert data.edge_index.tolist() == [[0, 1, 2, 0, 1, 2], [0, 1, 2, 0, 1, 2]]
+    assert data.num_nodes == 3
 
 
 def test_hetero_add_self_loops():

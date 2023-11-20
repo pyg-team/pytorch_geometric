@@ -4,20 +4,21 @@ from typing import Any, Dict, Optional, Union
 
 import torch
 import torch.nn.functional as F
-from torch import Tensor, nn
+from torch import Tensor
 from torch.nn.parameter import Parameter
 
+import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import index_sort, scatter
 from torch_geometric.utils.sparse import index2ptr
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
-    if not hasattr(nn.parameter, 'UninitializedParameter'):
+    if not hasattr(torch.nn.parameter, 'UninitializedParameter'):
         return False
-    return isinstance(x, nn.parameter.UninitializedParameter)
+    return isinstance(x, torch.nn.parameter.UninitializedParameter)
 
 
 def reset_weight_(weight: Tensor, in_channels: int,
@@ -54,14 +55,13 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data
+    r"""Applies a linear tranformation to the incoming data.
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
 
-    similar to :class:`torch.nn.Linear`.
-    It supports lazy initialization and customizable weight and bias
-    initialization.
+    In contrast to :class:`torch.nn.Linear`, it supports lazy initialization
+    and customizable weight and bias initialization.
 
     Args:
         in_channels (int): Size of each input sample. Will be initialized
@@ -83,9 +83,14 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
-                 weight_initializer: Optional[str] = None,
-                 bias_initializer: Optional[str] = None):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool = True,
+        weight_initializer: Optional[str] = None,
+        bias_initializer: Optional[str] = None,
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -93,30 +98,36 @@ class Linear(torch.nn.Module):
         self.bias_initializer = bias_initializer
 
         if in_channels > 0:
-            self.weight = Parameter(torch.Tensor(out_channels, in_channels))
+            self.weight = Parameter(torch.empty(out_channels, in_channels))
         else:
-            self.weight = nn.parameter.UninitializedParameter()
+            self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
-
-        self._load_hook = self._register_load_state_dict_pre_hook(
-            self._lazy_load_hook)
 
         self.reset_parameters()
 
     def __deepcopy__(self, memo):
-        out = Linear(self.in_channels, self.out_channels, self.bias
-                     is not None, self.weight_initializer,
-                     self.bias_initializer)
+        # PyTorch<1.13 cannot handle deep copies of uninitialized parameters :(
+        # TODO Drop this code once PyTorch 1.12 is no longer supported.
+        out = Linear(
+            self.in_channels,
+            self.out_channels,
+            self.bias is not None,
+            self.weight_initializer,
+            self.bias_initializer,
+        ).to(self.weight.device)
+
         if self.in_channels > 0:
             out.weight = copy.deepcopy(self.weight, memo)
+
         if self.bias is not None:
             out.bias = copy.deepcopy(self.bias, memo)
+
         return out
 
     def reset_parameters(self):
@@ -125,7 +136,8 @@ class Linear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
         """
@@ -142,24 +154,22 @@ class Linear(torch.nn.Module):
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
         if (is_uninitialized_parameter(self.weight)
-                or torch.onnx.is_in_onnx_export()):
+                or torch.onnx.is_in_onnx_export() or keep_vars):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            if torch.onnx.is_in_onnx_export():
+            if torch.onnx.is_in_onnx_export() or keep_vars:
                 destination[prefix + 'bias'] = self.bias
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
 
-    def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
-                        missing_keys, unexpected_keys, error_msgs):
-
+    def _load_from_state_dict(self, state_dict, prefix, *args, **kwargs):
         weight = state_dict.get(prefix + 'weight', None)
 
         if weight is not None and is_uninitialized_parameter(weight):
             self.in_channels = -1
-            self.weight = nn.parameter.UninitializedParameter()
+            self.weight = torch.nn.parameter.UninitializedParameter()
             if not hasattr(self, '_hook'):
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
@@ -171,6 +181,8 @@ class Linear(torch.nn.Module):
                 self._hook.remove()
                 delattr(self, '_hook')
 
+        super()._load_from_state_dict(state_dict, prefix, *args, **kwargs)
+
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
@@ -178,13 +190,14 @@ class Linear(torch.nn.Module):
 
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
-    to types
+    to types.
+
+    For type :math:`\kappa`, it computes
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -206,8 +219,14 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 is_sorted: bool = False, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_types: int,
+        is_sorted: bool = False,
+        **kwargs,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -216,47 +235,56 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        if torch_geometric.typing.WITH_PYG_LIB:
-            self.lins = None
-            if self.in_channels == -1:
-                self.weight = nn.parameter.UninitializedParameter()
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-            else:
-                self.weight = torch.nn.Parameter(
-                    torch.Tensor(num_types, in_channels, out_channels))
-            if kwargs.get('bias', True):
-                self.bias = Parameter(torch.Tensor(num_types, out_channels))
-            else:
-                self.register_parameter('bias', None)
-        else:
-            self.lins = torch.nn.ModuleList([
-                Linear(in_channels, out_channels, **kwargs)
-                for _ in range(num_types)
-            ])
-            self.register_parameter('weight', None)
-            self.register_parameter('bias', None)
+        self._use_segment_matmul_heuristic_output: Optional[bool] = None
 
+        if self.in_channels == -1:
+            self.weight = torch.nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
+        else:
+            self.weight = torch.nn.Parameter(
+                torch.empty(num_types, in_channels, out_channels))
+        if kwargs.get('bias', True):
+            self.bias = Parameter(torch.empty(num_types, out_channels))
+        else:
+            self.register_parameter('bias', None)
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        if torch_geometric.typing.WITH_PYG_LIB:
-            reset_weight_(self.weight, self.in_channels,
-                          self.kwargs.get('weight_initializer', None))
-            reset_weight_(self.bias, self.in_channels,
-                          self.kwargs.get('bias_initializer', None))
-        else:
-            for lin in self.lins:
-                lin.reset_parameters()
+        reset_weight_(self.weight, self.in_channels,
+                      self.kwargs.get('weight_initializer', None))
+        reset_bias_(self.bias, self.in_channels,
+                    self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        if torch_geometric.typing.WITH_PYG_LIB:
+        use_segment_matmul = torch_geometric.backend.use_segment_matmul
+        # If `use_segment_matmul` is not specified, use a simple heuristic to
+        # determine whether `segment_matmul` can speed up computation given the
+        # observed input sizes:
+        if use_segment_matmul is None:
+            if self._use_segment_matmul_heuristic_output is None:
+                segment_count = scatter(torch.ones_like(type_vec), type_vec,
+                                        dim_size=self.num_types, reduce='sum')
+
+                self._use_segment_matmul_heuristic_output = (
+                    torch_geometric.backend.use_segment_matmul_heuristic(
+                        num_segments=self.num_types,
+                        max_segment_size=int(segment_count.max()),
+                        in_channels=self.weight.size(1),
+                        out_channels=self.weight.size(2),
+                    ))
+
+            assert self._use_segment_matmul_heuristic_output is not None
+            use_segment_matmul = self._use_segment_matmul_heuristic_output
+
+        if use_segment_matmul and torch_geometric.typing.WITH_SEGMM:
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -275,11 +303,17 @@ class HeteroLinear(torch.nn.Module):
                 out_unsorted[perm] = out
                 out = out_unsorted
         else:
-            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
-            for i, lin in enumerate(self.lins):
+            for i in range(self.num_types):
                 mask = type_vec == i
-                out[mask] = lin(x[mask])
+                if mask.numel() == 0:
+                    continue
+                subset_out = F.linear(x[mask], self.weight[i].T)
+                # The data type may have changed with mixed precision:
+                out[mask] = subset_out.to(out.dtype)
+
+            if self.bias is not None:
+                out += self.bias[type_vec]
         return out
 
     @torch.no_grad()
@@ -299,13 +333,14 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary
+    r"""Applies separate linear tranformations to the incoming data dictionary.
+
+    For key :math:`\kappa`, it computes
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -356,7 +391,8 @@ class HeteroDictLinear(torch.nn.Module):
         self.kwargs = kwargs
 
         self.lins = torch.nn.ModuleDict({
-            key: Linear(channels, self.out_channels, **kwargs)
+            key:
+            Linear(channels, self.out_channels, **kwargs)
             for key, channels in self.in_channels.items()
         })
 
@@ -371,20 +407,39 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.
         """
-        if torch_geometric.typing.WITH_GMM:
-            xs = [x_dict[key] for key in self.lins.keys()]
-            weights = [lin.weight.t() for lin in self.lins.values()]
-            biases = [lin.bias for lin in self.lins.values()]
+        out_dict = {}
+
+        # Only apply fused kernel for more than 10 types, otherwise use
+        # sequential computation (which is generally faster for these cases).
+        use_segment_matmul = torch_geometric.backend.use_segment_matmul
+        if use_segment_matmul is None:
+            use_segment_matmul = len(x_dict) >= 10
+
+        if (use_segment_matmul and torch_geometric.typing.WITH_GMM
+                and not torch.jit.is_scripting()):
+            xs, weights, biases = [], [], []
+            for key, lin in self.lins.items():
+                if key in x_dict:
+                    xs.append(x_dict[key])
+                    weights.append(lin.weight.t())
+                    biases.append(lin.bias)
             biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
-            return {key: out for key, out in zip(x_dict.keys(), outs)}
+            for key, out in zip(x_dict.keys(), outs):
+                if key in x_dict:
+                    out_dict[key] = out
+        else:
+            for key, lin in self.lins.items():
+                if key in x_dict:
+                    out_dict[key] = lin(x_dict[key])
 
-        return {key: lin(x_dict[key]) for key, lin in self.lins.items()}
+        return out_dict
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):

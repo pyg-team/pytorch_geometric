@@ -3,7 +3,7 @@ from typing import List
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.datasets import FakeDataset
+from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.loader import (
     DataLoader,
     ImbalancedSampler,
@@ -92,3 +92,25 @@ def test_neighbor_loader_with_imbalanced_sampler():
                             num_neighbors=[-1])
 
     assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
+
+
+@onlyNeighborSampler
+def test_hetero_neighbor_loader_with_imbalanced_sampler():
+    torch.manual_seed(12345)
+    data = FakeHeteroDataset(num_classes=2)[0]
+
+    loader = NeighborLoader(
+        data,
+        batch_size=100,
+        input_nodes='v0',
+        num_neighbors=[-1],
+        sampler=ImbalancedSampler(data['v0'].y),
+    )
+
+    y = torch.cat([batch['v0'].y[:batch['v0'].batch_size] for batch in loader])
+
+    histogram = y.bincount()
+    prob = histogram / histogram.sum()
+
+    assert histogram.sum() == data['v0'].num_nodes
+    assert prob.min() > 0.4 and prob.max() < 0.6

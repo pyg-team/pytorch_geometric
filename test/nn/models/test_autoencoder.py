@@ -11,18 +11,21 @@ def test_gae():
     model = GAE(encoder=lambda x: x)
     model.reset_parameters()
 
-    x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
+    x = torch.tensor([[1.0, -1.0], [1.0, 2.0], [2.0, 1.0]])
     z = model.encode(x)
     assert torch.allclose(z, x)
 
     adj = model.decoder.forward_all(z)
-    assert torch.allclose(
-        adj,
-        torch.Tensor([[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]]).sigmoid())
+    expected = torch.tensor([
+        [2.0, -1.0, 1.0],
+        [-1.0, 5.0, 4.0],
+        [1.0, 4.0, 5.0],
+    ]).sigmoid()
+    assert torch.allclose(adj, expected)
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
     value = model.decode(z, edge_index)
-    assert torch.allclose(value, torch.sigmoid(torch.Tensor([-1, 4])))
+    assert torch.allclose(value, torch.tensor([-1.0, 4.0]).sigmoid())
 
     if is_full_test():
         jit = torch.jit.export(model)
@@ -48,7 +51,7 @@ def test_gae():
 def test_vgae():
     model = VGAE(encoder=lambda x: (x, x))
 
-    x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
+    x = torch.tensor([[1.0, -1.0], [1.0, 2.0], [2.0, 1.0]])
     model.encode(x)
     assert float(model.kl_loss()) > 0
 
@@ -65,7 +68,7 @@ def test_arga():
     model = ARGA(encoder=lambda x: x, discriminator=lambda x: T([0.5]))
     model.reset_parameters()
 
-    x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
+    x = torch.tensor([[1.0, -1.0], [1.0, 2.0], [2.0, 1.0]])
     z = model.encode(x)
 
     assert float(model.reg_loss(z)) > 0
@@ -81,7 +84,7 @@ def test_arga():
 def test_argva():
     model = ARGVA(encoder=lambda x: (x, x), discriminator=lambda x: T([0.5]))
 
-    x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
+    x = torch.tensor([[1.0, -1.0], [1.0, 2.0], [2.0, 1.0]])
     model.encode(x)
     model.reparametrize(model.__mu__, model.__logstd__)
     assert float(model.kl_loss()) > 0

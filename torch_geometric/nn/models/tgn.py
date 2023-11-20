@@ -7,6 +7,7 @@ from torch.nn import GRUCell, Linear
 
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
+from torch_geometric.utils.scatter import scatter_argmax
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
@@ -89,7 +90,8 @@ class TGNMemory(torch.nn.Module):
 
     def forward(self, n_id: Tensor) -> Tuple[Tensor, Tensor]:
         """Returns, for all nodes :obj:`n_id`, their current memory and their
-        last updated timestamp."""
+        last updated timestamp.
+        """
         if self.training:
             memory, last_update = self._get_updated_memory(n_id)
         else:
@@ -100,7 +102,8 @@ class TGNMemory(torch.nn.Module):
     def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
                      raw_msg: Tensor):
         """Updates the memory with newly encountered interactions
-        :obj:`(src, dst, t, raw_msg)`."""
+        :obj:`(src, dst, t, raw_msg)`.
+        """
         n_id = torch.cat([src, dst]).unique()
 
         if self.training:
@@ -194,8 +197,7 @@ class IdentityMessage(torch.nn.Module):
 
 class LastAggregator(torch.nn.Module):
     def forward(self, msg: Tensor, index: Tensor, t: Tensor, dim_size: int):
-        from torch_scatter import scatter_max
-        _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
+        argmax = scatter_argmax(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
         mask = argmax < msg.size(0)  # Filter items with at least one entry.
         out[mask] = msg[argmax[mask]]
@@ -220,7 +222,7 @@ class TimeEncoder(torch.nn.Module):
         return self.lin(t.view(-1, 1)).cos()
 
 
-class LastNeighborLoader(object):
+class LastNeighborLoader:
     def __init__(self, num_nodes: int, size: int, device=None):
         self.size = size
 

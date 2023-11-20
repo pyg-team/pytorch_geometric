@@ -18,7 +18,7 @@ from torch_geometric.utils import spmm
 
 class GINConv(MessagePassing):
     r"""The graph isomorphism operator from the `"How Powerful are
-    Graph Neural Networks?" <https://arxiv.org/abs/1810.00826>`_ paper
+    Graph Neural Networks?" <https://arxiv.org/abs/1810.00826>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
@@ -60,9 +60,9 @@ class GINConv(MessagePassing):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -101,7 +101,7 @@ class GINConv(MessagePassing):
 class GINEConv(MessagePassing):
     r"""The modified :class:`GINConv` operator from the `"Strategies for
     Pre-training Graph Neural Networks" <https://arxiv.org/abs/1905.12265>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
@@ -145,9 +145,9 @@ class GINEConv(MessagePassing):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         if edge_dim is not None:
             if isinstance(self.nn, torch.nn.Sequential):
                 nn = self.nn[0]

@@ -43,10 +43,9 @@ def join_list(l1, l2):
 
 
 def agg_dict_list(dict_list):
-    """
-    Aggregate a list of dictionaries: mean + std
+    """Aggregate a list of dictionaries: mean + std
     Args:
-        dict_list: list of dictionaries
+        dict_list: list of dictionaries.
 
     """
     dict_agg = {'epoch': dict_list[0]['epoch']}
@@ -80,15 +79,14 @@ def rm_keys(dict, keys):
 
 
 def agg_runs(dir, metric_best='auto'):
-    r'''
-    Aggregate over different random seeds of a single experiment
+    r"""Aggregate over different random seeds of a single experiment.
 
     Args:
         dir (str): Directory of the results, containing 1 experiment
         metric_best (str, optional): The metric for selecting the best
         validation performance. Options: auto, accuracy, auc.
 
-    '''
+    """
     results = {'train': None, 'val': None}
     results_best = {'train': None, 'val': None}
     for seed in os.listdir(dir):
@@ -131,10 +129,8 @@ def agg_runs(dir, metric_best='auto'):
                         results_best[split] = [stats_best]
                     else:
                         results_best[split] += [stats_best]
-    results = {k: v for k, v in results.items() if v is not None}  # rm None
-    results_best = {k: v
-                    for k, v in results_best.items()
-                    if v is not None}  # rm None
+    results = {k: v for k, v in results.items() if v is not None}
+    results_best = {k: v for k, v in results_best.items() if v is not None}
     for key in results:
         for i in range(len(results[key])):
             results[key][i] = agg_dict_list(results[key][i])
@@ -163,15 +159,14 @@ def agg_runs(dir, metric_best='auto'):
 
 
 def agg_batch(dir, metric_best='auto'):
-    r'''
-    Aggregate across results from multiple experiments via grid search
+    r"""Aggregate across results from multiple experiments via grid search.
 
     Args:
         dir (str): Directory of the results, containing multiple experiments
         metric_best (str, optional): The metric for selecting the best
         validation performance. Options: auto, accuracy, auc.
 
-    '''
+    """
     import pandas as pd
     results = {'train': [], 'val': [], 'test': []}
     for run in os.listdir(dir):

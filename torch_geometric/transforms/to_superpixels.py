@@ -41,7 +41,7 @@ class ToSLIC(BaseTransform):
         self.add_img = add_img
         self.kwargs = kwargs
 
-    def __call__(self, img: Tensor) -> Data:
+    def forward(self, img: Tensor) -> Data:
         from skimage.segmentation import slic
 
         img = img.permute(1, 2, 0)

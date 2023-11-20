@@ -9,7 +9,7 @@ import torch
 
 
 def get_numa_nodes_cores() -> Dict[str, Any]:
-    """ Returns numa nodes info in format:
+    """Parses numa nodes information into a dictionary.
 
     ..code-block::
 
@@ -62,7 +62,8 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
 
 class WorkerInitWrapper:
     r"""Wraps the :attr:`worker_init_fn` argument for
-    :class:`torch.utils.data.DataLoader` workers."""
+    :class:`torch.utils.data.DataLoader` workers.
+    """
     def __init__(self, func):
         self.func = func
 
@@ -141,6 +142,7 @@ class AffinityMixin:
             if numa_info and len(numa_info[0]) > self.num_workers:
                 # Take one thread per each node 0 core:
                 node0_cores = [cpus[0] for core_id, cpus in numa_info[0]]
+                node0_cores.sort()
             else:
                 node0_cores = list(range(psutil.cpu_count(logical=False)))
 

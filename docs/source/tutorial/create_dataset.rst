@@ -1,5 +1,5 @@
-Creating Your Own Datasets
-==========================
+Creating Graph Datasets
+=======================
 
 Although :pyg:`PyG` already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
 
@@ -35,9 +35,14 @@ You can find helpful methods to download and extract data in :mod:`torch_geometr
 
 The real magic happens in the body of :meth:`~torch_geometric.data.InMemoryDataset.process`.
 Here, we need to read and create a list of :class:`~torch_geometric.data.Data` objects and save it into the :obj:`processed_dir`.
-Because saving a huge python list is rather slow, we collate the list into one huge :class:`~torch_geometric.data.Data` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving .
-The collated data object has concatenated all examples into one big data object and, in addition, returns a :obj:`slices` dictionary to reconstruct single examples from this object.
+Because saving a huge python list is quite slow, we collate the list into one huge :class:`~torch_geometric.data.Data` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving.
+The collated data object concatenates all examples into one big data object and, in addition, returns a :obj:`slices` dictionary to reconstruct single examples from this object.
 Finally, we need to load these two objects in the constructor into the properties :obj:`self.data` and :obj:`self.slices`.
+
+.. note::
+
+    From :pyg:`null` **PyG >= 2.4**, the functionalities of :meth:`torch.save` and :meth:`torch_geometric.data.InMemoryDataset.collate` are unified and implemented behind :meth:`torch_geometric.data.InMemoryDataset.save`.
+    Additionally, :obj:`self.data` and :obj:`self.slices` are implicitly loaded via :meth:`torch_geometric.data.InMemoryDataset.load`.
 
 Let's see this process in a simplified example:
 
@@ -50,7 +55,9 @@ Let's see this process in a simplified example:
     class MyOwnDataset(InMemoryDataset):
         def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
             super().__init__(root, transform, pre_transform, pre_filter)
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.load(self.processed_paths[0])
+            # For PyG<2.4:
+            # self.data, self.slices = torch.load(self.processed_paths[0])
 
         @property
         def raw_file_names(self):
@@ -75,8 +82,9 @@ Let's see this process in a simplified example:
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(data) for data in data_list]
 
-            data, slices = self.collate(data_list)
-            torch.save((data, slices), self.processed_paths[0])
+            self.save(data_list, self.processed_paths[0])
+            # For PyG<2.4:
+            # torch.save(self.collate(data_list), self.processed_paths[0])
 
 Creating "Larger" Datasets
 --------------------------
@@ -178,15 +186,15 @@ Consider the following :class:`~torch_geometric.data.InMemoryDataset` constructe
         def __init__(self, root, data_list, transform=None):
             self.data_list = data_list
             super().__init__(root, transform)
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.load(self.processed_paths[0])
 
         @property
         def processed_file_names(self):
             return 'data.pt'
 
         def process(self):
-            torch.save(self.collate(self.data_list), self.processed_paths[0])
+            self.save(self.data_list, self.processed_paths[0])
 
 1. What is the output of :obj:`self.processed_paths[0]`?
 
-2. What does :meth:`~torch_geometric.data.InMemoryDataset.collate` do?
+2. What does :meth:`~torch_geometric.data.InMemoryDataset.save` do?

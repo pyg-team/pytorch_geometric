@@ -1,5 +1,6 @@
+import inspect
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Final, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -16,6 +17,7 @@ from torch_geometric.typing import NoneType
 
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
+
     There exists two ways to instantiate an :class:`MLP`:
 
     1. By specifying explicit channel sizes, *e.g.*,
@@ -71,6 +73,8 @@ class MLP(torch.nn.Module):
             bias per layer. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
+    supports_norm_batch: Final[bool]
+
     def __init__(
         self,
         channel_list: Optional[Union[List[int], int]] = None,
@@ -160,6 +164,11 @@ class MLP(torch.nn.Module):
                 norm_layer = Identity()
             self.norms.append(norm_layer)
 
+        self.supports_norm_batch = False
+        if len(self.norms) > 0 and hasattr(self.norms[0], 'forward'):
+            norm_params = inspect.signature(self.norms[0].forward).parameters
+            self.supports_norm_batch = 'batch' in norm_params
+
         self.reset_parameters()
 
     @property
@@ -188,24 +197,49 @@ class MLP(torch.nn.Module):
     def forward(
         self,
         x: Tensor,
+        batch: Optional[Tensor] = None,
+        batch_size: Optional[int] = None,
         return_emb: NoneType = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
             return_emb (bool, optional): If set to :obj:`True`, will
-                additionally return the embeddings before execution of to the
+                additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
         """
+        # `return_emb` is annotated here as `NoneType` to be compatible with
+        # TorchScript, which does not support different return types based on
+        # the value of an input argument.
+        emb: Optional[Tensor] = None
+
+        # If `plain_last=True`, then `len(norms) = len(lins) -1, thus skipping
+        # the execution of the last layer inside the for-loop.
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
-            x = norm(x)
+            if self.supports_norm_batch:
+                x = norm(x, batch, batch_size)
+            else:
+                x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout[i], training=self.training)
-            emb = x
+            if isinstance(return_emb, bool) and return_emb is True:
+                emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)

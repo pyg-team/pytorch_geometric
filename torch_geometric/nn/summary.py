@@ -6,6 +6,7 @@ from torch.jit import ScriptModule
 from torch.nn import Module
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.typing import SparseTensor
 
 
@@ -88,8 +89,11 @@ def summary(
         info['input_shape'] = input_shape[module_id]
         info['output_shape'] = output_shape[module_id]
         info['depth'] = depth
-        num_params = sum(p.numel() for p in module.parameters())
-        info['#param'] = f'{num_params:,}' if num_params > 0 else '--'
+        if any([is_uninitialized_parameter(p) for p in module.parameters()]):
+            info['#param'] = '-1'
+        else:
+            num_params = sum(p.numel() for p in module.parameters())
+            info['#param'] = f'{num_params:,}' if num_params > 0 else '--'
         info_list.append(info)
 
         if not isinstance(module, ScriptModule):

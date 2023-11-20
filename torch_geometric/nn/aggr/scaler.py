@@ -60,11 +60,11 @@ class DegreeScalerAggregation(Aggregation):
         self.init_avg_deg_log = float(((bin_degree + 1).log() * deg).sum()) / N
 
         if train_norm:
-            self.avg_deg_lin = torch.nn.Parameter(torch.Tensor(1))
-            self.avg_deg_log = torch.nn.Parameter(torch.Tensor(1))
+            self.avg_deg_lin = torch.nn.Parameter(torch.empty(1))
+            self.avg_deg_log = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('avg_deg_lin', torch.Tensor(1))
-            self.register_buffer('avg_deg_log', torch.Tensor(1))
+            self.register_buffer('avg_deg_lin', torch.empty(1))
+            self.register_buffer('avg_deg_log', torch.empty(1))
 
         self.reset_parameters()
 

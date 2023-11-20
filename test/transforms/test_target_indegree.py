@@ -8,7 +8,7 @@ def test_target_indegree():
     assert str(TargetIndegree()) == 'TargetIndegree(norm=True, max_value=None)'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    edge_attr = torch.Tensor([1, 1, 1, 1])
+    edge_attr = torch.tensor([1.0, 1.0, 1.0, 1.0])
 
     data = Data(edge_index=edge_index, num_nodes=3)
     data = TargetIndegree(norm=False)(data)

@@ -29,6 +29,18 @@ class GNNExplainer(ExplainerAlgorithm):
         gnn_explainer_link_pred.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/explain/gnn_explainer_link_pred.py>`_.
 
+    .. note::
+
+        The :obj:`edge_size` coefficient is multiplied by the number of nodes
+        in the explanation at every iteration, and the resulting value is added
+        to the loss as a regularization term, with the goal of producing
+        compact explanations.
+        A higher value will push the algorithm towards explanations with less
+        elements.
+        Consider adjusting the :obj:`edge_size` coefficient according to the
+        average node degree in the dataset, especially if this value is bigger
+        than in the datasets used in the original paper.
+
     Args:
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`100`)
@@ -131,8 +143,18 @@ class GNNExplainer(ExplainerAlgorithm):
             # involved into making the prediction. These are all the nodes and
             # edges with gradient != 0 (without regularization applied).
             if i == 0 and self.node_mask is not None:
+                if self.node_mask.grad is None:
+                    raise ValueError("Could not compute gradients for node "
+                                     "features. Please make sure that node "
+                                     "features are used inside the model or "
+                                     "disable it via `node_mask_type=None`.")
                 self.hard_node_mask = self.node_mask.grad != 0.0
             if i == 0 and self.edge_mask is not None:
+                if self.edge_mask.grad is None:
+                    raise ValueError("Could not compute gradients for edges. "
+                                     "Please make sure that edges are used "
+                                     "via message passing inside the model or "
+                                     "disable it via `edge_mask_type=None`.")
                 self.hard_edge_mask = self.edge_mask.grad != 0.0
 
     def _initialize_masks(self, x: Tensor, edge_index: Tensor):
@@ -310,7 +332,7 @@ class GNNExplainer_:
                     self.model, index, edge_index, num_nodes=x.size(0))
                 edge_mask = edge_mask.to(x.dtype)
             else:
-                edge_mask = torch.ones(edge_index.shape[1],
+                edge_mask = torch.ones(edge_index.size(1),
                                        device=edge_index.device)
 
         return node_mask, edge_mask

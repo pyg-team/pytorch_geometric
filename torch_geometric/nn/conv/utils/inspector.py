@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 from torch_geometric.nn.conv.utils.typing import parse_types
 
 
-class Inspector(object):
+class Inspector:
     def __init__(self, base_class: Any):
         self.base_class: Any = base_class
         self.params: Dict[str, Dict[str, Any]] = {}

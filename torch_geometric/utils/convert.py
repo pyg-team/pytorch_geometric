@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import scipy.sparse
 import torch
@@ -26,7 +26,6 @@ def to_scipy_sparse_matrix(
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -57,7 +56,6 @@ def from_scipy_sparse_matrix(
         A (scipy.sparse): A sparse matrix.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -78,7 +76,10 @@ def from_scipy_sparse_matrix(
 
 
 def to_networkx(
-    data: 'torch_geometric.data.Data',
+    data: Union[
+        'torch_geometric.data.Data',
+        'torch_geometric.data.HeteroData',
+    ],
     node_attrs: Optional[Iterable[str]] = None,
     edge_attrs: Optional[Iterable[str]] = None,
     graph_attrs: Optional[Iterable[str]] = None,
@@ -90,25 +91,28 @@ def to_networkx(
     a directed :obj:`networkx.DiGraph` otherwise.
 
     Args:
-        data (torch_geometric.data.Data): The data object.
+        data (torch_geometric.data.Data or torch_geometric.data.HeteroData): A
+            homogeneous or heterogeneous data object.
         node_attrs (iterable of str, optional): The node attributes to be
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
         graph_attrs (iterable of str, optional): The graph attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool or str, optional): If set to :obj:`True` or
-            "upper", will return a :obj:`networkx.Graph` instead of a
-            :obj:`networkx.DiGraph`. The undirected graph will correspond to
-            the upper triangle of the corresponding adjacency matrix.
-            Similarly, if set to "lower", the undirected graph will correspond
-            to the lower triangle of the adjacency matrix. (default:
-            :obj:`False`)
+        to_undirected (bool or str, optional): If set to :obj:`True`, will
+            return a :class:`networkx.Graph` instead of a
+            :class:`networkx.DiGraph`.
+            By default, will include all edges and make them undirected.
+            If set to :obj:`"upper"`, the undirected graph will only correspond
+            to the upper triangle of the input adjacency matrix.
+            If set to :obj:`"lower"`, the undirected graph will only correspond
+            to the lower triangle of the input adjacency matrix.
+            Only applicable in case the :obj:`data` object holds a homogeneous
+            graph. (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
-            include self loops in the resulting graph. (default: :obj:`False`)
+            include self-loops in the resulting graph. (default: :obj:`False`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -120,47 +124,54 @@ def to_networkx(
     """
     import networkx as nx
 
+    from torch_geometric.data import HeteroData
+
+    to_undirected_upper: bool = to_undirected == 'upper'
+    to_undirected_lower: bool = to_undirected == 'lower'
+    to_undirected: bool = (to_undirected_upper or to_undirected_lower
+                           or to_undirected is True)
+
+    if isinstance(data, HeteroData) and to_undirected:
+        raise ValueError("'to_undirected' is not supported in "
+                         "'to_networkx' for heterogeneous graphs")
+
     G = nx.Graph() if to_undirected else nx.DiGraph()
 
-    G.add_nodes_from(range(data.num_nodes))
+    def to_networkx_value(value: Any) -> Any:
+        return value.tolist() if isinstance(value, Tensor) else value
 
-    node_attrs = node_attrs or []
-    edge_attrs = edge_attrs or []
-    graph_attrs = graph_attrs or []
+    for key in graph_attrs or []:
+        G.graph[key] = to_networkx_value(data[key])
 
-    values = {}
-    for key, value in data(*(node_attrs + edge_attrs + graph_attrs)):
-        if torch.is_tensor(value):
-            value = value if value.dim() <= 1 else value.squeeze(-1)
-            values[key] = value.tolist()
-        else:
-            values[key] = value
+    node_offsets = data.node_offsets
+    for store in data.node_stores:
+        start = node_offsets[store._key]
+        for i in range(store.num_nodes):
+            attr: Dict[str, Any] = {}
+            if isinstance(data, HeteroData):
+                attr['type'] = store._key
+            for key in node_attrs or []:
+                attr[key] = to_networkx_value(store[key][i])
+            G.add_node(start + i, **attr)
 
-    to_undirected = "upper" if to_undirected is True else to_undirected
-    to_undirected_upper = True if to_undirected == "upper" else False
-    to_undirected_lower = True if to_undirected == "lower" else False
+    for store in data.edge_stores:
+        for i, (v, w) in enumerate(store.edge_index.t().tolist()):
+            if to_undirected_upper and v > w:
+                continue
+            elif to_undirected_lower and v < w:
+                continue
+            elif remove_self_loops and v == w and not store.is_bipartite():
+                continue
 
-    for i, (u, v) in enumerate(data.edge_index.t().tolist()):
+            attr: Dict[str, Any] = {}
+            if isinstance(data, HeteroData):
+                v = v + node_offsets[store._key[0]]
+                w = w + node_offsets[store._key[-1]]
+                attr['type'] = store._key
+            for key in edge_attrs or []:
+                attr[key] = to_networkx_value(store[key][i])
 
-        if to_undirected_upper and u > v:
-            continue
-        elif to_undirected_lower and u < v:
-            continue
-
-        if remove_self_loops and u == v:
-            continue
-
-        G.add_edge(u, v)
-
-        for key in edge_attrs:
-            G[u][v][key] = values[key][i]
-
-    for key in node_attrs:
-        for i, feat_dict in G.nodes(data=True):
-            feat_dict.update({key: values[key][i]})
-
-    for key in graph_attrs:
-        G.graph[key] = values[key]
+            G.add_edge(v, w, **attr)
 
     return G
 
@@ -187,7 +198,6 @@ def from_networkx(
         be numeric.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -202,15 +212,13 @@ def from_networkx(
 
     from torch_geometric.data import Data
 
-    G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
 
-    if isinstance(G, (nx.MultiGraph, nx.MultiDiGraph)):
-        edges = list(G.edges(keys=False))
-    else:
-        edges = list(G.edges)
-
-    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+    mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
+    edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
+    for i, (src, dst) in enumerate(G.edges()):
+        edge_index[0, i] = mapping[src]
+        edge_index[1, i] = mapping[dst]
 
     data = defaultdict(list)
 
@@ -238,6 +246,8 @@ def from_networkx(
             data[str(key)].append(value)
 
     for key, value in G.graph.items():
+        if key == 'node_default' or key == 'edge_default':
+            continue  # Do not load default attributes.
         key = f'graph_{key}' if key in node_attrs else key
         data[str(key)] = value
 
@@ -247,7 +257,7 @@ def from_networkx(
         else:
             try:
                 data[key] = torch.tensor(value)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, RuntimeError):
                 pass
 
     data['edge_index'] = edge_index.view(2, -1)
@@ -358,7 +368,6 @@ def to_trimesh(data):
         data (torch_geometric.data.Data): The data object.
 
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -380,10 +389,7 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
 
-Example:
-
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -446,13 +452,13 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     """
     df = g.view_edge_list()
 
-    src = from_dlpack(df['src'].to_dlpack()).long()
-    dst = from_dlpack(df['dst'].to_dlpack()).long()
+    src = from_dlpack(df[0].to_dlpack()).long()
+    dst = from_dlpack(df[1].to_dlpack()).long()
     edge_index = torch.stack([src, dst], dim=0)
 
     edge_weight = None
-    if 'weights' in df:
-        edge_weight = from_dlpack(df['weights'].to_dlpack())
+    if '2' in df:
+        edge_weight = from_dlpack(df['2'].to_dlpack())
 
     return edge_index, edge_weight
 
@@ -469,7 +475,6 @@ def to_dgl(
             The data object.
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
         >>> x = torch.randn(5, 3)
         >>> edge_attr = torch.randn(6, 2)
@@ -550,7 +555,6 @@ def from_dgl(
         g (dgl.DGLGraph): The :obj:`dgl` graph object.
 
     Example:
-
         >>> g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
         >>> g.ndata['x'] = torch.randn(g.num_nodes(), 3)
         >>> g.edata['edge_attr'] = torch.randn(g.num_edges(), 2)

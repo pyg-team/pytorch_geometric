@@ -61,6 +61,11 @@ class GraphGymModule(LightningModule):
     def pre_mp(self) -> torch.nn.Module:
         return self.model.pre_mp
 
+    def lr_scheduler_step(self, *args, **kwargs):
+        # Needed for PyTorch 2.0 since the base class of LR schedulers changed.
+        # TODO Remove once we only want to support PyTorch Lightning >= 2.0.
+        return super().lr_scheduler_step(*args, **kwargs)
+
 
 def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
     r"""Create model for graph machine learning.
@@ -74,7 +79,7 @@ def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
     dim_in = cfg.share.dim_in if dim_in is None else dim_in
     dim_out = cfg.share.dim_out if dim_out is None else dim_out
     # binary classification, output dim = 1
-    if 'classification' in cfg.dataset.task_type and dim_out == 2:
+    if 'classification' == cfg.dataset.task_type and dim_out == 2:
         dim_out = 1
 
     model = GraphGymModule(dim_in, dim_out, cfg)

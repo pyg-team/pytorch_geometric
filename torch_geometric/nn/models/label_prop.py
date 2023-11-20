@@ -10,15 +10,18 @@ from torch_geometric.utils import one_hot, spmm
 
 
 class LabelPropagation(MessagePassing):
-    r"""The label propagation operator from the `"Learning from Labeled and
-    Unlabeled Data with Label Propagation"
-    <http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf>`_ paper
+    r"""The label propagation operator, firstly introduced in the
+    `"Learning from Labeled and Unlabeled Data with Label Propagation"
+    <http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf>`_ paper.
 
     .. math::
         \mathbf{Y}^{\prime} = \alpha \cdot \mathbf{D}^{-1/2} \mathbf{A}
         \mathbf{D}^{-1/2} \mathbf{Y} + (1 - \alpha) \mathbf{Y},
 
     where unlabeled data is inferred by labeled data via propagation.
+    This concrete implementation here is derived from the `"Combining Label
+    Propagation And Simple Models Out-performs Graph Neural Networks"
+    <https://arxiv.org/abs/2010.13993>`_ paper.
 
     .. note::
 
@@ -45,7 +48,8 @@ class LabelPropagation(MessagePassing):
         edge_weight: OptTensor = None,
         post_step: Optional[Callable[[Tensor], Tensor]] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             y (torch.Tensor): The ground-truth label information
                 :math:`\mathbf{Y}`.

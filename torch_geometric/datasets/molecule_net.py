@@ -22,7 +22,7 @@ class MoleculeNet(InMemoryDataset):
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (:obj:`"ESOL"`, :obj:`"FreeSolv"`,
             :obj:`"Lipo"`, :obj:`"PCBA"`, :obj:`"MUV"`, :obj:`"HIV"`,
-            :obj:`"BACE"`, :obj:`"BBPB"`, :obj:`"Tox21"`, :obj:`"ToxCast"`,
+            :obj:`"BACE"`, :obj:`"BBBP"`, :obj:`"Tox21"`, :obj:`"ToxCast"`,
             :obj:`"SIDER"`, :obj:`"ClinTox"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -36,6 +36,8 @@ class MoleculeNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -91,7 +93,7 @@ class MoleculeNet(InMemoryDataset):
           - ~73.7
           - 9
           - 1
-        * - BBPB
+        * - BBBP
           - 2,050
           - ~23.9
           - ~51.6
@@ -136,7 +138,7 @@ class MoleculeNet(InMemoryDataset):
                 slice(0, 17)],
         'hiv': ['HIV', 'HIV.csv', 'HIV', 0, -1],
         'bace': ['BACE', 'bace.csv', 'bace', 0, 2],
-        'bbbp': ['BBPB', 'BBBP.csv', 'BBBP', -1, -2],
+        'bbbp': ['BBBP', 'BBBP.csv', 'BBBP', -1, -2],
         'tox21': ['Tox21', 'tox21.csv.gz', 'tox21', -1,
                   slice(0, 12)],
         'toxcast':
@@ -155,11 +157,13 @@ class MoleculeNet(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         assert self.name in self.names.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -212,7 +216,7 @@ class MoleculeNet(InMemoryDataset):
 
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.names[self.name][0]}({len(self)})'

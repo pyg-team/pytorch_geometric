@@ -22,7 +22,7 @@ def test_revgnn_forward_inverse(num_groups):
     h_o = h.clone().detach()
 
     out = conv(h, edge_index)
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         assert h.untyped_storage().size() == 0
     else:
         assert h.storage().size() == 0
@@ -80,7 +80,7 @@ def test_revgnn_diable(num_groups):
     target.backward()
 
     # Memory will not be freed if disable:
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         assert h.untyped_storage().size() == 4 * 4 * 32
     else:
         assert h.storage().size() == 4 * 32

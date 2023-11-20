@@ -52,7 +52,7 @@ class IndexToMask(BaseTransform):
         self.sizes = sizes
         self.replace = replace
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
@@ -106,7 +106,7 @@ class MaskToIndex(BaseTransform):
         self.attrs = [attrs] if isinstance(attrs, str) else attrs
         self.replace = replace
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

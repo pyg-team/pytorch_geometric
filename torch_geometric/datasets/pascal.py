@@ -52,6 +52,11 @@ class PascalVOCKeypoints(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        device (str or torch.device, optional): The device to use for
+            processing the raw data. If set to :obj:`None`, will utilize
+            GPU-processing if available. (default: :obj:`None`)
     """
     image_url = ('http://host.robots.ox.ac.uk/pascal/VOC/voc2011/'
                  'VOCtrainval_25-May-2011.tar')
@@ -68,7 +73,6 @@ class PascalVOCKeypoints(InMemoryDataset):
         'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
     ]
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
     def __init__(
@@ -79,12 +83,19 @@ class PascalVOCKeypoints(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        device: Optional[str] = None,
     ):
+        if device is None:
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
         self.category = category.lower()
         assert self.category in self.categories
-        super().__init__(root, transform, pre_transform, pre_filter)
+        self.device = device
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -248,8 +259,8 @@ class PascalVOCKeypoints(InMemoryDataset):
             train_set = [self.pre_transform(data) for data in train_set]
             test_set = [self.pre_transform(data) for data in test_set]
 
-        torch.save(self.collate(train_set), self.processed_paths[0])
-        torch.save(self.collate(test_set), self.processed_paths[1])
+        self.save(train_set, self.processed_paths[0])
+        self.save(test_set, self.processed_paths[1])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

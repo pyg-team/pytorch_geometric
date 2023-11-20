@@ -16,6 +16,7 @@ We have prepared a list of :colab:`Colab` notebooks that practically introduces 
 8. `Node Classification Instrumented with <https://colab.research.google.com/github/wandb/examples/blob/master/colabs/pyg/8_Node_Classification_(with_W&B).ipynb>`__ :wandb:`null` `Weights&Biases <https://colab.research.google.com/github/wandb/examples/blob/master/colabs/pyg/8_Node_Classification_(with_W&B).ipynb>`__
 9. `Graph Classification Instrumented with <https://colab.research.google.com/github/wandb/examples/blob/pyg/graph-classification/colabs/pyg/Graph_Classification_with_PyG_and_W%26B.ipynb>`__ :wandb:`null` `Weights&Biases <https://colab.research.google.com/github/wandb/examples/blob/pyg/graph-classification/colabs/pyg/Graph_Classification_with_PyG_and_W%26B.ipynb>`__
 10. `Link Prediction on MovieLens <https://colab.research.google.com/drive/1xpzn1Nvai1ygd_P5Yambc_oe4VBPK_ZT?usp=sharing>`__
+11. `Link Regression on MovieLens <https://colab.research.google.com/drive/1N3LvAO0AXV4kBPbTMX866OwJM9YS6Ji2?usp=sharing>`__
 
 All :colab:`Colab` notebooks are released under the MIT license.
 

@@ -34,7 +34,7 @@ class ToUndirected(BaseTransform):
         self.reduce = reduce
         self.merge = merge
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

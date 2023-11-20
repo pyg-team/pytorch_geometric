@@ -21,6 +21,7 @@ from torch_geometric.utils import get_embeddings
 class PGExplainer(ExplainerAlgorithm):
     r"""The PGExplainer model from the `"Parameterized Explainer for Graph
     Neural Network" <https://arxiv.org/abs/2011.04573>`_ paper.
+
     Internally, it utilizes a neural network to identify subgraph structures
     that play a crucial role in the predictions made by a GNN.
     Importantly, the :class:`PGExplainer` needs to be trained via

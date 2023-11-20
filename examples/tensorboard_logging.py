@@ -17,8 +17,8 @@ data = dataset[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = GCNConv(dataset.num_features, 16, cached=True)
-        self.conv2 = GCNConv(16, dataset.num_classes, cached=True)
+        self.conv1 = GCNConv(dataset.num_features, 16)
+        self.conv2 = GCNConv(16, dataset.num_classes)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index, None))
@@ -27,7 +27,13 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model, data = Net().to(device), data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 

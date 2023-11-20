@@ -81,6 +81,7 @@ def test_spmm_layout(device, layout, reduce):
         spmm(src, other, reduce=reduce)
 
 
+@withPackage('torch>=1.12.0')
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
 def test_spmm_jit(reduce):
     @torch.jit.script

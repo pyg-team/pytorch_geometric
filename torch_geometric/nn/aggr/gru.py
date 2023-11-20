@@ -3,6 +3,7 @@ from typing import Optional
 from torch import Tensor
 from torch.nn import GRU
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 
 
@@ -11,7 +12,17 @@ class GRUAggregation(Aggregation):
     interpreted as a sequence, as described in the `"Graph Neural Networks
     with Adaptive Readouts" <https://arxiv.org/abs/2211.04952>`_ paper.
 
+    .. note::
+
+        :class:`MLPAggregation` requires sorted indices :obj:`index` as input.
+        Specifically, if you use this aggregation as part of
+        :class:`~torch_geometric.nn.conv.MessagePassing`, ensure that
+        :obj:`edge_index` is sorted by destination nodes, either by manually
+        sorting edge indices via :meth:`~torch_geometric.utils.sort_edge_index`
+        or by calling :meth:`torch_geometric.data.Data.sort`.
+
     .. warning::
+
         :class:`GRUAggregation` is not a permutation-invariant operator.
 
     Args:
@@ -29,10 +40,20 @@ class GRUAggregation(Aggregation):
     def reset_parameters(self):
         self.gru.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-        x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim)
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
+
+        x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                   max_num_elements=max_num_elements)
+
         return self.gru(x)[0][:, -1]
 
     def __repr__(self) -> str:

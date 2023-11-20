@@ -13,7 +13,7 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 class GMMConv(MessagePassing):
     r"""The gaussian mixture model convolutional operator from the `"Geometric
     Deep Learning on Graphs and Manifolds using Mixture Model CNNs"
-    <https://arxiv.org/abs/1611.08402>`_ paper
+    <https://arxiv.org/abs/1611.08402>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
@@ -111,7 +111,7 @@ class GMMConv(MessagePassing):
                                weight_initializer='glorot')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

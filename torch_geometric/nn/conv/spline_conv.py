@@ -21,7 +21,7 @@ except (ImportError, OSError):  # Fail gracefully on GLIBC errors
 class SplineConv(MessagePassing):
     r"""The spline-based convolutional operator from the `"SplineCNN: Fast
     Geometric Deep Learning with Continuous B-Spline Kernels"
-    <https://arxiv.org/abs/1711.08920>`_ paper
+    <https://arxiv.org/abs/1711.08920>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|} \sum_{j \in
@@ -97,7 +97,7 @@ class SplineConv(MessagePassing):
 
         if in_channels[0] > 0:
             self.weight = Parameter(
-                torch.Tensor(self.K, in_channels[0], out_channels))
+                torch.empty(self.K, in_channels[0], out_channels))
         else:
             self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
@@ -108,7 +108,7 @@ class SplineConv(MessagePassing):
                               weight_initializer='uniform')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

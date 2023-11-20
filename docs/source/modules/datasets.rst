@@ -1,7 +1,38 @@
 torch_geometric.datasets
 ========================
 
-Benchmark Datasets
+.. contents:: Contents
+    :local:
+
+Homogeneous Datasets
+--------------------
+
+.. currentmodule:: torch_geometric.datasets
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
+
+   {% for name in torch_geometric.datasets.homo_datasets %}
+     {{ name }}
+   {% endfor %}
+
+Heterogeneous Datasets
+----------------------
+
+.. currentmodule:: torch_geometric.datasets
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
+
+   {% for name in torch_geometric.datasets.hetero_datasets %}
+     {{ name }}
+   {% endfor %}
+
+Synthetic Datasets
 ------------------
 
 .. currentmodule:: torch_geometric.datasets
@@ -11,7 +42,7 @@ Benchmark Datasets
    :toctree: ../generated
    :template: autosummary/only_class.rst
 
-   {% for name in torch_geometric.datasets.classes %}
+   {% for name in torch_geometric.datasets.synthetic_datasets %}
      {{ name }}
    {% endfor %}
 

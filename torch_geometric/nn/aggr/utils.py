@@ -8,7 +8,7 @@ from torch.nn import LayerNorm, Linear, MultiheadAttention, Parameter
 class MultiheadAttentionBlock(torch.nn.Module):
     r"""The Multihead Attention Block (MAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -55,7 +55,7 @@ class MultiheadAttentionBlock(torch.nn.Module):
 
     def forward(self, x: Tensor, y: Tensor, x_mask: Optional[Tensor] = None,
                 y_mask: Optional[Tensor] = None) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         if y_mask is not None:
             y_mask = ~y_mask
 
@@ -86,7 +86,7 @@ class MultiheadAttentionBlock(torch.nn.Module):
 class SetAttentionBlock(torch.nn.Module):
     r"""The Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -123,7 +123,7 @@ class SetAttentionBlock(torch.nn.Module):
 class InducedSetAttentionBlock(torch.nn.Module):
     r"""The Induced Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -147,7 +147,7 @@ class InducedSetAttentionBlock(torch.nn.Module):
     def __init__(self, channels: int, num_induced_points: int, heads: int = 1,
                  layer_norm: bool = True, dropout: float = 0.0):
         super().__init__()
-        self.ind = Parameter(torch.Tensor(1, num_induced_points, channels))
+        self.ind = Parameter(torch.empty(1, num_induced_points, channels))
         self.mab1 = MultiheadAttentionBlock(channels, heads, layer_norm,
                                             dropout)
         self.mab2 = MultiheadAttentionBlock(channels, heads, layer_norm,
@@ -174,7 +174,7 @@ class InducedSetAttentionBlock(torch.nn.Module):
 class PoolingByMultiheadAttention(torch.nn.Module):
     r"""The Pooling by Multihead Attention (PMA) layer from the `"Set
     Transformer: A Framework for Attention-based Permutation-Invariant Neural
-    Networks" <https://arxiv.org/abs/1810.00825>`_ paper
+    Networks" <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -197,7 +197,7 @@ class PoolingByMultiheadAttention(torch.nn.Module):
                  layer_norm: bool = True, dropout: float = 0.0):
         super().__init__()
         self.lin = Linear(channels, channels)
-        self.seed = Parameter(torch.Tensor(1, num_seed_points, channels))
+        self.seed = Parameter(torch.empty(1, num_seed_points, channels))
         self.mab = MultiheadAttentionBlock(channels, heads, layer_norm,
                                            dropout)
         self.reset_parameters()

@@ -47,7 +47,7 @@ def test_meta_layer_example():
         def forward(
             self,
             src: Tensor,
-            dest: Tensor,
+            dst: Tensor,
             edge_attr: Optional[Tensor],
             u: Optional[Tensor],
             batch: Optional[Tensor],
@@ -55,7 +55,7 @@ def test_meta_layer_example():
             assert edge_attr is not None
             assert u is not None
             assert batch is not None
-            out = torch.cat([src, dest, edge_attr, u[batch]], 1)
+            out = torch.cat([src, dst, edge_attr, u[batch]], 1)
             return self.edge_mlp(out)
 
     class NodeModel(torch.nn.Module):

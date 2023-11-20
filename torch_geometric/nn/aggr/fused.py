@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
@@ -18,6 +19,7 @@ from torch_geometric.utils import scatter
 
 class FusedAggregation(Aggregation):
     r"""Helper class to fuse computation of multiple aggregations together.
+
     Used internally in :class:`~torch_geometric.nn.aggr.MultiAggregation` to
     speed-up computation.
     Currently, the following optimizations are performed:
@@ -252,8 +254,9 @@ class FusedAggregation(Aggregation):
             outs[i] = sum_ / count
 
         # Compute `VarAggregation` second to be able to re-use it:
-        i = self.aggr_index.get('VarAggregation')
-        if i is not None:
+        if 'VarAggregation' in self.aggr_index:
+            i = self.aggr_index['VarAggregation']
+
             assert count is not None
 
             if self.lookup_ops[i] is None:
@@ -280,8 +283,9 @@ class FusedAggregation(Aggregation):
             outs[i] = (pow_sum / count) - (mean * mean)
 
         # Compute `StdAggregation` last:
-        i = self.aggr_index.get('StdAggregation')
-        if i is not None:
+        if 'StdAggregation' in self.aggr_index:
+            i = self.aggr_index['StdAggregation']
+
             var: Optional[Tensor] = None
             pow_sum: Optional[Tensor] = None
             mean: Optional[Tensor] = None
@@ -316,7 +320,11 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = var.clamp(min=1e-5).sqrt()
+            # Allow "undefined" gradient at `sqrt(0.0)`:
+            out = var.clamp(min=1e-5).sqrt()
+            out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+
+            outs[i] = out
 
         #######################################################################
 

@@ -1,5 +1,3 @@
-import copy
-
 import torch
 
 from torch_geometric.data import Data, HeteroData
@@ -17,19 +15,19 @@ def test_index_to_mask():
     data = Data(edge_index=edge_index, train_index=train_index,
                 test_index=test_index, num_nodes=5)
 
-    out = IndexToMask(replace=True)(copy.copy(data))
+    out = IndexToMask(replace=True)(data)
     assert len(out) == len(data)
     assert out.train_mask.tolist() == [True, True, True, False, False]
     assert out.test_mask.tolist() == [False, False, False, True, True]
 
-    out = IndexToMask(replace=False)(copy.copy(data))
+    out = IndexToMask(replace=False)(data)
     assert len(out) == len(data) + 2
 
-    out = IndexToMask(sizes=6, replace=True)(copy.copy(data))
+    out = IndexToMask(sizes=6, replace=True)(data)
     assert out.train_mask.tolist() == [True, True, True, False, False, False]
     assert out.test_mask.tolist() == [False, False, False, True, True, False]
 
-    out = IndexToMask(attrs='train_index')(copy.copy(data))
+    out = IndexToMask(attrs='train_index')(data)
     assert len(out) == len(data) + 1
     assert 'train_index' in out
     assert 'train_mask' in out
@@ -44,15 +42,15 @@ def test_mask_to_index():
     test_mask = torch.tensor([False, False, False, True, True])
     data = Data(train_mask=train_mask, test_mask=test_mask)
 
-    out = MaskToIndex(replace=True)(copy.copy(data))
+    out = MaskToIndex(replace=True)(data)
     assert len(out) == len(data)
     assert out.train_index.tolist() == [0, 1, 2]
     assert out.test_index.tolist() == [3, 4]
 
-    out = MaskToIndex(replace=False)(copy.copy(data))
+    out = MaskToIndex(replace=False)(data)
     assert len(out) == len(data) + 2
 
-    out = MaskToIndex(attrs='train_mask')(copy.copy(data))
+    out = MaskToIndex(attrs='train_mask')(data)
     assert len(out) == len(data) + 1
     assert 'train_mask' in out
     assert 'train_index' in out
@@ -70,7 +68,7 @@ def test_hetero_index_to_mask():
     data['v'].test_index = torch.arange(3, 5)
     data['v'].num_nodes = 5
 
-    out = IndexToMask()(copy.copy(data))
+    out = IndexToMask()(data)
     assert len(out) == len(data) + 2
     assert 'train_mask' in out['u']
     assert 'test_mask' in out['u']
@@ -86,7 +84,7 @@ def test_hetero_mask_to_index():
     data['v'].train_mask = torch.tensor([True, True, True, False, False])
     data['v'].test_mask = torch.tensor([False, False, False, True, True])
 
-    out = MaskToIndex()(copy.copy(data))
+    out = MaskToIndex()(data)
     assert len(out) == len(data) + 2
     assert 'train_index' in out['u']
     assert 'test_index' in out['u']

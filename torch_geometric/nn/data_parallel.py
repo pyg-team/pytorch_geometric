@@ -1,9 +1,11 @@
 import logging
+import warnings
 from itertools import chain
 
 import torch
 
 from torch_geometric.data import Batch
+from torch_geometric.utils import cumsum
 
 
 class DataParallel(torch.nn.DataParallel):
@@ -27,6 +29,19 @@ class DataParallel(torch.nn.DataParallel):
         You need to use the :class:`torch_geometric.loader.DataListLoader` for
         this module.
 
+    .. warning::
+
+        It is recommended to use
+        :class:`torch.nn.parallel.DistributedDataParallel` instead of
+        :class:`DataParallel` for multi-GPU training.
+        :class:`DataParallel` is usually much slower than
+        :class:`~torch.nn.parallel.DistributedDataParallel` even on a single
+        machine.
+        Take a look `here <https://github.com/pyg-team/pytorch_geometric/blob/
+        master/examples/multi_gpu/distributed_batching.py>`_ for an example on
+        how to use :pyg:`PyG` in combination with
+        :class:`~torch.nn.parallel.DistributedDataParallel`.
+
     Args:
         module (Module): Module to be parallelized.
         device_ids (list of int or torch.device): CUDA devices.
@@ -41,12 +56,18 @@ class DataParallel(torch.nn.DataParallel):
     def __init__(self, module, device_ids=None, output_device=None,
                  follow_batch=None, exclude_keys=None):
         super().__init__(module, device_ids, output_device)
+
+        warnings.warn("'DataParallel' is usually much slower than "
+                      "'DistributedDataParallel' even on a single machine. "
+                      "Please consider switching to 'DistributedDataParallel' "
+                      "for multi-GPU training.")
+
         self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
         self.follow_batch = follow_batch or []
         self.exclude_keys = exclude_keys or []
 
     def forward(self, data_list):
-        """"""
+        """"""  # noqa: D419
         if len(data_list) == 0:
             logging.warning('DataParallel received an empty data list, which '
                             'may result in unexpected behavior.')
@@ -74,13 +95,11 @@ class DataParallel(torch.nn.DataParallel):
         num_devices = min(len(device_ids), len(data_list))
 
         count = torch.tensor([data.num_nodes for data in data_list])
-        cumsum = count.cumsum(0)
-        cumsum = torch.cat([cumsum.new_zeros(1), cumsum], dim=0)
-        device_id = num_devices * cumsum.to(torch.float) / cumsum[-1].item()
+        ptr = cumsum(count)
+        device_id = num_devices * ptr.to(torch.float) / ptr[-1].item()
         device_id = (device_id[:-1] + device_id[1:]) / 2.0
         device_id = device_id.to(torch.long)  # round.
-        split = device_id.bincount().cumsum(0)
-        split = torch.cat([split.new_zeros(1), split], dim=0)
+        split = cumsum(device_id.bincount())
         split = torch.unique(split, sorted=True)
         split = split.tolist()
 

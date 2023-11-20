@@ -20,9 +20,9 @@ class DenseGINConv(torch.nn.Module):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -32,7 +32,8 @@ class DenseGINConv(torch.nn.Module):
 
     def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
                 add_loop: bool = True) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): Node feature tensor
                 :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with

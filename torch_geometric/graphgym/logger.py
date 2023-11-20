@@ -15,10 +15,7 @@ from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 
 def set_printing():
-    """
-    Set up printing options
-
-    """
+    """Set up printing options."""
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
     makedirs(cfg.run_dir)
@@ -35,7 +32,7 @@ def set_printing():
     logging.basicConfig(**logging_cfg)
 
 
-class Logger(object):
+class Logger:
     def __init__(self, name='train', task_type=None):
         self.name = name
         self.task_type = task_type

@@ -11,7 +11,7 @@ class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
     <https://arxiv.org/abs/2004.11198>`_ paper (functional name: :obj:`sign`),
-    which precomputes the fixed representations
+    which precomputes the fixed representations.
 
     .. math::
         \mathbf{X}^{(i)} = {\left( \mathbf{D}^{-1/2} \mathbf{A}
@@ -34,7 +34,7 @@ class SIGN(BaseTransform):
     def __init__(self, K: int):
         self.K = K
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
         row, col = data.edge_index
         N = data.num_nodes

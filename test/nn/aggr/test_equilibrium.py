@@ -18,9 +18,6 @@ def test_equilibrium(iter, alpha):
     out = model(x)
     assert out.size() == (1, 2)
 
-    with pytest.raises(ValueError):
-        model(x, dim_size=0)
-
     out = model(x, dim_size=3)
     assert out.size() == (3, 2)
     assert torch.all(out[1:, :] == 0)
@@ -42,9 +39,6 @@ def test_equilibrium_batch(iter, alpha):
     assert str(model) == 'EquilibriumAggregation()'
     out = model(x, batch)
     assert out.size() == (2, 2)
-
-    with pytest.raises(ValueError):
-        model(x, dim_size=0)
 
     out = model(x, dim_size=3)
     assert out.size() == (3, 2)

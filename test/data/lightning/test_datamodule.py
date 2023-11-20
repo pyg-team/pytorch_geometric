@@ -19,6 +19,8 @@ from torch_geometric.testing import (
     get_random_edge_index,
     onlyCUDA,
     onlyFullTest,
+    onlyNeighborSampler,
+    onlyOnline,
     withPackage,
 )
 
@@ -73,9 +75,9 @@ class LinearGraphModule(LightningModule):
 
 
 @onlyCUDA
+@onlyOnline
 @onlyFullTest
-@withPackage('pytorch_lightning>=2.0.0')
-@withPackage('torchmetrics>=0.11.0')
+@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
@@ -176,10 +178,10 @@ class LinearNodeModule(LightningModule):
 
 
 @onlyCUDA
+@onlyOnline
 @onlyFullTest
-@withPackage('pyg_lib')
-@withPackage('pytorch_lightning>=2.0.0')
-@withPackage('torchmetrics>=0.11.0')
+@onlyNeighborSampler
+@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
@@ -276,9 +278,8 @@ class LinearHeteroNodeModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
-@withPackage('pyg_lib')
-@withPackage('pytorch_lightning>=2.0.0')
-@withPackage('torchmetrics>=0.11.0')
+@onlyNeighborSampler
+@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
 def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 
@@ -326,7 +327,7 @@ def test_lightning_data_custom_sampler():
 
 @onlyCUDA
 @onlyFullTest
-@withPackage('pyg_lib')
+@onlyNeighborSampler
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data():
     torch.manual_seed(12345)
@@ -386,7 +387,7 @@ def test_lightning_hetero_link_data():
         assert 'edge_label_time' in batch['author', 'paper']
 
 
-@withPackage('pyg_lib')
+@onlyNeighborSampler
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data_custom_store():
     torch.manual_seed(12345)
@@ -423,7 +424,8 @@ def test_lightning_hetero_link_data_custom_store():
     assert 'edge_label_index' in batch['author', 'paper']
 
 
-@withPackage('pyg_lib')
+@onlyOnline
+@onlyNeighborSampler
 @withPackage('pytorch_lightning')
 def test_eval_loader_kwargs(get_dataset):
     data = get_dataset(name='Cora')[0]

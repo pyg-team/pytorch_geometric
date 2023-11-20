@@ -22,16 +22,16 @@ def test_dense_gcn_conv():
     assert sparse_out.size() == (5, channels)
 
     x = torch.cat([x, x.new_zeros(1, channels)], dim=0).view(2, 3, channels)
-    adj = torch.Tensor([
+    adj = torch.tensor([
         [
-            [0, 1, 1],
-            [1, 0, 1],
-            [1, 1, 0],
+            [0.0, 1.0, 1.0],
+            [1.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],
         ],
         [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, 0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
         ],
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
@@ -53,10 +53,10 @@ def test_dense_gcn_conv_with_broadcasting():
     conv = DenseGCNConv(channels, channels)
 
     x = torch.randn(batch_size, num_nodes, channels)
-    adj = torch.Tensor([
-        [0, 1, 1],
-        [1, 0, 1],
-        [1, 1, 0],
+    adj = torch.tensor([
+        [0.0, 1.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0],
     ])
 
     assert conv(x, adj).size() == (batch_size, num_nodes, channels)

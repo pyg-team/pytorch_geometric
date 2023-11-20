@@ -10,7 +10,7 @@ from torch_geometric.transforms import BaseTransform
 class RandomScale(BaseTransform):
     r"""Scales node positions by a randomly sampled factor :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
-    (functional name: :obj:`random_scale`)
+    (functional name: :obj:`random_scale`).
 
     .. math::
         \begin{bmatrix}
@@ -30,7 +30,7 @@ class RandomScale(BaseTransform):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         scale = random.uniform(*self.scales)
         data.pos = data.pos * scale
         return data

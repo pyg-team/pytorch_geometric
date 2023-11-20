@@ -21,7 +21,7 @@ class GNN(torch.nn.Module):
     def __init__(self, hidden_channels: int, out_channels: int,
                  dropout: float):
         super().__init__()
-        self.dropout = dropout
+        self.dropout = torch.nn.Dropout(p=dropout)
 
         self.conv1 = SAGEConv((-1, -1), hidden_channels)
         self.conv2 = SAGEConv((-1, -1), hidden_channels)
@@ -29,9 +29,9 @@ class GNN(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         x = self.conv1(x, edge_index).relu()
-        x = F.dropout(x, p=self.dropout, training=self.training)
+        x = self.dropout(x)
         x = self.conv2(x, edge_index).relu()
-        x = F.dropout(x, p=self.dropout, training=self.training)
+        x = self.dropout(x)
         return self.lin(x)
 
 

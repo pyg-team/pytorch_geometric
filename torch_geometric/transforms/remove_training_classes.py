@@ -17,7 +17,7 @@ class RemoveTrainingClasses(BaseTransform):
     def __init__(self, classes: List[int]):
         self.classes = classes
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         data.train_mask = data.train_mask.clone()
         for i in self.classes:
             data.train_mask[data.y == i] = False

@@ -26,6 +26,11 @@ def test_coalesce():
     assert out[1][0].tolist() == [[4], [3], [2], [6]]
     assert out[1][1].tolist() == [4, 3, 2, 6]
 
+    out = coalesce((edge_index[0], edge_index[1]))
+    assert isinstance(out, tuple)
+    assert out[0].tolist() == [0, 1, 1, 2]
+    assert out[1].tolist() == [1, 0, 2, 1]
+
 
 def test_coalesce_without_duplicates():
     edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])

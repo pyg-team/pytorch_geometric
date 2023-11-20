@@ -7,7 +7,7 @@ from torch.nn import Parameter
 class MessageNorm(torch.nn.Module):
     r"""Applies message normalization over the aggregated messages as described
     in the `"DeeperGCNs: All You Need to Train Deeper GCNs"
-    <https://arxiv.org/abs/2006.07739>`_ paper
+    <https://arxiv.org/abs/2006.07739>`_ paper.
 
     .. math::
 
@@ -22,9 +22,7 @@ class MessageNorm(torch.nn.Module):
     """
     def __init__(self, learn_scale: bool = False):
         super().__init__()
-
-        self.scale = Parameter(torch.Tensor([1.0]), requires_grad=learn_scale)
-
+        self.scale = Parameter(torch.empty(1), requires_grad=learn_scale)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -32,7 +30,8 @@ class MessageNorm(torch.nn.Module):
         self.scale.data.fill_(1.0)
 
     def forward(self, x: Tensor, msg: Tensor, p: float = 2.0) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             msg (torch.Tensor): The message tensor :math:`\mathbf{M}`.

@@ -3,14 +3,17 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from point_transformer_classification import TransformerBlock, TransitionDown
-from torch_cluster import knn_graph
 from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, knn_interpolate
+from torch_geometric.nn import MLP, knn_graph, knn_interpolate
+from torch_geometric.typing import WITH_TORCH_CLUSTER
 from torch_geometric.utils import scatter
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -30,10 +33,9 @@ test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
 
 
 class TransitionUp(torch.nn.Module):
-    '''
-        Reduce features dimensionnality and interpolate back to higher
-        resolution and cardinality
-    '''
+    """Reduce features dimensionality and interpolate back to higher
+    resolution and cardinality.
+    """
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.mlp_sub = MLP([in_channels, out_channels], plain_last=False)

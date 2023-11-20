@@ -9,7 +9,13 @@ from torch_geometric.transforms import GridSampling
 def test_grid_sampling():
     assert str(GridSampling(5)) == 'GridSampling(size=5)'
 
-    pos = torch.Tensor([[0, 2], [3, 2], [3, 2], [2, 8], [2, 6]])
+    pos = torch.tensor([
+        [0.0, 2.0],
+        [3.0, 2.0],
+        [3.0, 2.0],
+        [2.0, 8.0],
+        [2.0, 6.0],
+    ])
     y = torch.tensor([0, 1, 1, 2, 2])
     batch = torch.tensor([0, 0, 0, 0, 0])
 

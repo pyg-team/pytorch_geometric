@@ -14,7 +14,7 @@ from torch_geometric.typing import Adj
 class AntiSymmetricConv(torch.nn.Module):
     r"""The anti-symmetric graph convolutional operator from the
     `"Anti-Symmetric DGN: a stable architecture for Deep Graph Networks"
-    <https://openreview.net/forum?id=J3Y7cgZOOS>`_ paper
+    <https://openreview.net/forum?id=J3Y7cgZOOS>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i + \epsilon \cdot \sigma \left(
@@ -73,12 +73,12 @@ class AntiSymmetricConv(torch.nn.Module):
         if phi is None:
             phi = GCNConv(in_channels, in_channels, bias=False)
 
-        self.W = Parameter(torch.Tensor(in_channels, in_channels))
+        self.W = Parameter(torch.empty(in_channels, in_channels))
         self.register_buffer('eye', torch.eye(in_channels))
         self.phi = phi
 
         if bias:
-            self.bias = Parameter(torch.Tensor(in_channels))
+            self.bias = Parameter(torch.empty(in_channels))
         else:
             self.register_parameter('bias', None)
 

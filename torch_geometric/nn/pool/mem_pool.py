@@ -12,7 +12,7 @@ EPS = 1e-15
 class MemPooling(torch.nn.Module):
     r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
-    representation based on soft cluster assignments
+    representation based on soft cluster assignments.
 
     .. math::
         S_{i,j}^{(h)} &= \frac{
@@ -27,7 +27,7 @@ class MemPooling(torch.nn.Module):
         \mathbf{X}^{\prime} &= \mathbf{S}^{\top} \mathbf{X} \mathbf{W} \in
         \mathbb{R}^{K \times F^{\prime}}
 
-    Where :math:`H` denotes the number of heads, and :math:`K` denotes the
+    where :math:`H` denotes the number of heads, and :math:`K` denotes the
     number of clusters.
 
     Args:
@@ -46,7 +46,7 @@ class MemPooling(torch.nn.Module):
         self.num_clusters = num_clusters
         self.tau = tau
 
-        self.k = Parameter(torch.Tensor(heads, num_clusters, in_channels))
+        self.k = Parameter(torch.empty(heads, num_clusters, in_channels))
         self.conv = Conv2d(heads, 1, kernel_size=1, padding=0, bias=False)
         self.lin = Linear(in_channels, out_channels, bias=False)
 
@@ -60,7 +60,7 @@ class MemPooling(torch.nn.Module):
 
     @staticmethod
     def kl_loss(S: Tensor) -> Tensor:
-        r"""The additional KL divergence-based loss
+        r"""The additional KL divergence-based loss.
 
         .. math::
             P_{i,j} &= \frac{S_{i,j}^2 / \sum_{n=1}^N S_{n,j}}{\sum_{k=1}^K
@@ -78,9 +78,16 @@ class MemPooling(torch.nn.Module):
         loss = KLDivLoss(reduction='batchmean', log_target=False)
         return loss(S.clamp(EPS).log(), P.clamp(EPS))
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
-        r"""
+    def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+        mask: Optional[Tensor] = None,
+        max_num_nodes: Optional[int] = None,
+        batch_size: Optional[int] = None,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node feature tensor of shape
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
@@ -97,9 +104,15 @@ class MemPooling(torch.nn.Module):
                 node features of shape
                 :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
                 (default: :obj:`None`)
+            max_num_nodes (int, optional): The size of the :math:`B` node
+                dimension. Automatically calculated if not given.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if x.dim() <= 2:
-            x, mask = to_dense_batch(x, batch)
+            x, mask = to_dense_batch(x, batch, max_num_nodes=max_num_nodes,
+                                     batch_size=batch_size)
         elif mask is None:
             mask = x.new_ones((x.size(0), x.size(1)), dtype=torch.bool)
 

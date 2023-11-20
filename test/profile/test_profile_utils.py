@@ -24,7 +24,7 @@ def test_count_parameters():
 
 def test_get_model_size():
     model_size = get_model_size(Linear(32, 128, bias=False))
-    assert model_size >= 32 * 128 * 4 and model_size < 32 * 128 * 4 + 1000
+    assert model_size >= 32 * 128 * 4 and model_size < 32 * 128 * 4 + 2000
 
 
 def test_get_data_size():

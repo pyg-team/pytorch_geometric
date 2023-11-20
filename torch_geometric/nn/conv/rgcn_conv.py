@@ -5,6 +5,7 @@ from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
 
+import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
@@ -20,18 +21,18 @@ from torch_geometric.utils.sparse import index2ptr
 
 
 @torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index, edge_mask):  # noqa: F811
     # type: (Tensor, Tensor) -> Tensor
     pass
 
 
 @torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index, edge_mask):  # noqa: F811
     # type: (SparseTensor, Tensor) -> SparseTensor
     pass
 
 
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index: Adj, edge_mask: Tensor) -> Adj:  # noqa: F811
     if isinstance(edge_index, Tensor):
         return edge_index[:, edge_mask]
     return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout='coo')
@@ -40,7 +41,7 @@ def masked_edge_index(edge_index, edge_mask):
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
     Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper
+    <https://arxiv.org/abs/1703.06103>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot
@@ -131,32 +132,34 @@ class RGCNConv(MessagePassing):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
 
+        self._use_segment_matmul_heuristic_output: Optional[bool] = None
+
         if num_bases is not None:
             self.weight = Parameter(
-                torch.Tensor(num_bases, in_channels[0], out_channels))
-            self.comp = Parameter(torch.Tensor(num_relations, num_bases))
+                torch.empty(num_bases, in_channels[0], out_channels))
+            self.comp = Parameter(torch.empty(num_relations, num_bases))
 
         elif num_blocks is not None:
             assert (in_channels[0] % num_blocks == 0
                     and out_channels % num_blocks == 0)
             self.weight = Parameter(
-                torch.Tensor(num_relations, num_blocks,
-                             in_channels[0] // num_blocks,
-                             out_channels // num_blocks))
+                torch.empty(num_relations, num_blocks,
+                            in_channels[0] // num_blocks,
+                            out_channels // num_blocks))
             self.register_parameter('comp', None)
 
         else:
             self.weight = Parameter(
-                torch.Tensor(num_relations, in_channels[0], out_channels))
+                torch.empty(num_relations, in_channels[0], out_channels))
             self.register_parameter('comp', None)
 
         if root_weight:
-            self.root = Param(torch.Tensor(in_channels[1], out_channels))
+            self.root = Param(torch.empty(in_channels[1], out_channels))
         else:
             self.register_parameter('root', None)
 
         if bias:
-            self.bias = Param(torch.Tensor(out_channels))
+            self.bias = Param(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -201,7 +204,6 @@ class RGCNConv(MessagePassing):
             x_r = x[1]
 
         size = (x_l.size(0), x_r.size(0))
-
         if isinstance(edge_index, SparseTensor):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
@@ -229,9 +231,30 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
-                    and x_l.is_floating_point()
+
+            use_segment_matmul = torch_geometric.backend.use_segment_matmul
+            # If `use_segment_matmul` is not specified, use a simple heuristic
+            # to determine whether `segment_matmul` can speed up computation
+            # given the observed input sizes:
+            if use_segment_matmul is None:
+                segment_count = scatter(torch.ones_like(edge_type), edge_type,
+                                        dim_size=self.num_relations)
+
+                self._use_segment_matmul_heuristic_output = (
+                    torch_geometric.backend.use_segment_matmul_heuristic(
+                        num_segments=self.num_relations,
+                        max_segment_size=int(segment_count.max()),
+                        in_channels=self.weight.size(1),
+                        out_channels=self.weight.size(2),
+                    ))
+
+                assert self._use_segment_matmul_heuristic_output is not None
+                use_segment_matmul = self._use_segment_matmul_heuristic_output
+
+            if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
+                    and self.num_bases is None and x_l.is_floating_point()
                     and isinstance(edge_index, Tensor)):
+
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
@@ -269,7 +292,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if torch_geometric.typing.WITH_PYG_LIB and edge_type_ptr is not None:
+        if torch_geometric.typing.WITH_SEGMM and edge_type_ptr is not None:
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 

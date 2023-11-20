@@ -7,7 +7,7 @@ from torch_geometric.transforms import RandomScale
 def test_random_scale():
     assert str(RandomScale([1, 2])) == 'RandomScale([1, 2])'
 
-    pos = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+    pos = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
 
     data = Data(pos=pos)
     data = RandomScale([1, 1])(data)

@@ -13,7 +13,7 @@ class Compose(BaseTransform):
     def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

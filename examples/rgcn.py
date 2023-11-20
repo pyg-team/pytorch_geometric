@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -15,7 +16,9 @@ args = parser.parse_args()
 
 # Trade memory consumption for faster computation.
 if args.dataset in ['AIFB', 'MUTAG']:
-    RGCNConv = FastRGCNConv
+    Conv = FastRGCNConv
+else:
+    Conv = RGCNConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 dataset = Entities(path, args.dataset)
@@ -39,10 +42,10 @@ data.test_idx = mapping[data.train_idx.size(0):]
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = RGCNConv(data.num_nodes, 16, dataset.num_relations,
-                              num_bases=30)
-        self.conv2 = RGCNConv(16, dataset.num_classes, dataset.num_relations,
-                              num_bases=30)
+        self.conv1 = Conv(data.num_nodes, 16, dataset.num_relations,
+                          num_bases=30)
+        self.conv2 = Conv(16, dataset.num_classes, dataset.num_relations,
+                          num_bases=30)
 
     def forward(self, edge_index, edge_type):
         x = F.relu(self.conv1(None, edge_index, edge_type))
@@ -50,7 +53,13 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 device = torch.device('cpu') if args.dataset == 'AM' else device
 model, data = Net().to(device), data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
@@ -75,8 +84,12 @@ def test():
     return train_acc, test_acc
 
 
+times = []
 for epoch in range(1, 51):
+    start = time.time()
     loss = train()
     train_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f} '
           f'Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

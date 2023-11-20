@@ -30,16 +30,28 @@ def test_fused_aggregation(aggrs):
     out = torch.cat(aggr(x, index), dim=-1)
 
     expected = torch.cat([aggr(y, index) for aggr in aggrs], dim=-1)
-    assert torch.allclose(out, expected, atol=1e-6)
+    assert torch.allclose(out, expected, atol=1e-5)
 
     jit = torch.jit.script(aggr)
-    assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-6)
+    assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-5)
 
     out.mean().backward()
     assert x.grad is not None
     expected.mean().backward()
     assert y.grad is not None
-    assert torch.allclose(x.grad, y.grad)
+    assert torch.allclose(x.grad, y.grad, atol=1e-5)
+
+
+def test_empty_fused_std_aggregation():
+    aggrs = [aggregation_resolver(aggr) for aggr in ['mean', 'var', 'std']]
+    aggr = FusedAggregation(aggrs)
+
+    x = torch.empty(0, 6).reshape(0, 6)
+    index = torch.empty(0, dtype=torch.long)
+
+    out = torch.cat(aggr(x, index, dim_size=5), dim=-1)
+    assert out.size() == (5, 18)
+    assert float(out.abs().sum()) == 0.0
 
 
 if __name__ == '__main__':

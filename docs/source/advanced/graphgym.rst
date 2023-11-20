@@ -107,12 +107,7 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
        bash run_batch.sh # run a batch of experiments
 
 #. **Run GraphGym with CPU backend:**
-   GraphGym supports CPU backend as well -- you only need to add the line :obj:`device: cpu` to the :obj:`*.yaml` file.
-   Here we provide an example:
-
-   .. code-block:: bash
-
-       bash run_single_cpu.sh # run a single experiment using CPU backend
+   GraphGym supports CPU backend as well -- you only need to add the line :obj:`accelerator: cpu` to the :obj:`*.yaml` file.
 
 In-Depth Usage
 --------------

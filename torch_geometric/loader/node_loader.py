@@ -11,6 +11,7 @@ from torch_geometric.loader.utils import (
     filter_data,
     filter_hetero_data,
     get_input_nodes,
+    infer_filter_per_worker,
 )
 from torch_geometric.sampler import (
     BaseSampler,
@@ -58,14 +59,17 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
-            the returning data in each worker's subprocess rather than in the
-            main process.
-            Setting this to :obj:`True` for in-memory datasets is generally not
-            recommended:
-            (1) it may result in too many open file handles,
-            (2) it may slown down data loading,
-            (3) it requires operating on CPU tensors.
-            (default: :obj:`False`)
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
         custom_cls (HeteroData, optional): A custom
             :class:`~torch_geometric.data.HeteroData` class to return for
             mini-batches in case of remote backends. (default: :obj:`None`)
@@ -81,17 +85,21 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         input_time: OptTensor = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
-        filter_per_worker: bool = False,
+        filter_per_worker: Optional[bool] = None,
         custom_cls: Optional[HeteroData] = None,
         input_id: OptTensor = None,
         **kwargs,
     ):
+        if filter_per_worker is None:
+            filter_per_worker = infer_filter_per_worker(data)
+
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
-        input_type, input_nodes = get_input_nodes(data, input_nodes)
+        input_type, input_nodes, input_id = get_input_nodes(
+            data, input_nodes, input_id)
 
         self.data = data
         self.node_sampler = node_sampler
@@ -109,6 +117,16 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
+
+    def __call__(
+        self,
+        index: Union[Tensor, List[int]],
+    ) -> Union[Data, HeteroData]:
+        r"""Samples a subgraph from a batch of input nodes."""
+        out = self.collate_fn(index)
+        if not self.filter_per_worker:
+            out = self.filter_fn(out)
+        return out
 
     def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
@@ -133,13 +151,33 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             out = self.transform_sampler_output(out)
 
         if isinstance(out, SamplerOutput):
-            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.node_sampler.edge_permutation)
+            if isinstance(self.data, Data):
+                data = filter_data(  #
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.node_sampler.edge_permutation)
+
+            else:  # Tuple[FeatureStore, GraphStore]
+                edge_index = torch.stack([out.row, out.col])
+                data = Data(edge_index=edge_index)
+
+                # TODO Respect `custom_cls`.
+                # TODO Integrate features.
+
+                # Hack to detect whether we are in a distributed setting.
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
+                    # Metadata entries are populated in
+                    # `DistributedNeighborSampler._collate_fn()`
+                    data.x = out.metadata[-3]
+                    data.y = out.metadata[-2]
+                    data.edge_attr = out.metadata[-1]
 
             if 'n_id' not in data:
                 data.n_id = out.node
             if out.edge is not None and 'e_id' not in data:
-                data.e_id = out.edge
+                edge = out.edge.to(torch.long)
+                perm = self.node_sampler.edge_permutation
+                data.e_id = perm[edge] if perm is not None else edge
 
             data.batch = out.batch
             data.num_sampled_nodes = out.num_sampled_nodes
@@ -151,19 +189,32 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(self.data, out.node, out.row,
-                                          out.col, out.edge,
-                                          self.node_sampler.edge_permutation)
+                data = filter_hetero_data(  #
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.node_sampler.edge_permutation)
+
             else:  # Tuple[FeatureStore, GraphStore]
-                data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge, self.custom_cls)
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
+                    import torch_geometric.distributed as dist
+                    data = dist.utils.filter_dist_store(
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls, out.metadata)
+                else:
+                    data = filter_custom_store(  #
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
 
             for key, edge in (out.edge or {}).items():
-                if 'e_id' not in data[key]:
+                if edge is not None and 'e_id' not in data[key]:
+                    edge = edge.to(torch.long)
+                    perm = self.node_sampler.edge_permutation
+                    if perm is not None and perm.get(key, None) is not None:
+                        edge = perm[key][edge]
                     data[key].e_id = edge
 
             data.set_value_dict('batch', out.batch)

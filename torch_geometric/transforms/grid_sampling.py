@@ -36,7 +36,7 @@ class GridSampling(BaseTransform):
         self.start = start
         self.end = end
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         num_nodes = data.num_nodes
 
         batch = data.get('batch', None)

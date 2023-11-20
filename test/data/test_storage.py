@@ -1,6 +1,7 @@
 import copy
 from typing import Any
 
+import pytest
 import torch
 
 from torch_geometric.data.storage import BaseStorage
@@ -51,6 +52,9 @@ def test_base_storage():
     assert storage.x.data_ptr() != deepcopied_storage.x.data_ptr()
     assert int(storage.x) == 0
     assert int(deepcopied_storage.x) == 0
+
+    with pytest.raises(AttributeError, match="has no attribute 'asdf'"):
+        storage.asdf
 
 
 def test_storage_tensor_methods():

@@ -35,8 +35,7 @@ class Net(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers):
             self.convs.append(
-                DNAConv(hidden_channels, heads, groups, dropout=0.8,
-                        cached=True))
+                DNAConv(hidden_channels, heads, groups, dropout=0.8))
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
     def reset_parameters(self):
@@ -59,7 +58,13 @@ class Net(torch.nn.Module):
         return torch.log_softmax(x, dim=1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model = Net(in_channels=dataset.num_features, hidden_channels=128,
             out_channels=dataset.num_classes, num_layers=5, heads=8, groups=16)
 model, data = model.to(device), data.to(device)

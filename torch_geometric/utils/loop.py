@@ -24,7 +24,6 @@ def contains_self_loops(edge_index: Tensor) -> bool:
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> contains_self_loops(edge_index)
@@ -54,7 +53,6 @@ def remove_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_attr = [[1, 2], [3, 4], [5, 6]]
@@ -106,7 +104,6 @@ def segregate_self_loops(
         :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 0, 1],
         ...                            [0, 1, 0]])
         >>> (edge_index, edge_attr,
@@ -116,7 +113,6 @@ def segregate_self_loops(
         tensor([[0],
                 [0]])
     """
-
     mask = edge_index[0] != edge_index[1]
     inv_mask = ~mask
 
@@ -129,42 +125,42 @@ def segregate_self_loops(
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[float], Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, OptTensor, Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):
+def add_self_loops(edge_index, edge_attr, fill_value, num_nodes):  # noqa: F811
     # type: (Tensor, OptTensor, Optional[str], Optional[Tuple[int, int]]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
-def add_self_loops(
+def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
@@ -197,7 +193,6 @@ def add_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_weight = torch.tensor([0.5, 0.5, 0.5])
@@ -232,14 +227,14 @@ def add_self_loops(
         assert edge_attr is None
         layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
+        N = min(size)
         edge_index, edge_attr = to_edge_index(edge_index)
     elif isinstance(num_nodes, (tuple, list)):
         size = (num_nodes[0], num_nodes[1])
+        N = min(size)
     else:
         N = maybe_num_nodes(edge_index, num_nodes)
         size = (N, N)
-
-    N = min(size)
 
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
@@ -277,27 +272,27 @@ def add_self_loops(
 
 
 @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr, fill_value, num_nodes):
     # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 # @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr, fill_value, num_nodes):
     # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
 @torch.jit._overload
-def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
-                             num_nodes=None):
+def add_remaining_self_loops(  # noqa: F811
+        edge_index, edge_attr, fill_value, num_nodes):
     # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
     pass
 
 
-def add_remaining_self_loops(
+def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
@@ -327,7 +322,6 @@ def add_remaining_self_loops(
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1],
         ...                            [1, 0]])
         >>> edge_weight = torch.tensor([0.5, 0.5])
@@ -393,7 +387,6 @@ def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
     :rtype: :class:`Tensor`
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_weight = torch.tensor([0.2, 0.3, 0.5])

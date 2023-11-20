@@ -45,8 +45,7 @@ target = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
-@withPackage('pgmpy')
-@withPackage('pandas')
+@withPackage('pgmpy', 'pandas')
 @pytest.mark.parametrize('node_idx', [2, 6])
 @pytest.mark.parametrize('task_level, perturbation_mode', [
     ('node', 'randint'),

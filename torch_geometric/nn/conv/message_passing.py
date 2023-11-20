@@ -21,7 +21,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.utils.inspector import (
     Inspector,
     func_body_repr,
@@ -52,7 +52,9 @@ def ptr2ind(ptr: Tensor) -> Tensor:
 
 
 class MessagePassing(torch.nn.Module):
-    r"""Base class for creating message passing layers of the form
+    r"""Base class for creating message passing layers.
+
+    Message passing layers follow the form
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
@@ -130,18 +132,12 @@ class MessagePassing(torch.nn.Module):
 
         if aggr is None:
             self.aggr = None
-            self.aggr_module = None
         elif isinstance(aggr, (str, Aggregation)):
             self.aggr = str(aggr)
-            self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
-        else:
-            raise ValueError(
-                f"Only strings, list, tuples and instances of"
-                f"`torch_geometric.nn.aggr.Aggregation` are "
-                f"valid aggregation schemes (got '{type(aggr)}').")
+
+        self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
 
         self.flow = flow
 
@@ -173,7 +169,7 @@ class MessagePassing(torch.nn.Module):
             self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
         # Support for explainability.
-        self._explain = False
+        self._explain: Optional[bool] = None
         self._edge_mask = None
         self._loop_mask = None
         self._apply_sigmoid = True
@@ -223,7 +219,7 @@ class MessagePassing(torch.nn.Module):
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
-            if edge_index.size(0) != 2:
+            if not torch.jit.is_tracing() and edge_index.size(0) != 2:
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
@@ -552,11 +548,11 @@ class MessagePassing(torch.nn.Module):
         return x_j
 
     @property
-    def explain(self) -> bool:
+    def explain(self) -> Optional[bool]:
         return self._explain
 
     @explain.setter
-    def explain(self, explain: bool):
+    def explain(self, explain: Optional[bool]):
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -572,7 +568,6 @@ class MessagePassing(torch.nn.Module):
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
         # see stackoverflow.com: 394770/override-a-method-at-instance-level
-
         edge_mask = self._edge_mask
 
         if edge_mask is None:
@@ -646,6 +641,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
+
         The hook will be called every time before :meth:`propagate` is invoked.
         It should have the following signature:
 
@@ -667,6 +663,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_hook(self,
                                         hook: Callable) -> RemovableHandle:
         r"""Registers a forward hook on the module.
+
         The hook will be called every time after :meth:`propagate` has computed
         an output.
         It should have the following signature:
@@ -774,7 +771,8 @@ class MessagePassing(torch.nn.Module):
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
-        jittable module.
+        jittable module that can be used in combination with
+        :meth:`torch.jit.script`.
 
         Args:
             typing (str, optional): If given, will generate a concrete instance

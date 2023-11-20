@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -7,14 +8,12 @@ from torch.nn import Linear
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCN2Conv
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-transform = T.Compose([T.NormalizeFeatures(), T.ToSparseTensor()])
+transform = T.Compose([T.NormalizeFeatures(), T.GCNNorm(), T.ToSparseTensor()])
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
-data.adj_t = gcn_norm(data.adj_t)  # Pre-process GCN normalization.
 
 
 class Net(torch.nn.Module):
@@ -79,7 +78,9 @@ def test():
 
 
 best_val_acc = test_acc = 0
+times = []
 for epoch in range(1, 1001):
+    start = time.time()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -88,3 +89,5 @@ for epoch in range(1, 1001):
     print(f'Epoch: {epoch:04d}, Loss: {loss:.4f} Train: {train_acc:.4f}, '
           f'Val: {val_acc:.4f}, Test: {tmp_test_acc:.4f}, '
           f'Final Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

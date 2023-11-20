@@ -28,7 +28,7 @@ def to_nested_tensor(
             (default: :obj:`None`)
         ptr (torch.Tensor, optional): Alternative representation of
             :obj:`batch` in compressed format. (default: :obj:`None`)
-        batch_size (int, optional) The batch size :math:`B`.
+        batch_size (int, optional): The batch size :math:`B`.
             (default: :obj:`None`)
     """
     if ptr is not None:

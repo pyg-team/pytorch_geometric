@@ -10,7 +10,7 @@ authors=[
 ]
 description="Graph Neural Network Library for PyTorch"
 readme="README.md"
-requires-python=">=3.7"
+requires-python=">=3.8"
 keywords=[
     "deep-learning",
     "pytorch",
@@ -22,7 +22,6 @@ classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -81,12 +80,14 @@ full = [
     "graphviz",
     "tabulate",
     "matplotlib",
+    "pynndescent",
     "torchmetrics",
     "scikit-image",
     "pytorch-memlab",
     "pgmpy",
     "opt_einsum",
-    "statsmodels"
+    "statsmodels",
+    "rdkit",
 ]
 
 [project.urls]
@@ -109,10 +110,36 @@ include = ["torch_geometric/utils/*"]
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
-skip = [".gitingore", "__init__.py"]
+skip = [".gitignore", "__init__.py"]
+
+[tool.ruff]  # https://docs.astral.sh/ruff/rules
+select = [
+    "D",  # pydocstyle
+]
+ignore = [
+    "D100",  # TODO: Don't ignore "Missing docstring in public module"
+    "D101",  # TODO: Don't ignore "Missing docstring in public class"
+    "D102",  # TODO: Don't ignore "Missing docstring in public method"
+    "D103",  # TODO: Don't ignore "Missing docstring in public function"
+    "D104",  # TODO: Don't ignore "Missing docstring in public package"
+    "D105",  # Ignore "Missing docstring in magic method"
+    "D107",  # Ignore "Missing docstring in __init__"
+    "D205",  # Ignore "blank line required between summary line and description"
+]
+src = ["torch_geometric"]
+line-length = 80
+indent-width = 4
+target-version = "py38"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.pytest.ini_options]
-addopts = "--capture=no"
+addopts = [
+    "--capture=no",
+    "--color=yes",
+    "-vv",
+]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
     "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
@@ -159,10 +186,7 @@ omit = [
 exclude_lines = [
     "pragma: no cover",
     "pass",
-    "raise",
-    "except",
+    "raise NotImplementedError",
     "register_parameter",
-    "warn",
     "torch.cuda.is_available",
-    "WITH_PT2",
 ]

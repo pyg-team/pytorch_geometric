@@ -7,7 +7,7 @@ import torch_geometric.typing
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.testing import is_full_test
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import WITH_PT21, SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 
 
@@ -99,10 +99,14 @@ def test_static_gcn_conv():
     assert out.size() == (3, 4, 32)
 
 
-def test_gcn_conv_norm():
+def test_gcn_conv_error():
+    with pytest.raises(ValueError, match="does not support adding self-loops"):
+        GCNConv(16, 32, normalize=False, add_self_loops=True)
+
+
+def test_gcn_conv_flow():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
-    row, col = edge_index
 
     conv = GCNConv(16, 32, flow="source_to_target")
     out1 = conv(x, edge_index)
@@ -120,8 +124,8 @@ def test_gcn_norm_gradient(requires_grad, layout):
     if layout == torch.sparse_csr:
         adj = adj.to_sparse_csr()
 
-    # TODO Sparse CSR tensor does not yet inherit `requires_grad` from `value`.
-    if layout == torch.sparse_csr:
+    # TODO Sparse CSR tensor doesn't inherit `requires_grad` for PyTorch < 2.1.
+    if layout == torch.sparse_csr and not WITH_PT21:
         assert not gcn_norm(adj)[0].requires_grad
     else:
         assert adj.requires_grad == gcn_norm(adj)[0].requires_grad

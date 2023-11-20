@@ -19,7 +19,7 @@ class GCNNorm(BaseTransform):
     def __init__(self, add_self_loops: bool = True):
         self.add_self_loops = add_self_loops
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
         assert 'edge_index' in data or 'adj_t' in data
 

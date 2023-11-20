@@ -118,7 +118,7 @@ For this, we make use of the excellent `sentence-transformers <https://www.sbert
 
 .. code-block:: python
 
-    class SequenceEncoder(object):
+    class SequenceEncoder:
         def __init__(self, model_name='all-MiniLM-L6-v2', device=None):
             self.device = device
             self.model = SentenceTransformer(model_name, device=device)
@@ -137,7 +137,7 @@ For this, we first need to find all existing genres present in the data, create 
 
 .. code-block:: python
 
-    class GenresEncoder(object):
+    class GenresEncoder:
         def __init__(self, sep='|'):
             self.sep = sep
 
@@ -218,7 +218,7 @@ For example, for loading the ratings from the :obj:`rating` column in :obj:`rati
 
 .. code-block:: python
 
-    class IdentityEncoder(object):
+    class IdentityEncoder:
         def __init__(self, dtype=None):
             self.dtype = dtype
 

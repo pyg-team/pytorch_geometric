@@ -1,8 +1,6 @@
-"""
-An adaptation of RandLA-Net to the classification task, which was not
-addressed in the paper:
-RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
-Reference: https://arxiv.org/abs/1911.11236
+"""An adaptation of RandLA-Net to the classification task, which was not
+addressed in the `"RandLA-Net: Efficient Semantic Segmentation of Large-Scale
+Point Clouds" <https://arxiv.org/abs/1911.11236>`_ paper.
 """
 import os.path as osp
 
@@ -20,7 +18,11 @@ from torch_geometric.nn.aggr import MaxAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.nn.pool.decimation import decimation_indices
+from torch_geometric.typing import WITH_TORCH_CLUSTER
 from torch_geometric.utils import softmax
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 # Default activation and batch norm parameters used by RandLA-Net:
 lrelu02_kwargs = {'negative_slope': 0.2}
@@ -66,7 +68,7 @@ class LocalFeatureAggregation(MessagePassing):
             index (Tensor): index of centroid positions
                 (e.g. [0,...,0,1,...,1,...,N,...,N])
 
-        returns:
+        Returns:
             (Tensor): locSE weighted by feature attention scores.
 
         """

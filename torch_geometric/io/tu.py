@@ -7,7 +7,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import coalesce, one_hot, remove_self_loops
+from torch_geometric.utils import coalesce, cumsum, one_hot, remove_self_loops
 
 names = [
     'A', 'graph_indicator', 'node_labels', 'node_attributes'
@@ -100,12 +100,10 @@ def cat(seq):
 
 
 def split(data, batch):
-    node_slice = torch.cumsum(torch.from_numpy(np.bincount(batch)), 0)
-    node_slice = torch.cat([torch.tensor([0]), node_slice])
+    node_slice = cumsum(torch.from_numpy(np.bincount(batch)))
 
     row, _ = data.edge_index
-    edge_slice = torch.cumsum(torch.from_numpy(np.bincount(batch[row])), 0)
-    edge_slice = torch.cat([torch.tensor([0]), edge_slice])
+    edge_slice = cumsum(torch.from_numpy(np.bincount(batch[row])))
 
     # Edge indices should start at zero for every graph.
     data.edge_index -= node_slice[batch[row]].unsqueeze(0)

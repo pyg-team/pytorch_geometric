@@ -10,7 +10,14 @@ from torch_geometric.utils import coalesce
 def test_radius_graph():
     assert str(RadiusGraph(r=1)) == 'RadiusGraph(r=1)'
 
-    pos = torch.Tensor([[0, 0], [1, 0], [2, 0], [0, 1], [-2, 0], [0, -2]])
+    pos = torch.tensor([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [2.0, 0.0],
+        [0.0, 1.0],
+        [-2.0, 0.0],
+        [0.0, -2.0],
+    ])
 
     data = Data(pos=pos)
     data = RadiusGraph(r=1.5)(data)

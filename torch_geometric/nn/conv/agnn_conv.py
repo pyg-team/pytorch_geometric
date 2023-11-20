@@ -13,7 +13,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 class AGNNConv(MessagePassing):
     r"""The graph attentional propagation layer from the
     `"Attention-based Graph Neural Network for Semi-Supervised Learning"
-    <https://arxiv.org/abs/1803.03735>`_ paper
+    <https://arxiv.org/abs/1803.03735>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},
@@ -50,7 +50,7 @@ class AGNNConv(MessagePassing):
         self.add_self_loops = add_self_loops
 
         if requires_grad:
-            self.beta = Parameter(torch.Tensor(1))
+            self.beta = Parameter(torch.empty(1))
         else:
             self.register_buffer('beta', torch.ones(1))
 

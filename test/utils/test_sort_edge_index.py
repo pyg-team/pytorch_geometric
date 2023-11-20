@@ -13,6 +13,11 @@ def test_sort_edge_index():
     out = sort_edge_index(edge_index)
     assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
+    out = sort_edge_index((edge_index[0], edge_index[1]))
+    assert isinstance(out, tuple)
+    assert out[0].tolist() == [0, 1, 1, 2]
+    assert out[1].tolist() == [1, 0, 2, 1]
+
     out = sort_edge_index(edge_index, None)
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert out[1] is None

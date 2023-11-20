@@ -22,11 +22,10 @@ class Linear(torch.nn.Module):
         self.groups = groups
 
         self.weight = Parameter(
-            torch.Tensor(groups, in_channels // groups,
-                         out_channels // groups))
+            torch.empty(groups, in_channels // groups, out_channels // groups))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -171,7 +170,7 @@ class MultiHead(Attention):
 class DNAConv(MessagePassing):
     r"""The dynamic neighborhood aggregation operator from the `"Just Jump:
     Towards Dynamic Neighborhood Aggregation in Graph Neural Networks"
-    <https://arxiv.org/abs/1904.04849>`_ paper
+    <https://arxiv.org/abs/1904.04849>`_ paper.
 
     .. math::
         \mathbf{x}_v^{(t)} = h_{\mathbf{\Theta}}^{(t)} \left( \mathbf{x}_{v
@@ -256,13 +255,20 @@ class DNAConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
             x (torch.Tensor): The input node features of shape
                 :obj:`[num_nodes, num_layers, channels]`.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
         """
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '

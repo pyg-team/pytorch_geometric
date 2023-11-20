@@ -5,7 +5,12 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_tu_data
 
 
@@ -45,6 +50,8 @@ class TUDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node attributes (if present).
             (default: :obj:`False`)
@@ -114,15 +121,22 @@ class TUDataset(InMemoryDataset):
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 use_node_attr: bool = False, use_edge_attr: bool = False,
-                 cleaned: bool = False):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        use_node_attr: bool = False,
+        use_edge_attr: bool = False,
+        cleaned: bool = False,
+    ):
         self.name = name
         self.cleaned = cleaned
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         out = torch.load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:
@@ -131,7 +145,8 @@ class TUDataset(InMemoryDataset):
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        self.data, self.slices, self.sizes = out
+        data, self.slices, self.sizes = out
+        self.data = Data.from_dict(data) if isinstance(data, dict) else data
 
         if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
@@ -199,7 +214,8 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self._data, self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data.to_dict(), self.slices, sizes),
+                   self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

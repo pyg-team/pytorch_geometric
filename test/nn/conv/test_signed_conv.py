@@ -40,7 +40,8 @@ def test_signed_conv():
         assert torch.allclose(jit1(x, edge_index, edge_index), out1)
         assert torch.allclose(jit2(out1, edge_index, edge_index), out2)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
+    if (is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE
+            and torch_geometric.typing.WITH_PT112):
         t = '(Tensor, SparseTensor, SparseTensor) -> Tensor'
         jit1 = torch.jit.script(conv1.jittable(t))
         jit2 = torch.jit.script(conv2.jittable(t))
@@ -66,7 +67,7 @@ def test_signed_conv():
         assert torch.allclose(conv2((out1, out1[:2]), adj2.t(), adj2.t()),
                               out2[:2], atol=1e-6)
 
-    if is_full_test():
+    if is_full_test() and torch_geometric.typing.WITH_PT112:
         t = '(PairTensor, Tensor, Tensor) -> Tensor'
         jit1 = torch.jit.script(conv1.jittable(t))
         jit2 = torch.jit.script(conv2.jittable(t))
@@ -75,7 +76,8 @@ def test_signed_conv():
         assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
                               out2[:2], atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
+    if (is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE
+            and torch_geometric.typing.WITH_PT112):
         t = '(PairTensor, SparseTensor, SparseTensor) -> Tensor'
         jit1 = torch.jit.script(conv1.jittable(t))
         jit2 = torch.jit.script(conv2.jittable(t))

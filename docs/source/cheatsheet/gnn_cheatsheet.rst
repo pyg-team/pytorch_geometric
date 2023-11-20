@@ -31,7 +31,7 @@ Graph Neural Network Operators
 {% if not torch_geometric.nn.conv.utils.processes_heterogeneous_graphs(cls) and
       not torch_geometric.nn.conv.utils.processes_hypergraphs(cls) and
       not torch_geometric.nn.conv.utils.processes_point_clouds(cls) %}
-    * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
+    * - :class:`~torch_geometric.nn.conv.{{ cls }}` {% if torch_geometric.nn.conv.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__){% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_sparse_tensor(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_weights(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_features(cls) %}✓{% endif %}
@@ -57,7 +57,7 @@ Heterogeneous Graph Neural Network Operators
       - lazy
 {% for cls in torch_geometric.nn.conv.classes[1:] %}
 {% if torch_geometric.nn.conv.utils.processes_heterogeneous_graphs(cls) %}
-    * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
+    * - :class:`~torch_geometric.nn.conv.{{ cls }}` {% if torch_geometric.nn.conv.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__){% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_sparse_tensor(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_weights(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_features(cls) %}✓{% endif %}
@@ -83,7 +83,7 @@ Hypergraph Neural Network Operators
       - lazy
 {% for cls in torch_geometric.nn.conv.classes[1:] %}
 {% if torch_geometric.nn.conv.utils.processes_hypergraphs(cls) %}
-    * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
+    * - :class:`~torch_geometric.nn.conv.{{ cls }}` {% if torch_geometric.nn.conv.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__){% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_sparse_tensor(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_weights(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_edge_features(cls) %}✓{% endif %}
@@ -105,7 +105,7 @@ Point Cloud Neural Network Operators
       - lazy
 {% for cls in torch_geometric.nn.conv.classes[1:] %}
 {% if torch_geometric.nn.conv.utils.processes_point_clouds(cls) %}
-    * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
+    * - :class:`~torch_geometric.nn.conv.{{ cls }}` {% if torch_geometric.nn.conv.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__){% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_bipartite_graphs(cls) %}✓{% endif %}
       - {% if torch_geometric.nn.conv.utils.supports_lazy_initialization(cls) %}✓{% endif %}
 {% endif %}

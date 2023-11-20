@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 from math import ceil
 
 import torch
@@ -95,7 +96,9 @@ def test(loader):
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 
 
+times = []
 for epoch in range(1, 101):
+    start = time.time()
     train_loss = train(train_loader)
     _, train_acc = test(train_loader)
     val_loss, val_acc = test(val_loader)
@@ -104,3 +107,5 @@ for epoch in range(1, 101):
           f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
           f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
           f'Test Acc: {test_acc:.3f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

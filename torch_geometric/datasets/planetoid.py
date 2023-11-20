@@ -90,7 +90,7 @@ class Planetoid(InMemoryDataset):
         assert self.split in ['public', 'full', 'geom-gcn', 'random']
 
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
         if split == 'full':
             data = self.get(0)
@@ -162,7 +162,7 @@ class Planetoid(InMemoryDataset):
             data.test_mask = torch.stack(test_masks, dim=1)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}()'
