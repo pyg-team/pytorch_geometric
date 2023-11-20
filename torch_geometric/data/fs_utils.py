@@ -11,6 +11,26 @@ DEFAULT_CACHE_PATH = '/tmp/pyg_simplecache'
 
 
 def get_fs(path: str) -> fsspec.AbstractFileSystem:
+    """Get filesystem backend given a path URI to the resource.
+
+    Here are some common example paths and dispatch result:
+    * /home/file -> fsspec.implementations.local.LocalFileSystem.
+    * memory://home/file -> fsspec.implementations.memory.MemoryFileSystem.
+    * https://home/file -> fsspec.implementations.http.HTTPFileSystem.
+    * gs://home/file -> gcsfs.GCSFileSystem.
+    * s3://home/file -> s3fs.S3FileSystem.
+
+    See current list backend implementations in fsspec, here:
+    https://github.com/fsspec/filesystem_spec/blob/master/fsspec/registry.py#L62.
+
+    The backend dispatch can be updated with custom backends following:
+    https://filesystem-spec.readthedocs.io/en/latest/developer.html#implementing-a-backend.
+
+    Args:
+        path: URI to filesystem location, e.g., gs://home/me/file, s3://...
+    Returns:
+        fsspec filesystem backend for the URI.
+    """
     return url_to_fs(path)[0]
 
 
