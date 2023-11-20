@@ -172,7 +172,7 @@ class QM9(InMemoryDataset):
 
         self.featurize = featurize
 
-        if featurize == True:
+        if featurize is True:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_featurized.zip'
         else:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
@@ -271,7 +271,7 @@ class QM9(InMemoryDataset):
 
         data_list = []
         for i, mol in enumerate(tqdm(suppl)):
-            if i in skip or mol == None:
+            if i in skip or mol is None:
                 continue
 
             if self.featurize:
