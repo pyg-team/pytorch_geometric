@@ -136,15 +136,22 @@ class QM9(InMemoryDataset):
     .. list-table::
         :widths: 10 10 10 10 10
         :header-rows: 1
-
-        * - #graphs
+        * - #featurize
+          - #graphs
           - #nodes
           - #edges
           - #features
           - #tasks
-        * - 130,831 (129,428)
-          - ~18.0 (~18.3)
-          - ~37.3 (~37.9)
+        * - False
+          - 130,831
+          - ~18.0
+          - ~37.3
+          - 11
+          - 19
+        * - True
+          - 129,428
+          - ~18.3
+          - ~37.9
           - 11
           - 19
     """  # noqa: E501
