@@ -15,6 +15,7 @@ def test_attentional_aggregation():
     gate_nn = MLP([channels, 1], act='relu')
     nn = MLP([channels, channels], act='relu')
     aggr = AttentionalAggregation(gate_nn, nn)
+    aggr.reset_parameters()
     assert str(aggr) == (f'AttentionalAggregation(gate_nn=MLP({channels}, 1), '
                          f'nn=MLP({channels}, {channels}))')
 
