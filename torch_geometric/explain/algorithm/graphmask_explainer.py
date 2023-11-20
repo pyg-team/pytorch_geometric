@@ -526,12 +526,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 if i == 0:
                     edge_weight = sampling_weights
                 else:
-                    if edge_weight.size(-1) != sampling_weights.size(-1):
-                        sampling_weights = F.pad(
-                            input=sampling_weights,
-                            pad=(0, edge_weight.size(-1) -
-                                 sampling_weights.size(-1), 0, 0),
-                            mode='constant', value=0)
                     edge_weight = torch.cat((edge_weight, sampling_weights), 0)
                 if self.log:
                     pbar.update(1)
