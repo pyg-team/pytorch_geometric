@@ -55,7 +55,7 @@ class QM9(InMemoryDataset):
     The original QM9 dataset contains missing features and chemical
     inaccuracies, so it is best used for benchmarking rather than model development.
     For a more chemically complete version of the dataset, set featurize to True.
-    This differs from QM9 as follows: (1) All Hydrogen atoms are included,
+    This differs from the original QM9 dataset as follows: (1) All Hydrogen atoms are included,
     correcting 25,715 chemically incomplete molecular graphs from QM9.
     (2) All atomic and edge features are set to correct values. In QM9, the
     hybridization state and aromaticity of all atoms, as well the aromaticity
