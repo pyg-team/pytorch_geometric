@@ -157,15 +157,16 @@ class QM9(InMemoryDataset):
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None,
                  force_reload: bool = False, featurize: bool = False):
+        
         self.featurize = featurize
-
-        super().__init__(root, transform, pre_transform, pre_filter,
-                         force_reload=force_reload)
 
         if featurize == True:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_featurized.zip'
         else:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
+
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         self.load(self.processed_paths[0])
 
