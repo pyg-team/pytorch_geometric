@@ -4,6 +4,7 @@ from itertools import product
 from typing import Callable, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
 from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
@@ -243,9 +244,14 @@ def get_num_channels(num_channels) -> int:
     return random.randint(min_num_channels, max_num_channels)
 
 
-def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: float,
-                   is_undirected: bool = False,
-                   remove_loops: bool = False) -> torch.Tensor:
+def get_edge_index(
+    num_src_nodes: int,
+    num_dst_nodes: int,
+    avg_degree: float,
+    is_undirected: bool = False,
+    remove_loops: bool = False,
+) -> Tensor:
+
     num_edges = int(num_src_nodes * avg_degree)
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.int64)
     col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.int64)
