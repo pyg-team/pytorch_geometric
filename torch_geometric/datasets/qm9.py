@@ -52,7 +52,7 @@ class QM9(InMemoryDataset):
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
-    The default version of this dataset contains missing features and chemical
+    The original QM9 dataset contains missing features and chemical
     inaccuracies, so it is best used for benchmarking rather than model development.
     For a more chemically complete version of the dataset, set featurize to True.
     This differs from QM9 as follows: (1) All Hydrogen atoms are included,
