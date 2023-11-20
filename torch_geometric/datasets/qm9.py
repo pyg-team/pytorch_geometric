@@ -157,7 +157,7 @@ class QM9(InMemoryDataset):
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None,
                  force_reload: bool = False, featurize: bool = False):
-        
+
         self.featurize = featurize
 
         if featurize == True:
