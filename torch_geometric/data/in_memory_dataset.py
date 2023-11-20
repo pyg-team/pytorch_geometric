@@ -24,6 +24,7 @@ from torch_geometric.data import Batch, Data
 from torch_geometric.data.collate import collate
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import Dataset, IndexType
+from torch_geometric.data.fs_utils import fs_torch_load, fs_torch_save
 from torch_geometric.data.separate import separate
 
 
@@ -121,11 +122,11 @@ class InMemoryDataset(Dataset, ABC):
     def save(cls, data_list: List[BaseData], path: str):
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
-        torch.save((data.to_dict(), slices), path)
+        fs_torch_save((data.to_dict(), slices), path)
 
     def load(self, path: str, data_cls: Type[BaseData] = Data):
         r"""Loads the dataset from the file path :obj:`path`."""
-        data, self.slices = torch.load(path)
+        data, self.slices = fs_torch_load(path)
         if isinstance(data, dict):  # Backward compatibility.
             data = data_cls.from_dict(data)
         self.data = data

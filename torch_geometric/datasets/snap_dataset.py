@@ -2,16 +2,12 @@ import os
 import os.path as osp
 from typing import Any, Callable, List, Optional
 
+import fsspec
 import numpy as np
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_gz,
-    extract_tar,
-)
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data.fs_utils import fs_cp, fs_isdir, fs_ls
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import coalesce
 
@@ -35,7 +31,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
     ]
     for i in range(4, len(files), 5):
         featnames_file = files[i]
-        with open(featnames_file, 'r') as f:
+        with fsspec.open(featnames_file, 'r') as f:
             featnames = f.read().split('\n')[:-1]
             featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             all_featnames += featnames
@@ -63,7 +59,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
             # Reorder `x` according to `featnames` ordering.
             x_all = torch.zeros(x.size(0), len(all_featnames))
-            with open(featnames_file, 'r') as f:
+            with fsspec.open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
                 featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             indices = [all_featnames[featname] for featname in featnames]
@@ -79,7 +75,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
         circles = []
         circles_batch = []
-        with open(circles_file, 'r') as f:
+        with fsspec.open(circles_file, 'r') as f:
             for i, circle in enumerate(f.read().split('\n')[:-1]):
                 circle = [idx_assoc[c] for c in circle.split()[1:]]
                 circles += circle
@@ -219,7 +215,7 @@ class SNAPDataset(InMemoryDataset):
         return 'data.pt'
 
     def _download(self):
-        if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
+        if fs_isdir(self.raw_dir) and len(fs_ls(self.raw_dir)) > 0:
             return
 
         makedirs(self.raw_dir)
@@ -227,20 +223,15 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self):
         for name in self.available_datasets[self.name]:
-            path = download_url(f'{self.url}/{name}', self.raw_dir)
-            if name.endswith('.tar.gz'):
-                extract_tar(path, self.raw_dir)
-            elif name.endswith('.gz'):
-                extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            fs_cp(f'{self.url}/{name}', self.raw_dir, extract=True)
 
     def process(self):
         raw_dir = self.raw_dir
-        filenames = os.listdir(self.raw_dir)
-        if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
+        filenames = fs_ls(self.raw_dir)
+        if len(filenames) == 1 and fs_isdir(osp.join(raw_dir, filenames[0])):
             raw_dir = osp.join(raw_dir, filenames[0])
 
-        raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
+        raw_files = sorted([osp.join(raw_dir, f) for f in fs_ls(raw_dir)])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

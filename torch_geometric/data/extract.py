@@ -4,6 +4,7 @@ import os.path as osp
 import sys
 import tarfile
 import zipfile
+from typing import Any, Optional
 
 
 def maybe_log(path, log=True):
@@ -11,7 +12,8 @@ def maybe_log(path, log=True):
         print(f'Extracting {path}', file=sys.stderr)
 
 
-def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True):
+def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True,
+                fileobj: Optional[Any] = None):
     r"""Extracts a tar archive to a specific folder.
 
     Args:
@@ -22,7 +24,7 @@ def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True):
             console. (default: :obj:`True`)
     """
     maybe_log(path, log)
-    with tarfile.open(path, mode) as f:
+    with tarfile.open(path, mode, fileobj=fileobj) as f:
         f.extractall(folder)
 
 
