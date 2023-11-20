@@ -70,5 +70,6 @@ class DeepSetsAggregation(Aggregation):
         return x
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
-                f'global_nn={self.global_nn})')
+        return (f'{self.__class__.__name__}('
+                f'local_nn={self.local_mlp or self.local_nn}, '
+                f'global_nn={self.global_mlp or self.global_nn})')
