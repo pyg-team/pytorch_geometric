@@ -28,6 +28,7 @@ def get_fs(path: str) -> fsspec.AbstractFileSystem:
 
     Args:
         path: URI to filesystem location, e.g., gs://home/me/file, s3://...
+
     Returns:
         fsspec filesystem backend for the URI.
     """

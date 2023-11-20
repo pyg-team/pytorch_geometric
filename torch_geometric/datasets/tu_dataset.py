@@ -197,7 +197,8 @@ class TUDataset(InMemoryDataset):
         folder = osp.join(self.root, self.name)
         zip_url = f'{url}/{self.name}.zip'
         fs_cp(zip_url, self.raw_dir, extract=True)
-        fs_mv(osp.join(self.raw_dir, self.name, '*'), self.raw_dir, recursive=True)
+        fs_mv(osp.join(self.raw_dir, self.name, '*'), self.raw_dir,
+              recursive=True)
         fs_rm(osp.join(self.raw_dir, self.name))
 
     def process(self):
