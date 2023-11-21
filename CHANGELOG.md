@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added implemenation of `Batch.{from_batch_list,from_batch_index,add_graph_attr,set_edge_attr,set_edges}` ([#8414](https://github.com/pyg-team/pytorch_geometric/pull/8414))
+
 ### Changed
 
 ### Deprecated
@@ -58,6 +60,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Convert `Batch.index_select` to a full slicing operation returning a new batch instead of a list of `Data` ([#8414](https://github.com/pyg-team/pytorch_geometric/pull/8414))
 - Use `torch.load(weights_only=True)` by default ([#9618](https://github.com/pyg-team/pytorch_geometric/pull/9618))
 - Adapt `cugraph` examples to its new API ([#9541](https://github.com/pyg-team/pytorch_geometric/pull/9541))
 - Allow optional but untyped tensors in `MessagePassing` ([#9494](https://github.com/pyg-team/pytorch_geometric/pull/9494))
