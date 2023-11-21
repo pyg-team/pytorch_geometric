@@ -107,14 +107,11 @@ class InMemoryDataset(Dataset):
             self._data_list = self.len() * [None]
         elif self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
+        self._data._num_graphs = self.len()
 
-        data = separate(
-            cls=self._data.__class__,
-            batch=self._data,
-            idx=idx,
-            slice_dict=self.slices,
-            decrement=False,
-        )
+        data = separate(cls=self._data.__class__, batch=self._data,
+                        idx=torch.tensor([idx]).long(), slice_dict=self.slices,
+                        decrement=False, return_batch=False)
 
         self._data_list[idx] = copy.copy(data)
 
@@ -158,6 +155,7 @@ class InMemoryDataset(Dataset):
             increment=False,
             add_batch=False,
         )
+        data._num_graphs = len(data_list)
 
         return data, slices
 
