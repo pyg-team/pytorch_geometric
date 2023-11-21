@@ -63,24 +63,27 @@ def test_batch_basic():
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
     assert batch.ptr.tolist() == [0, 3, 5, 9]
 
-    assert str(batch[0]) == ("Data(x=[3], edge_index=[2, 4], y=[1], "
-                             "string='1', array=[2], num_nodes=3)")
-    assert str(batch[1]) == ("Data(x=[2], edge_index=[2, 2], y=[1], "
-                             "string='2', array=[3], num_nodes=2)")
-    assert str(batch[2]) == ("Data(x=[4], edge_index=[2, 6], y=[1], "
-                             "string='3', array=[4], num_nodes=4)")
+    graphs = batch[0], batch[1], batch[2]
+    assert all([isinstance(e, Data) for e in graphs])
+    assert [e.x.shape[0] for e in graphs] == [3, 2, 4]
+    assert [e.y.shape[0] for e in graphs] == [1, 1, 1]
+    assert [list(e.edge_index.shape) for e in graphs] == [[2, 4], [2, 2],
+                                                          [2, 6]]
+    assert [e.string for e in graphs] == ["1", "2", "3"]
+    assert [e.num_nodes for e in graphs] == [3, 2, 4]
 
-    assert len(batch.index_select([1, 0])) == 2
-    assert len(batch.index_select(torch.tensor([1, 0]))) == 2
-    assert len(batch.index_select(torch.tensor([True, False]))) == 1
-    assert len(batch.index_select(np.array([1, 0], dtype=np.int64))) == 2
-    assert len(batch.index_select(np.array([True, False]))) == 1
-    assert len(batch[:2]) == 2
+    assert batch.index_select([1, 0]).num_graphs == 2
+    assert batch.index_select(torch.tensor([1, 0])).num_graphs == 2
+    assert batch.index_select(torch.tensor([True, False,
+                                            False])).num_graphs == 1
+    assert batch.index_select(np.array([1, 0], dtype=np.int64)).num_graphs == 2
+    assert batch.index_select(np.array([True, False, False])).num_graphs == 1
+    assert batch[:2].num_graphs == 2
 
     data_list = batch.to_data_list()
     assert len(data_list) == 3
 
-    assert len(data_list[0]) == 6
+    assert set(data_list[0].keys()) == set(data1.keys())
     assert data_list[0].x.tolist() == [1, 2, 3]
     assert data_list[0].y.tolist() == [1]
     assert data_list[0].edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
@@ -111,21 +114,24 @@ def test_batch_basic():
 def test_index():
     index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
     index2 = Index([0, 1, 1, 2, 2, 3], dim_size=4, is_sorted=True)
+    index3 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
 
     data1 = Data(index=index1, num_nodes=3)
     data2 = Data(index=index2, num_nodes=4)
+    data3 = Data(index=index1, num_nodes=3)
 
-    batch = Batch.from_data_list([data1, data2])
+    batch = Batch.from_data_list([data1, data2, data3])
 
-    assert len(batch) == 2
-    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1]))
-    assert batch.ptr.equal(torch.tensor([0, 3, 7]))
+    assert len(batch) == 3
+    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1, 2, 2, 2]))
+    assert batch.ptr.equal(torch.tensor([0, 3, 7, 10]))
     assert isinstance(batch.index, Index)
-    assert batch.index.equal(torch.tensor([0, 1, 1, 2, 3, 4, 4, 5, 5, 6]))
-    assert batch.index.dim_size == 7
+    assert batch.index.equal(
+        torch.tensor([0, 1, 1, 2, 3, 4, 4, 5, 5, 6, 7, 8, 8, 9]))
+    assert batch.index.dim_size == 10
     assert batch.index.is_sorted
 
-    for i, index in enumerate([index1, index2]):
+    for i, index in enumerate([index1, index2, index3]):
         data = batch[i]
         assert isinstance(data.index, Index)
         assert data.index.equal(index)
@@ -149,18 +155,16 @@ def test_edge_index():
     data1 = Data(edge_index=edge_index1)
     data2 = Data(edge_index=edge_index2)
 
-    batch = Batch.from_data_list([data1, data2])
+    batch = Batch.from_data_list([data1, data2, data1.clone()])
 
-    assert len(batch) == 2
-    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1]))
-    assert batch.ptr.equal(torch.tensor([0, 3, 7]))
+    assert len(batch) == 3
+    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1, 2, 2, 2]))
+    assert batch.ptr.equal(torch.tensor([0, 3, 7, 10]))
     assert isinstance(batch.edge_index, EdgeIndex)
     assert batch.edge_index.equal(
-        torch.tensor([
-            [0, 1, 1, 2, 4, 3, 5, 4, 6, 5],
-            [1, 0, 2, 1, 3, 4, 4, 5, 5, 6],
-        ]))
-    assert batch.edge_index.sparse_size() == (7, 7)
+        torch.tensor([[0, 1, 1, 2, 4, 3, 5, 4, 6, 5, 7, 8, 8, 9],
+                      [1, 0, 2, 1, 3, 4, 4, 5, 5, 6, 8, 7, 9, 8]]))
+    assert batch.edge_index.sparse_size() == (10, 10)
     assert batch.edge_index.sort_order is None
     assert not batch.edge_index.is_undirected
 
