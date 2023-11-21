@@ -133,27 +133,13 @@ class QM9(InMemoryDataset):
 
     **STATS:**
 
-    .. list-table::
-        :widths: 10 10 10 10 10 10
-        :header-rows: 1
-        * - #featurize
-          - #graphs
-          - #nodes
-          - #edges
-          - #features
-          - #tasks
-        * - False
-          - 130,831
-          - ~18.0
-          - ~37.3
-          - 11
-          - 19
-        * - True
-          - 129,428
-          - ~18.3
-          - ~37.9
-          - 11
-          - 19
+    +--------------+---------+--------+--------+-----------+--------+
+    | featurize    | #graphs | #nodes | #edges | #features | #tasks |
+    +==============+=========+========+========+===========+========+
+    | :obj:`False` | 130,831 | ~18.0  | ~37.3  | 11        | 19     |
+    +--------------+---------+--------+--------+-----------+--------+
+    | :obj:`True`  | 129,428 | ~18.3  | ~37.9  | 11        | 19     |
+    +--------------+---------+--------+--------+-----------+--------+
     """  # noqa: E501
 
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
@@ -173,7 +159,7 @@ class QM9(InMemoryDataset):
         self.featurize = featurize
 
         if featurize is True:
-            self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_featurized.zip'
+            self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_ft.zip'
         else:
             self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
 
