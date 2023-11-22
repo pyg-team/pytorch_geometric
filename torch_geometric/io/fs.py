@@ -1,5 +1,6 @@
 import io
 import os.path as osp
+import sys
 from typing import Any, Dict, List, Optional, Union
 
 import fsspec
@@ -70,16 +71,19 @@ def cp(
     extract: bool = False,
     kwargs1: Optional[dict] = None,
     kwargs2: Optional[dict] = None,
+    log: bool = True,
 ):
     kwargs1 = kwargs1 or {}
     kwargs2 = kwargs2 or {}
 
     # Cache result if the protocol is not local:
+    cache_dir: Optional[str] = None
     if get_fs(path1).protocol not in {'file', 'memory'}:
-        kwargs1.setdefault(
-            'simplecache',
-            dict(cache_storage=torch_geometric.get_home_dir()),
-        )
+        if log and 'pytest' not in sys.modules:
+            print(f'Downloading {path1}', file=sys.stderr)
+
+        cache_dir = osp.join(torch_geometric.get_home_dir(), 'simplecache')
+        kwargs1.setdefault('simplecache', dict(cache_storage=cache_dir))
         path1 = f'simplecache::{path1}'
 
     # Extract = Unarchive + Decompress if applicable.
@@ -112,6 +116,9 @@ def cp(
 
         with fsspec.open(path1, **kwargs1) as f_from:
             _copy_file_handle(f_from, path2, **kwargs2)
+
+    if cache_dir is not None:
+        rm(cache_dir)
 
 
 def rm(path: str, recursive: bool = True):
