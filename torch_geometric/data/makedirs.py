@@ -1,5 +1,4 @@
-import os
-import os.path as osp
+from torch_geometric.io import fs
 
 from torch_geometric.deprecation import deprecated
 
@@ -16,4 +15,4 @@ def makedirs(path: str):
     Args:
         path (str): The path to create.
     """
-    os.makedirs(osp.expanduser(osp.normpath(path)), exist_ok=True)
+    fs.makedirs(path, exist_ok=True)
