@@ -13,18 +13,18 @@ data = dataset[0]
 
 kwargs = {'batch_size': 1024, 'num_workers': 10, 'persistent_workers': True}
 
-# Mimic ShadowGNN by setting the argument subgraph_type='induced'. 
-# This along with the num_neighbors argument will get the 
+# Mimic ShadowGNN by setting the argument subgraph_type='induced'.
+# This along with the num_neighbors argument will get the
 # complete induced subgraph
-train_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                                 input_nodes=data.train_mask, 
-                                 subgraph_type='induced', **kwargs)
-val_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                               input_nodes=data.val_mask, 
-                               subgraph_type='induced', **kwargs)
-test_loader = NeighborLoader(data, num_neighbors=[5]*2,
-                                input_nodes=data.test_mask, 
-                                subgraph_type='induced',  **kwargs)
+train_loader = NeighborLoader(data, num_neighbors=[5] * 2,
+                              input_nodes=data.train_mask,
+                              subgraph_type='induced', **kwargs)
+val_loader = NeighborLoader(data, num_neighbors=[5] * 2,
+                            input_nodes=data.val_mask, subgraph_type='induced',
+                            **kwargs)
+test_loader = NeighborLoader(data, num_neighbors=[5] * 2,
+                             input_nodes=data.test_mask,
+                             subgraph_type='induced', **kwargs)
 
 
 class GNN(torch.nn.Module):
@@ -33,7 +33,7 @@ class GNN(torch.nn.Module):
         self.conv1 = SAGEConv(in_channels, hidden_channels)
         self.conv2 = SAGEConv(hidden_channels, hidden_channels)
         self.conv3 = SAGEConv(hidden_channels, hidden_channels)
-        self.lin = torch.nn.Linear( hidden_channels, out_channels)
+        self.lin = torch.nn.Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, batch, root_n_id):
         x = self.conv1(x, edge_index).relu()
@@ -44,7 +44,7 @@ class GNN(torch.nn.Module):
         x = F.dropout(x, p=0.3, training=self.training)
 
         # We merge both central node embeddings and subgraph embeddings:
-        
+
         # x = torch.cat([x[root_n_id], global_mean_pool(x, batch)], dim=-1)
 
         x = self.lin(x)
@@ -56,6 +56,8 @@ model = GNN(dataset.num_features, 256, dataset.num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 from tqdm import tqdm
+
+
 def train():
     model.train()
     total_loss = total_examples = 0
@@ -67,7 +69,7 @@ def train():
         loss = F.cross_entropy(out, data.y)
         loss.backward()
         optimizer.step()
-        total_loss += float(loss) 
+        total_loss += float(loss)
         total_examples += 1
     return total_loss / total_examples
 
@@ -79,7 +81,8 @@ def test(loader, desc='Eval'):
     for data in tqdm(loader, desc=desc):
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch, data.input_id)
-        total_correct += int((out.argmax(dim=-1) == data.y).sum())/len(data.y)
+        total_correct += int(
+            (out.argmax(dim=-1) == data.y).sum()) / len(data.y)
         total_examples += 1
     return total_correct / total_examples
 
