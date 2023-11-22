@@ -69,10 +69,6 @@ def dict_list_to_tb(dict_list, writer):
         dict_to_tb(dict, writer, dict['epoch'])
 
 
-def makedirs(dir):
-    os.makedirs(dir, exist_ok=True)
-
-
 def makedirs_rm_exist(dir):
     """Make a directory, remove any existing data.
 
