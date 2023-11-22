@@ -9,7 +9,6 @@ from dataclasses import asdict
 from typing import Any
 
 import torch_geometric.graphgym.register as register
-from torch_geometric.data.makedirs import makedirs
 
 try:  # Define global config object
     from yacs.config import CfgNode as CN
@@ -483,7 +482,7 @@ def dump_cfg(cfg):
     Args:
         cfg (CfgNode): Configuration node
     """
-    makedirs(cfg.out_dir)
+    os.makedirs(cfg.out_dir, exist_ok=True)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)

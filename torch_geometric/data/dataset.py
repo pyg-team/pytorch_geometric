@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -12,7 +13,6 @@ import torch.utils.data
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -209,7 +209,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -240,7 +240,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        makedirs(self.processed_dir)
+        os.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
