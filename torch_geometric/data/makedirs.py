@@ -1,6 +1,5 @@
-from torch_geometric.io import fs
-
 from torch_geometric.deprecation import deprecated
+from torch_geometric.io import fs
 
 
 @deprecated("use 'os.makedirs(path, exist_ok=True)' instead")
