@@ -89,4 +89,4 @@ for epoch in range(1, 51):
     val_acc = test(val_loader, "Val")
     test_acc = test(test_loader, "Test")
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, ',
-          f'Val: {val_acc:.4f} Test: {test_acc:.4f}')
+          f'Val accuracy: {val_acc:.4f} Test accuracy: {test_acc:.4f}')
