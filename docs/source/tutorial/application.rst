@@ -7,3 +7,4 @@ Use-Cases & Applications
     neighbor_loader
     explain
     shallow_node_embeddings
+    application_overview
