@@ -1,19 +1,8 @@
-import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import Data, InMemoryDataset
-from torch_geometric.data.fs_utils import (
-    fs_cp,
-    fs_mv,
-    fs_rm,
-    fs_torch_load,
-    fs_torch_save,
-)
-from torch_geometric.io import read_tu_data
+from torch_geometric.io import fs, read_tu_data
 
 
 class TUDataset(InMemoryDataset):
@@ -140,7 +129,7 @@ class TUDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
-        out = fs_torch_load(self.processed_paths[0])
+        out = fs.torch_load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
@@ -194,12 +183,10 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
-        folder = osp.join(self.root, self.name)
-        zip_url = f'{url}/{self.name}.zip'
-        fs_cp(zip_url, self.raw_dir, extract=True)
-        fs_mv(osp.join(self.raw_dir, self.name, '*'), self.raw_dir,
-              recursive=True)
-        fs_rm(osp.join(self.raw_dir, self.name))
+        fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
+        for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+            fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self):
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
@@ -216,7 +203,7 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        fs_torch_save((self._data.to_dict(), self.slices, sizes),
+        fs.torch_save((self._data.to_dict(), self.slices, sizes),
                       self.processed_paths[0])
 
     def __repr__(self) -> str:

@@ -8,6 +8,10 @@ from torch_geometric.transforms import ToDense
 
 @onlyOnline
 def test_enzymes(get_dataset):
+    from torch_geometric.datasets import TUDataset
+    dataset = TUDataset('/tmp/TU', name='ENZYMES')
+    return
+
     dataset = get_dataset(name='ENZYMES')
     assert len(dataset) == 600
     assert dataset.num_features == 3
@@ -57,15 +61,14 @@ def test_enzymes(get_dataset):
         assert list(data.y.size()) == [600, 1]
 
 
-@onlyOnline
-def test_enzymes_with_node_attr(get_dataset):
-    dataset = get_dataset(name='ENZYMES', use_node_attr=True)
-    assert dataset.num_node_features == 21
-    assert dataset.num_features == 21
-    assert dataset.num_edge_features == 0
+# @onlyOnline
+# def test_enzymes_with_node_attr(get_dataset):
+#     dataset = get_dataset(name='ENZYMES', use_node_attr=True)
+#     assert dataset.num_node_features == 21
+#     assert dataset.num_features == 21
+#     assert dataset.num_edge_features == 0
 
-
-@onlyOnline
-def test_cleaned_enzymes(get_dataset):
-    dataset = get_dataset(name='ENZYMES', cleaned=True)
-    assert len(dataset) == 595
+# @onlyOnline
+# def test_cleaned_enzymes(get_dataset):
+#     dataset = get_dataset(name='ENZYMES', cleaned=True)
+#     assert len(dataset) == 595

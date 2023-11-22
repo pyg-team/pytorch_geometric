@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Any, Callable, List, Optional
 
@@ -7,8 +6,8 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset
-from torch_geometric.data.fs_utils import fs_cp, fs_isdir, fs_ls
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 from torch_geometric.utils import coalesce
 
 
@@ -215,7 +214,7 @@ class SNAPDataset(InMemoryDataset):
         return 'data.pt'
 
     def _download(self):
-        if fs_isdir(self.raw_dir) and len(fs_ls(self.raw_dir)) > 0:
+        if fs.isdir(self.raw_dir) and len(fs.ls(self.raw_dir)) > 0:
             return
 
         makedirs(self.raw_dir)
@@ -223,15 +222,15 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self):
         for name in self.available_datasets[self.name]:
-            fs_cp(f'{self.url}/{name}', self.raw_dir, extract=True)
+            fs.cp(f'{self.url}/{name}', self.raw_dir, extract=True)
 
     def process(self):
         raw_dir = self.raw_dir
-        filenames = fs_ls(self.raw_dir)
-        if len(filenames) == 1 and fs_isdir(osp.join(raw_dir, filenames[0])):
+        filenames = fs.ls(self.raw_dir)
+        if len(filenames) == 1 and fs.isdir(osp.join(raw_dir, filenames[0])):
             raw_dir = osp.join(raw_dir, filenames[0])
 
-        raw_files = sorted([osp.join(raw_dir, f) for f in fs_ls(raw_dir)])
+        raw_files = sorted([osp.join(raw_dir, f) for f in fs.ls(raw_dir)])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

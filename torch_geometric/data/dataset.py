@@ -12,8 +12,8 @@ import torch.utils.data
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.fs_utils import fs_normpath, fs_torch_save
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -92,7 +92,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(fs_normpath(root))
+            root = osp.expanduser(fs.normpath(root))
 
         self.root = root
         self.transform = transform
@@ -245,9 +245,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        fs_torch_save(_repr(self.pre_transform), path)
+        fs.torch_save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        fs_torch_save(_repr(self.pre_filter), path)
+        fs.torch_save(_repr(self.pre_filter), path)
 
         if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)

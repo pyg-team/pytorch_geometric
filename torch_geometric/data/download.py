@@ -6,8 +6,8 @@ from typing import Optional
 
 import fsspec
 
-from torch_geometric.data.fs_utils import fs_exists
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 
 def download_url(
@@ -33,7 +33,7 @@ def download_url(
 
     path = osp.join(folder, filename)
 
-    if fs_exists(path):  # pragma: no cover
+    if fs.exists(path):  # pragma: no cover
         if log and 'pytest' not in sys.modules:
             print(f'Using existing file {filename}', file=sys.stderr)
         return path
