@@ -185,6 +185,7 @@ class TUDataset(InMemoryDataset):
         url = self.cleaned_url if self.cleaned else self.url
         fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
         for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+            print(self.raw_dir, filename)
             fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
         fs.rm(osp.join(self.raw_dir, self.name))
 
