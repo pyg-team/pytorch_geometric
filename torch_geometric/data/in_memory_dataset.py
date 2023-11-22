@@ -15,6 +15,7 @@ from typing import (
     Union,
 )
 
+import torch
 from torch import Tensor
 from tqdm import tqdm
 
