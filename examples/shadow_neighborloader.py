@@ -2,11 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from tqdm import tqdm
 
 from torch_geometric.datasets import Flickr
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
-from tqdm import tqdm
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
 dataset = Flickr(path)
@@ -55,7 +55,6 @@ class GNN(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GNN(dataset.num_features, 256, dataset.num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-
 
 
 def train():
