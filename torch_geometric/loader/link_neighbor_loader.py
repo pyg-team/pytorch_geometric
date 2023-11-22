@@ -160,7 +160,7 @@ class LinkNeighborLoader(LinkLoader):
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph.
+            timestamps for either the nodes or edges in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.
