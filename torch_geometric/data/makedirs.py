@@ -1,6 +1,4 @@
-import errno
-import os
-import os.path as osp
+from torch_geometric.io import fs
 
 
 def makedirs(path: str):
@@ -9,8 +7,4 @@ def makedirs(path: str):
     Args:
         path (str): The path to create.
     """
-    try:
-        os.makedirs(osp.expanduser(osp.normpath(path)))
-    except OSError as e:
-        if e.errno != errno.EEXIST and osp.isdir(path):
-            raise e
+    fs.makedirs(path, exist_ok=True)
