@@ -22,6 +22,7 @@ requirements:
     - pyparsing
     - numpy
     - scipy
+    - aiohttp
     - requests
     - scikit-learn
 
