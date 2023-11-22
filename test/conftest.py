@@ -46,7 +46,7 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 
 @pytest.fixture(scope='session')
 def get_dataset() -> Callable:
-    # root = 'memory://pyg_test_datasets'
+    # TODO Support root = 'memory://pyg_test_datasets'
     root = osp.join('/', 'tmp', 'pyg_test_datasets')
     yield functools.partial(load_dataset, root)
     if osp.exists(root):
