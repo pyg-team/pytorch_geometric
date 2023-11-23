@@ -4,7 +4,7 @@ import socket
 import pytest
 import torch
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.dist_neighbor_sampler import (
@@ -15,9 +15,10 @@ from torch_geometric.distributed.rpc import init_rpc
 from torch_geometric.sampler import EdgeSamplerInput, NeighborSampler
 from torch_geometric.sampler.neighbor_sampler import edge_sample
 from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.typing import WITH_EDGE_TIME_NEIGHBOR_SAMPLE
 
 
-def create_data(rank, world_size, temporal=False):
+def create_data(rank, world_size, time_attr: str = 'time'):
     if rank == 0:  # Partition 0:
         node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
         edge_index = torch.tensor([  # Sorted by destination.
@@ -32,9 +33,12 @@ def create_data(rank, world_size, temporal=False):
         ])
 
     feature_store = LocalFeatureStore.from_data(node_id)
-    graph_store = LocalGraphStore.from_data(edge_id=None,
-                                            edge_index=edge_index,
-                                            num_nodes=10, is_sorted=True)
+    graph_store = LocalGraphStore.from_data(
+        edge_id=None,
+        edge_index=edge_index,
+        num_nodes=10,
+        is_sorted=True,
+    )
 
     graph_store.node_pb = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
     graph_store.meta.update({'num_parts': 2})
@@ -47,11 +51,19 @@ def create_data(rank, world_size, temporal=False):
     ])
     data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
-    if temporal:  # Create time data:
-        data_time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
-        feature_store.put_tensor(data_time, group_name=None, attr_name="time")
+    if time_attr == 'time':  # Create time data:
+        data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
+        feature_store.put_tensor(data.time, group_name=None, attr_name='time')
 
-        data.time = data_time
+    else:  # time_attr = 'edge_time'
+        data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
+
+        if rank == 0:
+            edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 11])
+        if rank == 1:
+            edge_time = torch.tensor([4, 7, 7, 7, 7, 7, 11])
+        feature_store.put_tensor(edge_time, group_name=None,
+                                 attr_name=time_attr)
 
     return (feature_store, graph_store), data
 
@@ -154,8 +166,9 @@ def dist_link_neighbor_sampler_temporal(
     master_port: int,
     seed_time: torch.tensor = None,
     temporal_strategy: str = 'uniform',
+    time_attr: str = 'time',
 ):
-    dist_data, data = create_data(rank, world_size, temporal=True)
+    dist_data, data = create_data(rank, world_size, time_attr)
 
     current_ctx = DistContext(
         rank=rank,
@@ -182,7 +195,7 @@ def dist_link_neighbor_sampler_temporal(
         shuffle=False,
         disjoint=True,
         temporal_strategy=temporal_strategy,
-        time_attr='time',
+        time_attr=time_attr,
     )
 
     init_rpc(
@@ -211,7 +224,6 @@ def dist_link_neighbor_sampler_temporal(
         row=input_row,
         col=input_col,
         time=seed_time,
-        input_type=None,
     )
 
     # Evaluate distributed edge sample function
@@ -221,10 +233,13 @@ def dist_link_neighbor_sampler_temporal(
 
     torch.distributed.barrier()
 
-    sampler = NeighborSampler(data=data, num_neighbors=num_neighbors,
-                              disjoint=True,
-                              temporal_strategy=temporal_strategy,
-                              time_attr='time')
+    sampler = NeighborSampler(
+        data=data,
+        num_neighbors=num_neighbors,
+        disjoint=True,
+        temporal_strategy=temporal_strategy,
+        time_attr=time_attr,
+    )
 
     # Evaluate edge sample function
     out = edge_sample(
@@ -290,12 +305,49 @@ def test_dist_link_neighbor_sampler_temporal(seed_time, temporal_strategy):
     world_size = 2
     w0 = mp_context.Process(
         target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 0, port, seed_time, temporal_strategy),
+        args=(world_size, 0, port, seed_time, temporal_strategy, 'time'),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 1, port, seed_time, temporal_strategy),
+        args=(world_size, 1, port, seed_time, temporal_strategy, 'time'),
+    )
+
+    w0.start()
+    w1.start()
+    w0.join()
+    w1.join()
+
+
+@onlyLinux
+@withPackage('pyg_lib')
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="Edge-level temporal sampling requires a more recent 'pyg-lib'"
+    " installation")
+@pytest.mark.parametrize(
+    'seed_time',
+    [torch.tensor([1, 1]), torch.tensor([3, 7])])
+@pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
+@pytest.mark.skip(
+    reason="Distributed edge based temporal sampling not yet implemented.")
+def test_dist_neighbor_sampler_edge_level_temporal(seed_time,
+                                                   temporal_strategy):
+    mp_context = torch.multiprocessing.get_context('spawn')
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(('127.0.0.1', 0))
+    port = s.getsockname()[1]
+    s.close()
+
+    world_size = 2
+    w0 = mp_context.Process(
+        target=dist_link_neighbor_sampler_temporal,
+        args=(world_size, 0, port, seed_time, temporal_strategy, 'edge_time'),
+    )
+
+    w1 = mp_context.Process(
+        target=dist_link_neighbor_sampler_temporal,
+        args=(world_size, 1, port, seed_time, temporal_strategy, 'edge_time'),
     )
 
     w0.start()

@@ -164,6 +164,8 @@ class NeighborSampler(BaseSampler):
         else:  # self.data_type == DataType.remote
             feature_store, graph_store = data
 
+            self.edge_time = None  # TODO (kgajdamo): temporary solution, implementation is be in the other PR
+
             # Obtain graph metadata:
             attrs = [attr for attr in feature_store.get_all_tensor_attrs()]
 
