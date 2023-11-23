@@ -50,6 +50,7 @@ nbsphinx_thumbnails = {
     'tutorial/create_dataset': '_static/thumbnails/create_dataset.png',
     'tutorial/load_csv': '_static/thumbnails/load_csv.png',
     'tutorial/explain': '_static/thumbnails/explain.png',
+    'tutorial/point_cloud': '_static/thumbnails/point_cloud.png',
 }
 
 

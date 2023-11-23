@@ -5,4 +5,4 @@ Use-Cases & Applications
     :name: rst-gallery
 
     explain
-    point_cloud_classification
+    point_cloud
