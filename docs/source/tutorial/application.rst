@@ -5,6 +5,6 @@ Use-Cases & Applications
     :name: rst-gallery
 
     neighbor_loader
-    explain
     point_cloud
+    explain
     shallow_node_embeddings

@@ -45,12 +45,6 @@ intersphinx_mapping = {
 }
 
 nbsphinx_thumbnails = {
-    'tutorial/create_gnn': '_static/thumbnails/create_gnn.png',
-    'tutorial/heterogeneous': '_static/thumbnails/heterogeneous.png',
-    'tutorial/create_dataset': '_static/thumbnails/create_dataset.png',
-    'tutorial/load_csv': '_static/thumbnails/load_csv.png',
-    'tutorial/explain': '_static/thumbnails/explain.png',
-    'tutorial/point_cloud': '_static/thumbnails/point_cloud.png',
     'tutorial/create_gnn':
     '_static/thumbnails/create_gnn.png',
     'tutorial/heterogeneous':
@@ -61,6 +55,8 @@ nbsphinx_thumbnails = {
     '_static/thumbnails/load_csv.png',
     'tutorial/neighbor_loader':
     '_static/thumbnails/neighbor_loader.png',
+    'tutorial/point_cloud':
+    '_static/thumbnails/point_cloud.png',
     'tutorial/explain':
     '_static/thumbnails/explain.png',
     'tutorial/shallow_node_embeddings':
