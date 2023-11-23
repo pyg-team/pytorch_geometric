@@ -1,5 +1,3 @@
-from copy import copy
-
 import torch
 
 from torch_geometric.data import Data
@@ -17,7 +15,7 @@ def test_fixed_points():
         num_nodes=100,
     )
 
-    out = FixedPoints(50, replace=True)(copy(data))
+    out = FixedPoints(50, replace=True)(data)
     assert len(out) == 5
     assert out.pos.size() == (50, 3)
     assert out.x.size() == (50, 16)
@@ -25,7 +23,7 @@ def test_fixed_points():
     assert out.edge_attr.size() == (100, 3)
     assert out.num_nodes == 50
 
-    out = FixedPoints(200, replace=True)(copy(data))
+    out = FixedPoints(200, replace=True)(data)
     assert len(out) == 5
     assert out.pos.size() == (200, 3)
     assert out.x.size() == (200, 16)
@@ -33,7 +31,7 @@ def test_fixed_points():
     assert out.edge_attr.size() == (100, 3)
     assert out.num_nodes == 200
 
-    out = FixedPoints(50, replace=False, allow_duplicates=False)(copy(data))
+    out = FixedPoints(50, replace=False, allow_duplicates=False)(data)
     assert len(out) == 5
     assert out.pos.size() == (50, 3)
     assert out.x.size() == (50, 16)
@@ -41,7 +39,7 @@ def test_fixed_points():
     assert out.edge_attr.size() == (100, 3)
     assert out.num_nodes == 50
 
-    out = FixedPoints(200, replace=False, allow_duplicates=False)(copy(data))
+    out = FixedPoints(200, replace=False, allow_duplicates=False)(data)
     assert len(out) == 5
     assert out.pos.size() == (100, 3)
     assert out.x.size() == (100, 16)
@@ -49,7 +47,7 @@ def test_fixed_points():
     assert out.edge_attr.size() == (100, 3)
     assert out.num_nodes == 100
 
-    out = FixedPoints(50, replace=False, allow_duplicates=True)(copy(data))
+    out = FixedPoints(50, replace=False, allow_duplicates=True)(data)
     assert len(out) == 5
     assert out.pos.size() == (50, 3)
     assert out.x.size() == (50, 16)
@@ -57,7 +55,7 @@ def test_fixed_points():
     assert out.edge_attr.size() == (100, 3)
     assert out.num_nodes == 50
 
-    out = FixedPoints(200, replace=False, allow_duplicates=True)(copy(data))
+    out = FixedPoints(200, replace=False, allow_duplicates=True)(data)
     assert len(out) == 5
     assert out.pos.size() == (200, 3)
     assert out.x.size() == (200, 16)

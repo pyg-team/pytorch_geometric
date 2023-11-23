@@ -111,7 +111,8 @@ class ExplanationMixin:
         method.
 
         Args:
-            threshold_config (ThresholdConfig): The threshold configuration.
+            *args: Arguments passed to :class:`ThresholdConfig`.
+            **kwargs: Keyword arguments passed to :class:`ThresholdConfig`.
         """
         threshold_config = ThresholdConfig.cast(*args, **kwargs)
 
@@ -155,7 +156,8 @@ class Explanation(Data, ExplanationMixin):
 
     def get_explanation_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
-        zero attribution are masked out."""
+        zero attribution are masked out.
+        """
         node_mask = self.get('node_mask')
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) > 0
@@ -166,7 +168,8 @@ class Explanation(Data, ExplanationMixin):
 
     def get_complement_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
-        attribution are masked out."""
+        attribution are masked out.
+        """
         node_mask = self.get('node_mask')
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) == 0
@@ -267,7 +270,8 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
     def get_explanation_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
-        zero attribution are masked out."""
+        zero attribution are masked out.
+        """
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) > 0
@@ -281,7 +285,8 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
     def get_complement_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
-        attribution are masked out."""
+        attribution are masked out.
+        """
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) == 0

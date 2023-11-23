@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import SparseTensor, TensorFrame
 from torch_geometric.utils import narrow
 
 
@@ -79,6 +79,12 @@ def _separate(
         for i, dim in enumerate(cat_dims):
             start, end = int(slices[idx][i]), int(slices[idx + 1][i])
             value = value.narrow(dim, start, end - start)
+        return value
+
+    elif isinstance(value, TensorFrame):
+        key = str(key)
+        start, end = int(slices[idx]), int(slices[idx + 1])
+        value = value[start:end]
         return value
 
     elif isinstance(value, Mapping):

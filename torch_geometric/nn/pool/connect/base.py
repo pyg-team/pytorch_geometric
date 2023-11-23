@@ -75,7 +75,8 @@ class Connect(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
-        r"""
+        r"""Forward pass.
+
         Args:
             select_output (SelectOutput): The output of :class:`Select`.
             edge_index (torch.Tensor): The edge indices.

@@ -43,25 +43,22 @@ def linear_attention(q: Tensor, k: Tensor, v: Tensor) -> Tensor:
         \mathbf{\hat{D}}^{-1}(\mathbf{Q}'((\mathbf{K}')^{\top} \mathbf{V}))
 
     """
-    k_contract = k.sum(dim=-2)
-    D_inv = 1.0 / torch.einsum('...Lr,...r->...L', q, k_contract)
-    kv = torch.einsum('...Lr,...Ld->...rd', k, v)
-    qkv = torch.einsum('...Lr,...rd->...Ld', q, kv)
-    out = torch.einsum('...L,...Ld->...Ld', D_inv, qkv)
+    D_inv = 1.0 / (q @ k.sum(dim=-2).unsqueeze(-1))
+    kv = k.transpose(-2, -1) @ v
+    qkv = q @ kv
+    out = torch.einsum('...L,...Ld->...Ld', D_inv.squeeze(-1), qkv)
     return out
 
 
-def generalized_kernel(x: Tensor, mat: Tensor,
-                       kernel: Callable = torch.nn.ReLU(),
-                       epsilon: float = 0.001) -> Tensor:
-    r"""Apply generalized kernelizable attention with
-    kernel functions such as the ReLU.
-    """
-    num_batches, num_heads, *_ = x.shape
-    # Expand projection matrix to number of batches and number of heads
-    projection = mat.expand(num_batches, num_heads, *mat.shape)
-    # "Inner" product x with projection matrix
-    x = torch.einsum('...id,...jd->...ij', x, projection)
+def generalized_kernel(
+        x: Tensor,
+        mat: Tensor,
+        kernel: Callable = torch.nn.ReLU(),
+        epsilon: float = 0.001,
+) -> Tensor:
+    batch_size, num_heads = x.size()[:2]
+    projection = mat.t().expand(batch_size, num_heads, -1, -1)
+    x = x @ projection
     out = kernel(x) + epsilon
     return out
 
@@ -148,7 +145,7 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
 
         Args:
             x (torch.Tensor): Node feature tensor
@@ -178,7 +175,8 @@ class PerformerAttention(torch.nn.Module):
     @torch.no_grad()
     def redraw_projection_matrix(self):
         r"""As described in the paper, periodically redraw
-        examples to improve overall approximation of attention."""
+        examples to improve overall approximation of attention.
+        """
         num_rows = self.fast_attn.num_rows
         num_cols = self.fast_attn.num_cols
         projection_matrix = orthogonal_matrix(num_rows, num_cols)

@@ -19,7 +19,7 @@ from torch_geometric.typing import (
 class FiLMConv(MessagePassing):
     r"""The FiLM graph convolutional operator from the
     `"GNN-FiLM: Graph Neural Networks with Feature-wise Linear Modulation"
-    <https://arxiv.org/abs/1906.12192>`_ paper
+    <https://arxiv.org/abs/1906.12192>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{r \in \mathcal{R}}

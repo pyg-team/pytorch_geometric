@@ -37,8 +37,8 @@ def test_gen_conv(aggr):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj3 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
-        assert torch.allclose(conv(x1, adj3.t()), out1)
-        assert torch.allclose(conv(x1, adj4.t()), out2)
+        assert torch.allclose(conv(x1, adj3.t()), out1, atol=1e-4)
+        assert torch.allclose(conv(x1, adj4.t()), out2, atol=1e-4)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
@@ -53,8 +53,8 @@ def test_gen_conv(aggr):
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj3.t()), out1)
-        assert torch.allclose(jit(x1, adj4.t()), out2)
+        assert torch.allclose(jit(x1, adj3.t()), out1, atol=1e-4)
+        assert torch.allclose(jit(x1, adj4.t()), out2, atol=1e-4)
 
     # Test bipartite message passing:
     adj1 = to_torch_coo_tensor(edge_index, size=(4, 2))
@@ -74,7 +74,7 @@ def test_gen_conv(aggr):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj3 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
         adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 2))
-        assert torch.allclose(conv((x1, x2), adj3.t()), out1)
+        assert torch.allclose(conv((x1, x2), adj3.t()), out1, atol=1e-4)
         assert torch.allclose(conv((x1, x2), adj4.t()), out2)
 
     if is_full_test():
@@ -91,8 +91,8 @@ def test_gen_conv(aggr):
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj3.t()), out1)
-        assert torch.allclose(jit((x1, x2), adj4.t()), out2)
+        assert torch.allclose(jit((x1, x2), adj3.t()), out1, atol=1e-4)
+        assert torch.allclose(jit((x1, x2), adj4.t()), out2, atol=1e-4)
 
     # Test bipartite message passing with unequal feature dimensions:
     conv.reset_parameters()

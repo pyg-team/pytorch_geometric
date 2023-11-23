@@ -58,7 +58,7 @@ def run_rpc_feature_test(
 
     feature.num_partitions = world_size
     feature.partition_idx = rank
-    feature.feature_pb = partition_book
+    feature.node_feat_pb = partition_book
     feature.meta = meta
     feature.local_only = False
     feature.set_rpc_router(rpc_router)

@@ -53,6 +53,8 @@ def supports_lazy_initialization(cls: str) -> bool:
 
 
 def processes_heterogeneous_graphs(cls: str) -> bool:
+    if 'hetero' in cls.lower():
+        return True
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
     return 'edge_index_dict' in str(signature) or 'edge_type' in str(signature)

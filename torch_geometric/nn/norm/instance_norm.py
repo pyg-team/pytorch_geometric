@@ -12,7 +12,7 @@ class InstanceNorm(_InstanceNorm):
     r"""Applies instance normalization over each individual example in a batch
     of node features as described in the `"Instance Normalization: The Missing
     Ingredient for Fast Stylization" <https://arxiv.org/abs/1607.08022>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
@@ -54,7 +54,8 @@ class InstanceNorm(_InstanceNorm):
 
     def forward(self, x: Tensor, batch: OptTensor = None,
                 batch_size: Optional[int] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector

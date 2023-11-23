@@ -13,7 +13,7 @@ from torch_geometric.utils import degree, spmm
 class MFConv(MessagePassing):
     r"""The graph neural network operator from the
     `"Convolutional Networks on Graphs for Learning Molecular Fingerprints"
-    <https://arxiv.org/abs/1509.09292>`_ paper
+    <https://arxiv.org/abs/1509.09292>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}^{(\deg(i))}_1 \mathbf{x}_i +

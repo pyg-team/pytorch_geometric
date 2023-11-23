@@ -1,5 +1,4 @@
 import numbers
-from copy import deepcopy
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import pytest
@@ -329,12 +328,10 @@ def test_pad_repr():
 @pytest.mark.parametrize('num_nodes', [32, 64])
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_auto_edges(data, num_nodes, add_pad_mask):
-    original = data
-    data = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask)
+    out = transform(data)
+    _check_data(data, out, num_nodes, is_mask_available=add_pad_mask)
 
 
 @pytest.mark.parametrize('num_nodes', [32, 64])
@@ -342,12 +339,11 @@ def test_pad_auto_edges(data, num_nodes, add_pad_mask):
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_data_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_data()
-    original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
                     add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, num_edges,
+    out = transform(data)
+    _check_data(data, out, num_nodes, num_edges,
                 is_mask_available=add_pad_mask)
 
 
@@ -356,12 +352,11 @@ def test_pad_data_explicit_edges(num_nodes, num_edges, add_pad_mask):
 @pytest.mark.parametrize('add_pad_mask', [True, False])
 def test_pad_heterodata_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_hetero_data()
-    original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
                     add_pad_mask=add_pad_mask)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, num_edges,
+    out = transform(data)
+    _check_data(data, out, num_nodes, num_edges,
                 is_mask_available=add_pad_mask)
 
 
@@ -370,12 +365,11 @@ def test_pad_heterodata_explicit_edges(num_nodes, num_edges, add_pad_mask):
                          [11, AttrNamePadding({'edge_attr': 2.0})])
 def test_pad_data_pad_values(node_pad_value, edge_pad_value):
     data = fake_data()
-    original = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, node_pad_value=node_pad_value,
                     edge_pad_value=edge_pad_value)
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, node_pad_value=node_pad_value,
+    out = transform(data)
+    _check_data(data, out, num_nodes, node_pad_value=node_pad_value,
                 edge_pad_value=edge_pad_value)
 
 
@@ -398,13 +392,12 @@ def test_pad_data_pad_values(node_pad_value, edge_pad_value):
 ])
 def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):
     data = fake_hetero_data()
-    original = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, node_pad_value=node_pad_value,
                     edge_pad_value=edge_pad_value)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, node_pad_value=node_pad_value,
+    out = transform(data)
+    _check_data(data, out, num_nodes, node_pad_value=node_pad_value,
                 edge_pad_value=edge_pad_value)
 
 
@@ -416,14 +409,12 @@ def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):
     ['y', 'edge_attr'],
 ])
 def test_pad_data_exclude_keys(data, add_pad_mask, exclude_keys):
-    original = data
-    data = deepcopy(data)
     num_nodes = 32
     transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask,
                     exclude_keys=exclude_keys)
 
-    padded = transform(data)
-    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask,
+    out = transform(data)
+    _check_data(data, out, num_nodes, is_mask_available=add_pad_mask,
                 exclude_keys=exclude_keys)
 
 
@@ -470,7 +461,7 @@ def test_pad_invalid_padding_type():
 
 
 def test_pad_data_non_tensor_attr():
-    data = deepcopy(fake_data())
+    data = fake_data()
     batch_size = 13
     data.batch_size = batch_size
 

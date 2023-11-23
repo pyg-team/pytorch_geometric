@@ -67,5 +67,5 @@ def test_cheb_conv_batch():
     out = conv(batch.x, batch.edge_index, batch.edge_weight, batch.batch)
 
     assert out.size() == (7, 16)
-    assert torch.allclose(out1, out[:4])
-    assert torch.allclose(out2, out[4:])
+    assert torch.allclose(out1, out[:4], atol=1e-6)
+    assert torch.allclose(out2, out[4:], atol=1e-6)

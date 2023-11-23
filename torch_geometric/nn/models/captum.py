@@ -2,9 +2,6 @@ from typing import Optional, Union
 
 import torch
 
-from torch_geometric.explain.algorithm.captum import \
-    captum_output_to_dicts  # noqa
-from torch_geometric.explain.algorithm.captum import to_captum_input  # noqa
 from torch_geometric.explain.algorithm.captum import (
     CaptumHeteroModel,
     CaptumModel,
