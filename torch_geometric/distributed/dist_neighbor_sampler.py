@@ -473,14 +473,15 @@ class DistNeighborSampler:
         # Negative Sampling ###################################################
 
         if neg_sampling is not None:
-            # When we are doing negative sampling, we append negative information
-            # of nodes/edges to `src`, `dst`, `src_time`, `dst_time`.
-            # Later on, we can easily reconstruct what belongs to positive and
-            # negative examples by slicing via `num_pos`.
+            # When we are doing negative sampling, we append negative
+            # information of nodes/edges to `src`, `dst`, `src_time`,
+            # `dst_time`. Later on, we can easily reconstruct what belongs to
+            # positive and negative examples by slicing via `num_pos`.
             num_neg = math.ceil(num_pos * neg_sampling.amount)
 
             if neg_sampling.is_binary():
-                # In the "binary" case, we randomly sample negative pairs of nodes.
+                # In the "binary" case, we randomly sample negative pairs of
+                # nodes.
                 if isinstance(node_time, dict):
                     src_node_time = node_time.get(input_type[0])
                 else:
@@ -510,7 +511,8 @@ class DistNeighborSampler:
                         1 + math.ceil(neg_sampling.amount))[:num_pos + num_neg]
 
             elif neg_sampling.is_triplet():
-                # In the "triplet" case, we randomly sample negative destinations.
+                # In the "triplet" case, we randomly sample negative
+                # destinations.
                 if isinstance(node_time, dict):
                     dst_node_time = node_time.get(input_type[-1])
                 else:
@@ -525,12 +527,12 @@ class DistNeighborSampler:
                 if edge_label_time is not None:
                     dst_time = edge_label_time.repeat(1 + neg_sampling.amount)
 
-        # Heterogeneus Neighborhood Sampling ######################################
+        # Heterogeneus Neighborhood Sampling ##################################
 
         if input_type is not None:  # TODO: (kgajdamo)
             raise NotImplementedError
 
-        # Homogeneus Neighborhood Sampling #####################################
+        # Homogeneus Neighborhood Sampling ####################################
 
         else:
 
@@ -551,7 +553,7 @@ class DistNeighborSampler:
                     input_type=None,
                 ))
 
-            # Enhance `out` by label information ##################################
+            # Enhance `out` by label information ##############################
             if neg_sampling is None or neg_sampling.is_binary():
                 if disjoint:
                     out.batch = out.batch % num_pos
