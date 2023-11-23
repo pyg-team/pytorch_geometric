@@ -2,6 +2,7 @@ import io
 import os.path as osp
 import sys
 from typing import Any, Dict, List, Optional, Union
+from uuid import uuid4
 
 import fsspec
 import torch
@@ -62,19 +63,26 @@ def ls(
     path: str,
     detail: bool = False,
 ) -> Union[List[str], List[Dict[str, Any]]]:
-    return get_fs(path).ls(path, detail=detail)
+    fs = get_fs(path)
+    paths = fs.ls(path, detail=detail)
+
+    if fs.protocol != 'file':
+        if detail:
+            for path in paths:
+                path['name'] = fs.unstrip_protocol(path['name'])
+        else:
+            paths = [fs.unstrip_protocol(path) for path in paths]
+
+    return paths
 
 
 def cp(
     path1: str,
     path2: str,
     extract: bool = False,
-    kwargs1: Optional[dict] = None,
-    kwargs2: Optional[dict] = None,
     log: bool = True,
 ):
-    kwargs1 = kwargs1 or {}
-    kwargs2 = kwargs2 or {}
+    kwargs = {}
 
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None
@@ -82,19 +90,20 @@ def cp(
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
-        cache_dir = osp.join(torch_geometric.get_home_dir(), 'simplecache')
-        kwargs1.setdefault('simplecache', dict(cache_storage=cache_dir))
+        home_dir = torch_geometric.get_home_dir()
+        cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
+        kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
         path1 = f'simplecache::{path1}'
 
-    # Extract = Unarchive + Decompress if applicable.
+    # Handle automatic extraction:
     if extract and path1.endswith('.tar.gz'):
-        kwargs1.setdefault('tar', dict(compression='gzip'))
+        kwargs.setdefault('tar', dict(compression='gzip'))
         path1 = f'tar://**::{path1}'
     elif extract and path1.endswith('.zip'):
         path1 = f'zip://**::{path1}'
     elif extract:
-        raise NotImplementedError(f"Automatic extraction of '{path1}' not "
-                                  f"yet supported")
+        raise NotImplementedError(
+            f"Automatic extraction of '{path1}' not yet supported")
 
     def _copy_file_handle(f_from: Any, path: str, **kwargs):
         with fsspec.open(path, 'wb', **kwargs) as f_to:
@@ -104,18 +113,20 @@ def cp(
                     break
                 f_to.write(chunk)
 
-    if extract:
-        open_files = fsspec.open_files(path1, **kwargs1)
-        with open_files as of:
-            for f_from, open_file in zip(of, open_files):
-                to_path = osp.join(path2, open_file.path)
-                _copy_file_handle(f_from, to_path, **kwargs2)
-    else:
-        if isdir(path2):
+    # If the source path points to a directory, we need to make sure to
+    # recursively copy all files within this directory. Additionally, if the
+    # destination folder does not yet exist, we inherit the basename from the
+    # source folder.
+    if isdir(path1):
+        if exists(path2):
             path2 = osp.join(path2, osp.basename(path1))
+        path1 = osp.join(path1, '**')
 
-        with fsspec.open(path1, **kwargs1) as f_from:
-            _copy_file_handle(f_from, path2, **kwargs2)
+    for open_file in fsspec.open_files(path1, **kwargs):
+        with open_file as f_from:
+            common_path = osp.commonprefix([path1, open_file.path])
+            to_path = osp.join(path2, open_file.path[len(common_path):])
+            _copy_file_handle(f_from, to_path)
 
     if cache_dir is not None:
         rm(cache_dir)
@@ -134,7 +145,12 @@ def mv(path1: str, path2: str, recursive: bool = True):
 
 def glob(path: str):
     fs = get_fs(path)
-    return fs.glob(path)
+    paths = fs.glob(path)
+
+    if fs.protocol != 'file':
+        paths = [fs.unstrip_protocol(path) for path in paths]
+
+    return paths
 
 
 def torch_save(data: Any, path: str):
