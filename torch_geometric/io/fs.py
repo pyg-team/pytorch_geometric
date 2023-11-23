@@ -105,14 +105,6 @@ def cp(
         raise NotImplementedError(
             f"Automatic extraction of '{path1}' not yet supported")
 
-    def _copy_file_handle(f_from: Any, path: str, **kwargs):
-        with fsspec.open(path, 'wb', **kwargs) as f_to:
-            while True:
-                chunk = f_from.read(10 * 1024 * 1024)
-                if not chunk:
-                    break
-                f_to.write(chunk)
-
     # If the source path points to a directory, we need to make sure to
     # recursively copy all files within this directory. Additionally, if the
     # destination folder does not yet exist, we inherit the basename from the
@@ -122,11 +114,17 @@ def cp(
             path2 = osp.join(path2, osp.basename(path1))
         path1 = osp.join(path1, '**')
 
+    # Perform the copy:
     for open_file in fsspec.open_files(path1, **kwargs):
         with open_file as f_from:
             common_path = osp.commonprefix([path1, open_file.path])
             to_path = osp.join(path2, open_file.path[len(common_path):])
-            _copy_file_handle(f_from, to_path)
+            with fsspec.open(to_path, 'wb') as f_to:
+                while True:
+                    chunk = f_from.read(10 * 1024 * 1024)
+                    if not chunk:
+                        break
+                    f_to.write(chunk)
 
     if cache_dir is not None:
         rm(cache_dir)
