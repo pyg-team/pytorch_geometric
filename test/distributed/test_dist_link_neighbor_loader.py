@@ -163,7 +163,6 @@ def dist_link_neighbor_loader_hetero(
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_homo(
     tmp_path,
     num_parts,
