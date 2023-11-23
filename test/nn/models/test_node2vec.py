@@ -31,10 +31,10 @@ def test_node2vec(device, p, q):
                      torch.ones(20, 16), torch.randint(10, (20, )))
     assert 0 <= acc and acc <= 1
 
-    if is_full_test():
-        jit = torch.jit.script(model)
+    # if is_full_test():
+    jit = torch.jit.script(model)
 
-        assert jit(torch.arange(3, device=device)).size() == (3, 16)
+    assert jit(torch.arange(3, device=device)).size() == (3, 16)
 
-        pos_rw, neg_rw = jit.sample(torch.arange(3))
-        assert float(jit.loss(pos_rw.to(device), neg_rw.to(device))) >= 0
+    pos_rw, neg_rw = jit.sample(torch.arange(3))
+    assert float(jit.loss(pos_rw.to(device), neg_rw.to(device))) >= 0
