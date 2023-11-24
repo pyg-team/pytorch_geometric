@@ -26,6 +26,19 @@ class OSE_GVCS(InMemoryDataset):
     The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
     composing the GVCS, and 290 directed edges, each representing one out of
     three relationships between machines.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            every access. (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     machines = [
         '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',

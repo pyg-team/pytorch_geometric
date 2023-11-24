@@ -25,10 +25,10 @@ class CitationFull(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
         to_undirected (bool, optional): Whether the original graph is
             converted to an undirected one. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -76,8 +76,8 @@ class CitationFull(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        force_reload: bool = False,
         to_undirected: bool = True,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         self.to_undirected = to_undirected

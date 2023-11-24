@@ -29,11 +29,11 @@ class MovieLens(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
         model_name (str): Name of model used to transform movie titles to node
             features. The model comes from the`Huggingface SentenceTransformer
             <https://huggingface.co/sentence-transformers>`_.
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
@@ -42,8 +42,8 @@ class MovieLens(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        force_reload: bool = False,
         model_name: Optional[str] = 'all-MiniLM-L6-v2',
+        force_reload: bool = False,
     ):
         self.model_name = model_name
         super().__init__(root, transform, pre_transform,
