@@ -30,6 +30,8 @@ class LINKXDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
@@ -73,12 +75,18 @@ class LINKXDataset(InMemoryDataset):
         'penn94': f'{github_url}/splits/fb100-Penn94-splits.npy',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property

@@ -32,6 +32,8 @@ class RCDD(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://s3.cn-north-1.amazonaws.com.cn/dgl-data/dataset/'
            'openhgnn/AliRCD_ICDM.zip')
@@ -41,8 +43,10 @@ class RCDD(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property

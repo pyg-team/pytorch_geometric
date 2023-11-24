@@ -25,15 +25,22 @@ class WikiCS(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         is_undirected (bool, optional): Whether the graph is undirected.
             (default: :obj:`True`)
     """
 
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 is_undirected: Optional[bool] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+        is_undirected: Optional[bool] = None,
+    ):
         if is_undirected is None:
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
@@ -41,7 +48,8 @@ class WikiCS(InMemoryDataset):
                 f"'is_undirected=False' to restore the old behavior.")
             is_undirected = True
         self.is_undirected = is_undirected
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property

@@ -36,16 +36,24 @@ class DBP15K(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
     file_id = '1ggYlYf2_kTyi7oF9g07oTNn3VDhjl7so'
 
-    def __init__(self, root: str, pair: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        pair: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
