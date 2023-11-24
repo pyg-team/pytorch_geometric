@@ -141,6 +141,8 @@ def test_compile_group_argsort(num_groups, descending, device):
     assert torch.allclose(out1, out2)
 
 
+withCUDA
+@disableExtensions
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
     index = torch.tensor([2, 2, 0, 0, 3], device=device)
