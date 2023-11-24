@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
@@ -60,11 +59,11 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:

@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from typing import Callable, Optional
 
 import numpy as np
@@ -75,7 +75,7 @@ class DGraphFin(InMemoryDataset):
 
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
-        path = os.path.join(self.raw_dir, "dgraphfin.npz")
+        path = osp.join(self.raw_dir, "dgraphfin.npz")
 
         with np.load(path) as loader:
             x = torch.from_numpy(loader['x']).to(torch.float)
