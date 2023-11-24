@@ -1,7 +1,6 @@
 import glob
 import os
 import os.path as osp
-import shutil
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
@@ -13,7 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import read_off
+from torch_geometric.io import fs, read_off
 
 
 class ModelNet(InMemoryDataset):
@@ -118,13 +117,13 @@ class ModelNet(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
         folder = osp.join(self.root, f'ModelNet{self.name}')
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
         # Delete osx metadata generated during compression of ModelNet10
         metadata_folder = osp.join(self.root, '__MACOSX')
         if osp.exists(metadata_folder):
-            shutil.rmtree(metadata_folder)
+            fs.rm(metadata_folder)
 
     def process(self):
         self.save(self.process_set('train'), self.processed_paths[0])

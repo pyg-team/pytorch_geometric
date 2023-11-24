@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 MOVIE_HEADERS = ["movieId", "title", "genres"]
 USER_HEADERS = ["userId", "gender", "age", "occupation", "zipCode"]
@@ -85,7 +85,7 @@ class MovieLens1M(InMemoryDataset):
         extract_zip(path, self.root)
         os.remove(path)
         folder = osp.join(self.root, 'ml-1m')
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
     def process(self):

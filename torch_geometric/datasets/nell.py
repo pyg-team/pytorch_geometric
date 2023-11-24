@@ -1,10 +1,9 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_tar
-from torch_geometric.io import read_planetoid_data
+from torch_geometric.io import fs, read_planetoid_data
 
 
 class NELL(InMemoryDataset):
@@ -73,7 +72,7 @@ class NELL(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_tar(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'nell_data'), self.raw_dir)
 
     def process(self):

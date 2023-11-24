@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class NeuroGraphDataset(InMemoryDataset):
@@ -107,7 +107,7 @@ class NeuroGraphDataset(InMemoryDataset):
         os.rename(
             osp.join(self.raw_dir, self.name, 'processed', f'{self.name}.pt'),
             osp.join(self.raw_dir, 'data.pt'))
-        shutil.rmtree(osp.join(self.raw_dir, self.name))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self):
         data, slices = torch.load(self.raw_paths[0])
@@ -116,10 +116,9 @@ class NeuroGraphDataset(InMemoryDataset):
         data_list: List[Data] = []
         for i in range(num_samples):
             x = data.x[slices['x'][i]:slices['x'][i + 1]]
-            edge_index = data.edge_index[
-                :,
-                slices['edge_index'][i]:slices['edge_index'][i + 1],
-            ]
+            start = slices['edge_index'][i]
+            end = slices['edge_index'][i + 1]
+            edge_index = data.edge_index[:, start:end]
             sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 
             if self.pre_filter is not None and not self.pre_filter(sample):
