@@ -2,33 +2,33 @@ import pytest
 import torch
 
 import torch_geometric.typing
+from torch_geometric.testing import withCUDA
 from torch_geometric.nn import MultiAggregation
 
-
-@pytest.mark.parametrize('multi_aggr_tuple', [
-    (dict(mode='cat'), 3),
-    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1),
-    (dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
-                                        num_heads=4)), 1),
-    (dict(mode='sum'), 1),
-    (dict(mode='mean'), 1),
-    (dict(mode='max'), 1),
-    (dict(mode='min'), 1),
-    (dict(mode='logsumexp'), 1),
-    (dict(mode='std'), 1),
-    (dict(mode='var'), 1),
+@withCUDA
+@pytest.mark.parametrize('aggr_kwargs, expand', [
+    (pytest.param(dict(mode='cat'), 3, id='cat')),
+    (pytest.param(dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1, id='proj')),
+    (pytest.param(dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
+                                        num_heads=4)), 1, id='attn')),
+    (pytest.param(dict(mode='sum'), 1, id='sum')),
+    (pytest.param(dict(mode='mean'), 1, id='mean')),
+    (pytest.param(dict(mode='max'), 1, id='max')),
+    (pytest.param(dict(mode='min'), 1, id='min')),
+    (pytest.param(dict(mode='logsumexp'), 1, id='logsumexp')),
+    (pytest.param(dict(mode='std'), 1, id='std')),
+    (pytest.param(dict(mode='var'), 1, id='var')),
 ])
-def test_multi_aggr(multi_aggr_tuple):
+def test_multi_aggr(aggr_kwargs, expand, device):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the other
     # modes keep output dimensions unchanged.
-    aggr_kwargs, expand = multi_aggr_tuple
-    x = torch.randn(7, 16)
-    index = torch.tensor([0, 0, 1, 1, 1, 2, 3])
-    ptr = torch.tensor([0, 2, 5, 6, 7])
+    x = torch.randn(7, 16, device=device)
+    index = torch.tensor([0, 0, 1, 1, 1, 2, 3], device=device)
+    ptr = torch.tensor([0, 2, 5, 6, 7], device=device)
 
     aggrs = ['mean', 'sum', 'max']
-    aggr = MultiAggregation(aggrs, **aggr_kwargs)
+    aggr = MultiAggregation(aggrs, **aggr_kwargs).to(device)
     aggr.reset_parameters()
     assert str(aggr) == ('MultiAggregation([\n'
                          '  MeanAggregation(),\n'
@@ -48,5 +48,6 @@ def test_multi_aggr(multi_aggr_tuple):
     jit = torch.jit.script(aggr)
     assert torch.allclose(out, jit(x, index))
 
-    opt_aggr = torch.compile(aggr)
-    assert torch.allclose(out, opt_aggr(x, index))
+    if torch_geometric.typing.WITH_PT21 and not torch_geometric.typing.WITH_TORCH_SCATTER:
+        opt = torch.compile(aggr)
+        assert torch.allclose(out, opt(x, index))
