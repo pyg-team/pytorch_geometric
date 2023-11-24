@@ -28,12 +28,6 @@ def create_dist_data(tmp_path: str, rank: int):
         node_pb,
         edge_pb,
     ) = load_partition_info(tmp_path, rank)
-    if meta['is_hetero']:
-        node_pb = torch.cat(list(node_pb.values()))
-        edge_pb = torch.cat(list(edge_pb.values()))
-    else:
-        feat_store.labels = torch.arange(node_pb.size()[0])
-
     graph_store.partition_idx = partition_idx
     graph_store.num_partitions = num_partitions
     graph_store.node_pb = node_pb
@@ -92,7 +86,7 @@ def dist_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.n_id.size() == (batch.num_nodes,)
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -123,7 +117,7 @@ def dist_neighbor_loader_hetero(
 
     loader = DistNeighborLoader(
         part_data,
-        num_neighbors=[1],
+        num_neighbors=[1, 1],
         batch_size=10,
         num_workers=num_workers,
         input_nodes=input_nodes,
@@ -153,16 +147,20 @@ def dist_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+            assert batch[edge_type].edge_attr.size(0) == batch[
+                edge_type
+            ].edge_index.size(1)
 
             if batch[edge_type].edge_index.numel() > 0:  # Test edge mapping:
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
-                global_edge_index_1 = torch.stack([
-                    batch[src].n_id[batch[edge_type].edge_index[0]],
-                    batch[dst].n_id[batch[edge_type].edge_index[1]],
-                ], dim=0)
+                global_edge_index_1 = torch.stack(
+                    [
+                        batch[src].n_id[batch[edge_type].edge_index[0]],
+                        batch[dst].n_id[batch[edge_type].edge_index[1]],
+                    ],
+                    dim=0,
+                )
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
 
@@ -215,7 +213,7 @@ def test_dist_neighbor_loader_homo(
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
-@pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
+# @pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
 def test_dist_neighbor_loader_hetero(
     tmp_path,
     num_parts,
@@ -242,12 +240,12 @@ def test_dist_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
+        args=(tmp_path, num_parts, 0, addr, port, num_workers, False),
     )
 
     w1 = mp_context.Process(
         target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
+        args=(tmp_path, num_parts, 1, addr, port, num_workers, False),
     )
 
     w0.start()

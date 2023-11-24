@@ -14,6 +14,7 @@ class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
     interface to act as a local graph store for distributed training.
     """
+
     def __init__(self):
         super().__init__()
         self._edge_index: Dict[Tuple, EdgeTensorType] = {}
@@ -41,12 +42,19 @@ class LocalGraphStore(GraphStore):
         node_type: Optional[NodeType] = None,
     ) -> Tensor:
         r"""Get the partition IDs of node IDs for a specific node type."""
-        return self.node_pb[ids]
+        if self.meta['is_hetero']:
+            return self.node_pb[node_type][ids]
+        else:
+            return self.node_pb[ids]
 
-    def get_partition_ids_from_eids(self, eids: torch.Tensor,
-                                    edge_type: Optional[EdgeType] = None):
+    def get_partition_ids_from_eids(
+        self, eids: torch.Tensor, edge_type: Optional[EdgeType] = None
+    ):
         r"""Get the partition IDs of edge IDs for a specific edge type."""
-        return self.edge_pb[eids]
+        if self.meta['is_hetero']:
+            return self.edge_pb[edge_type][eids]
+        else:
+            return self.edge_pb[eids]
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
@@ -61,8 +69,9 @@ class LocalGraphStore(GraphStore):
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._edge_id.pop(self.key(edge_attr), None) is not None
 
-    def _put_edge_index(self, edge_index: EdgeTensorType,
-                        edge_attr: EdgeAttr) -> bool:
+    def _put_edge_index(
+        self, edge_index: EdgeTensorType, edge_attr: EdgeAttr
+    ) -> bool:
         self._edge_index[self.key(edge_attr)] = edge_index
         self._edge_attr[self.key(edge_attr)] = edge_attr
         return True
@@ -174,15 +183,21 @@ class LocalGraphStore(GraphStore):
         graph_store.is_sorted = meta['is_sorted']
 
         if not meta['is_hetero']:
-            edge_index = torch.stack((graph_data['row'], graph_data['col']),
-                                     dim=0)
+            edge_index = torch.stack(
+                (graph_data['row'], graph_data['col']), dim=0
+            )
             edge_id = graph_data['edge_id']
             if not graph_store.is_sorted:
-                edge_index, edge_id = sort_edge_index(edge_index, edge_id,
-                                                      sort_by_row=False)
+                edge_index, edge_id = sort_edge_index(
+                    edge_index, edge_id, sort_by_row=False
+                )
 
-            attr = dict(edge_type=None, layout='coo', size=graph_data['size'],
-                        is_sorted=True)
+            attr = dict(
+                edge_type=None,
+                layout='coo',
+                size=graph_data['size'],
+                is_sorted=True,
+            )
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
 
@@ -199,7 +214,8 @@ class LocalGraphStore(GraphStore):
 
                 if not graph_store.is_sorted:
                     edge_index, edge_id = sort_edge_index(
-                        edge_index, edge_id, sort_by_row=False)
+                        edge_index, edge_id, sort_by_row=False
+                    )
                 graph_store.put_edge_index(edge_index, **attr)
                 graph_store.put_edge_id(edge_id, **attr)
 
