@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from itertools import chain
 from typing import Callable, List, Optional
 from xml.dom import minidom
@@ -16,6 +15,7 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
+from torch_geometric.io import fs
 
 
 class PascalVOCKeypoints(InMemoryDataset):
@@ -119,7 +119,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         os.unlink(path)
         image_path = osp.join(self.raw_dir, 'TrainVal', 'VOCdevkit', 'VOC2011')
         os.rename(image_path, osp.join(self.raw_dir, 'images'))
-        shutil.rmtree(osp.join(self.raw_dir, 'TrainVal'))
+        fs.rm(osp.join(self.raw_dir, 'TrainVal'))
 
         path = download_url(self.annotation_url, self.raw_dir)
         extract_tar(path, self.raw_dir, mode='r')

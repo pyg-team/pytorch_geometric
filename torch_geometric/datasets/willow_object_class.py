@@ -1,7 +1,6 @@
 import glob
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -14,6 +13,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class WILLOWObjectClass(InMemoryDataset):
@@ -95,7 +95,7 @@ class WILLOWObjectClass(InMemoryDataset):
         os.unlink(path)
         os.unlink(osp.join(self.root, 'README'))
         os.unlink(osp.join(self.root, 'demo_showAnno.m'))
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):

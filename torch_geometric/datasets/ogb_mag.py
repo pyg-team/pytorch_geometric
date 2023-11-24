@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class OGB_MAG(InMemoryDataset):
@@ -103,7 +104,7 @@ class OGB_MAG(InMemoryDataset):
             shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')
             shutil.move(path, self.raw_dir)
-            shutil.rmtree(osp.join(self.raw_dir, 'mag'))
+            fs.rm(osp.join(self.raw_dir, 'mag'))
             os.remove(osp.join(self.raw_dir, 'mag.zip'))
         if self.preprocess is not None:
             path = download_url(self.urls[self.preprocess], self.raw_dir)

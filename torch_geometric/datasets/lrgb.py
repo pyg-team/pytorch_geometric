@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import pickle
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class LRGBDataset(InMemoryDataset):
@@ -164,7 +164,7 @@ class LRGBDataset(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, self.dwnld_file_name[self.name]),
