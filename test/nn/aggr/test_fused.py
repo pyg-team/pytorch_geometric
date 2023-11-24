@@ -2,11 +2,10 @@ import pytest
 import torch
 
 import torch_geometric
-from torch_geometric.testing import withCUDA, disableExtensions, withPackage
 from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 from torch_geometric.profile import benchmark
-
+from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 
 aggrs_params = [
     ['sum', 'mean', 'min', 'max', 'mul', 'var', 'std'],
@@ -64,7 +63,6 @@ def test_compile_fused_aggregation(aggrs, device):
     opt = torch_geometric.compile(aggr)
     out2 = torch.cat(opt(x, index), dim=-1)
     assert torch.allclose(out1, out2, atol=1e-7)
-
 
 
 def test_empty_fused_std_aggregation():
