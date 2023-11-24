@@ -86,7 +86,7 @@ def dist_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes,)
+        assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -147,9 +147,8 @@ def dist_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert batch[edge_type].edge_attr.size(0) == batch[
-                edge_type
-            ].edge_index.size(1)
+            assert batch[edge_type].edge_attr.size(
+                0) == batch[edge_type].edge_index.size(1)
 
             if batch[edge_type].edge_index.numel() > 0:  # Test edge mapping:
                 src, _, dst = edge_type
