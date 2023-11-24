@@ -79,6 +79,7 @@ class HyperGraphData(Data):
         val = super().is_edge_attr(key)
         if not val and self.edge_index is not None:
             return key in self and self[key].size(0) == self.num_edges
+        return val
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if key == 'edge_index':
