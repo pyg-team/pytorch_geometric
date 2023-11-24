@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-import torch_geometric.typing
+import torch_geometric
 from torch_geometric.testing import withCUDA
 from torch_geometric.nn import MultiAggregation
 
@@ -48,6 +48,7 @@ def test_multi_aggr(aggr_kwargs, expand, device):
     jit = torch.jit.script(aggr)
     assert torch.allclose(out, jit(x, index))
 
-    if torch_geometric.typing.WITH_PT21 and not torch_geometric.typing.WITH_TORCH_SCATTER:
-        opt = torch.compile(aggr)
-        assert torch.allclose(out, opt(x, index))
+    if torch_geometric.typing.WITH_PT21:
+        opt = torch_geometric.compile(aggr)
+        atol = 1e-6 if aggr_kwargs['mode'] == 'std' else 1e-8
+        assert torch.allclose(out, opt(x, index), atol=atol)

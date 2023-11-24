@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric
 from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 from torch_geometric.profile import benchmark
@@ -35,7 +36,7 @@ def test_fused_aggregation(aggrs):
     jit = torch.jit.script(aggr)
     assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-5)
 
-    opt_aggr = torch.compile(aggr)
+    opt_aggr = torch_geometric.compile(aggr)
     assert torch.allclose(torch.cat(opt_aggr(x, index), dim=-1), out, atol=1e-8)
 
     out.mean().backward()
