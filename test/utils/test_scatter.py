@@ -37,6 +37,10 @@ def test_scatter(reduce, device):
     assert out1.device == device
     assert torch.allclose(out1, out2, atol=1e-6)
 
+    jit = torch.jit.script(scatter)
+    out3 = jit(src, index, dim=0, reduce=reduce)
+    assert torch.allclose(out1, out3, atol=1e-6)
+
     src = torch.randn(8, 100, 16, device=device)
     out1 = scatter(src, index, dim=1, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=1, reduce=reduce)
@@ -54,14 +58,9 @@ def test_compile_scatter(reduce, device):
     src = torch.randn(100, 16, device=device)
     index = torch.randint(0, 8, (100, ), device=device)
     out1 = scatter(src, index, dim=0, reduce=reduce)
-
-    jit = torch.jit.script(scatter)
-    out2 = jit(src, index, dim=0, reduce=reduce)
-    assert torch.allclose(out1, out2)
-
     opt = dynamo.optimize()(scatter)
-    out3 = opt(src, index, dim=0, reduce=reduce)
-    assert torch.allclose(out1, out3)
+    out2 = opt(src, index, dim=0, reduce=reduce)
+    assert torch.allclose(out1, out2)
 
 
 @withCUDA
