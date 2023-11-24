@@ -3,8 +3,7 @@ import torch
 
 import torch_geometric
 from torch_geometric.nn import MultiAggregation
-from torch_geometric.testing import withCUDA, disableExtensions, withPackage
-
+from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 
 # The 'cat' combine mode will expand the output dimensions by
 # the number of aggregators which is 3 here, while the other
