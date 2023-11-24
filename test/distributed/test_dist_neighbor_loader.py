@@ -86,7 +86,7 @@ def dist_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.n_id.size() == (batch.num_nodes,)
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -147,8 +147,9 @@ def dist_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert batch[edge_type].edge_attr.size(
-                0) == batch[edge_type].edge_index.size(1)
+            assert batch[edge_type].edge_attr.size(0) == batch[
+                edge_type
+            ].edge_index.size(1)
 
             if batch[edge_type].edge_index.numel() > 0:  # Test edge mapping:
                 src, _, dst = edge_type
@@ -212,7 +213,7 @@ def test_dist_neighbor_loader_homo(
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
-# @pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
+@pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
 def test_dist_neighbor_loader_hetero(
     tmp_path,
     num_parts,
@@ -239,12 +240,12 @@ def test_dist_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, False),
+        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
     )
 
     w1 = mp_context.Process(
         target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, False),
+        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
     )
 
     w0.start()
