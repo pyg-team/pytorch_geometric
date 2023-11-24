@@ -57,7 +57,7 @@ class CaptumExplainer(ExplainerAlgorithm):
     ):
         super().__init__()
 
-        import captum.attr  # noqa
+        import captum.attr
 
         if isinstance(attribution_method, str):
             self.attribution_method_class = getattr(

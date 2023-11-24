@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -12,7 +13,7 @@ import torch.utils.data
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -91,7 +92,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(osp.normpath(root))
+            root = osp.expanduser(fs.normpath(root))
 
         self.root = root
         self.transform = transform
@@ -209,7 +210,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -240,13 +241,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        makedirs(self.processed_dir)
+        os.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(_repr(self.pre_transform), path)
+        fs.torch_save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(_repr(self.pre_filter), path)
+        fs.torch_save(_repr(self.pre_filter), path)
 
         if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
@@ -399,7 +400,7 @@ def to_list(value: Any) -> Sequence:
 def files_exist(files: List[str]) -> bool:
     # NOTE: We return `False` in case `files` is empty, leading to a
     # re-processing of files on every instantiation.
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([fs.exists(f) for f in files])
 
 
 def _repr(obj: Any) -> str:

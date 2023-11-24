@@ -1,4 +1,5 @@
-import os.path
+import os
+import os.path as osp
 import warnings
 
 import pytest
@@ -105,7 +106,7 @@ def test_torch_profile(capfd, get_dataset, device):
         assert 'Self CUDA time total' in out
 
     rename_profile_file('test_profile')
-    assert os.path.exists('profile-test_profile.json')
+    assert osp.exists('profile-test_profile.json')
     os.remove('profile-test_profile.json')
 
 
@@ -128,7 +129,7 @@ def test_xpu_profile(capfd, get_dataset, export_chrome_trace):
         assert 'Self XPU' in out
 
     f_name = 'timeline.json'
-    f_exists = os.path.exists(f_name)
+    f_exists = osp.exists(f_name)
     if not export_chrome_trace:
         assert not f_exists
     else:

@@ -94,6 +94,7 @@ class BaseData:
 
     def update(self, data: 'BaseData') -> 'BaseData':
         r"""Updates the data object with the elements from another data object.
+        Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
 
@@ -203,7 +204,7 @@ class BaseData:
         offset: int = 0
         for store in self.node_stores:
             out[store._key] = offset
-            offset += store.num_nodes
+            offset = offset + store.num_nodes
         return out
 
     def generate_ids(self):
@@ -1048,6 +1049,9 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = str(list(value.shape))
     elif isinstance(value, SparseTensor):
         out = str(value.sizes())[:-1] + f', nnz={value.nnz()}]'
+    elif isinstance(value, TensorFrame):
+        out = (f'{value.__class__.__name__}('
+               f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
     elif isinstance(value, Sequence):

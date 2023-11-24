@@ -32,7 +32,9 @@ dependencies=[
     "tqdm",
     "numpy",
     "scipy",
+    "fsspec",
     "jinja2",
+    "aiohttp",
     "requests",
     "pyparsing",
     "scikit-learn",
@@ -104,9 +106,6 @@ based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
 
-[tool.flake8]
-ignore = ["F811", "W503", "W504"]
-
 [tool.pyright]
 include = ["torch_geometric/utils/*"]
 
@@ -115,8 +114,7 @@ multi_line_output = 3
 include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
-[tool.ruff]
-# https://docs.astral.sh/ruff/rules/
+[tool.ruff]  # https://docs.astral.sh/ruff/rules
 select = [
     "D",  # pydocstyle
 ]
@@ -126,12 +124,9 @@ ignore = [
     "D102",  # TODO: Don't ignore "Missing docstring in public method"
     "D103",  # TODO: Don't ignore "Missing docstring in public function"
     "D104",  # TODO: Don't ignore "Missing docstring in public package"
-    "D105",  # TODO: Don't ignore "Missing docstring in magic method"
-    "D106",  # TODO: Don't ignore "Missing docstring in public nested class"
-    "D107",  # TODO: Don't ignore "Missing docstring in __init__"
-    "D200",  # Ignore "One-line docstring should fit on one line"
-    "D205",  # Ignore "1 blank line required between summary line and description"
-
+    "D105",  # Ignore "Missing docstring in magic method"
+    "D107",  # Ignore "Missing docstring in __init__"
+    "D205",  # Ignore "blank line required between summary line and description"
 ]
 src = ["torch_geometric"]
 line-length = 80

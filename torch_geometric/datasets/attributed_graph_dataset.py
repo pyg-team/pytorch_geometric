@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import scipy.sparse as sp
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.typing import SparseTensor
 
 
@@ -34,6 +34,8 @@ class AttributedGraphDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -113,12 +115,18 @@ class AttributedGraphDataset(InMemoryDataset):
         'mag': '1ggraUMrQgdUyA3DjSRzzqMv0jFkU65V5',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -147,7 +155,7 @@ class AttributedGraphDataset(InMemoryDataset):
             path = osp.join(self.raw_dir, self.name)
         for name in self.raw_file_names:
             os.rename(osp.join(path, name), osp.join(self.raw_dir, name))
-        shutil.rmtree(path)
+        fs.rm(path)
 
     def process(self):
         import pandas as pd
