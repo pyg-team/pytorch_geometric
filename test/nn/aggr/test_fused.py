@@ -36,9 +36,10 @@ def test_fused_aggregation(aggrs):
     jit = torch.jit.script(aggr)
     assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-5)
 
-    opt_aggr = torch_geometric.compile(aggr)
-    assert torch.allclose(torch.cat(opt_aggr(x, index), dim=-1), out,
-                          atol=1e-8)
+    if torch_geometric.typing.WITH_PT21:
+        opt_aggr = torch_geometric.compile(aggr)
+        assert torch.allclose(torch.cat(opt_aggr(x, index), dim=-1), out,
+                            atol=1e-8)
 
     out.mean().backward()
     assert x.grad is not None
