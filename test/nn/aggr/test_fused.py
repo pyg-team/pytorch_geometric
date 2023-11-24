@@ -54,7 +54,6 @@ def test_compile_fused_aggregation(aggrs, device):
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
 
     x = torch.randn(6, 1, device=device)
-    y = x.clone()
     index = torch.tensor([0, 0, 1, 1, 1, 3], device=device)
 
     aggr = FusedAggregation(aggrs).to(device)
