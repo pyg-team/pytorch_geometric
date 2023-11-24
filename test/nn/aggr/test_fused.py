@@ -2,12 +2,13 @@ import pytest
 import torch
 
 import torch_geometric
+from torch_geometric.testing import withCUDA, disableExtensions, withPackage
 from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 from torch_geometric.profile import benchmark
 
 
-@pytest.mark.parametrize('aggrs', [
+aggrs_params = [
     ['sum', 'mean', 'min', 'max', 'mul', 'var', 'std'],
     ['sum', 'min', 'max', 'mul', 'var', 'std'],
     ['min', 'max', 'mul', 'var', 'std'],
@@ -15,7 +16,10 @@ from torch_geometric.profile import benchmark
     ['sum', 'min', 'max', 'mul', 'std'],
     ['mean', 'min', 'max', 'mul', 'std'],
     ['min', 'max', 'mul', 'std'],
-])
+]
+
+
+@pytest.mark.parametrize('aggrs', aggrs_params)
 def test_fused_aggregation(aggrs):
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
 
@@ -36,16 +40,31 @@ def test_fused_aggregation(aggrs):
     jit = torch.jit.script(aggr)
     assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-5)
 
-    if torch_geometric.typing.WITH_PT21:
-        opt_aggr = torch_geometric.compile(aggr)
-        assert torch.allclose(torch.cat(opt_aggr(x, index), dim=-1), out,
-                              atol=1e-8)
-
     out.mean().backward()
     assert x.grad is not None
     expected.mean().backward()
     assert y.grad is not None
     assert torch.allclose(x.grad, y.grad, atol=1e-5)
+
+
+@withCUDA
+@disableExtensions
+@withPackage('torch>=2.1.0')
+@pytest.mark.parametrize('aggrs', aggrs_params)
+def test_compile_fused_aggregation(aggrs, device):
+    aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
+
+    x = torch.randn(6, 1, device=device)
+    y = x.clone()
+    index = torch.tensor([0, 0, 1, 1, 1, 3], device=device)
+
+    aggr = FusedAggregation(aggrs).to(device)
+    out1 = torch.cat(aggr(x, index), dim=-1)
+
+    opt = torch_geometric.compile(aggr)
+    out2 = torch.cat(opt(x, index), dim=-1)
+    assert torch.allclose(out1, out2, atol=1e-7)
+
 
 
 def test_empty_fused_std_aggregation():
