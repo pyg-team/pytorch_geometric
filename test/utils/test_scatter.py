@@ -32,21 +32,36 @@ def test_scatter(reduce, device):
 
     src = torch.randn(100, 16, device=device)
     index = torch.randint(0, 8, (100, ), device=device)
-
     out1 = scatter(src, index, dim=0, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=0, reduce=reduce)
     assert out1.device == device
     assert torch.allclose(out1, out2, atol=1e-6)
-
-    jit = torch.jit.script(scatter)
-    out3 = jit(src, index, dim=0, reduce=reduce)
-    assert torch.allclose(out1, out3, atol=1e-6)
 
     src = torch.randn(8, 100, 16, device=device)
     out1 = scatter(src, index, dim=1, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=1, reduce=reduce)
     assert out1.device == device
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@withCUDA
+@disableExtensions
+@withPackage('torch>=2.1.0')
+@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
+def test_compile_scatter(reduce, device):
+    import torch._dynamo as dynamo
+
+    src = torch.randn(100, 16, device=device)
+    index = torch.randint(0, 8, (100, ), device=device)
+    out1 = scatter(src, index, dim=0, reduce=reduce)
+
+    jit = torch.jit.script(scatter)
+    out2 = jit(src, index, dim=0, reduce=reduce)
+    assert torch.allclose(out1, out2)
+
+    opt = dynamo.optimize()(scatter)
+    out3 = opt(src, index, dim=0, reduce=reduce)
+    assert torch.allclose(out1, out3)
 
 
 @withCUDA
@@ -75,6 +90,23 @@ def test_scatter_any(device):
 
 
 @withCUDA
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile_scatter_any(device):
+    import torch._dynamo as dynamo
+
+    src = torch.randn(6, 4, device=device)
+    index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
+
+    opt = dynamo.optimize()(scatter)
+    out = opt(src, index, dim=0, reduce='any')
+
+    for i in range(3):
+        for j in range(4):
+            assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
+
+
+@withCUDA
 @pytest.mark.parametrize('num_groups', [4])
 @pytest.mark.parametrize('descending', [False, True])
 def test_group_argsort(num_groups, descending, device):
@@ -96,12 +128,43 @@ def test_group_argsort(num_groups, descending, device):
 
 @withCUDA
 @disableExtensions
+@withPackage('torch>=2.1.0')
+@pytest.mark.parametrize('num_groups', [4])
+@pytest.mark.parametrize('descending', [False, True])
+def test_compile_group_argsort(num_groups, descending, device):
+    import torch._dynamo as dynamo
+
+    src = torch.randn(20, device=device)
+    index = torch.randint(0, num_groups, (20, ), device=device)
+    out1 = group_argsort(src, index, 0, num_groups, descending=descending)
+    opt = dynamo.optimize()(group_argsort)
+    out2 = opt(src, index, 0, num_groups, descending=descending)
+    assert torch.allclose(out1, out2)
+
+
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
     index = torch.tensor([2, 2, 0, 0, 3], device=device)
 
-    argmax = scatter_argmax(src, index, dim_size=6)
-    assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
+    out = scatter_argmax(src, index, dim_size=6)
+    assert out.tolist() == [3, 5, 1, 4, 5, 5]
+
+
+@withCUDA
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile_scatter_argmax(device):
+    src = torch.arange(5, device=device)
+    index = torch.tensor([2, 2, 0, 0, 3], device=device)
+
+    out1 = scatter_argmax(src, index, dim_size=6)
+    assert out1.tolist() == [3, 5, 1, 4, 5, 5]
+
+    opt = torch._dynamo.optimize()(scatter_argmax)
+    out2 = opt(src, index, dim_size=6)
+    assert torch.allclose(out1, out2)
+
+
 
 
 if __name__ == '__main__':
