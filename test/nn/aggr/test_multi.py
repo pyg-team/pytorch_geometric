@@ -47,3 +47,6 @@ def test_multi_aggr(multi_aggr_tuple):
 
     jit = torch.jit.script(aggr)
     assert torch.allclose(out, jit(x, index))
+
+    opt_aggr = torch.compile(aggr)
+    assert torch.allclose(out, opt_aggr(x, index))
