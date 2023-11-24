@@ -20,7 +20,6 @@ from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
 
 class RPCCallFeatureLookup(RPCCallBase):
     r"""A wrapper for RPC calls to the feature store."""
-
     def __init__(self, dist_feature: FeatureStore):
         super().__init__()
         self.dist_feature = dist_feature
@@ -35,7 +34,6 @@ class RPCCallFeatureLookup(RPCCallBase):
 @dataclass
 class LocalTensorAttr(TensorAttr):
     r"""Tensor attribute for storing features without :obj:`index`."""
-
     def __init__(
         self,
         group_name: Optional[Union[NodeType, EdgeType]] = _FieldStatus.UNSET,
@@ -49,7 +47,6 @@ class LocalFeatureStore(FeatureStore):
     r"""This class implements the :class:`torch_geometric.data.FeatureStore`
     interface to act as a local feature store for distributed training.
     """
-
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
         self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
@@ -100,9 +97,8 @@ class LocalFeatureStore(FeatureStore):
             return
 
         # TODO Compute this mapping without materializing a full-sized tensor:
-        global_id_to_index = global_id.new_full(
-            (int(global_id.max()) + 1,), fill_value=-1
-        )
+        global_id_to_index = global_id.new_full((int(global_id.max()) + 1, ),
+                                                fill_value=-1)
         global_id_to_index[global_id] = torch.arange(global_id.numel())
         self._global_id_to_index[group_name] = global_id_to_index
 
@@ -169,12 +165,10 @@ class LocalFeatureStore(FeatureStore):
         input_type: Optional[NodeOrEdgeType] = None,
     ) -> torch.futures.Future:
         r"""Lookup of local/remote features."""
-        remote_fut = self._remote_lookup_features(
-            index, is_node_feat, input_type
-        )
-        local_feature = self._local_lookup_features(
-            index, is_node_feat, input_type
-        )
+        remote_fut = self._remote_lookup_features(index, is_node_feat,
+                                                  input_type)
+        local_feature = self._local_lookup_features(index, is_node_feat,
+                                                    input_type)
         res_fut = torch.futures.Future()
 
         def when_finish(*_):
@@ -220,24 +214,20 @@ class LocalFeatureStore(FeatureStore):
             if is_node_feat:
                 kwargs = dict(group_name=input_type, attr_name='x')
                 ret_feat = self.get_tensor_from_global_id(
-                    index=local_ids, **kwargs
-                )
+                    index=local_ids, **kwargs)
             else:
                 kwargs = dict(group_name=input_type, attr_name='edge_attr')
                 ret_feat = self.get_tensor_from_global_id(
-                    index=local_ids, **kwargs
-                )
+                    index=local_ids, **kwargs)
         else:
             if is_node_feat:
                 kwargs = dict(group_name=None, attr_name='x')
                 ret_feat = self.get_tensor_from_global_id(
-                    index=local_ids, **kwargs
-                )
+                    index=local_ids, **kwargs)
             else:
                 kwargs = dict(group_name=(None, None), attr_name='edge_attr')
                 ret_feat = self.get_tensor_from_global_id(
-                    index=local_ids, **kwargs
-                )
+                    index=local_ids, **kwargs)
 
         return ret_feat, local_index
 
@@ -269,8 +259,7 @@ class LocalFeatureStore(FeatureStore):
                         to_worker,
                         self.rpc_call_id,
                         args=(remote_ids.cpu(), is_node_feat, input_type),
-                    )
-                )
+                    ))
                 indexes.append(torch.masked_select(input_order, remote_mask))
         collect_fut = torch.futures.collect_all(futs)
         res_fut = torch.futures.Future()
@@ -300,18 +289,22 @@ class LocalFeatureStore(FeatureStore):
             feat = self
             if is_node_feat:
                 kwargs = dict(group_name=input_type, attr_name='x')
-                ret_feat = feat.get_tensor_from_global_id(index=index, **kwargs)
+                ret_feat = feat.get_tensor_from_global_id(
+                    index=index, **kwargs)
             else:
                 kwargs = dict(group_name=input_type, attr_name='edge_attr')
-                ret_feat = feat.get_tensor_from_global_id(index=index, **kwargs)
+                ret_feat = feat.get_tensor_from_global_id(
+                    index=index, **kwargs)
         else:
             feat = self
             if is_node_feat:
                 kwargs = dict(group_name=None, attr_name='x')
-                ret_feat = feat.get_tensor_from_global_id(index=index, **kwargs)
+                ret_feat = feat.get_tensor_from_global_id(
+                    index=index, **kwargs)
             else:
                 kwargs = dict(group_name=(None, None), attr_name='edge_attr')
-                ret_feat = feat.get_tensor_from_global_id(index=index, **kwargs)
+                ret_feat = feat.get_tensor_from_global_id(
+                    index=index, **kwargs)
 
         return ret_feat
 
@@ -348,13 +341,10 @@ class LocalFeatureStore(FeatureStore):
             feat_store.put_global_id(edge_id, group_name=(None, None))
         if edge_attr is not None:
             if edge_id is None:
-                raise ValueError(
-                    "'edge_id' needs to be present in case "
-                    "'edge_attr' is passed"
-                )
-            feat_store.put_tensor(
-                edge_attr, group_name=(None, None), attr_name='edge_attr'
-            )
+                raise ValueError("'edge_id' needs to be present in case "
+                                 "'edge_attr' is passed")
+            feat_store.put_tensor(edge_attr, group_name=(None, None),
+                                  attr_name='edge_attr')
         return feat_store
 
     @classmethod
@@ -397,13 +387,10 @@ class LocalFeatureStore(FeatureStore):
         if edge_attr_dict is not None:
             for edge_type, edge_attr in edge_attr_dict.items():
                 if edge_id_dict is None or edge_type not in edge_id_dict:
-                    raise ValueError(
-                        "'edge_id' needs to be present in case "
-                        "'edge_attr' is passed"
-                    )
-                feat_store.put_tensor(
-                    edge_attr, group_name=edge_type, attr_name='edge_attr'
-                )
+                    raise ValueError("'edge_id' needs to be present in case "
+                                     "'edge_attr' is passed")
+                feat_store.put_tensor(edge_attr, group_name=edge_type,
+                                      attr_name='edge_attr')
 
         return feat_store
 
@@ -431,32 +418,26 @@ class LocalFeatureStore(FeatureStore):
                 feat_store.put_tensor(value, group_name=None, attr_name=key)
 
         if not meta['is_hetero'] and edge_feats is not None:
-            feat_store.put_global_id(
-                edge_feats['global_id'], group_name=(None, None)
-            )
+            feat_store.put_global_id(edge_feats['global_id'],
+                                     group_name=(None, None))
             for key, value in edge_feats['feats'].items():
-                feat_store.put_tensor(
-                    value, group_name=(None, None), attr_name=key
-                )
+                feat_store.put_tensor(value, group_name=(None, None),
+                                      attr_name=key)
 
         if meta['is_hetero'] and node_feats is not None:
             for node_type, node_feat in node_feats.items():
-                feat_store.put_global_id(
-                    node_feat['global_id'], group_name=node_type
-                )
+                feat_store.put_global_id(node_feat['global_id'],
+                                         group_name=node_type)
                 for key, value in node_feat['feats'].items():
-                    feat_store.put_tensor(
-                        value, group_name=node_type, attr_name=key
-                    )
+                    feat_store.put_tensor(value, group_name=node_type,
+                                          attr_name=key)
 
         if meta['is_hetero'] and edge_feats is not None:
             for edge_type, edge_feat in edge_feats.items():
-                feat_store.put_global_id(
-                    edge_feat['global_id'], group_name=edge_type
-                )
+                feat_store.put_global_id(edge_feat['global_id'],
+                                         group_name=edge_type)
                 for key, value in edge_feat['feats'].items():
-                    feat_store.put_tensor(
-                        value, group_name=edge_type, attr_name=key
-                    )
+                    feat_store.put_tensor(value, group_name=edge_type,
+                                          attr_name=key)
 
         return feat_store
