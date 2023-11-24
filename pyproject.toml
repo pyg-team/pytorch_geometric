@@ -144,6 +144,8 @@ addopts = [
 ]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
+    "ignore:Deprecated call to `pkg_resources:DeprecationWarning",
+    "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
     "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
     # Filter `torch` warnings:
     "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
