@@ -9,7 +9,6 @@ from dataclasses import asdict
 from typing import Any
 
 import torch_geometric.graphgym.register as register
-from torch_geometric.graphgym.utils.io import makedirs_rm_exist
 from torch_geometric.io import fs
 
 try:  # Define global config object
@@ -500,6 +499,12 @@ def load_cfg(cfg, args):
     cfg.merge_from_file(args.cfg_file)
     cfg.merge_from_list(args.opts)
     assert_cfg(cfg)
+
+
+def makedirs_rm_exist(dir):
+    if osp.isdir(dir):
+        fs.rm(dir)
+    os.makedirs(dir, exist_ok=True)
 
 
 def get_fname(fname):
