@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
@@ -96,7 +96,7 @@ class PyGModelHubMixin(ModelHubMixin):
         return card
 
     def _save_pretrained(self, save_directory: Union[Path, str]):
-        path = os.path.join(save_directory, MODEL_WEIGHTS_NAME)
+        path = osp.join(save_directory, MODEL_WEIGHTS_NAME)
         model_to_save = self.module if hasattr(self, 'module') else self
         torch.save(model_to_save.state_dict(), path)
 
@@ -154,8 +154,8 @@ class PyGModelHubMixin(ModelHubMixin):
     ):
         map_location = torch.device(map_location)
 
-        if os.path.isdir(model_id):
-            model_file = os.path.join(model_id, MODEL_WEIGHTS_NAME)
+        if osp.isdir(model_id):
+            model_file = osp.join(model_id, MODEL_WEIGHTS_NAME)
         else:
             model_file = hf_hub_download(
                 repo_id=model_id,
