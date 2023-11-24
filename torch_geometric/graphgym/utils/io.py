@@ -1,7 +1,9 @@
 import ast
 import json
 import os
-import shutil
+import os.path as osp
+
+from torch_geometric.io import fs
 
 
 def string_to_python(string):
@@ -75,6 +77,6 @@ def makedirs_rm_exist(dir):
     Args:
         dir (str): The directory to be created.
     """
-    if os.path.isdir(dir):
-        shutil.rmtree(dir)
+    if osp.isdir(dir):
+        fs.rm(dir)
     os.makedirs(dir, exist_ok=True)

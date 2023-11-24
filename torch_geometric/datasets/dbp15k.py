@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
@@ -12,7 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import read_txt_array
+from torch_geometric.io import fs, read_txt_array
 from torch_geometric.utils import sort_edge_index
 
 
@@ -61,7 +60,7 @@ class DBP15K(InMemoryDataset):
         path = download_url(self.url.format(self.file_id), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'DBP15K'), self.raw_dir)
 
     def process(self):
