@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from typing import Callable, List, Optional, Union
 
 import numpy as np
@@ -72,7 +72,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.__class__.__name__, 'processed')
+        return osp.join(self.root, self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self) -> str:

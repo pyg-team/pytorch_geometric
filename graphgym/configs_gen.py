@@ -1,7 +1,7 @@
 import argparse
 import copy
 import csv
-import os
+import os.path as osp
 import random
 
 import numpy as np
@@ -126,7 +126,7 @@ def gen_grid(args, config, config_budget={}):
     fname_start = get_fname(args.config)
     out_dir = f'{args.out_dir}/{task_name}'
     makedirs_rm_exist(out_dir)
-    config['out_dir'] = os.path.join(config['out_dir'], task_name)
+    config['out_dir'] = osp.join(config['out_dir'], task_name)
 
     outs = load_search_file(args.grid)
     for i, out in enumerate(outs):
@@ -166,7 +166,7 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
     fname_start = get_fname(args.config)
     out_dir = f'{args.out_dir}/{task_name}'
     makedirs_rm_exist(out_dir)
-    config['out_dir'] = os.path.join(config['out_dir'], task_name)
+    config['out_dir'] = osp.join(config['out_dir'], task_name)
     outs = load_search_file(args.grid)
 
     counts = []
