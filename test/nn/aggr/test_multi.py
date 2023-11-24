@@ -2,15 +2,19 @@ import pytest
 import torch
 
 import torch_geometric
-from torch_geometric.testing import withCUDA
 from torch_geometric.nn import MultiAggregation
+from torch_geometric.testing import withCUDA
+
 
 @withCUDA
 @pytest.mark.parametrize('aggr_kwargs, expand', [
     (pytest.param(dict(mode='cat'), 3, id='cat')),
-    (pytest.param(dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1, id='proj')),
-    (pytest.param(dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
-                                        num_heads=4)), 1, id='attn')),
+    (pytest.param(
+        dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)),
+        1, id='proj')),
+    (pytest.param(
+        dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
+                                           num_heads=4)), 1, id='attn')),
     (pytest.param(dict(mode='sum'), 1, id='sum')),
     (pytest.param(dict(mode='mean'), 1, id='mean')),
     (pytest.param(dict(mode='max'), 1, id='max')),

@@ -165,8 +165,6 @@ def test_compile_scatter_argmax(device):
     assert torch.allclose(out1, out2)
 
 
-
-
 if __name__ == '__main__':
     # Insights on GPU:
     # ================
