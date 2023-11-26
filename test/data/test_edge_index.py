@@ -6,6 +6,8 @@ from torch_geometric.data.edge_index import EdgeIndex
 
 def test_edge_index():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3))
+    assert isinstance(adj, EdgeIndex)
+    assert isinstance(adj.as_tensor(), Tensor)
     assert adj.sparse_size == (3, 3)
     assert adj.sort_order is None
 

@@ -66,8 +66,6 @@ def dense_diff_pool(
     batch_size, num_nodes, _ = x.size()
 
     s = torch.softmax(s, dim=-1)
-    print('s')
-    print(s)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
