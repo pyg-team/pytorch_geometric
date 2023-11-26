@@ -1,6 +1,7 @@
 import math
 from typing import Dict, List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr.base import Aggregation
@@ -188,6 +189,7 @@ class FusedAggregation(Aggregation):
         self.reduce_ops: List[Optional[str]] = reduce_ops
         self.lookup_ops: List[Optional[Tuple[str, int]]] = lookup_ops
 
+    # @torch._dynamo.optimize()
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> List[Tensor]:
