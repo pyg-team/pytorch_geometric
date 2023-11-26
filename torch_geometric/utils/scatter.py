@@ -91,8 +91,7 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                                   f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
-                return src.new_zeros(size).scatter_reduce_(
-                    dim, index, src, reduce=f'a{reduce}', include_self=False)
+                return _scatter_min_or_max(src, index, dim, size, reduce)
 
             return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                          reduce=reduce)
@@ -116,6 +115,13 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                                          reduce='mul')
 
         raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
+
+    @torch._dynamo.optimize()
+    def _scatter_min_or_max(src: Tensor, index: Tensor, dim: int, size: int,
+                            reduce: str):
+        return src.new_zeros(size).scatter_reduce_(dim, index, src,
+                                                   reduce=f'a{reduce}',
+                                                   include_self=False)
 
 else:  # pragma: no cover
 

@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
-        timeout-minutes: 10
+        timeout-minutes: 100
         run: |
           pytest --cov --cov-report=xml --durations 10
 

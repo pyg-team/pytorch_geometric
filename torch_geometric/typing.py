@@ -41,7 +41,7 @@ try:
             WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
-    WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
+    WITH_INDEX_SORT = False
     WITH_METIS = hasattr(pyg_lib, 'partition')
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = ('edge_time' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
@@ -64,7 +64,7 @@ except Exception as e:
 
 try:
     import torch_scatter  # noqa
-    WITH_TORCH_SCATTER = True
+    WITH_TORCH_SCATTER = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
