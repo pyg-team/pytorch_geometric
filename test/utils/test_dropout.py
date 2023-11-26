@@ -65,8 +65,12 @@ def test_dropout_edge():
     assert out[0].tolist() == [[0, 1, 2, 2], [1, 2, 1, 3]]
     assert out[1].tolist() == [True, False, True, True, True, False]
 
+    print()
+    print(edge_index)
+
     torch.manual_seed(6)
     out = dropout_edge(edge_index, force_undirected=True)
+    print(out[1])
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 2, 0, 1]]
     assert out[1].tolist() == [0, 2, 0, 2]
 
