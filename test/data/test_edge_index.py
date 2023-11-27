@@ -1,5 +1,6 @@
 import os.path as osp
 
+import pytest
 import torch
 
 from torch_geometric.data.edge_index import EdgeIndex
@@ -180,3 +181,36 @@ def test_save_and_load(tmp_path):
     assert torch.equal(out, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
     assert out.sort_order == 'row'
     assert torch.equal(out._rowptr, torch.tensor([0, 1, 3, 4]))
+
+
+def test_share_memory():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    adj = adj.share_memory_()
+    assert isinstance(adj, EdgeIndex)
+    assert adj.is_shared()
+    assert adj._rowptr.is_shared()
+
+
+@pytest.mark.parametrize('num_workers', [0, 2])
+def test_data_loader(num_workers):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    loader = torch.utils.data.DataLoader(
+        [adj] * 4,
+        batch_size=2,
+        num_workers=num_workers,
+        collate_fn=lambda x: x,
+        drop_last=True,
+    )
+
+    assert len(loader) == 2
+    for batch in loader:
+        assert isinstance(batch, list)
+        assert len(batch) == 2
+        for adj in batch:
+            assert isinstance(adj, EdgeIndex)
+            assert adj.is_shared() == (num_workers > 0)
+            assert adj._rowptr.is_shared() == (num_workers > 0)
