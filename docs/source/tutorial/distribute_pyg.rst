@@ -44,7 +44,7 @@ When we deal with one really big graph and one single machine can not cover one 
 
 
 
-The first step for distributed training is to partition the graph into multiples which can be used by multiple nodes. 
+The first step for distributed training is to partition the graph into multiples which can be used by multiple nodes.
 
 There are two partition examples in latest pyg from `here <https://github.com/pyg-team/pytorch_geometric/edit/master/examples/distributed/pyg>`__ for homo/hetero partition cases. Here we will use the ``ogbn-products`` as homo dataset/``ogbn-mags`` as hetero dataset to demonstrate how to partition it into two parts for distributed training.
 The complete script for partitioning ``ogbn-products`` dataset/``ogbn-mags`` for hetero dataset  can be found `here <https://github.com/pyg-team/pytorch_geometric/edit/master/examples/distributed/pyg/partition_graph.py>`__ for homo partition and `here <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_hetero_graph.py>`__ for hetero partition.
@@ -62,16 +62,16 @@ First, in ``examples/distributed/pyg/partition_graph.py`` script we use the foll
 
     dataset = PygNodePropPredDataset(ogbn_dataset)
     data = dataset[0]
-    
+
     partitioner = Partitioner(data, num_parts, save_dir, recursive)
     partitioner.generate_partition()
     split_idx = dataset.get_idx_split()
-    
+
     print('-- Saving label ...')
     label_dir = osp.join(root_dir, f'{ogbn_dataset}-label')
     os.makedirs(label_dir, exist_ok=True)
     torch.save(data.y.squeeze(), osp.join(label_dir, 'label.pt'))
-    
+
     print('-- Partitioning training indices ...')
     train_idx = split_idx['train']
     train_idx = train_idx.split(train_idx.size(0) // num_parts)
@@ -115,16 +115,16 @@ Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use 
   :width: 90%
 
 
-We used metis algorithm to do the partition work with the PyG's ClusterData API. During the partition we keep the halonode when cutting the edges with another partition as shown in the figure above. 
+We used metis algorithm to do the partition work with the PyG's ClusterData API. During the partition we keep the halonode when cutting the edges with another partition as shown in the figure above.
 
 Under the partition folder there are four folders:
 
-1) labels:     
-  + label.pt:   labels   
+1) labels:
+  + label.pt:   labels
 2) partition:
   + edge_map.pt:   partition book between edge_id and partition_id
   + node_map.pt:   partition book between node_id and partition_id
-  + META.json:  {'num_parts': 2, 'is_hetero': false, 'node_types': self.node_types, 'edge_types': self.edge_types, 'is_sorted': true } 
+  + META.json:  {'num_parts': 2, 'is_hetero': false, 'node_types': self.node_types, 'edge_types': self.edge_types, 'is_sorted': true }
   + part0:      partition 0
 
     - graph.pt:     graph topo
@@ -135,10 +135,10 @@ Under the partition folder there are four folders:
     - graph.pt:     graph topo
     - node_feats.pt:   node features
     - edge_feats.pt:   edge features
-3) training:  
+3) training:
   + partion0.pt:  training seeds for partition0
   + partion1.pt:  training seeds for partition1
-4) test:     
+4) test:
   + partion0.pt:  test seeds for partition0
   + partion0.pt:  test seeds for partition1
 
@@ -160,10 +160,10 @@ In distributed training, each node in the cluster holds a partition of the graph
 
 1) LocalGraphStore
 
-There are three parts for LocalGraphStore: 
+There are three parts for LocalGraphStore:
 
-+ Graph Stores:  
-  
++ Graph Stores:
+
   - graph topology, edge IDs, and parition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label
 
 + APIs for PyG Data:
@@ -181,8 +181,8 @@ There are three parts for LocalGraphStore:
 
 There are four parts for LocalGraphStore:
 
-+ Features Stores:  
-  
++ Features Stores:
+
   - node/edge features, node IDs, and parition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label
 
 + APIs for PyG Data:
@@ -198,7 +198,7 @@ There are four parts for LocalGraphStore:
 + API for feature lookup
 
   - API function ``lookup_features()`` is to lookup the features from local partition and remote partitions which will include the sub-apis of ``_remote_lookup_features()`` and ``_local_lookup_features()``.
-        
+
 
 
 
@@ -263,7 +263,7 @@ At the same time we also store the partition information like num_partitions, pa
   :width: 90%
 
 
-In the distributed pyg two torch.distributed parallel technologies are used: 
+In the distributed pyg two torch.distributed parallel technologies are used:
 
 + ``torch.distributed.ddp`` used for data parallel on training side
 + ``torch.distributed.rpc`` for remote sampling over multiple nodes. there are two times to use RPC in distributed sampling:
@@ -292,9 +292,9 @@ Here we used the torch.distributed.rpc instead of gRPC, etc because torch.distri
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, training_pg_master_port))
 
-Distributed class ``DistContext`` is used to contain the distributed information like world_size, rank, global_world_size, global_rank, group_name, etc which is easy for distributed communication.  
+Distributed class ``DistContext`` is used to contain the distributed information like world_size, rank, global_world_size, global_rank, group_name, etc which is easy for distributed communication.
 
-In the ``torch.distributed.ddp`` communication we support all kinds of backend, like NCCL, Gloo, MPI, etc. 
+In the ``torch.distributed.ddp`` communication we support all kinds of backend, like NCCL, Gloo, MPI, etc.
 
 
 
@@ -308,12 +308,12 @@ In the ``torch.distributed.ddp`` communication we support all kinds of backend, 
 
 Distributed class ``DistNeighborLoader`` is used to provide batch-sized data for distributed trainer. This class will have the input of data partition, num_neighbors, train_idx, batch_size, shuffle flag, device, number of sampler workers, master addr/port for ddp, context and rpc_worker_names, etc.
 
-As the DistNeighborLoader architecture shown above there are the separate processes for sampler and trainer. 
+As the DistNeighborLoader architecture shown above there are the separate processes for sampler and trainer.
 
 + **Main process**:   cover the loading of data partition, distloader and model training, etc
-+ **Sampler process**: cover the distNeighborSampler and message queue like here we used ``torch.mp.queue`` to send the sampler message from one process to another. 
++ **Sampler process**: cover the distNeighborSampler and message queue like here we used ``torch.mp.queue`` to send the sampler message from one process to another.
 
-The working flow is from load partition into graphstore/featurestore, distNeighborSampler with local and remote sampling,  sampled nodes/features to be formed into PyG data for dataloader and finally into trainer for training. 
+The working flow is from load partition into graphstore/featurestore, distNeighborSampler with local and remote sampling,  sampled nodes/features to be formed into PyG data for dataloader and finally into trainer for training.
 
 .. figure:: ../_static/thumbnails/distribute_distloader.png
   :align: center
@@ -324,7 +324,7 @@ Distributed class ``DistLoader`` is used to create distributed data loading rout
 Distributed class ``NodeLoader`` is used to do the distributed node sampling and feature collection from local/remotely based on the function of ``collate_fn`` and ``filter_fn`` in ``NodeLoader`` and finally formed sampled results into PyG data for dataloader output.
 
 
-There are several key features for ``DistNeighborLoader`` and  ``DistLoader``: 
+There are several key features for ``DistNeighborLoader`` and  ``DistLoader``:
 
 + ``DistNeighborLoader`` inherits all basic functionality from PyG Loaders and rely on PyTorch multiprocessing backend with modified ``_worker_loop`` arguments.
 + Modified args passed to the ``worker_init_fn`` control process initialization and closing behaviors, i.e. establish RPC and close it at process exit.
@@ -410,9 +410,9 @@ The figure below shows the architecture of the deployment mode:
   :align: center
   :width: 90%
 
-There are two communication groups. One is ddp group used for distributed training. Another is rpc group used for distributed sampling including node sampling and feature collection over multiple partitions. 
+There are two communication groups. One is ddp group used for distributed training. Another is rpc group used for distributed sampling including node sampling and feature collection over multiple partitions.
 
-From this diagram there are two nodes and each node will load one partition in graphstore/featurestore for their respective partition. 
+From this diagram there are two nodes and each node will load one partition in graphstore/featurestore for their respective partition.
 
 
 distributed training in PyG has two basic roles: sampler and trainer:
@@ -428,19 +428,19 @@ The working flow is -
 
 + **distributed node sampling**:  Based on training seeds (some seeds are in local and some are in remote nodes) the distributed node sampling will be performed. After the local sampling and remote sampling under these seeds the sampling results will be merged.
 
-+ **distributed feature lookup**: Based on the sampled global node ids (some are in local and some are in remote nodes) the distributed feature lookup still will be performance. Finally the local/remote features will be merged also. 
++ **distributed feature lookup**: Based on the sampled global node ids (some are in local and some are in remote nodes) the distributed feature lookup still will be performance. Finally the local/remote features will be merged also.
 
 + **form into PyG data format**:  Based on sampled nodes/features these sampled messages will be formed into PyG data as dataloader output for trainer input.
 
 
 
 
-The key code structure of distributed class ``DistNeighborSampler`` shown as below. 
+The key code structure of distributed class ``DistNeighborSampler`` shown as below.
 
 The key steps for distributed node sampling -
 
-+ ``node_sample()``:  
-  - Node sampling function based on layer-by-layer sampling, each layer of which is done by ``simple_one_hop()``. 
++ ``node_sample()``:
+  - Node sampling function based on layer-by-layer sampling, each layer of which is done by ``simple_one_hop()``.
   - After one layer sampled there will remove duplication in sampled results
   - Add with the sampled nodes from previous layers
 
@@ -560,7 +560,7 @@ The key steps for distributed node sampling -
         )
 
 
-One example based on the DistNeighborSampler is shown as below. 
+One example based on the DistNeighborSampler is shown as below.
 
 
 .. figure:: ../_static/thumbnails/distribute_neighborsampler.png
@@ -609,7 +609,7 @@ Key steps in this example as -
 7. Installation & Run for Homo/Hetero Example
 ---------------------------------------------
 
-7.1 Installation 
+7.1 Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Requirement:
@@ -631,7 +631,7 @@ Requirement:
 
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we partition the ``ogbn-products`` dataset into multiple partitions, each of which corresponds to a specific training node.
 
-Here, we use ``ogbn-products`` and partition it into two partitions (in default) by the `[partition example] <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`__ 
+Here, we use ``ogbn-products`` and partition it into two partitions (in default) by the `[partition example] <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`__
 
 .. code-block:: python
 
@@ -658,7 +658,7 @@ For example, running the example in two nodes:
       --dataset_root_dir=your partition folder \
       --num_nodes=2 --node_rank=0 --num_training_procs=1 \
       --master_addr= master ip
-    
+
     # Node 1:
     python dist_train_sage_for_homo.py \
       --dataset_root_dir=your partition folder \
@@ -707,7 +707,7 @@ For example, running the example in two nodes:
       --dataset=ogbn-mags \
       --num_nodes=2 --node_rank=0 --num_training_procs=1 \
       --master_addr= master ip
-    
+
     # Node 1:
     python dist_train_sage_for_hetero.py \
       --dataset_root_dir=your partition folder \
@@ -720,7 +720,7 @@ For example, running the example in two nodes:
 8. Run with Launch.py
 ------------------------------------
 
-As you can see the run in previous paragraph we need run the script in separate nodes which is not easy for the case of big partition numbers. So in this chapter we will use one script to run just in one node for multiple partitions. 
+As you can see the run in previous paragraph we need run the script in separate nodes which is not easy for the case of big partition numbers. So in this chapter we will use one script to run just in one node for multiple partitions.
 
 The requirement for this single-script run is that you still need multiple nodes with NFS supported & ssh with password-less.
 
@@ -728,12 +728,12 @@ In the followings we will show the files to run with single-scripts.
 
 1) **ip_config.yaml**
 
-There are the 2 ip and 2 ports list for 2 partitions inside this file as example below. 
+There are the 2 ip and 2 ports list for 2 partitions inside this file as example below.
 
-+ x.x.x.10 1234 
++ x.x.x.10 1234
 + x.x.x.12 1234
 
-The node with first IP address will be the host node to run with launch.py as below. 
+The node with first IP address will be the host node to run with launch.py as below.
 
 
 2) **launch.py**
@@ -755,51 +755,51 @@ In the launch.py you need setup the parameters as below
 
 3) **run_dist.sh**
 
-You also create one .sh file to run this distributed script with all parameters inside of this .sh file and if you need run another setting you just need change a little settting in this .sh file. 
+You also create one .sh file to run this distributed script with all parameters inside of this .sh file and if you need run another setting you just need change a little settting in this .sh file.
 
-The below .sh example is assume that you have the anaconda virtual environment in all nodes. 
+The below .sh example is assume that you have the anaconda virtual environment in all nodes.
 
 .. code-block:: python
 
     #!/bin/bash
-    
+
     CONDA_ENV=/home/userXXX/anaconda3/envs/PyGDistributed
     PYG_WORKSPACE=$PWD    #/home/userXXX/distributed_pyg/pytorch_geometric
     PY_EXEC=${CONDA_ENV}/bin/python
     EXEC_SCRIPT=${PYG_WORKSPACE}/e2e_homo.py
-    
+
     # node number
     NUM_NODES=2
-    
+
     # dataset folder
     DATASET_ROOT_DIR="/home/userXXX/partition_ds/products"
-    
+
     # process number for training
     NUM_TRAINING_PROCS=1
-    
+
     # dataset name
     DATASET=ogbn-product
-    
+
     # num epochs to run for
     EPOCHS=20
-    
+
     BATCH_SIZE=1024
-    
+
     # number of workers for sampling
     NUM_WORKERS=2
     CONCURRENCY=2
-    
+
     #partition data directory
     PART_CONFIG="/home/userXXX/partition_ds/products/ogbn-products-partitions/META.json"
     NUMPART=2
-    
+
     # fanout per layer
     NUM_NEIGHBORS="15,10,5"
-    
+
     #ip_config path
     IP_CONFIG=${PYG_WORKSPACE}/ip_config.yaml
-    
-    
+
+
     # Folder and filename where you want your logs.
     logdir="logs"
     mkdir -p "logs"
@@ -810,31 +810,3 @@ The below .sh example is assume that you have the anaconda virtual environment i
     # stdout stored in /logdir/logname.out
     python launch.py --workspace ${PYG_WORKSPACE} --num_nodes ${NUM_NODES} --num_neighbors ${NUM_NEIGHBORS} --num_training_procs ${NUM_TRAINING_PROCS} --dataset_root_dir ${DATASET_ROOT_DIR} --dataset ${DATASET} --epochs ${EPOCHS} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --concurrency ${CONCURRENCY} --part_config ${PART_CONFIG} --ip_config ${IP_CONFIG} "cd /home/userXXX; source anaconda3/envs/PyGDistributed/bin/activate; cd ${PYG_WORKSPACE}; ${PY_EXEC} ${EXEC_SCRIPT}" |& tee ${logdir}/${logname}.txt
     set +x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
