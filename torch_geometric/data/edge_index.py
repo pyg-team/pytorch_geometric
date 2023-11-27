@@ -311,6 +311,11 @@ def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
     return apply_(tensor, Tensor.cuda, *args, **kwargs)
 
 
+@implements(Tensor.share_memory_)
+def share_memory_(tensor: EdgeIndex) -> EdgeIndex:
+    return apply_(tensor, Tensor.share_memory_)
+
+
 @implements(torch.cat)
 def cat(
     tensors: List[Union[EdgeIndex, Tensor]],
