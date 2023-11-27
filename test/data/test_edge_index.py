@@ -62,6 +62,16 @@ def test_cpu_cuda():
     assert not out.is_cuda
 
 
+def test_share_memory():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    adj = adj.share_memory_()
+    assert isinstance(adj, EdgeIndex)
+    assert adj.is_shared()
+    assert adj._rowptr.is_shared()
+
+
 def test_sort_by():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     out = adj.sort_by('row')
@@ -166,6 +176,31 @@ def test_narrow():
     assert not isinstance(out, EdgeIndex)
 
 
+def test_getitem():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+
+    out = adj[:, torch.tensor([False, True, False, True])]
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
+    assert out.sort_order == 'row'
+
+    out = adj[..., torch.tensor([1, 3])]
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
+    assert out.sort_order is None
+
+    out = adj[..., 1::2]
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
+    assert out.sort_order == 'row'
+
+    out = adj[:, 0]
+    assert not isinstance(out, EdgeIndex)
+
+    out = adj[torch.tensor([0])]
+    assert not isinstance(out, EdgeIndex)
+
+
 def test_save_and_load(tmp_path):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj.fill_cache()
@@ -181,16 +216,6 @@ def test_save_and_load(tmp_path):
     assert torch.equal(out, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
     assert out.sort_order == 'row'
     assert torch.equal(out._rowptr, torch.tensor([0, 1, 3, 4]))
-
-
-def test_share_memory():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
-
-    adj = adj.share_memory_()
-    assert isinstance(adj, EdgeIndex)
-    assert adj.is_shared()
-    assert adj._rowptr.is_shared()
 
 
 @pytest.mark.parametrize('num_workers', [0, 2])
