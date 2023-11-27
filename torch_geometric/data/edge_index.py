@@ -228,7 +228,7 @@ class EdgeIndex(Tensor):
         out = self.__class__(edge_index)
 
         # We can fully fill metadata and cache:
-        out._sparse_size = self._sparse_size
+        out._sparse_size = self.sparse_size
         out._sort_order = sort_order
         out._rowptr = self._rowptr
         out._colptr = self._colptr
@@ -275,7 +275,7 @@ def apply_(
     out = out.as_subclass(EdgeIndex)
 
     # Copy metadata:
-    out._sparse_size = out._sparse_size
+    out._sparse_size = out.sparse_size
     out._sort_order = out._sort_order
 
     # Convert cache:
@@ -360,7 +360,7 @@ def flip(
 
     # Flip metadata and cache:
     if 0 in dims or -2 in dims:
-        out._sparse_size = input._sparse_size[::-1]
+        out._sparse_size = input.sparse_size[::-1]
 
     if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
         if input._sort_order == SortOrder.ROW:
@@ -372,5 +372,46 @@ def flip(
         out._colptr = input._rowptr
         out._csr2csc = input._csc2csr
         out._csc2csr = input._csr2csc
+
+    return out
+
+
+@implements(torch.index_select)
+@implements(Tensor.index_select)
+def index_select(
+    input: EdgeIndex,
+    dim: int,
+    index: Tensor,
+) -> Union[EdgeIndex, Tensor]:
+
+    out = Tensor.__torch_function__(  #
+        torch.index_select, (Tensor, ), (input, dim, index))
+
+    if dim == 1 or dim == -1:
+        out = out.as_subclass(EdgeIndex)
+        out._sparse_size = input.sparse_size
+
+    return out
+
+
+@implements(torch.narrow)
+@implements(Tensor.narrow)
+def narrow(
+    input: EdgeIndex,
+    dim: int,
+    start: Union[int, Tensor],
+    length: int,
+) -> Union[EdgeIndex, Tensor]:
+
+    out = Tensor.__torch_function__(  #
+        torch.narrow, (Tensor, ), (input, dim, start, length))
+
+    if dim == 1 or dim == -1:
+        out = out.as_subclass(EdgeIndex)
+        out._sparse_size = input.sparse_size
+        # NOTE We could potentially maintain `rowptr`/`colptr` attributes here,
+        # but it is not really clear if this is worth it. The most important
+        # information, the sort order, needs to be maintained though:
+        out._sort_order = input._sort_order
 
     return out
