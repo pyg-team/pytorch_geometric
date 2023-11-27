@@ -23,28 +23,6 @@ from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
-class MAG240M(LightningNodeData):
-    def __init__(self, *args, **kwargs):
-        super(MAG240M, self).__init__(*args, **kwargs)
-
-    @property
-    def num_features(self) -> int:
-        return 768
-
-    @property
-    def num_classes(self) -> int:
-        return 153
-
-    def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
-        node_types = ["paper", "author", "institution"]
-        edge_types = [
-            ("author", "affiliated_with", "institution"),
-            ("institution", "rev_affiliated_with", "author"),
-            ("author", "writes", "paper"),
-            ("paper", "rev_writes", "author"),
-            ("paper", "cites", "paper"),
-        ]
-        return node_types, edge_types
 
 
 class HomoGNN(torch.nn.Module):
