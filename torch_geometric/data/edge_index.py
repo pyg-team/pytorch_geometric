@@ -294,25 +294,21 @@ def flip(
     assert isinstance(dims, (tuple, list))
 
     out = Tensor.__torch_function__(torch.flip, (Tensor, ), (input, dims))
-
-    if len(dims) != 1:
-        return out
-    if dims[0] != 0 and dims[0] != -2:
-        return out
-
     out = out.as_subclass(EdgeIndex)
 
-    # Flip metadata:
-    out._sparse_size = input._sparse_size[::-1]
-    if input._sort_order == SortOrder.ROW:
-        out._sort_order = SortOrder.COL
-    elif input._sort_order == SortOrder.COL:
-        out._sort_order = SortOrder.ROW
+    # Flip metadata and cache:
+    if 0 in dims or -2 in dims:
+        out._sparse_size = input._sparse_size[::-1]
 
-    # Flip cache:
-    out._rowptr = input._colptr
-    out._colptr = input._rowptr
-    out._csr2csc = input._csc2csr
-    out._csc2csr = input._csr2csc
+    if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
+        if input._sort_order == SortOrder.ROW:
+            out._sort_order = SortOrder.COL
+        elif input._sort_order == SortOrder.COL:
+            out._sort_order = SortOrder.ROW
+
+        out._rowptr = input._colptr
+        out._colptr = input._rowptr
+        out._csr2csc = input._csc2csr
+        out._csc2csr = input._csr2csc
 
     return out

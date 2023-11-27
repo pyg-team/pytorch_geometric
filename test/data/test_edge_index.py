@@ -82,7 +82,12 @@ def test_edge_index_flip():
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
     assert out._sparse_size == (None, 3)
+    assert out.sort_order == 'col'
     assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
 
-    out = adj.flip(1)
-    assert not isinstance(out, EdgeIndex)
+    out = adj.flip([0, 1])
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
+    assert out._sparse_size == (None, 3)
+    assert out.sort_order is None
+    assert out._colptr is None
