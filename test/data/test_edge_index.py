@@ -15,8 +15,19 @@ def test_edge_index():
 
     assert isinstance(adj.as_tensor(), Tensor)
 
-    out = adj + 1
-    assert isinstance(out, Tensor)
+    assert isinstance(adj + 1, Tensor)
+
+
+def test_edge_index_fill_cache():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.validate().fill_cache()
+    assert adj.sparse_size == (3, None)
+    assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
+
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    adj.validate().fill_cache()
+    assert adj.sparse_size == (None, 3)
+    assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
 
 
 @withCUDA
