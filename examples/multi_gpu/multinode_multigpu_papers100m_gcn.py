@@ -1,31 +1,11 @@
+"""Multi-node multi-GPU example on ogbn-papers100m.
+
+To run:
+srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
+--container-name=cont --container-image=<image_url> \
+--container-mounts=/ogb-papers100m/:/workspace/dataset
+python3 path_to_script.py
 """
-In terminal 1:
-==============
-
-srun --overlap -A <slurm_access_group> -p interactive \
-    -J <experiment-name> -N 2 -t 02:00:00 --pty bash
-
-In terminal 2:
-==============
-
-squeue -u <slurm-unix-account-id>
-export jobid=<JOBID from SQUEUE>
-
-Then:
-=====
-
-srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
-    --container-image=<image_url> --container-name=cont
-    --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
-
-srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
-    --container-name=cont
-    --container-mounts=
-    <data-directory>/ogb-papers100m/:/workspace/dataset/
-
-python3 multinode_multigpu_papers100m_gcn.py --ngpu_per_node 3
-"""
-import argparse
 import os
 import time
 
@@ -39,42 +19,16 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
 
 
-def get_num_workers(world_size: int) -> int:
+def get_num_workers() -> int:
     num_workers = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_workers = len(os.sched_getaffinity(0)) // (2 * world_size)
+            num_workers = len(os.sched_getaffinity(0)) // 2
         except Exception:
             pass
     if num_workers is None:
-        num_workers = os.cpu_count() // (2 * world_size)
+        num_workers = os.cpu_count() // 2
     return num_workers
-
-
-_LOCAL_PROCESS_GROUP = None
-
-
-def create_local_process_group(num_workers_per_node: int):
-    global _LOCAL_PROCESS_GROUP
-    assert _LOCAL_PROCESS_GROUP is None
-    world_size = dist.get_world_size() if dist.is_initialized() else 1
-    rank = dist.get_rank() if dist.is_initialized() else 0
-    assert world_size % num_workers_per_node == 0
-
-    num_nodes = world_size // num_workers_per_node
-    node_rank = rank // num_workers_per_node
-    for i in range(num_nodes):
-        start = i * num_workers_per_node
-        end = (i + 1) * num_workers_per_node
-        ranks_on_i = list(range(start, end))
-        pg = dist.new_group(ranks_on_i)
-        if i == node_rank:
-            _LOCAL_PROCESS_GROUP = pg
-
-
-def get_local_process_group():
-    assert _LOCAL_PROCESS_GROUP is not None
-    return _LOCAL_PROCESS_GROUP
 
 
 class GCN(torch.nn.Module):
@@ -91,11 +45,11 @@ class GCN(torch.nn.Module):
         return x
 
 
-def run(device, world_size, data, split_idx, model):
-    local_group = get_local_process_group()
-    local_id = dist.get_rank(group=local_group)
+def run(world_size, data, split_idx, model):
+    local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
-    os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
+    torch.cuda.set_device(local_id)
+    device = torch.device(local_id)
     if rank == 0:
         print(f'Using {nprocs} GPUs...')
 
@@ -110,7 +64,7 @@ def run(device, world_size, data, split_idx, model):
     kwargs = dict(
         data=data,
         batch_size=128,
-        num_workers=get_num_workers(world_size),
+        num_workers=get_num_workers(),
         num_neighbors=[50, 50],
     )
 
@@ -185,24 +139,12 @@ def run(device, world_size, data, split_idx, model):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ngpu_per_node", type=int, default=1)
-    args = parser.parse_args()
-
     # Setup multi-node:
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
-    create_local_process_group(args.ngpu_per_node)
-    local_group = get_local_process_group()
-    if dist.is_initialized():
-        device_id = dist.get_rank(group=local_group)
-    else:
-        device_id = 0
-    torch.cuda.set_device(device_id)
-    device = torch.device(device_id)
-
+    assert dist.is_initialized(), "Distributed cluster not initialized"
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 64, dataset.num_classes)
 
-    run(device, nprocs, dataset[0], split_idx, model)
+    run(nprocs, dataset[0], split_idx, model)

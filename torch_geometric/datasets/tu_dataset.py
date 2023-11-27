@@ -1,17 +1,8 @@
-import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
-import torch
-
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
-from torch_geometric.io import read_tu_data
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs, read_tu_data
 
 
 class TUDataset(InMemoryDataset):
@@ -50,6 +41,8 @@ class TUDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node attributes (if present).
             (default: :obj:`False`)
@@ -119,17 +112,24 @@ class TUDataset(InMemoryDataset):
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 use_node_attr: bool = False, use_edge_attr: bool = False,
-                 cleaned: bool = False):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        use_node_attr: bool = False,
+        use_edge_attr: bool = False,
+        cleaned: bool = False,
+    ):
         self.name = name
         self.cleaned = cleaned
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
-        out = torch.load(self.processed_paths[0])
+        out = fs.torch_load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
@@ -183,12 +183,10 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
-        folder = osp.join(self.root, self.name)
-        path = download_url(f'{url}/{self.name}.zip', folder)
-        extract_zip(path, folder)
-        os.unlink(path)
-        shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(folder, self.name), self.raw_dir)
+        fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
+        for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+            fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self):
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
@@ -205,8 +203,8 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self._data.to_dict(), self.slices, sizes),
-                   self.processed_paths[0])
+        fs.torch_save((self._data.to_dict(), self.slices, sizes),
+                      self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

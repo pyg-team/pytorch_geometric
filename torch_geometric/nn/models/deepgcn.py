@@ -77,7 +77,7 @@ class DeepGCNLayer(torch.nn.Module):
         self.norm.reset_parameters()
 
     def forward(self, *args, **kwargs) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         args = list(args)
         x = args.pop(0)
 

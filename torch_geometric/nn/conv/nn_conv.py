@@ -14,6 +14,7 @@ class NNConv(MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
     `"Neural Message Passing for Quantum Chemistry"
     <https://arxiv.org/abs/1704.01212>`_ paper.
+
     This convolution is also known as the edge-conditioned convolution from the
     `"Dynamic Edge-Conditioned Filters in Convolutional Neural Networks on
     Graphs" <https://arxiv.org/abs/1704.02901>`_ paper (see

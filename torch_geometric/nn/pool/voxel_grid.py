@@ -39,7 +39,6 @@ def voxel_grid(
 
     :rtype: :class:`torch.Tensor`
     """
-
     if grid_cluster is None:
         raise ImportError('`voxel_grid` requires `torch-cluster`.')
 

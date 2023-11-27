@@ -142,7 +142,6 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -179,7 +178,8 @@ class Node2Vec(torch.nn.Module):
         **kwargs,
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,

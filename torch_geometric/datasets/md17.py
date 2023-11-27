@@ -129,6 +129,8 @@ class MD17(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -341,6 +343,7 @@ class MD17(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if name not in self.file_names:
             raise ValueError(f"Unknown dataset name '{name}'")
@@ -349,7 +352,8 @@ class MD17(InMemoryDataset):
         self.revised = 'revised' in name
         self.ccsd = 'CCSD' in self.name
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if len(self.processed_file_names) == 1 and train is not None:
             raise ValueError(
@@ -361,7 +365,7 @@ class MD17(InMemoryDataset):
                 f"the 'train' argument was not specified")
 
         idx = 0 if train is None or train else 1
-        self.data, self.slices = torch.load(self.processed_paths[idx])
+        self.load(self.processed_paths[idx])
 
     def mean(self) -> float:
         return float(self._data.energy.mean())
@@ -429,7 +433,7 @@ class MD17(InMemoryDataset):
                     data = self.pre_transform(data)
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), processed_path)
+            self.save(data_list, processed_path)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({len(self)}, name='{self.name}')"

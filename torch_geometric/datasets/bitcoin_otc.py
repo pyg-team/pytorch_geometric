@@ -31,6 +31,8 @@ class BitcoinOTC(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -52,12 +54,18 @@ class BitcoinOTC(InMemoryDataset):
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(self, root: str, edge_window_size: int = 10,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        edge_window_size: int = 10,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.edge_window_size = edge_window_size
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -115,5 +123,4 @@ class BitcoinOTC(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

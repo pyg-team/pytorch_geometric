@@ -3,7 +3,14 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import MLPAggregation, SAGEConv
-from torch_geometric.testing import assert_module, is_full_test
+from torch_geometric.testing import (
+    assert_module,
+    disableExtensions,
+    is_full_test,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 
 
@@ -122,3 +129,29 @@ def test_multi_aggr_sage_conv(aggr_kwargs):
                     aggr_kwargs=aggr_kwargs)
 
     assert_module(conv, x, edge_index, expected_size=(4, 32))
+
+
+@withCUDA
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile_multi_aggr_sage_conv(device):
+    import torch._dynamo as dynamo
+
+    x = torch.randn(4, 8, device=device)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], device=device)
+
+    conv = SAGEConv(
+        in_channels=8,
+        out_channels=32,
+        aggr=['mean', 'sum', 'min', 'max', 'std'],
+    ).jittable().to(device)
+
+    explanation = dynamo.explain(conv)(x, edge_index)
+    assert explanation.graph_break_count == 0
+
+    compiled_conv = torch_geometric.compile(conv)
+
+    expected = conv(x, edge_index)
+    out = compiled_conv(x, edge_index)
+    assert torch.allclose(out, expected)

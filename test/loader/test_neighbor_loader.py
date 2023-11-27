@@ -22,6 +22,7 @@ from torch_geometric.testing import (
     withPackage,
 )
 from torch_geometric.typing import (
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
     WITH_PYG_LIB,
     WITH_TORCH_SPARSE,
     WITH_WEIGHTED_NEIGHBOR_SAMPLE,
@@ -530,7 +531,7 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     seed = torch.arange(10)
 
     sample = torch.ops.pyg.neighbor_sample
-    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, True)
+    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
@@ -570,8 +571,8 @@ def test_pyg_lib_and_torch_sparse_hetero_equality():
 
     sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
-                  num_neighbors_dict, None, None, None, True, False, True,
-                  False, "uniform", True)
+                  num_neighbors_dict, None, None, None, None, True, False,
+                  True, False, "uniform", True)
     sample = torch.ops.torch_sparse.hetero_neighbor_sample
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
@@ -786,6 +787,64 @@ def test_weighted_hetero_neighbor_loader():
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
 
 
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_homo_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = Data(edge_index=edge_index, edge_time=edge_time, num_nodes=5)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch.edge_time.numel() == batch.num_edges
+        if batch.edge_time.numel() > 0:
+            assert batch.edge_time.max() <= 4
+
+
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_hetero_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = HeteroData()
+    data['A'].num_nodes = 5
+    data['A', 'A'].edge_index = edge_index
+    data['A', 'A'].edge_time = edge_time
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_nodes='A',
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch['A', 'A'].edge_time.numel() == batch['A', 'A'].num_edges
+        if batch['A', 'A'].edge_time.numel() > 0:
+            assert batch['A', 'A'].edge_time.max() <= 4
+
+
 @withCUDA
 @onlyNeighborSampler
 @withPackage('torch_frame')
@@ -814,3 +873,32 @@ def test_neighbor_loader_with_tensor_frame(device):
         assert batch.global_tf.device == device
         assert batch.global_tf.num_rows == 1
         assert batch.global_tf == data.global_tf
+
+
+@onlyNeighborSampler
+def test_neighbor_loader_input_id():
+    data = HeteroData()
+    data['a'].num_nodes = 10
+    data['b'].num_nodes = 12
+
+    row = torch.randint(0, data['a'].num_nodes, (40, ))
+    col = torch.randint(0, data['b'].num_nodes, (40, ))
+    data['a', 'b'].edge_index = torch.stack([row, col], dim=0)
+    data['b', 'a'].edge_index = torch.stack([col, row], dim=0)
+
+    mask = torch.ones(data['a'].num_nodes, dtype=torch.bool)
+    mask[0] = False
+
+    loader = NeighborLoader(
+        data,
+        input_nodes=('a', mask),
+        batch_size=2,
+        num_neighbors=[2, 2],
+    )
+    for i, batch in enumerate(loader):
+        if i < 4:
+            expected = [(2 * i) + 1, (2 * i) + 2]
+        else:
+            expected = [(2 * i) + 1]
+
+        assert batch['a'].input_id.tolist() == expected

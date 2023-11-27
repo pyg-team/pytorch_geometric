@@ -59,7 +59,7 @@ class DirGNNConv(torch.nn.Module):
             self.lin.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        r""""""
+        """"""  # noqa: D419
         x_in = self.conv_in(x, edge_index)
         x_out = self.conv_out(x, edge_index.flip([0]))
 

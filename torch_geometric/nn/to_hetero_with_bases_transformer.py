@@ -25,7 +25,8 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent
     via the basis-decomposition technique introduced in the
     `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper:
+    <https://arxiv.org/abs/1703.06103>`_ paper.
+
     For this, the heterogeneous graph is mapped to a typed homogeneous graph,
     in which its feature representations are aligned and grouped to a single
     representation.

@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from typing import Callable, Optional
 
 import numpy as np
@@ -32,6 +32,8 @@ class DGraphFin(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -51,10 +53,16 @@ class DGraphFin(InMemoryDataset):
 
     url = "https://dgraph.xinye.com"
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     def download(self):
         raise RuntimeError(
@@ -75,7 +83,7 @@ class DGraphFin(InMemoryDataset):
 
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
-        path = os.path.join(self.raw_dir, "dgraphfin.npz")
+        path = osp.join(self.raw_dir, "dgraphfin.npz")
 
         with np.load(path) as loader:
             x = torch.from_numpy(loader['x']).to(torch.float)
@@ -96,5 +104,4 @@ class DGraphFin(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

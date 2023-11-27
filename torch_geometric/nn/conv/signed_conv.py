@@ -11,7 +11,7 @@ from torch_geometric.utils import spmm
 
 class SignedConv(MessagePassing):
     r"""The signed graph convolutional operator from the `"Signed Graph
-    Convolutional Network" <https://arxiv.org/abs/1808.06354>`_ paper
+    Convolutional Network" <https://arxiv.org/abs/1808.06354>`_ paper.
 
     .. math::
         \mathbf{x}_v^{(\textrm{pos})} &= \mathbf{\Theta}^{(\textrm{pos})}
