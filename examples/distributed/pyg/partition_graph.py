@@ -14,7 +14,7 @@ def partition_dataset(
     num_parts: int,
     recursive: bool = False,
 ):
-    save_dir = osp.join(root_dir, f'{ogbn_dataset}-partitions')
+    save_dir = osp.join(f"{root_dir}-{num_parts}parts", f'{ogbn_dataset}-partitions')
     dataset = PygNodePropPredDataset(ogbn_dataset)
     data = dataset[0]
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='ogbn-products')
     parser.add_argument('--root_dir', type=str, default='./data/products')
-    parser.add_argument('--num_partitions', type=int, default=2)
+    parser.add_argument('--num_partitions', type=int, default=3)
     parser.add_argument('--recursive', action='store_true')
     args = parser.parse_args()
 
