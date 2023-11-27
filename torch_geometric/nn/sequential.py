@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Callable, List, NamedTuple, Tuple, Union
 from uuid import uuid1
@@ -103,7 +102,7 @@ def Sequential(
 
         calls.append((name, module, in_desc, out_desc))
 
-    root = os.path.dirname(osp.realpath(__file__))
+    root = osp.dirname(osp.realpath(__file__))
     with open(osp.join(root, 'sequential.jinja'), 'r') as f:
         template = Template(f.read())
 
