@@ -262,7 +262,7 @@ def run(
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
                 acc_sum += model.validation_step(batch)
-            print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+            print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
     torch.save(model, 'trained_gnn.pt')
