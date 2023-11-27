@@ -1,6 +1,6 @@
 import functools
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -418,5 +418,46 @@ def narrow(
         # but it is not really clear if this is worth it. The most important
         # information, the sort order, needs to be maintained though:
         out._sort_order = input._sort_order
+
+    return out
+
+
+@implements(Tensor.__getitem__)
+def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
+    out = Tensor.__torch_function__(  #
+        Tensor.__getitem__, (Tensor, ), (input, index))
+
+    # There exists 3 possible index types that map back to a valid `EdgeIndex`,
+    # and all include selecting/filtering in the last dimension only:
+    def is_last_dim_select(i: Any) -> bool:
+        # Maps to true for `__getitem__` requests of the form
+        # `tensor[..., index]` or `tensor[:, index]`.
+        if not isinstance(i, tuple) or len(i) != 2:
+            return False
+        if i[0] == Ellipsis:
+            return True
+        if not isinstance(i[0], slice):
+            return False
+        return i[0].start is None and i[0].stop is None and i[0].step is None
+
+    is_valid = is_last_dim_select(index)
+
+    # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
+    if is_valid and isinstance(index[1], (torch.BoolTensor, torch.ByteTensor)):
+        out = out.as_subclass(EdgeIndex)
+        out._sparse_size = input.sparse_size
+        out._sort_order = input._sort_order
+
+    # 2. `edge_index[:, index]` or `edge_index[..., index]`.
+    elif is_valid and isinstance(index[1], Tensor):
+        out = out.as_subclass(EdgeIndex)
+        out._sparse_size = input.sparse_size
+
+    # 3. `edge_index[:, slice]` or `edge_index[..., slice]`.
+    elif is_valid and isinstance(index[1], slice):
+        out = out.as_subclass(EdgeIndex)
+        out._sparse_size = input.sparse_size
+        if index[1].step is None or index[1].step > 0:
+            out._sort_order = input._sort_order
 
     return out
