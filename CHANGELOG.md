@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed `CaptumExplainer` in case no `index` is passed ([#8440](https://github.com/pyg-team/pytorch_geometric/pull/8440))
 - Fixed `edge_index` construction in the `UPFD` dataset ([#8413](https://github.com/pyg-team/pytorch_geometric/pull/8413))
 - Fixed TorchScript support in `AttentionalAggregation` and `DeepSetsAggregation` ([#8406](https://github.com/pyg-team/pytorch_geometric/pull/8406))
 - Fixed `GraphMaskExplainer` for GNNs with more than two layers ([#8401](https://github.com/pyg-team/pytorch_geometric/pull/8401))
