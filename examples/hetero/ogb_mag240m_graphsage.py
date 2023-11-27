@@ -227,7 +227,7 @@ def run(
             loss.backward()
             optimizer.step()
             iter_time = time.time() - since
-            if i > num_warmup_iters_for_timing:
+            if i > num_warmup_iters_for_timing - 1:
                 time_sum += iter_time
             if rank == 0 and i % log_every_n_steps == 0:
                 print(f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
