@@ -121,6 +121,7 @@ Under the partition folder there are four folders:
 
 1) labels:
   + label.pt:   labels
+
 2) partition:
   + edge_map.pt:   partition book between edge_id and partition_id
   + node_map.pt:   partition book between node_id and partition_id
@@ -138,6 +139,7 @@ Under the partition folder there are four folders:
 3) training:
   + partion0.pt:  training seeds for partition0
   + partion1.pt:  training seeds for partition1
+
 4) test:
   + partion0.pt:  test seeds for partition0
   + partion0.pt:  test seeds for partition1
