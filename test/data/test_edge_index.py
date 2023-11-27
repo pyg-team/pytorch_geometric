@@ -1,3 +1,5 @@
+import os.path as osp
+
 import torch
 
 from torch_geometric.data.edge_index import EdgeIndex
@@ -161,3 +163,20 @@ def test_narrow():
     out = adj.narrow(dim=0, start=0, length=1)
     assert torch.equal(out, torch.tensor([[0, 1, 1, 2]]))
     assert not isinstance(out, EdgeIndex)
+
+
+def test_save_and_load(tmp_path):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    assert adj.sort_order == 'row'
+    assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
+
+    path = osp.join(tmp_path, 'edge_index.pt')
+    torch.save(adj, path)
+    out = torch.load(path)
+
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert out.sort_order == 'row'
+    assert torch.equal(out._rowptr, torch.tensor([0, 1, 3, 4]))
