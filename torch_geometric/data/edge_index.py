@@ -121,6 +121,29 @@ class EdgeIndex(Tensor):
 
         return self
 
+    def fill_cache(self) -> 'EdgeIndex':
+        if self._sort_order == SortOrder.ROW and self._rowptr is None:
+            if self.num_rows is None:
+                self._sparse_size = (
+                    int(self[0].max()) + 1 if self.numel() > 0 else 0,
+                    self.num_cols,
+                )
+
+            self._rowptr = torch._convert_indices_from_coo_to_csr(
+                self[0], self.num_rows, out_int32=self.dtype != torch.int64)
+            self._rowptr = self._rowptr.to(self.dtype)
+
+        if self._sort_order == SortOrder.COL and self._colptr is None:
+            if self.num_cols is None:
+                self._sparse_size = (
+                    self.num_rows,
+                    int(self[1].max()) + 1 if self.numel() > 0 else 0,
+                )
+
+            self._colptr = torch._convert_indices_from_coo_to_csr(
+                self[1], self.num_cols, out_int32=self.dtype != torch.int64)
+            self._colptr = self._colptr.to(self.dtype)
+
     @property
     def sparse_size(self) -> Tuple[Optional[int], Optional[int]]:
         r"""The size of the underlying sparse matrix."""
