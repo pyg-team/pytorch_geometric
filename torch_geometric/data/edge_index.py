@@ -216,7 +216,7 @@ def apply_(
     out._sparse_size = out._sparse_size
     out._sort_order = out._sort_order
 
-    # Convert metadata:
+    # Convert cache:
     if tensor._rowptr is not None:
         out._rowptr = fn(tensor._rowptr, *args, **kwargs)
     if tensor._colptr is not None:
@@ -278,5 +278,37 @@ def cat(
         num_cols = max(num_cols, tensor.num_cols)
 
     out._sparse_size = (num_rows, num_cols)
+
+    return out
+
+
+@implements(torch.flip)
+@implements(Tensor.flip)
+def flip(
+    input: EdgeIndex,
+    dims: Union[int, List[int], Tuple[int, ...]],
+) -> Union[EdgeIndex, Tensor]:
+
+    if isinstance(dims, int):
+        dims = [dims]
+    assert isinstance(dims, (tuple, list))
+
+    out = Tensor.__torch_function__(torch.flip, (Tensor, ), (input, dims))
+    out = out.as_subclass(EdgeIndex)
+
+    # Flip metadata and cache:
+    if 0 in dims or -2 in dims:
+        out._sparse_size = input._sparse_size[::-1]
+
+    if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
+        if input._sort_order == SortOrder.ROW:
+            out._sort_order = SortOrder.COL
+        elif input._sort_order == SortOrder.COL:
+            out._sort_order = SortOrder.ROW
+
+        out._rowptr = input._colptr
+        out._colptr = input._rowptr
+        out._csr2csc = input._csc2csr
+        out._csc2csr = input._csr2csc
 
     return out

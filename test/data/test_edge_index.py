@@ -72,3 +72,22 @@ def test_edge_index_cat():
     out = torch.cat([adj1, adj2], dim=0)
     assert out.size() == (4, 4)
     assert not isinstance(out, EdgeIndex)
+
+
+def test_edge_index_flip():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    out = adj.flip(0)
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
+    assert out.sparse_size == (None, 3)
+    assert out.sort_order == 'col'
+    assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
+
+    out = adj.flip([0, 1])
+    assert isinstance(out, EdgeIndex)
+    assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
+    assert out.sparse_size == (None, 3)
+    assert out.sort_order is None
+    assert out._colptr is None
