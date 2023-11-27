@@ -23,8 +23,6 @@ from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
-
-
 class HomoGNN(torch.nn.Module):
     def __init__(
         self,
