@@ -1,5 +1,4 @@
 import torch
-from torch import Tensor
 
 from torch_geometric.data.edge_index import EdgeIndex
 from torch_geometric.testing import onlyCUDA, withCUDA
@@ -13,9 +12,9 @@ def test_edge_index():
     assert adj.sparse_size == (3, 3)
     assert adj.sort_order is None
 
-    assert isinstance(adj.as_tensor(), Tensor)
+    assert not isinstance(adj.as_tensor(), EdgeIndex)
 
-    assert isinstance(adj + 1, Tensor)
+    assert not isinstance(adj + 1, EdgeIndex)
 
 
 def test_edge_index_fill_cache():
@@ -37,6 +36,10 @@ def test_edge_index_to(device):
     out = adj.to(torch.int)
     assert isinstance(out, EdgeIndex)
     assert out.dtype == torch.int
+
+    out = adj.to(torch.float)
+    assert not isinstance(out, EdgeIndex)
+    assert out.dtype == torch.float
 
     out = adj.to(device)
     assert isinstance(out, EdgeIndex)
@@ -68,4 +71,4 @@ def test_edge_index_cat():
 
     out = torch.cat([adj1, adj2], dim=0)
     assert out.size() == (4, 4)
-    assert isinstance(out, Tensor)
+    assert not isinstance(out, EdgeIndex)

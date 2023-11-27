@@ -1,11 +1,24 @@
 import functools
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
+
+SUPPORTED_DTYPES: Set[torch.dtype] = {
+    torch.uint8,
+    torch.int8,
+    torch.int16,
+    torch.int32,
+    torch.int64,
+}
+
+
+class SortOrder(Enum):
+    ROW = 'row'
+    COL = 'col'
 
 
 def implements(torch_function: Callable):
@@ -18,10 +31,11 @@ def implements(torch_function: Callable):
     return decorator
 
 
-def assert_integral_type(tensor: Tensor):
-    if tensor.is_floating_point():
-        raise ValueError(f"'EdgeIndex' needs to be of integral type "
-                         f"(got '{tensor.dtype}')")
+def assert_valid_dtype(tensor: Tensor):
+    if tensor.dtype not in SUPPORTED_DTYPES:
+        raise ValueError(f"'EdgeIndex' holds an unsupported data type "
+                         f"(got '{tensor.dtype}', but expected one of "
+                         f"{SUPPORTED_DTYPES})")
 
 
 def assert_two_dimensional(tensor: Tensor):
@@ -31,11 +45,6 @@ def assert_two_dimensional(tensor: Tensor):
     if tensor.size(0) != 2:
         raise ValueError(f"'EdgeIndex' needs to have a shape of "
                          f"[2, *] (got {list(tensor.size())})")
-
-
-class SortOrder(Enum):
-    ROW = 'row'
-    COL = 'col'
 
 
 class EdgeIndex(Tensor):
@@ -74,7 +83,7 @@ class EdgeIndex(Tensor):
                             f"{set(kwargs.keys())})")
 
         assert isinstance(data, Tensor)
-        assert_integral_type(data)
+        assert_valid_dtype(data)
         assert_two_dimensional(data)
 
         out = super().__new__(cls, data)
@@ -90,7 +99,7 @@ class EdgeIndex(Tensor):
         * that :class:`EdgeIndex` only holds valid entries.
         * that the sort order is correctly set.
         """
-        assert_integral_type(self)
+        assert_valid_dtype(self)
         assert_two_dimensional(self)
 
         if self.numel() > 0 and self.min() < 0:
@@ -223,7 +232,10 @@ def apply_(
 @implements(Tensor.to)
 def to(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
     out = apply_(tensor, Tensor.to, *args, **kwargs)
-    assert_integral_type(out)
+
+    if out.dtype not in SUPPORTED_DTYPES:
+        out = out.as_tensor()
+
     return out
 
 
