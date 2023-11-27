@@ -2,17 +2,47 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data.edge_index import EdgeIndex
+from torch_geometric.testing import onlyCUDA, withCUDA
 
 
 def test_edge_index():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3))
     assert isinstance(adj, EdgeIndex)
-    assert isinstance(adj.as_tensor(), Tensor)
+    assert str(adj) == ('EdgeIndex([[0, 1, 1, 2],\n'
+                        '           [1, 0, 2, 1]])')
     assert adj.sparse_size == (3, 3)
     assert adj.sort_order is None
 
+    assert isinstance(adj.as_tensor(), Tensor)
+
     out = adj + 1
     assert isinstance(out, Tensor)
+
+
+@withCUDA
+def test_edge_index_to(device):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    out = adj.to(torch.int)
+    assert isinstance(out, EdgeIndex)
+    assert out.dtype == torch.int
+
+    out = adj.to(device)
+    assert isinstance(out, EdgeIndex)
+    assert out.device == device
+
+
+@onlyCUDA
+def test_edge_index_cpu_cuda():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    out = adj.cuda()
+    assert isinstance(out, EdgeIndex)
+    assert out.is_cuda
+
+    out = out.cpu()
+    assert isinstance(out, EdgeIndex)
+    assert not out.is_cuda
 
 
 def test_edge_index_cat():

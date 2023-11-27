@@ -18,6 +18,21 @@ def implements(torch_function: Callable):
     return decorator
 
 
+def assert_integral_type(tensor: Tensor):
+    if tensor.is_floating_point():
+        raise ValueError(f"'EdgeIndex' needs to be of integral type "
+                         f"(got '{tensor.dtype}')")
+
+
+def assert_two_dimensional(tensor: Tensor):
+    if tensor.dim() != 2:
+        raise ValueError(f"'EdgeIndex' needs to be two-dimensional "
+                         f"(got {tensor.dim()} dimensions)")
+    if tensor.size(0) != 2:
+        raise ValueError(f"'EdgeIndex' needs to have a shape of "
+                         f"[2, *] (got {list(tensor.size())})")
+
+
 class SortOrder(Enum):
     ROW = 'row'
     COL = 'col'
@@ -59,16 +74,8 @@ class EdgeIndex(Tensor):
                             f"{set(kwargs.keys())})")
 
         assert isinstance(data, Tensor)
-
-        if data.is_floating_point():
-            raise ValueError(f"'{cls.__name__}' needs to be of integral type "
-                             f"(got '{data.dtype}')")
-        if data.dim() != 2:
-            raise ValueError(f"'{cls.__name__}' needs to be two-dimensional "
-                             f"(got {data.dim()} dimensions)")
-        if data.size(0) != 2:
-            raise ValueError(f"'{cls.__name__}' needs to have a shape of "
-                             f"[2, *] (got {list(data.size())})")
+        assert_integral_type(data)
+        assert_two_dimensional(data)
 
         out = super().__new__(cls, data)
 
@@ -83,6 +90,9 @@ class EdgeIndex(Tensor):
         * that :class:`EdgeIndex` only holds valid entries.
         * that the sort order is correctly set.
         """
+        assert_integral_type(self)
+        assert_two_dimensional(self)
+
         if self.numel() > 0 and self.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
                              f"indices (got {int(self.min())})")
@@ -157,7 +167,51 @@ class EdgeIndex(Tensor):
 
         # For all other PyTorch functions, we return a vanilla PyTorch tensor.
         types = tuple(torch.Tensor if issubclass(t, cls) else t for t in types)
-        return torch.Tensor.__torch_function__(func, types, args, kwargs)
+        return Tensor.__torch_function__(func, types, args, kwargs)
+
+
+def apply_(
+    tensor: EdgeIndex,
+    fn: Callable,
+    *args,
+    **kwargs,
+) -> EdgeIndex:
+
+    out = Tensor.__torch_function__(fn, (Tensor, ), (tensor, ) + args, kwargs)
+    out = out.as_subclass(EdgeIndex)
+
+    # Copy metadata:
+    out._sparse_size = out._sparse_size
+    out._sort_order = out._sort_order
+
+    # Convert metadata:
+    if tensor._rowptr is not None:
+        out._rowptr = fn(tensor._rowptr, *args, **kwargs)
+    if tensor._colptr is not None:
+        out._colptr = fn(tensor._colptr, *args, **kwargs)
+    if tensor._csr2csc is not None:
+        out._csr2csc = fn(tensor._csr2csc, *args, **kwargs)
+    if tensor._csc2csr is not None:
+        out._csc2csr = fn(tensor._csc2csr, *args, **kwargs)
+
+    return out
+
+
+@implements(Tensor.to)
+def to(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+    out = apply_(tensor, Tensor.to, *args, **kwargs)
+    assert_integral_type(out)
+    return out
+
+
+@implements(Tensor.cpu)
+def cpu(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+    return apply_(tensor, Tensor.cpu, *args, **kwargs)
+
+
+@implements(Tensor.cuda)
+def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+    return apply_(tensor, Tensor.cuda, *args, **kwargs)
 
 
 @implements(torch.cat)
