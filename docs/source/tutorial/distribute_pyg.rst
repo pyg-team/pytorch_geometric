@@ -51,7 +51,7 @@ The complete script for partitioning ``ogbn-products`` dataset/``ogbn-mags`` for
 
 
 1.1 Partitioning the graph
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, in ``examples/distributed/pyg/partition_graph.py`` script we use the following script to load the ``ogbn-products`` dataset and partition it into ``num_parts``:
 
@@ -156,7 +156,7 @@ In distributed training, each node in the cluster holds a partition of the graph
   :width: 90%
 
 2.1 Architecture for LGS/LFS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1) LocalGraphStore
 
@@ -203,7 +203,7 @@ There are four parts for LocalGraphStore:
 
 
 2.2 Loading partition into Stores
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Based on the above APIs from LFS/LGS you can load the partitions into graphstore/featurestore over the multiple nodes as below code:
 
