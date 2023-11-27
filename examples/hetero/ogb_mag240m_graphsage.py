@@ -249,7 +249,7 @@ def run(
                     if n_devices > 0:
                         batch = batch.to(rank, "x", "y", "edge_index")
                     acc_sum += model.validation_step(batch)
-                print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+                print(f"Validation Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%")
     if n_devices > 1:
         dist.barrier()
     if rank == 0:
