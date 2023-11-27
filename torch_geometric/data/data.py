@@ -36,6 +36,7 @@ from torch_geometric.typing import (
     NodeType,
     OptTensor,
     SparseTensor,
+    TensorFrame,
 )
 from torch_geometric.utils import is_sparse, select, subgraph
 
@@ -93,6 +94,7 @@ class BaseData:
 
     def update(self, data: 'BaseData') -> 'BaseData':
         r"""Updates the data object with the elements from another data object.
+        Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
 
@@ -140,7 +142,8 @@ class BaseData:
 
     def __contains__(self, key: str) -> bool:
         r"""Returns :obj:`True` if the attribute :obj:`key` is present in the
-        data."""
+        data.
+        """
         return key in self.keys()
 
     def __getstate__(self) -> Dict[str, Any]:
@@ -183,7 +186,8 @@ class BaseData:
     def num_edges(self) -> int:
         r"""Returns the number of edges in the graph.
         For undirected graphs, this will return the number of bi-directional
-        edges, which is double the amount of unique edges."""
+        edges, which is double the amount of unique edges.
+        """
         return sum([v.num_edges for v in self.edge_stores])
 
     def node_attrs(self) -> List[str]:
@@ -200,12 +204,13 @@ class BaseData:
         offset: int = 0
         for store in self.node_stores:
             out[store._key] = offset
-            offset += store.num_nodes
+            offset = offset + store.num_nodes
         return out
 
     def generate_ids(self):
         r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
-        each node and edge to a continuously ascending and unique ID."""
+        each node and edge to a continuously ascending and unique ID.
+        """
         for store in self.node_stores:
             store.n_id = torch.arange(store.num_nodes)
         for store in self.edge_stores:
@@ -238,12 +243,14 @@ class BaseData:
 
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
-        and do not contain duplicate entries."""
+        and do not contain duplicate entries.
+        """
         return all([store.is_coalesced() for store in self.edge_stores])
 
     def coalesce(self) -> 'Data':
         r"""Sorts and removes duplicated entries from edge indices
-        :obj:`edge_index`."""
+        :obj:`edge_index`.
+        """
         out = copy.copy(self)
         for store in out.edge_stores:
             store.coalesce()
@@ -267,44 +274,51 @@ class BaseData:
 
     def apply_(self, func: Callable, *args: str):
         r"""Applies the in-place function :obj:`func`, either to all attributes
-        or only the ones given in :obj:`*args`."""
+        or only the ones given in :obj:`*args`.
+        """
         for store in self.stores:
             store.apply_(func, *args)
         return self
 
     def apply(self, func: Callable, *args: str):
         r"""Applies the function :obj:`func`, either to all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         for store in self.stores:
             store.apply(func, *args)
         return self
 
     def clone(self, *args: str):
         r"""Performs cloning of tensors, either for all attributes or only the
-        ones given in :obj:`*args`."""
+        ones given in :obj:`*args`.
+        """
         return copy.copy(self).apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: str):
         r"""Ensures a contiguous memory layout, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor device conversion, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: str):
         r"""Copies attributes to CPU memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Optional[Union[int, str]] = None, *args: str,
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         # Some PyTorch tensor like objects require a default value for `cuda`:
         device = 'cuda' if device is None else device
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
@@ -312,41 +326,48 @@ class BaseData:
 
     def pin_memory(self, *args: str):
         r"""Copies attributes to pinned memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: str):
         r"""Moves attributes to shared memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: str):
         r"""Detaches attributes from the computation graph, either for all
-        attributes or only the ones given in :obj:`*args`."""
+        attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.detach_(), *args)
 
     def detach(self, *args: str):
         r"""Detaches attributes from the computation graph by creating a new
         tensor, either for all attributes or only the ones given in
-        :obj:`*args`."""
+        :obj:`*args`.
+        """
         return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: str, requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
-        ones given in :obj:`*args`."""
+        ones given in :obj:`*args`.
+        """
         return self.apply_(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def record_stream(self, stream: torch.cuda.Stream, *args: str):
         r"""Ensures that the tensor memory is not reused for another tensor
         until all current work queued on :obj:`stream` has been completed,
-        either for all attributes or only the ones given in :obj:`*args`."""
+        either for all attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.record_stream(stream), *args)
 
     @property
     def is_cuda(self) -> bool:
         r"""Returns :obj:`True` if any :class:`torch.Tensor` attribute is
-        stored on the GPU, :obj:`False` otherwise."""
+        stored on the GPU, :obj:`False` otherwise.
+        """
         for store in self.stores:
             for value in store.values():
                 if isinstance(value, Tensor) and value.is_cuda:
@@ -397,7 +418,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
-    behavior of a regular Python dictionary.
+    behavior of a regular :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
@@ -438,9 +459,15 @@ class Data(BaseData, FeatureStore, GraphStore):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
-                 edge_attr: OptTensor = None, y: OptTensor = None,
-                 pos: OptTensor = None, **kwargs):
+    def __init__(
+        self,
+        x: Optional[Tensor] = None,
+        edge_index: OptTensor = None,
+        edge_attr: OptTensor = None,
+        y: OptTensor = None,
+        pos: OptTensor = None,
+        **kwargs,
+    ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
         super().__init__(tensor_attr_cls=DataTensorAttr)
@@ -608,12 +635,14 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
-        node-level tensor attribute."""
+        node-level tensor attribute.
+        """
         return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        edge-level tensor attribute."""
+        edge-level tensor attribute.
+        """
         return self._store.is_edge_attr(key)
 
     def subgraph(self, subset: Tensor) -> 'Data':
@@ -623,9 +652,21 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = subgraph(subset, self.edge_index, relabel_nodes=True,
-                       num_nodes=self.num_nodes, return_edge_mask=True)
-        edge_index, _, edge_mask = out
+        if 'edge_index' in self:
+            edge_index, _, edge_mask = subgraph(
+                subset,
+                self.edge_index,
+                relabel_nodes=True,
+                num_nodes=self.num_nodes,
+                return_edge_mask=True,
+            )
+        else:
+            edge_index = None
+            edge_mask = torch.ones(
+                self.num_edges,
+                dtype=torch.bool,
+                device=subset.device,
+            )
 
         data = copy.copy(self)
 
@@ -753,6 +794,9 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, node_ids[i])
+                elif (isinstance(value, TensorFrame)
+                      and self.is_node_attr(attr)):
+                    data[key][attr] = value[node_ids[i]]
 
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -770,6 +814,9 @@ class Data(BaseData, FeatureStore, GraphStore):
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
                     cat_dim = self.__cat_dim__(attr, value)
                     data[key][attr] = value.index_select(cat_dim, edge_ids[i])
+                elif (isinstance(value, TensorFrame)
+                      and self.is_edge_attr(attr)):
+                    data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.
         exclude_keys = set(data.keys()) | {
@@ -786,8 +833,9 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'Data':
-        r"""Creates a :class:`~torch_geometric.data.Data` object from a Python
-        dictionary."""
+        r"""Creates a :class:`~torch_geometric.data.Data` object from a
+        dictionary.
+        """
         return cls(**mapping)
 
     @property
@@ -798,7 +846,8 @@ class Data(BaseData, FeatureStore, GraphStore):
     @property
     def num_features(self) -> int:
         r"""Returns the number of features per node in the graph.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -818,43 +867,45 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def __iter__(self) -> Iterable:
         r"""Iterates over all attributes in the data, yielding their attribute
-        names and values."""
+        names and values.
+        """
         for key, value in self._store.items():
             yield key, value
 
     def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
-        If :obj:`*args` is not given, will iterate over all attributes."""
+        If :obj:`*args` is not given, will iterate over all attributes.
+        """
         for key, value in self._store.items(*args):
             yield key, value
 
     @property
-    def x(self) -> Any:
+    def x(self) -> Optional[Tensor]:
         return self['x'] if 'x' in self._store else None
 
     @property
-    def edge_index(self) -> Any:
+    def edge_index(self) -> Optional[Tensor]:
         return self['edge_index'] if 'edge_index' in self._store else None
 
     @property
-    def edge_weight(self) -> Any:
+    def edge_weight(self) -> Optional[Tensor]:
         return self['edge_weight'] if 'edge_weight' in self._store else None
 
     @property
-    def edge_attr(self) -> Any:
+    def edge_attr(self) -> Optional[Tensor]:
         return self['edge_attr'] if 'edge_attr' in self._store else None
 
     @property
-    def y(self) -> Any:
+    def y(self) -> Optional[Union[Tensor, int, float]]:
         return self['y'] if 'y' in self._store else None
 
     @property
-    def pos(self) -> Any:
+    def pos(self) -> Optional[Tensor]:
         return self['pos'] if 'pos' in self._store else None
 
     @property
-    def batch(self) -> Any:
+    def batch(self) -> Optional[Tensor]:
         return self['batch'] if 'batch' in self._store else None
 
     # Deprecated functions ####################################################
@@ -954,17 +1005,17 @@ class Data(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             del self.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.COO, None)
+                self._edge_attrs.pop(EdgeLayout.COO, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
             del self.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.CSR, None)
+                self._edge_attrs.pop(EdgeLayout.CSR, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
             del self.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.CSC, None)
+                self._edge_attrs.pop(EdgeLayout.CSC, None)
             return True
         return False
 
@@ -998,6 +1049,9 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = str(list(value.shape))
     elif isinstance(value, SparseTensor):
         out = str(value.sizes())[:-1] + f', nnz={value.nnz()}]'
+    elif isinstance(value, TensorFrame):
+        out = (f'{value.__class__.__name__}('
+               f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
     elif isinstance(value, Sequence):

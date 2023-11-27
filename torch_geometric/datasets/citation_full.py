@@ -1,8 +1,6 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import torch
-
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -29,6 +27,8 @@ class CitationFull(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
         to_undirected (bool, optional): Whether the original graph is
             converted to an undirected one. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -77,12 +77,14 @@ class CitationFull(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         to_undirected: bool = True,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         self.to_undirected = to_undirected
         assert self.name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -98,7 +100,8 @@ class CitationFull(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        suffix = 'undirected' if self.to_undirected else 'directed'
+        return f'data_{suffix}.pt'
 
     def download(self):
         download_url(self.url.format(self.name), self.raw_dir)
@@ -106,8 +109,7 @@ class CitationFull(InMemoryDataset):
     def process(self):
         data = read_npz(self.raw_paths[0], to_undirected=self.to_undirected)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}Full()'

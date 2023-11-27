@@ -12,7 +12,7 @@ MISSING = '???'
 
 @torch.jit._overload
 def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
-    # type: (Tensor, str, Optional[int], bool) -> Tensor  # noqa
+    # type: (Tensor, str, Optional[int], bool) -> Tensor
     pass
 
 
@@ -58,7 +58,6 @@ def sort_edge_index(  # noqa
         it is set to :obj:`None`).
 
     Examples:
-
         >>> edge_index = torch.tensor([[2, 1, 1, 0],
                                 [1, 2, 0, 1]])
         >>> edge_attr = torch.tensor([[1], [2], [3], [4]])

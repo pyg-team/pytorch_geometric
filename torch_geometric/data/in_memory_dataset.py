@@ -1,4 +1,5 @@
 import copy
+import os.path as osp
 import warnings
 from abc import ABC
 from collections.abc import Mapping, Sequence
@@ -16,18 +17,20 @@ from typing import (
 
 import torch
 from torch import Tensor
+from tqdm import tqdm
 
+import torch_geometric
 from torch_geometric.data import Batch, Data
 from torch_geometric.data.collate import collate
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
+from torch_geometric.io import fs
 
 
 class InMemoryDataset(Dataset, ABC):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
-    Inherits from :class:`torch_geometric.data.Dataset`.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
@@ -54,6 +57,8 @@ class InMemoryDataset(Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -70,8 +75,10 @@ class InMemoryDataset(Dataset, ABC):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter, log)
+        super().__init__(root, transform, pre_transform, pre_filter, log,
+                         force_reload)
         self._data = None
         self.slices = None
         self._data_list: Optional[List[BaseData]] = None
@@ -115,11 +122,11 @@ class InMemoryDataset(Dataset, ABC):
     def save(cls, data_list: List[BaseData], path: str):
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
-        torch.save((data.to_dict(), slices), path)
+        fs.torch_save((data.to_dict(), slices), path)
 
     def load(self, path: str, data_cls: Type[BaseData] = Data):
         r"""Loads the dataset from the file path :obj:`path`."""
-        data, self.slices = torch.load(path)
+        data, self.slices = fs.torch_load(path)
         if isinstance(data, dict):  # Backward compatibility.
             data = data_cls.from_dict(data)
         self.data = data
@@ -128,9 +135,10 @@ class InMemoryDataset(Dataset, ABC):
     def collate(
         data_list: List[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
-        r"""Collates a Python list of :class:`~torch_geometric.data.Data` or
+        r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal
-        storage format of :class:`~torch_geometric.data.InMemoryDataset`."""
+        storage format of :class:`~torch_geometric.data.InMemoryDataset`.
+        """
         if len(data_list) == 1:
             return data_list[0], None
 
@@ -160,6 +168,99 @@ class InMemoryDataset(Dataset, ABC):
         dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
+
+    def to_on_disk_dataset(
+        self,
+        root: Optional[str] = None,
+        backend: str = 'sqlite',
+        log: bool = True,
+    ) -> 'torch_geometric.data.OnDiskDataset':
+        r"""Converts the :class:`InMemoryDataset` to a :class:`OnDiskDataset`
+        variant. Useful for distributed training and hardware instances with
+        limited amount of shared memory.
+
+        root (str, optional): Root directory where the dataset should be saved.
+            If set to :obj:`None`, will save the dataset in
+            :obj:`root/on_disk`.
+            Note that it is important to specify :obj:`root` to account for
+            different dataset splits. (optional: :obj:`None`)
+        backend (str): The :class:`Database` backend to use.
+            (default: :obj:`"sqlite"`)
+        log (bool, optional): Whether to print any console output while
+            processing the dataset. (default: :obj:`True`)
+        """
+        if root is None and (self.root is None or not osp.exists(self.root)):
+            raise ValueError(f"The root directory of "
+                             f"'{self.__class__.__name__}' is not specified. "
+                             f"Please pass in 'root' when creating on-disk "
+                             f"datasets from it.")
+
+        root = root or osp.join(self.root, 'on_disk')
+
+        in_memory_dataset = self
+        ref_data = in_memory_dataset.get(0)
+        if not isinstance(ref_data, Data):
+            raise NotImplementedError(
+                f"`{self.__class__.__name__}.to_on_disk_dataset()` is "
+                f"currently only supported on homogeneous graphs")
+
+        # Parse the schema ====================================================
+
+        schema: Dict[str, Any] = {}
+        for key, value in ref_data.to_dict().items():
+            if isinstance(value, (int, float, str)):
+                schema[key] = value.__class__
+            elif isinstance(value, Tensor) and value.dim() == 0:
+                schema[key] = dict(dtype=value.dtype, size=(-1, ))
+            elif isinstance(value, Tensor):
+                size = list(value.size())
+                size[ref_data.__cat_dim__(key, value)] = -1
+                schema[key] = dict(dtype=value.dtype, size=tuple(size))
+            else:
+                schema[key] = object
+
+        # Create the on-disk dataset ==========================================
+
+        class OnDiskDataset(torch_geometric.data.OnDiskDataset):
+            def __init__(
+                self,
+                root: str,
+                transform: Optional[Callable] = None,
+            ):
+                super().__init__(
+                    root=root,
+                    transform=transform,
+                    backend=backend,
+                    schema=schema,
+                )
+
+            def process(self):
+                _iter = [
+                    in_memory_dataset.get(i)
+                    for i in in_memory_dataset.indices()
+                ]
+                if log:  # pragma: no cover
+                    _iter = tqdm(_iter, desc='Converting to OnDiskDataset')
+
+                data_list: List[Data] = []
+                for i, data in enumerate(_iter):
+                    data_list.append(data)
+                    if i + 1 == len(in_memory_dataset) or (i + 1) % 1000 == 0:
+                        self.extend(data_list)
+                        data_list = []
+
+            def serialize(self, data: Data) -> Dict[str, Any]:
+                return data.to_dict()
+
+            def deserialize(self, data: Dict[str, Any]) -> Data:
+                return Data.from_dict(data)
+
+            def __repr__(self) -> str:
+                arg_repr = str(len(self)) if len(self) > 1 else ''
+                return (f'OnDisk{in_memory_dataset.__class__.__name__}('
+                        f'{arg_repr})')
+
+        return OnDiskDataset(root, transform=in_memory_dataset.transform)
 
     @property
     def data(self) -> Any:
@@ -206,6 +307,31 @@ class InMemoryDataset(Dataset, ABC):
 
         raise AttributeError(f"'{self.__class__.__name__}' object has no "
                              f"attribute '{key}'")
+
+    def to(self, device: Union[int, str]) -> 'InMemoryDataset':
+        r"""Performs device conversion of the whole dataset."""
+        if self._indices is not None:
+            raise ValueError("The given 'InMemoryDataset' only references a "
+                             "subset of examples of the full dataset")
+        if self._data_list is not None:
+            raise ValueError("The data of the dataset is already cached")
+        self._data.to(device)
+        return self
+
+    def cpu(self, *args: str) -> 'InMemoryDataset':
+        r"""Moves the dataset to CPU memory."""
+        return self.to(torch.device('cpu'))
+
+    def cuda(
+        self,
+        device: Optional[Union[int, str]] = None,
+    ) -> 'InMemoryDataset':
+        r"""Moves the dataset toto CUDA memory."""
+        if isinstance(device, int):
+            device = f'cuda:{int}'
+        elif device is None:
+            device = 'cuda'
+        return self.to(device)
 
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:

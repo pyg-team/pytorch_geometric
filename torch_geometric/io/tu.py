@@ -1,4 +1,3 @@
-import glob
 import os
 import os.path as osp
 
@@ -6,7 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.io import read_txt_array
+from torch_geometric.io import fs, read_txt_array
 from torch_geometric.utils import coalesce, cumsum, one_hot, remove_self_loops
 
 names = [
@@ -16,7 +15,7 @@ names = [
 
 
 def read_tu_data(folder, prefix):
-    files = glob.glob(osp.join(folder, f'{prefix}_*.txt'))
+    files = fs.glob(osp.join(folder, f'{prefix}_*.txt'))
     names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1

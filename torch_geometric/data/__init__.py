@@ -6,8 +6,10 @@ from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
 from .temporal import TemporalData
+from .database import Database, SQLiteDatabase, RocksDatabase
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
+from .on_disk_dataset import OnDiskDataset
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
@@ -21,6 +23,7 @@ data_classes = [
     'TemporalData',
     'Dataset',
     'InMemoryDataset',
+    'OnDiskDataset',
 ]
 
 remote_backend_classes = [
@@ -28,6 +31,12 @@ remote_backend_classes = [
     'GraphStore',
     'TensorAttr',
     'EdgeAttr',
+]
+
+database_classes = [
+    'Database',
+    'SQLiteDatabase',
+    'RocksDatabase',
 ]
 
 helper_functions = [

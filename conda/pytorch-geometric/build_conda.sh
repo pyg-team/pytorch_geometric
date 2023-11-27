@@ -10,6 +10,9 @@ if [ "${CUDA_VERSION}" = "cpu" ]; then
   export CONDA_CUDATOOLKIT_CONSTRAINT="cpuonly  # [not osx]"
 else
   case $CUDA_VERSION in
+    cu121)
+      export CONDA_CUDATOOLKIT_CONSTRAINT="pytorch-cuda==12.1.*"
+      ;;
     cu118)
       export CONDA_CUDATOOLKIT_CONSTRAINT="pytorch-cuda==11.8.*"
       ;;

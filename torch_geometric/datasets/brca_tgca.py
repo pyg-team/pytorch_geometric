@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -12,12 +11,15 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class BrcaTcga(InMemoryDataset):
-    r"""The breast cancer (BRCA TCGA) dataset from the `cBioPortal
-    <https://www.cbioportal.org>`_ and the biological network for node
-    connections from `Pathway Commons <https://www.pathwaycommons.org>`_.
+    r"""The breast cancer (BRCA TCGA Pan-Cancer Atlas) dataset consisting of
+    patients with survival information and gene expression data from
+    `cBioPortal <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4160307/>`_
+    and a network of biological interactions between those nodes from
+    `Pathway Commons <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7145667/>`_.
     The dataset contains the gene features of 1,082 patients, and the overall
     survival time (in months) of each patient as label.
 
@@ -38,6 +40,8 @@ class BrcaTcga(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -62,8 +66,10 @@ class BrcaTcga(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -78,7 +84,7 @@ class BrcaTcga(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'brca_tcga'), self.raw_dir)
 
     def process(self):

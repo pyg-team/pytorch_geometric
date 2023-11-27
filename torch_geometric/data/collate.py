@@ -8,7 +8,12 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
-from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.typing import (
+    SparseTensor,
+    TensorFrame,
+    torch_frame,
+    torch_sparse,
+)
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
@@ -172,6 +177,13 @@ def _collate(
         value = torch.cat(values, dim=cat_dim or 0, out=out)
 
         return value, slices, incs
+
+    elif isinstance(elem, TensorFrame):
+        key = str(key)
+        sizes = torch.tensor([value.num_rows for value in values])
+        slices = cumsum(sizes)
+        value = torch_frame.cat(values, along='row')
+        return value, slices, None
 
     elif is_sparse(elem) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.

@@ -2,14 +2,14 @@ import functools
 import inspect
 import logging
 import os
-import shutil
+import os.path as osp
 import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
 
 import torch_geometric.graphgym.register as register
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 try:  # Define global config object
     from yacs.config import CfgNode as CN
@@ -21,15 +21,16 @@ except ImportError:
 
 
 def set_cfg(cfg):
-    r'''
-    This function sets the default config value.
-    1) Note that for an experiment, only part of the arguments will be used
-    The remaining unused arguments won't affect anything.
-    So feel free to register any argument in graphgym.contrib.config
-    2) We support *at most* two levels of configs, e.g., cfg.dataset.name
+    r"""This function sets the default config value.
 
-    :return: configuration use by the experiment.
-    '''
+    1) Note that for an experiment, only part of the arguments will be used
+       The remaining unused arguments won't affect anything.
+       So feel free to register any argument in graphgym.contrib.config
+    2) We support *at most* two levels of configs, *e.g.*,
+       :obj:`cfg.dataset.name`.
+
+    :return: Configuration use by the experiment.
+    """
     if cfg is None:
         return cfg
 
@@ -450,7 +451,7 @@ def set_cfg(cfg):
 
 
 def assert_cfg(cfg):
-    r"""Checks config values, do necessary post processing to the configs"""
+    r"""Checks config values, do necessary post processing to the configs."""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
         raise ValueError(f"Task '{cfg.dataset.task}' not supported. Must be "
                          f"one of node, edge, graph, link_pred")
@@ -476,22 +477,20 @@ def assert_cfg(cfg):
 
 
 def dump_cfg(cfg):
-    r"""
-    Dumps the config to the output directory specified in
-    :obj:`cfg.out_dir`
+    r"""Dumps the config to the output directory specified in
+    :obj:`cfg.out_dir`.
 
     Args:
         cfg (CfgNode): Configuration node
     """
-    makedirs(cfg.out_dir)
-    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
+    os.makedirs(cfg.out_dir, exist_ok=True)
+    cfg_file = osp.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
 
 def load_cfg(cfg, args):
-    r"""
-    Load configurations from file system and command line
+    r"""Load configurations from file system and command line.
 
     Args:
         cfg (CfgNode): Configuration node
@@ -503,19 +502,18 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if os.path.isdir(dir):
-        shutil.rmtree(dir)
+    if osp.isdir(dir):
+        fs.rm(dir)
     os.makedirs(dir, exist_ok=True)
 
 
 def get_fname(fname):
-    r"""
-    Extract filename from file name path
+    r"""Extract filename from file name path.
 
     Args:
         fname (str): Filename for the yaml format configuration file
     """
-    fname = os.path.basename(fname)
+    fname = osp.basename(fname)
     if fname.endswith('.yaml'):
         fname = fname[:-5]
     elif fname.endswith('.yml'):
@@ -524,15 +522,14 @@ def get_fname(fname):
 
 
 def set_out_dir(out_dir, fname):
-    r"""
-    Create the directory for full experiment run
+    r"""Create the directory for full experiment run.
 
     Args:
         out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
         fname (str): Filename for the yaml format configuration file
     """
     fname = get_fname(fname)
-    cfg.out_dir = os.path.join(out_dir, fname)
+    cfg.out_dir = osp.join(out_dir, fname)
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.out_dir, exist_ok=True)
@@ -541,13 +538,12 @@ def set_out_dir(out_dir, fname):
 
 
 def set_run_dir(out_dir):
-    r"""
-    Create the directory for each random seed experiment run
+    r"""Create the directory for each random seed experiment run.
 
     Args:
         out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
     """
-    cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
+    cfg.run_dir = osp.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)

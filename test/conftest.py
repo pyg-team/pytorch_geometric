@@ -1,11 +1,12 @@
 import functools
 import os.path as osp
-import shutil
+from typing import Callable
 
 import pytest
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset
+from torch_geometric.io import fs
 
 
 def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
@@ -44,11 +45,20 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 
 
 @pytest.fixture(scope='session')
-def get_dataset():
-    root = osp.join('/', 'tmp', 'pyg_test_datasets')
+def get_dataset() -> Callable:
+    support_memory_fs = False
+
+    # TODO Support memory filesystem on Windows.
+    # TODO Support memory filesystem for all datasets.
+    if not support_memory_fs:
+        root = osp.join('/', 'tmp', 'pyg_test_datasets')
+    else:
+        root = 'memory://pyg_test_datasets'
+
     yield functools.partial(load_dataset, root)
-    if osp.exists(root):
-        shutil.rmtree(root)
+
+    if not support_memory_fs and fs.exists(root):
+        fs.rm(root)
 
 
 @pytest.fixture

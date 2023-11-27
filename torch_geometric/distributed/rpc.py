@@ -2,7 +2,7 @@ import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 from torch.distributed import rpc
 
@@ -23,7 +23,7 @@ def rpc_require_initialized(func: Callable) -> Callable:
 
 
 @rpc_require_initialized
-def global_all_gather(obj, timeout=None):
+def global_all_gather(obj, timeout: Optional[int] = None):
     r"""Gathers objects from all groups in a list."""
     if timeout is None:
         return rpc.api._all_gather(obj)
@@ -31,8 +31,8 @@ def global_all_gather(obj, timeout=None):
 
 
 @rpc_require_initialized
-def global_barrier(timeout=None):
-    r""" Block until all local and remote RPC processes."""
+def global_barrier(timeout: Optional[int] = None):
+    r"""Block until all local and remote RPC processes."""
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
@@ -45,7 +45,7 @@ def init_rpc(
     master_addr: str,
     master_port: int,
     num_rpc_threads: int = 16,
-    rpc_timeout: float = 240,
+    rpc_timeout: int = 240,
 ):
     with _rpc_init_lock:
         if rpc_is_initialized():
@@ -122,7 +122,8 @@ def rpc_partition_to_workers(
     current_partition_idx: int,
 ):
     r"""Performs an :obj:`all_gather` to get the mapping between partition and
-    workers."""
+    workers.
+    """
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
@@ -164,7 +165,7 @@ def rpc_register(call: RPCCallBase) -> int:
 
 
 def _rpc_async_call(call_id: int, *args, **kwargs):
-    r""" Entry point for RPC requests."""
+    r"""Entry point for RPC requests."""
     return _rpc_call_pool.get(call_id).rpc_async(*args, **kwargs)
 
 

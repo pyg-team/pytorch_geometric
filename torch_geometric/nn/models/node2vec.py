@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -99,7 +99,7 @@ class Node2Vec(torch.nn.Module):
     def forward(self, batch: Optional[Tensor] = None) -> Tensor:
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
-        return emb if batch is None else emb.index_select(0, batch)
+        return emb if batch is None else emb[batch]
 
     def loader(self, **kwargs) -> DataLoader:
         return DataLoader(range(self.num_nodes), collate_fn=self.sample,
@@ -134,7 +134,7 @@ class Node2Vec(torch.nn.Module):
         return torch.cat(walks, dim=0)
 
     @torch.jit.export
-    def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
+    def sample(self, batch: Union[List[int], Tensor]) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
@@ -142,7 +142,6 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -179,7 +178,8 @@ class Node2Vec(torch.nn.Module):
         **kwargs,
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,

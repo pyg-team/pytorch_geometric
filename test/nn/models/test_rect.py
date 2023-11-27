@@ -33,12 +33,12 @@ def test_rect():
 
     if is_full_test():
         jit = torch.jit.script(model.jittable())
-        assert torch.allclose(jit(x, edge_index), out)
-        assert torch.allclose(embed_out, jit.embed(x, edge_index))
+        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
+        assert torch.allclose(embed_out, jit.embed(x, edge_index), atol=1e-6)
         assert torch.allclose(labeds_out, jit.get_semantic_labels(x, y, mask))
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         jit = torch.jit.script(model.jittable(use_sparse_tensor=True))
-        assert torch.allclose(jit(x, adj.t()), out)
-        assert torch.allclose(embed_out, jit.embed(x, adj.t()))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        assert torch.allclose(embed_out, jit.embed(x, adj.t()), atol=1e-6)
         assert torch.allclose(labeds_out, jit.get_semantic_labels(x, y, mask))

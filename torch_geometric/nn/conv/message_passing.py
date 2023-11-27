@@ -1,5 +1,4 @@
 import inspect
-import os
 import os.path as osp
 import random
 import re
@@ -52,7 +51,9 @@ def ptr2ind(ptr: Tensor) -> Tensor:
 
 
 class MessagePassing(torch.nn.Module):
-    r"""Base class for creating message passing layers of the form
+    r"""Base class for creating message passing layers.
+
+    Message passing layers follow the form
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
@@ -167,7 +168,7 @@ class MessagePassing(torch.nn.Module):
             self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
         # Support for explainability.
-        self._explain = False
+        self._explain: Optional[bool] = None
         self._edge_mask = None
         self._loop_mask = None
         self._apply_sigmoid = True
@@ -546,11 +547,11 @@ class MessagePassing(torch.nn.Module):
         return x_j
 
     @property
-    def explain(self) -> bool:
+    def explain(self) -> Optional[bool]:
         return self._explain
 
     @explain.setter
-    def explain(self, explain: bool):
+    def explain(self, explain: Optional[bool]):
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -566,7 +567,6 @@ class MessagePassing(torch.nn.Module):
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
         # see stackoverflow.com: 394770/override-a-method-at-instance-level
-
         edge_mask = self._edge_mask
 
         if edge_mask is None:
@@ -640,6 +640,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
+
         The hook will be called every time before :meth:`propagate` is invoked.
         It should have the following signature:
 
@@ -661,6 +662,7 @@ class MessagePassing(torch.nn.Module):
     def register_propagate_forward_hook(self,
                                         hook: Callable) -> RemovableHandle:
         r"""Registers a forward hook on the module.
+
         The hook will be called every time after :meth:`propagate` has computed
         an output.
         It should have the following signature:
@@ -860,7 +862,7 @@ class MessagePassing(torch.nn.Module):
             forward_types = []
             forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        root = os.path.dirname(osp.realpath(__file__))
+        root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 

@@ -21,7 +21,7 @@ class PointNetConv(MessagePassing):
     for 3D Classification and Segmentation"
     <https://arxiv.org/abs/1612.00593>`_ and `"PointNet++: Deep Hierarchical
     Feature Learning on Point Sets in a Metric Space"
-    <https://arxiv.org/abs/1706.02413>`_ papers
+    <https://arxiv.org/abs/1706.02413>`_ papers.
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in

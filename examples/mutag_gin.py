@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -27,21 +28,24 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
-init_wandb(name=f'GIN-{args.dataset}', batch_size=args.batch_size, lr=args.lr,
-           epochs=args.epochs, hidden_channels=args.hidden_channels,
-           num_layers=args.num_layers, device=device)
+init_wandb(
+    name=f'GIN-{args.dataset}',
+    batch_size=args.batch_size,
+    lr=args.lr,
+    epochs=args.epochs,
+    hidden_channels=args.hidden_channels,
+    num_layers=args.num_layers,
+    device=device,
+)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
 dataset = TUDataset(path, name=args.dataset).shuffle()
 
-train_dataset = dataset[len(dataset) // 10:]
-train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True)
-
-test_dataset = dataset[:len(dataset) // 10]
-test_loader = DataLoader(test_dataset, args.batch_size)
+train_loader = DataLoader(dataset[:0.9], args.batch_size, shuffle=True)
+test_loader = DataLoader(dataset[0.9:], args.batch_size)
 
 
-class Net(torch.nn.Module):
+class GIN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
         super().__init__()
 
@@ -61,8 +65,12 @@ class Net(torch.nn.Module):
         return self.mlp(x)
 
 
-model = Net(dataset.num_features, args.hidden_channels, dataset.num_classes,
-            args.num_layers).to(device)
+model = GIN(
+    in_channels=dataset.num_features,
+    hidden_channels=args.hidden_channels,
+    out_channels=dataset.num_classes,
+    num_layers=args.num_layers,
+).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 
@@ -88,13 +96,18 @@ def test(loader):
     total_correct = 0
     for data in loader:
         data = data.to(device)
-        pred = model(data.x, data.edge_index, data.batch).argmax(dim=-1)
+        out = model(data.x, data.edge_index, data.batch)
+        pred = out.argmax(dim=-1)
         total_correct += int((pred == data.y).sum())
     return total_correct / len(loader.dataset)
 
 
+times = []
 for epoch in range(1, args.epochs + 1):
+    start = time.time()
     loss = train()
     train_acc = test(train_loader)
     test_acc = test(test_loader)
     log(Epoch=epoch, Loss=loss, Train=train_acc, Test=test_acc)
+    times.append(time.time() - start)
+print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')

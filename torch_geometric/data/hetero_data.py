@@ -22,10 +22,13 @@ from torch_geometric.typing import (
     NodeType,
     QueryType,
     SparseTensor,
+    TensorFrame,
+    torch_frame,
 )
 from torch_geometric.utils import (
     bipartite_subgraph,
     contains_isolated_nodes,
+    is_sparse,
     is_undirected,
     mask_select,
 )
@@ -39,7 +42,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     Storage objects can hold either node-level, link-level or graph-level
     attributes.
     In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
-    behavior of a regular **nested** Python dictionary.
+    behavior of a regular **nested** :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -128,7 +131,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'HeteroData':
         r"""Creates a :class:`~torch_geometric.data.HeteroData` object from a
-        Python dictionary."""
+        dictionary.
+        """
         out = cls()
         for key, value in mapping.items():
             if key == '_global_store':
@@ -329,7 +333,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
+        if is_sparse(value) and 'adj' in key:
             return (0, 1)
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
@@ -361,7 +365,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     @property
     def num_features(self) -> Dict[NodeType, int]:
         r"""Returns the number of features per node type in the graph.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -680,6 +685,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     data[node_type][key] = value
 
         for edge_type in self.edge_types:
+            if 'edge_index' not in self[edge_type]:
+                continue
+
             src, _, dst = edge_type
 
             src_subset = subset_dict.get(src)
@@ -738,7 +746,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the subgraph induced by the given :obj:`node_types`, *i.e.*
         the returned :class:`HeteroData` object only contains the node types
         which are included in :obj:`node_types`, and only contains the edge
-        types where both end points are included in :obj:`node_types`."""
+        types where both end points are included in :obj:`node_types`.
+        """
         data = copy.copy(self)
         for edge_type in self.edge_types:
             src, _, dst = edge_type
@@ -753,7 +762,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the subgraph induced by the given :obj:`edge_types`, *i.e.*
         the returned :class:`HeteroData` object only contains the edge types
         which are included in :obj:`edge_types`, and only contains the node
-        types of the end points which are included in :obj:`node_types`."""
+        types of the end points which are included in :obj:`node_types`.
+        """
         edge_types = [self._to_canonical(e) for e in edge_types]
 
         data = copy.copy(self)
@@ -868,6 +878,25 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if len(sizes[0]) != 1 and len(set(sizes)) != 1:
                     continue
                 keys.append(key)
+
+            # Check for consistent column names in `TensorFrame`:
+            tf_cols = defaultdict(list)
+            for store in stores:
+                for key, value in store.items():
+                    if isinstance(value, TensorFrame):
+                        cols = tuple(chain(*value.col_names_dict.values()))
+                        tf_cols[key].append(cols)
+
+            for key, cols in tf_cols.items():
+                # The attribute needs to exist in all types:
+                if len(cols) != len(stores):
+                    continue
+                # The attributes needs to have the same column names:
+                lengths = set(cols)
+                if len(lengths) != 1:
+                    continue
+                keys.append(key)
+
             return keys
 
         if dummy_values:
@@ -891,19 +920,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if key in {'ptr'}:
                 continue
             values = [store[key] for store in self.node_stores]
-            dim = self.__cat_dim__(key, values[0], self.node_stores[0])
-            dim = values[0].dim() + dim if dim < 0 else dim
-            # For two-dimensional features, we allow arbitrary shapes and pad
-            # them with zeros if necessary in case their size doesn't match:
-            if values[0].dim() == 2 and dim == 0:
-                _max = max([value.size(-1) for value in values])
-                for i, v in enumerate(values):
-                    if v.size(-1) < _max:
-                        values[i] = torch.cat(
-                            [v, v.new_zeros(v.size(0), _max - v.size(-1))],
-                            dim=-1,
-                        )
-            value = torch.cat(values, dim) if len(values) > 1 else values[0]
+            if isinstance(values[0], TensorFrame):
+                value = torch_frame.cat(values, along='row')
+            else:
+                dim = self.__cat_dim__(key, values[0], self.node_stores[0])
+                dim = values[0].dim() + dim if dim < 0 else dim
+                # For two-dimensional features, we allow arbitrary shapes and
+                # pad them with zeros if necessary in case their size doesn't
+                # match:
+                if values[0].dim() == 2 and dim == 0:
+                    _max = max([value.size(-1) for value in values])
+                    for i, v in enumerate(values):
+                        if v.size(-1) < _max:
+                            pad = v.new_zeros(v.size(0), _max - v.size(-1))
+                            values[i] = torch.cat([v, pad], dim=-1)
+                value = torch.cat(values, dim)
             data[key] = value
 
         if not data.can_infer_num_nodes:
@@ -1050,17 +1081,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
             del store.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.COO), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.COO), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
             del store.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSR), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSR), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
             del store.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSC), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSC), None)
             return True
         return False
 
@@ -1105,7 +1136,8 @@ def offset_edge_index(
     edge_index: Tensor,
 ) -> Tensor:
     r"""Increases the edge indices by the offsets of source and destination
-    node types."""
+    node types.
+    """
     src, _, dst = edge_type
     offset = [[node_slices[src][0]], [node_slices[dst][0]]]
     offset = torch.tensor(offset, device=edge_index.device)

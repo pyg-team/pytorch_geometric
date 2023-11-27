@@ -27,13 +27,20 @@ class WikiCS(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
         is_undirected (bool, optional): Whether the graph is undirected.
             (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 is_undirected: Optional[bool] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        is_undirected: Optional[bool] = None,
+        force_reload: bool = False,
+    ):
         if is_undirected is None:
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
@@ -41,8 +48,9 @@ class WikiCS(InMemoryDataset):
                 f"'is_undirected=False' to restore the old behavior.")
             is_undirected = True
         self.is_undirected = is_undirected
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -87,4 +95,4 @@ class WikiCS(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

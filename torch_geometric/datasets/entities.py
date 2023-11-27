@@ -8,6 +8,7 @@ import torch
 
 from torch_geometric.data import (
     Data,
+    HeteroData,
     InMemoryDataset,
     download_url,
     extract_tar,
@@ -36,6 +37,8 @@ class Entities(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -72,14 +75,24 @@ class Entities(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
 
-    def __init__(self, root: str, name: str, hetero: bool = False,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        hetero: bool = False,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(
+            self.processed_paths[0],
+            data_cls=HeteroData if hetero else Data,
+        )
 
     @property
     def raw_dir(self) -> str:
@@ -198,7 +211,7 @@ class Entities(InMemoryDataset):
         if self.hetero:
             data = data.to_heterogeneous(node_type_names=['v'])
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.upper()}{self.__class__.__name__}()'

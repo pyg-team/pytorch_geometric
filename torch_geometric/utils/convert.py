@@ -26,7 +26,6 @@ def to_scipy_sparse_matrix(
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -57,7 +56,6 @@ def from_scipy_sparse_matrix(
         A (scipy.sparse): A sparse matrix.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -101,19 +99,20 @@ def to_networkx(
             copied. (default: :obj:`None`)
         graph_attrs (iterable of str, optional): The graph attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool or str, optional): If set to :obj:`True` or
-            :obj:`"upper"`, will return a :obj:`networkx.Graph` instead of a
-            :obj:`networkx.DiGraph`. The undirected graph will correspond to
-            the upper triangle of the corresponding adjacency matrix.
-            Similarly, if set to :obj:`"lower"`, the undirected graph will
-            correspond to the lower triangle of the adjacency matrix.
+        to_undirected (bool or str, optional): If set to :obj:`True`, will
+            return a :class:`networkx.Graph` instead of a
+            :class:`networkx.DiGraph`.
+            By default, will include all edges and make them undirected.
+            If set to :obj:`"upper"`, the undirected graph will only correspond
+            to the upper triangle of the input adjacency matrix.
+            If set to :obj:`"lower"`, the undirected graph will only correspond
+            to the lower triangle of the input adjacency matrix.
             Only applicable in case the :obj:`data` object holds a homogeneous
             graph. (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self-loops in the resulting graph. (default: :obj:`False`)
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -127,9 +126,10 @@ def to_networkx(
 
     from torch_geometric.data import HeteroData
 
-    to_undirected_upper: bool = to_undirected in {'upper', True}
+    to_undirected_upper: bool = to_undirected == 'upper'
     to_undirected_lower: bool = to_undirected == 'lower'
-    to_undirected: bool = to_undirected_upper or to_undirected_lower
+    to_undirected: bool = (to_undirected_upper or to_undirected_lower
+                           or to_undirected is True)
 
     if isinstance(data, HeteroData) and to_undirected:
         raise ValueError("'to_undirected' is not supported in "
@@ -198,7 +198,6 @@ def from_networkx(
         be numeric.
 
     Examples:
-
         >>> edge_index = torch.tensor([
         ...     [0, 1, 1, 2, 2, 3],
         ...     [1, 0, 2, 1, 3, 2],
@@ -369,7 +368,6 @@ def to_trimesh(data):
         data (torch_geometric.data.Data): The data object.
 
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -391,10 +389,7 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
 
-Example:
-
     Example:
-
         >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
         ...                    dtype=torch.float)
         >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -480,7 +475,6 @@ def to_dgl(
             The data object.
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
         >>> x = torch.randn(5, 3)
         >>> edge_attr = torch.randn(6, 2)
@@ -561,7 +555,6 @@ def from_dgl(
         g (dgl.DGLGraph): The :obj:`dgl` graph object.
 
     Example:
-
         >>> g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
         >>> g.ndata['x'] = torch.randn(g.num_nodes(), 3)
         >>> g.edata['edge_attr'] = torch.randn(g.num_edges(), 2)

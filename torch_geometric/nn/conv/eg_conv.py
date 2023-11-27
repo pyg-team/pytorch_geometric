@@ -77,15 +77,24 @@ class EGConv(MessagePassing):
     _cached_edge_index: Optional[Tuple[Tensor, OptTensor]]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels: int, out_channels: int,
-                 aggregators: List[str] = ["symnorm"], num_heads: int = 8,
-                 num_bases: int = 4, cached: bool = False,
-                 add_self_loops: bool = True, bias: bool = True, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        aggregators: List[str] = ['symnorm'],
+        num_heads: int = 8,
+        num_bases: int = 4,
+        cached: bool = False,
+        add_self_loops: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
         super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
-            raise ValueError(
-                'out_channels must be divisible by the number of heads')
+            raise ValueError(f"'out_channels' (got {out_channels}) must be "
+                             f"divisible by the number of heads "
+                             f"(got {num_heads})")
 
         for a in aggregators:
             if a not in ['sum', 'mean', 'symnorm', 'min', 'max', 'var', 'std']:
@@ -223,7 +232,11 @@ class EGConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t_2 = adj_t
         if len(self.aggregators) > 1 and 'symnorm' in self.aggregators:
-            adj_t_2 = adj_t.set_value(None)
+            if isinstance(adj_t, SparseTensor):
+                adj_t_2 = adj_t.set_value(None)
+            else:
+                adj_t_2 = adj_t.clone()
+                adj_t_2.values().fill_(1.0)
 
         outs = []
         for aggr in self.aggregators:
