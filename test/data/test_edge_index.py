@@ -59,6 +59,51 @@ def test_edge_index_cpu_cuda():
     assert not out.is_cuda
 
 
+def test_edge_index_sort_by():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    out = adj.sort_by('row')
+    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out.values, EdgeIndex)
+    assert not isinstance(out.indices, EdgeIndex)
+    assert torch.equal(out.values, adj)
+    assert torch.equal(out.indices, torch.arange(4))
+
+    adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]])
+    out = adj.sort_by('row')
+    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out.values, EdgeIndex)
+    assert not isinstance(out.indices, EdgeIndex)
+    assert torch.equal(out.values, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert torch.equal(out.indices, torch.tensor([0, 1, 3, 2]))
+
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj.fill_cache()
+
+    out = adj.sort_by('col')
+    assert torch.equal(out.values, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
+    assert torch.equal(out.indices, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csr2csc, torch.tensor([1, 0, 3, 2]))
+
+    out = out.values.sort_by('row')
+    assert torch.equal(out.values, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert torch.equal(out.indices, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csr2csc, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csc2csr, torch.tensor([1, 0, 3, 2]))
+
+    # Do another round to sort based on `_csr2csc` and `_csc2csr`:
+    out = out.values.sort_by('col')
+    assert torch.equal(out.values, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
+    assert torch.equal(out.indices, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csr2csc, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csc2csr, torch.tensor([1, 0, 3, 2]))
+
+    out = out.values.sort_by('row')
+    assert torch.equal(out.values, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert torch.equal(out.indices, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csr2csc, torch.tensor([1, 0, 3, 2]))
+    assert torch.equal(out.values._csc2csr, torch.tensor([1, 0, 3, 2]))
+
+
 def test_edge_index_cat():
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3))
     adj2 = EdgeIndex([[1, 2, 2, 3], [2, 1, 3, 2]], sparse_size=(4, 4))

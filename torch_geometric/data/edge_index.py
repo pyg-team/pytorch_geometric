@@ -5,6 +5,8 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.utils import index_sort
+
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
 SUPPORTED_DTYPES: Set[torch.dtype] = {
@@ -180,6 +182,66 @@ class EdgeIndex(Tensor):
         :class:`torch.Tensor` representation.
         """
         return self.as_subclass(Tensor)
+
+    def sort_by(
+        self,
+        sort_order: Union[str, SortOrder],
+        stable: bool = False,
+    ) -> torch.return_types.sort:
+        r"""Sorts the elements by row or column values.
+
+        Args:
+            sort_order (str): The sort order, either :obj:`"row"` or
+                :obj:`"col"`.
+            stable (bool, optional): Makes the sorting routine stable, which
+                guarantees that the order of equivalent elements is preserved.
+                (default: :obj:`False`)
+        """
+        sort_order = SortOrder(sort_order)
+
+        if self._sort_order == sort_order:  # Nothing to do.
+            perm = torch.arange(self.size(1), device=self.device)
+            return torch.return_types.sort([self, perm])
+
+        # If conversion from CSR->CSC or CSC->CSR is known, make use of it:
+        if (self._sort_order == SortOrder.ROW and sort_order == SortOrder.COL
+                and self._csr2csc is not None):
+
+            edge_index = self.as_tensor()[:, self._csr2csc]
+            perm = self._csr2csc
+
+        elif (self._sort_order == SortOrder.COL and sort_order == SortOrder.ROW
+              and self._csc2csr is not None):
+
+            edge_index = self.as_tensor()[:, self._csc2csr]
+            perm = self._csc2csr
+
+        # Otherwise, perform sorting:
+        elif sort_order == SortOrder.ROW:
+            row, perm = index_sort(self.as_tensor()[0], self.num_rows, stable)
+            edge_index = torch.stack([row, self.as_tensor()[1][perm]], dim=0)
+
+        else:
+            col, perm = index_sort(self.as_tensor()[1], self.num_cols, stable)
+            edge_index = torch.stack([self.as_tensor()[0][perm], col], dim=0)
+
+        out = self.__class__(edge_index)
+
+        # We can fully fill metadata and cache:
+        out._sparse_size = self._sparse_size
+        out._sort_order = sort_order
+        out._rowptr = self._rowptr
+        out._colptr = self._colptr
+        out._csr2csc = self._csr2csc
+        out._csc2csr = self._csc2csr
+
+        # Fill information for faster future CSR->CSC or CSC->CSR conversion:
+        if self._sort_order == SortOrder.ROW and sort_order == SortOrder.COL:
+            out._csr2csc = self._csr2csc = perm
+        elif self._sort_order == SortOrder.COL and sort_order == SortOrder.ROW:
+            out._csc2csr = self._csc2csr = perm
+
+        return torch.return_types.sort([out, perm])
 
     @classmethod
     def __torch_function__(cls, func, types, args=(), kwargs=None):
