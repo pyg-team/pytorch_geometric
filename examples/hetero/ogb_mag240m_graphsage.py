@@ -213,11 +213,11 @@ def run(
         time_sum, sum_acc = 0, 0
         if rank == 0:
             print("right before for loop over train loader...")
+        if rank == 0 and epoch == 0:
+            print("Training beginning...")
         for i, batch in enumerate(train_loader):
             if i >= num_steps_per_epoch:
                 break
-            if rank == 0 and epoch == 0 and i == 0:
-                print("Training beginning...")
             since = time.time()
             optimizer.zero_grad()
             if n_devices > 0:
