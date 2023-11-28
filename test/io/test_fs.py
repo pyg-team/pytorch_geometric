@@ -9,7 +9,7 @@ from torch_geometric.io import fs
 
 
 @pytest.fixture(params=['file', 'memory'])
-def tmp_fs_path(request, tmp_path):
+def tmp_fs_path(request, tmp_path) -> str:
     if request.param == 'file':
         return tmp_path.resolve().as_posix()
     elif request.param == 'memory':
