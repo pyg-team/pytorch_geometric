@@ -80,6 +80,7 @@ class Partitioner:
         self.num_parts = num_parts
         self.root = root
         self.recursive = recursive
+
     @property
     def is_hetero(self) -> bool:
         return isinstance(self.data, HeteroData)
@@ -102,7 +103,7 @@ class Partitioner:
             recursive=self.recursive,
             log=True,
             keep_inter_cluster_edges=True,
-            format='csc'
+            sparse_format='csc',
         )
 
         node_perm = cluster_data.partition.node_perm
