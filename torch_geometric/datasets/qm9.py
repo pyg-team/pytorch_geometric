@@ -52,6 +52,16 @@ class QM9(InMemoryDataset):
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
+    The original QM9 dataset contains missing features and chemical
+    inaccuracies, so it is best used for benchmarking rather than model development.
+    For a more chemically complete version of the dataset, set featurize to True.
+    This differs from the original QM9 dataset as follows: (1) All Hydrogen atoms are included,
+    correcting 25,715 chemically incomplete molecular graphs.
+    (2) All atomic and edge features are set to correct values. In the original QM9 dataset, the
+    hybridization state and aromaticity of all atoms, as well the aromaticity
+    of all bonds, were uniformly set equal to zero. (3) These changes necessitate
+    omitting 1,403 molecules from the original QM9 dataset.
+
 
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | Target | Property                         | Description                                                                       | Unit                                        |
@@ -117,29 +127,24 @@ class QM9(InMemoryDataset):
             final dataset. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        featurize (bool, optional): Whether to include completed and
+            corrected chemical graphs and features. Stats for the featurized dataset
+            are given in parentheses below. (default: :obj:`False`)
 
     **STATS:**
 
-    .. list-table::
-        :widths: 10 10 10 10 10
-        :header-rows: 1
-
-        * - #graphs
-          - #nodes
-          - #edges
-          - #features
-          - #tasks
-        * - 130,831
-          - ~18.0
-          - ~37.3
-          - 11
-          - 19
+    +--------------+---------+--------+--------+-----------+--------+
+    | featurize    | #graphs | #nodes | #edges | #features | #tasks |
+    +==============+=========+========+========+===========+========+
+    | :obj:`False` | 130,831 | ~18.0  | ~37.3  | 11        | 19     |
+    +--------------+---------+--------+--------+-----------+--------+
+    | :obj:`True`  | 129,428 | ~18.3  | ~37.9  | 11        | 19     |
+    +--------------+---------+--------+--------+-----------+--------+
     """  # noqa: E501
 
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
-    processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
 
     def __init__(
         self,
@@ -148,9 +153,19 @@ class QM9(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
+        featurize: bool = False,
     ):
+
+        self.featurize = featurize
+
+        if featurize is True:
+            self.processed_url = 'https://data.pyg.org/datasets/qm9_v3_ft.zip'
+        else:
+            self.processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
+
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
+
         self.load(self.processed_paths[0])
 
     def mean(self, target: int) -> float:
@@ -238,12 +253,15 @@ class QM9(InMemoryDataset):
             skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
-                                   sanitize=False)
+                                   sanitize=self.featurize)
 
         data_list = []
         for i, mol in enumerate(tqdm(suppl)):
-            if i in skip:
+            if i in skip or mol is None:
                 continue
+
+            if self.featurize:
+                mol = Chem.AddHs(mol)
 
             N = mol.GetNumAtoms()
 
