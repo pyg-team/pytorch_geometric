@@ -519,36 +519,36 @@ def test_data_with_tensor_frame():
         assert torch.allclose(value, tf.feat_dict[key][mask])
 
 
-def test_temporal_data():
-    edge_index = torch.tensor([[0, 1, 0, 2], [2, 1, 2, 1]])
-    edge_attr = torch.rand((edge_index.size(-1), 8))
-    time = torch.tensor([1, 4, 3, 2])
-    is_insert = torch.tensor([True, True, False, True])
-    data = Data(edge_index=edge_index, edge_attr=edge_attr, time=time,
-                is_insert=is_insert)
+def test_data_with_time_for_edges():
+    num_edges = 8
+    edge_index = torch.randint(0, 8, (2, num_edges))
+    edge_attr = torch.rand((num_edges, 16))
+    time = torch.tensor([1, 2, 4, 3, 6, 5, 8, 9])
+    x = torch.rand((edge_index.max(), 12))
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, time=time)
 
-    assert data.num_events == edge_index.size(-1)
-    assert data.is_event_attr('time')
-    assert data.is_event_attr('is_insert')
-    assert all([k in data.event_attrs() for k in ['time', 'is_insert']])
+    assert data.is_edge_attr('time')
+    assert not data.is_node_attr('time')
+    assert data.num_edges == num_edges
 
-    assert not data.is_chronological()
-    data = data.chronological()
-    assert data.is_chronological()
-    chronological_edge_index = torch.tensor([[0, 2, 0, 1], [2, 1, 2, 1]])
-    assert torch.all(chronological_edge_index == data.edge_index)
+    up_to_data = data.up_to(6)
+    assert up_to_data.num_edges == 6
+    # 'x' is not a part of edge attrs
+    assert torch.allclose(up_to_data.x, x)
+    assert torch.all(up_to_data.edge_index == edge_index[:, :6])
+    assert torch.allclose(up_to_data.edge_attr, edge_attr[:6, :])
+    assert torch.all(up_to_data.time == time[:6])
 
-    data.add_event(1, 2, 5, True, torch.rand((8, )))
-    data.add_event(0, 0, 6, True, torch.rand((8, )))
-    data.add_event(1, 0, 7, True, torch.rand((8, )))
-    data = data.chronological()
-    assert data.edge_index[0, -1] == 1
-    assert data.edge_index[1, -1] == 0
-    assert data.time[-1] == 7
-    assert data.is_insert[-1] == True
-    assert data.num_events == 7
+    snapshot_data = data.snapshot(3, 6)
+    assert snapshot_data.num_edges == 4
+    assert torch.allclose(snapshot_data.x, x)
+    assert torch.all(snapshot_data.edge_index == edge_index[:, 2:6])
+    assert torch.allclose(snapshot_data.edge_attr, edge_attr[2:6, :])
+    assert torch.all(snapshot_data.time == time[2:6])
 
-    data = data.events_before_or_at(4)
-    data = data.static_graph_at(4)
-    static_edge_index = torch.tensor([[1, 2], [1, 1]])
-    assert torch.all(data.edge_index == static_edge_index)
+    sorted_data = data.sort_by_time()
+    time_perm = torch.tensor([0, 1, 3, 2, 5, 4, 6, 7])
+    assert not data.is_sorted_by_time()
+    assert sorted_data.is_sorted_by_time()
+    assert torch.all(sorted_data.edge_index == edge_index[:, time_perm])
+    assert torch.allclose(sorted_data.edge_attr, edge_attr[time_perm, :])

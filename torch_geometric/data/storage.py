@@ -36,26 +36,14 @@ from torch_geometric.utils import (
     sort_edge_index,
 )
 
-NODE_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id', 'tf'}
-EDGE_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
-EVENT_KEYS = {'time', 'is_insert'}
+N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id', 'tf'}
+E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
 
 
 class AttrType(Enum):
     NODE = 'NODE'
     EDGE = 'EDGE'
-    EVENT = 'EVENT'
     OTHER = 'OTHER'
-
-
-def key2attr_type(key: str) -> AttrType:
-    if key in NODE_KEYS:
-        return AttrType.NODE
-    if key in EDGE_KEYS:
-        return AttrType.EDGE
-    if key in EVENT_KEYS:
-        return AttrType.EVENT
-    return AttrType.OTHER
 
 
 class BaseStorage(MutableMapping):
@@ -328,13 +316,13 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if isinstance(value, Tensor) and key in NODE_KEYS:
+            if isinstance(value, Tensor) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.size(cat_dim)
-            if isinstance(value, np.ndarray) and key in NODE_KEYS:
+            if isinstance(value, np.ndarray) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
-            if isinstance(value, TensorFrame) and key in NODE_KEYS:
+            if isinstance(value, TensorFrame) and key in N_KEYS:
                 return value.num_rows
         for key, value in self.items():
             if isinstance(value, Tensor) and 'node' in key:
@@ -420,9 +408,6 @@ class NodeStorage(BaseStorage):
     def is_edge_attr(self, key: str) -> bool:
         return False
 
-    def is_event_attr(self, key: str) -> bool:
-        return False
-
     def node_attrs(self) -> List[str]:
         return [key for key in self.keys() if self.is_node_attr(key)]
 
@@ -469,13 +454,13 @@ class EdgeStorage(BaseStorage):
         if 'num_edges' in self:
             return self['num_edges']
         for key, value in self.items():
-            if isinstance(value, Tensor) and key in EDGE_KEYS:
+            if isinstance(value, Tensor) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.size(cat_dim)
-            if isinstance(value, np.ndarray) and key in EDGE_KEYS:
+            if isinstance(value, Tensor) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
-            if isinstance(value, TensorFrame) and key in EDGE_KEYS:
+            if isinstance(value, TensorFrame) and key in E_KEYS:
                 return value.num_rows
         for key, value in self.items():
             if isinstance(value, Tensor) and 'edge' in key:
@@ -554,9 +539,6 @@ class EdgeStorage(BaseStorage):
 
         self._cached_attr[AttrType.EDGE].add(key)
         return True
-
-    def is_event_attr(self, key: str) -> bool:
-        return False
 
     def edge_attrs(self) -> List[str]:
         return [key for key in self.keys() if self.is_edge_attr(key)]
@@ -644,174 +626,8 @@ class EdgeStorage(BaseStorage):
         return self._key is not None and self._key[0] != self._key[-1]
 
 
-class EventStorage(BaseStorage):
-    r"""A storage for event-related information."""
-    # TODO: Should _key be defined? I think it should be
-    # the same type as EdgeType
-
-    @property
-    def num_events(self) -> int:
-        if 'num_events' in self:
-            return self['num_events']
-        for key, value in self.items():
-            # time tensor is 1D
-            if isinstance(value, Tensor) and key in EVENT_KEYS:
-                return value.numel()
-            if isinstance(value, np.ndarray) and key in EVENT_KEYS:
-                return value.size
-            if isinstance(value, TensorFrame) and key in EVENT_KEYS:
-                return len(value)
-        if 'edge_index' in self and isinstance(self.edge_index, Tensor):
-            cat_dim = self._parent().__cat_dim__('edge_index', self.edge_index,
-                                                 self)
-            return self.edge_index.size(cat_dim)
-        return 0
-
-    def is_node_attr(self, key: str) -> bool:
-        return False
-
-    def is_edge_attr(self, key: str) -> bool:
-        return False
-
-    def is_event_attr(self, key: str) -> bool:
-        if '_cached_attr' not in self.__dict__:
-            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
-
-        if key in self._cached_attr[AttrType.EVENT]:
-            return True
-        if key in self._cached_attr[AttrType.OTHER]:
-            return False
-
-        value = self[key]
-
-        if (isinstance(value, (list, tuple, TensorFrame))
-                and len(value) == self.num_events):
-            self._cached_attr[AttrType.EVENT].add(key)
-            return True
-
-        if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-        if value.ndim == 0:
-            self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-        cat_dim = self._parent().__cat_dim__(key, value, self)
-        if value.shape[cat_dim] != self.num_events:
-            self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-        self._cached_attr[AttrType.EVENT].add(key)
-        return True
-
-    def event_attrs(self) -> List[str]:
-        return [key for key in self.keys() if self.is_event_attr(key)]
-
-    def merge_cached_events(self) -> bool:
-        if '_cached_events' not in self.__dict__:
-            self._cached_events: list[tuple(int, int, Union[float, int], bool,
-                                            Tensor)] = []
-            return False
-        if not self._cached_events:
-            return False
-        required_keys = ['edge_index', 'edge_attr', 'time', 'is_insert']
-        present_keys = [k for k in required_keys if k in self]
-        if 0 < len(present_keys) < len(required_keys):
-            warnings.warn('Some event data is missing - '
-                          'please validate your data')
-            return False
-        edge_index = torch.tensor([e[:2] for e in self._cached_events
-                                   ]).transpose(0, -1)
-        edge_attr = torch.stack([e[-1] for e in self._cached_events])
-        time = torch.tensor([e[2] for e in self._cached_events])
-        is_insert = torch.tensor([e[3] for e in self._cached_events])
-        if present_keys:  # all defined
-            self.edge_index = torch.cat(
-                (self.edge_index, edge_index.to(self.edge_index.dtype)),
-                dim=-1)
-            self.edge_attr = torch.cat(
-                (self.edge_attr, edge_attr.to(self.edge_attr.dtype)))
-            self.time = torch.cat((self.time, time.to(self.time.dtype)))
-            self.is_insert = torch.cat(
-                (self.is_insert, is_insert.to(self.is_insert.dtype)))
-        else:  # none defined
-            self.edge_index = edge_index
-            self.edge_attr = edge_attr
-            self.time = time
-            self.is_insert = is_insert
-        self._cached_events.clear()
-        return True
-
-    def add_event(self, src: int, dst: int, time: Union[float, int],
-                  is_insert: bool, msg: Tensor):
-        if '_cached_events' not in self.__dict__:
-            self._cached_events: list[tuple(int, int, Union[float, int], bool,
-                                            Tensor)] = []
-        self._cached_events.append((src, dst, time, is_insert, msg))
-
-    def is_chronological(self) -> bool:
-        if 'time' in self:
-            return bool(torch.all(self.time[:-1] <= self.time[1:]))
-        return True
-
-    def chronological(self) -> 'EventStorage':
-        if self.is_chronological():
-            return self
-        if 'time' in self:
-            self.time, perm = torch.sort(self.time, stable=True)
-            # event is always associated with 'edge_index' and 'edge_attr'
-            if 'edge_index' in self:
-                self.edge_index = self.edge_index[:, perm]
-            if 'edge_attr' in self:
-                self.edge_attr = self.edge_attr[perm, :]
-            # if other event storages exist, we sort them according
-            # to 'time'
-            event_attrs = self.event_attrs()
-            event_attrs.remove('time')
-            for key in event_attrs:
-                self[key] = self[key][perm]
-        return self
-
-    def events_before_or_at(self, time: Union[float, int]) -> 'EventStorage':
-        if 'time' in self:
-            mask = self.time <= time
-            if 'edge_index' in self:
-                self.edge_index = self.edge_index[:, mask]
-            if 'edge_attr' in self:
-                self.edge_attr = self.edge_attr[mask, :]
-            event_attrs = self.event_attrs()
-            for key in event_attrs:
-                self[key] = self[key][mask]
-        return self
-
-    def static_graph_at(self, time: Union[float, int]) -> 'EventStorage':
-        required_keys = ['edge_index', 'edge_attr', 'time', 'is_insert']
-        if not all([k in self for k in required_keys]):
-            warnings.warn('Some event data is missing - '
-                          'please validate your data')
-            return self
-
-        self.events_before_or_at(time)
-        num_nodes = int(self.edge_index.max()) + 1
-        idx = (self.edge_index[0] * num_nodes) + self.edge_index[1]
-        sorted_indices, perm = torch.sort(idx, stable=True)
-        _, counts = torch.unique_consecutive(sorted_indices,
-                                             return_counts=True)
-        cumsum = torch.cumsum(counts, 0) - 1
-        perm = perm[cumsum]
-        insert_mask = self.is_insert[perm]
-        combined_mask = perm[insert_mask]
-        self.edge_index = self.edge_index[:, combined_mask]
-        self.edge_attr = self.edge_attr[combined_mask, :]
-        event_attrs = self.event_attrs()
-        for key in event_attrs:
-            self[key] = self[key][combined_mask]
-        return self
-
-
-class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
-    r"""A storage for node-level, edge-level and event-related information."""
+class GlobalStorage(NodeStorage, EdgeStorage):
+    r"""A storage for both node-level and edge-level information."""
     @property
     def _key(self) -> Any:
         return None
@@ -834,34 +650,16 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
             return True
         if key in self._cached_attr[AttrType.EDGE]:
             return False
-        if key in self._cached_attr[AttrType.EVENT]:
-            return False
         if key in self._cached_attr[AttrType.OTHER]:
             return False
 
         value = self[key]
-        attr_type = key2attr_type(key)
 
-        # TODO: Consider reducing heuristics to the below one.
-        # We can add some methods for registering custom/extending
-        # existing attribute type keys. Additional, explicit method
-        # call is better than confusion caused by wrongly classified
-        # attribute. Same applies to 'is_edge_attr' and 'is_event_attr'.
-        if (isinstance(value, (np.ndarray, Tensor, TensorFrame))
-                and attr_type != AttrType.OTHER):
-            self._cached_attr[attr_type].add(key)
-            return attr_type == AttrType.NODE
-
-        # TODO: fix this heuristic, it may produce false-positives
-        # len(value) == self.num_edges may work here as well
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_nodes):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
-        # TODO: if we allow value to be of 'np.ndarray' type, at some point
-        # we should force conversion to 'Tensor', otherwise we may face
-        # errors in methods such as 'sort()'
         if not isinstance(value, (Tensor, np.ndarray)):
             return False
 
@@ -870,15 +668,11 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
-        num_nodes = self.num_nodes
-        # 'num_edges' should represent 'num_events'
-        num_edges = self.num_edges
+        num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_nodes:
-            if value.shape[cat_dim] == num_edges and 'edge' in key:
+            if value.shape[cat_dim] == num_edges:
                 self._cached_attr[AttrType.EDGE].add(key)
-            elif value.shape[cat_dim] == num_edges:
-                self._cached_attr[AttrType.EVENT].add(key)
             else:
                 self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -887,12 +681,11 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
-        if 'edge' in key:
-            self._cached_attr[AttrType.EDGE].add(key)
-            return False
+        if 'edge' not in key:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
         else:
-            # cannot determine whether it's NODE or EVENT
-            self._cached_attr[AttrType.OTHER].add(key)
+            self._cached_attr[AttrType.EDGE].add(key)
             return False
 
     def is_edge_attr(self, key: str) -> bool:
@@ -901,23 +694,13 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
 
         if key in self._cached_attr[AttrType.EDGE]:
             return True
-        if key in self._cached_attr[AttrType.EVENT]:
-            return False
         if key in self._cached_attr[AttrType.NODE]:
             return False
         if key in self._cached_attr[AttrType.OTHER]:
             return False
 
         value = self[key]
-        attr_type = key2attr_type(key)
 
-        if (isinstance(value, (np.ndarray, Tensor, TensorFrame))
-                and attr_type != AttrType.OTHER):
-            self._cached_attr[attr_type].add(key)
-            return attr_type == AttrType.EDGE
-
-        # TODO: fix this heuristic, it may produce false-positives
-        # len(value) == self.num_nodes may work here as well
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_edges):
             self._cached_attr[AttrType.EDGE].add(key)
@@ -931,9 +714,7 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
-        num_nodes = self.num_nodes
-        # 'num_edges' should represent 'num_events'
-        num_edges = self.num_edges
+        num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_edges:
             if value.shape[cat_dim] == num_nodes:
@@ -942,82 +723,75 @@ class GlobalStorage(NodeStorage, EdgeStorage, EventStorage):
                 self._cached_attr[AttrType.OTHER].add(key)
             return False
 
-        if num_edges != num_nodes and 'edge' in key:
-            self._cached_attr[AttrType.EDGE].add(key)
-            return True
         if num_edges != num_nodes:
-            self._cached_attr[AttrType.EVENT].add(key)
-            return False
-
-        if 'edge' in key:
             self._cached_attr[AttrType.EDGE].add(key)
-            return True
-        else:
-            # cannot determine whether it's NODE or EVENT
-            self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-    def is_event_attr(self, key: str) -> bool:
-        if '_cached_attr' not in self.__dict__:
-            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
-
-        if key in self._cached_attr[AttrType.EVENT]:
-            return True
-        if key in self._cached_attr[AttrType.EDGE]:
-            return False
-        if key in self._cached_attr[AttrType.NODE]:
-            return False
-        if key in self._cached_attr[AttrType.OTHER]:
-            return False
-
-        value = self[key]
-        attr_type = key2attr_type(key)
-
-        if (isinstance(value, (np.ndarray, Tensor, TensorFrame))
-                and attr_type != AttrType.OTHER):
-            self._cached_attr[attr_type].add(key)
-            return attr_type == AttrType.EVENT
-
-        # TODO: fix this heuristic, it may produce false-positives
-        # len(value) == self.num_nodes may work here as well
-        if (isinstance(value, (list, tuple, TensorFrame))
-                and len(value) == self.num_events):
-            self._cached_attr[AttrType.EVENT].add(key)
-            return True
-
-        if not isinstance(value, (Tensor, np.ndarray)):
-            return False
-
-        if value.ndim == 0:
-            self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-        cat_dim = self._parent().__cat_dim__(key, value, self)
-        num_nodes = self.num_nodes
-        # 'num_events' should represent 'num_edges'
-        num_events = self.num_events
-
-        if value.shape[cat_dim] != num_events:
-            if value.shape[cat_dim] == num_nodes:
-                self._cached_attr[AttrType.NODE].add(key)
-            else:
-                self._cached_attr[AttrType.OTHER].add(key)
-            return False
-
-        if num_events != num_nodes and 'edge' in key:
-            self._cached_attr[AttrType.EDGE].add(key)
-            return False
-        if num_events != num_nodes:
-            self._cached_attr[AttrType.EVENT].add(key)
             return True
 
         if 'edge' in key:
             self._cached_attr[AttrType.EDGE].add(key)
             return True
         else:
-            # cannot determine whether it's NODE or EVENT
-            self._cached_attr[AttrType.OTHER].add(key)
+            self._cached_attr[AttrType.NODE].add(key)
             return False
+
+    def _index_select(self, keys: List[str], dims: List[int], index: Tensor):
+        assert len(keys) == len(
+            dims
+        ), "Number of provided keys does not match number of provided dims."
+        for key, dim in zip(keys, dims):
+            if key in self:
+                self[key] = torch.index_select(self[key], dim, index)
+
+    def _dims_for_attrs(self, keys: List[str]) -> List[int]:
+        # to avoid errors when 'num_edges == num_edge_features' or
+        # 'num_nodes == num_node_features'
+        predefined_dims = dict(x=0, edge_index=1, edge_attr=0)
+        dims = []
+        for key in keys:
+            if key in predefined_dims.keys():
+                dim = predefined_dims[key]
+            elif self.is_edge_attr(key):
+                dim = (torch.tensor(
+                    self[key].size()) == self.num_edges).nonzero()[0].item()
+            elif self.is_node_attr(key):
+                dim = (torch.tensor(
+                    self[key].size()) == self.num_nodes).nonzero()[0].item()
+            dims.append(dim)
+        return dims
+    
+    def is_sorted_by_time(self) -> bool:
+        if 'time' in self:
+            return bool(torch.all(self.time[:-1] <= self.time[1:]))
+        return True
+
+    def sort_by_time(self) -> 'GlobalStorage':
+        if self.is_sorted_by_time():
+            return self
+        if 'time' in self:
+            self.time, perm = torch.sort(self.time, stable=True)
+            if self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+                keys.remove('time')
+                self._index_select(keys, self._dims_for_attrs(keys), perm)
+            # TODO: cover case where 'time' is a node attribute
+        return self
+
+    def snapshot(self, start_time: Union[float, int],
+                 end_time: Union[float, int]) -> 'GlobalStorage':
+        if 'time' in self:
+            # this solution assumes that time may not be sorted
+            mask = (self.time >= start_time) & (self.time <= end_time)
+            perm = mask.nonzero(as_tuple=False).flatten()
+            if self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+                self._index_select(keys, self._dims_for_attrs(keys), perm)
+            # TODO: cover case where 'time' is a node attribute
+        return self
+
+    def up_to(self, time: Union[float, int]) -> 'GlobalStorage':
+        if 'time' in self:
+            return self.snapshot(self.time.min().item(), time)
+        return self
 
 
 def recursive_apply_(data: Any, func: Callable):

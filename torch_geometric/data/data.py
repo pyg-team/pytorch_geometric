@@ -25,7 +25,6 @@ from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
-    EventStorage,
     GlobalStorage,
     NodeStorage,
 )
@@ -83,10 +82,6 @@ class BaseData:
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
-        raise NotImplementedError
-
-    @property
-    def event_stores(self) -> List[EventStorage]:
         raise NotImplementedError
 
     def to_dict(self) -> Dict[str, Any]:
@@ -195,11 +190,6 @@ class BaseData:
         """
         return sum([v.num_edges for v in self.edge_stores])
 
-    @property
-    def num_events(self) -> int:
-        r"""Returns the number of events in temporal graph."""
-        return sum([v.num_events for v in self.event_stores])
-
     def node_attrs(self) -> List[str]:
         r"""Returns all node-level tensor attribute names."""
         return list(set(chain(*[s.node_attrs() for s in self.node_stores])))
@@ -207,10 +197,6 @@ class BaseData:
     def edge_attrs(self) -> List[str]:
         r"""Returns all edge-level tensor attribute names."""
         return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
-
-    def event_attrs(self) -> List[str]:
-        r"""Return all event-level tensor attribute names."""
-        return list(set(chain(*[s.event_attrs() for s in self.event_stores])))
 
     @property
     def node_offsets(self) -> Dict[NodeType, int]:
@@ -255,18 +241,6 @@ class BaseData:
             store.sort(sort_by_row)
         return out
 
-    def is_chronological(self) -> bool:
-        r"""Returns :obj:`True` if events are sorted according
-        to :obj:`time`"""
-        return all([store.is_chronological() for store in self.event_stores])
-
-    def chronological(self) -> 'Data':
-        r"""Sorts event data according to :obj:`time`."""
-        out = copy.copy(self)
-        for store in out.event_stores:
-            store.chronological()
-        return out
-
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
         and do not contain duplicate entries.
@@ -280,6 +254,34 @@ class BaseData:
         out = copy.copy(self)
         for store in out.edge_stores:
             store.coalesce()
+        return out
+
+    def is_sorted_by_time(self) -> bool:
+        r"""Returns :obj:`True` if :obj:`time` is sorted."""
+        return all([store.is_sorted_by_time() for store in self.stores])
+
+    def sort_by_time(self) -> 'BaseData':
+        r"""Sorts data associated with :obj:`time` according to :obj:`time`."""
+        out = copy.copy(self)
+        for store in out.stores:
+            store.sort_by_time()
+        return out
+
+    def snapshot(self, start_time: Union[float, int],
+                 end_time: Union[float, int]) -> 'BaseData':
+        r"""Returns snapshot of events that occurred in period
+        <:obj:`start_time`, :obj:`end_time`>.
+        """
+        out = copy.copy(self)
+        for store in out.stores:
+            store.snapshot(start_time, end_time)
+        return out
+
+    def up_to(self, time: Union[float, int]) -> 'BaseData':
+        r"""Returns events that occurred before or at given :obj:`time`."""
+        out = copy.copy(self)
+        for store in out.stores:
+            store.up_to(time)
         return out
 
     def has_isolated_nodes(self) -> bool:
@@ -442,9 +444,9 @@ class DataEdgeAttr(EdgeAttr):
 
 class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
-    The data object can hold node-level, link-level event-level and graph-level
-    attributes. In general, :class:`~torch_geometric.data.Data` tries to mimic
-    the behavior of a regular :python:`Python` dictionary.
+    The data object can hold node-level, link-level and graph-level attributes.
+    In general, :class:`~torch_geometric.data.Data` tries to mimic the
+    behavior of a regular :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
@@ -476,19 +478,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         x (torch.Tensor, optional): Node feature matrix with shape
             :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
-            with shape :obj:`[2, num_edges]`. If :obj:`time` is present,
-            it will be interpreted as an event. (default: :obj:`None`)
+            with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
         edge_attr (torch.Tensor, optional): Edge feature matrix with shape
-            :obj:`[num_edges, num_edge_features]`. If :obj:`time` is present,
-            it will be interpreted as an event message (default: :obj:`None`)
+            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         y (torch.Tensor, optional): Graph-level or node-level ground-truth
             labels with arbitrary shape. (default: :obj:`None`)
         pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
-        time (torch.Tensor, optional): Time of occurrence of each event
-            described in :obj:`edge_index`. (default: :obj:`None`)
-        is_insert (BoolTensor, optional): Flag denoting whether event described
-            in :obj:`edge_index` is node/edge insertion or deletion.
+        time (torch.Tensor, optional): The timestamps for each event with shape
+            :obj:`[num_edges]` or :obj:`[num_nodes]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def __init__(
@@ -499,7 +497,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         y: OptTensor = None,
         pos: OptTensor = None,
         time: OptTensor = None,
-        is_insert: OptTensor = None,
         **kwargs,
     ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
@@ -524,8 +521,6 @@ class Data(BaseData, FeatureStore, GraphStore):
             self.pos = pos
         if time is not None:
             self.time = time
-        if is_insert is not None:
-            self.is_insert = is_insert
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -553,11 +548,6 @@ class Data(BaseData, FeatureStore, GraphStore):
     # __getitem__, __setitem__, and __delitem__ so, for example, we
     # can accept key: Union[str, TensorAttr] in __getitem__.
     def __getitem__(self, key: str) -> Any:
-        special_key = key in ['edge_index', 'edge_attr', 'time', 'is_insert']
-        # TODO: Should we produce here some message warning about longer
-        # access time?
-        if special_key and key in self._store:
-            self._store.merge_cached_events()
         return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
@@ -583,9 +573,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         return out
 
     def __repr__(self) -> str:
-        # TODO: Should we produce here some message warning about longer
-        # creation time?
-        self._store.merge_cached_events()
         cls = self.__class__.__name__
         has_dict = any([isinstance(v, Mapping) for v in self._store.values()])
 
@@ -611,10 +598,6 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
-        return [self._store]
-
-    @property
-    def event_stores(self) -> List[EventStorage]:
         return [self._store]
 
     def to_dict(self) -> Dict[str, Any]:
@@ -683,25 +666,6 @@ class Data(BaseData, FeatureStore, GraphStore):
     def debug(self):
         pass  # TODO
 
-    def add_event(self, src: int, dst: int, time: Union[float, int],
-                  is_insert: bool, msg: Tensor):
-        r"""Adds event to the cache. Cache will be merged with existing data
-        at next access.
-        """
-        self._store.add_event(src, dst, time, is_insert, msg)
-
-    def events_before_or_at(self, time: Union[float, int]) -> 'Data':
-        r"""Returns events that occurred before or at :obj:`time`."""
-        out = copy.copy(self)
-        out._store.events_before_or_at(time)
-        return out
-
-    def static_graph_at(self, time: Union[float, int]) -> 'Data':
-        r"""Returns a static graph that existed at :obj:`time`."""
-        out = copy.copy(self)
-        out._store.static_graph_at(time)
-        return out
-
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
         node-level tensor attribute.
@@ -713,12 +677,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         edge-level tensor attribute.
         """
         return self._store.is_edge_attr(key)
-
-    def is_event_attr(self, key: str) -> bool:
-        r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        event-level tensor attribute.
-        """
-        return self._store.is_event_attr(key)
 
     def subgraph(self, subset: Tensor) -> 'Data':
         r"""Returns the induced subgraph given by the node indices
@@ -980,16 +938,12 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self['pos'] if 'pos' in self._store else None
 
     @property
-    def time(self) -> Optional[Tensor]:
-        return self['time'] if 'time' in self._store else None
-
-    @property
-    def is_insert(self) -> Optional[Tensor]:
-        return self['is_insert'] if 'is_insert' in self._store else None
-
-    @property
     def batch(self) -> Optional[Tensor]:
         return self['batch'] if 'batch' in self._store else None
+
+    @property
+    def time(self) -> Optional[Tensor]:
+        return self['time'] if 'time' in self._store else None
 
     # Deprecated functions ####################################################
 
