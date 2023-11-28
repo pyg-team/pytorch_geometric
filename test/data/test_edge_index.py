@@ -1,10 +1,20 @@
 import os.path as osp
+from typing import Optional
 
 import pytest
 import torch
+from torch import Tensor
 
+import torch_geometric
 from torch_geometric.data.edge_index import EdgeIndex
-from torch_geometric.testing import onlyCUDA, withCUDA
+from torch_geometric.testing import (
+    disableExtensions,
+    onlyCUDA,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
+from torch_geometric.utils import scatter
 
 
 def test_basic():
@@ -239,3 +249,71 @@ def test_data_loader(num_workers):
             assert isinstance(adj, EdgeIndex)
             assert adj.is_shared() == (num_workers > 0)
             assert adj._rowptr.is_shared() == (num_workers > 0)
+
+
+def test_torch_script():
+    class Model(torch.nn.Module):
+        def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
+            row, col = edge_index[0], edge_index[1]
+            x_j = x[row]
+            out = scatter(x_j, col, dim_size=edge_index.num_cols)
+            return out
+
+    x = torch.randn(3, 8)
+    # Test that `num_cols` gets picked up by making last node isolated.
+    edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 0, 1]], sparse_size=(3, 3))
+
+    model = Model()
+    expected = model(x, edge_index)
+    assert expected.size() == (3, 8)
+
+    # `torch.jit.script` does not support inheritance at the `Tensor` level :(
+    with pytest.raises(RuntimeError, match="attribute or method 'num_cols'"):
+        torch.jit.script(model)
+
+    # A valid workaround is to treat `EdgeIndex` as a regular PyTorch tensor
+    # whenever we are in script mode:
+    class ScriptableModel(torch.nn.Module):
+        def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
+            row, col = edge_index[0], edge_index[1]
+            x_j = x[row]
+            dim_size: Optional[int] = None
+            if (not torch.jit.is_scripting()
+                    and isinstance(edge_index, EdgeIndex)):
+                dim_size = edge_index.num_cols
+            out = scatter(x_j, col, dim_size=dim_size)
+            return out
+
+    script_model = torch.jit.script(ScriptableModel())
+    out = script_model(x, edge_index)
+    assert out.size() == (2, 8)
+    assert torch.allclose(out, expected[:2])
+
+
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.1.0')
+def test_compile():
+    import torch._dynamo as dynamo
+
+    class Model(torch.nn.Module):
+        def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
+            row, col = edge_index[0], edge_index[1]
+            x_j = x[row]
+            out = scatter(x_j, col, dim_size=edge_index.num_cols)
+            return out
+
+    x = torch.randn(3, 8)
+    # Test that `num_cols` gets picked up by making last node isolated.
+    edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 0, 1]], sparse_size=(3, 3))
+
+    model = Model()
+    expected = model(x, edge_index)
+    assert expected.size() == (3, 8)
+
+    explanation = dynamo.explain(model)(x, edge_index)
+    assert explanation.graph_break_count <= 0
+
+    compiled_model = torch_geometric.compile(model)
+    out = compiled_model(x, edge_index)
+    assert torch.allclose(out, expected)
