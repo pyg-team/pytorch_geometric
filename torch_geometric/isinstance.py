@@ -2,6 +2,11 @@ from typing import Any, Tuple, Type, Union
 
 import torch
 
+import torch_geometric.typing
+
+if torch_geometric.typing.WITH_PT20:
+    import torch._dynamo
+
 
 def is_torch_instance(obj: Any, cls: Union[Type, Tuple[Type]]) -> bool:
     r"""Checks if the :obj:`obj` is an instance of a :obj:`cls`.
@@ -16,6 +21,7 @@ def is_torch_instance(obj: Any, cls: Union[Type, Tuple[Type]]) -> bool:
     # compiled model before evaluating via `isinstance`.
     print(obj)
     print(obj.__class__)
-    if isinstance(obj, torch._dynamo.OptimizedModule):
+    if (torch_geometric.typing.WITH_PT20
+            and isinstance(obj, torch._dynamo.OptimizedModule)):
         return isinstance(obj._orig_mod, cls)
     return isinstance(obj, cls)
