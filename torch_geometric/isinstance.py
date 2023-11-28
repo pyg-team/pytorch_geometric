@@ -14,6 +14,8 @@ def is_torch_instance(obj: Any, cls: Union[Type, Tuple[Type]]) -> bool:
     # a `torch._dynamo.OptimizedModule` instance, leading to `isinstance` being
     # unable to check the model's inheritance. This function unwraps the
     # compiled model before evaluating via `isinstance`.
+    print(obj)
+    print(obj.__class__)
     if isinstance(obj, torch._dynamo.OptimizedModule):
         return isinstance(obj._orig_mod, cls)
     return isinstance(obj, cls)
