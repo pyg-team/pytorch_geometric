@@ -13,7 +13,7 @@
 | mag240m_graphsage.py                  | single-node | Example for training GNNs on a heterogeneous graph.                                                                                                               |
 | taobao.py                             | single-node | Example for training GNNs on a heterogeneous graph.                                                                                                               |
 | model_parallel.py                     | single-node | Example for model parallelism by manually placing layers on each GPU.                                                                                             |
-| data_parallel.py                      | single-node | `torch.nn.DataParallel` is discouraged ([pytorch/pytorch#65936](https://github.com/pytorch/pytorch/issues/65936)). Example for data parallelism in GNN workflows. |
+| data_parallel.py                      | single-node | `torch.nn.DataParallel` is discouraged ([pytorch/pytorch#65936](https://github.com/pytorch/pytorch/issues/65936)). |
 
 ## Examples with Intel GPUs (XPUs)
 
