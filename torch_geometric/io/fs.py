@@ -42,7 +42,7 @@ def get_fs(path: str) -> fsspec.AbstractFileSystem:
 
 
 def normpath(path: str) -> str:
-    if get_fs(path).protocol == 'file':
+    if isdisk(path):
         return osp.normpath(path)
     return path
 
@@ -59,6 +59,18 @@ def isdir(path: str) -> bool:
     return get_fs(path).isdir(path)
 
 
+def isfile(path: str) -> bool:
+    return get_fs(path).isfile(path)
+
+
+def isdisk(path: str) -> bool:
+    return 'file' in get_fs(path).protocol
+
+
+def islocal(path: str) -> bool:
+    return isdisk(path) or 'memory' in get_fs(path).protocol
+
+
 def ls(
     path: str,
     detail: bool = False,
@@ -66,7 +78,7 @@ def ls(
     fs = get_fs(path)
     paths = fs.ls(path, detail=detail)
 
-    if fs.protocol != 'file':
+    if not isdisk(path):
         if detail:
             for path in paths:
                 path['name'] = fs.unstrip_protocol(path['name'])
@@ -81,12 +93,13 @@ def cp(
     path2: str,
     extract: bool = False,
     log: bool = True,
+    clear_cache: bool = True,
 ):
     kwargs = {}
 
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None
-    if get_fs(path1).protocol not in {'file', 'memory'}:
+    if not islocal(path1):
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
@@ -117,8 +130,16 @@ def cp(
     # Perform the copy:
     for open_file in fsspec.open_files(path1, **kwargs):
         with open_file as f_from:
-            common_path = osp.commonprefix([path1, open_file.path])
-            to_path = osp.join(path2, open_file.path[len(common_path):])
+            if isfile(path1):
+                if isdir(path2):
+                    to_path = osp.join(path2, osp.basename(path1))
+                else:
+                    to_path = path2
+            else:
+                # Open file has protocol stripped.
+                common_path = osp.commonprefix(
+                    [fsspec.core.strip_protocol(path1), open_file.path])
+                to_path = osp.join(path2, open_file.path[len(common_path):])
             with fsspec.open(to_path, 'wb') as f_to:
                 while True:
                     chunk = f_from.read(10 * 1024 * 1024)
@@ -126,7 +147,7 @@ def cp(
                         break
                     f_to.write(chunk)
 
-    if cache_dir is not None:
+    if clear_cache and cache_dir is not None:
         rm(cache_dir)
 
 
@@ -145,7 +166,7 @@ def glob(path: str):
     fs = get_fs(path)
     paths = fs.glob(path)
 
-    if fs.protocol != 'file':
+    if not isdisk(path):
         paths = [fs.unstrip_protocol(path) for path in paths]
 
     return paths
