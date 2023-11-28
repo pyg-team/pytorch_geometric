@@ -49,7 +49,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='ogbn-products')
     parser.add_argument('--root_dir', type=str, default='./data/products')
-    parser.add_argument('--num_partitions', type=int, default=3)
+    parser.add_argument('--num_partitions', type=int, default=2)
     parser.add_argument('--recursive', action='store_true')
     args = parser.parse_args()
 
