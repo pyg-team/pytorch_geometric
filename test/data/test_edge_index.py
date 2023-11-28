@@ -2,9 +2,11 @@ import os.path as osp
 
 import pytest
 import torch
+from torch import Tensor
 
 from torch_geometric.data.edge_index import EdgeIndex
 from torch_geometric.testing import onlyCUDA, withCUDA
+from torch_geometric.utils import scatter
 
 
 def test_basic():
@@ -239,3 +241,23 @@ def test_data_loader(num_workers):
             assert isinstance(adj, EdgeIndex)
             assert adj.is_shared() == (num_workers > 0)
             assert adj._rowptr.is_shared() == (num_workers > 0)
+
+
+def test_torch_script():
+    class Model(torch.nn.Module):
+        def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
+            x_j = x[edge_index[0]]
+            out = scatter(x_j, edge_index[1], dim_size=edge_index.num_cols)
+            return out
+
+    x = torch.randn(3, 8)
+    edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3))
+
+    model = Model()
+    out = model(x, edge_index)
+    assert out.size() == (3, 8)
+
+    # TODO `torch.script` does not support inheritance at the `Tensor` level,
+    # so we need to figure out a workaround.
+    with pytest.raises(RuntimeError, match="attribute or method 'num_cols'"):
+        torch.jit.script(model)
