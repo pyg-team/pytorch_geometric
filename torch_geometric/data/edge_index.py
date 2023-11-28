@@ -50,6 +50,33 @@ def assert_two_dimensional(tensor: Tensor):
 
 
 class EdgeIndex(Tensor):
+    r"""An advanced :obj:`edge_index` representation with additional (meta)data
+    attached.
+
+    :class:`EdgeIndex` is a :pytorch:`PyTorch` tensor, that holds an
+    :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
+    Edges are given as pairwise source and destination node indices in sparse
+    COO format.
+
+    While :class:`EdgeIndex` sub-classes a general :pytorch:`PyTorch` tensor,
+    it can hold additional (meta)data, *i.e.*:
+
+    * :obj:`sparse_size`: The underlying sparse matrix size
+    * :obj:`sort_order`: The sort order (if present), either by row or column.
+
+    Additionally, :class:`EdgeIndex` caches data for fast CSR or CSC conversion
+    in case its representation is sorted, such as its :obj:`rowptr` or
+    :obj:`colptr`, or the permutation vectors for fast conversion from CSR to
+    CSC and vice versa.
+    Caches are filled based on demand (*e.g.*, when calling
+    :meth:`EdgeIndex.sort_by`), or when explicitly requested via
+    :meth:`EdgeIndex.fill_cache`, and are maintained and adjusted over its
+    lifespan (*e.g.*, when calling :meth:`EdgeIndex.flip`).
+
+    This representation ensures for optimal computation in GNN message passing
+    schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
+    workflows.
+    """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
     # for a basic tutorial on how to subclass `torch.Tensor`.
 
@@ -133,6 +160,9 @@ class EdgeIndex(Tensor):
         return self
 
     def fill_cache(self) -> 'EdgeIndex':
+        r"""Fills the cache with (meta)data information.
+        No-op in case :class:`EdgeIndex` is not sorted.
+        """
         if self._sort_order == SortOrder.ROW and self._rowptr is None:
             if self.num_rows is None:
                 self._sparse_size = (
