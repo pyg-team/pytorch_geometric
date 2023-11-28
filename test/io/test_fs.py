@@ -1,9 +1,10 @@
-from collections.abc import Callable
-import pytest
-import fsspec
 import functools
 import zipfile
+from collections.abc import Callable
 from os import path as osp
+
+import fsspec
+import pytest
 
 from torch_geometric.io import fs
 
