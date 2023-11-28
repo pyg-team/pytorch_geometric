@@ -67,7 +67,6 @@ class Partitioner:
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData],
@@ -136,7 +135,7 @@ class Partitioner:
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start : edge_start + num_edges]
+                edge_id = edge_perm[edge_start:edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += num_edges
 
@@ -159,9 +158,8 @@ class Partitioner:
                     # Sort on col to avoid keeping track of permuations in
                     # NeighborSampler when converting to CSC format:
                     num_cols = col.size()[0]
-                    global_col, perm = index_sort(
-                        global_col, max_value=num_cols
-                    )
+                    global_col, perm = index_sort(global_col,
+                                                  max_value=num_cols)
                     global_row = global_row[perm]
                     global_eid = edge_id[mask][perm]
                     assert torch.equal(
@@ -169,9 +167,8 @@ class Partitioner:
                         torch.stack((global_row, global_col), dim=0),
                     )
                     assert torch.equal(
-                        self.data[edge_type].edge_index[
-                            :, (global_eid - edge_offset[edge_type])
-                        ],
+                        self.data[edge_type].edge_index[:, (
+                            global_eid - edge_offset[edge_type])],
                         torch.stack(
                             (
                                 global_row - node_offset[src],
@@ -189,9 +186,8 @@ class Partitioner:
 
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask][perm]
-                        assert torch.equal(
-                            data.edge_attr[global_eid, :], edge_attr
-                        )
+                        assert torch.equal(data.edge_attr[global_eid, :],
+                                           edge_attr)
                         efeat[edge_type] = {
                             'global_id': global_eid,
                             'feats': dict(edge_attr=edge_attr),
@@ -238,7 +234,7 @@ class Partitioner:
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start : edge_start + num_edges]
+                edge_id = edge_perm[edge_start:edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += num_edges
 
@@ -264,9 +260,8 @@ class Partitioner:
                 )
                 if 'edge_attr' in part_data:
                     edge_attr = part_data.edge_attr[perm]
-                    assert torch.equal(
-                        self.data.edge_attr[edge_id, :], edge_attr
-                    )
+                    assert torch.equal(self.data.edge_attr[edge_id, :],
+                                       edge_attr)
 
                 torch.save(
                     {
@@ -334,14 +329,13 @@ def load_partition_info(
         node_pb_dir = os.path.join(root_dir, 'node_map')
         for ntype in meta['node_types']:
             node_pb_dict[ntype] = torch.load(
-                os.path.join(node_pb_dir, f'{as_str(ntype)}.pt')
-            )
+                os.path.join(node_pb_dir, f'{as_str(ntype)}.pt'))
 
         edge_pb_dict = {}
         edge_pb_dir = os.path.join(root_dir, 'edge_map')
         for etype in meta['edge_types']:
             edge_pb_dict[tuple(etype)] = torch.load(
-                os.path.join(edge_pb_dir, f'{as_str(etype)}.pt')
-            )
+                os.path.join(edge_pb_dir, f'{as_str(etype)}.pt'))
 
-        return (meta, num_partitions, partition_idx, node_pb_dict, edge_pb_dict)
+        return (meta, num_partitions, partition_idx, node_pb_dict,
+                edge_pb_dict)
