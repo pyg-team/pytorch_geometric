@@ -12,7 +12,6 @@ from torch_geometric.data import (
     extract_gz,
     extract_tar,
 )
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import coalesce
 
 
@@ -222,7 +221,7 @@ class SNAPDataset(InMemoryDataset):
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     def download(self):

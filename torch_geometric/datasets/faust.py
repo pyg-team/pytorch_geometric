@@ -1,11 +1,10 @@
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
 
 from torch_geometric.data import InMemoryDataset, extract_zip
-from torch_geometric.io import read_ply
+from torch_geometric.io import fs, read_ply
 
 
 class FAUST(InMemoryDataset):
@@ -109,4 +108,4 @@ class FAUST(InMemoryDataset):
         self.save(data_list[:80], self.processed_paths[0])
         self.save(data_list[80:], self.processed_paths[1])
 
-        shutil.rmtree(osp.join(self.raw_dir, 'MPI-FAUST'))
+        fs.rm(osp.join(self.raw_dir, 'MPI-FAUST'))

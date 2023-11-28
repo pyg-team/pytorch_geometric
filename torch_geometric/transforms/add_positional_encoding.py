@@ -2,6 +2,7 @@ from typing import Any, Optional
 
 import numpy as np
 import torch
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.data import Data
@@ -10,6 +11,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
     get_laplacian,
     get_self_loop_attr,
+    is_torch_sparse_tensor,
     scatter,
     to_edge_index,
     to_scipy_sparse_matrix,
@@ -18,8 +20,11 @@ from torch_geometric.utils import (
 )
 
 
-def add_node_attr(data: Data, value: Any,
-                  attr_name: Optional[str] = None) -> Data:
+def add_node_attr(
+    data: Data,
+    value: Any,
+    attr_name: Optional[str] = None,
+) -> Data:
     # TODO Move to `BaseTransform`.
     if attr_name is None:
         if 'x' in data:
@@ -138,17 +143,27 @@ class AddRandomWalkPE(BaseTransform):
         value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
         value = 1.0 / value
 
-        if torch_geometric.typing.WITH_WINDOWS:
+        if N <= 2_000:  # Dense code path for faster computation:
+            adj = torch.zeros((N, N), device=row.device)
+            adj[row, col] = value
+            loop_index = torch.arange(N, device=row.device)
+        elif torch_geometric.typing.WITH_WINDOWS:
             adj = to_torch_coo_tensor(data.edge_index, value, size=data.size())
         else:
             adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
+        def get_pe(out: Tensor) -> Tensor:
+            if is_torch_sparse_tensor(out):
+                return get_self_loop_attr(*to_edge_index(out), num_nodes=N)
+            return out[loop_index, loop_index]
+
         out = adj
-        pe_list = [get_self_loop_attr(*to_edge_index(out), num_nodes=N)]
+        pe_list = [get_pe(out)]
         for _ in range(self.walk_length - 1):
             out = out @ adj
-            pe_list.append(get_self_loop_attr(*to_edge_index(out), N))
-        pe = torch.stack(pe_list, dim=-1)
+            pe_list.append(get_pe(out))
 
+        pe = torch.stack(pe_list, dim=-1)
         data = add_node_attr(data, pe, attr_name=self.attr_name)
+
         return data

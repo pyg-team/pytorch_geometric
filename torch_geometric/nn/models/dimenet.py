@@ -11,7 +11,6 @@ from torch import Tensor
 from torch.nn import Embedding, Linear
 
 from torch_geometric.data import Dataset, download_url
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
@@ -584,7 +583,7 @@ class DimeNet(torch.nn.Module):
         root = osp.expanduser(osp.normpath(root))
         path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
 
-        makedirs(path)
+        os.makedirs(path, exist_ok=True)
         url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):
@@ -856,7 +855,7 @@ class DimeNetPlusPlus(DimeNet):
         root = osp.expanduser(osp.normpath(root))
         path = osp.join(root, 'pretrained_dimenet_pp', qm9_target_dict[target])
 
-        makedirs(path)
+        os.makedirs(path, exist_ok=True)
         url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):
