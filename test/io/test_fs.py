@@ -1,118 +1,93 @@
-import functools
 import zipfile
-from collections.abc import Callable
 from os import path as osp
 
 import fsspec
-import pytest
 
 from torch_geometric.io import fs
 
 
-@pytest.fixture()
-def _tmp_path() -> str:
-    support_memory_fs = False
-
-    # TODO Support memory filesystem on Windows.
-    # TODO Support memory filesystem for all datasets.
-    if not support_memory_fs:
-        root = osp.join('/', 'tmp', 'pyg_test_fs')
-    else:
-        root = 'memory://pyg_test_fs'
-
-    yield root
-
-    if fs.exists(root):
-        fs.rm(root)
+def test_get_fs():
+    assert 'file' in fs.get_fs('/tmp/test').protocol
+    assert 'memory' in fs.get_fs('memory:///tmp/test').protocol
 
 
-def _make_tmp_zip(path: str, data: dict):
-    data = data or {}
-    with fsspec.open(path, mode='wb') as f:
-        with zipfile.ZipFile(f, mode="w") as z:
-            for k, v in data.items():
-                z.writestr(k, v)
-    return path
-
-
-def _get_protocol(path: str) -> str:
-    return fs.get_fs(path).protocol
-
-
-def test_fs_get_fs():
-    assert 'file' in _get_protocol('/tmp/test')
-    assert 'memory' in _get_protocol('memory:///tmp/test')
-
-
-def test_fs_normpath_for_local_only():
+def test_normpath():
     assert fs.normpath('////home') == '/home'
     assert fs.normpath('memory:////home') == 'memory:////home'
 
 
-def test_fs_exists(_tmp_path):
-    assert not fs.exists(_tmp_path)
-    with fsspec.open(_tmp_path, 'wt') as f:
+def test_exists(tmp_path):
+    path = osp.join(tmp_path, 'file.txt')
+    assert not fs.exists(path)
+    with fsspec.open(path, 'w') as f:
         f.write('here')
-    assert fs.exists(_tmp_path)
+    assert fs.exists(path)
 
 
-def test_fs_makedirs(_tmp_path):
-    path = osp.join(_tmp_path, '1', '2')
+def test_makedirs(tmp_path):
+    path = osp.join(tmp_path, '1', '2')
     assert not fs.isdir(path)
     fs.makedirs(path)
     assert fs.isdir(path)
 
 
-def test_fs_ls(_tmp_path):
-    assert not fs.exists(_tmp_path)
-    num_files = 2
-    for n in range(num_files):
-        path = osp.join(_tmp_path, str(n))
-        with fsspec.open(path, 'wt') as f:
+def test_ls(tmp_path):
+    tmp_path = tmp_path.resolve().as_posix()
+
+    for i in range(2):
+        with fsspec.open(osp.join(tmp_path, str(i)), 'w') as f:
             f.write('here')
-    res = fs.ls(_tmp_path)
-    assert len(res) == num_files
-    assert all(_get_protocol(p) == _get_protocol(_tmp_path) for p in res)
+    res = fs.ls(tmp_path)
+    assert len(res) == 2
+    expected_protocol = fs.get_fs(tmp_path).protocol
+    assert all(fs.get_fs(path).protocol == expected_protocol for path in res)
 
 
-def test_fs_copy(_tmp_path):
-    src, dst = [osp.join(_tmp_path, f) for f in ['src', 'dst']]
-    num_files = 2
-    for n in range(num_files):
-        path = osp.join(src, str(n))
-        with fsspec.open(path, 'wt') as f:
+def test_cp(tmp_path):
+    src = osp.join(tmp_path, 'src')
+    for i in range(2):
+        with fsspec.open(osp.join(src, str(i)), 'w') as f:
             f.write('here')
+    assert fs.exists(src)
+
+    dst = osp.join(tmp_path, 'dst')
     assert not fs.exists(dst)
-    # Can copy a file to new name.
+
+    # Can copy a file to new name:
     fs.cp(osp.join(src, '1'), dst)
     assert fs.isfile(dst)
     fs.rm(dst)
+
+    # Can copy a single file to directory:
     fs.makedirs(dst)
-    # Can copy a single file to directory.
     fs.cp(osp.join(src, '1'), dst)
     assert len(fs.ls(dst)) == 1
-    # Can copy a multiple files to directory.
-    fs.cp(osp.join(src, '*'), dst)
+
+    # Can copy multiple files to directory:
+    fs.cp(src, dst)
     assert len(fs.ls(dst)) == 2
 
 
-def test_fs_copy_extract(_tmp_path):
-    src, dst = [osp.join(_tmp_path, f) for f in ['src', 'dst']]
-    src = osp.join(src, 'test.zip')
+def test_cp_extract(tmp_path):
+    def make_zip(path: str):
+        with fsspec.open(path, mode='wb') as f:
+            with zipfile.ZipFile(f, mode='w') as z:
+                z.writestr('1', b'data')
+                z.writestr('2', b'data')
 
-    # Create some zip with test files.
-    num_files = 2
-    zip_data = {str(k): b'data' for k in range(num_files)}
-    src = _make_tmp_zip(src, zip_data)
-    assert len(fsspec.open_files(f'zip://*::{src}')) == num_files
+    src = osp.join(tmp_path, 'src', 'test.zip')
+    make_zip(src)
+    assert len(fsspec.open_files(f'zip://*::{src}')) == 2
 
-    # Can copy the zip file.
+    dst = osp.join(tmp_path, 'dst')
     assert not fs.exists(dst)
+
+    # Can copy:
     fs.makedirs(dst)
     fs.cp(src, dst)
     assert fs.exists(osp.join(dst, 'test.zip'))
 
-    # Can copy and extract.
+    # Can copy and extract:
     fs.cp(src, dst, extract=True)
-    for n in range(num_files):
-        fs.exists(osp.join(dst, str(n)))
+    for i in range(2):
+        fs.exists(osp.join(dst, str(i)))
