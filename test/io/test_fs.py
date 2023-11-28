@@ -66,6 +66,8 @@ def test_cp(tmp_path):
     # Can copy multiple files to directory:
     fs.cp(src, dst)
     assert len(fs.ls(dst)) == 2
+    for i in range(2):
+        fs.exists(osp.join(dst, str(i)))
 
 
 def test_cp_extract(tmp_path):
@@ -83,11 +85,12 @@ def test_cp_extract(tmp_path):
     assert not fs.exists(dst)
 
     # Can copy:
-    fs.makedirs(dst)
     fs.cp(src, dst)
-    assert fs.exists(osp.join(dst, 'test.zip'))
+    assert fs.exists(dst)
+    fs.rm(dst)
 
     # Can copy and extract:
     fs.cp(src, dst, extract=True)
+    assert len(fs.ls(dst)) == 2
     for i in range(2):
         fs.exists(osp.join(dst, str(i)))
