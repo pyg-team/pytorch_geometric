@@ -73,8 +73,3 @@ repos:
           - mdformat-gfm
           - mdformat_frontmatter
           - mdformat_footnote
-        exclude: |
-          (?x)^(
-              CHANGELOG.md|
-              README.md
-          )$
