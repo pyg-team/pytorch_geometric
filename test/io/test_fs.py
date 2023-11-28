@@ -83,9 +83,15 @@ def test_fs_copy(_tmp_path):
         with fsspec.open(path, 'wt') as f:
             f.write('here')
     assert not fs.exists(dst)
+    # Can copy a file to new name.
+    fs.cp(osp.join(src, '1'), dst)
+    assert fs.isfile(dst)
+    fs.rm(dst)
     fs.makedirs(dst)
+    # Can copy a single file to directory.
     fs.cp(osp.join(src, '1'), dst)
     assert len(fs.ls(dst)) == 1
+    # Can copy a multiple files to directory.
     fs.cp(osp.join(src, '*'), dst)
     assert len(fs.ls(dst)) == 2
 
