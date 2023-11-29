@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.data.edge_index import EdgeIndex
+from torch_geometric.data.edge_index import EdgeIndex, to_dense
 from torch_geometric.testing import (
     disableExtensions,
     onlyCUDA,
@@ -33,12 +33,12 @@ def test_basic():
 def test_fill_cache():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj.validate().fill_cache()
-    assert adj.sparse_size == (3, None)
+    assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
     adj.validate().fill_cache()
-    assert adj.sparse_size == (None, 3)
+    assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
 
 
@@ -80,6 +80,17 @@ def test_share_memory():
     assert isinstance(adj, EdgeIndex)
     assert adj.is_shared()
     assert adj._rowptr.is_shared()
+
+
+def test_contiguous():
+    data = torch.tensor([[0, 1], [1, 0], [1, 2], [2, 1]]).t()
+
+    with pytest.raises(ValueError, match="needs to be contiguous"):
+        EdgeIndex(data)
+
+    adj = EdgeIndex(data.contiguous()).contiguous()
+    assert isinstance(adj, EdgeIndex)
+    assert adj.is_contiguous()
 
 
 def test_sort_by():
@@ -149,14 +160,14 @@ def test_flip():
     out = adj.flip(0)
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
-    assert out.sparse_size == (None, 3)
+    assert out.sparse_size == (3, 3)
     assert out.sort_order == 'col'
     assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
 
     out = adj.flip([0, 1])
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
-    assert out.sparse_size == (None, 3)
+    assert out.sparse_size == (3, 3)
     assert out.sort_order is None
     assert out._colptr is None
 
@@ -209,6 +220,107 @@ def test_getitem():
 
     out = adj[torch.tensor([0])]
     assert not isinstance(out, EdgeIndex)
+
+
+@pytest.mark.parametrize('dtype', [None, torch.double])
+def test_to_dense(dtype):
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+
+    out = adj.to_dense(dtype=dtype)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+
+    value = torch.arange(1, 5, dtype=dtype or torch.float)
+    out = to_dense(adj, value=value)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[0, 2, 0], [1, 0, 4], [0, 3, 0]]
+
+    value = torch.arange(1, 5, dtype=dtype or torch.float).view(-1, 1)
+    out = to_dense(adj, value=value)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3, 1)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[[0], [2], [0]], [[1], [0], [4]], [[0], [3], [0]]]
+
+
+def test_to_sparse_coo():
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_coo)
+    else:
+        out = adj.to_sparse()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_coo
+    assert out.size() == (3, 3)
+    assert torch.equal(adj, out._indices())
+
+    # Test clunky dispatch logic for `to_sparse_coo()`:
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+    out = adj.to_sparse_coo()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_coo
+    assert out.size() == (3, 3)
+    assert torch.equal(adj, out._indices())
+
+
+def test_to_sparse_csr():
+    with pytest.raises(ValueError, match="not sorted by rows"):
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
+
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csr)
+    else:
+        out = adj.to_sparse_csr()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_csr
+    assert out.size() == (3, 3)
+    assert torch.equal(adj._rowptr, out.crow_indices())
+    assert torch.equal(adj[1], out.col_indices())
+
+
+def test_to_sparse_csc():
+    with pytest.raises(ValueError, match="not sorted by columns"):
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
+
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csc)
+    else:
+        out = adj.to_sparse_csc()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_csc
+    assert out.size() == (3, 3)
+    assert torch.equal(adj._colptr, out.ccol_indices())
+    assert torch.equal(adj[0], out.row_indices())
+
+
+def test_matmul():
+    x = torch.randn(3, 1)
+    adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+
+    out = adj1 @ x
+    assert torch.allclose(out, adj1.to_dense() @ x)
+
+    out = adj2 @ x
+    assert torch.allclose(out, adj2.to_dense() @ x)
+
+    out = adj1 @ adj1
+    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
+
+    out = adj1 @ adj2
+    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj2.to_dense())
+
+    out = adj2 @ adj1
+    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj1.to_dense())
+
+    out = adj2 @ adj2
+    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj2.to_dense())
 
 
 def test_save_and_load(tmp_path):
