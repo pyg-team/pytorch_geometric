@@ -81,7 +81,7 @@ def test(loader, desc='Eval'):
         out = model(data.x, data.edge_index, data.batch, data.input_id)
         total_correct += int(
             (out.argmax(dim=-1) == data.y).sum())
-        total_examples += 1
+        total_examples += len(data.y)
     return total_correct / total_examples
 
 
