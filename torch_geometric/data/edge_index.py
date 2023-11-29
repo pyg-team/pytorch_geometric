@@ -654,6 +654,15 @@ if torch_geometric.typing.WITH_PT112:
             device=tensor.device,
         )
 
+else:
+
+    def to_sparse_csc(
+        tensor: EdgeIndex,
+        value: Optional[Tensor] = None,
+    ) -> Tensor:
+        raise NotImplementedError(
+            "'to_sparse_csc' not supported for PyTorch < 1.12")
+
 
 if torch_geometric.typing.WITH_PT20:
 
