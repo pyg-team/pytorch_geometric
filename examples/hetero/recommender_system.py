@@ -384,7 +384,7 @@ val_losses = []
 
 for iter in range(ITERATIONS):
     # forward propagation
-    users_emb_final, users_emb_0, items_emb_final, items_emb_0 = model.forward(
+    users_emb_final, users_emb_0, items_emb_final, items_emb_0 = model(
         train_sparse_edge_index)
 
     # mini batching
