@@ -28,12 +28,6 @@ def create_dist_data(tmp_path: str, rank: int):
         node_pb,
         edge_pb,
     ) = load_partition_info(tmp_path, rank)
-    if meta['is_hetero']:
-        node_pb = torch.cat(list(node_pb.values()))
-        edge_pb = torch.cat(list(edge_pb.values()))
-    else:
-        feat_store.labels = torch.arange(node_pb.size()[0])
-
     graph_store.partition_idx = partition_idx
     graph_store.num_partitions = num_partitions
     graph_store.node_pb = node_pb
@@ -153,10 +147,10 @@ def dist_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+            num_edges = batch[edge_type].edge_index.size(1)
 
-            if batch[edge_type].edge_index.numel() > 0:  # Test edge mapping:
+            assert batch[edge_type].edge_attr.size(0) == num_edges
+            if num_edges > 0:  # Test edge mapping:
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
                 global_edge_index_1 = torch.stack([
