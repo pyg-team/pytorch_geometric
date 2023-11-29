@@ -4,6 +4,7 @@ import time
 
 import torch
 import torch.nn.functional as F
+from sklearn.model_selection import train_test_split
 from torch.nn import Linear
 from tqdm import tqdm
 
@@ -11,7 +12,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn.conv import SAGEConv
-from sklearn.model_selection import train_test_split
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--profile_code', action='store_true',
@@ -45,29 +45,26 @@ edge_index = data[('user', 'rates', 'movie')].edge_index
 num_interactions = edge_index.shape[1]
 all_indices = [i for i in range(num_interactions)]
 
-train_indices, test_indices = train_test_split(
-    all_indices, test_size=0.2, random_state=1)
-val_indices, test_indices = train_test_split(
-    test_indices, test_size=0.5, random_state=1)
+train_indices, test_indices = train_test_split(all_indices, test_size=0.2,
+                                               random_state=1)
+val_indices, test_indices = train_test_split(test_indices, test_size=0.5,
+                                             random_state=1)
 data = data.to_homogeneous()
-train_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
-                                      neg_sampling_ratio=1,
-                                      edge_label_index=data.edge_index[:,train_indices],
-                                      edge_label_time=data.time[train_indices],
-                                      batch_size=2048, shuffle=True,
-                                      time_attr='time')
-val_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
-                                    neg_sampling_ratio=1,
-                                    edge_label_index=data.edge_index[:,val_indices],
-                                    edge_label_time=data.time[val_indices],
-                                    batch_size=4096, shuffle=True,
-                                    time_attr='time')
-test_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
-                                     neg_sampling_ratio=1,
-                                     edge_label_index=data.edge_index[:,test_indices],
-                                     edge_label_time=data.time[test_indices],
-                                     batch_size=4096, shuffle=True,
-                                     time_attr='time')
+train_dataloader = LinkNeighborLoader(
+    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=data.edge_index[:, train_indices],
+    edge_label_time=data.time[train_indices], batch_size=2048, shuffle=True,
+    time_attr='time')
+val_dataloader = LinkNeighborLoader(
+    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=data.edge_index[:, val_indices],
+    edge_label_time=data.time[val_indices], batch_size=4096, shuffle=True,
+    time_attr='time')
+test_dataloader = LinkNeighborLoader(
+    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=data.edge_index[:, test_indices],
+    edge_label_time=data.time[test_indices], batch_size=4096, shuffle=True,
+    time_attr='time')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:

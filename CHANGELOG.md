@@ -7,8 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added examples for edge-level temporal sampling  for homogeneous and heterogenous cases using MovieLens dataset (([#8383] (https://github.com/pyg-team/pytorch_geometric/pull/8383)))))
-- Added support for edge-level temporal sampling in `NeighborLoader` and `LinkNeighborLoader` ([#8372] (https://github.com/pyg-team/pytorch_geometric/pull/8372))
+- Added examples for edge-level temporal sampling  for homogeneous and heterogenous cases using MovieLens dataset ((\[#8383\] (https://github.com/pyg-team/pytorch_geometric/pull/8383)))))
+- Added support for edge-level temporal sampling in `NeighborLoader` and `LinkNeighborLoader` (\[#8372\] (https://github.com/pyg-team/pytorch_geometric/pull/8372))
 - Added METIS partitioning with CSC/CSR format selection in `ClusterData` ([#8438](https://github.com/pyg-team/pytorch_geometric/pull/8438/))
 - Added `is_torch_instance` to check against the original class of compiled models ([#8461](https://github.com/pyg-team/pytorch_geometric/pull/8461))
 - Added dense computation for `AddRandomWalkPE` ([#8431](https://github.com/pyg-team/pytorch_geometric/pull/8431))
