@@ -619,12 +619,12 @@ class DistNeighborSampler:
             True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,
-            self.disjoint or self.time_attr is not None,
+            self.disjoint and self.time_attr is not None,
             self.temporal_strategy,
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        if self.disjoint or self.time_attr is not None:
+        if self.disjoint and self.time_attr is not None:
             # We create a batch during the step of merging sampler outputs.
             _, node = node.t().contiguous()
 
