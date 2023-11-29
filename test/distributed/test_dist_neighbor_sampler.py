@@ -55,7 +55,7 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
         feature_store.put_tensor(data.time, group_name=None,
                                  attr_name=time_attr)
 
-    else:  # Create edge-level time data:
+    elif time_attr == 'edge_time':  # Create edge-level time data:
         data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
 
         if rank == 0:
