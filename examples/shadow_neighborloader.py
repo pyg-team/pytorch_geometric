@@ -65,7 +65,7 @@ def train():
         optimizer.zero_grad()
         # print(data.input_id.size())
         out = model(data.x, data.edge_index, data.batch, data.input_id)
-        loss = F.cross_entropy(out, data.y)
+        loss = F.cross_entropy(out[:data.batch_size], data.y[:data.batch_size])
         loss.backward()
         optimizer.step()
         total_loss += float(loss)
@@ -81,8 +81,8 @@ def test(loader, desc='Eval'):
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch, data.input_id)
         total_correct += int(
-            (out.argmax(dim=-1) == data.y).sum()) / len(data.y)
-        total_examples += 1
+            (out.argmax(dim=-1) == data.y).sum())
+        total_examples += len(data.y)
     return total_correct / total_examples
 
 
