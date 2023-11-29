@@ -7,11 +7,13 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
-from torch_geometric.utils import hyper_subgraph, select
+from torch_geometric.utils import select
+from torch_geometric.utils.subgraph import hyper_subgraph
 
 
 class HyperGraphData(Data):
     r"""A data object describing a hypergraph.
+
     The data object can hold node-level, link-level and graph-level attributes.
     This object differs from a standard :obj:`~torch_geometric.data.Data`
     object by having hyperedges, i.e. edges that connect more
@@ -56,8 +58,7 @@ class HyperGraphData(Data):
 
     @property
     def num_edges(self) -> int:
-        r"""Returns the number of hyperedges in the hypergraph.
-        """
+        r"""Returns the number of hyperedges in the hypergraph."""
         if self.edge_index is None:
             return 0
         return max(self.edge_index[1]) + 1

@@ -15,7 +15,7 @@ def get_laplacian(
     dtype: Optional[torch.dtype] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, OptTensor]:
-    r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
+    r"""Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 
     Args:
@@ -40,7 +40,6 @@ def get_laplacian(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2],
         ...                            [1, 0, 2, 1]])
         >>> edge_weight = torch.tensor([1., 2., 2., 4.])
@@ -55,7 +54,6 @@ def get_laplacian(
         >>> # Random-walk normalization
         >>> lap_rw = get_laplacian(edge_index, edge_weight, normalization='rw')
     """
-
     if normalization is not None:
         assert normalization in ['sym', 'rw']  # 'Invalid normalization'
 

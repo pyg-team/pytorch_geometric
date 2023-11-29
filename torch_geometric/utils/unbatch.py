@@ -22,12 +22,11 @@ def unbatch(
             entry in :obj:`src` to a specific example. Must be ordered.
         dim (int, optional): The dimension along which to split the :obj:`src`
             tensor. (default: :obj:`0`)
-        batch_size (int, optional) The batch size. (default: :obj:`None`)
+        batch_size (int, optional): The batch size. (default: :obj:`None`)
 
     :rtype: :class:`List[Tensor]`
 
     Example:
-
         >>> src = torch.arange(7)
         >>> batch = torch.tensor([0, 0, 0, 1, 1, 2, 2])
         >>> unbatch(src, batch)
@@ -49,12 +48,11 @@ def unbatch_edge_index(
         batch (LongTensor): The batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example. Must be ordered.
-        batch_size (int, optional) The batch size. (default: :obj:`None`)
+        batch_size (int, optional): The batch size. (default: :obj:`None`)
 
     :rtype: :class:`List[Tensor]`
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6],
         ...                            [1, 0, 2, 1, 3, 2, 5, 4, 6, 5]])
         >>> batch = torch.tensor([0, 0, 0, 0, 1, 1, 1])

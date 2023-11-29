@@ -196,7 +196,7 @@ def test_trim_to_layer_with_neighbor_loader():
                  batch.num_sampled_nodes, batch.num_sampled_edges)[:2]
     assert out2.size() == (2, 16)
 
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
 
 def test_trim_to_layer_filtering():

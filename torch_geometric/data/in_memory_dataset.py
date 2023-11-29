@@ -25,6 +25,7 @@ from torch_geometric.data.collate import collate
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
+from torch_geometric.io import fs
 
 
 class InMemoryDataset(Dataset, ABC):
@@ -56,6 +57,8 @@ class InMemoryDataset(Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -72,8 +75,10 @@ class InMemoryDataset(Dataset, ABC):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        force_reload: bool = False,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter, log)
+        super().__init__(root, transform, pre_transform, pre_filter, log,
+                         force_reload)
         self._data = None
         self.slices = None
         self._data_list: Optional[List[BaseData]] = None
@@ -117,11 +122,11 @@ class InMemoryDataset(Dataset, ABC):
     def save(cls, data_list: List[BaseData], path: str):
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
-        torch.save((data.to_dict(), slices), path)
+        fs.torch_save((data.to_dict(), slices), path)
 
     def load(self, path: str, data_cls: Type[BaseData] = Data):
         r"""Loads the dataset from the file path :obj:`path`."""
-        data, self.slices = torch.load(path)
+        data, self.slices = fs.torch_load(path)
         if isinstance(data, dict):  # Backward compatibility.
             data = data_cls.from_dict(data)
         self.data = data
@@ -130,9 +135,10 @@ class InMemoryDataset(Dataset, ABC):
     def collate(
         data_list: List[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
-        r"""Collates a Python list of :class:`~torch_geometric.data.Data` or
+        r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal
-        storage format of :class:`~torch_geometric.data.InMemoryDataset`."""
+        storage format of :class:`~torch_geometric.data.InMemoryDataset`.
+        """
         if len(data_list) == 1:
             return data_list[0], None
 
@@ -301,6 +307,31 @@ class InMemoryDataset(Dataset, ABC):
 
         raise AttributeError(f"'{self.__class__.__name__}' object has no "
                              f"attribute '{key}'")
+
+    def to(self, device: Union[int, str]) -> 'InMemoryDataset':
+        r"""Performs device conversion of the whole dataset."""
+        if self._indices is not None:
+            raise ValueError("The given 'InMemoryDataset' only references a "
+                             "subset of examples of the full dataset")
+        if self._data_list is not None:
+            raise ValueError("The data of the dataset is already cached")
+        self._data.to(device)
+        return self
+
+    def cpu(self, *args: str) -> 'InMemoryDataset':
+        r"""Moves the dataset to CPU memory."""
+        return self.to(torch.device('cpu'))
+
+    def cuda(
+        self,
+        device: Optional[Union[int, str]] = None,
+    ) -> 'InMemoryDataset':
+        r"""Moves the dataset toto CUDA memory."""
+        if isinstance(device, int):
+            device = f'cuda:{int}'
+        elif device is None:
+            device = 'cuda'
+        return self.to(device)
 
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:

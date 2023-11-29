@@ -127,7 +127,8 @@ class Explainer:
         **kwargs,
     ) -> Tensor:
         r"""Returns the prediction of the model on the input graph with node
-        and edge masks applied."""
+        and edge masks applied.
+        """
         if isinstance(x, Tensor) and node_mask is not None:
             x = node_mask * x
         elif isinstance(x, dict) and node_mask is not None:

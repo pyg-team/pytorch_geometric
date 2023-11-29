@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.0
+name: Testing minimal PyTorch 2.1
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -45,5 +45,6 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
           pytest

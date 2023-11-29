@@ -1,3 +1,9 @@
+r"""Dense neural network module package.
+
+This package provides modules applicable for operating on dense tensor
+representations.
+"""
+
 from .linear import Linear, HeteroLinear, HeteroDictLinear
 from .dense_gat_conv import DenseGATConv
 from .dense_sage_conv import DenseSAGEConv

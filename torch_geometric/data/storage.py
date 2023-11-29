@@ -179,14 +179,16 @@ class BaseStorage(MutableMapping):
 
     def apply_(self, func: Callable, *args: str):
         r"""Applies the in-place function :obj:`func`, either to all attributes
-        or only the ones given in :obj:`*args`."""
+        or only the ones given in :obj:`*args`.
+        """
         for value in self.values(*args):
             recursive_apply_(value, func)
         return self
 
     def apply(self, func: Callable, *args: str):
         r"""Applies the function :obj:`func`, either to all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         for key, value in self.items(*args):
             self[key] = recursive_apply(value, func)
         return self
@@ -219,63 +221,74 @@ class BaseStorage(MutableMapping):
 
     def contiguous(self, *args: str):
         r"""Ensures a contiguous memory layout, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor dtype and/or device conversion, either for all
-        attributes or only the ones given in :obj:`*args`."""
+        attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: str):
         r"""Copies attributes to CPU memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Optional[Union[int, str]] = None, *args: str,
              non_blocking: bool = False):  # pragma: no cover
         r"""Copies attributes to CUDA memory, either for all attributes or only
-        the ones given in :obj:`*args`."""
+        the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
     def pin_memory(self, *args: str):  # pragma: no cover
         r"""Copies attributes to pinned memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: str):
         r"""Moves attributes to shared memory, either for all attributes or
-        only the ones given in :obj:`*args`."""
+        only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: str):
         r"""Detaches attributes from the computation graph, either for all
-        attributes or only the ones given in :obj:`*args`."""
+        attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply(lambda x: x.detach_(), *args)
 
     def detach(self, *args: str):
         r"""Detaches attributes from the computation graph by creating a new
         tensor, either for all attributes or only the ones given in
-        :obj:`*args`."""
+        :obj:`*args`.
+        """
         return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: str, requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
-        ones given in :obj:`*args`."""
+        ones given in :obj:`*args`.
+        """
         return self.apply(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def record_stream(self, stream: torch.cuda.Stream, *args: str):
         r"""Ensures that the tensor memory is not reused for another tensor
         until all current work queued on :obj:`stream` has been completed,
-        either for all attributes or only the ones given in :obj:`*args`."""
+        either for all attributes or only the ones given in :obj:`*args`.
+        """
         return self.apply_(lambda x: x.record_stream(stream), *args)
 
 
 class NodeStorage(BaseStorage):
+    r"""A storage for node-level information."""
     @property
     def _key(self) -> NodeType:
         key = self.__dict__.get('_key', None)
@@ -352,6 +365,8 @@ class NodeStorage(BaseStorage):
             return 1 if self.x.dim() == 1 else self.x.size(-1)
         if 'x' in self and isinstance(self.x, TensorFrame):
             return self.x.num_cols
+        if 'tf' in self and isinstance(self.tf, TensorFrame):
+            return self.tf.num_cols
         return 0
 
     @property
@@ -398,7 +413,9 @@ class NodeStorage(BaseStorage):
 
 
 class EdgeStorage(BaseStorage):
-    r"""We support multiple ways to store edge connectivity in a
+    r"""A storage for edge-level information.
+
+    We support multiple ways to store edge connectivity in a
     :class:`EdgeStorage` object:
 
     * :obj:`edge_index`: A :class:`torch.LongTensor` holding edge indices in
@@ -467,6 +484,8 @@ class EdgeStorage(BaseStorage):
             return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
         if 'edge_attr' in self and isinstance(self.edge_attr, np.ndarray):
             return 1 if self.edge_attr.ndim == 1 else self.edge_attr.shape[-1]
+        if 'edge_attr' in self and isinstance(self.edge_attr, TensorFrame):
+            return self.edge_attr.num_cols
         return 0
 
     @property
@@ -608,6 +627,7 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
+    r"""A storage for both node-level and edge-level information."""
     @property
     def _key(self) -> Any:
         return None
@@ -641,7 +661,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:
@@ -688,7 +707,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
 
         if not isinstance(value, (Tensor, np.ndarray)):
-            self._cached_attr[AttrType.OTHER].add(key)
             return False
 
         if value.ndim == 0:
@@ -732,7 +750,7 @@ def recursive_apply_(data: Any, func: Callable):
     else:
         try:
             func(data)
-        except:  # noqa
+        except Exception:
             pass
 
 
@@ -750,5 +768,5 @@ def recursive_apply(data: Any, func: Callable) -> Any:
     else:
         try:
             return func(data)
-        except:  # noqa
+        except Exception:
             return data

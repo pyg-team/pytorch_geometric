@@ -33,7 +33,8 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 class NeighborSampler(BaseSampler):
     r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
-    by :class:`~torch_geometric.loader.NeighborLoader`."""
+    by :class:`~torch_geometric.loader.NeighborLoader`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -68,13 +69,26 @@ class NeighborSampler(BaseSampler):
             self.num_nodes = data.num_nodes
 
             self.node_time: Optional[Tensor] = None
+            self.edge_time: Optional[Tensor] = None
+
             if time_attr is not None:
-                self.node_time = data[time_attr]
+                if data.is_node_attr(time_attr):
+                    self.node_time = data[time_attr]
+                elif data.is_edge_attr(time_attr):
+                    self.edge_time = data[time_attr]
+                else:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' is neither a "
+                        f"node-level or edge-level attribute")
 
             # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, src_node_time=self.node_time)
+                is_sorted=is_sorted, src_node_time=self.node_time,
+                edge_time=self.edge_time)
+
+            if self.edge_time is not None and self.perm is not None:
+                self.edge_time = self.edge_time[self.perm]
 
             self.edge_weight: Optional[Tensor] = None
             if weight_attr is not None:
@@ -88,8 +102,32 @@ class NeighborSampler(BaseSampler):
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
+            self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
+
             if time_attr is not None:
-                self.node_time = data.collect(time_attr)
+                is_node_level_time = is_edge_level_time = False
+
+                for store in data.node_stores:
+                    if time_attr in store:
+                        is_node_level_time = True
+                for store in data.edge_stores:
+                    if time_attr in store:
+                        is_edge_level_time = True
+
+                if is_node_level_time and is_edge_level_time:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' holds both "
+                        f"node-level and edge-level information")
+
+                if not is_node_level_time and not is_edge_level_time:
+                    raise ValueError(
+                        f"The time attribute '{time_attr}' is neither a "
+                        f"node-level or edge-level attribute")
+
+                if is_node_level_time:
+                    self.node_time = data.collect(time_attr)
+                else:
+                    self.edge_time = data.collect(time_attr)
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
@@ -100,9 +138,18 @@ class NeighborSampler(BaseSampler):
             # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
-                is_sorted=is_sorted, node_time_dict=self.node_time)
+                is_sorted=is_sorted, node_time_dict=self.node_time,
+                edge_time_dict=self.edge_time)
+
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+
+            if self.edge_time is not None:
+                for edge_type, edge_time in self.edge_time.items():
+                    if self.perm.get(edge_type, None) is not None:
+                        edge_time = edge_time[self.perm[edge_type]]
+                        self.edge_time[edge_type] = edge_time
+                self.edge_time = remap_keys(self.edge_time, self.to_rel_type)
 
             self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
             if weight_attr is not None:
@@ -118,18 +165,17 @@ class NeighborSampler(BaseSampler):
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
-            self.node_types = list(set(attr.group_name for attr in node_attrs))
+            attrs = [attr for attr in feature_store.get_all_tensor_attrs()]
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
 
-            self.num_nodes = {
-                node_type: remote_backend_utils.size(*data, node_type)
-                for node_type in self.node_types
-            }
+            if weight_attr is not None:
+                raise NotImplementedError(
+                    f"'weight_attr' argument not yet supported within "
+                    f"'{self.__class__.__name__}' for "
+                    f"'(FeatureStore, GraphStore)' inputs")
 
-            self.node_time: Optional[Dict[NodeType, Tensor]] = None
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -148,32 +194,69 @@ class NeighborSampler(BaseSampler):
 
                 # We obtain all features with `node_attr.name=time_attr`:
                 time_attrs = [
-                    copy.copy(attr) for attr in node_attrs
+                    copy.copy(attr) for attr in attrs
                     if attr.attr_name == time_attr
                 ]
-                for attr in time_attrs:  # Reset the index to obtain full data.
-                    attr.index = None
-                time_tensors = feature_store.multi_get_tensor(time_attrs)
-                self.node_time = {
-                    time_attr.group_name: time_tensor
-                    for time_attr, time_tensor in zip(time_attrs, time_tensors)
+
+            if not self.is_hetero:
+                self.node_types = [None]
+                self.num_nodes = max(edge_attrs[0].size)
+                self.edge_weight: Optional[Tensor] = None
+
+                self.node_time: Optional[Tensor] = None
+                self.edge_time: Optional[Tensor] = None
+
+                if time_attr is not None:
+                    if len(time_attrs) != 1:
+                        raise ValueError("Temporal sampling specified but did "
+                                         "not find any temporal data")
+                    time_attrs[0].index = None  # Reset index for full data.
+                    time_tensor = feature_store.get_tensor(time_attrs[0])
+                    # Currently, we determine whether to use node-level or
+                    # edge-level temporal sampling based on the attribute name.
+                    if time_attr == 'time':
+                        self.node_time = time_tensor
+                    else:
+                        self.edge_time = time_tensor
+
+                self.row, self.colptr, self.perm = graph_store.csc()
+
+            else:
+                self.node_types = list(
+                    set(attr.group_name for attr in attrs
+                        if isinstance(attr.group_name, NodeType)))
+                self.num_nodes = {
+                    node_type: remote_backend_utils.size(*data, node_type)
+                    for node_type in self.node_types
                 }
+                self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
 
-            self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
-            if weight_attr is not None:
-                raise NotImplementedError(
-                    f"'weight_attr' argument not yet supported within "
-                    f"'{self.__class__.__name__}' for "
-                    f"'(FeatureStore, GraphStore)' inputs")
+                self.node_time: Optional[Dict[NodeType, Tensor]] = None
+                self.edge_time: Optional[Dict[NodeType, Tensor]] = None
 
-            # Conversion to/from C++ string type (see above):
-            self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
-            self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+                # TODO Add support for edge-level temporal sampling.
+                if time_attr is not None:
+                    for attr in time_attrs:  # Reset index for full data.
+                        attr.index = None
+                    time_tensors = feature_store.multi_get_tensor(time_attrs)
+                    self.node_time = {
+                        time_attr.group_name: time_tensor
+                        for time_attr, time_tensor in zip(
+                            time_attrs, time_tensors)
+                    }
 
-            # Convert the graph data into CSC format for sampling:
-            row_dict, colptr_dict, self.perm = graph_store.csc()
-            self.row_dict = remap_keys(row_dict, self.to_rel_type)
-            self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+                # Conversion to/from C++ string type (see above):
+                self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
+                self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+                # Convert the graph data into CSC format for sampling:
+                row_dict, colptr_dict, self.perm = graph_store.csc()
+                self.row_dict = remap_keys(row_dict, self.to_rel_type)
+                self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+
+        if (self.edge_time is not None
+                and not torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE):
+            raise ImportError("Edge-level temporal sampling requires a "
+                              "more recent 'pyg-lib' installation")
 
         if (self.edge_weight is not None
                 and not torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE):
@@ -198,8 +281,18 @@ class NeighborSampler(BaseSampler):
             self._num_neighbors = NumNeighbors(num_neighbors)
 
     @property
+    def is_hetero(self) -> bool:
+        if self.data_type == DataType.homogeneous:
+            return False
+        if self.data_type == DataType.heterogeneous:
+            return True
+
+        # self.data_type == DataType.remote
+        return self.edge_types != [None]
+
+    @property
     def is_temporal(self) -> bool:
-        return self.node_time is not None
+        return self.node_time is not None or self.edge_time is not None
 
     @property
     def disjoint(self) -> bool:
@@ -223,8 +316,9 @@ class NeighborSampler(BaseSampler):
     # Edge-based sampling #####################################################
 
     def sample_from_edges(
-        self, inputs: EdgeSamplerInput,
-        neg_sampling: Optional[NegativeSampling] = None
+        self,
+        inputs: EdgeSamplerInput,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
@@ -247,7 +341,8 @@ class NeighborSampler(BaseSampler):
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
-        installed) or :obj:`torch-sparse` (if installed) sampling routines."""
+        installed) or :obj:`torch-sparse` (if installed) sampling routines.
+        """
         if isinstance(seed, dict):  # Heterogeneous sampling:
             # TODO Support induced subgraph sampling in `pyg-lib`.
             if (torch_geometric.typing.WITH_PYG_LIB
@@ -265,8 +360,10 @@ class NeighborSampler(BaseSampler):
                     seed,
                     self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (self.edge_time, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
@@ -284,8 +381,8 @@ class NeighborSampler(BaseSampler):
 
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
                 num_sampled_nodes = num_sampled_edges = None
-                if len(out) == 6:
-                    num_sampled_nodes, num_sampled_edges = out[4:]
+                if len(out) >= 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:6]
 
                 if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
@@ -345,8 +442,10 @@ class NeighborSampler(BaseSampler):
                     seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
                     self.node_time,
-                    seed_time,
                 )
+                if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
+                    args += (self.edge_time, )
+                args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
@@ -364,8 +463,8 @@ class NeighborSampler(BaseSampler):
 
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
                 num_sampled_nodes = num_sampled_edges = None
-                if len(out) == 6:
-                    num_sampled_nodes, num_sampled_edges = out[4:]
+                if len(out) >= 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:6]
 
                 if self.disjoint:
                     batch, node = node.t().contiguous()
@@ -412,7 +511,8 @@ def node_sample(
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
-    input. Returns the output of this sampling procedure."""
+    input. Returns the output of this sampling procedure.
+    """
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
         seed_time = None
@@ -437,7 +537,8 @@ def edge_sample(
     neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
-    function of the same signature as `node_sample`."""
+    function of the same signature as `node_sample`.
+    """
     input_id = inputs.input_id
     src = inputs.row
     dst = inputs.col
@@ -598,8 +699,13 @@ def edge_sample(
 
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
-                            src_time)
+            out.metadata = (
+                input_id,
+                src_index,
+                dst_pos_index,
+                dst_neg_index,
+                src_time,
+            )
 
     # Homogeneus Neighborhood Sampling ########################################
 
@@ -641,15 +747,24 @@ def edge_sample(
                 dst_neg_index = inverse_seed[2 * num_pos:]
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
-                            src_time)
+            out.metadata = (
+                input_id,
+                src_index,
+                dst_pos_index,
+                dst_neg_index,
+                src_time,
+            )
 
     return out
 
 
-def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
-               seed_time: Optional[Tensor],
-               node_time: Optional[Tensor]) -> Tensor:
+def neg_sample(
+    seed: Tensor,
+    neg_sampling: NegativeSampling,
+    num_nodes: int,
+    seed_time: Optional[Tensor],
+    node_time: Optional[Tensor],
+) -> Tensor:
     num_neg = math.ceil(seed.numel() * neg_sampling.amount)
 
     # TODO: Do not sample false negatives.

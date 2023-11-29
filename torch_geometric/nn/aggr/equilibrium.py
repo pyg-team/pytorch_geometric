@@ -48,8 +48,7 @@ class ResNetPotential(torch.nn.Module):
 
 
 class MomentumOptimizer(torch.nn.Module):
-    r"""
-    Provides an inner loop optimizer for the implicitly defined output
+    r"""Provides an inner loop optimizer for the implicitly defined output
     layer. It is based on an unrolled Nesterov momentum algorithm.
 
     Args:
@@ -108,6 +107,7 @@ class MomentumOptimizer(torch.nn.Module):
 class EquilibriumAggregation(Aggregation):
     r"""The equilibrium aggregation layer from the `"Equilibrium Aggregation:
     Encoding Sets via Optimization" <https://arxiv.org/abs/2202.12795>`_ paper.
+
     The output of this layer :math:`\mathbf{y}` is defined implicitly via a
     potential function :math:`F(\mathbf{x}, \mathbf{y})`, a regularization term
     :math:`R(\mathbf{y})`, and the condition

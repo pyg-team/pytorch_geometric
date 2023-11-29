@@ -34,20 +34,28 @@ class FB15k_237(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://raw.githubusercontent.com/villmow/'
            'datasets_knowledge_embedding/master/FB15k-237')
 
-    def __init__(self, root: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
+    def __init__(
+        self,
+        root: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
 
         if split not in {'train', 'val', 'test'}:
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -86,4 +94,4 @@ class FB15k_237(InMemoryDataset):
 
         for data, path in zip(data_list, self.processed_paths):
             data.num_nodes = len(node_dict)
-            torch.save(self.collate([data]), path)
+            self.save([data], path)

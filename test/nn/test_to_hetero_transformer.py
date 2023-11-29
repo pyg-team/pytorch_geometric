@@ -7,7 +7,15 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
-from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
+from torch_geometric.datasets import FakeHeteroDataset
+from torch_geometric.nn import (
+    GAT,
+    BatchNorm,
+    GATv2Conv,
+    GCNConv,
+    GINEConv,
+    GraphSAGE,
+)
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
     MeanAggregation,
@@ -16,7 +24,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyCUDA, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge
 
@@ -512,3 +520,47 @@ def test_to_hetero_validate():
 
     with pytest.warns(UserWarning, match="letters, numbers and underscores"):
         model = to_hetero(model, metadata, debug=False)
+
+
+def test_to_hetero_on_static_graphs():
+    x_dict = {
+        'paper': torch.randn(4, 100, 16),
+        'author': torch.randn(4, 100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'written_by', 'author'): torch.randint(100, (2, 200)),
+        ('author', 'writes', 'paper'): torch.randint(100, (2, 200)),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+    model = to_hetero(Net4(), metadata, debug=False)
+    out_dict = model(x_dict, edge_index_dict)
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (4, 100, 32)
+    assert out_dict['author'].size() == (4, 100, 32)
+
+
+@onlyCUDA
+def test_to_hetero_lazy_cuda():
+    class Model(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.conv = GATv2Conv(
+                (-1, -1),
+                out_channels=2,
+                add_self_loops=False,
+                edge_dim=-1,
+                heads=1,
+            ).to('cuda')
+
+        def forward(self, x, edge_index, edge_attr):
+            return self.conv(x, edge_index, edge_attr)
+
+    data = FakeHeteroDataset(edge_dim=10)[0].to('cuda')
+    model = to_hetero(Model(), data.metadata())
+    out_dict = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
+    assert len(out_dict) == len(data.node_types)
+    for out in out_dict.values():
+        assert out.is_cuda
+        assert out.size(-1) == 2

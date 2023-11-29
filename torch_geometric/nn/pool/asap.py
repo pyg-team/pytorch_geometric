@@ -89,7 +89,8 @@ class ASAPooling(torch.nn.Module):
         edge_weight: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node feature matrix.
             edge_index (torch.Tensor): The edge indices.

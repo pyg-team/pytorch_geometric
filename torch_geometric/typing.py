@@ -1,4 +1,6 @@
 import inspect
+import os
+import platform
 import sys
 import warnings
 from typing import Dict, List, Optional, Tuple, Union
@@ -12,6 +14,9 @@ WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
+
+WITH_WINDOWS = os.name == 'nt'
+WITH_ARM = platform.machine() != 'x86_64'
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = -1
@@ -29,14 +34,17 @@ try:
         try:
             x = torch.randn(3, 4, device='cuda')
             ptr = torch.tensor([0, 2, 3], device='cuda')
-            weight = torch.tensor([2, 4, 4], device='cuda')
+            weight = torch.randn(2, 4, 4, device='cuda')
             out = pyg_lib.ops.segment_matmul(x, ptr, weight)
         except RuntimeError:
             WITH_GMM = False
             WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
+    WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE = ('edge_time' in inspect.signature(
+        pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
 except Exception as e:
@@ -48,8 +56,10 @@ except Exception as e:
     WITH_GMM = False
     WITH_SEGMM = False
     WITH_SAMPLED_OP = False
+    WITH_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
 
 try:
@@ -216,6 +226,7 @@ try:
     WITH_TORCH_FRAME = True
     from torch_frame import TensorFrame
 except Exception:
+    torch_frame = object
     WITH_TORCH_FRAME = False
 
     class TensorFrame:
@@ -267,7 +278,8 @@ EDGE_TYPE_STR_SPLIT = '__'
 
 class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
-    type tuple into a single string."""
+    type tuple into a single string.
+    """
     def __new__(cls, *args):
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:

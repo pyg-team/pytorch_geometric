@@ -30,19 +30,27 @@ class GDELT(EventDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
-    def __init__(self, root: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         idx = self.processed_file_names.index(f'{split}.pt')
-        self.data, self.slices = torch.load(self.processed_paths[idx])
+        self.load(self.processed_paths[idx])
 
     @property
     def num_nodes(self) -> int:
@@ -75,6 +83,6 @@ class GDELT(EventDataset):
     def process(self):
         s = self.splits
         data_list = super().process()
-        torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
-        torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
-        torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])
+        self.save(data_list[s[0]:s[1]], self.processed_paths[0])
+        self.save(data_list[s[1]:s[2]], self.processed_paths[1])
+        self.save(data_list[s[2]:s[3]], self.processed_paths[2])

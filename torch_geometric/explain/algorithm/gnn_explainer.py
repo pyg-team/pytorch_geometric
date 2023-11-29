@@ -29,6 +29,18 @@ class GNNExplainer(ExplainerAlgorithm):
         gnn_explainer_link_pred.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/explain/gnn_explainer_link_pred.py>`_.
 
+    .. note::
+
+        The :obj:`edge_size` coefficient is multiplied by the number of nodes
+        in the explanation at every iteration, and the resulting value is added
+        to the loss as a regularization term, with the goal of producing
+        compact explanations.
+        A higher value will push the algorithm towards explanations with less
+        elements.
+        Consider adjusting the :obj:`edge_size` coefficient according to the
+        average node degree in the dataset, especially if this value is bigger
+        than in the datasets used in the original paper.
+
     Args:
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`100`)

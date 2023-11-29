@@ -214,7 +214,8 @@ class BasicGNN(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
     ):
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
@@ -410,7 +411,8 @@ class BasicGNN(torch.nn.Module):
 
     def jittable(self, use_sparse_tensor: bool = False) -> 'BasicGNN':
         r"""Produces a new jittable instance module that can be used in
-        combination with :meth:`torch.jit.script`."""
+        combination with :meth:`torch.jit.script`.
+        """
         class EdgeIndexJittable(torch.nn.Module):
             def __init__(self, child: BasicGNN):
                 super().__init__()
