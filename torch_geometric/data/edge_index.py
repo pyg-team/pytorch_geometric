@@ -1,6 +1,16 @@
 import functools
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch import Tensor
@@ -561,6 +571,27 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
     return out
 
 
+@implements(Tensor.to_dense)
+def to_dense(
+    tensor: EdgeIndex,
+    dtype: Optional[torch.dtype] = None,
+    value: Optional[Tensor] = None,
+) -> Tensor:
+
+    # TODO Respect duplicate edges.
+
+    dtype = value.dtype if value is not None else dtype
+
+    size = tensor.get_sparse_size()
+    if value is not None and value.dim() > 1:
+        size = size + value.shape[1:]
+
+    out = torch.zeros(size, dtype=dtype, device=tensor.device)
+    out[tensor[0], tensor[1]] = value if value is not None else 1
+
+    return out
+
+
 def _get_value(
     numel: int,
     dtype: Optional[torch.dtype] = None,
@@ -573,10 +604,13 @@ def _get_value(
 
 
 # `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
-def to_sparse_coo(tensor: EdgeIndex) -> Tensor:
+def to_sparse_coo(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
+    if value is None:
+        value = _get_value(tensor.size(1), device=tensor.device)
+
     out = torch.sparse_coo_tensor(
         indices=tensor.as_tensor(),
-        values=_get_value(tensor.size(1), device=tensor.device),
+        values=value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -588,7 +622,10 @@ def to_sparse_coo(tensor: EdgeIndex) -> Tensor:
 
 
 @implements(Tensor.to_sparse_csr)
-def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
+def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
+    if value is None:
+        value = _get_value(tensor.size(1), device=tensor.device)
+
     return torch.sparse_csr_tensor(
         crow_indices=tensor.get_rowptr(),
         col_indices=tensor[1],
@@ -601,14 +638,30 @@ def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
 if torch_geometric.typing.WITH_PT112:
 
     @implements(Tensor.to_sparse_csc)
-    def to_sparse_csc(tensor: EdgeIndex) -> Tensor:
+    def to_sparse_csc(
+        tensor: EdgeIndex,
+        value: Optional[Tensor] = None,
+    ) -> Tensor:
+
+        if value is None:
+            value = _get_value(tensor.size(1), device=tensor.device)
+
         return torch.sparse_csc_tensor(
             ccol_indices=tensor.get_colptr(),
             row_indices=tensor[0],
-            values=_get_value(tensor.size(1), device=tensor.device),
+            values=value,
             size=tensor.get_sparse_size(),
             device=tensor.device,
         )
+
+else:
+
+    def to_sparse_csc(
+        tensor: EdgeIndex,
+        value: Optional[Tensor] = None,
+    ) -> Tensor:
+        raise NotImplementedError(
+            "'to_sparse_csc' not supported for PyTorch < 1.12")
 
 
 if torch_geometric.typing.WITH_PT20:
@@ -618,19 +671,49 @@ if torch_geometric.typing.WITH_PT20:
         tensor: EdgeIndex,
         *,
         layout: Optional[torch.layout] = None,
+        value: Optional[Tensor] = None,
     ) -> Tensor:
 
         if layout is None or layout == torch.sparse_coo:
-            return to_sparse_coo(tensor)
+            return to_sparse_coo(tensor, value)
         if layout == torch.sparse_csr:
-            return tensor.to_sparse_csr()
+            return to_sparse_csr(tensor, value)
         if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
-            return tensor.to_sparse_csc()
+            return to_sparse_csc(tensor, value)
 
         raise ValueError(f"Unexpected tensor layout (got '{layout}')")
 
 else:
 
     @implements(Tensor.to_sparse)
-    def to_sparse(tensor: EdgeIndex) -> Tensor:
-        return to_sparse_coo(tensor)
+    def to_sparse(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
+        return to_sparse_coo(tensor, value)
+
+
+@implements(torch.matmul)
+@implements(Tensor.matmul)
+def matmul(
+    input: EdgeIndex,
+    other: Union[Tensor, EdgeIndex],
+    input_weight: Optional[Tensor] = None,
+    other_weight: Optional[Tensor] = None,
+    reduce: Literal['sum'] = 'sum',
+) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+
+    assert reduce in ['sum']
+
+    # TODO Utilize available `CSC` representation for faster backward passes.
+
+    if input._sort_order == SortOrder.COL:
+        input = to_sparse_csc(input, other_weight)
+    else:
+        input = to_sparse_csr(input, other_weight)
+
+    if isinstance(other, EdgeIndex):
+        if other._sort_order == SortOrder.COL:
+            other = to_sparse_csc(other, other_weight)
+        else:
+            other = to_sparse_csr(other, other_weight)
+
+    return Tensor.__torch_function__(  #
+        Tensor.matmul, (Tensor, ), (input, other))
