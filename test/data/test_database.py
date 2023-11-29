@@ -1,3 +1,4 @@
+import math
 import os.path as osp
 
 import pytest
@@ -17,7 +18,7 @@ if has_package('rocksdict'):
 
 @pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
 @pytest.mark.parametrize('batch_size', [None, 1])
-def test_databases_single_tensor(tmp_path, Database, batch_size):
+def test_database_single_tensor(tmp_path, Database, batch_size):
     kwargs = dict(path=osp.join(tmp_path, 'storage.db'))
     if Database == SQLiteDatabase:
         kwargs['name'] = 'test_table'
@@ -56,7 +57,7 @@ def test_databases_single_tensor(tmp_path, Database, batch_size):
 
 
 @pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
-def test_databases_schema(tmp_path, Database):
+def test_database_schema(tmp_path, Database):
     kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
 
     path = osp.join(tmp_path, 'tuple_storage.db')
@@ -70,9 +71,9 @@ def test_databases_schema(tmp_path, Database):
         4: object,
     }
 
-    data1 = (1, 0.1, 'a', torch.randn(2, 8), Data(x=torch.randn(1, 8)))
-    data2 = (2, 0.2, 'b', torch.randn(2, 16), Data(x=torch.randn(2, 8)))
-    data3 = (3, 0.3, 'c', torch.randn(2, 32), Data(x=torch.randn(3, 8)))
+    data1 = (1, 0.1, 'a', torch.randn(2, 8), Data(x=torch.randn(8)))
+    data2 = (2, float('inf'), 'b', torch.randn(2, 16), Data(x=torch.randn(8)))
+    data3 = (3, float('NaN'), 'c', torch.randn(2, 32), Data(x=torch.randn(8)))
     db.insert(0, data1)
     db.multi_insert([1, 2], [data2, data3])
 
@@ -81,7 +82,10 @@ def test_databases_schema(tmp_path, Database):
 
     for out, data in zip([out1, out2, out3], [data1, data2, data3]):
         assert out[0] == data[0]
-        assert out[1] == data[1]
+        if math.isnan(data[1]):
+            assert math.isnan(out[1])
+        else:
+            assert out[1] == data[1]
         assert out[2] == data[2]
         assert torch.equal(out[3], data[3])
         assert isinstance(out[4], Data) and len(out[4]) == 1

@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class BrcaTcga(InMemoryDataset):
@@ -84,7 +84,7 @@ class BrcaTcga(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'brca_tcga'), self.raw_dir)
 
     def process(self):

@@ -1,5 +1,4 @@
 import inspect
-import os
 import os.path as osp
 import random
 import re
@@ -863,7 +862,7 @@ class MessagePassing(torch.nn.Module):
             forward_types = []
             forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        root = os.path.dirname(osp.realpath(__file__))
+        root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 

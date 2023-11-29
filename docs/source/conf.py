@@ -55,6 +55,8 @@ nbsphinx_thumbnails = {
     '_static/thumbnails/load_csv.png',
     'tutorial/neighbor_loader':
     '_static/thumbnails/neighbor_loader.png',
+    'tutorial/point_cloud':
+    '_static/thumbnails/point_cloud.png',
     'tutorial/explain':
     '_static/thumbnails/explain.png',
     'tutorial/shallow_node_embeddings':
