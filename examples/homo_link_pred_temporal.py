@@ -11,6 +11,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn.conv import SAGEConv
+from sklearn.model_selection import train_test_split
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--profile_code', action='store_true',
@@ -40,34 +41,31 @@ data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # Perform a link-level split into training, validation, and test edges:
-train_data, val_data, test_data = T.RandomLinkSplit(
-    num_val=0.1,
-    num_test=0.1,
-    neg_sampling_ratio=0.0,
-    edge_types=[('user', 'rates', 'movie')],
-    rev_edge_types=[('movie', 'rev_rates', 'user')],
-)(data)
+edge_index = data[('user', 'rates', 'movie')].edge_index
+num_interactions = edge_index.shape[1]
+all_indices = [i for i in range(num_interactions)]
 
-train_data = train_data.to_homogeneous()
-val_data = val_data.to_homogeneous()
-test_data = test_data.to_homogeneous()
-
-train_dataloader = LinkNeighborLoader(data=train_data, num_neighbors=[5, 5, 5],
+train_indices, test_indices = train_test_split(
+    all_indices, test_size=0.2, random_state=1)
+val_indices, test_indices = train_test_split(
+    test_indices, test_size=0.5, random_state=1)
+data = data.to_homogeneous()
+train_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
                                       neg_sampling_ratio=1,
-                                      edge_label_index=train_data.edge_index,
-                                      edge_label_time=train_data.time,
+                                      edge_label_index=data.edge_index[:,train_indices],
+                                      edge_label_time=data.time[train_indices],
                                       batch_size=2048, shuffle=True,
                                       time_attr='time')
-val_dataloader = LinkNeighborLoader(data=val_data, num_neighbors=[5, 5, 5],
+val_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
                                     neg_sampling_ratio=1,
-                                    edge_label_index=val_data.edge_index,
-                                    edge_label_time=val_data.time,
+                                    edge_label_index=data.edge_index[:,val_indices],
+                                    edge_label_time=data.time[val_indices],
                                     batch_size=4096, shuffle=True,
                                     time_attr='time')
-test_dataloader = LinkNeighborLoader(data=test_data, num_neighbors=[5, 5, 5],
+test_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
                                      neg_sampling_ratio=1,
-                                     edge_label_index=test_data.edge_index,
-                                     edge_label_time=test_data.time,
+                                     edge_label_index=data.edge_index[:,test_indices],
+                                     edge_label_time=data.time[test_indices],
                                      batch_size=4096, shuffle=True,
                                      time_attr='time')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
