@@ -605,8 +605,8 @@ def to_sparse(
 ) -> Tensor:
 
     if sparseDims is not None:
-        raise ValueError("The 'sparseDims' argument is an invalid argument "
-                         "for 'EdgeIndex.to_sparse()' (got {sparseDims})")
+        raise ValueError(f"The 'sparseDims' argument is an invalid argument "
+                         f"for 'EdgeIndex.to_sparse()' (got {sparseDims})")
 
     if layout is None or layout == torch.sparse_coo:
         # `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
