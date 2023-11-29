@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.data.edge_index import EdgeIndex
+from torch_geometric.data.edge_index import EdgeIndex, to_dense
 from torch_geometric.testing import (
     disableExtensions,
     onlyCUDA,
@@ -222,9 +222,37 @@ def test_getitem():
     assert not isinstance(out, EdgeIndex)
 
 
+@pytest.mark.parametrize('dtype', [None, torch.double])
+def test_to_dense(dtype):
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+
+    out = adj.to_dense(dtype=dtype)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+
+    value = torch.arange(1, 5, dtype=dtype or torch.float)
+    out = to_dense(adj, value=value)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[0, 2, 0], [1, 0, 4], [0, 3, 0]]
+
+    value = torch.arange(1, 5, dtype=dtype or torch.float).view(-1, 1)
+    out = to_dense(adj, value=value)
+    assert isinstance(out, Tensor)
+    assert out.size() == (3, 3, 1)
+    assert out.dtype == dtype or torch.float
+    assert out.tolist() == [[[0], [2], [0]], [[1], [0], [4]], [[0], [3], [0]]]
+
+
 def test_to_sparse_coo():
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
-    out = adj.to_sparse(layout=torch.sparse_coo)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_coo)
+    else:
+        out = adj.to_sparse()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
@@ -244,7 +272,10 @@ def test_to_sparse_csr():
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    out = adj.to_sparse(layout=torch.sparse_csr)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csr)
+    else:
+        out = adj.to_sparse_csr()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csr
     assert out.size() == (3, 3)
@@ -257,7 +288,10 @@ def test_to_sparse_csc():
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
-    out = adj.to_sparse(layout=torch.sparse_csc)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csc)
+    else:
+        out = adj.to_sparse_csc()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csc
     assert out.size() == (3, 3)
@@ -267,13 +301,26 @@ def test_to_sparse_csc():
 
 def test_matmul():
     x = torch.randn(3, 1)
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
 
-    adj @ x
+    out = adj1 @ x
+    assert torch.allclose(out, adj1.to_dense() @ x)
 
-    # torch.matmul(adj, x)
+    out = adj2 @ x
+    assert torch.allclose(out, adj2.to_dense() @ x)
 
-    pass
+    out = adj1 @ adj1
+    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
+
+    out = adj1 @ adj2
+    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj2.to_dense())
+
+    out = adj2 @ adj1
+    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj1.to_dense())
+
+    out = adj2 @ adj2
+    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj2.to_dense())
 
 
 def test_save_and_load(tmp_path):
