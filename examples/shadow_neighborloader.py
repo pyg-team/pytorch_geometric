@@ -75,8 +75,7 @@ def test(loader, desc='Eval'):
     for data in tqdm(loader, desc=desc):
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch, data.input_id)
-        total_correct += int(
-            (out.argmax(dim=-1) == data.y).sum())
+        total_correct += int((out.argmax(dim=-1) == data.y).sum())
         total_examples += len(data.y)
     return total_correct / total_examples
 
