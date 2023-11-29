@@ -291,6 +291,7 @@ class EdgeIndex(Tensor):
         # * not all operations lead to valid `EdgeIndex` tensors again, e.g.,
         #   `torch.sum()` does not yield a `EdgeIndex` as its output, or
         #   `torch.cat(dim=0) violates the [2, *] shape assumption.
+
         # To account for this, we hold a number of `HANDLED_FUNCTIONS` that
         # implement specific functions for valid `EdgeIndex` routines.
         if func in HANDLED_FUNCTIONS:
