@@ -1,6 +1,16 @@
 import functools
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch import Tensor
@@ -621,3 +631,17 @@ def to_sparse(
         return tensor.to_sparse_csc()
 
     raise ValueError(f"Unexpected tensor layout (got '{layout}')")
+
+
+@implements(torch.matmul)
+@implements(Tensor.matmul)
+def matmul(
+    input: EdgeIndex,
+    other: Union[Tensor, EdgeIndex],
+    input_weight: Optional[Tensor] = None,
+    other_weight: Optional[Tensor] = None,
+    reduce: Literal['sum'] = 'sum',
+) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+
+    print("HEHE")
+    return None
