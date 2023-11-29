@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
@@ -167,46 +168,50 @@ class EdgeIndex(Tensor):
 
         return self
 
-    def fill_cache(self) -> 'EdgeIndex':
-        r"""Fills the cache with (meta)data information.
-        No-op in case :class:`EdgeIndex` is not sorted.
-        """
-        if self._sort_order == SortOrder.ROW and self._rowptr is None:
-            if self.num_rows is None:
-                self._sparse_size = (
-                    int(self[0].max()) + 1 if self.numel() > 0 else 0,
-                    self.num_cols,
-                )
-
-            self._rowptr = torch._convert_indices_from_coo_to_csr(
-                self[0], self.num_rows, out_int32=self.dtype != torch.int64)
-            self._rowptr = self._rowptr.to(self.dtype)
-
-        if self._sort_order == SortOrder.COL and self._colptr is None:
-            if self.num_cols is None:
-                self._sparse_size = (
-                    self.num_rows,
-                    int(self[1].max()) + 1 if self.numel() > 0 else 0,
-                )
-
-            self._colptr = torch._convert_indices_from_coo_to_csr(
-                self[1], self.num_cols, out_int32=self.dtype != torch.int64)
-            self._colptr = self._colptr.to(self.dtype)
-
     @property
     def sparse_size(self) -> Tuple[Optional[int], Optional[int]]:
         r"""The size of the underlying sparse matrix."""
         return self._sparse_size
+
+    def get_sparse_size(self) -> Tuple[int, int]:
+        r"""The size of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        """
+        return (self.get_num_rows(), self.get_num_cols())
 
     @property
     def num_rows(self) -> Optional[int]:
         r"""The number of rows of the underlying sparse matrix."""
         return self._sparse_size[0]
 
+    def get_num_rows(self) -> int:
+        r"""The number of rows of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        """
+        if self.num_rows is None:
+            self._sparse_size = (
+                int(self[0].max()) + 1 if self.numel() > 0 else 0,
+                self.num_cols,
+            )
+
+        return self.num_rows
+
     @property
     def num_cols(self) -> Optional[int]:
         r"""The number of columns of the underlying sparse matrix."""
         return self._sparse_size[1]
+
+    def get_num_cols(self) -> int:
+        r"""The number of columns of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        """
+        if self.num_cols is None:
+            self._sparse_size = (
+                self.num_rows,
+                int(self[1].max()) + 1 if self.numel() > 0 else 0,
+            )
+
+        return self.num_cols
 
     @property
     def sort_order(self) -> Optional[str]:
@@ -214,6 +219,56 @@ class EdgeIndex(Tensor):
         :obj:`None`.
         """
         return None if self._sort_order is None else self._sort_order.value
+
+    def get_rowptr(self) -> Tensor:
+        r"""Returns the :obj:`rowptr` vector of :class:`EdgeIndex`, a
+        compressed representation of row indices in case :class:`EdgeIndex` is
+        sorted by rows.
+        """
+        if self._sort_order != SortOrder.ROW:
+            raise ValueError(
+                f"Cannot access 'rowptr' in '{self.__class__.__name__}' "
+                f"since it is not sorted by rows (got '{self.sort_order}')")
+
+        if self._rowptr is not None:
+            return self._rowptr
+
+        self._rowptr = torch._convert_indices_from_coo_to_csr(
+            self[0], self.get_num_rows(), out_int32=self.dtype != torch.int64)
+        self._rowptr = self._rowptr.to(self.dtype)
+
+        return self._rowptr
+
+    def get_colptr(self) -> Tensor:
+        r"""Returns the :obj:`colptr` vector of :class:`EdgeIndex`, a
+        compressed representation of column indices in case :class:`EdgeIndex`
+        is sorted by columns.
+        """
+        if self._sort_order != SortOrder.COL:
+            raise ValueError(
+                f"Cannot access 'colptr' in '{self.__class__.__name__}' "
+                f"since it is not sorted by columns (got '{self.sort_order}')")
+
+        if self._colptr is not None:
+            return self._colptr
+
+        self._colptr = torch._convert_indices_from_coo_to_csr(
+            self[1], self.get_num_cols(), out_int32=self.dtype != torch.int64)
+        self._colptr = self._colptr.to(self.dtype)
+
+        return self._colptr
+
+    def fill_cache(self) -> 'EdgeIndex':
+        r"""Fills the cache with (meta)data information.
+        No-op in case :class:`EdgeIndex` is not sorted.
+        """
+        self.get_num_rows()
+        self.get_num_cols()
+
+        if self._sort_order == SortOrder.ROW:
+            self.get_rowptr()
+        if self._sort_order == SortOrder.COL:
+            self.get_colptr()
 
     def as_tensor(self) -> Tensor:
         r"""Zero-copies the :class:`EdgeIndex` representation back to a
@@ -504,3 +559,78 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
             out._sort_order = input._sort_order
 
     return out
+
+
+def _get_value(
+    numel: int,
+    dtype: Optional[torch.dtype] = None,
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    if (torch_geometric.typing.WITH_PT20
+            and not torch_geometric.typing.WITH_ARM):
+        return torch.ones(1, dtype=dtype, device=device).expand(numel)
+    return torch.ones(numel, dtype=dtype, device=device)
+
+
+# `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
+def to_sparse_coo(tensor: EdgeIndex) -> Tensor:
+    out = torch.sparse_coo_tensor(
+        indices=tensor.as_tensor(),
+        values=_get_value(tensor.size(1), device=tensor.device),
+        size=tensor.get_sparse_size(),
+        device=tensor.device,
+    )
+
+    if tensor._sort_order == SortOrder.ROW:
+        out = out._coalesced_(True)
+
+    return out
+
+
+@implements(Tensor.to_sparse_csr)
+def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
+    return torch.sparse_csr_tensor(
+        crow_indices=tensor.get_rowptr(),
+        col_indices=tensor[1],
+        values=_get_value(tensor.size(1), device=tensor.device),
+        size=tensor.get_sparse_size(),
+        device=tensor.device,
+    )
+
+
+if torch_geometric.typing.WITH_PT112:
+
+    @implements(Tensor.to_sparse_csc)
+    def to_sparse_csc(tensor: EdgeIndex) -> Tensor:
+        return torch.sparse_csc_tensor(
+            ccol_indices=tensor.get_colptr(),
+            row_indices=tensor[0],
+            values=_get_value(tensor.size(1), device=tensor.device),
+            size=tensor.get_sparse_size(),
+            device=tensor.device,
+        )
+
+
+if torch_geometric.typing.WITH_PT20:
+
+    @implements(Tensor.to_sparse)
+    def to_sparse(
+        tensor: EdgeIndex,
+        *,
+        layout: Optional[torch.layout] = None,
+    ) -> Tensor:
+
+        if layout is None or layout == torch.sparse_coo:
+            return to_sparse_coo(tensor)
+        if layout == torch.sparse_csr:
+            return tensor.to_sparse_csr()
+        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
+            return tensor.to_sparse_csc()
+
+        raise ValueError(f"Unexpected tensor layout (got '{layout}')")
+
+else:
+
+    @implements(Tensor.to_sparse)
+    def to_sparse(tensor: EdgeIndex) -> Tensor:
+        return to_sparse_coo(tensor)

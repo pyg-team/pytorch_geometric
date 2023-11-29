@@ -33,12 +33,12 @@ def test_basic():
 def test_fill_cache():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj.validate().fill_cache()
-    assert adj.sparse_size == (3, None)
+    assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
     adj.validate().fill_cache()
-    assert adj.sparse_size == (None, 3)
+    assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
 
 
@@ -160,14 +160,14 @@ def test_flip():
     out = adj.flip(0)
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
-    assert out.sparse_size == (None, 3)
+    assert out.sparse_size == (3, 3)
     assert out.sort_order == 'col'
     assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
 
     out = adj.flip([0, 1])
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
-    assert out.sparse_size == (None, 3)
+    assert out.sparse_size == (3, 3)
     assert out.sort_order is None
     assert out._colptr is None
 
@@ -220,6 +220,58 @@ def test_getitem():
 
     out = adj[torch.tensor([0])]
     assert not isinstance(out, EdgeIndex)
+
+
+def test_to_sparse_coo():
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_coo)
+    else:
+        out = adj.to_sparse()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_coo
+    assert out.size() == (3, 3)
+    assert torch.equal(adj, out._indices())
+
+    # Test clunky dispatch logic for `to_sparse_coo()`:
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+    out = adj.to_sparse_coo()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_coo
+    assert out.size() == (3, 3)
+    assert torch.equal(adj, out._indices())
+
+
+def test_to_sparse_csr():
+    with pytest.raises(ValueError, match="not sorted by rows"):
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
+
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csr)
+    else:
+        out = adj.to_sparse_csr()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_csr
+    assert out.size() == (3, 3)
+    assert torch.equal(adj._rowptr, out.crow_indices())
+    assert torch.equal(adj[1], out.col_indices())
+
+
+def test_to_sparse_csc():
+    with pytest.raises(ValueError, match="not sorted by columns"):
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
+
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csc)
+    else:
+        out = adj.to_sparse_csc()
+    assert isinstance(out, Tensor)
+    assert out.layout == torch.sparse_csc
+    assert out.size() == (3, 3)
+    assert torch.equal(adj._colptr, out.ccol_indices())
+    assert torch.equal(adj[0], out.row_indices())
 
 
 def test_save_and_load(tmp_path):
