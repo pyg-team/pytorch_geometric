@@ -633,5 +633,4 @@ else:
 
     @implements(Tensor.to_sparse)
     def to_sparse(tensor: EdgeIndex) -> Tensor:
-
         return to_sparse_coo(tensor)
