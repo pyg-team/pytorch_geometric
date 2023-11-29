@@ -183,15 +183,14 @@ class DistNeighborSampler:
         src_batch_dict = None
 
         seed = inputs.node.to(self.device)
-        seed_time = None
+        seed_time: Optional[Tensor] = None
         if self.time_attr is not None:
             if inputs.time is not None:
                 seed_time = inputs.time.to(self.device)
+            elif self.node_time is not None:
+                seed_time = self.node_time[seed]
             else:
-                if self.time_attr == 'time':
-                    seed_time = self.node_time[seed]
-                else:  # self.time_attr == 'edge_time'
-                    raise ValueError("Seed time needs to be specified.")
+                raise ValueError("Seed time needs to be specified")
 
         src_batch = torch.arange(batch_size) if self.disjoint else None
         metadata = (seed, seed_time)
@@ -620,12 +619,12 @@ class DistNeighborSampler:
             True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,
-            self.disjoint and self.time_attr is not None,
+            self.disjoint or self.time_attr is not None,
             self.temporal_strategy,
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        if self.disjoint and self.time_attr is not None:
+        if self.disjoint or self.time_attr is not None:
             # We create a batch during the step of merging sampler outputs.
             _, node = node.t().contiguous()
 

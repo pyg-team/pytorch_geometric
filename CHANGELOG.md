@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `fsspec` as file system backend ([#8379](https://github.com/pyg-team/pytorch_geometric/pull/8379), [#8426](https://github.com/pyg-team/pytorch_geometric/pull/8426), [#8434](https://github.com/pyg-team/pytorch_geometric/pull/8434))
 - Added support for floating-point average degree numbers in `FakeDataset` and `FakeHeteroDataset` ([#8404](https://github.com/pyg-team/pytorch_geometric/pull/8404))
 - Added support for device conversions of `InMemoryDataset` ([#8402](https://github.com/pyg-team/pytorch_geometric/pull/8402))
-- Added support for edge-level temporal sampling in `NeighborLoader` and `LinkNeighborLoader` ([#8372](https://github.com/pyg-team/pytorch_geometric/pull/8372))
+- Added support for edge-level temporal sampling in `NeighborLoader` and `LinkNeighborLoader` ([#8372](https://github.com/pyg-team/pytorch_geometric/pull/8372), [#8428](https://github.com/pyg-team/pytorch_geometric/pull/8428))
 - Added support for `torch.compile` in `ModuleDict` and `ParameterDict` ([#8363](https://github.com/pyg-team/pytorch_geometric/pull/8363))
 - Added `force_reload` option to `Dataset` and `InMemoryDataset` to reload datasets ([#8352](https://github.com/pyg-team/pytorch_geometric/pull/8352), [#8357](https://github.com/pyg-team/pytorch_geometric/pull/8357), [#8436](https://github.com/pyg-team/pytorch_geometric/pull/8436))
 - Added support for `torch.compile` in `MultiAggregation` ([#8345](https://github.com/pyg-team/pytorch_geometric/pull/8345))
@@ -28,7 +28,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `RCDD` dataset ([#8196](https://github.com/pyg-team/pytorch_geometric/pull/8196))
 - Added distributed `GAT + ogbn-products` example targeting XPU device ([#8032](https://github.com/pyg-team/pytorch_geometric/pull/8032))
 - Added the option to skip explanations of certain message passing layers via `conv.explain = False` ([#8216](https://github.com/pyg-team/pytorch_geometric/pull/8216))
-- Added support for distributed edge-level temporal sampling ([#8428](https://github.com/pyg-team/pytorch_geometric/pull/8428))
 
 ### Changed
 

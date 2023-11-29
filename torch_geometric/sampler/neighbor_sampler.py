@@ -212,9 +212,11 @@ class NeighborSampler(BaseSampler):
                                          "not find any temporal data")
                     time_attrs[0].index = None  # Reset index for full data.
                     time_tensor = feature_store.get_tensor(time_attrs[0])
+                    # Currently, we determine whether to use node-level or
+                    # edge-level temporal sampling based on the attribute name.
                     if time_attr == 'time':
                         self.node_time = time_tensor
-                    else:  # time_attr == 'edge_time':
+                    else:
                         self.edge_time = time_tensor
 
                 self.row, self.colptr, self.perm = graph_store.csc()
@@ -232,6 +234,7 @@ class NeighborSampler(BaseSampler):
                 self.node_time: Optional[Dict[NodeType, Tensor]] = None
                 self.edge_time: Optional[Dict[NodeType, Tensor]] = None
 
+                # TODO Add support for edge-level temporal sampling.
                 if time_attr is not None:
                     for attr in time_attrs:  # Reset index for full data.
                         attr.index = None
