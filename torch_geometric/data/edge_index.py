@@ -599,14 +599,14 @@ if torch_geometric.typing.WITH_PT112:
 @implements(Tensor.to_sparse)
 def to_sparse(
     tensor: EdgeIndex,
-    sparseDims: Optional[int] = None,
+    sparse_dim: Optional[int] = None,
     *,
     layout: Optional[torch.layout] = None,
 ) -> Tensor:
 
-    if sparseDims is not None:
-        raise ValueError(f"The 'sparseDims' argument is an invalid argument "
-                         f"for 'EdgeIndex.to_sparse()' (got {sparseDims})")
+    if sparse_dim is not None:
+        raise ValueError(f"The 'sparse_dim' argument is an invalid argument "
+                         f"for 'EdgeIndex.to_sparse()' (got {sparse_dim})")
 
     if layout is None or layout == torch.sparse_coo:
         # `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
