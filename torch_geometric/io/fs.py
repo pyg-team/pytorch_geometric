@@ -93,8 +93,8 @@ def cp(
     path2: str,
     extract: bool = False,
     log: bool = True,
-    clear_cache: bool = True,
     use_cache: bool = True,
+    clear_cache: bool = True,
 ):
     kwargs = {}
 
@@ -104,8 +104,7 @@ def cp(
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
-        # Cache seems to confuse the gcs filesystem.
-        if use_cache:
+        if use_cache:  # Cache seems to confuse the gcs filesystem.
             home_dir = torch_geometric.get_home_dir()
             cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
             kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
@@ -150,7 +149,7 @@ def cp(
                         break
                     f_to.write(chunk)
 
-    if clear_cache and cache_dir is not None:
+    if use_cache and clear_cache and cache_dir is not None:
         rm(cache_dir)
 
 
