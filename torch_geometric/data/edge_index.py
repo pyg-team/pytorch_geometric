@@ -698,13 +698,13 @@ def matmul(
     if input._sort_order == SortOrder.COL:
         input = to_sparse_csc(input, other_weight)
     else:
-        input = input.to_sparse_csr(other_weight)
+        input = to_sparse_csr(input, other_weight)
 
     if isinstance(other, EdgeIndex):
         if other._sort_order == SortOrder.COL:
-            other = other.to_sparse_csc(other_weight)
+            other = to_sparse_csc(other, other_weight)
         else:
-            other = other.to_sparse_csr(other_weight)
+            other = to_sparse_csr(other, other_weight)
 
     return Tensor.__torch_function__(  #
         Tensor.matmul, (Tensor, ), (input, other))
