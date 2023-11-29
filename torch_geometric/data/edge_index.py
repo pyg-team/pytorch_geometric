@@ -583,11 +583,14 @@ def _get_value(
 
 
 @implements(Tensor.to_sparse_csr)
-def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
+def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
+    if value is None:
+        value = _get_value(tensor.size(1), device=tensor.device)
+
     return torch.sparse_csr_tensor(
         crow_indices=tensor.get_rowptr(),
         col_indices=tensor[1],
-        values=_get_value(tensor.size(1), device=tensor.device),
+        values=value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -596,11 +599,18 @@ def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
 if torch_geometric.typing.WITH_PT112:
 
     @implements(Tensor.to_sparse_csc)
-    def to_sparse_csc(tensor: EdgeIndex) -> Tensor:
+    def to_sparse_csc(
+        tensor: EdgeIndex,
+        value: Optional[Tensor] = None,
+    ) -> Tensor:
+
+        if value is None:
+            value = _get_value(tensor.size(1), device=tensor.device)
+
         return torch.sparse_csc_tensor(
             ccol_indices=tensor.get_colptr(),
             row_indices=tensor[0],
-            values=_get_value(tensor.size(1), device=tensor.device),
+            values=value,
             size=tensor.get_sparse_size(),
             device=tensor.device,
         )
@@ -648,6 +658,9 @@ def matmul(
     other_weight: Optional[Tensor] = None,
     reduce: Literal['sum'] = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+
+    # TODO Utilize available `CSC` representation for faster backward passes.
+    adj = input.to_sparse_csr()
 
     print("HEHE")
     return None
