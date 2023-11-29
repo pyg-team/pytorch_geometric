@@ -63,7 +63,6 @@ def train():
     for data in tqdm(train_loader, desc="Train"):
         data = data.to(device)
         optimizer.zero_grad()
-        # print(data.input_id.size())
         out = model(data.x, data.edge_index, data.batch, data.input_id)
         loss = F.cross_entropy(out, data.y)
         loss.backward()
