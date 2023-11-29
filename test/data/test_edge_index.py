@@ -265,17 +265,6 @@ def test_to_sparse_csc():
     assert torch.equal(adj[0], out.row_indices())
 
 
-def test_matmul():
-    x = torch.randn(3, 1)
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-
-    adj @ x
-
-    # torch.matmul(adj, x)
-
-    pass
-
-
 def test_save_and_load(tmp_path):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj.fill_cache()
