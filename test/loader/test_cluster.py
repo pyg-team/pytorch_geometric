@@ -167,8 +167,12 @@ def test_cluster_gcn_correctness(get_dataset, sparse_format):
     dataset = get_dataset('Cora')
     data = dataset[0].clone()
     data.n_id = torch.arange(data.num_nodes)
-    cluster_data = ClusterData(data, num_parts=10, log=False,
-                               sparse_format=sparse_format)
+    cluster_data = ClusterData(
+        data,
+        num_parts=10,
+        log=False,
+        sparse_format=sparse_format,
+    )
     loader = ClusterLoader(cluster_data, batch_size=3, shuffle=False)
 
     for batch1 in loader:
@@ -181,7 +185,7 @@ def test_cluster_gcn_correctness(get_dataset, sparse_format):
             batch1.edge_index,
             sort_edge_index(
                 batch2.edge_index,
-                sort_by_row=False if sparse_format == 'csc' else True,
+                sort_by_row=sparse_format == 'csr',
             ),
         )
 
