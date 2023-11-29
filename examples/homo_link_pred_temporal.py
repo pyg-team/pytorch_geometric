@@ -71,7 +71,7 @@ test_dataloader = LinkNeighborLoader(data=data, num_neighbors=[5, 5, 5],
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:
-    weight = torch.bincount(train_data.edge_label)
+    weight = torch.bincount(data.edge_label)
     weight = weight.max() / weight
 else:
     weight = None
