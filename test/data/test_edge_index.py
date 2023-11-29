@@ -82,6 +82,17 @@ def test_share_memory():
     assert adj._rowptr.is_shared()
 
 
+def test_contiguous():
+    data = torch.tensor([[0, 1], [1, 0], [1, 2], [2, 1]]).t()
+
+    with pytest.raises(ValueError, match="needs to be contiguous"):
+        EdgeIndex(data)
+
+    adj = EdgeIndex(data.contiguous()).contiguous()
+    assert isinstance(adj, EdgeIndex)
+    assert adj.is_contiguous()
+
+
 def test_sort_by():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     out = adj.sort_by('row')

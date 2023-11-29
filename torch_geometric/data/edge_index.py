@@ -49,6 +49,12 @@ def assert_two_dimensional(tensor: Tensor):
                          f"[2, *] (got {list(tensor.size())})")
 
 
+def assert_contiguous(tensor: Tensor):
+    if not tensor.is_contiguous():
+        raise ValueError("'EdgeIndex' needs to be contiguous. Please call "
+                         "`edge_index.contiguous()` before proceeding.")
+
+
 class EdgeIndex(Tensor):
     r"""An advanced :obj:`edge_index` representation with additional (meta)data
     attached.
@@ -114,6 +120,7 @@ class EdgeIndex(Tensor):
         assert isinstance(data, Tensor)
         assert_valid_dtype(data)
         assert_two_dimensional(data)
+        assert_contiguous(data)
 
         out = super().__new__(cls, data)
 
@@ -130,6 +137,7 @@ class EdgeIndex(Tensor):
         """
         assert_valid_dtype(self)
         assert_two_dimensional(self)
+        assert_contiguous(self)
 
         if self.numel() > 0 and self.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
@@ -344,6 +352,11 @@ def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
 @implements(Tensor.share_memory_)
 def share_memory_(tensor: EdgeIndex) -> EdgeIndex:
     return apply_(tensor, Tensor.share_memory_)
+
+
+@implements(Tensor.contiguous)
+def contiguous(tensor: EdgeIndex) -> EdgeIndex:
+    return apply_(tensor, Tensor.contiguous)
 
 
 @implements(torch.cat)
