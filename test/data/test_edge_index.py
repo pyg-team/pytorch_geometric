@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.data.edge_index import EdgeIndex, to_dense
+from torch_geometric.data.edge_index import EdgeIndex, matmul, to_dense
 from torch_geometric.testing import (
     disableExtensions,
     onlyCUDA,
@@ -321,6 +321,35 @@ def test_matmul():
 
     out = adj2 @ adj2
     assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj2.to_dense())
+
+
+def test_matmul_input_value():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+
+    x = torch.randn(3, 1)
+    value = torch.randn(4)
+
+    out = matmul(adj, x, input_value=value)
+    assert torch.allclose(out, to_dense(adj, value=value) @ x)
+
+
+def test_matmul_grad():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+
+    x1 = torch.randn(3, 1, requires_grad=True)
+    value = torch.randn(4, requires_grad=True)
+
+    out = matmul(adj, x1, input_value=value)
+    grad_out = torch.randn_like(out)
+    out.backward(grad_out)
+
+    x2 = x1.detach().requires_grad_()
+    dense_adj = to_dense(adj, value=value).detach().requires_grad_()
+    out = dense_adj @ x2
+    out.backward(grad_out)
+
+    assert torch.allclose(x1.grad, x2.grad)
+    assert torch.allclose(value.grad, dense_adj.grad[adj[0], adj[1]])
 
 
 def test_save_and_load(tmp_path):

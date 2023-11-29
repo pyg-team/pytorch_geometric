@@ -629,7 +629,7 @@ def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
     return torch.sparse_csr_tensor(
         crow_indices=tensor.get_rowptr(),
         col_indices=tensor[1],
-        values=_get_value(tensor.size(1), device=tensor.device),
+        values=value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -695,8 +695,8 @@ else:
 def matmul(
     input: EdgeIndex,
     other: Union[Tensor, EdgeIndex],
-    input_weight: Optional[Tensor] = None,
-    other_weight: Optional[Tensor] = None,
+    input_value: Optional[Tensor] = None,
+    other_value: Optional[Tensor] = None,
     reduce: Literal['sum'] = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
@@ -705,15 +705,18 @@ def matmul(
     # TODO Utilize available `CSC` representation for faster backward passes.
 
     if input._sort_order == SortOrder.COL:
-        input = to_sparse_csc(input, other_weight)
+        input = to_sparse_csc(input, input_value)
     else:
-        input = to_sparse_csr(input, other_weight)
+        input = to_sparse_csr(input, input_value)
 
     if isinstance(other, EdgeIndex):
         if other._sort_order == SortOrder.COL:
-            other = to_sparse_csc(other, other_weight)
+            other = to_sparse_csc(other, other_value)
         else:
-            other = to_sparse_csr(other, other_weight)
+            other = to_sparse_csr(other, other_value)
 
-    return Tensor.__torch_function__(  #
-        Tensor.matmul, (Tensor, ), (input, other))
+    elif other_value is not None:
+        raise ValueError("'other_value' not supported for sparse-dense "
+                         "matrix multiplication")
+
+    return torch.matmul(input, other)
