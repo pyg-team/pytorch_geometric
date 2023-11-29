@@ -27,8 +27,10 @@ dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 edge_index = data[('user', 'rates', 'movie')].edge_index
 
+# Use only those edges whose ratings are higher than or equal to 4
 rating_threshold = 4
 edge_index = edge_index[:, torch.where(data[('user', 'rates', 'movie')].edge_label >= rating_threshold)[0]]
+data[('user','rates','movie')].edge_index = edge_index
 
 
 num_users = data['user']['num_nodes']
