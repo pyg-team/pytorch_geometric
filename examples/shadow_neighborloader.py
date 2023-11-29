@@ -80,7 +80,7 @@ def test(loader, desc='Eval'):
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch, data.input_id)
         total_correct += int(
-            (out.argmax(dim=-1) == data.y).sum()) / len(data.y)
+            (out.argmax(dim=-1) == data.y).sum())
         total_examples += 1
     return total_correct / total_examples
 
