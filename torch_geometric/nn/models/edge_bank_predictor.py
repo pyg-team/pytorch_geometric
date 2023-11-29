@@ -1,5 +1,4 @@
-"""
-EdgeBank is a simple strong baseline for dynamic link prediction
+"""EdgeBank is a simple strong baseline for dynamic link prediction
 it predicts the existence of edges based on their history of occurrence
 Reference:
     - https://github.com/fpour/DGB/tree/main
@@ -18,8 +17,7 @@ class EdgeBankPredictor(torch.nn.Module):
         time_window_ratio: float = 0.15,
         pos_prob: float = 1.0,
     ):
-        r"""
-        intialize edgebank and specify the memory mode
+        r"""Intialize edgebank and specify the memory mode
         Parameters:
             memory_mode: 'unlimited' or 'fixed_time_window'
             time_window_ratio: the ratio of the time window length to the total time length
@@ -47,8 +45,7 @@ class EdgeBankPredictor(torch.nn.Module):
         self.pos_prob = pos_prob
 
     def _edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        Parameters:
+        r"""Parameters:
             query_edge_indices: [2, num_edges] tensor of edge indices
         Returns:
             edge_isin_mem_tensor: [num_edges] boolean tensor representing
@@ -64,8 +61,7 @@ class EdgeBankPredictor(torch.nn.Module):
         return edge_isin_mem_tensor
 
     def _index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        return indices in memory that match query_edge_indices
+        r"""Return indices in memory that match query_edge_indices
         Parameters:
             query_edge_indices: [2, num_edges] tensor of edge indices
         Returns:
@@ -81,8 +77,7 @@ class EdgeBankPredictor(torch.nn.Module):
         return mem_indices
 
     def update_memory(self, edge_index: torch.tensor, ts: torch.tensor):
-        r"""
-        generate the current and correct state of the memory with the observed edges so far
+        r"""Generate the current and correct state of the memory with the observed edges so far
         note that historical edges may include training, validation, and already observed test edges
         Parameters:
             edge_index: [2, num_edges] tensor of edge indices
@@ -97,8 +92,7 @@ class EdgeBankPredictor(torch.nn.Module):
 
     @property
     def start_time(self) -> int:
-        """
-        return the start of time window for edgebank `fixed_time_window` only
+        """Return the start of time window for edgebank `fixed_time_window` only
         Returns:
             start of time window
         """
@@ -110,8 +104,7 @@ class EdgeBankPredictor(torch.nn.Module):
 
     @property
     def end_time(self) -> int:
-        """
-        return the end of time window for edgebank `fixed_time_window` only
+        """Return the end of time window for edgebank `fixed_time_window` only
         Returns:
             end of time window
         """
@@ -122,8 +115,7 @@ class EdgeBankPredictor(torch.nn.Module):
         return self.cur_t
 
     def _update_unlimited_memory(self, update_edge_index: torch.tensor):
-        r"""
-        update self.memory with newly arrived edge indices
+        r"""Update self.memory with newly arrived edge indices
         Parameters:
             update_edge_index: [2, num_edges] tensor of edge indices
         """
@@ -147,8 +139,7 @@ class EdgeBankPredictor(torch.nn.Module):
 
     def _update_time_window_memory(self, update_edge_index: torch.tensor,
                                    update_ts: torch.tensor) -> None:
-        r"""
-        move the time window forward until end of dst timestamp here
+        r"""Move the time window forward until end of dst timestamp here
         also need to remove earlier edges from memory which is not in the time window
         Parameters:
             update_edge_index: [2, num_edges] tensor of edge indices
@@ -179,8 +170,7 @@ class EdgeBankPredictor(torch.nn.Module):
         self.timestamps = torch.cat((self.timestamps, update_ts))
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        predict the probability from query src,dst pair given the current memory,
+        r"""Predict the probability from query src,dst pair given the current memory,
         all edges not in memory will return 0.0 while all observed edges in memory will return self.pos_prob
         Parameters:
             query_edge_indices: [2, num_edges] tensor of edge indices
@@ -199,8 +189,7 @@ class EdgeBankPredictor(torch.nn.Module):
 
 
 def cantor_pairing_function(a: torch.tensor, b: torch.tensor) -> torch.tensor:
-    """
-    The Cantor Pairing Function uniquely encodes
+    """The Cantor Pairing Function uniquely encodes
     two natural numbers into a single natural number.
     https://en.wikipedia.org/wiki/Pairing_function
     """

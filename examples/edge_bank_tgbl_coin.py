@@ -24,8 +24,7 @@ def test_edge_bank_pred():
     from tgb.utils.utils import save_results, set_random_seed
 
     def helper_func(data, test_mask, neg_sampler, split_mode):
-        r"""
-        Evaluated the dynamic link prediction
+        r"""Evaluated the dynamic link prediction
         Evaluation happens as 'one vs. many', meaning that each positive edge is evaluated against many negative edges
 
         Parameters:
