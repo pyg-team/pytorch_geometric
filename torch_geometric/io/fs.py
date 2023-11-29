@@ -94,6 +94,7 @@ def cp(
     extract: bool = False,
     log: bool = True,
     clear_cache: bool = True,
+    use_cache: bool = True,
 ):
     kwargs = {}
 
@@ -103,10 +104,12 @@ def cp(
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
-        home_dir = torch_geometric.get_home_dir()
-        cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
-        kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
-        path1 = f'simplecache::{path1}'
+        # Cache seems to confuse the gcs filesystem.
+        if use_cache:
+            home_dir = torch_geometric.get_home_dir()
+            cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
+            kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
+            path1 = f'simplecache::{path1}'
 
     # Handle automatic extraction:
     if extract and path1.endswith('.tar.gz'):
