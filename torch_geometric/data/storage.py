@@ -758,7 +758,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
                     self[key].size()) == self.num_nodes).nonzero()[0].item()
             dims.append(dim)
         return dims
-    
+
     def is_sorted_by_time(self) -> bool:
         if 'time' in self:
             return bool(torch.all(self.time[:-1] <= self.time[1:]))
