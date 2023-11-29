@@ -57,7 +57,7 @@ model = GIN(
 ).to(device)
 
 # Compile the model into an optimized version and enforce zero graph breaks:
-model = torch_geometric.compile(model, dynamic=True, fullgraph=True)
+model = torch_geometric.compile(model, dynamic=True)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
