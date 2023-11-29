@@ -572,6 +572,21 @@ def _get_value(
     return torch.ones(numel, dtype=dtype, device=device)
 
 
+# `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
+def to_sparse_coo(tensor: EdgeIndex) -> Tensor:
+    out = torch.sparse_coo_tensor(
+        indices=tensor.as_tensor(),
+        values=_get_value(tensor.size(1), device=tensor.device),
+        size=tensor.get_sparse_size(),
+        device=tensor.device,
+    )
+
+    if tensor._sort_order == SortOrder.ROW:
+        out = out._coalesced_(True)
+
+    return out
+
+
 @implements(Tensor.to_sparse_csr)
 def to_sparse_csr(tensor: EdgeIndex) -> Tensor:
     return torch.sparse_csr_tensor(
@@ -596,34 +611,27 @@ if torch_geometric.typing.WITH_PT112:
         )
 
 
-@implements(Tensor.to_sparse)
-def to_sparse(
-    tensor: EdgeIndex,
-    sparse_dim: Optional[int] = None,
-    *,
-    layout: Optional[torch.layout] = None,
-) -> Tensor:
+if torch_geometric.typing.WITH_PT20:
 
-    if sparse_dim is not None:
-        raise ValueError(f"The 'sparse_dim' argument is an invalid argument "
-                         f"for 'EdgeIndex.to_sparse()' (got {sparse_dim})")
+    @implements(Tensor.to_sparse)
+    def to_sparse(
+        tensor: EdgeIndex,
+        *,
+        layout: Optional[torch.layout] = None,
+    ) -> Tensor:
 
-    if layout is None or layout == torch.sparse_coo:
-        # `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
-        out = torch.sparse_coo_tensor(
-            indices=tensor.as_tensor(),
-            values=_get_value(tensor.size(1), device=tensor.device),
-            size=tensor.get_sparse_size(),
-            device=tensor.device,
-        )
+        if layout is None or layout == torch.sparse_coo:
+            return to_sparse_coo(tensor)
+        if layout == torch.sparse_csr:
+            return tensor.to_sparse_csr()
+        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
+            return tensor.to_sparse_csc()
 
-        if tensor._sort_order == SortOrder.ROW:
-            out = out._coalesced_(True)
+        raise ValueError(f"Unexpected tensor layout (got '{layout}')")
 
-        return out
-    if layout == torch.sparse_csr:
-        return tensor.to_sparse_csr()
-    if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
-        return tensor.to_sparse_csc()
+else:
 
-    raise ValueError(f"Unexpected tensor layout (got '{layout}')")
+    @implements(Tensor.to_sparse)
+    def to_sparse(tensor: EdgeIndex) -> Tensor:
+
+        return to_sparse_coo(tensor)

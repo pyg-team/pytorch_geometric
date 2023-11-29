@@ -224,7 +224,10 @@ def test_getitem():
 
 def test_to_sparse_coo():
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
-    out = adj.to_sparse(layout=torch.sparse_coo)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_coo)
+    else:
+        out = adj.to_sparse()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
@@ -244,7 +247,10 @@ def test_to_sparse_csr():
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    out = adj.to_sparse(layout=torch.sparse_csr)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csr)
+    else:
+        out = adj.to_sparse_csr()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csr
     assert out.size() == (3, 3)
@@ -257,7 +263,10 @@ def test_to_sparse_csc():
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
-    out = adj.to_sparse(layout=torch.sparse_csc)
+    if torch_geometric.typing.WITH_PT20:
+        out = adj.to_sparse(layout=torch.sparse_csc)
+    else:
+        out = adj.to_sparse_csc()
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csc
     assert out.size() == (3, 3)
