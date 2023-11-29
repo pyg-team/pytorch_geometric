@@ -147,19 +147,16 @@ def dist_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert batch[edge_type].edge_attr.size(
-                0) == batch[edge_type].edge_index.size(1)
+            num_edges = batch[edge_type].edge_index.size(1)
 
-            if batch[edge_type].edge_index.numel() > 0:  # Test edge mapping:
+            assert batch[edge_type].edge_attr.size(0) == num_edges
+            if num_edges > 0:  # Test edge mapping:
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
-                global_edge_index_1 = torch.stack(
-                    [
-                        batch[src].n_id[batch[edge_type].edge_index[0]],
-                        batch[dst].n_id[batch[edge_type].edge_index[1]],
-                    ],
-                    dim=0,
-                )
+                global_edge_index_1 = torch.stack([
+                    batch[src].n_id[batch[edge_type].edge_index[0]],
+                    batch[dst].n_id[batch[edge_type].edge_index[1]],
+                ], dim=0)
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
 

@@ -145,7 +145,8 @@ class Partitioner:
                 graph = {}
                 efeat = {}
                 for i, edge_type in enumerate(self.edge_types):
-                    # col = dst, row = src
+                    # Row vector refers to source nodes.
+                    # Column vector refers to destination nodes.
                     src, _, dst = edge_type
                     size = (self.data[src].num_nodes, self.data[dst].num_nodes)
 
@@ -166,16 +167,13 @@ class Partitioner:
                         data.edge_index[:, global_eid],
                         torch.stack((global_row, global_col), dim=0),
                     )
+                    local_eid = global_eid - edge_offset[edge_type]
                     assert torch.equal(
-                        self.data[edge_type].edge_index[:, (
-                            global_eid - edge_offset[edge_type])],
-                        torch.stack(
-                            (
-                                global_row - node_offset[src],
-                                global_col - node_offset[dst],
-                            ),
-                            dim=0,
-                        ),
+                        self.data[edge_type].edge_index[:, local_eid],
+                        torch.stack((
+                            global_row - node_offset[src],
+                            global_col - node_offset[dst],
+                        ), dim=0),
                     )
                     graph[edge_type] = {
                         'edge_id': global_eid,
@@ -186,8 +184,6 @@ class Partitioner:
 
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask][perm]
-                        assert torch.equal(data.edge_attr[global_eid, :],
-                                           edge_attr)
                         efeat[edge_type] = {
                             'global_id': global_eid,
                             'feats': dict(edge_attr=edge_attr),
@@ -269,25 +265,19 @@ class Partitioner:
                         'row': global_row,
                         'col': global_col,
                         'size': (data.num_nodes, data.num_nodes),
-                    },
-                    osp.join(path, 'graph.pt'),
-                )
+                    }, osp.join(path, 'graph.pt'))
 
                 torch.save(
                     {
                         'global_id': node_id,
                         'feats': dict(x=part_data.x),
-                    },
-                    osp.join(path, 'node_feats.pt'),
-                )
+                    }, osp.join(path, 'node_feats.pt'))
                 if 'edge_attr' in part_data:
                     torch.save(
                         {
                             'global_id': edge_id,
                             'feats': dict(edge_attr=part_data.edge_attr[perm]),
-                        },
-                        osp.join(path, 'edge_feats.pt'),
-                    )
+                        }, osp.join(path, 'edge_feats.pt'))
 
             logging.info('Saving partition mapping info')
             torch.save(node_map, osp.join(self.root, 'node_map.pt'))
@@ -300,7 +290,7 @@ class Partitioner:
             'edge_types': self.edge_types,
             'node_offset': list(node_offset.values()) if node_offset else None,
             'is_hetero': self.is_hetero,
-            'is_sorted': True,  # Based on col/destination.
+            'is_sorted': True,  # Based on colum/destination.
         }
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
@@ -311,31 +301,31 @@ def load_partition_info(
     partition_idx: int,
 ) -> Tuple[Dict, int, int, torch.Tensor, torch.Tensor]:
     # load the partition with PyG format (graphstore/featurestore)
-    with open(os.path.join(root_dir, 'META.json'), 'rb') as infile:
+    with open(osp.join(root_dir, 'META.json'), 'rb') as infile:
         meta = json.load(infile)
     num_partitions = meta['num_parts']
     assert partition_idx >= 0
     assert partition_idx < num_partitions
-    partition_dir = os.path.join(root_dir, f'part_{partition_idx}')
-    assert os.path.exists(partition_dir)
+    partition_dir = osp.join(root_dir, f'part_{partition_idx}')
+    assert osp.exists(partition_dir)
 
     if meta['is_hetero'] is False:
-        node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
-        edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
+        node_pb = torch.load(osp.join(root_dir, 'node_map.pt'))
+        edge_pb = torch.load(osp.join(root_dir, 'edge_map.pt'))
 
         return (meta, num_partitions, partition_idx, node_pb, edge_pb)
     else:
         node_pb_dict = {}
-        node_pb_dir = os.path.join(root_dir, 'node_map')
+        node_pb_dir = osp.join(root_dir, 'node_map')
         for ntype in meta['node_types']:
             node_pb_dict[ntype] = torch.load(
-                os.path.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+                osp.join(node_pb_dir, f'{as_str(ntype)}.pt'))
 
         edge_pb_dict = {}
-        edge_pb_dir = os.path.join(root_dir, 'edge_map')
+        edge_pb_dir = osp.join(root_dir, 'edge_map')
         for etype in meta['edge_types']:
             edge_pb_dict[tuple(etype)] = torch.load(
-                os.path.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+                osp.join(edge_pb_dir, f'{as_str(etype)}.pt'))
 
         return (meta, num_partitions, partition_idx, node_pb_dict,
                 edge_pb_dict)

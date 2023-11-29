@@ -2,7 +2,7 @@ import copy
 import os.path as osp
 import sys
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 import torch
 import torch.utils.data
@@ -23,7 +23,7 @@ class Partition:
     partptr: Tensor
     node_perm: Tensor
     edge_perm: Tensor
-    sparse_format: str
+    sparse_format: Literal['csr', 'csc']
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -47,6 +47,8 @@ class ClusterData(torch.utils.data.Dataset):
             progress. (default: :obj:`True`)
         keep_inter_cluster_edges (bool, optional): If set to :obj:`True`,
             will keep inter-cluster edge connections. (default: :obj:`False`)
+        sparse_format (str, optional): The sparse format to use for computing
+            partitions. (default: :obj:`"csr"`)
     """
     def __init__(
         self,
@@ -56,18 +58,15 @@ class ClusterData(torch.utils.data.Dataset):
         save_dir: Optional[str] = None,
         log: bool = True,
         keep_inter_cluster_edges: bool = False,
-        sparse_format: str = 'csr',
+        sparse_format: Literal['csr', 'csc'] = 'csr',
     ):
         assert data.edge_index is not None
+        assert sparse_format in ['csr', 'csc']
 
         self.num_parts = num_parts
         self.recursive = recursive
         self.keep_inter_cluster_edges = keep_inter_cluster_edges
-        if sparse_format in ['csc', 'csr']:
-            self.sparse_format = sparse_format
-        else:
-            raise NotImplementedError(
-                f"Supported formats: ['csr', 'csc'], got {sparse_format}")
+        self.sparse_format = sparse_format
 
         recursive_str = '_recursive' if recursive else ''
         filename = f'metis_{num_parts}{recursive_str}.pt'
@@ -92,19 +91,13 @@ class ClusterData(torch.utils.data.Dataset):
 
     def _metis(self, edge_index: Tensor, num_nodes: int) -> Tensor:
         # Computes a node-level partition assignment vector via METIS.
-        if self.sparse_format == 'csr':
-            # Calculate CSR representation:
-            row, col = sort_edge_index(edge_index, num_nodes=num_nodes)
-            rowptr = index2ptr(row, size=num_nodes)
-            indptr = rowptr
-            index = col
-        else:
-            # Calculate CSR representation:
-            row, col = sort_edge_index(edge_index, num_nodes=num_nodes,
-                                       sort_by_row=False)
-            colptr = index2ptr(col, size=num_nodes)
-            indptr = colptr
-            index = row
+        if self.sparse_format == 'csr':  # Calculate CSR representation:
+            row, index = sort_edge_index(edge_index, num_nodes=num_nodes)
+            indptr = index2ptr(row, size=num_nodes)
+        else:  # Calculate CSR representation:
+            index, col = sort_edge_index(edge_index, num_nodes=num_nodes,
+                                         sort_by_row=False)
+            indptr = index2ptr(col, size=num_nodes)
 
         # Compute METIS partitioning:
         cluster: Optional[Tensor] = None
@@ -155,14 +148,12 @@ class ClusterData(torch.utils.data.Dataset):
             edge_index,
             edge_attr=edge_perm,
             num_nodes=cluster.numel(),
-            sort_by_row=False if self.sparse_format == 'csc' else True,
+            sort_by_row=self.sparse_format == 'csr',
         )
         if self.sparse_format == 'csr':
-            indptr = index2ptr(row, size=cluster.numel())
-            index = col
+            indptr, index = index2ptr(row, size=cluster.numel()), col
         else:
-            indptr = index2ptr(col, size=cluster.numel())
-            index = row
+            indptr, index = index2ptr(col, size=cluster.numel()), row
 
         return Partition(indptr, index, partptr, node_perm, edge_perm,
                          self.sparse_format)
@@ -269,15 +260,15 @@ class ClusterLoader(torch.utils.data.DataLoader):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 
-        global_ptr = self.cluster_data.partition.indptr
+        global_indptr = self.cluster_data.partition.indptr
         global_index = self.cluster_data.partition.index
 
         # Get all node-level and edge-level start and end indices for the
         # current mini-batch:
         node_start = self.cluster_data.partition.partptr[batch]
         node_end = self.cluster_data.partition.partptr[batch + 1]
-        edge_start = global_ptr[node_start]
-        edge_end = global_ptr[node_end]
+        edge_start = global_indptr[node_start]
+        edge_end = global_indptr[node_end]
 
         # Iterate over each partition in the batch and calculate new edge
         # connectivity. This is done by slicing the corresponding source and
@@ -286,7 +277,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         rows, cols, nodes, cumsum = [], [], [], 0
         for i in range(batch.numel()):
             nodes.append(torch.arange(node_start[i], node_end[i]))
-            indptr = global_ptr[node_start[i]:node_end[i] + 1]
+            indptr = global_indptr[node_start[i]:node_end[i] + 1]
             indptr = indptr - edge_start[i]
             if self.cluster_data.partition.sparse_format == 'csr':
                 row = ptr2index(indptr) + cumsum
@@ -320,22 +311,16 @@ class ClusterLoader(torch.utils.data.DataLoader):
                 out.num_nodes = cumsum
             elif self.cluster_data.data.is_node_attr(key):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
-                out[key] = torch.cat(
-                    [
-                        narrow(out[key], cat_dim, s, e - s)
-                        for s, e in zip(node_start, node_end)
-                    ],
-                    dim=cat_dim,
-                )
+                out[key] = torch.cat([
+                    narrow(out[key], cat_dim, s, e - s)
+                    for s, e in zip(node_start, node_end)
+                ], dim=cat_dim)
             elif self.cluster_data.data.is_edge_attr(key):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
-                value = torch.cat(
-                    [
-                        narrow(out[key], cat_dim, s, e - s)
-                        for s, e in zip(edge_start, edge_end)
-                    ],
-                    dim=cat_dim,
-                )
+                value = torch.cat([
+                    narrow(out[key], cat_dim, s, e - s)
+                    for s, e in zip(edge_start, edge_end)
+                ], dim=cat_dim)
                 out[key] = select(value, edge_mask, dim=cat_dim)
 
         out.edge_index = torch.stack([row, col], dim=0)

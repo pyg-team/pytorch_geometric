@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added METIS partitioning with CSC/CSR format selection in `ClusterData` and fixed hetero data indexing. ([#8438](https://github.com/pyg-team/pytorch_geometric/pull/8438/))
+- Added METIS partitioning with CSC/CSR format selection in `ClusterData` ([#8438](https://github.com/pyg-team/pytorch_geometric/pull/8438/))
 - Added `is_torch_instance` to check against the original class of compiled models ([#8461](https://github.com/pyg-team/pytorch_geometric/pull/8461))
 - Added dense computation for `AddRandomWalkPE` ([#8431](https://github.com/pyg-team/pytorch_geometric/pull/8431))
 - Added a tutorial for point cloud processing ([#8015](https://github.com/pyg-team/pytorch_geometric/pull/8015))
