@@ -48,7 +48,7 @@ CUDA_VISIBLE_DEVICES=2,3 python dist_train_sage_supervised.py \
 **Notes:**
 
 1. You should change the `master_addr` to the IP of `node#0`.
-2. Since there is randomness during data partitioning, please ensure all nodes are using the same partitioned data when running `dist_train_sage_supervised.py`.
+1. Since there is randomness during data partitioning, please ensure all nodes are using the same partitioned data when running `dist_train_sage_supervised.py`.
 
 ### Using the `launch.py` Script
 
@@ -65,9 +65,10 @@ In distributed training (under the worker mode), each node in the cluster holds 
 Thus, before the training starts, we partition the `ogbn-products` dataset into multiple partitions, each of which corresponds to a specific training worker.
 
 The partitioning occurs in three steps:
-  1. Run the partition algorithm to assign nodes to partitions.
-  2. Construct the partitioned graph structure based on the node assignment.
-  3. Split the node features and edge features into partitions.
+
+1. Run the partition algorithm to assign nodes to partitions.
+1. Construct the partitioned graph structure based on the node assignment.
+1. Split the node features and edge features into partitions.
 
 GLT supports caching graph topology and frequently accessed features in GPU to accelerate GPU sampling and feature collection.
 For feature caching, we adopt a pre-sampling-based approach to determine the hotness of nodes, and cache features for nodes with higher hotness while loading the graph.

@@ -1,10 +1,13 @@
+import os
 import os.path as osp
 import ssl
 import sys
 import urllib
 from typing import Optional
 
-from torch_geometric.data.makedirs import makedirs
+import fsspec
+
+from torch_geometric.io import fs
 
 
 def download_url(
@@ -30,7 +33,7 @@ def download_url(
 
     path = osp.join(folder, filename)
 
-    if osp.exists(path):  # pragma: no cover
+    if fs.exists(path):  # pragma: no cover
         if log and 'pytest' not in sys.modules:
             print(f'Using existing file {filename}', file=sys.stderr)
         return path
@@ -38,12 +41,12 @@ def download_url(
     if log and 'pytest' not in sys.modules:
         print(f'Downloading {url}', file=sys.stderr)
 
-    makedirs(folder)
+    os.makedirs(folder, exist_ok=True)
 
     context = ssl._create_unverified_context()
     data = urllib.request.urlopen(url, context=context)
 
-    with open(path, 'wb') as f:
+    with fsspec.open(path, 'wb') as f:
         # workaround for https://bugs.python.org/issue42853
         while True:
             chunk = data.read(10 * 1024 * 1024)

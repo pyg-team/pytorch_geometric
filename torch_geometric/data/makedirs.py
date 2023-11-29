@@ -1,16 +1,17 @@
-import errno
-import os
-import os.path as osp
+from torch_geometric.deprecation import deprecated
+from torch_geometric.io import fs
 
 
+@deprecated("use 'os.makedirs(path, exist_ok=True)' instead")
 def makedirs(path: str):
     r"""Recursively creates a directory.
+
+    .. warning::
+
+        :meth:`makedirs` is deprecated and will be removed soon.
+        Please use :obj:`os.makedirs(path, exist_ok=True)` instead.
 
     Args:
         path (str): The path to create.
     """
-    try:
-        os.makedirs(osp.expanduser(osp.normpath(path)))
-    except OSError as e:
-        if e.errno != errno.EEXIST and osp.isdir(path):
-            raise e
+    fs.makedirs(path, exist_ok=True)

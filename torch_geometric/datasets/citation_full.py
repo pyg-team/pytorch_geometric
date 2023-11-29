@@ -27,6 +27,8 @@ class CitationFull(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
         to_undirected (bool, optional): Whether the original graph is
             converted to an undirected one. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -75,11 +77,13 @@ class CitationFull(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         to_undirected: bool = True,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         self.to_undirected = to_undirected
         assert self.name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
