@@ -44,10 +44,6 @@ class GNN(torch.nn.Module):
         x = self.conv3(x, edge_index).relu()
         x = F.dropout(x, p=0.3, training=self.training)
 
-        # We merge both central node embeddings and subgraph embeddings:
-
-        # x = torch.cat([x[root_n_id], global_mean_pool(x, batch)], dim=-1)
-
         x = self.lin(x)
         return x
 
