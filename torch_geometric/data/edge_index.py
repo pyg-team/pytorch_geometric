@@ -681,7 +681,7 @@ if torch_geometric.typing.WITH_PT112:
         return torch.sparse_csc_tensor(
             ccol_indices=tensor.get_colptr(),
             row_indices=tensor[0],
-            value=tensor.get_value() if value is None else value,
+            values=tensor.get_value() if value is None else value,
             size=tensor.get_sparse_size(),
             device=tensor.device,
         )
@@ -829,10 +829,9 @@ def matmul(
     else:
         input = to_sparse_csr(input, input_value)
 
-    if isinstance(other, EdgeIndex):
-        if other._sort_order == SortOrder.COL:
-            other = to_sparse_csc(other, other_value)
-        else:
-            other = to_sparse_csr(other, other_value)
+    if other._sort_order == SortOrder.COL:
+        other = to_sparse_csc(other, other_value)
+    else:
+        other = to_sparse_csr(other, other_value)
 
     return torch.matmul(input, other)
