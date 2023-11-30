@@ -722,10 +722,39 @@ else:
         return to_sparse_coo(tensor, value)
 
 
-ReduceType = Literal['sum']
+# Sparse-Dense Matrix Multiplication ##########################################
+
+ReduceType = Literal['sum', 'mean', 'min', 'max']
 
 
-class SparseDenseMatmul(torch.autograd.Function):
+def _torch_sparse_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    input_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+) -> Tensor:
+    pass
+
+
+def _scatter_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    input_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+) -> Tensor:
+    pass
+
+
+def _torch_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    input_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+) -> Tensor:
+    pass
+
+
+class _torch_advanced_spmm(torch.autograd.Function):
     @staticmethod
     def forward(
         ctx,
@@ -739,9 +768,6 @@ class SparseDenseMatmul(torch.autograd.Function):
             raise ValueError("Sparse-dense matrix multiplication requires "
                              "'EdgeIndex' to be sorted by rows")
 
-        if reduce not in ReduceType.__args__:
-            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
-
         if other.requires_grad:
             ctx.save_for_backward(input, input_value)
 
@@ -753,8 +779,18 @@ class SparseDenseMatmul(torch.autograd.Function):
             # If `torch-sparse` is available, it still provides a faster
             # sparse-dense matmul code path (after all these years...):
             rowptr, col = input.get_rowptr(), input[1]
-            return torch.ops.torch_sparse.spmm_sum(  #
-                None, rowptr, col, input_value, None, None, other)
+            if reduce == 'sum':
+                return torch.ops.torch_sparse.spmm_sum(  #
+                    None, rowptr, col, input_value, None, None, other)
+            elif reduce == 'mean':
+                return torch.ops.torch_sparse.spmm_mean(  #
+                    None, rowptr, col, input_value, None, None, None, other)
+            elif reduce == 'min':
+                return torch.ops.torch_sparse.spmm_min(  #
+                    rowptr, col, input_value, other)
+            elif reduce == 'max':
+                return torch.ops.torch_sparse.spmm_max(  #
+                    rowptr, col, input_value, other)
 
         input_value = input.get_value() if input_value is None else input_value
         adj = to_sparse_csr(input, input_value)
@@ -804,6 +840,22 @@ class SparseDenseMatmul(torch.autograd.Function):
                                       "not yet supported")
 
         return None, other_grad, None, None
+
+
+def _spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    input_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+) -> Tensor:
+
+    if input.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
+        return _torch_sparse_spmm(input, other, reduce)
+
+    elif input_value is not None and input_value.requires_grad:
+        pass
+    else:
+        pass
 
 
 @implements(torch.matmul)
