@@ -722,7 +722,7 @@ else:
         return to_sparse_coo(tensor, value)
 
 
-ReduceType = Literal['sum', 'mean', 'min', 'max']
+ReduceType = Literal['sum']
 
 
 class SparseDenseMatmul(torch.autograd.Function):
@@ -739,7 +739,7 @@ class SparseDenseMatmul(torch.autograd.Function):
             raise ValueError("Sparse-dense matrix multiplication requires "
                              "'EdgeIndex' to be sorted by rows")
 
-        if reduce != 'sum':
+        if reduce not in ReduceType.__args__:
             raise NotImplementedError("`reduce='{reduce}'` not yet supported")
 
         if other.requires_grad:
@@ -816,7 +816,7 @@ def matmul(
     reduce: ReduceType = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
-    assert reduce in ['sum']
+    assert reduce in ReduceType.__args__
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
