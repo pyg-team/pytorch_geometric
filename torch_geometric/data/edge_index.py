@@ -288,7 +288,7 @@ class EdgeIndex(Tensor):
 
         return self._colptr
 
-    def get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
+    def _get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
         if self._value is not None:
             if (dtype or torch.get_default_dtype()) == self._value.dtype:
                 return self._value
@@ -661,7 +661,7 @@ def to_dense(
 def to_sparse_coo(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
     out = torch.sparse_coo_tensor(
         indices=tensor.as_tensor(),
-        values=tensor.get_value() if value is None else value,
+        values=tensor._get_value() if value is None else value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -677,7 +677,7 @@ def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
     return torch.sparse_csr_tensor(
         crow_indices=tensor.get_rowptr(),
         col_indices=tensor[1],
-        values=tensor.get_value() if value is None else value,
+        values=tensor._get_value() if value is None else value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -693,7 +693,7 @@ if torch_geometric.typing.WITH_PT112:
         return torch.sparse_csc_tensor(
             ccol_indices=tensor.get_colptr(),
             row_indices=tensor[0],
-            values=tensor.get_value() if value is None else value,
+            values=tensor._get_value() if value is None else value,
             size=tensor.get_sparse_size(),
             device=tensor.device,
         )
@@ -765,7 +765,8 @@ class SparseDenseMatmul(torch.autograd.Function):
             return torch.ops.torch_sparse.spmm_sum(  #
                 None, rowptr, col, input_value, None, None, other)
 
-        input_value = input.get_value() if input_value is None else input_value
+        if input_value is None:
+            input_value = input._get_value()
         adj = to_sparse_csr(input, input_value)
 
         return adj @ other
@@ -796,7 +797,7 @@ class SparseDenseMatmul(torch.autograd.Function):
 
             else:
                 if input_value is None:
-                    input_value = input.get_value()
+                    input_value = input._get_value()
 
                 adj_t = torch.sparse_csr_tensor(
                     crow_indices=input.get_colptr(),
@@ -817,13 +818,12 @@ class SparseDenseMatmul(torch.autograd.Function):
 
 @implements(torch.matmul)
 @implements(Tensor.matmul)
-@implements(torch.sparse.mm)
 def matmul(
     input: EdgeIndex,
     other: Union[Tensor, EdgeIndex],
-    reduce: ReduceType = 'sum',
     input_value: Optional[Tensor] = None,
     other_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
     if reduce not in ReduceType.__args__:
@@ -845,4 +845,25 @@ def matmul(
     else:
         other = to_sparse_csr(other, other_value)
 
-    return torch.matmul(input, other)
+    out = torch.matmul(input, other)
+    assert out.layout == torch.sparse_csr
+
+    rowptr, col = out.crow_indices(), out.col_indices()
+    edge_index = torch._convert_indices_from_csr_to_coo(
+        rowptr, col, out_int32=rowptr.dtype != torch.int64)
+
+    edge_index = edge_index.as_subclass(EdgeIndex)
+    edge_index._sort_order = SortOrder.ROW
+    edge_index._sparse_size = (out.size(0), out.size(1))
+    edge_index._rowptr = rowptr
+
+    return edge_index, out.values()
+
+
+@implements(torch.sparse.mm)
+def _matmul(
+    mat1: EdgeIndex,
+    mat2: Union[Tensor, EdgeIndex],
+    reduce: ReduceType = 'sum',
+) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+    return matmul(mat1, mat2, reduce=reduce)

@@ -64,11 +64,11 @@ def test_clone():
 
     out = adj.clone()
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = torch.clone(adj)
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
 
 @withCUDA
@@ -175,7 +175,7 @@ def test_cat():
     assert out.size() == (2, 8)
     assert isinstance(out, EdgeIndex)
     assert out.sparse_size == (4, 4)
-    assert out.sort_order is None
+    assert not out.is_sorted
 
     out = torch.cat([adj1, adj2], dim=0)
     assert out.size() == (4, 4)
@@ -190,14 +190,14 @@ def test_flip():
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
     assert out.sparse_size == (3, 3)
-    assert out.sort_order == 'col'
+    assert out.is_sorted_by_col
     assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
 
     out = adj.flip([0, 1])
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
     assert out.sparse_size == (3, 3)
-    assert out.sort_order is None
+    assert not out.is_sorted
     assert out._colptr is None
 
 
@@ -219,7 +219,7 @@ def test_narrow():
     out = adj.narrow(dim=1, start=1, length=2)
     assert torch.equal(out, torch.tensor([[1, 1], [0, 2]]))
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj.narrow(dim=0, start=0, length=1)
     assert torch.equal(out, torch.tensor([[0, 1, 1, 2]]))
@@ -232,17 +232,17 @@ def test_getitem():
     out = adj[:, torch.tensor([False, True, False, True])]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj[..., torch.tensor([1, 3])]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order is None
+    assert not out.is_sorted
 
     out = adj[..., 1::2]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj[:, 0]
     assert not isinstance(out, EdgeIndex)
@@ -331,31 +331,40 @@ def test_to_sparse_csc():
 def test_matmul_forward():
     x = torch.randn(3, 1)
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj1_dense = adj1.to_dense()
     adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    adj2_dense = adj2.to_dense()
 
     out = adj1 @ x
-    assert torch.allclose(out, adj1.to_dense() @ x)
+    assert torch.allclose(out, adj1_dense @ x)
 
     out = adj1.matmul(x)
-    assert torch.allclose(out, adj1.to_dense() @ x)
+    assert torch.allclose(out, adj1_dense @ x)
 
     out = torch.matmul(adj1, x)
-    assert torch.allclose(out, adj1.to_dense() @ x)
+    assert torch.allclose(out, adj1_dense @ x)
 
     out = torch.sparse.mm(adj1, x, reduce='sum')
-    assert torch.allclose(out, adj1.to_dense() @ x)
+    assert torch.allclose(out, adj1_dense @ x)
 
-    out = adj1 @ adj1
-    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
+    out, value = adj1 @ adj1
+    assert isinstance(out, EdgeIndex)
+    assert out.is_sorted_by_row
+    assert out._sparse_size == (3, 3)
+    assert out._rowptr is not None
+    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj1_dense)
 
-    out = adj1 @ adj2
-    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj2.to_dense())
+    out, value = adj1 @ adj2
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj2_dense)
 
-    out = adj2 @ adj1
-    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj1.to_dense())
+    out, value = adj2 @ adj1
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj1_dense)
 
-    out = adj2 @ adj2
-    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj2.to_dense())
+    out, value = adj2 @ adj2
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj2_dense)
 
 
 def test_matmul_input_value():
