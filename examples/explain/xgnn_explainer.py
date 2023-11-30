@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, XGNNExplainer, XGNNGenerator
+from torch_geometric.explain import Explainer, XGNNExplainer, XGNNTrainer
 from torch_geometric.nn import GCNConv
 
 
@@ -77,7 +77,7 @@ class GraphGenerator(torch.nn.Module):
 
         return (start_node, end_node), graph_state
 
-class RLGenTrainer(XGNNGenerator):
+class RLGenTrainer(XGNNTrainer):
 
     def calculate_reward(graph_state, pre_trained_gnn):
         gnn_output = pre_trained_gnn(graph_state)
@@ -128,7 +128,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=XGNNExplainer(generative_model = XGNNGenerator(), epochs = 200),
+    algorithm=XGNNExplainer(generative_model = XGNNTrainer(), epochs = 200),
     explanation_type='model',
     node_mask_type=None,
     edge_mask_type=None,
