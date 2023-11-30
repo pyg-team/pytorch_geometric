@@ -16,7 +16,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
@@ -739,16 +739,22 @@ class SparseDenseMatmul(torch.autograd.Function):
             raise ValueError("Sparse-dense matrix multiplication requires "
                              "'EdgeIndex' to be sorted by rows")
 
-        ctx.save_for_backward(input, input_value)
+        if reduce != 'sum':
+            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
+
+        if other.requires_grad:
+            ctx.save_for_backward(input, input_value)
+
+        other = other.detach()
+        if input_value is not None:
+            input_value = input_value.detach()
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             # If `torch-sparse` is available, it still provides a faster
             # sparse-dense matmul code path (after all these years...):
-            adj = input.to_sparse_tensor(value=input_value)
-            return torch_sparse.matmul(adj, other)
-
-        if reduce != 'sum':
-            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
+            rowptr, col = input.get_rowptr(), input[1]
+            return torch.ops.torch_sparse.spmm_sum(  #
+                None, rowptr, col, input_value, None, None, other)
 
         input_value = input.get_value() if input_value is None else input_value
         adj = to_sparse_csr(input, input_value)
@@ -767,28 +773,35 @@ class SparseDenseMatmul(torch.autograd.Function):
 
             # We need to compute `adj.t() @ out_grad`. For the transpose, we
             # first sort by column and then create a CSR matrix from it.
+            # We can call `input.flip(0)` here and create a sparse CSR matrix
+            # from it, but creating it via `colptr` directly is more efficient:
             # Note that the sort result is cached across multiple applications.
             input, perm = input.sort_by(SortOrder.COL)
+            colptr, row = input.get_colptr(), input[0]
             if input_value is not None:
-                input_value = input_value[perm]
+                input_value = input_value.detach()[perm]
+
+            if torch_geometric.typing.WITH_TORCH_CLUSTER:
+                other_grad = torch.ops.torch_sparse.spmm_sum(  #
+                    None, colptr, row, input_value, None, None, out_grad)
+
             else:
-                input_value = input.get_value()
+                if input_value is None:
+                    input_value = input.get_value()
 
-            # We can call `input.flip(0)` here and call `to_sparse_csr`, but
-            # creating the sparse CSR matrix from `colptr` directly is a bit
-            # more efficient:
-            adj_t = torch.sparse_csr_tensor(
-                crow_indices=input.get_colptr(),
-                col_indices=input[0],
-                values=input_value,
-                size=input.get_sparse_size()[::-1],
-                device=input.device,
-            )
+                adj_t = torch.sparse_csr_tensor(
+                    crow_indices=input.get_colptr(),
+                    col_indices=input[0],
+                    values=input_value,
+                    size=input.get_sparse_size()[::-1],
+                    device=input.device,
+                )
 
-            other_grad = adj_t @ out_grad
+                other_grad = adj_t @ out_grad
 
         if ctx.needs_input_grad[2]:
-            raise NotImplementedError
+            raise NotImplementedError("Gradient computation for 'input_value' "
+                                      "not yet supported")
 
         return None, other_grad, None, None
 
