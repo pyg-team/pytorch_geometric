@@ -9,6 +9,7 @@ class ExplanationType(Enum):
     """Enum class for the explanation type."""
     model = 'model'
     phenomenon = 'phenomenon'
+    generative = 'generative'
 
 
 class MaskType(Enum):
