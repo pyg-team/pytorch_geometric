@@ -378,8 +378,8 @@ def apply_(
     out = out.as_subclass(EdgeIndex)
 
     # Copy metadata:
-    out._sparse_size = out.sparse_size
-    out._sort_order = out._sort_order
+    out._sparse_size = tensor.sparse_size
+    out._sort_order = tensor._sort_order
 
     # Convert cache:
     if tensor._rowptr is not None:
@@ -392,6 +392,12 @@ def apply_(
         out._csc2csr = fn(tensor._csc2csr, *args, **kwargs)
 
     return out
+
+
+@implements(torch.clone)
+@implements(Tensor.clone)
+def clone(tensor: EdgeIndex) -> EdgeIndex:
+    return apply_(tensor, Tensor.clone)
 
 
 @implements(Tensor.to)
@@ -690,6 +696,77 @@ else:
         return to_sparse_coo(tensor, value)
 
 
+ReduceType = Literal['sum']
+
+
+class SparseDenseMatmul(torch.autograd.Function):
+    @staticmethod
+    def forward(
+        ctx,
+        input: EdgeIndex,
+        other: Tensor,
+        input_value: Optional[Tensor] = None,
+        reduce: ReduceType = 'sum',
+    ) -> Tensor:
+
+        assert reduce in ['sum']
+
+        if other.requires_grad:
+            ctx.save_for_backward(input, input_value)
+
+        if input_value is None:
+            input_value = _get_value(
+                input.size(1),
+                dtype=other.dtype,
+                device=input.device,
+            )
+
+        adj = to_sparse_csr(input, input_value)  # Requires `sort_order="row"`.
+
+        return adj @ other
+
+    @staticmethod
+    def backward(
+        ctx,
+        out_grad: Tensor,
+    ) -> Tuple[None, Optional[Tensor], None, None]:
+
+        other_grad: Optional[Tensor] = None
+        if ctx.needs_input_grad[1]:
+            input, input_value = ctx.saved_tensors
+
+            # We need to compute adj.t() @ out_grad. To perform the transpose,
+            # we first sort by column and then create a CSR matrix from it.
+            # Note that the sort result is cached across multiple applications.
+            input, perm = input.sort_by(SortOrder.COL)
+            if input_value is not None:
+                input_value = input_value[perm]
+            else:
+                input_value = _get_value(
+                    input.size(1),
+                    dtype=out_grad.dtype,
+                    device=input.device,
+                )
+
+            # We can call `input.flip(0)` here and call `to_sparse_csr`, but
+            # creating the sparse CSR matrix from `colptr` directly is a bit
+            # more efficient:
+            adj_t = torch.sparse_csr_tensor(
+                crow_indices=input.get_colptr(),
+                col_indices=input[0],
+                values=input_value,
+                size=input.get_sparse_size()[::-1],
+                device=input.device,
+            )
+
+            other_grad = adj_t @ out_grad
+
+        if ctx.needs_input_grad[2]:
+            raise NotImplementedError
+
+        return None, other_grad, None, None
+
+
 @implements(torch.matmul)
 @implements(Tensor.matmul)
 def matmul(
@@ -697,12 +774,16 @@ def matmul(
     other: Union[Tensor, EdgeIndex],
     input_value: Optional[Tensor] = None,
     other_value: Optional[Tensor] = None,
-    reduce: Literal['sum'] = 'sum',
+    reduce: ReduceType = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
     assert reduce in ['sum']
 
-    # TODO Utilize available `CSC` representation for faster backward passes.
+    if not isinstance(other, EdgeIndex):
+        if other_value is not None:
+            raise ValueError("'other_value' not supported for sparse-dense "
+                             "matrix multiplication")
+        return SparseDenseMatmul.apply(input, other, input_value, reduce)
 
     if input._sort_order == SortOrder.COL:
         input = to_sparse_csc(input, input_value)
@@ -714,9 +795,5 @@ def matmul(
             other = to_sparse_csc(other, other_value)
         else:
             other = to_sparse_csr(other, other_value)
-
-    elif other_value is not None:
-        raise ValueError("'other_value' not supported for sparse-dense "
-                         "matrix multiplication")
 
     return torch.matmul(input, other)

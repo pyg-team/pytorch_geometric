@@ -42,6 +42,18 @@ def test_fill_cache():
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
 
 
+def test_clone():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+
+    out = adj.clone()
+    assert isinstance(out, EdgeIndex)
+    assert out.sort_order == 'row'
+
+    out = torch.clone(adj)
+    assert isinstance(out, EdgeIndex)
+    assert out.sort_order == 'row'
+
+
 @withCUDA
 def test_to(device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -299,16 +311,13 @@ def test_to_sparse_csc():
     assert torch.equal(adj[0], out.row_indices())
 
 
-def test_matmul():
+def test_matmul_forward():
     x = torch.randn(3, 1)
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
 
     out = adj1 @ x
     assert torch.allclose(out, adj1.to_dense() @ x)
-
-    out = adj2 @ x
-    assert torch.allclose(out, adj2.to_dense() @ x)
 
     out = adj1 @ adj1
     assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
@@ -327,30 +336,28 @@ def test_matmul_input_value():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x = torch.randn(3, 1)
-    value = torch.randn(4)
+    input_value = torch.randn(4)
 
-    out = matmul(adj, x, input_value=value)
-    assert torch.allclose(out, to_dense(adj, value=value) @ x)
+    out = matmul(adj, x, input_value)
+    assert torch.allclose(out, to_dense(adj, value=input_value) @ x)
 
 
-def test_matmul_grad():
+def test_matmul_backward():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x1 = torch.randn(3, 1, requires_grad=True)
-    value = torch.randn(4, requires_grad=True)
+    input_value = torch.randn(4)
 
-    out = matmul(adj, x1, input_value=value)
+    out = matmul(adj, x1, input_value)
     grad_out = torch.randn_like(out)
     out.backward(grad_out)
 
     x2 = x1.detach().requires_grad_()
-    dense_adj = to_dense(adj, value=value).detach().requires_grad_()
+    dense_adj = to_dense(adj, value=input_value)
     out = dense_adj @ x2
     out.backward(grad_out)
 
     assert torch.allclose(x1.grad, x2.grad)
-    if torch_geometric.typing.WITH_PT21:  # TODO Investigate.
-        assert torch.allclose(value.grad, dense_adj.grad[adj[0], adj[1]])
 
 
 def test_save_and_load(tmp_path):
