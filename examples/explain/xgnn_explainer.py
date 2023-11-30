@@ -116,6 +116,16 @@ model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
 model.load_state_dict(torch.load("best_model.pth"))
 model.to(device)  # Don't forget to move the model to the correct device
 
+def check_edge_representation(data):
+    # Convert edge indices to a set of tuples for easier comparison
+    edge_set = {tuple(edge) for edge in data.edge_index.t().tolist()}
+
+    for edge in edge_set:
+        reverse_edge = (edge[1], edge[0])
+        if reverse_edge not in edge_set:
+            return "Edges are represented as single, undirected edges"
+    return "Edges are represented with two directed edges, one in each direction"
+
 class GraphGenerator(torch.nn.Module):
     def __init__(self, num_node_features, num_output_features, num_candidate_node_types):
         super(GraphGenerator, self).__init__()
@@ -170,8 +180,43 @@ class GraphGenerator(torch.nn.Module):
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
         self.graph_generator = GraphGenerator()
+        self.candidate_set = torch.tensor([0])  # tensor of features of candidate nodes (node types)
+
     
-    def calculate_reward(graph_state, pre_trained_gnn, target_class, num_classes):
+    def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
+        final_rewards = []
+        for _ in range(num_rollouts):
+            # Generate a final graph from the intermediate graph state
+            final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
+            
+            # Evaluate the final graph
+            with torch.no_grad():
+                gnn_output = pre_trained_gnn(final_graph)
+                class_score = gnn_output[target_class]
+                reward = class_score - 1 / num_classes
+                final_rewards.append(reward)
+
+        # Average the rewards from all rollouts
+        average_final_reward = sum(final_rewards) / len(final_rewards)
+        return average_final_reward
+
+    def evaluate_graph_validity(self, graph_state):
+        # check if graph has duplicated edges
+        
+        edge_set = set()
+        
+        for edge in graph_state.edge_index:
+            sorted_edge = tuple(sorted(edge))
+            
+            if sorted_edge in edge_set:
+                return -1
+            
+            edge_set.add(sorted_edge)
+            
+        return 0
+        
+        
+    def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
         gnn_output = pre_trained_gnn(graph_state)
         class_score = gnn_output[target_class]
         intermediate_reward = class_score - 1 / num_classes
@@ -183,7 +228,6 @@ class RLGenExplainer(XGNNExplainer):
         # This needs to be defined based on the specific graph rules of your dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
 
-        # Combine the rewards
         lambda_1, lambda_2 = 1, 1  # Hyperparameters, can be tuned
         reward = intermediate_reward + lambda_1 * final_graph_reward + lambda_2 * graph_validity_score
         return reward
@@ -193,6 +237,9 @@ class RLGenExplainer(XGNNExplainer):
         optimizer = torch.optim.Adam(graph_generator.parameters(), lr=learning_rate)
         for epoch in range(num_epochs):
             total_loss = 0
+            
+            current_graph_state = initial_state # TODO: Define initial graph state
+            
             for step in range(max_steps):
 
                 action, new_graph_state = graph_generator(current_graph_state, candidate_set)
