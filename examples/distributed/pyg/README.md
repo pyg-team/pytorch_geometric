@@ -14,12 +14,11 @@ This example shows how to use [distributed PyG](https://github.com/pyg-team/pyto
 
 #### Requirements
 
-1) Password-less ssh needs to be set up on all the nodes that you are using.
-2) A network file system (NFS) is set up for all the nodes to access.
+1. Password-less ssh needs to be set up on all the nodes that you are using.
+1. A network file system (NFS) is set up for all the nodes to access.
 
 To perform distributed sampling, files and codes need to be accessed across multiple machines.
 A distributed file system (*i.e.*, [NFS](https://wiki.archlinux.org/index.php/NFS), [SSHFS](https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh), [Ceph](https://docs.ceph.com/en/latest/install), ...) is required to allow you for synchnonizing files such as partition information.
-
 
 ### Step 2: Prepare and partition the data
 
@@ -30,15 +29,12 @@ Here, we use `ogbn-products` and partition it into two partitions (in default) b
 ```bash
 python partition_graph.py --dataset=ogbn-products --root_dir=./data/products --num_partitions=2
 ```
+
 The generated partition will have the folder below.
 
 ![image](https://github.com/ZhengHongming888/pytorch_geometric/assets/33777424/1d375496-99d5-43f9-b1c3-ce345e2572c0)
 
-
 You can put/move the products partition folder into one public folder that each node can access this shared folder.
-
-
-
 
 ### Step 3: Run the example in each training node
 
@@ -61,11 +57,8 @@ python dist_train_sage_for_homo.py \
 **Notes:**
 
 1. You should change the `master_addr` to the IP of `node#0`.
-2. In default this example will use the num_workers = 2 for number of sampling workers and concurrency=2 for mp.queue. you can also add these argument to speed up the training like "--num_workers=8 --concurrency=8"
-3. All nodes need to use the same partitioned data when running `dist_train_sage_for_homo.py`.
-
-
-
+1. In default this example will use the num_workers = 2 for number of sampling workers and concurrency=2 for mp.queue. you can also add these argument to speed up the training like "--num_workers=8 --concurrency=8"
+1. All nodes need to use the same partitioned data when running `dist_train_sage_for_homo.py`.
 
 ## Distributed Sage for Ogbn-Mags (Hetero Multi-Node) Example
 
@@ -75,19 +68,17 @@ Same as Homo above.
 
 ### Step 2: Prepare and partition the data
 
-
 Here, we use `ogbn-products` and partition it into two partitions (in default) by the [partition example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_hetero_graph.py) :
 
 ```bash
 python partition_hetero_graph.py --dataset=ogbn-mag --root_dir=./data/mag --num_partitions=2
 ```
+
 The generated partition will have the folder below.
 
 ![image](https://github.com/ZhengHongming888/pytorch_geometric/assets/33777424/4d2e3212-d3e4-4f5a-bc91-38e92e32422e)
 
-
 You can put/move the products partition folder into one public folder that each node can access this shared folder.
-
 
 ### Step 3: Run the example in each training node
 
