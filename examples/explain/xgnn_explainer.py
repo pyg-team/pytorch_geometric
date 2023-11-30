@@ -50,17 +50,29 @@ class GraphGenerator(torch.nn.Module):
         )
 
     def forward(self, graph_state, candidate_set):
-        node_features = graph_state.x
+        # contatenate graph_state features with candidate_set features
+        node_features_graph = graph_state.x
+        node_features = torch.cat((node_features, candidate_set), dim=0)
+
+        # run through gcn layers
         for gcn_layer in self.gcn_layers:
             node_features = gcn_layer(node_features, graph_state.edge_index)
         
-
+        # get start node probabilities and mask out candidates
         start_node_probs = self.mlp_start_node(node_features)
+        candidate_set_mask = torch.ones_like(start_node_probs)
+        candidate_set_mask[candidate_set] = 0
+        start_node_probs = start_node_probs * candidate_set_mask
+
+        # sample start node
         start_node = torch.distributions.Categorical(start_node_probs).sample()
 
+        # get end node probabilities and mask out start node
         combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
         end_node_probs = self.mlp_end_node(combined_features)
+        end_node_probs[start_node] = 0
 
+        # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
 
         return (start_node, end_node), graph_state
