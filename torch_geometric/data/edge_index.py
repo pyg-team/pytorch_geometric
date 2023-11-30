@@ -851,6 +851,7 @@ def matmul(
     rowptr, col = out.crow_indices(), out.col_indices()
     edge_index = torch._convert_indices_from_csr_to_coo(
         rowptr, col, out_int32=rowptr.dtype != torch.int64)
+    edge_index = edge_index.to(rowptr.device)
 
     edge_index = edge_index.as_subclass(EdgeIndex)
     edge_index._sort_order = SortOrder.ROW
