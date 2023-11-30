@@ -1,5 +1,6 @@
 import atexit
 import socket
+from typing import Optional
 
 import pytest
 import torch
@@ -15,10 +16,9 @@ from torch_geometric.distributed.rpc import init_rpc
 from torch_geometric.sampler import EdgeSamplerInput, NeighborSampler
 from torch_geometric.sampler.neighbor_sampler import edge_sample
 from torch_geometric.testing import onlyLinux, withPackage
-from torch_geometric.typing import WITH_EDGE_TIME_NEIGHBOR_SAMPLE
 
 
-def create_data(rank, world_size, time_attr: str = 'time'):
+def create_data(rank, world_size, time_attr: Optional[str] = None):
     if rank == 0:  # Partition 0:
         node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
         edge_index = torch.tensor([  # Sorted by destination.
@@ -51,17 +51,18 @@ def create_data(rank, world_size, time_attr: str = 'time'):
     ])
     data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
-    if time_attr == 'time':  # Create time data:
+    if time_attr == 'time':  # Create node-level time data:
         data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
         feature_store.put_tensor(data.time, group_name=None, attr_name='time')
 
-    else:  # time_attr = 'edge_time'
+    elif time_attr == 'edge_time':  # Create edge-level time data:
         data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
 
         if rank == 0:
             edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 11])
         if rank == 1:
             edge_time = torch.tensor([4, 7, 7, 7, 7, 7, 11])
+
         feature_store.put_tensor(edge_time, group_name=None,
                                  attr_name=time_attr)
 
@@ -321,18 +322,13 @@ def test_dist_link_neighbor_sampler_temporal(seed_time, temporal_strategy):
 
 @onlyLinux
 @withPackage('pyg_lib')
-@pytest.mark.skipif(
-    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
-    reason="Edge-level temporal sampling requires a more recent 'pyg-lib'"
-    " installation")
-@pytest.mark.parametrize(
-    'seed_time',
-    [torch.tensor([1, 1]), torch.tensor([3, 7])])
+@pytest.mark.parametrize('seed_time', [[1, 1], [3, 7]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
-@pytest.mark.skip(
-    reason="Distributed edge based temporal sampling not yet implemented.")
 def test_dist_neighbor_sampler_edge_level_temporal(seed_time,
                                                    temporal_strategy):
+
+    seed_time = torch.tensor(seed_time)
+
     mp_context = torch.multiprocessing.get_context('spawn')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(('127.0.0.1', 0))
