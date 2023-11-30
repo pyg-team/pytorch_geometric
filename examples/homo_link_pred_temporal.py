@@ -1,4 +1,5 @@
 import argparse
+import copy
 import os.path as osp
 import time
 
@@ -7,7 +8,6 @@ import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from torch.nn import Linear
 from tqdm import tqdm
-import copy
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -51,11 +51,11 @@ for edge_name in edge_names:
         if len(data[edge_name][attr].size()) == 1:
             data[edge_name][attr] = data[edge_name][attr][perm]
         else:
-            data[edge_name][attr] = data[edge_name][attr][:,perm]
+            data[edge_name][attr] = data[edge_name][attr][:, perm]
 num_edges = len(data[edge_names[0]].time)
 
-splits = [int(i*num_edges) for i in split_ratio]
-splits[2] += num_edges-sum(splits)
+splits = [int(i * num_edges) for i in split_ratio]
+splits[2] += num_edges - sum(splits)
 train_data = copy.deepcopy(data)
 val_data = copy.deepcopy(data)
 test_data = copy.deepcopy(data)
@@ -72,21 +72,24 @@ train_data = train_data.to_homogeneous()
 val_data = val_data.to_homogeneous()
 test_data = test_data.to_homogeneous()
 
-train_dataloader = LinkNeighborLoader(
-    data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=train_data.edge_index,
-    edge_label_time=train_data.time, batch_size=2048, shuffle=True,
-    time_attr='time')
-val_dataloader = LinkNeighborLoader(
-    data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=val_data.edge_index,
-    edge_label_time=val_data.time, batch_size=4096, shuffle=True,
-    time_attr='time')
-test_dataloader = LinkNeighborLoader(
-    data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=test_data.edge_index,
-    edge_label_time=test_data.time, batch_size=4096, shuffle=True,
-    time_attr='time')
+train_dataloader = LinkNeighborLoader(data=train_data, num_neighbors=[5, 5, 5],
+                                      neg_sampling_ratio=1,
+                                      edge_label_index=train_data.edge_index,
+                                      edge_label_time=train_data.time,
+                                      batch_size=2048, shuffle=True,
+                                      time_attr='time')
+val_dataloader = LinkNeighborLoader(data=val_data, num_neighbors=[5, 5, 5],
+                                    neg_sampling_ratio=1,
+                                    edge_label_index=val_data.edge_index,
+                                    edge_label_time=val_data.time,
+                                    batch_size=4096, shuffle=True,
+                                    time_attr='time')
+test_dataloader = LinkNeighborLoader(data=test_data, num_neighbors=[5, 5, 5],
+                                     neg_sampling_ratio=1,
+                                     edge_label_index=test_data.edge_index,
+                                     edge_label_time=test_data.time,
+                                     batch_size=4096, shuffle=True,
+                                     time_attr='time')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:
@@ -142,6 +145,7 @@ class Model(torch.nn.Module):
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
+
 def train(train_dl, val_dl):
     model.train()
     pbar = tqdm(train_dl, desc='Train')
@@ -181,6 +185,7 @@ def test(dl, desc='val'):
     if args.profile_code is True:
         print(f'{desc} time = {val_time}')
     return float(rmse)
+
 
 EPOCHS = 10
 for epoch in range(0, EPOCHS):
