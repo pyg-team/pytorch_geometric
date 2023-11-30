@@ -44,14 +44,13 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Environment
+      label: Versions
       description: |
-        Please provide as much information as possible about your environment, such as your PyG (`print(torch_geometric.__version__)`) and PyTorch version (`print(torch.__version__)`), your OS (*e.g.*, Linux), and your Python version (*e.g.*, `3.9`):
-      value: |
-        * PyG version:
-        * PyTorch version:
-        * OS:
-        * Python version:
-        * CUDA/cuDNN version:
-        * How you installed PyTorch and PyG (`conda`, `pip`, source):
-        * Any other relevant information (*e.g.*, version of `torch-scatter`):
+        Please run the following and paste the output below.
+        ```sh
+        curl -OL https://raw.githubusercontent.com/pytorch/pytorch/main/torch/utils/collect_env.py
+        # For security purposes, please check the contents of collect_env.py before running it.
+        python3 collect_env.py
+        ```
+    validations:
+      required: true
