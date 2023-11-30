@@ -9,6 +9,7 @@ from torch_geometric.typing import pyg_lib
 def index_sort(
     inputs: torch.Tensor,
     max_value: Optional[int] = None,
+    stable: bool = False,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     r"""Sorts the elements of the :obj:`inputs` tensor in ascending order.
     It is expected that :obj:`inputs` is one-dimensional and that it only
@@ -21,7 +22,10 @@ def index_sort(
             :obj:`inputs`. This value can be an estimation, but needs to be
             greater than or equal to the real maximum.
             (default: :obj:`None`)
+        stable (bool, optional): Makes the sorting routine stable, which
+            guarantees that the order of equivalent elements is preserved.
+            (default: :obj:`False`)
     """
-    if not torch_geometric.typing.WITH_INDEX_SORT:  # pragma: no cover
-        return inputs.sort()
+    if stable or not torch_geometric.typing.WITH_INDEX_SORT:
+        return inputs.sort(stable=stable)
     return pyg_lib.ops.index_sort(inputs, max_value=max_value)
