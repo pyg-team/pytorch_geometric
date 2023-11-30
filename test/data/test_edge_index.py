@@ -344,7 +344,12 @@ def test_matmul_forward():
     out = torch.matmul(adj1, x)
     assert torch.allclose(out, adj1_dense @ x)
 
-    out = torch.sparse.mm(adj1, x, reduce='sum')
+    if torch_geometric.typing.WITH_PT20:
+        out = torch.sparse.mm(adj1, x, reduce='sum')
+    else:
+        with pytest.raises(TypeError, match="got an unexpected keyword"):
+            torch.sparse.mm(adj1, x, reduce='sum')
+        out = torch.sparse.mm(adj1, x)
     assert torch.allclose(out, adj1_dense @ x)
 
     out, value = adj1 @ adj1
