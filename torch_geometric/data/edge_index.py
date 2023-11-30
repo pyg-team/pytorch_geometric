@@ -816,7 +816,8 @@ def matmul(
     reduce: ReduceType = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
-    assert reduce in ReduceType.__args__
+    if reduce not in ReduceType.__args__:
+        raise NotImplementedError("`reduce='{reduce}'` not yet supported")
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
