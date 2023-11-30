@@ -44,9 +44,9 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                       num_training_procs_per_node: int, dataset_name: str,
                       root_dir: str, node_label_file: str, in_channels: int,
                       out_channels: int, train_idx: torch.Tensor,
-                      test_idx: torch.Tensor, epochs: int, num_neighbors: str, batch_size: int,
-                      num_workers: int, concurrency: int, master_addr: str,
-                      training_pg_master_port: int,
+                      test_idx: torch.Tensor, epochs: int, num_neighbors: str,
+                      batch_size: int, num_workers: int, concurrency: int,
+                      master_addr: str, training_pg_master_port: int,
                       train_loader_master_port: int,
                       test_loader_master_port: int):
 
@@ -81,7 +81,9 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     feature.feature_pb = node_pb
     feature.meta = meta
 
-    print(f"-------- meta={meta}, partition_idx={partition_idx}, node_pb={node_pb} ")
+    print(
+        f"-------- meta={meta}, partition_idx={partition_idx}, node_pb={node_pb} "
+    )
 
     # load the label file and put into graph as labels
     if node_label_file is not None:
@@ -166,8 +168,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 pbar.set_description(f'Epoch {epoch:02d}')
             batch_time_start = time.time()
             optimizer.zero_grad()
-            out = model(batch.x, batch.edge_index)[: batch.batch_size] 
-            loss = F.cross_entropy(out, batch.y[: batch.batch_size])
+            out = model(batch.x, batch.edge_index)[:batch.batch_size]
+            loss = F.cross_entropy(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
             batch_time = time.time() - batch_time_start
@@ -357,8 +359,8 @@ if __name__ == '__main__':
         run_training_proc,
         args=(args.num_nodes, args.node_rank, args.num_training_procs,
               args.dataset, root_dir, node_label_file, args.in_channel,
-              args.out_channel, train_idx, test_idx, args.epochs, args.num_neighbors, 
-              args.batch_size, args.num_workers, args.concurrency,
-              args.master_addr, args.training_pg_master_port,
+              args.out_channel, train_idx, test_idx, args.epochs,
+              args.num_neighbors, args.batch_size, args.num_workers,
+              args.concurrency, args.master_addr, args.training_pg_master_port,
               args.train_loader_master_port, args.test_loader_master_port),
         nprocs=args.num_training_procs, join=True)
