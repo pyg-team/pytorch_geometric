@@ -26,7 +26,11 @@ def test_basic():
     assert str(adj) == ('EdgeIndex([[0, 1, 1, 2],\n'
                         '           [1, 0, 2, 1]])')
     assert adj.sparse_size == (3, 3)
+
     assert adj.sort_order is None
+    assert not adj.is_sorted
+    assert not adj.is_sorted_by_row
+    assert not adj.is_sorted_by_col
 
     assert not isinstance(adj.as_tensor(), EdgeIndex)
 
@@ -39,10 +43,20 @@ def test_fill_cache_():
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
 
+    assert adj.sort_order == 'row'
+    assert adj.is_sorted
+    assert adj.is_sorted_by_row
+    assert not adj.is_sorted_by_col
+
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
     adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
+
+    assert adj.sort_order == 'col'
+    assert adj.is_sorted
+    assert not adj.is_sorted_by_row
+    assert adj.is_sorted_by_col
 
 
 def test_clone():
@@ -322,6 +336,15 @@ def test_matmul_forward():
     out = adj1 @ x
     assert torch.allclose(out, adj1.to_dense() @ x)
 
+    out = adj1.matmul(x)
+    assert torch.allclose(out, adj1.to_dense() @ x)
+
+    out = torch.matmul(adj1, x)
+    assert torch.allclose(out, adj1.to_dense() @ x)
+
+    out = torch.sparse.mm(adj1, x, reduce='sum')
+    assert torch.allclose(out, adj1.to_dense() @ x)
+
     out = adj1 @ adj1
     assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
 
@@ -339,24 +362,24 @@ def test_matmul_input_value():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x = torch.randn(3, 1)
-    input_value = torch.randn(4)
+    value = torch.randn(4)
 
-    out = matmul(adj, x, input_value)
-    assert torch.allclose(out, to_dense(adj, value=input_value) @ x)
+    out = matmul(adj, x, input_value=value)
+    assert torch.allclose(out, to_dense(adj, value=value) @ x)
 
 
 def test_matmul_backward():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x1 = torch.randn(3, 1, requires_grad=True)
-    input_value = torch.randn(4)
+    value = torch.randn(4)
 
-    out = matmul(adj, x1, input_value)
+    out = matmul(adj, x1, input_value=value)
     grad_out = torch.randn_like(out)
     out.backward(grad_out)
 
     x2 = x1.detach().requires_grad_()
-    dense_adj = to_dense(adj, value=input_value)
+    dense_adj = to_dense(adj, value=value)
     out = dense_adj @ x2
     out.backward(grad_out)
 
