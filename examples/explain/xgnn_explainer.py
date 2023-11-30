@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, XGNNExplainer, XGNNTrainer
+from torch_geometric.explain import Explainer, XGNNExplainer
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
@@ -15,7 +16,7 @@ import random
 # dataset = Planetoid(path, dataset)
 # data = dataset[0]
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cpu'#'cuda' if torch.cuda.is_available() else 'cpu'
 print('Device: {}'.format(device))
 
 class GCN(torch.nn.Module):
@@ -113,7 +114,7 @@ args = {
 
 model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
                   output_dim=1, dropout=args['dropout'])
-model.load_state_dict(torch.load("best_model.pth"))
+model.load_state_dict(torch.load("examples\\explain\\best_model.pth"))
 model.to(device)  # Don't forget to move the model to the correct device
 
 def check_edge_representation(data):
@@ -179,9 +180,13 @@ class GraphGenerator(torch.nn.Module):
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
+        super(RLGenExplainer, self).__init__()
         self.graph_generator = GraphGenerator()
         self.candidate_set = torch.tensor([0])  # tensor of features of candidate nodes (node types)
-
+        self.max_steps = 10
+        self.lambda_1 = 1
+        self.lambda_2 = 1
+        self.num_classes = 2
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
         final_rewards = []
@@ -228,22 +233,29 @@ class RLGenExplainer(XGNNExplainer):
         # This needs to be defined based on the specific graph rules of your dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
 
-        lambda_1, lambda_2 = 1, 1  # Hyperparameters, can be tuned
-        reward = intermediate_reward + lambda_1 * final_graph_reward + lambda_2 * graph_validity_score
+        reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
         return reward
 
     # Training function
-    def train_generative_model(model_to_explain, for_class, num_epochs, learning_rate):
-        optimizer = torch.optim.Adam(graph_generator.parameters(), lr=learning_rate)
+    def train_generative_model(self, model_to_explain, for_class, num_epochs, learning_rate):
+        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr=learning_rate)
         for epoch in range(num_epochs):
             total_loss = 0
             
-            current_graph_state = initial_state # TODO: Define initial graph state
+            # sample from candidate set and create initial graph state
+            n = 1 
+            perm = torch.randperm(self.candidate_set.size(0))
+            sampled_indices = perm[:n]
+            x = self.candidate_set[sampled_indices]
+            edge_index = torch.tensor([[], []], dtype=torch.long)
+            initial_state = Data(x=x, edge_index=edge_index)
             
-            for step in range(max_steps):
-
-                action, new_graph_state = graph_generator(current_graph_state, candidate_set)
-                reward = calculate_reward(new_graph_state, pre_trained_gnn, target_class, num_classes)
+            current_graph_state = initial_state
+            
+            for step in range(self.max_steps):
+                action, new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
+                print(action)
+                reward = self.calculate_reward(new_graph_state, pre_trained_gnn, for_class, self.num_classes)
                 
                 start_node_log_prob = torch.log(action[0].probs[action[0].sample().item()])
                 end_node_log_prob = torch.log(action[1].probs[action[1].sample().item()])
@@ -251,11 +263,11 @@ class RLGenExplainer(XGNNExplainer):
                 
                 loss = -reward * log_probs
                 total_loss += loss.item()
-
+                
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-
+                
                 if reward < 0:
                     current_graph_state = previous_graph_state
             print(f"Epoch {epoch} completed, Total Loss: {total_loss}")
