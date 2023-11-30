@@ -82,7 +82,7 @@ You can put/move the products partition folder into one public folder that each 
 
 ### Step 3: Run the example in each training node
 
-For example, running the example in two nodes each with two GPUs:
+For example, running the example in two nodes each with one cpu:
 
 ```bash
 # Node 0:
