@@ -167,10 +167,8 @@ class GraphGenerator(torch.nn.Module):
 
         return (start_node, end_node), graph_state
 
-class RLGenExplainer(XGNNExplainer):
-    def __init__(self):
-        self.graph_generator = GraphGenerator()
-    
+class RLGenTrainer(XGNNTrainer):
+
     def calculate_reward(graph_state, pre_trained_gnn, target_class, num_classes):
         gnn_output = pre_trained_gnn(graph_state)
         class_score = gnn_output[target_class]
