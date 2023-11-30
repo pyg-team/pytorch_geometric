@@ -14,7 +14,7 @@ from torch_geometric.explain.config import MaskType
 from torch_geometric.testing import withPackage
 
 
-from torch_geometric.explain import XGNNExplainer, XGNNGenerator, Explainer
+from torch_geometric.explain import XGNNExplainer, XGNNTrainer, Explainer
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
@@ -40,7 +40,7 @@ class GCN(torch.nn.Module):
         x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
     
-class RLGraphGen(XGNNGenerator):
+class RLGraphGen(XGNNTrainer):
     def __init__(self):
         super().__init__()
     def train(self, model):
@@ -63,7 +63,7 @@ for epoch in range(1, 21):
 
 explainer = Explainer(
     model=model,
-    algorithm=XGNNExplainer(generative_model = XGNNGenerator(), epochs = 200),
+    algorithm=XGNNExplainer(generative_model = XGNNTrainer(), epochs = 200),
     explanation_type='model',
     node_mask_type=None,
     edge_mask_type=None,
