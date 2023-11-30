@@ -1,4 +1,5 @@
 import os.path as osp
+import warnings
 from typing import Optional
 
 import pytest
@@ -7,6 +8,7 @@ from torch import Tensor
 
 import torch_geometric
 from torch_geometric.data.edge_index import EdgeIndex, matmul, to_dense
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
     onlyCUDA,
@@ -30,14 +32,14 @@ def test_basic():
     assert not isinstance(adj + 1, EdgeIndex)
 
 
-def test_fill_cache():
+def test_fill_cache_():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.validate().fill_cache()
+    adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
-    adj.validate().fill_cache()
+    adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
 
@@ -86,7 +88,7 @@ def test_cpu_cuda():
 
 def test_share_memory():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
+    adj.fill_cache_()
 
     adj = adj.share_memory_()
     assert isinstance(adj, EdgeIndex)
@@ -123,7 +125,7 @@ def test_sort_by():
     assert torch.equal(out.indices, torch.tensor([0, 1, 3, 2]))
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
+    adj.fill_cache_()
 
     out = adj.sort_by('col')
     assert torch.equal(out.values, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
@@ -167,7 +169,7 @@ def test_cat():
 
 def test_flip():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
+    adj.fill_cache_()
 
     out = adj.flip(0)
     assert isinstance(out, EdgeIndex)
@@ -362,7 +364,7 @@ def test_matmul_backward():
 
 def test_save_and_load(tmp_path):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
+    adj.fill_cache_()
 
     assert adj.sort_order == 'row'
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
@@ -380,7 +382,7 @@ def test_save_and_load(tmp_path):
 @pytest.mark.parametrize('num_workers', [0, 2])
 def test_data_loader(num_workers):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj.fill_cache()
+    adj.fill_cache_()
 
     loader = torch.utils.data.DataLoader(
         [adj] * 4,
@@ -466,3 +468,58 @@ def test_compile():
     compiled_model = torch_geometric.compile(model)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    from torch_sparse import SparseTensor
+
+    warnings.filterwarnings('ignore', ".*Sparse CSR tensor support.*")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
+    args = parser.parse_args()
+
+    channels = 128
+    num_nodes = 20_000
+    num_edges = 200_000
+
+    x = torch.randn(num_nodes, channels, device=args.device)
+    edge_index = EdgeIndex(
+        torch.randint(0, num_nodes, size=(2, num_edges), device=args.device),
+        sparse_size=(num_nodes, num_nodes),
+    ).sort_by('row')[0]
+    edge_index.fill_cache_()
+    adj1 = edge_index.to_sparse_csr()
+    adj2 = SparseTensor(
+        row=edge_index[0],
+        col=edge_index[1],
+        sparse_sizes=(num_nodes, num_nodes),
+    )
+
+    def edge_index_mm(edge_index, x):
+        return edge_index @ x
+
+    def torch_sparse_mm(adj, x):
+        return adj @ x
+
+    def sparse_tensor_mm(adj, x):
+        return adj @ x
+
+    def scatter_mm(edge_index, x):
+        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0))
+
+    funcs = [edge_index_mm, torch_sparse_mm, sparse_tensor_mm, scatter_mm]
+    func_names = ['edge_index', 'torch.sparse', 'SparseTensor', 'scatter']
+    func_args = [(edge_index, x), (adj1, x), (adj2, x), (edge_index, x)]
+
+    benchmark(
+        funcs=funcs,
+        func_names=func_names,
+        args=func_args,
+        num_steps=100 if args.device == 'cpu' else 1000,
+        num_warmups=50 if args.device == 'cpu' else 500,
+        backward=args.backward,
+    )
