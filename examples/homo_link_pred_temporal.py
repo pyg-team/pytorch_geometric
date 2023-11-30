@@ -5,7 +5,6 @@ import time
 
 import torch
 import torch.nn.functional as F
-from sklearn.model_selection import train_test_split
 from torch.nn import Linear
 from tqdm import tqdm
 
@@ -41,7 +40,7 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-# Perform a temporal link-level split into training, validation, and test edges:
+# Perform a temporal link-level split into train, val, and test edges:
 split_ratio = [0.8, 0.1, 0.1]
 
 _, perm = torch.sort(data[('user', 'rates', 'movie')].time)
