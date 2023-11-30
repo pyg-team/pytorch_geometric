@@ -5,26 +5,116 @@ import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, XGNNExplainer, XGNNTrainer
 from torch_geometric.nn import GCNConv
+from torch.nn import BatchNorm1d
+from torch_geometric.nn import global_mean_pool
 
+import random
+# # TODO: Get our acyclic dataset
+# dataset = 'Cora'
+# path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+# dataset = Planetoid(path, dataset)
+# data = dataset[0]
 
-# TODO: Get our acyclic dataset
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-dataset = Planetoid(path, dataset)
-data = dataset[0]
-
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print('Device: {}'.format(device))
 
 class GCN(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = GCNConv(dataset.num_features, 16)
-        self.conv2 = GCNConv(16, dataset.num_classes)
+    def __init__(self, input_dim, gcn_output_dims, dropout, return_embeds=False):
+        super(GCN, self).__init__()
 
-    def forward(self, x, edge_index):
-        x = F.relu(self.conv1(x, edge_index))
-        x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index)
-        return F.log_softmax(x, dim=1)
+        # A list of GCNConv layers
+        self.convs = None
+
+        # A list of 1D batch normalization layers
+        self.bns = None
+
+        # The log softmax layer
+        self.softmax = None
+
+        self.convs = torch.nn.ModuleList([GCNConv(in_channels=input_dim, out_channels=gcn_output_dims[0])])
+        self.convs.extend([GCNConv(in_channels=gcn_output_dims[i + 0], out_channels=gcn_output_dims[i + 1]) for i in range(len(gcn_output_dims) - 1)])
+
+        self.bns = torch.nn.ModuleList([BatchNorm1d(num_features=gcn_output_dims[l]) for l in range(len(gcn_output_dims) - 1)])
+        
+        self.softmax = torch.nn.LogSoftmax()
+
+        # Probability of an element getting zeroed
+        self.dropout = dropout
+
+        # Skip classification layer and return node embeddings
+        self.return_embeds = return_embeds
+
+    def reset_parameters(self):
+        for conv in self.convs:
+            conv.reset_parameters()
+        for bn in self.bns:
+            bn.reset_parameters()
+
+    def forward(self, x, adj_t):
+        out = None
+
+        for i in range(len(self.convs)-1):
+          x = F.relu(self.bns[i](self.convs[i](x, adj_t)))
+          if self.training:
+            x = F.dropout(x, p=self.dropout)
+        x = self.convs[-1](x, adj_t)
+        if self.return_embeds:
+          out = x
+        else:
+          out = self.softmax(x)
+
+        return out
+
+### GCN to predict graph property
+class GCN_Graph(torch.nn.Module):
+    def __init__(self, input_dim, gcn_output_dims, output_dim, dropout):
+        super(GCN_Graph, self).__init__()
+
+        # self.node_encoder = AtomEncoder(hidden_dim)
+        
+        self.gnn_node = GCN(input_dim, gcn_output_dims, dropout, return_embeds=True)
+
+        self.pool = global_mean_pool # global averaging to obtain graph representation
+
+        # Output layer
+        self.linear = torch.nn.Linear(gcn_output_dims[-1], output_dim) # One fully connected layer as a classifier
+
+
+    def reset_parameters(self):
+      self.gnn_node.reset_parameters()
+      self.linear.reset_parameters()
+
+    def forward(self, batched_data):
+        # Extract important attributes of our mini-batch
+        x, edge_index, batch = batched_data.x, batched_data.edge_index, batched_data.batch
+        
+        device = edge_index.device
+        degrees = torch.sum(edge_index[0] == torch.arange(edge_index.max() + 1, device=device)[:, None], dim=1, dtype=torch.float)
+        x = degrees.unsqueeze(1)  # Add feature dimension
+        embed = x.to(device)  # Ensure the embedding tensor is on the correct device
+
+        out = None
+
+        node_embeddings = self.gnn_node(embed, edge_index)
+        agg_features = self.pool(node_embeddings, batch)
+        out = self.linear(agg_features)
+
+        return out
+    
+args = {
+    'device': device,
+    'input_dim' : 1,
+    'gcn_output_dim' : [8, 16],
+    'dropout': 0.5,
+    'lr': 0.001,
+    'weight_decay' : 0.00001,
+    'epochs': 30,
+}
+
+model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
+                  output_dim=1, dropout=args['dropout'])
+model.load_state_dict(torch.load("best_model.pth"))
+model.to(device)  # Don't forget to move the model to the correct device
 
 class GraphGenerator(torch.nn.Module):
     def __init__(self, num_node_features, num_output_features, num_candidate_node_types):
