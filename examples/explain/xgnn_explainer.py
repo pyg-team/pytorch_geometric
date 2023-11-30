@@ -167,8 +167,10 @@ class GraphGenerator(torch.nn.Module):
 
         return (start_node, end_node), graph_state
 
-class RLGenTrainer(XGNNTrainer):
-
+class RLGenExplainer(XGNNExplainer):
+    def __init__(self):
+        self.graph_generator = GraphGenerator()
+    
     def calculate_reward(graph_state, pre_trained_gnn, target_class, num_classes):
         gnn_output = pre_trained_gnn(graph_state)
         class_score = gnn_output[target_class]
@@ -187,7 +189,7 @@ class RLGenTrainer(XGNNTrainer):
         return reward
 
     # Training function
-    def train(graph_generator, pre_trained_gnn, num_epochs, learning_rate):
+    def train_generative_model(model_to_explain, for_class, num_epochs, learning_rate):
         optimizer = torch.optim.Adam(graph_generator.parameters(), lr=learning_rate)
         for epoch in range(num_epochs):
             total_loss = 0
@@ -218,15 +220,15 @@ data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 explainer = Explainer(
-    model=model,
-    algorithm=XGNNExplainer(generative_model = XGNNTrainer(target_class), epochs = 200),
-    explanation_type='model',
-    node_mask_type=None,
-    edge_mask_type=None,
-    model_config=dict(
-        mode='multiclass_classification',
-        task_level='node',
-        return_type='log_probs',
+    model = model,
+    algorithm = RLGenExplainer(),
+    explanation_type = 'model',
+    node_mask_type = None,
+    edge_mask_type = None,
+    model_config = dict(
+        mode = 'multiclass_classification',
+        task_level = 'node',
+        return_type = 'log_probs',
     ),
 )
 

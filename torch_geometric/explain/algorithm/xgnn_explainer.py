@@ -10,36 +10,6 @@ from torch_geometric.explain import ExplainerConfig, GenerativeExplanation, Mode
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
-
-class XGNNTrainer(torch.nn.Module):
-    """
-    An abstract base class for training generative model.
-
-    Args:
-        None
-    """
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        pass
-    def train(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
-        """
-        Trains the generative model.
-
-        Args:
-            model: predicitve model used to train the generative model
-            for_class: the class to train the generative model for
-            epochs (int, optional): The number of epochs to train.
-                (default: :obj:`100`)
-            learning_rate: lr (float, optional): The learning rate to apply.
-                (default: :obj:`0.01`)
-
-        Returns:
-            None
-        """
-
-        # TODO: throw errors, this is a base class
-        print("debug: xgnn train")
-        pass
     
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
@@ -62,14 +32,6 @@ class XGNNExplainer(ExplainerAlgorithm):
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
     """
     
-    def __init__(self, generative_model : XGNNTrainer, epochs: int = 100, lr: float = 0.01, **kwargs):
-        super().__init__()
-        self.generative_model = generative_model
-        self.epochs = epochs
-        self.lr = lr
-        print("debug: xgnn init (file: xgnn_explainer.py)")
-
-
     def forward(
         self,
         model: torch.nn.Module,
@@ -89,13 +51,34 @@ class XGNNExplainer(ExplainerAlgorithm):
         
         generative_models = dict()
         for t in torch.unique(target):
-            generative_models[t] = self.generative_model.train(model, 
+            generative_models[t] = self.train_generative_model(model, 
                                                                for_class = t, 
                                                                num_epochs = 100, 
                                                                learning_rate = 0.01, 
                                                                **kwargs)
         # self._clean_model(model)
         return GenerativeExplanation(model = model, generative_models = generative_models)
+
+    def train_generative_model(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
+        """
+        Trains the generative model.
+
+        Args:
+            model: predicitve model used to train the generative model
+            for_class: the class to train the generative model for
+            epochs (int, optional): The number of epochs to train.
+                (default: :obj:`100`)
+            learning_rate: lr (float, optional): The learning rate to apply.
+                (default: :obj:`0.01`)
+
+        Returns:
+            None
+        """
+
+        # TODO: throw errors, this is a base class
+        print("debug: xgnn train")
+        pass
+
 
     def supports(self) -> bool:
         return True
