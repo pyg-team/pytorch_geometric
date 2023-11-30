@@ -169,11 +169,21 @@ class GraphGenerator(torch.nn.Module):
 
 class RLGenTrainer(XGNNTrainer):
 
-    def calculate_reward(graph_state, pre_trained_gnn):
+    def calculate_reward(graph_state, pre_trained_gnn, target_class, num_classes):
         gnn_output = pre_trained_gnn(graph_state)
-        # TODO: Implement
-        graph_validity_score = ... 
-        reward = ... 
+        class_score = gnn_output[target_class]
+        intermediate_reward = class_score - 1 / num_classes
+
+        # Assuming rollout function is defined to perform graph rollouts and evaluate
+        final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
+
+        # Compute graph validity score (R_tr)
+        # This needs to be defined based on the specific graph rules of your dataset
+        graph_validity_score = self.evaluate_graph_validity(graph_state) 
+
+        # Combine the rewards
+        lambda_1, lambda_2 = 1, 1  # Hyperparameters, can be tuned
+        reward = intermediate_reward + lambda_1 * final_graph_reward + lambda_2 * graph_validity_score
         return reward
 
     # Training function
@@ -184,7 +194,7 @@ class RLGenTrainer(XGNNTrainer):
             for step in range(max_steps):
 
                 action, new_graph_state = graph_generator(current_graph_state, candidate_set)
-                reward = calculate_reward(new_graph_state, pre_trained_gnn)
+                reward = calculate_reward(new_graph_state, pre_trained_gnn, target_class, num_classes)
                 
                 start_node_log_prob = torch.log(action[0].probs[action[0].sample().item()])
                 end_node_log_prob = torch.log(action[1].probs[action[1].sample().item()])
@@ -203,22 +213,13 @@ class RLGenTrainer(XGNNTrainer):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GCN().to(device)
+pre_trained_gnn = GCN().to(device) # TODO
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-for epoch in range(1, 201):
-    model.train()
-    optimizer.zero_grad()
-    out = model(data.x, data.edge_index)
-    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
-    loss.backward()
-    optimizer.step()
-
-
 explainer = Explainer(
     model=model,
-    algorithm=XGNNExplainer(generative_model = XGNNTrainer(), epochs = 200),
+    algorithm=XGNNExplainer(generative_model = XGNNTrainer(target_class), epochs = 200),
     explanation_type='model',
     node_mask_type=None,
     edge_mask_type=None,
