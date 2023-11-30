@@ -26,7 +26,11 @@ def test_basic():
     assert str(adj) == ('EdgeIndex([[0, 1, 1, 2],\n'
                         '           [1, 0, 2, 1]])')
     assert adj.sparse_size == (3, 3)
+
     assert adj.sort_order is None
+    assert not adj.is_sorted
+    assert not adj.is_sorted_by_row
+    assert not adj.is_sorted_by_col
 
     assert not isinstance(adj.as_tensor(), EdgeIndex)
 
@@ -39,10 +43,20 @@ def test_fill_cache_():
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._rowptr, torch.tensor([0, 1, 3, 4]))
 
+    assert adj.sort_order == 'row'
+    assert adj.is_sorted
+    assert adj.is_sorted_by_row
+    assert not adj.is_sorted_by_col
+
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
     adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert torch.equal(adj._colptr, torch.tensor([0, 1, 3, 4]))
+
+    assert adj.sort_order == 'col'
+    assert adj.is_sorted
+    assert not adj.is_sorted_by_row
+    assert adj.is_sorted_by_col
 
 
 def test_clone():
@@ -50,11 +64,11 @@ def test_clone():
 
     out = adj.clone()
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = torch.clone(adj)
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
 
 @withCUDA
@@ -161,7 +175,7 @@ def test_cat():
     assert out.size() == (2, 8)
     assert isinstance(out, EdgeIndex)
     assert out.sparse_size == (4, 4)
-    assert out.sort_order is None
+    assert not out.is_sorted
 
     out = torch.cat([adj1, adj2], dim=0)
     assert out.size() == (4, 4)
@@ -176,14 +190,14 @@ def test_flip():
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 0, 2, 1], [0, 1, 1, 2]]))
     assert out.sparse_size == (3, 3)
-    assert out.sort_order == 'col'
+    assert out.is_sorted_by_col
     assert torch.equal(out._colptr, torch.tensor([0, 1, 3, 4]))
 
     out = adj.flip([0, 1])
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2, 0, 1], [2, 1, 1, 0]]))
     assert out.sparse_size == (3, 3)
-    assert out.sort_order is None
+    assert not out.is_sorted
     assert out._colptr is None
 
 
@@ -205,7 +219,7 @@ def test_narrow():
     out = adj.narrow(dim=1, start=1, length=2)
     assert torch.equal(out, torch.tensor([[1, 1], [0, 2]]))
     assert isinstance(out, EdgeIndex)
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj.narrow(dim=0, start=0, length=1)
     assert torch.equal(out, torch.tensor([[0, 1, 1, 2]]))
@@ -218,17 +232,17 @@ def test_getitem():
     out = adj[:, torch.tensor([False, True, False, True])]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj[..., torch.tensor([1, 3])]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order is None
+    assert not out.is_sorted
 
     out = adj[..., 1::2]
     assert isinstance(out, EdgeIndex)
     assert torch.equal(out, torch.tensor([[1, 2], [0, 1]]))
-    assert out.sort_order == 'row'
+    assert out.is_sorted_by_row
 
     out = adj[:, 0]
     assert not isinstance(out, EdgeIndex)
@@ -317,46 +331,69 @@ def test_to_sparse_csc():
 def test_matmul_forward():
     x = torch.randn(3, 1)
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj1_dense = adj1.to_dense()
     adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    adj2_dense = adj2.to_dense()
 
     out = adj1 @ x
-    assert torch.allclose(out, adj1.to_dense() @ x)
+    assert torch.allclose(out, adj1_dense @ x)
 
-    out = adj1 @ adj1
-    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj1.to_dense())
+    out = adj1.matmul(x)
+    assert torch.allclose(out, adj1_dense @ x)
 
-    out = adj1 @ adj2
-    assert torch.allclose(out.to_dense(), adj1.to_dense() @ adj2.to_dense())
+    out = torch.matmul(adj1, x)
+    assert torch.allclose(out, adj1_dense @ x)
 
-    out = adj2 @ adj1
-    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj1.to_dense())
+    if torch_geometric.typing.WITH_PT20:
+        out = torch.sparse.mm(adj1, x, reduce='sum')
+    else:
+        with pytest.raises(TypeError, match="got an unexpected keyword"):
+            torch.sparse.mm(adj1, x, reduce='sum')
+        out = torch.sparse.mm(adj1, x)
+    assert torch.allclose(out, adj1_dense @ x)
 
-    out = adj2 @ adj2
-    assert torch.allclose(out.to_dense(), adj2.to_dense() @ adj2.to_dense())
+    out, value = adj1 @ adj1
+    assert isinstance(out, EdgeIndex)
+    assert out.is_sorted_by_row
+    assert out._sparse_size == (3, 3)
+    assert out._rowptr is not None
+    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj1_dense)
+
+    out, value = adj1 @ adj2
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj2_dense)
+
+    out, value = adj2 @ adj1
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj1_dense)
+
+    out, value = adj2 @ adj2
+    assert isinstance(out, EdgeIndex)
+    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj2_dense)
 
 
 def test_matmul_input_value():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x = torch.randn(3, 1)
-    input_value = torch.randn(4)
+    value = torch.randn(4)
 
-    out = matmul(adj, x, input_value)
-    assert torch.allclose(out, to_dense(adj, value=input_value) @ x)
+    out = matmul(adj, x, input_value=value)
+    assert torch.allclose(out, to_dense(adj, value=value) @ x)
 
 
 def test_matmul_backward():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
 
     x1 = torch.randn(3, 1, requires_grad=True)
-    input_value = torch.randn(4)
+    value = torch.randn(4)
 
-    out = matmul(adj, x1, input_value)
+    out = matmul(adj, x1, input_value=value)
     grad_out = torch.randn_like(out)
     out.backward(grad_out)
 
     x2 = x1.detach().requires_grad_()
-    dense_adj = to_dense(adj, value=input_value)
+    dense_adj = to_dense(adj, value=value)
     out = dense_adj @ x2
     out.backward(grad_out)
 
