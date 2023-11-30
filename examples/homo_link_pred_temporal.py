@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from torch.nn import Linear
 from tqdm import tqdm
+import copy
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -40,30 +41,51 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-# Perform a link-level split into training, validation, and test edges:
-edge_index = data[('user', 'rates', 'movie')].edge_index
-num_interactions = edge_index.shape[1]
-all_indices = [i for i in range(num_interactions)]
+# Perform a temporal link-level split into training, validation, and test edges:
+split_ratio = [0.8, 0.1, 0.1]
 
-train_indices, test_indices = train_test_split(all_indices, test_size=0.2,
-                                               random_state=1)
-val_indices, test_indices = train_test_split(test_indices, test_size=0.5,
-                                             random_state=1)
+_, perm = torch.sort(data[('user', 'rates', 'movie')].time)
+edge_names = [('user', 'rates', 'movie'), ('movie', 'rev_rates', 'user')]
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        if len(data[edge_name][attr].size()) == 1:
+            data[edge_name][attr] = data[edge_name][attr][perm]
+        else:
+            data[edge_name][attr] = data[edge_name][attr][:,perm]
+num_edges = len(data[edge_names[0]].time)
+
+splits = [int(i*num_edges) for i in split_ratio]
+splits[2] += num_edges-sum(splits)
+train_data = copy.deepcopy(data)
+val_data = copy.deepcopy(data)
+test_data = copy.deepcopy(data)
+graphs = [train_data, val_data, test_data]
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        dim = len(data[edge_name][attr].size()) - 1
+        data_splits = torch.split(data[edge_name][attr], splits, dim)
+        for i, graph in enumerate(graphs):
+            graph[edge_name][attr] = data_splits[i]
+
 data = data.to_homogeneous()
+train_data = train_data.to_homogeneous()
+val_data = val_data.to_homogeneous()
+test_data = test_data.to_homogeneous()
+
 train_dataloader = LinkNeighborLoader(
-    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=data.edge_index[:, train_indices],
-    edge_label_time=data.time[train_indices], batch_size=2048, shuffle=True,
+    data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=train_data.edge_index,
+    edge_label_time=train_data.time, batch_size=2048, shuffle=True,
     time_attr='time')
 val_dataloader = LinkNeighborLoader(
-    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=data.edge_index[:, val_indices],
-    edge_label_time=data.time[val_indices], batch_size=4096, shuffle=True,
+    data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=val_data.edge_index,
+    edge_label_time=val_data.time, batch_size=4096, shuffle=True,
     time_attr='time')
 test_dataloader = LinkNeighborLoader(
-    data=data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
-    edge_label_index=data.edge_index[:, test_indices],
-    edge_label_time=data.time[test_indices], batch_size=4096, shuffle=True,
+    data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=test_data.edge_index,
+    edge_label_time=test_data.time, batch_size=4096, shuffle=True,
     time_attr='time')
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
@@ -118,8 +140,7 @@ class Model(torch.nn.Module):
 
 
 model = Model(hidden_channels=32).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 def train(train_dl, val_dl):
     model.train()
@@ -161,10 +182,10 @@ def test(dl, desc='val'):
         print(f'{desc} time = {val_time}')
     return float(rmse)
 
-
-for epoch in range(1, 31):
+EPOCHS = 10
+for epoch in range(0, EPOCHS):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader)
     val_rmse = test(val_dataloader, 'val')
     test_rmse = test(test_dataloader, 'test')
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
-          f'Val: {val_rmse:.4f}')
+          f'Val RMSE: {val_rmse:.4f} Test RMSE: {test_rmse:.4f}')
