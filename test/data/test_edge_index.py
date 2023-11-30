@@ -16,6 +16,7 @@ from torch_geometric.testing import (
     withCUDA,
     withPackage,
 )
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import scatter
 
 
@@ -362,6 +363,16 @@ def test_matmul_backward():
     assert torch.allclose(x1.grad, x2.grad)
 
 
+@withPackage('torch_sparse')
+def test_to_sparse_tensor():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_tensor()
+    assert isinstance(adj, SparseTensor)
+    assert adj.sizes() == [3, 3]
+    row, col, _ = adj.coo()
+    assert torch.equal(row, torch.tensor([0, 1, 1, 2]))
+    assert torch.equal(col, torch.tensor([1, 0, 2, 1]))
+
+
 def test_save_and_load(tmp_path):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj.fill_cache_()
@@ -472,8 +483,6 @@ def test_compile():
 
 if __name__ == '__main__':
     import argparse
-
-    from torch_sparse import SparseTensor
 
     warnings.filterwarnings('ignore', ".*Sparse CSR tensor support.*")
 

@@ -16,6 +16,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
@@ -366,6 +367,30 @@ class EdgeIndex(Tensor):
 
         return torch.return_types.sort([out, perm])
 
+    def to_sparse_tensor(
+        self,
+        value: Optional[Tensor] = None,
+    ) -> SparseTensor:
+        r"""Converts the :class:`EdgeIndex` representation to a
+        :class:`torch_sparse.SparseTensor`. Requires that :obj:`torch-sparse`
+        is installed.
+
+        Args:
+            value (torch.Tensor, optional): The values of non-zero indices.
+                (default: :obj:`None`)
+        """
+        is_sorted = self._sort_order == SortOrder.ROW
+
+        return SparseTensor(
+            row=self[0],
+            col=self[1],
+            rowptr=self.get_rowptr() if is_sorted else None,
+            value=value,
+            sparse_sizes=self.get_sparse_size(),
+            is_sorted=is_sorted,
+            trust_data=True,
+        )
+
     @classmethod
     def __torch_function__(cls, func, types, args=(), kwargs=None):
         # `EdgeIndex` should be treated as a regular PyTorch tensor for all
@@ -710,13 +735,29 @@ class SparseDenseMatmul(torch.autograd.Function):
         reduce: ReduceType = 'sum',
     ) -> Tensor:
 
-        assert reduce in ['sum']
+        if input._sort_order != SortOrder.ROW:
+            raise ValueError("Sparse-dense matrix multiplication requires "
+                             "'EdgeIndex' to be sorted by rows")
+
+        if reduce not in ReduceType.__args__:
+            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
 
         if other.requires_grad:
             ctx.save_for_backward(input, input_value)
 
+        other = other.detach()
+        if input_value is not None:
+            input_value = input_value.detach()
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            # If `torch-sparse` is available, it still provides a faster
+            # sparse-dense matmul code path (after all these years...):
+            rowptr, col = input.get_rowptr(), input[1]
+            return torch.ops.torch_sparse.spmm_sum(  #
+                None, rowptr, col, input_value, None, None, other)
+
         input_value = input.get_value() if input_value is None else input_value
-        adj = to_sparse_csr(input, input_value)  # Requires `sort_order="row"`.
+        adj = to_sparse_csr(input, input_value)
 
         return adj @ other
 
@@ -732,28 +773,35 @@ class SparseDenseMatmul(torch.autograd.Function):
 
             # We need to compute `adj.t() @ out_grad`. For the transpose, we
             # first sort by column and then create a CSR matrix from it.
+            # We can call `input.flip(0)` here and create a sparse CSR matrix
+            # from it, but creating it via `colptr` directly is more efficient:
             # Note that the sort result is cached across multiple applications.
             input, perm = input.sort_by(SortOrder.COL)
+            colptr, row = input.get_colptr(), input[0]
             if input_value is not None:
-                input_value = input_value[perm]
+                input_value = input_value.detach()[perm]
+
+            if torch_geometric.typing.WITH_TORCH_CLUSTER:
+                other_grad = torch.ops.torch_sparse.spmm_sum(  #
+                    None, colptr, row, input_value, None, None, out_grad)
+
             else:
-                input_value = input.get_value()
+                if input_value is None:
+                    input_value = input.get_value()
 
-            # We can call `input.flip(0)` here and call `to_sparse_csr`, but
-            # creating the sparse CSR matrix from `colptr` directly is a bit
-            # more efficient:
-            adj_t = torch.sparse_csr_tensor(
-                crow_indices=input.get_colptr(),
-                col_indices=input[0],
-                values=input_value,
-                size=input.get_sparse_size()[::-1],
-                device=input.device,
-            )
+                adj_t = torch.sparse_csr_tensor(
+                    crow_indices=input.get_colptr(),
+                    col_indices=input[0],
+                    values=input_value,
+                    size=input.get_sparse_size()[::-1],
+                    device=input.device,
+                )
 
-            other_grad = adj_t @ out_grad
+                other_grad = adj_t @ out_grad
 
         if ctx.needs_input_grad[2]:
-            raise NotImplementedError
+            raise NotImplementedError("Gradient computation for 'input_value' "
+                                      "not yet supported")
 
         return None, other_grad, None, None
 
@@ -768,7 +816,8 @@ def matmul(
     reduce: ReduceType = 'sum',
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
-    assert reduce in ['sum']
+    if reduce not in ReduceType.__args__:
+        raise NotImplementedError("`reduce='{reduce}'` not yet supported")
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
