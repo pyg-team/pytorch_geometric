@@ -110,6 +110,8 @@ class EdgeIndex(Tensor):
     _csr2csc: Optional[Tensor] = None  # Permutation from CSR to CSC.
     _csc2csr: Optional[Tensor] = None  # Permutation from CSC to CSR.
 
+    _value: Optional[Tensor] = None  # 1-element value for SpMM.
+
     def __new__(
         cls,
         data,
@@ -268,7 +270,22 @@ class EdgeIndex(Tensor):
 
         return self._colptr
 
-    def fill_cache(self) -> 'EdgeIndex':
+    def get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
+        if self._value is not None:
+            return self._value  # TODO Respect `dtype`
+
+        if (torch_geometric.typing.WITH_PT20
+                and not torch_geometric.typing.WITH_ARM):
+            value = torch.ones(1, dtype=dtype, device=self.device)
+            value = value.expand(self.size(1))
+        else:
+            value = torch.ones(self.size(1), dtype=dtype, device=self.device)
+
+        self._value = value
+
+        return self._value
+
+    def fill_cache_(self) -> 'EdgeIndex':
         r"""Fills the cache with (meta)data information.
         No-op in case :class:`EdgeIndex` is not sorted.
         """
@@ -279,6 +296,8 @@ class EdgeIndex(Tensor):
             self.get_rowptr()
         if self._sort_order == SortOrder.COL:
             self.get_colptr()
+
+        return self
 
     def as_tensor(self) -> Tensor:
         r"""Zero-copies the :class:`EdgeIndex` representation back to a
@@ -337,6 +356,7 @@ class EdgeIndex(Tensor):
         out._colptr = self._colptr
         out._csr2csc = self._csr2csc
         out._csc2csr = self._csc2csr
+        out._value = self._value
 
         # Fill information for faster future CSR->CSC or CSC->CSR conversion:
         if self._sort_order == SortOrder.ROW and sort_order == SortOrder.COL:
@@ -492,6 +512,8 @@ def flip(
         out._csr2csc = input._csc2csr
         out._csc2csr = input._csr2csc
 
+    out._value = input._value
+
     return out
 
 
@@ -598,25 +620,11 @@ def to_dense(
     return out
 
 
-def _get_value(
-    numel: int,
-    dtype: Optional[torch.dtype] = None,
-    device: Optional[torch.device] = None,
-) -> Tensor:
-    if (torch_geometric.typing.WITH_PT20
-            and not torch_geometric.typing.WITH_ARM):
-        return torch.ones(1, dtype=dtype, device=device).expand(numel)
-    return torch.ones(numel, dtype=dtype, device=device)
-
-
 # `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
 def to_sparse_coo(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
-    if value is None:
-        value = _get_value(tensor.size(1), device=tensor.device)
-
     out = torch.sparse_coo_tensor(
         indices=tensor.as_tensor(),
-        values=value,
+        values=tensor.get_value() if value is None else value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -629,13 +637,10 @@ def to_sparse_coo(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
 
 @implements(Tensor.to_sparse_csr)
 def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
-    if value is None:
-        value = _get_value(tensor.size(1), device=tensor.device)
-
     return torch.sparse_csr_tensor(
         crow_indices=tensor.get_rowptr(),
         col_indices=tensor[1],
-        values=value,
+        values=tensor.get_value() if value is None else value,
         size=tensor.get_sparse_size(),
         device=tensor.device,
     )
@@ -648,14 +653,10 @@ if torch_geometric.typing.WITH_PT112:
         tensor: EdgeIndex,
         value: Optional[Tensor] = None,
     ) -> Tensor:
-
-        if value is None:
-            value = _get_value(tensor.size(1), device=tensor.device)
-
         return torch.sparse_csc_tensor(
             ccol_indices=tensor.get_colptr(),
             row_indices=tensor[0],
-            values=value,
+            values=tensor.get_value() if value is None else value,
             size=tensor.get_sparse_size(),
             device=tensor.device,
         )
@@ -714,13 +715,7 @@ class SparseDenseMatmul(torch.autograd.Function):
         if other.requires_grad:
             ctx.save_for_backward(input, input_value)
 
-        if input_value is None:
-            input_value = _get_value(
-                input.size(1),
-                dtype=other.dtype,
-                device=input.device,
-            )
-
+        input_value = input.get_value() if input_value is None else input_value
         adj = to_sparse_csr(input, input_value)  # Requires `sort_order="row"`.
 
         return adj @ other
@@ -735,18 +730,14 @@ class SparseDenseMatmul(torch.autograd.Function):
         if ctx.needs_input_grad[1]:
             input, input_value = ctx.saved_tensors
 
-            # We need to compute adj.t() @ out_grad. To perform the transpose,
-            # we first sort by column and then create a CSR matrix from it.
+            # We need to compute `adj.t() @ out_grad`. For the transpose, we
+            # first sort by column and then create a CSR matrix from it.
             # Note that the sort result is cached across multiple applications.
             input, perm = input.sort_by(SortOrder.COL)
             if input_value is not None:
                 input_value = input_value[perm]
             else:
-                input_value = _get_value(
-                    input.size(1),
-                    dtype=out_grad.dtype,
-                    device=input.device,
-                )
+                input_value = input.get_value()
 
             # We can call `input.flip(0)` here and call `to_sparse_csr`, but
             # creating the sparse CSR matrix from `colptr` directly is a bit
@@ -790,10 +781,9 @@ def matmul(
     else:
         input = to_sparse_csr(input, input_value)
 
-    if isinstance(other, EdgeIndex):
-        if other._sort_order == SortOrder.COL:
-            other = to_sparse_csc(other, other_value)
-        else:
-            other = to_sparse_csr(other, other_value)
+    if other._sort_order == SortOrder.COL:
+        other = to_sparse_csc(other, other_value)
+    else:
+        other = to_sparse_csr(other, other_value)
 
     return torch.matmul(input, other)
