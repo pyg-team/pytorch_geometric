@@ -749,7 +749,7 @@ class SparseDenseMatmul(torch.autograd.Function):
         if input_value is not None:
             input_value = input_value.detach()
 
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
+        if other.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
             # If `torch-sparse` is available, it still provides a faster
             # sparse-dense matmul code path (after all these years...):
             rowptr, col = input.get_rowptr(), input[1]
@@ -781,7 +781,7 @@ class SparseDenseMatmul(torch.autograd.Function):
             if input_value is not None:
                 input_value = input_value.detach()[perm]
 
-            if torch_geometric.typing.WITH_TORCH_CLUSTER:
+            if out_grad.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
                 other_grad = torch.ops.torch_sparse.spmm_sum(  #
                     None, colptr, row, input_value, None, None, out_grad)
 
