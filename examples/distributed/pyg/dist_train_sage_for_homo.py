@@ -29,9 +29,6 @@ def test(model, test_loader, dataset_name):
         x = model(batch.x, batch.edge_index)[:batch.batch_size]
         xs.append(x.cpu())
         y_true.append(batch.y[:batch.batch_size].cpu())
-        del batch
-        if i == len(test_loader) - 1:
-            torch.distributed.barrier()
     xs = [t.to(device) for t in xs]
     y_true = [t.to(device) for t in y_true]
     y_pred = torch.cat(xs, dim=0).argmax(dim=-1, keepdim=True)
@@ -47,7 +44,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                       num_training_procs_per_node: int, dataset_name: str,
                       root_dir: str, node_label_file: str, in_channels: int,
                       out_channels: int, train_idx: torch.Tensor,
-                      test_idx: torch.Tensor, epochs: int, batch_size: int,
+                      test_idx: torch.Tensor, epochs: int, num_neighbors: str, batch_size: int,
                       num_workers: int, concurrency: int, master_addr: str,
                       training_pg_master_port: int,
                       train_loader_master_port: int,
@@ -57,6 +54,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     graph = LocalGraphStore.from_partition(
         osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
     edge_attrs = graph.get_all_edge_attrs()
+
+    print(f"-----  000 edge_attrs={edge_attrs} ")
 
     # load partition into feature
     feature = LocalFeatureStore.from_partition(
@@ -82,6 +81,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     feature.feature_pb = node_pb
     feature.meta = meta
 
+    print(f"-------- meta={meta}, partition_idx={partition_idx}, node_pb={node_pb} ")
+
     # load the label file and put into graph as labels
     if node_label_file is not None:
         if isinstance(node_label_file, dict):
@@ -92,6 +93,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
             whole_node_labels = torch.load(node_label_file)
     node_labels = whole_node_labels
     graph.labels = node_labels
+    feature.labels = node_labels
 
     partition_data = (feature, graph)
 
@@ -115,7 +117,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     train_idx = train_idx.split(
         train_idx.size(0) // num_training_procs_per_node)[local_proc_rank]
 
-    num_neighbors = [15, 10, 5]
+    num_neighbors = num_neighbors.split(",")
+    num_neighbors = [int(i) for i in num_neighbors]
     # Create distributed neighbor loader for training
     train_loader = pyg_dist.DistNeighborLoader(
         data=partition_data, num_neighbors=num_neighbors,
@@ -133,7 +136,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     # Create distributed neighbor loader for testing.
     test_loader = pyg_dist.DistNeighborLoader(
         data=partition_data, num_neighbors=num_neighbors, input_nodes=test_idx,
-        batch_size=batch_size, shuffle=True, device=torch.device('cpu'),
+        batch_size=batch_size, shuffle=False, device=torch.device('cpu'),
         num_workers=num_workers, concurrency=concurrency,
         master_addr=master_addr, master_port=test_loader_master_port,
         async_sampling=True, filter_per_worker=False, current_ctx=current_ctx,
@@ -147,7 +150,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         out_channels=out_channels,
     ).to(current_device)
     model = DistributedDataParallel(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.004)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
 
     # Train and test.
     f = open(f'dist_train_sage_for_homo_rank{node_rank}.txt', 'a+')
@@ -155,18 +158,23 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         model.train()
         pbar = tqdm(total=train_idx.size(0))
         start = time.time()
+        times = []
         for i, batch in enumerate(train_loader):
+            if i == len(train_loader) - 2:
+                break
             if i == 0:
                 pbar.set_description(f'Epoch {epoch:02d}')
+            batch_time_start = time.time()
             optimizer.zero_grad()
-            out = model(
-                batch.x,
-                batch.edge_index)[:batch.batch_size].log_softmax(dim=-1)
-            loss = F.nll_loss(out, batch.y[:batch.batch_size])
+            out = model(batch.x, batch.edge_index)[: batch.batch_size] 
+            loss = F.cross_entropy(out, batch.y[: batch.batch_size])
             loss.backward()
             optimizer.step()
-            if i == len(train_loader) - 1:
-                torch.distributed.barrier()
+            batch_time = time.time() - batch_time_start
+            times.append(batch_time)
+            print(
+                f"-------- dist_training: i={i}, batch loss={loss}, batch_time={batch_time} --------- "
+            )
             pbar.update(batch_size)
         pbar.close()
 
@@ -177,14 +185,14 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         print(
             f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, Loss: {loss:.4f}, Epoch Time: {end - start}\n'
         )
-        print("\n\n\n\n\n\n")
+        print("\n")
         print(
             "********************************************************************************************** "
         )
-        print("\n\n\n\n\n\n")
+        print("\n")
 
         # Test accuracy.
-        if epoch % 5 == 0 and epoch > 0:
+        if epoch % 5 == 0:
             test_acc = test(model, test_loader, dataset_name)
             f.write(
                 f'-- [Trainer {current_ctx.rank}] Test Accuracy: {test_acc:.4f}\n'
@@ -193,11 +201,12 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 f'-- [Trainer {current_ctx.rank}] Test Accuracy: {test_acc:.4f}\n'
             )
 
-            print("\n\n\n\n\n\n")
+            print("\n\n")
             print(
                 "********************************************************************************************** "
             )
-        print("\n\n\n\n\n\n")
+        print("\n\n")
+    torch.distributed.destroy_process_group()
 
 
 if __name__ == '__main__':
@@ -234,6 +243,13 @@ if __name__ == '__main__':
         help="Number of distributed nodes.",
     )
     parser.add_argument(
+        "--num_neighbors",
+        type=str,
+        default="15,10,5",
+        help="number of the layers",
+    )
+
+    parser.add_argument(
         "--node_rank",
         type=int,
         default=0,
@@ -248,7 +264,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--epochs",
         type=int,
-        default=25,
+        default=3,
         help="The number of training epochs.",
     )
     parser.add_argument(
@@ -341,7 +357,7 @@ if __name__ == '__main__':
         run_training_proc,
         args=(args.num_nodes, args.node_rank, args.num_training_procs,
               args.dataset, root_dir, node_label_file, args.in_channel,
-              args.out_channel, train_idx, test_idx, args.epochs,
+              args.out_channel, train_idx, test_idx, args.epochs, args.num_neighbors, 
               args.batch_size, args.num_workers, args.concurrency,
               args.master_addr, args.training_pg_master_port,
               args.train_loader_master_port, args.test_loader_master_port),
