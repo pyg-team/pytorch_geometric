@@ -114,7 +114,7 @@ args = {
 
 model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
                   output_dim=1, dropout=args['dropout'])
-model.load_state_dict(torch.load("examples\\explain\\best_model.pth"))
+model.load_state_dict(torch.load("examples\\explain\\best_model.pth", map_location=torch.device('cpu')))
 model.to(device)  # Don't forget to move the model to the correct device
 
 def check_edge_representation(data):
@@ -128,7 +128,7 @@ def check_edge_representation(data):
     return "Edges are represented with two directed edges, one in each direction"
 
 class GraphGenerator(torch.nn.Module):
-    def __init__(self, num_node_features, num_output_features, num_candidate_node_types):
+    def __init__(self, num_node_features, num_candidate_node_types):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
         self.gcn_layers = torch.nn.ModuleList([
@@ -181,8 +181,8 @@ class GraphGenerator(torch.nn.Module):
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
         super(RLGenExplainer, self).__init__()
-        self.graph_generator = GraphGenerator()
         self.candidate_set = torch.tensor([0])  # tensor of features of candidate nodes (node types)
+        self.graph_generator = GraphGenerator(1, self.candidate_set.size(0))
         self.max_steps = 10
         self.lambda_1 = 1
         self.lambda_2 = 1
@@ -274,14 +274,14 @@ class RLGenExplainer(XGNNExplainer):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-pre_trained_gnn = GCN().to(device) # TODO
-data = data.to(device)
+#model = GCN().to(device)
+#data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 explainer = Explainer(
     model = model,
     algorithm = RLGenExplainer(),
-    explanation_type = 'model',
+    explanation_type = 'generative',
     node_mask_type = None,
     edge_mask_type = None,
     model_config = dict(
@@ -294,6 +294,6 @@ explainer = Explainer(
 print("EXPLAINER DONE!")
 
 class_index = 1
-explanation = explainer(data.x, data.edge_index) # Generates explanations for all classes at once
+explanation = explainer(None, None) # Generates explanations for all classes at once
 print(explanation)
 

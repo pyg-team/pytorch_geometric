@@ -155,8 +155,8 @@ class Explainer:
 
     def __call__(
         self,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        x: Optional[Union[Tensor, Dict[NodeType, Tensor]]],
+        edge_index: Optional[Union[Tensor, Dict[EdgeType, Tensor]]],
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
@@ -204,7 +204,11 @@ class Explainer:
                     f"type '{self.explanation_type.value}'")
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
-
+        elif self.explanation_type == ExplanationType.generative:
+            # TODO Everything
+            print("3.1. GENERATIVE EXPLANATION file(explainer.py)")
+     
+     
         if isinstance(index, int):
             index = torch.tensor([index])
 
