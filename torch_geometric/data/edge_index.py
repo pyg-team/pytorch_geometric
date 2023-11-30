@@ -16,6 +16,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.typing import SparseTensor, torch_sparse
 from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
@@ -366,6 +367,30 @@ class EdgeIndex(Tensor):
 
         return torch.return_types.sort([out, perm])
 
+    def to_sparse_tensor(
+        self,
+        value: Optional[Tensor] = None,
+    ) -> SparseTensor:
+        r"""Converts the :class:`EdgeIndex` representation to a
+        :class:`torch_sparse.SparseTensor`. Requires that :obj:`torch-sparse`
+        is installed.
+
+        Args:
+            value (torch.Tensor, optional): The values of non-zero indices.
+                (default: :obj:`None`)
+        """
+        is_sorted = self._sort_order == SortOrder.ROW
+
+        return SparseTensor(
+            row=self[0],
+            col=self[1],
+            rowptr=self.get_rowptr() if is_sorted else None,
+            value=value,
+            sparse_sizes=self.get_sparse_size(),
+            is_sorted=is_sorted,
+            trust_data=True,
+        )
+
     @classmethod
     def __torch_function__(cls, func, types, args=(), kwargs=None):
         # `EdgeIndex` should be treated as a regular PyTorch tensor for all
@@ -697,7 +722,7 @@ else:
         return to_sparse_coo(tensor, value)
 
 
-ReduceType = Literal['sum']
+ReduceType = Literal['sum', 'mean', 'min', 'max']
 
 
 class SparseDenseMatmul(torch.autograd.Function):
@@ -710,13 +735,23 @@ class SparseDenseMatmul(torch.autograd.Function):
         reduce: ReduceType = 'sum',
     ) -> Tensor:
 
-        assert reduce in ['sum']
+        if input._sort_order != SortOrder.ROW:
+            raise ValueError("Sparse-dense matrix multiplication requires "
+                             "'EdgeIndex' to be sorted by rows")
 
-        if other.requires_grad:
-            ctx.save_for_backward(input, input_value)
+        ctx.save_for_backward(input, input_value)
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            # If `torch-sparse` is available, it still provides a faster
+            # sparse-dense matmul code path (after all these years...):
+            adj = input.to_sparse_tensor(value=input_value)
+            return torch_sparse.matmul(adj, other)
+
+        if reduce != 'sum':
+            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
 
         input_value = input.get_value() if input_value is None else input_value
-        adj = to_sparse_csr(input, input_value)  # Requires `sort_order="row"`.
+        adj = to_sparse_csr(input, input_value)
 
         return adj @ other
 
