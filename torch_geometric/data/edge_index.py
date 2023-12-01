@@ -981,7 +981,6 @@ class SparseDenseMatmul(torch.autograd.Function):
             # If `torch-sparse` is available, it still provides a faster
             # sparse-dense matmul code path (after all these years...):
             rowptr, col, perm = input.get_csr()
-            return None
             if input_value is not None:
                 input_value = input_value[perm]
             return torch.ops.torch_sparse.spmm_sum(  #
