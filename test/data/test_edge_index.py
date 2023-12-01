@@ -22,6 +22,7 @@ from torch_geometric.utils import scatter
 
 def test_basic():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3))
+    adj.validate()
     assert isinstance(adj, EdgeIndex)
     assert str(adj) == ('EdgeIndex([[0, 1, 1, 2],\n'
                         '           [1, 0, 2, 1]])')
@@ -32,9 +33,26 @@ def test_basic():
     assert not adj.is_sorted_by_row
     assert not adj.is_sorted_by_col
 
+    assert not adj.is_undirected
+
     assert not isinstance(adj.as_tensor(), EdgeIndex)
 
     assert not isinstance(adj + 1, EdgeIndex)
+
+
+def test_undirected():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], is_undirected=True)
+    assert isinstance(adj, EdgeIndex)
+    assert adj.is_undirected
+
+    assert adj.sparse_size == (None, None)
+    adj.get_num_rows()
+    assert adj.sparse_size == (3, 3)
+
+    adj.validate()
+
+    with pytest.raises(ValueError, match="'EdgeIndex' is not undirected"):
+        EdgeIndex([[0, 1, 1, 2], [0, 0, 1, 1]], is_undirected=True).validate()
 
 
 def test_fill_cache_():
@@ -129,7 +147,7 @@ def test_sort_by():
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert torch.equal(out.values, adj)
-    assert torch.equal(out.indices, torch.arange(4))
+    assert out.indices == slice(None, None, None)
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]])
     out = adj.sort_by('row')
