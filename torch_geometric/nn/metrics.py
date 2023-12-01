@@ -64,7 +64,8 @@ class LinkPredMetric(BaseMetric, ABC):
                              f"(got {pred_index_mat.size(1)})")
 
         # Compute a boolean matrix indicating if the k-th prediction is part of
-        # the ground-truth:
+        # the ground-truth. We do this by flattening both prediction and
+        # target indices, and then determine overlaps via `torch.isin`.
         max_index = max(
             pred_index_mat.max() if pred_index_mat.numel() > 0 else 0,
             edge_label_index[1].max()
