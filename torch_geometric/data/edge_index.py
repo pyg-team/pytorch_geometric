@@ -69,6 +69,12 @@ def assert_contiguous(tensor: Tensor):
                          "`edge_index.contiguous()` before proceeding.")
 
 
+def assert_symmetric(size: Tuple[Optional[int], Optional[int]]):
+    if size[0] is not None and size[1] is not None and size[0] != size[1]:
+        raise ValueError("'EdgeIndex' is undirected but received a "
+                         "non-symmetric size")
+
+
 class EdgeIndex(Tensor):
     r"""An advanced :obj:`edge_index` representation with additional (meta)data
     attached.
@@ -83,14 +89,14 @@ class EdgeIndex(Tensor):
 
     * :obj:`sparse_size`: The underlying sparse matrix size
     * :obj:`sort_order`: The sort order (if present), either by row or column.
+    * :obj:`is_undirected`: Whether edges are bidirectional.
 
     Additionally, :class:`EdgeIndex` caches data for fast CSR or CSC conversion
     in case its representation is sorted, such as its :obj:`rowptr` or
-    :obj:`colptr`, or the permutation vectors for fast conversion from CSR to
-    CSC and vice versa.
+    :obj:`colptr`, or the permutation vectors from CSR to CSC and vice versa.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`EdgeIndex.sort_by`), or when explicitly requested via
-    :meth:`EdgeIndex.fill_cache`, and are maintained and adjusted over its
+    :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
     lifespan (*e.g.*, when calling :meth:`EdgeIndex.flip`).
 
     This representation ensures for optimal computation in GNN message passing
@@ -107,6 +113,9 @@ class EdgeIndex(Tensor):
     # based on row or column values.
     _sort_order: Optional[SortOrder] = None
 
+    # Whether the `edge_index` is undirected:
+    _is_undirected: bool = False
+
     # An additional data cache:
     _rowptr: Optional[Tensor] = None  # The CSR `rowptr` in case sorted by row.
     _colptr: Optional[Tensor] = None  # The CSC `colptr` in case sorted by col.
@@ -121,6 +130,7 @@ class EdgeIndex(Tensor):
         *args,
         sparse_size: Tuple[Optional[int], Optional[int]] = (None, None),
         sort_order: Optional[Union[str, SortOrder]] = None,
+        is_undirected: bool = False,
         **kwargs,
     ):
         if not isinstance(data, Tensor):
@@ -138,11 +148,19 @@ class EdgeIndex(Tensor):
         assert_two_dimensional(data)
         assert_contiguous(data)
 
+        if is_undirected:
+            assert_symmetric(sparse_size)
+            if sparse_size[0] is not None and sparse_size[1] is None:
+                sparse_size = (sparse_size[0], sparse_size[0])
+            elif sparse_size[0] is None and sparse_size[1] is not None:
+                sparse_size = (sparse_size[1], sparse_size[1])
+
         out = super().__new__(cls, data)
 
         # Attach metadata:
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
+        out._is_undirected = is_undirected
 
         return out
 
@@ -154,6 +172,8 @@ class EdgeIndex(Tensor):
         assert_valid_dtype(self)
         assert_two_dimensional(self)
         assert_contiguous(self)
+        if self.is_undirected:
+            assert_symmetric(self.sparse_size)
 
         if self.numel() > 0 and self.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
@@ -181,6 +201,13 @@ class EdgeIndex(Tensor):
             raise ValueError(f"'{self.__class__.__name__}' is not sorted by "
                              f"column indices")
 
+        if self.is_undirected:
+            flat_index1 = (self[0] * self.get_num_rows() + self[1]).sort()[0]
+            flat_index2 = (self[1] * self.get_num_cols() + self[0]).sort()[0]
+            if not torch.equal(flat_index1, flat_index2):
+                raise ValueError(f"'{self.__class__.__name__}' is not "
+                                 f"undirected")
+
         return self
 
     @property
@@ -204,10 +231,12 @@ class EdgeIndex(Tensor):
         Automatically computed and cached when not explicitly set.
         """
         if self.num_rows is None:
-            self._sparse_size = (
-                int(self[0].max()) + 1 if self.numel() > 0 else 0,
-                self.num_cols,
-            )
+            num_rows = int(self[0].max()) + 1 if self.numel() > 0 else 0
+
+            if self.is_undirected:
+                self._sparse_size = (num_rows, num_rows)
+            else:
+                self._sparse_size = (num_rows, self.num_cols)
 
         return self.num_rows
 
@@ -221,10 +250,12 @@ class EdgeIndex(Tensor):
         Automatically computed and cached when not explicitly set.
         """
         if self.num_cols is None:
-            self._sparse_size = (
-                self.num_rows,
-                int(self[1].max()) + 1 if self.numel() > 0 else 0,
-            )
+            num_cols = int(self[1].max()) + 1 if self.numel() > 0 else 0
+
+            if self.is_undirected:
+                self._sparse_size = (num_cols, num_cols)
+            else:
+                self._sparse_size = (self.num_rows, num_cols)
 
         return self.num_cols
 
@@ -249,6 +280,11 @@ class EdgeIndex(Tensor):
     def is_sorted_by_col(self) -> bool:
         r"""Returns whether indices are sorted by columns."""
         return self._sort_order == SortOrder.COL
+
+    @property
+    def is_undirected(self) -> bool:
+        r"""Returns whether indices are bidirectional."""
+        return self._is_undirected
 
     def get_rowptr(self) -> Tensor:
         r"""Returns the :obj:`rowptr` vector of :class:`EdgeIndex`, a
@@ -377,8 +413,7 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            perm = torch.arange(self.size(1), device=self.device)
-            return torch.return_types.sort([self, perm])
+            return torch.return_types.sort([self, slice(None, None, None)])
 
         # If conversion from CSR->CSC or CSC->CSR is known, make use of it:
         if self.is_sorted_by_row:
