@@ -140,8 +140,10 @@ def test_contiguous():
     assert adj.is_contiguous()
 
 
-def test_sort_by():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+@pytest.mark.parametrize('is_undirected', [False, True])
+def test_sort_by(is_undirected):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row',
+                    is_undirected=is_undirected)
     out = adj.sort_by('row')
     assert isinstance(out, torch.return_types.sort)
     assert isinstance(out.values, EdgeIndex)
@@ -149,7 +151,7 @@ def test_sort_by():
     assert torch.equal(out.values, adj)
     assert out.indices == slice(None, None, None)
 
-    adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]])
+    adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], is_undirected=is_undirected)
     out = adj.sort_by('row')
     assert isinstance(out, torch.return_types.sort)
     assert isinstance(out.values, EdgeIndex)
@@ -157,7 +159,8 @@ def test_sort_by():
     assert torch.equal(out.values, torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
     assert torch.equal(out.indices, torch.tensor([0, 1, 3, 2]))
 
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row',
+                    is_undirected=is_undirected)
     adj.fill_cache_()
 
     out = adj.sort_by('col')

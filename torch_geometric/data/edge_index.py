@@ -432,17 +432,25 @@ class EdgeIndex(Tensor):
 
         return self._value
 
-    def fill_cache_(self) -> 'EdgeIndex':
-        r"""Fills the cache with (meta)data information."""
+    def fill_cache_(self, no_transpose: bool = False) -> 'EdgeIndex':
+        r"""Fills the cache with (meta)data information.
+
+        Args:
+            no_transpose (bool, optional): If set to :obj:`True`, will not fill
+                the cache with information about the transposed
+                :class:`EdgeIndex`. (default: :obj:`False`)
+        """
         self.get_num_rows()
         self.get_num_cols()
 
         if self.is_sorted_by_row:
             self.get_csr()
-            self.get_csc()
+            if not no_transpose:
+                self.get_csc()
         elif self.is_sorted_by_col:
             self.get_csc()
-            self.get_csr()
+            if not no_transpose:
+                self.get_csr()
 
         return self
 
@@ -471,23 +479,35 @@ class EdgeIndex(Tensor):
 
         if self.is_sorted_by_row:  # CSR->CSC:
             perm = self._csr2csc
-            if perm is None:
+
+            if (self.is_undirected and perm is not None
+                    and self._csc_row is not None):
+                edge_index = torch.stack([self._csc_row, self[0]], dim=0)
+
+            elif perm is None:
                 col, perm = index_sort(self[1], self.get_num_cols())
                 edge_index = torch.stack([self[0][perm], col], dim=0)
+                self._csc_row = edge_index[0]
                 self._csr2csc = perm
             else:
                 edge_index = self.as_tensor()[:, perm]
-            self._csc_row = edge_index[0]
+                self._csc_row = edge_index[0]
 
         elif self.is_sorted_by_col:  # CSC->CSR:
             perm = self._csc2csr
-            if perm is None:
+
+            if (self.is_undirected and perm is not None
+                    and self._csr_col is not None):
+                edge_index = torch.stack([self[1], self._csr_col], dim=0)
+
+            elif perm is None:
                 row, perm = index_sort(self[0], self.get_num_rows())
                 edge_index = torch.stack([row, self[1][perm]], dim=0)
+                self._csr_col = edge_index[1]
                 self._csc2csr = perm
             else:
                 edge_index = self.as_tensor()[:, perm]
-            self._csr_col = edge_index[1]
+                self._csr_col = edge_index[1]
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
@@ -977,6 +997,8 @@ class SparseDenseMatmul(torch.autograd.Function):
         ctx,
         out_grad: Tensor,
     ) -> Tuple[None, Optional[Tensor], None, None]:
+
+        # TODO Leverage `is_undirected` in case `input_value` is None.
 
         other_grad: Optional[Tensor] = None
         if ctx.needs_input_grad[1]:
