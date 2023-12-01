@@ -178,6 +178,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 f"-------- dist_training: i={i}, batch loss={loss}, batch_time={batch_time} --------- "
             )
             pbar.update(batch_size)
+
+        torch.distributed.barrier()
         pbar.close()
 
         end = time.time()
@@ -196,6 +198,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         # Test accuracy.
         if epoch % 5 == 0:
             test_acc = test(model, test_loader, dataset_name)
+            torch.distributed.barrier()
+
             f.write(
                 f'-- [Trainer {current_ctx.rank}] Test Accuracy: {test_acc:.4f}\n'
             )
