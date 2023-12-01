@@ -482,7 +482,7 @@ class EdgeIndex(Tensor):
 
             if (self.is_undirected and perm is not None
                     and self._csc_row is not None):
-                edge_index = torch.stack([self.csc_row, self[0]], dim=0)
+                edge_index = torch.stack([self._csc_row, self[0]], dim=0)
 
             elif perm is None:
                 col, perm = index_sort(self[1], self.get_num_cols())
