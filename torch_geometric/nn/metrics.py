@@ -55,7 +55,7 @@ class LinkPredMetric(BaseMetric, ABC):
                 every example in the mini-batch with shape
                 :obj:`[batch_size, top_k]`.
             edge_label_index (torch.Tensor): The ground-truth indices for every
-                example in the mini-batch, given in COO of shape
+                example in the mini-batch, given in COO format of shape
                 :obj:`[2, num_ground_truth_indices]`.
         """
         if pred_index_mat.size(1) != self.top_k:
