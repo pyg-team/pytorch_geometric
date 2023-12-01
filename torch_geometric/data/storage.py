@@ -457,7 +457,7 @@ class EdgeStorage(BaseStorage):
             if isinstance(value, Tensor) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.size(cat_dim)
-            if isinstance(value, Tensor) and key in E_KEYS:
+            if isinstance(value, np.ndarray) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and key in E_KEYS:
