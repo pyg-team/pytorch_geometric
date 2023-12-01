@@ -12,6 +12,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from torch_geometric.nn.pool import MIPSKNNIndex
 from ordered_set import OrderedSet
+from torch.nn import CrossEntropyLoss
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -49,11 +50,22 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
+#Use only edges that have high ratings (>=4)
+rating_threshold = 4
+edge_names = [('user', 'rates', 'movie'), ('movie', 'rev_rates', 'user')]
+filter_indices = torch.where(data[edge_names[0]].edge_label >= 
+                                 rating_threshold)[0]
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        if len(data[edge_name][attr].size()) == 1:
+            data[edge_name][attr] = data[edge_name][attr][filter_indices]
+        else:
+            data[edge_name][attr] = data[edge_name][attr][:,filter_indices]
+
 # Perform a temporal link-level split into training, validation, and test edges:
 split_ratio = [0.8, 0.1, 0.1]
-
+assert sum(split_ratio)==1
 _, perm = torch.sort(data[('user', 'rates', 'movie')].time)
-edge_names = [('user', 'rates', 'movie'), ('movie', 'rev_rates', 'user')]
 for edge_name in edge_names:
     for attr in data[edge_name]:
         if len(data[edge_name][attr].size()) == 1:
@@ -77,14 +89,14 @@ for edge_name in edge_names:
 
 
 train_dataloader = LinkNeighborLoader(
-    data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    data=train_data, num_neighbors=[10, 10, 10], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       train_data[('user', 'rates',
                             'movie')].edge_index),
     edge_label_time=train_data[('user', 'rates', 'movie')].time,
     batch_size=4096, shuffle=True, time_attr='time')
 val_dataloader = LinkNeighborLoader(
-    data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    data=val_data, num_neighbors=[10, 10, 10], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       val_data[('user', 'rates',
                             'movie')].edge_index),
@@ -115,11 +127,13 @@ class GNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = SAGEConv((-1, -1), hidden_channels)
-        self.conv2 = SAGEConv((-1, -1), out_channels)
+        self.conv2 = SAGEConv((-1, -1), hidden_channels)
+        self.conv3 = SAGEConv((-1, -1), out_channels)
 
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
-        x = self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index).relu()
+        x = self.conv3(x, edge_index)
         return x
 
 
@@ -137,7 +151,6 @@ class EdgeDecoder(torch.nn.Module):
         i_to_u = self.user_to_item(z_dict['movie'][row])
                                    
         z = torch.cat([u_to_i, i_to_u], dim=-1)
-        # z = torch.cat([z_dict['user'][row], z_dict['movie'][col]], dim=-1)
 
         z = self.lin1(z).relu()
         z = self.lin2(z)
@@ -156,11 +169,8 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict, edge_label_index)
 
 
-model = Model(hidden_channels=32).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-
-
-
+model = Model(hidden_channels=64).to(device)
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
 
 
 
@@ -171,11 +181,16 @@ def train(train_dl, val_dl, val_data, epoch):
     train_time = 0
     if args.visualize_emb:
         tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
-        embs = tsne.fit_transform(model.encoder(val_data.x_dict, 
-            val_data.edge_index_dict)['movie'].detach().numpy())
-        plt.scatter(embs[:,0], embs[:,1], alpha=0.1)
+        emb_u_m = model.encoder(val_data.x_dict, 
+            val_data.edge_index_dict)
+        embs_user_to_movie = model.decoder.user_to_item(emb_u_m['user'])
+        emb_reduced = tsne.fit_transform(emb_u_m['movie'].detach().numpy())
+        plt.scatter(emb_reduced[:,0], emb_reduced[:,1], alpha=0.1)
+        emb_reduced = tsne.fit_transform(embs_user_to_movie.detach().numpy())
+        plt.scatter(emb_reduced[:,0], emb_reduced[:,1], alpha=0.1, marker='x')
         plt.savefig('./fig-' + str(epoch) + '.png')
         plt.clf()
+    
     for step, batch in enumerate(pbar):
         optimizer.zero_grad()
         pred = model(batch.x_dict, batch.edge_index_dict,
@@ -213,7 +228,7 @@ def test(dl, desc='val'):
         print(f'{desc} time = {val_time}')
     return float(rmse)
 
-EPOCHS = 10
+EPOCHS = 5
 for epoch in range(0, EPOCHS):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader, val_data=val_data, epoch=epoch)
     # train_rmse = test(val_dataloader)
@@ -222,7 +237,7 @@ for epoch in range(0, EPOCHS):
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
           f'Val RMSE: {val_rmse:.4f}, Test RMSE: {test_rmse:.4f}')
 
-k=20
+k=5
 embs = model.encoder(val_data.x_dict, 
     val_data.edge_index_dict)
 mipsknn = MIPSKNNIndex(embs['movie'])
@@ -250,6 +265,31 @@ user_pos_items = get_user_positive_items(train_data['user', 'movie'].edge_index)
 
 real_recs = {}
 for user in range(val_data['user'].x.size(0)):
-    real_recs[user] = list(OrderedSet(knn_index[user].tolist()) - OrderedSet(user_pos_items[user]))[:k]
+    try:
+        real_recs[user] = list(OrderedSet(knn_index[user].tolist()) - OrderedSet(user_pos_items[user]))[:k]
+    except KeyError:
+        real_recs[user] = knn_index[user].tolist()[:k]
 
+movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
+rating_path = osp.join(path, './raw/ml-latest-small/ratings.csv')
+# load user and movie nodes
+import pandas as pd
+def load_node_csv(path, index_col):
+    df = pd.read_csv(path, index_col=index_col)
+    return df
+
+movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
+val_user_pos_items = get_user_positive_items(val_data['user', 'movie'].edge_index)
+import json
+with open('recommendations.txt', 'w') as f:
+    for user in range(val_data['user'].x.size(0)):
+        try:
+            f.write('\nTrain\n')
+            f.write(json.dumps(movie_id_to_name.iloc[user_pos_items[user]].to_dict()))
+            f.write('\nPred\n')
+            f.write(json.dumps(movie_id_to_name.iloc[real_recs[user]].to_dict()))
+            f.write('\nGT\n')
+            f.write(json.dumps(movie_id_to_name.iloc[val_user_pos_items[user]].to_dict()))
+        except KeyError:
+            pass
 
