@@ -93,7 +93,7 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     model = to_jittable(model)
 
     # Do not generate device asserts which may slow down model execution:
-    if torch_geometric.tyiping.WITH_PT22:
+    if torch_geometric.typing.WITH_PT22:
         torch._inductor.config.assert_indirect_indexing = False
     elif torch_geometric.typing.WITH_PT21:
         torch._inductor.config.triton.assert_indirect_indexing = False
