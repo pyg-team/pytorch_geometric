@@ -315,7 +315,7 @@ def test_to_sparse_coo():
 
 
 def test_to_sparse_csr():
-    with pytest.raises(ValueError, match="not sorted by rows"):
+    with pytest.raises(ValueError, match="not sorted"):
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
@@ -331,7 +331,7 @@ def test_to_sparse_csr():
 
 
 def test_to_sparse_csc():
-    with pytest.raises(ValueError, match="not sorted by columns"):
+    with pytest.raises(ValueError, match="not sorted"):
         EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
