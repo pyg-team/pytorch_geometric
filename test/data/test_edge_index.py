@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.data.edge_index import EdgeIndex, matmul, to_dense
+from torch_geometric.data.edge_index import EdgeIndex
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
@@ -262,14 +262,14 @@ def test_to_dense(dtype):
     assert out.tolist() == [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
 
     value = torch.arange(1, 5, dtype=dtype or torch.float)
-    out = to_dense(adj, value=value)
+    out = adj.to_dense(value)
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3)
     assert out.dtype == dtype or torch.float
     assert out.tolist() == [[0, 2, 0], [1, 0, 4], [0, 3, 0]]
 
     value = torch.arange(1, 5, dtype=dtype or torch.float).view(-1, 1)
-    out = to_dense(adj, value=value)
+    out = adj.to_dense(value)
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3, 1)
     assert out.dtype == dtype or torch.float
@@ -357,19 +357,19 @@ def test_matmul_forward():
     assert out.is_sorted_by_row
     assert out._sparse_size == (3, 3)
     assert out._rowptr is not None
-    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj1_dense)
+    assert torch.allclose(out.to_dense(value), adj1_dense @ adj1_dense)
 
     out, value = adj1 @ adj2
     assert isinstance(out, EdgeIndex)
-    assert torch.allclose(to_dense(out, value=value), adj1_dense @ adj2_dense)
+    assert torch.allclose(out.to_dense(value), adj1_dense @ adj2_dense)
 
     out, value = adj2 @ adj1
     assert isinstance(out, EdgeIndex)
-    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj1_dense)
+    assert torch.allclose(out.to_dense(value), adj2_dense @ adj1_dense)
 
     out, value = adj2 @ adj2
     assert isinstance(out, EdgeIndex)
-    assert torch.allclose(to_dense(out, value=value), adj2_dense @ adj2_dense)
+    assert torch.allclose(out.to_dense(value), adj2_dense @ adj2_dense)
 
 
 def test_matmul_input_value():
@@ -378,8 +378,8 @@ def test_matmul_input_value():
     x = torch.randn(3, 1)
     value = torch.randn(4)
 
-    out = matmul(adj, x, input_value=value)
-    assert torch.allclose(out, to_dense(adj, value=value) @ x)
+    out = adj.matmul(x, input_value=value)
+    assert torch.allclose(out, adj.to_dense(value) @ x)
 
 
 def test_matmul_backward():
@@ -388,12 +388,12 @@ def test_matmul_backward():
     x1 = torch.randn(3, 1, requires_grad=True)
     value = torch.randn(4)
 
-    out = matmul(adj, x1, input_value=value)
+    out = adj.matmul(x1, input_value=value)
     grad_out = torch.randn_like(out)
     out.backward(grad_out)
 
     x2 = x1.detach().requires_grad_()
-    dense_adj = to_dense(adj, value=value)
+    dense_adj = adj.to_dense(value)
     out = dense_adj @ x2
     out.backward(grad_out)
 
