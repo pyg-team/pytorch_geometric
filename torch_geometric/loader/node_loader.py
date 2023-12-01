@@ -158,12 +158,12 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
 
             else:  # Tuple[FeatureStore, GraphStore]
                 edge_index = torch.stack([out.row, out.col])
-                data = Data(edge_index=edge_index)
+                fs, _ = self.data
+                x = fs.get_tensor(group_name=None,
+                                  attr_name='x', index=out.node)
+                data = Data(x=x, edge_index=edge_index)
 
                 # TODO Respect `custom_cls`.
-                fs, _ = self.data
-                data.x = fs.get_tensor(group_name=None,
-                                       attr_name='x', index=out.node)
 
                 # Hack to detect whether we are in a distributed setting.
                 if (self.node_sampler.__class__.__name__ ==
