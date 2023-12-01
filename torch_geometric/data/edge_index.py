@@ -263,7 +263,9 @@ class EdgeIndex(Tensor):
                 f"Cannot access 'rowptr' in '{self.__class__.__name__}' "
                 f"since it is not sorted. Please call `sort_by(...)` first.")
 
-        row = self[0] if self.is_sorted_by_row else self[0][self.get_csc2csr()]
+        row = self[0]
+        if not self.is_sorted_by_row:
+            row = row[self._get_csc2csr()]
         self._rowptr = torch._convert_indices_from_coo_to_csr(
             row, self.get_num_rows(), out_int32=self.dtype != torch.int64)
         self._rowptr = self._rowptr.to(self.dtype)
@@ -283,14 +285,16 @@ class EdgeIndex(Tensor):
                 f"Cannot access 'colptr' in '{self.__class__.__name__}' "
                 f"since it is not sorted. Please call `sort_by(...)` first.")
 
-        col = self[1] if self.is_sorted_by_col else self[1][self.get_csr2csc()]
+        col = self[1]
+        if not self.is_sorted_by_col:
+            col = col[self._get_csr2csc()]
         self._colptr = torch._convert_indices_from_coo_to_csr(
             col, self.get_num_cols(), out_int32=self.dtype != torch.int64)
         self._colptr = self._colptr.to(self.dtype)
 
         return self._colptr
 
-    def get_csr2csc(self) -> Tensor:
+    def _get_csr2csc(self) -> Tensor:
         r"""Returns the permutation to map from CSR to CSC representation."""
         if self._csr2csc is not None:
             return self._csr2csc
@@ -304,7 +308,7 @@ class EdgeIndex(Tensor):
         _, self._csr2csc = index_sort(self[1], self.num_cols)
         return self._csr2csc
 
-    def get_csc2csr(self) -> Tensor:
+    def _get_csc2csr(self) -> Tensor:
         r"""Returns the permutation to map from CSC to CSR representation."""
         if self._csc2csr is not None:
             return self._csc2csr
@@ -378,11 +382,11 @@ class EdgeIndex(Tensor):
 
         # If conversion from CSR->CSC or CSC->CSR is known, make use of it:
         if self.is_sorted_by_row:
-            perm = self.get_csr2csc()
+            perm = self._get_csr2csc()
             edge_index = self.as_tensor()[:, perm]
 
         elif self.is_sorted_by_col:
-            perm = self.get_csc2csr()
+            perm = self._get_csc2csr()
             edge_index = self.as_tensor()[:, perm]
 
         # Otherwise, perform sorting:
@@ -787,7 +791,7 @@ def _torch_sparse_spmm(
             row = input[0]
         if other.requires_grad:
             row = input[0]
-            csr2csc = input.get_csr2csc()
+            csr2csc = input._get_csr2csc()
             colptr = input.get_colptr()
         return torch.ops.torch_sparse.spmm_sum(  #
             row, rowptr, col, value, colptr, csr2csc, other)
@@ -798,7 +802,7 @@ def _torch_sparse_spmm(
         if other.requires_grad:
             row = input[0]
             rowcount = rowptr.diff()
-            csr2csc = input.get_csr2csc()
+            csr2csc = input._get_csr2csc()
             colptr = input.get_colptr()
         return torch.ops.torch_sparse.spmm_mean(  #
             row, rowptr, col, value, rowcount, colptr, csr2csc, other)
