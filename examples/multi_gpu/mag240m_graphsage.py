@@ -127,7 +127,7 @@ def run(
     data,
     n_devices=1,
     num_epochs=1,
-    num_steps_per_epoch=100,
+    num_steps_per_epoch=-1,
     log_every_n_steps=1,
     batch_size=1024,
     sizes=[128],
@@ -214,7 +214,7 @@ def run(
         if rank == 0 and epoch == 0:
             print("Training beginning...")
         for i, batch in enumerate(train_loader):
-            if i >= num_steps_per_epoch:
+            if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
                 break
             since = time.time()
             optimizer.zero_grad()
@@ -299,7 +299,9 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=1024)
     parser.add_argument("--dropout", type=float, default=0.5)
     parser.add_argument("--epochs", type=int, default=1)
-    parser.add_argument("--num_steps_per_epoch", type=int, default=500)
+    parser.add_argument("--num_steps_per_epoch", type=int, default=-1, \
+                        help="-1 by default means run the full dataset each epoch, \
+                        otherwise select how many steps to take")
     parser.add_argument("--log_every_n_steps", type=int, default=1)
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
@@ -307,7 +309,7 @@ if __name__ == "__main__":
         "--subgraph", type=float, default=1,
         help='decimal from (0,1] representing the \
         portion of nodes to use in subgraph')
-    parser.add_argument("--sizes", type=str, default="128")
+    parser.add_argument("--sizes", type=str, default="25-15")
     parser.add_argument("--n_devices", type=int, default=1,
                         help="0 devices for CPU, or 1-8 to use GPUs")
     parser.add_argument("--debug", action="store_true")
