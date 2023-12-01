@@ -69,7 +69,7 @@ class LinkPredMetric(BaseMetric, ABC):
             pred_index_mat.max() if pred_index_mat.numel() > 0 else 0,
             edge_label_index[1].max()
             if edge_label_index[1].numel() > 0 else 0,
-        )
+        ) + 1
         arange = torch.arange(
             start=0,
             end=max_index * pred_index_mat.size(0),

@@ -12,7 +12,6 @@ from torch_geometric.nn.metrics import LinkPredPrecision
 @pytest.mark.parametrize('batch_size', [32])
 @pytest.mark.parametrize('top_k', [1, 10, 100])
 def test_metrics(num_src_nodes, num_dst_nodes, num_edges, batch_size, top_k):
-
     row = torch.randint(0, num_src_nodes, (num_edges, ))
     col = torch.randint(0, num_dst_nodes, (num_edges, ))
     edge_label_index = torch.stack([row, col], dim=0)
@@ -46,4 +45,4 @@ def test_metrics(num_src_nodes, num_dst_nodes, num_edges, batch_size, top_k):
             precision = float(mask.sum() / top_k)
             values.append(precision)
     expected = torch.tensor(values).mean()
-    assert torch.allclose(out, expected, atol=1e-3)
+    assert torch.allclose(out, expected)
