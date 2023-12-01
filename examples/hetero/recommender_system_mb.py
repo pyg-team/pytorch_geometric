@@ -184,10 +184,11 @@ def train(train_dl, val_dl, val_data, epoch):
         emb_u_m = model.encoder(val_data.x_dict, 
             val_data.edge_index_dict)
         embs_user_to_movie = model.decoder.user_to_item(emb_u_m['user'])
-        emb_reduced = tsne.fit_transform(emb_u_m['movie'].detach().numpy())
-        plt.scatter(emb_reduced[:,0], emb_reduced[:,1], alpha=0.1)
-        emb_reduced = tsne.fit_transform(embs_user_to_movie.detach().numpy())
-        plt.scatter(emb_reduced[:,0], emb_reduced[:,1], alpha=0.1, marker='x')
+        emb_reduced = tsne.fit_transform(torch.vstack((emb_u_m['movie'],embs_user_to_movie )).detach().numpy())
+        # tsne.fit_transform(emb_u_m['movie'].detach().numpy())
+        plt.scatter(emb_reduced[:emb_u_m['movie'].size(0),0], emb_reduced[:emb_u_m['movie'].size(0),1], alpha=0.1)
+        # emb_reduced = tsne.fit_transform(embs_user_to_movie.detach().numpy())
+        plt.scatter(emb_reduced[emb_u_m['movie'].size(0):,0], emb_reduced[emb_u_m['movie'].size(0):,1], alpha=0.1, marker='x')
         plt.savefig('./fig-' + str(epoch) + '.png')
         plt.clf()
     
@@ -228,7 +229,7 @@ def test(dl, desc='val'):
         print(f'{desc} time = {val_time}')
     return float(rmse)
 
-EPOCHS = 5
+EPOCHS = 50
 for epoch in range(0, EPOCHS):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader, val_data=val_data, epoch=epoch)
     # train_rmse = test(val_dataloader)
