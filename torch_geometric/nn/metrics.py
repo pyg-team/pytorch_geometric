@@ -114,6 +114,16 @@ class LinkPredMetric(BaseMetric, ABC):
 
     @abstractmethod
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        r"""Compute the specific metric.
+        To be implemented separately for each metric class.
+
+        Args:
+            pred_isin_mat (torch.Tensor): A boolean matrix whose :obj:`(i,k)`
+                element indicates if the :obj:`k`-th prediction for the
+                :obj:`i`-th example is correct or not.
+            y_count (torch.Tensor): A vector indicating the number of
+                ground-truth labels for each example.
+        """
         raise NotImplementedError
 
     def __repr__(self) -> str:
