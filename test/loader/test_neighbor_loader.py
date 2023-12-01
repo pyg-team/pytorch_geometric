@@ -392,9 +392,8 @@ def test_custom_neighbor_loader():
     edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
     edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
     coo = (edge_index[0], edge_index[1])
-    graph_store.put_edge_index(edge_index=coo,
-                               edge_type=None,
-                               layout='coo', size=(100, 100))
+    graph_store.put_edge_index(edge_index=coo, edge_type=None, layout='coo',
+                               size=(100, 100))
 
     data = Data(x=x, edge_index=edge_index)
 

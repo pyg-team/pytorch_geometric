@@ -313,8 +313,8 @@ class GraphStore:
         edge_attrs: List[EdgeAttr] = []
         for attr in self.get_all_edge_attrs():
             edge_attrs.append(attr)
-        is_hetero = is_hetero and (
-            [attr.edge_type for attr in edge_attrs] != [None])
+        is_hetero = is_hetero and ([attr.edge_type
+                                    for attr in edge_attrs] != [None])
         if not is_hetero:
             return self._edge_to_layout(edge_attrs[0], layout, store)
 

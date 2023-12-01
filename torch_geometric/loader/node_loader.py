@@ -159,8 +159,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             else:  # Tuple[FeatureStore, GraphStore]
                 edge_index = torch.stack([out.row, out.col])
                 fs, _ = self.data
-                x = fs.get_tensor(group_name=None,
-                                  attr_name='x', index=out.node)
+                x = fs.get_tensor(group_name=None, attr_name='x',
+                                  index=out.node)
                 data = Data(x=x, edge_index=edge_index)
 
                 # TODO Respect `custom_cls`.
