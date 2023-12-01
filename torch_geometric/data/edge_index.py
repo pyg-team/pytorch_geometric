@@ -173,11 +173,11 @@ class EdgeIndex(Tensor):
                              f"(got {int(self[1].max())}, but expected values "
                              f"smaller than {self.num_cols})")
 
-        if self._sort_order == SortOrder.ROW and (self[0].diff() < 0).any():
+        if self.is_sorted_by_row and (self[0].diff() < 0).any():
             raise ValueError(f"'{self.__class__.__name__}' is not sorted by "
                              f"row indices")
 
-        if self._sort_order == SortOrder.COL and (self[1].diff() < 0).any():
+        if self.is_sorted_by_col and (self[1].diff() < 0).any():
             raise ValueError(f"'{self.__class__.__name__}' is not sorted by "
                              f"column indices")
 
@@ -255,16 +255,17 @@ class EdgeIndex(Tensor):
         compressed representation of row indices in case :class:`EdgeIndex` is
         sorted by rows.
         """
-        if self._sort_order != SortOrder.ROW:
-            raise ValueError(
-                f"Cannot access 'rowptr' in '{self.__class__.__name__}' "
-                f"since it is not sorted by rows (got '{self.sort_order}')")
-
         if self._rowptr is not None:
             return self._rowptr
 
+        if not self.is_sorted:
+            raise ValueError(
+                f"Cannot access 'rowptr' in '{self.__class__.__name__}' "
+                f"since it is not sorted. Please call `sort_by(...)` first.")
+
+        row = self[0] if self.is_sorted_by_row else self[0][self.get_csc2csr()]
         self._rowptr = torch._convert_indices_from_coo_to_csr(
-            self[0], self.get_num_rows(), out_int32=self.dtype != torch.int64)
+            row, self.get_num_rows(), out_int32=self.dtype != torch.int64)
         self._rowptr = self._rowptr.to(self.dtype)
 
         return self._rowptr
@@ -274,19 +275,48 @@ class EdgeIndex(Tensor):
         compressed representation of column indices in case :class:`EdgeIndex`
         is sorted by columns.
         """
-        if self._sort_order != SortOrder.COL:
-            raise ValueError(
-                f"Cannot access 'colptr' in '{self.__class__.__name__}' "
-                f"since it is not sorted by columns (got '{self.sort_order}')")
-
         if self._colptr is not None:
             return self._colptr
 
+        if not self.is_sorted:
+            raise ValueError(
+                f"Cannot access 'colptr' in '{self.__class__.__name__}' "
+                f"since it is not sorted. Please call `sort_by(...)` first.")
+
+        col = self[1] if self.is_sorted_by_col else self[1][self.get_csr2csc()]
         self._colptr = torch._convert_indices_from_coo_to_csr(
-            self[1], self.get_num_cols(), out_int32=self.dtype != torch.int64)
+            col, self.get_num_cols(), out_int32=self.dtype != torch.int64)
         self._colptr = self._colptr.to(self.dtype)
 
         return self._colptr
+
+    def get_csr2csc(self) -> Tensor:
+        r"""Returns the permutation to map from CSR to CSC representation."""
+        if self._csr2csc is not None:
+            return self._csr2csc
+
+        if not self.is_sorted_by_row:
+            raise ValueError(
+                f"Cannot access 'csr2csc' in '{self.__class__.__name__}' "
+                f"since it is not sorted by rows. Please call `sort_by(...)` "
+                f"first.")
+
+        _, self._csr2csc = index_sort(self[1], self.num_cols)
+        return self._csr2csc
+
+    def get_csc2csr(self) -> Tensor:
+        r"""Returns the permutation to map from CSC to CSR representation."""
+        if self._csc2csr is not None:
+            return self._csc2csr
+
+        if not self.is_sorted_by_col:
+            raise ValueError(
+                f"Cannot access 'csc2csr' in '{self.__class__.__name__}' "
+                f"since it is not sorted by columns. Please call "
+                f"`sort_by(...)` first.")
+
+        _, self._csc2csr = index_sort(self[0], self.num_rows)
+        return self._csc2csr
 
     def _get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
         if self._value is not None:
@@ -311,10 +341,12 @@ class EdgeIndex(Tensor):
         self.get_num_rows()
         self.get_num_cols()
 
-        if self._sort_order == SortOrder.ROW:
+        if self.is_sorted_by_row:
             self.get_rowptr()
-        if self._sort_order == SortOrder.COL:
             self.get_colptr()
+        elif self.is_sorted_by_col:
+            self.get_colptr()
+            self.get_rowptr()
 
         return self
 
@@ -345,22 +377,22 @@ class EdgeIndex(Tensor):
             return torch.return_types.sort([self, perm])
 
         # If conversion from CSR->CSC or CSC->CSR is known, make use of it:
-        if self._sort_order == SortOrder.ROW and self._csr2csc is not None:
-            edge_index = self.as_tensor()[:, self._csr2csc]
-            perm = self._csr2csc
+        if self.is_sorted_by_row:
+            perm = self.get_csr2csc()
+            edge_index = self.as_tensor()[:, perm]
 
-        elif self._sort_order == SortOrder.COL and self._csc2csr is not None:
-            edge_index = self.as_tensor()[:, self._csc2csr]
-            perm = self._csc2csr
+        elif self.is_sorted_by_col:
+            perm = self.get_csc2csr()
+            edge_index = self.as_tensor()[:, perm]
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
-            row, perm = index_sort(self.as_tensor()[0], self.num_rows, stable)
-            edge_index = torch.stack([row, self.as_tensor()[1][perm]], dim=0)
+            row, perm = index_sort(self[0], self.num_rows, stable)
+            edge_index = torch.stack([row, self[1][perm]], dim=0)
 
         else:
-            col, perm = index_sort(self.as_tensor()[1], self.num_cols, stable)
-            edge_index = torch.stack([self.as_tensor()[0][perm], col], dim=0)
+            col, perm = index_sort(self[1], self.num_cols, stable)
+            edge_index = torch.stack([self[0][perm], col], dim=0)
 
         out = self.__class__(edge_index)
 
@@ -372,12 +404,6 @@ class EdgeIndex(Tensor):
         out._csr2csc = self._csr2csc
         out._csc2csr = self._csc2csr
         out._value = self._value
-
-        # Fill information for faster future CSR->CSC or CSC->CSR conversion:
-        if self._sort_order == SortOrder.ROW:
-            out._csr2csc = self._csr2csc = perm
-        elif self._sort_order == SortOrder.COL:
-            out._csc2csr = self._csc2csr = perm
 
         return torch.return_types.sort([out, perm])
 
@@ -410,12 +436,18 @@ class EdgeIndex(Tensor):
             requires_grad=value.requires_grad,
         )
 
-        if self._sort_order == SortOrder.ROW:
+        if self.is_sorted_by_row:
             out = out._coalesced_(True)
 
         return out
 
     def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
+        if not self.is_sorted_by_row:
+            raise ValueError(
+                f"Cannot access convert '{self.__class__.__name__}' to "
+                f"'torch.sparse_csr_tensor' since it is not sorted by rows. "
+                f"Please call `sort_by(...)` first.")
+
         value = self._get_value() if value is None else value
         return torch.sparse_csr_tensor(
             crow_indices=self.get_rowptr(),
@@ -430,6 +462,12 @@ class EdgeIndex(Tensor):
         if not torch_geometric.typing.WITH_PT112:
             raise NotImplementedError(
                 "'to_sparse_csc' not supported for PyTorch < 1.12")
+
+        if not self.is_sorted_by_col:
+            raise ValueError(
+                f"Cannot access convert '{self.__class__.__name__}' to "
+                f"'torch.sparse_csc_tensor' since it is not sorted by "
+                f"columns. Please call `sort_by(...)` first.")
 
         value = self._get_value() if value is None else value
         return torch.sparse_csc_tensor(
@@ -624,9 +662,9 @@ def flip(
         out._sparse_size = input.sparse_size[::-1]
 
     if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
-        if input._sort_order == SortOrder.ROW:
+        if input.is_sorted_by_row:
             out._sort_order = SortOrder.COL
-        elif input._sort_order == SortOrder.COL:
+        elif input.is_sorted_by_col:
             out._sort_order = SortOrder.ROW
 
         out._rowptr = input._colptr
@@ -721,6 +759,59 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
     return out
 
 
+# Sparse-Dense Matrix Multiplication ##########################################
+
+
+def _torch_sparse_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+) -> Tensor:
+    # `torch-sparse` still provides a faster sparse-dense matrix multiplication
+    # code path on GPUs (after all these years...):
+    assert input.is_sorted_by_row
+    assert torch_geometric.typing.WITH_TORCH_SPARSE
+
+    rowptr = input.get_rowptr()
+    col = input[1]
+
+    # Optional arguments for backpropagation:
+    row: Optional[Tensor] = None
+    rowcount: Optional[Tensor] = None
+    colptr: Optional[Tensor] = None
+    csr2csc: Optional[Tensor] = None
+
+    if reduce == 'sum':
+        if value is not None and value.requires_grad:
+            row = input[0]
+        if other.requires_grad:
+            row = input[0]
+            csr2csc = input.get_csr2csc()
+            colptr = input.get_colptr()
+        return torch.ops.torch_sparse.spmm_sum(  #
+            row, rowptr, col, value, colptr, csr2csc, other)
+
+    if reduce == 'mean':
+        if value is not None and value.requires_grad:
+            row = input[0]
+        if other.requires_grad:
+            row = input[0]
+            rowcount = rowptr.diff()
+            csr2csc = input.get_csr2csc()
+            colptr = input.get_colptr()
+        return torch.ops.torch_sparse.spmm_mean(  #
+            row, rowptr, col, value, rowcount, colptr, csr2csc, other)
+
+    if reduce == 'amin':
+        return torch.ops.torch_sparse.spmm_min(rowptr, col, value, other)
+
+    if reduce == 'amax':
+        return torch.ops.torch_sparse.spmm_max(rowptr, col, value, other)
+
+    raise NotImplementedError
+
+
 class SparseDenseMatmul(torch.autograd.Function):
     @staticmethod
     def forward(
@@ -731,7 +822,7 @@ class SparseDenseMatmul(torch.autograd.Function):
         reduce: ReduceType = 'sum',
     ) -> Tensor:
 
-        if input._sort_order != SortOrder.ROW:
+        if not input.is_sorted_by_row:
             raise ValueError("Sparse-dense matrix multiplication requires "
                              "'EdgeIndex' to be sorted by rows")
 
@@ -820,12 +911,12 @@ def matmul(
                              "matrix multiplication")
         return SparseDenseMatmul.apply(input, other, input_value, reduce)
 
-    if input._sort_order == SortOrder.COL:
+    if input.is_sorted_by_col:
         input = input.to_sparse_csc(input_value)
     else:
         input = input.to_sparse_csr(input_value)
 
-    if other._sort_order == SortOrder.COL:
+    if other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)
     else:
         other = other.to_sparse_csr(other_value)
