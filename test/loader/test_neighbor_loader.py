@@ -383,6 +383,52 @@ def test_custom_neighbor_loader():
     # Initialize feature store, graph store, and reference:
     feature_store = MyFeatureStore()
     graph_store = MyGraphStore()
+
+    # Set up node features:
+    x = torch.arange(100, 300)
+    feature_store.put_tensor(x, group_name=None, attr_name='x', index=None)
+
+    # COO:
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=None,
+                               layout='coo', size=(100, 100))
+
+    data = Data(x=x, edge_index=edge_index)
+
+    # Construct neighbor loaders:
+    loader1 = NeighborLoader(data, batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    loader2 = NeighborLoader((feature_store, graph_store), batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    assert str(loader1) == str(loader2)
+    assert len(loader1) == len(loader2)
+
+    for batch1, batch2 in zip(loader1, loader2):
+        assert len(batch1) == len(batch2)
+        assert batch1.batch_size == batch2.batch_size
+
+        # Mapped indices of neighbors may be differently sorted ...
+        assert torch.allclose(
+            batch1.x.sort()[0],
+            batch2.x.sort()[0],
+        )
+
+        # ... but should sample the exact same number of edges:
+        assert batch1.num_edges == batch2.num_edges
+
+
+@onlyNeighborSampler
+def test_custom_neighbor_loader_hetero():
+    # Initialize feature store, graph store, and reference:
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
     data = HeteroData()
 
     # Set up node features:
