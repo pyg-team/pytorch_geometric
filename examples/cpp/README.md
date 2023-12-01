@@ -19,10 +19,10 @@ make
 Once both dependencies are sorted, we can start the CMake fun:
 
 1. Run `save_model.py` to create and save a PyG GNN model.
-2. Create a `build` directory inside the current one.
-3. From within the `build` directory, run the following commands:
-   * `cmake -DCMAKE_PREFIX_PATH="<PATH_TO_LIBTORCH>;<PATH_TO_TORCHSCATTER>;<PATH_TO_TORCH_SPARSE>" ..`
-   * `cmake --build .`
+1. Create a `build` directory inside the current one.
+1. From within the `build` directory, run the following commands:
+   - `cmake -DCMAKE_PREFIX_PATH="<PATH_TO_LIBTORCH>;<PATH_TO_TORCHSCATTER>;<PATH_TO_TORCH_SPARSE>" ..`
+   - `cmake --build .`
 
 That's it!
 You should now have a `hello-world` executable in your `build` folder.

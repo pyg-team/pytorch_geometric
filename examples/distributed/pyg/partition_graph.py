@@ -14,7 +14,8 @@ def partition_dataset(
     num_parts: int,
     recursive: bool = False,
 ):
-    save_dir = osp.join(root_dir, f'{ogbn_dataset}-partitions')
+    save_dir = osp.join(f'{root_dir}-{num_parts}parts',
+                        f'{ogbn_dataset}-partitions')
     dataset = PygNodePropPredDataset(ogbn_dataset)
     data = dataset[0]
 

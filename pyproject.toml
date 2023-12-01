@@ -32,7 +32,9 @@ dependencies=[
     "tqdm",
     "numpy",
     "scipy",
+    "fsspec",
     "jinja2",
+    "aiohttp",
     "requests",
     "pyparsing",
     "scikit-learn",
@@ -149,6 +151,9 @@ filterwarnings = [
     "ignore:Sparse CSR tensor support is in beta state:UserWarning",
     "ignore:Sparse CSC tensor support is in beta state:UserWarning",
     "ignore:torch.distributed._sharded_tensor will be deprecated:DeprecationWarning",
+    # Filter `torch.compile` warnings:
+    "ignore:pkg_resources is deprecated as an API",
+    "ignore:Deprecated call to `pkg_resources.declare_namespace",
     # Filter `captum` warnings:
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",

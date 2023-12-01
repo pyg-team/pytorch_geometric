@@ -284,8 +284,8 @@ class SQLiteDatabase(Database):
         # Create the table (if it does not exist) by mapping the Python schema
         # to the corresponding SQL schema:
         sql_schema = ',\n'.join([
-            f'  {col_name} {self._to_sql_type(type_info)} NOT NULL' for
-            col_name, type_info in zip(self._col_names, self.schema.values())
+            f'  {col_name} {self._to_sql_type(type_info)}' for col_name,
+            type_info in zip(self._col_names, self.schema.values())
         ])
         query = (f'CREATE TABLE IF NOT EXISTS {self.name} (\n'
                  f'  id INTEGER PRIMARY KEY,\n'
@@ -409,13 +409,13 @@ class SQLiteDatabase(Database):
 
     def _to_sql_type(self, type_info: Any) -> str:
         if type_info == int:
-            return 'INTEGER'
+            return 'INTEGER NOT NULL'
         if type_info == float:
             return 'FLOAT'
         if type_info == str:
-            return 'TEXT'
+            return 'TEXT NOT NULL'
         else:
-            return 'BLOB'
+            return 'BLOB NOT NULL'
 
     def _serialize(self, row: Any) -> List[Any]:
         # Serializes the given input data according to `schema`:
@@ -455,7 +455,9 @@ class SQLiteDatabase(Database):
                 else:
                     tensor = torch.empty(0, dtype=col_schema.dtype)
                 out_dict[key] = tensor.view(*col_schema.size)
-            elif col_schema in {int, float, str}:
+            elif col_schema == float:
+                out_dict[key] = value if value is not None else float('NaN')
+            elif col_schema in {int, str}:
                 out_dict[key] = value
             else:
                 out_dict[key] = pickle.loads(value)
