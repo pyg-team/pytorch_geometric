@@ -8,7 +8,6 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
 from ogb.lsc import MAG240MDataset, MAG240MEvaluator
-from root import ROOT
 from torch import Tensor
 from torch.nn import Linear
 from torch.nn.parallel import DistributedDataParallel
@@ -333,7 +332,7 @@ if __name__ == "__main__":
         )
         args.n_devices = torch.cuda.device_count()
     print("Loading Data...")
-    dataset = MAG240MDataset(ROOT)
+    dataset = MAG240MDataset()
     data = dataset.to_pyg_hetero_data()
     print("Data =", data)
 
