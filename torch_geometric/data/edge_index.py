@@ -444,7 +444,7 @@ class EdgeIndex(Tensor):
     def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
         if not self.is_sorted_by_row:
             raise ValueError(
-                f"Cannot access convert '{self.__class__.__name__}' to "
+                f"Cannot convert '{self.__class__.__name__}' to "
                 f"'torch.sparse_csr_tensor' since it is not sorted by rows. "
                 f"Please call `sort_by(...)` first.")
 
@@ -465,7 +465,7 @@ class EdgeIndex(Tensor):
 
         if not self.is_sorted_by_col:
             raise ValueError(
-                f"Cannot access convert '{self.__class__.__name__}' to "
+                f"Cannot convert '{self.__class__.__name__}' to "
                 f"'torch.sparse_csc_tensor' since it is not sorted by "
                 f"columns. Please call `sort_by(...)` first.")
 
