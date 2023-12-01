@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple, Union
+from collections import defaultdict
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -11,30 +11,42 @@ from torch_geometric.sampler import SamplerOutput
 from torch_geometric.typing import EdgeType, NodeType
 
 
-@dataclass
 class NodeDict:
-    r"""Class used during heterogeneous sampling:
-    1) The nodes to serve as source nodes in the next layer
-    2) The nodes with duplicates that are further needed to create COO output
+    r"""Class used during heterogeneous sampling.
+    1) The nodes to serve as source nodes in the next layer.
+    2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
     """
-    src: Dict[NodeType, Tensor] = field(default_factory=dict)
-    with_dupl: Dict[NodeType, Tensor] = field(default_factory=dict)
-    out: Dict[NodeType, Tensor] = field(default_factory=dict)
+    def __init__(self, node_types, num_hops):
+        self.src: Dict[NodeType, List[Tensor]] = defaultdict(list)
+        self.with_dupl: Dict[NodeType, Tensor] = defaultdict()
+        self.out: Dict[NodeType, Tensor] = defaultdict()
+
+        for k in node_types:
+            self.src.update(
+                {k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]})
+            self.with_dupl.update({k: torch.empty(0, dtype=torch.int64)})
+            self.out.update({k: torch.empty(0, dtype=torch.int64)})
 
 
-@dataclass
 class BatchDict:
-    r"""Class used during disjoint heterogeneous sampling:
+    r"""Class used during disjoint heterogeneous sampling.
     1) The batch to serve as initial subgraph IDs for source nodes in the next
-       layer
+       layer.
     2) The subgraph IDs with duplicates that are further needed to create COO
-       output
+       output.
     3) The output subgraph IDs without duplicates.
     """
-    src: Dict[NodeType, Tensor] = field(default_factory=dict)
-    with_duple: Dict[NodeType, Tensor] = field(default_factory=dict)
-    out: Dict[NodeType, Tensor] = field(default_factory=dict)
+    def __init__(self, node_types, num_hops):
+        self.src: Dict[NodeType, List[Tensor]] = defaultdict(list)
+        self.with_dupl: Dict[NodeType, Tensor] = defaultdict()
+        self.out: Dict[NodeType, Tensor] = defaultdict()
+
+        for k in node_types:
+            self.src.update(
+                {k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]})
+            self.with_dupl.update({k: torch.empty(0, dtype=torch.int64)})
+            self.out.update({k: torch.empty(0, dtype=torch.int64)})
 
 
 def remove_duplicates(
