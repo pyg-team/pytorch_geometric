@@ -79,7 +79,6 @@ def test_undirected(dtype, device):
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_fill_cache_(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
-
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
