@@ -179,12 +179,12 @@ class HANConv(MessagePassing):
         return out.view(-1, self.out_channels)
 
     def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
-        edge_mask = self._edge_mask
-        loop_mask = self._loop_mask
+        edge_mask_dict = self._edge_mask
+        loop_mask_dict = self._loop_mask
         edge_keys = self._edge_keys
         edge_key_index = self._current_edge_key_index
 
-        if not isinstance(edge_mask, dict):
+        if not isinstance(edge_mask_dict, dict):
             raise ValueError(
                 "HANConv edge mask was not initialized correctly! "
                 "It should be a dictionary of edge types and edge masks.")
@@ -208,8 +208,8 @@ class HANConv(MessagePassing):
         # edge_mask = edge_mask[possible_eindexes[0]]
         # loop_mask = loop_mask[possible_eindexes[0]]
 
-        edge_mask = edge_mask[edge_keys[edge_key_index]]
-        loop_mask = loop_mask[edge_keys[edge_key_index]]
+        edge_mask = edge_mask_dict[edge_keys[edge_key_index]]
+        loop_mask = loop_mask_dict[edge_keys[edge_key_index]]
 
         return self._explain_message_with_masks(inputs, size_i, edge_mask,
                                                 loop_mask)

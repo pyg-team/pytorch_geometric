@@ -1,7 +1,6 @@
 import math
 from typing import Dict, List, Optional, Tuple, Union
 
-# import ipdb
 import torch
 from torch import Tensor
 from torch.nn import Parameter
@@ -233,11 +232,11 @@ class HGTConv(MessagePassing):
         return out.view(-1, self.out_channels)
 
     def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
-        edge_mask = self._edge_mask
-        loop_mask = self._loop_mask
-        # edge_keys = self._edge_keys
+        edge_mask_dict = self._edge_mask
+        loop_mask_dict = self._loop_mask
+        edge_keys = self._edge_keys
 
-        if not isinstance(edge_mask, dict):
+        if not isinstance(edge_mask_dict, dict):
             raise ValueError(
                 "HGTConv edge mask was not initialized correctly! "
                 "It should be a dictionary of edge types and edge masks.")
@@ -245,7 +244,15 @@ class HGTConv(MessagePassing):
         # With HGTConv, all of the edge indices and edge attributes
         # were merged into a single bipartite edge index using
         # construct_bipartite_edge_index. We must do the same
-        # with the edge masks in the same order.
+        # with the edge masks in the same key order, though
+        # we do not need to "offset" indices in the mask at all.
+        # TODO: Add support for sparse edge (adj_t)?
+
+        edge_mask = torch.cat(
+            [edge_mask_dict[edge_type] for edge_type in edge_keys])
+
+        loop_mask = torch.cat(
+            [loop_mask_dict[edge_type] for edge_type in edge_keys])
 
         return self._explain_message_with_masks(inputs, size_i, edge_mask,
                                                 loop_mask)
