@@ -1,15 +1,14 @@
 # TODO: move model to torch_geometric.nn.models.graph_mixer
 import torch
 import torch.nn.functional as F
+from tqdm import tqdm
+
 import torch_geometric
+import torch_geometric.transforms as T
 from torch_geometric.datasets import GDELTLite, Planetoid
 from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.nn.models.graph_mixer import LinkEncoder, NodeEncoder
-import torch_geometric.transforms as T
 from torch_geometric.utils import to_undirected
-from tqdm import tqdm
-
-
 
 
 class GraphMixer(torch.nn.Module):
@@ -36,8 +35,7 @@ class GraphMixer(torch.nn.Module):
         )
         self.node_encoder = NodeEncoder(time_window=node_encoder_time_window)
         self.link_classifier = torch.nn.Linear(
-            (link_encoder_out_channels + num_node_feats) * 2, 1
-        )
+            (link_encoder_out_channels + num_node_feats) * 2, 1)
 
     def forward(
         self,
