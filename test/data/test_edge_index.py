@@ -83,37 +83,37 @@ def test_fill_cache_(dtype, device, is_undirected):
     adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert adj._rowptr.dtype == dtype
-    assert torch.equal(adj._rowptr, tensor([0, 1, 3, 4], device=device))
+    assert adj._rowptr.equal(tensor([0, 1, 3, 4], device=device))
     assert adj._csr_col is None
     assert adj._csr2csc.dtype == torch.int64
-    assert (torch.equal(adj._csr2csc, tensor([1, 0, 3, 2], device=device))
-            or torch.equal(adj._csr2csc, tensor([1, 3, 0, 2], device=device)))
+    assert (adj._csr2csc.equal(tensor([1, 0, 3, 2], device=device))
+            or adj._csr2csc.equal(tensor([1, 3, 0, 2], device=device)))
     if is_undirected:
         assert adj._colptr is None
     else:
         assert adj._colptr.dtype == dtype
-        assert torch.equal(adj._colptr, tensor([0, 1, 3, 4], device=device))
+        assert adj._colptr.equal(tensor([0, 1, 3, 4], device=device))
     assert adj._csc_row.dtype == dtype
-    assert (torch.equal(adj._csc_row, tensor([1, 0, 2, 1], device=device))
-            or torch.equal(adj._csc_row, tensor([1, 2, 0, 1], device=device)))
+    assert (adj._csc_row.equal(tensor([1, 0, 2, 1], device=device))
+            or adj._csc_row.equal(tensor([1, 2, 0, 1], device=device)))
     assert adj._csc2csr is None
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
     adj.validate().fill_cache_()
     assert adj.sparse_size == (3, 3)
     assert adj._colptr.dtype == dtype
-    assert torch.equal(adj._colptr, tensor([0, 1, 3, 4], device=device))
+    assert adj._colptr.equal(tensor([0, 1, 3, 4], device=device))
     assert adj._csc_row is None
-    assert (torch.equal(adj._csc2csr, tensor([1, 0, 3, 2], device=device))
-            or torch.equal(adj._csc2csr, tensor([1, 3, 0, 2], device=device)))
+    assert (adj._csc2csr.equal(tensor([1, 0, 3, 2], device=device))
+            or adj._csc2csr.equal(tensor([1, 3, 0, 2], device=device)))
     if is_undirected:
         assert adj._rowptr is None
     else:
         assert adj._rowptr.dtype == dtype
-        assert torch.equal(adj._rowptr, tensor([0, 1, 3, 4], device=device))
+        assert adj._rowptr.equal(tensor([0, 1, 3, 4], device=device))
     assert adj._csr_col.dtype == dtype
-    assert (torch.equal(adj._csr_col, tensor([1, 0, 2, 1], device=device))
-            or torch.equal(adj._csr_col, tensor([1, 2, 0, 1], device=device)))
+    assert (adj._csr_col.equal(tensor([1, 0, 2, 1], device=device))
+            or adj._csr_col.equal(tensor([1, 2, 0, 1], device=device)))
     assert adj._csr2csc is None
 
 
@@ -154,10 +154,13 @@ def test_to(dtype, device, is_undirected):
     assert adj._csr2csc.device == device
 
     out = adj.to(torch.int)
-    assert isinstance(out, EdgeIndex)
     assert out.dtype == torch.int
-    assert out._rowptr.dtype
-    assert out._csr2csc.dtype
+    if torch_geometric.typing.WITH_PT113:
+        assert isinstance(out, EdgeIndex)
+        assert out._rowptr.dtype == torch.int
+        assert out._csr2csc.dtype == torch.int
+    else:
+        assert not isinstance(out, EdgeIndex)
 
     out = adj.to(torch.float)
     assert not isinstance(out, EdgeIndex)
@@ -168,8 +171,11 @@ def test_to(dtype, device, is_undirected):
     assert out.dtype == torch.int64
 
     out = adj.int()
-    assert isinstance(out, EdgeIndex)
     assert out.dtype == torch.int
+    if torch_geometric.typing.WITH_PT113:
+        assert isinstance(out, EdgeIndex)
+    else:
+        assert not isinstance(out, EdgeIndex)
 
 
 @onlyCUDA
@@ -226,7 +232,7 @@ def test_sort_by(dtype, device, is_undirected):
     assert isinstance(out, torch.return_types.sort)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
-    assert torch.equal(out.values, adj)
+    assert out.values.equal(adj)
     assert out.indices == slice(None, None, None)
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], **kwargs)
@@ -234,11 +240,11 @@ def test_sort_by(dtype, device, is_undirected):
     assert isinstance(out, torch.return_types.sort)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
-    assert torch.equal(out.values[0], tensor([0, 1, 1, 2], device=device))
-    assert (torch.equal(out.values[1], tensor([1, 0, 2, 1], device=device))
-            or torch.equal(out.values[1], tensor([1, 2, 0, 1], device=device)))
-    assert (torch.equal(out.indices, tensor([0, 1, 3, 2], device=device))
-            or torch.equal(out.indices, tensor([0, 3, 1, 2], device=device)))
+    assert out.values[0].equal(tensor([0, 1, 1, 2], device=device))
+    assert (out.values[1].equal(tensor([1, 0, 2, 1], device=device))
+            or out.values[1].equal(tensor([1, 2, 0, 1], device=device)))
+    assert (out.indices.equal(tensor([0, 1, 3, 2], device=device))
+            or out.indices.equal(tensor([0, 3, 1, 2], device=device)))
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
@@ -293,21 +299,15 @@ def test_flip(dtype, device, is_undirected):
 
     out = adj.flip(0)
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(
-        out,
-        tensor([[1, 0, 2, 1], [0, 1, 1, 2]], device=device),
-    )
+    assert out.equal(tensor([[1, 0, 2, 1], [0, 1, 1, 2]], device=device))
     assert out.sparse_size == (3, 3)
     assert out.is_sorted_by_col
     assert out.is_undirected == is_undirected
-    assert torch.equal(out._colptr, tensor([0, 1, 3, 4], device=device))
+    assert out._colptr.equal(tensor([0, 1, 3, 4], device=device))
 
     out = adj.flip([0, 1])
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(
-        out,
-        tensor([[1, 2, 0, 1], [2, 1, 1, 0]], device=device),
-    )
+    assert out.equal(tensor([[1, 2, 0, 1], [2, 1, 1, 0]], device=device))
     assert out.sparse_size == (3, 3)
     assert not out.is_sorted
     assert out.is_undirected == is_undirected
@@ -322,13 +322,13 @@ def test_index_select(dtype, device, is_undirected):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
     out = adj.index_select(1, tensor([1, 3], device=device))
-    assert torch.equal(out, tensor([[1, 2], [0, 1]], device=device))
+    assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert isinstance(out, EdgeIndex)
     assert not out.is_sorted
     assert not out.is_undirected
 
     out = adj.index_select(0, tensor([0], device=device))
-    assert torch.equal(out, tensor([[0, 1, 1, 2]], device=device))
+    assert out.equal(tensor([[0, 1, 1, 2]], device=device))
     assert not isinstance(out, EdgeIndex)
 
 
@@ -341,13 +341,13 @@ def test_narrow(dtype, device, is_undirected):
 
     out = adj.narrow(dim=1, start=1, length=2)
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[1, 1], [0, 2]], device=device))
+    assert out.equal(tensor([[1, 1], [0, 2]], device=device))
     assert out.is_sorted_by_row
     assert not out.is_undirected
 
     out = adj.narrow(dim=0, start=0, length=1)
     assert not isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[0, 1, 1, 2]], device=device))
+    assert out.equal(tensor([[0, 1, 1, 2]], device=device))
 
 
 @withCUDA
@@ -359,19 +359,19 @@ def test_getitem(dtype, device, is_undirected):
 
     out = adj[:, tensor([False, True, False, True], device=device)]
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[1, 2], [0, 1]], device=device))
+    assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert out.is_sorted_by_row
     assert not out.is_undirected
 
     out = adj[..., tensor([1, 3], device=device)]
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[1, 2], [0, 1]], device=device))
+    assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert not out.is_sorted
     assert not out.is_undirected
 
     out = adj[..., 1::2]
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[1, 2], [0, 1]], device=device))
+    assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert out.is_sorted_by_row
     assert not out.is_undirected
 
@@ -416,7 +416,7 @@ def test_to_sparse_coo():
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
-    assert torch.equal(adj, out._indices())
+    assert adj.equal(out._indices())
 
     # Test clunky dispatch logic for `to_sparse_coo()`:
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
@@ -424,7 +424,7 @@ def test_to_sparse_coo():
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
-    assert torch.equal(adj, out._indices())
+    assert adj.equal(out._indices())
 
 
 def test_to_sparse_csr():
@@ -439,8 +439,8 @@ def test_to_sparse_csr():
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csr
     assert out.size() == (3, 3)
-    assert torch.equal(adj._rowptr, out.crow_indices())
-    assert torch.equal(adj[1], out.col_indices())
+    assert adj._rowptr.equal(out.crow_indices())
+    assert adj[1].equal(out.col_indices())
 
 
 def test_to_sparse_csc():
@@ -455,8 +455,8 @@ def test_to_sparse_csc():
     assert isinstance(out, Tensor)
     assert out.layout == torch.sparse_csc
     assert out.size() == (3, 3)
-    assert torch.equal(adj._colptr, out.ccol_indices())
-    assert torch.equal(adj[0], out.row_indices())
+    assert adj._colptr.equal(out.ccol_indices())
+    assert adj[0].equal(out.row_indices())
 
 
 def test_matmul_forward():
@@ -537,8 +537,8 @@ def test_to_sparse_tensor():
     assert isinstance(adj, SparseTensor)
     assert adj.sizes() == [3, 3]
     row, col, _ = adj.coo()
-    assert torch.equal(row, tensor([0, 1, 1, 2]))
-    assert torch.equal(col, tensor([1, 0, 2, 1]))
+    assert row.equal(tensor([0, 1, 1, 2]))
+    assert col.equal(tensor([1, 0, 2, 1]))
 
 
 def test_save_and_load(tmp_path):
@@ -546,16 +546,16 @@ def test_save_and_load(tmp_path):
     adj.fill_cache_()
 
     assert adj.sort_order == 'row'
-    assert torch.equal(adj._rowptr, tensor([0, 1, 3, 4]))
+    assert adj._rowptr.equal(tensor([0, 1, 3, 4]))
 
     path = osp.join(tmp_path, 'edge_index.pt')
     torch.save(adj, path)
     out = torch.load(path)
 
     assert isinstance(out, EdgeIndex)
-    assert torch.equal(out, tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
     assert out.sort_order == 'row'
-    assert torch.equal(out._rowptr, tensor([0, 1, 3, 4]))
+    assert out._rowptr.equal(tensor([0, 1, 3, 4]))
 
 
 @pytest.mark.parametrize('num_workers', [0, 2])
