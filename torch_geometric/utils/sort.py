@@ -26,8 +26,7 @@ def index_sort(
             guarantees that the order of equivalent elements is preserved.
             (default: :obj:`False`)
     """
-    if torch_geometric.typing.WITH_INDEX_SORT:
+    if stable or not torch_geometric.typing.WITH_INDEX_SORT:
         return inputs.sort(stable=stable)
-    # `pyg_lib.ops.index_sort` always returns stable sorting:
     out = pyg_lib.ops.index_sort(inputs, max_value=max_value)
     return torch.return_types.sort(out)

@@ -7,7 +7,7 @@ from torch_geometric.utils import index_sort
 @withCUDA
 def test_index_sort_stable(device):
     for _ in range(100):
-        inputs = torch.randint(0, 10, size=(100, 1), device=device)
+        inputs = torch.randint(0, 4, size=(10, ), device=device)
 
         out = index_sort(inputs, stable=True)
         expected = torch.sort(inputs, stable=True)
