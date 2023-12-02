@@ -21,13 +21,15 @@ from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
-SUPPORTED_DTYPES: Set[torch.dtype] = {
-    torch.uint8,
-    torch.int8,
-    torch.int16,
-    torch.int32,
-    torch.int64,
-}
+if torch_geometric.typing.WITH_PT113:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int32,
+        torch.int64,
+    }
+else:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int64,
+    }
 
 ReduceType = Literal['sum']
 
@@ -318,12 +320,9 @@ class EdgeIndex(Tensor):
                 rowptr = self._colptr
 
             else:  # Otherwise, fill cache:
-                self._rowptr = torch._convert_indices_from_coo_to_csr(
-                    self[0],
-                    self.get_num_rows(),
-                    out_int32=self.dtype != torch.int64,
-                ).to(self.dtype)
-                rowptr = self._rowptr
+                self._rowptr = rowptr = torch._convert_indices_from_coo_to_csr(
+                    self[0], self.get_num_rows(), out_int32=self.dtype
+                    != torch.int64)
 
             return rowptr, self[1], slice(None, None, None)
 
@@ -349,12 +348,9 @@ class EdgeIndex(Tensor):
                 if row is None:
                     row = self[0][self._csc2csr]
 
-                self._rowptr = torch._convert_indices_from_coo_to_csr(
-                    row,
-                    self.get_num_rows(),
-                    out_int32=self.dtype != torch.int64,
-                ).to(self.dtype)
-                rowptr = self._rowptr
+                self._rowptr = rowptr = torch._convert_indices_from_coo_to_csr(
+                    row, self.get_num_rows(), out_int32=self.dtype
+                    != torch.int64)
 
         return rowptr, self._csr_col, self._csc2csr
 
@@ -376,12 +372,9 @@ class EdgeIndex(Tensor):
                 colptr = self._rowptr
 
             else:  # Otherwise, fill cache:
-                self._colptr = torch._convert_indices_from_coo_to_csr(
-                    self[1],
-                    self.get_num_cols(),
-                    out_int32=self.dtype != torch.int64,
-                ).to(self.dtype)
-                colptr = self._colptr
+                self._colptr = colptr = torch._convert_indices_from_coo_to_csr(
+                    self[1], self.get_num_cols(), out_int32=self.dtype
+                    != torch.int64)
 
             return colptr, self[0], slice(None, None, None)
 
@@ -407,12 +400,9 @@ class EdgeIndex(Tensor):
                 if col is None:
                     col = self[1][self._csr2csc]
 
-                self._colptr = torch._convert_indices_from_coo_to_csr(
-                    col,
-                    self.get_num_cols(),
-                    out_int32=self.dtype != torch.int64,
-                ).to(self.dtype)
-                colptr = self._colptr
+                self._colptr = colptr = torch._convert_indices_from_coo_to_csr(
+                    col, self.get_num_cols(), out_int32=self.dtype
+                    != torch.int64)
 
         return colptr, self._csc_row, self._csr2csc
 
@@ -465,12 +455,16 @@ class EdgeIndex(Tensor):
     def sort_by(
         self,
         sort_order: Union[str, SortOrder],
+        stable: bool = False,
     ) -> torch.return_types.sort:
         r"""Sorts the elements by row or column indices.
 
         Args:
             sort_order (str): The sort order, either :obj:`"row"` or
                 :obj:`"col"`.
+            stable (bool, optional): Makes the sorting routine stable, which
+                guarantees that the order of equivalent elements is preserved.
+                (default: :obj:`False`)
         """
         sort_order = SortOrder(sort_order)
 
@@ -485,9 +479,9 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self._csc_row, self[0]], dim=0)
 
             elif perm is None:
-                col, perm = index_sort(self[1], self.get_num_cols())
-                edge_index = torch.stack([self[0][perm], col], dim=0)
-                self._csc_row = edge_index[0]
+                col, perm = index_sort(self[1], self.get_num_cols(), stable)
+                self._csc_row = self[0][perm]
+                edge_index = torch.stack([self._csc_row, col], dim=0)
                 self._csr2csc = perm
             else:
                 edge_index = self.as_tensor()[:, perm]
@@ -501,9 +495,9 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self[1], self._csr_col], dim=0)
 
             elif perm is None:
-                row, perm = index_sort(self[0], self.get_num_rows())
-                edge_index = torch.stack([row, self[1][perm]], dim=0)
-                self._csr_col = edge_index[1]
+                row, perm = index_sort(self[0], self.get_num_rows(), stable)
+                self._csr_col = self[1][perm]
+                edge_index = torch.stack([row, self._csr_col], dim=0)
                 self._csc2csr = perm
             else:
                 edge_index = self.as_tensor()[:, perm]
@@ -511,28 +505,25 @@ class EdgeIndex(Tensor):
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
-            row, perm = index_sort(self[0], self.get_num_rows())
+            row, perm = index_sort(self[0], self.get_num_rows(), stable)
             edge_index = torch.stack([row, self[1][perm]], dim=0)
 
         else:
-            col, perm = index_sort(self[1], self.get_num_cols())
+            col, perm = index_sort(self[1], self.get_num_cols(), stable)
             edge_index = torch.stack([self[0][perm], col], dim=0)
 
         out = self.__class__(edge_index)
 
-        # We can fully inherit metadata and cache:
+        # We can mostly inherit metadata and cache:
         out._sparse_size = self.sparse_size
         out._sort_order = sort_order
         out._is_undirected = self.is_undirected
 
         out._rowptr = self._rowptr
-        out._csr_col = self._csr_col
-
         out._colptr = self._colptr
-        out._csc_row = self._csc_row
 
-        out._csr2csc = self._csr2csc
-        out._csc2csr = self._csc2csr
+        # NOTE We cannot copy CSR<>CSC permutations since we don't require that
+        # local neighborhoods are sorted, and thus they may run out of sync.
 
         out._value = self._value
 
@@ -711,13 +702,23 @@ def clone(tensor: EdgeIndex) -> EdgeIndex:
 
 
 @implements(Tensor.to)
-def to(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+def to(tensor: EdgeIndex, *args, **kwargs) -> Union[EdgeIndex, Tensor]:
     out = apply_(tensor, Tensor.to, *args, **kwargs)
 
     if out.dtype not in SUPPORTED_DTYPES:
         out = out.as_tensor()
 
     return out
+
+
+@implements(Tensor.int)
+def _int(tensor: EdgeIndex) -> EdgeIndex:
+    return to(tensor, torch.int32)
+
+
+@implements(Tensor.long)
+def long(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+    return to(tensor, torch.int64)
 
 
 @implements(Tensor.cpu)
@@ -884,7 +885,8 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
     is_valid = is_last_dim_select(index)
 
     # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
-    if is_valid and isinstance(index[1], (torch.BoolTensor, torch.ByteTensor)):
+    if (is_valid and isinstance(index[1], Tensor)
+            and index[1].dtype in (torch.bool, torch.uint8)):
         out = out.as_subclass(EdgeIndex)
         out._sparse_size = input.sparse_size
         out._sort_order = input._sort_order
@@ -1072,7 +1074,6 @@ def matmul(
     rowptr, col = out.crow_indices(), out.col_indices()
     edge_index = torch._convert_indices_from_csr_to_coo(
         rowptr, col, out_int32=rowptr.dtype != torch.int64)
-    edge_index = edge_index.to(rowptr.device)
 
     edge_index = edge_index.as_subclass(EdgeIndex)
     edge_index._sort_order = SortOrder.ROW
