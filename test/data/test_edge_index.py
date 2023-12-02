@@ -400,7 +400,7 @@ def test_to_dense(dtype, device, value_dtype):
     expected = [[0.0, 2.0, 0.0], [1.0, 0.0, 4.0], [0.0, 3.0, 0.0]]
     assert out.equal(tensor(expected, dtype=value_dtype, device=device))
 
-    value = torch.arange(1, 5, dtype=dtype or torch.float, device=device)
+    value = torch.arange(1, 5, dtype=value_dtype or torch.float, device=device)
     out = adj.to_dense(value.view(-1, 1))
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3, 1)
