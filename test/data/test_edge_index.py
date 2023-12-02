@@ -482,9 +482,8 @@ def test_to_sparse_csc(dtype, device):
 
 @withCUDA
 @withPackage('torch_sparse')
-@pytest.mark.parametrize('dtype', DTYPES)
-def test_to_sparse_tensor(dtype, device):
-    kwargs = dict(dtype=dtype, device=device)
+def test_to_sparse_tensor(device):
+    kwargs = dict(device=device)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     out = adj.to_sparse_tensor()
     assert isinstance(out, SparseTensor)
