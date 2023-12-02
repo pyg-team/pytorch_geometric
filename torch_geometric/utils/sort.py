@@ -28,5 +28,6 @@ def index_sort(
     """
     if torch_geometric.typing.WITH_INDEX_SORT:
         return inputs.sort(stable=stable)
+    # `pyg_lib.ops.index_sort` always returns stable sorting:
     out = pyg_lib.ops.index_sort(inputs, max_value=max_value)
     return torch.return_types.sort(out)
