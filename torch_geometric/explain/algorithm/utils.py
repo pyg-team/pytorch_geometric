@@ -78,6 +78,13 @@ def set_hetero_masks(
                 for k, mask in mask_dict.items()
             }
 
+            # Dictionary key order is guaranteed to be in the
+            # order of insertion from Python 3.7+
+            # so while this would be dangerous on older versions,
+            # it is safe to assume the order here will be the same
+            # order passed to the convolution's forward
+            edge_keys_dict = ['__'.join(k) for k in edge_index_dict.keys()]
+
             # Below performs the same as above -
             # converting mask_dict to a ParamDict
             # But this breaks the computation graph
@@ -101,6 +108,8 @@ def set_hetero_masks(
             module._edge_mask = edge_mask_dict
             module._loop_mask = loop_mask_dict
             module._apply_sigmoid = apply_sigmoid
+            module._edge_keys = edge_keys_dict
+            module._current_edge_key_index = 0
 
 
 def clear_masks(model: torch.nn.Module):
