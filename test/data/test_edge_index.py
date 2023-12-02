@@ -141,9 +141,8 @@ def test_clone(dtype, device, is_undirected):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
-def test_to(dtype, device, is_undirected):
-    kwargs = dict(dtype=dtype, is_undirected=is_undirected)
+def test_to(dtype, device):
+    kwargs = dict(dtype=dtype)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
 
@@ -180,9 +179,8 @@ def test_to(dtype, device, is_undirected):
 
 @onlyCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
-def test_cpu_cuda(dtype, is_undirected):
-    kwargs = dict(dtype=dtype, is_undirected=is_undirected)
+def test_cpu_cuda(dtype):
+    kwargs = dict(dtype=dtype)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
 
     out = adj.cuda()
@@ -196,9 +194,8 @@ def test_cpu_cuda(dtype, is_undirected):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
-def test_share_memory(dtype, device, is_undirected):
-    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+def test_share_memory(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
 
@@ -382,81 +379,118 @@ def test_getitem(dtype, device, is_undirected):
     assert not isinstance(out, EdgeIndex)
 
 
-@pytest.mark.parametrize('dtype', [None, torch.double])
-def test_to_dense(dtype):
-    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('value_dtype', [None, torch.double])
+def test_to_dense(dtype, device, value_dtype):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], **kwargs)
 
-    out = adj.to_dense(dtype=dtype)
+    out = adj.to_dense(dtype=value_dtype)
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3)
-    assert out.dtype == dtype or torch.float
-    assert out.tolist() == [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+    expected = [[0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+    assert out.equal(tensor(expected, dtype=value_dtype, device=device))
 
-    value = torch.arange(1, 5, dtype=dtype or torch.float)
+    value = torch.arange(1, 5, dtype=value_dtype or torch.float, device=device)
     out = adj.to_dense(value)
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3)
-    assert out.dtype == dtype or torch.float
-    assert out.tolist() == [[0, 2, 0], [1, 0, 4], [0, 3, 0]]
+    expected = [[0.0, 2.0, 0.0], [1.0, 0.0, 4.0], [0.0, 3.0, 0.0]]
+    assert out.equal(tensor(expected, dtype=value_dtype, device=device))
 
-    value = torch.arange(1, 5, dtype=dtype or torch.float).view(-1, 1)
-    out = adj.to_dense(value)
+    value = torch.arange(1, 5, dtype=dtype or torch.float, device=device)
+    out = adj.to_dense(value.view(-1, 1))
     assert isinstance(out, Tensor)
     assert out.size() == (3, 3, 1)
-    assert out.dtype == dtype or torch.float
-    assert out.tolist() == [[[0], [2], [0]], [[1], [0], [4]], [[0], [3], [0]]]
+    expected = [
+        [[0.0], [2.0], [0.0]],
+        [[1.0], [0.0], [4.0]],
+        [[0.0], [3.0], [0.0]],
+    ]
+    assert out.equal(tensor(expected, dtype=value_dtype, device=device))
 
 
-def test_to_sparse_coo():
-    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_to_sparse_coo(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], **kwargs)
     if torch_geometric.typing.WITH_PT20:
         out = adj.to_sparse(layout=torch.sparse_coo)
     else:
         out = adj.to_sparse()
     assert isinstance(out, Tensor)
+    assert out.dtype == torch.float
+    assert out.device == device
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
     assert adj.equal(out._indices())
 
-    # Test clunky dispatch logic for `to_sparse_coo()`:
-    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]])
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], **kwargs)
     out = adj.to_sparse_coo()
     assert isinstance(out, Tensor)
+    assert out.dtype == torch.float
+    assert out.device == device
     assert out.layout == torch.sparse_coo
     assert out.size() == (3, 3)
     assert adj.equal(out._indices())
 
 
-def test_to_sparse_csr():
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_to_sparse_csr(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
     with pytest.raises(ValueError, match="not sorted"):
-        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csr()
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs).to_sparse_csr()
 
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     if torch_geometric.typing.WITH_PT20:
         out = adj.to_sparse(layout=torch.sparse_csr)
     else:
         out = adj.to_sparse_csr()
     assert isinstance(out, Tensor)
+    assert out.dtype == torch.float
+    assert out.device == device
     assert out.layout == torch.sparse_csr
     assert out.size() == (3, 3)
     assert adj._rowptr.equal(out.crow_indices())
     assert adj[1].equal(out.col_indices())
 
 
-def test_to_sparse_csc():
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_to_sparse_csc(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
     with pytest.raises(ValueError, match="not sorted"):
-        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_csc()
+        EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs).to_sparse_csc()
 
-    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
     if torch_geometric.typing.WITH_PT20:
         out = adj.to_sparse(layout=torch.sparse_csc)
     else:
         out = adj.to_sparse_csc()
     assert isinstance(out, Tensor)
+    assert out.dtype == torch.float
+    assert out.device == device
     assert out.layout == torch.sparse_csc
     assert out.size() == (3, 3)
     assert adj._colptr.equal(out.ccol_indices())
     assert adj[0].equal(out.row_indices())
+
+
+@withCUDA
+@withPackage('torch_sparse')
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_to_sparse_tensor(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
+    out = adj.to_sparse_tensor()
+    assert isinstance(out, SparseTensor)
+    assert out.sizes() == [3, 3]
+    row, col, _ = out.coo()
+    assert row.equal(adj[0])
+    assert col.equal(adj[1])
 
 
 def test_matmul_forward():
@@ -531,36 +565,31 @@ def test_matmul_backward():
     assert torch.allclose(x1.grad, x2.grad)
 
 
-@withPackage('torch_sparse')
-def test_to_sparse_tensor():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]]).to_sparse_tensor()
-    assert isinstance(adj, SparseTensor)
-    assert adj.sizes() == [3, 3]
-    row, col, _ = adj.coo()
-    assert row.equal(tensor([0, 1, 1, 2]))
-    assert col.equal(tensor([1, 0, 2, 1]))
-
-
-def test_save_and_load(tmp_path):
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_save_and_load(dtype, device, tmp_path):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
 
     assert adj.sort_order == 'row'
-    assert adj._rowptr.equal(tensor([0, 1, 3, 4]))
+    assert adj._rowptr is not None
 
     path = osp.join(tmp_path, 'edge_index.pt')
     torch.save(adj, path)
     out = torch.load(path)
 
     assert isinstance(out, EdgeIndex)
-    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]]))
+    assert out.equal(adj)
     assert out.sort_order == 'row'
-    assert out._rowptr.equal(tensor([0, 1, 3, 4]))
+    assert out._rowptr.equal(adj._rowptr)
 
 
+@pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('num_workers', [0, 2])
-def test_data_loader(num_workers):
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+def test_data_loader(dtype, num_workers):
+    kwargs = dict(dtype=dtype)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
 
     loader = torch.utils.data.DataLoader(
@@ -577,6 +606,7 @@ def test_data_loader(num_workers):
         assert len(batch) == 2
         for adj in batch:
             assert isinstance(adj, EdgeIndex)
+            assert adj.dtype == adj.dtype
             assert adj.is_shared() == (num_workers > 0)
             assert adj._rowptr.is_shared() == (num_workers > 0)
 
