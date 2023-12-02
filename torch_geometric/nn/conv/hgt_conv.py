@@ -1,6 +1,7 @@
 import math
 from typing import Dict, List, Optional, Tuple, Union
 
+import ipdb
 import torch
 from torch import Tensor
 from torch.nn import Parameter
@@ -230,6 +231,38 @@ class HGTConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         out = v_j * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
+
+    def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
+        edge_mask = self._edge_mask
+        loop_mask = self._loop_mask
+
+        if not isinstance(edge_mask, dict):
+            raise ValueError(
+                "HANConv edge mask was not initialized correctly! "
+                "It should be a dictionary of edge types and edge masks.")
+
+        # Find the edge and loop mask that matches the input shapes
+        # Note that this will break if any edge indices have the same shape...
+        # Find some way to order them? Some way to compute things more sanely?
+        # Perhaps storing the edge index info somewhere as well?
+        # Basically, we need a way to uniquely map the inputs to the edge mask
+        # Above is TODO
+        possible_eindexes = [
+            etype for etype, eindex in edge_mask.items()
+            if inputs.shape[0] == eindex.shape[0]
+        ]
+
+        if len(possible_eindexes) > 1:
+            ipdb.set_trace()
+            raise ValueError(
+                "Cannot determine which edge mask to use "
+                "due to multiple edge indexes with the same size!")
+
+        edge_mask = edge_mask[possible_eindexes[0]]
+        loop_mask = loop_mask[possible_eindexes[0]]
+
+        return self._explain_message_with_masks(inputs, size_i, edge_mask,
+                                                loop_mask)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(-1, {self.out_channels}, '
