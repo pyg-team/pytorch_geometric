@@ -231,8 +231,10 @@ def test_sort_by(dtype, device, is_undirected):
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert torch.equal(out.values[0], tensor([0, 1, 1, 2], device=device))
-    assert torch.equal(out.values[1], tensor([1, 0, 2, 1], device=device))
-    assert torch.equal(out.indices, tensor([0, 1, 3, 2], device=device))
+    assert (torch.equal(out.values[1], tensor([1, 0, 2, 1], device=device))
+            or torch.equal(out.values[1], tensor([1, 2, 0, 1], device=device)))
+    assert (torch.equal(out.indices, tensor([0, 1, 3, 2], device=device))
+            or torch.equal(out.indices, tensor([0, 3, 1, 2], device=device)))
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()

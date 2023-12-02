@@ -329,6 +329,7 @@ class EdgeIndex(Tensor):
 
         row: Optional[Tensor] = None
         if self._csc2csr is None:
+            # We require stable sort to keep CSC<>CSR permutations in sync:
             row, self._csc2csr = index_sort(self[0], self.get_num_rows(), True)
 
         if self._csr_col is None:
@@ -381,6 +382,7 @@ class EdgeIndex(Tensor):
 
         col: Optional[Tensor] = None
         if self._csr2csc is None:
+            # We require stable sort to keep CSR<>CSC permutations in sync:
             col, self._csr2csc = index_sort(self[1], self.get_num_cols(), True)
 
         if self._csc_row is None:
@@ -450,12 +452,16 @@ class EdgeIndex(Tensor):
     def sort_by(
         self,
         sort_order: Union[str, SortOrder],
+        stable: bool = False,
     ) -> torch.return_types.sort:
         r"""Sorts the elements by row or column indices.
 
         Args:
             sort_order (str): The sort order, either :obj:`"row"` or
                 :obj:`"col"`.
+            stable (bool, optional): Makes the sorting routine stable, which
+                guarantees that the order of equivalent elements is preserved.
+                (default: :obj:`False`)
         """
         sort_order = SortOrder(sort_order)
 
@@ -470,6 +476,7 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self._csc_row, self[0]], dim=0)
 
             elif perm is None:
+                # We require stable sort to keep CSR<>CSC permutations in sync:
                 col, perm = index_sort(self[1], self.get_num_cols(), True)
                 self._csc_row = self[0][perm]
                 edge_index = torch.stack([self._csc_row, col], dim=0)
@@ -486,6 +493,7 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self[1], self._csr_col], dim=0)
 
             elif perm is None:
+                # We require stable sort to keep CSC<>CSR permutations in sync:
                 row, perm = index_sort(self[0], self.get_num_rows(), True)
                 self._csr_col = self[1][perm]
                 edge_index = torch.stack([row, self._csr_col], dim=0)
@@ -496,11 +504,11 @@ class EdgeIndex(Tensor):
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
-            row, perm = index_sort(self[0], self.get_num_rows(), True)
+            row, perm = index_sort(self[0], self.get_num_rows(), stable)
             edge_index = torch.stack([row, self[1][perm]], dim=0)
 
         else:
-            col, perm = index_sort(self[1], self.get_num_cols(), True)
+            col, perm = index_sort(self[1], self.get_num_cols(), stable)
             edge_index = torch.stack([self[0][perm], col], dim=0)
 
         out = self.__class__(edge_index)
