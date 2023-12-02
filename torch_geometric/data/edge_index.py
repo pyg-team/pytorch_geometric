@@ -21,10 +21,15 @@ from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
-SUPPORTED_DTYPES: Set[torch.dtype] = {
-    torch.int32,
-    torch.int64,
-}
+if torch_geometric.typing.WITH_PT113:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int32,
+        torch.int64,
+    }
+else:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int64,
+    }
 
 ReduceType = Literal['sum']
 
@@ -329,8 +334,7 @@ class EdgeIndex(Tensor):
 
         row: Optional[Tensor] = None
         if self._csc2csr is None:
-            # We require stable sort to keep CSC<>CSR permutations in sync:
-            row, self._csc2csr = index_sort(self[0], self.get_num_rows(), True)
+            row, self._csc2csr = index_sort(self[0], self.get_num_rows())
 
         if self._csr_col is None:
             self._csr_col = self[1][self._csc2csr]
@@ -382,8 +386,7 @@ class EdgeIndex(Tensor):
 
         col: Optional[Tensor] = None
         if self._csr2csc is None:
-            # We require stable sort to keep CSR<>CSC permutations in sync:
-            col, self._csr2csc = index_sort(self[1], self.get_num_cols(), True)
+            col, self._csr2csc = index_sort(self[1], self.get_num_cols())
 
         if self._csc_row is None:
             self._csc_row = self[0][self._csr2csc]
@@ -476,8 +479,7 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self._csc_row, self[0]], dim=0)
 
             elif perm is None:
-                # We require stable sort to keep CSR<>CSC permutations in sync:
-                col, perm = index_sort(self[1], self.get_num_cols(), True)
+                col, perm = index_sort(self[1], self.get_num_cols(), stable)
                 self._csc_row = self[0][perm]
                 edge_index = torch.stack([self._csc_row, col], dim=0)
                 self._csr2csc = perm
@@ -493,8 +495,7 @@ class EdgeIndex(Tensor):
                 edge_index = torch.stack([self[1], self._csr_col], dim=0)
 
             elif perm is None:
-                # We require stable sort to keep CSC<>CSR permutations in sync:
-                row, perm = index_sort(self[0], self.get_num_rows(), True)
+                row, perm = index_sort(self[0], self.get_num_rows(), stable)
                 self._csr_col = self[1][perm]
                 edge_index = torch.stack([row, self._csr_col], dim=0)
                 self._csc2csr = perm
@@ -513,19 +514,16 @@ class EdgeIndex(Tensor):
 
         out = self.__class__(edge_index)
 
-        # We can fully inherit metadata and cache:
+        # We can mostly inherit metadata and cache:
         out._sparse_size = self.sparse_size
         out._sort_order = sort_order
         out._is_undirected = self.is_undirected
 
         out._rowptr = self._rowptr
-        out._csr_col = self._csr_col
-
         out._colptr = self._colptr
-        out._csc_row = self._csc_row
 
-        out._csr2csc = self._csr2csc
-        out._csc2csr = self._csc2csr
+        # NOTE We cannot copy CSR<>CSC permutations since we don't require that
+        # local neighborhoods are sorted, and thus they may run out of sync.
 
         out._value = self._value
 

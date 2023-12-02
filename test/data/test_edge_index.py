@@ -86,14 +86,16 @@ def test_fill_cache_(dtype, device, is_undirected):
     assert torch.equal(adj._rowptr, tensor([0, 1, 3, 4], device=device))
     assert adj._csr_col is None
     assert adj._csr2csc.dtype == torch.int64
-    assert torch.equal(adj._csr2csc, tensor([1, 0, 3, 2], device=device))
+    assert (torch.equal(adj._csr2csc, tensor([1, 0, 3, 2], device=device))
+            or torch.equal(adj._csr2csc, tensor([1, 3, 0, 2], device=device)))
     if is_undirected:
         assert adj._colptr is None
     else:
         assert adj._colptr.dtype == dtype
         assert torch.equal(adj._colptr, tensor([0, 1, 3, 4], device=device))
     assert adj._csc_row.dtype == dtype
-    assert torch.equal(adj._csc_row, tensor([1, 0, 2, 1], device=device))
+    assert (torch.equal(adj._csc_row, tensor([1, 0, 2, 1], device=device))
+            or torch.equal(adj._csc_row, tensor([1, 2, 0, 1], device=device)))
     assert adj._csc2csr is None
 
     adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
@@ -102,14 +104,16 @@ def test_fill_cache_(dtype, device, is_undirected):
     assert adj._colptr.dtype == dtype
     assert torch.equal(adj._colptr, tensor([0, 1, 3, 4], device=device))
     assert adj._csc_row is None
-    assert torch.equal(adj._csc2csr, tensor([1, 0, 3, 2], device=device))
+    assert (torch.equal(adj._csc2csr, tensor([1, 0, 3, 2], device=device))
+            or torch.equal(adj._csc2csr, tensor([1, 3, 0, 2], device=device)))
     if is_undirected:
         assert adj._rowptr is None
     else:
         assert adj._rowptr.dtype == dtype
         assert torch.equal(adj._rowptr, tensor([0, 1, 3, 4], device=device))
     assert adj._csr_col.dtype == dtype
-    assert torch.equal(adj._csr_col, tensor([1, 0, 2, 1], device=device))
+    assert (torch.equal(adj._csr_col, tensor([1, 0, 2, 1], device=device))
+            or torch.equal(adj._csr_col, tensor([1, 2, 0, 1], device=device)))
     assert adj._csr2csc is None
 
 
@@ -237,36 +241,26 @@ def test_sort_by(dtype, device, is_undirected):
             or torch.equal(out.indices, tensor([0, 3, 1, 2], device=device)))
 
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
-    adj.fill_cache_()
 
     out, perm = adj.sort_by('col')
-    assert torch.equal(out[0], tensor([1, 0, 2, 1], device=device))
-    assert torch.equal(out[1], tensor([0, 1, 1, 2], device=device))
-    assert torch.equal(perm, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csr2csc, tensor([1, 0, 3, 2], device=device))
+    assert adj._csr2csc is not None  # Check caches.
+    assert adj._csc_row is not None
+    assert (out[0].equal(tensor([1, 0, 2, 1], device=device))
+            or out[0].equal(tensor([1, 2, 0, 1], device=device)))
+    assert out[1].equal(tensor([0, 1, 1, 2], device=device))
+    assert (perm.equal(tensor([1, 0, 3, 2], device=device))
+            or perm.equal(tensor([1, 3, 0, 2], device=device)))
+    assert out._csr2csc is None
     assert out._csc2csr is None
 
     out, perm = out.sort_by('row')
-    assert torch.equal(out[0], tensor([0, 1, 1, 2], device=device))
-    assert torch.equal(out[1], tensor([1, 0, 2, 1], device=device))
-    assert torch.equal(perm, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csr2csc, torch.tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csc2csr, torch.tensor([1, 0, 3, 2], device=device))
-
-    # Do another round to sort based on `_csr2csc` and `_csc2csr`:
-    out, perm = out.sort_by('col')
-    assert torch.equal(out[0], tensor([1, 0, 2, 1], device=device))
-    assert torch.equal(out[1], tensor([0, 1, 1, 2], device=device))
-    assert torch.equal(perm, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csr2csc, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csc2csr, tensor([1, 0, 3, 2], device=device))
-
-    out, perm = out.sort_by('row')
-    assert torch.equal(out[0], tensor([0, 1, 1, 2], device=device))
-    assert torch.equal(out[1], tensor([1, 0, 2, 1], device=device))
-    assert torch.equal(perm, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csr2csc, tensor([1, 0, 3, 2], device=device))
-    assert torch.equal(out._csc2csr, tensor([1, 0, 3, 2], device=device))
+    assert out[0].equal(tensor([0, 1, 1, 2], device=device))
+    assert (out[1].equal(tensor([1, 0, 2, 1], device=device))
+            or out[1].equal(tensor([1, 2, 0, 1], device=device)))
+    assert (perm.equal(tensor([1, 0, 3, 2], device=device))
+            or perm.equal(tensor([2, 3, 0, 1], device=device)))
+    assert out._csr2csc is None
+    assert out._csc2csr is None
 
 
 @withCUDA
