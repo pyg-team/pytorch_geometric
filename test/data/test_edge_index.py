@@ -141,8 +141,9 @@ def test_clone(dtype, device, is_undirected):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-def test_to(dtype, device):
-    kwargs = dict(dtype=dtype)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_to(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
 
