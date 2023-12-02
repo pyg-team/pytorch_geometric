@@ -66,4 +66,6 @@ jobs:
       - name: Check type hints
         continue-on-error: true
         run: |
-          mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric
+          # https://github.com/python/mypy/issues/10863
+          mkdir -p .mypy_cache
+          mypy
