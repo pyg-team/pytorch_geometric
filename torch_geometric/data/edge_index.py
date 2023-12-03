@@ -233,12 +233,13 @@ class EdgeIndex(Tensor):
     # Validation ##############################################################
 
     def validate(self) -> 'EdgeIndex':
-        r"""Validates the :class:`EdgeIndex` representation, *i.e.* it ensures
-        that
+        r"""Validates the :class:`EdgeIndex` representation.
 
-        * that it only holds valid indices.
-        * that the sort order is correctly set.
-        * that indices are bidirectional in case it is specified as undirected.
+        In particular, it ensures that
+
+        * it only holds valid indices.
+        * the sort order is correctly set.
+        * indices are bidirectional in case it is specified as undirected.
         """
         assert_valid_dtype(self)
         assert_two_dimensional(self)
@@ -373,8 +374,7 @@ class EdgeIndex(Tensor):
     @assert_sorted
     def get_indptr(self) -> Tensor:
         r"""Returns the compressed index representation in case
-        :class:`EdgeIndex` is sorted.
-        """
+        :class:`EdgeIndex` is sorted."""
         if self._indptr is not None:
             return self._indptr
 
@@ -410,8 +410,7 @@ class EdgeIndex(Tensor):
     @assert_sorted
     def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
         r"""Returns the compressed CSR representation
-        :obj:`(rowptr, col), perm` in case :class:`EdgeIndex` is sorted.
-        """
+        :obj:`(rowptr, col), perm` in case :class:`EdgeIndex` is sorted."""
         if self.is_sorted_by_row:
             return (self.get_indptr(), self[1]), slice(None, None, None)
 
@@ -434,8 +433,7 @@ class EdgeIndex(Tensor):
     @assert_sorted
     def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
         r"""Returns the compressed CSC representation
-        :obj:`(colptr, row), perm` in case :class:`EdgeIndex` is sorted.
-        """
+        :obj:`(colptr, row), perm` in case :class:`EdgeIndex` is sorted."""
         if self.is_sorted_by_col:
             return (self.get_indptr(), self[0]), slice(None, None, None)
 
@@ -566,6 +564,7 @@ class EdgeIndex(Tensor):
             dtype (torch.dtype, optional): The data type of the returned
                 tensor. (default: :obj:`None`)
         """
+
         # TODO Respect duplicated edges.
 
         dtype = value.dtype if value is not None else dtype
@@ -665,6 +664,7 @@ class EdgeIndex(Tensor):
                 not specified, sparse indices will be assigned a value of
                 :obj:`1`. (default: :obj:`None`)
         """
+
         if layout is None or layout == torch.sparse_coo:
             return self.to_sparse_coo(value)
         if layout == torch.sparse_csr:
