@@ -21,7 +21,7 @@ from torch_geometric.utils import index_sort
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
-if torch_geometric.typing.WITH_PT113:
+if torch_geometric.typing.WITH_PT20:
     SUPPORTED_DTYPES: Set[torch.dtype] = {
         torch.int32,
         torch.int64,
