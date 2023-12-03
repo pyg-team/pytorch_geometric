@@ -251,7 +251,8 @@ class EdgeIndex(Tensor):
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
         r"""The size of the underlying sparse matrix.
         If :obj:`dim` is specified, returns an integer holding the size of that
-        sparse dimension."""
+        sparse dimension.
+        """
         if dim is not None:
             return self._sparse_size[dim]
         return self._sparse_size
@@ -302,7 +303,8 @@ class EdgeIndex(Tensor):
         r"""The size of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.
         If :obj:`dim` is specified, returns an integer holding the size of that
-        sparse dimension."""
+        sparse dimension.
+        """
         if dim is not None:
             if self._sparse_size[dim] is not None:
                 return self._sparse_size[dim]
