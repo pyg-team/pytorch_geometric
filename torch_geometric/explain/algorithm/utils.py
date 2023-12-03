@@ -85,25 +85,6 @@ def set_hetero_masks(
             # order passed to the convolution's forward
             edge_keys_dict = ['__'.join(k) for k in edge_index_dict.keys()]
 
-            # Below performs the same as above -
-            # converting mask_dict to a ParamDict
-            # But this breaks the computation graph
-            # (Parameter(mask) is a leaf tensor now)
-            # param_mask_dict = torch.nn.ParameterDict()
-            # mod_param_names = [k for k,_ in module.named_parameters()]
-
-            # for edge_type, mask in mask_dict.items():
-            #     edge_type = '__'.join(edge_type)
-            #     module_param_name = '_edge_mask.' + edge_type
-
-            #     ipdb.set_trace()
-
-            #     if (not isinstance(mask, Parameter)
-            #             and module_param_name in mod_param_names):
-            #         param_mask_dict[edge_type] = Parameter(mask)
-            #     else:
-            #         param_mask_dict[edge_type] = mask
-
             module.explain = True
             module._edge_mask = edge_mask_dict
             module._loop_mask = loop_mask_dict

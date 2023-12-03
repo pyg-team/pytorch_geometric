@@ -191,23 +191,6 @@ class HANConv(MessagePassing):
 
         self._current_edge_key_index = self._current_edge_key_index + 1
 
-        # Find the edge and loop mask that matches the input shapes
-        # Note that this will break if any edge indices have the same shape...
-        # Kept for posterity, overruled by edge_keys and assumption of order
-        # possible_eindexes = [
-        #     etype for etype, eindex in edge_mask.items()
-        #     if inputs.shape[0] == eindex.shape[0]
-        # ]
-
-        # if len(possible_eindexes) > 1:
-        #     ipdb.set_trace()
-        #     raise ValueError(
-        #         "Cannot determine which edge mask to use "
-        #         "due to multiple edge indexes with the same size!")
-
-        # edge_mask = edge_mask[possible_eindexes[0]]
-        # loop_mask = loop_mask[possible_eindexes[0]]
-
         edge_mask = edge_mask_dict[edge_keys[edge_key_index]]
         loop_mask = loop_mask_dict[edge_keys[edge_key_index]]
 
