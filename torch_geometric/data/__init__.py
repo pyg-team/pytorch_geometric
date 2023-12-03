@@ -6,6 +6,7 @@ from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
 from .temporal import TemporalData
+from .edge_index import EdgeIndex
 from .database import Database, SQLiteDatabase, RocksDatabase
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
@@ -24,6 +25,10 @@ data_classes = [
     'Dataset',
     'InMemoryDataset',
     'OnDiskDataset',
+]
+
+tensor_classes = [
+    'EdgeIndex',
 ]
 
 remote_backend_classes = [
@@ -48,7 +53,8 @@ helper_functions = [
     'extract_gz',
 ]
 
-__all__ = data_classes + remote_backend_classes + helper_functions
+__all__ = (data_classes + tensor_classes + remote_backend_classes +
+           helper_functions)
 
 lightning = LazyLoader('lightning', globals(),
                        'torch_geometric.data.lightning')
