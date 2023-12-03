@@ -49,6 +49,14 @@ def implements(torch_function: Callable):
     return decorator
 
 
+def set_tuple_item(values: Tuple, dim: int, value: Any) -> Tuple:
+    if dim < -len(values) or dim >= len(values):
+        raise IndexError("tuple index out of range")
+
+    dim = dim + len(values) if dim < 0 else dim
+    return values[:dim] + (value, ) + values[dim + 1:]
+
+
 def assert_valid_dtype(tensor: Tensor):
     if tensor.dtype not in SUPPORTED_DTYPES:
         raise ValueError(f"'EdgeIndex' holds an unsupported data type "
@@ -77,6 +85,19 @@ def assert_symmetric(size: Tuple[Optional[int], Optional[int]]):
                          "non-symmetric size")
 
 
+def assert_sorted(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not args[0].is_sorted:
+            cls_name = args[0].__class__.__name__
+            raise ValueError(
+                f"Cannot call '{func.__name__}' since '{cls_name}' is not "
+                f"sorted. Please call `{cls_name}.sort_by(...)` first.")
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 class EdgeIndex(Tensor):
     r"""An advanced :obj:`edge_index` representation with additional (meta)data
     attached.
@@ -95,7 +116,8 @@ class EdgeIndex(Tensor):
 
     Additionally, :class:`EdgeIndex` caches data for fast CSR or CSC conversion
     in case its representation is sorted, such as its :obj:`rowptr` or
-    :obj:`colptr`, or the permutation vectors from CSR to CSC and vice versa.
+    :obj:`colptr`, or the permutation vector for going from CSR to CSC or vice
+    versa.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`EdgeIndex.sort_by`), or when explicitly requested via
     :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
@@ -122,17 +144,16 @@ class EdgeIndex(Tensor):
     # neighborhoods is not necessarily deterministic.
     _is_undirected: bool = False
 
-    # An data cache for CSR and CSC representations:
-    _rowptr: Optional[Tensor] = None
-    _csr_col: Optional[Tensor] = None
+    # A cache for its compressed representation:
+    _indptr: Optional[Tensor] = None
 
-    _colptr: Optional[Tensor] = None
-    _csc_row: Optional[Tensor] = None
+    # A cache for its transposed representation:
+    _T_perm: Optional[Tensor] = None
+    _T_index: Tuple[Optional[Tensor], Optional[Tensor]] = (None, None)
+    _T_indptr: Optional[Tensor] = None
 
-    _csr2csc: Optional[Tensor] = None
-    _csc2csr: Optional[Tensor] = None
-
-    _value: Optional[Tensor] = None  # 1-element value for SpMM.
+    # A cached "1"-vector for `torch.sparse` matrix multiplication:
+    _value: Optional[Tensor] = None
 
     def __new__(
         cls,
@@ -185,7 +206,7 @@ class EdgeIndex(Tensor):
         assert_two_dimensional(self)
         assert_contiguous(self)
         if self.is_undirected:
-            assert_symmetric(self.sparse_size)
+            assert_symmetric(self.sparse_size())
 
         if self.numel() > 0 and self.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
@@ -224,16 +245,17 @@ class EdgeIndex(Tensor):
 
     # Properties ##############################################################
 
-    @property
-    def sparse_size(self) -> Tuple[Optional[int], Optional[int]]:
-        r"""The size of the underlying sparse matrix."""
-        return self._sparse_size
-
-    def get_sparse_size(self) -> Tuple[int, int]:
+    def sparse_size(
+        self,
+        dim: Optional[int] = None,
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
         r"""The size of the underlying sparse matrix.
-        Automatically computed and cached when not explicitly set.
+        If :obj:`dim` is specified, returns an integer holding the size of that
+        sparse dimension.
         """
-        return (self.get_num_rows(), self.get_num_cols())
+        if dim is not None:
+            return self._sparse_size[dim]
+        return self._sparse_size
 
     @property
     def num_rows(self) -> Optional[int]:
@@ -274,137 +296,117 @@ class EdgeIndex(Tensor):
 
     # Cache Interface #########################################################
 
+    def get_sparse_size(
+        self,
+        dim: Optional[int] = None,
+    ) -> Union[torch.Size, int]:
+        r"""The size of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        If :obj:`dim` is specified, returns an integer holding the size of that
+        sparse dimension.
+        """
+        if dim is not None:
+            if self._sparse_size[dim] is not None:
+                return self._sparse_size[dim]
+
+            if self.is_undirected:
+                size = int(self.max()) + 1 if self.numel() > 0 else 0
+                self._sparse_size = (size, size)
+                return size
+
+            size = int(self[dim].max()) + 1 if self.numel() > 0 else 0
+            self._sparse_size = set_tuple_item(self._sparse_size, dim, size)
+            return size
+
+        return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
+
     def get_num_rows(self) -> int:
         r"""The number of rows of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.
         """
-        if self.num_rows is None:
-            num_rows = int(self[0].max()) + 1 if self.numel() > 0 else 0
-
-            if self.is_undirected:
-                self._sparse_size = (num_rows, num_rows)
-            else:
-                self._sparse_size = (num_rows, self.num_cols)
-
-        return self.num_rows
+        return self.get_sparse_size(0)
 
     def get_num_cols(self) -> int:
         r"""The number of columns of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.
         """
-        if self.num_cols is None:
-            num_cols = int(self[1].max()) + 1 if self.numel() > 0 else 0
+        return self.get_sparse_size(1)
 
-            if self.is_undirected:
-                self._sparse_size = (num_cols, num_cols)
-            else:
-                self._sparse_size = (self.num_rows, num_cols)
+    @assert_sorted
+    def get_indptr(self) -> Tensor:
+        if self._indptr is not None:
+            return self._indptr
 
-        return self.num_cols
+        if self.is_undirected and self._T_indptr is not None:
+            return self._T_indptr
 
-    def get_csr(self) -> Tuple[Tensor, Tensor, Union[Tensor, slice]]:
-        if not self.is_sorted:
-            raise ValueError(
-                f"Cannot access CSR format since '{self.__class__.__name__}' "
-                f"is not sorted. Please call `sort_by(...)` first.")
+        dim = 0 if self.is_sorted_by_row else 1
+        self._indptr = torch._convert_indices_from_coo_to_csr(
+            self[dim],
+            self.get_sparse_size(dim),
+            out_int32=self.dtype != torch.int64,
+        )
 
-        # For edge indices sorted by row, we just need to compute `rowptr` in
-        # case it is not yet populated in the cache.
+        return self._indptr
+
+    @assert_sorted
+    def _sort_by_transpose(self) -> Tuple[Tuple[Tensor, Tensor], Tensor]:
+        dim = 1 if self.is_sorted_by_row else 0
+
+        if self._T_perm is None:
+            index, perm = index_sort(self[dim], self.get_sparse_size(dim))
+            self._T_index = set_tuple_item(self._T_index, dim, index)
+            self._T_perm = perm
+
+        assert self._T_index[dim] is not None
+
+        if self._T_index[1 - dim] is None:
+            self._T_index = set_tuple_item(  #
+                self._T_index, 1 - dim, self[1 - dim][self._T_perm])
+
+        return self._T_index, self._T_perm
+
+    @assert_sorted
+    def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
         if self.is_sorted_by_row:
-            # Re-use cache if applicable:
-            if self._rowptr is not None:
-                rowptr = self._rowptr
+            return (self.get_indptr(), self[1]), slice(None, None, None)
 
-            # Re-use CSC cache for undirected edge indices:
-            if self.is_undirected and self._colptr is not None:
-                rowptr = self._colptr
-
-            else:  # Otherwise, fill cache:
-                self._rowptr = rowptr = torch._convert_indices_from_coo_to_csr(
-                    self[0], self.get_num_rows(), out_int32=self.dtype
-                    != torch.int64)
-
-            return rowptr, self[1], slice(None, None, None)
-
-        # For edge indices sorted by column, the logic is a bit more involved.
-        # In general, we first compute the CSR permutation, from which we can
-        # compute the CSR row and column representations, from which we can
-        # then compute the row pointer.
         assert self.is_sorted_by_col
+        (row, col), perm = self._sort_by_transpose()
 
-        row: Optional[Tensor] = None
-        if self._csc2csr is None:
-            row, self._csc2csr = index_sort(self[0], self.get_num_rows())
+        if self._T_indptr is not None:
+            rowptr = self._T_indptr
+        elif self.is_undirected and self._indptr is not None:
+            rowptr = self._indptr
+        else:
+            rowptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
+                row,
+                self.get_num_rows(),
+                out_int32=self.dtype != torch.int64,
+            )
 
-        if self._csr_col is None:
-            self._csr_col = self[1][self._csc2csr]
+        return (rowptr, col), perm
 
-        rowptr: Optional[Tensor] = self._rowptr
-        if rowptr is None:
-            if self.is_undirected and self._colptr is not None:
-                rowptr = self._colptr
-
-            else:
-                if row is None:
-                    row = self[0][self._csc2csr]
-
-                self._rowptr = rowptr = torch._convert_indices_from_coo_to_csr(
-                    row, self.get_num_rows(), out_int32=self.dtype
-                    != torch.int64)
-
-        return rowptr, self._csr_col, self._csc2csr
-
-    def get_csc(self) -> Tuple[Tensor, Tensor, Union[Tensor, slice]]:
-        if not self.is_sorted:
-            raise ValueError(
-                f"Cannot access CSC format since '{self.__class__.__name__}' "
-                f"is not sorted. Please call `sort_by(...)` first.")
-
-        # For edge indices sorted by column, we just need to compute `colptr`
-        # in case it is not yet populated in the cache.
+    @assert_sorted
+    def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
         if self.is_sorted_by_col:
-            # Re-use cache if applicable:
-            if self._colptr is not None:
-                colptr = self._colptr
+            return (self.get_indptr(), self[0]), slice(None, None, None)
 
-            # Re-use CSR cache for undirected edge indices:
-            if self.is_undirected and self._rowptr is not None:
-                colptr = self._rowptr
-
-            else:  # Otherwise, fill cache:
-                self._colptr = colptr = torch._convert_indices_from_coo_to_csr(
-                    self[1], self.get_num_cols(), out_int32=self.dtype
-                    != torch.int64)
-
-            return colptr, self[0], slice(None, None, None)
-
-        # For edge indices sorted by row, the logic is a bit more involved.
-        # In general, we first compute the CSC permutation, from which we can
-        # compute the CSC row and column representations, from which we can
-        # then compute the column pointer.
         assert self.is_sorted_by_row
+        (row, col), perm = self._sort_by_transpose()
 
-        col: Optional[Tensor] = None
-        if self._csr2csc is None:
-            col, self._csr2csc = index_sort(self[1], self.get_num_cols())
+        if self._T_indptr is not None:
+            colptr = self._T_indptr
+        elif self.is_undirected and self._indptr is not None:
+            colptr = self._indptr
+        else:
+            colptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
+                col,
+                self.get_num_cols(),
+                out_int32=self.dtype != torch.int64,
+            )
 
-        if self._csc_row is None:
-            self._csc_row = self[0][self._csr2csc]
-
-        colptr: Optional[Tensor] = self._colptr
-        if colptr is None:
-            if self.is_undirected and self._rowptr is not None:
-                colptr = self._rowptr
-
-            else:
-                if col is None:
-                    col = self[1][self._csr2csc]
-
-                self._colptr = colptr = torch._convert_indices_from_coo_to_csr(
-                    col, self.get_num_cols(), out_int32=self.dtype
-                    != torch.int64)
-
-        return colptr, self._csc_row, self._csr2csc
+        return (colptr, row), perm
 
     def _get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
         if self._value is not None:
@@ -430,8 +432,7 @@ class EdgeIndex(Tensor):
                 the cache with information about the transposed
                 :class:`EdgeIndex`. (default: :obj:`False`)
         """
-        self.get_num_rows()
-        self.get_num_cols()
+        self.get_sparse_size()
 
         if self.is_sorted_by_row:
             self.get_csr()
@@ -471,37 +472,9 @@ class EdgeIndex(Tensor):
         if self._sort_order == sort_order:  # Nothing to do.
             return torch.return_types.sort([self, slice(None, None, None)])
 
-        if self.is_sorted_by_row:  # CSR->CSC:
-            perm = self._csr2csc
-
-            if (self.is_undirected and perm is not None
-                    and self._csc_row is not None):
-                edge_index = torch.stack([self._csc_row, self[0]], dim=0)
-
-            elif perm is None:
-                col, perm = index_sort(self[1], self.get_num_cols(), stable)
-                self._csc_row = self[0][perm]
-                edge_index = torch.stack([self._csc_row, col], dim=0)
-                self._csr2csc = perm
-            else:
-                edge_index = self.as_tensor()[:, perm]
-                self._csc_row = edge_index[0]
-
-        elif self.is_sorted_by_col:  # CSC->CSR:
-            perm = self._csc2csr
-
-            if (self.is_undirected and perm is not None
-                    and self._csr_col is not None):
-                edge_index = torch.stack([self[1], self._csr_col], dim=0)
-
-            elif perm is None:
-                row, perm = index_sort(self[0], self.get_num_rows(), stable)
-                self._csr_col = self[1][perm]
-                edge_index = torch.stack([row, self._csr_col], dim=0)
-                self._csc2csr = perm
-            else:
-                edge_index = self.as_tensor()[:, perm]
-                self._csr_col = edge_index[1]
+        if self.is_sorted:
+            (row, col), perm = self._sort_by_transpose()
+            edge_index = torch.stack([row, col], dim=0)
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
@@ -515,12 +488,12 @@ class EdgeIndex(Tensor):
         out = self.__class__(edge_index)
 
         # We can mostly inherit metadata and cache:
-        out._sparse_size = self.sparse_size
+        out._sparse_size = self.sparse_size()
         out._sort_order = sort_order
         out._is_undirected = self.is_undirected
 
-        out._rowptr = self._rowptr
-        out._colptr = self._colptr
+        out._indptr = self._T_indptr
+        out._T_indptr = self._indptr
 
         # NOTE We cannot copy CSR<>CSC permutations since we don't require that
         # local neighborhoods are sorted, and thus they may run out of sync.
@@ -535,7 +508,7 @@ class EdgeIndex(Tensor):
         dtype: Optional[torch.dtype] = None,
     ) -> Tensor:
 
-        # TODO Respect duplicate edges.
+        # TODO Respect duplicated edges.
 
         dtype = value.dtype if value is not None else dtype
 
@@ -564,7 +537,7 @@ class EdgeIndex(Tensor):
         return out
 
     def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
-        rowptr, col, perm = self.get_csr()
+        (rowptr, col), perm = self.get_csr()
         value = self._get_value() if value is None else value[perm]
 
         return torch.sparse_csr_tensor(
@@ -581,7 +554,7 @@ class EdgeIndex(Tensor):
             raise NotImplementedError(
                 "'to_sparse_csc' not supported for PyTorch < 1.12")
 
-        colptr, row, perm = self.get_csc()
+        (colptr, row), perm = self.get_csc()
         value = self._get_value() if value is None else value[perm]
 
         return torch.sparse_csc_tensor(
@@ -624,7 +597,7 @@ class EdgeIndex(Tensor):
         return SparseTensor(
             row=self[0],
             col=self[1],
-            rowptr=self._rowptr,
+            rowptr=self._indptr if self.is_sorted_by_row else None,
             value=value,
             sparse_sizes=self.get_sparse_size(),
             is_sorted=self.is_sorted_by_row,
@@ -672,25 +645,26 @@ def apply_(
     out = out.as_subclass(EdgeIndex)
 
     # Copy metadata:
-    out._sparse_size = tensor.sparse_size
+    out._sparse_size = tensor.sparse_size()
     out._sort_order = tensor._sort_order
-    out._is_undirected = tensor.is_undirected
+    out._is_undirected = tensor._is_undirected
 
     # Convert cache (but do not consider `_value`):
-    if tensor._rowptr is not None:
-        out._rowptr = fn(tensor._rowptr, *args, **kwargs)
-    if tensor._csr_col is not None:
-        out._csr_col = fn(tensor._csr_col, *args, **kwargs)
+    if tensor._indptr is not None:
+        out._indptr = fn(tensor._indptr, *args, **kwargs)
 
-    if tensor._colptr is not None:
-        out._colptr = fn(tensor._colptr, *args, **kwargs)
-    if tensor._csc_row is not None:
-        out._csc_row = fn(tensor._csc_row, *args, **kwargs)
+    if tensor._T_perm is not None:
+        out._T_perm = fn(tensor._T_perm, *args, **kwargs)
 
-    if tensor._csr2csc is not None:
-        out._csr2csc = fn(tensor._csr2csc, *args, **kwargs)
-    if tensor._csc2csr is not None:
-        out._csc2csr = fn(tensor._csc2csr, *args, **kwargs)
+    _T_row, _T_col = tensor._T_index
+    if _T_row is not None:
+        _T_row = fn(_T_row, *args, **kwargs)
+    if _T_col is not None:
+        _T_col = fn(_T_col, *args, **kwargs)
+    out._T_index = (_T_row, _T_col)
+
+    if tensor._T_indptr is not None:
+        out._T_indptr = fn(tensor._T_indptr, *args, **kwargs)
 
     return out
 
@@ -803,7 +777,7 @@ def flip(
 
     # Flip metadata and cache:
     if 0 in dims or -2 in dims:
-        out._sparse_size = input.sparse_size[::-1]
+        out._sparse_size = input.sparse_size()[::-1]
 
     if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
         if input.is_sorted_by_row:
@@ -811,14 +785,10 @@ def flip(
         elif input.is_sorted_by_col:
             out._sort_order = SortOrder.ROW
 
-        out._rowptr = input._colptr
-        out._csr_col = input._csc_row
-
-        out._colptr = input._rowptr
-        out._csc_row = input._csr_col
-
-        out._csr2csc = input._csc2csr
-        out._csc2csr = input._csr2csc
+        out._indptr = input._T_indptr
+        out._T_perm = input._T_perm
+        out._T_index = input._T_index[::-1]
+        out._T_indptr = input._indptr
 
     return out
 
@@ -836,7 +806,7 @@ def index_select(
 
     if dim == 1 or dim == -1:
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
 
     return out
 
@@ -855,7 +825,7 @@ def narrow(
 
     if dim == 1 or dim == -1:
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         # NOTE We could potentially maintain `rowptr`/`colptr` attributes here,
         # but it is not really clear if this is worth it. The most important
         # information, the sort order, needs to be maintained though:
@@ -888,18 +858,18 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
     if (is_valid and isinstance(index[1], Tensor)
             and index[1].dtype in (torch.bool, torch.uint8)):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         out._sort_order = input._sort_order
 
     # 2. `edge_index[:, index]` or `edge_index[..., index]`.
     elif is_valid and isinstance(index[1], Tensor):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
 
     # 3. `edge_index[:, slice]` or `edge_index[..., slice]`.
     elif is_valid and isinstance(index[1], slice):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         if index[1].step is None or index[1].step > 0:
             out._sort_order = input._sort_order
 
@@ -982,7 +952,7 @@ class SparseDenseMatmul(torch.autograd.Function):
         if other.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
             # If `torch-sparse` is available, it still provides a faster
             # sparse-dense matmul code path (after all these years...):
-            rowptr, col, perm = input.get_csr()
+            (rowptr, col), perm = input.get_csr()
             if input_value is not None:
                 input_value = input_value[perm]
             return torch.ops.torch_sparse.spmm_sum(  #
@@ -1011,7 +981,7 @@ class SparseDenseMatmul(torch.autograd.Function):
             # We can call `input.flip(0)` here and create a sparse CSR matrix
             # from it, but creating it via `colptr` directly is more efficient:
             # Note that the sort result is cached across multiple applications.
-            colptr, row, perm = input.get_csc()
+            (colptr, row), perm = input.get_csc()
 
             if input_value is not None:
                 input_value = input_value.detach()[perm]
