@@ -783,9 +783,9 @@ def flip(
         elif input.is_sorted_by_col:
             out._sort_order = SortOrder.ROW
 
+        out._indptr = input._T_indptr
         out._T_perm = input._T_perm
         out._T_index = input._T_index[::-1]
-        out._indptr = input._T_indptr
         out._T_indptr = input._indptr
 
     return out
