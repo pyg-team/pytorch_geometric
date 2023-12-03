@@ -155,7 +155,7 @@ def test_to(dtype, device, is_undirected):
 
     out = adj.to(torch.int)
     assert out.dtype == torch.int
-    if torch_geometric.typing.WITH_PT113:
+    if torch_geometric.typing.WITH_PT20:
         assert isinstance(out, EdgeIndex)
         assert out._rowptr.dtype == torch.int
         assert out._csr2csc.dtype == torch.int
@@ -172,7 +172,7 @@ def test_to(dtype, device, is_undirected):
 
     out = adj.int()
     assert out.dtype == torch.int
-    if torch_geometric.typing.WITH_PT113:
+    if torch_geometric.typing.WITH_PT20:
         assert isinstance(out, EdgeIndex)
     else:
         assert not isinstance(out, EdgeIndex)
