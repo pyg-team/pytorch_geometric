@@ -95,7 +95,8 @@ class EdgeIndex(Tensor):
 
     Additionally, :class:`EdgeIndex` caches data for fast CSR or CSC conversion
     in case its representation is sorted, such as its :obj:`rowptr` or
-    :obj:`colptr`, or the permutation vectors from CSR to CSC and vice versa.
+    :obj:`colptr`, or the permutation vector for going from CSR to CSC or vice
+    versa.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`EdgeIndex.sort_by`), or when explicitly requested via
     :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
@@ -122,17 +123,16 @@ class EdgeIndex(Tensor):
     # neighborhoods is not necessarily deterministic.
     _is_undirected: bool = False
 
-    # An data cache for CSR and CSC representations:
-    _rowptr: Optional[Tensor] = None
-    _csr_col: Optional[Tensor] = None
+    # A cache for its compressed representation:
+    _indptr: Optional[Tensor] = None
 
-    _colptr: Optional[Tensor] = None
-    _csc_row: Optional[Tensor] = None
+    # A cache for its transposed representation:
+    _T_indptr: Optional[Tensor] = None
+    _T_index: Optional[Tensor] = None
+    _T_perm: Optional[Tensor] = None
 
-    _csr2csc: Optional[Tensor] = None
-    _csc2csr: Optional[Tensor] = None
-
-    _value: Optional[Tensor] = None  # 1-element value for SpMM.
+    # A cached "1"-vector for `torch.sparse` matrix multiplication:
+    _value: Optional[Tensor] = None
 
     def __new__(
         cls,
@@ -229,12 +229,6 @@ class EdgeIndex(Tensor):
         r"""The size of the underlying sparse matrix."""
         return self._sparse_size
 
-    def get_sparse_size(self) -> Tuple[int, int]:
-        r"""The size of the underlying sparse matrix.
-        Automatically computed and cached when not explicitly set.
-        """
-        return (self.get_num_rows(), self.get_num_cols())
-
     @property
     def num_rows(self) -> Optional[int]:
         r"""The number of rows of the underlying sparse matrix."""
@@ -274,6 +268,12 @@ class EdgeIndex(Tensor):
 
     # Cache Interface #########################################################
 
+    def get_sparse_size(self, int: Optional[int] = None) -> Tuple[int, int]:
+        r"""The size of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        """
+        return (self.get_num_rows(), self.get_num_cols())
+
     def get_num_rows(self) -> int:
         r"""The number of rows of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.
@@ -301,6 +301,27 @@ class EdgeIndex(Tensor):
                 self._sparse_size = (self.num_rows, num_cols)
 
         return self.num_cols
+
+    def get_indptr(self) -> Tensor:
+        # TODO Add doc-string.
+        if not self.is_sorted:
+            raise ValueError(
+                f"Cannot access 'indptr' since '{self.__class__.__name__}' "
+                f"is not sorted. Please call `sort_by(...)` first.")
+
+        if self._indptr is not None:
+            return self._indptr
+
+        if self.is_undirected and self._T_indptr is not None:
+            return self._T_indptr
+
+        index = self[0 if self.is_sorted_by_row else 1]
+        size = self
+
+        self._indptr = torch._convert_indices_from_coo_to_csr(
+            self[0], self.get_num_rows(), out_int32=self.dtype != torch.int64)
+
+        return self._indptr
 
     def get_csr(self) -> Tuple[Tensor, Tensor, Union[Tensor, slice]]:
         if not self.is_sorted:
