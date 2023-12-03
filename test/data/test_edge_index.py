@@ -7,7 +7,8 @@ import torch
 from torch import Tensor, tensor
 
 import torch_geometric
-from torch_geometric.data.edge_index import SUPPORTED_DTYPES, EdgeIndex
+from torch_geometric.data import EdgeIndex
+from torch_geometric.data.edge_index import SUPPORTED_DTYPES
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,

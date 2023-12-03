@@ -99,16 +99,15 @@ def assert_sorted(func):
 
 
 class EdgeIndex(Tensor):
-    r"""An advanced :obj:`edge_index` representation with additional (meta)data
-    attached.
+    r"""A :obj:`edge_index` tensor with additional (meta)data attached.
 
     :class:`EdgeIndex` is a :pytorch:`PyTorch` tensor, that holds an
     :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
     Edges are given as pairwise source and destination node indices in sparse
     COO format.
 
-    While :class:`EdgeIndex` sub-classes a general :pytorch:`PyTorch` tensor,
-    it can hold additional (meta)data, *i.e.*:
+    While :class:`EdgeIndex` sub-classes a general :pytorch:`null`
+    :class:`torch.Tensor`, it can hold additional (meta)data, *i.e.*:
 
     * :obj:`sparse_size`: The underlying sparse matrix size
     * :obj:`sort_order`: The sort order (if present), either by row or column.
@@ -126,6 +125,42 @@ class EdgeIndex(Tensor):
     This representation ensures for optimal computation in GNN message passing
     schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
     workflows.
+
+    .. code-block:: python
+
+        from torch_geometric.data import EdgeIndex
+
+        edge_index = EdgeIndex(
+            [[0, 1, 1, 2],
+             [1, 0, 2, 1]]
+            sparse_size=(3, 3),
+            sort_order='row',
+            is_undirected=True,
+            device='cpu',
+        )
+        >>> EdgeIndex([[0, 1, 1, 2],
+        ...            [1, 0, 2, 1]])
+        assert edge_index.is_sorted_by_row
+        assert not edge_index.is_undirected
+
+        # Flipping order:
+        edge_index = edge_index.flip(0)
+        >>> EdgeIndex([[1, 0, 2, 1],
+        ...            [0, 1, 1, 2]])
+        assert edge_index.is_sorted_by_col
+        assert not edge_index.is_undirected
+
+        # Filtering:
+        mask = torch.tensor([True, True, True, False])
+        edge_index = edge_index[:, mask]
+        >>> EdgeIndex([[1, 0, 2],
+        ...            [0, 1, 1]])
+        assert edge_index.is_sorted_by_col
+        assert not edge_index.is_undirected
+
+        # Sparse-Dense Matrix Multiplication:
+        out = edge_index @ torch.randn(3, 16)
+        assert out.size() == (3, 16)
     """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
     # for a basic tutorial on how to subclass `torch.Tensor`.
@@ -198,9 +233,12 @@ class EdgeIndex(Tensor):
     # Validation ##############################################################
 
     def validate(self) -> 'EdgeIndex':
-        r"""Validates the :class:`EdgeIndex` representation, i.e., it ensures
-        * that :class:`EdgeIndex` only holds valid entries.
+        r"""Validates the :class:`EdgeIndex` representation, *i.e.* it ensures
+        that
+
+        * that it only holds valid indices.
         * that the sort order is correctly set.
+        * that indices are bidirectional in case it is specified as undirected.
         """
         assert_valid_dtype(self)
         assert_two_dimensional(self)
@@ -334,6 +372,8 @@ class EdgeIndex(Tensor):
 
     @assert_sorted
     def get_indptr(self) -> Tensor:
+        r"""Returns the compressed index representation in case
+        :class:`EdgeIndex` is sorted."""
         if self._indptr is not None:
             return self._indptr
 
@@ -368,6 +408,8 @@ class EdgeIndex(Tensor):
 
     @assert_sorted
     def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+        r"""Returns the compressed CSR representation
+        :obj:`(rowptr, col), perm` in case :class:`EdgeIndex` is sorted."""
         if self.is_sorted_by_row:
             return (self.get_indptr(), self[1]), slice(None, None, None)
 
@@ -389,6 +431,8 @@ class EdgeIndex(Tensor):
 
     @assert_sorted
     def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+        r"""Returns the compressed CSC representation
+        :obj:`(colptr, row), perm` in case :class:`EdgeIndex` is sorted."""
         if self.is_sorted_by_col:
             return (self.get_indptr(), self[0]), slice(None, None, None)
 
@@ -505,8 +549,20 @@ class EdgeIndex(Tensor):
     def to_dense(
         self,
         value: Optional[Tensor] = None,
+        fill_value: float = 0.0,
         dtype: Optional[torch.dtype] = None,
     ) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a dense :class:`torch.Tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+            fill_value (float, optional): The fill value for remaining elements
+                in the dense matrix. (default: :obj:`0.0`)
+            dtype (torch.dtype, optional): The data type of the returned
+                tensor. (default: :obj:`None`)
+        """
 
         # TODO Respect duplicated edges.
 
@@ -516,12 +572,20 @@ class EdgeIndex(Tensor):
         if value is not None and value.dim() > 1:
             size = size + value.shape[1:]
 
-        out = torch.zeros(size, dtype=dtype, device=self.device)
+        out = torch.full(size, fill_value, dtype=dtype, device=self.device)
         out[self[0], self[1]] = value if value is not None else 1
 
         return out
 
     def to_sparse_coo(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_coo_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
         value = self._get_value() if value is None else value
         out = torch.sparse_coo_tensor(
             indices=self.as_tensor(),
@@ -537,6 +601,14 @@ class EdgeIndex(Tensor):
         return out
 
     def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_csr_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
         (rowptr, col), perm = self.get_csr()
         value = self._get_value() if value is None else value[perm]
 
@@ -550,6 +622,14 @@ class EdgeIndex(Tensor):
         )
 
     def to_sparse_csc(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_csc_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
         if not torch_geometric.typing.WITH_PT112:
             raise NotImplementedError(
                 "'to_sparse_csc' not supported for PyTorch < 1.12")
@@ -569,9 +649,20 @@ class EdgeIndex(Tensor):
     def to_sparse(
         self,
         *,
-        layout: Optional[torch.layout] = None,
+        layout: torch.layout = torch.sparse_coo,
         value: Optional[Tensor] = None,
     ) -> Tensor:
+        r"""Converts :class_:`EdgeIndex` into a
+        :pytorch:`null` :class:`torch.sparse` tensor.
+
+        Args:
+            layout (torch.layout, optional): The desired sparse layout. One of
+                :obj:`torch.sparse_coo`, :obj:`torch.sparse_csr`, or
+                :obj:`torch.sparse_csc`. (default: :obj:`torch.sparse_coo`)
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
 
         if layout is None or layout == torch.sparse_coo:
             return self.to_sparse_coo(value)
@@ -586,12 +677,12 @@ class EdgeIndex(Tensor):
         self,
         value: Optional[Tensor] = None,
     ) -> SparseTensor:
-        r"""Converts the :class:`EdgeIndex` representation to a
-        :class:`torch_sparse.SparseTensor`. Requires that :obj:`torch-sparse`
-        is installed.
+        r"""Converts :class_:`EdgeIndex` into a
+        :class:`torch_sparse.SparseTensor`.
+        Requires that :obj:`torch-sparse` is installed.
 
         Args:
-            value (torch.Tensor, optional): The values of non-zero indices.
+            value (torch.Tensor, optional): The values for sparse indices.
                 (default: :obj:`None`)
         """
         return SparseTensor(
