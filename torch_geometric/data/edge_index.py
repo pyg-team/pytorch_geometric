@@ -99,9 +99,9 @@ def assert_sorted(func):
 
 
 class EdgeIndex(Tensor):
-    r"""A :obj:`edge_index` tensor with additional (meta)data attached.
+    r"""An COO :obj:`edge_index` tensor with additional (meta)data attached.
 
-    :class:`EdgeIndex` is a :pytorch:`PyTorch` tensor, that holds an
+    :class:`EdgeIndex` is a :pytorch:`null` class:`torch.Tensor`, that holds an
     :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
     Edges are given as pairwise source and destination node indices in sparse
     COO format.
@@ -578,7 +578,7 @@ class EdgeIndex(Tensor):
         return out
 
     def to_sparse_coo(self, value: Optional[Tensor] = None) -> Tensor:
-        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
         :class:`torch.sparse_coo_tensor`.
 
         Args:
@@ -601,7 +601,7 @@ class EdgeIndex(Tensor):
         return out
 
     def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
-        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
         :class:`torch.sparse_csr_tensor`.
 
         Args:
@@ -622,7 +622,7 @@ class EdgeIndex(Tensor):
         )
 
     def to_sparse_csc(self, value: Optional[Tensor] = None) -> Tensor:
-        r"""Converts :class_:`EdgeIndex` into a :pytorch:`null`
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
         :class:`torch.sparse_csc_tensor`.
 
         Args:
@@ -652,7 +652,7 @@ class EdgeIndex(Tensor):
         layout: torch.layout = torch.sparse_coo,
         value: Optional[Tensor] = None,
     ) -> Tensor:
-        r"""Converts :class_:`EdgeIndex` into a
+        r"""Converts :class:`EdgeIndex` into a
         :pytorch:`null` :class:`torch.sparse` tensor.
 
         Args:
@@ -677,7 +677,7 @@ class EdgeIndex(Tensor):
         self,
         value: Optional[Tensor] = None,
     ) -> SparseTensor:
-        r"""Converts :class_:`EdgeIndex` into a
+        r"""Converts :class:`EdgeIndex` into a
         :class:`torch_sparse.SparseTensor`.
         Requires that :obj:`torch-sparse` is installed.
 
