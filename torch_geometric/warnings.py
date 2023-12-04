@@ -1,4 +1,5 @@
 import warnings
+from typing import Literal
 
 import torch
 
@@ -18,7 +19,10 @@ def warn(message: str):
     warnings.warn(message)
 
 
-def filterwarnings(action: str, message: str):
+def filterwarnings(
+    action: Literal['default', 'error', 'ignore', 'always', 'module', 'once'],
+    message: str,
+):
     if _is_compiling():
         return
 
