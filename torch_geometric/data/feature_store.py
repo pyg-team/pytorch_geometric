@@ -271,8 +271,11 @@ class FeatureStore:
             their ordering to unique identify tensor values.
             (default: :obj:`None`)
     """
+    tensor_attr_cls: TensorAttr
+
     def __init__(self, tensor_attr_cls: Optional[Any] = None):
-        self._tensor_attr_cls = tensor_attr_cls or TensorAttr
+        super().__init__
+        self.__dict__['tensor_attr_cls'] = tensor_attr_cls or TensorAttr
 
     # Core (CRUD) #############################################################
 
