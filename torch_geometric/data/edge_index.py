@@ -709,14 +709,13 @@ class EdgeIndex(Tensor):
         r"""Performs a matrix multiplication of the matrices :obj:`input` and
         :obj:`other`.
         If :obj:`input` is a :math:`(n \times m)` matrix and :obj:`other` is a
-        :math:`(m \times p` tensor, then the output will be a
+        :math:`(m \times p)` tensor, then the output will be a
         :math:`(n \times p)` tensor.
         See :meth:`torch.matmul` for more information.
 
         :obj:`input` is a sparse matrix as denoted by the indices in
-        :class:`EdgeIndex`.
-        :obj:`input_value` corresponds to the values of non-zero elements in
-        :obj:`input`.
+        :class:`EdgeIndex`, and :obj:`input_value` corresponds to the values
+        of non-zero elements in :obj:`input`.
         If not specified, non-zero elements will be assigned a value of
         :obj:`1.0`.
 
@@ -730,11 +729,11 @@ class EdgeIndex(Tensor):
         See :meth:`torch.sparse.mm` for more information.
 
         Lastly, the :obj:`transpose` option allows to perform matrix
-        multiplication where :obj:`input` will be first transposed, *i.e.*
+        multiplication where :obj:`input` will be first transposed, *i.e.*:
 
         .. math::
 
-            \textrm{input}^{\top} \cdot \textrm{other}\textrm{.}
+            \textrm{input}^{\top} \cdot \textrm{other}
 
         Args:
             other (torch.Tensor or EdgeIndex): The second matrix to be
@@ -752,7 +751,7 @@ class EdgeIndex(Tensor):
                 :obj:`"min"`/:obj:`amin` or :obj:`"max"`/:obj:`amax`.
                 (default: :obj:`"sum"`)
             transpose (bool, optional): If set to :obj:`True`, will perform
-                matrix multiplication based on the transposed input.
+                matrix multiplication based on the transposed :obj:`input`.
                 (default: :obj:`False`)
         """
         return matmul(self, other, input_value, other_value, reduce, transpose)
