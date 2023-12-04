@@ -4,27 +4,28 @@ import os.path as osp
 from collections import Counter
 from typing import Callable, List, Optional
 
-import numpy as np
 import torch
 
 from torch_geometric.data import (
     Data,
+    HeteroData,
     InMemoryDataset,
     download_url,
     extract_tar,
 )
+from torch_geometric.utils import index_sort
 
 
 class Entities(InMemoryDataset):
-    r"""The relational entities networks "AIFB", "MUTAG", "BGS" and "AM" from
-    the `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper.
+    r"""The relational entities networks :obj:`"AIFB"`, :obj:`"MUTAG"`,
+    :obj:`"BGS"` and :obj:`"AM"` from the `"Modeling Relational Data with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
     Training and test splits are given by node indices.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"AIFB"`,
-            :obj:`"MUTAG"`, :obj:`"BGS"`, :obj:`"AM"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"AIFB"`, :obj:`"MUTAG"`,
+            :obj:`"BGS"`, :obj:`"AM"`).
         hetero (bool, optional): If set to :obj:`True`, will save the dataset
             as a :class:`~torch_geometric.data.HeteroData` object.
             (default: :obj:`False`)
@@ -36,18 +37,62 @@ class Entities(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - AIFB
+          - 8,285
+          - 58,086
+          - 0
+          - 4
+        * - AM
+          - 1,666,764
+          - 11,976,642
+          - 0
+          - 11
+        * - MUTAG
+          - 23,644
+          - 148,454
+          - 0
+          - 2
+        * - BGS
+          - 333,845
+          - 1,832,398
+          - 0
+          - 2
     """
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
 
-    def __init__(self, root: str, name: str, hetero: bool = False,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        hetero: bool = False,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(
+            self.processed_paths[0],
+            data_cls=HeteroData if hetero else Data,
+        )
 
     @property
     def raw_dir(self) -> str:
@@ -59,11 +104,11 @@ class Entities(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return self.data.edge_type.max().item() + 1
+        return self._data.edge_type.max().item() + 1
 
     @property
     def num_classes(self) -> int:
-        return self.data.train_y.max().item() + 1
+        return self._data.train_y.max().item() + 1
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -116,7 +161,7 @@ class Entities(InMemoryDataset):
             edges.append([dst, src, 2 * rel + 1])
 
         edges = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        perm = (N * R * edges[0] + R * edges[1] + edges[2]).argsort()
+        _, perm = index_sort(N * R * edges[0] + R * edges[1] + edges[2])
         edges = edges[:, perm]
 
         edge_index, edge_type = edges[:2], edges[2]
@@ -137,7 +182,7 @@ class Entities(InMemoryDataset):
         labels_df = pd.read_csv(task_file, sep='\t')
         labels_set = set(labels_df[label_header].values.tolist())
         labels_dict = {lab: i for i, lab in enumerate(list(labels_set))}
-        nodes_dict = {np.unicode(key): val for key, val in nodes_dict.items()}
+        nodes_dict = {str(key): val for key, val in nodes_dict.items()}
 
         train_labels_df = pd.read_csv(train_file, sep='\t')
         train_indices, train_labels = [], []
@@ -166,13 +211,13 @@ class Entities(InMemoryDataset):
         if self.hetero:
             data = data.to_heterogeneous(node_type_names=['v'])
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.upper()}{self.__class__.__name__}()'
 
 
-class hide_stdout(object):
+class hide_stdout:
     def __enter__(self):
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)

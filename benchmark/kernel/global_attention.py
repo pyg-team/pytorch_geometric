@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import GlobalAttention, SAGEConv
+from torch_geometric.nn import AttentionalAggregation, SAGEConv
 
 
 class GlobalAttentionNet(torch.nn.Module):
@@ -12,7 +12,7 @@ class GlobalAttentionNet(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(SAGEConv(hidden, hidden))
-        self.att = GlobalAttention(Linear(hidden, 1))
+        self.att = AttentionalAggregation(Linear(hidden, 1))
         self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 

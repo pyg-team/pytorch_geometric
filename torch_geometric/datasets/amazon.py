@@ -1,8 +1,6 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import torch
-
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -17,8 +15,8 @@ class Amazon(InMemoryDataset):
     map goods to their respective product category.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Computers"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Computers"`,
             :obj:`"Photo"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -28,38 +26,47 @@ class Amazon(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Computers
-              - 13,752
-              - 491,722
-              - 767
-              - 10
-            * - Photo
-              - 7,650
-              - 238,162
-              - 745
-              - 8
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Computers
+          - 13,752
+          - 491,722
+          - 767
+          - 10
+        * - Photo
+          - 7,650
+          - 238,162
+          - 745
+          - 8
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         assert self.name in ['computers', 'photo']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -81,10 +88,9 @@ class Amazon(InMemoryDataset):
         download_url(self.url + self.raw_file_names, self.raw_dir)
 
     def process(self):
-        data = read_npz(self.raw_paths[0])
+        data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name.capitalize()}()'

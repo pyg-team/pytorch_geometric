@@ -11,7 +11,7 @@ EPS = 1e-15
 
 class DMoNPooling(torch.nn.Module):
     r"""The spectral modularity pooling operator from the `"Graph Clustering
-    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
+    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -65,13 +65,14 @@ class DMoNPooling(torch.nn.Module):
             channels = [channels]
 
         from torch_geometric.nn.models.mlp import MLP
-        self.mlp = MLP(channels + [k], act='selu', batch_norm=False)
+        self.mlp = MLP(channels + [k], act=None, norm=None)
 
         self.dropout = dropout
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.mlp.reset_parameters()
 
     def forward(
@@ -80,23 +81,25 @@ class DMoNPooling(torch.nn.Module):
         adj: Tensor,
         mask: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
-            x (Tensor): Node feature tensor :math:`\mathbf{X} \in
-                \mathbb{R}^{B \times N \times F}` with batch-size
-                :math:`B`, (maximum) number of nodes :math:`N` for each graph,
-                and feature dimension :math:`F`.
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
                 Note that the cluster assignment matrix
                 :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
                 being created within this method.
-            adj (Tensor): Adjacency tensor
+            adj (torch.Tensor): Adjacency tensor
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
-            mask (BoolTensor, optional): Mask matrix
+            mask (torch.Tensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
 
-        :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
-            :class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
+        :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
+            :class:`torch.Tensor`, :class:`torch.Tensor`,
+            :class:`torch.Tensor`, :class:`torch.Tensor`)
         """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
@@ -105,41 +108,50 @@ class DMoNPooling(torch.nn.Module):
         s = F.dropout(s, self.dropout, training=self.training)
         s = torch.softmax(s, dim=-1)
 
-        (batch_size, num_nodes, _), k = x.size(), s.size(-1)
+        (batch_size, num_nodes, _), C = x.size(), s.size(-1)
 
-        if mask is not None:
-            mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
-            x, s = x * mask, s * mask
+        if mask is None:
+            mask = torch.ones(batch_size, num_nodes, dtype=torch.bool,
+                              device=x.device)
+
+        mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
+        x, s = x * mask, s * mask
 
         out = F.selu(torch.matmul(s.transpose(1, 2), x))
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ik', adj).transpose(0, 1)
-        m = torch.einsum('ij->', degrees)
+        degrees = torch.einsum('ijk->ij', adj)  # B X N
+        degrees = degrees.unsqueeze(-1) * mask  # B x N x 1
+        degrees_t = degrees.transpose(1, 2)  # B x 1 x N
 
-        ca = torch.matmul(s.transpose(1, 2), degrees)
-        cb = torch.matmul(degrees.transpose(0, 1), s)
+        m = torch.einsum('ijk->i', degrees) / 2  # B
+        m_expand = m.view(-1, 1, 1).expand(-1, C, C)  # B x C x C
 
-        normalizer = torch.matmul(ca, cb) / 2 / m
+        ca = torch.matmul(s.transpose(1, 2), degrees)  # B x C x 1
+        cb = torch.matmul(degrees_t, s)  # B x 1 x C
+
+        normalizer = torch.matmul(ca, cb) / 2 / m_expand
         decompose = out_adj - normalizer
         spectral_loss = -_rank3_trace(decompose) / 2 / m
-        spectral_loss = torch.mean(spectral_loss)
+        spectral_loss = spectral_loss.mean()
 
         # Orthogonality regularization:
         ss = torch.matmul(s.transpose(1, 2), s)
-        i_s = torch.eye(k).type_as(ss)
+        i_s = torch.eye(C).type_as(ss)
         ortho_loss = torch.norm(
             ss / torch.norm(ss, dim=(-1, -2), keepdim=True) -
             i_s / torch.norm(i_s), dim=(-1, -2))
-        ortho_loss = torch.mean(ortho_loss)
+        ortho_loss = ortho_loss.mean()
 
         # Cluster loss:
-        cluster_loss = torch.norm(torch.einsum(
-            'ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
+        cluster_size = torch.einsum('ijk->ik', s)  # B x C
+        cluster_loss = torch.norm(input=cluster_size, dim=1)
+        cluster_loss = cluster_loss / mask.sum(dim=1) * torch.norm(i_s) - 1
+        cluster_loss = cluster_loss.mean()
 
         # Fix and normalize coarsened adjacency matrix:
-        ind = torch.arange(k, device=out_adj.device)
+        ind = torch.arange(C, device=out_adj.device)
         out_adj[:, ind, ind] = 0
         d = torch.einsum('ijk->ij', out_adj)
         d = torch.sqrt(d)[:, None] + EPS

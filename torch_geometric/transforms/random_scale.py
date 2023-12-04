@@ -1,5 +1,7 @@
 import random
+from typing import Tuple
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -8,7 +10,7 @@ from torch_geometric.transforms import BaseTransform
 class RandomScale(BaseTransform):
     r"""Scales node positions by a randomly sampled factor :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
-    (functional name: :obj:`random_scale`)
+    (functional name: :obj:`random_scale`).
 
     .. math::
         \begin{bmatrix}
@@ -24,11 +26,11 @@ class RandomScale(BaseTransform):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
-    def __init__(self, scales):
+    def __init__(self, scales: Tuple[float, float]):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
 
-    def __call__(self, data):
+    def forward(self, data: Data) -> Data:
         scale = random.uniform(*self.scales)
         data.pos = data.pos * scale
         return data

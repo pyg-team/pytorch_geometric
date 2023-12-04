@@ -3,9 +3,9 @@ from typing import Callable, Optional
 
 import numpy as np
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import coalesce
 
 
 class WikipediaNetwork(InMemoryDataset):
@@ -17,8 +17,8 @@ class WikipediaNetwork(InMemoryDataset):
     The task is to predict the average daily traffic of the web page.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"chameleon"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"chameleon"`,
             :obj:`"crocodile"`, :obj:`"squirrel"`).
         geom_gcn_preprocess (bool): If set to :obj:`True`, will load the
             pre-processed data as introduced in the `"Geom-GCN: Geometric
@@ -27,6 +27,9 @@ class WikipediaNetwork(InMemoryDataset):
             into five categories to predict.
             If set to :obj:`True`, the dataset :obj:`"crocodile"` is not
             available.
+            If set to :obj:`True`, train/validation/test splits will be
+            available as masks for multiple splits with shape
+            :obj:`[num_nodes, num_splits]`. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -35,6 +38,8 @@ class WikipediaNetwork(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     """
 
@@ -42,17 +47,24 @@ class WikipediaNetwork(InMemoryDataset):
     processed_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                      'geom-gcn/f1fc0d14b3b019c562737240d06ec83b07d16a8f')
 
-    def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        geom_gcn_preprocess: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         self.geom_gcn_preprocess = geom_gcn_preprocess
         assert self.name in ['chameleon', 'crocodile', 'squirrel']
         if geom_gcn_preprocess and self.name == 'crocodile':
             raise AttributeError("The dataset 'crocodile' is not available in "
                                  "case 'geom_gcn_preprocess=True'")
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -104,7 +116,7 @@ class WikipediaNetwork(InMemoryDataset):
                 data = f.read().split('\n')[1:-1]
                 data = [[int(v) for v in r.split('\t')] for r in data]
             edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
-            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+            edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
             train_masks, val_masks, test_masks = [], [], []
             for filepath in self.raw_paths[2:]:
@@ -124,7 +136,7 @@ class WikipediaNetwork(InMemoryDataset):
             x = torch.from_numpy(data['features']).to(torch.float)
             edge_index = torch.from_numpy(data['edges']).to(torch.long)
             edge_index = edge_index.t().contiguous()
-            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+            edge_index = coalesce(edge_index, num_nodes=x.size(0))
             y = torch.from_numpy(data['target']).to(torch.float)
 
             data = Data(x=x, edge_index=edge_index, y=y)
@@ -132,4 +144,4 @@ class WikipediaNetwork(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

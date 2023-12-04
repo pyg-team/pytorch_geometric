@@ -1,7 +1,7 @@
 import os
 import os.path as osp
-import shutil
 from itertools import chain
+from typing import Callable, List, Optional
 from xml.dom import minidom
 
 import numpy as np
@@ -15,6 +15,7 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
+from torch_geometric.io import fs
 
 
 class PascalVOCKeypoints(InMemoryDataset):
@@ -29,8 +30,8 @@ class PascalVOCKeypoints(InMemoryDataset):
     on ImageNet (:obj:`relu4_2` and :obj:`relu5_1`).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of
             :obj:`"Aeroplane"`, :obj:`"Bicycle"`, :obj:`"Bird"`,
             :obj:`"Boat"`, :obj:`"Bottle"`, :obj:`"Bus"`, :obj:`"Car"`,
             :obj:`"Cat"`, :obj:`"Chair"`, :obj:`"Diningtable"`, :obj:`"Dog"`,
@@ -51,6 +52,11 @@ class PascalVOCKeypoints(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        device (str or torch.device, optional): The device to use for
+            processing the raw data. If set to :obj:`None`, will utilize
+            GPU-processing if available. (default: :obj:`None`)
     """
     image_url = ('http://host.robots.ox.ac.uk/pascal/VOC/voc2011/'
                  'VOCtrainval_25-May-2011.tar')
@@ -67,31 +73,44 @@ class PascalVOCKeypoints(InMemoryDataset):
         'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
     ]
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
-    def __init__(self, root, category, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        device: Optional[str] = None,
+    ):
+        if device is None:
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
         self.category = category.lower()
         assert self.category in self.categories
-        super().__init__(root, transform, pre_transform, pre_filter)
+        self.device = device
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.category.capitalize(), 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['images', 'annotations', 'splits.npz']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
     def download(self):
@@ -100,7 +119,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         os.unlink(path)
         image_path = osp.join(self.raw_dir, 'TrainVal', 'VOCdevkit', 'VOC2011')
         os.rename(image_path, osp.join(self.raw_dir, 'images'))
-        shutil.rmtree(osp.join(self.raw_dir, 'TrainVal'))
+        fs.rm(osp.join(self.raw_dir, 'TrainVal'))
 
         path = download_url(self.annotation_url, self.raw_dir)
         extract_tar(path, self.raw_dir, mode='r')
@@ -240,8 +259,8 @@ class PascalVOCKeypoints(InMemoryDataset):
             train_set = [self.pre_transform(data) for data in train_set]
             test_set = [self.pre_transform(data) for data in test_set]
 
-        torch.save(self.collate(train_set), self.processed_paths[0])
-        torch.save(self.collate(test_set), self.processed_paths[1])
+        self.save(train_set, self.processed_paths[0])
+        self.save(test_set, self.processed_paths[1])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

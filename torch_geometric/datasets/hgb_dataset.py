@@ -28,8 +28,8 @@ class HGBDataset(InMemoryDataset):
         `HGB leaderboard <https://www.biendata.xyz/hgb/>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"ACM"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"ACM"`,
             :obj:`"DBLP"`, :obj:`"Freebase"`, :obj:`"IMDB"`)
         transform (callable, optional): A function/transform that takes in an
             :class:`torch_geometric.data.HeteroData` object and returns a
@@ -39,11 +39,9 @@ class HGBDataset(InMemoryDataset):
             an :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
-
-    url = ('https://cloud.tsinghua.edu.cn/d/2d965d2fc2ee41d09def/files/'
-           '?p=%2F{}.zip&dl=1')
-
     names = {
         'acm': 'ACM',
         'dblp': 'DBLP',
@@ -51,13 +49,30 @@ class HGBDataset(InMemoryDataset):
         'imdb': 'IMDB',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    urls = {
+        'acm': ('https://drive.google.com/uc?'
+                'export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz'),
+        'dblp': ('https://drive.google.com/uc?'
+                 'export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC'),
+        'freebase': ('https://drive.google.com/uc?'
+                     'export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7'),
+        'imdb': ('https://drive.google.com/uc?'
+                 'export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2'),
+    }
+
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         assert self.name in set(self.names.keys())
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_dir(self) -> str:
@@ -77,7 +92,7 @@ class HGBDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        url = self.url.format(self.names[self.name])
+        url = self.urls[self.name]
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
@@ -181,6 +196,11 @@ class HGBDataset(InMemoryDataset):
                 data[n_type].train_mask[n_id] = True
             for y in test_ys:
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
+                if data[n_type].y.dim() > 1:  # multi-label
+                    for v in y[3].split(','):
+                        data[n_type].y[n_id, int(v)] = 1
+                else:
+                    data[n_type].y[n_id] = int(y[3])
                 data[n_type].test_mask[n_id] = True
 
         else:  # Link prediction:
@@ -189,7 +209,7 @@ class HGBDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.names[self.name]}()'

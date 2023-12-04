@@ -14,10 +14,10 @@ class SVDFeatureReduction(BaseTransform):
         out_channels (int): The dimensionlity of node features after
             reduction.
     """
-    def __init__(self, out_channels):
+    def __init__(self, out_channels: int):
         self.out_channels = out_channels
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         if data.x.size(-1) > self.out_channels:
             U, S, _ = torch.linalg.svd(data.x)
             data.x = torch.mm(U[:, :self.out_channels],

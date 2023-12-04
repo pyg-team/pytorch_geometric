@@ -25,7 +25,7 @@ def init_wandb(name: str, **kwargs):
 
 def log(**kwargs):
     def _map(value: Any) -> str:
-        if isinstance(value, int):
+        if isinstance(value, int) and not isinstance(value, bool):
             return f'{value:03d}'
         if isinstance(value, float):
             return f'{value:.4f}'

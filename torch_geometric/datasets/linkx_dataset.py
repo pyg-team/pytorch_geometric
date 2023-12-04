@@ -3,9 +3,9 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import one_hot
 
 
 class LINKXDataset(InMemoryDataset):
@@ -18,10 +18,10 @@ class LINKXDataset(InMemoryDataset):
         sources, but have been updated with new features and/or labels.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"penn94"`,
-            :obj:`"reed98"`, :obj:`"amherst41"`, :obj:`"cornell5"`,
-            :obj:`"johnshopkins55"`, :obj:`"genius"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"penn94"`, :obj:`"reed98"`,
+            :obj:`"amherst41"`, :obj:`"cornell5"`, :obj:`"johnshopkins55"`,
+            :obj:`"genius"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -30,6 +30,8 @@ class LINKXDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
@@ -73,13 +75,19 @@ class LINKXDataset(InMemoryDataset):
         'penn94': f'{github_url}/splits/fb100-Penn94-splits.npy',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name.lower()
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -132,7 +140,7 @@ class LINKXDataset(InMemoryDataset):
         x = torch.cat([metadata[:, :1], metadata[:, 2:]], dim=-1)
         for i in range(x.size(1)):
             _, out = x[:, i].unique(return_inverse=True)
-            xs.append(F.one_hot(out).to(torch.float))
+            xs.append(one_hot(out))
         x = torch.cat(xs, dim=-1)
 
         data = Data(x=x, edge_index=edge_index, y=y)
@@ -175,7 +183,7 @@ class LINKXDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}({len(self)})'

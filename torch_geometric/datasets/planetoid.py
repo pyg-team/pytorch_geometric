@@ -9,19 +9,18 @@ from torch_geometric.io import read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):
-    r"""The citation network datasets "Cora", "CiteSeer" and "PubMed" from the
-    `"Revisiting Semi-Supervised Learning with Graph Embeddings"
-    <https://arxiv.org/abs/1603.08861>`_ paper.
+    r"""The citation network datasets :obj:`"Cora"`, :obj:`"CiteSeer"` and
+    :obj:`"PubMed"` from the `"Revisiting Semi-Supervised Learning with Graph
+    Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
     Nodes represent documents and edges represent citation links.
     Training, validation and test splits are given by binary masks.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`,
-            :obj:`"CiteSeer"`, :obj:`"PubMed"`).
-        split (string): The type of dataset split
-            (:obj:`"public"`, :obj:`"full"`, :obj:`"geom-gcn"`,
-            :obj:`"random"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"CiteSeer"`,
+            :obj:`"PubMed"`).
+        split (str, optional): The type of dataset split (:obj:`"public"`,
+            :obj:`"full"`, :obj:`"geom-gcn"`, :obj:`"random"`).
             If set to :obj:`"public"`, the split will be the public fixed split
             from the `"Revisiting Semi-Supervised Learning with Graph
             Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
@@ -49,49 +48,60 @@ class Planetoid(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Cora
-              - 2,708
-              - 10,556
-              - 1,433
-              - 7
-            * - CiteSeer
-              - 3,327
-              - 9,104
-              - 3,703
-              - 6
-            * - PubMed
-              - 19,717
-              - 88,648
-              - 500
-              - 3
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cora
+          - 2,708
+          - 10,556
+          - 1,433
+          - 7
+        * - CiteSeer
+          - 3,327
+          - 9,104
+          - 3,703
+          - 6
+        * - PubMed
+          - 19,717
+          - 88,648
+          - 500
+          - 3
     """
-
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
     geom_gcn_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                     'geom-gcn/master')
 
-    def __init__(self, root: str, name: str, split: str = "public",
-                 num_train_per_class: int = 20, num_val: int = 500,
-                 num_test: int = 1000, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        split: str = "public",
+        num_train_per_class: int = 20,
+        num_val: int = 500,
+        num_test: int = 1000,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name
 
         self.split = split.lower()
         assert self.split in ['public', 'full', 'geom-gcn', 'random']
 
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
         if split == 'full':
             data = self.get(0)
@@ -163,7 +173,7 @@ class Planetoid(InMemoryDataset):
             data.test_mask = torch.stack(test_masks, dim=1)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}()'

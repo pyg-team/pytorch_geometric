@@ -1,12 +1,18 @@
 import glob
 import os
 import os.path as osp
-import shutil
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
+from torch import Tensor
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.io import read_off
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
+from torch_geometric.io import fs, read_off
 
 
 class ModelNet(InMemoryDataset):
@@ -26,8 +32,8 @@ class ModelNet(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string, optional): The name of the dataset (:obj:`"10"` for
+        root (str): Root directory where the dataset should be saved.
+        name (str, optional): The name of the dataset (:obj:`"10"` for
             ModelNet10, :obj:`"40"` for ModelNet40). (default: :obj:`"10"`)
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
@@ -43,6 +49,33 @@ class ModelNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - ModelNet10
+          - 4,899
+          - ~9,508.2
+          - ~37,450.5
+          - 3
+          - 10
+        * - ModelNet40
+          - 12,311
+          - ~17,744.4
+          - ~66,060.9
+          - 3
+          - 40
     """
 
     urls = {
@@ -51,23 +84,32 @@ class ModelNet(InMemoryDataset):
         '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
-    def __init__(self, root, name='10', train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str = '10',
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert name in ['10', '40']
         self.name = name
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'bathtub', 'bed', 'chair', 'desk', 'dresser', 'monitor',
             'night_stand', 'sofa', 'table', 'toilet'
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
     def download(self):
@@ -75,19 +117,19 @@ class ModelNet(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
         folder = osp.join(self.root, f'ModelNet{self.name}')
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
         # Delete osx metadata generated during compression of ModelNet10
         metadata_folder = osp.join(self.root, '__MACOSX')
         if osp.exists(metadata_folder):
-            shutil.rmtree(metadata_folder)
+            fs.rm(metadata_folder)
 
     def process(self):
-        torch.save(self.process_set('train'), self.processed_paths[0])
-        torch.save(self.process_set('test'), self.processed_paths[1])
+        self.save(self.process_set('train'), self.processed_paths[0])
+        self.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset):
+    def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
@@ -106,7 +148,7 @@ class ModelNet(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        return self.collate(data_list)
+        return data_list
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name}({len(self)})'

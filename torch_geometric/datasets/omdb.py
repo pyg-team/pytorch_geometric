@@ -12,7 +12,7 @@ class OMDB(InMemoryDataset):
     <https://omdb.mathub.io/dataset>`__ of bulk organic crystals.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
@@ -27,17 +27,25 @@ class OMDB(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://omdb.mathub.io/dataset'
 
-    def __init__(self, root: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> str:
@@ -77,5 +85,5 @@ class OMDB(InMemoryDataset):
             train_data = [self.pre_transform(d) for d in train_data]
             test_data = [self.pre_transform(d) for d in test_data]
 
-        torch.save(self.collate(train_data), self.processed_paths[0])
-        torch.save(self.collate(test_data), self.processed_paths[1])
+        self.save(train_data, self.processed_paths[0])
+        self.save(test_data, self.processed_paths[1])

@@ -23,7 +23,7 @@ class Model(torch.nn.Module):
                        dropout=dropout, jk='cat')
 
         self.classifier = MLP([hidden_channels, hidden_channels, out_channels],
-                              batch_norm=True, dropout=dropout)
+                              norm="batch_norm", dropout=dropout)
 
     def forward(self, data):
         x = self.gnn(data.x, data.edge_index)

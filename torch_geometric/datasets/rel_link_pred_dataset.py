@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
@@ -14,8 +13,8 @@ class RelLinkPredDataset(InMemoryDataset):
     Training and test splits are given by sets of triplets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"FB15k-237"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"FB15k-237"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -24,6 +23,23 @@ class RelLinkPredDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 14,541
+          - 544,230
+          - 0
+          - 0
     """
 
     urls = {
@@ -31,25 +47,31 @@ class RelLinkPredDataset(InMemoryDataset):
                       'RelationPrediction/master/data/FB-Toutanova')
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name
         assert name in ['FB15k-237']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def num_relations(self) -> int:
-        return int(self.data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
@@ -98,7 +120,7 @@ class RelLinkPredDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save((self.collate([data])), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}()'

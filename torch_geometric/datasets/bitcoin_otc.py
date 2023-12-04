@@ -19,7 +19,7 @@ class BitcoinOTC(InMemoryDataset):
     who-trusts-whom networks of sequential time steps.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         edge_window_size (int, optional): The window size for the existence of
             an edge in the graph sequence since its initial creation.
             (default: :obj:`10`)
@@ -31,16 +31,41 @@ class BitcoinOTC(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 138
+          - 6,005
+          - ~2,573.2
+          - 0
+          - 0
     """
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(self, root: str, edge_window_size: int = 10,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        edge_window_size: int = 10,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.edge_window_size = edge_window_size
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -52,7 +77,7 @@ class BitcoinOTC(InMemoryDataset):
 
     @property
     def num_nodes(self) -> int:
-        return self.data.edge_index.max().item() + 1
+        return self._data.edge_index.max().item() + 1
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -70,7 +95,7 @@ class BitcoinOTC(InMemoryDataset):
             edge_index = edge_index.t().contiguous()
             num_nodes = edge_index.max().item() + 1
 
-            edge_attr = [float(line[2]) for line in data]
+            edge_attr = [int(line[2]) for line in data]
             edge_attr = torch.tensor(edge_attr, dtype=torch.long)
 
             stamps = [int(float(line[3])) for line in data]
@@ -98,5 +123,4 @@ class BitcoinOTC(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

@@ -1,4 +1,5 @@
 import torch_geometric
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
@@ -6,7 +7,7 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('knn_graph')
 class KNNGraph(BaseTransform):
-    r"""Creates a k-NN graph based on node positions :obj:`pos`
+    r"""Creates a k-NN graph based on node positions :obj:`data.pos`
     (functional name: :obj:`knn_graph`).
 
     Args:
@@ -15,13 +16,13 @@ class KNNGraph(BaseTransform):
             self-loops. (default: :obj:`False`)
         force_undirected (bool, optional): If set to :obj:`True`, new edges
             will be undirected. (default: :obj:`False`)
-        flow (string, optional): The flow direction when used in combination
-            with message passing (:obj:`"source_to_target"` or
+        flow (str, optional): The flow direction when used in combination with
+            message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`).
             If set to :obj:`"source_to_target"`, every target node will have
             exactly :math:`k` source nodes pointing to it.
             (default: :obj:`"source_to_target"`)
-        cosine (boolean, optional): If :obj:`True`, will use the cosine
+        cosine (bool, optional): If :obj:`True`, will use the cosine
             distance instead of euclidean distance to find nearest neighbors.
             (default: :obj:`False`)
         num_workers (int): Number of workers to use for computation. Has no
@@ -30,10 +31,10 @@ class KNNGraph(BaseTransform):
     """
     def __init__(
         self,
-        k=6,
-        loop=False,
-        force_undirected=False,
-        flow='source_to_target',
+        k: int = 6,
+        loop: bool = False,
+        force_undirected: bool = False,
+        flow: str = 'source_to_target',
         cosine: bool = False,
         num_workers: int = 1,
     ):
@@ -44,7 +45,7 @@ class KNNGraph(BaseTransform):
         self.cosine = cosine
         self.num_workers = num_workers
 
-    def __call__(self, data):
+    def forward(self, data: Data) -> Data:
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
 

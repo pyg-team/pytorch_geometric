@@ -1,64 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional
 
 import pytest
 import torch
 
-from torch_geometric.data.feature_store import (
-    AttrView,
-    FeatureStore,
-    TensorAttr,
-    _field_status,
-)
-from torch_geometric.typing import FeatureTensorType
-
-
-class MyFeatureStore(FeatureStore):
-    def __init__(self):
-        super().__init__()
-        self.store = {}
-
-    @staticmethod
-    def key(attr: TensorAttr) -> str:
-        return (attr.group_name, attr.attr_name)
-
-    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        index = attr.index
-
-        # None indices define the obvious index:
-        if index is None:
-            index = torch.arange(0, tensor.shape[0])
-
-        # Store the index:
-        self.store[MyFeatureStore.key(attr)] = (index, tensor)
-
-        return True
-
-    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        index, tensor = self.store.get(MyFeatureStore.key(attr), (None, None))
-
-        if tensor is None:
-            return None
-
-        # None indices return the whole tensor:
-        if attr.index is None:
-            return tensor
-
-        idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
-        return tensor[idx]
-
-    def _remove_tensor(self, attr: TensorAttr) -> bool:
-        del self.store[MyFeatureStore.key(attr)]
-        return True
-
-    def __len__(self):
-        raise NotImplementedError
+from torch_geometric.data import TensorAttr
+from torch_geometric.data.feature_store import AttrView, _FieldStatus
+from torch_geometric.testing import MyFeatureStore
 
 
 @dataclass
 class MyTensorAttrNoGroupName(TensorAttr):
-    def __init__(self, attr_name=_field_status.UNSET,
-                 index=_field_status.UNSET):
+    def __init__(self, attr_name=_FieldStatus.UNSET, index=_FieldStatus.UNSET):
         # Treat group_name as optional, and move it to the end
         super().__init__(None, attr_name, index)
 
@@ -66,25 +18,18 @@ class MyTensorAttrNoGroupName(TensorAttr):
 class MyFeatureStoreNoGroupName(MyFeatureStore):
     def __init__(self):
         super().__init__()
-        self._attr_cls = MyTensorAttrNoGroupName
-
-    @staticmethod
-    def key(attr: TensorAttr) -> str:
-        return attr.attr_name
-
-    def __len__(self):
-        raise NotImplementedError
+        self._tensor_attr_cls = MyTensorAttrNoGroupName
 
 
 def test_feature_store():
-    r"""Tests basic API and indexing functionality of a feature store."""
     store = MyFeatureStore()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     group_name = 'A'
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
+    assert TensorAttr(group_name).update(attr) == attr
 
     # Normal API:
     store.put_tensor(tensor, attr)
@@ -93,15 +38,23 @@ def test_feature_store():
         store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
-    assert store.get_tensor(None, None, index) is None
-    store.remove_tensor(group_name, attr_name, None)
-    assert store.get_tensor(attr) is None
+
+    assert store.update_tensor(tensor + 1, attr)
+    assert torch.equal(store.get_tensor(attr), tensor + 1)
+
+    store.remove_tensor(attr)
+    with pytest.raises(KeyError):
+        _ = store.get_tensor(attr)
 
     # Views:
     view = store.view(group_name=group_name)
     view.attr_name = attr_name
     view['index'] = index
+    assert view != "not a 'AttrView' object"
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
+    assert str(view) == ("AttrView(store=MyFeatureStore(), "
+                         "attr=TensorAttr(group_name='A', attr_name='feat', "
+                         "index=tensor([0, 1, 2])))")
 
     # Indexing:
     store[group_name, attr_name, index] = tensor
@@ -131,14 +84,16 @@ def test_feature_store():
 
     # Deletion:
     del store[group_name, attr_name, index]
-    assert store[group_name, attr_name, index] is None
+    with pytest.raises(KeyError):
+        _ = store[group_name, attr_name, index]
     del store[group_name]
-    assert store[group_name]() is None
+    with pytest.raises(KeyError):
+        _ = store[group_name]()
 
 
 def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])

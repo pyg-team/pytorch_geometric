@@ -3,15 +3,13 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter
-from torch_sparse import SparseTensor, fill_diag, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
+from torch_geometric.utils import add_remaining_self_loops, scatter, spmm
 
 
 class EGConv(MessagePassing):
@@ -79,15 +77,24 @@ class EGConv(MessagePassing):
     _cached_edge_index: Optional[Tuple[Tensor, OptTensor]]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels: int, out_channels: int,
-                 aggregators: List[str] = ["symnorm"], num_heads: int = 8,
-                 num_bases: int = 4, cached: bool = False,
-                 add_self_loops: bool = True, bias: bool = True, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        aggregators: List[str] = ['symnorm'],
+        num_heads: int = 8,
+        num_bases: int = 4,
+        cached: bool = False,
+        add_self_loops: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
         super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
-            raise ValueError(
-                'out_channels must be divisible by the number of heads')
+            raise ValueError(f"'out_channels' (got {out_channels}) must be "
+                             f"divisible by the number of heads "
+                             f"(got {num_heads})")
 
         for a in aggregators:
             if a not in ['sum', 'mean', 'symnorm', 'min', 'max', 'var', 'std']:
@@ -108,13 +115,14 @@ class EGConv(MessagePassing):
                                num_heads * num_bases * len(aggregators))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.bases_lin.reset_parameters()
         self.comb_lin.reset_parameters()
         zeros(self.bias)
@@ -122,7 +130,6 @@ class EGConv(MessagePassing):
         self._cached_edge_index = None
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         symnorm_weight: OptTensor = None
         if "symnorm" in self.aggregators:
             if isinstance(edge_index, Tensor):
@@ -130,7 +137,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index, symnorm_weight = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, symnorm_weight)
                 else:
@@ -141,7 +149,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -162,7 +171,7 @@ class EGConv(MessagePassing):
                 if self.cached and cache is not None:
                     edge_index = cache
                 else:
-                    edge_index = fill_diag(edge_index, 1.0)
+                    edge_index = torch_sparse.fill_diag(edge_index, 1.0)
                     if self.cached:
                         self._cached_adj_t = edge_index
 
@@ -189,7 +198,7 @@ class EGConv(MessagePassing):
         out = out.view(-1, self.out_channels)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -205,16 +214,16 @@ class EGConv(MessagePassing):
             if aggr == 'symnorm':
                 assert symnorm_weight is not None
                 out = scatter(inputs * symnorm_weight.view(-1, 1), index, 0,
-                              None, dim_size, reduce='sum')
+                              dim_size, reduce='sum')
             elif aggr == 'var' or aggr == 'std':
-                mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-                mean_squares = scatter(inputs * inputs, index, 0, None,
-                                       dim_size, reduce='mean')
+                mean = scatter(inputs, index, 0, dim_size, reduce='mean')
+                mean_squares = scatter(inputs * inputs, index, 0, dim_size,
+                                       reduce='mean')
                 out = mean_squares - mean * mean
                 if aggr == 'std':
-                    out = torch.sqrt(out.relu_() + 1e-5)
+                    out = out.clamp(min=1e-5).sqrt()
             else:
-                out = scatter(inputs, index, 0, None, dim_size, reduce=aggr)
+                out = scatter(inputs, index, 0, dim_size, reduce=aggr)
 
             outs.append(out)
 
@@ -223,20 +232,24 @@ class EGConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t_2 = adj_t
         if len(self.aggregators) > 1 and 'symnorm' in self.aggregators:
-            adj_t_2 = adj_t.set_value(None)
+            if isinstance(adj_t, SparseTensor):
+                adj_t_2 = adj_t.set_value(None)
+            else:
+                adj_t_2 = adj_t.clone()
+                adj_t_2.values().fill_(1.0)
 
         outs = []
         for aggr in self.aggregators:
             if aggr == 'symnorm':
-                out = matmul(adj_t, x, reduce='sum')
+                out = spmm(adj_t, x, reduce='sum')
             elif aggr in ['var', 'std']:
-                mean = matmul(adj_t_2, x, reduce='mean')
-                mean_sq = matmul(adj_t_2, x * x, reduce='mean')
+                mean = spmm(adj_t_2, x, reduce='mean')
+                mean_sq = spmm(adj_t_2, x * x, reduce='mean')
                 out = mean_sq - mean * mean
                 if aggr == 'std':
                     out = torch.sqrt(out.relu_() + 1e-5)
             else:
-                out = matmul(adj_t_2, x, reduce=aggr)
+                out = spmm(adj_t_2, x, reduce=aggr)
 
             outs.append(out)
 

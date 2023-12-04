@@ -2,10 +2,11 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
+from torch_geometric.typing import SparseTensor, TensorFrame
+from torch_geometric.utils import narrow
 
 
 def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
@@ -59,17 +60,20 @@ def _separate(
     if isinstance(value, Tensor):
         # Narrow a `torch.Tensor` based on `slices`.
         # NOTE: We need to take care of decrementing elements appropriately.
+        key = str(key)
         cat_dim = batch.__cat_dim__(key, value, store)
         start, end = int(slices[idx]), int(slices[idx + 1])
-        value = value.narrow(cat_dim or 0, start, end - start)
+        value = narrow(value, cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
-        if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
+        if (decrement and incs is not None
+                and (incs.dim() > 1 or int(incs[idx]) != 0)):
             value = value - incs[idx].to(value.device)
         return value
 
     elif isinstance(value, SparseTensor) and decrement:
         # Narrow a `SparseTensor` based on `slices`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
+        key = str(key)
         cat_dim = batch.__cat_dim__(key, value, store)
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         for i, dim in enumerate(cat_dims):
@@ -77,23 +81,51 @@ def _separate(
             value = value.narrow(dim, start, end - start)
         return value
 
+    elif isinstance(value, TensorFrame):
+        key = str(key)
+        start, end = int(slices[idx]), int(slices[idx + 1])
+        value = value[start:end]
+        return value
+
     elif isinstance(value, Mapping):
         # Recursively separate elements of dictionaries.
         return {
-            key: _separate(key, elem, idx, slices[key],
-                           incs[key] if decrement else None, batch, store,
-                           decrement)
+            key:
+            _separate(
+                key,
+                elem,
+                idx,
+                slices=slices[key],
+                incs=incs[key] if decrement else None,
+                batch=batch,
+                store=store,
+                decrement=decrement,
+            )
             for key, elem in value.items()
         }
 
     elif (isinstance(value, Sequence) and isinstance(value[0], Sequence)
           and not isinstance(value[0], str) and len(value[0]) > 0
-          and isinstance(value[0][0], (Tensor, SparseTensor))):
+          and isinstance(value[0][0], (Tensor, SparseTensor))
+          and isinstance(slices, Sequence)):
         # Recursively separate elements of lists of lists.
+        return [elem[idx] for elem in value]
+
+    elif (isinstance(value, Sequence) and not isinstance(value, str)
+          and isinstance(value[0], (Tensor, SparseTensor))
+          and isinstance(slices, Sequence)):
+        # Recursively separate elements of lists of Tensors/SparseTensors.
         return [
-            _separate(key, elem, idx, slices[i],
-                      incs[i] if decrement else None, batch, store, decrement)
-            for i, elem in enumerate(value)
+            _separate(
+                key,
+                elem,
+                idx,
+                slices=slices[i],
+                incs=incs[i] if decrement else None,
+                batch=batch,
+                store=store,
+                decrement=decrement,
+            ) for i, elem in enumerate(value)
         ]
 
     else:

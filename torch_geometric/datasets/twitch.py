@@ -16,8 +16,8 @@ class Twitch(InMemoryDataset):
     The task is to predict whether a user streams mature content.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"DE"`, :obj:`"EN"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"DE"`, :obj:`"EN"`,
             :obj:`"ES"`, :obj:`"FR"`, :obj:`"PT"`, :obj:`"RU"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -27,18 +27,67 @@ class Twitch(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - DE
+          - 9,498
+          - 315,774
+          - 128
+          - 2
+        * - EN
+          - 7,126
+          - 77,774
+          - 128
+          - 2
+        * - ES
+          - 4,648
+          - 123,412
+          - 128
+          - 2
+        * - FR
+          - 6,551
+          - 231,883
+          - 128
+          - 2
+        * - PT
+          - 1,912
+          - 64,510
+          - 128
+          - 2
+        * - RU
+          - 4,385
+          - 78,993
+          - 128
+          - 2
     """
 
     url = 'https://graphmining.ai/datasets/ptg/twitch'
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.name = name
         assert self.name in ['DE', 'EN', 'ES', 'FR', 'PT', 'RU']
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -72,4 +121,4 @@ class Twitch(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

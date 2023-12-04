@@ -73,7 +73,7 @@ def test_rooted_subgraph_minibatch():
     loader = DataLoader([data, data], batch_size=2)
     batch = next(iter(loader))
     batch = batch.map_data()
-    assert len(batch) == 6
+    assert batch.num_graphs == len(batch) == 2
 
     assert batch.x.size() == (14, 8)
     assert batch.edge_index.size() == (2, 16)

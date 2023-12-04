@@ -10,7 +10,7 @@ from torch_geometric.utils import softmax
 class Set2Set(Aggregation):
     r"""The Set2Set aggregation operator based on iterative content-based
     attention, as described in the `"Order Matters: Sequence to sequence for
-    Sets" <https://arxiv.org/abs/1511.06391>`_ paper
+    Sets" <https://arxiv.org/abs/1511.06391>`_ paper.
 
     .. math::
         \mathbf{q}_t &= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})
@@ -40,11 +40,10 @@ class Set2Set(Aggregation):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_two_dimensional_input(x, dim)
 
@@ -57,7 +56,7 @@ class Set2Set(Aggregation):
             q = q.view(dim_size, self.in_channels)
             e = (x * q[index]).sum(dim=-1, keepdim=True)
             a = softmax(e, index, ptr, dim_size, dim)
-            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='add')
+            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='sum')
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star

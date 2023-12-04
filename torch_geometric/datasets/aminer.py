@@ -1,10 +1,8 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
-from torch_sparse import coalesce, transpose
 
 from torch_geometric.data import (
     HeteroData,
@@ -12,6 +10,8 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
+from torch_geometric.utils import coalesce
 
 
 class AMiner(InMemoryDataset):
@@ -24,7 +24,7 @@ class AMiner(InMemoryDataset):
     truth labels for a subset of nodes.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
@@ -33,15 +33,23 @@ class AMiner(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://www.dropbox.com/s/1bnz8r7mofx0osf/net_aminer.zip?dl=1'
     y_url = 'https://www.dropbox.com/s/nkocx16rpl4ydde/label.zip?dl=1'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -55,7 +63,7 @@ class AMiner(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'net_aminer'), self.raw_dir)
@@ -100,12 +108,11 @@ class AMiner(InMemoryDataset):
         paper_author = torch.from_numpy(paper_author.values)
         paper_author = paper_author.t().contiguous()
         M, N = int(paper_author[0].max() + 1), int(paper_author[1].max() + 1)
-        paper_author, _ = coalesce(paper_author, None, M, N)
-        author_paper, _ = transpose(paper_author, None, M, N)
+        paper_author = coalesce(paper_author, num_nodes=max(M, N))
         data['paper'].num_nodes = M
         data['author'].num_nodes = N
         data['paper', 'written_by', 'author'].edge_index = paper_author
-        data['author', 'writes', 'paper'].edge_index = author_paper
+        data['author', 'writes', 'paper'].edge_index = paper_author.flip([0])
 
         # Get paper<->venue connectivity.
         path = osp.join(self.raw_dir, 'paper_conf.txt')
@@ -113,13 +120,12 @@ class AMiner(InMemoryDataset):
         paper_venue = torch.from_numpy(paper_venue.values)
         paper_venue = paper_venue.t().contiguous()
         M, N = int(paper_venue[0].max() + 1), int(paper_venue[1].max() + 1)
-        paper_venue, _ = coalesce(paper_venue, None, M, N)
-        venue_paper, _ = transpose(paper_venue, None, M, N)
+        paper_venue = coalesce(paper_venue, num_nodes=max(M, N))
         data['venue'].num_nodes = N
         data['paper', 'published_in', 'venue'].edge_index = paper_venue
-        data['venue', 'publishes', 'paper'].edge_index = venue_paper
+        data['venue', 'publishes', 'paper'].edge_index = paper_venue.flip([0])
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

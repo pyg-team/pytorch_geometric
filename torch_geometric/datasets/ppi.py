@@ -2,6 +2,7 @@ import json
 import os
 import os.path as osp
 from itertools import product
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -23,8 +24,8 @@ class PPI(InMemoryDataset):
     total) and gene ontology sets as labels (121 in total).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string): If :obj:`"train"`, loads the training dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
@@ -39,48 +40,59 @@ class PPI(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 20
-              - ~2,245.3
-              - ~61,318.4
-              - 50
-              - 121
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 20
+          - ~2,245.3
+          - ~61,318.4
+          - 50
+          - 121
     """
 
     url = 'https://data.dgl.ai/dataset/ppi.zip'
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
 
         assert split in ['train', 'val', 'test']
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if split == 'train':
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.load(self.processed_paths[0])
         elif split == 'val':
-            self.data, self.slices = torch.load(self.processed_paths[1])
+            self.load(self.processed_paths[1])
         elif split == 'test':
-            self.data, self.slices = torch.load(self.processed_paths[2])
+            self.load(self.processed_paths[2])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         splits = ['train', 'valid', 'test']
         files = ['feats.npy', 'graph_id.npy', 'graph.json', 'labels.npy']
         return [f'{split}_{name}' for split, name in product(splits, files)]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
@@ -126,4 +138,4 @@ class PPI(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
-            torch.save(self.collate(data_list), self.processed_paths[s])
+            self.save(data_list, self.processed_paths[s])

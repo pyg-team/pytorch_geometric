@@ -1,13 +1,21 @@
 from itertools import chain
+from typing import Any, Tuple, Union
 
 import torch
 from scipy.sparse.csgraph import minimum_spanning_tree
-from torch_sparse import SparseTensor
+from torch import Tensor
 
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import (
+    from_scipy_sparse_matrix,
+    to_scipy_sparse_matrix,
+    to_undirected,
+)
 
 
-def tree_decomposition(mol, return_vocab=False):
+def tree_decomposition(
+    mol: Any,
+    return_vocab: bool = False,
+) -> Union[Tuple[Tensor, Tensor, int], Tuple[Tensor, Tensor, int, Tensor]]:
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.
@@ -16,12 +24,13 @@ def tree_decomposition(mol, return_vocab=False):
     of cliques.
 
     Args:
-        mol (rdkit.Chem.Mol): A :obj:`rdkit` molecule.
+        mol (rdkit.Chem.Mol): An :obj:`rdkit` molecule.
         return_vocab (bool, optional): If set to :obj:`True`, will return an
             identifier for each clique (ring, bond, bridged compounds, single).
             (default: :obj:`False`)
 
-    :rtype: (LongTensor, LongTensor, int)
+    :rtype: :obj:`(LongTensor, LongTensor, int)` if :obj:`return_vocab` is
+        :obj:`False`, else :obj:`(LongTensor, LongTensor, int, LongTensor)`
     """
     import rdkit.Chem as Chem
 
@@ -101,13 +110,11 @@ def tree_decomposition(mol, return_vocab=False):
 
     if len(edges) > 0:
         edge_index_T, weight = zip(*edges.items())
-        row, col = torch.tensor(edge_index_T).t()
+        edge_index = torch.tensor(edge_index_T).t()
         inv_weight = 100 - torch.tensor(weight)
-        clique_graph = SparseTensor(row=row, col=col, value=inv_weight,
-                                    sparse_sizes=(len(cliques), len(cliques)))
-        junc_tree = minimum_spanning_tree(clique_graph.to_scipy('csr'))
-        row, col, _ = SparseTensor.from_scipy(junc_tree).coo()
-        edge_index = torch.stack([row, col], dim=0)
+        graph = to_scipy_sparse_matrix(edge_index, inv_weight, len(cliques))
+        junc_tree = minimum_spanning_tree(graph)
+        edge_index, _ = from_scipy_sparse_matrix(junc_tree)
         edge_index = to_undirected(edge_index, num_nodes=len(cliques))
     else:
         edge_index = torch.empty((2, 0), dtype=torch.long)

@@ -1,3 +1,5 @@
+import copy
+
 import torch
 
 from torch_geometric.data import TemporalData
@@ -19,13 +21,19 @@ def test_temporal_data():
                          "msg=[3, 16], y=[3])")
 
     assert data.num_nodes == 6
-    assert data.num_events == len(data) == 3
+    assert data.num_events == data.num_edges == len(data) == 3
 
     assert data.src.tolist() == [0, 1, 2]
     assert data['src'].tolist() == [0, 1, 2]
 
-    assert sorted(data.keys) == ['dst', 'msg', 'src', 't', 'y']
-    assert sorted(data.to_dict().keys()) == sorted(data.keys)
+    assert data.edge_index.tolist() == [[0, 1, 2], [3, 4, 5]]
+    data.edge_index = 'edge_index'
+    assert data.edge_index == 'edge_index'
+    del data.edge_index
+    assert data.edge_index.tolist() == [[0, 1, 2], [3, 4, 5]]
+
+    assert sorted(data.keys()) == ['dst', 'msg', 'src', 't', 'y']
+    assert sorted(data.to_dict().keys()) == sorted(data.keys())
 
     data_tuple = data.to_namedtuple()
     assert len(data_tuple) == 5
@@ -46,6 +54,14 @@ def test_temporal_data():
     assert clone.dst.data_ptr() != data.dst.data_ptr()
     assert clone.dst.tolist() == data.dst.tolist()
 
+    deepcopy = copy.deepcopy(data)
+    assert deepcopy != data
+    assert len(deepcopy) == len(data)
+    assert deepcopy.src.data_ptr() != data.src.data_ptr()
+    assert deepcopy.src.tolist() == data.src.tolist()
+    assert deepcopy.dst.data_ptr() != data.dst.data_ptr()
+    assert deepcopy.dst.tolist() == data.dst.tolist()
+
     key = value = 'test_value'
     data[key] = value
     assert data[key] == value
@@ -54,6 +70,15 @@ def test_temporal_data():
     del data[key]  # Deleting unset attributes should work as well.
 
     assert data.get(key, 10) == 10
+
+    assert len([event for event in data]) == 3
+
+    assert len([attr for attr in data()]) == 5
+
+    assert data.size() == (2, 5)
+
+    del data.src
+    assert 'src' not in data
 
 
 def test_train_val_test_split():

@@ -41,7 +41,13 @@ zs_data = T.RemoveTrainingClasses(args.unseen_classes)(copy.copy(data))
 model = RECT_L(200, 200, normalize=False, dropout=0.0)
 zs_data.y = model.get_semantic_labels(zs_data.x, zs_data.y, zs_data.train_mask)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model, zs_data = model.to(device), zs_data.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')

@@ -6,7 +6,7 @@ from torch_geometric.utils import to_dense_batch
 
 def test_mem_pool():
     mpool1 = MemPooling(4, 8, heads=3, num_clusters=2)
-    assert mpool1.__repr__() == 'MemPooling(4, 8, heads=3, num_clusters=2)'
+    assert str(mpool1) == 'MemPooling(4, 8, heads=3, num_clusters=2)'
     mpool2 = MemPooling(8, 4, heads=2, num_clusters=1)
 
     x = torch.randn(17, 4)
@@ -22,5 +22,5 @@ def test_mem_pool():
     assert out1.size() == (5, 2, 8)
     assert out2.size() == (5, 1, 4)
     assert S[~mask].sum() == 0
-    assert S[mask].sum() == x.size(0)
+    assert round(S[mask].sum().item()) == x.size(0)
     assert float(loss) > 0

@@ -1,37 +1,24 @@
 import logging
 import math
+import os
 import sys
 import time
-import warnings
 from typing import Any, Dict, Optional
 
 import torch
 
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.imports import Callback, pl
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
-try:
-    import pytorch_lightning as pl
-    from pytorch_lightning import Callback
-
-except ImportError:
-    pl = None
-    Callback = object
-    warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
-                  "experiment manager via 'pip install pytorch_lightning'")
-
 
 def set_printing():
-    """
-    Set up printing options
-
-    """
+    """Set up printing options."""
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
-    makedirs(cfg.run_dir)
+    os.makedirs(cfg.run_dir, exist_ok=True)
     h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
@@ -45,7 +32,7 @@ def set_printing():
     logging.basicConfig(**logging_cfg)
 
 
-class Logger(object):
+class Logger:
     def __init__(self, name='train', task_type=None):
         self.name = name
         self.task_type = task_type
@@ -54,7 +41,7 @@ class Logger(object):
         self._time_total = 0  # won't be reset
 
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
-        makedirs(self.out_dir)
+        os.makedirs(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
             from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
@@ -324,7 +311,7 @@ class LoggerCallback(Callback):
         batch: Any,
         batch_idx: int,
         unused: int = 0,
-    ) -> None:
+    ):
         stats = self._get_stats(self._train_epoch_start_time, outputs, trainer)
         self.train_logger.update_stats(**stats)
 
@@ -335,8 +322,8 @@ class LoggerCallback(Callback):
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
-        dataloader_idx: int,
-    ) -> None:
+        dataloader_idx: int = 0,
+    ):
         stats = self._get_stats(self._val_epoch_start_time, outputs, trainer)
         self.val_logger.update_stats(**stats)
 
@@ -347,8 +334,8 @@ class LoggerCallback(Callback):
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
-        dataloader_idx: int,
-    ) -> None:
+        dataloader_idx: int = 0,
+    ):
         stats = self._get_stats(self._test_epoch_start_time, outputs, trainer)
         self.test_logger.update_stats(**stats)
 

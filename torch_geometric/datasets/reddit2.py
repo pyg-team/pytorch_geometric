@@ -1,6 +1,7 @@
 import json
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
@@ -23,7 +24,7 @@ class Reddit2(InMemoryDataset):
         `GraphSAINT <https://arxiv.org/abs/1907.04931>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -32,20 +33,23 @@ class Reddit2(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 232,965
-              - 23,213,838
-              - 602
-              - 41
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 232,965
+          - 23,213,838
+          - 602
+          - 41
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -54,16 +58,23 @@ class Reddit2(InMemoryDataset):
     class_map_id = '1JF3Pjv9OboMNYs2aXRQGbJbc4t_nDd5u'
     role_id = '1nJIKd77lcAGU4j-kVNx_AIGEkveIKz3A'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['adj_full.npz', 'feats.npy', 'class_map.json', 'role.json']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -114,4 +125,4 @@ class Reddit2(InMemoryDataset):
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

@@ -1,0 +1,201 @@
+import os
+import sys
+import warnings
+from importlib import import_module
+from importlib.util import find_spec
+from typing import Callable
+
+import torch
+from packaging.requirements import Requirement
+
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
+from torch_geometric.visualization.graph import has_graphviz
+
+
+def is_full_test() -> bool:
+    r"""Whether to run the full but time-consuming test suite."""
+    return os.getenv('FULL_TEST', '0') == '1'
+
+
+def onlyFullTest(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the full test
+    suite.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        not is_full_test(),
+        reason="Fast test run",
+    )(func)
+
+
+def onlyLinux(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should only execute on
+    Linux systems.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        sys.platform != 'linux',
+        reason="No Linux system",
+    )(func)
+
+
+def noWindows(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should not execute on
+    Windows systems.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        os.name == 'nt',
+        reason="Windows system",
+    )(func)
+
+
+def onlyPython(*args) -> Callable:
+    r"""A decorator to run tests on specific :python:`Python` versions only."""
+    def decorator(func: Callable) -> Callable:
+        import pytest
+
+        python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
+        return pytest.mark.skipif(
+            python_version not in args,
+            reason=f"Python {python_version} not supported",
+        )(func)
+
+    return decorator
+
+
+def onlyCUDA(func: Callable) -> Callable:
+    r"""A decorator to skip tests if CUDA is not found."""
+    import pytest
+    return pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA not available",
+    )(func)
+
+
+def onlyXPU(func: Callable) -> Callable:
+    r"""A decorator to skip tests if XPU is not found."""
+    import pytest
+    try:
+        import intel_extension_for_pytorch as ipex
+        xpu_available = ipex.xpu.is_available()
+    except ImportError:
+        xpu_available = False
+    return pytest.mark.skipif(
+        not xpu_available,
+        reason="XPU not available",
+    )(func)
+
+
+def onlyOnline(func: Callable):
+    r"""A decorator to skip tests if there exists no connection to the
+    internet.
+    """
+    import http.client as httplib
+
+    import pytest
+
+    has_connection = True
+    connection = httplib.HTTPSConnection('8.8.8.8', timeout=5)
+    try:
+        connection.request('HEAD', '/')
+    except Exception:
+        has_connection = False
+    finally:
+        connection.close()
+
+    return pytest.mark.skipif(
+        not has_connection,
+        reason="No internet connection",
+    )(func)
+
+
+def onlyGraphviz(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should only execute in case
+    :obj:`graphviz` is installed.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        not has_graphviz(),
+        reason="Graphviz not installed",
+    )(func)
+
+
+def onlyNeighborSampler(func: Callable):
+    r"""A decorator to skip tests if no neighborhood sampler package is
+    installed.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
+        reason="No neighbor sampler installed",
+    )(func)
+
+
+def has_package(package: str) -> bool:
+    r"""Returns :obj:`True` in case :obj:`package` is installed."""
+    if '|' in package:
+        return any(has_package(p) for p in package.split('|'))
+
+    req = Requirement(package)
+    if find_spec(req.name) is None:
+        return False
+    module = import_module(req.name)
+    if not hasattr(module, '__version__'):
+        return True
+
+    version = module.__version__
+    # `req.specifier` does not support `.dev` suffixes, e.g., for
+    # `pyg_lib==0.1.0.dev*`, so we manually drop them:
+    if '.dev' in version:
+        version = '.'.join(version.split('.dev')[:-1])
+
+    return version in req.specifier
+
+
+def withPackage(*args) -> Callable:
+    r"""A decorator to skip tests if certain packages are not installed.
+    Also supports version specification.
+    """
+    na_packages = set(package for package in args if not has_package(package))
+
+    def decorator(func: Callable) -> Callable:
+        import pytest
+        return pytest.mark.skipif(
+            len(na_packages) > 0,
+            reason=f"Package(s) {na_packages} are not installed",
+        )(func)
+
+    return decorator
+
+
+def withCUDA(func: Callable):
+    r"""A decorator to test both on CPU and CUDA (if available)."""
+    import pytest
+
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+    if torch.cuda.is_available():
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
+
+    # Additional devices can be registered through environment variables:
+    device = os.getenv('TORCH_DEVICE')
+    if device:
+        backend = os.getenv('TORCH_BACKEND')
+        if backend is None:
+            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
+                          f"order to test against '{device}'")
+        else:
+            import_module(backend)
+            devices.append(pytest.param(torch.device(device), id=device))
+
+    return pytest.mark.parametrize('device', devices)(func)
+
+
+def disableExtensions(func: Callable):
+    r"""A decorator to temporarily disable the usage of the
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
+    packages.
+    """
+    import pytest
+
+    return pytest.mark.usefixtures('disable_extensions')(func)

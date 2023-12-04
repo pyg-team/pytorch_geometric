@@ -5,12 +5,13 @@ from torch_geometric.transforms import NormalizeFeatures
 
 
 def test_normalize_scale():
-    assert NormalizeFeatures().__repr__() == 'NormalizeFeatures()'
+    transform = NormalizeFeatures()
+    assert str(transform) == 'NormalizeFeatures()'
 
     x = torch.tensor([[1, 0, 1], [0, 1, 0], [0, 0, 0]], dtype=torch.float)
-
     data = Data(x=x)
-    data = NormalizeFeatures()(data)
+
+    data = transform(data)
     assert len(data) == 1
     assert data.x.tolist() == [[0.5, 0, 0.5], [0, 1, 0], [0, 0, 0]]
 

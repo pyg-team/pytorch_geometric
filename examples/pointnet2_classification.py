@@ -6,7 +6,11 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, PointConv, fps, global_max_pool, radius
+from torch_geometric.nn import MLP, PointNetConv, fps, global_max_pool, radius
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 
 class SAModule(torch.nn.Module):
@@ -14,7 +18,7 @@ class SAModule(torch.nn.Module):
         super().__init__()
         self.ratio = ratio
         self.r = r
-        self.conv = PointConv(nn, add_self_loops=False)
+        self.conv = PointNetConv(nn, add_self_loops=False)
 
     def forward(self, x, pos, batch):
         idx = fps(pos, batch, ratio=self.ratio)
@@ -49,7 +53,7 @@ class Net(torch.nn.Module):
         self.sa2_module = SAModule(0.25, 0.4, MLP([128 + 3, 128, 128, 256]))
         self.sa3_module = GlobalSAModule(MLP([256 + 3, 256, 512, 1024]))
 
-        self.mlp = MLP([1024, 512, 256, 10], dropout=0.5, batch_norm=False)
+        self.mlp = MLP([1024, 512, 256, 10], dropout=0.5, norm=None)
 
     def forward(self, data):
         sa0_out = (data.x, data.pos, data.batch)

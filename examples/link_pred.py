@@ -8,7 +8,13 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import negative_sampling
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 transform = T.Compose([
     T.NormalizeFeatures(),
     T.ToDevice(device),
@@ -86,7 +92,7 @@ for epoch in range(1, 101):
     val_auc = test(val_data)
     test_auc = test(test_data)
     if val_auc > best_val_auc:
-        best_val = val_auc
+        best_val_auc = val_auc
         final_test_auc = test_auc
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')

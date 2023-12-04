@@ -1,7 +1,7 @@
 import glob
 import os
 import os.path as osp
-import shutil
+from typing import Callable, List, Optional
 
 import torch
 
@@ -11,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class PascalPF(InMemoryDataset):
@@ -19,8 +20,8 @@ class PascalPF(InMemoryDataset):
     per example over 20 categories.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of
             :obj:`"Aeroplane"`, :obj:`"Bicycle"`, :obj:`"Bird"`,
             :obj:`"Boat"`, :obj:`"Bottle"`, :obj:`"Bus"`, :obj:`"Car"`,
             :obj:`"Cat"`, :obj:`"Chair"`, :obj:`"Diningtable"`, :obj:`"Dog"`,
@@ -39,6 +40,8 @@ class PascalPF(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://www.di.ens.fr/willow/research/proposalflow/dataset/'
            'PF-dataset-PASCAL.zip')
@@ -49,26 +52,34 @@ class PascalPF(InMemoryDataset):
         'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
     ]
 
-    def __init__(self, root, category, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         self.category = category.lower()
         assert self.category in self.categories
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
         self.pairs = torch.load(self.processed_paths[1])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['Annotations', 'parsePascalVOC.mat']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return [f'{self.category}.pt', f'{self.category}_pairs.pt']
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
 
     def process(self):
@@ -108,7 +119,7 @@ class PascalPF(InMemoryDataset):
 
         pairs = [(names.index(x[0][0]), names.index(x[1][0])) for x in pairs]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
         torch.save(pairs, self.processed_paths[1])
 
     def __repr__(self) -> str:
