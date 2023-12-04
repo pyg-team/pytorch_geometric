@@ -109,6 +109,16 @@ blank_line_before_nested_class_or_def = false
 [tool.pyright]
 include = ["torch_geometric/utils/*"]
 
+[tool.mypy]
+files = ["torch_geometric"]
+install_types = true
+non_interactive = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true

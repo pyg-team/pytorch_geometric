@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added support for type checking via `mypy` ([#8254](https://github.com/pyg-team/pytorch_geometric/pull/8254))
 - Added support for link-prediction retrieval metrics ([#8499](https://github.com/pyg-team/pytorch_geometric/pull/8499))
 - Added METIS partitioning with CSC/CSR format selection in `ClusterData` ([#8438](https://github.com/pyg-team/pytorch_geometric/pull/8438))
 - Added `is_torch_instance` to check against the original class of compiled models ([#8461](https://github.com/pyg-team/pytorch_geometric/pull/8461))
