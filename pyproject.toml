@@ -116,7 +116,7 @@ warn_redundant_casts = true
 warn_unused_configs = true
 warn_unused_ignores = true
 exclude = [
-    "^torch_geometric/utils",
+    "torch_geometric.utils.*",
     "^torch_geometric/io",
     "^torch_geometric/data",
     "^torch_geometric/sampler",
