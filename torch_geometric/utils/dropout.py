@@ -106,7 +106,7 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
         p (float, optional): Dropout probability. (default: :obj:`0.5`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        relabel_nodes (bool, optional): If set to `True`, the resulting 
+        relabel_nodes (bool, optional): If set to `True`, the resulting
             `edge_index` will be relabeled to hold consecutive indices starting from zero.
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
