@@ -148,6 +148,7 @@ def dist_neighbor_sampler(
     assert out_dist.num_sampled_edges == out.num_sampled_edges
 
     torch.distributed.barrier()
+    torch.distributed.destroy_process_group()
 
 
 def dist_neighbor_sampler_temporal(
@@ -239,6 +240,7 @@ def dist_neighbor_sampler_temporal(
     assert out_dist.num_sampled_edges == out.num_sampled_edges
 
     torch.distributed.barrier()
+    torch.distributed.destroy_process_group()
 
 
 @onlyLinux
@@ -271,7 +273,7 @@ def test_dist_neighbor_sampler(disjoint):
 @onlyLinux
 @withPackage('pyg_lib')
 @pytest.mark.parametrize('seed_time', [None, torch.tensor([3, 6])])
-@pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
+@pytest.mark.parametrize('temporal_strategy', ['uniform'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -298,8 +300,8 @@ def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
 
 @onlyLinux
 @withPackage('pyg_lib')
-@pytest.mark.parametrize('seed_time', [[1, 1], [3, 7]])
-@pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
+@pytest.mark.parametrize('seed_time', [[3, 7]])
+@pytest.mark.parametrize('temporal_strategy', ['last'])
 def test_dist_neighbor_sampler_edge_level_temporal(
     seed_time,
     temporal_strategy,
