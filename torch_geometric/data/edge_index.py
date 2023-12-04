@@ -31,7 +31,9 @@ else:
         torch.int64,
     }
 
-ReduceType = Literal['sum', 'mean', 'min', 'max']
+ReduceType = Literal['sum', 'mean', 'amin', 'amax', 'add', 'min', 'max']
+PYG_REDUCE = {'add': 'sum', 'amin': 'min', 'amax': 'max'}
+TORCH_REDUCE = {'add': 'sum', 'min': 'amin', 'max': 'amax'}
 
 
 class SortOrder(Enum):
@@ -983,6 +985,7 @@ def _torch_sparse_spmm(
     # `torch-sparse` still provides a faster sparse-dense matrix multiplication
     # code path on GPUs (after all these years...):
     assert torch_geometric.typing.WITH_TORCH_SPARSE
+    reduce = PYG_REDUCE[reduce] if reduce in PYG_REDUCE else reduce
 
     # Optional arguments for backpropagation:
     colptr: Optional[Tensor] = None
@@ -1030,8 +1033,7 @@ class _TorchSPMM(torch.autograd.Function):
         transpose: bool = False,
     ) -> Tensor:
 
-        reduce = 'amin' if reduce == 'min' else reduce
-        reduce = 'amax' if reduce == 'max' else reduce
+        reduce = TORCH_REDUCE[reduce] if reduce in TORCH_REDUCE else reduce
 
         value = value.detach() if value is not None else value
         if other.requires_grad:
@@ -1150,9 +1152,11 @@ def _spmm(
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     if value is not None and value.requires_grad:
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            return _torch_sparse_spmm(input, other, value, reduce, transpose)
         return _scatter_spmm(input, other, value, reduce, transpose)
 
-    if reduce == 'sum':
+    if reduce == 'sum' or reduce == 'add':
         return _TorchSPMM.apply(input, other, value, 'sum', transpose)
 
     if reduce == 'mean':
