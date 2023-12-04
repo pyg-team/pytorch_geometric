@@ -17,7 +17,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import index_sort, scatter
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
@@ -31,7 +31,7 @@ else:
         torch.int64,
     }
 
-ReduceType = Literal['sum']
+ReduceType = Literal['sum', 'mean', 'min', 'max']
 
 
 class SortOrder(Enum):
@@ -461,8 +461,7 @@ class EdgeIndex(Tensor):
             if (dtype or torch.get_default_dtype()) == self._value.dtype:
                 return self._value
 
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
+        if torch_geometric.typing.WITH_PT20 and not self.is_cuda:
             value = torch.ones(1, dtype=dtype, device=self.device)
             value = value.expand(self.size(1))
         else:
@@ -703,8 +702,10 @@ class EdgeIndex(Tensor):
         input_value: Optional[Tensor] = None,
         other_value: Optional[Tensor] = None,
         reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Union[Tensor, Tuple['EdgeIndex', Tensor]]:
-        return matmul(self, other, input_value, other_value, reduce)
+        # TODO Add doc-string
+        return matmul(self, other, input_value, other_value, reduce, transpose)
 
     @classmethod
     def __torch_function__(cls, func, types, args=(), kwargs=None):
@@ -977,131 +978,189 @@ def _torch_sparse_spmm(
     other: Tensor,
     value: Optional[Tensor] = None,
     reduce: ReduceType = 'sum',
+    transpose: bool = False,
 ) -> Tensor:
     # `torch-sparse` still provides a faster sparse-dense matrix multiplication
     # code path on GPUs (after all these years...):
-    assert input.is_sorted_by_row
     assert torch_geometric.typing.WITH_TORCH_SPARSE
 
-    rowptr = input.get_rowptr()
-    col = input[1]
-
     # Optional arguments for backpropagation:
-    row: Optional[Tensor] = None
-    rowcount: Optional[Tensor] = None
     colptr: Optional[Tensor] = None
-    csr2csc: Optional[Tensor] = None
+    perm: Optional[Tensor] = None
+
+    if not transpose:
+        assert input.is_sorted_by_row
+        (rowptr, col), _ = input.get_csr()
+        row = input[0]
+        if other.requires_grad and reduce in ['sum', 'mean']:
+            (colptr, _), perm = input.get_csc()
+    else:
+        assert input.is_sorted_by_col
+        (rowptr, col), _ = input.get_csc()
+        row = input[1]
+        if other.requires_grad and reduce in ['sum', 'mean']:
+            (colptr, _), perm = input.get_csr()
 
     if reduce == 'sum':
-        if value is not None and value.requires_grad:
-            row = input[0]
-        if other.requires_grad:
-            row = input[0]
-            csr2csc = input._get_csr2csc()
-            colptr = input.get_colptr()
         return torch.ops.torch_sparse.spmm_sum(  #
-            row, rowptr, col, value, colptr, csr2csc, other)
+            row, rowptr, col, value, colptr, perm, other)
 
     if reduce == 'mean':
-        if value is not None and value.requires_grad:
-            row = input[0]
-        if other.requires_grad:
-            row = input[0]
-            rowcount = rowptr.diff()
-            csr2csc = input._get_csr2csc()
-            colptr = input.get_colptr()
+        rowcount = rowptr.diff() if other.requires_grad else None
         return torch.ops.torch_sparse.spmm_mean(  #
-            row, rowptr, col, value, rowcount, colptr, csr2csc, other)
+            row, rowptr, col, value, rowcount, colptr, perm, other)
 
-    if reduce == 'amin':
-        return torch.ops.torch_sparse.spmm_min(rowptr, col, value, other)
+    if reduce == 'min':
+        return torch.ops.torch_sparse.spmm_min(rowptr, col, value, other)[0]
 
-    if reduce == 'amax':
-        return torch.ops.torch_sparse.spmm_max(rowptr, col, value, other)
+    if reduce == 'max':
+        return torch.ops.torch_sparse.spmm_max(rowptr, col, value, other)[0]
 
     raise NotImplementedError
 
 
-class SparseDenseMatmul(torch.autograd.Function):
+class _TorchSPMM(torch.autograd.Function):
     @staticmethod
     def forward(
         ctx,
         input: EdgeIndex,
         other: Tensor,
-        input_value: Optional[Tensor] = None,
+        value: Optional[Tensor] = None,
         reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Tensor:
 
-        if reduce not in ReduceType.__args__:
-            raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
+        reduce = 'amin' if reduce == 'min' else reduce
+        reduce = 'amax' if reduce == 'max' else reduce
 
+        value = value.detach() if value is not None else value
         if other.requires_grad:
-            ctx.save_for_backward(input, input_value)
+            other = other.detach()
+            ctx.save_for_backward(input, value)
+            ctx.reduce = reduce
+            ctx.transpose = transpose
 
-        other = other.detach()
-        if input_value is not None:
-            input_value = input_value.detach()
+        if not transpose:
+            assert input.is_sorted_by_row
+            adj = input.to_sparse_csr(value)
+        else:
+            assert input.is_sorted_by_col
+            adj = input.to_sparse_csc(value).t()
 
-        if other.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
-            # If `torch-sparse` is available, it still provides a faster
-            # sparse-dense matmul code path (after all these years...):
-            (rowptr, col), perm = input.get_csr()
-            if input_value is not None:
-                input_value = input_value[perm]
-            return torch.ops.torch_sparse.spmm_sum(  #
-                None, rowptr, col, input_value, None, None, other)
+        if torch_geometric.typing.WITH_PT20 and not other.is_cuda:
+            return torch.sparse.mm(adj, other, reduce)
 
-        if input_value is None:
-            input_value = input._get_value()
-        adj = input.to_sparse_csr(input_value)
-
+        assert reduce == 'sum'
         return adj @ other
 
     @staticmethod
     def backward(
         ctx,
         out_grad: Tensor,
-    ) -> Tuple[None, Optional[Tensor], None, None]:
-
-        # TODO Leverage `is_undirected` in case `input_value` is None.
+    ) -> Tuple[None, Optional[Tensor], None, None, None]:
 
         other_grad: Optional[Tensor] = None
         if ctx.needs_input_grad[1]:
-            input, input_value = ctx.saved_tensors
+            input, value = ctx.saved_tensors
+            assert ctx.reduce == 'sum'
 
-            # We need to compute `adj.t() @ out_grad`. For the transpose, we
-            # first sort by column and then create a CSR matrix from it.
-            # We can call `input.flip(0)` here and create a sparse CSR matrix
-            # from it, but creating it via `colptr` directly is more efficient:
-            # Note that the sort result is cached across multiple applications.
-            (colptr, row), perm = input.get_csc()
-
-            if input_value is not None:
-                input_value = input_value.detach()[perm]
-
-            if out_grad.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
-                other_grad = torch.ops.torch_sparse.spmm_sum(  #
-                    None, colptr, row, input_value, None, None, out_grad)
-
+            if not ctx.transpose:
+                if value is None and input.is_undirected:
+                    adj = input.to_sparse_csr(value)
+                else:
+                    (colptr, row), perm = input.get_csc()
+                    if value is not None:
+                        value = value[perm]
+                    else:
+                        value = input._get_value()
+                    adj = torch.sparse_csr_tensor(
+                        crow_indices=colptr,
+                        col_indices=row,
+                        values=value,
+                        size=input.get_sparse_size()[::-1],
+                        device=input.device,
+                    )
             else:
-                if input_value is None:
-                    input_value = input._get_value()
+                if value is None and input.is_undirected:
+                    adj = input.to_sparse_csc(value).t()
+                else:
+                    (rowptr, col), perm = input.get_csr()
+                    if value is not None:
+                        value = value[perm]
+                    else:
+                        value = input._get_value()
+                    adj = torch.sparse_csr_tensor(
+                        crow_indices=rowptr,
+                        col_indices=col,
+                        values=value,
+                        size=input.get_sparse_size()[::-1],
+                        device=input.device,
+                    )
 
-                adj_t = torch.sparse_csr_tensor(
-                    crow_indices=colptr,
-                    col_indices=row,
-                    values=input_value,
-                    size=input.get_sparse_size()[::-1],
-                    device=input.device,
-                )
-
-                other_grad = adj_t @ out_grad
+            other_grad = adj @ out_grad
 
         if ctx.needs_input_grad[2]:
-            raise NotImplementedError("Gradient computation for 'input_value' "
-                                      "not yet supported")
+            raise NotImplementedError("Gradient computation for 'value' not "
+                                      "yet supported")
 
-        return None, other_grad, None, None
+        return None, other_grad, None, None, None
+
+
+def _scatter_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
+) -> Tensor:
+
+    if not transpose:
+        other_j = other[input[1]]
+        index = input[0]
+        dim_size = input.sparse_size(0)
+    else:
+        other_j = other[input[0]]
+        index = input[1]
+        dim_size = input.sparse_size(1)
+
+    other_j = other_j * value.view(-1, 1) if value is not None else other_j
+    return scatter(other_j, index, dim=0, dim_size=dim_size, reduce=reduce)
+
+
+def _spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
+) -> Tensor:
+
+    if reduce not in ReduceType.__args__:
+        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
+
+    if not transpose and not input.is_sorted_by_row:
+        cls_name = input.__class__.__name__
+        raise ValueError(f"'matmul(..., transpose=False)' requires "
+                         f"'{cls_name}' to be sorted by rows")
+
+    if transpose and not input.is_sorted_by_col:
+        cls_name = input.__class__.__name__
+        raise ValueError(f"'matmul(..., transpose=True)' requires "
+                         f"'{cls_name}' to be sorted by colums")
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE and other.is_cuda:
+        return _torch_sparse_spmm(input, other, value, reduce, transpose)
+
+    if value is not None and value.requires_grad:
+        return _scatter_spmm(input, other, value, reduce, transpose)
+
+    if reduce in ['sum', 'mean']:
+        return _TorchSPMM.apply(input, other, value, 'sum', transpose)
+
+    if not other.is_cuda and not other.requires_grad:
+        return _TorchSPMM.apply(input, other, value, reduce, transpose)
+
+    return _scatter_spmm(input, other, value, reduce, transpose)
 
 
 def matmul(
@@ -1110,6 +1169,7 @@ def matmul(
     input_value: Optional[Tensor] = None,
     other_value: Optional[Tensor] = None,
     reduce: ReduceType = 'sum',
+    transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
     if reduce not in ReduceType.__args__:
@@ -1119,7 +1179,11 @@ def matmul(
         if other_value is not None:
             raise ValueError("'other_value' not supported for sparse-dense "
                              "matrix multiplication")
-        return SparseDenseMatmul.apply(input, other, input_value, reduce)
+        return _spmm(input, other, input_value, reduce, transpose)
+
+    if transpose:
+        raise NotImplementedError("`transpose=True` not yet supported for "
+                                  "sparse-sparse matrix multiplication")
 
     if input.is_sorted_by_col:
         input = input.to_sparse_csc(input_value)
