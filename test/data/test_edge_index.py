@@ -502,6 +502,7 @@ def test_to_sparse_tensor(device):
 
 
 @withCUDA
+@withPackage('torch_sparse')
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
 def test_torch_sparse_spmm(device, reduce, transpose):
