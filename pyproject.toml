@@ -108,8 +108,8 @@ blank_line_before_nested_class_or_def = false
 
 [tool.mypy]
 files = ["torch_geometric"]
-install_types = false  # FIXME: before merge
-non_interactive = true
+install_types = false  # FIXME: revert me; debug according to https://github.com/python/mypy/issues/10768
+non_interactive = false  # FIXME: revert me; debug according to https://github.com/python/mypy/issues/10768
 ignore_missing_imports = true
 show_error_codes = true
 warn_redundant_casts = true
