@@ -715,14 +715,15 @@ class EdgeIndex(Tensor):
 
         :obj:`input` is a sparse matrix as denoted by the indices in
         :class:`EdgeIndex`.
-        :obj:`input_value` corresponds to the non-zero values of :obj:`input`.
-        If not specified, non-zero values will be assigned a value of
+        :obj:`input_value` corresponds to the values of non-zero elements in
+        :obj:`input`.
+        If not specified, non-zero elements will be assigned a value of
         :obj:`1.0`.
 
         :obj:`other` can either be a dense :class:`torch.Tensor` or a sparse
         :class:`EdgeIndex`.
         if :obj:`other` is a sparse :class:`EdgeIndex`, then :obj:`other_value`
-        corresponds to its non-zero values.
+        corresponds to the values of its non-zero elements.
 
         This function additionally accepts an optional :obj:`reduce` argument
         that allows specification of an optional reduction operation.
@@ -733,7 +734,7 @@ class EdgeIndex(Tensor):
 
         .. math::
 
-            \textrm{input}^{\top} \cdot \textrm{other}
+            \textrm{input}^{\top} \cdot \textrm{other}\textrm{.}
 
         Args:
             other (torch.Tensor or EdgeIndex): The second matrix to be
