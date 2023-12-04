@@ -23,6 +23,7 @@ from .homophily import homophily
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
+from .matching import maximal_matching
 from .mask import mask_select, index_to_mask, mask_to_index
 from .select import select, narrow
 from .to_dense_batch import to_dense_batch
@@ -93,6 +94,7 @@ __all__ = [
     'mask_select',
     'index_to_mask',
     'mask_to_index',
+    'maximal_matching',
     'select',
     'narrow',
     'to_dense_batch',

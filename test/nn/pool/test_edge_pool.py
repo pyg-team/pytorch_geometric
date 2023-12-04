@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn import EdgePooling
+from torch_geometric.nn import EdgePooling, maximal_matching_cluster
 from torch_geometric.testing import is_full_test
 from torch_geometric.utils import scatter
 
@@ -66,8 +66,8 @@ def test_edge_pooling():
     new_x, new_edge_index, new_batch, unpool_info = op(x, edge_index, batch)
 
     assert new_x.size(0) == new_batch.size(0) == 4
-    assert new_edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [0, 1, 2, 1, 2, 2]]
-    assert new_batch.tolist() == [1, 0, 0, 0]
+    assert new_edge_index.tolist() == [[0, 0, 1, 1, 2, 3], [0, 1, 0, 1, 2, 0]]
+    assert new_batch.tolist() == [0, 0, 1, 0]
 
     if is_full_test():
         jit = torch.jit.script(op)
@@ -99,5 +99,44 @@ def test_edge_pooling():
     new_x, new_edge_index, new_batch, _ = op(x, edge_index, batch)
 
     assert new_x.size(0) == new_batch.size(0) == 3
-    assert new_batch.tolist() == [1, 0, 0]
-    assert new_edge_index.tolist() == [[0, 1, 1, 2, 2], [0, 1, 2, 1, 2]]
+    assert new_batch.tolist() == [0, 0, 1]
+    assert new_edge_index.tolist() == [[0, 0, 1, 1, 2], [0, 1, 0, 1, 2]]
+
+
+def test_maximal_matching_cluster():
+    n, m = 5, 12
+    index = torch.tensor([[0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 4],
+                          [1, 4, 0, 2, 4, 1, 3, 2, 4, 0, 1, 3]]).long()
+
+    perm1 = torch.arange(m)
+    match1, clus1 = maximal_matching_cluster(edge_index=index, num_nodes=n,
+                                             perm=perm1)
+    exp_match1 = torch.tensor([1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]).bool()
+    exp_clus1 = torch.tensor([0, 0, 1, 1, 2]).long()
+
+    assert torch.equal(match1, exp_match1)
+    assert torch.equal(clus1, exp_clus1)
+
+    perm2 = perm1.roll(-1, 0)
+    match2, clus2 = maximal_matching_cluster(edge_index=index, num_nodes=n,
+                                             perm=perm2)
+    exp_match2 = torch.tensor([0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]).bool()
+    exp_clus2 = torch.tensor([0, 1, 1, 2, 0]).long()
+
+    assert torch.equal(match2, exp_match2)
+    assert torch.equal(clus2, exp_clus2)
+
+    perm3 = torch.arange(m).flip(-1)
+    match3, clus3 = maximal_matching_cluster(edge_index=index, num_nodes=n,
+                                             perm=perm3)
+    exp_match3 = torch.tensor([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1]).bool()
+    exp_clus3 = torch.tensor([0, 1, 1, 2, 2])
+
+    assert torch.equal(match3, exp_match3)
+    assert torch.equal(clus3, exp_clus3)
+
+    if is_full_test():
+        jit = torch.jit.script(maximal_matching_cluster)
+        assert exp_clus1.equal(jit(index, perm=perm1)[1])
+        assert exp_clus2.equal(jit(index, perm=perm2)[1])
+        assert exp_clus3.equal(jit(index, perm=perm3)[1])
