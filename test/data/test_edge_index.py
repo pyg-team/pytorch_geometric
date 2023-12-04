@@ -560,7 +560,7 @@ def test_torch_spmm(device, reduce, transpose):
     # Basic:
     x = torch.randn(3, 2, device=device)
 
-    if not x.is_cuda or reduce == 'sum':
+    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
         out = _TorchSPMM.apply(adj, x, None, reduce, transpose)
         exp = scatter(x[adj[i]], adj[1 - i], reduce=reduce)
         assert out.allclose(exp)
@@ -572,7 +572,7 @@ def test_torch_spmm(device, reduce, transpose):
     x = torch.randn(3, 1, device=device)
     value = torch.rand(adj.size(1), device=device)
 
-    if not x.is_cuda or reduce == 'sum':
+    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
         out = _TorchSPMM.apply(adj, x, value, reduce, transpose)
         exp = scatter(x[adj[i]] * value.view(-1, 1), adj[1 - i], reduce=reduce)
         assert out.allclose(exp)
