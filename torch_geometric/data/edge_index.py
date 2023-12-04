@@ -1160,7 +1160,8 @@ def _spmm(
         count = input.get_indptr().diff()
         return out / count.clamp_(min=1).to(out.dtype).view(-1, 1)
 
-    if not other.is_cuda and not other.requires_grad:
+    if (torch_geometric.typing.WITH_PT20 and not other.is_cuda
+            and not other.requires_grad):
         return _TorchSPMM.apply(input, other, value, reduce, transpose)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
