@@ -130,6 +130,10 @@ exclude = [
     "^torch_geometric/graphgym",
     "^torch_geometric/distributed",
     "^torch_geometric/config_store",
+    "^examples/",
+    "^benchmark/",
+    "^graphgym/",
+    "^test/",
 ]
 
 [tool.isort]
