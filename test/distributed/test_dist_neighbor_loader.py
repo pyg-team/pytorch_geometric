@@ -2,6 +2,7 @@ import socket
 
 import pytest
 import torch
+import torch.distributed as dist
 import torch.multiprocessing as mp
 
 from torch_geometric.data import Data, HeteroData
@@ -203,6 +204,8 @@ def test_dist_neighbor_loader_homo(
     w0.join()
     w1.join()
 
+    dist.destroy_process_group()
+
 
 @onlyLinux
 @withPackage('pyg_lib')
@@ -248,3 +251,5 @@ def test_dist_neighbor_loader_hetero(
     w1.start()
     w0.join()
     w1.join()
+
+    dist.destroy_process_group()
