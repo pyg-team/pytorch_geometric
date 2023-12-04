@@ -11,6 +11,7 @@ from torch_geometric.data import EdgeIndex
 from torch_geometric.data.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
+    _scatter_spmm,
     _torch_sparse_spmm,
     _TorchSPMM,
 )
@@ -508,13 +509,12 @@ def test_to_sparse_tensor(device):
 def test_torch_sparse_spmm(device, reduce, transpose):
     adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
     adj = adj.sort_by('col' if transpose else 'row').values
-    i = 0 if transpose else 1
 
     # Basic:
     x = torch.randn(3, 1, device=device)
 
     out = _torch_sparse_spmm(adj, x, None, reduce, transpose)
-    exp = scatter(x[adj[i]], adj[1 - i], reduce=reduce)
+    exp = _scatter_spmm(adj, x, None, reduce, transpose)
     assert out.allclose(exp)
 
     # With non-zero values:
@@ -522,7 +522,7 @@ def test_torch_sparse_spmm(device, reduce, transpose):
     value = torch.rand(adj.size(1), device=device)
 
     out = _torch_sparse_spmm(adj, x, value, reduce, transpose)
-    exp = scatter(x[adj[i]] * value.view(-1, 1), adj[1 - i], reduce=reduce)
+    exp = _scatter_spmm(adj, x, value, reduce, transpose)
     assert out.allclose(exp)
 
     # Gradients w.r.t. other:
@@ -532,7 +532,7 @@ def test_torch_sparse_spmm(device, reduce, transpose):
 
     out = _torch_sparse_spmm(adj, x1, None, reduce, transpose)
     out.backward(grad)
-    exp = scatter(x2[adj[i]], adj[1 - i], reduce=reduce)
+    exp = _scatter_spmm(adj, x2, None, reduce, transpose)
     exp.backward(grad)
     assert x1.grad.allclose(x2.grad)
 
@@ -544,7 +544,7 @@ def test_torch_sparse_spmm(device, reduce, transpose):
 
     out = _torch_sparse_spmm(adj, x, value1, reduce, transpose)
     out.backward(grad)
-    exp = scatter(x[adj[i]] * value2.view(-1, 1), adj[1 - i], reduce=reduce)
+    exp = _scatter_spmm(adj, x, value2, reduce, transpose)
     exp.backward(grad)
     assert value1.grad.allclose(value2.grad)
 
@@ -555,14 +555,14 @@ def test_torch_sparse_spmm(device, reduce, transpose):
 def test_torch_spmm(device, reduce, transpose):
     adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
     adj, perm = adj.sort_by('col' if transpose else 'row')
-    i = 0 if transpose else 1
 
     # Basic:
     x = torch.randn(3, 2, device=device)
 
-    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
+    if ((not x.is_cuda and torch_geometric.typing.WITH_PT20)
+            or reduce in ['sum', 'add']):
         out = _TorchSPMM.apply(adj, x, None, reduce, transpose)
-        exp = scatter(x[adj[i]], adj[1 - i], reduce=reduce)
+        exp = _scatter_spmm(adj, x, None, reduce, transpose)
         assert out.allclose(exp)
     else:
         with pytest.raises(AssertionError):
@@ -572,9 +572,10 @@ def test_torch_spmm(device, reduce, transpose):
     x = torch.randn(3, 1, device=device)
     value = torch.rand(adj.size(1), device=device)
 
-    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
+    if ((not x.is_cuda and torch_geometric.typing.WITH_PT20)
+            or reduce in ['sum', 'add']):
         out = _TorchSPMM.apply(adj, x, value, reduce, transpose)
-        exp = scatter(x[adj[i]] * value.view(-1, 1), adj[1 - i], reduce=reduce)
+        exp = _scatter_spmm(adj, x, value, reduce, transpose)
         assert out.allclose(exp)
     else:
         with pytest.raises(AssertionError):
@@ -585,10 +586,10 @@ def test_torch_spmm(device, reduce, transpose):
     x2 = x1.detach().requires_grad_()
     grad = torch.randn_like(x1)
 
-    if reduce == 'sum':
+    if reduce in ['sum', 'add']:
         out = _TorchSPMM.apply(adj, x1, None, reduce, transpose)
         out.backward(grad)
-        exp = scatter(x2[adj[i]], adj[1 - i], reduce=reduce)
+        exp = _scatter_spmm(adj, x2, None, reduce, transpose)
         exp.backward(grad)
         assert x1.grad.allclose(x2.grad)
     else:
@@ -829,13 +830,12 @@ if __name__ == '__main__':
         return adj.matmul(x, reduce=reduce)
 
     def scatter_mm(edge_index, x, reduce):
-        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0),
-                       reduce=reduce)
+        return _scatter_spmm(edge_index, x, reduce=reduce)
 
     funcs = [edge_index_mm, torch_sparse_mm, sparse_tensor_mm, scatter_mm]
     func_names = ['edge_index', 'torch.sparse', 'SparseTensor', 'scatter']
 
-    for reduce in ReduceType.__args__:
+    for reduce in ['sum', 'mean', 'amin', 'amax']:
         func_args = [(edge_index, x, reduce), (adj1, x), (adj2, x, reduce),
                      (edge_index, x, reduce)]
         print(f"reduce='{reduce}':")
