@@ -115,25 +115,24 @@ show_error_codes = true
 warn_redundant_casts = true
 warn_unused_configs = true
 warn_unused_ignores = true
-exclude = [
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = [
     "torch_geometric.utils.*",
-    "^torch_geometric/io",
-    "^torch_geometric/data",
-    "^torch_geometric/sampler",
-    "^torch_geometric/loader",
-    "^torch_geometric/transforms",
-    "^torch_geometric/datasets",
-    "^torch_geometric/nn",
-    "^torch_geometric/explain",
-    "^torch_geometric/profile",
-    "^torch_geometric/contrib",
-    "^torch_geometric/graphgym",
-    "^torch_geometric/distributed",
-    "^torch_geometric/config_store",
-    "^examples/",
-    "^benchmark/",
-    "^graphgym/",
-    "^test/",
+    "torch_geometric.io.*",
+    "torch_geometric.data.*",
+    "torch_geometric.sampler.*",
+    "torch_geometric.loader.*",
+    "torch_geometric.transforms.*",
+    "torch_geometric.datasets.*",
+    "torch_geometric.nn.*",
+    "torch_geometric.explain.*",
+    "torch_geometric.profile.*",
+    "torch_geometric.contrib.*",
+    "torch_geometric.graphgym.*",
+    "torch_geometric.distributed.*",
+    "torch_geometric.config_store",
 ]
 
 [tool.isort]

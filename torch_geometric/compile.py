@@ -101,7 +101,7 @@ def compile(
     # Do not generate device asserts which may slow down model execution:
     config = torch._inductor.config
     if torch_geometric.typing.WITH_PT22:
-        config.assert_indirect_indexing = False  # type: ignore
+        config.assert_indirect_indexing = False
     elif torch_geometric.typing.WITH_PT21:
         config.triton.assert_indirect_indexing = False
 

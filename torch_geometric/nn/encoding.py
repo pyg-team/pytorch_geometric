@@ -8,6 +8,7 @@ class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from the `"Attention Is All You Need"
     <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
 
+
     .. math::
 
         PE(x)_{2 \cdot i} &= \sin(x / 10000^{2 \cdot i / d})
