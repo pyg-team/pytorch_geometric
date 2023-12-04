@@ -818,27 +818,32 @@ if __name__ == '__main__':
         sparse_sizes=(num_nodes, num_nodes),
     )
 
-    def edge_index_mm(edge_index, x):
-        return edge_index @ x
+    def edge_index_mm(edge_index, x, reduce):
+        return edge_index.matmul(x, reduce=reduce)
 
     def torch_sparse_mm(adj, x):
         return adj @ x
 
-    def sparse_tensor_mm(adj, x):
-        return adj @ x
+    def sparse_tensor_mm(adj, x, reduce):
+        return adj.matmul(x, reduce=reduce)
 
-    def scatter_mm(edge_index, x):
-        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0))
+    def scatter_mm(edge_index, x, reduce):
+        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0),
+                       reduce=reduce)
 
     funcs = [edge_index_mm, torch_sparse_mm, sparse_tensor_mm, scatter_mm]
     func_names = ['edge_index', 'torch.sparse', 'SparseTensor', 'scatter']
-    func_args = [(edge_index, x), (adj1, x), (adj2, x), (edge_index, x)]
 
-    benchmark(
-        funcs=funcs,
-        func_names=func_names,
-        args=func_args,
-        num_steps=100 if args.device == 'cpu' else 1000,
-        num_warmups=50 if args.device == 'cpu' else 500,
-        backward=args.backward,
-    )
+    for reduce in ReduceType.__args__:
+        func_args = [(edge_index, x, reduce), (adj1, x), (adj2, x, reduce),
+                     (edge_index, x, reduce)]
+        print(f"reduce='{reduce}':")
+
+        benchmark(
+            funcs=funcs,
+            func_names=func_names,
+            args=func_args,
+            num_steps=100 if args.device == 'cpu' else 1000,
+            num_warmups=50 if args.device == 'cpu' else 500,
+            backward=args.backward,
+        )
