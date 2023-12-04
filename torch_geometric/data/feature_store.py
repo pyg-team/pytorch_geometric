@@ -272,8 +272,7 @@ class FeatureStore:
             (default: :obj:`None`)
     """
     def __init__(self, tensor_attr_cls: Optional[Any] = None):
-        super().__init__()
-        self.__dict__['_tensor_attr_cls'] = tensor_attr_cls or TensorAttr
+        self._tensor_attr_cls = tensor_attr_cls or TensorAttr
 
     # Core (CRUD) #############################################################
 
