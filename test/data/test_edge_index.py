@@ -8,7 +8,12 @@ from torch import Tensor, tensor
 
 import torch_geometric
 from torch_geometric.data import EdgeIndex
-from torch_geometric.data.edge_index import SUPPORTED_DTYPES
+from torch_geometric.data.edge_index import (
+    SUPPORTED_DTYPES,
+    ReduceType,
+    _torch_sparse_spmm,
+    _TorchSPMM,
+)
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
@@ -24,6 +29,10 @@ DTYPES = [pytest.param(dtype, id=str(dtype)[6:]) for dtype in SUPPORTED_DTYPES]
 IS_UNDIRECTED = [
     pytest.param(False, id='directed'),
     pytest.param(True, id='undirected'),
+]
+TRANSPOSE = [
+    pytest.param(False, id=''),
+    pytest.param(True, id='transpose'),
 ]
 
 
@@ -492,6 +501,111 @@ def test_to_sparse_tensor(device):
     assert col.equal(adj[1])
 
 
+@withCUDA
+@withPackage('torch_sparse')
+@pytest.mark.parametrize('reduce', ReduceType.__args__)
+@pytest.mark.parametrize('transpose', TRANSPOSE)
+def test_torch_sparse_spmm(device, reduce, transpose):
+    adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
+    adj = adj.sort_by('col' if transpose else 'row').values
+    i = 0 if transpose else 1
+
+    # Basic:
+    x = torch.randn(3, 1, device=device)
+
+    out = _torch_sparse_spmm(adj, x, None, reduce, transpose)
+    exp = scatter(x[adj[i]], adj[1 - i], reduce=reduce)
+    assert out.allclose(exp)
+
+    # With non-zero values:
+    x = torch.randn(3, 1, device=device)
+    value = torch.rand(adj.size(1), device=device)
+
+    out = _torch_sparse_spmm(adj, x, value, reduce, transpose)
+    exp = scatter(x[adj[i]] * value.view(-1, 1), adj[1 - i], reduce=reduce)
+    assert out.allclose(exp)
+
+    # Gradients w.r.t. other:
+    x1 = torch.randn(3, 1, device=device, requires_grad=True)
+    x2 = x1.detach().requires_grad_()
+    grad = torch.randn_like(x1)
+
+    out = _torch_sparse_spmm(adj, x1, None, reduce, transpose)
+    out.backward(grad)
+    exp = scatter(x2[adj[i]], adj[1 - i], reduce=reduce)
+    exp.backward(grad)
+    assert x1.grad.allclose(x2.grad)
+
+    # Gradients w.r.t. value:
+    x = torch.randn(3, 1, device=device)
+    value1 = torch.rand(adj.size(1), device=device, requires_grad=True)
+    value2 = value1.detach().requires_grad_()
+    grad = torch.randn_like(x)
+
+    out = _torch_sparse_spmm(adj, x, value1, reduce, transpose)
+    out.backward(grad)
+    exp = scatter(x[adj[i]] * value2.view(-1, 1), adj[1 - i], reduce=reduce)
+    exp.backward(grad)
+    assert value1.grad.allclose(value2.grad)
+
+
+@withCUDA
+@pytest.mark.parametrize('reduce', ReduceType.__args__)
+@pytest.mark.parametrize('transpose', TRANSPOSE)
+def test_torch_spmm(device, reduce, transpose):
+    adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
+    adj, perm = adj.sort_by('col' if transpose else 'row')
+    i = 0 if transpose else 1
+
+    # Basic:
+    x = torch.randn(3, 2, device=device)
+
+    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
+        out = _TorchSPMM.apply(adj, x, None, reduce, transpose)
+        exp = scatter(x[adj[i]], adj[1 - i], reduce=reduce)
+        assert out.allclose(exp)
+    else:
+        with pytest.raises(AssertionError):
+            _TorchSPMM.apply(adj, x, None, reduce, transpose)
+
+    # With non-zero values:
+    x = torch.randn(3, 1, device=device)
+    value = torch.rand(adj.size(1), device=device)
+
+    if (not x.is_cuda and torch_geometric.typing.WITH_PT20) or reduce == 'sum':
+        out = _TorchSPMM.apply(adj, x, value, reduce, transpose)
+        exp = scatter(x[adj[i]] * value.view(-1, 1), adj[1 - i], reduce=reduce)
+        assert out.allclose(exp)
+    else:
+        with pytest.raises(AssertionError):
+            _TorchSPMM.apply(adj, x, value, reduce, transpose)
+
+    # Gradients w.r.t. other:
+    x1 = torch.randn(3, 1, device=device, requires_grad=True)
+    x2 = x1.detach().requires_grad_()
+    grad = torch.randn_like(x1)
+
+    if reduce == 'sum':
+        out = _TorchSPMM.apply(adj, x1, None, reduce, transpose)
+        out.backward(grad)
+        exp = scatter(x2[adj[i]], adj[1 - i], reduce=reduce)
+        exp.backward(grad)
+        assert x1.grad.allclose(x2.grad)
+    else:
+        with pytest.raises(AssertionError):
+            out = _TorchSPMM.apply(adj, x1, None, reduce, transpose)
+            out.backward(grad)
+
+    # Gradients w.r.t. value:
+    x = torch.randn(3, 1, device=device)
+    value1 = torch.rand(adj.size(1), device=device, requires_grad=True)
+    grad = torch.randn_like(x)
+
+    with pytest.raises((AssertionError, NotImplementedError)):
+        out = _TorchSPMM.apply(adj, x, value1, reduce, transpose)
+        out.backward(grad)
+
+
 def test_matmul_forward():
     x = torch.randn(3, 1)
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
@@ -705,27 +819,32 @@ if __name__ == '__main__':
         sparse_sizes=(num_nodes, num_nodes),
     )
 
-    def edge_index_mm(edge_index, x):
-        return edge_index @ x
+    def edge_index_mm(edge_index, x, reduce):
+        return edge_index.matmul(x, reduce=reduce)
 
     def torch_sparse_mm(adj, x):
         return adj @ x
 
-    def sparse_tensor_mm(adj, x):
-        return adj @ x
+    def sparse_tensor_mm(adj, x, reduce):
+        return adj.matmul(x, reduce=reduce)
 
-    def scatter_mm(edge_index, x):
-        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0))
+    def scatter_mm(edge_index, x, reduce):
+        return scatter(x[edge_index[1]], edge_index[0], dim_size=x.size(0),
+                       reduce=reduce)
 
     funcs = [edge_index_mm, torch_sparse_mm, sparse_tensor_mm, scatter_mm]
     func_names = ['edge_index', 'torch.sparse', 'SparseTensor', 'scatter']
-    func_args = [(edge_index, x), (adj1, x), (adj2, x), (edge_index, x)]
 
-    benchmark(
-        funcs=funcs,
-        func_names=func_names,
-        args=func_args,
-        num_steps=100 if args.device == 'cpu' else 1000,
-        num_warmups=50 if args.device == 'cpu' else 500,
-        backward=args.backward,
-    )
+    for reduce in ReduceType.__args__:
+        func_args = [(edge_index, x, reduce), (adj1, x), (adj2, x, reduce),
+                     (edge_index, x, reduce)]
+        print(f"reduce='{reduce}':")
+
+        benchmark(
+            funcs=funcs,
+            func_names=func_names,
+            args=func_args,
+            num_steps=100 if args.device == 'cpu' else 1000,
+            num_warmups=50 if args.device == 'cpu' else 500,
+            backward=args.backward,
+        )
