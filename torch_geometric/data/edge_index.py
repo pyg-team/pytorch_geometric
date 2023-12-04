@@ -561,7 +561,7 @@ class EdgeIndex(Tensor):
 
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
             fill_value (float, optional): The fill value for remaining elements
                 in the dense matrix. (default: :obj:`0.0`)
@@ -587,7 +587,7 @@ class EdgeIndex(Tensor):
 
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
         value = self._get_value() if value is None else value
@@ -610,7 +610,7 @@ class EdgeIndex(Tensor):
 
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
         (rowptr, col), perm = self.get_csr()
@@ -631,7 +631,7 @@ class EdgeIndex(Tensor):
 
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
         if not torch_geometric.typing.WITH_PT112:
@@ -664,7 +664,7 @@ class EdgeIndex(Tensor):
                 :obj:`torch.sparse_coo`, :obj:`torch.sparse_csr`, or
                 :obj:`torch.sparse_csc`. (default: :obj:`torch.sparse_coo`)
             value (torch.Tensor, optional): The values for non-zero elements.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
         if layout is None or layout == torch.sparse_coo:
@@ -741,11 +741,11 @@ class EdgeIndex(Tensor):
                 multiplied, which can be sparse or dense.
             input_value (torch.Tensor, optional): The values for non-zero
                 elements of :obj:`input`.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
             other_value (torch.Tensor, optional): The values for non-zero
                 elements of :obj:`other` in case it is sparse.
-                If not specified, non-zero values will be assigned a value of
+                If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
             reduce (str, optional): The reduce operation, one of
                 :obj:`"sum"`/:obj:`"add"`, :obj:`"mean"`,
