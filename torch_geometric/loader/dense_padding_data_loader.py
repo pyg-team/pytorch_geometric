@@ -316,7 +316,7 @@ def dense_padded_from_data_list(
     )
 
     batch._num_graphs = len(data_list)
-    batch._mask_dict = mask_dict
+    batch.mask_dict = mask_dict # NOTE: `mask_dict` must be a public attribute of `Batch` for auto-device onloading to work.
 
     return batch
 
