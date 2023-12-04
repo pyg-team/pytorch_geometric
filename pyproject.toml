@@ -108,8 +108,8 @@ blank_line_before_nested_class_or_def = false
 
 [tool.mypy]
 files = ["torch_geometric"]
-install_types = false  # FIXME: revert me; debug according to https://github.com/python/mypy/issues/10768
-non_interactive = false  # FIXME: revert me; debug according to https://github.com/python/mypy/issues/10768
+install_types = false  # FIXME Revert me (https://github.com/python/mypy/issues/10768)
+non_interactive = false  # FIXME Revert me (https://github.com/python/mypy/issues/10768)
 ignore_missing_imports = true
 show_error_codes = true
 warn_redundant_casts = true
@@ -145,11 +145,11 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
-    "D100",  # TODO: Don't ignore "Missing docstring in public module"
-    "D101",  # TODO: Don't ignore "Missing docstring in public class"
-    "D102",  # TODO: Don't ignore "Missing docstring in public method"
-    "D103",  # TODO: Don't ignore "Missing docstring in public function"
-    "D104",  # TODO: Don't ignore "Missing docstring in public package"
+    "D100",  # TODO Don't ignore "Missing docstring in public module"
+    "D101",  # TODO Don't ignore "Missing docstring in public class"
+    "D102",  # TODO Don't ignore "Missing docstring in public method"
+    "D103",  # TODO Don't ignore "Missing docstring in public function"
+    "D104",  # TODO Don't ignore "Missing docstring in public package"
     "D105",  # Ignore "Missing docstring in magic method"
     "D107",  # Ignore "Missing docstring in __init__"
     "D205",  # Ignore "blank line required between summary line and description"

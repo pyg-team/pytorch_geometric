@@ -50,6 +50,10 @@ class MyFeatureStore(FeatureStore):
             return tensor
 
         assert isinstance(attr.index, Tensor)
+
+        if attr.index.numel() == 0:
+            return tensor[attr.index]
+
         idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
         return tensor[idx]
 
