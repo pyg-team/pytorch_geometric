@@ -506,8 +506,13 @@ def test_to_sparse_tensor(device):
 @withPackage('torch_sparse')
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
-def test_torch_sparse_spmm(device, reduce, transpose):
-    adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
+    if is_undirected:
+        kwargs = dict(is_undirected=True)
+        adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, **kwargs)
+    else:
+        adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
     adj = adj.sort_by('col' if transpose else 'row').values
 
     # Basic:
@@ -552,8 +557,13 @@ def test_torch_sparse_spmm(device, reduce, transpose):
 @withCUDA
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
-def test_torch_spmm(device, reduce, transpose):
-    adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_torch_spmm(device, reduce, transpose, is_undirected):
+    if is_undirected:
+        kwargs = dict(is_undirected=True)
+        adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, **kwargs)
+    else:
+        adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
     adj, perm = adj.sort_by('col' if transpose else 'row')
 
     # Basic:
@@ -607,29 +617,62 @@ def test_torch_spmm(device, reduce, transpose):
         out.backward(grad)
 
 
-def test_matmul_forward():
-    x = torch.randn(3, 1)
+@withCUDA
+@pytest.mark.parametrize('reduce', ReduceType.__args__)
+@pytest.mark.parametrize('transpose', TRANSPOSE)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_spmm(device, reduce, transpose, is_undirected):
+    if is_undirected:
+        kwargs = dict(is_undirected=True)
+        adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, **kwargs)
+    else:
+        adj = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], device=device)
+    adj = adj.sort_by('col' if transpose else 'row').values
+
+    # Basic:
+    x = torch.randn(3, 1, device=device)
+
+    out = adj.matmul(x, reduce=reduce, transpose=transpose)
+    exp = _scatter_spmm(adj, x, None, reduce, transpose)
+    assert out.allclose(exp)
+
+    # With non-zero values:
+    x = torch.randn(3, 1, device=device)
+    value = torch.rand(adj.size(1), device=device)
+
+    out = adj.matmul(x, value, reduce=reduce, transpose=transpose)
+    exp = _scatter_spmm(adj, x, value, reduce, transpose)
+    assert out.allclose(exp)
+
+    # Gradients w.r.t. other:
+    x1 = torch.randn(3, 1, device=device, requires_grad=True)
+    x2 = x1.detach().requires_grad_()
+    grad = torch.randn_like(x1)
+
+    out = adj.matmul(x1, reduce=reduce, transpose=transpose)
+    out.backward(grad)
+    exp = _scatter_spmm(adj, x2, None, reduce, transpose)
+    exp.backward(grad)
+    assert x1.grad.allclose(x2.grad)
+
+    # Gradients w.r.t. value:
+    x = torch.randn(3, 1, device=device)
+    value1 = torch.rand(adj.size(1), device=device, requires_grad=True)
+    value2 = value1.detach().requires_grad_()
+    grad = torch.randn_like(x)
+
+    out = adj.matmul(x, value1, reduce=reduce, transpose=transpose)
+    out.backward(grad)
+    exp = _scatter_spmm(adj, x, value2, reduce, transpose)
+    exp.backward(grad)
+    assert value1.grad.allclose(value2.grad)
+
+
+def test_spspmm():
     adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
     adj1_dense = adj1.to_dense()
     adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
     adj2_dense = adj2.to_dense()
-
-    out = adj1 @ x
-    assert torch.allclose(out, adj1_dense @ x)
-
-    out = adj1.matmul(x)
-    assert torch.allclose(out, adj1_dense @ x)
-
-    out = torch.matmul(adj1, x)
-    assert torch.allclose(out, adj1_dense @ x)
-
-    if torch_geometric.typing.WITH_PT20:
-        out = torch.sparse.mm(adj1, x, reduce='sum')
-    else:
-        with pytest.raises(TypeError, match="got an unexpected keyword"):
-            torch.sparse.mm(adj1, x, reduce='sum')
-        out = torch.sparse.mm(adj1, x)
-    assert torch.allclose(out, adj1_dense @ x)
 
     out, value = adj1 @ adj1
     assert isinstance(out, EdgeIndex)
@@ -651,32 +694,32 @@ def test_matmul_forward():
     assert torch.allclose(out.to_dense(value), adj2_dense @ adj2_dense)
 
 
-def test_matmul_input_value():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+@withCUDA
+def test_matmul(device):
+    kwargs = dict(sort_order='row', device=device)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
+    x = torch.randn(3, 1, device=device)
+    expected = adj.to_dense() @ x
 
-    x = torch.randn(3, 1)
-    value = torch.randn(4)
+    out = adj @ x
+    assert torch.allclose(out, expected)
 
-    out = adj.matmul(x, input_value=value)
-    assert torch.allclose(out, adj.to_dense(value) @ x)
+    out = adj.matmul(x)
+    assert torch.allclose(out, expected)
 
+    out = torch.mm(adj, x)
+    assert torch.allclose(out, expected)
 
-def test_matmul_backward():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
+    out = torch.matmul(adj, x)
+    assert torch.allclose(out, expected)
 
-    x1 = torch.randn(3, 1, requires_grad=True)
-    value = torch.randn(4)
-
-    out = adj.matmul(x1, input_value=value)
-    grad_out = torch.randn_like(out)
-    out.backward(grad_out)
-
-    x2 = x1.detach().requires_grad_()
-    dense_adj = adj.to_dense(value)
-    out = dense_adj @ x2
-    out.backward(grad_out)
-
-    assert torch.allclose(x1.grad, x2.grad)
+    if torch_geometric.typing.WITH_PT20:
+        out = torch.sparse.mm(adj, x, reduce='sum')
+    else:
+        with pytest.raises(TypeError, match="got an unexpected keyword"):
+            torch.sparse.mm(adj, x, reduce='sum')
+        out = torch.sparse.mm(adj, x)
+    assert torch.allclose(out, expected)
 
 
 @withCUDA

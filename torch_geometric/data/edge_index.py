@@ -560,9 +560,9 @@ class EdgeIndex(Tensor):
         r"""Converts :class:`EdgeIndex` into a dense :class:`torch.Tensor`.
 
         Args:
-            value (torch.Tensor, optional): The values for sparse indices. If
-                not specified, sparse indices will be assigned a value of
-                :obj:`1`. (default: :obj:`None`)
+            value (torch.Tensor, optional): The values for non-zero elements.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
             fill_value (float, optional): The fill value for remaining elements
                 in the dense matrix. (default: :obj:`0.0`)
             dtype (torch.dtype, optional): The data type of the returned
@@ -586,9 +586,9 @@ class EdgeIndex(Tensor):
         :class:`torch.sparse_coo_tensor`.
 
         Args:
-            value (torch.Tensor, optional): The values for sparse indices. If
-                not specified, sparse indices will be assigned a value of
-                :obj:`1`. (default: :obj:`None`)
+            value (torch.Tensor, optional): The values for non-zero elements.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
         """
         value = self._get_value() if value is None else value
         out = torch.sparse_coo_tensor(
@@ -609,9 +609,9 @@ class EdgeIndex(Tensor):
         :class:`torch.sparse_csr_tensor`.
 
         Args:
-            value (torch.Tensor, optional): The values for sparse indices. If
-                not specified, sparse indices will be assigned a value of
-                :obj:`1`. (default: :obj:`None`)
+            value (torch.Tensor, optional): The values for non-zero elements.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
         """
         (rowptr, col), perm = self.get_csr()
         value = self._get_value() if value is None else value[perm]
@@ -630,9 +630,9 @@ class EdgeIndex(Tensor):
         :class:`torch.sparse_csc_tensor`.
 
         Args:
-            value (torch.Tensor, optional): The values for sparse indices. If
-                not specified, sparse indices will be assigned a value of
-                :obj:`1`. (default: :obj:`None`)
+            value (torch.Tensor, optional): The values for non-zero elements.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
         """
         if not torch_geometric.typing.WITH_PT112:
             raise NotImplementedError(
@@ -663,9 +663,9 @@ class EdgeIndex(Tensor):
             layout (torch.layout, optional): The desired sparse layout. One of
                 :obj:`torch.sparse_coo`, :obj:`torch.sparse_csr`, or
                 :obj:`torch.sparse_csc`. (default: :obj:`torch.sparse_coo`)
-            value (torch.Tensor, optional): The values for sparse indices. If
-                not specified, sparse indices will be assigned a value of
-                :obj:`1`. (default: :obj:`None`)
+            value (torch.Tensor, optional): The values for non-zero elements.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
         """
         if layout is None or layout == torch.sparse_coo:
             return self.to_sparse_coo(value)
@@ -685,7 +685,7 @@ class EdgeIndex(Tensor):
         Requires that :obj:`torch-sparse` is installed.
 
         Args:
-            value (torch.Tensor, optional): The values for sparse indices.
+            value (torch.Tensor, optional): The values for non-zero elements.
                 (default: :obj:`None`)
         """
         return SparseTensor(
@@ -706,7 +706,54 @@ class EdgeIndex(Tensor):
         reduce: ReduceType = 'sum',
         transpose: bool = False,
     ) -> Union[Tensor, Tuple['EdgeIndex', Tensor]]:
-        # TODO Add doc-string
+        r"""Performs a matrix multiplication of the matrices :obj:`input` and
+        :obj:`other`.
+        If :obj:`input` is a :math:`(n \times m)` matrix and :obj:`other` is a
+        :math:`(m \times p` tensor, then the output will be a
+        :math:`(n \times p)` tensor.
+        See :meth:`torch.matmul` for more information.
+
+        :obj:`input` is a sparse matrix as denoted by the indices in
+        :class:`EdgeIndex`.
+        :obj:`input_value` corresponds to the non-zero values of :obj:`input`.
+        If not specified, non-zero values will be assigned a value of
+        :obj:`1.0`.
+
+        :obj:`other` can either be a dense :class:`torch.Tensor` or a sparse
+        :class:`EdgeIndex`.
+        if :obj:`other` is a sparse :class:`EdgeIndex`, then :obj:`other_value`
+        corresponds to its non-zero values.
+
+        This function additionally accepts an optional :obj:`reduce` argument
+        that allows specification of an optional reduction operation.
+        See :meth:`torch.sparse.mm` for more information.
+
+        Lastly, the :obj:`transpose` option allows to perform matrix
+        multiplication where :obj:`input` will be first transposed, *i.e.*
+
+        .. math::
+
+            \textrm{input}^{\top} \cdot \textrm{other}
+
+        Args:
+            other (torch.Tensor or EdgeIndex): The second matrix to be
+                multiplied, which can be sparse or dense.
+            input_value (torch.Tensor, optional): The values for non-zero
+                elements of :obj:`input`.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
+            other_value (torch.Tensor, optional): The values for non-zero
+                elements of :obj:`other` in case it is sparse.
+                If not specified, non-zero values will be assigned a value of
+                :obj:`1.0`. (default: :obj:`None`)
+            reduce (str, optional): The reduce operation, one of
+                :obj:`"sum"`/:obj:`"add"`, :obj:`"mean"`,
+                :obj:`"min"`/:obj:`amin` or :obj:`"max"`/:obj:`amax`.
+                (default: :obj:`"sum"`)
+            transpose (bool, optional): If set to :obj:`True`, will perform
+                matrix multiplication based on the transposed input.
+                (default: :obj:`False`)
+        """
         return matmul(self, other, input_value, other_value, reduce, transpose)
 
     @classmethod
@@ -1182,7 +1229,6 @@ def matmul(
     reduce: ReduceType = 'sum',
     transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
-
     if reduce not in ReduceType.__args__:
         raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
 
@@ -1221,6 +1267,7 @@ def matmul(
     return edge_index, out.values()
 
 
+@implements(torch.mm)
 @implements(torch.matmul)
 @implements(Tensor.matmul)
 def _matmul1(
