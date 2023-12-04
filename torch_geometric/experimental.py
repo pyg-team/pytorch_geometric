@@ -62,7 +62,7 @@ class experimental_mode:
     def __enter__(self):
         set_experimental_mode_enabled(True, self.options)
 
-    def __exit__(self, *args) -> bool:
+    def __exit__(self, *args):
         for option, value in self.previous_state.items():
             __experimental_flag__[option] = value
 
@@ -119,7 +119,7 @@ def disable_dynamic_shapes(required_args: List[str]) -> Callable:
             for required_arg in required_args:
                 index = required_args_pos[required_arg]
 
-                value: Optional[Any] = None
+                value: Optional[Any] = None  # type: ignore
                 if index < len(args):
                     value = args[index]
                 elif required_arg in kwargs:

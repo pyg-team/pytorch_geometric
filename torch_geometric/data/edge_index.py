@@ -17,17 +17,21 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import index_sort, scatter
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
-SUPPORTED_DTYPES: Set[torch.dtype] = {
-    torch.uint8,
-    torch.int8,
-    torch.int16,
-    torch.int32,
-    torch.int64,
-}
+if torch_geometric.typing.WITH_PT20:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int32,
+        torch.int64,
+    }
+else:
+    SUPPORTED_DTYPES: Set[torch.dtype] = {
+        torch.int64,
+    }
+
+ReduceType = Literal['sum', 'mean', 'min', 'max']
 
 
 class SortOrder(Enum):
@@ -43,6 +47,14 @@ def implements(torch_function: Callable):
         return my_function
 
     return decorator
+
+
+def set_tuple_item(values: Tuple, dim: int, value: Any) -> Tuple:
+    if dim < -len(values) or dim >= len(values):
+        raise IndexError("tuple index out of range")
+
+    dim = dim + len(values) if dim < 0 else dim
+    return values[:dim] + (value, ) + values[dim + 1:]
 
 
 def assert_valid_dtype(tensor: Tensor):
@@ -67,33 +79,88 @@ def assert_contiguous(tensor: Tensor):
                          "`edge_index.contiguous()` before proceeding.")
 
 
-class EdgeIndex(Tensor):
-    r"""An advanced :obj:`edge_index` representation with additional (meta)data
-    attached.
+def assert_symmetric(size: Tuple[Optional[int], Optional[int]]):
+    if size[0] is not None and size[1] is not None and size[0] != size[1]:
+        raise ValueError("'EdgeIndex' is undirected but received a "
+                         "non-symmetric size")
 
-    :class:`EdgeIndex` is a :pytorch:`PyTorch` tensor, that holds an
+
+def assert_sorted(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not args[0].is_sorted:
+            cls_name = args[0].__class__.__name__
+            raise ValueError(
+                f"Cannot call '{func.__name__}' since '{cls_name}' is not "
+                f"sorted. Please call `{cls_name}.sort_by(...)` first.")
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+class EdgeIndex(Tensor):
+    r"""An COO :obj:`edge_index` tensor with additional (meta)data attached.
+
+    :class:`EdgeIndex` is a :pytorch:`null` class:`torch.Tensor`, that holds an
     :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
     Edges are given as pairwise source and destination node indices in sparse
     COO format.
 
-    While :class:`EdgeIndex` sub-classes a general :pytorch:`PyTorch` tensor,
-    it can hold additional (meta)data, *i.e.*:
+    While :class:`EdgeIndex` sub-classes a general :pytorch:`null`
+    :class:`torch.Tensor`, it can hold additional (meta)data, *i.e.*:
 
     * :obj:`sparse_size`: The underlying sparse matrix size
     * :obj:`sort_order`: The sort order (if present), either by row or column.
+    * :obj:`is_undirected`: Whether edges are bidirectional.
 
     Additionally, :class:`EdgeIndex` caches data for fast CSR or CSC conversion
     in case its representation is sorted, such as its :obj:`rowptr` or
-    :obj:`colptr`, or the permutation vectors for fast conversion from CSR to
-    CSC and vice versa.
+    :obj:`colptr`, or the permutation vector for going from CSR to CSC or vice
+    versa.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`EdgeIndex.sort_by`), or when explicitly requested via
-    :meth:`EdgeIndex.fill_cache`, and are maintained and adjusted over its
+    :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
     lifespan (*e.g.*, when calling :meth:`EdgeIndex.flip`).
 
     This representation ensures for optimal computation in GNN message passing
     schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
     workflows.
+
+    .. code-block:: python
+
+        from torch_geometric.data import EdgeIndex
+
+        edge_index = EdgeIndex(
+            [[0, 1, 1, 2],
+             [1, 0, 2, 1]]
+            sparse_size=(3, 3),
+            sort_order='row',
+            is_undirected=True,
+            device='cpu',
+        )
+        >>> EdgeIndex([[0, 1, 1, 2],
+        ...            [1, 0, 2, 1]])
+        assert edge_index.is_sorted_by_row
+        assert not edge_index.is_undirected
+
+        # Flipping order:
+        edge_index = edge_index.flip(0)
+        >>> EdgeIndex([[1, 0, 2, 1],
+        ...            [0, 1, 1, 2]])
+        assert edge_index.is_sorted_by_col
+        assert not edge_index.is_undirected
+
+        # Filtering:
+        mask = torch.tensor([True, True, True, False])
+        edge_index = edge_index[:, mask]
+        >>> EdgeIndex([[1, 0, 2],
+        ...            [0, 1, 1]])
+        assert edge_index.is_sorted_by_col
+        assert not edge_index.is_undirected
+
+        # Sparse-Dense Matrix Multiplication:
+        out = edge_index @ torch.randn(3, 16)
+        assert out.size() == (3, 16)
     """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
     # for a basic tutorial on how to subclass `torch.Tensor`.
@@ -105,13 +172,23 @@ class EdgeIndex(Tensor):
     # based on row or column values.
     _sort_order: Optional[SortOrder] = None
 
-    # An additional data cache:
-    _rowptr: Optional[Tensor] = None  # The CSR `rowptr` in case sorted by row.
-    _colptr: Optional[Tensor] = None  # The CSC `colptr` in case sorted by col.
-    _csr2csc: Optional[Tensor] = None  # Permutation from CSR to CSC.
-    _csc2csr: Optional[Tensor] = None  # Permutation from CSC to CSR.
+    # Whether the `edge_index` is undirected:
+    # NOTE `is_undirected` allows us to assume symmetric adjacency matrix size
+    # and to share compressed pointer representations, however, it does not
+    # allow us get rid of CSR/CSC permutation vectors since ordering within
+    # neighborhoods is not necessarily deterministic.
+    _is_undirected: bool = False
 
-    _value: Optional[Tensor] = None  # 1-element value for SpMM.
+    # A cache for its compressed representation:
+    _indptr: Optional[Tensor] = None
+
+    # A cache for its transposed representation:
+    _T_perm: Optional[Tensor] = None
+    _T_index: Tuple[Optional[Tensor], Optional[Tensor]] = (None, None)
+    _T_indptr: Optional[Tensor] = None
+
+    # A cached "1"-vector for `torch.sparse` matrix multiplication:
+    _value: Optional[Tensor] = None
 
     def __new__(
         cls,
@@ -119,6 +196,7 @@ class EdgeIndex(Tensor):
         *args,
         sparse_size: Tuple[Optional[int], Optional[int]] = (None, None),
         sort_order: Optional[Union[str, SortOrder]] = None,
+        is_undirected: bool = False,
         **kwargs,
     ):
         if not isinstance(data, Tensor):
@@ -136,22 +214,38 @@ class EdgeIndex(Tensor):
         assert_two_dimensional(data)
         assert_contiguous(data)
 
+        if is_undirected:
+            assert_symmetric(sparse_size)
+            if sparse_size[0] is not None and sparse_size[1] is None:
+                sparse_size = (sparse_size[0], sparse_size[0])
+            elif sparse_size[0] is None and sparse_size[1] is not None:
+                sparse_size = (sparse_size[1], sparse_size[1])
+
         out = super().__new__(cls, data)
 
         # Attach metadata:
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
+        out._is_undirected = is_undirected
 
         return out
 
+    # Validation ##############################################################
+
     def validate(self) -> 'EdgeIndex':
-        r"""Validates the :class:`EdgeIndex` representation, i.e., it ensures
-        * that :class:`EdgeIndex` only holds valid entries.
-        * that the sort order is correctly set.
+        r"""Validates the :class:`EdgeIndex` representation.
+
+        In particular, it ensures that
+
+        * it only holds valid indices.
+        * the sort order is correctly set.
+        * indices are bidirectional in case it is specified as undirected.
         """
         assert_valid_dtype(self)
         assert_two_dimensional(self)
         assert_contiguous(self)
+        if self.is_undirected:
+            assert_symmetric(self.sparse_size())
 
         if self.numel() > 0 and self.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
@@ -171,60 +265,46 @@ class EdgeIndex(Tensor):
                              f"(got {int(self[1].max())}, but expected values "
                              f"smaller than {self.num_cols})")
 
-        if self._sort_order == SortOrder.ROW and (self[0].diff() < 0).any():
+        if self.is_sorted_by_row and (self[0].diff() < 0).any():
             raise ValueError(f"'{self.__class__.__name__}' is not sorted by "
                              f"row indices")
 
-        if self._sort_order == SortOrder.COL and (self[1].diff() < 0).any():
+        if self.is_sorted_by_col and (self[1].diff() < 0).any():
             raise ValueError(f"'{self.__class__.__name__}' is not sorted by "
                              f"column indices")
 
+        if self.is_undirected:
+            flat_index1 = (self[0] * self.get_num_rows() + self[1]).sort()[0]
+            flat_index2 = (self[1] * self.get_num_cols() + self[0]).sort()[0]
+            if not torch.equal(flat_index1, flat_index2):
+                raise ValueError(f"'{self.__class__.__name__}' is not "
+                                 f"undirected")
+
         return self
 
-    @property
-    def sparse_size(self) -> Tuple[Optional[int], Optional[int]]:
-        r"""The size of the underlying sparse matrix."""
-        return self._sparse_size
+    # Properties ##############################################################
 
-    def get_sparse_size(self) -> Tuple[int, int]:
+    def sparse_size(
+        self,
+        dim: Optional[int] = None,
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
         r"""The size of the underlying sparse matrix.
-        Automatically computed and cached when not explicitly set.
+        If :obj:`dim` is specified, returns an integer holding the size of that
+        sparse dimension.
         """
-        return (self.get_num_rows(), self.get_num_cols())
+        if dim is not None:
+            return self._sparse_size[dim]
+        return self._sparse_size
 
     @property
     def num_rows(self) -> Optional[int]:
         r"""The number of rows of the underlying sparse matrix."""
         return self._sparse_size[0]
 
-    def get_num_rows(self) -> int:
-        r"""The number of rows of the underlying sparse matrix.
-        Automatically computed and cached when not explicitly set.
-        """
-        if self.num_rows is None:
-            self._sparse_size = (
-                int(self[0].max()) + 1 if self.numel() > 0 else 0,
-                self.num_cols,
-            )
-
-        return self.num_rows
-
     @property
     def num_cols(self) -> Optional[int]:
         r"""The number of columns of the underlying sparse matrix."""
         return self._sparse_size[1]
-
-    def get_num_cols(self) -> int:
-        r"""The number of columns of the underlying sparse matrix.
-        Automatically computed and cached when not explicitly set.
-        """
-        if self.num_cols is None:
-            self._sparse_size = (
-                self.num_rows,
-                int(self[1].max()) + 1 if self.numel() > 0 else 0,
-            )
-
-        return self.num_cols
 
     @property
     def sort_order(self) -> Optional[str]:
@@ -233,50 +313,155 @@ class EdgeIndex(Tensor):
         """
         return None if self._sort_order is None else self._sort_order.value
 
-    def get_rowptr(self) -> Tensor:
-        r"""Returns the :obj:`rowptr` vector of :class:`EdgeIndex`, a
-        compressed representation of row indices in case :class:`EdgeIndex` is
-        sorted by rows.
+    @property
+    def is_sorted(self) -> bool:
+        r"""Returns whether indices are either sorted by rows or columns."""
+        return self._sort_order is not None
+
+    @property
+    def is_sorted_by_row(self) -> bool:
+        r"""Returns whether indices are sorted by rows."""
+        return self._sort_order == SortOrder.ROW
+
+    @property
+    def is_sorted_by_col(self) -> bool:
+        r"""Returns whether indices are sorted by columns."""
+        return self._sort_order == SortOrder.COL
+
+    @property
+    def is_undirected(self) -> bool:
+        r"""Returns whether indices are bidirectional."""
+        return self._is_undirected
+
+    # Cache Interface #########################################################
+
+    def get_sparse_size(
+        self,
+        dim: Optional[int] = None,
+    ) -> Union[torch.Size, int]:
+        r"""The size of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        If :obj:`dim` is specified, returns an integer holding the size of that
+        sparse dimension.
         """
-        if self._sort_order != SortOrder.ROW:
-            raise ValueError(
-                f"Cannot access 'rowptr' in '{self.__class__.__name__}' "
-                f"since it is not sorted by rows (got '{self.sort_order}')")
+        if dim is not None:
+            if self._sparse_size[dim] is not None:
+                return self._sparse_size[dim]
 
-        if self._rowptr is not None:
-            return self._rowptr
+            if self.is_undirected:
+                size = int(self.max()) + 1 if self.numel() > 0 else 0
+                self._sparse_size = (size, size)
+                return size
 
-        self._rowptr = torch._convert_indices_from_coo_to_csr(
-            self[0], self.get_num_rows(), out_int32=self.dtype != torch.int64)
-        self._rowptr = self._rowptr.to(self.dtype)
+            size = int(self[dim].max()) + 1 if self.numel() > 0 else 0
+            self._sparse_size = set_tuple_item(self._sparse_size, dim, size)
+            return size
 
-        return self._rowptr
+        return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
 
-    def get_colptr(self) -> Tensor:
-        r"""Returns the :obj:`colptr` vector of :class:`EdgeIndex`, a
-        compressed representation of column indices in case :class:`EdgeIndex`
-        is sorted by columns.
+    def get_num_rows(self) -> int:
+        r"""The number of rows of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
         """
-        if self._sort_order != SortOrder.COL:
-            raise ValueError(
-                f"Cannot access 'colptr' in '{self.__class__.__name__}' "
-                f"since it is not sorted by columns (got '{self.sort_order}')")
+        return self.get_sparse_size(0)
 
-        if self._colptr is not None:
-            return self._colptr
+    def get_num_cols(self) -> int:
+        r"""The number of columns of the underlying sparse matrix.
+        Automatically computed and cached when not explicitly set.
+        """
+        return self.get_sparse_size(1)
 
-        self._colptr = torch._convert_indices_from_coo_to_csr(
-            self[1], self.get_num_cols(), out_int32=self.dtype != torch.int64)
-        self._colptr = self._colptr.to(self.dtype)
+    @assert_sorted
+    def get_indptr(self) -> Tensor:
+        r"""Returns the compressed index representation in case
+        :class:`EdgeIndex` is sorted.
+        """
+        if self._indptr is not None:
+            return self._indptr
 
-        return self._colptr
+        if self.is_undirected and self._T_indptr is not None:
+            return self._T_indptr
 
-    def get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
+        dim = 0 if self.is_sorted_by_row else 1
+        self._indptr = torch._convert_indices_from_coo_to_csr(
+            self[dim],
+            self.get_sparse_size(dim),
+            out_int32=self.dtype != torch.int64,
+        )
+
+        return self._indptr
+
+    @assert_sorted
+    def _sort_by_transpose(self) -> Tuple[Tuple[Tensor, Tensor], Tensor]:
+        dim = 1 if self.is_sorted_by_row else 0
+
+        if self._T_perm is None:
+            index, perm = index_sort(self[dim], self.get_sparse_size(dim))
+            self._T_index = set_tuple_item(self._T_index, dim, index)
+            self._T_perm = perm
+
+        assert self._T_index[dim] is not None
+
+        if self._T_index[1 - dim] is None:
+            self._T_index = set_tuple_item(  #
+                self._T_index, 1 - dim, self[1 - dim][self._T_perm])
+
+        return self._T_index, self._T_perm
+
+    @assert_sorted
+    def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+        r"""Returns the compressed CSR representation
+        :obj:`(rowptr, col), perm` in case :class:`EdgeIndex` is sorted.
+        """
+        if self.is_sorted_by_row:
+            return (self.get_indptr(), self[1]), slice(None, None, None)
+
+        assert self.is_sorted_by_col
+        (row, col), perm = self._sort_by_transpose()
+
+        if self._T_indptr is not None:
+            rowptr = self._T_indptr
+        elif self.is_undirected and self._indptr is not None:
+            rowptr = self._indptr
+        else:
+            rowptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
+                row,
+                self.get_num_rows(),
+                out_int32=self.dtype != torch.int64,
+            )
+
+        return (rowptr, col), perm
+
+    @assert_sorted
+    def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+        r"""Returns the compressed CSC representation
+        :obj:`(colptr, row), perm` in case :class:`EdgeIndex` is sorted.
+        """
+        if self.is_sorted_by_col:
+            return (self.get_indptr(), self[0]), slice(None, None, None)
+
+        assert self.is_sorted_by_row
+        (row, col), perm = self._sort_by_transpose()
+
+        if self._T_indptr is not None:
+            colptr = self._T_indptr
+        elif self.is_undirected and self._indptr is not None:
+            colptr = self._indptr
+        else:
+            colptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
+                col,
+                self.get_num_cols(),
+                out_int32=self.dtype != torch.int64,
+            )
+
+        return (colptr, row), perm
+
+    def _get_value(self, dtype: Optional[torch.dtype] = None) -> Tensor:
         if self._value is not None:
-            return self._value  # TODO Respect `dtype`
+            if (dtype or torch.get_default_dtype()) == self._value.dtype:
+                return self._value
 
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
+        if torch_geometric.typing.WITH_PT20 and not self.is_cuda:
             value = torch.ones(1, dtype=dtype, device=self.device)
             value = value.expand(self.size(1))
         else:
@@ -286,19 +471,28 @@ class EdgeIndex(Tensor):
 
         return self._value
 
-    def fill_cache_(self) -> 'EdgeIndex':
+    def fill_cache_(self, no_transpose: bool = False) -> 'EdgeIndex':
         r"""Fills the cache with (meta)data information.
-        No-op in case :class:`EdgeIndex` is not sorted.
-        """
-        self.get_num_rows()
-        self.get_num_cols()
 
-        if self._sort_order == SortOrder.ROW:
-            self.get_rowptr()
-        if self._sort_order == SortOrder.COL:
-            self.get_colptr()
+        Args:
+            no_transpose (bool, optional): If set to :obj:`True`, will not fill
+                the cache with information about the transposed
+                :class:`EdgeIndex`. (default: :obj:`False`)
+        """
+        self.get_sparse_size()
+
+        if self.is_sorted_by_row:
+            self.get_csr()
+            if not no_transpose:
+                self.get_csc()
+        elif self.is_sorted_by_col:
+            self.get_csc()
+            if not no_transpose:
+                self.get_csr()
 
         return self
+
+    # Methods #################################################################
 
     def as_tensor(self) -> Tensor:
         r"""Zero-copies the :class:`EdgeIndex` representation back to a
@@ -311,7 +505,7 @@ class EdgeIndex(Tensor):
         sort_order: Union[str, SortOrder],
         stable: bool = False,
     ) -> torch.return_types.sort:
-        r"""Sorts the elements by row or column values.
+        r"""Sorts the elements by row or column indices.
 
         Args:
             sort_order (str): The sort order, either :obj:`"row"` or
@@ -323,73 +517,195 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            perm = torch.arange(self.size(1), device=self.device)
-            return torch.return_types.sort([self, perm])
+            return torch.return_types.sort([self, slice(None, None, None)])
 
-        # If conversion from CSR->CSC or CSC->CSR is known, make use of it:
-        if (self._sort_order == SortOrder.ROW and sort_order == SortOrder.COL
-                and self._csr2csc is not None):
-
-            edge_index = self.as_tensor()[:, self._csr2csc]
-            perm = self._csr2csc
-
-        elif (self._sort_order == SortOrder.COL and sort_order == SortOrder.ROW
-              and self._csc2csr is not None):
-
-            edge_index = self.as_tensor()[:, self._csc2csr]
-            perm = self._csc2csr
+        if self.is_sorted:
+            (row, col), perm = self._sort_by_transpose()
+            edge_index = torch.stack([row, col], dim=0)
 
         # Otherwise, perform sorting:
         elif sort_order == SortOrder.ROW:
-            row, perm = index_sort(self.as_tensor()[0], self.num_rows, stable)
-            edge_index = torch.stack([row, self.as_tensor()[1][perm]], dim=0)
+            row, perm = index_sort(self[0], self.get_num_rows(), stable)
+            edge_index = torch.stack([row, self[1][perm]], dim=0)
 
         else:
-            col, perm = index_sort(self.as_tensor()[1], self.num_cols, stable)
-            edge_index = torch.stack([self.as_tensor()[0][perm], col], dim=0)
+            col, perm = index_sort(self[1], self.get_num_cols(), stable)
+            edge_index = torch.stack([self[0][perm], col], dim=0)
 
         out = self.__class__(edge_index)
 
-        # We can fully fill metadata and cache:
-        out._sparse_size = self.sparse_size
+        # We can mostly inherit metadata and cache:
+        out._sparse_size = self.sparse_size()
         out._sort_order = sort_order
-        out._rowptr = self._rowptr
-        out._colptr = self._colptr
-        out._csr2csc = self._csr2csc
-        out._csc2csr = self._csc2csr
+        out._is_undirected = self.is_undirected
+
+        out._indptr = self._T_indptr
+        out._T_indptr = self._indptr
+
+        # NOTE We cannot copy CSR<>CSC permutations since we don't require that
+        # local neighborhoods are sorted, and thus they may run out of sync.
+
         out._value = self._value
 
-        # Fill information for faster future CSR->CSC or CSC->CSR conversion:
-        if self._sort_order == SortOrder.ROW and sort_order == SortOrder.COL:
-            out._csr2csc = self._csr2csc = perm
-        elif self._sort_order == SortOrder.COL and sort_order == SortOrder.ROW:
-            out._csc2csr = self._csc2csr = perm
-
         return torch.return_types.sort([out, perm])
+
+    def to_dense(
+        self,
+        value: Optional[Tensor] = None,
+        fill_value: float = 0.0,
+        dtype: Optional[torch.dtype] = None,
+    ) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a dense :class:`torch.Tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+            fill_value (float, optional): The fill value for remaining elements
+                in the dense matrix. (default: :obj:`0.0`)
+            dtype (torch.dtype, optional): The data type of the returned
+                tensor. (default: :obj:`None`)
+        """
+        # TODO Respect duplicated edges.
+
+        dtype = value.dtype if value is not None else dtype
+
+        size = self.get_sparse_size()
+        if value is not None and value.dim() > 1:
+            size = size + value.shape[1:]
+
+        out = torch.full(size, fill_value, dtype=dtype, device=self.device)
+        out[self[0], self[1]] = value if value is not None else 1
+
+        return out
+
+    def to_sparse_coo(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_coo_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
+        value = self._get_value() if value is None else value
+        out = torch.sparse_coo_tensor(
+            indices=self.as_tensor(),
+            values=value,
+            size=self.get_sparse_size(),
+            device=self.device,
+            requires_grad=value.requires_grad,
+        )
+
+        if self.is_sorted_by_row:
+            out = out._coalesced_(True)
+
+        return out
+
+    def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_csr_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
+        (rowptr, col), perm = self.get_csr()
+        value = self._get_value() if value is None else value[perm]
+
+        return torch.sparse_csr_tensor(
+            crow_indices=rowptr,
+            col_indices=col,
+            values=value,
+            size=self.get_sparse_size(),
+            device=self.device,
+            requires_grad=value.requires_grad,
+        )
+
+    def to_sparse_csc(self, value: Optional[Tensor] = None) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
+        :class:`torch.sparse_csc_tensor`.
+
+        Args:
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
+        if not torch_geometric.typing.WITH_PT112:
+            raise NotImplementedError(
+                "'to_sparse_csc' not supported for PyTorch < 1.12")
+
+        (colptr, row), perm = self.get_csc()
+        value = self._get_value() if value is None else value[perm]
+
+        return torch.sparse_csc_tensor(
+            ccol_indices=colptr,
+            row_indices=row,
+            values=value,
+            size=self.get_sparse_size(),
+            device=self.device,
+            requires_grad=value.requires_grad,
+        )
+
+    def to_sparse(
+        self,
+        *,
+        layout: torch.layout = torch.sparse_coo,
+        value: Optional[Tensor] = None,
+    ) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a
+        :pytorch:`null` :class:`torch.sparse` tensor.
+
+        Args:
+            layout (torch.layout, optional): The desired sparse layout. One of
+                :obj:`torch.sparse_coo`, :obj:`torch.sparse_csr`, or
+                :obj:`torch.sparse_csc`. (default: :obj:`torch.sparse_coo`)
+            value (torch.Tensor, optional): The values for sparse indices. If
+                not specified, sparse indices will be assigned a value of
+                :obj:`1`. (default: :obj:`None`)
+        """
+        if layout is None or layout == torch.sparse_coo:
+            return self.to_sparse_coo(value)
+        if layout == torch.sparse_csr:
+            return self.to_sparse_csr(value)
+        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
+            return self.to_sparse_csc(value)
+
+        raise ValueError(f"Unexpected tensor layout (got '{layout}')")
 
     def to_sparse_tensor(
         self,
         value: Optional[Tensor] = None,
     ) -> SparseTensor:
-        r"""Converts the :class:`EdgeIndex` representation to a
-        :class:`torch_sparse.SparseTensor`. Requires that :obj:`torch-sparse`
-        is installed.
+        r"""Converts :class:`EdgeIndex` into a
+        :class:`torch_sparse.SparseTensor`.
+        Requires that :obj:`torch-sparse` is installed.
 
         Args:
-            value (torch.Tensor, optional): The values of non-zero indices.
+            value (torch.Tensor, optional): The values for sparse indices.
                 (default: :obj:`None`)
         """
-        is_sorted = self._sort_order == SortOrder.ROW
-
         return SparseTensor(
             row=self[0],
             col=self[1],
-            rowptr=self.get_rowptr() if is_sorted else None,
+            rowptr=self._indptr if self.is_sorted_by_row else None,
             value=value,
             sparse_sizes=self.get_sparse_size(),
-            is_sorted=is_sorted,
+            is_sorted=self.is_sorted_by_row,
             trust_data=True,
         )
+
+    def matmul(
+        self,
+        other: Union[Tensor, 'EdgeIndex'],
+        input_value: Optional[Tensor] = None,
+        other_value: Optional[Tensor] = None,
+        reduce: ReduceType = 'sum',
+        transpose: bool = False,
+    ) -> Union[Tensor, Tuple['EdgeIndex', Tensor]]:
+        # TODO Add doc-string
+        return matmul(self, other, input_value, other_value, reduce, transpose)
 
     @classmethod
     def __torch_function__(cls, func, types, args=(), kwargs=None):
@@ -423,18 +739,26 @@ def apply_(
     out = out.as_subclass(EdgeIndex)
 
     # Copy metadata:
-    out._sparse_size = tensor.sparse_size
+    out._sparse_size = tensor.sparse_size()
     out._sort_order = tensor._sort_order
+    out._is_undirected = tensor._is_undirected
 
-    # Convert cache:
-    if tensor._rowptr is not None:
-        out._rowptr = fn(tensor._rowptr, *args, **kwargs)
-    if tensor._colptr is not None:
-        out._colptr = fn(tensor._colptr, *args, **kwargs)
-    if tensor._csr2csc is not None:
-        out._csr2csc = fn(tensor._csr2csc, *args, **kwargs)
-    if tensor._csc2csr is not None:
-        out._csc2csr = fn(tensor._csc2csr, *args, **kwargs)
+    # Convert cache (but do not consider `_value`):
+    if tensor._indptr is not None:
+        out._indptr = fn(tensor._indptr, *args, **kwargs)
+
+    if tensor._T_perm is not None:
+        out._T_perm = fn(tensor._T_perm, *args, **kwargs)
+
+    _T_row, _T_col = tensor._T_index
+    if _T_row is not None:
+        _T_row = fn(_T_row, *args, **kwargs)
+    if _T_col is not None:
+        _T_col = fn(_T_col, *args, **kwargs)
+    out._T_index = (_T_row, _T_col)
+
+    if tensor._T_indptr is not None:
+        out._T_indptr = fn(tensor._T_indptr, *args, **kwargs)
 
     return out
 
@@ -446,13 +770,23 @@ def clone(tensor: EdgeIndex) -> EdgeIndex:
 
 
 @implements(Tensor.to)
-def to(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+def to(tensor: EdgeIndex, *args, **kwargs) -> Union[EdgeIndex, Tensor]:
     out = apply_(tensor, Tensor.to, *args, **kwargs)
 
     if out.dtype not in SUPPORTED_DTYPES:
         out = out.as_tensor()
 
     return out
+
+
+@implements(Tensor.int)
+def _int(tensor: EdgeIndex) -> EdgeIndex:
+    return to(tensor, torch.int32)
+
+
+@implements(Tensor.long)
+def long(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+    return to(tensor, torch.int64)
 
 
 @implements(Tensor.cpu)
@@ -481,6 +815,9 @@ def cat(
     dim: int = 0,
 ) -> Union[EdgeIndex, Tensor]:
 
+    if len(tensors) == 1:
+        return tensors[0]
+
     out = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim))
 
     if dim != 1 and dim != -1:  # No valid `EdgeIndex` anymore.
@@ -505,6 +842,13 @@ def cat(
 
     out._sparse_size = (num_rows, num_cols)
 
+    # Post-process `is_undirected`:
+    is_undirected = True
+    for tensor in tensors:
+        is_undirected = tensor.is_undirected
+
+    out._is_undirected = is_undirected
+
     return out
 
 
@@ -522,22 +866,23 @@ def flip(
     out = Tensor.__torch_function__(torch.flip, (Tensor, ), (input, dims))
     out = out.as_subclass(EdgeIndex)
 
+    out._value = input._value
+    out._is_undirected = input.is_undirected
+
     # Flip metadata and cache:
     if 0 in dims or -2 in dims:
-        out._sparse_size = input.sparse_size[::-1]
+        out._sparse_size = input.sparse_size()[::-1]
 
     if len(dims) == 1 and (dims[0] == 0 or dims[0] == -2):
-        if input._sort_order == SortOrder.ROW:
+        if input.is_sorted_by_row:
             out._sort_order = SortOrder.COL
-        elif input._sort_order == SortOrder.COL:
+        elif input.is_sorted_by_col:
             out._sort_order = SortOrder.ROW
 
-        out._rowptr = input._colptr
-        out._colptr = input._rowptr
-        out._csr2csc = input._csc2csr
-        out._csc2csr = input._csr2csc
-
-    out._value = input._value
+        out._indptr = input._T_indptr
+        out._T_perm = input._T_perm
+        out._T_index = input._T_index[::-1]
+        out._T_indptr = input._indptr
 
     return out
 
@@ -555,7 +900,7 @@ def index_select(
 
     if dim == 1 or dim == -1:
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
 
     return out
 
@@ -574,7 +919,7 @@ def narrow(
 
     if dim == 1 or dim == -1:
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         # NOTE We could potentially maintain `rowptr`/`colptr` attributes here,
         # but it is not really clear if this is worth it. The most important
         # information, the sort order, needs to be maintained though:
@@ -604,235 +949,287 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
     is_valid = is_last_dim_select(index)
 
     # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
-    if is_valid and isinstance(index[1], (torch.BoolTensor, torch.ByteTensor)):
+    if (is_valid and isinstance(index[1], Tensor)
+            and index[1].dtype in (torch.bool, torch.uint8)):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         out._sort_order = input._sort_order
 
     # 2. `edge_index[:, index]` or `edge_index[..., index]`.
     elif is_valid and isinstance(index[1], Tensor):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
 
     # 3. `edge_index[:, slice]` or `edge_index[..., slice]`.
     elif is_valid and isinstance(index[1], slice):
         out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size
+        out._sparse_size = input.sparse_size()
         if index[1].step is None or index[1].step > 0:
             out._sort_order = input._sort_order
 
     return out
 
 
-@implements(Tensor.to_dense)
-def to_dense(
-    tensor: EdgeIndex,
-    dtype: Optional[torch.dtype] = None,
+# Sparse-Dense Matrix Multiplication ##########################################
+
+
+def _torch_sparse_spmm(
+    input: EdgeIndex,
+    other: Tensor,
     value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
 ) -> Tensor:
+    # `torch-sparse` still provides a faster sparse-dense matrix multiplication
+    # code path on GPUs (after all these years...):
+    assert torch_geometric.typing.WITH_TORCH_SPARSE
 
-    # TODO Respect duplicate edges.
+    # Optional arguments for backpropagation:
+    colptr: Optional[Tensor] = None
+    perm: Optional[Tensor] = None
 
-    dtype = value.dtype if value is not None else dtype
+    if not transpose:
+        assert input.is_sorted_by_row
+        (rowptr, col), _ = input.get_csr()
+        row = input[0]
+        if other.requires_grad and reduce in ['sum', 'mean']:
+            (colptr, _), perm = input.get_csc()
+    else:
+        assert input.is_sorted_by_col
+        (rowptr, col), _ = input.get_csc()
+        row = input[1]
+        if other.requires_grad and reduce in ['sum', 'mean']:
+            (colptr, _), perm = input.get_csr()
 
-    size = tensor.get_sparse_size()
-    if value is not None and value.dim() > 1:
-        size = size + value.shape[1:]
+    if reduce == 'sum':
+        return torch.ops.torch_sparse.spmm_sum(  #
+            row, rowptr, col, value, colptr, perm, other)
 
-    out = torch.zeros(size, dtype=dtype, device=tensor.device)
-    out[tensor[0], tensor[1]] = value if value is not None else 1
+    if reduce == 'mean':
+        rowcount = rowptr.diff() if other.requires_grad else None
+        return torch.ops.torch_sparse.spmm_mean(  #
+            row, rowptr, col, value, rowcount, colptr, perm, other)
 
-    return out
+    if reduce == 'min':
+        return torch.ops.torch_sparse.spmm_min(rowptr, col, value, other)[0]
 
+    if reduce == 'max':
+        return torch.ops.torch_sparse.spmm_max(rowptr, col, value, other)[0]
 
-# `to_sparse_coo()` uses `to_sparse(layout=None)` dispatch logic:
-def to_sparse_coo(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
-    out = torch.sparse_coo_tensor(
-        indices=tensor.as_tensor(),
-        values=tensor.get_value() if value is None else value,
-        size=tensor.get_sparse_size(),
-        device=tensor.device,
-    )
-
-    if tensor._sort_order == SortOrder.ROW:
-        out = out._coalesced_(True)
-
-    return out
-
-
-@implements(Tensor.to_sparse_csr)
-def to_sparse_csr(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
-    return torch.sparse_csr_tensor(
-        crow_indices=tensor.get_rowptr(),
-        col_indices=tensor[1],
-        values=tensor.get_value() if value is None else value,
-        size=tensor.get_sparse_size(),
-        device=tensor.device,
-    )
+    raise NotImplementedError
 
 
-if torch_geometric.typing.WITH_PT112:
-
-    @implements(Tensor.to_sparse_csc)
-    def to_sparse_csc(
-        tensor: EdgeIndex,
-        value: Optional[Tensor] = None,
-    ) -> Tensor:
-        return torch.sparse_csc_tensor(
-            ccol_indices=tensor.get_colptr(),
-            row_indices=tensor[0],
-            values=tensor.get_value() if value is None else value,
-            size=tensor.get_sparse_size(),
-            device=tensor.device,
-        )
-
-else:
-
-    def to_sparse_csc(
-        tensor: EdgeIndex,
-        value: Optional[Tensor] = None,
-    ) -> Tensor:
-        raise NotImplementedError(
-            "'to_sparse_csc' not supported for PyTorch < 1.12")
-
-
-if torch_geometric.typing.WITH_PT20:
-
-    @implements(Tensor.to_sparse)
-    def to_sparse(
-        tensor: EdgeIndex,
-        *,
-        layout: Optional[torch.layout] = None,
-        value: Optional[Tensor] = None,
-    ) -> Tensor:
-
-        if layout is None or layout == torch.sparse_coo:
-            return to_sparse_coo(tensor, value)
-        if layout == torch.sparse_csr:
-            return to_sparse_csr(tensor, value)
-        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
-            return to_sparse_csc(tensor, value)
-
-        raise ValueError(f"Unexpected tensor layout (got '{layout}')")
-
-else:
-
-    @implements(Tensor.to_sparse)
-    def to_sparse(tensor: EdgeIndex, value: Optional[Tensor] = None) -> Tensor:
-        return to_sparse_coo(tensor, value)
-
-
-ReduceType = Literal['sum']
-
-
-class SparseDenseMatmul(torch.autograd.Function):
+class _TorchSPMM(torch.autograd.Function):
     @staticmethod
     def forward(
         ctx,
         input: EdgeIndex,
         other: Tensor,
-        input_value: Optional[Tensor] = None,
+        value: Optional[Tensor] = None,
         reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Tensor:
 
-        if input._sort_order != SortOrder.ROW:
-            raise ValueError("Sparse-dense matrix multiplication requires "
-                             "'EdgeIndex' to be sorted by rows")
+        reduce = 'amin' if reduce == 'min' else reduce
+        reduce = 'amax' if reduce == 'max' else reduce
 
-        if reduce not in ReduceType.__args__:
-            raise NotImplementedError("`reduce='{reduce}'` not yet supported")
-
+        value = value.detach() if value is not None else value
         if other.requires_grad:
-            ctx.save_for_backward(input, input_value)
+            other = other.detach()
+            ctx.save_for_backward(input, value)
+            ctx.reduce = reduce
+            ctx.transpose = transpose
 
-        other = other.detach()
-        if input_value is not None:
-            input_value = input_value.detach()
+        if not transpose:
+            assert input.is_sorted_by_row
+            adj = input.to_sparse_csr(value)
+        else:
+            assert input.is_sorted_by_col
+            adj = input.to_sparse_csc(value).t()
 
-        if other.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
-            # If `torch-sparse` is available, it still provides a faster
-            # sparse-dense matmul code path (after all these years...):
-            rowptr, col = input.get_rowptr(), input[1]
-            return torch.ops.torch_sparse.spmm_sum(  #
-                None, rowptr, col, input_value, None, None, other)
+        if torch_geometric.typing.WITH_PT20 and not other.is_cuda:
+            return torch.sparse.mm(adj, other, reduce)
 
-        input_value = input.get_value() if input_value is None else input_value
-        adj = to_sparse_csr(input, input_value)
-
+        assert reduce == 'sum'
         return adj @ other
 
     @staticmethod
     def backward(
         ctx,
         out_grad: Tensor,
-    ) -> Tuple[None, Optional[Tensor], None, None]:
+    ) -> Tuple[None, Optional[Tensor], None, None, None]:
 
         other_grad: Optional[Tensor] = None
         if ctx.needs_input_grad[1]:
-            input, input_value = ctx.saved_tensors
+            input, value = ctx.saved_tensors
+            assert ctx.reduce == 'sum'
 
-            # We need to compute `adj.t() @ out_grad`. For the transpose, we
-            # first sort by column and then create a CSR matrix from it.
-            # We can call `input.flip(0)` here and create a sparse CSR matrix
-            # from it, but creating it via `colptr` directly is more efficient:
-            # Note that the sort result is cached across multiple applications.
-            input, perm = input.sort_by(SortOrder.COL)
-            colptr, row = input.get_colptr(), input[0]
-            if input_value is not None:
-                input_value = input_value.detach()[perm]
-
-            if out_grad.is_cuda and torch_geometric.typing.WITH_TORCH_SPARSE:
-                other_grad = torch.ops.torch_sparse.spmm_sum(  #
-                    None, colptr, row, input_value, None, None, out_grad)
-
+            if not ctx.transpose:
+                if value is None and input.is_undirected:
+                    adj = input.to_sparse_csr(value)
+                else:
+                    (colptr, row), perm = input.get_csc()
+                    if value is not None:
+                        value = value[perm]
+                    else:
+                        value = input._get_value()
+                    adj = torch.sparse_csr_tensor(
+                        crow_indices=colptr,
+                        col_indices=row,
+                        values=value,
+                        size=input.get_sparse_size()[::-1],
+                        device=input.device,
+                    )
             else:
-                if input_value is None:
-                    input_value = input.get_value()
+                if value is None and input.is_undirected:
+                    adj = input.to_sparse_csc(value).t()
+                else:
+                    (rowptr, col), perm = input.get_csr()
+                    if value is not None:
+                        value = value[perm]
+                    else:
+                        value = input._get_value()
+                    adj = torch.sparse_csr_tensor(
+                        crow_indices=rowptr,
+                        col_indices=col,
+                        values=value,
+                        size=input.get_sparse_size()[::-1],
+                        device=input.device,
+                    )
 
-                adj_t = torch.sparse_csr_tensor(
-                    crow_indices=input.get_colptr(),
-                    col_indices=input[0],
-                    values=input_value,
-                    size=input.get_sparse_size()[::-1],
-                    device=input.device,
-                )
-
-                other_grad = adj_t @ out_grad
+            other_grad = adj @ out_grad
 
         if ctx.needs_input_grad[2]:
-            raise NotImplementedError("Gradient computation for 'input_value' "
-                                      "not yet supported")
+            raise NotImplementedError("Gradient computation for 'value' not "
+                                      "yet supported")
 
-        return None, other_grad, None, None
+        return None, other_grad, None, None, None
 
 
-@implements(torch.matmul)
-@implements(Tensor.matmul)
+def _scatter_spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
+) -> Tensor:
+
+    if not transpose:
+        other_j = other[input[1]]
+        index = input[0]
+    else:
+        other_j = other[input[0]]
+        index = input[1]
+
+    other_j = other_j * value.view(-1, 1) if value is not None else other_j
+    return scatter(other_j, index, 0, dim_size=other.size(0), reduce=reduce)
+
+
+def _spmm(
+    input: EdgeIndex,
+    other: Tensor,
+    value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
+) -> Tensor:
+
+    if reduce not in ReduceType.__args__:
+        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
+
+    if not transpose and not input.is_sorted_by_row:
+        cls_name = input.__class__.__name__
+        raise ValueError(f"'matmul(..., transpose=False)' requires "
+                         f"'{cls_name}' to be sorted by rows")
+
+    if transpose and not input.is_sorted_by_col:
+        cls_name = input.__class__.__name__
+        raise ValueError(f"'matmul(..., transpose=True)' requires "
+                         f"'{cls_name}' to be sorted by colums")
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE and other.is_cuda:
+        return _torch_sparse_spmm(input, other, value, reduce, transpose)
+
+    if value is not None and value.requires_grad:
+        return _scatter_spmm(input, other, value, reduce, transpose)
+
+    if reduce == 'sum':
+        return _TorchSPMM.apply(input, other, value, 'sum', transpose)
+
+    if reduce == 'mean':
+        out = _TorchSPMM.apply(input, other, value, 'sum', transpose)
+        count = input.get_indptr().diff()
+        return out / count.clamp_(min=1).to(out.dtype).view(-1, 1)
+
+    if (torch_geometric.typing.WITH_PT20 and not other.is_cuda
+            and not other.requires_grad):
+        return _TorchSPMM.apply(input, other, value, reduce, transpose)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        return _torch_sparse_spmm(input, other, value, reduce, transpose)
+
+    return _scatter_spmm(input, other, value, reduce, transpose)
+
+
 def matmul(
     input: EdgeIndex,
     other: Union[Tensor, EdgeIndex],
     input_value: Optional[Tensor] = None,
     other_value: Optional[Tensor] = None,
     reduce: ReduceType = 'sum',
+    transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
 
     if reduce not in ReduceType.__args__:
-        raise NotImplementedError("`reduce='{reduce}'` not yet supported")
+        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
             raise ValueError("'other_value' not supported for sparse-dense "
                              "matrix multiplication")
-        return SparseDenseMatmul.apply(input, other, input_value, reduce)
+        return _spmm(input, other, input_value, reduce, transpose)
 
-    if input._sort_order == SortOrder.COL:
-        input = to_sparse_csc(input, input_value)
+    if transpose:
+        raise NotImplementedError("`transpose=True` not yet supported for "
+                                  "sparse-sparse matrix multiplication")
+
+    if input.is_sorted_by_col:
+        input = input.to_sparse_csc(input_value)
     else:
-        input = to_sparse_csr(input, input_value)
+        input = input.to_sparse_csr(input_value)
 
-    if other._sort_order == SortOrder.COL:
-        other = to_sparse_csc(other, other_value)
+    if other.is_sorted_by_col:
+        other = other.to_sparse_csc(other_value)
     else:
-        other = to_sparse_csr(other, other_value)
+        other = other.to_sparse_csr(other_value)
 
-    return torch.matmul(input, other)
+    out = torch.matmul(input, other)
+    assert out.layout == torch.sparse_csr
+
+    rowptr, col = out.crow_indices(), out.col_indices()
+    edge_index = torch._convert_indices_from_csr_to_coo(
+        rowptr, col, out_int32=rowptr.dtype != torch.int64)
+
+    edge_index = edge_index.as_subclass(EdgeIndex)
+    edge_index._sort_order = SortOrder.ROW
+    edge_index._sparse_size = (out.size(0), out.size(1))
+    edge_index._rowptr = rowptr
+
+    return edge_index, out.values()
+
+
+@implements(torch.matmul)
+@implements(Tensor.matmul)
+def _matmul1(
+    input: EdgeIndex,
+    other: Union[Tensor, EdgeIndex],
+) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+    return matmul(input, other)
+
+
+@implements(torch.sparse.mm)
+def _matmul2(
+    mat1: EdgeIndex,
+    mat2: Union[Tensor, EdgeIndex],
+    reduce: ReduceType = 'sum',
+) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
+    return matmul(mat1, mat2, reduce=reduce)
