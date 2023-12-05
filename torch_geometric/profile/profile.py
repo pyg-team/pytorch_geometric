@@ -119,7 +119,8 @@ def profileit(device: str):  # pragma: no cover
             time = start.elapsed_time(end) / 1000
 
             if is_cuda:
-                # Get the global memory statistics collected by `pytorch_memlab`:
+                # Get the global memory statistics collected
+                # by `pytorch_memlab`:
                 memlab = read_from_memlab(line_profiler)
                 max_allocated, max_reserved, max_active = memlab
                 line_profiler.disable()
@@ -132,10 +133,7 @@ def profileit(device: str):  # pragma: no cover
                                   max_active, free_cuda, used_cuda)
                 return out, stats
             else:
-                max_allocated, max_reserved, max_active = get_gpu_memory_from_ipex(
-                )
-
-                stats = GPUStats(time, max_allocated, max_reserved, max_active)
+                stats = GPUStats(time, *get_gpu_memory_from_ipex())
                 return out, stats
 
         return wrapper
