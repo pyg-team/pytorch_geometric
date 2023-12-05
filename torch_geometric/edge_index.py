@@ -223,7 +223,10 @@ class EdgeIndex(Tensor):
             elif sparse_size[0] is None and sparse_size[1] is not None:
                 sparse_size = (sparse_size[1], sparse_size[1])
 
-        out = super().__new__(cls, data)
+        if torch_geometric.typing.WITH_PT112:
+            out = super().__new__(cls, data)
+        else:
+            out = Tensor._make_subclass(cls, data)
 
         # Attach metadata:
         out._sparse_size = sparse_size
