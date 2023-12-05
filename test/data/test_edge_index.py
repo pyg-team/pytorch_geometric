@@ -1,6 +1,6 @@
 import os.path as osp
 import warnings
-from typing import Optional
+from typing import List, Optional
 
 import pytest
 import torch
@@ -22,6 +22,7 @@ from torch_geometric.testing import (
     onlyCUDA,
     onlyLinux,
     withCUDA,
+    withoutExtensions,
     withPackage,
 )
 from torch_geometric.typing import SparseTensor
@@ -702,10 +703,14 @@ def test_torch_spmm(device, reduce, transpose, is_undirected):
 
 
 @withCUDA
+@withoutExtensions
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
-def test_spmm(device, reduce, transpose, is_undirected):
+def test_spmm(without_extensions, device, reduce, transpose, is_undirected):
+    if without_extensions:
+        warnings.filterwarnings('ignore', '.*can be accelerated via.*')
+
     if is_undirected:
         kwargs = dict(is_undirected=True)
         adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, **kwargs)
@@ -768,7 +773,8 @@ def test_spspmm():
     assert isinstance(out, EdgeIndex)
     assert out.is_sorted_by_row
     assert out._sparse_size == (3, 3)
-    assert out._rowptr is not None
+    if not torch_geometric.typing.WITH_WINDOWS:
+        assert out._indptr is not None
     assert torch.allclose(out.to_dense(value), adj1_dense @ adj1_dense)
 
     out, value = adj1 @ adj2
@@ -785,7 +791,8 @@ def test_spspmm():
 
 
 @withCUDA
-def test_matmul(device):
+@withoutExtensions
+def test_matmul(without_extensions, device):
     kwargs = dict(sort_order='row', device=device)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     x = torch.randn(3, 1, device=device)
@@ -832,6 +839,10 @@ def test_save_and_load(dtype, device, tmp_path):
     assert out._indptr.equal(adj._indptr)
 
 
+def _collate_fn(edge_indices: List[EdgeIndex]) -> List[EdgeIndex]:
+    return edge_indices
+
+
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('num_workers', [0, 2])
 def test_data_loader(dtype, num_workers):
@@ -843,7 +854,7 @@ def test_data_loader(dtype, num_workers):
         [adj] * 4,
         batch_size=2,
         num_workers=num_workers,
-        collate_fn=lambda x: x,
+        collate_fn=_collate_fn,
         drop_last=True,
     )
 
