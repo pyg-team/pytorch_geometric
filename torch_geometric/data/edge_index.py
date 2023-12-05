@@ -26,7 +26,7 @@ if torch_geometric.typing.WITH_PT20:
         torch.int32,
         torch.int64,
     }
-else:
+else:  # pragma: no cover
     SUPPORTED_DTYPES: Set[torch.dtype] = {
         torch.int64,
     }
@@ -83,8 +83,8 @@ def assert_contiguous(tensor: Tensor):
 
 def assert_symmetric(size: Tuple[Optional[int], Optional[int]]):
     if size[0] is not None and size[1] is not None and size[0] != size[1]:
-        raise ValueError("'EdgeIndex' is undirected but received a "
-                         "non-symmetric size")
+        raise ValueError(f"'EdgeIndex' is undirected but received a "
+                         f"non-symmetric size (got {list(size)})")
 
 
 def assert_sorted(func):
@@ -101,7 +101,7 @@ def assert_sorted(func):
 
 
 class EdgeIndex(Tensor):
-    r"""An COO :obj:`edge_index` tensor with additional (meta)data attached.
+    r"""A COO :obj:`edge_index` tensor with additional (meta)data attached.
 
     :class:`EdgeIndex` is a :pytorch:`null` class:`torch.Tensor`, that holds an
     :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
@@ -143,14 +143,14 @@ class EdgeIndex(Tensor):
         >>> EdgeIndex([[0, 1, 1, 2],
         ...            [1, 0, 2, 1]])
         assert edge_index.is_sorted_by_row
-        assert not edge_index.is_undirected
+        assert edge_index.is_undirected
 
         # Flipping order:
         edge_index = edge_index.flip(0)
         >>> EdgeIndex([[1, 0, 2, 1],
         ...            [0, 1, 1, 2]])
         assert edge_index.is_sorted_by_col
-        assert not edge_index.is_undirected
+        assert edge_index.is_undirected
 
         # Filtering:
         mask = torch.tensor([True, True, True, False])
@@ -161,7 +161,7 @@ class EdgeIndex(Tensor):
         assert not edge_index.is_undirected
 
         # Sparse-Dense Matrix Multiplication:
-        out = edge_index @ torch.randn(3, 16)
+        out = edge_index.flip(0) @ torch.randn(3, 16)
         assert out.size() == (3, 16)
     """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
@@ -293,6 +293,10 @@ class EdgeIndex(Tensor):
         r"""The size of the underlying sparse matrix.
         If :obj:`dim` is specified, returns an integer holding the size of that
         sparse dimension.
+
+        Args:
+            dim (int, optional): The dimension for which to retrieve the size.
+                (default: :obj:`None`)
         """
         if dim is not None:
             return self._sparse_size[dim]
@@ -345,6 +349,10 @@ class EdgeIndex(Tensor):
         Automatically computed and cached when not explicitly set.
         If :obj:`dim` is specified, returns an integer holding the size of that
         sparse dimension.
+
+        Args:
+            dim (int, optional): The dimension for which to retrieve the size.
+                (default: :obj:`None`)
         """
         if dim is not None:
             if self._sparse_size[dim] is not None:
@@ -466,7 +474,7 @@ class EdgeIndex(Tensor):
         if torch_geometric.typing.WITH_PT20 and not self.is_cuda:
             value = torch.ones(1, dtype=dtype, device=self.device)
             value = value.expand(self.size(1))
-        else:
+        else:  # pragma: no cover
             value = torch.ones(self.size(1), dtype=dtype, device=self.device)
 
         self._value = value
@@ -844,7 +852,7 @@ def cpu(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
 
 
 @implements(Tensor.cuda)
-def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:  # pragma: no cover
     return apply_(tensor, Tensor.cuda, *args, **kwargs)
 
 
@@ -1098,9 +1106,9 @@ class _TorchSPMM(torch.autograd.Function):
 
         if torch_geometric.typing.WITH_PT20 and not other.is_cuda:
             return torch.sparse.mm(adj, other, reduce)
-
-        assert reduce == 'sum'
-        return adj @ other
+        else:  # pragma: no cover
+            assert reduce == 'sum'
+            return adj @ other
 
     @staticmethod
     def backward(
@@ -1195,7 +1203,8 @@ def _spmm(
         raise ValueError(f"'matmul(..., transpose=True)' requires "
                          f"'{cls_name}' to be sorted by colums")
 
-    if torch_geometric.typing.WITH_TORCH_SPARSE and other.is_cuda:
+    if (torch_geometric.typing.WITH_TORCH_SPARSE  # pragma: no cover
+            and other.is_cuda):
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     if value is not None and value.requires_grad:
