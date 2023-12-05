@@ -1,16 +1,16 @@
 from typing import Optional, Tuple
 
-import torch
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import pyg_lib
 
 
 def index_sort(
-    inputs: torch.Tensor,
+    inputs: Tensor,
     max_value: Optional[int] = None,
     stable: bool = False,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> Tuple[Tensor, Tensor]:
     r"""Sorts the elements of the :obj:`inputs` tensor in ascending order.
     It is expected that :obj:`inputs` is one-dimensional and that it only
     contains positive integer values. If :obj:`max_value` is given, it can

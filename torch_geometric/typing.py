@@ -1,6 +1,5 @@
 import inspect
 import os
-import platform
 import sys
 import warnings
 from typing import Dict, List, Optional, Tuple, Union
@@ -11,15 +10,15 @@ from torch import Tensor
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
+WITH_PT22 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 2
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
-WITH_ARM = platform.machine() != 'x86_64'
 
 if not hasattr(torch, 'sparse_csc'):
-    torch.sparse_csc = -1
+    torch.sparse_csc = torch.sparse_coo
 
 try:
     import pyg_lib  # noqa
@@ -109,7 +108,7 @@ except Exception as e:
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
 
-    class SparseStorage:
+    class SparseStorage:  # type: ignore
         def __init__(
             self,
             row: Optional[Tensor] = None,
@@ -127,7 +126,7 @@ except Exception as e:
         ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
-    class SparseTensor:
+    class SparseTensor:  # type: ignore
         def __init__(
             self,
             row: Optional[Tensor] = None,
@@ -191,7 +190,7 @@ except Exception as e:
         ) -> Tensor:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
-    class torch_sparse:
+    class torch_sparse:  # type: ignore
         @staticmethod
         def matmul(src: SparseTensor, other: Tensor,
                    reduce: str = "sum") -> Tensor:
@@ -229,7 +228,7 @@ except Exception:
     torch_frame = object
     WITH_TORCH_FRAME = False
 
-    class TensorFrame:
+    class TensorFrame:  # type: ignore
         pass
 
 
