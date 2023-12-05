@@ -4,7 +4,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import unbatch, unbatch_edge_index
+from torch_geometric.utils import (degree, unbatch, unbatch_edge_index,
+                                   to_undirected)
 
 
 def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -67,9 +68,6 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         >>> label_informativeness(edge_index, y, method='node')
         0.3381873621927896
     """
-    import networkx as nx
-    import numpy as np
-
     assert method in {'edge', 'node'}
     y = y.squeeze(-1) if y.dim() > 1 else y
 
@@ -88,84 +86,75 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
     li_list = []
     for edge_index, y in zip(edge_index_list, y_list):
-        graph = nx.Graph()
-        graph.add_nodes_from(range(edge_index.max().item()))
-        graph.add_edges_from(edge_index.cpu().T.numpy())
-
-        labels = y.cpu().numpy()
+        edge_index = to_undirected(edge_index)
 
         # Convert labels to consecutive integers
-        unique_labels = np.unique(labels)
-        labels_map = {label: i for i, label in enumerate(unique_labels)}
-        labels = np.array([labels_map[label] for label in labels])
+        unique_labels = y.unique()
+        labels_map = {
+            label.item(): i for i, label in enumerate(unique_labels)
+        }
+        y = torch.tensor([labels_map[label.item()] for label in y])
 
         num_classes = len(unique_labels)
+        degrees = degree(edge_index[0])
 
         if method == 'edge':
-            class_degree_weighted_probs = np.array(
-                [0 for _ in range(num_classes)], dtype=float)
-            for u in graph.nodes:
-                label = labels[u]
-                class_degree_weighted_probs[label] += graph.degree(u)
-
+            class_degree_weighted_probs = torch.zeros(num_classes)
+            class_degree_weighted_probs.index_add_(dim=0, index=y,
+                                                   source=degrees)
             class_degree_weighted_probs /= class_degree_weighted_probs.sum()
 
-            edge_probs = np.zeros((num_classes, num_classes))
-            for u, v in graph.edges:
-                label_u = labels[u]
-                label_v = labels[v]
-                edge_probs[label_u, label_v] += 1
-                edge_probs[label_v, label_u] += 1
-
+            edge_probs = torch.zeros(num_classes, num_classes)
+            labels_u = y[edge_index[0]]
+            labels_v = y[edge_index[1]]
+            edge_probs.index_put_(
+                indices=(labels_u, labels_v),
+                values=torch.ones(edge_index.shape[1]),
+                accumulate=True,
+            )
             edge_probs /= edge_probs.sum()
-
             edge_probs += eps
 
-            numerator = (edge_probs * np.log(edge_probs)).sum()
+            numerator = (edge_probs * torch.log(edge_probs)).sum()
             denominator = (class_degree_weighted_probs *
-                           np.log(class_degree_weighted_probs)).sum()
+                           torch.log(class_degree_weighted_probs)).sum()
             li_edge = 2 - numerator / denominator
 
-            li_list.append(li_edge)
+            li_list.append(li_edge.item())
 
         elif method == 'node':
-            class_probs = np.array([0 for _ in range(num_classes)],
-                                   dtype=float)
-            class_degree_weighted_probs = np.array(
-                [0 for _ in range(num_classes)], dtype=float)
-            num_zero_degree_nodes = 0
-            for u in graph.nodes:
-                if graph.degree(u) == 0:
-                    num_zero_degree_nodes += 1
-                    continue
-
-                label = labels[u]
-                class_probs[label] += 1
-                class_degree_weighted_probs[label] += graph.degree(u)
-
+            class_probs = torch.zeros(num_classes)
+            class_probs.index_add_(dim=0, index=y,
+                                   source=torch.ones(len(y)))
             class_probs /= class_probs.sum()
+
+            class_degree_weighted_probs = torch.zeros(num_classes)
+            class_degree_weighted_probs.index_add_(dim=0, index=y,
+                                                   source=degrees)
             class_degree_weighted_probs /= class_degree_weighted_probs.sum()
-            num_nonzero_degree_nodes = len(graph.nodes) - num_zero_degree_nodes
 
-            edge_probs = np.zeros((num_classes, num_classes))
-            for u, v in graph.edges:
-                label_u = labels[u]
-                label_v = labels[v]
-                edge_probs[label_u, label_v] += \
-                    1 / (num_nonzero_degree_nodes * graph.degree(u))
-                edge_probs[label_v, label_u] += \
-                    1 / (num_nonzero_degree_nodes * graph.degree(v))
+            num_nonzero_degree_nodes = (degrees > 0).sum()
 
+            edge_probs = torch.zeros(num_classes, num_classes)
+            labels_u = y[edge_index[0]]
+            labels_v = y[edge_index[1]]
+            degrees_u = degrees[edge_index[0]]
+            edge_probs.index_put_(
+                indices=(labels_u, labels_v),
+                values=1 / (num_nonzero_degree_nodes * degrees_u),
+                accumulate=True,
+            )
             edge_probs += eps
 
-            log = np.log(edge_probs /
-                         (class_probs.reshape(-1, 1) *
-                          class_degree_weighted_probs.reshape(1, -1)))
+            log = torch.log(
+                edge_probs
+                / (class_probs[:, None] * class_degree_weighted_probs[None, :])
+            )
             numerator = (edge_probs * log).sum()
-            denominator = (class_probs * np.log(class_probs)).sum()
+            denominator = (class_probs * torch.log(class_probs)).sum()
             li_node = -numerator / denominator
 
-            li_list.append(li_node)
+            li_list.append(li_node.item())
 
         else:
             raise NotImplementedError

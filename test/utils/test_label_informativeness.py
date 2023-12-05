@@ -2,12 +2,10 @@ import pytest
 import torch
 
 import torch_geometric.typing
-from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import label_informativeness
 
 
-@withPackage('networkx')
 def test_label_informativeness():
     edge_index = torch.tensor([[0, 1, 2, 2, 3, 4], [1, 2, 0, 3, 4, 5]])
     y = torch.tensor([0, 0, 0, 0, 1, 1])
@@ -24,10 +22,10 @@ def test_label_informativeness():
 
     method = 'node'
     assert pytest.approx(label_informativeness(edge_index, y,
-                                               method=method)) == 0.3381874
+                                               method=method)) == 0.3381873
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert pytest.approx(label_informativeness(adj, y,
-                                                   method=method)) == 0.3381874
+                                                   method=method)) == 0.3381873
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9],
                                [1, 2, 0, 4, 5, 3, 7, 8, 9, 6, 7]])
@@ -38,10 +36,10 @@ def test_label_informativeness():
     assert pytest.approx(
         label_informativeness(
             edge_index, y, batch,
-            method=method).tolist()) == [0.2740172, 0.2740172, 0.2174435]
+            method=method).tolist()) == [0.2740172, 0.2740172, 0.2174433]
 
     method = 'node'
     assert pytest.approx(
         label_informativeness(
             edge_index, y, batch,
-            method=method).tolist()) == [0.2740173, 0.2740173, 0.2203068]
+            method=method).tolist()) == [0.2740172, 0.2740172, 0.2203068]
