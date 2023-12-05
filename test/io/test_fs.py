@@ -6,6 +6,7 @@ import pytest
 
 from torch_geometric.data import extract_zip
 from torch_geometric.io import fs
+from torch_geometric.testing import noWindows
 
 
 @pytest.fixture(params=['file', 'memory'])
@@ -22,6 +23,7 @@ def test_get_fs():
     assert 'memory' in fs.get_fs('memory:///tmp/test').protocol
 
 
+@noWindows
 def test_normpath():
     assert fs.normpath('////home') == '/home'
     assert fs.normpath('memory:////home') == 'memory:////home'
