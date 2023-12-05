@@ -738,31 +738,33 @@ class EdgeIndex(Tensor):
 
     @overload
     def matmul(
+        self,
         other: 'EdgeIndex',
-        input_value: Optional[Tensor] = None,
-        other_value: Optional[Tensor] = None,
-        reduce: str = 'sum',
-        transpose: bool = False,
+        input_value: Optional[Tensor],
+        other_value: Optional[Tensor],
+        reduce: ReduceType,
+        transpose: bool,
     ) -> Tuple['EdgeIndex', Tensor]:
         pass
 
     @overload
     def matmul(
+        self,
         other: Tensor,
-        input_value: Optional[Tensor] = None,
-        other_value: Optional[Tensor] = None,
-        reduce: str = 'sum',
-        transpose: bool = False,
+        input_value: Optional[Tensor],
+        other_value: Optional[Tensor],
+        reduce: ReduceType,
+        transpose: bool,
     ) -> Tensor:
         pass
 
     def matmul(
         self,
-        other,
-        input_value=None,
-        other_value=None,
-        reduce='sum',
-        transpose=False,
+        other: Union['EdgeIndex', Tensor],
+        input_value: Optional[Tensor] = None,
+        other_value: Optional[Tensor] = None,
+        reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Union[Tensor, Tuple['EdgeIndex', Tensor]]:
         r"""Performs a matrix multiplication of the matrices :obj:`input` and
         :obj:`other`.
@@ -1242,6 +1244,9 @@ def _spmm(
     transpose: bool = False,
 ) -> Tensor:
 
+    if reduce not in get_args(ReduceType):
+        raise ValueError(f"`reduce='{reduce}'` not yet supported")
+
     if not transpose and not input.is_sorted_by_row:
         cls_name = input.__class__.__name__
         raise ValueError(f"'matmul(..., transpose=False)' requires "
@@ -1287,8 +1292,6 @@ def matmul(
     reduce: ReduceType = 'sum',
     transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
-    if reduce not in get_args(ReduceType):
-        raise ValueError(f"`reduce='{reduce}'` not yet supported")
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
