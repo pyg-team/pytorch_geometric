@@ -88,10 +88,19 @@ class GCN_Graph(torch.nn.Module):
 
     def forward(self, batched_data):
         # Extract important attributes of our mini-batch
+        print("batched_data", batched_data)
         x, edge_index, batch = batched_data.x, batched_data.edge_index, batched_data.batch
         
         device = edge_index.device
-        degrees = torch.sum(edge_index[0] == torch.arange(edge_index.max() + 1, device=device)[:, None], dim=1, dtype=torch.float)
+        print("edge_index shape:", edge_index.shape)
+        print("edge_index", edge_index)
+        
+        if edge_index.numel() == 0:
+            # if edge_index is empty
+            degrees = torch.zeros(x.size(0), dtype=torch.float, device=device)
+        else:
+            degrees = torch.sum(edge_index[0] == torch.arange(edge_index.max() + 1, device=device)[:, None], dim=1, dtype=torch.float)
+
         x = degrees.unsqueeze(1)  # Add feature dimension
         
         embed = x.to(device)  # Ensure the embedding tensor is on the correct device
@@ -183,13 +192,17 @@ class GraphGenerator(torch.nn.Module):
         start_node = torch.distributions.Categorical(start_node_probs).sample()
 
         # get end node probabilities and mask out start node
-        combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
+        combined_features = torch.cat((node_features, node_features[start_node]), dim=0)
         end_node_probs = self.mlp_end_node(combined_features)
         end_node_probs[start_node] = 0
-
+        
+        # change 0 probabilities to very small number
+        end_node_probs[end_node_probs == 0] = 1e-10
+        
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
-
+        
+        print("graph generator output:", (start_node, end_node), graph_state)
         return (start_node, end_node), graph_state
 
 class RLGenExplainer(XGNNExplainer):
@@ -207,6 +220,7 @@ class RLGenExplainer(XGNNExplainer):
         for _ in range(num_rollouts):
             # Generate a final graph from the intermediate graph state
             final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
+            print("final_graph", final_graph)
             
             # Evaluate the final graph
             with torch.no_grad():
