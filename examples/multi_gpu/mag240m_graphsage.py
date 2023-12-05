@@ -16,7 +16,6 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
-from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
@@ -299,8 +298,9 @@ if __name__ == "__main__":
     parser.add_argument("--dropout", type=float, default=0.5)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--num_steps_per_epoch", type=int, default=-1, \
-                        help="-1 by default means run the full dataset each epoch, \
-                        otherwise select how many steps to take"                                                                                                                                                                                                                                                                )
+                        help="-1 by default means run the full \
+                        dataset each epoch, \
+                        otherwise select how many steps to take.")                                                                                                                                                                                                                                                                )
     parser.add_argument("--log_every_n_steps", type=int, default=1)
     parser.add_argument("--eval_steps", type=int, default=100)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
