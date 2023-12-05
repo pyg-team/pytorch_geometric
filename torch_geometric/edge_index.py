@@ -20,7 +20,6 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import index_sort, scatter
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
@@ -433,6 +432,8 @@ class EdgeIndex(Tensor):
 
     @assert_sorted
     def _sort_by_transpose(self) -> Tuple[Tuple[Tensor, Tensor], Tensor]:
+        from torch_geometric.utils import index_sort
+
         dim = 1 if self.is_sorted_by_row else 0
 
         if self._T_perm is None:
@@ -554,6 +555,8 @@ class EdgeIndex(Tensor):
                 guarantees that the order of equivalent elements is preserved.
                 (default: :obj:`False`)
         """
+        from torch_geometric.utils import index_sort
+
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
@@ -1224,6 +1227,7 @@ def _scatter_spmm(
     reduce: ReduceType = 'sum',
     transpose: bool = False,
 ) -> Tensor:
+    from torch_geometric.utils import scatter
 
     if not transpose:
         other_j = other[input[1]]
