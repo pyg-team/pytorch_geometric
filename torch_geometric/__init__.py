@@ -7,7 +7,6 @@ import torch_geometric.datasets
 import torch_geometric.nn
 import torch_geometric.explain
 import torch_geometric.profile
-import torch_geometric.metrics
 
 from .seed import seed_everything
 from .home import get_home_dir, set_home_dir
