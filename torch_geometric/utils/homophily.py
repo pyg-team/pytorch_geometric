@@ -4,7 +4,9 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import degree, scatter, unbatch, unbatch_edge_index
+from torch_geometric.utils import (degree, scatter,
+                                   unbatch, unbatch_edge_index,
+                                   to_undirected)
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -163,9 +165,6 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         return out if out.numel() > 1 else float(out)
 
     elif method == 'adjusted':
-        import networkx as nx
-        import numpy as np
-
         if isinstance(edge_index, SparseTensor):
             edge_index = torch.vstack([row, col])
 
@@ -180,39 +179,31 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
         h_adj_list = []
         for edge_index, y in zip(edge_index_list, y_list):
-            graph = nx.Graph()
-            graph.add_nodes_from(range(edge_index.max().item()))
-            graph.add_edges_from(edge_index.cpu().T.numpy())
-
-            labels = y.cpu().numpy()
+            edge_index = to_undirected(edge_index)
 
             # Convert labels to consecutive integers
-            unique_labels = np.unique(labels)
-            labels_map = {label: i for i, label in enumerate(unique_labels)}
-            labels = np.array([labels_map[label] for label in labels])
+            unique_labels = y.unique()
+            labels_map = {
+                label.item(): i for i, label in enumerate(unique_labels)
+            }
+            y = torch.tensor([labels_map[label.item()] for label in y])
 
             num_classes = len(unique_labels)
             if num_classes == 1:
                 h_adj_list.append(1.)
                 continue
 
-            edges_with_same_label = 0
-            for u, v in graph.edges:
-                if labels[u] == labels[v]:
-                    edges_with_same_label += 1
+            h_edge = (y[edge_index[0]] == y[edge_index[1]]).float().mean()
 
-            h_edge = edges_with_same_label / len(graph.edges)
+            degrees = degree(edge_index[0])
+            degree_sums = torch.zeros(num_classes)
+            degree_sums.index_add_(dim=0, index=y, source=degrees)
 
-            degree_sums = np.zeros((num_classes, ))
-            for u in graph.nodes:
-                label = labels[u]
-                degree_sums[label] += graph.degree(u)
-
-            adjust = (degree_sums**2 / (len(graph.edges) * 2)**2).sum()
+            adjust = (degree_sums**2).sum() / edge_index.shape[1]**2
 
             h_adj = (h_edge - adjust) / (1 - adjust)
 
-            h_adj_list.append(h_adj)
+            h_adj_list.append(h_adj.item())
 
         if batch is None:
             return h_adj_list[0]
