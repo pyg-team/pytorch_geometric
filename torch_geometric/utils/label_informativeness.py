@@ -4,8 +4,12 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import (degree, unbatch, unbatch_edge_index,
-                                   to_undirected)
+from torch_geometric.utils import (
+    degree,
+    to_undirected,
+    unbatch,
+    unbatch_edge_index,
+)
 
 
 def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -90,9 +94,7 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
         # Convert labels to consecutive integers
         unique_labels = y.unique()
-        labels_map = {
-            label.item(): i for i, label in enumerate(unique_labels)
-        }
+        labels_map = {label.item(): i for i, label in enumerate(unique_labels)}
         y = torch.tensor([labels_map[label.item()] for label in y])
 
         num_classes = len(unique_labels)
@@ -124,8 +126,7 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
         elif method == 'node':
             class_probs = torch.zeros(num_classes)
-            class_probs.index_add_(dim=0, index=y,
-                                   source=torch.ones(len(y)))
+            class_probs.index_add_(dim=0, index=y, source=torch.ones(len(y)))
             class_probs /= class_probs.sum()
 
             class_degree_weighted_probs = torch.zeros(num_classes)
@@ -147,9 +148,8 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             edge_probs += eps
 
             log = torch.log(
-                edge_probs
-                / (class_probs[:, None] * class_degree_weighted_probs[None, :])
-            )
+                edge_probs /
+                (class_probs[:, None] * class_degree_weighted_probs[None, :]))
             numerator = (edge_probs * log).sum()
             denominator = (class_probs * torch.log(class_probs)).sum()
             li_node = -numerator / denominator

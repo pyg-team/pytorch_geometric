@@ -4,9 +4,13 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import (degree, scatter,
-                                   unbatch, unbatch_edge_index,
-                                   to_undirected)
+from torch_geometric.utils import (
+    degree,
+    scatter,
+    to_undirected,
+    unbatch,
+    unbatch_edge_index,
+)
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -184,7 +188,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             # Convert labels to consecutive integers
             unique_labels = y.unique()
             labels_map = {
-                label.item(): i for i, label in enumerate(unique_labels)
+                label.item(): i
+                for i, label in enumerate(unique_labels)
             }
             y = torch.tensor([labels_map[label.item()] for label in y])
 
