@@ -1,4 +1,4 @@
-import pytest  # noqa
+import pytest
 import torch
 
 from torch_geometric.nn.conv import SAGEConv

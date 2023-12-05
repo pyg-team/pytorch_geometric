@@ -53,12 +53,14 @@ def test_point_net_conv():
     assert out.size() == (2, 32)
     assert torch.allclose(conv((x1, None), (pos1, pos2), edge_index), out)
     assert torch.allclose(conv(x1, (pos1, pos2), adj1.t()), out, atol=1e-6)
-    assert torch.allclose(conv((x1, None), (pos1, pos2), adj1.t()), out)
+    assert torch.allclose(conv((x1, None), (pos1, pos2), adj1.t()), out,
+                          atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
         assert torch.allclose(conv(x1, (pos1, pos2), adj2.t()), out, atol=1e-6)
-        assert torch.allclose(conv((x1, None), (pos1, pos2), adj2.t()), out)
+        assert torch.allclose(conv((x1, None), (pos1, pos2), adj2.t()), out,
+                              atol=1e-6)
 
     if is_full_test():
         t = '(PairOptTensor, PairTensor, Tensor) -> Tensor'
@@ -68,4 +70,5 @@ def test_point_net_conv():
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(PairOptTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, None), (pos1, pos2), adj2.t()), out)
+        assert torch.allclose(jit((x1, None), (pos1, pos2), adj2.t()), out,
+                              atol=1e-6)

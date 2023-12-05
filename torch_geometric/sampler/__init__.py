@@ -1,3 +1,5 @@
+r"""Graph sampler package."""
+
 from .base import (BaseSampler, NodeSamplerInput, EdgeSamplerInput,
                    SamplerOutput, HeteroSamplerOutput, NegativeSampling,
                    NumNeighbors)

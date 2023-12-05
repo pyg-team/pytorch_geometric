@@ -26,6 +26,8 @@ class Amazon(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -58,10 +60,12 @@ class Amazon(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         assert self.name in ['computers', 'photo']
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property

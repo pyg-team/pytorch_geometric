@@ -1,3 +1,5 @@
+r"""Utility package."""
+
 import copy
 
 from .scatter import scatter, group_argsort

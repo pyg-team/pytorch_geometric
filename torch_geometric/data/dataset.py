@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -12,7 +13,7 @@ import torch.utils.data
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -44,6 +45,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
             included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -84,11 +87,12 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        force_reload: bool = False,
     ):
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(osp.normpath(root))
+            root = osp.expanduser(fs.normpath(root))
 
         self.root = root
         self.transform = transform
@@ -96,6 +100,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         self.pre_filter = pre_filter
         self.log = log
         self._indices: Optional[Sequence] = None
+        self.force_reload = force_reload
 
         if self.has_download:
             self._download()
@@ -205,7 +210,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -217,32 +222,32 @@ class Dataset(torch.utils.data.Dataset, ABC):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
             warnings.warn(
-                f"The `pre_transform` argument differs from the one used in "
-                f"the pre-processed version of this dataset. If you want to "
-                f"make use of another pre-processing technique, make sure to "
-                f"delete '{self.processed_dir}' first")
+                "The `pre_transform` argument differs from the one used in "
+                "the pre-processed version of this dataset. If you want to "
+                "make use of another pre-processing technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
             warnings.warn(
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
-                "make use of another pre-fitering technique, make sure to "
-                "delete '{self.processed_dir}' first")
+                "make use of another pre-fitering technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
-        if files_exist(self.processed_paths):  # pragma: no cover
+        if not self.force_reload and files_exist(self.processed_paths):
             return
 
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        makedirs(self.processed_dir)
+        os.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(_repr(self.pre_transform), path)
+        fs.torch_save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(_repr(self.pre_filter), path)
+        fs.torch_save(_repr(self.pre_filter), path)
 
         if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
@@ -395,7 +400,7 @@ def to_list(value: Any) -> Sequence:
 def files_exist(files: List[str]) -> bool:
     # NOTE: We return `False` in case `files` is empty, leading to a
     # re-processing of files on every instantiation.
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([fs.exists(f) for f in files])
 
 
 def _repr(obj: Any) -> str:

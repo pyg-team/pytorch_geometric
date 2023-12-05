@@ -2,6 +2,7 @@ import os.path as osp
 import warnings
 from itertools import repeat
 
+import fsspec
 import torch
 
 from torch_geometric.data import Data
@@ -91,7 +92,7 @@ def read_file(folder, prefix, name):
     if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)
 
-    with open(path, 'rb') as f:
+    with fsspec.open(path, 'rb') as f:
         warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
         out = pickle.load(f, encoding='latin1')
 

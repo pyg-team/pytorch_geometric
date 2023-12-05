@@ -12,7 +12,7 @@ MISSING = '???'
 
 @torch.jit._overload
 def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
-    # type: (Tensor, str, Optional[int], bool) -> Tensor  # noqa
+    # type: (Tensor, str, Optional[int], bool) -> Tensor
     pass
 
 

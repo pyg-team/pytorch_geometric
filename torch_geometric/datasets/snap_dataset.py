@@ -12,7 +12,6 @@ from torch_geometric.data import (
     extract_gz,
     extract_tar,
 )
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import coalesce
 
 
@@ -92,7 +91,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
                               usecols=[0]).squeeze()
             col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
                               usecols=[1]).squeeze()
-        except:  # noqa
+        except Exception:
             continue
 
         row = torch.tensor([idx_assoc[i] for i in row])
@@ -171,6 +170,8 @@ class SNAPDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://snap.stanford.edu/data'
@@ -196,10 +197,12 @@ class SNAPDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -218,7 +221,7 @@ class SNAPDataset(InMemoryDataset):
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     def download(self):

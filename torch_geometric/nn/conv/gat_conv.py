@@ -149,10 +149,10 @@ class GATConv(MessagePassing):
 
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
+        self.lin = self.lin_src = self.lin_dst = None
         if isinstance(in_channels, int):
-            self.lin_src = Linear(in_channels, heads * out_channels,
-                                  bias=False, weight_initializer='glorot')
-            self.lin_dst = self.lin_src
+            self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                              weight_initializer='glorot')
         else:
             self.lin_src = Linear(in_channels[0], heads * out_channels, False,
                                   weight_initializer='glorot')
@@ -182,8 +182,12 @@ class GATConv(MessagePassing):
 
     def reset_parameters(self):
         super().reset_parameters()
-        self.lin_src.reset_parameters()
-        self.lin_dst.reset_parameters()
+        if self.lin is not None:
+            self.lin.reset_parameters()
+        if self.lin_src is not None:
+            self.lin_src.reset_parameters()
+        if self.lin_dst is not None:
+            self.lin_dst.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
         glorot(self.att_src)
@@ -199,10 +203,10 @@ class GATConv(MessagePassing):
         size: Size = None,
         return_attention_weights=None,
     ):
-        # type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # forward_type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # forward_type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""Runs the forward pass of the module.
 
         Args:
@@ -232,13 +236,33 @@ class GATConv(MessagePassing):
         # transform source and target node features via separate weights:
         if isinstance(x, Tensor):
             assert x.dim() == 2, "Static graphs not supported in 'GATConv'"
-            x_src = x_dst = self.lin_src(x).view(-1, H, C)
+
+            if self.lin is not None:
+                x_src = x_dst = self.lin(x).view(-1, H, C)
+            else:
+                # If the module is initialized as bipartite, transform source
+                # and destination node features separately:
+                assert self.lin_src is not None and self.lin_dst is not None
+                x_src = self.lin_src(x).view(-1, H, C)
+                x_dst = self.lin_dst(x).view(-1, H, C)
+
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
-            x_src = self.lin_src(x_src).view(-1, H, C)
-            if x_dst is not None:
-                x_dst = self.lin_dst(x_dst).view(-1, H, C)
+
+            if self.lin is not None:
+                # If the module is initialized as non-bipartite, we expect that
+                # source and destination node features have the same shape and
+                # that they their transformations are shared:
+                x_src = self.lin(x_src).view(-1, H, C)
+                if x_dst is not None:
+                    x_dst = self.lin(x_dst).view(-1, H, C)
+            else:
+                assert self.lin_src is not None and self.lin_dst is not None
+
+                x_src = self.lin_src(x_src).view(-1, H, C)
+                if x_dst is not None:
+                    x_dst = self.lin_dst(x_dst).view(-1, H, C)
 
         x = (x_src, x_dst)
 

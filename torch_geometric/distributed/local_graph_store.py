@@ -41,12 +41,18 @@ class LocalGraphStore(GraphStore):
         node_type: Optional[NodeType] = None,
     ) -> Tensor:
         r"""Get the partition IDs of node IDs for a specific node type."""
-        return self.node_pb[ids]
+        if self.meta['is_hetero']:
+            return self.node_pb[node_type][ids]
+        else:
+            return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
                                     edge_type: Optional[EdgeType] = None):
         r"""Get the partition IDs of edge IDs for a specific edge type."""
-        return self.edge_pb[eids]
+        if self.meta['is_hetero']:
+            return self.edge_pb[edge_type][eids]
+        else:
+            return self.edge_pb[eids]
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
@@ -98,6 +104,7 @@ class LocalGraphStore(GraphStore):
                 (CSC format). (default: :obj:`False`)
         """
         graph_store = cls()
+        graph_store.meta = {'is_hetero': False}
 
         if not is_sorted:
             edge_index, edge_id = sort_edge_index(
@@ -180,8 +187,12 @@ class LocalGraphStore(GraphStore):
                 edge_index, edge_id = sort_edge_index(edge_index, edge_id,
                                                       sort_by_row=False)
 
-            attr = dict(edge_type=None, layout='coo', size=graph_data['size'],
-                        is_sorted=True)
+            attr = dict(
+                edge_type=None,
+                layout='coo',
+                size=graph_data['size'],
+                is_sorted=True,
+            )
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
 
