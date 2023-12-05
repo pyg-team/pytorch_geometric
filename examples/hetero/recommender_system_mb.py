@@ -16,15 +16,18 @@ from torch.nn import CrossEntropyLoss
 from sklearn.metrics import accuracy_score, roc_auc_score
 import pandas as pd
 import json
+import random
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
-import random
+from torch_geometric.nn.metrics import LinkPredPrecision
 
 parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--epochs', type=int, default=50,
+                    help='number of epochs')
 parser.add_argument('-k', '--k', type=int, default=20,
                     help='number of predictions per user to make')
 parser.add_argument('--visualize_emb', action='store_true',
@@ -127,6 +130,7 @@ test_dataloader = LinkNeighborLoader(
                                  'movie')].edge_index),
     edge_label_time=test_data[('user', 'rates', 'movie')].time,
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
+
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
 if args.use_weighted_loss:
@@ -169,7 +173,6 @@ class EdgeDecoder(torch.nn.Module):
         i_to_u = self.item_to_user(z_dict['movie'][col])
 
         z = torch.cat([u_to_i, i_to_u], dim=-1)
-        # z = torch.cat([z_dict['user'][row], z_dict['movie'][col]], dim=-1)
 
         z = self.lin1(z).relu()
         z = self.lin2(z)
@@ -204,18 +207,11 @@ model = Model(
     num_users=data['user'].x.size(0),
     num_movies=data['movie'].x.size(0),
     hidden_channels=64).to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=5e-4)
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
 
 
 def get_user_positive_items(edge_index):
-    """Generates dictionary of positive items for each user
-
-    Args:
-        edge_index (torch.Tensor): 2 by N list of edges
-
-    Returns:
-        dict: dictionary of positive items for each user
-    """
+    # Get all the movies that the user has actually watched
     user_pos_items = {}
     for i in range(edge_index.shape[1]):
         user = edge_index[0][i].item()
@@ -224,12 +220,9 @@ def get_user_positive_items(edge_index):
             user_pos_items[user] = []
         user_pos_items[user].append(item)
     return user_pos_items
-
-def make_recommendations(model,
-                         train_data,
-                         val_data,
-                         k,
-                         write_to_file=False):
+    
+def get_embeddings(model, val_data):
+    # Get user and movie embeddings from the model
     x_dict = {}
     x_dict['user'] = torch.cat([model.user_emb(val_data['user'].n_id),
                                 val_data.x_dict['user']], dim=-1)
@@ -237,11 +230,22 @@ def make_recommendations(model,
                                  val_data.x_dict['movie']], dim=-1)
     embs = model.encoder(x_dict,
                          val_data.edge_index_dict)
-    mipsknn = MIPSKNNIndex(embs['movie'])
+    movie_embs = embs['movie']
     embs_user_to_movie = embs['user']
     embs_user_to_movie = model.decoder.user_to_item(embs['user'])
+    movie_embs = model.decoder.item_to_user(embs['movie'])
+    return movie_embs, embs_user_to_movie
+
+def make_recommendations(model,
+                         train_data,
+                         val_data,
+                         k,
+                         write_to_file=False):
+
+    movie_embs, user_embs = get_embeddings(model, val_data)
+    mipsknn = MIPSKNNIndex(movie_embs)
     knn_score, knn_index = mipsknn.search(
-        embs_user_to_movie, embs['movie'].size(0))
+        user_embs, movie_embs.size(0))
 
     # Obtain the movies that each user has already
     # watched. These movies need to be removed from
@@ -290,7 +294,6 @@ def make_recommendations(model,
                                 [val_user_pos_items[user]].to_dict()))
                 except KeyError:
                     pass
-
     # Obtain some metrics
     hits = 0
     user_hits = 0
@@ -299,30 +302,25 @@ def make_recommendations(model,
             set(val_user_pos_items[user])))
         hits += correct_preds
         user_hits += correct_preds > 0
-
+    
     print(f"Total hits at top-{k} = {hits}")
     print(
         f"Total user hits at top-{k} = {user_hits}/{len(val_user_pos_items)}")
+    
+    return real_recs
 
 
 def visualize(model, val_data, epoch):
     tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
-    x_dict = {}
-    x_dict['user'] = torch.cat([model.user_emb(val_data['user'].n_id),
-                                val_data.x_dict['user']], dim=-1)
-    x_dict['movie'] = torch.cat([model.movie_emb(val_data['movie'].n_id),
-                                 val_data.x_dict['movie']], dim=-1)
-    emb_u_m = model.encoder(x_dict,
-                            val_data.edge_index_dict)
-    embs_user_to_movie = model.decoder.user_to_item(emb_u_m['user'])
-    emb_reduced = tsne.fit_transform(torch.vstack((emb_u_m['movie'],
-                                                   embs_user_to_movie
+    movie_embs, user_embs = get_embeddings(model, val_data)
+    emb_reduced = tsne.fit_transform(torch.vstack((movie_embs,
+                                                   user_embs,
                                                    )).detach().numpy())
-    plt.scatter(emb_reduced[:emb_u_m['movie'].size(0), 0],
-                emb_reduced[:emb_u_m['movie'].size(0), 1],
+    plt.scatter(emb_reduced[:movie_embs.size(0), 0],
+                emb_reduced[:movie_embs.size(0), 1],
                 alpha=0.1)
-    plt.scatter(emb_reduced[emb_u_m['movie'].size(0):, 0],
-                emb_reduced[emb_u_m['movie'].size(0):, 1],
+    plt.scatter(emb_reduced[movie_embs.size(0):, 0],
+                emb_reduced[movie_embs.size(0):, 1],
                 alpha=0.1,
                 marker='x')
     plt.savefig('./fig-' + str(epoch) + '.png')
@@ -401,24 +399,41 @@ def test(dl, desc='val'):
         print(f'{desc} time = {val_time}')
     return float(rmse), roc, acc
 
+def compute_metrics(real_recs, val_dataloader, val_data, k, desc):
+    metric = LinkPredPrecision(k)
+    real_recs_list = []
+    [real_recs_list.append(rec) for id, rec in real_recs.items()]
+    rec_tensor = torch.tensor(real_recs_list)
 
-EPOCHS = 50
+    for batch in val_dataloader:
+        node_id = batch['user'].n_id
+        edge_label_index = batch['user', 'movie'].edge_label_index
+        mask = torch.isin(edge_label_index[0], node_id)
+        y_batch, y_index = edge_label_index[:, mask]
+        arange = torch.empty(batch['user'].x.size(0), dtype=node_id.dtype)
+        arange[node_id] = torch.arange(node_id.numel())
+        y_batch = arange[y_batch]
+        metric.update(rec_tensor[node_id], (y_batch, y_index))
+    return metric.compute()
+
+EPOCHS = args.epochs
 for epoch in range(0, EPOCHS):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader,
                  val_data=val_data, epoch=epoch)
     val_rmse = test(val_dataloader, 'val')
+    real_recs = make_recommendations(model, train_data, val_data, args.k, False)
+    val_precision_at_k = compute_metrics(real_recs, val_dataloader, val_data, args.k, 'val prec@k')
     print(
         f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
         f'Val RMSE: {val_rmse[0]:.4f}, Val ROC: {val_rmse[1]:.4f} Val Acc: {val_rmse[2]:.4f}')
-
-    make_recommendations(model, train_data, val_data, args.k, False)
+    print(f'Val precision@{args.k} = {val_precision_at_k:.3E}')
 
 # Get results on test split
 test_rmse = test(test_dataloader, 'test')
-print(
-    f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
-    f'test RMSE: {test_rmse[0]:.4f}, test ROC: {test_rmse[1]:.4f} test Acc: {test_rmse[2]:.4f}')
-make_recommendations(model, train_data, test_data, args.k, False)
+print(f'test RMSE: {test_rmse[0]:.4f}, test ROC: {test_rmse[1]:.4f} test Acc: {test_rmse[2]:.4f}')
+real_recs = make_recommendations(model, train_data, test_data, args.k, False)
+test_precision_at_k = compute_metrics(real_recs, test_dataloader, test_data, args.k, 'test prec@k')
+print(f'test precision@{args.k} = {test_precision_at_k:.3E}')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
