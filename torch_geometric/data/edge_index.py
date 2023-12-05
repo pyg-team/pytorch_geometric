@@ -1203,8 +1203,8 @@ def _spmm(
         raise ValueError(f"'matmul(..., transpose=True)' requires "
                          f"'{cls_name}' to be sorted by colums")
 
-    if (torch_geometric.typing.WITH_TORCH_SPARSE  # pragma: no cover
-            and other.is_cuda):
+    if (torch_geometric.typing.WITH_TORCH_SPARSE
+            and other.is_cuda):  # pragma: no cover
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     if value is not None and value.requires_grad:
@@ -1253,7 +1253,7 @@ def matmul(
 
     transpose &= not input.is_undirected or input_value is not None
 
-    if torch_geometric.typing.WITH_WINDOWS:
+    if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
         input = input.to_sparse_coo(input_value)
     elif input.is_sorted_by_col:
         input = input.to_sparse_csc(input_value)
@@ -1263,7 +1263,7 @@ def matmul(
     if transpose:
         input = input.t()
 
-    if torch_geometric.typing.WITH_WINDOWS:
+    if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
         other = other.to_sparse_coo(input_value)
     elif other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)
@@ -1278,7 +1278,7 @@ def matmul(
         edge_index = torch._convert_indices_from_csr_to_coo(
             rowptr, col, out_int32=rowptr.dtype != torch.int64)
 
-    elif out.layout == torch.sparse_coo:
+    elif out.layout == torch.sparse_coo:  # pragma: no cover
         edge_index = out.indices()
 
     else:
