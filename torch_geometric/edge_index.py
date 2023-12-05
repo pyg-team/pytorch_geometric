@@ -1,4 +1,5 @@
 import functools
+import typing
 from enum import Enum
 from typing import (
     Any,
@@ -10,6 +11,8 @@ from typing import (
     Set,
     Tuple,
     Union,
+    get_args,
+    overload,
 )
 
 import torch
@@ -26,14 +29,22 @@ if torch_geometric.typing.WITH_PT20:
         torch.int32,
         torch.int64,
     }
-else:  # pragma: no cover
+elif not typing.TYPE_CHECKING:  # pragma: no cover
     SUPPORTED_DTYPES: Set[torch.dtype] = {
         torch.int64,
     }
 
 ReduceType = Literal['sum', 'mean', 'amin', 'amax', 'add', 'min', 'max']
-PYG_REDUCE = {'add': 'sum', 'amin': 'min', 'amax': 'max'}
-TORCH_REDUCE = {'add': 'sum', 'min': 'amin', 'max': 'amax'}
+PYG_REDUCE: Dict[ReduceType, ReduceType] = {
+    'add': 'sum',
+    'amin': 'min',
+    'amax': 'max'
+}
+TORCH_REDUCE: Dict[ReduceType, ReduceType] = {
+    'add': 'sum',
+    'min': 'amin',
+    'max': 'amax'
+}
 
 
 class SortOrder(Enum):
@@ -289,6 +300,14 @@ class EdgeIndex(Tensor):
 
     # Properties ##############################################################
 
+    @overload
+    def sparse_size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def sparse_size(self, dim: int) -> Optional[int]:
+        pass
+
     def sparse_size(
         self,
         dim: Optional[int] = None,
@@ -343,6 +362,14 @@ class EdgeIndex(Tensor):
         return self._is_undirected
 
     # Cache Interface #########################################################
+
+    @overload
+    def get_sparse_size(self) -> torch.Size:
+        pass
+
+    @overload
+    def get_sparse_size(self, dim: int) -> int:
+        pass
 
     def get_sparse_size(
         self,
@@ -709,13 +736,33 @@ class EdgeIndex(Tensor):
             trust_data=True,
         )
 
+    @overload
     def matmul(
-        self,
-        other: Union[Tensor, 'EdgeIndex'],
+        other: 'EdgeIndex',
         input_value: Optional[Tensor] = None,
         other_value: Optional[Tensor] = None,
-        reduce: ReduceType = 'sum',
+        reduce: str = 'sum',
         transpose: bool = False,
+    ) -> Tuple['EdgeIndex', Tensor]:
+        pass
+
+    @overload
+    def matmul(
+        other: Tensor,
+        input_value: Optional[Tensor] = None,
+        other_value: Optional[Tensor] = None,
+        reduce: str = 'sum',
+        transpose: bool = False,
+    ) -> Tensor:
+        pass
+
+    def matmul(
+        self,
+        other,
+        input_value=None,
+        other_value=None,
+        reduce='sum',
+        transpose=False,
     ) -> Union[Tensor, Tuple['EdgeIndex', Tensor]]:
         r"""Performs a matrix multiplication of the matrices :obj:`input` and
         :obj:`other`.
@@ -886,18 +933,20 @@ def cat(
     out = out.as_subclass(EdgeIndex)
 
     # Post-process `sparse_size`:
-    num_rows = 0
+    num_rows: Optional[int] = 0
     for tensor in tensors:
         if not isinstance(tensor, EdgeIndex) or tensor.num_rows is None:
             num_rows = None
             break
+        assert isinstance(num_rows, int)
         num_rows = max(num_rows, tensor.num_rows)
 
-    num_cols = 0
+    num_cols: Optional[int] = 0
     for tensor in tensors:
         if not isinstance(tensor, EdgeIndex) or tensor.num_cols is None:
             num_cols = None
             break
+        assert isinstance(num_cols, int)
         num_cols = max(num_cols, tensor.num_cols)
 
     out._sparse_size = (num_rows, num_cols)
@@ -1193,9 +1242,6 @@ def _spmm(
     transpose: bool = False,
 ) -> Tensor:
 
-    if reduce not in ReduceType.__args__:
-        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
-
     if not transpose and not input.is_sorted_by_row:
         cls_name = input.__class__.__name__
         raise ValueError(f"'matmul(..., transpose=False)' requires "
@@ -1241,8 +1287,8 @@ def matmul(
     reduce: ReduceType = 'sum',
     transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
-    if reduce not in ReduceType.__args__:
-        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported")
+    if reduce not in get_args(ReduceType):
+        raise ValueError(f"`reduce='{reduce}'` not yet supported")
 
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
