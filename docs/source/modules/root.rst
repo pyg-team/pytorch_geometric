@@ -1,6 +1,9 @@
 torch_geometric
 ===============
 
+.. automodule:: torch_geometric.edge_index
+    :members:
+
 .. automodule:: torch_geometric.seed
     :members:
 
