@@ -1251,27 +1251,38 @@ def matmul(
         raise NotImplementedError("`transpose=True` not yet supported for "
                                   "sparse-sparse matrix multiplication")
 
-    if input.is_sorted_by_col:
+    if torch_geometric.typing.WITH_WINDOWS:
+        input = input.to_sparse_coo(input_value)
+    elif input.is_sorted_by_col:
         input = input.to_sparse_csc(input_value)
     else:
         input = input.to_sparse_csr(input_value)
 
-    if other.is_sorted_by_col:
+    if torch_geometric.typing.WITH_WINDOWS:
+        other = other.to_sparse_coo(input_value)
+    elif other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)
     else:
         other = other.to_sparse_csr(other_value)
 
     out = torch.matmul(input, other)
-    assert out.layout == torch.sparse_csr
 
-    rowptr, col = out.crow_indices(), out.col_indices()
-    edge_index = torch._convert_indices_from_csr_to_coo(
-        rowptr, col, out_int32=rowptr.dtype != torch.int64)
+    rowptr: Optional[Tensor] = None
+    if out.layout == torch.sparse_csr:
+        rowptr, col = out.crow_indices(), out.col_indices()
+        edge_index = torch._convert_indices_from_csr_to_coo(
+            rowptr, col, out_int32=rowptr.dtype != torch.int64)
+
+    elif out.layout == torch.sparse_coo:
+        edge_index = out.indices()
+
+    else:
+        raise NotImplementedError
 
     edge_index = edge_index.as_subclass(EdgeIndex)
     edge_index._sort_order = SortOrder.ROW
     edge_index._sparse_size = (out.size(0), out.size(1))
-    edge_index._rowptr = rowptr
+    edge_index._indptr = rowptr
 
     return edge_index, out.values()
 

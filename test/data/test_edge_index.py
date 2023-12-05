@@ -773,7 +773,8 @@ def test_spspmm():
     assert isinstance(out, EdgeIndex)
     assert out.is_sorted_by_row
     assert out._sparse_size == (3, 3)
-    assert out._rowptr is not None
+    if not torch_geometric.typing.WITH_WINDOWS:
+        assert out._indptr is not None
     assert torch.allclose(out.to_dense(value), adj1_dense @ adj1_dense)
 
     out, value = adj1 @ adj2
@@ -838,12 +839,13 @@ def test_save_and_load(dtype, device, tmp_path):
     assert out._indptr.equal(adj._indptr)
 
 
+def _collate_fn(edge_indices: List[EdgeIndex]) -> List[EdgeIndex]:
+    return edge_indices
+
+
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('num_workers', [0, 2])
 def test_data_loader(dtype, num_workers):
-    def _collate_fn(edge_indices: List[EdgeIndex]) -> List[EdgeIndex]:
-        return edge_indices
-
     kwargs = dict(dtype=dtype)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()

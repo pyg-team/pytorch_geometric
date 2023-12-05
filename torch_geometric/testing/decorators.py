@@ -202,8 +202,9 @@ def disableExtensions(func: Callable):
 
 
 def withoutExtensions(func: Callable):
-    r"""A decorator to test both with and without extension packages, such as
-    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib`.
+    r"""A decorator to test both with and without the usage of extension
+    packages such as :obj:`torch_scatter`, :obj:`torch_sparse` and
+    :obj:`pyg_lib`.
     """
     import pytest
 
