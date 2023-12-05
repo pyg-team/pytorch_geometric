@@ -20,7 +20,7 @@ from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
-from torch_geometric.nn.metrics import LinkPredPrecision, LinkPredNDCG
+from torch_geometric.nn.metrics import LinkPredNDCG, LinkPredPrecision
 from torch_geometric.nn.pool import MIPSKNNIndex
 
 parser = argparse.ArgumentParser()
@@ -414,8 +414,7 @@ for epoch in range(0, EPOCHS):
     # val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
-    val_metrics = compute_metrics(real_recs, val_data, args.k,
-                                         'val prec@k')
+    val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
     precision = val_metrics['precision']
     ndcg = val_metrics['ndcg']
     print(f'Epoch: {epoch:03d}, Train loss: {loss:.4f}',
@@ -425,15 +424,15 @@ for epoch in range(0, EPOCHS):
 # Get results on test split
 
 # To evaluate the link prediction performance uncomment the following line
-# test_rmse = evaluate(test_dataloader, 
-#               'test')  
-real_recs = make_recommendations(model, train_data, test_data, args.k,
-                                 True)
-test_metrics = compute_metrics(real_recs, test_data, args.k,
-                                      'test prec@k')
+# test_rmse = evaluate(test_dataloader,
+#               'test')
+real_recs = make_recommendations(model, train_data, test_data, args.k, True)
+test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
 precision = test_metrics['precision']
 ndcg = test_metrics['ndcg']
-print(f'Test metrics: precision@{args.k} = {precision:.4f} ndcg@{args.k} = {ndcg:.4f}')
+print(
+    f'Test metrics: precision@{args.k} = {precision:.4f} ndcg@{args.k} = {ndcg:.4f}'
+)
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
