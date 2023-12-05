@@ -56,4 +56,4 @@ def test_ndcg():
     metric.update(pred_mat, edge_label_index)
     result = metric.compute()
 
-    assert float(result) == pytest.approx(0.6934)
+    assert float(result) == pytest.approx(0.6934264)
