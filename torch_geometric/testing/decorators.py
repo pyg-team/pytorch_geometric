@@ -199,3 +199,16 @@ def disableExtensions(func: Callable):
     import pytest
 
     return pytest.mark.usefixtures('disable_extensions')(func)
+
+
+def withoutExtensions(func: Callable):
+    r"""A decorator to test both with and without extension packages, such as
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib`.
+    """
+    import pytest
+
+    return pytest.mark.parametrize(
+        'without_extensions',
+        ['enable_extensions', 'disable_extensions'],
+        indirect=True,
+    )(func)
