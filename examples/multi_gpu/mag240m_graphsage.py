@@ -295,6 +295,7 @@ if __name__ == "__main__":
     help_str = "-1 by default means run the full \
                     dataset each epoch, \
                     otherwise select how many steps to take."
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--hidden_channels", type=int, default=1024)
     parser.add_argument("--batch_size", type=int, default=1024)
