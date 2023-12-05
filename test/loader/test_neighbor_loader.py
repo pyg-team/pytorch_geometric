@@ -665,9 +665,8 @@ def test_memmap_neighbor_loader(tmp_path):
 @pytest.mark.parametrize('loader_cores', [None, [1, 2]])
 def test_cpu_affinity_neighbor_loader(loader_cores):
     data = Data(x=torch.randn(1, 1))
-    loader = NeighborLoader(
-        data, num_neighbors=[-1], batch_size=1, num_workers=2
-    )
+    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
+                            num_workers=2)
     out = []
     with loader.enable_cpu_affinity(loader_cores):
         iterator = loader._get_iterator()
@@ -675,8 +674,8 @@ def test_cpu_affinity_neighbor_loader(loader_cores):
         for worker in workers:
             sleep(2)  # Gives time for worker to initialize.
             process = subprocess.Popen(
-                ['taskset', '-c', '-p', f'{worker.pid}'], stdout=subprocess.PIPE
-            )
+                ['taskset', '-c', '-p', f'{worker.pid}'],
+                stdout=subprocess.PIPE)
             stdout = process.communicate()[0].decode('utf-8')
             out.append(stdout.split(':')[1].strip())
         if loader_cores:
