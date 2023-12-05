@@ -385,6 +385,13 @@ def test_flip(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
     assert out._T_indptr is None
 
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
+    out = adj.flip(0)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device))
+    assert out.is_sorted_by_row
+    assert out.is_undirected == is_undirected
+
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
