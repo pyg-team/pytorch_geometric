@@ -114,8 +114,8 @@ def assert_sorted(func):
 class EdgeIndex(Tensor):
     r"""A COO :obj:`edge_index` tensor with additional (meta)data attached.
 
-    :class:`EdgeIndex` is a :pytorch:`null` class:`torch.Tensor`, that holds an
-    :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
+    :class:`EdgeIndex` is a :pytorch:`null` :class:`torch.Tensor`, that holds
+    an :obj:`edge_index` representation of shape :obj:`[2, num_edges]`.
     Edges are given as pairwise source and destination node indices in sparse
     COO format.
 
@@ -141,7 +141,7 @@ class EdgeIndex(Tensor):
 
     .. code-block:: python
 
-        from torch_geometric.data import EdgeIndex
+        from torch_geometric import EdgeIndex
 
         edge_index = EdgeIndex(
             [[0, 1, 1, 2],
