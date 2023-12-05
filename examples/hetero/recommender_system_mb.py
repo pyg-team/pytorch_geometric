@@ -104,7 +104,6 @@ for edge_name in edge_names:
         for i, graph in enumerate(graphs):
             graph[edge_name][attr] = data_splits[i]
 
-
 BATCH_SIZE = 512
 
 train_dataloader = LinkNeighborLoader(
@@ -116,20 +115,20 @@ train_dataloader = LinkNeighborLoader(
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
 
 val_dataloader = LinkNeighborLoader(
-    data=val_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    data=val_data, num_neighbors=[-1, -1, -1], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       val_data[('user', 'rates',
                                 'movie')].edge_index),
-    edge_label_time=val_data[('user', 'rates', 'movie')].time,
-    batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
+    batch_size=BATCH_SIZE, shuffle=True,
+)
 
 test_dataloader = LinkNeighborLoader(
-    data=test_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    data=test_data, num_neighbors=[-1, -1, -1], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       test_data[('user', 'rates',
                                  'movie')].edge_index),
-    edge_label_time=test_data[('user', 'rates', 'movie')].time,
-    batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
+    batch_size=BATCH_SIZE, shuffle=True,
+)
 
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
@@ -164,13 +163,8 @@ class EdgeDecoder(torch.nn.Module):
         super().__init__()
         self.lin1 = Linear(2 * hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, 1)
-        self.user_to_item = Linear(hidden_channels, hidden_channels)
-        self.item_to_user = Linear(hidden_channels, hidden_channels)
 
-    def forward(self, z_dict, edge_label_index):
-        row, col = edge_label_index
-        u_to_i = self.user_to_item(z_dict['user'][row])
-        i_to_u = self.item_to_user(z_dict['movie'][col])
+    def forward(self, u_to_i, i_to_u):
 
         z = torch.cat([u_to_i, i_to_u], dim=-1)
 
@@ -187,6 +181,8 @@ class Model(torch.nn.Module):
         self.movie_emb = Embedding(num_movies, hidden_channels, device=device)
         self.encoder = GNNEncoder(hidden_channels, hidden_channels)
         self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
+        self.user_to_hidden = Linear(hidden_channels, hidden_channels)
+        self.item_to_hidden = Linear(hidden_channels, hidden_channels)
         self.decoder = EdgeDecoder(hidden_channels)
 
     def init_parameters(self):
@@ -200,7 +196,10 @@ class Model(torch.nn.Module):
         x_dict['movie'] = torch.cat(
             [self.movie_emb(movie_id), x_dict['movie']], dim=-1)
         z_dict = self.encoder(x_dict, edge_index_dict)
-        return self.decoder(z_dict, edge_label_index)
+        row, col = edge_label_index
+        u_to_i = self.user_to_hidden(z_dict['user'][row])
+        i_to_u = self.item_to_hidden(z_dict['movie'][col])
+        return self.decoder(u_to_i, i_to_u)
 
 
 model = Model(
@@ -220,7 +219,33 @@ def get_user_positive_items(edge_index):
             user_pos_items[user] = []
         user_pos_items[user].append(item)
     return user_pos_items
-    
+
+
+def write_recs(real_recs, val_data, val_user_pos_items):
+    movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
+    # load user and movie nodes
+
+    def load_node_csv(path, index_col):
+        df = pd.read_csv(path, index_col=index_col)
+        return df
+
+    movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
+    with open('recommendations.txt', 'w') as f:
+        for user in range(val_data['user'].x.size(0)):
+            try:
+                if user in val_user_pos_items:
+                    f.write('\nPred\n')
+                    f.write(json.dumps(
+                        movie_id_to_name.iloc[real_recs[user]].to_dict()))
+                    f.write('\nGT\n')
+                    f.write(
+                        json.dumps(
+                            movie_id_to_name.iloc
+                            [val_user_pos_items[user]].to_dict()))
+            except KeyError:
+                pass
+
+
 def get_embeddings(model, val_data):
     # Get user and movie embeddings from the model
     x_dict = {}
@@ -231,10 +256,10 @@ def get_embeddings(model, val_data):
     embs = model.encoder(x_dict,
                          val_data.edge_index_dict)
     movie_embs = embs['movie']
-    embs_user_to_movie = embs['user']
-    embs_user_to_movie = model.decoder.user_to_item(embs['user'])
-    movie_embs = model.decoder.item_to_user(embs['movie'])
+    embs_user_to_movie = model.user_to_hidden(embs['user'])
+    movie_embs = model.item_to_hidden(embs['movie'])
     return movie_embs, embs_user_to_movie
+
 
 def make_recommendations(model,
                          train_data,
@@ -271,42 +296,8 @@ def make_recommendations(model,
 
     # Let's write out the recommendations into a file
     if write_to_file:
-        movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
-        rating_path = osp.join(path, './raw/ml-latest-small/ratings.csv')
-        # load user and movie nodes
+        write_recs(real_recs, val_data, val_user_pos_items)
 
-        def load_node_csv(path, index_col):
-            df = pd.read_csv(path, index_col=index_col)
-            return df
-
-        movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
-        with open('recommendations.txt', 'w') as f:
-            for user in range(val_data['user'].x.size(0)):
-                try:
-                    if user in val_user_pos_items:
-                        f.write('\nPred\n')
-                        f.write(json.dumps(
-                            movie_id_to_name.iloc[real_recs[user]].to_dict()))
-                        f.write('\nGT\n')
-                        f.write(
-                            json.dumps(
-                                movie_id_to_name.iloc
-                                [val_user_pos_items[user]].to_dict()))
-                except KeyError:
-                    pass
-    # Obtain some metrics
-    hits = 0
-    user_hits = 0
-    for user in val_user_pos_items:
-        correct_preds = len(set(real_recs[user]).intersection(
-            set(val_user_pos_items[user])))
-        hits += correct_preds
-        user_hits += correct_preds > 0
-    
-    print(f"Total hits at top-{k} = {hits}")
-    print(
-        f"Total user hits at top-{k} = {user_hits}/{len(val_user_pos_items)}")
-    
     return real_recs
 
 
@@ -350,8 +341,6 @@ def train(train_dl, val_dl, val_data, epoch):
                      batch['user', 'movie'].edge_label_index)
         target = batch['user', 'movie'].edge_label
         loss = weighted_mse_loss(pred, target, weight)
-        # loss = torch.nn.functional.binary_cross_entropy_with_logits(
-        #                                           pred.view(-1), target)
         loss.backward()
         optimizer.step()
         pbar.set_postfix({'loss': loss.item()})
@@ -369,7 +358,7 @@ def train(train_dl, val_dl, val_data, epoch):
 
 
 @torch.no_grad()
-def test(dl, desc='val'):
+def evaluate(dl, desc='val'):
     model.eval()
     rmse = 0
     t0 = time.time()
@@ -380,8 +369,8 @@ def test(dl, desc='val'):
         batch = randomize_inputs(batch)
         pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
                      batch.edge_index_dict,
-                     batch['user', 'movie'].edge_label_index)  
-                     # .sigmoid().view(-1).cpu()
+                     batch['user', 'movie'].edge_label_index)
+        # .sigmoid().view(-1).cpu()
         pred = pred.clamp(min=0, max=5)
         target = batch['user', 'movie'].edge_label.float()
         preds.append(pred)
@@ -399,41 +388,46 @@ def test(dl, desc='val'):
         print(f'{desc} time = {val_time}')
     return float(rmse), roc, acc
 
-def compute_metrics(real_recs, val_dataloader, val_data, k, desc):
-    metric = LinkPredPrecision(k)
+
+def compute_metrics(real_recs, val_data, k, desc):
+    # Convert real_recs from a list to tensor
     real_recs_list = []
     [real_recs_list.append(rec) for id, rec in real_recs.items()]
     rec_tensor = torch.tensor(real_recs_list)
+    node_id = val_data['user'].n_id
 
-    for batch in val_dataloader:
-        node_id = batch['user'].n_id
-        edge_label_index = batch['user', 'movie'].edge_label_index
-        mask = torch.isin(edge_label_index[0], node_id)
-        y_batch, y_index = edge_label_index[:, mask]
-        arange = torch.empty(batch['user'].x.size(0), dtype=node_id.dtype)
-        arange[node_id] = torch.arange(node_id.numel())
-        y_batch = arange[y_batch]
-        metric.update(rec_tensor[node_id], (y_batch, y_index))
-    return metric.compute()
+    # Use torch_geometric.nn.metrics
+    precision = LinkPredPrecision(k)
+    precision.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
+    return precision.compute()
+
 
 EPOCHS = args.epochs
 for epoch in range(0, EPOCHS):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader,
                  val_data=val_data, epoch=epoch)
-    val_rmse = test(val_dataloader, 'val')
+
+    # Get results on val split
+    val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
     real_recs = make_recommendations(model, train_data, val_data, args.k, False)
-    val_precision_at_k = compute_metrics(real_recs, val_dataloader, val_data, args.k, 'val prec@k')
+    val_precision_at_k = compute_metrics(
+        real_recs, val_data, args.k, 'val prec@k')
     print(
         f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
-        f'Val RMSE: {val_rmse[0]:.4f}, Val ROC: {val_rmse[1]:.4f} Val Acc: {val_rmse[2]:.4f}')
-    print(f'Val precision@{args.k} = {val_precision_at_k:.3E}')
+        f' Val RMSE: {val_rmse[0]:.4f}, Val ROC: {val_rmse[1]:.4f},'
+        f' Val Acc: {val_rmse[2]:.4f},'
+        f' Val precision@{args.k} = {val_precision_at_k:.3E}')
 
-# Get results on test split
-test_rmse = test(test_dataloader, 'test')
-print(f'test RMSE: {test_rmse[0]:.4f}, test ROC: {test_rmse[1]:.4f} test Acc: {test_rmse[2]:.4f}')
-real_recs = make_recommendations(model, train_data, test_data, args.k, False)
-test_precision_at_k = compute_metrics(real_recs, test_dataloader, test_data, args.k, 'test prec@k')
-print(f'test precision@{args.k} = {test_precision_at_k:.3E}')
+    # Get results on test split
+    test_rmse = evaluate(test_dataloader, 'test')  # Eval link prediction perf
+    real_recs = make_recommendations(model, train_data, test_data, args.k, True)
+    test_precision_at_k = compute_metrics(
+        real_recs, test_data, args.k, 'test prec@k')
+    print(
+        f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
+        f' Test RMSE: {test_rmse[0]:.4f}, Test ROC: {test_rmse[1]:.4f},'
+        f' Test Acc: {test_rmse[2]:.4f},'
+        f' Test precision@{args.k} = {test_precision_at_k:.3E}')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
