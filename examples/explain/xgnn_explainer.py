@@ -148,6 +148,10 @@ class GraphGenerator(torch.nn.Module):
     def __init__(self, num_node_features, num_candidate_node_types):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
+        print("debug: GraphGenerator init")
+        print("num_node_features", num_node_features)
+        print("num_candidate_node_types", num_candidate_node_types)
+        print("debug: GraphGenerator init done")
         self.gcn_layers = torch.nn.ModuleList([
             GCNConv(num_node_features, 16),
             GCNConv(16, 24),
@@ -174,8 +178,6 @@ class GraphGenerator(torch.nn.Module):
 
         # run through GCN layers
         for gcn_layer in self.gcn_layers:
-            print("node_features shape:", node_features.shape)
-            print("graph_state.edge_index shape:", graph_state.edge_index.shape)
             node_features = gcn_layer(node_features, graph_state.edge_index)
         
         # get start node probabilities and mask out candidates
@@ -184,26 +186,46 @@ class GraphGenerator(torch.nn.Module):
         candidate_set_mask = torch.ones_like(start_node_probs)
         candidate_set_mask[candidate_set] = 0
         start_node_probs = start_node_probs * candidate_set_mask
-
+        
+        print("start_node_probs", start_node_probs)
+        
         # change 0 probabilities to very small number
         start_node_probs[start_node_probs == 0] = 1e-10
+        start_node_probs = start_node_probs.squeeze()
 
         # sample start node
         start_node = torch.distributions.Categorical(start_node_probs).sample()
+        
+        print("start_node", start_node)
 
         # get end node probabilities and mask out start node
-        combined_features = torch.cat((node_features, node_features[start_node]), dim=0)
+        combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
         end_node_probs = self.mlp_end_node(combined_features)
         end_node_probs[start_node] = 0
         
+        print("end_node_probs", end_node_probs)
+        
         # change 0 probabilities to very small number
         end_node_probs[end_node_probs == 0] = 1e-10
+        end_node_probs = end_node_probs.squeeze()
+        
         
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
         
-        print("graph generator output:", (start_node, end_node), graph_state)
-        return (start_node, end_node), graph_state
+        # update graph state
+        print("end_node", end_node)
+        
+        if end_node >= graph_state.x.shape[0]: 
+            graph_state.x = torch.cat((graph_state.x, torch.tensor(1)), dim=0)
+        
+        new_edge = torch.tensor([[start_node], [end_node]])
+        graph_state.edge_index = torch.cat((graph_state.edge_index, new_edge), dim=1)
+        print("graph_state", graph_state)
+        print("graph_state.edge_index", graph_state.edge_index)
+        print("graph_state.x", graph_state.x)
+        
+        return graph_state
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
@@ -276,15 +298,18 @@ class RLGenExplainer(XGNNExplainer):
             sampled_indices = perm[:n]
             x = self.candidate_set[sampled_indices].view(n, 1)  # reshaping to [n, num_features]
             edge_index = torch.tensor([[], []], dtype=torch.long)
+            print("edge_index", edge_index)
             initial_state = Data(x=x, edge_index=edge_index)
 
             current_graph_state = initial_state
 
-            print("candidate_set (file:  examples/explain/xgnn_explainer.py)", self.candidate_set.shape)
+            print("current_graph_state", current_graph_state)
             
             for step in range(self.max_steps):
                 action, new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
-                print(action)
+                print("action", action)
+                print("new_graph_state", new_graph_state)
+                
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
                 
                 start_node_log_prob = torch.log(action[0].probs[action[0].sample().item()])
