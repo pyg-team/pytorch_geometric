@@ -760,7 +760,7 @@ class EdgeIndex(Tensor):
 
     def matmul(
         self,
-        other: Union['EdgeIndex', Tensor],
+        other: Union[Tensor, 'EdgeIndex'],
         input_value: Optional[Tensor] = None,
         other_value: Optional[Tensor] = None,
         reduce: ReduceType = 'sum',
@@ -1245,7 +1245,7 @@ def _spmm(
 ) -> Tensor:
 
     if reduce not in get_args(ReduceType):
-        raise ValueError(f"`reduce='{reduce}'` not yet supported")
+        raise ValueError(f"`reduce='{reduce}'` is not a valid reduction")
 
     if not transpose and not input.is_sorted_by_row:
         cls_name = input.__class__.__name__
