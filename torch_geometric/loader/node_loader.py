@@ -5,12 +5,9 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.mixin import (
-    AffinityMixin,
-    MemMixin,
-    MultithreadMixin,
-)
+from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
+    filter_custom_hetero_store,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -26,9 +23,7 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputNodes, OptTensor
 
 
-class NodeLoader(
-    torch.utils.data.DataLoader, AffinityMixin, MultithreadMixin, MemMixin
-):
+class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
     r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -83,7 +78,6 @@ class NodeLoader(
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -99,15 +93,14 @@ class NodeLoader(
     ):
         if filter_per_worker is None:
             filter_per_worker = infer_filter_per_worker(data)
-        # TODO: Infer persisten_workers if 'spawn' => keep alive
+
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes, input_id = get_input_nodes(
-            data, input_nodes, input_id
-        )
+            data, input_nodes, input_id)
 
         self.data = data
         self.node_sampler = node_sampler
@@ -124,11 +117,7 @@ class NodeLoader(
         )
 
         iterator = range(input_nodes.size(0))
-        super().__init__(
-            iterator,
-            collate_fn=self.collate_fn,
-            **kwargs,
-        )
+        super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
     def __call__(
         self,
@@ -165,31 +154,25 @@ class NodeLoader(
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
                 data = filter_data(  #
-                    self.data,
-                    out.node,
-                    out.row,
-                    out.col,
-                    out.edge,
-                    self.node_sampler.edge_permutation,
-                )
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
-                edge_index = torch.stack([out.row, out.col])
-                data = Data(edge_index=edge_index)
-
-                # TODO Respect `custom_cls`.
-                # TODO Integrate features.
 
                 # Hack to detect whether we are in a distributed setting.
-                if (
-                    self.node_sampler.__class__.__name__
-                    == 'DistNeighborSampler'
-                ):
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
+                    edge_index = torch.stack([out.row, out.col])
+                    data = Data(edge_index=edge_index)
                     # Metadata entries are populated in
                     # `DistributedNeighborSampler._collate_fn()`
                     data.x = out.metadata[-3]
                     data.y = out.metadata[-2]
                     data.edge_attr = out.metadata[-1]
+                else:
+                    data = filter_custom_store(  #
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -209,39 +192,22 @@ class NodeLoader(
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
                 data = filter_hetero_data(  #
-                    self.data,
-                    out.node,
-                    out.row,
-                    out.col,
-                    out.edge,
-                    self.node_sampler.edge_permutation,
-                )
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
-                if (
-                    self.node_sampler.__class__.__name__
-                    == 'DistNeighborSampler'
-                ):
-                    import torch_geometric.distributed as dist
 
+                # Hack to detect whether we are in a distributed setting.
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
+                    import torch_geometric.distributed as dist
                     data = dist.utils.filter_dist_store(
-                        *self.data,
-                        out.node,
-                        out.row,
-                        out.col,
-                        out.edge,
-                        self.custom_cls,
-                        out.metadata,
-                    )
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls, out.metadata)
                 else:
-                    data = filter_custom_store(  #
-                        *self.data,
-                        out.node,
-                        out.row,
-                        out.col,
-                        out.edge,
-                        self.custom_cls,
-                    )
+                    data = filter_custom_hetero_store(  #
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
@@ -265,10 +231,8 @@ class NodeLoader(
             data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
-            raise TypeError(
-                f"'{self.__class__.__name__}'' found invalid "
-                f"type: '{type(out)}'"
-            )
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)
 
