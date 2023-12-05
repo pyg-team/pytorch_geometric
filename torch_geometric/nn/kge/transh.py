@@ -3,8 +3,10 @@ import math
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
+from typing import Tuple
 
 
 class TransH(KGEModel):
@@ -75,12 +77,12 @@ class TransH(KGEModel):
 
         head = self.node_emb(head_index)
         tail = self.node_emb(tail_index)
-        
+
         w_rel = F.normalize(self.w_rel_emb(rel_type), p=self.p_norm)
         d_rel = self.d_rel_emb(rel_type)
 
-        proj_head = head - w_rel.T * head * w_rel
-        proj_tail = tail - w_rel.T * tail * w_rel
+        proj_head = head - torch.matmul(torch.matmul(head, w_rel.T), w_rel)
+        proj_tail = tail - torch.matmul(torch.matmul(tail, w_rel.T), w_rel)
 
         proj_head = F.normalize(proj_head, p=self.p_norm, dim=-1)
         proj_tail = F.normalize(proj_tail, p=self.p_norm, dim=-1)
@@ -94,7 +96,8 @@ class TransH(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-
+        
+        # TODO: check page 4 for adding soft constraints to loss
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 
@@ -104,3 +107,39 @@ class TransH(KGEModel):
             target=torch.ones_like(pos_score),
             margin=self.margin,
         )
+    
+    # TODO: change function name to random_sample after verifying it works
+    def sample_golden_triplets(
+            self, 
+            head_index: Tensor, 
+            rel_type: Tensor, 
+            tail_index: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        
+        hpt = head_index.numel() // tail_index.numel()  # average number of head entities per tail entity
+        tph = tail_index.numel() // head_index.numel() # average number of tail entities per head entity
+        
+        print('head_index size:', head_index.size)
+        
+        #bernoulli = torch.bernoulli(input=tph / (tph + hpt), out=)
+    
+        # if bernoulli:
+        #     # replace head
+        #     pass
+        # else:
+        #     # replace tail
+        #     pass
+
+        # FROM ORIGINAL RANDOM SAMPLE
+        # # Random sample either `head_index` or `tail_index` (but not both):
+        # num_negatives = head_index.numel() // 2
+        # rnd_index = torch.randint(self.num_nodes, head_index.size(),
+        #                           device=head_index.device)
+
+        # head_index = head_index.clone()
+        # head_index[:num_negatives] = rnd_index[:num_negatives]
+        # tail_index = tail_index.clone()
+        # tail_index[num_negatives:] = rnd_index[num_negatives:]
+
+        return head_index, rel_type, tail_index
+
