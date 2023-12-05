@@ -81,7 +81,7 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
         # For "min" and "max" reduction, we prefer `scatter_reduce_` on CPU or
         # in case the input does not require gradients:
-        if reduce == 'min' or reduce == 'max':
+        if reduce in ['min', 'max', 'amin', 'amax']:
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
                     or not src.is_cuda or not src.requires_grad):
 
@@ -92,10 +92,11 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
-                    dim, index, src, reduce=f'a{reduce}', include_self=False)
+                    dim, index, src, reduce=f'a{reduce[-3:]}',
+                    include_self=False)
 
             return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
-                                         reduce=reduce)
+                                         reduce=reduce[-3:])
 
         # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
         if reduce == 'mul':
@@ -138,8 +139,8 @@ else:  # pragma: no cover
                 minimal-sized output tensor according to
                 :obj:`index.max() + 1`. (default: :obj:`None`)
             reduce (str, optional): The reduce operation (:obj:`"sum"`,
-                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
-                (default: :obj:`"sum"`)
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
+                :obj:`"any"`). (default: :obj:`"sum"`)
         """
         if reduce == 'any':
             dim = src.dim() + dim if dim < 0 else dim
@@ -154,6 +155,10 @@ else:  # pragma: no cover
 
         if not torch_geometric.typing.WITH_TORCH_SCATTER:
             raise ImportError("'scatter' requires the 'torch-scatter' package")
+
+        if reduce == 'amin' or reduce == 'amax':
+            reduce = reduce[-3:]
+
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)
 

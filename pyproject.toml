@@ -75,7 +75,7 @@ full = [
     "numba",
     "sympy",
     "pandas",
-    "captum",
+    "captum<0.7.0",
     "rdflib",
     "trimesh",
     "networkx",

@@ -18,19 +18,6 @@ Data Objects
      {{ name }}
    {% endfor %}
 
-Tensor Objects
---------------
-
-.. currentmodule:: torch_geometric.data
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated
-
-   {% for name in torch_geometric.data.tensor_classes %}
-     {{ name }}
-   {% endfor %}
-
 Remote Backend Interfaces
 -------------------------
 
