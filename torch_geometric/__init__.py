@@ -12,6 +12,7 @@ import torch_geometric.metrics
 from .seed import seed_everything
 from .home import get_home_dir, set_home_dir
 from .compile import compile
+from .isinstance import is_torch_instance
 from .debug import is_debug_enabled, debug, set_debug
 from .experimental import (is_experimental_mode_enabled, experimental_mode,
                            set_experimental_mode)
@@ -27,6 +28,7 @@ __all__ = [
     'get_home_dir',
     'set_home_dir',
     'compile',
+    'is_torch_instance',
     'is_debug_enabled',
     'debug',
     'set_debug',

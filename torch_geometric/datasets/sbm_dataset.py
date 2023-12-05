@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from typing import Callable, List, Optional, Union
 
 import numpy as np
@@ -34,6 +34,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
             in an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed
             before being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         **kwargs (optional): The keyword arguments that are passed down to the
             :meth:`sklearn.datasets.make_classification` method for drawing
             node features.
@@ -47,6 +49,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
         **kwargs,
     ):
         if not isinstance(block_sizes, torch.Tensor):
@@ -67,12 +70,13 @@ class StochasticBlockModelDataset(InMemoryDataset):
         }
         self.kwargs.update(kwargs)
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.__class__.__name__, 'processed')
+        return osp.join(self.root, self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self) -> str:

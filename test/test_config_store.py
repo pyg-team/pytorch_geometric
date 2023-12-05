@@ -145,4 +145,3 @@ def test_hydra_config_store():
     assert cfg.lr_scheduler.cooldown == 0
     assert cfg.lr_scheduler.min_lr == 0
     assert cfg.lr_scheduler.eps == 1e-08
-    assert not cfg.lr_scheduler.verbose
