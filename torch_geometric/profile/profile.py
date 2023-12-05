@@ -54,7 +54,7 @@ def profileit(device: str):  # pragma: no cover
 
     Args:
         device (str): Target device for profiling. Options are:
-        :obj:`cuda` and obj:`xpu`.
+            :obj:`cuda` and obj:`xpu`.
 
     .. code-block:: python
 
