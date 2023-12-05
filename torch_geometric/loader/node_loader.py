@@ -1,15 +1,14 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
-import logging
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.mixin import (
     AffinityMixin,
+    MemMixin,
     MultithreadMixin,
-    MembindMixin,
 )
 from torch_geometric.loader.utils import (
     filter_custom_store,
@@ -25,12 +24,10 @@ from torch_geometric.sampler import (
     SamplerOutput,
 )
 from torch_geometric.typing import InputNodes, OptTensor
-import os, psutil
 
 
-class NodeLoader(
-    torch.utils.data.DataLoader, AffinityMixin, MultithreadMixin, MembindMixin
-):
+class NodeLoader(torch.utils.data.DataLoader, AffinityMixin, MultithreadMixin,
+                 MemMixin):
     r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -85,7 +82,6 @@ class NodeLoader(
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -108,8 +104,7 @@ class NodeLoader(
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes, input_id = get_input_nodes(
-            data, input_nodes, input_id
-        )
+            data, input_nodes, input_id)
 
         self.data = data
         self.node_sampler = node_sampler
@@ -117,11 +112,6 @@ class NodeLoader(
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
-        self.worker_threads = (
-            torch.get_num_threads()
-            if torch.multiprocessing.get_context()._name == 'spawn'
-            else 1
-        )
 
         self.input_data = NodeSamplerInput(
             input_id=input_id,
@@ -134,13 +124,8 @@ class NodeLoader(
         super().__init__(
             iterator,
             collate_fn=self.collate_fn,
-            # worker_init_fn=self.init_fn,
+            worker_init_fn=self.init_fn,
             **kwargs,
-        )
-
-    def init_fn(self, worker_id):
-        logging.debug(
-            f"woker {worker_id} process is using {round((psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2),2)} MB of memory"
         )
 
     def __call__(
@@ -194,10 +179,8 @@ class NodeLoader(
                 # TODO Integrate features.
 
                 # Hack to detect whether we are in a distributed setting.
-                if (
-                    self.node_sampler.__class__.__name__
-                    == 'DistNeighborSampler'
-                ):
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
                     # Metadata entries are populated in
                     # `DistributedNeighborSampler._collate_fn()`
                     data.x = out.metadata[-3]
@@ -231,10 +214,8 @@ class NodeLoader(
                 )
 
             else:  # Tuple[FeatureStore, GraphStore]
-                if (
-                    self.node_sampler.__class__.__name__
-                    == 'DistNeighborSampler'
-                ):
+                if (self.node_sampler.__class__.__name__ ==
+                        'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
 
                     data = dist.utils.filter_dist_store(
@@ -278,10 +259,8 @@ class NodeLoader(
             data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
-            raise TypeError(
-                f"'{self.__class__.__name__}'' found invalid "
-                f"type: '{type(out)}'"
-            )
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)
 

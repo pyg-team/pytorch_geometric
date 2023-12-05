@@ -5,7 +5,11 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.mixin import AffinityMixin
+from torch_geometric.loader.mixin import (
+    AffinityMixin,
+    MemMixin,
+    MultithreadMixin,
+)
 from torch_geometric.loader.utils import (
     filter_custom_hetero_store,
     filter_custom_store,
@@ -24,7 +28,8 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputEdges, OptTensor
 
 
-class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
+class LinkLoader(torch.utils.data.DataLoader, AffinityMixin, MultithreadMixin,
+                 MemMixin):
     r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -221,11 +226,15 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
                 data = filter_data(  #
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                    self.data,
+                    out.node,
+                    out.row,
+                    out.col,
+                    out.edge,
+                    self.link_sampler.edge_permutation,
+                )
 
             else:  # Tuple[FeatureStore, GraphStore]
-
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
@@ -238,8 +247,13 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                     data.edge_attr = out.metadata[-1]
                 else:
                     data = filter_custom_store(  #
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                        *self.data,
+                        out.node,
+                        out.row,
+                        out.col,
+                        out.edge,
+                        self.custom_cls,
+                    )
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -271,22 +285,38 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
                 data = filter_hetero_data(  #
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                    self.data,
+                    out.node,
+                    out.row,
+                    out.col,
+                    out.edge,
+                    self.link_sampler.edge_permutation,
+                )
 
             else:  # Tuple[FeatureStore, GraphStore]
-
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
+
                     data = dist.utils.filter_dist_store(
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls, out.metadata)
+                        *self.data,
+                        out.node,
+                        out.row,
+                        out.col,
+                        out.edge,
+                        self.custom_cls,
+                        out.metadata,
+                    )
                 else:
                     data = filter_custom_hetero_store(  #
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                        *self.data,
+                        out.node,
+                        out.row,
+                        out.col,
+                        out.edge,
+                        self.custom_cls,
+                    )
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:

@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import psutil
 import torch
+
 from torch_geometric.data.hetero_data import HeteroData
 
 
@@ -36,27 +37,23 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
             for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
                 cpu_id = int(os.path.basename(cpu_dir)[3:])
                 if cpu_id > 0:
-                    with open(
-                        os.path.join(cpu_dir, 'online')
-                    ) as core_online_file:
+                    with open(os.path.join(cpu_dir,
+                                           'online')) as core_online_file:
                         core_online = int(
-                            core_online_file.read().splitlines()[0]
-                        )
+                            core_online_file.read().splitlines()[0])
                 else:
                     core_online = 1  # cpu0 is always online (special case)
                 if core_online == 1:
-                    with open(
-                        os.path.join(cpu_dir, 'topology', 'core_id')
-                    ) as core_id_file:
+                    with open(os.path.join(cpu_dir, 'topology',
+                                           'core_id')) as core_id_file:
                         core_id = int(core_id_file.read().strip())
                         if core_id in thread_siblings:
                             thread_siblings[core_id].append(cpu_id)
                         else:
                             thread_siblings[core_id] = [cpu_id]
 
-            nodes[numa_node_id] = sorted(
-                [(k, sorted(v)) for k, v in thread_siblings.items()]
-            )
+            nodes[numa_node_id] = sorted([(k, sorted(v))
+                                          for k, v in thread_siblings.items()])
 
     except (OSError, ValueError, IndexError, IOError):
         Warning('Failed to read NUMA info')
@@ -69,7 +66,6 @@ class WorkerInitWrapper:
     r"""Wraps the :attr:`worker_init_fn` argument for
     :class:`torch.utils.data.DataLoader` workers.
     """
-
     def __init__(self, func):
         self.func = func
 
@@ -78,12 +74,30 @@ class WorkerInitWrapper:
             self.func(worker_id)
 
 
-class MultithreadMixin:
-    r"""A context manager to enable multithreading in each dataloder worker
-    subprocess (sampler).
-    It changes the default value of threads used in the sampler from 1 to `worker_threads`
+class MemMixin:
+    r"""A context manager to enable logging of dataloder workers
+    memory consumption.
     """
+    def mem_init_fn(self, worker_id):
+        logging.debug(
+            f"woker {worker_id} process is using {round((psutil.Process(                os.getpid()).memory_info().rss / 1024 ** 2),2)} MB of memory"
+        )
+        self.worker_init_fn_old(worker_id)
 
+    @contextmanager
+    def enable_memory_log(self):
+        self.worker_init_fn_old = WorkerInitWrapper(self.worker_init_fn)
+        try:
+            self.worker_init_fn = self.mem_init_fn
+            yield
+        finally:
+            self.worker_init_fn = self.worker_init_fn_old
+
+
+class MultithreadMixin:
+    r"""A context manager to enable multithreading in dataloder workers.
+    It changes the default value of threads used in the sampler from 1 to `worker_threads`.
+    """
     def mt_init_fn(self, worker_id):
         try:
             torch.set_num_threads(int(self.worker_threads))
@@ -93,42 +107,46 @@ class MultithreadMixin:
 
     @contextmanager
     def enable_multithreading(
-        self, worker_threads: Optional[int] = torch.get_num_threads() / 2
-    ):
+            self, worker_threads: Optional[int] = torch.get_num_threads() / 2):
         r"""Enables multithreading in worker subprocess.
 
         Args:
-            worker_threads ([int], optional): Number of cores available for sampling.
-                (default: : `torch.get_num_threads()/2`
-                half of all avaialbe CPU cores )
+            worker_threads ([int], optional): Number of cores for sampling.
+            By defualt it uses half of all avaialbe CPU cores
+            (default: : `torch.get_num_threads() / 2`)
+
+        .. code-block:: python
+        def run():
+            loader = NeigborLoader(data, num_workers=3)
+            with loader.enable_multithreading(10):
+                for batch in loader:
+                    pass
+        if if __name__ == '__main__':
+            torch.set_start_method('spawn')
+            run()
         """
         self.worker_threads = worker_threads
-        nthreads_old = (
-            torch.get_num_threads()
-        )  # 1 is torch Dataloader default value
+        nthreads_old = (torch.get_num_threads()
+                        )  # 1 is torch Dataloader default value
         self.worker_init_fn_old = WorkerInitWrapper(self.worker_init_fn)
 
         if not self.num_workers > 0:
             raise ValueError(
                 f"'enable_multithread_sampling' should be used with at least one "
-                f"worker (got {self.num_workers})"
-            )
+                f"worker (got {self.num_workers})")
         if worker_threads > torch.get_num_threads():
             raise ValueError(
                 f"'worker_threads' should be smaller than the total available number of threads "
-                f"(max is {torch.get_num_threads()} got {worker_threads})"
-            )
+                f"(max is {torch.get_num_threads()} got {worker_threads})")
         if torch.multiprocessing.get_context()._name != 'spawn':
             raise ValueError(
                 f"'enable_multithread_sampling' can only be used with 'spawn' multiprocessing context "
-                f"(got {torch.multiprocessing.get_context()._name})"
-            )
+                f"(got {torch.multiprocessing.get_context()._name})")
 
         try:
             self.worker_init_fn = self.mt_init_fn
             logging.debug(
-                f"Using {self.worker_threads} threads in each sampling worker"
-            )
+                f"Using {self.worker_threads} threads in each sampling worker")
             yield
         finally:
             torch.set_num_threads(nthreads_old)
@@ -152,33 +170,31 @@ class AffinityMixin:
 
     .. warning::
 
-        To correctly affinitize compute threads (*i.e.* with OMP), please make
-        sure that you exclude :obj:`loader_cores` from the list of cores
-        available for the main process.
+        To correctly affinitize compute threads (*i.e.* with KMP_AFFINITY),
+        please make sure that you exclude :obj:`loader_cores` from the
+        list of cores available for the main process.
         This will cause core oversubsription and exacerbate performance.
 
     .. code-block:: python
-
         loader = NeigborLoader(data, num_workers=3)
         with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
             for batch in loader:
                 pass
     """
-
     def aff_init_fn(self, worker_id):
         try:
             worker_cores = self.loader_cores[worker_id]
             if not isinstance(worker_cores, List):
                 worker_cores = [worker_cores]
 
-            torch.set_num_threads(len(worker_cores))
+            if torch.multiprocessing.get_context()._name == 'spawn':
+                torch.set_num_threads(len(worker_cores))
+
             psutil.Process().cpu_affinity(worker_cores)
 
         except IndexError:
-            raise ValueError(
-                f"Cannot use CPU affinity for worker ID "
-                f"{worker_id} on CPU {self.loader_cores}"
-            )
+            raise ValueError(f"Cannot use CPU affinity for worker ID "
+                             f"{worker_id} on CPU {self.loader_cores}")
 
         self.worker_init_fn_old(worker_id)
 
@@ -192,31 +208,23 @@ class AffinityMixin:
         Args:
             loader_cores ([int], optional): List of CPU cores to which data
                 loader workers should affinitize to.
-                By default, will affinitize to cores starting at :obj:`cpu0`.
-                (default: :obj:`node0_cores[:num_workers]`)
+                By default, it will affinitize to numa0 cores. If used with 'spawn' multiprocessing context, it will automatically enable multithreading and use multiple cores per eachg sampler.
         """
         if not self.num_workers > 0:
             raise ValueError(
                 f"'enable_cpu_affinity' should be used with at least one "
-                f"worker (got {self.num_workers})"
-            )
+                f"worker (got {self.num_workers})")
         if loader_cores and len(loader_cores) != self.num_workers:
             raise ValueError(
                 f"The number of loader cores (got {len(loader_cores)}) "
                 f"in 'enable_cpu_affinity' should match with the number "
-                f"of workers (got {self.num_workers})"
-            )
+                f"of workers (got {self.num_workers})")
         if isinstance(self.data, HeteroData):
             raise UserWarning(
                 f"Due to conflicting parallelization methods it is not advised "
                 f"to use affinitization with hetero datasets. "
-                f"Use `enable_multithreading` for better performance. "
-            )
-        if torch.multiprocessing.get_context()._name != 'spawn':
-            raise ValueError(
-                f"'enable_cpu_affinity' should be used with 'spawn' multiprocessing context "
-                f"(got {torch.multiprocessing.get_context()._name})"
-            )
+                f"Use `enable_multithreading` for better performance. ")
+
         self.worker_init_fn_old = WorkerInitWrapper(self.worker_init_fn)
         affinity_old = psutil.Process().cpu_affinity()
         nthreads_old = torch.get_num_threads()
@@ -234,22 +242,25 @@ class AffinityMixin:
             if len(node0_cores) < self.num_workers:
                 raise ValueError(
                     f"More workers (got {self.num_workers}) than available "
-                    f"cores (got {len(node0_cores)})"
-                )
+                    f"cores (got {len(node0_cores)})")
 
             # Set default loader core IDs:
-            work_thread_pool = int(len(node0_cores) / self.num_workers)
-            loader_cores = [
-                list(range(work_thread_pool * i, work_thread_pool * (i + 1)))
-                for i in range(self.num_workers)
-            ]
+            if torch.multiprocessing.get_context()._name == 'spawn':
+                work_thread_pool = int(len(node0_cores) / self.num_workers)
+                loader_cores = [
+                    list(
+                        range(work_thread_pool * i,
+                              work_thread_pool * (i + 1)))
+                    for i in range(self.num_workers)
+                ]
+            else:
+                loader_cores = node0_cores[:self.num_workers]
+
         try:
             # Set CPU affinity for dataloader:
             self.worker_init_fn = self.aff_init_fn
-            logging.debug(
-                f"{self.num_workers} data loader workers are "
-                f"assigned to CPUs {loader_cores}"
-            )
+            logging.debug(f"{self.num_workers} data loader workers are "
+                          f"assigned to CPUs {loader_cores}")
             yield
         finally:
             # Restore omp_num_threads and cpu affinity:
