@@ -1,4 +1,5 @@
 import os.path as osp
+import os
 
 import torch
 import torch.nn.functional as F
@@ -115,7 +116,13 @@ args = {
 
 model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
                   output_dim=1, dropout=args['dropout'])
-model.load_state_dict(torch.load("examples\\explain\\best_model.pth", map_location=torch.device('cpu')))
+
+# depending on os change path
+path = "examples/explain/best_model.pth"
+if os.name == 'nt':
+    path = "examples\\explain\\best_model.pth"
+
+model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 model.to(device)
 
 def check_edge_representation(data):
@@ -142,21 +149,19 @@ class GraphGenerator(torch.nn.Module):
             torch.nn.Linear(32, 16),
             torch.nn.ReLU6(),
             torch.nn.Linear(16, num_candidate_node_types),
-            torch.nn.Softmax(dim=-1)
+            torch.nn.Softmax(dim=0)
         )
         self.mlp_end_node = torch.nn.Sequential(
             torch.nn.Linear(32, 24),
             torch.nn.ReLU6(),
             torch.nn.Linear(24, num_candidate_node_types),
-            torch.nn.Softmax(dim=-1)
+            torch.nn.Softmax(dim=0)
         )
 
     def forward(self, graph_state, candidate_set):
         # contatenate graph_state features with candidate_set features
         node_features_graph = graph_state.x
-        print("graph_state", graph_state)
-        print("node_features_graph", node_features_graph)
-        node_features = torch.cat((node_features_graph, candidate_set), dim=0)
+        node_features = torch.cat((node_features_graph, candidate_set), dim=0).float()
 
         # run through GCN layers
         for gcn_layer in self.gcn_layers:
@@ -166,9 +171,13 @@ class GraphGenerator(torch.nn.Module):
         
         # get start node probabilities and mask out candidates
         start_node_probs = self.mlp_start_node(node_features)
+
         candidate_set_mask = torch.ones_like(start_node_probs)
         candidate_set_mask[candidate_set] = 0
         start_node_probs = start_node_probs * candidate_set_mask
+
+        # change 0 probabilities to very small number
+        start_node_probs[start_node_probs == 0] = 1e-10
 
         # sample start node
         start_node = torch.distributions.Categorical(start_node_probs).sample()
@@ -256,6 +265,8 @@ class RLGenExplainer(XGNNExplainer):
             initial_state = Data(x=x, edge_index=edge_index)
 
             current_graph_state = initial_state
+
+            print("candidate_set (file:  examples/explain/xgnn_explainer.py)", self.candidate_set.shape)
             
             for step in range(self.max_steps):
                 action, new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
