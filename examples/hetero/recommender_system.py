@@ -1,199 +1,216 @@
-
-# import required modules
-import random
-from tqdm import tqdm
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+import argparse
+import os.path as osp
+import time
 
 import torch
-from torch import nn, optim, Tensor
+import torch.nn.functional as F
+from sklearn.model_selection import train_test_split
+from torch.nn import Linear, Embedding
+from tqdm import tqdm
+import copy
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+from torch_geometric.nn.pool import MIPSKNNIndex
+from ordered_set import OrderedSet
+from torch.nn import CrossEntropyLoss
+from sklearn.metrics import accuracy_score, roc_auc_score
+import pandas as pd
+import json
+import random
 
-from torch_sparse import SparseTensor, matmul
-
-from torch_geometric.utils import structured_negative_sampling
-from torch_geometric.data import download_url, extract_zip
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj
+import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
-import os.path as osp
+from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.nn import to_hetero
+from torch_geometric.nn.conv import SAGEConv
+from torch_geometric.nn.metrics import LinkPredPrecision
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"Using device {device}.")
+parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--epochs', type=int, default=50,
+                    help='number of epochs')
+parser.add_argument('-k', '--k', type=int, default=20,
+                    help='number of predictions per user to make')
+parser.add_argument('--visualize_emb', action='store_true',
+                    help='Epoch-wise visualization of embeddings')
+parser.set_defaults(visualize_emb=False)
+parser.add_argument('--profile_code', action='store_true',
+                    help='Display timing information')
+parser.set_defaults(profile_code=False)
+parser.add_argument('--use_weighted_loss', action='store_true',
+                    help='Whether to use weighted MSE loss.')
+args = parser.parse_args()
+
+print(args)
+random.seed(42)
+torch.manual_seed(42)
+
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
-edge_index = data[('user', 'rates', 'movie')].edge_index
 
-# Use only those edges whose ratings are higher than or equal to 4
+# Add user node features for message passing:
+data['user'].x = torch.eye(data['user'].num_nodes, device=device)
+del data['user'].num_nodes
+
+# Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
+data = T.ToUndirected()(data)
+del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
+
+# Add node ids
+data['movie'].n_id = torch.arange(0, data['movie'].x.size(0))
+data['user'].n_id = torch.arange(0, data['user'].x.size(0))
+
+# Use only edges that have high ratings (>=4)
 rating_threshold = 4
-edge_index = edge_index[:, torch.where(data[('user', 'rates', 'movie')].edge_label >= rating_threshold)[0]]
-data[('user','rates','movie')].edge_index = edge_index
+edge_names = [('user', 'rates', 'movie'), ('movie', 'rev_rates', 'user')]
+filter_indices = torch.where(data[edge_names[0]].edge_label >=
+                             rating_threshold)[0]
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        if len(data[edge_name][attr].size()) == 1:
+            data[edge_name][attr] = data[edge_name][attr][filter_indices]
+        else:
+            data[edge_name][attr] = data[edge_name][attr][:, filter_indices]
+
+# Perform a temporal link-level split into training, validation, and test edges:
+split_ratio = [0.8, 0.1, 0.1]
+assert sum(split_ratio) == 1
+_, perm = torch.sort(data[('user', 'rates', 'movie')].time)
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        if len(data[edge_name][attr].size()) == 1:
+            data[edge_name][attr] = data[edge_name][attr][perm]
+        else:
+            data[edge_name][attr] = data[edge_name][attr][:, perm]
+num_edges = len(data[edge_names[0]].time)
+
+splits = [int(i*num_edges) for i in split_ratio]
+splits[2] += num_edges-sum(splits)
+train_data = copy.deepcopy(data)
+val_data = copy.deepcopy(data)
+test_data = copy.deepcopy(data)
+graphs = [train_data, val_data, test_data]
+for edge_name in edge_names:
+    for attr in data[edge_name]:
+        dim = len(data[edge_name][attr].size()) - 1
+        data_splits = torch.split(data[edge_name][attr], splits, dim)
+        for i, graph in enumerate(graphs):
+            graph[edge_name][attr] = data_splits[i]
+
+BATCH_SIZE = 512
+
+train_dataloader = LinkNeighborLoader(
+    data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      train_data[('user', 'rates',
+                                  'movie')].edge_index),
+    edge_label_time=train_data[('user', 'rates', 'movie')].time,
+    batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
+
+val_dataloader = LinkNeighborLoader(
+    data=val_data, num_neighbors=[-1, -1, -1], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      val_data[('user', 'rates',
+                                'movie')].edge_index),
+    batch_size=BATCH_SIZE, shuffle=True,
+)
+
+test_dataloader = LinkNeighborLoader(
+    data=test_data, num_neighbors=[-1, -1, -1], neg_sampling_ratio=1,
+    edge_label_index=(('user', 'rates', 'movie'),
+                      test_data[('user', 'rates',
+                                 'movie')].edge_index),
+    batch_size=BATCH_SIZE, shuffle=True,
+)
+
+# We have an unbalanced dataset with many labels for rating 3 and 4, and very
+# few for 0 and 1. Therefore we use a weighted MSE loss.
+if args.use_weighted_loss:
+    weight = torch.bincount(data['user', 'movie'].edge_label)
+    weight = weight.max() / weight
+else:
+    weight = None
 
 
-num_users = data['user']['num_nodes']
-num_movies = data['movie'].x.size(0)
+def weighted_mse_loss(pred, target, weight=None):
+    weight = 1. if weight is None else weight[target].to(pred.dtype)
+    return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
 
 
-
-# split the edges of the graph using a 80/10/10 train/validation/test split
-# num_users, num_movies = len(user_mapping), len(movie_mapping)
-num_interactions = edge_index.shape[1]
-all_indices = [i for i in range(num_interactions)]
-
-train_indices, test_indices = train_test_split(
-    all_indices, test_size=0.2, random_state=1)
-val_indices, test_indices = train_test_split(
-    test_indices, test_size=0.5, random_state=1)
-
-train_edge_index = edge_index[:, train_indices]
-val_edge_index = edge_index[:, val_indices]
-test_edge_index = edge_index[:, test_indices]
-
-
-
-# convert edge indices into Sparse Tensors: https://pytorch-geometric.readthedocs.io/en/latest/notes/sparse_tensor.html
-train_sparse_edge_index = SparseTensor(row=train_edge_index[0], col=train_edge_index[1], sparse_sizes=(
-    num_users + num_movies, num_users + num_movies))
-val_sparse_edge_index = SparseTensor(row=val_edge_index[0], col=val_edge_index[1], sparse_sizes=(
-    num_users + num_movies, num_users + num_movies))
-test_sparse_edge_index = SparseTensor(row=test_edge_index[0], col=test_edge_index[1], sparse_sizes=(
-    num_users + num_movies, num_users + num_movies))
-
-
-
-# function which random samples a mini-batch of positive and negative samples
-def sample_mini_batch(batch_size, edge_index):
-    """Randomly samples indices of a minibatch given an adjacency matrix
-
-    Args:
-        batch_size (int): minibatch size
-        edge_index (torch.Tensor): 2 by N list of edges
-
-    Returns:
-        tuple: user indices, positive item indices, negative item indices
-    """
-    edges = structured_negative_sampling(edge_index)
-    edges = torch.stack(edges, dim=0)
-    indices = random.choices(
-        [i for i in range(edges[0].shape[0])], k=batch_size)
-    batch = edges[:, indices]
-    user_indices, pos_item_indices, neg_item_indices = batch[0], batch[1], batch[2]
-    return user_indices, pos_item_indices, neg_item_indices
-
-
-
-# defines LightGCN model
-class LightGCN(MessagePassing):
-    """LightGCN Model as proposed in https://arxiv.org/abs/2002.02126
-    """
-
-    def __init__(self, num_users, num_items, embedding_dim=64, K=3, add_self_loops=False):
-        """Initializes LightGCN Model
-
-        Args:
-            num_users (int): Number of users
-            num_items (int): Number of items
-            embedding_dim (int, optional): Dimensionality of embeddings. Defaults to 8.
-            K (int, optional): Number of message passing layers. Defaults to 3.
-            add_self_loops (bool, optional): Whether to add self loops for message passing. Defaults to False.
-        """
+class GNNEncoder(torch.nn.Module):
+    def __init__(self, hidden_channels, out_channels):
         super().__init__()
-        self.num_users, self.num_items = num_users, num_items
-        self.embedding_dim, self.K = embedding_dim, K
-        self.add_self_loops = add_self_loops
+        self.conv1 = SAGEConv((-1, -1), hidden_channels)
+        self.conv2 = SAGEConv((-1, -1), hidden_channels)
+        self.conv3 = SAGEConv((-1, -1), out_channels)
 
-        self.users_emb = nn.Embedding(
-            num_embeddings=self.num_users, embedding_dim=self.embedding_dim) # e_u^0
-        self.items_emb = nn.Embedding(
-            num_embeddings=self.num_items, embedding_dim=self.embedding_dim) # e_i^0
-
-        nn.init.normal_(self.users_emb.weight, std=0.1)
-        nn.init.normal_(self.items_emb.weight, std=0.1)
-
-    def forward(self, edge_index: SparseTensor):
-        """Forward propagation of LightGCN Model.
-
-        Args:
-            edge_index (SparseTensor): adjacency matrix
-
-        Returns:
-            tuple (Tensor): e_u_k, e_u_0, e_i_k, e_i_0
-        """
-        # compute \tilde{A}: symmetrically normalized adjacency matrix
-        edge_index_norm = gcn_norm(
-            edge_index, add_self_loops=self.add_self_loops)
-
-        emb_0 = torch.cat([self.users_emb.weight, self.items_emb.weight]) # E^0
-        embs = [emb_0]
-        emb_k = emb_0
-
-        # multi-scale diffusion
-        for i in range(self.K):
-            emb_k = self.propagate(edge_index_norm, x=emb_k)
-            embs.append(emb_k)
-
-        embs = torch.stack(embs, dim=1)
-        emb_final = torch.mean(embs, dim=1) # E^K
-
-        users_emb_final, items_emb_final = torch.split(
-            emb_final, [self.num_users, self.num_items]) # splits into e_u^K and e_i^K
-
-        # returns e_u^K, e_u^0, e_i^K, e_i^0
-        return users_emb_final, self.users_emb.weight, items_emb_final, self.items_emb.weight
-
-    def message(self, x_j: Tensor) -> Tensor:
-        return x_j
-
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        # computes \tilde{A} @ x
-        return matmul(adj_t, x)
-
-model = LightGCN(num_users, num_movies)
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
+        x = self.conv2(x, edge_index).relu()
+        x = self.conv3(x, edge_index)
+        return x
 
 
-def bpr_loss(users_emb_final, users_emb_0, pos_items_emb_final, pos_items_emb_0, neg_items_emb_final, neg_items_emb_0, lambda_val):
-    """Bayesian Personalized Ranking Loss as described in https://arxiv.org/abs/1205.2618
+class EdgeDecoder(torch.nn.Module):
+    def __init__(self, hidden_channels):
+        super().__init__()
+        self.lin1 = Linear(2 * hidden_channels, hidden_channels)
+        self.lin2 = Linear(hidden_channels, 1)
 
-    Args:
-        users_emb_final (torch.Tensor): e_u_k
-        users_emb_0 (torch.Tensor): e_u_0
-        pos_items_emb_final (torch.Tensor): positive e_i_k
-        pos_items_emb_0 (torch.Tensor): positive e_i_0
-        neg_items_emb_final (torch.Tensor): negative e_i_k
-        neg_items_emb_0 (torch.Tensor): negative e_i_0
-        lambda_val (float): lambda value for regularization loss term
+    def forward(self, u_to_i, i_to_u):
 
-    Returns:
-        torch.Tensor: scalar bpr loss value
-    """
-    reg_loss = lambda_val * (users_emb_0.norm(2).pow(2) +
-                             pos_items_emb_0.norm(2).pow(2) +
-                             neg_items_emb_0.norm(2).pow(2)) # L2 loss
+        z = torch.cat([u_to_i, i_to_u], dim=-1)
 
-    pos_scores = torch.mul(users_emb_final, pos_items_emb_final)
-    pos_scores = torch.sum(pos_scores, dim=-1) # predicted scores of positive samples
-    neg_scores = torch.mul(users_emb_final, neg_items_emb_final)
-    neg_scores = torch.sum(neg_scores, dim=-1) # predicted scores of negative samples
-
-    loss = -torch.mean(torch.nn.functional.softplus(pos_scores - neg_scores)) + reg_loss
-
-    return loss
+        z = self.lin1(z).relu()
+        z = self.lin2(z)
+        return z.view(-1)
+        # return z
 
 
+class Model(torch.nn.Module):
+    def __init__(self, num_users, num_movies, hidden_channels):
+        super().__init__()
+        self.user_emb = Embedding(num_users, hidden_channels, device=device)
+        self.movie_emb = Embedding(num_movies, hidden_channels, device=device)
+        self.encoder = GNNEncoder(hidden_channels, hidden_channels)
+        self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
+        self.user_to_hidden = Linear(hidden_channels, hidden_channels)
+        self.item_to_hidden = Linear(hidden_channels, hidden_channels)
+        self.decoder = EdgeDecoder(hidden_channels)
 
-# helper function to get N_u
+    def init_parameters(self):
+        torch.nn.init.xavier_uniform_(self.user_emb.weight, gain=1)
+        torch.nn.init.xavier_uniform_(self.movie_emb.weight, gain=1)
+
+    def forward(self, user_id, movie_id, x_dict, edge_index_dict,
+                edge_label_index):
+        x_dict['user'] = torch.cat(
+            [self.user_emb(user_id), x_dict['user']], dim=-1)
+        x_dict['movie'] = torch.cat(
+            [self.movie_emb(movie_id), x_dict['movie']], dim=-1)
+        z_dict = self.encoder(x_dict, edge_index_dict)
+        row, col = edge_label_index
+        u_to_i = self.user_to_hidden(z_dict['user'][row])
+        i_to_u = self.item_to_hidden(z_dict['movie'][col])
+        return self.decoder(u_to_i, i_to_u)
+
+
+model = Model(
+    num_users=data['user'].x.size(0),
+    num_movies=data['movie'].x.size(0),
+    hidden_channels=64).to(device)
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
+
+
 def get_user_positive_items(edge_index):
-    """Generates dictionary of positive items for each user
-
-    Args:
-        edge_index (torch.Tensor): 2 by N list of edges
-
-    Returns:
-        dict: dictionary of positive items for each user
-    """
+    # Get all the movies that the user has actually watched
     user_pos_items = {}
     for i in range(edge_index.shape[1]):
         user = edge_index[0][i].item()
@@ -204,297 +221,213 @@ def get_user_positive_items(edge_index):
     return user_pos_items
 
 
-# computes recall@K and precision@K
-def RecallPrecision_ATk(groundTruth, r, k):
-    """Computers recall @ k and precision @ k
-
-    Args:
-        groundTruth (list): list of lists containing highly rated items of each user
-        r (list): list of lists indicating whether each top k item recommended to each user
-            is a top k ground truth item or not
-        k (intg): determines the top k items to compute precision and recall on
-
-    Returns:
-        tuple: recall @ k, precision @ k
-    """
-    num_correct_pred = torch.sum(r, dim=-1)  # number of correctly predicted items per user
-    # number of items liked by each user in the test set
-    user_num_liked = torch.Tensor([len(groundTruth[i])
-                                  for i in range(len(groundTruth))])
-    recall = torch.mean(num_correct_pred / user_num_liked)
-    precision = torch.mean(num_correct_pred) / k
-    return recall.item(), precision.item()
-
-
-# computes NDCG@K
-def NDCGatK_r(groundTruth, r, k):
-    """Computes Normalized Discounted Cumulative Gain (NDCG) @ k
-
-    Args:
-        groundTruth (list): list of lists containing highly rated items of each user
-        r (list): list of lists indicating whether each top k item recommended to each user
-            is a top k ground truth item or not
-        k (int): determines the top k items to compute ndcg on
-
-    Returns:
-        float: ndcg @ k
-    """
-    assert len(r) == len(groundTruth)
-
-    test_matrix = torch.zeros((len(r), k))
-
-    for i, items in enumerate(groundTruth):
-        length = min(len(items), k)
-        test_matrix[i, :length] = 1
-    max_r = test_matrix
-    idcg = torch.sum(max_r * 1. / torch.log2(torch.arange(2, k + 2)), axis=1)
-    dcg = r * (1. / torch.log2(torch.arange(2, k + 2)))
-    dcg = torch.sum(dcg, axis=1)
-    idcg[idcg == 0.] = 1.
-    ndcg = dcg / idcg
-    ndcg[torch.isnan(ndcg)] = 0.
-    return torch.mean(ndcg).item()
-
-
-# wrapper function to get evaluation metrics
-def get_metrics(model, edge_index, exclude_edge_indices, k):
-    """Computes the evaluation metrics: recall, precision, and ndcg @ k
-
-    Args:
-        model (LighGCN): lightgcn model
-        edge_index (torch.Tensor): 2 by N list of edges for split to evaluate
-        exclude_edge_indices ([type]): 2 by N list of edges for split to discount from evaluation
-        k (int): determines the top k items to compute metrics on
-
-    Returns:
-        tuple: recall @ k, precision @ k, ndcg @ k
-    """
-    user_embedding = model.users_emb.weight
-    item_embedding = model.items_emb.weight
-
-    # get ratings between every user and item - shape is num users x num movies
-    rating = torch.matmul(user_embedding, item_embedding.T)
-
-    for exclude_edge_index in exclude_edge_indices:
-        # gets all the positive items for each user from the edge index
-        user_pos_items = get_user_positive_items(exclude_edge_index)
-        # get coordinates of all edges to exclude
-        exclude_users = []
-        exclude_items = []
-        for user, items in user_pos_items.items():
-            exclude_users.extend([user] * len(items))
-            exclude_items.extend(items)
-
-        # set ratings of excluded edges to large negative value
-        rating[exclude_users, exclude_items] = -(1 << 10)
-
-    # get the top k recommended items for each user
-    _, top_K_items = torch.topk(rating, k=k)
-
-    # get all unique users in evaluated split
-    users = edge_index[0].unique()
-
-    test_user_pos_items = get_user_positive_items(edge_index)
-
-    # convert test user pos items dictionary into a list
-    test_user_pos_items_list = [
-        test_user_pos_items[user.item()] for user in users]
-
-    # determine the correctness of topk predictions
-    r = []
-    for user in users:
-        ground_truth_items = test_user_pos_items[user.item()]
-        label = list(map(lambda x: x in ground_truth_items, top_K_items[user]))
-        r.append(label)
-    r = torch.Tensor(np.array(r).astype('float'))
-
-    recall, precision = RecallPrecision_ATk(test_user_pos_items_list, r, k)
-    ndcg = NDCGatK_r(test_user_pos_items_list, r, k)
-
-    return recall, precision, ndcg
-
-
-
-# wrapper function to evaluate model
-def evaluation(model, edge_index, sparse_edge_index, exclude_edge_indices, k, lambda_val):
-    """Evaluates model loss and metrics including recall, precision, ndcg @ k
-
-    Args:
-        model (LighGCN): lightgcn model
-        edge_index (torch.Tensor): 2 by N list of edges for split to evaluate
-        sparse_edge_index (sparseTensor): sparse adjacency matrix for split to evaluate
-        exclude_edge_indices ([type]): 2 by N list of edges for split to discount from evaluation
-        k (int): determines the top k items to compute metrics on
-        lambda_val (float): determines lambda for bpr loss
-
-    Returns:
-        tuple: bpr loss, recall @ k, precision @ k, ndcg @ k
-    """
-    # get embeddings
-    users_emb_final, users_emb_0, items_emb_final, items_emb_0 = model.forward(
-        sparse_edge_index)
-    edges = structured_negative_sampling(
-        edge_index, contains_neg_self_loops=False)
-    user_indices, pos_item_indices, neg_item_indices = edges[0], edges[1], edges[2]
-    users_emb_final, users_emb_0 = users_emb_final[user_indices], users_emb_0[user_indices]
-    pos_items_emb_final, pos_items_emb_0 = items_emb_final[
-        pos_item_indices], items_emb_0[pos_item_indices]
-    neg_items_emb_final, neg_items_emb_0 = items_emb_final[
-        neg_item_indices], items_emb_0[neg_item_indices]
-
-    loss = bpr_loss(users_emb_final, users_emb_0, pos_items_emb_final, pos_items_emb_0,
-                    neg_items_emb_final, neg_items_emb_0, lambda_val).item()
-
-    recall, precision, ndcg = get_metrics(
-        model, edge_index, exclude_edge_indices, k)
-
-    return loss, recall, precision, ndcg
-
-
-
-# define contants
-ITERATIONS = 10000
-BATCH_SIZE = 1024
-LR = 1e-3
-ITERS_PER_EVAL = 200
-ITERS_PER_LR_DECAY = 200
-K = 20
-LAMBDA = 1e-6
-
-
-
-model = model.to(device)
-model.train()
-
-optimizer = optim.Adam(model.parameters(), lr=LR)
-scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.95)
-
-edge_index = edge_index.to(device)
-train_edge_index = train_edge_index.to(device)
-train_sparse_edge_index = train_sparse_edge_index.to(device)
-
-val_edge_index = val_edge_index.to(device)
-val_sparse_edge_index = val_sparse_edge_index.to(device)
-
-
-
-# training loop
-train_losses = []
-val_losses = []
-
-for iter in range(ITERATIONS):
-    # forward propagation
-    users_emb_final, users_emb_0, items_emb_final, items_emb_0 = model(
-        train_sparse_edge_index)
-
-    # mini batching
-    user_indices, pos_item_indices, neg_item_indices = sample_mini_batch(
-        BATCH_SIZE, train_edge_index)
-    user_indices, pos_item_indices, neg_item_indices = user_indices.to(
-        device), pos_item_indices.to(device), neg_item_indices.to(device)
-    users_emb_final, users_emb_0 = users_emb_final[user_indices], users_emb_0[user_indices]
-    pos_items_emb_final, pos_items_emb_0 = items_emb_final[
-        pos_item_indices], items_emb_0[pos_item_indices]
-    neg_items_emb_final, neg_items_emb_0 = items_emb_final[
-        neg_item_indices], items_emb_0[neg_item_indices]
-
-    # loss computation
-    train_loss = bpr_loss(users_emb_final, users_emb_0, pos_items_emb_final,
-                          pos_items_emb_0, neg_items_emb_final, neg_items_emb_0, LAMBDA)
-
-    optimizer.zero_grad()
-    train_loss.backward()
-    optimizer.step()
-
-    if iter % ITERS_PER_EVAL == 0:
-        model.eval()
-        val_loss, recall, precision, ndcg = evaluation(
-            model, val_edge_index, val_sparse_edge_index, [train_edge_index], K, LAMBDA)
-        print(f"[Iteration {iter}/{ITERATIONS}] train_loss: {round(train_loss.item(), 5)}, val_loss: {round(val_loss, 5)}, val_recall@{K}: {round(recall, 5)}, val_precision@{K}: {round(precision, 5)}, val_ndcg@{K}: {round(ndcg, 5)}")
-        train_losses.append(train_loss.item())
-        val_losses.append(val_loss)
-        model.train()
-
-    if iter % ITERS_PER_LR_DECAY == 0 and iter != 0:
-        scheduler.step()
-
-
-
-
-# evaluate on test set
-model.eval()
-test_edge_index = test_edge_index.to(device)
-test_sparse_edge_index = test_sparse_edge_index.to(device)
-
-test_loss, test_recall, test_precision, test_ndcg = evaluation(
-            model, test_edge_index, test_sparse_edge_index, [train_edge_index, val_edge_index], K, LAMBDA)
-
-print(f"[test_loss: {round(test_loss, 5)}, test_recall@{K}: {round(test_recall, 5)}, test_precision@{K}: {round(test_precision, 5)}, test_ndcg@{K}: {round(test_ndcg, 5)}")
-
-
-# # Make New Recommendatios for a Given User
-
-
-movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
-rating_path = osp.join(path, './raw/ml-latest-small/ratings.csv')
-# load user and movie nodes
-def load_node_csv(path, index_col):
-    """Loads csv containing node information
-
-    Args:
-        path (str): path to csv file
-        index_col (str): column name of index column
-
-    Returns:
-        dict: mapping of csv row to node id
-    """
-    df = pd.read_csv(path, index_col=index_col)
-    mapping = {index: i for i, index in enumerate(df.index.unique())}
-    return mapping
-
-
-user_mapping = load_node_csv(rating_path, index_col='userId')
-movie_mapping = load_node_csv(movie_path, index_col='movieId')
-
-
-model.eval()
-df = pd.read_csv(movie_path)
-movieid_title = pd.Series(df.title.values,index=df.movieId).to_dict()
-movieid_genres = pd.Series(df.genres.values,index=df.movieId).to_dict()
-
-user_pos_items = get_user_positive_items(edge_index)
-
-
-
-def make_predictions(user_id, num_recs):
-    user = user_mapping[user_id]
-    e_u = model.users_emb.weight[user]
-    scores = model.items_emb.weight @ e_u
-
-    values, indices = torch.topk(scores, k=len(user_pos_items[user]) + num_recs)
-
-    movies = [index.cpu().item() for index in indices if index in user_pos_items[user]][:num_recs]
-    movie_ids = [list(movie_mapping.keys())[list(movie_mapping.values()).index(movie)] for movie in movies]
-    titles = [movieid_title[id] for id in movie_ids]
-    genres = [movieid_genres[id] for id in movie_ids]
-
-    print(f"Here are some movies that user {user_id} rated highly")
-    for i in range(num_recs):
-        print(f"title: {titles[i]}, genres: {genres[i]} ")
-
-    print(indices)
-    movies = [index.cpu().item() for index in indices if index not in user_pos_items[user]][:num_recs]
-    movie_ids = [list(movie_mapping.keys())[list(movie_mapping.values()).index(movie)] for movie in movies]
-    titles = [movieid_title[id] for id in movie_ids]
-    genres = [movieid_genres[id] for id in movie_ids]
-
-    print(f"Here are some suggested movies for user {user_id}")
-    for i in range(num_recs):
-        print(f"title: {titles[i]}, genres: {genres[i]} ")
-
-
-
-USER_ID = 1
-NUM_RECS = 2
-
-make_predictions(USER_ID, NUM_RECS)
+def write_recs(real_recs, val_data, val_user_pos_items):
+    movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
+    # load user and movie nodes
+
+    def load_node_csv(path, index_col):
+        df = pd.read_csv(path, index_col=index_col)
+        return df
+
+    movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
+    with open('recommendations.txt', 'w') as f:
+        for user in range(val_data['user'].x.size(0)):
+            try:
+                if user in val_user_pos_items:
+                    f.write('\nPred\n')
+                    f.write(json.dumps(
+                        movie_id_to_name.iloc[real_recs[user]].to_dict()))
+                    f.write('\nGT\n')
+                    f.write(
+                        json.dumps(
+                            movie_id_to_name.iloc
+                            [val_user_pos_items[user]].to_dict()))
+            except KeyError:
+                pass
+
+
+def get_embeddings(model, val_data):
+    # Get user and movie embeddings from the model
+    x_dict = {}
+    x_dict['user'] = torch.cat([model.user_emb(val_data['user'].n_id),
+                                val_data.x_dict['user']], dim=-1)
+    x_dict['movie'] = torch.cat([model.movie_emb(val_data['movie'].n_id),
+                                 val_data.x_dict['movie']], dim=-1)
+    embs = model.encoder(x_dict,
+                         val_data.edge_index_dict)
+    movie_embs = embs['movie']
+    embs_user_to_movie = model.user_to_hidden(embs['user'])
+    movie_embs = model.item_to_hidden(embs['movie'])
+    return movie_embs, embs_user_to_movie
+
+
+def make_recommendations(model,
+                         train_data,
+                         val_data,
+                         k,
+                         write_to_file=False):
+
+    movie_embs, user_embs = get_embeddings(model, val_data)
+    mipsknn = MIPSKNNIndex(movie_embs)
+    knn_score, knn_index = mipsknn.search(
+        user_embs, movie_embs.size(0))
+
+    # Obtain the movies that each user has already
+    # watched. These movies need to be removed from
+    # recommendations
+    user_pos_items = get_user_positive_items(
+        train_data['user', 'movie'].edge_index)
+
+    # Get the recommendations for user; only those
+    # that the user is yet to watch
+    real_recs = {}
+    for user in range(val_data['user'].x.size(0)):
+        try:
+            real_recs[user] = list(
+                OrderedSet(knn_index[user].tolist()) -
+                OrderedSet(user_pos_items[user]))[
+                : k]
+        except KeyError:
+            real_recs[user] = knn_index[user].tolist()[:k]
+
+    # Get the ground truth
+    val_user_pos_items = get_user_positive_items(
+        val_data['user', 'movie'].edge_index)
+
+    # Let's write out the recommendations into a file
+    if write_to_file:
+        write_recs(real_recs, val_data, val_user_pos_items)
+
+    return real_recs
+
+
+def visualize(model, val_data, epoch):
+    tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
+    movie_embs, user_embs = get_embeddings(model, val_data)
+    emb_reduced = tsne.fit_transform(torch.vstack((movie_embs,
+                                                   user_embs,
+                                                   )).detach().numpy())
+    plt.scatter(emb_reduced[:movie_embs.size(0), 0],
+                emb_reduced[:movie_embs.size(0), 1],
+                alpha=0.1)
+    plt.scatter(emb_reduced[movie_embs.size(0):, 0],
+                emb_reduced[movie_embs.size(0):, 1],
+                alpha=0.1,
+                marker='x')
+    plt.savefig('./fig-' + str(epoch) + '.png')
+    plt.clf()
+
+
+def randomize_inputs(batch):
+    perm = torch.randperm(len(batch['user', 'movie'].edge_label))
+    batch[edge_names[0]]['edge_label'] = batch[edge_names[0]]['edge_label'][perm]
+    batch[edge_names[0]]['edge_label_index'] = batch[edge_names[0]][
+        'edge_label_index'][:, perm]
+    return batch
+
+
+def train(train_dl, val_dl, val_data, epoch):
+    model.train()
+    pbar = tqdm(train_dl, desc='Train')
+    t0 = time.time()
+    train_time = 0
+
+    for step, batch in enumerate(pbar):
+        optimizer.zero_grad()
+        batch = randomize_inputs(batch)
+        pred = model(batch['user'].n_id,
+                     batch['movie'].n_id,
+                     batch.x_dict, batch.edge_index_dict,
+                     batch['user', 'movie'].edge_label_index)
+        target = batch['user', 'movie'].edge_label
+        loss = weighted_mse_loss(pred, target, weight)
+        loss.backward()
+        optimizer.step()
+        pbar.set_postfix({'loss': loss.item()})
+        t1 = time.time()
+        train_time += t1 - t0
+        t0 = time.time()
+
+    if args.profile_code is True:
+        print(f'train time = {train_time}')
+
+    if args.visualize_emb:
+        visualize(model, val_data, epoch)
+
+    return float(loss)
+
+
+@torch.no_grad()
+def evaluate(dl, desc='val'):
+    model.eval()
+    rmse = 0
+    t0 = time.time()
+    val_time = 0
+    preds, targets = [], []
+    for batch in tqdm(dl, desc=desc):
+        optimizer.zero_grad()
+        batch = randomize_inputs(batch)
+        pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
+                     batch.edge_index_dict,
+                     batch['user', 'movie'].edge_label_index)
+        # .sigmoid().view(-1).cpu()
+        pred = pred.clamp(min=0, max=5)
+        target = batch['user', 'movie'].edge_label.float()
+        preds.append(pred)
+        targets.append(target)
+
+        rmse += F.mse_loss(pred, target).sqrt()
+        t1 = time.time()
+        val_time += t1 - t0
+        t0 = time.time()
+    pred = torch.cat(preds, dim=0).numpy()
+    target = torch.cat(targets, dim=0).numpy()
+    acc = accuracy_score(target, pred > 0.5)
+    roc = roc_auc_score(target, pred)
+    if args.profile_code is True:
+        print(f'{desc} time = {val_time}')
+    return float(rmse), roc, acc
+
+
+def compute_metrics(real_recs, val_data, k, desc):
+    # Convert real_recs from a list to tensor
+    real_recs_list = []
+    [real_recs_list.append(rec) for id, rec in real_recs.items()]
+    rec_tensor = torch.tensor(real_recs_list)
+    node_id = val_data['user'].n_id
+
+    # Use torch_geometric.nn.metrics
+    precision = LinkPredPrecision(k)
+    precision.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
+    return precision.compute()
+
+
+EPOCHS = args.epochs
+for epoch in range(0, EPOCHS):
+    loss = train(train_dl=train_dataloader, val_dl=val_dataloader,
+                 val_data=val_data, epoch=epoch)
+
+    # Get results on val split
+    val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
+    real_recs = make_recommendations(model, train_data, val_data, args.k, False)
+    val_precision_at_k = compute_metrics(
+        real_recs, val_data, args.k, 'val prec@k')
+    print(
+        f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
+        f' Val RMSE: {val_rmse[0]:.4f}, Val ROC: {val_rmse[1]:.4f},'
+        f' Val Acc: {val_rmse[2]:.4f},'
+        f' Val precision@{args.k} = {val_precision_at_k:.3E}')
+
+    # Get results on test split
+    test_rmse = evaluate(test_dataloader, 'test')  # Eval link prediction perf
+    real_recs = make_recommendations(model, train_data, test_data, args.k, True)
+    test_precision_at_k = compute_metrics(
+        real_recs, test_data, args.k, 'test prec@k')
+    print(
+        f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
+        f' Test RMSE: {test_rmse[0]:.4f}, Test ROC: {test_rmse[1]:.4f},'
+        f' Test Acc: {test_rmse[2]:.4f},'
+        f' Test precision@{args.k} = {test_precision_at_k:.3E}')
+
+# Save the model for good measure
+torch.save(model.state_dict(), "./model.bin")
