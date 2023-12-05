@@ -6,6 +6,8 @@ from functools import partial
 from os.path import isfile, join
 from typing import Callable, Dict, List, Optional, Union
 
+# TODO
+# What is the specific need for networkx? If it is only for subgraph and number of nodes (my current understanding, correct if wrong), then I would suggest using Pytorch/torch_geometric features instead.
 import networkx as nx
 import torch
 from torch import Tensor
@@ -33,6 +35,11 @@ from .subgraphX_utils import (
 
 
 def compute_scores(score_func, children):
+    """
+    @TODO: Donald
+    comment :
+        Could you add docstrings and types to these functions to explain their objective?
+    """
     results = []
     for child in children:
         if child.P == 0:
@@ -76,6 +83,10 @@ class MCTSNode(object):
 
     @property
     def info(self):
+        """
+        @TODO: Donald
+        Comments" Is this needed or could you do MCTSNode(**info_dict)
+        """
         info_dict = {
             "data": self.data.to("cpu"),
             "coalition": self.coalition,
@@ -155,12 +166,15 @@ class MCTS(object):
         if node_idx is not None:
             if isinstance(node_idx, torch.Tensor):
                 node_idx = node_idx.item()
-
+            # TODO: Donald
+            # Not sure what others think but my preference would be to have longer, more descriptive variable names like original_node_idx or original_graph.
             self.ori_node_idx = node_idx
             self.ori_graph = copy.copy(self.graph)
             x, edge_index, subset, edge_mask, kwargs = self.__subgraph__(
                 node_idx, self.X, self.edge_index, self.num_hops
             )
+            # @TODO: donald
+            # Can you just create self.graph after all the transformations so you don't have to manually apply them each time?
             self.data = Batch.from_data_list([Data(x=x, edge_index=edge_index)])
             self.graph = self.ori_graph.subgraph(subset.tolist())
             mapping = {int(v): k for k, v in enumerate(subset)}
@@ -181,6 +195,10 @@ class MCTS(object):
         self.state_map = {str(self.root.coalition): self.root}
 
     def set_score_func(self, score_func):
+        """
+        # @TODO: Donald
+        I haven't checked but this seems like it should either already exist or would be nice to abstract out of this specific class.
+        """
         self.score_func = score_func
 
     @staticmethod
@@ -207,6 +225,10 @@ class MCTS(object):
 
         # Expand if this node has never been visited
         if len(tree_node.children) == 0:
+            """
+            @TODO: Donald
+            Could you store the degrees of all of the nodes initially and then just take a slice of the array to get the candidate choices? Also, is there a reason you are using self.graph vs. x and edge_index.
+            """
             node_degree_list = list(self.graph.subgraph(cur_graph_coalition).degree)
             node_degree_list = sorted(
                 node_degree_list, key=lambda x: x[1], reverse=self.high2low
@@ -219,6 +241,8 @@ class MCTS(object):
                 expand_nodes = all_nodes
 
             if len(all_nodes) > self.expand_atoms:
+                # @TODO: donald
+                # Rename each_node to curr_node or similar
                 expand_nodes = expand_nodes[: self.expand_atoms]
 
             for each_node in expand_nodes:
@@ -295,6 +319,8 @@ class MCTS(object):
         return explanations
 
 
+# @TODO: donald
+# Should everything above this be moved into a separate file? Personally I'm unsure.
 class SubgraphXExplainer(ExplainerAlgorithm):
     r"""The SubgraphX explainer model from the `"On Explainability
     of Graph Neural Networks via Subgraph Explorations"
@@ -373,6 +399,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         self.subgraph_building_method = subgraph_building_method
 
         # saving and visualization
+        # @TODO: donald
+        # self.save = self.save_dir is not None
         self.save_dir = save_dir
         self.filename = filename
         self.save = True if self.save_dir is not None else False
@@ -473,7 +501,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         if self.model_config.task_level == ModelTaskLevel.graph:
             # Explanation for Graph Classification Task
             if not saved_MCTSInfo_list:
-                value_func = GnnNetsGC2valueFunc(model, target_class=label)
+                value_func = GnnNetsGC2valueFunc(model, target_class=label, **kwargs)
                 payoff_func = self.get_reward_func(value_func)
                 self.mcts_state_map = self.get_mcts_class(
                     x, edge_index, score_func=payoff_func
@@ -481,6 +509,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
 
             # l sharply score
+            # @TODO: Donald
+            # Use elif self.model_config.task_level == ModelTaskLevel.node here, and have the else raise an exception (similar to GNNExplainer logic flow). This way, as new modes (edge prediction) are incorporated, exceptions are immediately raised.
             value_func = GnnNetsGC2valueFunc(model, target_class=label)
 
         else:
