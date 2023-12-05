@@ -1247,9 +1247,11 @@ def matmul(
                              "matrix multiplication")
         return _spmm(input, other, input_value, reduce, transpose)
 
-    if transpose:
-        raise NotImplementedError("`transpose=True` not yet supported for "
-                                  "sparse-sparse matrix multiplication")
+    if reduce not in ['sum', 'add']:
+        raise NotImplementedError(f"`reduce='{reduce}'` not yet supported for "
+                                  f"sparse-sparse matrix multiplication")
+
+    transpose &= not input.is_undirected or input_value is not None
 
     if torch_geometric.typing.WITH_WINDOWS:
         input = input.to_sparse_coo(input_value)
@@ -1257,6 +1259,9 @@ def matmul(
         input = input.to_sparse_csc(input_value)
     else:
         input = input.to_sparse_csr(input_value)
+
+    if transpose:
+        input = input.t()
 
     if torch_geometric.typing.WITH_WINDOWS:
         other = other.to_sparse_coo(input_value)

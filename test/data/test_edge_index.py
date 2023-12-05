@@ -763,31 +763,34 @@ def test_spmm(without_extensions, device, reduce, transpose, is_undirected):
     assert value1.grad.allclose(value2.grad)
 
 
-def test_spspmm():
-    adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row')
-    adj1_dense = adj1.to_dense()
-    adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col')
+@withCUDA
+@pytest.mark.parametrize('reduce', ReduceType.__args__)
+@pytest.mark.parametrize('transpose', TRANSPOSE)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_spspmm(device, reduce, transpose, is_undirected):
+    if is_undirected:
+        kwargs = dict(device=device, sort_order='row', is_undirected=True)
+        adj1 = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
+    else:
+        kwargs = dict(device=device, sort_order='row')
+        adj1 = EdgeIndex([[0, 1, 1, 2], [2, 0, 1, 2]], **kwargs)
+
+    adj1_dense = adj1.to_dense().t() if transpose else adj1.to_dense()
+    adj2 = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col',
+                     device=device)
     adj2_dense = adj2.to_dense()
 
-    out, value = adj1 @ adj1
-    assert isinstance(out, EdgeIndex)
-    assert out.is_sorted_by_row
-    assert out._sparse_size == (3, 3)
-    if not torch_geometric.typing.WITH_WINDOWS:
-        assert out._indptr is not None
-    assert torch.allclose(out.to_dense(value), adj1_dense @ adj1_dense)
-
-    out, value = adj1 @ adj2
-    assert isinstance(out, EdgeIndex)
-    assert torch.allclose(out.to_dense(value), adj1_dense @ adj2_dense)
-
-    out, value = adj2 @ adj1
-    assert isinstance(out, EdgeIndex)
-    assert torch.allclose(out.to_dense(value), adj2_dense @ adj1_dense)
-
-    out, value = adj2 @ adj2
-    assert isinstance(out, EdgeIndex)
-    assert torch.allclose(out.to_dense(value), adj2_dense @ adj2_dense)
+    if reduce in ['sum', 'add']:
+        out, value = adj1.matmul(adj2, reduce=reduce, transpose=transpose)
+        assert isinstance(out, EdgeIndex)
+        assert out.is_sorted_by_row
+        assert out._sparse_size == (3, 3)
+        if not torch_geometric.typing.WITH_WINDOWS:
+            assert out._indptr is not None
+        assert torch.allclose(out.to_dense(value), adj1_dense @ adj2_dense)
+    else:
+        with pytest.raises(NotImplementedError, match="not yet supported"):
+            adj1.matmul(adj2, reduce=reduce, transpose=transpose)
 
 
 @withCUDA
