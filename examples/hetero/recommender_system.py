@@ -20,7 +20,7 @@ from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
-from torch_geometric.nn.metrics import LinkPredPrecision
+from torch_geometric.nn.metrics import LinkPredPrecision, LinkPredNDCG
 from torch_geometric.nn.pool import MIPSKNNIndex
 
 parser = argparse.ArgumentParser()
@@ -392,9 +392,16 @@ def compute_metrics(real_recs, val_data, k, desc):
     node_id = val_data['user'].n_id
 
     # Use torch_geometric.nn.metrics
+    metrics = {}
     precision = LinkPredPrecision(k)
     precision.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
-    return precision.compute()
+    metrics['precision'] = precision.compute()
+
+    ndcg = LinkPredNDCG(k)
+    ndcg.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
+    metrics['ndcg'] = ndcg.compute()
+
+    return metrics
 
 
 EPOCHS = args.epochs
@@ -403,26 +410,30 @@ for epoch in range(0, EPOCHS):
                  val_data=val_data, epoch=epoch)
 
     # Get results on val split
-    val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
+    # To evaluate the link prediction performance uncomment the following line
+    # val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
-    val_precision_at_k = compute_metrics(real_recs, val_data, args.k,
+    val_metrics = compute_metrics(real_recs, val_data, args.k,
                                          'val prec@k')
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
-          f' Val RMSE: {val_rmse[0]:.4f}, Val ROC: {val_rmse[1]:.4f},'
-          f' Val Acc: {val_rmse[2]:.4f},'
-          f' Val precision@{args.k} = {val_precision_at_k:.3E}')
+    precision = val_metrics['precision']
+    ndcg = val_metrics['ndcg']
+    print(f'Epoch: {epoch:03d}, Train loss: {loss:.4f}',
+          f'Val metrics: precision@{args.k} = {precision:.4E}',
+          f' ndcg@{args.k} = {ndcg:.4E}')
 
-    # Get results on test split
-    test_rmse = evaluate(test_dataloader, 'test')  # Eval link prediction perf
-    real_recs = make_recommendations(model, train_data, test_data, args.k,
-                                     True)
-    test_precision_at_k = compute_metrics(real_recs, test_data, args.k,
-                                          'test prec@k')
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},'
-          f' Test RMSE: {test_rmse[0]:.4f}, Test ROC: {test_rmse[1]:.4f},'
-          f' Test Acc: {test_rmse[2]:.4f},'
-          f' Test precision@{args.k} = {test_precision_at_k:.3E}')
+# Get results on test split
+
+# To evaluate the link prediction performance uncomment the following line
+# test_rmse = evaluate(test_dataloader, 
+#               'test')  
+real_recs = make_recommendations(model, train_data, test_data, args.k,
+                                 True)
+test_metrics = compute_metrics(real_recs, test_data, args.k,
+                                      'test prec@k')
+precision = test_metrics['precision']
+ndcg = test_metrics['ndcg']
+print(f'Test metrics: precision@{args.k} = {precision:.4f} ndcg@{args.k} = {ndcg:.4f}')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
