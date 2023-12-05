@@ -662,27 +662,29 @@ def test_memmap_neighbor_loader(tmp_path):
 
 @onlyLinux
 @onlyNeighborSampler
-@pytest.mark.parametrize('loader_cores', [None, [1]])
+@pytest.mark.parametrize('loader_cores', [None, [1, 2]])
 def test_cpu_affinity_neighbor_loader(loader_cores):
     data = Data(x=torch.randn(1, 1))
-    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                            num_workers=1)
-
+    loader = NeighborLoader(
+        data, num_neighbors=[-1], batch_size=1, num_workers=2
+    )
     out = []
     with loader.enable_cpu_affinity(loader_cores):
         iterator = loader._get_iterator()
         workers = iterator._workers
         for worker in workers:
-            sleep(1)  # Gives time for worker to initialize.
+            sleep(2)  # Gives time for worker to initialize.
             process = subprocess.Popen(
-                ['taskset', '-c', '-p', f'{worker.pid}'],
-                stdout=subprocess.PIPE)
+                ['taskset', '-c', '-p', f'{worker.pid}'], stdout=subprocess.PIPE
+            )
             stdout = process.communicate()[0].decode('utf-8')
-            out.append(int(stdout.split(':')[1].strip()))
-        if not loader_cores:
-            assert out == [0]
+            out.append(stdout.split(':')[1].strip())
+        if loader_cores:
+            out == ['[1]', '[2]']
         else:
-            assert out == loader_cores
+            n, m = out[0].split('-')
+            assert int(n) == 0
+            assert int(out[1].split('-')[0]) == int(m) + 1
 
 
 @withPackage('pyg_lib')
