@@ -90,11 +90,13 @@ def dropout_adj(
     return edge_index, edge_attr
 
 
-def dropout_node(edge_index: Tensor, p: float = 0.5,
-                 num_nodes: Optional[int] = None, 
-                 training: bool = True,
-                 relabel_nodes: bool = False,
-                ) -> Tuple[Tensor, Tensor, Tensor]:
+def dropout_node(
+    edge_index: Tensor,
+    p: float = 0.5,
+    num_nodes: Optional[int] = None,
+    training: bool = True,
+    relabel_nodes: bool = False,
+) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Randomly drops nodes from the adjacency matrix
     :obj:`edge_index` with probability :obj:`p` using samples from
     a Bernoulli distribution.
