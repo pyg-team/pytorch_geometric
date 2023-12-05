@@ -12,8 +12,7 @@ import torch.nn.functional as F
 from ordered_set import OrderedSet
 from sklearn.manifold import TSNE
 from sklearn.metrics import accuracy_score, roc_auc_score
-from sklearn.model_selection import train_test_split
-from torch.nn import CrossEntropyLoss, Embedding, Linear
+from torch.nn import Embedding, Linear
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
@@ -78,7 +77,7 @@ for edge_name in edge_names:
         else:
             data[edge_name][attr] = data[edge_name][attr][:, filter_indices]
 
-# Perform a temporal link-level split into training, validation, and test edges:
+# Perform a temporal link-level split into train, val, and test edges:
 split_ratio = [0.8, 0.1, 0.1]
 assert sum(split_ratio) == 1
 _, perm = torch.sort(data[('user', 'rates', 'movie')].time)
