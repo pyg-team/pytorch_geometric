@@ -116,7 +116,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
         >>> # Adjusted homophily ratio
         >>> homophily(edge_index, y, method='adjusted')
-        -0.14285714285714285
+        -0.1428571492433548
     """
     assert method in {'edge', 'node', 'edge_insensitive', 'adjusted'}
     y = y.squeeze(-1) if y.dim() > 1 else y

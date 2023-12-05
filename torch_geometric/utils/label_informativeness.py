@@ -62,11 +62,11 @@ def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         >>> y = torch.tensor([0, 0, 0, 0, 1, 1])
         >>> # Edge label informativeness
         >>> label_informativeness(edge_index, y, method='edge')
-        0.2517760099956565
+        0.25177597999572754
 
         >>> # Node label informativeness
         >>> label_informativeness(edge_index, y, method='node')
-        0.3381873621927896
+        0.3381872773170471
     """
     assert method in {'edge', 'node'}
     y = y.squeeze(-1) if y.dim() > 1 else y
