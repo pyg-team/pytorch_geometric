@@ -430,7 +430,9 @@ real_recs = make_recommendations(model, train_data, test_data, args.k, True)
 test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
 precision = test_metrics['precision']
 ndcg = test_metrics['ndcg']
-print(f'Test metrics: precision@{args.k} = {precision:.4E} ndcg@{args.k} = {ndcg:.4E}')
+print(
+    f'Test metrics: precision@{args.k} = {precision:.4E} ndcg@{args.k} = {ndcg:.4E}'
+)
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
