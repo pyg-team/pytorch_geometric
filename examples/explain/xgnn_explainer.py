@@ -92,6 +92,7 @@ class GCN_Graph(torch.nn.Module):
         device = edge_index.device
         degrees = torch.sum(edge_index[0] == torch.arange(edge_index.max() + 1, device=device)[:, None], dim=1, dtype=torch.float)
         x = degrees.unsqueeze(1)  # Add feature dimension
+        
         embed = x.to(device)  # Ensure the embedding tensor is on the correct device
 
         out = None
@@ -115,7 +116,7 @@ args = {
 model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
                   output_dim=1, dropout=args['dropout'])
 model.load_state_dict(torch.load("examples\\explain\\best_model.pth", map_location=torch.device('cpu')))
-model.to(device)  # Don't forget to move the model to the correct device
+model.to(device)
 
 def check_edge_representation(data):
     # Convert edge indices to a set of tuples for easier comparison
@@ -153,10 +154,14 @@ class GraphGenerator(torch.nn.Module):
     def forward(self, graph_state, candidate_set):
         # contatenate graph_state features with candidate_set features
         node_features_graph = graph_state.x
-        node_features = torch.cat((node_features, candidate_set), dim=0)
+        print("graph_state", graph_state)
+        print("node_features_graph", node_features_graph)
+        node_features = torch.cat((node_features_graph, candidate_set), dim=0)
 
-        # run through gcn layers
+        # run through GCN layers
         for gcn_layer in self.gcn_layers:
+            print("node_features shape:", node_features.shape)
+            print("graph_state.edge_index shape:", graph_state.edge_index.shape)
             node_features = gcn_layer(node_features, graph_state.edge_index)
         
         # get start node probabilities and mask out candidates
@@ -181,7 +186,7 @@ class GraphGenerator(torch.nn.Module):
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
         super(RLGenExplainer, self).__init__()
-        self.candidate_set = torch.tensor([0])  # tensor of features of candidate nodes (node types)
+        self.candidate_set = torch.tensor([[0]])  # 2d tensor of features of candidate nodes (node types)
         self.graph_generator = GraphGenerator(1, self.candidate_set.size(0))
         self.max_steps = 10
         self.lambda_1 = 1
@@ -230,7 +235,7 @@ class RLGenExplainer(XGNNExplainer):
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
 
         # Compute graph validity score (R_tr)
-        # This needs to be defined based on the specific graph rules of your dataset
+        # defined based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
 
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
@@ -246,16 +251,16 @@ class RLGenExplainer(XGNNExplainer):
             n = 1 
             perm = torch.randperm(self.candidate_set.size(0))
             sampled_indices = perm[:n]
-            x = self.candidate_set[sampled_indices]
+            x = self.candidate_set[sampled_indices].view(n, 1)  # reshaping to [n, num_features]
             edge_index = torch.tensor([[], []], dtype=torch.long)
             initial_state = Data(x=x, edge_index=edge_index)
-            
+
             current_graph_state = initial_state
             
             for step in range(self.max_steps):
                 action, new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
                 print(action)
-                reward = self.calculate_reward(new_graph_state, pre_trained_gnn, for_class, self.num_classes)
+                reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
                 
                 start_node_log_prob = torch.log(action[0].probs[action[0].sample().item()])
                 end_node_log_prob = torch.log(action[1].probs[action[1].sample().item()])
@@ -268,8 +273,8 @@ class RLGenExplainer(XGNNExplainer):
                 loss.backward()
                 optimizer.step()
                 
-                if reward < 0:
-                    current_graph_state = previous_graph_state
+                if reward >= 0:
+                    current_graph_state = new_graph_state
             print(f"Epoch {epoch} completed, Total Loss: {total_loss}")
 
 
@@ -294,6 +299,8 @@ explainer = Explainer(
 print("EXPLAINER DONE!")
 
 class_index = 1
-explanation = explainer(None, None) # Generates explanations for all classes at once
+target = torch.tensor([0, 1])
+
+explanation = explainer(None, None, target=target) # Generates explanations for all classes at once
 print(explanation)
 
