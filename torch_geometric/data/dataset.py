@@ -161,7 +161,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
             num_classes = torch.unique(y).numel()
             if num_classes > 2:
                 warnings.warn("Found floating-point labels while calling "
-                              "`dataset.num_classes`. Returning the number "
+                              "`dataset.num_classes`. Returning the number of "
                               "unique elements. Please make sure that this "
                               "is expected before proceeding.")
             return num_classes
