@@ -41,10 +41,10 @@ def get_num_hops(model: torch.nn.Module) -> int:
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor = ...,
-    relabel_nodes: bool = ...,
-    num_nodes: Optional[int] = ...,
-    return_edge_mask: Literal[False] = ...,
+    edge_attr: OptTensor,
+    relabel_nodes: bool,
+    num_nodes: Optional[int],
+    return_edge_mask: Literal[False],
 ) -> Tuple[Tensor, OptTensor]:
     pass
 
@@ -53,10 +53,10 @@ def subgraph(
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor = ...,
-    relabel_nodes: bool = ...,
-    num_nodes: Optional[int] = ...,
-    return_edge_mask: Literal[True] = ...,
+    edge_attr: OptTensor,
+    relabel_nodes: bool,
+    num_nodes: Optional[int],
+    return_edge_mask: Literal[True],
 ) -> Tuple[Tensor, OptTensor, Tensor]:
     pass
 
@@ -314,8 +314,10 @@ def k_hop_subgraph(
     node_mask = row.new_empty(num_nodes, dtype=torch.bool)
     edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
 
-    if isinstance(node_idx, (int, list, tuple)):
-        node_idx = torch.tensor([node_idx], device=row.device).flatten()
+    if isinstance(node_idx, int):
+        node_idx = torch.tensor([node_idx], device=row.device)
+    elif isinstance(node_idx, (list, tuple)):
+        node_idx = torch.tensor(node_idx, device=row.device)
     else:
         node_idx = node_idx.to(row.device)
 
@@ -339,9 +341,9 @@ def k_hop_subgraph(
     edge_index = edge_index[:, edge_mask]
 
     if relabel_nodes:
-        node_idx = row.new_full((num_nodes, ), -1)
-        node_idx[subset] = torch.arange(subset.size(0), device=row.device)
-        edge_index = node_idx[edge_index]
+        mapping = row.new_full((num_nodes, ), -1)
+        mapping[subset] = torch.arange(subset.size(0), device=row.device)
+        edge_index = mapping[edge_index]
 
     return subset, edge_index, inv, edge_mask
 

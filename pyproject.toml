@@ -119,7 +119,6 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_errors = true
 module = [
-    "torch_geometric.utils.*",
     "torch_geometric.data.*",
     "torch_geometric.sampler.*",
     "torch_geometric.loader.*",

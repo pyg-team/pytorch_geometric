@@ -1,4 +1,5 @@
-from typing import List, Optional, Tuple, Union
+import typing
+from typing import List, Literal, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -7,33 +8,51 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-MISSING = '???'
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload as overload
 
 
-@torch.jit._overload
-def coalesce(  # noqa: F811
-        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor
+@overload
+def coalesce(
+    edge_index: Tensor,
+    edge_attr: Literal['???'],
+    num_nodes: Optional[int],
+    reduce: str,
+    is_sorted: bool,
+    sort_by_row: bool,
+) -> Tensor:
     pass
 
 
-@torch.jit._overload
+@overload
 def coalesce(  # noqa: F811
-        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, Optional[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
+    edge_index: Tensor,
+    edge_attr: OptTensor,
+    num_nodes: Optional[int],
+    reduce: str,
+    is_sorted: bool,
+    sort_by_row: bool,
+) -> Tuple[Tensor, OptTensor]:
     pass
 
 
-@torch.jit._overload
+@overload
 def coalesce(  # noqa: F811
-        edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, List[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, List[Tensor]]  # noqa
+    edge_index: Tensor,
+    edge_attr: List[Tensor],
+    num_nodes: Optional[int],
+    reduce: str,
+    is_sorted: bool,
+    sort_by_row: bool = ...,
+) -> Tuple[Tensor, List[Tensor]]:
     pass
 
 
 def coalesce(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: Union[OptTensor, List[Tensor], Literal['???']] = '???',
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
     is_sorted: bool = False,
@@ -117,7 +136,9 @@ def coalesce(  # noqa: F811
 
     # Only perform expensive merging in case there exists duplicates:
     if mask.all():
-        if edge_attr is None or isinstance(edge_attr, (Tensor, list, tuple)):
+        if edge_attr is None or isinstance(edge_attr, Tensor):
+            return edge_index, edge_attr
+        if isinstance(edge_attr, (list, tuple)):
             return edge_index, edge_attr
         return edge_index
 
