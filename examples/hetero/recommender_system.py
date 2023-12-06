@@ -415,20 +415,16 @@ for epoch in range(0, EPOCHS):
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-    print(
-        f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
-        f'Val RMSE: {val_rmse[0]:.4f}, Val ROC_AUC: {val_rmse[1]:.4f} '
-        f'Val Acc: {val_rmse[2]:.4f}'
-    )
+    print(f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
+          f'Val RMSE: {val_rmse[0]:.4f}, Val ROC_AUC: {val_rmse[1]:.4f} '
+          f'Val Acc: {val_rmse[2]:.4f}')
     print(f'Val precision@{args.k} = {val_metrics["precision"]:.3E}')
     print(f'Val ndcg@{args.k} = {val_metrics["ndcg"]:.3E}')
 
 # Get results on test split
 test_rmse = evaluate(test_dataloader, 'test')
-print(
-    f'test RMSE: {test_rmse[0]:.4f}, test ROC_AUC: {test_rmse[1]:.4f}'
-    f' test Acc: {test_rmse[2]:.4f}'
-)
+print(f'test RMSE: {test_rmse[0]:.4f}, test ROC_AUC: {test_rmse[1]:.4f}'
+      f' test Acc: {test_rmse[2]:.4f}')
 real_recs = make_recommendations(model, train_data, test_data, args.k, False)
 test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
 print(f'Test precision@{args.k} = {test_metrics["precision"]:.3E}')
