@@ -1,3 +1,4 @@
+import typing
 import warnings
 from typing import Any, List, Optional, Tuple, Union
 
@@ -303,6 +304,8 @@ def to_torch_csc_tensor(
 
     """
     if not torch_geometric.typing.WITH_PT112:
+        if typing.TYPE_CHECKING:
+            raise NotImplementedError
         return torch_geometric.typing.MockTorchCSCTensor(
             edge_index, edge_attr, size)
 
@@ -434,7 +437,7 @@ def get_sparse_diag(
 
 
 def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
-    size = adj.size()
+    size = tuple(adj.size())
 
     if value.dim() > 1:
         size = size + value.size()[1:]
@@ -483,7 +486,7 @@ def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     # the individual sparse tensor layouts.
     assert dim in {0, 1, (0, 1)}
 
-    size = [0, 0]
+    size = (0, 0)
     edge_indices = []
     edge_attrs = []
     for tensor in tensors:
@@ -493,17 +496,14 @@ def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
 
         if dim == 0:
             edge_index[0] += size[0]
-            size[0] += tensor.size(0)
-            size[1] = max(size[1], tensor.size(1))
+            size = (size[0] + tensor.size(0), max(size[1], tensor.size(1)))
         elif dim == 1:
             edge_index[1] += size[1]
-            size[0] = max(size[0], tensor.size(0))
-            size[1] += tensor.size(1)
+            size = (max(size[0], tensor.size(0)), size[1] + tensor.size(1))
         else:
             edge_index[0] += size[0]
             edge_index[1] += size[1]
-            size[0] += tensor.size(0)
-            size[1] += tensor.size(1)
+            size = (size[0] + tensor.size(0), size[1] + tensor.size(1))
 
         edge_indices.append(edge_index)
         edge_attrs.append(edge_attr)
