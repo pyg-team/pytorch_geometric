@@ -1,3 +1,4 @@
+import typing
 from copy import copy
 from typing import Dict, Optional, Tuple, Union
 
@@ -7,22 +8,33 @@ from torch import Tensor
 import torch_geometric
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload as overload
 
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
-    # type: (Tensor, Optional[int]) -> int
+
+@overload
+def maybe_num_nodes(
+    edge_index: Tensor,
+    num_nodes: Optional[int],
+) -> int:
     pass
 
 
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
-    # type: (Tuple[Tensor, Tensor], Optional[int]) -> int
+@overload
+def maybe_num_nodes(  # noqa: F811
+    edge_index: Tuple[Tensor, Tensor],
+    num_nodes: Optional[int],
+) -> int:
     pass
 
 
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):  # noqa: F811
-    # type: (SparseTensor, Optional[int]) -> int
+@overload
+def maybe_num_nodes(  # noqa: F811
+        edge_index: SparseTensor,
+        num_nodes: Optional[int],
+) -> int:
     pass
 
 
@@ -42,7 +54,7 @@ def maybe_num_nodes(  # noqa: F811
                 edge_index.view(-1),
                 edge_index.new_full((1, ), fill_value=-1)
             ])
-            return tmp.max() + 1
+            return tmp.max() + 1  # type: ignore
 
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     elif isinstance(edge_index, tuple):
@@ -52,8 +64,7 @@ def maybe_num_nodes(  # noqa: F811
         )
     elif isinstance(edge_index, SparseTensor):
         return max(edge_index.size(0), edge_index.size(1))
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
 
 
 def maybe_num_nodes_dict(
