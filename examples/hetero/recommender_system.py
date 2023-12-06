@@ -3,7 +3,6 @@ import copy
 import json
 import os.path as osp
 import random
-import time
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -164,13 +163,13 @@ class EdgeDecoder(torch.nn.Module):
         super().__init__()
         self.lin1 = Linear(2 * hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, 1)
-        self.user_to_item = Linear(hidden_channels, hidden_channels)
-        self.item_to_user = Linear(hidden_channels, hidden_channels)
+        self.user_to_hidden = Linear(hidden_channels, hidden_channels)
+        self.item_to_hidden = Linear(hidden_channels, hidden_channels)
 
     def forward(self, z_dict, edge_label_index):
         row, col = edge_label_index
-        u_to_i = self.user_to_item(z_dict['user'][row])
-        i_to_u = self.item_to_user(z_dict['movie'][col])
+        u_to_i = self.user_to_hidden(z_dict['user'][row])
+        i_to_u = self.item_to_hidden(z_dict['movie'][col])
 
         z = (u_to_i*i_to_u).sum(dim=1)
         
@@ -256,8 +255,8 @@ def get_embeddings(model, val_data):
     embs = model.encoder(x_dict, val_data.edge_index_dict)
     movie_embs = embs['movie']
     embs_user_to_movie = embs['user']
-    embs_user_to_movie = model.decoder.user_to_item(embs['user'])
-    movie_embs = model.decoder.item_to_user(embs['movie'])
+    embs_user_to_movie = model.decoder.user_to_hidden(embs['user'])
+    movie_embs = model.decoder.item_to_hidden(embs['movie'])
     return movie_embs, embs_user_to_movie
 
 
@@ -322,11 +321,8 @@ def randomize_inputs(batch):
 
 def train(train_dl, val_dl, val_data, epoch):
     model.train()
-    pbar = tqdm(train_dl, desc='Train')
-    t0 = time.time()
-    train_time = 0
 
-    for step, batch in enumerate(pbar):
+    for step, batch in enumerate(train_dl):
         optimizer.zero_grad()
         batch = randomize_inputs(batch)
         pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
@@ -336,13 +332,7 @@ def train(train_dl, val_dl, val_data, epoch):
         loss = weighted_mse_loss(pred, target, weight)
         loss.backward()
         optimizer.step()
-        pbar.set_postfix({'loss': loss.item()})
-        t1 = time.time()
-        train_time += t1 - t0
-        t0 = time.time()
 
-    if args.profile_code is True:
-        print(f'train time = {train_time}')
 
     if args.visualize_emb:
         visualize(model, val_data, epoch)
@@ -371,7 +361,7 @@ def compute_metrics(real_recs, val_data, k, desc):
 
 
 EPOCHS = args.epochs
-for epoch in range(0, EPOCHS):
+for epoch in tqdm(range(0, EPOCHS)):
     loss = train(train_dl=train_dataloader, val_dl=val_dataloader,
                  val_data=val_data, epoch=epoch)
 
@@ -379,15 +369,17 @@ for epoch in range(0, EPOCHS):
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-    print( f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
-    f' Val precision@{args.k} = {val_metrics["precision"]:.3E},'
-    f' Val ndcg@{args.k} = {val_metrics["ndcg"]:.3E}')
 
     # Get results on test split
     real_recs = make_recommendations(model, train_data, test_data, args.k, False)
     test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
-    print(f'Test precision@{args.k} = {test_metrics["precision"]:.3E}, '
-          f'Test ndcg@{args.k} = {test_metrics["ndcg"]:.3E}')
+    
+    # Print output
+    print( f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
+        f' Val [precision@{args.k} = {val_metrics["precision"]:.3E},'
+        f' ndcg@{args.k} = {val_metrics["ndcg"]:.3E}],'
+        f' Test [precision@{args.k} = {test_metrics["precision"]:.3E},'
+        f' ndcg@{args.k} = {test_metrics["ndcg"]:.3E}]')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
