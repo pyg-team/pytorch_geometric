@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.coalesce import coalesce
+from torch_geometric.utils import coalesce
 
 
 def grid(
