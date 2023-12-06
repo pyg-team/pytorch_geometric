@@ -42,8 +42,9 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GCN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk)
+    model = GCN(in_channels=8, hidden_channels=16, num_layers=3,
+                out_channels=out_dim, dropout=dropout, act=act, norm=norm,
+                jk=jk)
     assert str(model) == f'GCN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -58,8 +59,9 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GraphSAGE(8, 16, num_layers=3, out_channels=out_dim,
-                      dropout=dropout, act=act, norm=norm, jk=jk)
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=3,
+                      out_channels=out_dim, dropout=dropout, act=act,
+                      norm=norm, jk=jk)
     assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -74,8 +76,9 @@ def test_gin(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GIN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk)
+    model = GIN(in_channels=8, hidden_channels=16, num_layers=3,
+                out_channels=out_dim, dropout=dropout, act=act, norm=norm,
+                jk=jk)
     assert str(model) == f'GIN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -91,13 +94,15 @@ def test_gat(out_dim, dropout, act, norm, jk):
     out_channels = 16 if out_dim is None else out_dim
 
     for v2 in [False, True]:
-        model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
-                    dropout=dropout, act=act, norm=norm, jk=jk)
+        model = GAT(in_channels=8, hidden_channels=16, num_layers=3,
+                    out_channels=out_dim, v2=v2, dropout=dropout, act=act,
+                    norm=norm, jk=jk)
         assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
-        model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
-                    dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
+        model = GAT(in_channels=8, hidden_channels=16, num_layers=3,
+                    out_channels=out_dim, v2=v2, dropout=dropout, act=act,
+                    norm=norm, jk=jk, heads=4)
         assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
@@ -117,9 +122,9 @@ def test_pna(out_dim, dropout, act, norm, jk):
         'identity', 'amplification', 'attenuation', 'linear', 'inverse_linear'
     ]
 
-    model = PNA(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk, aggregators=aggregators,
-                scalers=scalers, deg=deg)
+    model = PNA(in_channels=8, hidden_channels=16, num_layers=3,
+                out_channels=out_dim, dropout=dropout, act=act, norm=norm,
+                jk=jk, aggregators=aggregators, scalers=scalers, deg=deg)
     assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -134,8 +139,9 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = EdgeCNN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
-                    act=act, norm=norm, jk=jk)
+    model = EdgeCNN(in_channels=8, hidden_channels=16, num_layers=3,
+                    out_channels=out_dim, dropout=dropout, act=act, norm=norm,
+                    jk=jk)
     assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -144,7 +150,7 @@ def test_jittable():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    model = GCN(8, 16, num_layers=2).jittable()
+    model = GCN(in_channels=8, hidden_channels=16, num_layers=2).jittable()
     model = torch.jit.script(model)
 
     assert model(x, edge_index).size() == (3, 16)
@@ -157,7 +163,8 @@ def test_one_layer_gnn(out_dim, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GraphSAGE(8, 16, num_layers=1, out_channels=out_dim, jk=jk)
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=1,
+                      out_channels=out_dim, jk=jk)
     assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -172,7 +179,8 @@ def test_batch(norm):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     batch = torch.tensor([0, 0, 1])
 
-    model = GraphSAGE(8, 16, num_layers=2, norm=norm)
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=2,
+                      norm=norm)
     assert model.supports_norm_batch == (norm != 'BatchNorm')
 
     out = model(x, edge_index, batch=batch)
@@ -190,8 +198,8 @@ def test_basic_gnn_inference(get_dataset, jk):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
-    model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
-                      out_channels=dataset.num_classes, jk=jk)
+    model = GraphSAGE(in_channels=dataset.num_features, hidden_channels=16,
+                      num_layers=2, out_channels=dataset.num_classes, jk=jk)
     model.eval()
 
     out1 = model(data.x, data.edge_index)
@@ -214,7 +222,7 @@ def test_compile(device):
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
-    model = GCN(8, 16, num_layers=3).to(device)
+    model = GCN(in_channels=8, hidden_channels=16, num_layers=3).to(device)
     compiled_model = torch_geometric.compile(model)
 
     expected = model(x, edge_index)
@@ -234,7 +242,7 @@ def test_packaging():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    model = GraphSAGE(8, 16, num_layers=3)
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=3)
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
@@ -242,7 +250,7 @@ def test_packaging():
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 
-    model = GraphSAGE(8, 16, num_layers=3)
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=3)
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
@@ -411,7 +419,8 @@ if __name__ == '__main__':
     for Model in [GCN, GraphSAGE, GIN, EdgeCNN]:
         print(f'Model: {Model.__name__}')
 
-        model = Model(64, 64, num_layers=3).to(args.device)
+        model = Model(in_channels=64, hidden_channels=64,
+                      num_layers=3).to(args.device)
         compiled_model = torch_geometric.compile(model)
 
         benchmark(

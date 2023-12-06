@@ -12,8 +12,10 @@ x = torch.randn(8, 3, requires_grad=True)
 edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
                            [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
 
-GCN = GCN(3, 16, 2, 7, dropout=0.5)
-GAT = GAT(3, 16, 2, 7, heads=2, concat=False)
+GCN = GCN(in_channels=3, hidden_channels=16, num_layers=2, out_channels=7,
+          dropout=0.5)
+GAT = GAT(in_channels=3, hidden_channels=16, num_layers=2, out_channels=7,
+          heads=2, concat=False)
 mask_types = ['edge', 'node_and_edge', 'node']
 methods = [
     'Saliency',
