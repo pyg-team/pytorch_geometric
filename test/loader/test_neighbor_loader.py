@@ -1,4 +1,5 @@
 import os.path as osp
+
 import numpy as np
 import pytest
 import torch
@@ -655,6 +656,7 @@ def test_memmap_neighbor_loader(tmp_path):
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
+
 
 @withPackage('pyg_lib')
 def test_homo_neighbor_loader_sampled_info():
