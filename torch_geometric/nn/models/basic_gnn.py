@@ -33,6 +33,9 @@ class BasicGNN(torch.nn.Module):
     r"""An abstract class for implementing basic GNN models.
 
     Args:
+        channel_list (List[int], optional): List of input, intermediate
+            and output channels such that :obj:`len(channel_list) - 1` denotes
+            the number of layers of the MLP (default: :obj:`None`)
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
@@ -69,10 +72,12 @@ class BasicGNN(torch.nn.Module):
 
     def __init__(
         self,
-        in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
+        channel_list: Optional[List[int]] = None,
+        *,
+        in_channels: Optional[int] = None,
+        hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
@@ -84,10 +89,6 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        self.in_channels = in_channels
-        self.hidden_channels = hidden_channels
-        self.num_layers = num_layers
-
         self.dropout = torch.nn.Dropout(p=dropout)
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
@@ -95,33 +96,41 @@ class BasicGNN(torch.nn.Module):
         self.norm = norm if isinstance(norm, str) else None
         self.norm_kwargs = norm_kwargs
 
-        if out_channels is not None:
-            self.out_channels = out_channels
-        else:
-            self.out_channels = hidden_channels
+        if jk is not None and channel_list is not None:
+            raise ValueError(
+                "Argument `channel_list` not support for `JumpingKnowledge`.")
+
+        if channel_list is not None and in_channels is not None:
+            raise ValueError("Use either `channel_list` or `in_channel`.")
+
+        if in_channels is not None:
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(f"Argument `hidden_channels` must be given "
+                                 f"for `num_layers={num_layers}`")
+            if out_channels is None:
+                out_channels = hidden_channels
+
+            channel_list = [hidden_channels] * (num_layers - 1)
+            channel_list = [in_channels] + channel_list + [out_channels]
+
+        self.channel_list = channel_list
 
         self.convs = ModuleList()
-        if num_layers > 1:
+
+        if self.num_layers > 1:
             self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
-            else:
-                in_channels = hidden_channels
-        for _ in range(num_layers - 2):
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
-            else:
-                in_channels = hidden_channels
-        if out_channels is not None and jk is None:
-            self._is_conv_to_out = True
+                self.init_conv(channel_list[0], channel_list[1], **kwargs))
+
+        iterator = zip(channel_list[1:-1], channel_list[2:])
+        for in_channels, out_channels in iterator:
+
+            if isinstance(self.in_channels, (tuple, list)):
+                in_channels = (in_channels, in_channels)
+
             self.convs.append(
                 self.init_conv(in_channels, out_channels, **kwargs))
-        else:
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
 
         self.norms = ModuleList()
         norm_layer = normalization_resolver(
@@ -146,7 +155,7 @@ class BasicGNN(torch.nn.Module):
             self.norms.append(torch.nn.Identity())
 
         if jk is not None and jk != 'last':
-            self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
+            self.jk = JumpingKnowledge(jk, hidden_channels, self.num_layers)
 
         if jk is not None:
             if jk == 'cat':
@@ -162,6 +171,21 @@ class BasicGNN(torch.nn.Module):
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
+
+    @property
+    def in_channels(self) -> int:
+        r"""Size of each input sample."""
+        return self.channel_list[0]
+
+    @property
+    def out_channels(self) -> int:
+        r"""Size of each output sample."""
+        return self.channel_list[-1]
+
+    @property
+    def num_layers(self) -> int:
+        r"""The number of layers."""
+        return len(self.channel_list) - 1
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
