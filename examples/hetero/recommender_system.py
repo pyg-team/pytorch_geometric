@@ -241,7 +241,15 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
     return real_recs
 
 
-def visualize(model, val_data, epoch):
+def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
+    """
+    Args:
+    model:          Trained Model 
+    train_data:     Graph with train edges
+    val_data:       Graph with val edges
+    real_recs:      Recommendations for each user
+    num_users:      Num of users who should be plotted
+    """
     tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
     movie_embs, user_embs = get_embeddings(model, val_data)
     emb_reduced = tsne.fit_transform(
@@ -249,10 +257,63 @@ def visualize(model, val_data, epoch):
             movie_embs,
             user_embs,
         )).detach().numpy())
+    plt.figure(figsize=(10, 10), dpi=300)
     plt.scatter(emb_reduced[:movie_embs.size(0), 0],
-                emb_reduced[:movie_embs.size(0), 1], alpha=0.1)
-    plt.scatter(emb_reduced[movie_embs.size(0):, 0],
-                emb_reduced[movie_embs.size(0):, 1], alpha=0.1, marker='x')
+                emb_reduced[:movie_embs.size(0), 1], alpha=0.1, label='All Movies')
+    
+    movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
+    def load_node_csv(path, index_col):
+        df = pd.read_csv(path, index_col=index_col)
+        return df
+    
+
+    movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
+    val_pos_items = get_user_positive_items(val_data['user', 'movie'].edge_index)
+    train_pos_items = get_user_positive_items(train_data['user', 'movie'].edge_index)
+    displayed_users = 0
+    title_text = "Diplaying Train and Pred Movies for users -- "
+    for user_i, (val_user, gt) in enumerate(val_pos_items.items()):
+        try:
+            train_gt = train_pos_items[val_user]
+            plt.scatter(emb_reduced[train_gt, 0],
+                        emb_reduced[train_gt, 1], marker='+', label='Train Movies'+str(val_user))
+            for i in train_gt:
+                plt.annotate(movie_id_to_name.iloc[i]['title'],
+                             xy=(emb_reduced[i,0], emb_reduced[i,1]),
+                             xytext=(emb_reduced[i,0]+2, emb_reduced[i,1]),
+                             fontsize=3,
+                             horizontalalignment='left',
+                             arrowprops={'arrowstyle' : '->',
+                                         'color': '0.5',
+                                         'shrinkA' : 5,
+                                         'shrinkB' : 5,
+                                         'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"}
+                             )
+                
+            plt.scatter(emb_reduced[real_recs[val_user], 0],
+                        emb_reduced[real_recs[val_user], 1], marker='x', label='Pred Movies '+str(val_user))
+            for i in real_recs[val_user]:
+                plt.annotate(movie_id_to_name.iloc[i]['title'],
+                             (emb_reduced[i,0], emb_reduced[i,1]),
+                             xytext=(emb_reduced[i,0]-2, emb_reduced[i,1]),
+                             fontsize=3,
+                             horizontalalignment='right',
+                             arrowprops={'arrowstyle' : '->',
+                                         'color': '0.5',
+                                         'shrinkA' : 5,
+                                         'shrinkB' : 5,
+                                         'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"}
+                             )
+            displayed_users += 1
+            title_text += str(val_user)+ ', '
+        except KeyError:
+            pass
+    
+        if displayed_users == num_users:
+            break
+    
+    plt.legend(loc='upper left', ncol=3, fontsize=10)
+    plt.title(title_text)
     plt.savefig('./fig-' + str(epoch) + '.png')
     plt.clf()
 
@@ -268,11 +329,6 @@ def train(train_dl, val_data, epoch):
         loss = F.mse_loss(pred, target)
         loss.backward()
         optimizer.step()
-
-
-    if args.visualize_emb:
-        visualize(model, val_data, epoch)
-
     return float(loss)
 
 def compute_metrics(real_recs, val_data, k, desc):
@@ -305,9 +361,12 @@ for epoch in tqdm(range(0, EPOCHS)):
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
+    
+    if args.visualize_emb:
+        visualize(model, train_data, val_data, real_recs, epoch)
 
     # Get results on test split
-    real_recs = make_recommendations(model, train_data, test_data, args.k, False)
+    real_recs = make_recommendations(model, train_data, test_data, args.k, True)
     test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
     
     # Print output
