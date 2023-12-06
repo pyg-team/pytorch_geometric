@@ -1,5 +1,5 @@
 import typing
-from typing import List, Literal, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,15 +13,17 @@ if typing.TYPE_CHECKING:
 else:
     from torch.jit import _overload as overload
 
+MISSING = '???'
+
 
 @overload
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Literal['???'] = ...,
-    num_nodes: Optional[int] = ...,
-    reduce: str = ...,
-    is_sorted: bool = ...,
-    sort_by_row: bool = ...,
+    edge_attr: str = MISSING,
+    num_nodes: Optional[int] = None,
+    reduce: str = 'sum',
+    is_sorted: bool = False,
+    sort_by_row: bool = True,
 ) -> Tensor:
     pass
 
@@ -30,10 +32,10 @@ def coalesce(
 def coalesce(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor,
-    num_nodes: Optional[int] = ...,
-    reduce: str = ...,
-    is_sorted: bool = ...,
-    sort_by_row: bool = ...,
+    num_nodes: Optional[int] = None,
+    reduce: str = 'sum',
+    is_sorted: bool = False,
+    sort_by_row: bool = True,
 ) -> Tuple[Tensor, OptTensor]:
     pass
 
@@ -42,19 +44,19 @@ def coalesce(  # noqa: F811
 def coalesce(  # noqa: F811
     edge_index: Tensor,
     edge_attr: List[Tensor],
-    num_nodes: Optional[int] = ...,
-    reduce: str = ...,
-    is_sorted: bool = ...,
-    sort_by_row: bool = ...,
+    num_nodes: Optional[int] = None,
+    reduce: str = 'sum',
+    is_sorted: bool = False,
+    sort_by_row: bool = True,
 ) -> Tuple[Tensor, List[Tensor]]:
     pass
 
 
 def coalesce(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], Literal['???']] = '???',
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = 'add',
+    reduce: str = 'sum',
     is_sorted: bool = False,
     sort_by_row: bool = True,
 ) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
@@ -71,8 +73,8 @@ def coalesce(  # noqa: F811
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         reduce (str, optional): The reduce operation to use for merging edge
-            features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"`, :obj:`"any"`). (default: :obj:`"add"`)
+            features (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+            :obj:`"mul"`, :obj:`"any"`). (default: :obj:`"sum"`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
             :obj:`edge_index` to be already sorted row-wise.
         sort_by_row (bool, optional): If set to :obj:`False`, will sort
