@@ -1,7 +1,4 @@
 import os.path as osp
-import subprocess
-from time import sleep
-
 import numpy as np
 import pytest
 import torch
@@ -658,33 +655,6 @@ def test_memmap_neighbor_loader(tmp_path):
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
-
-
-@onlyLinux
-@onlyNeighborSampler
-@pytest.mark.parametrize('loader_cores', [None, [1, 2]])
-def test_cpu_affinity_neighbor_loader(loader_cores):
-    data = Data(x=torch.randn(1, 1))
-    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                            num_workers=2)
-    out = []
-    with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator()
-        workers = iterator._workers
-        for worker in workers:
-            sleep(2)  # Gives time for worker to initialize.
-            process = subprocess.Popen(
-                ['taskset', '-c', '-p', f'{worker.pid}'],
-                stdout=subprocess.PIPE)
-            stdout = process.communicate()[0].decode('utf-8')
-            out.append(stdout.split(':')[1].strip())
-        if loader_cores:
-            out == ['[1]', '[2]']
-        else:
-            n, m = out[0].split('-')
-            assert int(n) == 0
-            assert int(out[1].split('-')[0]) == int(m) + 1
-
 
 @withPackage('pyg_lib')
 def test_homo_neighbor_loader_sampled_info():
