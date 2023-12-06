@@ -17,11 +17,11 @@ else:
 @overload
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Literal['???'],
-    num_nodes: Optional[int],
-    reduce: str,
-    is_sorted: bool,
-    sort_by_row: bool,
+    edge_attr: Literal['???'] = ...,
+    num_nodes: Optional[int] = ...,
+    reduce: str = ...,
+    is_sorted: bool = ...,
+    sort_by_row: bool = ...,
 ) -> Tensor:
     pass
 
@@ -30,10 +30,10 @@ def coalesce(
 def coalesce(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor,
-    num_nodes: Optional[int],
-    reduce: str,
-    is_sorted: bool,
-    sort_by_row: bool,
+    num_nodes: Optional[int] = ...,
+    reduce: str = ...,
+    is_sorted: bool = ...,
+    sort_by_row: bool = ...,
 ) -> Tuple[Tensor, OptTensor]:
     pass
 
@@ -42,9 +42,9 @@ def coalesce(  # noqa: F811
 def coalesce(  # noqa: F811
     edge_index: Tensor,
     edge_attr: List[Tensor],
-    num_nodes: Optional[int],
-    reduce: str,
-    is_sorted: bool,
+    num_nodes: Optional[int] = ...,
+    reduce: str = ...,
+    is_sorted: bool = ...,
     sort_by_row: bool = ...,
 ) -> Tuple[Tensor, List[Tensor]]:
     pass

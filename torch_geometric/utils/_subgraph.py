@@ -41,9 +41,21 @@ def get_num_hops(model: torch.nn.Module) -> int:
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor,
-    relabel_nodes: bool,
-    num_nodes: Optional[int],
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
     return_edge_mask: Literal[False],
 ) -> Tuple[Tensor, OptTensor]:
     pass
@@ -53,9 +65,10 @@ def subgraph(
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor,
-    relabel_nodes: bool,
-    num_nodes: Optional[int],
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
     return_edge_mask: Literal[True],
 ) -> Tuple[Tensor, OptTensor, Tensor]:
     pass
@@ -67,6 +80,7 @@ def subgraph(
     edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
+    *,
     return_edge_mask: bool = False,
 ) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, Tensor]]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
