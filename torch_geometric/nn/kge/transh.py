@@ -81,8 +81,8 @@ class TransH(KGEModel):
         w_rel = F.normalize(self.w_rel_emb(rel_type), p=self.p_norm)
         d_rel = self.d_rel_emb(rel_type)
 
-        proj_head = head - torch.matmul(torch.matmul(head, w_rel.T), w_rel)
-        proj_tail = tail - torch.matmul(torch.matmul(tail, w_rel.T), w_rel)
+        proj_head = head - (w_rel * head).sum(dim=1).unsqueeze(dim=1) * w_rel
+        proj_tail = tail - (w_rel * tail).sum(dim=1).unsqueeze(dim=1) * w_rel
 
         proj_head = F.normalize(proj_head, p=self.p_norm, dim=-1)
         proj_tail = F.normalize(proj_tail, p=self.p_norm, dim=-1)
@@ -101,6 +101,8 @@ class TransH(KGEModel):
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 
+        sample_test = self.sample_golden_triplets(head_index, rel_type, tail_index)
+
         return F.margin_ranking_loss(
             pos_score,
             neg_score,
@@ -115,11 +117,38 @@ class TransH(KGEModel):
             rel_type: Tensor, 
             tail_index: Tensor
     ) -> Tuple[Tensor, Tensor, Tensor]:
+       
+        for i in range(self.num_relations):
+            r = rel_type[i]
+            mask = (rel_type == r).int()
+            print(head_index[0])
+            head_unique, tail_count = torch.unique((head_index[mask]), return_counts=True)
+            tail_unique, head_count = torch.unique(tail_index[mask], return_counts=True)
+            #print(head_index[mask])
+            # print('head unique', head_unique)
+            # print('tail count', tail_count)
+            print('tail unique', tail_unique)
+            print('head count', head_count)
+
+
+
+    #    torch.unique((head_index, rel_type, tail_index), return_counts=True)
+
+    #    print('head:', head_index.shape)
+    #    print('rel:', rel_type.shape)
+    #    print(head_index)
+    #    print('tail:', tail_index.shape)
+
+        # hpt = head_index.numel() // tail_index.numel()  # average number of head entities per tail entity
+        # tph = tail_index.numel() // head_index.numel() # average number of tail entities per head entity
         
-        hpt = head_index.numel() // tail_index.numel()  # average number of head entities per tail entity
-        tph = tail_index.numel() // head_index.numel() # average number of tail entities per head entity
+        # corrupt_head_prob = torch.empty(self.num_relations)
         
-        print('head_index size:', head_index.size)
+        # for r in range(self.num_relations):
+            
+
+
+        # print('head_index size:', head_index.size)
         
         #bernoulli = torch.bernoulli(input=tph / (tph + hpt), out=)
     
@@ -140,6 +169,3 @@ class TransH(KGEModel):
         # head_index[:num_negatives] = rnd_index[:num_negatives]
         # tail_index = tail_index.clone()
         # tail_index[num_negatives:] = rnd_index[num_negatives:]
-
-        return head_index, rel_type, tail_index
-

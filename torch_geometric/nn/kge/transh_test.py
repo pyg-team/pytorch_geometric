@@ -7,6 +7,8 @@ import torch.optim as optim
 from torch_geometric.datasets import FB15k_237
 from torch_geometric.nn import TransE
 from transh import TransH
+
+from torch_geometric.transforms import RandomLinkSplit
                 
 model_map = {
     'transe': TransE,
@@ -26,7 +28,14 @@ print('train_data size:', train_data.size)
 val_data = FB15k_237(path, split='val')[0].to(device)
 print('val_data size:', val_data.size)
 test_data = FB15k_237(path, split='test')[0].to(device)
-print('test_data size:', test_data.size)
+
+# our sanity check (DELETE LATER)
+transform = RandomLinkSplit(is_undirected=True)
+train_test, val_test, test_test = transform(test_data)
+#transform2 = RandomLinkSplit(is_undirected=True)
+#train_test2, val_test2, test_test2 = transform2(test_test)
+test_data = val_test
+print('test data:', val_test.size)
 
 model_arg_map = {'rotate': {'margin': 9.0}}
 model = model_map[args.model](
@@ -74,7 +83,7 @@ def test(data):
         head_index=data.edge_index[0],
         rel_type=data.edge_type,
         tail_index=data.edge_index[1],
-        batch_size=5, #from 20000
+        batch_size=1000, #from 20000
         k=10,
     )
 
@@ -90,3 +99,15 @@ for epoch in range(1, 6):
 rank, mrr, hits_at_10 = test(test_data)
 print(f'Test Mean Rank: {rank:.2f}, Test MRR: {mrr:.4f}, '
       f'Test Hits@10: {hits_at_10:.4f}')
+
+"""
+TransH initial test:
+- mean rank: 7592.13
+- MRR: 0.0076
+- hits@10: 0.0123
+
+TransE initial test:
+- mean rank: 7222.76
+- MRR: 0.0408
+- hits@10: 0.0737
+"""
