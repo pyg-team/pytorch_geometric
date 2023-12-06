@@ -243,13 +243,6 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
 
 def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
-    """Visualization of embeddings.
-    model:          Trained Model
-    train_data:     Graph with train edges
-    val_data:       Graph with val edges
-    real_recs:      Recommendations for each user
-    num_users:      Num of users who should be plotted
-    """
     tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
     movie_embs, user_embs = get_embeddings(model, val_data)
     emb_reduced = tsne.fit_transform(
