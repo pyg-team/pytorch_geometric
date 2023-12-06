@@ -246,7 +246,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
-        pe.extern('torch_geometric.utils.trim_to_layer')
+        pe.extern('torch_geometric.utils._trim_to_layer')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
 
