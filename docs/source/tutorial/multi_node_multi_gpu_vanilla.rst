@@ -62,7 +62,7 @@ Using a cluster configured with pyxis-containers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If your cluster supports the :obj:`pyxis` plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
-Currently it is not yet publically available, but you can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
+See `here <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_.
 The container should set up all necessary environment variables from which you can now directly run the example using :obj:`srun` from your command prompt:
 
 .. code-block:: console
