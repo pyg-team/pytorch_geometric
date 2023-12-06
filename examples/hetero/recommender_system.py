@@ -46,17 +46,13 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 
-# Add user node features for message passing:
-data['user'].x = torch.eye(data['user'].num_nodes, device=device)
-del data['user'].num_nodes
-
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # Add node ids
-data['movie'].n_id = torch.arange(0, data['movie'].x.size(0))
-data['user'].n_id = torch.arange(0, data['user'].x.size(0))
+data['movie'].n_id = torch.arange(0, data['movie'].num_nodes)
+data['user'].n_id = torch.arange(0, data['user'].num_nodes)
 
 # Use only edges that have high ratings (>=4)
 rating_threshold = 4
@@ -103,14 +99,6 @@ train_dataloader = LinkNeighborLoader(
                       train_data[('user', 'rates', 'movie')].edge_index),
     edge_label_time=train_data[('user', 'rates', 'movie')].time,
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
-
-
-# We have an unbalanced dataset with many labels for rating 3 and 4, and very
-# few for 0 and 1. Therefore we use a weighted MSE loss.
-def weighted_mse_loss(pred, target, weight=None):
-    weight = 1. if weight is None else weight[target].to(pred.dtype)
-    return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
-
 
 class GNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
@@ -159,16 +147,15 @@ class Model(torch.nn.Module):
 
     def forward(self, user_id, movie_id, x_dict, edge_index_dict,
                 edge_label_index):
-        x_dict['user'] = torch.cat([self.user_emb(user_id), x_dict['user']],
-                                   dim=-1)
+        x_dict['user'] = self.user_emb(user_id)
         x_dict['movie'] = torch.cat(
             [self.movie_emb(movie_id), x_dict['movie']], dim=-1)
         z_dict = self.encoder(x_dict, edge_index_dict)
         return self.decoder(z_dict, edge_label_index)
 
 
-model = Model(num_users=data['user'].x.size(0),
-              num_movies=data['movie'].x.size(0),
+model = Model(num_users=data['user'].num_nodes,
+              num_movies=data['movie'].num_nodes,
               hidden_channels=64).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
 
@@ -196,7 +183,7 @@ def write_recs(real_recs, val_data, val_user_pos_items):
 
     movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
     with open('recommendations.txt', 'w') as f:
-        for user in range(val_data['user'].x.size(0)):
+        for user in range(val_data['user'].num_nodes):
             try:
                 if user in val_user_pos_items:
                     f.write('\nPred\n')
@@ -214,9 +201,7 @@ def write_recs(real_recs, val_data, val_user_pos_items):
 def get_embeddings(model, val_data):
     # Get user and movie embeddings from the model
     x_dict = {}
-    x_dict['user'] = torch.cat(
-        [model.user_emb(val_data['user'].n_id), val_data.x_dict['user']],
-        dim=-1)
+    x_dict['user'] = model.user_emb(val_data['user'].n_id)
     x_dict['movie'] = torch.cat(
         [model.movie_emb(val_data['movie'].n_id), val_data.x_dict['movie']],
         dim=-1)
@@ -243,7 +228,7 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
     # Get the recommendations for user; only those
     # that the user is yet to watch
     real_recs = {}
-    for user in range(val_data['user'].x.size(0)):
+    for user in range(val_data['user'].num_nodes):
         try:
             real_recs[user] = list(
                 OrderedSet(knn_index[user].tolist()) -
