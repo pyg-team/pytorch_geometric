@@ -38,15 +38,14 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
             for cpu_dir in glob.glob(osp.join(node_path, 'cpu[0-9]*')):
                 cpu_id = int(osp.basename(cpu_dir)[3:])
                 if cpu_id > 0:
-                    with open(osp.join(cpu_dir,
-                                           'online')) as core_online_file:
+                    with open(osp.join(cpu_dir, 'online')) as core_online_file:
                         core_online = int(
                             core_online_file.read().splitlines()[0])
                 else:
                     core_online = 1  # cpu0 is always online (special case)
                 if core_online == 1:
                     with open(osp.join(cpu_dir, 'topology',
-                                           'core_id')) as core_id_file:
+                                       'core_id')) as core_id_file:
                         core_id = int(core_id_file.read().strip())
                         if core_id in thread_siblings:
                             thread_siblings[core_id].append(cpu_id)
