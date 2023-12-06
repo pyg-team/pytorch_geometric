@@ -10,7 +10,6 @@ import torch
 import torch.nn.functional as F
 from ordered_set import OrderedSet
 from sklearn.manifold import TSNE
-from sklearn.metrics import accuracy_score, roc_auc_score
 from torch.nn import Embedding, Linear
 from tqdm import tqdm
 
@@ -30,11 +29,6 @@ parser.add_argument('-k', '--k', type=int, default=20,
 parser.add_argument('--visualize_emb', action='store_true',
                     help='Epoch-wise visualization of embeddings')
 parser.set_defaults(visualize_emb=False)
-parser.add_argument('--profile_code', action='store_true',
-                    help='Display timing information')
-parser.set_defaults(profile_code=False)
-parser.add_argument('--use_weighted_loss', action='store_true',
-                    help='Whether to use weighted MSE loss.')
 args = parser.parse_args()
 
 print(args)
@@ -110,35 +104,9 @@ train_dataloader = LinkNeighborLoader(
     edge_label_time=train_data[('user', 'rates', 'movie')].time,
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
 
-val_dataloader = LinkNeighborLoader(
-    data=val_data,
-    num_neighbors=[-1, -1, -1],
-    neg_sampling_ratio=1,
-    edge_label_index=(('user', 'rates', 'movie'),
-                      val_data[('user', 'rates', 'movie')].edge_index),
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-)
-
-test_dataloader = LinkNeighborLoader(
-    data=test_data,
-    num_neighbors=[-1, -1, -1],
-    neg_sampling_ratio=1,
-    edge_label_index=(('user', 'rates', 'movie'),
-                      test_data[('user', 'rates', 'movie')].edge_index),
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-)
 
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
-if args.use_weighted_loss:
-    weight = torch.bincount(data['user', 'movie'].edge_label)
-    weight = weight.max() / weight
-else:
-    weight = None
-
-
 def weighted_mse_loss(pred, target, weight=None):
     weight = 1. if weight is None else weight[target].to(pred.dtype)
     return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
@@ -319,17 +287,17 @@ def randomize_inputs(batch):
     return batch
 
 
-def train(train_dl, val_dl, val_data, epoch):
+def train(train_dl, val_data, epoch):
     model.train()
 
     for step, batch in enumerate(train_dl):
         optimizer.zero_grad()
-        batch = randomize_inputs(batch)
+        # batch = randomize_inputs(batch)
         pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
                      batch.edge_index_dict, batch['user',
                                                   'movie'].edge_label_index)
         target = batch['user', 'movie'].edge_label
-        loss = weighted_mse_loss(pred, target, weight)
+        loss = F.mse_loss(pred, target)
         loss.backward()
         optimizer.step()
 
@@ -362,7 +330,7 @@ def compute_metrics(real_recs, val_data, k, desc):
 
 EPOCHS = args.epochs
 for epoch in tqdm(range(0, EPOCHS)):
-    loss = train(train_dl=train_dataloader, val_dl=val_dataloader,
+    loss = train(train_dl=train_dataloader,
                  val_data=val_data, epoch=epoch)
 
     # Get results on val split
