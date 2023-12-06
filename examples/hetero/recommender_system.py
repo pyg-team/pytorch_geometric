@@ -316,6 +316,7 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
     plt.title(title_text)
     plt.savefig('./fig-' + str(epoch) + '.png')
     plt.clf()
+    plt.close()
 
 def train(train_dl, val_data, epoch):
     model.train()
