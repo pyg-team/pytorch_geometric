@@ -2,7 +2,6 @@ import multiprocessing as mp
 import warnings
 from typing import Optional
 
-import numpy as np
 import torch
 from torch import Tensor
 
