@@ -172,12 +172,9 @@ class EdgeDecoder(torch.nn.Module):
         u_to_i = self.user_to_item(z_dict['user'][row])
         i_to_u = self.item_to_user(z_dict['movie'][col])
 
-        z = torch.cat([u_to_i, i_to_u], dim=-1)
-
-        z = self.lin1(z).relu()
-        z = self.lin2(z)
+        z = (u_to_i*i_to_u).sum(dim=1)
+        
         return z.view(-1)
-        # return z
 
 
 class Model(torch.nn.Module):
@@ -352,38 +349,6 @@ def train(train_dl, val_dl, val_data, epoch):
 
     return float(loss)
 
-
-@torch.no_grad()
-def evaluate(dl, desc='val'):
-    model.eval()
-    rmse = 0
-    t0 = time.time()
-    val_time = 0
-    preds, targets = [], []
-    for batch in tqdm(dl, desc=desc):
-        optimizer.zero_grad()
-        batch = randomize_inputs(batch)
-        pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
-                     batch.edge_index_dict, batch['user',
-                                                  'movie'].edge_label_index)
-        pred = pred.clamp(min=0, max=5)
-        target = batch['user', 'movie'].edge_label.float()
-        preds.append(pred)
-        targets.append(target)
-
-        rmse += F.mse_loss(pred, target).sqrt()
-        t1 = time.time()
-        val_time += t1 - t0
-        t0 = time.time()
-    pred = torch.cat(preds, dim=0).numpy()
-    target = torch.cat(targets, dim=0).numpy()
-    acc = accuracy_score(target, pred > 0.5)
-    roc = roc_auc_score(target, pred)
-    if args.profile_code is True:
-        print(f'{desc} time = {val_time}')
-    return float(rmse), roc, acc
-
-
 def compute_metrics(real_recs, val_data, k, desc):
     # Convert real_recs from a list to tensor
     real_recs_list = []
@@ -411,28 +376,18 @@ for epoch in range(0, EPOCHS):
                  val_data=val_data, epoch=epoch)
 
     # Get results on val split
-    val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-    print(
-        f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
-        f'Val RMSE: {val_rmse[0]:.4f}, Val ROC_AUC: {val_rmse[1]:.4f} '
-        f'Val Acc: {val_rmse[2]:.4f}'
-    )
-    print(f'Val precision@{args.k} = {val_metrics["precision"]:.3E}')
-    print(f'Val ndcg@{args.k} = {val_metrics["ndcg"]:.3E}')
+    print( f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
+    f' Val precision@{args.k} = {val_metrics["precision"]:.3E},'
+    f' Val ndcg@{args.k} = {val_metrics["ndcg"]:.3E}')
 
-# Get results on test split
-test_rmse = evaluate(test_dataloader, 'test')
-print(
-    f'test RMSE: {test_rmse[0]:.4f}, test ROC_AUC: {test_rmse[1]:.4f}'
-    f' test Acc: {test_rmse[2]:.4f}'
-)
-real_recs = make_recommendations(model, train_data, test_data, args.k, False)
-test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
-print(f'Test precision@{args.k} = {test_metrics["precision"]:.3E}')
-print(f'Test ndcg@{args.k} = {test_metrics["ndcg"]:.3E}')
+    # Get results on test split
+    real_recs = make_recommendations(model, train_data, test_data, args.k, False)
+    test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
+    print(f'Test precision@{args.k} = {test_metrics["precision"]:.3E}, '
+          f'Test ndcg@{args.k} = {test_metrics["ndcg"]:.3E}')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
