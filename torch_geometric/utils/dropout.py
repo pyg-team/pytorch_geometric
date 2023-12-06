@@ -146,7 +146,6 @@ def dropout_node(
     edge_index, _, edge_mask = subgraph(
         node_mask,
         edge_index,
-        edge_attr=None,
         relabel_nodes=relabel_nodes,
         num_nodes=num_nodes,
         return_edge_mask=True,
