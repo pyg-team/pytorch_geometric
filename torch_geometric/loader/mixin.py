@@ -1,6 +1,7 @@
 import glob
 import logging
 import os
+import os.path as osp
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional, Union
 
@@ -34,17 +35,17 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
             numa_node_id = int(osp.basename(node_path)[4:])
 
             thread_siblings = {}
-            for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
-                cpu_id = int(os.path.basename(cpu_dir)[3:])
+            for cpu_dir in glob.glob(osp.join(node_path, 'cpu[0-9]*')):
+                cpu_id = int(osp.basename(cpu_dir)[3:])
                 if cpu_id > 0:
-                    with open(os.path.join(cpu_dir,
+                    with open(osp.join(cpu_dir,
                                            'online')) as core_online_file:
                         core_online = int(
                             core_online_file.read().splitlines()[0])
                 else:
                     core_online = 1  # cpu0 is always online (special case)
                 if core_online == 1:
-                    with open(os.path.join(cpu_dir, 'topology',
+                    with open(osp.join(cpu_dir, 'topology',
                                            'core_id')) as core_id_file:
                         core_id = int(core_id_file.read().strip())
                         if core_id in thread_siblings:
