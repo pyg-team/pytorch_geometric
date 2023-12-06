@@ -40,6 +40,7 @@ def test_cpu_affinity_neighbor_loader(loader_cores, spawn_context):
             # test if threads assigned to workers are in two consecutive ranges
             # (0-n), (n+1, m)
 
+
 def init_fn(worker_id):
     assert torch.get_num_threads() == 2
     print(f"{worker_id} uses {torch.get_num_threads()} threads")

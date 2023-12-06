@@ -100,7 +100,7 @@ def without_extensions(request):
     return request.param == 'disable_extensions'
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def spawn_context():
-    mp.set_start_method('spawn')
+    mp.set_start_method('spawn', force=True)
     print(f'Setting torch.multiprocessing context to `spawn`')
