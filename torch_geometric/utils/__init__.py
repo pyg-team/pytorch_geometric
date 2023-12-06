@@ -16,8 +16,8 @@ from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
                    add_remaining_self_loops, get_self_loop_attr)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
-from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
-                       bipartite_subgraph)
+from ._subgraph import (get_num_hops, subgraph, k_hop_subgraph,
+                        bipartite_subgraph)
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
 from ._homophily import homophily
 from ._assortativity import assortativity
