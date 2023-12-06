@@ -41,10 +41,10 @@ def get_num_hops(model: torch.nn.Module) -> int:
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor,
-    relabel_nodes: bool,
-    num_nodes: Optional[int],
-    return_edge_mask: Literal[False],
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    return_edge_mask: Literal[False] = ...,
 ) -> Tuple[Tensor, OptTensor]:
     pass
 
@@ -53,10 +53,10 @@ def subgraph(
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: OptTensor,
-    relabel_nodes: bool,
-    num_nodes: Optional[int],
-    return_edge_mask: Literal[True],
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    return_edge_mask: Literal[True] = ...,
 ) -> Tuple[Tensor, OptTensor, Tensor]:
     pass
 
