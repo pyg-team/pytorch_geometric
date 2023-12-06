@@ -100,6 +100,7 @@ train_dataloader = LinkNeighborLoader(
     edge_label_time=train_data[('user', 'rates', 'movie')].time,
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
 
+
 class GNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
@@ -125,8 +126,8 @@ class EdgeDecoder(torch.nn.Module):
         u = z_dict['user'][row]
         i = z_dict['movie'][col]
 
-        z = (u*i).sum(dim=1)
-        
+        z = (u * i).sum(dim=1)
+
         return z.view(-1)
 
 
@@ -242,9 +243,8 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
 
 def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
-    """
-    Args:
-    model:          Trained Model 
+    """Args:
+    model:          Trained Model
     train_data:     Graph with train edges
     val_data:       Graph with val edges
     real_recs:      Recommendations for each user
@@ -258,65 +258,70 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
             user_embs,
         )).detach().numpy())
     plt.figure(figsize=(10, 10), dpi=300)
-    plt.scatter(emb_reduced[:movie_embs.size(0), 0],
-                emb_reduced[:movie_embs.size(0), 1], alpha=0.1, label='All Movies')
-    
+    plt.scatter(emb_reduced[:movie_embs.size(0),
+                            0], emb_reduced[:movie_embs.size(0), 1], alpha=0.1,
+                label='All Movies')
+
     movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
+
     def load_node_csv(path, index_col):
         df = pd.read_csv(path, index_col=index_col)
         return df
-    
 
     movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
-    val_pos_items = get_user_positive_items(val_data['user', 'movie'].edge_index)
-    train_pos_items = get_user_positive_items(train_data['user', 'movie'].edge_index)
+    val_pos_items = get_user_positive_items(val_data['user',
+                                                     'movie'].edge_index)
+    train_pos_items = get_user_positive_items(train_data['user',
+                                                         'movie'].edge_index)
     displayed_users = 0
     title_text = "Displaying Train and Pred Movies for users: "
     for user_i, (val_user, gt) in enumerate(val_pos_items.items()):
         try:
             train_gt = train_pos_items[val_user]
-            plt.scatter(emb_reduced[train_gt, 0],
-                        emb_reduced[train_gt, 1], marker='+', label='Train Movies'+str(val_user))
+            plt.scatter(emb_reduced[train_gt, 0], emb_reduced[train_gt, 1],
+                        marker='+', label='Train Movies' + str(val_user))
             for i in train_gt:
-                plt.annotate(movie_id_to_name.iloc[i]['title'],
-                             xy=(emb_reduced[i,0], emb_reduced[i,1]),
-                             xytext=(emb_reduced[i,0]+2, emb_reduced[i,1]),
-                             fontsize=3,
-                             horizontalalignment='left',
-                             arrowprops={'arrowstyle' : '->',
-                                         'color': '0.5',
-                                         'shrinkA' : 5,
-                                         'shrinkB' : 5,
-                                         'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"}
-                             )
-                
-            plt.scatter(emb_reduced[real_recs[val_user], 0],
-                        emb_reduced[real_recs[val_user], 1], marker='x', label='Pred Movies '+str(val_user))
+                plt.annotate(
+                    movie_id_to_name.iloc[i]['title'],
+                    xy=(emb_reduced[i, 0], emb_reduced[i, 1]),
+                    xytext=(emb_reduced[i, 0] + 2, emb_reduced[i, 1]),
+                    fontsize=3, horizontalalignment='left', arrowprops={
+                        'arrowstyle': '->',
+                        'color': '0.5',
+                        'shrinkA': 5,
+                        'shrinkB': 5,
+                        'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
+                    })
+
+            plt.scatter(emb_reduced[real_recs[val_user],
+                                    0], emb_reduced[real_recs[val_user], 1],
+                        marker='x', label='Pred Movies ' + str(val_user))
             for i in real_recs[val_user]:
-                plt.annotate(movie_id_to_name.iloc[i]['title'],
-                             (emb_reduced[i,0], emb_reduced[i,1]),
-                             xytext=(emb_reduced[i,0]-2, emb_reduced[i,1]),
-                             fontsize=3,
-                             horizontalalignment='right',
-                             arrowprops={'arrowstyle' : '->',
-                                         'color': '0.5',
-                                         'shrinkA' : 5,
-                                         'shrinkB' : 5,
-                                         'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"}
-                             )
+                plt.annotate(
+                    movie_id_to_name.iloc[i]['title'],
+                    (emb_reduced[i, 0], emb_reduced[i, 1]),
+                    xytext=(emb_reduced[i, 0] - 2, emb_reduced[i, 1]),
+                    fontsize=3, horizontalalignment='right', arrowprops={
+                        'arrowstyle': '->',
+                        'color': '0.5',
+                        'shrinkA': 5,
+                        'shrinkB': 5,
+                        'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
+                    })
             displayed_users += 1
-            title_text += str(val_user)+ ' '
+            title_text += str(val_user) + ' '
         except KeyError:
             pass
-    
+
         if displayed_users == num_users:
             break
-    
+
     plt.legend(loc='upper left', ncol=3, fontsize=10)
     plt.title(title_text)
     plt.savefig('./fig-' + str(epoch) + '.png')
     plt.clf()
     plt.close()
+
 
 def train(train_dl, val_data, epoch):
     model.train()
@@ -331,6 +336,7 @@ def train(train_dl, val_data, epoch):
         loss.backward()
         optimizer.step()
     return float(loss)
+
 
 def compute_metrics(real_recs, val_data, k, desc):
     # Convert real_recs from a list to tensor
@@ -355,27 +361,27 @@ def compute_metrics(real_recs, val_data, k, desc):
 
 EPOCHS = args.epochs
 for epoch in tqdm(range(0, EPOCHS)):
-    loss = train(train_dl=train_dataloader,
-                 val_data=val_data, epoch=epoch)
+    loss = train(train_dl=train_dataloader, val_data=val_data, epoch=epoch)
 
     # Get results on val split
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-    
+
     if args.visualize_emb:
         visualize(model, train_data, val_data, real_recs, epoch)
 
     # Get results on test split
-    real_recs = make_recommendations(model, train_data, test_data, args.k, True)
+    real_recs = make_recommendations(model, train_data, test_data, args.k,
+                                     True)
     test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
-    
+
     # Print output
-    print( f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
-        f' Val [precision@{args.k} = {val_metrics["precision"]:.3E},'
-        f' ndcg@{args.k} = {val_metrics["ndcg"]:.3E}],'
-        f' Test [precision@{args.k} = {test_metrics["precision"]:.3E},'
-        f' ndcg@{args.k} = {test_metrics["ndcg"]:.3E}]')
+    print(f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
+          f' Val [precision@{args.k} = {val_metrics["precision"]:.3E},'
+          f' ndcg@{args.k} = {val_metrics["ndcg"]:.3E}],'
+          f' Test [precision@{args.k} = {test_metrics["precision"]:.3E},'
+          f' ndcg@{args.k} = {test_metrics["ndcg"]:.3E}]')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
