@@ -243,8 +243,7 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
 
 def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
-    """
-    Args:
+    """Args:
     model:          Trained Model
     train_data:     Graph with train edges
     val_data:       Graph with val edges
