@@ -31,7 +31,7 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
     nodes = {}
     try:
         for node_path in numa_node_paths:
-            numa_node_id = int(os.path.basename(node_path)[4:])
+            numa_node_id = int(osp.basename(node_path)[4:])
 
             thread_siblings = {}
             for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
@@ -80,7 +80,7 @@ class MemMixin:
     """
     def mem_init_fn(self, worker_id):
         logging.debug(
-            f"woker {worker_id} process is using {round((psutil.Process(                os.getpid()).memory_info().rss / 1024 ** 2),2)} MB of memory"
+            f"Worker {worker_id} process is using {round((psutil.Process(                os.getpid()).memory_info().rss / 1024 ** 2),2)} MB of memory"
         )
         self.worker_init_fn_old(worker_id)
 
@@ -95,7 +95,7 @@ class MemMixin:
 
 
 class MultithreadMixin:
-    r"""A context manager to enable multithreading in dataloder workers.
+    r"""A context manager to enable multithreading in dataloader workers.
     It changes the default value of threads used in the sampler from 1 to `worker_threads`.
     """
     def mt_init_fn(self, worker_id):
