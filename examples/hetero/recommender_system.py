@@ -164,8 +164,13 @@ class EdgeDecoder(torch.nn.Module):
         super().__init__()
         self.lin1 = Linear(2 * hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, 1)
+        self.user_to_item = Linear(hidden_channels, hidden_channels)
+        self.item_to_user = Linear(hidden_channels, hidden_channels)
 
-    def forward(self, u_to_i, i_to_u):
+    def forward(self, z_dict, edge_label_index):
+        row, col = edge_label_index
+        u_to_i = self.user_to_item(z_dict['user'][row])
+        i_to_u = self.item_to_user(z_dict['movie'][col])
 
         z = torch.cat([u_to_i, i_to_u], dim=-1)
 
@@ -182,8 +187,6 @@ class Model(torch.nn.Module):
         self.movie_emb = Embedding(num_movies, hidden_channels, device=device)
         self.encoder = GNNEncoder(hidden_channels, hidden_channels)
         self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
-        self.user_to_hidden = Linear(hidden_channels, hidden_channels)
-        self.item_to_hidden = Linear(hidden_channels, hidden_channels)
         self.decoder = EdgeDecoder(hidden_channels)
 
     def init_parameters(self):
@@ -192,15 +195,12 @@ class Model(torch.nn.Module):
 
     def forward(self, user_id, movie_id, x_dict, edge_index_dict,
                 edge_label_index):
-        x_dict['user'] = torch.cat([self.user_emb(user_id), x_dict['user']],
-                                   dim=-1)
+        x_dict['user'] = torch.cat(
+            [self.user_emb(user_id), x_dict['user']], dim=-1)
         x_dict['movie'] = torch.cat(
             [self.movie_emb(movie_id), x_dict['movie']], dim=-1)
         z_dict = self.encoder(x_dict, edge_index_dict)
-        row, col = edge_label_index
-        u_to_i = self.user_to_hidden(z_dict['user'][row])
-        i_to_u = self.item_to_hidden(z_dict['movie'][col])
-        return self.decoder(u_to_i, i_to_u)
+        return self.decoder(z_dict, edge_label_index)
 
 
 model = Model(num_users=data['user'].x.size(0),
@@ -250,30 +250,35 @@ def write_recs(real_recs, val_data, val_user_pos_items):
 def get_embeddings(model, val_data):
     # Get user and movie embeddings from the model
     x_dict = {}
-    x_dict['user'] = torch.cat(
-        [model.user_emb(val_data['user'].n_id), val_data.x_dict['user']],
-        dim=-1)
-    x_dict['movie'] = torch.cat(
-        [model.movie_emb(val_data['movie'].n_id), val_data.x_dict['movie']],
-        dim=-1)
-    embs = model.encoder(x_dict, val_data.edge_index_dict)
+    x_dict['user'] = torch.cat([model.user_emb(val_data['user'].n_id),
+                                val_data.x_dict['user']], dim=-1)
+    x_dict['movie'] = torch.cat([model.movie_emb(val_data['movie'].n_id),
+                                 val_data.x_dict['movie']], dim=-1)
+    embs = model.encoder(x_dict,
+                         val_data.edge_index_dict)
     movie_embs = embs['movie']
-    embs_user_to_movie = model.user_to_hidden(embs['user'])
-    movie_embs = model.item_to_hidden(embs['movie'])
+    embs_user_to_movie = embs['user']
+    embs_user_to_movie = model.decoder.user_to_item(embs['user'])
+    movie_embs = model.decoder.item_to_user(embs['movie'])
     return movie_embs, embs_user_to_movie
 
 
-def make_recommendations(model, train_data, val_data, k, write_to_file=False):
+def make_recommendations(model,
+                         train_data,
+                         val_data,
+                         k,
+                         write_to_file=False):
 
     movie_embs, user_embs = get_embeddings(model, val_data)
     mipsknn = MIPSKNNIndex(movie_embs)
-    knn_score, knn_index = mipsknn.search(user_embs, movie_embs.size(0))
+    knn_score, knn_index = mipsknn.search(
+        user_embs, movie_embs.size(0))
 
     # Obtain the movies that each user has already
     # watched. These movies need to be removed from
     # recommendations
-    user_pos_items = get_user_positive_items(train_data['user',
-                                                        'movie'].edge_index)
+    user_pos_items = get_user_positive_items(
+        train_data['user', 'movie'].edge_index)
 
     # Get the recommendations for user; only those
     # that the user is yet to watch
@@ -282,13 +287,14 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
         try:
             real_recs[user] = list(
                 OrderedSet(knn_index[user].tolist()) -
-                OrderedSet(user_pos_items[user]))[:k]
+                OrderedSet(user_pos_items[user]))[
+                : k]
         except KeyError:
             real_recs[user] = knn_index[user].tolist()[:k]
 
     # Get the ground truth
-    val_user_pos_items = get_user_positive_items(val_data['user',
-                                                          'movie'].edge_index)
+    val_user_pos_items = get_user_positive_items(
+        val_data['user', 'movie'].edge_index)
 
     # Let's write out the recommendations into a file
     if write_to_file:
@@ -300,25 +306,25 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 def visualize(model, val_data, epoch):
     tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
     movie_embs, user_embs = get_embeddings(model, val_data)
-    emb_reduced = tsne.fit_transform(
-        torch.vstack((
-            movie_embs,
-            user_embs,
-        )).detach().numpy())
+    emb_reduced = tsne.fit_transform(torch.vstack((movie_embs,
+                                                   user_embs,
+                                                   )).detach().numpy())
     plt.scatter(emb_reduced[:movie_embs.size(0), 0],
-                emb_reduced[:movie_embs.size(0), 1], alpha=0.1)
+                emb_reduced[:movie_embs.size(0), 1],
+                alpha=0.1)
     plt.scatter(emb_reduced[movie_embs.size(0):, 0],
-                emb_reduced[movie_embs.size(0):, 1], alpha=0.1, marker='x')
+                emb_reduced[movie_embs.size(0):, 1],
+                alpha=0.1,
+                marker='x')
     plt.savefig('./fig-' + str(epoch) + '.png')
     plt.clf()
 
 
 def randomize_inputs(batch):
     perm = torch.randperm(len(batch['user', 'movie'].edge_label))
-    batch[edge_names[0]]['edge_label'] = batch[
-        edge_names[0]]['edge_label'][perm]
-    batch[edge_names[0]]['edge_label_index'] = batch[
-        edge_names[0]]['edge_label_index'][:, perm]
+    batch[edge_names[0]]['edge_label'] = batch[edge_names[0]]['edge_label'][perm]
+    batch[edge_names[0]]['edge_label_index'] = batch[edge_names[0]][
+        'edge_label_index'][:, perm]
     return batch
 
 
@@ -331,9 +337,10 @@ def train(train_dl, val_dl, val_data, epoch):
     for step, batch in enumerate(pbar):
         optimizer.zero_grad()
         batch = randomize_inputs(batch)
-        pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
-                     batch.edge_index_dict, batch['user',
-                                                  'movie'].edge_label_index)
+        pred = model(batch['user'].n_id,
+                     batch['movie'].n_id,
+                     batch.x_dict, batch.edge_index_dict,
+                     batch['user', 'movie'].edge_label_index)
         target = batch['user', 'movie'].edge_label
         loss = weighted_mse_loss(pred, target, weight)
         loss.backward()
@@ -363,9 +370,8 @@ def evaluate(dl, desc='val'):
         optimizer.zero_grad()
         batch = randomize_inputs(batch)
         pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
-                     batch.edge_index_dict, batch['user',
-                                                  'movie'].edge_label_index)
-        # .sigmoid().view(-1).cpu()
+                     batch.edge_index_dict,
+                     batch['user', 'movie'].edge_label_index)
         pred = pred.clamp(min=0, max=5)
         target = batch['user', 'movie'].edge_label.float()
         preds.append(pred)
@@ -389,6 +395,7 @@ def compute_metrics(real_recs, val_data, k, desc):
     real_recs_list = []
     [real_recs_list.append(rec) for id, rec in real_recs.items()]
     rec_tensor = torch.tensor(real_recs_list)
+
     node_id = val_data['user'].n_id
 
     # Use torch_geometric.nn.metrics
@@ -410,27 +417,24 @@ for epoch in range(0, EPOCHS):
                  val_data=val_data, epoch=epoch)
 
     # Get results on val split
-    # To evaluate the link prediction performance uncomment the following line
-    # val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
+    val_rmse = evaluate(val_dataloader, 'val')  # Eval link prediction perf
     real_recs = make_recommendations(model, train_data, val_data, args.k,
                                      False)
     val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-    precision = val_metrics['precision']
-    ndcg = val_metrics['ndcg']
-    print(f'Epoch: {epoch:03d}, Train loss: {loss:.4f}',
-          f'Val metrics: precision@{args.k} = {precision:.4E}',
-          f' ndcg@{args.k} = {ndcg:.4E}')
+    print(
+        f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
+        f'Val RMSE: {val_rmse[0]:.4f}, Val ROC_AUC: {val_rmse[1]:.4f} Val Acc: {val_rmse[2]:.4f}')
+    print(f'Val precision@{args.k} = {val_metrics["precision"]:.3E}')
+    print(f'Val ndcg@{args.k} = {val_metrics["ndcg"]:.3E}')
 
 # Get results on test split
-
-# To evaluate the link prediction performance uncomment the following line
-# test_rmse = evaluate(test_dataloader,
-#               'test')
-real_recs = make_recommendations(model, train_data, test_data, args.k, True)
+test_rmse = evaluate(test_dataloader, 'test')
+print(
+    f'test RMSE: {test_rmse[0]:.4f}, test ROC_AUC: {test_rmse[1]:.4f} test Acc: {test_rmse[2]:.4f}')
+real_recs = make_recommendations(model, train_data, test_data, args.k, False)
 test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
-precision = test_metrics['precision']
-ndcg = test_metrics['ndcg']
-print(f'Test metrics: precision@{args.k} = {precision:.4E} ndcg@{args.k} = {ndcg:.4E}')
+print(f'Test precision@{args.k} = {test_metrics["precision"]:.3E}')
+print(f'Test ndcg@{args.k} = {test_metrics["ndcg"]:.3E}')
 
 # Save the model for good measure
 torch.save(model.state_dict(), "./model.bin")
