@@ -437,7 +437,7 @@ def get_sparse_diag(
 
 
 def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
-    size = tuple(adj.size())
+    size = adj.size()
 
     if value.dim() > 1:
         size = size + value.size()[1:]
