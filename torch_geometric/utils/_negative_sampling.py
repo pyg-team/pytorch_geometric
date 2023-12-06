@@ -61,10 +61,10 @@ def negative_sampling(
     if isinstance(num_nodes, int):
         size = (num_nodes, num_nodes)
         bipartite = False
-        force_undirected = False
     else:
         size = num_nodes
         bipartite = True
+        force_undirected = False
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
