@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Literal, Optional, Tuple, Union, overload
 
 import torch
 from torch import Tensor
@@ -37,6 +37,30 @@ def get_num_hops(model: torch.nn.Module) -> int:
     return num_hops
 
 
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    return_edge_mask: Literal[False] = ...,
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    return_edge_mask: Literal[True] = ...,
+) -> Tuple[Tensor, OptTensor, Tensor]:
+    pass
+
+
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
@@ -44,7 +68,7 @@ def subgraph(
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, Tensor]]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
