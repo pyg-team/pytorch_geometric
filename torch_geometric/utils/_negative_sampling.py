@@ -55,11 +55,16 @@ def negative_sampling(
     """
     assert method in ['sparse', 'dense']
 
-    size = num_nodes
-    bipartite = isinstance(size, (tuple, list))
-    size = maybe_num_nodes(edge_index) if size is None else size
-    size = (size, size) if not bipartite else size
-    force_undirected = False if bipartite else force_undirected
+    if num_nodes is None:
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    if isinstance(num_nodes, int):
+        size = (num_nodes, num_nodes)
+        bipartite = False
+    else:
+        size = num_nodes
+        bipartite = True
+        force_undirected = False
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
@@ -95,7 +100,7 @@ def negative_sampling(
         idx = idx.to('cpu')
         for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, device='cpu')
-            mask = np.isin(rnd, idx)
+            mask = np.isin(rnd.numpy(), idx.numpy())
             if neg_idx is not None:
                 mask |= np.isin(rnd, neg_idx.to('cpu'))
             mask = torch.from_numpy(mask).to(torch.bool)
