@@ -4,6 +4,7 @@ from typing import Callable
 
 import pytest
 import torch.multiprocessing as mp
+
 import torch_geometric.typing
 from torch_geometric.data import Dataset
 from torch_geometric.io import fs
