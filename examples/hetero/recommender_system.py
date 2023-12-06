@@ -106,28 +106,26 @@ class GNNEncoder(torch.nn.Module):
         self.conv1 = SAGEConv((-1, -1), hidden_channels)
         self.conv2 = SAGEConv((-1, -1), hidden_channels)
         self.conv3 = SAGEConv((-1, -1), out_channels)
+        self.to_hidden = Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index).relu()
         x = self.conv3(x, edge_index)
+        x = self.to_hidden(x)
         return x
 
 
 class EdgeDecoder(torch.nn.Module):
     def __init__(self, hidden_channels):
         super().__init__()
-        self.lin1 = Linear(2 * hidden_channels, hidden_channels)
-        self.lin2 = Linear(hidden_channels, 1)
-        self.user_to_hidden = Linear(hidden_channels, hidden_channels)
-        self.item_to_hidden = Linear(hidden_channels, hidden_channels)
 
     def forward(self, z_dict, edge_label_index):
         row, col = edge_label_index
-        u_to_i = self.user_to_hidden(z_dict['user'][row])
-        i_to_u = self.item_to_hidden(z_dict['movie'][col])
+        u = z_dict['user'][row]
+        i = z_dict['movie'][col]
 
-        z = (u_to_i*i_to_u).sum(dim=1)
+        z = (u*i).sum(dim=1)
         
         return z.view(-1)
 
@@ -206,11 +204,7 @@ def get_embeddings(model, val_data):
         [model.movie_emb(val_data['movie'].n_id), val_data.x_dict['movie']],
         dim=-1)
     embs = model.encoder(x_dict, val_data.edge_index_dict)
-    movie_embs = embs['movie']
-    embs_user_to_movie = embs['user']
-    embs_user_to_movie = model.decoder.user_to_hidden(embs['user'])
-    movie_embs = model.decoder.item_to_hidden(embs['movie'])
-    return movie_embs, embs_user_to_movie
+    return embs['movie'], embs['user']
 
 
 def make_recommendations(model, train_data, val_data, k, write_to_file=False):
@@ -262,22 +256,11 @@ def visualize(model, val_data, epoch):
     plt.savefig('./fig-' + str(epoch) + '.png')
     plt.clf()
 
-
-def randomize_inputs(batch):
-    perm = torch.randperm(len(batch['user', 'movie'].edge_label))
-    batch[edge_names[0]]['edge_label'] = batch[
-        edge_names[0]]['edge_label'][perm]
-    batch[edge_names[0]]['edge_label_index'] = batch[
-        edge_names[0]]['edge_label_index'][:, perm]
-    return batch
-
-
 def train(train_dl, val_data, epoch):
     model.train()
 
     for step, batch in enumerate(train_dl):
         optimizer.zero_grad()
-        # batch = randomize_inputs(batch)
         pred = model(batch['user'].n_id, batch['movie'].n_id, batch.x_dict,
                      batch.edge_index_dict, batch['user',
                                                   'movie'].edge_label_index)
