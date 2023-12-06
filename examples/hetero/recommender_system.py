@@ -271,7 +271,7 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
     val_pos_items = get_user_positive_items(val_data['user', 'movie'].edge_index)
     train_pos_items = get_user_positive_items(train_data['user', 'movie'].edge_index)
     displayed_users = 0
-    title_text = "Diplaying Train and Pred Movies for users -- "
+    title_text = "Displaying Train and Pred Movies for users: "
     for user_i, (val_user, gt) in enumerate(val_pos_items.items()):
         try:
             train_gt = train_pos_items[val_user]
@@ -305,7 +305,7 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
                                          'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"}
                              )
             displayed_users += 1
-            title_text += str(val_user)+ ', '
+            title_text += str(val_user)+ ' '
         except KeyError:
             pass
     
