@@ -103,27 +103,15 @@ class GraphGenerator(torch.nn.Module):
 
         # sample start node
         start_node = torch.distributions.Categorical(start_node_probs).sample()
-        
-        print("start_node", start_node)
-
         # get end node probabilities and mask out start node
         # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
         end_node_probs = self.mlp_end_node(node_features)
         end_node_probs[start_node] = 0
-        
-        print("end_node_probs", end_node_probs)
-        
         # change 0 probabilities to very small number
         end_node_probs[end_node_probs == 0] = 1e-10
         end_node_probs = end_node_probs.squeeze()
-        
-        
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
-        
-        # update graph state
-        print("end_node", end_node)
-        
         if end_node >= graph_state.x.shape[0]: 
             # add new node features to graph state
             graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0)
@@ -135,7 +123,7 @@ class GraphGenerator(torch.nn.Module):
         print("graph_state.edge_index", graph_state.edge_index)
         print("graph_state.x", graph_state.x)
         
-        return graph_state
+        return (graph_state.x, graph_state.edge_index), graph_state
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self):
