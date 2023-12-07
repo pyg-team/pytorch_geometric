@@ -8,16 +8,17 @@ from torch_geometric.nn.pool.select.topk import topk
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import softmax
 
+
 class SelectSAG(Select):
-    r"""Selects the top-:math:`k` nodes with highest projection scores from 
-    the `"Self-Attention Graph Pooling" <https://arxiv.org/abs/1904.08082>`_ 
+    r"""Selects the top-:math:`k` nodes with highest projection scores from
+    the `"Self-Attention Graph Pooling" <https://arxiv.org/abs/1904.08082>`_
     and `"Understanding Attention and Generalization in Graph Neural Networks"
     <https://arxiv.org/abs/1905.02850>`_ papers.
 
     If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
         .. math::
             mathbf{i} &= \mathrm{top}_k(\mathbf{attn})
-    
+
     If :obj:`min_score` :math:`\tilde{\alpha}` is a value in :obj:`[0, 1]`,
     computes:
         .. math::
@@ -40,14 +41,9 @@ class SelectSAG(Select):
         act (str or callable, optional): The non-linearity :math:`\sigma`.
             (default: :obj:`"tanh"`)
     """
-    def __init__(
-            self, 
-            ratio: Union[int, float] = 0.5,
-            min_score: Optional[float] = None,
-            act: Union[str, Callable] = 'tanh',
-            *args, 
-            **kwargs
-    ) -> None:
+    def __init__(self, ratio: Union[int, float] = 0.5,
+                 min_score: Optional[float] = None,
+                 act: Union[str, Callable] = 'tanh', *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         if ratio is None and min_score is None:
@@ -58,7 +54,7 @@ class SelectSAG(Select):
         self.ratio = ratio
         self.min_score = min_score
         self.act = activation_resolver(act)
-    
+
     def forward(
         self,
         attn: Tensor,
@@ -80,7 +76,8 @@ class SelectSAG(Select):
         return SelectOutput(
             node_index=node_index,
             num_nodes=score.size(0),
-            cluster_index=torch.arange(node_index.size(0), device=score.device),
+            cluster_index=torch.arange(node_index.size(0),
+                                       device=score.device),
             num_clusters=node_index.size(0),
             weight=score[node_index],
         )
