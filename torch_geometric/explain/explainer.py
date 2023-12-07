@@ -266,8 +266,7 @@ class Explainer:
             ### TODO Everything ###
 
             print("5. GENERATING EXPLANATION file(explainer.py)")
-            pass
-
+            return explanation
 
         explanation.validate_masks()
         return explanation.threshold(self.threshold_config)

@@ -182,6 +182,7 @@ class RLGenExplainer(XGNNExplainer):
         for edge in graph_state.edge_index:
             sorted_edge = tuple(sorted(edge))
             if sorted_edge in edge_set:
+                print("Graph has duplicated edges")
                 return -1
             edge_set.add(sorted_edge)
         return 0
@@ -225,8 +226,11 @@ class RLGenExplainer(XGNNExplainer):
                 optimizer.step()
                 
                 if reward >= 0:
+                    print("reward is positive", reward)
                     current_graph_state = new_graph_state
             print(f"Epoch {epoch} completed, Total Loss: {total_loss}")
+            
+        return self.graph_generator 
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
