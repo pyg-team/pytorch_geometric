@@ -4,7 +4,6 @@ import os
 import torch
 import torch.nn.functional as F
 from torch_geometric.data import Data
-from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, XGNNExplainer
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
@@ -29,7 +28,12 @@ args = {'device': device,
         'opt_restart': 0,
         'weight_decay': 5e-5,
         'lr': 0.001}
-
+class objectview(object):
+    def __init__(self, d):
+        self.__dict__ = d
+        
+args = objectview(args)
+        
 model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
 
 # depending on os change path
