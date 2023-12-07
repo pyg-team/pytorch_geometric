@@ -8,6 +8,8 @@ from torch_geometric.explain import Explainer, XGNNExplainer
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.datasets import TUDataset
+
 
 import random
 # # TODO: Get our acyclic dataset
@@ -224,7 +226,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-candidate_set = torch.tensor([[1, 0, 0, 0, 0, 0, 0], [0, 1, 0 ,0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]], dtype=torch.float)
+# extract features for the candidate set
+dataset = TUDataset(root='/tmp/MUTAG', name='MUTAG')
+all_features = torch.cat([data.x for data in dataset], dim=0)
+candidate_set = torch.unique(all_features, dim=0)
 
 explainer = Explainer(
     model = model,
