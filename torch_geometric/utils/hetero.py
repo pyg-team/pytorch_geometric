@@ -105,12 +105,12 @@ def construct_bipartite_edge_index(
 
         if edge_attr_dict is not None:
             if isinstance(edge_attr_dict, ParameterDict):
-                edge_attr = edge_attr_dict['__'.join(edge_type)]
+                value = edge_attr_dict['__'.join(edge_type)]
             else:
-                edge_attr = edge_attr_dict[edge_type]
-            if edge_attr.size(0) != edge_index.size(1):
-                edge_attr = edge_attr.expand(edge_index.size(1), -1)
-            edge_attrs.append(edge_attr)
+                value = edge_attr_dict[edge_type]
+            if value.size(0) != edge_index.size(1):
+                value = value.expand(edge_index.size(1), -1)
+            edge_attrs.append(value)
 
     edge_index = torch.cat(edge_indices, dim=1)
 
