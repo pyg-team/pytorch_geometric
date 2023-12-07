@@ -184,9 +184,9 @@ class GraphGenerator(torch.nn.Module):
         start_node_probs = self.mlp_start_node(node_features)
 
         candidate_set_mask = torch.ones_like(start_node_probs)
-        candidate_set_mask[candidate_set] = 0
+        candidate_set_indices = torch.arange(node_features_graph.shape[0], node_features.shape[0])
+        candidate_set_mask[candidate_set_indices] = 0
         print("candidate_set_mask", candidate_set_mask)
-        print("candidate_set", candidate_set)
         start_node_probs = start_node_probs * candidate_set_mask
         
         print("start_node_probs", start_node_probs)
@@ -219,9 +219,11 @@ class GraphGenerator(torch.nn.Module):
         print("end_node", end_node)
         
         if end_node >= graph_state.x.shape[0]: 
-            graph_state.x = torch.cat((graph_state.x, torch.tensor(1)), dim=0)
+            # add new node features to graph state
+            graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0)
         
         new_edge = torch.tensor([[start_node], [end_node]])
+        print("new_edge", new_edge)
         graph_state.edge_index = torch.cat((graph_state.edge_index, new_edge), dim=1)
         print("graph_state", graph_state)
         print("graph_state.edge_index", graph_state.edge_index)
@@ -274,6 +276,7 @@ class RLGenExplainer(XGNNExplainer):
         
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
+        print("debug (file: xgnn_explainer.py): calculate_reward - graph_state", graph_state)
         gnn_output = pre_trained_gnn(graph_state)
         class_score = gnn_output[target_class]
         intermediate_reward = class_score - 1 / num_classes
