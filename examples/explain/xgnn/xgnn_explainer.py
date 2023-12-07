@@ -39,7 +39,7 @@ model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
 # depending on os change path
 path = "examples/explain/xgnn/mutag_model.pth"
 if os.name == 'nt':
-    path = "examples\\explain\\best_model.pth"
+    path = "examples\\explain\\xgnn\\mutag_model.pth"
 
 model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 model.to(device)
@@ -118,21 +118,17 @@ class GraphGenerator(torch.nn.Module):
         end_node = torch.distributions.Categorical(end_node_probs).sample()
         if end_node >= graph_state.x.shape[0]: 
             # add new node features to graph state
-            graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0)
+            graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0).float()
         
         new_edge = torch.tensor([[start_node], [end_node]])
-        print("new_edge", new_edge)
         graph_state.edge_index = torch.cat((graph_state.edge_index, new_edge), dim=1)
-        print("graph_state", graph_state)
-        print("graph_state.edge_index", graph_state.edge_index)
-        print("graph_state.x", graph_state.x)
         
         return (graph_state.x, graph_state.edge_index), graph_state
 
 class RLGenExplainer(XGNNExplainer):
-    def __init__(self):
+    def __init__(self, candidate_set):
         super(RLGenExplainer, self).__init__()
-        self.candidate_set = torch.tensor([[0]])  # 2d tensor of features of candidate nodes (node types)
+        self.candidate_set = candidate_set
         self.graph_generator = GraphGenerator(1, self.candidate_set.size(0))
         self.max_steps = 10
         self.lambda_1 = 1
@@ -140,6 +136,7 @@ class RLGenExplainer(XGNNExplainer):
         self.num_classes = 2
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
+        print("DEBUG grapht_state", graph_state)
         gnn_output = pre_trained_gnn(graph_state) # Forward on your current graph, we give a batch of size 1 to the model
         probability_of_target_class = gnn_output[target_class]
         return probability_of_target_class - 1 / num_classes
@@ -227,9 +224,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
+candidate_set = torch.tensor([[1, 0, 0, 0, 0, 0, 0], [0, 1, 0 ,0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]], dtype=torch.float)
+
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(),
+    algorithm = RLGenExplainer(candidate_set=candidate_set),
     explanation_type = 'generative',
     node_mask_type = None,
     edge_mask_type = None,
