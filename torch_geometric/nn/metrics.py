@@ -150,6 +150,27 @@ class LinkPredPrecision(LinkPredMetric):
         return pred_isin_mat.sum(dim=-1) / self.k
 
 
+class LinkPredRecall(LinkPredMetric):
+    r"""A link prediction metric to compute Recall@:math:`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate
+            against.
+        eps (float, optional): A small value to avoid division by zero
+            in recall calculation.
+    """
+    is_differentiable: bool = False
+    higher_is_better: bool = True
+    full_state_update: bool = False
+
+    def __init__(self, k: int, eps: Optional[float] = 0.0):
+        super().__init__(k)
+        self.eps = eps
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        return pred_isin_mat.sum(dim=1) / (y_count + self.eps)
+
+
 class LinkPredNDCG(LinkPredMetric):
     r"""A link prediction metric to compute the Normalized Discounted
     Cumulative Gain (NDCG).
