@@ -80,7 +80,7 @@ def run_rpc_feature_test(
     assert torch.allclose(cpu_tensor1, tensor1.wait())
 
     rpc.shutdown_rpc()
-    
+
     assert rpc.rpc_is_initialized() == False
 
 
