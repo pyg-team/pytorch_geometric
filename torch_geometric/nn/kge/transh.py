@@ -7,6 +7,7 @@ from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
 from typing import Tuple
+import random
 
 
 class TransH(KGEModel):
@@ -50,8 +51,10 @@ class TransH(KGEModel):
         margin: float = 1.0,
         p_norm: float = 2.0,
         sparse: bool = False,
+        bernoulli: bool = True
     ):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
+        self.bernoulli = bernoulli
 
         self.p_norm = p_norm
         self.margin = margin
@@ -97,11 +100,14 @@ class TransH(KGEModel):
         tail_index: Tensor,
     ) -> Tensor:
         
+        # TODO: incorporate true/false using bernoulli or regular
+        
         # TODO: check page 4 for adding soft constraints to loss
         pos_score = self(head_index, rel_type, tail_index)
-        neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
-
-        sample_test = self.sample_golden_triplets(head_index, rel_type, tail_index)
+        if self.bernoulli:
+            neg_score = self(*self.sample_golden_triplets(head_index, rel_type, tail_index))
+        else:
+            neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 
         return F.margin_ranking_loss(
             pos_score,
@@ -118,17 +124,52 @@ class TransH(KGEModel):
             tail_index: Tensor
     ) -> Tuple[Tensor, Tensor, Tensor]:
        
-        for i in range(self.num_relations):
-            r = rel_type[i]
+       #get distinct relations
+        unique_relations = torch.unique(rel_type)
+        head_corruption_prob = torch.zeros(rel_type.shape[0])
+        for i in range(unique_relations.shape[0]):
+            r = unique_relations[i]
             mask = (rel_type == r).int()
-            print(head_index[0])
-            head_unique, tail_count = torch.unique((head_index[mask]), return_counts=True)
-            tail_unique, head_count = torch.unique(tail_index[mask], return_counts=True)
-            #print(head_index[mask])
-            # print('head unique', head_unique)
-            # print('tail count', tail_count)
-            print('tail unique', tail_unique)
-            print('head count', head_count)
+            _, tail_count = torch.unique((head_index[mask]), return_counts=True, dim=0)
+            _, head_count = torch.unique(tail_index[mask], return_counts=True, dim=0)
+            tph = torch.mean(tail_count, dtype=torch.float64)
+            hpt = torch.mean(head_count, dtype=torch.float64)
+            prob_mask = torch.Tensor([tph / (tph + hpt) if val == 1 else 0 for val in mask])
+            head_corruption_prob += prob_mask
+
+        head_index = head_index.clone()
+        tail_index = tail_index.clone()
+        # head_index = torch.Tensor([random.randint(0, self.num_nodes - 1) if torch.bernoulli(head_corruption_prob) == 1 else head_index])
+        # tail_index = torch.Tensor([random.randint(0, self.num_nodes - 1) if torch.bernoulli(head_corruption_prob) == 0 else tail_index])
+        # for i in range(head_index.shape[0]):
+        #     prob = head_corruption_prob[i]
+        #     corrupt_head = torch.bernoulli(prob)
+        #     if corrupt_head:
+        #         # replace head with random head
+        #         head_index[i] = random.randint(0, self.num_nodes - 1)
+        #     else:
+        #         # replace tail with random tail
+        #         tail_index[i] = random.randint(0, self.num_nodes - 1)
+
+        corrupt_heads = torch.bernoulli(head_corruption_prob).bool()
+        corrupt_tails = ~corrupt_heads
+
+        head_index[corrupt_heads] = torch.randint(0, self.num_nodes, (corrupt_heads.sum(),))
+        tail_index[corrupt_tails] = torch.randint(0, self.num_nodes, (corrupt_tails.sum(),))
+        
+        return head_index, rel_type, tail_index
+                
+
+
+        
+
+        
+
+        
+
+           
+            
+
 
 
 
