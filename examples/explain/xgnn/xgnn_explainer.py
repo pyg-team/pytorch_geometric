@@ -147,53 +147,44 @@ class RLGenExplainer(XGNNExplainer):
         self.lambda_2 = 1
         self.num_classes = 2
     
+    def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
+        gnn_output = pre_trained_gnn(graph_state) # Forward on your current graph, we give a batch of size 1 to the model
+        probability_of_target_class = gnn_output[target_class]
+        return probability_of_target_class - 1 / num_classes
+    
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
         final_rewards = []
         for _ in range(num_rollouts):
             # Generate a final graph from the intermediate graph state
             final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
             print("final_graph", final_graph)
-            
             # Evaluate the final graph
             with torch.no_grad():
-                gnn_output = pre_trained_gnn(final_graph)
-                class_score = gnn_output[target_class]
-                reward = class_score - 1 / num_classes
+                reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
                 final_rewards.append(reward)
-
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
         return average_final_reward
 
     def evaluate_graph_validity(self, graph_state):
         # check if graph has duplicated edges
-        
         edge_set = set()
         
         for edge in graph_state.edge_index:
             sorted_edge = tuple(sorted(edge))
-            
             if sorted_edge in edge_set:
                 return -1
-            
             edge_set.add(sorted_edge)
-            
         return 0
-        
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
         print("debug (file: xgnn_explainer.py): calculate_reward - graph_state", graph_state)
-        gnn_output = pre_trained_gnn(graph_state)
-        class_score = gnn_output[target_class]
-        intermediate_reward = class_score - 1 / num_classes
-
+        intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, target_class, num_classes)
         # Assuming rollout function is defined to perform graph rollouts and evaluate
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
-
         # Compute graph validity score (R_tr)
         # defined based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
-
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
         return reward
 
