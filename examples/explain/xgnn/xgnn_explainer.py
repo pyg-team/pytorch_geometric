@@ -16,118 +16,24 @@ import random
 # path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 # dataset = Planetoid(path, dataset)
 # data = dataset[0]
+from xgnn_model import GCN_Graph
 
-device = 'cpu'#'cuda' if torch.cuda.is_available() else 'cpu'
-print('Device: {}'.format(device))
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-class GCN(torch.nn.Module):
-    def __init__(self, input_dim, gcn_output_dims, dropout, return_embeds=False):
-        super(GCN, self).__init__()
+args = {'device': device,
+        'dropout': 0.1,
+        'epochs': 1000,
+        'input_dim' : 7,
+        'opt': 'adam',
+        'opt_scheduler': 'none',
+        'opt_restart': 0,
+        'weight_decay': 5e-5,
+        'lr': 0.001}
 
-        # A list of GCNConv layers
-        self.convs = None
-
-        # A list of 1D batch normalization layers
-        self.bns = None
-
-        # The log softmax layer
-        self.softmax = None
-
-        self.convs = torch.nn.ModuleList([GCNConv(in_channels=input_dim, out_channels=gcn_output_dims[0])])
-        self.convs.extend([GCNConv(in_channels=gcn_output_dims[i + 0], out_channels=gcn_output_dims[i + 1]) for i in range(len(gcn_output_dims) - 1)])
-
-        self.bns = torch.nn.ModuleList([BatchNorm1d(num_features=gcn_output_dims[l]) for l in range(len(gcn_output_dims) - 1)])
-        
-        self.softmax = torch.nn.LogSoftmax()
-
-        # Probability of an element getting zeroed
-        self.dropout = dropout
-
-        # Skip classification layer and return node embeddings
-        self.return_embeds = return_embeds
-
-    def reset_parameters(self):
-        for conv in self.convs:
-            conv.reset_parameters()
-        for bn in self.bns:
-            bn.reset_parameters()
-
-    def forward(self, x, adj_t):
-        out = None
-
-        for i in range(len(self.convs)-1):
-          x = F.relu(self.bns[i](self.convs[i](x, adj_t)))
-          if self.training:
-            x = F.dropout(x, p=self.dropout)
-        x = self.convs[-1](x, adj_t)
-        if self.return_embeds:
-          out = x
-        else:
-          out = self.softmax(x)
-
-        return out
-
-### GCN to predict graph property
-class GCN_Graph(torch.nn.Module):
-    def __init__(self, input_dim, gcn_output_dims, output_dim, dropout):
-        super(GCN_Graph, self).__init__()
-
-        # self.node_encoder = AtomEncoder(hidden_dim)
-        
-        self.gnn_node = GCN(input_dim, gcn_output_dims, dropout, return_embeds=True)
-
-        self.pool = global_mean_pool # global averaging to obtain graph representation
-
-        # Output layer
-        self.linear = torch.nn.Linear(gcn_output_dims[-1], output_dim) # One fully connected layer as a classifier
-
-
-    def reset_parameters(self):
-      self.gnn_node.reset_parameters()
-      self.linear.reset_parameters()
-
-    def forward(self, batched_data):
-        # Extract important attributes of our mini-batch
-        print("batched_data", batched_data)
-        x, edge_index, batch = batched_data.x, batched_data.edge_index, batched_data.batch
-        
-        device = edge_index.device
-        print("edge_index shape:", edge_index.shape)
-        print("edge_index", edge_index)
-        
-        if edge_index.numel() == 0:
-            # if edge_index is empty
-            degrees = torch.zeros(x.size(0), dtype=torch.float, device=device)
-        else:
-            degrees = torch.sum(edge_index[0] == torch.arange(edge_index.max() + 1, device=device)[:, None], dim=1, dtype=torch.float)
-
-        x = degrees.unsqueeze(1)  # Add feature dimension
-        
-        embed = x.to(device)  # Ensure the embedding tensor is on the correct device
-
-        out = None
-
-        node_embeddings = self.gnn_node(embed, edge_index)
-        agg_features = self.pool(node_embeddings, batch)
-        out = self.linear(agg_features)
-
-        return out
-    
-args = {
-    'device': device,
-    'input_dim' : 1,
-    'gcn_output_dim' : [8, 16],
-    'dropout': 0.5,
-    'lr': 0.001,
-    'weight_decay' : 0.00001,
-    'epochs': 30,
-}
-
-model = GCN_Graph(args['input_dim'], args['gcn_output_dim'],
-                  output_dim=1, dropout=args['dropout'])
+model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
 
 # depending on os change path
-path = "examples/explain/best_model.pth"
+path = "examples/explain/xgnn/mutag_model.pth"
 if os.name == 'nt':
     path = "examples\\explain\\best_model.pth"
 

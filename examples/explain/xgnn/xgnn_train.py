@@ -2,13 +2,13 @@ from torch_geometric.data import Batch
 from torch_geometric.datasets import TUDataset
 import torch
 import torch.optim as optim
+import numpy as np
 from tqdm import trange
 import copy
 from tqdm.auto import trange
+import matplotlib.pyplot as plt
 
 from xgnn_model import GCN_Graph
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def create_single_batch(dataset):
     data_list = [data for data in dataset]
@@ -72,7 +72,9 @@ class objectview(object):
     def __init__(self, d):
         self.__dict__ = d
 
-args = {'batch_size': 32,
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+args = {'device': device,
         'dropout': 0.1,
         'epochs': 1000,
         'input_dim' : 7,
@@ -104,11 +106,17 @@ test_indices = indices[train_size + val_size:]
 
 test_accs, losses, best_model, best_acc = train(dataset, args, train_indices, val_indices, test_indices)
 
-print("Maximum test set accuracy: {0}".format(max(test_accs)))
-print("Minimum loss: {0}".format(min(losses)))
+try:
+    torch.save(best_model.state_dict(), 'examples/explain/xgnn/mutag_model.pth')
+    print("Model saved successfully.")
+except Exception as e:
+    print("Error saving model:", e)
 
-plt.title(dataset.name)
-plt.plot(losses, label="training loss")
-plt.plot(test_accs, label="test accuracy")
-plt.legend()
-plt.show()
+# print("Maximum test set accuracy: {0}".format(max(test_accs)))
+# print("Minimum loss: {0}".format(min(losses)))
+
+# plt.title(dataset.name)
+# plt.plot(losses, label="training loss")
+# plt.plot(test_accs, label="test accuracy")
+# plt.legend()
+# plt.show()
