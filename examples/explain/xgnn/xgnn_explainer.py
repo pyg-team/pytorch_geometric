@@ -3,7 +3,7 @@ import os
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Batch
 from torch_geometric.explain import Explainer, XGNNExplainer
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
@@ -46,6 +46,11 @@ if os.name == 'nt':
 model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 model.to(device)
 
+def create_single_batch(dataset):
+    data_list = [data for data in dataset]
+    batched_data = Batch.from_data_list(data_list)
+    return batched_data
+
 def check_edge_representation(data):
     # Convert edge indices to a set of tuples for easier comparison
     edge_set = {tuple(edge) for edge in data.edge_index.t().tolist()}
@@ -73,13 +78,13 @@ class GraphGenerator(torch.nn.Module):
         self.mlp_start_node = torch.nn.Sequential(
             torch.nn.Linear(32, 16),
             torch.nn.ReLU6(),
-            torch.nn.Linear(16, num_candidate_node_types),
+            torch.nn.Linear(16, 1),
             torch.nn.Softmax(dim=0)
         )
         self.mlp_end_node = torch.nn.Sequential(
             torch.nn.Linear(32, 24),
             torch.nn.ReLU6(),
-            torch.nn.Linear(24, num_candidate_node_types),
+            torch.nn.Linear(24, 1),
             torch.nn.Softmax(dim=0)
         )
 
@@ -91,17 +96,15 @@ class GraphGenerator(torch.nn.Module):
         # run through GCN layers
         for gcn_layer in self.gcn_layers:
             node_features = gcn_layer(node_features, graph_state.edge_index)
-        
         # get start node probabilities and mask out candidates
         start_node_probs = self.mlp_start_node(node_features)
-
+        
         candidate_set_mask = torch.ones_like(start_node_probs)
         candidate_set_indices = torch.arange(node_features_graph.shape[0], node_features.shape[0])
         candidate_set_mask[candidate_set_indices] = 0
-        print("candidate_set_mask", candidate_set_mask)
         start_node_probs = start_node_probs * candidate_set_mask
         
-        print("start_node_probs", start_node_probs)
+        #print("start_node_probs", start_node_probs)
         
         # change 0 probabilities to very small number
         start_node_probs[start_node_probs == 0] = 1e-10
@@ -131,15 +134,16 @@ class RLGenExplainer(XGNNExplainer):
     def __init__(self, candidate_set):
         super(RLGenExplainer, self).__init__()
         self.candidate_set = candidate_set
-        self.graph_generator = GraphGenerator(1, self.candidate_set.size(0))
+        self.graph_generator = GraphGenerator(self.candidate_set.size(1), self.candidate_set.size(0))
         self.max_steps = 10
         self.lambda_1 = 1
         self.lambda_2 = 1
         self.num_classes = 2
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
-        print("DEBUG grapht_state", graph_state)
-        gnn_output = pre_trained_gnn(graph_state) # Forward on your current graph, we give a batch of size 1 to the model
+        graph_state_batch = create_single_batch([graph_state,])
+        print("DEBUG graph_state", graph_state_batch)
+        gnn_output = pre_trained_gnn(graph_state_batch) # Forward on your current graph, we give a batch of size 1 to the model
         probability_of_target_class = gnn_output[target_class]
         return probability_of_target_class - 1 / num_classes
     
@@ -186,12 +190,12 @@ class RLGenExplainer(XGNNExplainer):
             total_loss = 0
             
             # sample from candidate set and create initial graph state
+            num_features = self.candidate_set.size(1)
             n = 1 
             perm = torch.randperm(self.candidate_set.size(0))
             sampled_indices = perm[:n]
-            x = self.candidate_set[sampled_indices].view(n, 1)  # reshaping to [n, num_features]
-            edge_index = torch.tensor([[], []], dtype=torch.long)
-            print("edge_index", edge_index)
+            x = self.candidate_set[sampled_indices].view(n, num_features)  # reshaping to [n, num_features]
+            edge_index = torch.tensor([[], []], dtype=torch.int64)
             initial_state = Data(x=x, edge_index=edge_index)
 
             current_graph_state = initial_state
