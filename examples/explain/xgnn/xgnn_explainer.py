@@ -142,9 +142,16 @@ class RLGenExplainer(XGNNExplainer):
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
         graph_state_batch = create_single_batch([graph_state,])
-        print("DEBUG graph_state", graph_state_batch)
-        gnn_output = pre_trained_gnn(graph_state_batch) # Forward on your current graph, we give a batch of size 1 to the model
-        probability_of_target_class = gnn_output[target_class]
+        
+        # Move graph batch to the same device as your model
+        graph_state_batch = graph_state_batch.to(device)
+
+        # ...
+        pre_trained_gnn.eval()
+        with torch.no_grad():
+            gnn_output = pre_trained_gnn(graph_state_batch)
+        
+            probability_of_target_class = gnn_output[target_class]
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
@@ -196,7 +203,8 @@ class RLGenExplainer(XGNNExplainer):
             sampled_indices = perm[:n]
             x = self.candidate_set[sampled_indices].view(n, num_features)  # reshaping to [n, num_features]
             edge_index = torch.tensor([[], []], dtype=torch.int64)
-            initial_state = Data(x=x, edge_index=edge_index)
+            print("debug x", x)
+            initial_state = Data(x=x.T, edge_index=edge_index)
 
             current_graph_state = initial_state
 
