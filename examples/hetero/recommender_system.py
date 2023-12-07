@@ -156,7 +156,7 @@ class Model(torch.nn.Module):
 model = Model(num_users=data['user'].num_nodes,
               num_movies=data['movie'].num_nodes,
               hidden_channels=64).to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
 
 
 def get_user_positive_items(edge_index):
@@ -210,7 +210,7 @@ def get_embeddings(model, val_data):
 
 def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
-    movie_embs, user_embs = get_embeddings(model, val_data)
+    movie_embs, user_embs = get_embeddings(model, train_data)
     mipsknn = MIPSKNNIndex(movie_embs)
     knn_score, knn_index = mipsknn.search(user_embs, movie_embs.size(0))
 
@@ -223,7 +223,7 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
     # Get the recommendations for user; only those
     # that the user is yet to watch
     real_recs = {}
-    for user in range(val_data['user'].num_nodes):
+    for user in range(train_data['user'].num_nodes):
         try:
             real_recs[user] = list(
                 OrderedSet(knn_index[user].tolist()) -
@@ -274,6 +274,21 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
             plt.scatter(emb_reduced[train_gt, 0], emb_reduced[train_gt, 1],
                         marker='+', label='Train Movies' + str(val_user))
             for i in train_gt:
+                plt.annotate(
+                    movie_id_to_name.iloc[i]['title'],
+                    xy=(emb_reduced[i, 0], emb_reduced[i, 1]),
+                    xytext=(emb_reduced[i, 0] + 2, emb_reduced[i, 1]),
+                    fontsize=3, horizontalalignment='left', arrowprops={
+                        'arrowstyle': '->',
+                        'color': '0.5',
+                        'shrinkA': 5,
+                        'shrinkB': 5,
+                        'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
+                    })
+            val_gt = val_pos_items[val_user]
+            plt.scatter(emb_reduced[val_gt, 0], emb_reduced[val_gt, 1],
+                        marker='+', label='GT (Val) Movies' + str(val_user))
+            for i in val_gt:
                 plt.annotate(
                     movie_id_to_name.iloc[i]['title'],
                     xy=(emb_reduced[i, 0], emb_reduced[i, 1]),
