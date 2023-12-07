@@ -184,7 +184,7 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        # 1-dim tensors are not supported yet in all code paths of PyTorch :(
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
         # edge_attr = torch.ones(1, device=edge_index.device)
         # edge_attr = edge_attr.expand(edge_index.size(1))
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
@@ -244,7 +244,7 @@ def to_torch_csr_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        # 1-dim tensors are not supported yet in all code paths of PyTorch :(
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
         # edge_attr = torch.ones(1, device=edge_index.device)
         # edge_attr = edge_attr.expand(edge_index.size(1))
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
@@ -311,7 +311,7 @@ def to_torch_csc_tensor(
                                          sort_by_row=False)
 
     if edge_attr is None:
-        # 1-dim tensors are not supported yet in all code paths of PyTorch :(
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
         # edge_attr = torch.ones(1, device=edge_index.device)
         # edge_attr = edge_attr.expand(edge_index.size(1))
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)

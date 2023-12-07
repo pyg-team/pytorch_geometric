@@ -199,7 +199,7 @@ class EdgeIndex(Tensor):
     _T_index: Tuple[Optional[Tensor], Optional[Tensor]] = (None, None)
     _T_indptr: Optional[Tensor] = None
 
-    # A cached "1"-vector for `torch.sparse` matrix multiplication:
+    # A cached "1"-value vector for `torch.sparse` matrix multiplication:
     _value: Optional[Tensor] = None
 
     def __new__(
@@ -502,7 +502,7 @@ class EdgeIndex(Tensor):
             if (dtype or torch.get_default_dtype()) == self._value.dtype:
                 return self._value
 
-        # 1-dim tensors are not supported yet in all code paths of PyTorch :(
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
         # value = torch.ones(1, dtype=dtype, device=self.device)
         # value = value.expand(self.size(1))
         self._value = torch.ones(self.size(1), dtype=dtype, device=self.device)
