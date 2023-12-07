@@ -65,6 +65,7 @@ def construct_bipartite_edge_index(
     src_offset_dict: Dict[EdgeType, int],
     dst_offset_dict: Dict[NodeType, int],
     edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    n_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Adj, Optional[Tensor]]:
     """Constructs a tensor of edge indices by concatenating edge indices
     for each edge type. The edge indices are increased by the offset of the
@@ -121,9 +122,10 @@ def construct_bipartite_edge_index(
     if is_sparse_tensor:
         # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
-            row=edge_index[1],
-            col=edge_index[0],
+            row=edge_index[0],
+            col=edge_index[1],
             value=edge_attr,
-        )
-
+            sparse_sizes=n_nodes,
+        ).t()
+    # If not SparseTensor, edge_index.shape == ?
     return edge_index, edge_attr
