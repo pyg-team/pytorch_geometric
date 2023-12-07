@@ -36,7 +36,8 @@ def run_rpc_feature_test(
 
     # 2) Collect all workers:
     partition_to_workers = rpc.rpc_partition_to_workers(
-        current_ctx, world_size, rank)
+        current_ctx, world_size, rank
+    )
 
     assert partition_to_workers == [
         ['dist-feature-test-0'],
@@ -53,7 +54,7 @@ def run_rpc_feature_test(
         'edge_types': None,
         'is_hetero': False,
         'node_types': None,
-        'num_parts': 2
+        'num_parts': 2,
     }
 
     feature.num_partitions = world_size
@@ -80,8 +81,7 @@ def run_rpc_feature_test(
     assert torch.allclose(cpu_tensor1, tensor1.wait())
 
     rpc.shutdown_rpc()
-
-    assert rpc.rpc_is_initialized() == False
+    assert rpc.rpc_is_initialized() is False
 
 
 @onlyLinux
@@ -94,10 +94,12 @@ def test_dist_feature_lookup():
     global_id1 = torch.arange(128 * 2) + 128 * 2
 
     # Set the partition book for two features (partition 0 and 1):
-    partition_book = torch.cat([
-        torch.zeros(128 * 2, dtype=torch.long),
-        torch.ones(128 * 2, dtype=torch.long)
-    ])
+    partition_book = torch.cat(
+        [
+            torch.zeros(128 * 2, dtype=torch.long),
+            torch.ones(128 * 2, dtype=torch.long),
+        ]
+    )
 
     # Put the test tensor into the different feature stores with IDs:
     feature0 = LocalFeatureStore()
@@ -114,10 +116,12 @@ def test_dist_feature_lookup():
     port = s.getsockname()[1]
     s.close()
 
-    w0 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 0, feature0, partition_book, port))
-    w1 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 1, feature1, partition_book, port))
+    w0 = mp_context.Process(
+        target=run_rpc_feature_test, args=(2, 0, feature0, partition_book, port)
+    )
+    w1 = mp_context.Process(
+        target=run_rpc_feature_test, args=(2, 1, feature1, partition_book, port)
+    )
 
     w0.start()
     w1.start()
