@@ -261,14 +261,6 @@ def dist_neighbor_sampler_hetero(
         group_name='dist-sampler-test',
     )
 
-    # Initialize training process group of PyTorch.
-    torch.distributed.init_process_group(
-        backend='gloo',
-        rank=current_ctx.rank,
-        world_size=current_ctx.world_size,
-        init_method=f'tcp://localhost:{master_port}',
-    )
-
     num_neighbors = [-1, -1]
     dist_sampler = DistNeighborSampler(
         data=dist_data,
@@ -279,6 +271,9 @@ def dist_neighbor_sampler_hetero(
         disjoint=disjoint,
     )
 
+    # Close RPC & worker group at exit:
+    atexit.register(close_sampler, 0, dist_sampler)
+
     init_rpc(
         current_ctx=current_ctx,
         rpc_worker_names={},
@@ -288,10 +283,6 @@ def dist_neighbor_sampler_hetero(
 
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
-
-    # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
-    torch.distributed.barrier()
 
     # Create inputs nodes such that each belongs to a different partition
     node_pb_list = dist_data[1].node_pb[input_type].tolist()
@@ -310,8 +301,6 @@ def dist_neighbor_sampler_hetero(
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
 
-    torch.distributed.barrier()
-
     sampler = NeighborSampler(
         data=data,
         num_neighbors=num_neighbors,
@@ -328,8 +317,6 @@ def dist_neighbor_sampler_hetero(
             assert torch.equal(out_dist.batch[k].sort()[0],
                                out.batch[k].sort()[0])
         assert out_dist.num_sampled_nodes[k] == out.num_sampled_nodes[k]
-
-    torch.distributed.barrier()
 
 
 @onlyLinux
