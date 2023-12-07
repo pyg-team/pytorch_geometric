@@ -502,13 +502,10 @@ class EdgeIndex(Tensor):
             if (dtype or torch.get_default_dtype()) == self._value.dtype:
                 return self._value
 
-        if torch_geometric.typing.WITH_PT20 and not self.is_cuda:
-            value = torch.ones(1, dtype=dtype, device=self.device)
-            value = value.expand(self.size(1))
-        else:  # pragma: no cover
-            value = torch.ones(self.size(1), dtype=dtype, device=self.device)
-
-        self._value = value
+        # 1-dim tensors are not supported yet in all code paths of PyTorch :(
+        # value = torch.ones(1, dtype=dtype, device=self.device)
+        # value = value.expand(self.size(1))
+        self._value = torch.ones(self.size(1), dtype=dtype, device=self.device)
 
         return self._value
 
