@@ -185,6 +185,8 @@ class GraphGenerator(torch.nn.Module):
 
         candidate_set_mask = torch.ones_like(start_node_probs)
         candidate_set_mask[candidate_set] = 0
+        print("candidate_set_mask", candidate_set_mask)
+        print("candidate_set", candidate_set)
         start_node_probs = start_node_probs * candidate_set_mask
         
         print("start_node_probs", start_node_probs)
@@ -199,8 +201,8 @@ class GraphGenerator(torch.nn.Module):
         print("start_node", start_node)
 
         # get end node probabilities and mask out start node
-        combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
-        end_node_probs = self.mlp_end_node(combined_features)
+        # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
+        end_node_probs = self.mlp_end_node(node_features)
         end_node_probs[start_node] = 0
         
         print("end_node_probs", end_node_probs)
