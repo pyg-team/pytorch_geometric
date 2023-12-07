@@ -3,17 +3,13 @@ import os.path as osp
 
 import torch
 import torch.optim as optim
+from transh import TransH
 
 from torch_geometric.datasets import FB15k_237
 from torch_geometric.nn import TransE
-from transh import TransH
-
 from torch_geometric.transforms import RandomLinkSplit
-                
-model_map = {
-    'transe': TransE,
-    'transh': TransH
-}
+
+model_map = {'transe': TransE, 'transh': TransH}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', choices=model_map.keys(), type=str.lower,
@@ -83,11 +79,13 @@ def test(data):
         head_index=data.edge_index[0],
         rel_type=data.edge_type,
         tail_index=data.edge_index[1],
-        batch_size=1000, #from 20000
+        batch_size=1000,  #from 20000
         k=10,
     )
 
-model.compute_corrupt_probs(train_data.edge_index[0], train_data.edge_type, train_data.edge_index[1])
+
+model.compute_corrupt_probs(train_data.edge_index[0], train_data.edge_type,
+                            train_data.edge_index[1])
 for epoch in range(1, 500):
     loss = train()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
@@ -99,7 +97,6 @@ for epoch in range(1, 500):
 rank, mrr, hits_at_10 = test(test_data)
 print(f'Test Mean Rank: {rank:.2f}, Test MRR: {mrr:.4f}, '
       f'Test Hits@10: {hits_at_10:.4f}')
-
 """
 TransH initial test:
 - mean rank: 7592.13
