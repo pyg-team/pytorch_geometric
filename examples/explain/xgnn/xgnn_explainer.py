@@ -55,6 +55,15 @@ def create_single_batch(dataset):
     batched_data = Batch.from_data_list(data_list)
     return batched_data
 
+
+def custom_softmax(arr, axis=0):
+    non_zero_indices = torch.where(arr != 0)
+    arr_non_zero = arr[non_zero_indices]
+    arr_non_zero = F.softmax(arr_non_zero, dim=axis)
+    arr[non_zero_indices] = arr_non_zero
+    return arr
+
+
 def check_edge_representation(data):
     # Convert edge indices to a set of tuples for easier comparison
     edge_set = {tuple(edge) for edge in data.edge_index.t().tolist()}
@@ -105,11 +114,13 @@ class GraphGenerator(torch.nn.Module):
         
         candidate_set_mask = torch.ones_like(start_node_probs)
         candidate_set_indices = torch.arange(node_features_graph.shape[0], node_features.shape[0])
+        # set to minimum possible value
         candidate_set_mask[candidate_set_indices] = 0
         start_node_probs = start_node_probs * candidate_set_mask
         # change 0 probabilities to very small number
         #start_node_probs[start_node_probs == 0] = 1e-10
         start_node_probs = start_node_probs.squeeze()
+        start_node_probs = custom_softmax(start_node_probs)
 
         # sample start node
         p_start = torch.distributions.Categorical(start_node_probs)
@@ -124,6 +135,8 @@ class GraphGenerator(torch.nn.Module):
         # change 0 probabilities to very small number
         #end_node_probs[end_node_probs == 0] = 1e-10
         end_node_probs = end_node_probs.squeeze()
+        end_node_probs = custom_softmax(end_node_probs)
+        
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
         if end_node >= graph_state.x.shape[0]: 
@@ -139,8 +152,7 @@ class GraphGenerator(torch.nn.Module):
         start_node_one_hot[start_node] = 1
         end_node_one_hot = torch.zeros_like(end_node_probs)
         end_node_one_hot[end_node] = 1
-        
-        #print(graph_state.x.size())
+
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
 class RLGenExplainer(XGNNExplainer):
@@ -159,11 +171,8 @@ class RLGenExplainer(XGNNExplainer):
         # Move graph batch to the same device as your model
         graph_state_batch = graph_state_batch.to(device)
 
-        # ...
-        pre_trained_gnn.eval()
-        with torch.no_grad():
-            gnn_output = pre_trained_gnn(graph_state_batch)
-            probability_of_target_class = gnn_output[0][target_class]
+        gnn_output = pre_trained_gnn(graph_state_batch)
+        probability_of_target_class = gnn_output[0][target_class]
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
@@ -172,9 +181,8 @@ class RLGenExplainer(XGNNExplainer):
             # Generate a final graph from the intermediate graph state
             _, final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
             # Evaluate the final graph
-            with torch.no_grad():
-                reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
-                final_rewards.append(reward)
+            reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
+            final_rewards.append(reward)
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
         return average_final_reward
@@ -230,7 +238,6 @@ class RLGenExplainer(XGNNExplainer):
                 optimizer.step()
                 
                 if reward >= 0:
-                    print("reward is positive", reward)
                     current_graph_state = new_graph_state
             print(f"Epoch {epoch} completed, Total Loss: {total_loss}")
             
