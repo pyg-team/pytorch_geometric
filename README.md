@@ -424,6 +424,9 @@ where `${CUDA}` should be replaced by either `cpu`, `cu117`, or `cu118` dependin
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
+### NVIDIA PyG Container
+NVIDIA provides a PyG docker container for effortlessly training and deploying GPU accelerated GNNs with PyG, see [here](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg).
+
 ### Nightly and Master
 
 In case you want to experiment with the latest PyG features which are not fully released yet, either install the **nightly version** of PyG via
