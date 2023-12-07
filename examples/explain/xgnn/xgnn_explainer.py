@@ -103,32 +103,41 @@ class GraphGenerator(torch.nn.Module):
         candidate_set_indices = torch.arange(node_features_graph.shape[0], node_features.shape[0])
         candidate_set_mask[candidate_set_indices] = 0
         start_node_probs = start_node_probs * candidate_set_mask
-        
-        #print("start_node_probs", start_node_probs)
-        
         # change 0 probabilities to very small number
-        start_node_probs[start_node_probs == 0] = 1e-10
+        #start_node_probs[start_node_probs == 0] = 1e-10
         start_node_probs = start_node_probs.squeeze()
 
         # sample start node
-        start_node = torch.distributions.Categorical(start_node_probs).sample()
+        p_start = torch.distributions.Categorical(start_node_probs)
+        start_node = p_start.sample()
+        
         # get end node probabilities and mask out start node
         # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
         end_node_probs = self.mlp_end_node(node_features)
-        end_node_probs[start_node] = 0
+        start_node_mask = torch.ones_like(end_node_probs)
+        start_node_mask[start_node] = 0
+        end_node_probs = end_node_probs * start_node_mask
         # change 0 probabilities to very small number
-        end_node_probs[end_node_probs == 0] = 1e-10
+        #end_node_probs[end_node_probs == 0] = 1e-10
         end_node_probs = end_node_probs.squeeze()
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
         if end_node >= graph_state.x.shape[0]: 
             # add new node features to graph state
             graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0).float()
-        
-        new_edge = torch.tensor([[start_node], [end_node]])
+            new_edge = torch.tensor([[start_node], [graph_state.x.shape[0] - 1]])
+        else: 
+            new_edge = torch.tensor([[start_node], [end_node]])
         graph_state.edge_index = torch.cat((graph_state.edge_index, new_edge), dim=1)
         
-        return (graph_state.x, graph_state.edge_index), graph_state
+        # one hot encoding of start and end node
+        start_node_one_hot = torch.zeros_like(start_node_probs)
+        start_node_one_hot[start_node] = 1
+        end_node_one_hot = torch.zeros_like(end_node_probs)
+        end_node_one_hot[end_node] = 1
+        
+        #print(graph_state.x.size())
+        return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self, candidate_set):
@@ -150,16 +159,14 @@ class RLGenExplainer(XGNNExplainer):
         pre_trained_gnn.eval()
         with torch.no_grad():
             gnn_output = pre_trained_gnn(graph_state_batch)
-        
-            probability_of_target_class = gnn_output[target_class]
+            probability_of_target_class = gnn_output[0][target_class]
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
         final_rewards = []
         for _ in range(num_rollouts):
             # Generate a final graph from the intermediate graph state
-            final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
-            print("final_graph", final_graph)
+            _, final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
             # Evaluate the final graph
             with torch.no_grad():
                 reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
@@ -180,7 +187,6 @@ class RLGenExplainer(XGNNExplainer):
         return 0
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
-        print("debug (file: xgnn_explainer.py): calculate_reward - graph_state", graph_state)
         intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, target_class, num_classes)
         # Assuming rollout function is defined to perform graph rollouts and evaluate
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
@@ -197,32 +203,22 @@ class RLGenExplainer(XGNNExplainer):
             total_loss = 0
             
             # sample from candidate set and create initial graph state
-            num_features = self.candidate_set.size(1)
-            n = 1 
-            perm = torch.randperm(self.candidate_set.size(0))
-            sampled_indices = perm[:n]
-            x = self.candidate_set[sampled_indices].view(n, num_features)  # reshaping to [n, num_features]
-            edge_index = torch.tensor([[], []], dtype=torch.int64)
-            print("debug x", x)
-            initial_state = Data(x=x.T, edge_index=edge_index)
-
-            current_graph_state = initial_state
-
-            print("current_graph_state", current_graph_state)
+            random_index = torch.randint(0, self.candidate_set.size(0), (1,))
+            sampled_node = self.candidate_set[random_index] # sample a node from the candidate set
+            edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
+            initial_graph = Data(x=sampled_node, edge_index=edge_index)
+            current_graph_state = initial_graph
             
             for step in range(self.max_steps):
-                action, new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
-                print("action", action)
-                print("new_graph_state", new_graph_state)
+                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
                 
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
                 
-                start_node_log_prob = torch.log(action[0].probs[action[0].sample().item()])
-                end_node_log_prob = torch.log(action[1].probs[action[1].sample().item()])
-                log_probs = start_node_log_prob + end_node_log_prob
+                LCE_start = F.cross_entropy(p_start, a_start)
+                LCE_end = F.cross_entropy(p_end, a_end)
                 
-                loss = -reward * log_probs
-                total_loss += loss.item()
+                loss = -reward * (LCE_start + LCE_end)
+                total_loss += -reward * (LCE_start.item() + LCE_end.item())
                 
                 optimizer.zero_grad()
                 loss.backward()
