@@ -44,14 +44,18 @@ def test_makedirs(tmp_fs_path):
     assert fs.isdir(path)
 
 
-def test_ls(tmp_fs_path):
+@pytest.mark.parametrize('detail', [False, True])
+def test_ls(tmp_fs_path, detail):
     for i in range(2):
         with fsspec.open(osp.join(tmp_fs_path, str(i)), 'w') as f:
             f.write('here')
-    res = fs.ls(tmp_fs_path)
+    res = fs.ls(tmp_fs_path, detail)
     assert len(res) == 2
     expected_protocol = fs.get_fs(tmp_fs_path).protocol
-    assert all(fs.get_fs(path).protocol == expected_protocol for path in res)
+    for output in res:
+        if detail:
+            output = output['name']
+        assert fs.get_fs(output).protocol == expected_protocol
 
 
 def test_cp(tmp_fs_path):

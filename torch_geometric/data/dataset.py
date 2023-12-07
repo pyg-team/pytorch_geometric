@@ -158,7 +158,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         elif y.numel() == y.size(0) and not torch.is_floating_point(y):
             return int(y.max()) + 1
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
+            num_classes = torch.unique(y).numel()
+            if num_classes > 2:
+                warnings.warn("Found floating-point labels while calling "
+                              "`dataset.num_classes`. Returning the number of "
+                              "unique elements. Please make sure that this "
+                              "is expected before proceeding.")
+            return num_classes
         else:
             return y.size(-1)
 
@@ -170,7 +176,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # may produce a tuple of data objects (e.g., when used in combination
         # with `RandomLinkSplit`, so we take care of this case here as well:
         data_list = _get_flattened_data_list([data for data in self])
-        y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        y = torch.as_tensor([data.y for data in data_list if 'y' in data])
 
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:

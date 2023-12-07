@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, overload
 
 import torch
 from torch import Tensor
@@ -12,9 +12,35 @@ from torch_geometric.utils import (
 )
 
 
-def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
-                          method: str = 'edge',
-                          eps: float = 1e-8) -> Union[float, Tensor]:
+@overload
+def label_informativeness(
+    edge_index: Adj,
+    y: Tensor,
+    batch: None = ...,
+    method: str = ...,
+    eps: float = ...,
+) -> float:
+    pass
+
+
+@overload
+def label_informativeness(
+    edge_index: Adj,
+    y: Tensor,
+    batch: Tensor,
+    method: str = ...,
+    eps: float = ...,
+) -> Tensor:
+    pass
+
+
+def label_informativeness(
+    edge_index: Adj,
+    y: Tensor,
+    batch: OptTensor = None,
+    method: str = 'edge',
+    eps: float = 1e-8
+) -> Union[float, Tensor]:
     r"""Label informativeness (:math:`\mathrm{LI}`) is a characteristic of
     labeled graphs that shows how much information about a node's label we get
     from knowing its neighbor's label.

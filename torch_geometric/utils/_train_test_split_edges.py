@@ -40,10 +40,14 @@ def train_test_split_edges(
     """
     assert 'batch' not in data  # No batch-mode.
 
+    assert data.num_nodes is not None
+    assert data.edge_index is not None
+
     num_nodes = data.num_nodes
     row, col = data.edge_index
     edge_attr = data.edge_attr
-    data.edge_index = data.edge_attr = None
+    del data.edge_index
+    del data.edge_attr
 
     # Return upper triangular portion.
     mask = row < col

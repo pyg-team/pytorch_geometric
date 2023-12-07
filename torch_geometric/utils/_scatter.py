@@ -12,8 +12,13 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
-    def scatter(src: Tensor, index: Tensor, dim: int = 0,
-                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+    def scatter(
+        src: Tensor,
+        index: Tensor,
+        dim: int = 0,
+        dim_size: Optional[int] = None,
+        reduce: str = 'sum',
+    ) -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -120,8 +125,13 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
 else:  # pragma: no cover
 
-    def scatter(src: Tensor, index: Tensor, dim: int = 0,
-                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+    def scatter(
+        src: Tensor,
+        index: Tensor,
+        dim: int = 0,
+        dim_size: Optional[int] = None,
+        reduce: str = 'sum',
+    ) -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -168,8 +178,12 @@ def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     return src.view(size).expand_as(ref)
 
 
-def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
-                   dim_size: Optional[int] = None) -> Tensor:
+def scatter_argmax(
+    src: Tensor,
+    index: Tensor,
+    dim: int = 0,
+    dim_size: Optional[int] = None,
+) -> Tensor:
 
     if torch_geometric.typing.WITH_TORCH_SCATTER:
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
@@ -181,7 +195,7 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
     assert src.numel() == index.numel()
 
     if dim_size is None:
-        dim_size = index.max() + 1 if index.numel() > 0 else 0
+        dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
         res = src.new_empty(dim_size)
@@ -189,7 +203,7 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
                             include_self=False)
     elif torch_geometric.typing.WITH_PT111:
         res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
-                                   output_size=dim_size)
+                                   output_size=dim_size)  # type: ignore
     else:
         raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
 

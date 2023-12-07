@@ -76,16 +76,16 @@ def ls(
     detail: bool = False,
 ) -> Union[List[str], List[Dict[str, Any]]]:
     fs = get_fs(path)
-    paths = fs.ls(path, detail=detail)
+    outputs = fs.ls(path, detail=detail)
 
     if not isdisk(path):
         if detail:
-            for path in paths:
-                path['name'] = fs.unstrip_protocol(path['name'])
+            for output in outputs:
+                output['name'] = fs.unstrip_protocol(output['name'])
         else:
-            paths = [fs.unstrip_protocol(path) for path in paths]
+            outputs = [fs.unstrip_protocol(path) for output in outputs]
 
-    return paths
+    return outputs
 
 
 def cp(
@@ -96,7 +96,7 @@ def cp(
     use_cache: bool = True,
     clear_cache: bool = True,
 ):
-    kwargs = {}
+    kwargs: Dict[str, Any] = {}
 
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None

@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import select
-from torch_geometric.utils.subgraph import hyper_subgraph
+from torch_geometric.utils._subgraph import hyper_subgraph
 
 
 class HyperGraphData(Data):
