@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, overload
 
 import torch
 from torch import Tensor
@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_geometric.typing import (
     Adj,
     EdgeType,
+    MaybeHeteroAdjTensor,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
     NodeType,
@@ -27,6 +28,31 @@ def filter_empty_entries(
     return out_dict
 
 
+@overload
+def trim_to_layer(
+    layer: int,
+    num_sampled_nodes_per_hop: List[int],
+    num_sampled_edges_per_hop: List[int],
+    x: Tensor,
+    edge_index: Adj,
+    edge_attr: Optional[Tensor] = None,
+) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def trim_to_layer(
+    layer: int,
+    num_sampled_nodes_per_hop: Dict[NodeType, List[int]],
+    num_sampled_edges_per_hop: Dict[EdgeType, List[int]],
+    x: Dict[NodeType, Tensor],
+    edge_index: Dict[EdgeType, Adj],
+    edge_attr: Optional[Dict[EdgeType, Tensor]] = None,
+) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Adj], Optional[Dict[
+        EdgeType, Tensor]]]:
+    pass
+
+
 def trim_to_layer(
     layer: int,
     num_sampled_nodes_per_hop: Union[List[int], Dict[NodeType, List[int]]],
@@ -34,7 +60,7 @@ def trim_to_layer(
     x: MaybeHeteroNodeTensor,
     edge_index: MaybeHeteroEdgeTensor,
     edge_attr: Optional[MaybeHeteroEdgeTensor] = None,
-) -> Tuple[MaybeHeteroNodeTensor, MaybeHeteroEdgeTensor,
+) -> Tuple[MaybeHeteroNodeTensor, MaybeHeteroAdjTensor,
            Optional[MaybeHeteroEdgeTensor]]:
     r"""Trims the :obj:`edge_index` representation, node features :obj:`x` and
     edge features :obj:`edge_attr` to a minimal-sized representation for the
@@ -62,12 +88,16 @@ def trim_to_layer(
         return x, edge_index, edge_attr
 
     if isinstance(num_sampled_edges_per_hop, dict):
+        assert isinstance(num_sampled_nodes_per_hop, dict)
+
+        assert isinstance(x, dict)
         x = {
             k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
             for k, v in x.items()
         }
         x = filter_empty_entries(x)
 
+        assert isinstance(edge_index, dict)
         edge_index = {
             k:
             trim_adj(
@@ -82,6 +112,7 @@ def trim_to_layer(
         edge_index = filter_empty_entries(edge_index)
 
         if edge_attr is not None:
+            assert isinstance(edge_attr, dict)
             edge_attr = {
                 k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
@@ -90,7 +121,12 @@ def trim_to_layer(
 
         return x, edge_index, edge_attr
 
+    assert isinstance(num_sampled_nodes_per_hop, list)
+
+    assert isinstance(x, Tensor)
     x = trim_feat(x, layer, num_sampled_nodes_per_hop)
+
+    assert isinstance(edge_index, Tensor)
     edge_index = trim_adj(
         edge_index,
         layer,
@@ -100,6 +136,7 @@ def trim_to_layer(
     )
 
     if edge_attr is not None:
+        assert isinstance(edge_attr, Tensor)
         edge_attr = trim_feat(edge_attr, layer, num_sampled_edges_per_hop)
 
     return x, edge_index, edge_attr
