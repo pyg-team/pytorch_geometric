@@ -38,6 +38,10 @@ args = objectview(args)
         
 model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
 
+# Assume 'model_to_freeze' is the model you want to freeze
+for param in model.parameters():
+    param.requires_grad = False
+    
 # depending on os change path
 path = "examples/explain/xgnn/mutag_model.pth"
 if os.name == 'nt':
