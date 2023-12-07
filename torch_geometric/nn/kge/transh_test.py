@@ -29,13 +29,13 @@ val_data = FB15k_237(path, split='val')[0].to(device)
 print('val_data size:', val_data.size)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
-# our sanity check (DELETE LATER)
-transform = RandomLinkSplit(is_undirected=True)
-train_test, val_test, test_test = transform(test_data)
-#transform2 = RandomLinkSplit(is_undirected=True)
-#train_test2, val_test2, test_test2 = transform2(test_test)
-test_data = val_test
-print('test data:', val_test.size)
+# # our sanity check (DELETE LATER)
+# transform = RandomLinkSplit(is_undirected=True)
+# train_test, val_test, test_test = transform(test_data)
+# #transform2 = RandomLinkSplit(is_undirected=True)
+# #train_test2, val_test2, test_test2 = transform2(test_test)
+# test_data = val_test
+# print('test data:', val_test.size)
 
 model_arg_map = {'rotate': {'margin': 9.0}}
 model = model_map[args.model](
@@ -87,8 +87,8 @@ def test(data):
         k=10,
     )
 
-
-for epoch in range(1, 6):
+model.compute_corrupt_probs(train_data.edge_index[0], train_data.edge_type, train_data.edge_index[1])
+for epoch in range(1, 500):
     loss = train()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
     if epoch % 25 == 0:

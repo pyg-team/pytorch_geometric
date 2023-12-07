@@ -125,24 +125,25 @@ class TransH(KGEModel):
     ) -> Tuple[Tensor, Tensor, Tensor]:
        
        #get distinct relations
-        unique_relations = torch.unique(rel_type)
-        head_corruption_prob = torch.zeros(rel_type.shape[0])
-        for i in range(unique_relations.shape[0]):
-            r = unique_relations[i]
-            mask = (rel_type == r).int()
-            _, tail_count = torch.unique((head_index[mask]), return_counts=True, dim=0)
-            _, head_count = torch.unique(tail_index[mask], return_counts=True, dim=0)
-            tph = torch.mean(tail_count, dtype=torch.float64)
-            hpt = torch.mean(head_count, dtype=torch.float64)
-            prob_mask = torch.Tensor([tph / (tph + hpt) if val == 1 else 0 for val in mask])
-            head_corruption_prob += prob_mask
+        # unique_relations = torch.unique(rel_type)
+        # head_corruption_prob = torch.zeros(rel_type.shape[0])
+        # for i in range(unique_relations.shape[0]):
+        #     r = unique_relations[i]
+        #     mask = (rel_type == r).int()
+        #     _, tail_count = torch.unique((head_index[mask]), return_counts=True, dim=0)
+        #     _, head_count = torch.unique(tail_index[mask], return_counts=True, dim=0)
+        #     tph = torch.mean(tail_count, dtype=torch.float64)
+        #     hpt = torch.mean(head_count, dtype=torch.float64)
+        #     prob_mask = torch.Tensor([tph / (tph + hpt) if val == 1 else 0 for val in mask])
+        #     head_corruption_prob += prob_mask
 
         head_index = head_index.clone()
         tail_index = tail_index.clone()
+        
         # head_index = torch.Tensor([random.randint(0, self.num_nodes - 1) if torch.bernoulli(head_corruption_prob) == 1 else head_index])
         # tail_index = torch.Tensor([random.randint(0, self.num_nodes - 1) if torch.bernoulli(head_corruption_prob) == 0 else tail_index])
         # for i in range(head_index.shape[0]):
-        #     prob = head_corruption_prob[i]
+        #     prob = self.head_corruption_probs[rel_type[i]]
         #     corrupt_head = torch.bernoulli(prob)
         #     if corrupt_head:
         #         # replace head with random head
@@ -150,8 +151,9 @@ class TransH(KGEModel):
         #     else:
         #         # replace tail with random tail
         #         tail_index[i] = random.randint(0, self.num_nodes - 1)
-
-        corrupt_heads = torch.bernoulli(head_corruption_prob).bool()
+        
+        probs = torch.Tensor([self.head_corruption_probs[r.item()] for r in rel_type])
+        corrupt_heads = torch.bernoulli(probs).bool()
         corrupt_tails = ~corrupt_heads
 
         head_index[corrupt_heads] = torch.randint(0, self.num_nodes, (corrupt_heads.sum(),))
@@ -159,7 +161,24 @@ class TransH(KGEModel):
         
         return head_index, rel_type, tail_index
                 
-
+    def compute_corrupt_probs(
+            self, 
+            head_index: Tensor, 
+            rel_type: Tensor, 
+            tail_index: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+       
+        self.head_corruption_probs = {}
+        for r in rel_type:
+            r = r.item()
+            if r not in self.head_corruption_probs:
+                mask = (rel_type == r).int()
+                _, tail_count = torch.unique((head_index[mask]), return_counts=True, dim=0)
+                _, head_count = torch.unique(tail_index[mask], return_counts=True, dim=0)
+                tph = torch.mean(tail_count, dtype=torch.float64)
+                hpt = torch.mean(head_count, dtype=torch.float64)
+                # prob_mask = torch.Tensor([tph / (tph + hpt) if val == 1 else 0 for val in mask])
+                self.head_corruption_probs[r] = tph / (tph + hpt)
 
         
 
