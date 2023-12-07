@@ -39,7 +39,6 @@ class GCN_Graph(torch.nn.Module):
     def forward(self, batched_data):
         # Extract important attributes of our mini-batch
         x, edge_index, batch = batched_data.x, batched_data.edge_index, batched_data.batch
-        embed = x.to(device)  # Ensure the embedding tensor is on the correct device
 
         for i in range(len(self.convs)):
             x = F.relu(self.convs[i](x, edge_index))
