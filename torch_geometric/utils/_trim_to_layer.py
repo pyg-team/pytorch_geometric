@@ -126,7 +126,7 @@ def trim_to_layer(
     assert isinstance(x, Tensor)
     x = trim_feat(x, layer, num_sampled_nodes_per_hop)
 
-    assert isinstance(edge_index, Tensor)
+    assert isinstance(edge_index, Adj)
     edge_index = trim_adj(
         edge_index,
         layer,
