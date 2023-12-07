@@ -34,13 +34,9 @@ def label_informativeness(
     pass
 
 
-def label_informativeness(
-    edge_index: Adj,
-    y: Tensor,
-    batch: OptTensor = None,
-    method: str = 'edge',
-    eps: float = 1e-8
-) -> Union[float, Tensor]:
+def label_informativeness(edge_index: Adj, y: Tensor, batch: OptTensor = None,
+                          method: str = 'edge',
+                          eps: float = 1e-8) -> Union[float, Tensor]:
     r"""Label informativeness (:math:`\mathrm{LI}`) is a characteristic of
     labeled graphs that shows how much information about a node's label we get
     from knowing its neighbor's label.
