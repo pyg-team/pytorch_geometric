@@ -33,9 +33,10 @@ def lexsort(
         out = np.lexsort([k.detach().cpu().numpy() for k in keys], axis=dim)
         return torch.from_numpy(out).to(keys[0].device)
 
-    kwargs = dict(dim=dim, descending=descending, stable=True)
-    out = keys[0].argsort(**kwargs)
+    out = keys[0].argsort(dim=dim, descending=descending, stable=True)
     for k in keys[1:]:
-        out = out.gather(dim, k.gather(dim, out).argsort(**kwargs))
+        index = k.gather(dim, out)
+        index = index.argsort(dim=dim, descending=descending, stable=True)
+        out = out.gather(dim, index)
 
     return out
