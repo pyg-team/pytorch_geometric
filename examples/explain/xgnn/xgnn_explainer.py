@@ -74,6 +74,8 @@ def check_edge_representation(data):
             return "Edges are represented as single, undirected edges"
     return "Edges are represented with two directed edges, one in each direction"
 
+
+
 class GraphGenerator(torch.nn.Module):
     def __init__(self, num_node_features, num_candidate_node_types):
         super(GraphGenerator, self).__init__()
@@ -104,8 +106,9 @@ class GraphGenerator(torch.nn.Module):
     def forward(self, graph_state, candidate_set):
         # contatenate graph_state features with candidate_set features
         node_features_graph = graph_state.x
-        node_features = torch.cat((node_features_graph, candidate_set), dim=0).float()
-
+        candidate_features = torch.stack(list(candidate_set.values()))
+        node_features = torch.cat((node_features_graph, candidate_features), dim=0).float()
+        
         # run through GCN layers
         for gcn_layer in self.gcn_layers:
             node_features = gcn_layer(node_features, graph_state.edge_index)
@@ -141,7 +144,9 @@ class GraphGenerator(torch.nn.Module):
         end_node = torch.distributions.Categorical(end_node_probs).sample()
         if end_node >= graph_state.x.shape[0]: 
             # add new node features to graph state
-            graph_state.x = torch.cat((graph_state.x, candidate_set[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0).float()
+            graph_state.x = torch.cat((graph_state.x, 
+                                       list(candidate_set.values())[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0).float() # TODO: make prettier
+            graph_state.node_type += [list(candidate_set.keys())[end_node - graph_state.x.shape[0]],] # TODO: make prettier
             new_edge = torch.tensor([[start_node], [graph_state.x.shape[0] - 1]])
         else: 
             new_edge = torch.tensor([[start_node], [end_node]])
@@ -156,14 +161,16 @@ class GraphGenerator(torch.nn.Module):
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
 class RLGenExplainer(XGNNExplainer):
-    def __init__(self, candidate_set):
+    def __init__(self, candidate_set, validity_args):
         super(RLGenExplainer, self).__init__()
         self.candidate_set = candidate_set
-        self.graph_generator = GraphGenerator(self.candidate_set.size(1), self.candidate_set.size(0))
+        self.graph_generator = GraphGenerator(len(list(self.candidate_set.values())[0]),
+                                              len(self.candidate_set)) # TODO: get number of features out in a prettier way
         self.max_steps = 10
         self.lambda_1 = 1
         self.lambda_2 = 1
         self.num_classes = 2
+        self.validity_args = validity_args
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
         graph_state_batch = create_single_batch([graph_state,])
@@ -187,16 +194,29 @@ class RLGenExplainer(XGNNExplainer):
         average_final_reward = sum(final_rewards) / len(final_rewards)
         return average_final_reward
 
-    def evaluate_graph_validity(self, graph_state):
-        # check if graph has duplicated edges
-        edge_set = set()
+    # def evaluate_graph_validity(self, graph_state):
+    #     # check if graph has duplicated edges
+    #     edge_set = set()
         
-        for edge in graph_state.edge_index:
-            sorted_edge = tuple(sorted(edge))
-            if sorted_edge in edge_set:
-                print("Graph has duplicated edges")
+    #     for edge in graph_state.edge_index:
+    #         sorted_edge = tuple(sorted(edge))
+    #         if sorted_edge in edge_set:
+    #             print("Graph has duplicated edges")
+    #             return -1
+    #         edge_set.add(sorted_edge)
+    #     return 0
+
+    def evaluate_graph_validity(self, graph_state):
+        # For mutag, node degrees cannot exceed valency
+        degree = torch.zeros(graph_state.num_nodes, dtype=torch.long)
+        for (u, v) in zip(graph_state.edge_index[0], graph_state.edge_index[1]):
+            degree[u] += 1
+            degree[v] += 1 # TODO: please fix this it is uglier than pepe the frog
+          
+        for node_idx in range(graph_state.num_nodes):
+            if degree[node_idx] > self.validity_args[graph_state.node_type[node_idx]]:
                 return -1
-            edge_set.add(sorted_edge)
+
         return 0
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
@@ -214,13 +234,21 @@ class RLGenExplainer(XGNNExplainer):
         optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr=learning_rate)
         for epoch in range(num_epochs):
             total_loss = 0
-            
-            # sample from candidate set and create initial graph state
-            random_index = torch.randint(0, self.candidate_set.size(0), (1,))
-            sampled_node = self.candidate_set[random_index] # sample a node from the candidate set
+
+
+            # we sample from node IDs and candidate keys set which is now a dictionary, then create a data object with the correct node type and edge index
+            random_node_type = random.choice(list(candidate_set.keys()))
+            feature = candidate_set[random_node_type].unsqueeze(0)
             edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
-            initial_graph = Data(x=sampled_node, edge_index=edge_index)
+            node_type = [random_node_type,]
+            initial_graph = Data(x=feature, edge_index=edge_index, node_type=node_type)
             current_graph_state = initial_graph
+            # sample from candidate set and create initial graph state
+            # random_index = torch.randint(0, self.candidate_set.size(0), (1,))
+            # sampled_node = self.candidate_set[random_index] # sample a node from the candidate set
+            # edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
+            # initial_graph = Data(x=sampled_node, edge_index=edge_index)
+            # current_graph_state = initial_graph
             
             for step in range(self.max_steps):
                 ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
@@ -252,11 +280,24 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 # extract features for the candidate set
 dataset = TUDataset(root='/tmp/MUTAG', name='MUTAG')
 all_features = torch.cat([data.x for data in dataset], dim=0)
-candidate_set = torch.unique(all_features, dim=0)
+
+# we hope these are in the same order
+max_valency = {'C': 4, 'N': 5, 'O': 2, 'F': 1, 'I': 7, 'Cl': 7, 'Br': 5}
+
+# node type map that maps node type to a one hot vector encoding torch tensor please
+candidate_set = {'C': torch.tensor([1, 0, 0, 0, 0, 0, 0]),
+                 'N': torch.tensor([0, 1, 0, 0, 0, 0, 0]),
+                 'O': torch.tensor([0, 0, 1, 0, 0, 0, 0]),
+                 'F': torch.tensor([0, 0, 0, 1, 0, 0, 0]),
+                 'I': torch.tensor([0, 0, 0, 0, 1, 0, 0]),
+                 'Cl': torch.tensor([0, 0, 0, 0, 0, 1, 0]),
+                 'Br': torch.tensor([0, 0, 0, 0, 0, 0, 1])}
+
+# validity_args_valency = {candidate_set[atom] : max_val for atom, max_val in max_valency.items()}
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(candidate_set=candidate_set),
+    algorithm = RLGenExplainer(candidate_set=candidate_set, validity_args = max_valency),
     explanation_type = 'generative',
     node_mask_type = None,
     edge_mask_type = None,
