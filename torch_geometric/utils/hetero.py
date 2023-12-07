@@ -84,6 +84,8 @@ def construct_bipartite_edge_index(
         edge_attr_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
             dictionary holding edge features for each individual edge type.
             (default: :obj:`None`)
+        n_nodes (Tuple[int, int]): When edge_index_dict has `SparseTensor`,
+            n_nodes specifies the shape of output `SparseTensor`.
     """
     is_sparse_tensor = False
     edge_indices: List[Tensor] = []
@@ -120,7 +122,6 @@ def construct_bipartite_edge_index(
         edge_attr = torch.cat(edge_attrs, dim=0)
 
     if is_sparse_tensor:
-        # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
             row=edge_index[0],
             col=edge_index[1],
