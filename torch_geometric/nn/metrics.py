@@ -21,9 +21,9 @@ class LinkPredMetric(BaseMetric, ABC):
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
-    is_differentiable: Optional[bool] = None
+    is_differentiable: bool = False
+    full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    full_state_update: Optional[bool] = None
 
     def __init__(self, k: int):
         super().__init__()
@@ -140,9 +140,7 @@ class LinkPredPrecision(LinkPredMetric):
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
-    is_differentiable: bool = False
     higher_is_better: bool = True
-    full_state_update: bool = False
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
         return pred_isin_mat.sum(dim=-1) / self.k
@@ -154,9 +152,7 @@ class LinkPredRecall(LinkPredMetric):
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
-    is_differentiable: bool = False
     higher_is_better: bool = True
-    full_state_update: bool = False
 
     def __init__(self, k: int):
         super().__init__(k)
@@ -172,9 +168,7 @@ class LinkPredNDCG(LinkPredMetric):
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
-    is_differentiable: bool = False
     higher_is_better: bool = True
-    full_state_update: bool = False
 
     def __init__(self, k: int):
         super().__init__(k=k)
