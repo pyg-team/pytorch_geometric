@@ -6,6 +6,7 @@ The functions in the file have been ported over from,
 import copy
 from functools import partial
 from itertools import combinations
+from typing import Callable, List, Tuple, Union
 
 import numpy as np
 import torch
@@ -20,6 +21,13 @@ from torch_geometric.utils import to_networkx
 def find_closest_node_result(results, max_nodes):
     """Return the highest reward tree_node
     with its subgraph is smaller than max_nodes
+    
+    Args:
+        results (list): list of TreeNode
+        max_nodes (int): maximum number of nodes in the subgraph
+        
+    Returns:
+        result_node (TreeNode): the highest reward TreeNode
     """
     results = sorted(results, key=lambda x: len(x.coalition))
 
@@ -237,7 +245,10 @@ def mc_l_shapley(
     return mc_l_shapley_value
 
 
-def get_graph_build_func(build_method):
+def get_graph_build_func(
+    build_method: str,
+) -> Callable[[...], Tuple[torch.Tensor, torch.Tensor]]:
+    """Return the subgraph building function"""
     if build_method.lower() == "zero_filling":
         return graph_build_zero_filling
     elif build_method.lower() == "split":
@@ -246,7 +257,9 @@ def get_graph_build_func(build_method):
         raise NotImplementedError
 
 
-def graph_build_zero_filling(X, edge_index, node_mask: np.array):
+def graph_build_zero_filling(
+    X, edge_index, node_mask: np.array
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """Subgraph building through masking the
     unselected nodes with zero features
     """
@@ -254,7 +267,9 @@ def graph_build_zero_filling(X, edge_index, node_mask: np.array):
     return ret_X, edge_index
 
 
-def graph_build_split(X, edge_index, node_mask: np.array):
+def graph_build_split(
+    X, edge_index, node_mask: np.array
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """subgraph building through spliting the selected nodes
     from the original graph
     """
@@ -268,19 +283,17 @@ def graph_build_split(X, edge_index, node_mask: np.array):
 def gnn_score(
     coalition: list,
     data: Data,
-    value_func: str,
-    subgraph_building_method="zero_filling",
-) -> torch.Tensor:
+    value_func: Callable[[Data], torch.Tensor],
+    subgraph_building_method: str = "zero_filling",
+) -> float:
     """the value of subgraph with selected nodes"""
-    num_nodes = data.num_nodes
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
-    mask = torch.zeros(num_nodes).type(torch.float32).to(data.x.device)
+    mask = torch.zeros(data.num_nodes).type(torch.float32).to(data.x.device)
     mask[coalition] = 1.0
     ret_x, ret_edge_index = subgraph_build_func(data.x, data.edge_index, mask)
     mask_data = Data(x=ret_x, edge_index=ret_edge_index)
     mask_data = Batch.from_data_list([mask_data])
     score = value_func(mask_data)
-    # get the score of predicted class for graph or specific node idx
     return score.item()
 
 
@@ -291,7 +304,7 @@ def reward_func(
     local_radius=4,
     sample_num=100,
     subgraph_building_method="zero_filling",
-):
+) -> Callable[[...], float]:
     if reward_method.lower() == "gnn_score":
         return partial(
             gnn_score,
@@ -406,9 +419,9 @@ def sparsity(coalition: list, data: Data, subgraph_building_method="zero_filling
 def GnnNetsGC2valueFunc(gnnNets, target_class):
     """Value Function for Graph Classification (GC) Task"""
 
-    def value_func(batch):
+    def value_func(batch, **kwargs):
         with torch.no_grad():
-            logits = gnnNets(batch.x, batch.edge_index)
+            logits = gnnNets(batch.x, batch.edge_index, **kwargs)
             probs = torch.softmax(logits, dim=-1)
             score = probs[:, target_class]
         return score
@@ -416,15 +429,17 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
     return value_func
 
 
-def GnnNetsNC2valueFunc(gnnNets_NC, node_idx, target_class):
+def GnnNetsNC2valueFunc(
+    gnnNets_NC, node_idx, target_class
+) -> Callable[[Data], torch.Tensor]:
     """Value Function for Node Classification (NC) Task"""
+    # TODO: @Donald
+    # should it be batched?
 
-    def value_func(data):
+    def value_func(data: Data) -> torch.Tensor:
         with torch.no_grad():
             logits = gnnNets_NC(data.x, data.edge_index)
             probs = F.softmax(logits, dim=-1)
-            # select the corresponding node prob through
-            # the node idx on all the sampling graphs
             batch_size = data.batch.max() + 1
             probs = probs.reshape(batch_size, -1, probs.shape[-1])
             score = probs[:, node_idx, target_class]
