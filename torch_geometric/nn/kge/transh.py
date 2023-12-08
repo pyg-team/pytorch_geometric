@@ -139,14 +139,12 @@ class TransH(KGEModel):
             tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
 
         self.head_corruption_probs = {}
-        for r in rel_type:
-            r = r.item()
-            if r not in self.head_corruption_probs:
-                mask = (rel_type == r).int()
-                _, tail_count = torch.unique((head_index[mask]),
-                                             return_counts=True, dim=0)
-                _, head_count = torch.unique(tail_index[mask],
-                                             return_counts=True, dim=0)
-                tph = torch.mean(tail_count, dtype=torch.float64)
-                hpt = torch.mean(head_count, dtype=torch.float64)
-                self.head_corruption_probs[r] = tph / (tph + hpt)
+        for r in range(self.num_relations):
+            mask = (rel_type == r).bool()
+            _, tail_count = torch.unique((head_index[mask]),
+                                         return_counts=True, dim=0)
+            _, head_count = torch.unique(tail_index[mask],
+                                         return_counts=True, dim=0)
+            tph = torch.mean(tail_count, dtype=torch.float64)
+            hpt = torch.mean(head_count, dtype=torch.float64)
+            self.head_corruption_probs[r] = tph / (tph + hpt)
