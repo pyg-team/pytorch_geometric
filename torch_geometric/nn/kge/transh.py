@@ -1,4 +1,5 @@
 import math
+from typing import Tuple
 
 import torch
 import torch.nn.functional as F
@@ -6,7 +7,6 @@ from torch import Tensor
 from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
-from typing import Tuple
 
 
 class TransH(KGEModel):
@@ -46,16 +46,10 @@ class TransH(KGEModel):
             If set to :obj:`True`, sample negative labels using a Bernoulli
             distribution. (default: :obj:`False`)
     """
-    def __init__(
-        self,
-        num_nodes: int,
-        num_relations: int,
-        hidden_channels: int,
-        margin: float = 1.0,
-        p_norm: float = 2.0,
-        sparse: bool = False,
-        bernoulli: bool = False
-    ):
+    def __init__(self, num_nodes: int, num_relations: int,
+                 hidden_channels: int, margin: float = 1.0,
+                 p_norm: float = 2.0, sparse: bool = False,
+                 bernoulli: bool = False):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
         self.bernoulli = bernoulli
 
@@ -96,8 +90,8 @@ class TransH(KGEModel):
         proj_tail = F.normalize(proj_tail, p=self.p_norm, dim=-1)
 
         # Calculate *negative* TransH norm:
-        return -(((proj_head + d_rel) - proj_tail)
-                 .norm(p=self.p_norm, dim=-1))**2
+        return -((
+            (proj_head + d_rel) - proj_tail).norm(p=self.p_norm, dim=-1))**2
 
     def loss(
         self,
@@ -108,13 +102,11 @@ class TransH(KGEModel):
 
         pos_score = self(head_index, rel_type, tail_index)
         if self.bernoulli:
-            neg_score = self(*self.random_sample_bernoulli(head_index,
-                                                           rel_type,
-                                                           tail_index))
+            neg_score = self(*self.random_sample_bernoulli(
+                head_index, rel_type, tail_index))
         else:
-            neg_score = self(*self.random_sample(head_index,
-                                                 rel_type,
-                                                 tail_index))
+            neg_score = self(
+                *self.random_sample(head_index, rel_type, tail_index))
 
         return F.margin_ranking_loss(
             pos_score,
@@ -124,33 +116,27 @@ class TransH(KGEModel):
         )
 
     def random_sample_bernoulli(
-            self,
-            head_index: Tensor,
-            rel_type: Tensor,
-            tail_index: Tensor
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+            self, head_index: Tensor, rel_type: Tensor,
+            tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
 
         head_index = head_index.clone()
         tail_index = tail_index.clone()
 
-        probs = torch.Tensor([self.head_corruption_probs[r.item()]
-                              for r in rel_type])
+        probs = torch.Tensor(
+            [self.head_corruption_probs[r.item()] for r in rel_type])
         corrupt_heads = torch.bernoulli(probs).bool()
         corrupt_tails = ~corrupt_heads
 
         head_index[corrupt_heads] = torch.randint(0, self.num_nodes,
-                                                  (corrupt_heads.sum(),))
+                                                  (corrupt_heads.sum(), ))
         tail_index[corrupt_tails] = torch.randint(0, self.num_nodes,
-                                                  (corrupt_tails.sum(),))
+                                                  (corrupt_tails.sum(), ))
 
         return head_index, rel_type, tail_index
 
     def compute_corrupt_probs(
-            self,
-            head_index: Tensor,
-            rel_type: Tensor,
-            tail_index: Tensor
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+            self, head_index: Tensor, rel_type: Tensor,
+            tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
 
         self.head_corruption_probs = {}
         for r in rel_type:
