@@ -69,7 +69,7 @@ class SelectSAG(Select):
                 each node to a specific example. (default: :obj:`None`)
 
         Return types:
-            selectout (torch_geometric.nn.pool.select.SelectOutput): The object 
+            selectout (torch_geometric.nn.pool.select.SelectOutput): The object
                 holds the output of the select part of SAGPooling.
         """
         if batch is None:
