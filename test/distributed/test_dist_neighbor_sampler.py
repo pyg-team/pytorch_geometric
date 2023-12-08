@@ -1,7 +1,6 @@
 import atexit
 import socket
 from typing import Optional
-from contextlib import closing
 
 import pytest
 import torch
@@ -227,7 +226,7 @@ def dist_neighbor_sampler_temporal(
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
@@ -255,7 +254,7 @@ def test_dist_neighbor_sampler(disjoint):
 @pytest.mark.parametrize('temporal_strategy', ['uniform'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
@@ -288,7 +287,7 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]

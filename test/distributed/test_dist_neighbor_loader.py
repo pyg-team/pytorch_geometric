@@ -3,7 +3,6 @@ import socket
 import pytest
 import torch
 import torch.multiprocessing as mp
-from contextlib import closing
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
@@ -178,7 +177,7 @@ def test_dist_neighbor_loader_homo(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind((addr, 0))
         port = sock.getsockname()[1]
@@ -222,7 +221,7 @@ def test_dist_neighbor_loader_hetero(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind((addr, 0))
         port = sock.getsockname()[1]

@@ -1,4 +1,3 @@
-from contextlib import closing
 import socket
 from typing import Dict, List
 
@@ -112,7 +111,7 @@ def test_dist_feature_lookup():
     feature1.put_tensor(cpu_tensor1, group_name=None, attr_name='x')
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(1)
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
