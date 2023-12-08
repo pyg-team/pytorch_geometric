@@ -84,6 +84,7 @@ def to_networkx(
     edge_attrs: Optional[Iterable[str]] = None,
     graph_attrs: Optional[Iterable[str]] = None,
     to_undirected: Optional[Union[bool, str]] = False,
+    to_multi: bool = False,
     remove_self_loops: bool = False,
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
@@ -109,6 +110,11 @@ def to_networkx(
             to the lower triangle of the input adjacency matrix.
             Only applicable in case the :obj:`data` object holds a homogeneous
             graph. (default: :obj:`False`)
+        to_multi (bool, optional): if set to :obj:`True`, will return a
+            :class:`networkx.MultiGraph` or a :class:`networkx:MultiDiGraph`
+            (depending on the :obj:`to_undirected` option), which will not drop
+            duplicated edges that may exist in :obj:`data`.
+            (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self-loops in the resulting graph. (default: :obj:`False`)
 
@@ -135,7 +141,10 @@ def to_networkx(
         raise ValueError("'to_undirected' is not supported in "
                          "'to_networkx' for heterogeneous graphs")
 
-    G = nx.Graph() if to_undirected else nx.DiGraph()
+    if to_undirected:
+        G = nx.MultiGraph() if to_multi else nx.Graph()
+    else:
+        G = nx.MultiDiGraph() if to_multi else nx.DiGraph()
 
     def to_networkx_value(value: Any) -> Any:
         return value.tolist() if isinstance(value, Tensor) else value
