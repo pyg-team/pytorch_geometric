@@ -96,6 +96,7 @@ class DistNeighborSampler:
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
         self.time_attr = time_attr
+        self.temporal = time_attr is not None
         self.with_edge_attr = self.feature_store.has_edge_attr()
         self.csc = True
 
@@ -213,7 +214,7 @@ class DistNeighborSampler:
 
         seed = inputs.node.to(self.device)
         seed_time: Optional[Tensor] = None
-        if self.time_attr is not None:
+        if self.temporal:
             if inputs.time is not None:
                 seed_time = inputs.time.to(self.device)
             elif self.node_time is not None:
@@ -370,8 +371,10 @@ class DistNeighborSampler:
             )
         else:
             src = seed
-            node = src
-            batch = src_batch if self.disjoint else None
+            node = src.clone()
+            batch = src_batch.clone() if self.disjoint else None
+
+            src_seed_time = seed_time.clone() if self.temporal else None
 
             node_with_dupl = [torch.empty(0, dtype=torch.int64)]
             batch_with_dupl = [torch.empty(0, dtype=torch.int64)]
@@ -381,10 +384,10 @@ class DistNeighborSampler:
             num_sampled_nodes = [seed.numel()]
             num_sampled_edges = []
 
-            # loop over the layers
+            # Loop over the layers
             for i, one_hop_num in enumerate(self.num_neighbors):
-                out = await self.sample_one_hop(src, one_hop_num, seed_time,
-                                                src_batch)
+                out = await self.sample_one_hop(src, one_hop_num,
+                                                src_seed_time, src_batch)
                 if out.node.numel() == 0:
                     # no neighbors were sampled
                     num_zero_layers = self.num_hops - i
@@ -392,7 +395,7 @@ class DistNeighborSampler:
                     num_sampled_edges += num_zero_layers * [0]
                     break
 
-                # remove duplicates
+                # Remove duplicates
                 src, node, src_batch, batch = remove_duplicates(
                     out, node, batch, self.disjoint)
 
@@ -402,11 +405,11 @@ class DistNeighborSampler:
                 if self.disjoint:
                     batch_with_dupl.append(out.batch)
 
-                if seed_time is not None and i < self.num_hops - 1:
-                    # Get the seed time for the next layer based on the
-                    # previous seed_time and sampled neighbors per node info:
-                    seed_time = torch.repeat_interleave(
-                        seed_time, torch.as_tensor(out.metadata[0]))
+                if self.temporal and i < self.num_hops - 1:
+                    # Assign seed time based on src nodes subgraph IDs.
+                    src_seed_time = src_batch.clone()
+                    for batch_idx, time in enumerate(seed_time):
+                        src_seed_time[src_batch == batch_idx] = time
 
                 num_sampled_nodes.append(len(src))
                 num_sampled_edges.append(len(out.node))
@@ -724,7 +727,7 @@ class DistNeighborSampler:
             p_mask = partition_ids == p_id
             p_srcs = torch.masked_select(srcs, p_mask)
             p_seed_time = (torch.masked_select(seed_time, p_mask)
-                           if seed_time is not None else None)
+                           if self.temporal else None)
 
             p_indices = torch.arange(len(p_srcs), dtype=torch.long)
             partition_orders[p_mask] = p_indices
@@ -799,12 +802,12 @@ class DistNeighborSampler:
             True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,
-            self.disjoint and self.time_attr is not None,
+            self.disjoint and self.temporal,
             self.temporal_strategy,
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        if self.disjoint and self.time_attr is not None:
+        if self.disjoint and self.temporal:
             # We create a batch during the step of merging sampler outputs.
             _, node = node.t().contiguous()
 
