@@ -135,6 +135,28 @@ def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
     return free_mem, used_mem
 
 
+def get_gpu_memory_from_ipex(
+        device: int = 0,
+        digits=2) -> Tuple[float, float, float]:  # pragma: no cover
+    r"""Returns the XPU memory statistics.
+
+    Args:
+        device (int, optional): The GPU device identifier. (default: :obj:`0`)
+        digits (int): The number of decimals to use for megabytes.
+            (default: :obj:`2`)
+    """
+    import intel_extension_for_pytorch as ipex
+    stats = ipex.xpu.memory_stats_as_nested_dict(device)
+    max_allocated = stats['allocated_bytes']['all']['peak']
+    max_reserved = stats['reserved_bytes']['all']['peak']
+    max_active = stats['active_bytes']['all']['peak']
+    max_allocated = byte_to_megabyte(max_allocated, digits)
+    max_reserved = byte_to_megabyte(max_reserved, digits)
+    max_active = byte_to_megabyte(max_active, digits)
+    ipex.xpu.reset_peak_memory_stats()
+    return max_allocated, max_reserved, max_active
+
+
 ###############################################################################
 
 

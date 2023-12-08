@@ -7,6 +7,7 @@ from torch_geometric.profile import (
     get_cpu_memory_from_gc,
     get_data_size,
     get_gpu_memory_from_gc,
+    get_gpu_memory_from_ipex,
     get_gpu_memory_from_nvidia_smi,
     get_model_size,
 )
@@ -14,7 +15,7 @@ from torch_geometric.profile.utils import (
     byte_to_megabyte,
     medibyte_to_megabyte,
 )
-from torch_geometric.testing import onlyCUDA, withPackage
+from torch_geometric.testing import onlyCUDA, onlyXPU, withPackage
 from torch_geometric.typing import SparseTensor
 
 
@@ -66,6 +67,14 @@ def test_get_gpu_memory_from_nvidia_smi():
     free_mem, used_mem = get_gpu_memory_from_nvidia_smi(device=0, digits=2)
     assert free_mem >= 0
     assert used_mem >= 0
+
+
+@onlyXPU
+def test_get_gpu_memory_from_ipex():
+    max_allocated, max_reserved, max_active = get_gpu_memory_from_ipex()
+    assert max_allocated >= 0
+    assert max_reserved >= 0
+    assert max_active >= 0
 
 
 def test_bytes_function():

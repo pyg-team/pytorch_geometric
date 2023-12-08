@@ -17,7 +17,7 @@ else:
 @overload
 def maybe_num_nodes(
     edge_index: Tensor,
-    num_nodes: Optional[int],
+    num_nodes: Optional[int] = None,
 ) -> int:
     pass
 
@@ -25,15 +25,15 @@ def maybe_num_nodes(
 @overload
 def maybe_num_nodes(  # noqa: F811
     edge_index: Tuple[Tensor, Tensor],
-    num_nodes: Optional[int],
+    num_nodes: Optional[int] = None,
 ) -> int:
     pass
 
 
 @overload
 def maybe_num_nodes(  # noqa: F811
-        edge_index: SparseTensor,
-        num_nodes: Optional[int],
+    edge_index: SparseTensor,
+    num_nodes: Optional[int] = None,
 ) -> int:
     pass
 
