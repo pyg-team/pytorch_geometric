@@ -3,7 +3,11 @@ from typing import List
 import pytest
 import torch
 
-from torch_geometric.nn.metrics import LinkPredNDCG, LinkPredPrecision
+from torch_geometric.nn.metrics import (
+    LinkPredNDCG,
+    LinkPredPrecision,
+    LinkPredRecall,
+)
 
 
 @pytest.mark.parametrize('num_src_nodes', [100])
@@ -21,7 +25,7 @@ def test_precision(num_src_nodes, num_dst_nodes, num_edges, batch_size, k):
     top_k_pred_mat = pred.topk(k, dim=1)[1]
 
     metric = LinkPredPrecision(k)
-    assert str(metric) == f'LinkPredPrecision({k})'
+    assert str(metric) == f'LinkPredPrecision(k={k})'
 
     for node_id in torch.split(torch.randperm(num_src_nodes), batch_size):
         mask = torch.isin(edge_label_index[0], node_id)
@@ -48,11 +52,24 @@ def test_precision(num_src_nodes, num_dst_nodes, num_edges, batch_size, k):
     assert torch.allclose(out, expected)
 
 
+def test_recall():
+    pred_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
+    edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]])
+
+    metric = LinkPredRecall(k=2)
+    assert str(metric) == f'LinkPredRecall(k={2})'
+    metric.update(pred_mat, edge_label_index)
+    result = metric.compute()
+
+    assert float(result) == pytest.approx(0.5 * (2 / 3 + 0.5))
+
+
 def test_ndcg():
     pred_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
     edge_label_index = torch.tensor([[0, 0, 2, 2], [0, 1, 2, 1]])
 
     metric = LinkPredNDCG(k=2)
+    assert str(metric) == f'LinkPredNDCG(k={2})'
     metric.update(pred_mat, edge_label_index)
     result = metric.compute()
 
