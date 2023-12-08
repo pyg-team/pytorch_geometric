@@ -85,14 +85,6 @@ def dist_neighbor_sampler(
         group_name='dist-sampler-test',
     )
 
-    # Initialize training process group of PyTorch:
-    torch.distributed.init_process_group(
-        backend='gloo',
-        rank=current_ctx.rank,
-        world_size=current_ctx.world_size,
-        init_method=f'tcp://localhost:{master_port}',
-    )
-
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
@@ -101,6 +93,8 @@ def dist_neighbor_sampler(
         shuffle=False,
         disjoint=disjoint,
     )
+    # Close RPC & worker group at exit:
+    atexit.register(close_sampler, 0, dist_sampler)
 
     init_rpc(
         current_ctx=current_ctx,
@@ -112,10 +106,6 @@ def dist_neighbor_sampler(
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
 
-    # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
-    torch.distributed.barrier()
-
     if rank == 0:  # Seed nodes:
         input_node = torch.tensor([1, 6])
     else:
@@ -126,8 +116,6 @@ def dist_neighbor_sampler(
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
-
-    torch.distributed.barrier()
 
     sampler = NeighborSampler(
         data=data,
@@ -146,9 +134,6 @@ def dist_neighbor_sampler(
         assert torch.equal(out_dist.batch, out.batch)
     assert out_dist.num_sampled_nodes == out.num_sampled_nodes
     assert out_dist.num_sampled_edges == out.num_sampled_edges
-
-    torch.distributed.barrier()
-    torch.distributed.destroy_process_group()
 
 
 def dist_neighbor_sampler_temporal(
@@ -169,14 +154,6 @@ def dist_neighbor_sampler_temporal(
         group_name='dist-sampler-test',
     )
 
-    # Initialize training process group of PyTorch:
-    torch.distributed.init_process_group(
-        backend='gloo',
-        rank=current_ctx.rank,
-        world_size=current_ctx.world_size,
-        init_method=f'tcp://localhost:{master_port}',
-    )
-
     num_neighbors = [-1, -1] if temporal_strategy == 'uniform' else [1, 1]
     dist_sampler = DistNeighborSampler(
         data=dist_data,
@@ -188,6 +165,8 @@ def dist_neighbor_sampler_temporal(
         temporal_strategy=temporal_strategy,
         time_attr=time_attr,
     )
+    # Close RPC & worker group at exit:
+    atexit.register(close_sampler, 0, dist_sampler)
 
     init_rpc(
         current_ctx=current_ctx,
@@ -195,13 +174,8 @@ def dist_neighbor_sampler_temporal(
         master_addr='localhost',
         master_port=master_port,
     )
-
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
-
-    # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
-    torch.distributed.barrier()
 
     if rank == 0:  # Seed nodes:
         input_node = torch.tensor([1, 6], dtype=torch.int64)
@@ -217,9 +191,6 @@ def dist_neighbor_sampler_temporal(
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
-
-    torch.distributed.barrier()
-
     sampler = NeighborSampler(
         data=data,
         num_neighbors=num_neighbors,
@@ -239,19 +210,16 @@ def dist_neighbor_sampler_temporal(
     assert out_dist.num_sampled_nodes == out.num_sampled_nodes
     assert out_dist.num_sampled_edges == out.num_sampled_edges
 
-    torch.distributed.barrier()
-    torch.distributed.destroy_process_group()
-
 
 @onlyLinux
 @withPackage('pyg_lib')
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind(('127.0.0.1', 0))
+        port = sock.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
@@ -276,10 +244,10 @@ def test_dist_neighbor_sampler(disjoint):
 @pytest.mark.parametrize('temporal_strategy', ['uniform'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind(('127.0.0.1', 0))
+        port = sock.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
@@ -309,10 +277,10 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind(('127.0.0.1', 0))
+        port = sock.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
