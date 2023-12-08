@@ -86,24 +86,27 @@ def remove_self_loops(  # noqa: F811
                 [3, 4]]))
     """
     size: Optional[Tuple[int, int]] = None
-    layout: Optional[torch.layout] = None
+    if not typing.TYPE_CHECKING and torch.jit.is_scripting():
+        layout: Optional[int] = None
+    else:
+        layout: Optional[torch.layout] = None
 
     if is_torch_sparse_tensor(edge_index):
         assert edge_attr is None
         layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
-        edge_index, edge_attr = to_edge_index(edge_index)
+        edge_index, value = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
 
     if layout is not None:
-        assert edge_attr is not None
-        edge_attr = edge_attr[mask]
+        assert value is not None
+        value = value[mask]
         if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
-            return to_torch_coo_tensor(edge_index, edge_attr, size, True), None
+            return to_torch_coo_tensor(edge_index, value, size, True), None
         elif str(layout) == 'torch.sparse_csr':
-            return to_torch_csr_tensor(edge_index, edge_attr, size, True), None
+            return to_torch_csr_tensor(edge_index, value, size, True), None
         raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
     if edge_attr is None:
@@ -129,8 +132,9 @@ def segregate_self_loops(  # noqa: F811
 
 
 def segregate_self_loops(  # noqa: F811
-    edge_index: Tensor, edge_attr: OptTensor = None) -> Tuple[
-        Tensor, OptTensor, Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+) -> Tuple[Tensor, OptTensor, Tensor, OptTensor]:
     r"""Segregates self-loops from the graph.
 
     Args:
@@ -166,8 +170,8 @@ def segregate_self_loops(  # noqa: F811
 def add_self_loops(
     edge_index: Tensor,
     edge_attr: None = None,
-    *,
-    num_nodes: Optional[int],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, None]:
     pass
 
@@ -176,8 +180,48 @@ def add_self_loops(
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: None = None,
-    *,
-    num_nodes: Tuple[int, int],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, None]:
     pass
 
@@ -186,9 +230,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: Optional[float],
-    num_nodes: Optional[int],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -197,9 +240,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: Optional[float],
-    num_nodes: Tuple[int, int],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -208,9 +250,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: Tensor,
-    num_nodes: Optional[int],
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -219,9 +260,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: Tensor,
-    num_nodes: Tuple[int, int],
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -230,9 +270,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: str,
-    num_nodes: Optional[int],
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -241,9 +280,8 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: str,
-    num_nodes: Tuple[int, int],
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, Tensor]:
     pass
 
@@ -251,7 +289,6 @@ def add_self_loops(  # noqa: F811
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
-    *,
     fill_value: Optional[Union[float, Tensor, str]] = None,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tuple[Tensor, OptTensor]:
@@ -309,15 +346,19 @@ def add_self_loops(  # noqa: F811
                 [1, 0, 0, 0, 1]]),
         tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
-    layout: Optional[torch.layout] = None
+    if not typing.TYPE_CHECKING and torch.jit.is_scripting():
+        layout: Optional[int] = None
+    else:
+        layout: Optional[torch.layout] = None
     is_sparse = is_torch_sparse_tensor(edge_index)
 
+    value: Optional[Tensor] = None
     if is_sparse:
         assert edge_attr is None
         layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
         N = min(size)
-        edge_index, edge_attr = to_edge_index(edge_index)
+        edge_index, value = to_edge_index(edge_index)
     elif isinstance(num_nodes, (tuple, list)):
         size = (num_nodes[0], num_nodes[1])
         N = min(size)
@@ -325,88 +366,94 @@ def add_self_loops(  # noqa: F811
         N = maybe_num_nodes(edge_index, num_nodes)
         size = (N, N)
 
-    loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
+    loop_index = torch.arange(0, N, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
+    full_edge_index = torch.cat([edge_index, loop_index], dim=1)
+
+    if is_sparse:
+        assert edge_attr is None
+        assert value is not None
+        loop_attr = compute_loop_attr(  #
+            edge_index, value, N, is_sparse, fill_value)
+        value = torch.cat([value, loop_attr], dim=0)
+
+        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
+            return to_torch_coo_tensor(full_edge_index, value, size), None
+        elif str(layout) == 'torch.sparse_csr':
+            return to_torch_csr_tensor(full_edge_index, value, size), None
+        raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
     if edge_attr is not None:
-        if fill_value is None:
-            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
-
-        elif isinstance(fill_value, (int, float)):
-            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
-                                           fill_value)
-        elif isinstance(fill_value, Tensor):
-            loop_attr = fill_value.to(edge_attr.device, edge_attr.dtype)
-            if edge_attr.dim() != loop_attr.dim():
-                loop_attr = loop_attr.unsqueeze(0)
-            sizes = [N] + [1] * (loop_attr.dim() - 1)
-            loop_attr = loop_attr.repeat(sizes)
-
-        elif isinstance(fill_value, str):
-            col = edge_index[0] if is_sparse else edge_index[1]
-            loop_attr = scatter(edge_attr, col, 0, N, fill_value)
-        else:
-            raise AttributeError("No valid 'fill_value' provided")
-
+        loop_attr = compute_loop_attr(  #
+            edge_index, edge_attr, N, is_sparse, fill_value)
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
-    edge_index = torch.cat([edge_index, loop_index], dim=1)
-    if is_sparse:
-        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
-            return to_torch_coo_tensor(edge_index, edge_attr, size), None
-        elif str(layout) == 'torch.sparse_csr':
-            return to_torch_csr_tensor(edge_index, edge_attr, size), None
-        raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
-    return edge_index, edge_attr
+    return full_edge_index, edge_attr
 
 
 @overload
 def add_remaining_self_loops(
     edge_index: Tensor,
-    edge_attr: None = None,
-    *,
-    num_nodes: Optional[int],
-) -> Tuple[Tensor, None]:
-    pass
-
-
-@overload
-def add_remaining_self_loops(  # noqa: F811
-    edge_index: Tensor,
     edge_attr: Tensor,
-    *,
-    fill_value: Optional[float],
-    num_nodes: Optional[int],
-) -> Tuple[Tensor, Tensor]:
-    pass
-
-
-@overload
-def add_remaining_self_loops(  # noqa: F811
-    edge_index: Tensor,
-    edge_attr: Tensor,
-    *,
-    fill_value: Tensor,
-    num_nodes: Optional[int],
-) -> Tuple[Tensor, Tensor]:
-    pass
-
-
-@overload
-def add_remaining_self_loops(  # noqa: F811
-    edge_index: Tensor,
-    edge_attr: Tensor,
-    *,
-    fill_value: str,
+    fill_value: Optional[float] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     pass
 
 
 def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
     edge_attr: OptTensor = None,
-    *,
     fill_value: Optional[Union[float, Tensor, str]] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, OptTensor]:
@@ -449,24 +496,9 @@ def add_remaining_self_loops(  # noqa: F811
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
     if edge_attr is not None:
-        if fill_value is None:
-            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
-        elif isinstance(fill_value, (int, float)):
-            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
-                                           fill_value)
-        elif isinstance(fill_value, Tensor):
-            loop_attr = fill_value.to(edge_attr.device, edge_attr.dtype)
-            if edge_attr.dim() != loop_attr.dim():
-                loop_attr = loop_attr.unsqueeze(0)
-            sizes = [N] + [1] * (loop_attr.dim() - 1)
-            loop_attr = loop_attr.repeat(*sizes)
-
-        elif isinstance(fill_value, str):
-            loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
-                                reduce=fill_value)
-        else:
-            raise AttributeError("No valid 'fill_value' provided")
+        loop_attr = compute_loop_attr(  #
+            edge_index, edge_attr, N, False, fill_value)
 
         inv_mask = ~mask
         loop_attr[edge_index[0][inv_mask]] = edge_attr[inv_mask]
@@ -477,8 +509,11 @@ def add_remaining_self_loops(  # noqa: F811
     return edge_index, edge_attr
 
 
-def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
-                       num_nodes: Optional[int] = None) -> Tensor:
+def get_self_loop_attr(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    num_nodes: Optional[int] = None,
+) -> Tensor:
     r"""Returns the edge features or weights of self-loops
     :math:`(i, i)` of every node :math:`i \in \mathcal{V}` in the
     graph given by :attr:`edge_index`. Edge features of missing self-loops not
@@ -521,3 +556,66 @@ def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
     full_loop_attr[loop_index] = loop_attr
 
     return full_loop_attr
+
+
+@overload
+def compute_loop_attr(
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: int,
+    is_sparse: bool,
+    fill_value: Optional[float] = None,
+) -> Tensor:
+    pass
+
+
+@overload
+def compute_loop_attr(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: int,
+    is_sparse: bool,
+    fill_value: Optional[Tensor] = None,
+) -> Tensor:
+    pass
+
+
+@overload
+def compute_loop_attr(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: int,
+    is_sparse: bool,
+    fill_value: Optional[str] = None,
+) -> Tensor:
+    pass
+
+
+def compute_loop_attr(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: int,
+    is_sparse: bool,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+) -> Tensor:
+
+    if fill_value is None:
+        size = (num_nodes, ) + edge_attr.size()[1:]
+        return edge_attr.new_ones(size)
+
+    elif isinstance(fill_value, (int, float)):
+        size = (num_nodes, ) + edge_attr.size()[1:]
+        return edge_attr.new_full(size, fill_value)
+
+    elif isinstance(fill_value, Tensor):
+        size = (num_nodes, ) + edge_attr.size()[1:]
+        loop_attr = fill_value.to(edge_attr.device, edge_attr.dtype)
+        if edge_attr.dim() != loop_attr.dim():
+            loop_attr = loop_attr.unsqueeze(0)
+        return loop_attr.expand(size)
+
+    elif isinstance(fill_value, str):
+        col = edge_index[0] if is_sparse else edge_index[1]
+        return scatter(edge_attr, col, 0, num_nodes, fill_value)
+
+    raise AttributeError("No valid 'fill_value' provided")
