@@ -552,3 +552,28 @@ def test_data_with_time_for_edges():
     assert sorted_data.is_sorted_by_time()
     assert torch.all(sorted_data.edge_index == edge_index[:, time_perm])
     assert torch.allclose(sorted_data.edge_attr, edge_attr[time_perm, :])
+
+    del data.x
+    new_edges = 4
+    new_edge_index = torch.randint(0, 8, (2, new_edges))
+    new_edge_attr = torch.rand((new_edges, 16))
+    new_time = torch.tensor([10, 11, 12, 13])
+    new_data = Data(edge_index=new_edge_index, edge_attr=new_edge_attr,
+                    time=new_time)
+    concatenated_data = data.concat(new_data)
+    assert concatenated_data.num_edges == num_edges + new_edges
+    assert torch.all(
+        concatenated_data.edge_index == torch.cat((edge_index,
+                                                   new_edge_index), -1))
+    assert torch.allclose(concatenated_data.edge_attr,
+                          torch.cat((edge_attr, new_edge_attr), 0))
+    assert torch.allclose(concatenated_data.time, torch.cat((time, new_time),
+                                                            0))
+
+    new_data.edge_attr = torch.rand((new_edges, 8))
+    with pytest.raises(AttributeError):
+        data.concat(new_data)
+
+    empty_data = Data()
+    with pytest.raises(AttributeError):
+        data.concat(empty_data)

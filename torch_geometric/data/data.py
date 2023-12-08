@@ -98,6 +98,12 @@ class BaseData:
         """
         raise NotImplementedError
 
+    def concat(self, data: 'Data') -> 'Data':
+        r"""Concatenates :obj:`self` object with given :obj:`data`. All values
+        should have matching shapes at not-concat dimensions.
+        """
+        raise NotImplementedError
+
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
         attribute :obj:`key` will get concatenated when creating mini-batches
@@ -610,6 +616,13 @@ class Data(BaseData, FeatureStore, GraphStore):
         for key, value in data.items():
             self[key] = value
         return self
+
+    def concat(self, data: 'Data') -> 'Data':
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, data.stores):
+            store.concat(other_store)
+
+        return out
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if is_sparse(value) and 'adj' in key:

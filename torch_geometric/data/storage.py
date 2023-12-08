@@ -745,7 +745,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
     def _dims_for_attrs(self, keys: List[str]) -> List[int]:
         # to avoid errors when 'num_edges == num_edge_features' or
         # 'num_nodes == num_node_features'
-        predefined_dims = dict(x=0, edge_index=1, edge_attr=0)
+        predefined_dims = dict(x=0, edge_index=1, edge_attr=0, time=0)
         dims = []
         for key in keys:
             if key in predefined_dims.keys():
@@ -758,6 +758,24 @@ class GlobalStorage(NodeStorage, EdgeStorage):
                     self[key].size()) == self.num_nodes).nonzero()[0].item()
             dims.append(dim)
         return dims
+
+    def concat(self, other: 'GlobalStorage') -> 'GlobalStorage':
+        if not (set(self.keys()) == set(other.keys())):
+            raise AttributeError('Given storage is not compatible')
+        for key, dim in zip(self.keys(), self._dims_for_attrs(self.keys())):
+            if self[key].dim() != other[key].dim():
+                raise AttributeError("Number of dims do not match for "
+                                     f"key '{key}'.")
+            for i in range(self[key].dim()):
+                if i != dim and self[key].size(i) != other[key].size(i):
+                    raise AttributeError(f"Dim size at dim={i} do not match "
+                                         f"for key: '{key}'")
+            self[key] = torch.cat((self[key], other[key]), dim)
+        if 'edge_index' in self:
+            self.num_edges = self.edge_index.size(-1)
+        if 'x' in self:
+            self.num_nodes = self.x.size(0)
+        return self
 
     def is_sorted_by_time(self) -> bool:
         if 'time' in self:
