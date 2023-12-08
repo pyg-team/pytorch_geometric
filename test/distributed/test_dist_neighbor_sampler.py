@@ -324,10 +324,10 @@ def dist_neighbor_sampler_hetero(
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind(('127.0.0.1', 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
@@ -352,10 +352,10 @@ def test_dist_neighbor_sampler(disjoint):
 @pytest.mark.parametrize('temporal_strategy', ['uniform'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind(('127.0.0.1', 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
@@ -385,10 +385,10 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind(('127.0.0.1', 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
 
     world_size = 2
     w0 = mp_context.Process(
@@ -411,10 +411,10 @@ def test_dist_neighbor_sampler_edge_level_temporal(
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(("127.0.0.1", 0))
-    port = s.getsockname()[1]
-    s.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
 
     world_size = 2
     data = FakeHeteroDataset(
