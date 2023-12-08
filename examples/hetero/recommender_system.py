@@ -22,7 +22,7 @@ from torch_geometric.nn.metrics import LinkPredNDCG, LinkPredPrecision
 from torch_geometric.nn.pool import MIPSKNNIndex
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epochs', type=int, default=50,
+parser.add_argument('-e', '--epochs', type=int, default=20,
                     help='number of epochs')
 parser.add_argument('-k', '--k', type=int, default=20,
                     help='number of predictions per user to make')
@@ -156,7 +156,7 @@ class Model(torch.nn.Module):
 model = Model(num_users=data['user'].num_nodes,
               num_movies=data['movie'].num_nodes,
               hidden_channels=64).to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
 
 
 def get_user_positive_items(edge_index):
@@ -212,7 +212,7 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
     movie_embs, user_embs = get_embeddings(model, train_data)
     mipsknn = MIPSKNNIndex(movie_embs)
-    knn_score, knn_index = mipsknn.search(user_embs, movie_embs.size(0), train_data['user', 'movie'].edge_index)
+    knn_score, knn_index = mipsknn.search(user_embs, k, train_data['user', 'movie'].edge_index)
 
     # Obtain the movies that each user has already
     # watched. These movies need to be removed from
@@ -238,22 +238,6 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
     # Let's write out the recommendations into a file
     if write_to_file:
         write_recs(real_recs, val_data, val_user_pos_items)
-
-    hits = 0
-    user_hits = 0
-    positive_hit_user = []
-    for user in val_user_pos_items:
-        correct_preds = len(set(real_recs[user]).intersection(
-            set(val_user_pos_items[user])))
-        hits += correct_preds
-        user_hits += correct_preds > 0
-        if correct_preds>0:
-            positive_hit_user.append(user)
-
-
-    print(f"Total hits at {k} = {hits}")
-    print(f"Total user hits at {k} = {user_hits}/{len(val_user_pos_items)}")
-    print(f'Positive users = {positive_hit_user}')
 
     return real_recs
 
@@ -289,7 +273,6 @@ def visualize(model, train_data, val_data, real_recs, epoch, users_list=[338]):
         if val_user not in users_list:
             continue
         try:
-            print(f'{val_user} is in {users_list}')
             try:
                 train_gt = train_pos_items[val_user]
                 plt.scatter(emb_reduced[train_gt, 0], emb_reduced[train_gt, 1],
