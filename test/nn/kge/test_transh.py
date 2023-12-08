@@ -4,10 +4,8 @@ from torch_geometric.nn import TransH
 
 
 def test_transh():
-    model = TransH(num_nodes=10, num_relations=5, hidden_channels=32,
-                   bernoulli=True)
-    assert str(model) == '''TransH(10, num_relations=5, hidden_channels=32,
-                   bernoulli=True)'''
+    model = TransH(num_nodes=10, num_relations=5, hidden_channels=32)
+    assert str(model) == '''TransH(10, num_relations=5, hidden_channels=32)'''
 
     head_index = torch.tensor([0, 2, 4, 6, 8])
     rel_type = torch.tensor([0, 1, 2, 3, 4])
