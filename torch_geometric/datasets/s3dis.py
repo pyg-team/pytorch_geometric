@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class S3DIS(InMemoryDataset):
@@ -38,6 +38,8 @@ class S3DIS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
@@ -55,10 +57,12 @@ class S3DIS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
 
@@ -74,7 +78,7 @@ class S3DIS(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 

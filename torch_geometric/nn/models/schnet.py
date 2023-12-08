@@ -11,7 +11,6 @@ from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.data import Dataset, download_url, extract_zip
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
@@ -189,7 +188,7 @@ class SchNet(torch.nn.Module):
         units[5] = ase.units.Bohr**2
 
         root = osp.expanduser(osp.normpath(root))
-        makedirs(root)
+        os.makedirs(root, exist_ok=True)
         folder = 'trained_schnet_models'
         if not osp.exists(osp.join(root, folder)):
             path = download_url(SchNet.url, root)
@@ -250,7 +249,7 @@ class SchNet(torch.nn.Module):
         net.lin2.bias = state.output_modules[0].out_net[1].out_net[1].bias
 
         mean = state.output_modules[0].atom_pool.average
-        net.readout = 'mean' if mean is True else 'add'
+        net.readout = aggr_resolver('mean' if mean is True else 'add')
 
         dipole = state.output_modules[0].__class__.__name__ == 'DipoleMoment'
         net.dipole = dipole

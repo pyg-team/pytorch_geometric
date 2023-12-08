@@ -27,22 +27,30 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
 
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target", dtype=None):
-
+def gcn_norm(  # noqa: F811
+    edge_index: Adj,
+    edge_weight: OptTensor = None,
+    num_nodes: Optional[int] = None,
+    improved: bool = False,
+    add_self_loops: bool = True,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+):
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):

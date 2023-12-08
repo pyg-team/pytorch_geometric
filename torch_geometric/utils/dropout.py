@@ -90,9 +90,13 @@ def dropout_adj(
     return edge_index, edge_attr
 
 
-def dropout_node(edge_index: Tensor, p: float = 0.5,
-                 num_nodes: Optional[int] = None,
-                 training: bool = True) -> Tuple[Tensor, Tensor, Tensor]:
+def dropout_node(
+    edge_index: Tensor,
+    p: float = 0.5,
+    num_nodes: Optional[int] = None,
+    training: bool = True,
+    relabel_nodes: bool = False,
+) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Randomly drops nodes from the adjacency matrix
     :obj:`edge_index` with probability :obj:`p` using samples from
     a Bernoulli distribution.
@@ -108,6 +112,9 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
+        relabel_nodes (bool, optional): If set to `True`, the resulting
+            `edge_index` will be relabeled to hold consecutive indices
+            starting from zero.
 
     :rtype: (:class:`LongTensor`, :class:`BoolTensor`, :class:`BoolTensor`)
 
@@ -136,9 +143,13 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
 
     prob = torch.rand(num_nodes, device=edge_index.device)
     node_mask = prob > p
-    edge_index, _, edge_mask = subgraph(node_mask, edge_index,
-                                        num_nodes=num_nodes,
-                                        return_edge_mask=True)
+    edge_index, _, edge_mask = subgraph(
+        node_mask,
+        edge_index,
+        relabel_nodes=relabel_nodes,
+        num_nodes=num_nodes,
+        return_edge_mask=True,
+    )
     return edge_index, edge_mask, node_mask
 
 

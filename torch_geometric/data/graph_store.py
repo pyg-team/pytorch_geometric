@@ -176,7 +176,7 @@ class GraphStore:
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Obtains all edge attributes stored in the :class:`GraphStore`."""
+        r"""Returns all registered edge attributes."""
         pass
 
     # Layout Conversion #######################################################
@@ -186,8 +186,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in COO
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in COO format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -203,8 +202,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSR
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSR format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -220,8 +218,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSC
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSC format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -309,15 +306,14 @@ class GraphStore:
         store: bool = False,
     ) -> ConversionOutputType:
 
-        is_hetero = True  # Default.
+        edge_attrs: List[EdgeAttr] = self.get_all_edge_attrs()
+
         if hasattr(self, 'meta'):  # `LocalGraphStore` hack.
             is_hetero = self.meta.get('is_hetero', False)
+        else:
+            is_hetero = all(attr.edge_type is not None for attr in edge_attrs)
 
         if not is_hetero:
-            edge_attrs: List[EdgeAttr] = []
-            for attr in self.get_all_edge_attrs():
-                edge_attrs.append(attr)
-
             return self._edge_to_layout(edge_attrs[0], layout, store)
 
         # Obtain all edge attributes, grouped by type:

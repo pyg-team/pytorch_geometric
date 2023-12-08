@@ -1,3 +1,4 @@
+import typing
 import warnings
 
 import torch
@@ -7,21 +8,36 @@ import torch_geometric.typing
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload as overload
 
-@torch.jit._overload
-def spmm(src, other, reduce):
-    # type: (Tensor, Tensor, str) -> Tensor
+
+@overload
+def spmm(
+    src: Tensor,
+    other: Tensor,
+    reduce: str = 'sum',
+) -> Tensor:
     pass
 
 
-@torch.jit._overload
-def spmm(src, other, reduce):
-    # type: (SparseTensor, Tensor, str) -> Tensor
+@overload
+def spmm(  # noqa: F811
+    src: SparseTensor,
+    other: Tensor,
+    reduce: str = 'sum',
+) -> Tensor:
     pass
 
 
-def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
-    """Matrix product of sparse matrix with dense matrix.
+def spmm(  # noqa: F811
+        src: Adj,
+        other: Tensor,
+        reduce: str = 'sum',
+) -> Tensor:
+    r"""Matrix product of sparse matrix with dense matrix.
 
     Args:
         src (torch.Tensor or torch_sparse.SparseTensor): The input sparse

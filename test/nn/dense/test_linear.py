@@ -276,7 +276,7 @@ if __name__ == '__main__':
     try:
         import dgl
         WITH_DLG = True
-    except:  # noqa
+    except Exception:
         WITH_DGL = False
 
     warnings.filterwarnings('ignore', '.*API of nested tensors.*')

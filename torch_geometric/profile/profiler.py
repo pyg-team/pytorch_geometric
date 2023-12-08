@@ -105,8 +105,7 @@ class Profiler:
 
             @functools.wraps(_forward)
             def wrap_forward(*args, **kwargs):
-                """The forward pass is decorated and profiled here.
-                """
+                """The forward pass is decorated and profiled here."""
                 # only torch 1.8.1+ is supported
                 torch_version = torch.__version__
                 if torch_version <= '1.8.1':
@@ -133,8 +132,7 @@ class Profiler:
         return trace
 
     def _remove_hook_trace(self, trace):
-        """Clean it up after the profiling is done.
-        """
+        """Clean it up after the profiling is done."""
         [path, leaf, module] = trace
         _id = id(module)
         if _id in self._ids:

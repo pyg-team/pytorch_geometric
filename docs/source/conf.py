@@ -39,7 +39,7 @@ suppress_warnings = ['autodoc.import_object']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
     'torch': ('https://pytorch.org/docs/master', None),
 }
@@ -55,6 +55,8 @@ nbsphinx_thumbnails = {
     '_static/thumbnails/load_csv.png',
     'tutorial/neighbor_loader':
     '_static/thumbnails/neighbor_loader.png',
+    'tutorial/point_cloud':
+    '_static/thumbnails/point_cloud.png',
     'tutorial/explain':
     '_static/thumbnails/explain.png',
     'tutorial/shallow_node_embeddings':
@@ -66,10 +68,12 @@ nbsphinx_thumbnails = {
 }
 
 
-def setup(app):
-    def rst_jinja_render(app, _, source):
+def rst_jinja_render(app, _, source):
+    if hasattr(app.builder, 'templates'):
         rst_context = {'torch_geometric': torch_geometric}
         source[0] = app.builder.templates.render_string(source[0], rst_context)
 
+
+def setup(app):
     app.connect('source-read', rst_jinja_render)
     app.add_js_file('js/version_alert.js')

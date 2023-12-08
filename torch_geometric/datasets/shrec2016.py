@@ -47,6 +47,8 @@ class SHREC2016(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     train_url = ('http://www.dais.unive.it/~shrec2016/data/'
@@ -69,12 +71,14 @@ class SHREC2016(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         assert partiality.lower() in self.partialities
         self.part = partiality.lower()
         assert category.lower() in self.categories
         self.cat = category.lower()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.__ref__ = torch.load(self.processed_paths[0])
         path = self.processed_paths[1] if train else self.processed_paths[2]
         self.load(path)

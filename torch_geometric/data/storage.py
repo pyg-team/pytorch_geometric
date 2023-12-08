@@ -457,7 +457,7 @@ class EdgeStorage(BaseStorage):
             if isinstance(value, Tensor) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.size(cat_dim)
-            if isinstance(value, Tensor) and key in E_KEYS:
+            if isinstance(value, np.ndarray) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and key in E_KEYS:
@@ -750,7 +750,7 @@ def recursive_apply_(data: Any, func: Callable):
     else:
         try:
             func(data)
-        except:  # noqa
+        except Exception:
             pass
 
 
@@ -768,5 +768,5 @@ def recursive_apply(data: Any, func: Callable) -> Any:
     else:
         try:
             return func(data)
-        except:  # noqa
+        except Exception:
             return data

@@ -53,12 +53,12 @@ def run_rpc_feature_test(
         'edge_types': None,
         'is_hetero': False,
         'node_types': None,
-        'num_parts': 2
+        'num_parts': 2,
     }
 
     feature.num_partitions = world_size
     feature.partition_idx = rank
-    feature.feature_pb = partition_book
+    feature.node_feat_pb = partition_book
     feature.meta = meta
     feature.local_only = False
     feature.set_rpc_router(rpc_router)
@@ -80,6 +80,7 @@ def run_rpc_feature_test(
     assert torch.allclose(cpu_tensor1, tensor1.wait())
 
     rpc.shutdown_rpc()
+    assert rpc.rpc_is_initialized() is False
 
 
 @onlyLinux
@@ -94,7 +95,7 @@ def test_dist_feature_lookup():
     # Set the partition book for two features (partition 0 and 1):
     partition_book = torch.cat([
         torch.zeros(128 * 2, dtype=torch.long),
-        torch.ones(128 * 2, dtype=torch.long)
+        torch.ones(128 * 2, dtype=torch.long),
     ])
 
     # Put the test tensor into the different feature stores with IDs:

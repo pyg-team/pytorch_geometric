@@ -1,34 +1,61 @@
+import typing
 from typing import List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload as overload
+
 MISSING = '???'
 
 
-@torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
-    # type: (Tensor, str, Optional[int], bool) -> Tensor  # noqa
+@overload
+def sort_edge_index(
+    edge_index: Tensor,
+    edge_attr: str = MISSING,
+    num_nodes: Optional[int] = None,
+    sort_by_row: bool = True,
+) -> Tensor:
     pass
 
 
-@torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
-    # type: (Tensor, Optional[Tensor], Optional[int], bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
+@overload
+def sort_edge_index(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: Optional[int] = None,
+    sort_by_row: bool = True,
+) -> Tuple[Tensor, Tensor]:
     pass
 
 
-@torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
-    # type: (Tensor, List[Tensor], Optional[int], bool) -> Tuple[Tensor, List[Tensor]]  # noqa
+@overload
+def sort_edge_index(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: OptTensor,
+    num_nodes: Optional[int] = None,
+    sort_by_row: bool = True,
+) -> Tuple[Tensor, OptTensor]:
     pass
 
 
-def sort_edge_index(  # noqa
+@overload
+def sort_edge_index(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: List[Tensor],
+    num_nodes: Optional[int] = None,
+    sort_by_row: bool = True,
+) -> Tuple[Tensor, List[Tensor]]:
+    pass
+
+
+def sort_edge_index(  # noqa: F811
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,

@@ -105,10 +105,10 @@ class FAConv(MessagePassing):
         edge_weight: OptTensor = None,
         return_attention_weights=None,
     ):
-        # type: (Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Tensor, Tensor, SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # forward_type: (Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor  # noqa
+        # forward_type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
+        # forward_type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # forward_type: (Tensor, Tensor, SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""Runs the forward pass of the module.
 
         Args:

@@ -9,7 +9,7 @@ from torch_geometric.explain import ExplainerAlgorithm
 from torch_geometric.explain.config import ModelMode, ModelTaskLevel
 from torch_geometric.explain.explanation import Explanation
 from torch_geometric.utils import k_hop_subgraph
-from torch_geometric.utils.subgraph import get_num_hops
+from torch_geometric.utils._subgraph import get_num_hops
 
 
 class PGMExplainer(ExplainerAlgorithm):

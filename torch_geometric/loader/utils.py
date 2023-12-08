@@ -202,15 +202,49 @@ def filter_hetero_data(
 def filter_custom_store(
     feature_store: FeatureStore,
     graph_store: GraphStore,
+    node: Tensor,
+    row: Tensor,
+    col: Tensor,
+    edge: OptTensor,
+    custom_cls: Optional[Data] = None,
+) -> Data:
+    r"""Constructs a :class:`~torch_geometric.data.Data` object from a feature
+    store and graph store instance.
+    """
+    # Construct a new `Data` object:
+    data = custom_cls() if custom_cls is not None else Data()
+
+    data.edge_index = torch.stack([row, col], dim=0)
+
+    # Filter node storage:
+    required_attrs = []
+    for attr in feature_store.get_all_tensor_attrs():
+        attr.index = node  # TODO Support edge features.
+        required_attrs.append(attr)
+        data.num_nodes = attr.index.size(0)
+
+    # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
+    # full control over optimizing how it returns features (since the call is
+    # synchronous, this amounts to giving the feature store control over all
+    # iteration).
+    tensors = feature_store.multi_get_tensor(required_attrs)
+    for i, attr in enumerate(required_attrs):
+        data[attr.attr_name] = tensors[i]
+
+    return data
+
+
+def filter_custom_hetero_store(
+    feature_store: FeatureStore,
+    graph_store: GraphStore,
     node_dict: Dict[str, Tensor],
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, OptTensor],
     custom_cls: Optional[HeteroData] = None,
 ) -> HeteroData:
-    r"""Constructs a `HeteroData` object from a feature store that only holds
-    nodes in `node` end edges in `edge` for each node and edge type,
-    respectively.
+    r"""Constructs a :class:`~torch_geometric.data.HeteroData` object from a
+    feature store and graph store instance.
     """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
@@ -248,7 +282,7 @@ def filter_custom_store(
 def get_input_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
-    input_id: Optional[Tensor],
+    input_id: Optional[Tensor] = None,
 ) -> Tuple[Optional[str], Tensor, Optional[Tensor]]:
     def to_index(nodes, input_id) -> Tuple[Tensor, Optional[Tensor]]:
         if isinstance(nodes, Tensor) and nodes.dtype == torch.bool:
