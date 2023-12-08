@@ -19,8 +19,7 @@ class LinkPredMetric(BaseMetric, ABC):
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
-        k (int): The number of top-:math:`k` predictions to evaluate
-            against.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     is_differentiable: Optional[bool] = None
     higher_is_better: Optional[bool] = None
@@ -132,15 +131,14 @@ class LinkPredMetric(BaseMetric, ABC):
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.k})'
+        return f'{self.__class__.__name__}(k={self.k})'
 
 
 class LinkPredPrecision(LinkPredMetric):
     r"""A link prediction metric to compute Precision@:math`k`.
 
     Args:
-        k (int): The number of top-:math:`k` predictions to evaluate
-            against.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     is_differentiable: bool = False
     higher_is_better: bool = True
@@ -154,21 +152,17 @@ class LinkPredRecall(LinkPredMetric):
     r"""A link prediction metric to compute Recall@:math:`k`.
 
     Args:
-        k (int): The number of top-:math:`k` predictions to evaluate
-            against.
-        eps (float, optional): A small value to avoid division by zero
-            in recall calculation.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     is_differentiable: bool = False
     higher_is_better: bool = True
     full_state_update: bool = False
 
-    def __init__(self, k: int, eps: Optional[float] = 0.0):
+    def __init__(self, k: int):
         super().__init__(k)
-        self.eps = eps
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        return pred_isin_mat.sum(dim=1) / (y_count + self.eps)
+        return pred_isin_mat.sum(dim=1) / y_count.clamp(min=1e-7)
 
 
 class LinkPredNDCG(LinkPredMetric):
@@ -176,8 +170,7 @@ class LinkPredNDCG(LinkPredMetric):
     Cumulative Gain (NDCG).
 
     Args:
-        k (int): The number of top-:math:`k` predictions to evaluate
-            against.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     is_differentiable: bool = False
     higher_is_better: bool = True
