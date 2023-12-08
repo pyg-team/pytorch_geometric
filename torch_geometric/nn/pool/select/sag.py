@@ -64,7 +64,18 @@ class SelectSAG(Select):
         attn: Tensor,
         batch: Optional[Tensor] = None,
     ) -> SelectOutput:
-        """"""
+        r"""Forward pass.
+
+        Args:
+            attn (torch.Tensor): The attention scores of modes.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+
+        Return types:
+            selectout (torch_geometric.nn.pool.select.SelectOutput): The object 
+                holds the output of the select part of SAGPooling.
+        """
         if batch is None:
             batch = attn.new_zeros(attn.size(0), dtype=torch.long)
 
