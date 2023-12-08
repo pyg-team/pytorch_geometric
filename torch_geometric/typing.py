@@ -338,6 +338,7 @@ Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
 
 MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
+MaybeHeteroAdjTensor = Union[Tensor, Dict[EdgeType, Adj]]
 MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 # Types for sampling ##########################################################
