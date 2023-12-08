@@ -6,7 +6,7 @@ import torch
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 from torch_geometric.utils import group_argsort, scatter
-from torch_geometric.utils.scatter import scatter_argmax
+from torch_geometric.utils._scatter import scatter_argmax
 
 
 @withPackage('torch>=1.12.0')

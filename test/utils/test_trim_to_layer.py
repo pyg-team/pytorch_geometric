@@ -10,7 +10,7 @@ from torch_geometric.nn import GraphConv
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import trim_to_layer
-from torch_geometric.utils.trim_to_layer import trim_sparse_tensor
+from torch_geometric.utils._trim_to_layer import trim_sparse_tensor
 
 
 @withPackage('torch_sparse')
