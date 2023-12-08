@@ -1,109 +1,108 @@
-Multi-Node-Multi-GPU Training in Pure PyTorch
-=============================================
+Multi-Node Training using SLURM
+===============================
 
-This tutorial introduces a skeleton on how to perform distributed training on multiple GPUs over multiple nodes.
-Before going through this tutorial, we recommend reading `our tutorial on single-node multi-GPU training <multi_gpu_vanilla.html>`_ as a warm up.
+This tutorial introduces a skeleton on how to perform distributed training on multiple GPUs over multiple nodes using the `SLURM workload manager <https://slurm.schedmd.com/>`_ available at many supercomputing centers.
+The code is based on `our tutorial on single-node multi-GPU training <multi_gpu_vanilla.html>`_.
+Please go there first to understand the basics if you are unfamiliar with the concepts of distributed training in :pytorch:`PyTorch`.
 
 .. note::
-    A runnable example of this tutorial can be found at `examples/multi_gpu/multinode_multigpu_papers100m_gcn.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/multinode_multigpu_papers100m_gcn.py>`_.
+    The complete script of this tutorial can be found at `examples/multi_gpu/distributed_sampling_multinode.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling_multinode.py>`_.
+    You can find the example :obj:`*.sbatch` file `next to it <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling_multinode.sbatch>`_ and tune it to your needs.
 
-Our first step is to understand the basic structure of a multi-node-multi-GPU example:
+A submission script to manage startup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+As we are now running on multiple nodes, we can no longer use our :obj:`__main__` entrypoint and start processes from there.
+This is where the workload manager comes in as it allows us to prepare a special :obj:`*.sbatch` file.
+This file is a standard bash script with instructions on how to setup the processes and your environment.
 
-    import os
-
-    import torch
-    import torch.distributed as dist
-    from torch_geometric.datasets import FakeDataset
-    from torch_geometric.nn.models import GCN
-
-    def run(device, world_size, data, model):
-        pass
-
-    if __name__ == '__main__':
-        torch.distributed.init_process_group("nccl")
-        nprocs = dist.get_world_size()
-        assert dist.is_initialized(), "Distributed cluster not initialized"
-
-        dataset = FakeDataset(avg_num_nodes=100_000)
-        model = GCN(dataset.num_features, 64, dataset.num_classes, num_layers=2)
-
-        run(device, nprocs, dataset[0], model)
-
-Similarly to the single-node multi-GPU example, we define a :meth:`run` function. However, in this case we are using :obj:`torch.distributed` with NVIDIA NCCL backend instead of relying on :class:`~torch.multiprocessing`.
-Check out this :pytorch:`null` `PyTorch tutorial on multi-node multi-GPU training <https://pytorch.org/tutorials/intermediate/ddp_series_multinode.html>`_ for more details.
-The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` usage.
-We load our (synthetic) dataset and define a :class:`~torch_geometric.nn.models.GCN` model and pass these to our :meth:`run` function.
-
-The final step of coding is to define our :meth:`run` function:
-
-.. code-block:: python
-
-    def run(device, world_size, data, model):
-        local_id = int(os.environ['LOCAL_RANK'])
-        rank = torch.distributed.get_rank()
-        torch.cuda.set_device(local_id)
-        device = torch.device(local_id)
-        ...
-
-We first define our local :obj:`local_id` and our global :obj:`rank`.
-Here, :obj:`local_id` refers to the GPU device within a node we want to run the model on.
-To understand this better, consider a scenario where we use three nodes with 8 GPUs each.
-The 7th GPU on the 3rd node, or the 23rd GPU in our system, has the global process rank :obj:`22`, however, its local rank :obj:`local_id` is :obj:`6`.
-
-After that, model training is very similar to `our single-node multi-GPU tutorial <multi_gpu_vanilla.html>`_:
-
-.. code-block:: python
-
-    import torch.nn.functional as F
-    from torch.nn.parallel import DistributedDataParallel
-    from torch_geometric.loader import NeighborLoader
-
-    def run(device, world_size, data, model):
-        ...
-
-        model = DistributedDataParallel(model.to(device), device_ids=[local_id])
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
-        input_nodes = torch.arange(data.num_nodes).split(
-            data.num_nodes // world_size,
-        )[rank].clone()
-
-        loader = NeighborLoader(
-            dataset,
-            input_nodes=input_nodes,
-            num_neighbors=[10, 10],
-            batch_size=128,
-            shuffle=True,
-        )
-
-        for epoch in range(1, 10):
-            for batch in loader:
-                batch = batch.to(device)
-                optimizer.zero_grad()
-                out = model(batch.x, batch.edge_index)[:batch.batch_size]
-                y = batch.y[:batch.batch_size]
-                loss = F.cross_entropy(out, batch.y)
-                loss.backward()
-                optimizer.step()
-
-1. We put our :class:`~torch_geometric.nn.models.GCN` model on its respective :obj:`device` and wrap it inside :class:`~torch.nn.parallel.DistributedDataParallel` while we pass :obj:`local_id` to its :obj:`device_id` parameter.
-2. We then set up our optimizer for training.
-3. We then split our input/seed nodes into :obj:`world_size` many chunks for each GPU, and initialize the :class:`~torch_geometric.loader.NeighborLoader` class to only operate on its specific subset of nodes.
-4. Finally, we iterate over epochs and batches to train our GNN as usual.
-
-And that's all the coding.
-Putting it all together gives a working multi-node-multi-GPU example that follows a training flow that is similar to single GPU training or single-node multi-GPU training.
-
-However, to run the example you need to use Slurm on a cluster with :obj:`pyxis` for container management enabled.
-Speak with your cluster management team for more information on usage for your specific cluster, especially for alternative set ups.
+Our example starts with the usual shebang :obj:`#!/bin/bash` and special comments instructing which resources the SLURM system should reserve for our training run.
+Configuration of the specifics usually depends on your site (and your usage limits!).
+The following is a minimal example which works with a quite unrestricted configuration available to us:
 
 .. code-block:: bash
 
-    srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> --container-name=cont --container-image=<image_url> --container-mounts=/ogb-papers100m/:/workspace/dataset python3 path_to_script.py
+    #!/bin/bash
+    #SBATCH --job-name=pyg-multinode-tutorial # identifier for the job listings
+    #SBATCH --output=pyg-multinode.log        # outputfile
+    #SBATCH --partition=gpucloud              # ADJUST this to your system
+    #SBATCH -N 2                              # number of nodes you want to use
+    #SBATCH --ntasks=4                        # number of processes to be run
+    #SBATCH --gpus-per-task=1                 # every process wants one GPU!
+    #SBATCH --gpu-bind=none                   # NCCL can't deal with task-binding...
 
-NVIDIA provides a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`.
-You can sign up for early access `here <https://developer.nvidia.com/pyg-container-early-access>`_.
-General availability on `NVIDIA NGC <https://www.ngc.nvidia.com/>`_ is set for the end of 2023.
-Alternatively, see `docker.com <https://www.docker.com/>`_ for information on how to create your own container.
+This example will create two processes each on two nodes with each process having a single GPU reserved.
+
+In the following part, we have to set up some environment variables for :obj:`torch.distributed` to properly do the rendezvous procedure.
+In theory you could also set those inside the :python:`Python` process:
+
+.. code-block:: bash
+
+    export MASTER_PORT=$(expr 10000 + $(echo -n $SLURM_JOBID | tail -c 4))
+    export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
+    echo "MASTER_ADDR:MASTER_PORT="${MASTER_ADDR}:${MASTER_PORT}
+
+If you do not want to let your script randomly open a port and listen for incoming connections, you can also use a file on your shared filesystem.
+
+Now the only thing left to add is the execution of the training script:
+
+.. code-block:: console
+
+    srun python distributed_sampling_multinode.py
+
+Note how the :obj`python` call is prefixed with the :obj:`srun` command and thus :obj:`--ntasks` replicas will be started.
+
+Finally, to submit the :obj:`*.sbatch` file itself into the work queue, use the :obj:`sbatch` utility in your shell:
+
+.. code-block:: console
+
+    sbatch distributed_sampling_multinode.sbatch
+
+Using a cluster configured with pyxis-containers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your cluster supports the :obj:`pyxis` plugin developed by NVIDIA, you can use a ready-to-use :pyg:`PyG` container that is updated each month with the latest from NVIDIA and :pyg:`PyG`, see `here <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_ for more information.
+The container sets up all necessary environment variables from which you can now directly run the example using :obj:`srun` from your command prompt:
+
+.. code-block:: console
+
+    srun --partition=<partitionname> -N<num_nodes> --ntasks=<number of GPUS in total> --gpus-per-task=1 --gpu-bind=none --container-name=pyg-test --container-image=<image_url> --container-mounts='.:/workspace' python3 distributed_sampling_multinode.py
+
+Note that :obj:`--container-mounts='.:/workspace'` makes the current folder (which should include the example code) available in the default startup folder :obj:`workspace` of the container.
+
+If you want to eventually customize packages in the container without having access to :obj:`docker` (very likely on a public HPC), you can create your own image by following `this tutorial <https://doku.lrz.de/9-creating-and-reusing-a-custom-enroot-container-image-10746637.html>`_.
+
+Modifying the training script
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As SLURM now takes care of creating multiple :python:`Python` processes and we can not share any data (each process will have the full dataset loaded!), our :obj:`__main__` section now has to query the environment for the process setup generated by SLURM or the :obj:`pyxis` container:
+
+.. code-block:: python
+
+    # Get the world size from the WORLD_SIZE variable or directly from SLURM:
+    world_size = int(os.environ.get('WORLD_SIZE', os.environ.get('SLURM_NTASKS')))
+    # Likewise for RANK and LOCAL_RANK:
+    rank = int(os.environ.get('RANK', os.environ.get('SLURM_PROCID')))
+    local_rank = int(os.environ.get('LOCAL_RANK', os.environ.get('SLURM_LOCALID')))
+    run(world_size, rank, local_rank)
+
+The :meth:`torch.distributed.init_process_group` function will now pick up the :obj:`MASTER_ADDR` from the environment:
+
+.. code-block:: python
+
+    def run(world_size: int, rank: int, local_rank: int):
+        dist.init_process_group('nccl', world_size=world_size, rank=rank)
+
+We also have to replace the usage of :obj:`rank` depending on whether we want to use it for node-local purposes like selecting a GPU or global tasks such as data splitting
+
+.. code-block:: python
+
+    train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
+    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+
+while we need to assign the model to a node-local GPU and thus use :obj:`local_rank`:
+
+.. code-block:: python
+
+    model = SAGE(dataset.num_features, 256, dataset.num_classes).to(local_rank)
+    model = DistributedDataParallel(model, device_ids=[local_rank])

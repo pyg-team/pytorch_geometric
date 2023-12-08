@@ -144,7 +144,7 @@ class UPFD(InMemoryDataset):
         batch = torch.from_numpy(batch).to(torch.long)
 
         node_slice = cumsum(batch.bincount())
-        edge_slice = cumsum(batch[edge_index[0].bincount()])
+        edge_slice = cumsum(batch[edge_index[0]].bincount())
         graph_slice = torch.arange(y.size(0) + 1)
         self.slices = {
             'x': node_slice,

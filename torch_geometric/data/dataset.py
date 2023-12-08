@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -12,7 +13,7 @@ import torch.utils.data
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -91,7 +92,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(osp.normpath(root))
+            root = osp.expanduser(fs.normpath(root))
 
         self.root = root
         self.transform = transform
@@ -157,7 +158,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         elif y.numel() == y.size(0) and not torch.is_floating_point(y):
             return int(y.max()) + 1
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
+            num_classes = torch.unique(y).numel()
+            if num_classes > 2:
+                warnings.warn("Found floating-point labels while calling "
+                              "`dataset.num_classes`. Returning the number of "
+                              "unique elements. Please make sure that this "
+                              "is expected before proceeding.")
+            return num_classes
         else:
             return y.size(-1)
 
@@ -169,7 +176,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # may produce a tuple of data objects (e.g., when used in combination
         # with `RandomLinkSplit`, so we take care of this case here as well:
         data_list = _get_flattened_data_list([data for data in self])
-        y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        if 'y' in data_list[0] and isinstance(data_list[0].y, Tensor):
+            y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        else:
+            y = torch.as_tensor([data.y for data in data_list if 'y' in data])
 
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
@@ -209,7 +219,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -240,13 +250,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        makedirs(self.processed_dir)
+        os.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(_repr(self.pre_transform), path)
+        fs.torch_save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(_repr(self.pre_filter), path)
+        fs.torch_save(_repr(self.pre_filter), path)
 
         if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
@@ -399,7 +409,7 @@ def to_list(value: Any) -> Sequence:
 def files_exist(files: List[str]) -> bool:
     # NOTE: We return `False` in case `files` is empty, leading to a
     # re-processing of files on every instantiation.
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([fs.exists(f) for f in files])
 
 
 def _repr(obj: Any) -> str:

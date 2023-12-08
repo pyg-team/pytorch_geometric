@@ -119,6 +119,7 @@ class DistNeighborSampler:
         self.node_types = self._sampler.node_types
         self.edge_types = self._sampler.edge_types
         self.node_time = self._sampler.node_time
+        self.edge_time = self._sampler.edge_time
 
         rpc_sample_callee = RPCSamplingCallee(self)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
@@ -163,8 +164,7 @@ class DistNeighborSampler:
 
     async def node_sample(
         self,
-        inputs: Union[NodeSamplerInput, EdgeSamplerInput],
-        dst_time: Tensor = None,
+        inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Performs layer by layer distributed sampling from a
         :class:`NodeSamplerInput` and returns the output of the sampling
@@ -182,34 +182,18 @@ class DistNeighborSampler:
         seed_time_dict = None
         src_batch_dict = None
 
-        if isinstance(inputs, NodeSamplerInput):
-            seed = inputs.node.to(self.device)
-            seed_time = None
-            if self.time_attr is not None:
-                if inputs.time is not None:
-                    seed_time = inputs.time.to(self.device)
-                else:
-                    seed_time = self.node_time[seed]
-            src_batch = torch.arange(batch_size) if self.disjoint else None
-            metadata = (seed, seed_time)
+        seed = inputs.node.to(self.device)
+        seed_time: Optional[Tensor] = None
+        if self.time_attr is not None:
+            if inputs.time is not None:
+                seed_time = inputs.time.to(self.device)
+            elif self.node_time is not None:
+                seed_time = self.node_time[seed]
+            else:
+                raise ValueError("Seed time needs to be specified")
 
-        elif isinstance(inputs, EdgeSamplerInput) and self.is_hetero:
-            seed_dict = {input_type[0]: inputs.row, input_type[-1]: inputs.col}
-            if dst_time is not None:
-                seed_time_dict = {
-                    input_type[0]: inputs.time,
-                    input_type[-1]: dst_time,
-                }
-
-            if self.disjoint:
-                src_batch_dict = {
-                    input_type[0]: torch.arange(batch_size),
-                    input_type[-1]: torch.arange(batch_size, batch_size * 2),
-                }
-            metadata = (seed_dict, seed_time_dict)
-
-        else:
-            raise NotImplementedError
+        src_batch = torch.arange(batch_size) if self.disjoint else None
+        metadata = (seed, seed_time)
 
         if self.is_hetero:
             if input_type is None:
@@ -374,6 +358,9 @@ class DistNeighborSampler:
                                                 src_batch)
                 if out.node.numel() == 0:
                     # no neighbors were sampled
+                    num_zero_layers = self.num_hops - i
+                    num_sampled_nodes += num_zero_layers * [0]
+                    num_sampled_edges += num_zero_layers * [0]
                     break
 
                 # remove duplicates
@@ -612,6 +599,7 @@ class DistNeighborSampler:
             colptr = self._sampler.colptr
             row = self._sampler.row
             node_time = self.node_time
+            edge_time = self.edge_time
         else:
             rel_type = '__'.join(edge_type)
             colptr = self._sampler.colptr_dict[rel_type]
@@ -625,17 +613,18 @@ class DistNeighborSampler:
             input_nodes.to(colptr.dtype),
             num_neighbors,
             node_time,
+            edge_time,
             seed_time,
             None,  # TODO: edge_weight
             True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,
-            self.disjoint and node_time is not None,
+            self.disjoint and self.time_attr is not None,
             self.temporal_strategy,
         )
         node, edge, cumsum_neighbors_per_node = out
 
-        if self.disjoint and node_time is not None:
+        if self.disjoint and self.time_attr is not None:
             # We create a batch during the step of merging sampler outputs.
             _, node = node.t().contiguous()
 

@@ -76,7 +76,7 @@ def test_edge_conv_conv():
 
 
 @withPackage('torch_cluster')
-def test_dynamic_edge_conv_conv():
+def test_dynamic_edge_conv():
     x1 = torch.randn(8, 16)
     x2 = torch.randn(4, 16)
     batch1 = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
