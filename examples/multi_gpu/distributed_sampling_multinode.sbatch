@@ -11,15 +11,15 @@
 #SBATCH --mem=100G                        # total number of memory available per node (tensorflow need(ed) at least <GPU-memory> per GPU)
 #SBATCH --export=ALL                      # use your shell environment (PATHs, ...)
 
-# thanks for shell-ideas to https://github.com/PrincetonUniversity/multi_gpu_training/
+# Thanks for shell-ideas to https://github.com/PrincetonUniversity/multi_gpu_training
 export MASTER_PORT=$(expr 10000 + $(echo -n $SLURM_JOBID | tail -c 4))
 export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 echo "MASTER_ADDR:MASTER_PORT="${MASTER_ADDR}:${MASTER_PORT}
 
-echo "##########################################################################"
-echo "I recommend you set up your environment here (conda/spack/pip/modulefiles)"
+echo "###########################################################################"
+echo "We recommend you set up your environment here (conda/spack/pip/modulefiles)"
 echo "then remove --export=ALL (allows running the sbatch from any shell"
-echo "##########################################################################"
+echo "###########################################################################"
 
 # use --output=0 so that only the first task logs to the file!
 srun --output=0 python distributed_sampling_multinode.py

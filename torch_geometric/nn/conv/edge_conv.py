@@ -114,10 +114,12 @@ class DynamicEdgeConv(MessagePassing):
         reset(self.nn)
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
-        # type: (Tensor, OptTensor) -> Tensor  # noqa
-        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
+        # forward_type: (Tensor, OptTensor) -> Tensor
+        # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)

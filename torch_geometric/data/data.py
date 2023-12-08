@@ -204,7 +204,7 @@ class BaseData:
         offset: int = 0
         for store in self.node_stores:
             out[store._key] = offset
-            offset += store.num_nodes
+            offset = offset + store.num_nodes
         return out
 
     def generate_ids(self):

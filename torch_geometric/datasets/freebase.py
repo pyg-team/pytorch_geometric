@@ -34,14 +34,22 @@ class FB15k_237(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://raw.githubusercontent.com/villmow/'
            'datasets_knowledge_embedding/master/FB15k-237')
 
-    def __init__(self, root: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
+    def __init__(
+        self,
+        root: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
 
         if split not in {'train', 'val', 'test'}:
             raise ValueError(f"Invalid 'split' argument (got {split})")

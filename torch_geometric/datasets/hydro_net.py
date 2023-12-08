@@ -43,6 +43,8 @@ class HydroNet(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         num_workers (int): Number of multiprocessing workers to use for
             pre-processing the dataset. (default :obj:`8`)
         clusters (int or List[int], optional): Select a subset of clusters
@@ -57,6 +59,7 @@ class HydroNet(InMemoryDataset):
         name: Optional[str] = None,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
         num_workers: int = 8,
         clusters: Optional[Union[int, List[int]]] = None,
         use_processed: bool = True,
@@ -65,7 +68,8 @@ class HydroNet(InMemoryDataset):
         self.num_workers = num_workers
         self.use_processed = use_processed
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.select_clusters(clusters)
 
     @property

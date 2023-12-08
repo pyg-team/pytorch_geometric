@@ -29,9 +29,6 @@ def create_dist_data(tmp_path: str, rank: int):
         node_pb,
         edge_pb,
     ) = load_partition_info(tmp_path, rank)
-    if meta['is_hetero']:
-        node_pb = torch.cat(list(node_pb.values()))
-        edge_pb = torch.cat(list(edge_pb.values()))
 
     graph_store.partition_idx = partition_idx
     graph_store.num_partitions = num_partitions
@@ -174,12 +171,12 @@ def test_dist_link_neighbor_loader_homo(
     async_sampling,
     neg_ratio,
 ):
+    addr = '127.0.0.1'
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -225,11 +222,11 @@ def test_dist_link_neighbor_loader_hetero(
     edge_type,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,

@@ -119,12 +119,14 @@ class ExplainerDataset(InMemoryDataset):
 
             if 'y' in motif:
                 ys.append(motif.y + 1 if motif.y.min() == 0 else motif.y)
+            else:
+                ys.append(torch.ones(motif.num_nodes, dtype=torch.long))
 
             num_nodes += motif.num_nodes
 
         return Explanation(
             edge_index=torch.cat(edge_indices, dim=1),
-            y=torch.cat(ys, dim=0) if len(ys) > 1 else None,
+            y=torch.cat(ys, dim=0),
             edge_mask=torch.cat(edge_masks, dim=0),
             node_mask=torch.cat(node_masks, dim=0),
         )
