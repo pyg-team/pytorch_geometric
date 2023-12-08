@@ -108,10 +108,10 @@ def test_dist_feature_lookup():
     feature1.put_tensor(cpu_tensor1, group_name=None, attr_name='x')
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind(('127.0.0.1', 0))
+        port = sock.getsockname()[1]
 
     w0 = mp_context.Process(target=run_rpc_feature_test,
                             args=(2, 0, feature0, partition_book, port))

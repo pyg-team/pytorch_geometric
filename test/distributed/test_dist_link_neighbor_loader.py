@@ -153,8 +153,8 @@ def dist_link_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+            assert batch[edge_type].edge_attr.size(
+                0) == batch[edge_type].edge_index.size(1)
 
 
 @onlyLinux
@@ -171,12 +171,12 @@ def test_dist_link_neighbor_loader_homo(
     async_sampling,
     neg_ratio,
 ):
+    addr = '127.0.0.1'
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -189,14 +189,30 @@ def test_dist_link_neighbor_loader_homo(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w0.start()
@@ -222,11 +238,11 @@ def test_dist_link_neighbor_loader_hetero(
     edge_type,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
@@ -241,14 +257,32 @@ def test_dist_link_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w0.start()
