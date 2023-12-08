@@ -1,3 +1,4 @@
+from contextlib import closing
 import socket
 from typing import Dict, List
 
@@ -36,7 +37,8 @@ def run_rpc_feature_test(
 
     # 2) Collect all workers:
     partition_to_workers = rpc.rpc_partition_to_workers(
-        current_ctx, world_size, rank)
+        current_ctx, world_size, rank
+    )
 
     assert partition_to_workers == [
         ['dist-feature-test-0'],
@@ -93,10 +95,12 @@ def test_dist_feature_lookup():
     global_id1 = torch.arange(128 * 2) + 128 * 2
 
     # Set the partition book for two features (partition 0 and 1):
-    partition_book = torch.cat([
-        torch.zeros(128 * 2, dtype=torch.long),
-        torch.ones(128 * 2, dtype=torch.long),
-    ])
+    partition_book = torch.cat(
+        [
+            torch.zeros(128 * 2, dtype=torch.long),
+            torch.ones(128 * 2, dtype=torch.long),
+        ]
+    )
 
     # Put the test tensor into the different feature stores with IDs:
     feature0 = LocalFeatureStore()
@@ -108,15 +112,17 @@ def test_dist_feature_lookup():
     feature1.put_tensor(cpu_tensor1, group_name=None, attr_name='x')
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.settimeout(1)
+        sock.bind(('127.0.0.1', 0))
+        port = sock.getsockname()[1]
 
-    w0 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 0, feature0, partition_book, port))
-    w1 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 1, feature1, partition_book, port))
+    w0 = mp_context.Process(
+        target=run_rpc_feature_test, args=(2, 0, feature0, partition_book, port)
+    )
+    w1 = mp_context.Process(
+        target=run_rpc_feature_test, args=(2, 1, feature1, partition_book, port)
+    )
 
     w0.start()
     w1.start()

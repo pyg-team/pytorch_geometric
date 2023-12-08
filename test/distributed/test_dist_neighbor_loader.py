@@ -3,6 +3,7 @@ import socket
 import pytest
 import torch
 import torch.multiprocessing as mp
+from contextlib import closing
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
@@ -86,7 +87,7 @@ def dist_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.n_id.size() == (batch.num_nodes,)
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -153,10 +154,13 @@ def dist_neighbor_loader_hetero(
             if num_edges > 0:  # Test edge mapping:
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
-                global_edge_index_1 = torch.stack([
-                    batch[src].n_id[batch[edge_type].edge_index[0]],
-                    batch[dst].n_id[batch[edge_type].edge_index[1]],
-                ], dim=0)
+                global_edge_index_1 = torch.stack(
+                    [
+                        batch[src].n_id[batch[edge_type].edge_index[0]],
+                        batch[dst].n_id[batch[edge_type].edge_index[1]],
+                    ],
+                    dim=0,
+                )
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
 
@@ -173,11 +177,11 @@ def test_dist_neighbor_loader_homo(
     async_sampling,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -217,11 +221,11 @@ def test_dist_neighbor_loader_hetero(
     async_sampling,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
