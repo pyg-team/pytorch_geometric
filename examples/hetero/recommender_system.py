@@ -156,7 +156,7 @@ class Model(torch.nn.Module):
 model = Model(num_users=data['user'].num_nodes,
               num_movies=data['movie'].num_nodes,
               hidden_channels=64).to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
 
 
 def get_user_positive_items(edge_index):
@@ -212,7 +212,7 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
 
     movie_embs, user_embs = get_embeddings(model, train_data)
     mipsknn = MIPSKNNIndex(movie_embs)
-    knn_score, knn_index = mipsknn.search(user_embs, movie_embs.size(0))
+    knn_score, knn_index = mipsknn.search(user_embs, movie_embs.size(0), train_data['user', 'movie'].edge_index)
 
     # Obtain the movies that each user has already
     # watched. These movies need to be removed from
@@ -239,10 +239,26 @@ def make_recommendations(model, train_data, val_data, k, write_to_file=False):
     if write_to_file:
         write_recs(real_recs, val_data, val_user_pos_items)
 
+    hits = 0
+    user_hits = 0
+    positive_hit_user = []
+    for user in val_user_pos_items:
+        correct_preds = len(set(real_recs[user]).intersection(
+            set(val_user_pos_items[user])))
+        hits += correct_preds
+        user_hits += correct_preds > 0
+        if correct_preds>0:
+            positive_hit_user.append(user)
+
+
+    print(f"Total hits at {k} = {hits}")
+    print(f"Total user hits at {k} = {user_hits}/{len(val_user_pos_items)}")
+    print(f'Positive users = {positive_hit_user}')
+
     return real_recs
 
 
-def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
+def visualize(model, train_data, val_data, real_recs, epoch, users_list=[338]):
     tsne = TSNE(random_state=1, n_iter=1000, early_exaggeration=20)
     movie_embs, user_embs = get_embeddings(model, val_data)
     emb_reduced = tsne.fit_transform(
@@ -268,23 +284,30 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
                                                          'movie'].edge_index)
     displayed_users = 0
     title_text = "Displaying Train and Pred Movies for users: "
+    
     for user_i, (val_user, gt) in enumerate(val_pos_items.items()):
+        if val_user not in users_list:
+            continue
         try:
-            train_gt = train_pos_items[val_user]
-            plt.scatter(emb_reduced[train_gt, 0], emb_reduced[train_gt, 1],
-                        marker='+', label='Train Movies' + str(val_user))
-            for i in train_gt:
-                plt.annotate(
-                    movie_id_to_name.iloc[i]['title'],
-                    xy=(emb_reduced[i, 0], emb_reduced[i, 1]),
-                    xytext=(emb_reduced[i, 0] + 2, emb_reduced[i, 1]),
-                    fontsize=3, horizontalalignment='left', arrowprops={
-                        'arrowstyle': '->',
-                        'color': '0.5',
-                        'shrinkA': 5,
-                        'shrinkB': 5,
-                        'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
-                    })
+            print(f'{val_user} is in {users_list}')
+            try:
+                train_gt = train_pos_items[val_user]
+                plt.scatter(emb_reduced[train_gt, 0], emb_reduced[train_gt, 1],
+                            marker='+', label='Train Movies' + str(val_user))
+                for i in train_gt:
+                    plt.annotate(
+                        movie_id_to_name.iloc[i]['title'],
+                        xy=(emb_reduced[i, 0], emb_reduced[i, 1]),
+                        xytext=(emb_reduced[i, 0] + 2, emb_reduced[i, 1]),
+                        fontsize=3, horizontalalignment='left', arrowprops={
+                            'arrowstyle': '->',
+                            'color': '0.5',
+                            'shrinkA': 5,
+                            'shrinkB': 5,
+                            'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
+                        })
+            except KeyError:
+                pass
             val_gt = val_pos_items[val_user]
             plt.scatter(emb_reduced[val_gt, 0], emb_reduced[val_gt, 1],
                         marker='+', label='GT (Val) Movies' + str(val_user))
@@ -321,8 +344,6 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
         except KeyError:
             pass
 
-        if displayed_users == num_users:
-            break
 
     plt.legend(loc='upper left', ncol=3, fontsize=10)
     plt.title(title_text)
@@ -331,7 +352,7 @@ def visualize(model, train_data, val_data, real_recs, epoch, num_users=1):
     plt.close()
 
 
-def train(train_dl, val_data, epoch):
+def train(train_dl):
     model.train()
 
     for step, batch in enumerate(train_dl):
@@ -369,7 +390,7 @@ def compute_metrics(real_recs, val_data, k, desc):
 
 EPOCHS = args.epochs
 for epoch in tqdm(range(0, EPOCHS)):
-    loss = train(train_dl=train_dataloader, val_data=val_data, epoch=epoch)
+    loss = train(train_dl=train_dataloader)
 
     # Get results on val split
     real_recs = make_recommendations(model, train_data, val_data, args.k,
