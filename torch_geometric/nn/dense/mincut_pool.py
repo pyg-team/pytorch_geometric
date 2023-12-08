@@ -99,9 +99,11 @@ def dense_mincut_pool(
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
     out_adj[:, ind, ind] = 0
-    d = torch.einsum('ijk->ij', out_adj)
-    d = torch.sqrt(d)[:, None] + EPS
-    out_adj = (out_adj / d) / d.transpose(1, 2)
+    # Degree normalization
+    d = torch.sum(out_adj, 2) + EPS
+    d = torch.diag_embed(d)
+    d_inv_sqrt = 1 / d.sqrt()
+    out_adj = torch.matmul(d_inv_sqrt, torch.matmul(out_adj, d_inv_sqrt))
 
     return out, out_adj, mincut_loss, ortho_loss
 
