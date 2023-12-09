@@ -18,9 +18,9 @@ def test_cluster_gcn_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out, atol=1e-5)
 
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-            assert torch.allclose(conv(x, adj2.t()), out, atol=1e-5)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj2.t()), out, atol=1e-5)
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'

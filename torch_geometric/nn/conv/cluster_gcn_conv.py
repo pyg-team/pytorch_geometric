@@ -106,7 +106,7 @@ class ClusterGCNConv(MessagePassing):
 
             edge_index = set_sparse_value(edge_index, edge_weight)
 
-        if True:
+        else:
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
