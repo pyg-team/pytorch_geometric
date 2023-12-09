@@ -747,8 +747,9 @@ class EdgeIndex(Tensor):
             trust_data=True,
         )
 
+    # TODO investigate how to avoid overlapping return types here.
     @overload
-    def matmul(
+    def matmul(  # type: ignore
         self,
         other: 'EdgeIndex',
         input_value: Optional[Tensor] = None,
