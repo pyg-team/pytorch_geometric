@@ -74,48 +74,48 @@ class ClusterGCNConv(MessagePassing):
         num_nodes = x.size(self.node_dim)
         edge_weight: OptTensor = None
 
-        # if isinstance(edge_index, SparseTensor):
-        #     assert edge_index.size(0) == edge_index.size(1)
+        if isinstance(edge_index, SparseTensor):
+            assert edge_index.size(0) == edge_index.size(1)
 
-        #     if self.add_self_loops:
-        #         edge_index = torch_sparse.set_diag(edge_index)
+            if self.add_self_loops:
+                edge_index = torch_sparse.set_diag(edge_index)
 
-        #     col, row, _ = edge_index.coo()  # Transposed.
-        #     deg_inv = 1. / torch_sparse.sum(edge_index, dim=1).clamp_(1.)
+            col, row, _ = edge_index.coo()  # Transposed.
+            deg_inv = 1. / torch_sparse.sum(edge_index, dim=1).clamp_(1.)
 
-        #     edge_weight = deg_inv[col]
-        #     edge_weight[row == col] += self.diag_lambda * deg_inv
-        #     edge_index = edge_index.set_value(edge_weight, layout='coo')
+            edge_weight = deg_inv[col]
+            edge_weight[row == col] += self.diag_lambda * deg_inv
+            edge_index = edge_index.set_value(edge_weight, layout='coo')
 
-        # elif is_torch_sparse_tensor(edge_index):
-        #     assert edge_index.size(0) == edge_index.size(1)
+        elif is_torch_sparse_tensor(edge_index):
+            assert edge_index.size(0) == edge_index.size(1)
 
-        #     if edge_index.layout == torch.sparse_csc:
-        #         raise NotImplementedError("Sparse CSC matrices are not yet "
-        #                                   "supported in 'gcn_norm'")
+            if edge_index.layout == torch.sparse_csc:
+                raise NotImplementedError("Sparse CSC matrices are not yet "
+                                          "supported in 'gcn_norm'")
 
-        #     if self.add_self_loops:
-        #         edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+            if self.add_self_loops:
+                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
 
-        #     col_and_row, value = to_edge_index(edge_index)
-        #     col, row = col_and_row[0], col_and_row[1]
-        #     deg_inv = 1. / degree(col, num_nodes=edge_index.size(0)).clamp_(1.)
+            col_and_row, value = to_edge_index(edge_index)
+            col, row = col_and_row[0], col_and_row[1]
+            deg_inv = 1. / degree(col, num_nodes=edge_index.size(0)).clamp_(1.)
 
-        #     edge_weight = deg_inv[col]
-        #     edge_weight[row == col] += self.diag_lambda * deg_inv
+            edge_weight = deg_inv[col]
+            edge_weight[row == col] += self.diag_lambda * deg_inv
 
-        #     edge_index = set_sparse_value(edge_index, edge_weight)
+            edge_index = set_sparse_value(edge_index, edge_weight)
 
         if True:
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
-            #     edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
 
             row, col = edge_index[0], edge_index[1]
             deg_inv = 1. / degree(col, num_nodes=num_nodes).clamp_(1.)
 
             edge_weight = deg_inv[col]
-            # edge_weight[row == col] += self.diag_lambda * deg_inv
+            edge_weight[row == col] += self.diag_lambda * deg_inv
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -124,8 +124,7 @@ class ClusterGCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        assert edge_weight is not None
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
