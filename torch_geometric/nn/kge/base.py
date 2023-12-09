@@ -162,7 +162,6 @@ class KGEModel(torch.nn.Module):
 
         return head_index, rel_type, tail_index
 
-    @torch.no_grad()
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.num_nodes}, '
                 f'num_relations={self.num_relations}, '
