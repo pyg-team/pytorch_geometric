@@ -288,7 +288,7 @@ def from_networkx(
             x = x.view(-1, 1) if x.dim() <= 1 else x
             xs.append(x)
             del data[key]
-        data['x'] = torch.cat(xs, dim=-1)
+        data.x = torch.cat(xs, dim=-1)
 
     if group_edge_attrs is not None:
         xs = []
@@ -298,10 +298,10 @@ def from_networkx(
             x = x.view(-1, 1) if x.dim() <= 1 else x
             xs.append(x)
             del data[key]
-        data['edge_attr'] = torch.cat(xs, dim=-1)
+        data.edge_attr = torch.cat(xs, dim=-1)
 
     if data.x is None and data.pos is None:
-        data['num_nodes'] = G.number_of_nodes()
+        data.num_nodes = G.number_of_nodes()
 
     return data
 
@@ -601,7 +601,7 @@ def from_dgl(
 
     if g.is_homogeneous:
         data = Data()
-        data['edge_index'] = torch.stack(g.edges(), dim=0)
+        data.edge_index = torch.stack(g.edges(), dim=0)
 
         for attr, value in g.ndata.items():
             data[attr] = value

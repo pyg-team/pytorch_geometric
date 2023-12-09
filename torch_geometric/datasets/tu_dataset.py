@@ -139,6 +139,7 @@ class TUDataset(InMemoryDataset):
         data, self.slices, self.sizes = out
         self.data = Data.from_dict(data) if isinstance(data, dict) else data
 
+        assert isinstance(self._data, Data)
         if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
             self._data.x = self._data.x[:, num_node_attributes:]

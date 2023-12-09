@@ -552,6 +552,14 @@ class Data(BaseData, FeatureStore, GraphStore):
             info = ',\n'.join(info)
             return f'{cls}(\n{info}\n)'
 
+    @property
+    def num_nodes(self) -> Optional[int]:
+        return super().num_nodes
+
+    @num_nodes.setter
+    def num_nodes(self, num_nodes: Optional[int]):
+        self._store.num_nodes = num_nodes
+
     def stores_as(self, data: 'Data'):
         return self
 
@@ -884,29 +892,57 @@ class Data(BaseData, FeatureStore, GraphStore):
     def x(self) -> Optional[Tensor]:
         return self['x'] if 'x' in self._store else None
 
+    @x.setter
+    def x(self, x: Optional[Tensor]):
+        self._store.x = x
+
     @property
     def edge_index(self) -> Optional[Tensor]:
         return self['edge_index'] if 'edge_index' in self._store else None
+
+    @edge_index.setter
+    def edge_index(self, edge_index: Optional[Tensor]):
+        self._store.edge_index = edge_index
 
     @property
     def edge_weight(self) -> Optional[Tensor]:
         return self['edge_weight'] if 'edge_weight' in self._store else None
 
+    @edge_weight.setter
+    def edge_weight(self, edge_weight: Optional[Tensor]):
+        self._store.edge_weight = edge_weight
+
     @property
     def edge_attr(self) -> Optional[Tensor]:
         return self['edge_attr'] if 'edge_attr' in self._store else None
+
+    @edge_attr.setter
+    def edge_attr(self, edge_attr: Optional[Tensor]):
+        self._store.edge_attr = edge_attr
 
     @property
     def y(self) -> Optional[Union[Tensor, int, float]]:
         return self['y'] if 'y' in self._store else None
 
+    @y.setter
+    def y(self, y: Optional[Tensor]):
+        self._store.y = y
+
     @property
     def pos(self) -> Optional[Tensor]:
         return self['pos'] if 'pos' in self._store else None
 
+    @pos.setter
+    def pos(self, pos: Optional[Tensor]):
+        self._store.pos = pos
+
     @property
     def batch(self) -> Optional[Tensor]:
         return self['batch'] if 'batch' in self._store else None
+
+    @batch.setter
+    def batch(self, batch: Optional[Tensor]):
+        self._store.batch = batch
 
     # Deprecated functions ####################################################
 
