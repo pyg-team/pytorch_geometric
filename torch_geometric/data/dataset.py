@@ -62,11 +62,11 @@ class Dataset(torch.utils.data.Dataset, ABC):
         """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
@@ -88,7 +88,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):

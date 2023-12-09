@@ -30,7 +30,7 @@ class EventDataset(InMemoryDataset):
     def process_events(self) -> Tensor:
         raise NotImplementedError
 
-    def process(self) -> List[Data]:
+    def _process(self) -> List[Data]:
         events = self.process_events()
         events = events - events.min(dim=0, keepdim=True)[0]
 
@@ -121,7 +121,7 @@ class ICEWS18(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super().process()
+        data_list = self._process()
         self.save(data_list[s[0]:s[1]], self.processed_paths[0])
         self.save(data_list[s[1]:s[2]], self.processed_paths[1])
         self.save(data_list[s[2]:s[3]], self.processed_paths[2])

@@ -104,11 +104,11 @@ class Entities(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return self._data.edge_type.max().item() + 1
+        return int(self._data.edge_type.max()) + 1  # type: ignore
 
     @property
     def num_classes(self) -> int:
-        return self._data.train_y.max().item() + 1
+        return int(self._data.train_y.max()) + 1  # type: ignore
 
     @property
     def raw_file_names(self) -> List[str]:

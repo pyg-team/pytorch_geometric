@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 import numpy as np
 import torch
@@ -368,6 +368,7 @@ class MD17(InMemoryDataset):
         self.load(self.processed_paths[idx])
 
     def mean(self) -> float:
+        assert isinstance(self._data, Data)
         return float(self._data.energy.mean())
 
     @property
@@ -381,12 +382,12 @@ class MD17(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> Union[str, List[str]]:
         name = self.file_names[self.name]
         if self.revised:
             return osp.join('rmd17', 'npz_data', name)
         elif self.ccsd:
-            return name[:-4] + '-train.npz', name[:-4] + '-test.npz'
+            return [name[:-4] + '-train.npz', name[:-4] + '-test.npz']
         return name
 
     @property
