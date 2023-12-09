@@ -80,7 +80,7 @@ def negative_sampling(
     prob = 1. - idx.numel() / population  # Probability to sample a negative.
     sample_size = int(1.1 * num_neg_samples / prob)  # (Over)-sample size.
 
-    neg_idx = None
+    neg_idx: Optional[Tensor] = None
     if method == 'dense':
         # The dense version creates a mask of shape `population` to check for
         # invalid samples.
@@ -100,7 +100,7 @@ def negative_sampling(
         idx = idx.to('cpu')
         for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, device='cpu')
-            mask = np.isin(rnd.numpy(), idx.numpy())
+            mask = np.isin(rnd.numpy(), idx.numpy())  # type: ignore
             if neg_idx is not None:
                 mask |= np.isin(rnd, neg_idx.to('cpu'))
             mask = torch.from_numpy(mask).to(torch.bool)
@@ -110,6 +110,7 @@ def negative_sampling(
                 neg_idx = neg_idx[:num_neg_samples]
                 break
 
+    assert neg_idx is not None
     return vector_to_edge_index(neg_idx, size, bipartite, force_undirected)
 
 
@@ -205,8 +206,11 @@ def batched_negative_sampling(
     return torch.cat(neg_edge_indices, dim=1)
 
 
-def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
-                                 contains_neg_self_loops: bool = True):
+def structured_negative_sampling(
+    edge_index,
+    num_nodes: Optional[int] = None,
+    contains_neg_self_loops: bool = True,
+) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
@@ -346,8 +350,12 @@ def edge_index_to_vector(
         return idx, population
 
 
-def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
-                         force_undirected: bool = False) -> Tensor:
+def vector_to_edge_index(
+    idx: Tensor,
+    size: Tuple[int, int],
+    bipartite: bool,
+    force_undirected: bool = False,
+) -> Tensor:
 
     if bipartite:  # No need to account for self-loops.
         row = idx.div(size[1], rounding_mode='floor')
