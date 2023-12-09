@@ -86,6 +86,8 @@ class InfectionDataset(InMemoryDataset):
         if num_graphs is None and isinstance(max_path_length, list):
             num_graphs = len(max_path_length)
 
+        assert num_graphs is not None
+
         self.graph_generator = GraphGenerator.resolve(
             graph_generator,
             **(graph_generator_kwargs or {}),

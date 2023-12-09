@@ -61,11 +61,11 @@ class InMemoryDataset(Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     def __init__(
@@ -120,7 +120,7 @@ class InMemoryDataset(Dataset, ABC):
         return data
 
     @classmethod
-    def save(cls, data_list: List[BaseData], path: str):
+    def save(cls, data_list: Sequence[BaseData], path: str):
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
         fs.torch_save((data.to_dict(), slices), path)
@@ -134,7 +134,7 @@ class InMemoryDataset(Dataset, ABC):
 
     @staticmethod
     def collate(
-        data_list: List[BaseData],
+        data_list: Sequence[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
         r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal

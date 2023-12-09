@@ -16,7 +16,8 @@ class CustomMotif(MotifGenerator):
     def __init__(self, structure: Any):
         super().__init__()
 
-        self.structure = None
+        self.structure: Data
+
         if isinstance(structure, Data):
             self.structure = structure
         else:
@@ -27,7 +28,7 @@ class CustomMotif(MotifGenerator):
             except ImportError:
                 pass
 
-        if self.structure is None:
+        if structure is None:
             raise ValueError(f"Expected a motif structure of type "
                              f"'torch_geometric.data.Data' or 'networkx.Graph'"
                              f"(got {type(structure)})")

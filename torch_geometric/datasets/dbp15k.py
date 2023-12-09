@@ -122,14 +122,14 @@ class DBP15K(InMemoryDataset):
                 x_dict[int(info[0])] = torch.stack(hs, dim=0)
 
         idx = torch.tensor(list(x_dict.keys()))
-        assoc = torch.full((idx.max().item() + 1, ), -1, dtype=torch.long)
+        assoc = torch.full((int(idx.max()) + 1, ), -1, dtype=torch.long)
         assoc[idx] = torch.arange(idx.size(0))
 
         subj, obj = assoc[subj], assoc[obj]
         edge_index = torch.stack([subj, obj], dim=0)
         edge_index, rel = sort_edge_index(edge_index, rel)
 
-        xs = [None for _ in range(idx.size(0))]
+        xs = list(x_dict.values())
         for i in x_dict.keys():
             xs[assoc[i]] = x_dict[i]
         x = torch.nn.utils.rnn.pad_sequence(xs, batch_first=True)

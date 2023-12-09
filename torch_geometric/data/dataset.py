@@ -49,14 +49,14 @@ class Dataset(torch.utils.data.Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
         be present in order to skip downloading.
         """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
         must be present in order to skip processing.
         """
