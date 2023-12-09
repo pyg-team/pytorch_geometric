@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
+from torch_geometric.nn.kge.loader import KGTripletLoader
 
 
 class TransH(KGEModel):
@@ -52,6 +53,7 @@ class TransH(KGEModel):
                  bernoulli: bool = False):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
         self.bernoulli = bernoulli
+        self.head_corruption_probs = {}
 
         self.p_norm = p_norm
         self.margin = margin
@@ -66,9 +68,12 @@ class TransH(KGEModel):
     def reset_parameters(self):
         bound = 6. / math.sqrt(self.hidden_channels)
         torch.nn.init.uniform_(self.node_emb.weight, -bound, bound)
-        torch.nn.init.uniform_(self.rel_emb.weight, -bound, bound)
-        F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
-                    out=self.rel_emb.weight.data)
+        torch.nn.init.uniform_(self.w_rel_emb.weight, -bound, bound)
+        torch.nn.init.uniform_(self.d_rel_emb.weight, -bound, bound)
+        F.normalize(self.w_rel_emb.weight.data, p=self.p_norm, dim=-1,
+                    out=self.w_rel_emb.weight.data)
+        F.normalize(self.d_rel_emb.weight.data, p=self.p_norm, dim=-1,
+                    out=self.d_rel_emb.weight.data)
 
     def forward(
         self,
@@ -115,6 +120,17 @@ class TransH(KGEModel):
             margin=self.margin,
         )
 
+    def loader(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+        **kwargs,
+    ) -> Tensor:
+        if self.bernoulli:
+            self.compute_corrupt_probs(head_index, rel_type, tail_index)
+        return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
+
     def random_sample_bernoulli(
             self, head_index: Tensor, rel_type: Tensor,
             tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
@@ -138,7 +154,6 @@ class TransH(KGEModel):
             self, head_index: Tensor, rel_type: Tensor,
             tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
 
-        self.head_corruption_probs = {}
         for r in range(self.num_relations):
             mask = (rel_type == r).bool()
             _, tail_count = torch.unique((head_index[mask]),

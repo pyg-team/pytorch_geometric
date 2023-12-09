@@ -78,11 +78,6 @@ def test(data):
     )
 
 
-# Vectorized computation of corruption probabilities for Bernoulli sampling
-if model == 'transh' and model.bernoulli:
-    model.compute_corrupt_probs(train_data.edge_index[0], train_data.edge_type,
-                                train_data.edge_index[1])
-
 for epoch in range(1, 501):
     loss = train()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
