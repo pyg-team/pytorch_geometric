@@ -4,7 +4,6 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import (
@@ -45,7 +44,7 @@ def contains_self_loops(edge_index: Tensor) -> bool:
 
 
 @overload
-def remove_self_loops(  # noqa: F811
+def remove_self_loops(
     edge_index: Tensor,
     edge_attr: None = None,
 ) -> Tuple[Tensor, None]:
@@ -63,15 +62,15 @@ def remove_self_loops(  # noqa: F811
 @overload
 def remove_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor,
-) -> Tuple[Tensor, OptTensor]:
+    edge_attr: Optional[Tensor],
+) -> Tuple[Tensor, Optional[Tensor]]:
     pass
 
 
 def remove_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
-) -> Tuple[Tensor, OptTensor]:
+    edge_attr: Optional[Tensor] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Removes every self-loop in the graph given by :attr:`edge_index`, so
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 
@@ -127,8 +126,8 @@ def remove_self_loops(  # noqa: F811
 @overload
 def segregate_self_loops(
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
-) -> Tuple[Tensor, Optional[Tensor], Tensor, Optional[Tensor]]:
+    edge_attr: None = None,
+) -> Tuple[Tensor, None, Tensor, None]:
     pass
 
 
@@ -140,10 +139,18 @@ def segregate_self_loops(  # noqa: F811
     pass
 
 
+@overload
 def segregate_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
-) -> Tuple[Tensor, OptTensor, Tensor, OptTensor]:
+    edge_attr: Optional[Tensor],
+) -> Tuple[Tensor, Optional[Tensor], Tensor, Optional[Tensor]]:
+    pass
+
+
+def segregate_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+) -> Tuple[Tensor, Optional[Tensor], Tensor, Optional[Tensor]]:
     r"""Segregates self-loops from the graph.
 
     Args:
@@ -178,47 +185,47 @@ def segregate_self_loops(  # noqa: F811
 @overload
 def add_self_loops(
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[float] = None,
     num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, None]:
     pass
 
 
 @overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[float] = None,
     num_nodes: Optional[Tuple[int, int]] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, None]:
     pass
 
 
 @overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, None]:
     pass
 
 
 @overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[Tensor] = None,
     num_nodes: Optional[Tuple[int, int]] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, None]:
     pass
 
 
 @overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[str] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, None]:
@@ -228,7 +235,7 @@ def add_self_loops(  # noqa: F811
 @overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: None = None,
     fill_value: Optional[str] = None,
     num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, None]:
@@ -295,12 +302,72 @@ def add_self_loops(  # noqa: F811
     pass
 
 
+@overload
 def add_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[Tuple[int, int]] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+def add_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
@@ -403,6 +470,36 @@ def add_self_loops(  # noqa: F811
 @overload
 def add_remaining_self_loops(
     edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[float] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: None = None,
+    fill_value: Optional[str] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, None]:
+    pass
+
+
+@overload
+def add_remaining_self_loops(  # noqa: F811
+    edge_index: Tensor,
     edge_attr: Tensor,
     fill_value: Optional[float] = None,
     num_nodes: Optional[int] = None,
@@ -433,7 +530,7 @@ def add_remaining_self_loops(  # noqa: F811
 @overload
 def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: Optional[Tensor],
     fill_value: Optional[float] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -443,7 +540,7 @@ def add_remaining_self_loops(  # noqa: F811
 @overload
 def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: Optional[Tensor],
     fill_value: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -453,7 +550,7 @@ def add_remaining_self_loops(  # noqa: F811
 @overload
 def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: Optional[Tensor],
     fill_value: Optional[str] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -462,10 +559,10 @@ def add_remaining_self_loops(  # noqa: F811
 
 def add_remaining_self_loops(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: Optional[Tensor] = None,
     fill_value: Optional[Union[float, Tensor, str]] = None,
     num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
@@ -520,7 +617,7 @@ def add_remaining_self_loops(  # noqa: F811
 
 def get_self_loop_attr(
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> Tensor:
     r"""Returns the edge features or weights of self-loops
