@@ -94,7 +94,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root
+        self.root = root or '???'
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter

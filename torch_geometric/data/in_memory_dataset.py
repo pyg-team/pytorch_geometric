@@ -79,8 +79,9 @@ class InMemoryDataset(Dataset, ABC):
     ):
         super().__init__(root, transform, pre_transform, pre_filter, log,
                          force_reload)
-        self._data = None
-        self.slices = None
+
+        self._data: Optional[BaseData] = None
+        self.slices: Optional[Dict[str, Tensor]] = None
         self._data_list: Optional[List[BaseData]] = None
 
     @property
