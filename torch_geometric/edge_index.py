@@ -234,7 +234,7 @@ class EdgeIndex(Tensor):
                 sparse_size = (sparse_size[1], sparse_size[1])
 
         if torch_geometric.typing.WITH_PT112:
-            out = super().__new__(cls, data)
+            out = super().__new__(cls, data)  # type: ignore
         else:
             out = Tensor._make_subclass(cls, data)
 
@@ -384,8 +384,9 @@ class EdgeIndex(Tensor):
                 (default: :obj:`None`)
         """
         if dim is not None:
-            if self._sparse_size[dim] is not None:
-                return self._sparse_size[dim]
+            size = self._sparse_size[dim]
+            if size is not None:
+                return size
 
             if self.is_undirected:
                 size = int(self.max()) + 1 if self.numel() > 0 else 0
@@ -441,13 +442,14 @@ class EdgeIndex(Tensor):
             self._T_index = set_tuple_item(self._T_index, dim, index)
             self._T_perm = perm
 
-        assert self._T_index[dim] is not None
-
         if self._T_index[1 - dim] is None:
             self._T_index = set_tuple_item(  #
                 self._T_index, 1 - dim, self[1 - dim][self._T_perm])
 
-        return self._T_index, self._T_perm
+        row, col = self._T_index
+        assert row is not None and col is not None
+
+        return (row, col), self._T_perm
 
     @assert_sorted
     def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
@@ -557,7 +559,10 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            return torch.return_types.sort([self, slice(None, None, None)])
+            return torch.return_types.sort([  # type: ignore
+                self,
+                slice(None, None, None),
+            ])
 
         if self.is_sorted:
             (row, col), perm = self._sort_by_transpose()
@@ -587,9 +592,9 @@ class EdgeIndex(Tensor):
 
         out._value = self._value
 
-        return torch.return_types.sort([out, perm])
+        return torch.return_types.sort([out, perm])  # type: ignore
 
-    def to_dense(
+    def to_dense(  # type: ignore
         self,
         value: Optional[Tensor] = None,
         fill_value: float = 0.0,
@@ -612,7 +617,7 @@ class EdgeIndex(Tensor):
 
         size = self.get_sparse_size()
         if value is not None and value.dim() > 1:
-            size = size + value.shape[1:]
+            size = size + value.size()[1:]  # type: ignore
 
         out = torch.full(size, fill_value, dtype=dtype, device=self.device)
         out[self[0], self[1]] = value if value is not None else 1
@@ -642,7 +647,10 @@ class EdgeIndex(Tensor):
 
         return out
 
-    def to_sparse_csr(self, value: Optional[Tensor] = None) -> Tensor:
+    def to_sparse_csr(  # type: ignore
+            self,
+            value: Optional[Tensor] = None,
+    ) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
         :class:`torch.sparse_csr_tensor`.
 
@@ -663,7 +671,10 @@ class EdgeIndex(Tensor):
             requires_grad=value.requires_grad,
         )
 
-    def to_sparse_csc(self, value: Optional[Tensor] = None) -> Tensor:
+    def to_sparse_csc(  # type: ignore
+            self,
+            value: Optional[Tensor] = None,
+    ) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a :pytorch:`null`
         :class:`torch.sparse_csc_tensor`.
 
@@ -688,7 +699,7 @@ class EdgeIndex(Tensor):
             requires_grad=value.requires_grad,
         )
 
-    def to_sparse(
+    def to_sparse(  # type: ignore
         self,
         *,
         layout: torch.layout = torch.sparse_coo,
@@ -736,14 +747,15 @@ class EdgeIndex(Tensor):
             trust_data=True,
         )
 
+    # TODO investigate how to avoid overlapping return types here.
     @overload
-    def matmul(
+    def matmul(  # type: ignore
         self,
         other: 'EdgeIndex',
-        input_value: Optional[Tensor],
-        other_value: Optional[Tensor],
-        reduce: ReduceType,
-        transpose: bool,
+        input_value: Optional[Tensor] = None,
+        other_value: Optional[Tensor] = None,
+        reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Tuple['EdgeIndex', Tensor]:
         pass
 
@@ -751,10 +763,10 @@ class EdgeIndex(Tensor):
     def matmul(
         self,
         other: Tensor,
-        input_value: Optional[Tensor],
-        other_value: Optional[Tensor],
-        reduce: ReduceType,
-        transpose: bool,
+        input_value: Optional[Tensor] = None,
+        other_value: None = None,
+        reduce: ReduceType = 'sum',
+        transpose: bool = False,
     ) -> Tensor:
         pass
 
@@ -881,11 +893,7 @@ def clone(tensor: EdgeIndex) -> EdgeIndex:
 @implements(Tensor.to)
 def to(tensor: EdgeIndex, *args, **kwargs) -> Union[EdgeIndex, Tensor]:
     out = apply_(tensor, Tensor.to, *args, **kwargs)
-
-    if out.dtype not in SUPPORTED_DTYPES:
-        out = out.as_tensor()
-
-    return out
+    return out if out.dtype in SUPPORTED_DTYPES else out.as_tensor()
 
 
 @implements(Tensor.int)
@@ -956,7 +964,10 @@ def cat(
     # Post-process `is_undirected`:
     is_undirected = True
     for tensor in tensors:
-        is_undirected = tensor.is_undirected
+        if isinstance(tensor, EdgeIndex):
+            is_undirected = tensor.is_undirected
+        else:
+            is_undirected = False
 
     out._is_undirected = is_undirected
 
@@ -1167,8 +1178,10 @@ class _TorchSPMM(torch.autograd.Function):
     @staticmethod
     def backward(
         ctx,
-        out_grad: Tensor,
+        *grad_outputs: Any,
     ) -> Tuple[None, Optional[Tensor], None, None, None]:
+
+        grad_out, = grad_outputs
 
         other_grad: Optional[Tensor] = None
         if ctx.needs_input_grad[1]:
@@ -1208,7 +1221,7 @@ class _TorchSPMM(torch.autograd.Function):
                         device=input.device,
                     )
 
-            other_grad = adj @ out_grad
+            other_grad = adj @ grad_out
 
         if ctx.needs_input_grad[2]:
             raise NotImplementedError("Gradient computation for 'value' not "
@@ -1307,14 +1320,14 @@ def matmul(
     transpose &= not input.is_undirected or input_value is not None
 
     if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
-        input = input.to_sparse_coo(input_value)
+        sparse_input = input.to_sparse_coo(input_value)
     elif input.is_sorted_by_col:
-        input = input.to_sparse_csc(input_value)
+        sparse_input = input.to_sparse_csc(input_value)
     else:
-        input = input.to_sparse_csr(input_value)
+        sparse_input = input.to_sparse_csr(input_value)
 
     if transpose:
-        input = input.t()
+        sparse_input = sparse_input.t()
 
     if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
         other = other.to_sparse_coo(input_value)
@@ -1323,7 +1336,7 @@ def matmul(
     else:
         other = other.to_sparse_csr(other_value)
 
-    out = torch.matmul(input, other)
+    out = torch.matmul(sparse_input, other)
 
     rowptr: Optional[Tensor] = None
     if out.layout == torch.sparse_csr:
