@@ -2,14 +2,15 @@ import copy
 import os.path as osp
 import warnings
 from abc import ABC
-from collections.abc import Mapping, Sequence
 from typing import (
     Any,
     Callable,
     Dict,
     Iterable,
     List,
+    Mapping,
     Optional,
+    Sequence,
     Tuple,
     Type,
     Union,
@@ -120,7 +121,7 @@ class InMemoryDataset(Dataset, ABC):
         return data
 
     @classmethod
-    def save(cls, data_list: List[BaseData], path: str) -> None:
+    def save(cls, data_list: Sequence[BaseData], path: str) -> None:
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
         fs.torch_save((data.to_dict(), slices), path)
