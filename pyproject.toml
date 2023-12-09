@@ -130,7 +130,6 @@ module = [
     "torch_geometric.contrib.*",
     "torch_geometric.graphgym.*",
     "torch_geometric.distributed.*",
-    "torch_geometric.config_store",
 ]
 
 [tool.isort]
