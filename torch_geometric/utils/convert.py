@@ -247,11 +247,9 @@ def from_networkx(
 
     if group_node_attrs is not None and not isinstance(group_node_attrs, list):
         group_node_attrs = node_attrs
-    assert isinstance(group_node_attrs, (list, tuple))
 
     if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
-    assert isinstance(group_edge_attrs, (list, tuple))
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         if set(feat_dict.keys()) != set(node_attrs):
