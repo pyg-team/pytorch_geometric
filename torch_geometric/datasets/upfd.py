@@ -119,7 +119,7 @@ class UPFD(InMemoryDataset):
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self) -> None:
