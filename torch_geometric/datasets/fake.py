@@ -81,16 +81,17 @@ class FakeDataset(InMemoryDataset):
             data.y = torch.randint(self._num_classes, (num_nodes, ))
         elif self._num_classes > 0 and self.task == 'graph':
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
-        assert isinstance(data.y, Tensor)
 
         data.edge_index = get_edge_index(num_nodes, num_nodes, self.avg_degree,
                                          self.is_undirected, remove_loops=True)
 
         if self.num_channels > 0:
             x = torch.randn(num_nodes, self.num_channels)
-            if self.task == 'graph':
+            if self._num_classes > 0 and self.task == 'node':
+                assert isinstance(data.y, Tensor)
                 data.x = x + data.y
-            elif self.task == 'node':
+            elif self._num_classes > 0 and self.task == 'graph':
+                assert isinstance(data.y, Tensor)
                 data.x = x + data.y.unsqueeze(1)
         else:
             data.num_nodes = num_nodes
