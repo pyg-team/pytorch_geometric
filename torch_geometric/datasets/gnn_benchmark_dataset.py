@@ -119,7 +119,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name
         assert self.name in self.names
 
@@ -171,12 +171,12 @@ class GNNBenchmarkDataset(InMemoryDataset):
         else:
             return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         if self.name == 'CSL':
             data_list = self.process_CSL()
             self.save(data_list, self.processed_paths[0])

@@ -53,7 +53,7 @@ class FakeDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(None, transform)
 
         if task == 'auto':
@@ -154,7 +154,7 @@ class FakeHeteroDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(None, transform)
 
         if task == 'auto':
@@ -242,7 +242,7 @@ def get_num_nodes(avg_num_nodes: int, avg_degree: float) -> int:
     return random.randint(min_num_nodes, max_num_nodes)
 
 
-def get_num_channels(num_channels) -> int:
+def get_num_channels(num_channels: int) -> int:
     min_num_channels = 3 * num_channels // 4
     max_num_channels = 5 * num_channels // 4
     return random.randint(min_num_channels, max_num_channels)
