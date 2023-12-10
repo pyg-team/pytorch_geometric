@@ -282,7 +282,7 @@ class BaseData:
         end_time: Union[float, int],
     ) -> 'BaseData':
         r"""Returns a snapshot of :obj:`data` to only events that occurred in
-        period :obj:`<start_time, end_time>`.
+        period :obj:`[start_time, end_time]`.
         """
         out = copy.copy(self)
         for store in out.stores:

@@ -519,61 +519,52 @@ def test_data_with_tensor_frame():
         assert torch.allclose(value, tf.feat_dict[key][mask])
 
 
-def test_data_with_time_for_edges():
-    num_edges = 8
-    edge_index = torch.randint(0, 8, (2, num_edges))
-    edge_attr = torch.rand((num_edges, 16))
-    time = torch.tensor([1, 2, 4, 3, 6, 5, 8, 9])
-    x = torch.rand((edge_index.max(), 12))
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, time=time)
+@pytest.mark.parametrize('num_nodes', [4])
+@pytest.mark.parametrize('num_edges', [8])
+def test_data_time_handling(num_nodes, num_edges):
+    data = Data(
+        x=torch.randn(num_nodes, 12),
+        edge_index=torch.randint(0, num_nodes, (2, num_edges)),
+        edge_attr=torch.rand((num_edges, 16)),
+        time=torch.arange(num_edges),
+        num_nodes=num_nodes,
+    )
 
     assert data.is_edge_attr('time')
     assert not data.is_node_attr('time')
-    assert data.num_edges == num_edges
+    assert data.is_sorted_by_time()
 
-    up_to_data = data.up_to(6)
-    assert up_to_data.num_edges == 6
-    # 'x' is not a part of edge attrs
-    assert torch.allclose(up_to_data.x, x)
-    assert torch.all(up_to_data.edge_index == edge_index[:, :6])
-    assert torch.allclose(up_to_data.edge_attr, edge_attr[:6, :])
-    assert torch.all(up_to_data.time == time[:6])
+    out = data.up_to(5)
+    assert out.num_edges == 6
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, :6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[:6])
+    assert torch.equal(out.time, data.time[:6])
 
-    snapshot_data = data.snapshot(3, 6)
-    assert snapshot_data.num_edges == 4
-    assert torch.allclose(snapshot_data.x, x)
-    assert torch.all(snapshot_data.edge_index == edge_index[:, 2:6])
-    assert torch.allclose(snapshot_data.edge_attr, edge_attr[2:6, :])
-    assert torch.all(snapshot_data.time == time[2:6])
+    out = data.snapshot(2, 5)
+    assert out.num_edges == 4
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, 2:6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[2:6, :])
+    assert torch.equal(out.time, data.time[2:6])
 
-    sorted_data = data.sort_by_time()
-    time_perm = torch.tensor([0, 1, 3, 2, 5, 4, 6, 7])
-    assert not data.is_sorted_by_time()
-    assert sorted_data.is_sorted_by_time()
-    assert torch.all(sorted_data.edge_index == edge_index[:, time_perm])
-    assert torch.allclose(sorted_data.edge_attr, edge_attr[time_perm, :])
+    out = data.sort_by_time()
+    assert data.is_sorted_by_time()
 
-    del data.x
-    new_edges = 4
-    new_edge_index = torch.randint(0, 8, (2, new_edges))
-    new_edge_attr = torch.rand((new_edges, 16))
-    new_time = torch.tensor([10, 11, 12, 13])
-    new_data = Data(edge_index=new_edge_index, edge_attr=new_edge_attr,
-                    time=new_time)
-    concatenated_data = data.concat(new_data)
-    assert concatenated_data.num_edges == num_edges + new_edges
-    assert torch.all(
-        concatenated_data.edge_index == torch.cat((edge_index,
-                                                   new_edge_index), -1))
-    assert torch.allclose(concatenated_data.edge_attr,
-                          torch.cat((edge_attr, new_edge_attr), 0))
-    assert torch.allclose(concatenated_data.time, torch.cat((time, new_time),
-                                                            0))
+    out = data.concat(data)
+    assert out.num_nodes == 8
+    assert not out.is_sorted_by_time()
 
-    new_data.edge_attr = torch.rand((new_edges, 8))
-    with pytest.raises(AttributeError):
-        data.concat(new_data)
+    assert torch.allclose(out.x, torch.cat([data.x, data.x], dim=0))
+    assert torch.equal(
+        out.edge_index,
+        torch.cat([data.edge_index, data.edge_index], dim=1),
+    )
+    assert torch.allclose(
+        out.edge_attr,
+        torch.cat([data.edge_attr, data.edge_attr], dim=0),
+    )
+    assert torch.allclose(out.time, torch.cat([data.time, data.time], dim=0))
 
-    empty_data = Data()
-    with pytest.raises(AttributeError):
-        data.concat(empty_data)
+    out = out.sort_by_time()
+    assert torch.equal(out.time, data.time.repeat_interleave(2))

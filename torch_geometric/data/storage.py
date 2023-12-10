@@ -33,6 +33,7 @@ from torch_geometric.utils import (
     contains_isolated_nodes,
     is_torch_sparse_tensor,
     is_undirected,
+    select,
     sort_edge_index,
 )
 
@@ -285,6 +286,95 @@ class BaseStorage(MutableMapping):
         either for all attributes or only the ones given in :obj:`*args`.
         """
         return self.apply_(lambda x: x.record_stream(stream), *args)
+
+    # Time Handling ###########################################################
+
+    def _cat_dims(self, keys: List[int]) -> Dict[str, int]:
+        return {
+            key: self._parent().__cat_dim__(key, self[key], self)
+            for key in keys
+        }
+
+    def _select(
+        self,
+        keys: List[str],
+        index_or_mask: Tensor,
+    ) -> 'BaseStorage':
+
+        for key, dim in self._cat_dims(keys).items():
+            self[key] = select(self[key], index_or_mask, dim)
+
+        return self
+
+    def concat(self, other: 'GlobalStorage') -> 'GlobalStorage':
+        if not (set(self.keys()) == set(other.keys())):
+            raise AttributeError('Given storage is not compatible')
+
+        for key, dim in self._cat_dims(self.keys()).items():
+            value1 = self[key]
+            value2 = other[key]
+
+            if key in {'num_nodes', 'num_edges'}:
+                self[key] = value1 + value2
+
+            elif isinstance(value1, list):
+                self[key] = value1 + value2
+
+            elif isinstance(value1, Tensor):
+                self[key] = torch.cat([value1, value2], dim=dim)
+
+            else:
+                raise NotImplementedError(
+                    f"'{self.__class__.__name__}.concat' not yet implemented "
+                    f"for '{type(value1)}'")
+
+        return self
+
+    def is_sorted_by_time(self) -> bool:
+        if 'time' in self:
+            return bool(torch.all(self.time[:-1] <= self.time[1:]))
+        return True
+
+    def sort_by_time(self) -> 'GlobalStorage':
+        if self.is_sorted_by_time():
+            return self
+
+        if 'time' in self:
+            perm = torch.argsort(self.time, stable=True)
+
+            if self.is_node_attr('time'):
+                keys = self.node_attrs()
+            elif self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+
+            self._select(keys, perm)
+
+        return self
+
+    def snapshot(
+        self,
+        start_time: Union[float, int],
+        end_time: Union[float, int],
+    ) -> 'GlobalStorage':
+        if 'time' in self:
+            mask = (self.time >= start_time) & (self.time <= end_time)
+
+            if self.is_node_attr('time'):
+                keys = self.node_attrs()
+            elif self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+
+            self._select(keys, mask)
+
+            if self.is_node_attr('time') and 'num_nodes' in self:
+                self.num_nodes = int(mask.sum())
+
+        return self
+
+    def up_to(self, time: Union[float, int]) -> 'GlobalStorage':
+        if 'time' in self:
+            return self.snapshot(self.time.min().item(), time)
+        return self
 
 
 class NodeStorage(BaseStorage):
@@ -733,83 +823,6 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         else:
             self._cached_attr[AttrType.NODE].add(key)
             return False
-
-    def _index_select(self, keys: List[str], dims: List[int], index: Tensor):
-        assert len(keys) == len(
-            dims
-        ), "Number of provided keys does not match number of provided dims."
-        for key, dim in zip(keys, dims):
-            if key in self:
-                self[key] = torch.index_select(self[key], dim, index)
-
-    def _dims_for_attrs(self, keys: List[str]) -> List[int]:
-        # to avoid errors when 'num_edges == num_edge_features' or
-        # 'num_nodes == num_node_features'
-        predefined_dims = dict(x=0, edge_index=1, edge_attr=0, time=0)
-        dims = []
-        for key in keys:
-            if key in predefined_dims.keys():
-                dim = predefined_dims[key]
-            elif self.is_edge_attr(key):
-                dim = (torch.tensor(
-                    self[key].size()) == self.num_edges).nonzero()[0].item()
-            elif self.is_node_attr(key):
-                dim = (torch.tensor(
-                    self[key].size()) == self.num_nodes).nonzero()[0].item()
-            dims.append(dim)
-        return dims
-
-    def concat(self, other: 'GlobalStorage') -> 'GlobalStorage':
-        if not (set(self.keys()) == set(other.keys())):
-            raise AttributeError('Given storage is not compatible')
-        for key, dim in zip(self.keys(), self._dims_for_attrs(self.keys())):
-            if self[key].dim() != other[key].dim():
-                raise AttributeError("Number of dims do not match for "
-                                     f"key '{key}'.")
-            for i in range(self[key].dim()):
-                if i != dim and self[key].size(i) != other[key].size(i):
-                    raise AttributeError(f"Dim size at dim={i} do not match "
-                                         f"for key: '{key}'")
-            self[key] = torch.cat((self[key], other[key]), dim)
-        if 'edge_index' in self:
-            self.num_edges = self.edge_index.size(-1)
-        if 'x' in self:
-            self.num_nodes = self.x.size(0)
-        return self
-
-    def is_sorted_by_time(self) -> bool:
-        if 'time' in self:
-            return bool(torch.all(self.time[:-1] <= self.time[1:]))
-        return True
-
-    def sort_by_time(self) -> 'GlobalStorage':
-        if self.is_sorted_by_time():
-            return self
-        if 'time' in self:
-            self.time, perm = torch.sort(self.time, stable=True)
-            if self.is_edge_attr('time'):
-                keys = self.edge_attrs()
-                keys.remove('time')
-                self._index_select(keys, self._dims_for_attrs(keys), perm)
-            # TODO: cover case where 'time' is a node attribute
-        return self
-
-    def snapshot(self, start_time: Union[float, int],
-                 end_time: Union[float, int]) -> 'GlobalStorage':
-        if 'time' in self:
-            # this solution assumes that time may not be sorted
-            mask = (self.time >= start_time) & (self.time <= end_time)
-            perm = mask.nonzero(as_tuple=False).flatten()
-            if self.is_edge_attr('time'):
-                keys = self.edge_attrs()
-                self._index_select(keys, self._dims_for_attrs(keys), perm)
-            # TODO: cover case where 'time' is a node attribute
-        return self
-
-    def up_to(self, time: Union[float, int]) -> 'GlobalStorage':
-        if 'time' in self:
-            return self.snapshot(self.time.min().item(), time)
-        return self
 
 
 def recursive_apply_(data: Any, func: Callable):
