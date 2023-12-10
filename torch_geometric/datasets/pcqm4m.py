@@ -53,7 +53,7 @@ class PCQM4Mv2(OnDiskDataset):
         split: str = 'train',
         transform: Optional[Callable] = None,
         backend: str = 'sqlite',
-    ):
+    ) -> None:
         assert split in ['train', 'val', 'test', 'holdout']
 
         schema = {
@@ -76,7 +76,7 @@ class PCQM4Mv2(OnDiskDataset):
             osp.join('pcqm4m-v2', 'split_dict.pt'),
         ]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)

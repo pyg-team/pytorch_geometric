@@ -70,7 +70,7 @@ class GeometricShapes(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
@@ -84,12 +84,12 @@ class GeometricShapes(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         self.save(self.process_set('train'), self.processed_paths[0])
         self.save(self.process_set('test'), self.processed_paths[1])
 

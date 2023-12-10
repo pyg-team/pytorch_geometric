@@ -92,7 +92,7 @@ class ModelNet(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -111,7 +111,7 @@ class ModelNet(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.unlink(path)
@@ -124,7 +124,7 @@ class ModelNet(InMemoryDataset):
         if osp.exists(metadata_folder):
             fs.rm(metadata_folder)
 
-    def process(self):
+    def process(self) -> None:
         self.save(self.process_set('train'), self.processed_paths[0])
         self.save(self.process_set('test'), self.processed_paths[1])
 

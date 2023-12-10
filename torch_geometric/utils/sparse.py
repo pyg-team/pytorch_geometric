@@ -333,7 +333,7 @@ def to_torch_sparse_tensor(
     size: Optional[Union[int, Tuple[int, int]]] = None,
     is_coalesced: bool = False,
     layout: torch.layout = torch.sparse_coo,
-):
+) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor` with custom :obj:`layout`.
     See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
