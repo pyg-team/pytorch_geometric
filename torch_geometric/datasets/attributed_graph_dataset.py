@@ -171,8 +171,8 @@ class AttributedGraphDataset(InMemoryDataset):
         edge_index = torch.from_numpy(df.values).t().contiguous()
 
         with open(self.raw_paths[2], 'r') as f:
-            ys = f.read().split('\n')[:-1]
-            ys = [[int(y) - 1 for y in row.split()[1:]] for row in ys]
+            rows = f.read().split('\n')[:-1]
+            ys = [[int(y) - 1 for y in row.split()[1:]] for row in rows]
             multilabel = max([len(y) for y in ys]) > 1
 
         if not multilabel:

@@ -70,9 +70,9 @@ class AmazonBook(InMemoryDataset):
             with open(path, 'r') as f:
                 lines = f.readlines()
             for line in lines:
-                line = line.strip().split(' ')
-                for dst in line[1:]:
-                    rows.append(int(line[0]))
+                indices = line.strip().split(' ')
+                for dst in indices[1:]:
+                    rows.append(int(indices[0]))
                     cols.append(int(dst))
             index = torch.tensor([rows, cols])
 
