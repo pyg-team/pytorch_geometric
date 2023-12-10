@@ -99,8 +99,8 @@ class BaseData:
         raise NotImplementedError
 
     def concat(self, data: 'BaseData') -> 'BaseData':
-        r"""Concatenates :obj:`self` object with given :obj:`data`. All values
-        should have matching shapes at non-concat dimensions.
+        r"""Concatenates :obj:`self` with another :obj:`data` object.
+        All values needs to have matching shapes at non-concat dimensions.
         """
         out = copy.copy(self)
         for store, other_store in zip(out.stores, data.stores):
@@ -281,8 +281,8 @@ class BaseData:
         start_time: Union[float, int],
         end_time: Union[float, int],
     ) -> 'BaseData':
-        r"""Returns a snapshot of :obj:`data` to only events that occurred in
-        period :obj:`[start_time, end_time]`.
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        in period :obj:`[start_time, end_time]`.
         """
         out = copy.copy(self)
         for store in out.stores:
@@ -290,8 +290,8 @@ class BaseData:
         return out
 
     def up_to(self, end_time: Union[float, int]) -> 'BaseData':
-        r"""Returns a snapshot of :obj:`data` to only events that occurred up
-        to :obj:`end_time`.
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        up to :obj:`end_time` (inclusive of :obj:`edge_time`).
         """
         out = copy.copy(self)
         for store in out.stores:
