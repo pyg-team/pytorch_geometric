@@ -374,7 +374,7 @@ def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     return edge_index, edge_weight
 
 
-def to_trimesh(data):
+def to_trimesh(data: 'torch_geometric.data.Data') -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`trimesh.Trimesh`.
 
@@ -391,12 +391,18 @@ def to_trimesh(data):
         <trimesh.Trimesh(vertices.shape=(4, 3), faces.shape=(2, 3))>
     """
     import trimesh
-    return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
-                           faces=data.face.detach().t().cpu().numpy(),
-                           process=False)
+
+    assert data.pos is not None
+    assert data.face is not None
+
+    return trimesh.Trimesh(
+        vertices=data.pos.detach().cpu().numpy(),
+        faces=data.face.detach().t().cpu().numpy(),
+        process=False,
+    )
 
 
-def from_trimesh(mesh):
+def from_trimesh(mesh: Any) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`trimesh.Trimesh` to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -421,8 +427,12 @@ def from_trimesh(mesh):
     return Data(pos=pos, face=face)
 
 
-def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
-               relabel_nodes: bool = True, directed: bool = True):
+def to_cugraph(
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    relabel_nodes: bool = True,
+    directed: bool = True,
+) -> Any:
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
 

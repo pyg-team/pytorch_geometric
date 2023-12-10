@@ -13,7 +13,7 @@ class MotifGenerator(ABC):
         pass
 
     @staticmethod
-    def resolve(query: Union[Any, str], *args, **kwargs):
+    def resolve(query: Union[Any, str], *args, **kwargs) -> 'MotifGenerator':
         import torch_geometric.datasets.motif_generator as _motif_generators
         motif_generators = [
             gen for gen in vars(_motif_generators).values()

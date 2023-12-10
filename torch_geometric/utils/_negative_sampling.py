@@ -207,7 +207,7 @@ def batched_negative_sampling(
 
 
 def structured_negative_sampling(
-    edge_index,
+    edge_index: Tensor,
     num_nodes: Optional[int] = None,
     contains_neg_self_loops: bool = True,
 ) -> Tuple[Tensor, Tensor, Tensor]:
@@ -303,7 +303,11 @@ def structured_negative_sampling_feasible(
 ###############################################################################
 
 
-def sample(population: int, k: int, device=None) -> Tensor:
+def sample(
+    population: int,
+    k: int,
+    device: Optional[Union[torch.device, str]] = None,
+) -> Tensor:
     if population <= k:
         return torch.arange(population, device=device)
     else:

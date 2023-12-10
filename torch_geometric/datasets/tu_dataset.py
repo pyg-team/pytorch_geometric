@@ -123,7 +123,7 @@ class TUDataset(InMemoryDataset):
         use_node_attr: bool = False,
         use_edge_attr: bool = False,
         cleaned: bool = False,
-    ):
+    ) -> None:
         self.name = name
         self.cleaned = cleaned
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -182,14 +182,14 @@ class TUDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.cleaned_url if self.cleaned else self.url
         fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
         for filename in fs.ls(osp.join(self.raw_dir, self.name)):
             fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
         fs.rm(osp.join(self.raw_dir, self.name))
 
-    def process(self):
+    def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
 
         if self.pre_filter is not None or self.pre_transform is not None:
@@ -204,6 +204,7 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
+        assert isinstance(self._data, Data)
         fs.torch_save((self._data.to_dict(), self.slices, sizes),
                       self.processed_paths[0])
 

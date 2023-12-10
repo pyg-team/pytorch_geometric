@@ -46,7 +46,7 @@ class GDELT(EventDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
@@ -69,7 +69,7 @@ class GDELT(EventDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
@@ -81,7 +81,7 @@ class GDELT(EventDataset):
             events += [data]
         return torch.cat(events, dim=0)
 
-    def process(self):
+    def process(self) -> None:
         s = self.splits
         data_list = self._process_data_list()
         self.save(data_list[s[0]:s[1]], self.processed_paths[0])

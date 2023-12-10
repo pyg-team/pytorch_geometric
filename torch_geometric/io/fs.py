@@ -1,7 +1,7 @@
 import io
 import os.path as osp
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union, overload
 from uuid import uuid4
 
 import fsspec
@@ -51,7 +51,7 @@ def exists(path: str) -> bool:
     return get_fs(path).exists(path)
 
 
-def makedirs(path: str, exist_ok: bool = True):
+def makedirs(path: str, exist_ok: bool = True) -> None:
     return get_fs(path).makedirs(path, exist_ok)
 
 
@@ -69,6 +69,16 @@ def isdisk(path: str) -> bool:
 
 def islocal(path: str) -> bool:
     return isdisk(path) or 'memory' in get_fs(path).protocol
+
+
+@overload
+def ls(path: str, *, detail: Literal[False] = False) -> List[str]:
+    pass
+
+
+@overload
+def ls(path: str, detail: Literal[True]) -> List[Dict[str, Any]]:
+    pass
 
 
 def ls(
@@ -95,7 +105,7 @@ def cp(
     log: bool = True,
     use_cache: bool = True,
     clear_cache: bool = True,
-):
+) -> None:
     kwargs: Dict[str, Any] = {}
 
     # Cache result if the protocol is not local:
@@ -153,18 +163,18 @@ def cp(
         rm(cache_dir)
 
 
-def rm(path: str, recursive: bool = True):
+def rm(path: str, recursive: bool = True) -> None:
     get_fs(path).rm(path, recursive)
 
 
-def mv(path1: str, path2: str, recursive: bool = True):
+def mv(path1: str, path2: str, recursive: bool = True) -> None:
     fs1 = get_fs(path1)
     fs2 = get_fs(path2)
     assert fs1.protocol == fs2.protocol
     fs1.mv(path1, path2, recursive)
 
 
-def glob(path: str):
+def glob(path: str) -> List[str]:
     fs = get_fs(path)
     paths = fs.glob(path)
 
@@ -174,7 +184,7 @@ def glob(path: str):
     return paths
 
 
-def torch_save(data: Any, path: str):
+def torch_save(data: Any, path: str) -> None:
     buffer = io.BytesIO()
     torch.save(data, buffer)
     with fsspec.open(path, 'wb') as f:

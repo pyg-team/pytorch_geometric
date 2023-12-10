@@ -49,7 +49,7 @@ class DBP15K(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
         super().__init__(root, transform, pre_transform,
@@ -64,14 +64,14 @@ class DBP15K(InMemoryDataset):
     def processed_file_names(self) -> str:
         return f'{self.pair}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.file_id), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'DBP15K'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         embs = {}
         with open(osp.join(self.raw_dir, 'sub.glove.300d'), 'r') as f:
             for i, line in enumerate(f):

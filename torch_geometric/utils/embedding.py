@@ -28,7 +28,7 @@ def get_embeddings(
 
     embeddings: List[Tensor] = []
 
-    def hook(model: torch.nn.Module, inputs: Any, outputs: Any):
+    def hook(model: torch.nn.Module, inputs: Any, outputs: Any) -> None:
         # Clone output in case it will be later modified in-place:
         outputs = outputs[0] if isinstance(outputs, tuple) else outputs
         assert isinstance(outputs, Tensor)
