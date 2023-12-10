@@ -122,7 +122,7 @@ class AttributedGraphDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform,
@@ -145,7 +145,7 @@ class AttributedGraphDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.url.format(self.datasets[self.name])
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
@@ -157,7 +157,7 @@ class AttributedGraphDataset(InMemoryDataset):
             os.rename(osp.join(path, name), osp.join(self.raw_dir, name))
         fs.rm(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         x = sp.load_npz(self.raw_paths[0])

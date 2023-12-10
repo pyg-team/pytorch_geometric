@@ -55,7 +55,7 @@ class Actor(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -69,13 +69,13 @@ class Actor(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for f in self.raw_file_names[:2]:
             download_url(f'{self.url}/new_data/film/{f}', self.raw_dir)
         for f in self.raw_file_names[2:]:
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'r') as f:
             data = [x.split('\t') for x in f.read().split('\n')[1:-1]]
 
