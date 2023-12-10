@@ -31,7 +31,6 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             the master node.
         current_ctx (DistContext): Distributed context information of the
             current process.
-        rpc_worker_names (Dict[DistRole, List[str]]): RPC workers identifiers.
         concurrency (int, optional): RPC concurrency used for defining the
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
@@ -46,7 +45,6 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
         master_addr: str,
         master_port: Union[int, str],
         current_ctx: DistContext,
-        rpc_worker_names: Dict[DistRole, List[str]],
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
@@ -84,7 +82,6 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             neighbor_sampler = DistNeighborSampler(
                 data=data,
                 current_ctx=current_ctx,
-                rpc_worker_names=rpc_worker_names,
                 num_neighbors=num_neighbors,
                 replace=replace,
                 subgraph_type=subgraph_type,
@@ -104,7 +101,6 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             master_addr=master_addr,
             master_port=master_port,
             current_ctx=current_ctx,
-            rpc_worker_names=rpc_worker_names,
             **kwargs,
         )
         LinkLoader.__init__(
@@ -119,6 +115,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             filter_per_worker=filter_per_worker,
             worker_init_fn=self.worker_init_fn,
             transform_sampler_output=self.channel_get,
+            persistent_workers=(kwargs['num_workers'] > 1)
             **kwargs,
         )
 

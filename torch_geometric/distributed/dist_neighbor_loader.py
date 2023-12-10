@@ -31,7 +31,6 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             the master node.
         current_ctx (DistContext): Distributed context information of the
             current process.
-        rpc_worker_names (Dict[DistRole, List[str]]): RPC worker identifiers.
         concurrency (int, optional): RPC concurrency used for defining the
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
@@ -39,6 +38,7 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         All other arguments follow the interface of
         :class:`torch_geometric.loader.NeighborLoader`.
     """
+
     def __init__(
         self,
         data: Tuple[LocalFeatureStore, LocalGraphStore],
@@ -46,7 +46,6 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         master_addr: str,
         master_port: Union[int, str],
         current_ctx: DistContext,
-        rpc_worker_names: Dict[DistRole, List[str]],
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
         neighbor_sampler: Optional[DistNeighborSampler] = None,
@@ -67,17 +66,18 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         assert concurrency >= 1, "RPC concurrency must be greater than 1"
 
         if input_time is not None and time_attr is None:
-            raise ValueError("Received conflicting 'input_time' and "
-                             "'time_attr' arguments: 'input_time' is set "
-                             "while 'time_attr' is not set.")
+            raise ValueError(
+                "Received conflicting 'input_time' and "
+                "'time_attr' arguments: 'input_time' is set "
+                "while 'time_attr' is not set."
+            )
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
 
         if neighbor_sampler is None:
-            neighbor_sampler = DistNeighborSampler(
+            dist_sampler = DistNeighborSampler(
                 data=data,
                 current_ctx=current_ctx,
-                rpc_worker_names=rpc_worker_names,
                 num_neighbors=num_neighbors,
                 replace=replace,
                 subgraph_type=subgraph_type,
@@ -89,27 +89,26 @@ class DistNeighborLoader(NodeLoader, DistLoader):
                 concurrency=concurrency,
             )
 
-        self.neighbor_sampler = neighbor_sampler
-
         DistLoader.__init__(
             self,
             channel=channel,
             master_addr=master_addr,
             master_port=master_port,
             current_ctx=current_ctx,
-            rpc_worker_names=rpc_worker_names,
+            dist_sampler=dist_sampler,
             **kwargs,
         )
         NodeLoader.__init__(
             self,
             data=data,
-            node_sampler=neighbor_sampler,
+            node_sampler=dist_sampler,
             input_nodes=input_nodes,
             input_time=input_time,
             transform=transform,
             filter_per_worker=filter_per_worker,
             transform_sampler_output=self.channel_get,
             worker_init_fn=self.worker_init_fn,
+            persistent_workers=(kwargs['num_workers'] > 0),
             **kwargs,
         )
 
