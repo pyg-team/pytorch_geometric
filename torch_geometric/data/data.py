@@ -98,6 +98,15 @@ class BaseData:
         """
         raise NotImplementedError
 
+    def concat(self, data: 'BaseData') -> 'BaseData':
+        r"""Concatenates :obj:`self` with another :obj:`data` object.
+        All values needs to have matching shapes at non-concat dimensions.
+        """
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, data.stores):
+            store.concat(other_store)
+        return out
+
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
         attribute :obj:`key` will get concatenated when creating mini-batches
@@ -254,6 +263,39 @@ class BaseData:
         out = copy.copy(self)
         for store in out.edge_stores:
             store.coalesce()
+        return out
+
+    def is_sorted_by_time(self) -> bool:
+        r"""Returns :obj:`True` if :obj:`time` is sorted."""
+        return all([store.is_sorted_by_time() for store in self.stores])
+
+    def sort_by_time(self) -> 'BaseData':
+        r"""Sorts data associated with :obj:`time` according to :obj:`time`."""
+        out = copy.copy(self)
+        for store in out.stores:
+            store.sort_by_time()
+        return out
+
+    def snapshot(
+        self,
+        start_time: Union[float, int],
+        end_time: Union[float, int],
+    ) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        in period :obj:`[start_time, end_time]`.
+        """
+        out = copy.copy(self)
+        for store in out.stores:
+            store.snapshot(start_time, end_time)
+        return out
+
+    def up_to(self, end_time: Union[float, int]) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        up to :obj:`end_time` (inclusive of :obj:`edge_time`).
+        """
+        out = copy.copy(self)
+        for store in out.stores:
+            store.up_to(end_time)
         return out
 
     def has_isolated_nodes(self) -> bool:
@@ -457,6 +499,8 @@ class Data(BaseData, FeatureStore, GraphStore):
             labels with arbitrary shape. (default: :obj:`None`)
         pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamps for each event with shape
+            :obj:`[num_edges]` or :obj:`[num_nodes]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def __init__(
@@ -466,6 +510,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         edge_attr: OptTensor = None,
         y: OptTensor = None,
         pos: OptTensor = None,
+        time: OptTensor = None,
         **kwargs,
     ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
@@ -488,6 +533,8 @@ class Data(BaseData, FeatureStore, GraphStore):
             self.y = y
         if pos is not None:
             self.pos = pos
+        if time is not None:
+            self.time = time
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -943,6 +990,14 @@ class Data(BaseData, FeatureStore, GraphStore):
     @batch.setter
     def batch(self, batch: Optional[Tensor]):
         self._store.batch = batch
+
+    @property
+    def time(self) -> Optional[Tensor]:
+        return self['time'] if 'time' in self._store else None
+
+    @time.setter
+    def time(self, time: Optional[Tensor]):
+        self._store.time = time
 
     # Deprecated functions ####################################################
 
