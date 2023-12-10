@@ -214,8 +214,6 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def has_download(self) -> bool:
         r"""Checks whether the dataset defines a :meth:`download` method."""
-        if self.root == MISSING:
-            return False
         return overrides_method(self.__class__, 'download')
 
     def _download(self):
@@ -228,8 +226,6 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def has_process(self) -> bool:
         r"""Checks whether the dataset defines a :meth:`process` method."""
-        if self.root == MISSING:
-            return False
         return overrides_method(self.__class__, 'process')
 
     def _process(self):
