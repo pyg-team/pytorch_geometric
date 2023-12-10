@@ -139,7 +139,7 @@ class Entities(InMemoryDataset):
         with hide_stdout():
             g = rdf.Graph()
             with gzip.open(graph_file, 'rb') as f:
-                g.parse(file=f, format='nt')
+                g.parse(file=f, format='nt')  # type: ignore
 
         freq = Counter(g.predicates())
 
