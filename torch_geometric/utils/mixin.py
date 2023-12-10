@@ -1,15 +1,15 @@
-from typing import Iterator, Optional, TypeVar
+from typing import Iterator, TypeVar
 
 T = TypeVar('T')
 
 
 class CastMixin:
     @classmethod
-    def cast(cls: T, *args, **kwargs) -> Optional[T]:
+    def cast(cls: T, *args, **kwargs) -> T:
         if len(args) == 1 and len(kwargs) == 0:
             elem = args[0]
             if elem is None:
-                return None
+                return None  # type: ignore
             if isinstance(elem, CastMixin):
                 return elem  # type: ignore
             if isinstance(elem, tuple):
