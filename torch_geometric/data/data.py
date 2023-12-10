@@ -98,11 +98,14 @@ class BaseData:
         """
         raise NotImplementedError
 
-    def concat(self, data: 'Data') -> 'Data':
+    def concat(self, data: 'BaseData') -> 'BaseData':
         r"""Concatenates :obj:`self` object with given :obj:`data`. All values
-        should have matching shapes at not-concat dimensions.
+        should have matching shapes at non-concat dimensions.
         """
-        raise NotImplementedError
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, data.stores):
+            store.concat(other_store)
+        return out
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
@@ -273,21 +276,26 @@ class BaseData:
             store.sort_by_time()
         return out
 
-    def snapshot(self, start_time: Union[float, int],
-                 end_time: Union[float, int]) -> 'BaseData':
-        r"""Returns snapshot of events that occurred in period
-        <:obj:`start_time`, :obj:`end_time`>.
+    def snapshot(
+        self,
+        start_time: Union[float, int],
+        end_time: Union[float, int],
+    ) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only events that occurred in
+        period :obj:`<start_time, end_time>`.
         """
         out = copy.copy(self)
         for store in out.stores:
             store.snapshot(start_time, end_time)
         return out
 
-    def up_to(self, time: Union[float, int]) -> 'BaseData':
-        r"""Returns events that occurred before or at given :obj:`time`."""
+    def up_to(self, end_time: Union[float, int]) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only events that occurred up
+        to :obj:`end_time`.
+        """
         out = copy.copy(self)
         for store in out.stores:
-            store.up_to(time)
+            store.up_to(end_time)
         return out
 
     def has_isolated_nodes(self) -> bool:
@@ -616,13 +624,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         for key, value in data.items():
             self[key] = value
         return self
-
-    def concat(self, data: 'Data') -> 'Data':
-        out = copy.copy(self)
-        for store, other_store in zip(out.stores, data.stores):
-            store.concat(other_store)
-
-        return out
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if is_sparse(value) and 'adj' in key:
