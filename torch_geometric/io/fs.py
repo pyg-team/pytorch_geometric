@@ -77,18 +77,17 @@ def ls(path: str) -> List[str]:
 
 
 @overload
-def ls(path: str, *, detail: Literal[False]) -> List[str]:
+def ls(path: str, detail: Literal[False]) -> List[str]:
     pass
 
 
 @overload
-def ls(path: str, *, detail: Literal[True]) -> Dict[str, Any]:
+def ls(path: str, detail: Literal[True]) -> Dict[str, Any]:
     pass
 
 
 def ls(
     path: str,
-    *,
     detail: bool = False,
 ) -> Union[List[str], List[Dict[str, Any]]]:
     fs = get_fs(path)
