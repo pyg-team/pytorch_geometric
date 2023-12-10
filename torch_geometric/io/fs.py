@@ -72,7 +72,7 @@ def islocal(path: str) -> bool:
 
 
 @overload
-def ls(path: str, *, detail: Literal[False] = False) -> List[str]:
+def ls(path: str, detail: Literal[False] = False) -> List[str]:
     pass
 
 
