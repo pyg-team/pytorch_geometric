@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, List, Optional, Union
 
 import numpy as np
 import torch
@@ -81,7 +81,7 @@ class WikipediaNetwork(InMemoryDataset):
             return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> Union[List[str], str]:
         if self.geom_gcn_preprocess:
             return (['out1_node_feature_label.txt', 'out1_graph_edges.txt'] +
                     [f'{self.name}_split_0.6_0.2_{i}.npz' for i in range(10)])

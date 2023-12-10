@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import torch
@@ -39,7 +39,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             all_featnames += featnames
     all_featnames = sorted(list(set(all_featnames)))
-    all_featnames = {key: i for i, key in enumerate(all_featnames)}
+    all_featnames_dict = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
     for i in range(0, len(files), 5):
@@ -65,24 +65,24 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             with open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
                 featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
-            indices = [all_featnames[featname] for featname in featnames]
+            indices = [all_featnames_dict[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
                           usecols=[0]).squeeze()
 
-        idx_assoc = {}
+        idx_assoc: Dict[str, int] = {}
         for i, j in enumerate(idx):
             idx_assoc[j] = i
 
-        circles = []
-        circles_batch = []
+        circles: List[int] = []
+        circles_batch: List[int] = []
         with open(circles_file, 'r') as f:
-            for i, circle in enumerate(f.read().split('\n')[:-1]):
-                circle = [idx_assoc[c] for c in circle.split()[1:]]
-                circles += circle
-                circles_batch += [i] * len(circle)
+            for i, line in enumerate(f.read().split('\n')[:-1]):
+                circle_indices = [idx_assoc[c] for c in line.split()[1:]]
+                circles += circle_indices
+                circles_batch += [i] * len(circle_indices)
         circle = torch.tensor(circles)
         circle_batch = torch.tensor(circles_batch)
 

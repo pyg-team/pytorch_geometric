@@ -55,7 +55,7 @@ def get_mesh_laplacian(
 
     num_nodes = pos.shape[0]
 
-    def get_cots(left, centre, right):
+    def get_cots(left: Tensor, centre: Tensor, right: Tensor) -> Tensor:
         left_pos, central_pos, right_pos = pos[left], pos[centre], pos[right]
         left_vec = left_pos - central_pos
         right_vec = right_pos - central_pos
@@ -81,7 +81,7 @@ def get_mesh_laplacian(
 
     if normalization is not None:
 
-        def get_areas(left, centre, right):
+        def get_areas(left: Tensor, centre: Tensor, right: Tensor) -> Tensor:
             central_pos = pos[centre]
             left_vec = pos[left] - central_pos
             right_vec = pos[right] - central_pos

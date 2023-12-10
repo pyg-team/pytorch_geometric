@@ -92,7 +92,7 @@ class PPI(InMemoryDataset):
         return [f'{split}_{name}' for split, name in product(splits, files)]
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):

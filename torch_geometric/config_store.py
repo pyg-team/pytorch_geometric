@@ -1,5 +1,6 @@
 import copy
 import inspect
+import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -15,12 +16,17 @@ MAPPING = {
 
 try:
     from omegaconf import MISSING
-except ImportError:
-    MISSING: Any = '???'
+except Exception:
+    MISSING = '???'
 
 try:
-    from hydra.core.config_store import ConfigStore
+    import hydra  # noqa
     WITH_HYDRA = True
+except Exception:
+    WITH_HYDRA = False
+
+if not typing.TYPE_CHECKING and WITH_HYDRA:
+    from hydra.core.config_store import ConfigStore
 
     def get_node(cls: Union[str, Any]) -> Optional[Any]:
         if (not isinstance(cls, str)
@@ -63,9 +69,7 @@ try:
         node = get_node(cls)
         return node._metadata.orig_type if node is not None else None
 
-except ImportError:
-
-    WITH_HYDRA = False
+else:
 
     class Singleton(type):
         _instances: Dict[type, Any] = {}
@@ -90,7 +94,7 @@ except ImportError:
 
     class ConfigStore(metaclass=Singleton):
         def __init__(self):
-            self.repo: Dict[str, Any] = defaultdict(dict)
+            self.repo: Dict[str, Any] = defaultdict(dict)  # type: ignore
 
         @classmethod
         def instance(cls, *args, **kwargs) -> 'ConfigStore':
@@ -166,7 +170,7 @@ def map_annotation(
         annotation.__args__ = tuple(map_annotation(a, mapping) for a in args)
         return annotation
 
-    if annotation in mapping or {}:
+    if mapping is not None and annotation in mapping:
         return mapping[annotation]
 
     out = dataclass_from_class(annotation)
@@ -225,10 +229,10 @@ def to_dataclass(
     params = inspect.signature(cls.__init__).parameters
 
     if strict:  # Check that keys in map_args or exclude_args are present.
-        args = set() if map_args is None else set(map_args.keys())
+        keys = set() if map_args is None else set(map_args.keys())
         if exclude_args is not None:
-            args |= set([arg for arg in exclude_args if isinstance(arg, str)])
-        diff = args - set(params.keys())
+            keys |= set([arg for arg in exclude_args if isinstance(arg, str)])
+        diff = keys - set(params.keys())
         if len(diff) > 0:
             raise ValueError(f"Expected input argument(s) {diff} in "
                              f"'{cls.__name__}'")
@@ -264,7 +268,7 @@ def to_dataclass(
                     annotation = List[Any]
             elif origin == dict:
                 if getattr(args[1], '__origin__', None) == Union:
-                    annotation = Dict[args[0], Any]
+                    annotation = Dict[args[0], Any]  # type: ignore
         else:
             annotation = Any
 
@@ -344,7 +348,7 @@ def register(
                 f"The data class '{data_cls.__name__}' is already registered "
                 f"in the global configuration store")
 
-        if WITH_HYDRA:
+        if not typing.TYPE_CHECKING and WITH_HYDRA:
             get_config_store().store(name, data_cls, group)
             get_node(name)._metadata.orig_type = cls
         else:

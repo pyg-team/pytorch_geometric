@@ -72,6 +72,7 @@ class OGB_MAG(InMemoryDataset):
 
     @property
     def num_classes(self) -> int:
+        assert isinstance(self._data, HeteroData)
         return int(self._data['paper'].y.max()) + 1
 
     @property

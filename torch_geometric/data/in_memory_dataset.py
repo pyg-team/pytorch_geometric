@@ -2,14 +2,15 @@ import copy
 import os.path as osp
 import warnings
 from abc import ABC
-from collections.abc import Mapping, Sequence
 from typing import (
     Any,
     Callable,
     Dict,
     Iterable,
     List,
+    Mapping,
     Optional,
+    Sequence,
     Tuple,
     Type,
     Union,
@@ -61,11 +62,11 @@ class InMemoryDataset(Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     def __init__(
@@ -76,11 +77,12 @@ class InMemoryDataset(Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform, pre_filter, log,
                          force_reload)
-        self._data = None
-        self.slices = None
+
+        self._data: Optional[BaseData] = None
+        self.slices: Optional[Dict[str, Tensor]] = None
         self._data_list: Optional[List[BaseData]] = None
 
     @property
@@ -119,12 +121,12 @@ class InMemoryDataset(Dataset, ABC):
         return data
 
     @classmethod
-    def save(cls, data_list: List[BaseData], path: str):
+    def save(cls, data_list: Sequence[BaseData], path: str) -> None:
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
         fs.torch_save((data.to_dict(), slices), path)
 
-    def load(self, path: str, data_cls: Type[BaseData] = Data):
+    def load(self, path: str, data_cls: Type[BaseData] = Data) -> None:
         r"""Loads the dataset from the file path :obj:`path`."""
         data, self.slices = fs.torch_load(path)
         if isinstance(data, dict):  # Backward compatibility.
@@ -133,7 +135,7 @@ class InMemoryDataset(Dataset, ABC):
 
     @staticmethod
     def collate(
-        data_list: List[BaseData],
+        data_list: Sequence[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
         r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal

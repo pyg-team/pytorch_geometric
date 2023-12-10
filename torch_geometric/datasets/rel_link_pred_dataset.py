@@ -63,7 +63,7 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return int(self._data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1  # type: ignore
 
     @property
     def raw_dir(self) -> str:
