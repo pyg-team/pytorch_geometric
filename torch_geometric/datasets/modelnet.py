@@ -1,10 +1,9 @@
 import glob
 import os
 import os.path as osp
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, List, Optional
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import (
     Data,
@@ -129,7 +128,7 @@ class ModelNet(InMemoryDataset):
         self.save(self.process_set('train'), self.processed_paths[0])
         self.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
+    def process_set(self, dataset: str) -> List[Data]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 

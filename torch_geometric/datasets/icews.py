@@ -1,6 +1,7 @@
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import read_txt_array
@@ -26,10 +27,10 @@ class EventDataset(InMemoryDataset):
     def num_rels(self) -> int:
         raise NotImplementedError
 
-    def process_events(self) -> int:
+    def process_events(self) -> Tensor:
         raise NotImplementedError
 
-    def process(self) -> List[Data]:
+    def _process_data_list(self) -> List[Data]:
         events = self.process_events()
         events = events - events.min(dim=0, keepdim=True)[0]
 
@@ -110,7 +111,7 @@ class ICEWS18(EventDataset):
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process_events(self) -> torch.Tensor:
+    def process_events(self) -> Tensor:
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
@@ -120,7 +121,7 @@ class ICEWS18(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super().process()
+        data_list = self._process_data_list()
         self.save(data_list[s[0]:s[1]], self.processed_paths[0])
         self.save(data_list[s[1]:s[2]], self.processed_paths[1])
         self.save(data_list[s[2]:s[3]], self.processed_paths[2])

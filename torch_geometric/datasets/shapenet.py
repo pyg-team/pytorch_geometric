@@ -152,6 +152,8 @@ class ShapeNet(InMemoryDataset):
                               'train, val, trainval or test'))
 
         self.load(path)
+
+        assert isinstance(self._data, Data)
         self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
@@ -168,7 +170,7 @@ class ShapeNet(InMemoryDataset):
         return list(self.category_ids.values()) + ['train_test_split']
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
             osp.join(f'{cats}_{split}.pt')

@@ -1,6 +1,7 @@
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import download_url
 from torch_geometric.datasets.icews import EventDataset
@@ -72,7 +73,7 @@ class GDELT(EventDataset):
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process_events(self) -> torch.Tensor:
+    def process_events(self) -> Tensor:
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
@@ -82,7 +83,7 @@ class GDELT(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super().process()
+        data_list = self._process_data_list()
         self.save(data_list[s[0]:s[1]], self.processed_paths[0])
         self.save(data_list[s[1]:s[2]], self.processed_paths[1])
         self.save(data_list[s[2]:s[3]], self.processed_paths[2])

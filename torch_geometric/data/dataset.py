@@ -16,6 +16,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -49,24 +50,24 @@ class Dataset(torch.utils.data.Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
         be present in order to skip downloading.
         """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
         must be present in order to skip processing.
         """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
@@ -88,13 +89,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root or '???'
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter

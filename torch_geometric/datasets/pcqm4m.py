@@ -6,6 +6,7 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric.data import Data, OnDiskDataset, download_url, extract_zip
+from torch_geometric.data.data import BaseData
 from torch_geometric.utils import from_smiles
 
 
@@ -80,7 +81,7 @@ class PCQM4Mv2(OnDiskDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0])
@@ -96,7 +97,8 @@ class PCQM4Mv2(OnDiskDataset):
                 self.extend(data_list)
                 data_list = []
 
-    def serialize(self, data: Data) -> Dict[str, Any]:
+    def serialize(self, data: BaseData) -> Dict[str, Any]:
+        assert isinstance(data, Data)
         return dict(
             x=data.x,
             edge_index=data.edge_index,
