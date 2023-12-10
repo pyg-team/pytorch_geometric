@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from torch_geometric.data import Data
 from torch_geometric.datasets.motif_generator import MotifGenerator
@@ -16,7 +16,7 @@ class CustomMotif(MotifGenerator):
     def __init__(self, structure: Any):
         super().__init__()
 
-        self.structure: Data
+        self.structure: Optional[Data] = None
 
         if isinstance(structure, Data):
             self.structure = structure
@@ -28,10 +28,11 @@ class CustomMotif(MotifGenerator):
             except ImportError:
                 pass
 
-        if structure is None:
+        if self.structure is None:
             raise ValueError(f"Expected a motif structure of type "
                              f"'torch_geometric.data.Data' or 'networkx.Graph'"
                              f"(got {type(structure)})")
 
     def __call__(self) -> Data:
+        assert isinstance(self.structure, Data)
         return self.structure
