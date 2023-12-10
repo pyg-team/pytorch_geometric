@@ -123,7 +123,6 @@ module = [
     "torch_geometric.sampler.*",
     "torch_geometric.loader.*",
     "torch_geometric.transforms.*",
-    "torch_geometric.datasets.*",
     "torch_geometric.nn.*",
     "torch_geometric.explain.*",
     "torch_geometric.profile.*",

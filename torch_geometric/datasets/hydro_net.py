@@ -63,13 +63,14 @@ class HydroNet(InMemoryDataset):
         num_workers: int = 8,
         clusters: Optional[Union[int, List[int]]] = None,
         use_processed: bool = True,
-    ):
+    ) -> None:
         self.name = name
         self.num_workers = num_workers
         self.use_processed = use_processed
 
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
+
         self.select_clusters(clusters)
 
     @property
@@ -80,7 +81,7 @@ class HydroNet(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'W{c}_geoms_all.npz' for c in range(3, 31)]
 
-    def download(self):
+    def download(self) -> None:
         token_file = Path(osp.join(self.raw_dir, 'use_processed'))
         if self.use_processed and token_file.exists():
             return
@@ -105,7 +106,7 @@ class HydroNet(InMemoryDataset):
 
         os.rmdir(osp.join(self.raw_dir, folder_name))
 
-    def process(self):
+    def process(self) -> None:
         if self.use_processed:
             return self._unpack_processed()
 
@@ -119,7 +120,7 @@ class HydroNet(InMemoryDataset):
             leave=True,
         )
 
-    def _unpack_processed(self):
+    def _unpack_processed(self) -> None:
         files = glob(osp.join(self.raw_dir, '*.npz'))
         for f in files:
             dst = osp.join(self.processed_dir, osp.basename(f))
@@ -133,7 +134,7 @@ class HydroNet(InMemoryDataset):
     def select_clusters(
         self,
         clusters: Optional[Union[int, List[int]]],
-    ) -> 'Optional[List[Partition]]':
+    ) -> None:
         if self.name is not None:
             clusters = self._validate_name(clusters)
 
@@ -161,14 +162,14 @@ class HydroNet(InMemoryDataset):
             raise ValueError(f"Invalid subset name '{self.name}'. "
                              f"Must be either 'small' or 'medium'")
 
-        return range(3, 26)
+        return list(range(3, 26))
 
     @cached_property
-    def _dataset(self) -> ConcatDataset:
-        dataset = ConcatDataset(self._partitions)
+    def _dataset(self) -> Union[ConcatDataset, Subset]:
+        dataset: ConcatDataset = ConcatDataset(self._partitions)
 
         if self.name == "small":
-            dataset = self._load_small_split(dataset)
+            return self._load_small_split(dataset)
 
         return dataset
 
@@ -177,9 +178,8 @@ class HydroNet(InMemoryDataset):
         with np.load(split_file) as split:
             train_idx = split['train_idx']
             val_idx = split['val_idx']
-            all_idx = np.concatenate([train_idx, val_idx])
-            dataset = Subset(dataset, all_idx)
-        return dataset
+        all_idx = np.concatenate([train_idx, val_idx])
+        return Subset(dataset, all_idx)
 
     def len(self) -> int:
         return len(self._dataset)
@@ -319,8 +319,12 @@ class Partition(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         self.load()
+        assert self._data_list is not None
+
         if self._data_list[idx] is not None:
-            return copy.copy(self._data_list[idx])
+            cached_data = self._data_list[idx]
+            assert isinstance(cached_data, Data)
+            return copy.copy(cached_data)
 
         data = Data(
             z=torch.from_numpy(self.z[idx, :]),

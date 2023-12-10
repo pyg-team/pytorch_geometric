@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from itertools import product
-from typing import Callable, Optional
+from typing import Callable, Dict, List, Literal, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -48,7 +48,7 @@ class FakeDataset(InMemoryDataset):
         num_channels: int = 64,
         edge_dim: int = 0,
         num_classes: int = 10,
-        task: str = "auto",
+        task: Literal['node', 'graph', 'auto'] = 'auto',
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
@@ -81,15 +81,17 @@ class FakeDataset(InMemoryDataset):
             data.y = torch.randint(self._num_classes, (num_nodes, ))
         elif self._num_classes > 0 and self.task == 'graph':
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
+        assert isinstance(data.y, Tensor)
 
         data.edge_index = get_edge_index(num_nodes, num_nodes, self.avg_degree,
                                          self.is_undirected, remove_loops=True)
 
-        if self.num_channels > 0 and self.task == 'graph':
-            data.x = torch.randn(num_nodes, self.num_channels) + data.y
-        elif self.num_channels > 0 and self.task == 'node':
-            data.x = torch.randn(num_nodes,
-                                 self.num_channels) + data.y.unsqueeze(1)
+        if self.num_channels > 0:
+            x = torch.randn(num_nodes, self.num_channels)
+            if self.task == 'graph':
+                data.x = x + data.y
+            elif self.task == 'node':
+                data.x = x + data.y.unsqueeze(1)
         else:
             data.num_nodes = num_nodes
 
@@ -159,14 +161,14 @@ class FakeHeteroDataset(InMemoryDataset):
 
         self.node_types = [f'v{i}' for i in range(max(num_node_types, 1))]
 
-        edge_types = []
+        edge_types: List[Tuple[str, str]] = []
         edge_type_product = list(product(self.node_types, self.node_types))
         while len(edge_types) < max(num_edge_types, 1):
             edge_types.extend(edge_type_product)
         random.shuffle(edge_types)
 
-        self.edge_types = []
-        count = defaultdict(lambda: 0)
+        self.edge_types: List[Tuple[str, str, str]] = []
+        count: Dict[Tuple[str, str], int] = defaultdict(lambda: 0)
         for edge_type in edge_types[:max(num_edge_types, 1)]:
             rel = f'e{count[edge_type]}'
             count[edge_type] += 1
