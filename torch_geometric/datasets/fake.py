@@ -89,10 +89,10 @@ class FakeDataset(InMemoryDataset):
             x = torch.randn(num_nodes, self.num_channels)
             if self._num_classes > 0 and self.task == 'node':
                 assert isinstance(data.y, Tensor)
-                x = x + data.y
+                x = x + data.y.unsqueeze(1)
             elif self._num_classes > 0 and self.task == 'graph':
                 assert isinstance(data.y, Tensor)
-                x = x + data.y.unsqueeze(1)
+                x = x + data.y
             data.x = x
         else:
             data.num_nodes = num_nodes
