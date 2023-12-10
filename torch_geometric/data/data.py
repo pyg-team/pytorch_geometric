@@ -995,6 +995,10 @@ class Data(BaseData, FeatureStore, GraphStore):
     def time(self) -> Optional[Tensor]:
         return self['time'] if 'time' in self._store else None
 
+    @time.setter
+    def time(self, time: Optional[Tensor]):
+        self._store.time = time
+
     # Deprecated functions ####################################################
 
     @property
