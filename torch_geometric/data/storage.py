@@ -340,7 +340,7 @@ class BaseStorage(MutableMapping):
             return self
 
         if 'time' in self:
-            perm = torch.argsort(self.time, stable=True)
+            _, perm = torch.sort(self.time, stable=True)
 
             if self.is_node_attr('time'):
                 keys = self.node_attrs()
