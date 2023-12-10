@@ -16,6 +16,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -94,7 +95,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root or '???'
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -213,6 +214,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def has_download(self) -> bool:
         r"""Checks whether the dataset defines a :meth:`download` method."""
+        if self.root == MISSING:
+            return False
         return overrides_method(self.__class__, 'download')
 
     def _download(self):
@@ -225,6 +228,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def has_process(self) -> bool:
         r"""Checks whether the dataset defines a :meth:`process` method."""
+        if self.root == MISSING:
+            return False
         return overrides_method(self.__class__, 'process')
 
     def _process(self):
