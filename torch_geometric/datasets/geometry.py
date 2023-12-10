@@ -5,7 +5,12 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_off
 
 
@@ -93,7 +98,7 @@ class GeometricShapes(InMemoryDataset):
         self.save(self.process_set('train'), self.processed_paths[0])
         self.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset: str):
+    def process_set(self, dataset: str) -> List[Data]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 

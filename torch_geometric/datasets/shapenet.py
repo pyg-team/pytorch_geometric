@@ -129,7 +129,7 @@ class ShapeNet(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -177,7 +177,7 @@ class ShapeNet(InMemoryDataset):
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
@@ -208,7 +208,7 @@ class ShapeNet(InMemoryDataset):
 
         return data_list
 
-    def process(self):
+    def process(self) -> None:
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
             path = osp.join(self.raw_dir, 'train_test_split',

@@ -13,7 +13,7 @@ class GraphGenerator(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def resolve(query: Union[Any, str], *args, **kwargs):
+    def resolve(query: Union[Any, str], *args, **kwargs) -> 'GraphGenerator':
         import torch_geometric.datasets.graph_generator as _graph_generators
         graph_generators = [
             gen for gen in vars(_graph_generators).values()

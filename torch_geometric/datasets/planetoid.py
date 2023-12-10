@@ -93,7 +93,7 @@ class Planetoid(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name
 
         self.split = split.lower()
@@ -149,7 +149,7 @@ class Planetoid(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for name in self.raw_file_names:
             download_url(f'{self.url}/{name}', self.raw_dir)
         if self.split == 'geom-gcn':
@@ -157,7 +157,7 @@ class Planetoid(InMemoryDataset):
                 url = f'{self.geom_gcn_url}/splits/{self.name.lower()}'
                 download_url(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, self.name)
 
         if self.split == 'geom-gcn':
