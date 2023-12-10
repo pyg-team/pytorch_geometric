@@ -83,7 +83,7 @@ class Entities(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
@@ -123,12 +123,12 @@ class Entities(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'hetero_data.pt' if self.hetero else 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.name), self.root)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import gzip
 
         import pandas as pd
@@ -160,11 +160,11 @@ class Entities(InMemoryDataset):
             edges.append([src, dst, 2 * rel])
             edges.append([dst, src, 2 * rel + 1])
 
-        edges = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        _, perm = index_sort(N * R * edges[0] + R * edges[1] + edges[2])
-        edges = edges[:, perm]
+        edge = torch.tensor(edges, dtype=torch.long).t().contiguous()
+        _, perm = index_sort(N * R * edge[0] + R * edge[1] + edge[2])
+        edge = edge[:, perm]
 
-        edge_index, edge_type = edges[:2], edges[2]
+        edge_index, edge_type = edge[:2], edge[2]
 
         if self.name == 'am':
             label_header = 'label_cateogory'
@@ -218,9 +218,9 @@ class Entities(InMemoryDataset):
 
 
 class hide_stdout:
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         logging.getLogger().setLevel(self.level)

@@ -56,7 +56,7 @@ class Flickr(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -69,7 +69,7 @@ class Flickr(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
 
@@ -82,7 +82,7 @@ class Flickr(InMemoryDataset):
         path = download_url(self.url.format(self.role_id), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, 'role.json'))
 
-    def process(self):
+    def process(self) -> None:
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()

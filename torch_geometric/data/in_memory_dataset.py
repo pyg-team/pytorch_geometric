@@ -9,6 +9,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
+    MutableSequence,
     Optional,
     Sequence,
     Tuple,
@@ -83,7 +84,7 @@ class InMemoryDataset(Dataset, ABC):
 
         self._data: Optional[BaseData] = None
         self.slices: Optional[Dict[str, Tensor]] = None
-        self._data_list: Optional[List[BaseData]] = None
+        self._data_list: Optional[MutableSequence[Optional[BaseData]]] = None
 
     @property
     def num_classes(self) -> int:
