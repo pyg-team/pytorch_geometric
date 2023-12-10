@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from itertools import product
-from typing import Callable, Dict, List, Literal, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -48,7 +48,7 @@ class FakeDataset(InMemoryDataset):
         num_channels: int = 64,
         edge_dim: int = 0,
         num_classes: int = 10,
-        task: Literal['node', 'graph', 'auto'] = 'auto',
+        task: str = 'auto',
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
