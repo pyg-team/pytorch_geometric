@@ -1,6 +1,7 @@
 import logging
 from os.path import isfile, join
 from typing import Callable, Dict, List, Optional, Union, Tuple
+import numpy as np
 
 import torch
 from torch import Tensor
@@ -138,10 +139,12 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             ]
         return ret_list
 
-    def write_from_MCTSNode_list(self, MCTSNode_list):
+    @staticmethod
+    def extract_MCTSInfo_list(
+        MCTSNode_list: List[Union[List[MCTSNode], MCTSNode]]
+    ) -> List[Union[List[Dict], Dict]]:
         """
-        TODO: @Donald - I think that it should be renmaed
-        write MCTSNode_list to saved file
+        extract MCTSInfo_list from MCTSNode_list
         """
         if isinstance(MCTSNode_list[0], MCTSNode):
             ret_list = [node.info for node in MCTSNode_list]
@@ -207,25 +210,20 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     ) -> Tuple[List[Union[List[MCTSNode], MCTSNode]], Dict, List[int]]:
         with torch.no_grad():
             probs = model(x, edge_index, **kwargs).softmax(dim=-1)
-
         if saved_MCTSInfo_list is not None:
-            # TODO : donald, should check why there are two cases
             results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
         if self.model_config.task_level == ModelTaskLevel.graph:
+            value_func = GnnNetsGC2valueFunc(model, target_class=label)
             if saved_MCTSInfo_list is None:
-                value_func = GnnNetsGC2valueFunc(model, target_class=label, **kwargs)
-                payoff_func = self.get_reward_func(value_func)
                 self.mcts_state_map: MCTS = self.get_mcts_class(
-                    x, edge_index, score_func=payoff_func
+                    x, edge_index, score_func=self.get_reward_func(value_func)
                 )
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
-            value_func = GnnNetsGC2valueFunc(model, target_class=label)
         elif self.model_config.task_level == ModelTaskLevel.node:
             if node_idx is None:
                 raise ValueError("For Node task, node_idx must be provided to explain")
             label = label[node_idx]
-
             self.mcts_state_map: MCTS = self.get_mcts_class(
                 x, edge_index, node_idx=node_idx
             )
@@ -238,10 +236,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             )
 
             if saved_MCTSInfo_list is None:
-                payoff_func = self.get_reward_func(
+                self.mcts_state_map.score_func = self.get_reward_func(
                     value_func, node_idx=self.mcts_state_map.new_node_idx
                 )
-                self.mcts_state_map.score_func = payoff_func
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
         else:
             raise ValueError(
@@ -250,21 +247,14 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         tree_node_x: MCTSNode = find_closest_node_result(results, max_nodes=max_nodes)
 
-        # keep the important structure
-        masked_node_list = [
-            node
-            for node in range(tree_node_x.data.x.shape[0])
-            if node in tree_node_x.coalition
-        ]
-
-        # remove the important structure, for node_classification,
-        # remain the node_idx when remove the important structure
-        maskout_node_list = [
-            node
-            for node in range(tree_node_x.data.x.shape[0])
-            if node not in tree_node_x.coalition
-        ]
-        if not self.model_config.task_level == ModelTaskLevel.graph:
+        masked_node_list = tree_node_x.coalition
+        maskout_node_list = list(
+            set(range(tree_node_x.data.x.shape[0])).difference(tree_node_x.coalition)
+        )
+        if (
+            self.model_config.task_level == ModelTaskLevel.node
+            and self.new_node_idx not in masked_node_list
+        ):
             maskout_node_list += [self.new_node_idx]
 
         masked_score = gnn_score(
@@ -287,7 +277,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             subgraph_building_method=self.subgraph_building_method,
         )
 
-        results = self.write_from_MCTSNode_list(results)
+        results = self.extract_MCTSInfo_list(results)
         node_idx = 0 if node_idx is None else node_idx
         related_pred = {
             "masked": masked_score,
@@ -295,6 +285,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             "origin": probs[node_idx, label].item(),
             "sparsity": sparsity_score,
         }
+        if self.mcts_state_map.subset is not None:
+            masked_node_list = np.array(self.mcts_state_map.subset)[
+                masked_node_list
+            ].tolist()
 
         return results, related_pred, masked_node_list
 
@@ -338,13 +332,11 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         self.num_hops = self.update_num_hops(model, self.num_hops)
 
-        if self.save:
-            file_path = join(self.save_dir, f"{self.filename}.pt")
-            # TODO: @donald
-            # in my understanding, there is no additional process when loading the saved results
-            if isfile(file_path):
-                logging.info(f"Loading saved results from {file_path}")
-                saved_results = torch.load(file_path)
+        if self.save and isfile(
+            file_path := join(self.save_dir, f"{self.filename}.pt")
+        ):
+            logging.info(f"Loading saved results from {file_path}")
+            saved_results = torch.load(file_path)
         else:
             saved_results = None
 
@@ -377,13 +369,12 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             x,
             edge_index,
             node_mask=node_mask,
-            edge_mask=edge_mask.unsqueeze(1).float(),
+            edge_mask=edge_mask,
             results=results,
             related_pred=related_pred,
             masked_node_list=masked_node_list,
             explained_edge_list=subgraph_edge_index,
         )
-
         return explanation
 
     def supports(self) -> bool:
@@ -392,5 +383,4 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
-
         return True

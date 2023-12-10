@@ -1,5 +1,4 @@
 import math
-from collections import Counter
 from functools import partial
 from typing import Callable, List, Optional
 
@@ -16,9 +15,11 @@ from torch_geometric.utils import (
     subgraph,
 )
 
+from .subgraphX_utils import connected_components
+
 
 def compute_scores(score_func: Callable, children: List) -> List[float]:
-    """TODO: @donald Complete Docstrings for Readability
+    """
     compute the scores for each child node given the score function
     Args:
         score_func (:obj:`Callable`): The reward function for tree node
@@ -138,6 +139,7 @@ class MCTS(object):
             x=X, edge_index=to_undirected(remove_self_loops(edge_index)[0])
         )
         self.new_node_idx = node_idx
+        self.subset = None
 
         # extract the sub-graph and change the node indices.
         if node_idx is not None:
@@ -155,9 +157,9 @@ class MCTS(object):
                 ),
             )
             self.new_node_idx = mapping.item()
+            self.subset = subset.tolist()
 
         self.num_nodes = self.graph.num_nodes
-
         self.root_coalition = list(range(self.num_nodes))
         self.MCTSNodeClass = partial(
             MCTSNode,
@@ -183,7 +185,7 @@ class MCTS(object):
         edge_index: torch.Tensor,
         num_hops: int,
     ):
-        num_nodes, num_edges = x.size(0), edge_index.size(1)
+        num_nodes = x.size(0)
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
             node_idx, num_hops, edge_index, relabel_nodes=True, num_nodes=num_nodes
         )
@@ -202,11 +204,16 @@ class MCTS(object):
                 self.graph.edge_index,
                 relabel_nodes=False,
             )
-            node_degree = degree(subgraph_edge_index[0], dtype=torch.long)
-            all_nodes = sorted(
-                list(range(len(node_degree))),
-                key=lambda x: node_degree[x],
-                reverse=self.high2low,
+            node_degree = degree(subgraph_edge_index[0], dtype=torch.long).tolist()
+            all_nodes = list(
+                filter(
+                    lambda x: node_degree[x] > 0,
+                    sorted(
+                        list(range(len(node_degree))),
+                        key=lambda x: node_degree[x],
+                        reverse=self.high2low,
+                    ),
+                )
             )
 
             if self.new_node_idx is not None:
@@ -219,44 +226,44 @@ class MCTS(object):
                 # here we check the resulting sub-graphs and
                 # only keep the largest one
                 subgraph_coalition = [node for node in all_nodes if node != curr_node]
-
-                subgraphs = [
-                    self.graph.subgraph(c)
-                    for c in nx.connected_components(
-                        self.graph.subgraph(subgraph_coalition)
+                subgraphs = list(
+                    connected_components(
+                        subgraph(
+                            subgraph_coalition,
+                            self.graph.edge_index,
+                            relabel_nodes=False,
+                        )[0],
+                        subgraph_coalition,
                     )
-                ]
-
-                if self.new_node_idx:
+                )
+                if self.new_node_idx is not None:
                     for sub in subgraphs:
-                        if self.new_node_idx in list(sub.nodes()):
+                        if self.new_node_idx in sub:
                             main_sub = sub
                 else:
                     main_sub = subgraphs[0]
-
                     for sub in subgraphs:
-                        if sub.number_of_nodes() > main_sub.number_of_nodes():
+                        if len(sub) > len(main_sub):
                             main_sub = sub
-
-                new_graph_coalition = sorted(list(main_sub.nodes()))
+                new_graph_coalition = sorted(main_sub.tolist())
 
                 # check the state map and merge the same sub-graph
                 find_same = False
                 for old_graph_node in self.state_map.values():
-                    if Counter(old_graph_node.coalition) == Counter(
-                        new_graph_coalition
-                    ):
+                    if sorted(old_graph_node.coalition) == sorted(new_graph_coalition):
                         new_node = old_graph_node
                         find_same = True
+                        break
 
                 if not find_same:
-                    new_node = self.MCTSNodeClass(new_graph_coalition)
+                    new_node = self.MCTSNodeClass(coalition=new_graph_coalition)
                     self.state_map[str(new_graph_coalition)] = new_node
 
                 find_same_child = False
                 for cur_child in tree_node.children:
-                    if Counter(cur_child.coalition) == Counter(new_graph_coalition):
+                    if sorted(cur_child.coalition) == sorted(new_graph_coalition):
                         find_same_child = True
+                        break
 
                 if not find_same_child:
                     tree_node.children.append(new_node)
@@ -274,7 +281,7 @@ class MCTS(object):
 
     def mcts(self, verbose=True) -> List[MCTSNode]:
         if verbose:
-            print(f"The nodes in graph is {self.graph.num_nodes}")
+            print(f"The nodes in graph is {self.graph}")
         for rollout_idx in range(self.n_rollout):
             self.mcts_rollout(self.root)
             if verbose:

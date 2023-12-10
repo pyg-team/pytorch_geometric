@@ -6,7 +6,7 @@ The functions in the file have been ported over from,
 import copy
 from functools import partial
 from itertools import combinations
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Tuple, Union, Optional
 
 import numpy as np
 import torch
@@ -15,28 +15,47 @@ from scipy.special import comb
 
 from torch_geometric.data import Batch, Data, Dataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import to_networkx
+from torch_geometric.utils import to_networkx, k_hop_subgraph
 
 
-def find_closest_node_result(results, max_nodes):
+def find_closest_node_result(results, max_nodes: int):
     """Return the highest reward tree_node
     with its subgraph is smaller than max_nodes
-    
+
     Args:
         results (list): list of TreeNode
         max_nodes (int): maximum number of nodes in the subgraph
-        
+
     Returns:
         result_node (TreeNode): the highest reward TreeNode
     """
-    results = sorted(results, key=lambda x: len(x.coalition))
+    return sorted(
+        filter(lambda x: len(x.coalition) <= max_nodes, results),
+        key=lambda x: x.P,
+        reverse=True,
+    )[0]
 
-    result_node = results[0]
-    for result_idx in range(len(results)):
-        x = results[result_idx]
-        if len(x.coalition) <= max_nodes and x.P > result_node.P:
-            result_node = x
-    return result_node
+
+def connected_components(
+    edge_index: torch.Tensor, nodes: Optional[List[int]] = None
+) -> List[torch.Tensor]:
+    """Generate connected components from edge_index by using k_hop_subgraph"""
+
+    if nodes is None:
+        nodes = edge_index.unique().tolist()
+
+    seen = set()
+    unseen = set(nodes)
+    while unseen:
+        node = unseen.pop()
+        if node not in edge_index:
+            seen.add(node)
+            yield torch.tensor([node])
+            continue
+        component = k_hop_subgraph([node], len(nodes), edge_index)[0]
+        seen.update(component.tolist())
+        unseen.difference_update(component.tolist())
+        yield component
 
 
 class MarginalSubgraphDataset(Dataset):
@@ -108,21 +127,21 @@ def l_shapley(
     subgraph_building_method="zero_filling",
 ):
     """shapley value where players are local neighbor nodes"""
-    graph = to_networkx(data)
-    num_nodes = graph.number_of_nodes()
+    # graph = to_networkx(data)
+    # num_nodes = graph.number_of_nodes()
+    graph = data
+    num_nodes = graph.num_nodes
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
 
-    local_region = copy.copy(coalition)
-    for k in range(local_radius - 1):
-        k_neiborhoood = []
-        for node in local_region:
-            k_neiborhoood += list(graph.neighbors(node))
-        local_region += k_neiborhoood
-        local_region = list(set(local_region))
-
+    local_region = list(
+        set(
+            coalition
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+        )
+    )
     set_exclude_masks = []
     set_include_masks = []
-    nodes_around = [node for node in local_region if node not in coalition]
+    nodes_around = list(set(local_region) - set(coalition))
     num_nodes_around = len(nodes_around)
 
     for subset_len in range(0, num_nodes_around + 1):
@@ -130,17 +149,17 @@ def l_shapley(
         for node_exclude_subset in node_exclude_subsets:
             set_exclude_mask = np.ones(num_nodes)
             set_exclude_mask[local_region] = 0.0
+
             if node_exclude_subset:
                 set_exclude_mask[list(node_exclude_subset)] = 1.0
             set_include_mask = set_exclude_mask.copy()
             set_include_mask[coalition] = 1.0
-
             set_exclude_masks.append(set_exclude_mask)
             set_include_masks.append(set_include_mask)
 
     exclude_mask = np.stack(set_exclude_masks, axis=0)
     include_mask = np.stack(set_include_masks, axis=0)
-    num_players = len(nodes_around) + 1
+    num_players = num_nodes_around + 1
     num_player_in_set = (
         num_players - 1 + len(coalition) - (1 - exclude_mask).sum(axis=1)
     )
@@ -205,25 +224,35 @@ def mc_l_shapley(
     sample_num=1000,
 ) -> float:
     """monte carlo sampling approximation of the l_shapley value"""
-    graph = to_networkx(data)
-    num_nodes = graph.number_of_nodes()
+    # graph = to_networkx(data)
+    # num_nodes = graph.number_of_nodes()
+    # subgraph_build_func = get_graph_build_func(subgraph_building_method)
+    # local_region = copy.copy(coalition)
+    # for k in range(local_radius - 1):
+    #     k_neiborhoood = []
+    #     for node in local_region:
+    #         k_neiborhoood += list(graph.neighbors(node))
+    #     local_region += k_neiborhoood
+    #     local_region = list(set(local_region))
+
+    graph = data
+    num_nodes = graph.num_nodes
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
-
-    local_region = copy.copy(coalition)
-    for k in range(local_radius - 1):
-        k_neiborhoood = []
-        for node in local_region:
-            k_neiborhoood += list(graph.neighbors(node))
-        local_region += k_neiborhoood
-        local_region = list(set(local_region))
-
+    local_region = list(
+        set(
+            coalition
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+        )
+    )
     coalition_placeholder = num_nodes
     set_exclude_masks = []
     set_include_masks = []
-    for example_idx in range(sample_num):
-        subset_nodes_from = [node for node in local_region if node not in coalition]
-        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
+
+    for _ in range(sample_num):
+        subset_nodes_from = list(set(local_region) - set(coalition))
+        random_nodes_permutation = np.random.permutation(
+            subset_nodes_from + [coalition_placeholder]
+        )
         split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
@@ -405,6 +434,7 @@ def NC_mc_l_shapley(
 
 
 def sparsity(coalition: list, data: Data, subgraph_building_method="zero_filling"):
+    """calculate the sparsity of the subgraph"""
     if subgraph_building_method == "zero_filling":
         return 1.0 - len(coalition) / data.num_nodes
 
@@ -433,8 +463,6 @@ def GnnNetsNC2valueFunc(
     gnnNets_NC, node_idx, target_class
 ) -> Callable[[Data], torch.Tensor]:
     """Value Function for Node Classification (NC) Task"""
-    # TODO: @Donald
-    # should it be batched?
 
     def value_func(data: Data) -> torch.Tensor:
         with torch.no_grad():
