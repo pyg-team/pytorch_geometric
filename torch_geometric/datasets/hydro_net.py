@@ -146,7 +146,7 @@ class HydroNet(InMemoryDataset):
 
         clusters = [clusters] if isinstance(clusters, int) else clusters
 
-        def is_valid_cluster(x):
+        def is_valid_cluster(x) -> bool:
             return isinstance(x, int) and x >= 3 and x <= 30
 
         if not all([is_valid_cluster(x) for x in clusters]):
@@ -192,7 +192,7 @@ class HydroNet(InMemoryDataset):
         return self._dataset[idx]
 
 
-def get_num_clusters(filepath) -> int:
+def get_num_clusters(filepath: str) -> int:
     name = osp.basename(filepath)
     return int(name[1:name.find('_')])
 
@@ -200,7 +200,7 @@ def get_num_clusters(filepath) -> int:
 def read_energy(file: str, chunk_size: int) -> np.ndarray:
     import pandas as pd
 
-    def skipatoms(i: int):
+    def skipatoms(i: int) -> bool:
         return (i - 1) % chunk_size != 0
 
     if chunk_size - 2 == 11 * 3:
@@ -219,7 +219,7 @@ def read_energy(file: str, chunk_size: int) -> np.ndarray:
 def read_atoms(file: str, chunk_size: int) -> Tuple[np.ndarray, np.ndarray]:
     import pandas as pd
 
-    def skipheaders(i: int):
+    def skipheaders(i: int) -> bool:
         return i % chunk_size == 0 or (i - 1) % chunk_size == 0
 
     dtypes = {

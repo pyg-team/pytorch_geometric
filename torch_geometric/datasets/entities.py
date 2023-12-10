@@ -152,11 +152,12 @@ class Entities(InMemoryDataset):
         R = 2 * len(relations)
 
         relations_dict = {rel: i for i, rel in enumerate(relations)}
-        nodes_dict = {node: i for i, node in enumerate(nodes)}
+        nodes_dict = {str(node): i for i, node in enumerate(nodes)}
 
         edges = []
         for s, p, o in g.triples((None, None, None)):
-            src, dst, rel = nodes_dict[s], nodes_dict[o], relations_dict[p]
+            src, dst = nodes_dict[str(s)], nodes_dict[str(o)]
+            rel = relations_dict[p]
             edges.append([src, dst, 2 * rel])
             edges.append([dst, src, 2 * rel + 1])
 
@@ -182,7 +183,6 @@ class Entities(InMemoryDataset):
         labels_df = pd.read_csv(task_file, sep='\t')
         labels_set = set(labels_df[label_header].values.tolist())
         labels_dict = {lab: i for i, lab in enumerate(list(labels_set))}
-        nodes_dict = {str(key): val for key, val in nodes_dict.items()}
 
         train_labels_df = pd.read_csv(train_file, sep='\t')
         train_indices, train_labels = [], []
