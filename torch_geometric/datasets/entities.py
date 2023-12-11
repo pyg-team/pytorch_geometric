@@ -222,6 +222,5 @@ class hide_stdout:
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)
 
-
     def __exit__(self, *args: Any) -> None:
         logging.getLogger().setLevel(self.level)
