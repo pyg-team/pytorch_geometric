@@ -256,7 +256,7 @@ def visualize(model, train_data, val_data, real_recs, epoch, users_list=[338]):
                                                          'movie'].edge_index)
     displayed_users = 0
     title_text = "Displaying Train and Pred Movies for users: "
-    
+
     for user_i, (val_user, gt) in enumerate(val_pos_items.items()):
         if val_user not in users_list:
             continue
@@ -275,7 +275,8 @@ def visualize(model, train_data, val_data, real_recs, epoch, users_list=[338]):
                             'color': '0.5',
                             'shrinkA': 5,
                             'shrinkB': 5,
-                            'connectionstyle': "angle,angleA=-90,angleB=180,rad=0"
+                            'connectionstyle':
+                            "angle,angleA=-90,angleB=180,rad=0"
                         })
             except KeyError:
                 pass
@@ -314,7 +315,6 @@ def visualize(model, train_data, val_data, real_recs, epoch, users_list=[338]):
             title_text += str(val_user) + ' '
         except KeyError:
             pass
-
 
     plt.legend(loc='upper left', ncol=3, fontsize=10)
     plt.title(title_text)
