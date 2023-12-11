@@ -171,6 +171,7 @@ class RLGenExplainer(XGNNExplainer):
         self.validity_args = validity_args
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
+        
         graph_state_batch = create_single_batch([graph_state,])
         
         # Move graph batch to the same device as your model
@@ -178,18 +179,35 @@ class RLGenExplainer(XGNNExplainer):
 
         gnn_output = pre_trained_gnn(graph_state_batch)
         probability_of_target_class = gnn_output[0][target_class]
+
+        # print("target_class", target_class)
+        # print("probability_of_target_class", probability_of_target_class)
+
+        # print("debug: reward_tf", probability_of_target_class - 1 / num_classes)
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
+        
         final_rewards = []
         for _ in range(num_rollouts):
+            # make copy of intermediate graph state
+            intermediate_graph_state_copy = Data(x=intermediate_graph_state.x.clone(), 
+                                                 edge_index=intermediate_graph_state.edge_index.clone(), 
+                                                 node_type=intermediate_graph_state.node_type.copy())
             # Generate a final graph from the intermediate graph state
-            _, final_graph = self.graph_generator(intermediate_graph_state, self.candidate_set)
+            _, final_graph = self.graph_generator(intermediate_graph_state_copy, self.candidate_set)
             # Evaluate the final graph
             reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
             final_rewards.append(reward)
+
+            # delete intermediate graph state copy
+            del intermediate_graph_state_copy
+
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
+        
+        
+        # print("debug: rollout_reward", average_final_reward)
         return average_final_reward
 
     # def evaluate_graph_validity(self, graph_state):
@@ -210,8 +228,9 @@ class RLGenExplainer(XGNNExplainer):
         # Check if any node degree exceeds valency
         node_type_valencies = torch.tensor([self.validity_args[type_] for type_ in graph_state.node_type])
         if torch.any(degrees > node_type_valencies):
+            # print("debug: evaluate_graph_validity", -1)
             return -1
-
+        # print("debug: evaluate_graph_validity", 0)
         return 0
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
@@ -222,6 +241,7 @@ class RLGenExplainer(XGNNExplainer):
         # defined based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
+        # print("debug: calculate_reward", reward)
         return reward
 
     # Training function
