@@ -157,7 +157,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 ret_list.append(single_label_ret_list)
         return ret_list
 
-    def get_reward_func(self, value_func, node_idx=None) -> Callable[[...], float]:
+    def get_reward_func(self, value_func, node_idx=None) -> Callable:
         """Runs `__call__` on the `reward_method`"""
         if self.model_config.task_level == ModelTaskLevel.graph:
             node_idx = None

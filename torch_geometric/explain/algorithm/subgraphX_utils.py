@@ -264,7 +264,7 @@ def mc_l_shapley(
 
 def get_graph_build_func(
     build_method: str,
-) -> Callable[[...], Tuple[torch.Tensor, torch.Tensor]]:
+) -> Callable:
     """Return the subgraph building function"""
     if build_method.lower() == "zero_filling":
         return graph_build_zero_filling
@@ -300,7 +300,7 @@ def graph_build_split(
 def gnn_score(
     coalition: list,
     data: Data,
-    value_func: Callable[[Data], torch.Tensor],
+    value_func: Callable,
     subgraph_building_method: str = "zero_filling",
 ) -> float:
     """the value of subgraph with selected nodes"""
@@ -321,7 +321,7 @@ def reward_func(
     local_radius=4,
     sample_num=100,
     subgraph_building_method="zero_filling",
-) -> Callable[[...], float]:
+) -> Callable:
     if reward_method.lower() == "gnn_score":
         return partial(
             gnn_score,
@@ -444,9 +444,7 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
     return value_func
 
 
-def GnnNetsNC2valueFunc(
-    gnnNets_NC, node_idx, target_class
-) -> Callable[[Data], torch.Tensor]:
+def GnnNetsNC2valueFunc(gnnNets_NC, node_idx, target_class) -> Callable:
     """Value Function for Node Classification (NC) Task"""
 
     def value_func(data: Data) -> torch.Tensor:
