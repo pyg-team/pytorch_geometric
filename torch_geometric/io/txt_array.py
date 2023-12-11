@@ -17,7 +17,7 @@ def parse_txt_array(
     to_number = float if empty.is_floating_point() else int
 
     return torch.tensor([[to_number(x) for x in line.split(sep)[start:end]]
-                         for line in src])
+                         for line in src], dtype=dtype).squeeze()
 
 
 def read_txt_array(
