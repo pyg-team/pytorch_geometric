@@ -153,7 +153,7 @@ def get_gpu_memory_from_ipex(
     max_allocated = byte_to_megabyte(max_allocated, digits)
     max_reserved = byte_to_megabyte(max_reserved, digits)
     max_active = byte_to_megabyte(max_active, digits)
-    ipex.xpu.reset_peak_memory_stats()
+    ipex.xpu.reset_peak_memory_stats(device)
     return max_allocated, max_reserved, max_active
 
 
