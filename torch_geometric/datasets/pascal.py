@@ -7,6 +7,7 @@ from xml.dom import minidom
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch.utils.data import DataLoader
 
 from torch_geometric.data import (
@@ -147,7 +148,7 @@ class PascalVOCKeypoints(InMemoryDataset):
 
         vgg16_outputs = []
 
-        def hook(module, x, y):
+        def hook(module: torch.nn.Module, x: Tensor, y: Tensor) -> None:
             vgg16_outputs.append(y)
 
         vgg16 = models.vgg16(pretrained=True).to(self.device)
