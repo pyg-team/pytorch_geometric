@@ -2,7 +2,7 @@ import inspect
 import os
 import sys
 import warnings
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -83,7 +83,7 @@ except Exception as e:
     WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
     class TorchCluster:
-        def __getattr__(self, key: str):
+        def __getattr__(self, key: str) -> Any:
             raise ImportError(f"'{key}' requires 'torch-cluster'")
 
     torch_cluster = TorchCluster()
@@ -279,27 +279,26 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
-    def __new__(cls, *args):
+    def __new__(cls, *args: Any) -> 'EdgeTypeStr':
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
-            args = tuple(args[0])
+            arg = tuple(args[0])
 
         if len(args) == 1 and isinstance(args[0], str):
-            args = args[0]  # An edge type string was passed.
+            arg = args[0]  # An edge type string was passed.
 
         elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
             # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
-            args = (args[0], DEFAULT_REL, args[1])
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join((args[0], DEFAULT_REL, args[1]))
 
         elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
             # A `(src, rel, dst)` edge type was passed:
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join(args)
 
         else:
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
-        return str.__new__(cls, args)
+        return str.__new__(cls, arg)
 
     def to_tuple(self) -> EdgeType:
         r"""Returns the original edge type."""
