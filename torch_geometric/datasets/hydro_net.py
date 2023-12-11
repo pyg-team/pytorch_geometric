@@ -146,7 +146,7 @@ class HydroNet(InMemoryDataset):
 
         clusters = [clusters] if isinstance(clusters, int) else clusters
 
-        def is_valid_cluster(x) -> bool:
+        def is_valid_cluster(x: Union[int, List[int]]) -> bool:
             return isinstance(x, int) and x >= 3 and x <= 30
 
         if not all([is_valid_cluster(x) for x in clusters]):

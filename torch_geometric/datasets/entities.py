@@ -2,7 +2,7 @@ import logging
 import os
 import os.path as osp
 from collections import Counter
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 import torch
 
@@ -222,5 +222,5 @@ class hide_stdout:
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         logging.getLogger().setLevel(self.level)
