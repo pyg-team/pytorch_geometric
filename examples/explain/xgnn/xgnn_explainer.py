@@ -12,11 +12,6 @@ from torch_geometric.datasets import TUDataset
 
 
 import random
-# # TODO: Get our acyclic dataset
-# dataset = 'Cora'
-# path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-# dataset = Planetoid(path, dataset)
-# data = dataset[0]
 from xgnn_model import GCN_Graph
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -109,15 +104,15 @@ class GraphGenerator(torch.nn.Module):
         candidate_features = torch.stack(list(candidate_set.values()))
         node_features = torch.cat((node_features_graph, candidate_features), dim=0).float()
         
-        # run through GCN layers
+        # compute node encodings with GCN layers
+        node_encodings = node_features
         for gcn_layer in self.gcn_layers:
-            node_features = gcn_layer(node_features, graph_state.edge_index)
+            node_encodings = gcn_layer(node_encodings, graph_state.edge_index)
         # get start node probabilities and mask out candidates
-        start_node_probs = self.mlp_start_node(node_features)
+        start_node_probs = self.mlp_start_node(node_encodings)
         
         candidate_set_mask = torch.ones_like(start_node_probs)
-        candidate_set_indices = torch.arange(node_features_graph.shape[0], node_features.shape[0])
-        # set to minimum possible value
+        candidate_set_indices = torch.arange(node_features_graph.shape[0], node_encodings.shape[0])
         candidate_set_mask[candidate_set_indices] = 0
         start_node_probs = start_node_probs * candidate_set_mask
         # change 0 probabilities to very small number
@@ -131,7 +126,7 @@ class GraphGenerator(torch.nn.Module):
         
         # get end node probabilities and mask out start node
         # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
-        end_node_probs = self.mlp_end_node(node_features)
+        end_node_probs = self.mlp_end_node(node_encodings)
         start_node_mask = torch.ones_like(end_node_probs)
         start_node_mask[start_node] = 0
         end_node_probs = end_node_probs * start_node_mask
@@ -142,29 +137,32 @@ class GraphGenerator(torch.nn.Module):
         
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
-        if end_node >= graph_state.x.shape[0]: 
+        num_nodes_graph = graph_state.x.shape[0]
+        if end_node >= num_nodes_graph: 
             # add new node features to graph state
-            graph_state.x = torch.cat((graph_state.x, 
-                                       list(candidate_set.values())[end_node - graph_state.x.shape[0]].unsqueeze(0)), dim=0).float() # TODO: make prettier
-            graph_state.node_type += [list(candidate_set.keys())[end_node - graph_state.x.shape[0]],] # TODO: make prettier
-            new_edge = torch.tensor([[start_node], [graph_state.x.shape[0] - 1]])
+            # graph_state.x = torch.cat((graph_state.x, node_features[end_node].unsqueeze(0).float()), dim=0).float() # TODO: make prettier
+            graph_state.x = torch.cat([graph_state.x, node_features[end_node].unsqueeze(0).float()], dim=0)
+            # graph_state.node_type += [list(candidate_set.keys())[end_node - num_nodes_graph],] # TODO: make prettier
+            graph_state.node_type.append(list(candidate_set.keys())[end_node - num_nodes_graph])
+            new_edge = torch.tensor([[start_node], [num_nodes_graph]])
         else: 
             new_edge = torch.tensor([[start_node], [end_node]])
         graph_state.edge_index = torch.cat((graph_state.edge_index, new_edge), dim=1)
         
         # one hot encoding of start and end node
-        start_node_one_hot = torch.zeros_like(start_node_probs)
-        start_node_one_hot[start_node] = 1
-        end_node_one_hot = torch.zeros_like(end_node_probs)
-        end_node_one_hot[end_node] = 1
+        start_node_one_hot = torch.eye(start_node_probs.shape[0])[start_node]
+        end_node_one_hot = torch.eye(end_node_probs.shape[0])[end_node]
 
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
+
+
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self, candidate_set, validity_args):
         super(RLGenExplainer, self).__init__()
         self.candidate_set = candidate_set
-        self.graph_generator = GraphGenerator(len(list(self.candidate_set.values())[0]),
+        num_features = len(next(iter(self.candidate_set.values())))
+        self.graph_generator = GraphGenerator(num_features,
                                               len(self.candidate_set)) # TODO: get number of features out in a prettier way
         self.max_steps = 10
         self.lambda_1 = 1
@@ -208,14 +206,11 @@ class RLGenExplainer(XGNNExplainer):
 
     def evaluate_graph_validity(self, graph_state):
         # For mutag, node degrees cannot exceed valency
-        degree = torch.zeros(graph_state.num_nodes, dtype=torch.long)
-        for (u, v) in zip(graph_state.edge_index[0], graph_state.edge_index[1]):
-            degree[u] += 1
-            degree[v] += 1 # TODO: please fix this it is uglier than pepe the frog
-          
-        for node_idx in range(graph_state.num_nodes):
-            if degree[node_idx] > self.validity_args[graph_state.node_type[node_idx]]:
-                return -1
+        degrees = torch.bincount(graph_state.edge_index.flatten(), minlength=graph_state.num_nodes)
+        # Check if any node degree exceeds valency
+        node_type_valencies = torch.tensor([self.validity_args[type_] for type_ in graph_state.node_type])
+        if torch.any(degrees > node_type_valencies):
+            return -1
 
         return 0
         
