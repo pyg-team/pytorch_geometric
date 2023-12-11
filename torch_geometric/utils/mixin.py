@@ -1,11 +1,11 @@
-from typing import Iterator, TypeVar
+from typing import Any, Iterator, TypeVar
 
 T = TypeVar('T')
 
 
 class CastMixin:
     @classmethod
-    def cast(cls: T, *args, **kwargs) -> T:
+    def cast(cls: T, *args: Any, **kwargs: Any) -> T:
         if len(args) == 1 and len(kwargs) == 0:
             elem = args[0]
             if elem is None:
