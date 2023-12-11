@@ -10,6 +10,7 @@ from typing import (
     Optional,
     Set,
     Tuple,
+    Type,
     Union,
     get_args,
     overload,
@@ -51,10 +52,10 @@ class SortOrder(Enum):
     COL = 'col'
 
 
-def implements(torch_function: Callable):
+def implements(torch_function: Callable) -> Callable:
     r"""Registers a :pytorch:`PyTorch` function override."""
     @functools.wraps(torch_function)
-    def decorator(my_function: Callable):
+    def decorator(my_function: Callable) -> Callable:
         HANDLED_FUNCTIONS[torch_function] = my_function
         return my_function
 
@@ -69,14 +70,14 @@ def set_tuple_item(values: Tuple, dim: int, value: Any) -> Tuple:
     return values[:dim] + (value, ) + values[dim + 1:]
 
 
-def assert_valid_dtype(tensor: Tensor):
+def assert_valid_dtype(tensor: Tensor) -> None:
     if tensor.dtype not in SUPPORTED_DTYPES:
         raise ValueError(f"'EdgeIndex' holds an unsupported data type "
                          f"(got '{tensor.dtype}', but expected one of "
                          f"{SUPPORTED_DTYPES})")
 
 
-def assert_two_dimensional(tensor: Tensor):
+def assert_two_dimensional(tensor: Tensor) -> None:
     if tensor.dim() != 2:
         raise ValueError(f"'EdgeIndex' needs to be two-dimensional "
                          f"(got {tensor.dim()} dimensions)")
@@ -85,21 +86,21 @@ def assert_two_dimensional(tensor: Tensor):
                          f"[2, *] (got {list(tensor.size())})")
 
 
-def assert_contiguous(tensor: Tensor):
+def assert_contiguous(tensor: Tensor) -> None:
     if not tensor.is_contiguous():
         raise ValueError("'EdgeIndex' needs to be contiguous. Please call "
                          "`edge_index.contiguous()` before proceeding.")
 
 
-def assert_symmetric(size: Tuple[Optional[int], Optional[int]]):
+def assert_symmetric(size: Tuple[Optional[int], Optional[int]]) -> None:
     if size[0] is not None and size[1] is not None and size[0] != size[1]:
         raise ValueError(f"'EdgeIndex' is undirected but received a "
                          f"non-symmetric size (got {list(size)})")
 
 
-def assert_sorted(func):
+def assert_sorted(func: Callable) -> Callable:
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         if not args[0].is_sorted:
             cls_name = args[0].__class__.__name__
             raise ValueError(
@@ -203,14 +204,14 @@ class EdgeIndex(Tensor):
     _value: Optional[Tensor] = None
 
     def __new__(
-        cls,
-        data,
-        *args,
+        cls: Type,
+        data: Any,
+        *args: Any,
         sparse_size: Tuple[Optional[int], Optional[int]] = (None, None),
         sort_order: Optional[Union[str, SortOrder]] = None,
         is_undirected: bool = False,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> 'EdgeIndex':
         if not isinstance(data, Tensor):
             data = torch.tensor(data, *args, **kwargs)
         elif len(args) > 0:
@@ -829,7 +830,13 @@ class EdgeIndex(Tensor):
         return matmul(self, other, input_value, other_value, reduce, transpose)
 
     @classmethod
-    def __torch_function__(cls, func, types, args=(), kwargs=None):
+    def __torch_function__(
+        cls: Type,
+        func: Callable,
+        types: Tuple[Type, ...],
+        args: Tuple[Any, ...] = (),
+        kwargs: Optional[Dict[str, Any]] = None,
+    ) -> Any:
         # `EdgeIndex` should be treated as a regular PyTorch tensor for all
         # standard PyTorch functionalities. However,
         # * some of its metadata can be transferred to new functions, e.g.,
@@ -845,15 +852,15 @@ class EdgeIndex(Tensor):
             return HANDLED_FUNCTIONS[func](*args, **(kwargs or {}))
 
         # For all other PyTorch functions, we return a vanilla PyTorch tensor.
-        types = tuple(torch.Tensor if issubclass(t, cls) else t for t in types)
-        return Tensor.__torch_function__(func, types, args, kwargs)
+        _types = tuple(Tensor if issubclass(t, cls) else t for t in types)
+        return Tensor.__torch_function__(func, _types, args, kwargs)
 
 
 def apply_(
     tensor: EdgeIndex,
     fn: Callable,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ) -> EdgeIndex:
 
     out = Tensor.__torch_function__(fn, (Tensor, ), (tensor, ) + args, kwargs)
@@ -891,7 +898,11 @@ def clone(tensor: EdgeIndex) -> EdgeIndex:
 
 
 @implements(Tensor.to)
-def to(tensor: EdgeIndex, *args, **kwargs) -> Union[EdgeIndex, Tensor]:
+def to(
+    tensor: EdgeIndex,
+    *args: Any,
+    **kwargs: Any,
+) -> Union[EdgeIndex, Tensor]:
     out = apply_(tensor, Tensor.to, *args, **kwargs)
     return out if out.dtype in SUPPORTED_DTYPES else out.as_tensor()
 
@@ -902,17 +913,21 @@ def _int(tensor: EdgeIndex) -> EdgeIndex:
 
 
 @implements(Tensor.long)
-def long(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+def long(tensor: EdgeIndex, *args: Any, **kwargs: Any) -> EdgeIndex:
     return to(tensor, torch.int64)
 
 
 @implements(Tensor.cpu)
-def cpu(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:
+def cpu(tensor: EdgeIndex, *args: Any, **kwargs: Any) -> EdgeIndex:
     return apply_(tensor, Tensor.cpu, *args, **kwargs)
 
 
 @implements(Tensor.cuda)
-def cuda(tensor: EdgeIndex, *args, **kwargs) -> EdgeIndex:  # pragma: no cover
+def cuda(  # pragma: no cover
+    tensor: EdgeIndex,
+    *args: Any,
+    **kwargs: Any,
+) -> EdgeIndex:
     return apply_(tensor, Tensor.cuda, *args, **kwargs)
 
 
@@ -1145,7 +1160,7 @@ def _torch_sparse_spmm(
 class _TorchSPMM(torch.autograd.Function):
     @staticmethod
     def forward(
-        ctx,
+        ctx: Any,
         input: EdgeIndex,
         other: Tensor,
         value: Optional[Tensor] = None,
@@ -1177,7 +1192,7 @@ class _TorchSPMM(torch.autograd.Function):
 
     @staticmethod
     def backward(
-        ctx,
+        ctx: Any,
         *grad_outputs: Any,
     ) -> Tuple[None, Optional[Tensor], None, None, None]:
 

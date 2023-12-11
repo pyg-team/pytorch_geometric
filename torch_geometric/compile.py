@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Callable, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import torch
 
@@ -34,8 +34,8 @@ def to_jittable(model: torch.nn.Module) -> torch.nn.Module:
 
 def compile(
     model: Optional[torch.nn.Module] = None,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ) -> Union[torch.nn.Module, Callable[[torch.nn.Module], torch.nn.Module]]:
     r"""Optimizes the given :pyg:`PyG` model/function via
     :meth:`torch.compile`.
