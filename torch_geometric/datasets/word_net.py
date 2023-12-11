@@ -190,9 +190,9 @@ class WordNet18RR(InMemoryDataset):
                 edge_types.append(
                     torch.tensor([self.edge2id[i] for i in _edge_type]))
 
-        src = torch.tensor(srcs)
-        dst = torch.tensor(dsts)
-        edge_type = torch.tensor(edge_types)
+        src = torch.cat(srcs, dim=0)
+        dst = torch.cat(dsts, dim=0)
+        edge_type = torch.cat(edge_types, dim=0)
 
         train_mask = torch.zeros(src.size(0), dtype=torch.bool)
         train_mask[:srcs[0].size(0)] = True

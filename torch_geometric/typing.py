@@ -282,7 +282,7 @@ class EdgeTypeStr(str):
     def __new__(cls, *args: Any) -> 'EdgeTypeStr':
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
-            arg = tuple(args[0])
+            args = tuple(args[0])
 
         if len(args) == 1 and isinstance(args[0], str):
             arg = args[0]  # An edge type string was passed.
