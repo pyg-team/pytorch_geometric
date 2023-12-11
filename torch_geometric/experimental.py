@@ -119,12 +119,13 @@ def disable_dynamic_shapes(required_args: List[str]) -> Callable:
             for required_arg in required_args:
                 index = required_args_pos[required_arg]
 
-                value: Optional[Any] = None  # type: ignore
+                value: Optional[Any] = None
                 if index < len(args):
                     value = args[index]
                 elif required_arg in kwargs:
                     value = kwargs[required_arg]
                 elif num_default_args > 0:
+                    assert spec.defaults is not None
                     value = spec.defaults[index - num_positional_args]
 
                 if value is None:
