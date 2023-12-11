@@ -82,4 +82,4 @@ class FakeHeteroDataset(InMemoryDataset):
         data['paper'].test_mask = torch.zeros(num_papers, dtype=torch.bool)
         data['paper'].test_mask[perm[80:100]] = True
 
-        self.data, self.slices = self.collate([data])  # type: ignore
+        self.data, self.slices = self.collate([data])

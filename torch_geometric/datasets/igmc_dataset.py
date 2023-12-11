@@ -41,7 +41,7 @@ class IGMCDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower().replace('-', '_')
         assert self.name in ['flixster', 'douban', 'yahoo_music']
 
@@ -65,7 +65,7 @@ class IGMCDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = f'{self.url}/{self.name}/training_test_dataset.mat'
         download_url(path, self.raw_dir)
 
@@ -80,7 +80,7 @@ class IGMCDataset(InMemoryDataset):
 
         return out
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         M = self.load_matlab_file(self.raw_paths[0], 'M')

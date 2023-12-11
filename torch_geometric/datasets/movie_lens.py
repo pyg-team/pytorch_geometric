@@ -44,7 +44,7 @@ class MovieLens(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         model_name: Optional[str] = 'all-MiniLM-L6-v2',
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.model_name = model_name
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
@@ -61,12 +61,12 @@ class MovieLens(InMemoryDataset):
     def processed_file_names(self) -> str:
         return f'data_{self.model_name}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
         from sentence_transformers import SentenceTransformer
 

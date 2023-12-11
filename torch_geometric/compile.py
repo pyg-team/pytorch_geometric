@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Callable, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import torch
 
@@ -34,8 +34,8 @@ def to_jittable(model: torch.nn.Module) -> torch.nn.Module:
 
 def compile(
     model: Optional[torch.nn.Module] = None,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ) -> Union[torch.nn.Module, Callable[[torch.nn.Module], torch.nn.Module]]:
     r"""Optimizes the given :pyg:`PyG` model/function via
     :meth:`torch.compile`.
@@ -101,7 +101,7 @@ def compile(
     # Do not generate device asserts which may slow down model execution:
     config = torch._inductor.config
     if torch_geometric.typing.WITH_PT22:
-        config.assert_indirect_indexing = False
+        config.assert_indirect_indexing = False  # type: ignore
     elif torch_geometric.typing.WITH_PT21:
         config.triton.assert_indirect_indexing = False
 
