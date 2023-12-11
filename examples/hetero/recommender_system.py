@@ -20,6 +20,7 @@ from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
 from torch_geometric.nn.metrics import LinkPredNDCG, LinkPredPrecision
 from torch_geometric.nn.pool import MIPSKNNIndex
+from torch_geometric.loader import NeighborLoader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--epochs', type=int, default=20,
@@ -171,7 +172,7 @@ def get_user_positive_items(edge_index):
     return user_pos_items
 
 
-def write_recs(real_recs, val_data, val_user_pos_items):
+def write_recs(real_recs, val_data):
     movie_path = osp.join(path, './raw/ml-latest-small/movies.csv')
 
     # load user and movie nodes
@@ -181,6 +182,10 @@ def write_recs(real_recs, val_data, val_user_pos_items):
         return df
 
     movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
+    
+    # Get the ground truth
+    val_user_pos_items = get_user_positive_items(val_data['user',
+                                                          'movie'].edge_index)
     with open('recommendations.txt', 'w') as f:
         for user in range(val_data['user'].num_nodes):
             try:
@@ -208,36 +213,19 @@ def get_embeddings(model, val_data):
     return embs['movie'], embs['user']
 
 
-def make_recommendations(model, train_data, val_data, k, write_to_file=False):
-
-    movie_embs, user_embs = get_embeddings(model, train_data)
-    mipsknn = MIPSKNNIndex(movie_embs)
-    knn_score, knn_index = mipsknn.search(user_embs, k, train_data['user', 'movie'].edge_index)
-
-    # Obtain the movies that each user has already
-    # watched. These movies need to be removed from
-    # recommendations
-    user_pos_items = get_user_positive_items(train_data['user',
-                                                        'movie'].edge_index)
-
-    # Get the recommendations for user; only those
-    # that the user is yet to watch
+def make_recommendations(model, inference_dataloader, k):
     real_recs = {}
-    for user in range(train_data['user'].num_nodes):
-        try:
-            real_recs[user] = list(
-                OrderedSet(knn_index[user].tolist()) -
-                OrderedSet(user_pos_items[user]))[:k]
-        except KeyError:
-            real_recs[user] = knn_index[user].tolist()[:k]
+    for i, batch in enumerate(inference_dataloader):
+        movie_embs, user_embs = get_embeddings(model, batch)
+        mipsknn = MIPSKNNIndex(movie_embs)
+        knn_score, knn_index_ = mipsknn.search(user_embs, k, batch['user', 'movie'].edge_index)
+        knn_index_translated =  batch['movie'].n_id[knn_index_[:][:]]
+    
+        # Get the recommendations for user; 
+        for i, user in enumerate(batch['user'].n_id.detach().numpy()):
+            rec = knn_index_translated[i,:].tolist()
+            real_recs[user] = rec[:k]
 
-    # Get the ground truth
-    val_user_pos_items = get_user_positive_items(val_data['user',
-                                                          'movie'].edge_index)
-
-    # Let's write out the recommendations into a file
-    if write_to_file:
-        write_recs(real_recs, val_data, val_user_pos_items)
 
     return real_recs
 
@@ -350,43 +338,63 @@ def train(train_dl):
     return float(loss)
 
 
-def compute_metrics(real_recs, val_data, k, desc):
+def compute_metrics(real_recs, inference_dataloader, k):
     # Convert real_recs from a list to tensor
     real_recs_list = []
     [real_recs_list.append(rec) for id, rec in real_recs.items()]
     rec_tensor = torch.tensor(real_recs_list)
 
-    node_id = val_data['user'].n_id
-
-    # Use torch_geometric.nn.metrics
-    metrics = {}
     precision = LinkPredPrecision(k)
-    precision.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
-    metrics['precision'] = precision.compute()
-
     ndcg = LinkPredNDCG(k)
-    ndcg.update(rec_tensor[node_id], val_data['user', 'movie'].edge_index)
+    
+    metrics = {}
+    for batch in inference_dataloader:
+        node_id = batch['user'].n_id
+        precision.update(rec_tensor[node_id], batch['user', 'movie'].edge_index)
+        ndcg.update(rec_tensor[node_id], batch['user', 'movie'].edge_index)
+    
+    metrics['precision'] = precision.compute()
     metrics['ndcg'] = ndcg.compute()
 
     return metrics
 
+eval_batch_size = 256
+
+train_node_dataloader = NeighborLoader(
+    train_data,
+    num_neighbors=[-1]*2,
+    input_nodes=('user', torch.arange(train_data['user'].num_nodes)),
+    shuffle=False,
+    batch_size=eval_batch_size,
+)
+val_node_dataloader = NeighborLoader(
+    val_data,
+    num_neighbors=[-1]*2,
+    input_nodes=('user', torch.arange(val_data['user'].num_nodes)),
+    shuffle=False,
+    batch_size=eval_batch_size,
+)
+test_node_dataloader = NeighborLoader(
+    test_data,
+    num_neighbors=[-1]*2,
+    input_nodes=('user', torch.arange(test_data['user'].num_nodes)),
+    shuffle=False,
+    batch_size=eval_batch_size,
+)
 
 EPOCHS = args.epochs
+
 for epoch in tqdm(range(0, EPOCHS)):
     loss = train(train_dl=train_dataloader)
-
-    # Get results on val split
-    real_recs = make_recommendations(model, train_data, val_data, args.k,
-                                     False)
-    val_metrics = compute_metrics(real_recs, val_data, args.k, 'val prec@k')
-
+    real_recs = make_recommendations(model, train_node_dataloader, args.k)
+    val_metrics = compute_metrics(real_recs, val_node_dataloader, args.k)
+    test_metrics = compute_metrics(real_recs, test_node_dataloader, args.k)
+    
     if args.visualize_emb:
         visualize(model, train_data, val_data, real_recs, epoch)
 
-    # Get results on test split
-    real_recs = make_recommendations(model, train_data, test_data, args.k,
-                                     True)
-    test_metrics = compute_metrics(real_recs, test_data, args.k, 'test prec@k')
+    # Let's write out the recommendations into a file
+    write_recs(real_recs, val_data)
 
     # Print output
     print(f'Epoch: {epoch:03d}, Train Loss: {loss:.4f},'
