@@ -43,5 +43,6 @@ jobs:
           pip install -e .[full,test]
 
       - name: Check type hints
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           mypy
