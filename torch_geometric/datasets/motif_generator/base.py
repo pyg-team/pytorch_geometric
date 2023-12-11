@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Union
 
 from torch_geometric.data import Data
 from torch_geometric.resolver import resolver
@@ -15,8 +15,8 @@ class MotifGenerator(ABC):
     @staticmethod
     def resolve(
         query: Union[Any, str],
-        *args: Tuple[Any],
-        **kwargs: Dict[str, Any],
+        *args: Any,
+        **kwargs: Any,
     ) -> 'MotifGenerator':
         import torch_geometric.datasets.motif_generator as _motif_generators
         motif_generators = [
