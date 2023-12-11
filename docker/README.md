@@ -14,11 +14,11 @@ If you encounter any problems, please feel free to contact <liangshengwen@ict.ac
 You can run PyG inside a singularity image. An example singularity file can be found in this folder. You might have to modify the script as versions keep getting updated.
 
 The versions specified in the script were last updated in December 2023. The script installs:
+
 - cuda 12.1 (requires compute capability 5.0 as provided since Maxwell, i.e. Geforce GTX 9xx and newer)
 - python 3.11.7 (3.12 was not yet supported by pytorch)
 - pytorch 2.1.0 (pytorch 2.1.1 was out but not yet supported by pyg_lib)
-- pytorch geometric 
-
+- pytorch geometric
 
 ## Building and Using the Container
 
@@ -26,7 +26,7 @@ To build the container, run
 
 `sudo singularity build geometric.sif singularity`
 
-then wait. 
+then wait.
 The container needs to be built on a machine with an NVIDIA GPU in order to install cuda bindings. Otherwise, the CPU version will be installed. (and there is no easy fix to avoid that..)
 Once finished, you can run the GAT example in the folder you built the image in by calling
 
@@ -50,7 +50,6 @@ singularity exec geometric.sif python3 gat.py
 
 in case you have to resort to using the CPU.
 
-
 ## Troubleshooting and additional comments
 
 **Temporary files:** If your harddisk runs full after multiple builds, this is known and apparently working as intended; delete the `/tmp/sbuild-XXXXXXXXX` files.
@@ -61,8 +60,6 @@ in case you have to resort to using the CPU.
 
 **Deprecation Notice:** NVIDIA only supports the latest CUDA subversion of each docker image. If you receive a deprecation notice, consider increasing the CUDA version of the base docker file from 12.1.1 to 12.1.x.
 
-**Outdated Host NVIDIA driver:** CUDA 12.1 requires a relatively up-to-date nvidia driver on the host. It is not necessary that the exact CUDA versions match as long as the driver is recent enough. 
+**Outdated Host NVIDIA driver:** CUDA 12.1 requires a relatively up-to-date nvidia driver on the host. It is not necessary that the exact CUDA versions match as long as the driver is recent enough.
 
 **Compute Capabilities:** If you run it on multiply systems (likely, with singularity), ensure that the device is supported by the CUDA version. If you have the cuda samples installed, check the compute capabilities with (for example) `/usr/local/cuda-10.1/extras/demo_suite/deviceQuery | grep 'CUDA Capability'`; if not, check [here](https://en.wikipedia.org/wiki/CUDA#GPUs_supported). CUDA 12.x relies com compute capability 5.0 and up, which includes GTX 9xx cards and newer.
-
-
