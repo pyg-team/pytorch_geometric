@@ -153,19 +153,12 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             for epoch in range(epochs):
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
-                # Runs sampling for the training epoch.
-                # Note that train dataloader SHOULD have shuffle
-                # and drop_last as True.
-                # However, this feature is not yet available.
-                # Coming early 2024.
-                # CuGraph can produce huge speed ups but not shuffling
-                # can have negative impacts on val/test accuracy.
                 BulkSampleLoader(
                     cugraph_store,
                     cugraph_store,
                     input_nodes=split_idx['train'],
                     directory=train_path,
-                    # shuffle=True, drop_last=True,
+                    shuffle=True, drop_last=True,
                     **kwargs)
 
             print('validation', len(split_idx['valid']))
