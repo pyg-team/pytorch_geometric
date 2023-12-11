@@ -2,7 +2,6 @@ import os.path as osp
 from typing import Callable, Optional
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
