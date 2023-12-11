@@ -213,7 +213,7 @@ def get_embeddings(model, val_data):
 
 def make_recommendations(model, inference_dataloader, k):
     real_recs = {}
-    for i, batch in enumerate(inference_dataloader):
+    for batch in inference_dataloader:
         movie_embs, user_embs = get_embeddings(model, batch)
         mipsknn = MIPSKNNIndex(movie_embs)
         knn_score, knn_index_ = mipsknn.search(
