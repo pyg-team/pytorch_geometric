@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Union
+from typing import Any, Dict, Tuple, Union
 
 from torch_geometric.data import Data
 from torch_geometric.resolver import resolver
@@ -13,7 +13,11 @@ class GraphGenerator(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def resolve(query: Union[Any, str], *args, **kwargs) -> 'GraphGenerator':
+    def resolve(
+        query: Union[Any, str],
+        *args: Tuple[Any],
+        **kwargs: Dict[str, Any],
+    ) -> 'GraphGenerator':
         import torch_geometric.datasets.graph_generator as _graph_generators
         graph_generators = [
             gen for gen in vars(_graph_generators).values()

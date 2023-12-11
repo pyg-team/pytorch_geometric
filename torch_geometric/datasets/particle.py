@@ -1,6 +1,6 @@
 import glob
 import os.path as osp
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -10,7 +10,13 @@ from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
-    def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
+    def __inc__(
+        self,
+        key: str,
+        value: Any,
+        *args: Tuple[Any],
+        **kwargs: Dict[str, Any],
+    ) -> Any:
         if key == 'y_index':
             return torch.tensor([value[0].max().item() + 1, self.num_nodes])
         else:
