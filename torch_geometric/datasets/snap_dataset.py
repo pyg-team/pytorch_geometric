@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -16,7 +16,7 @@ from torch_geometric.utils import coalesce
 
 
 class EgoData(Data):
-    def __inc__(self, key: str, value: Any, *args, **kwargs):
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'circle':
             return self.num_nodes
         elif key == 'circle_batch':
@@ -198,7 +198,7 @@ class SNAPDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -217,14 +217,14 @@ class SNAPDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def _download(self):
+    def _download(self) -> None:
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
         os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
-    def download(self):
+    def download(self) -> None:
         for name in self.available_datasets[self.name]:
             path = download_url(f'{self.url}/{name}', self.raw_dir)
             if name.endswith('.tar.gz'):
@@ -233,7 +233,7 @@ class SNAPDataset(InMemoryDataset):
                 extract_gz(path, self.raw_dir)
             os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         raw_dir = self.raw_dir
         filenames = os.listdir(self.raw_dir)
         if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
@@ -241,6 +241,7 @@ class SNAPDataset(InMemoryDataset):
 
         raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
 
+        data_list: Union[List[Data], List[EgoData]]
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
         elif self.name[:4] == 'soc-':

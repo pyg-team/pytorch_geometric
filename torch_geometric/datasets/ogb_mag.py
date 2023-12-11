@@ -62,7 +62,7 @@ class OGB_MAG(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         preprocess = None if preprocess is None else preprocess.lower()
         self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
@@ -102,7 +102,7 @@ class OGB_MAG(InMemoryDataset):
         else:
             return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         if not all([osp.exists(f) for f in self.raw_paths[:5]]):
             path = download_url(self.url, self.raw_dir)
             extract_zip(path, self.raw_dir)
@@ -120,7 +120,7 @@ class OGB_MAG(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

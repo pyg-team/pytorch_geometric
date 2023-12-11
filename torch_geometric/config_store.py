@@ -74,7 +74,7 @@ else:
     class Singleton(type):
         _instances: Dict[type, Any] = {}
 
-        def __call__(cls, *args, **kwargs) -> Any:
+        def __call__(cls, *args: Any, **kwargs: Any) -> Any:
             if cls not in cls._instances:
                 instance = super(Singleton, cls).__call__(*args, **kwargs)
                 cls._instances[cls] = instance
@@ -93,11 +93,11 @@ else:
         _metadata: Metadata = field(default_factory=Metadata)
 
     class ConfigStore(metaclass=Singleton):
-        def __init__(self):
-            self.repo: Dict[str, Any] = defaultdict(dict)  # type: ignore
+        def __init__(self) -> None:
+            self.repo: Dict[str, Any] = defaultdict(dict)
 
         @classmethod
-        def instance(cls, *args, **kwargs) -> 'ConfigStore':
+        def instance(cls, *args: Any, **kwargs: Any) -> 'ConfigStore':
             return cls(*args, **kwargs)
 
         def store(
@@ -106,7 +106,7 @@ else:
             node: Any,
             group: Optional[str] = None,
             orig_type: Optional[Any] = None,
-        ):
+        ) -> None:
             cur = self.repo
             if group is not None:
                 cur = cur[group]
@@ -282,7 +282,7 @@ def to_dataclass(
                 # Avoid late binding of default values inside a loop:
                 # https://stackoverflow.com/questions/3431676/
                 # creating-functions-in-a-loop
-                def wrapper(default):
+                def wrapper(default: Any) -> Callable[[], Any]:
                     return lambda: default
 
                 default = field(default_factory=wrapper(default))
@@ -318,7 +318,7 @@ def register(
     cls: Optional[Any] = None,
     data_cls: Optional[Any] = None,
     group: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Union[Any, Callable]:
     r"""Registers a class in the global configuration store.
 
@@ -399,7 +399,7 @@ class Config:
     lr_scheduler: Optional[LRScheduler] = None
 
 
-def fill_config_store():
+def fill_config_store() -> None:
     import torch_geometric
 
     config_store = get_config_store()
@@ -421,7 +421,7 @@ def fill_config_store():
 
     # Register `torch_geometric.datasets` #####################################
     datasets = torch_geometric.datasets
-    map_dataset_args = {
+    map_dataset_args: Dict[str, Any] = {
         'transform': (Dict[str, Transform], field(default_factory=dict)),
         'pre_transform': (Dict[str, Transform], field(default_factory=dict)),
     }

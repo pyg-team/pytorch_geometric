@@ -344,7 +344,7 @@ class MD17(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         if name not in self.file_names:
             raise ValueError(f"Unknown dataset name '{name}'")
 
@@ -397,7 +397,7 @@ class MD17(InMemoryDataset):
         else:
             return ['data.pt']
 
-    def download(self):
+    def download(self) -> None:
         if self.revised:
             path = download_url(self.revised_url, self.raw_dir)
             extract_tar(path, self.raw_dir, mode='r:bz2')
@@ -409,7 +409,7 @@ class MD17(InMemoryDataset):
                 extract_zip(path, self.raw_dir)
                 os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         it = zip(self.raw_paths, self.processed_paths)
         for raw_path, processed_path in it:
             raw_data = np.load(raw_path)
