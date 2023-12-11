@@ -62,15 +62,10 @@ def run_train(data, world_size, model, epochs, batch_size, fan_out, split_idx,
         fs.add_data(data.x, "N", "x")
         fs.add_data(data.y, "N", "y")
         cugraph_store = CuGraphStore(fs, G, N)
-        # Note that train dataloader SHOULD have shuffle and drop_last as True.
-        # However, this feature is not yet available in CuGraphNeighborLoader.
-        # Coming early 2024.
-        # CuGraphNeighborLoader can produce huge speed ups but not shuffling
-        # can have negative impacts on val/test accuracy.
         train_loader = CuGraphNeighborLoader(
             cugraph_store,
             input_nodes=split_idx['train'],
-            # shuffle=True, drop_last=True,
+            shuffle=True, drop_last=True,
             **kwargs)
         eval_loader = CuGraphNeighborLoader(cugraph_store,
                                             input_nodes=split_idx['valid'],
