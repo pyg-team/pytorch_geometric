@@ -3,10 +3,8 @@ from functools import partial
 from typing import Callable, List, Optional
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data
-from torch_geometric.explain import Explanation
 from torch_geometric.utils import (
     k_hop_subgraph,
     remove_self_loops,
@@ -188,7 +186,11 @@ class MCTS(object):
     ):
         num_nodes = x.size(0)
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
-            node_idx, num_hops, edge_index, relabel_nodes=True, num_nodes=num_nodes
+            node_idx,
+            num_hops,
+            edge_index,
+            relabel_nodes=True,
+            num_nodes=num_nodes,
         )
         x = x[subset]
         return x, edge_index, subset, mapping
@@ -205,7 +207,9 @@ class MCTS(object):
                 self.graph.edge_index,
                 relabel_nodes=False,
             )
-            node_degree = degree(subgraph_edge_index[0], dtype=torch.long).tolist()
+            node_degree = degree(
+                subgraph_edge_index[0], dtype=torch.long
+            ).tolist()
             all_nodes = list(
                 filter(
                     lambda x: node_degree[x] > 0,
@@ -218,7 +222,9 @@ class MCTS(object):
             )
 
             if self.new_node_idx is not None:
-                expand_nodes = [node for node in all_nodes if node != self.new_node_idx]
+                expand_nodes = [
+                    node for node in all_nodes if node != self.new_node_idx
+                ]
             else:
                 expand_nodes = all_nodes
 
@@ -226,7 +232,9 @@ class MCTS(object):
                 # for each node, pruning it and get the remaining sub-graph
                 # here we check the resulting sub-graphs and
                 # only keep the largest one
-                subgraph_coalition = [node for node in all_nodes if node != curr_node]
+                subgraph_coalition = [
+                    node for node in all_nodes if node != curr_node
+                ]
                 subgraphs = list(
                     connected_components(
                         subgraph(
@@ -251,18 +259,24 @@ class MCTS(object):
                 # check the state map and merge the same sub-graph
                 find_same = False
                 for old_graph_node in self.state_map.values():
-                    if sorted(old_graph_node.coalition) == sorted(new_graph_coalition):
+                    if sorted(old_graph_node.coalition) == sorted(
+                        new_graph_coalition
+                    ):
                         new_node = old_graph_node
                         find_same = True
                         break
 
                 if not find_same:
-                    new_node = self.MCTSNodeClass(coalition=new_graph_coalition)
+                    new_node = self.MCTSNodeClass(
+                        coalition=new_graph_coalition
+                    )
                     self.state_map[str(new_graph_coalition)] = new_node
 
                 find_same_child = False
                 for cur_child in tree_node.children:
-                    if sorted(cur_child.coalition) == sorted(new_graph_coalition):
+                    if sorted(cur_child.coalition) == sorted(
+                        new_graph_coalition
+                    ):
                         find_same_child = True
                         break
 
@@ -274,7 +288,9 @@ class MCTS(object):
                 child.P = score
 
         sum_count = sum([c.N for c in tree_node.children])
-        selected_node = max(tree_node.children, key=lambda x: x.Q() + x.U(sum_count))
+        selected_node = max(
+            tree_node.children, key=lambda x: x.Q() + x.U(sum_count)
+        )
         v = self.mcts_rollout(selected_node)
         selected_node.W += v
         selected_node.N += 1

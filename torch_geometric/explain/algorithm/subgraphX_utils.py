@@ -3,10 +3,9 @@ The functions in the file have been ported over from,
 - https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/shapley.py
 - https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/subgraphx.py
 """
-import copy
 from functools import partial
 from itertools import combinations
-from typing import Callable, List, Tuple, Union, Optional
+from typing import Callable, List, Tuple, Optional
 
 import numpy as np
 import torch
@@ -85,8 +84,12 @@ class MarginalSubgraphDataset(Dataset):
         include_graph_X, include_graph_edge_index = self.subgraph_build_func(
             self.X, self.edge_index, self.include_mask[idx]
         )
-        exclude_data = Data(x=exclude_graph_X, edge_index=exclude_graph_edge_index)
-        include_data = Data(x=include_graph_X, edge_index=include_graph_edge_index)
+        exclude_data = Data(
+            x=exclude_graph_X, edge_index=exclude_graph_edge_index
+        )
+        include_data = Data(
+            x=include_graph_X, edge_index=include_graph_edge_index
+        )
         return exclude_data, include_data
 
 
@@ -134,7 +137,9 @@ def l_shapley(
     local_region = list(
         set(
             coalition
-            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[
+                0
+            ].tolist()
         )
     )
     set_exclude_masks = []
@@ -169,7 +174,9 @@ def l_shapley(
         data, exclude_mask, include_mask, value_func, subgraph_build_func
     )
 
-    l_shapley_value = (marginal_contributions.squeeze().cpu() * coeffs).sum().item()
+    l_shapley_value = (
+        (marginal_contributions.squeeze().cpu() * coeffs).sum().item()
+    )
     return l_shapley_value
 
 
@@ -190,10 +197,18 @@ def mc_shapley(
     set_include_masks = []
 
     for example_idx in range(sample_num):
-        subset_nodes_from = [node for node in node_indices if node not in coalition]
-        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
-        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
+        subset_nodes_from = [
+            node for node in node_indices if node not in coalition
+        ]
+        random_nodes_permutation = np.array(
+            subset_nodes_from + [coalition_placeholder]
+        )
+        random_nodes_permutation = np.random.permutation(
+            random_nodes_permutation
+        )
+        split_idx = np.where(
+            random_nodes_permutation == coalition_placeholder
+        )[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.zeros(num_nodes)
         set_exclude_mask[selected_nodes] = 1.0
@@ -229,7 +244,9 @@ def mc_l_shapley(
     local_region = list(
         set(
             coalition
-            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[
+                0
+            ].tolist()
         )
     )
     coalition_placeholder = num_nodes
@@ -241,7 +258,9 @@ def mc_l_shapley(
         random_nodes_permutation = np.random.permutation(
             subset_nodes_from + [coalition_placeholder]
         )
-        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
+        split_idx = np.where(
+            random_nodes_permutation == coalition_placeholder
+        )[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
         set_exclude_mask[local_region] = 0.0
@@ -385,17 +404,27 @@ def NC_mc_l_shapley(
     local_region = list(
         set(
             coalition
-            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[
+                0
+            ].tolist()
         )
     )
     coalition_placeholder = num_nodes
     set_exclude_masks = []
     set_include_masks = []
     for example_idx in range(sample_num):
-        subset_nodes_from = [node for node in local_region if node not in coalition]
-        random_nodes_permutation = np.array(subset_nodes_from + [coalition_placeholder])
-        random_nodes_permutation = np.random.permutation(random_nodes_permutation)
-        split_idx = np.where(random_nodes_permutation == coalition_placeholder)[0][0]
+        subset_nodes_from = [
+            node for node in local_region if node not in coalition
+        ]
+        random_nodes_permutation = np.array(
+            subset_nodes_from + [coalition_placeholder]
+        )
+        random_nodes_permutation = np.random.permutation(
+            random_nodes_permutation
+        )
+        split_idx = np.where(
+            random_nodes_permutation == coalition_placeholder
+        )[0][0]
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
         set_exclude_mask[local_region] = 0.0
@@ -418,7 +447,9 @@ def NC_mc_l_shapley(
     return mc_l_shapley_value
 
 
-def sparsity(coalition: list, data: Data, subgraph_building_method="zero_filling"):
+def sparsity(
+    coalition: list, data: Data, subgraph_building_method="zero_filling"
+):
     """calculate the sparsity of the subgraph"""
     if subgraph_building_method == "zero_filling":
         return 1.0 - len(coalition) / data.num_nodes

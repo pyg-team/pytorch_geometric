@@ -63,7 +63,9 @@ def main():
     # set number of GCN Convolutions (i.e. num_hops)
     num_layers = 3
     idx = torch.arange(data.num_nodes)
-    train_idx, test_idx = train_test_split(idx, train_size=0.75, stratify=data.y)
+    train_idx, test_idx = train_test_split(
+        idx, train_size=0.75, stratify=data.y
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data = data.to(device)
@@ -74,7 +76,9 @@ def main():
         num_layers=num_layers,
         out_channels=dataset.num_classes,
     ).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0001)
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=0.01, weight_decay=0.0001
+    )
 
     # train our model
     pbar = tqdm(range(1, 2001))
@@ -83,7 +87,8 @@ def main():
         if epoch == 1 or epoch % 200 == 0:
             train_acc, test_acc = get_acc(model, data, train_idx, test_idx)
             pbar.set_description(
-                f"Loss: {loss:.4f}, Train: {train_acc:.4f}, " f"Test: {test_acc:.4f}"
+                f"Loss: {loss:.4f}, Train: {train_acc:.4f}, "
+                f"Test: {test_acc:.4f}"
             )
     pbar.close()
     model.eval()

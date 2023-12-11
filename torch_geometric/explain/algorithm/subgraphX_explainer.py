@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.config import ModelTaskLevel
 from torch_geometric.nn.conv import MessagePassing
@@ -26,38 +25,37 @@ from .subgraphX_utils import (
 
 
 class SubgraphXExplainer(ExplainerAlgorithm):
-    r"""The SubgraphX explainer model from the `"On Explainability
-    of Graph Neural Networks via Subgraph Explorations"
+    r"""
+    The SubgraphX explainer model from the `"On Explainability
+    of Graph Neural Networks via Subgraph Explorations" <https://arxiv.org/abs/2102.05152>`_ paper.
 
-    Paper: https://arxiv.org/abs/2102.05152
-    Official Implementation Repo: \
-        https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/subgraphx.py
+    `Official Implementation Repo
+    <https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/subgraphx.py>`_.
 
     .. note::
+
         For an example of using SubgraphXExplainer, see
         `examples/subgraphx_explainer.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        subgraphx_explainer.py>`_.
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/subgraphx_explainer.py>`_.
 
     Args:
         device: Device to generate the explanations on.
-        local_radius(:obj:`int`): Local radius to be considered while
-            evaluating subgraph importance for :obj:`l_shapley`,
-            :obj:`mc_l_shapley`
-        sample_num(:obj:`int`): Sampling time of monte carlo sampling
-            approximation for :obj:`mc_shapley`, :obj:`mc_l_shapley`
-            (default: :obj:`mc_l_shapley`)
-        reward_method(:obj:`str`): Reward method to assign subgraph
-            importance.
-            One of [
-                "gnn_score", "mc_shapley", "l_shapley",
-                "mc_l_shapley", "nc_mc_l_shapley"
-            ]
-        subgraph_building_method(:obj:`str`): Specifies way to fill
-            subgraph. One of ["zero_filling", "split"]
-        save_dir(:obj:`str`, :obj:`None`): Root directory to save
-        the explanation results (default: :obj:`None`)
-        filename(:obj:`str`): The filename of results
+        local_radius (int): Local radius to be considered while
+            evaluating subgraph importance for
+            :obj:`"l_shapley"`, :obj:`"mc_l_shapley"`
+        sample_num (int): Sampling time of monte carlo sampling
+            approximation for :obj:`"mc_shapley"`, :obj:`"mc_l_shapley"`
+            (default: :obj:`"mc_l_shapley"`)
+        reward_method (str): Reward method to assign subgraph
+            importance. One of :obj:`"gnn_score"`, :obj:`"mc_shapley"`
+            :obj:`"l_shapley"`, :obj:`"mc_l_shapley"`
+            and :obj:`"nc_mc_l_shapley"`.
+        subgraph_building_method (str): Specifies way to fill
+            subgraph. One of :obj:`"zero_filling"` and :obj:`"split"`
+        save_dir (str, optional): Root directory
+            to save the explanation results
+            (default: :obj:`None`)
+        filename (str): The filename of results.
     """
 
     def __init__(
@@ -125,7 +123,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         """
         if isinstance(MCTSInfo_list[0], dict):
             ret_list = [
-                MCTSNode(device=self.device, **node_info) for node_info in MCTSInfo_list
+                MCTSNode(device=self.device, **node_info)
+                for node_info in MCTSInfo_list
             ]
         elif isinstance(MCTSInfo_list[0][0], dict):
             ret_list = [
@@ -179,7 +178,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             and node_idx is not None
         ):
             logging.warning(
-                "For Graph Classification, node_idx should not be provided to explain. node_idx will be ignored"
+                """For Graph Classification,
+                node_idx should not be provided to explain.
+                node_idx will be ignored"""
             )
             node_idx = None
 
@@ -224,7 +225,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         elif self.model_config.task_level == ModelTaskLevel.node:
             if node_idx is None:
-                raise ValueError("For Node task, node_idx must be provided to explain")
+                raise ValueError(
+                    "For Node task, node_idx must be provided to explain"
+                )
             label = label[node_idx]
             self.mcts_state_map: MCTS = self.get_mcts_class(
                 x, edge_index, node_idx=node_idx
@@ -245,14 +248,19 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         else:
             raise ValueError(
-                f"Task level '{self.model_config.task_level.value}' not supported"
+                f"""Task level
+                '{self.model_config.task_level.value}' not supported"""
             )
 
-        tree_node_x: MCTSNode = find_closest_node_result(results, max_nodes=max_nodes)
+        tree_node_x: MCTSNode = find_closest_node_result(
+            results, max_nodes=max_nodes
+        )
 
         masked_node_list = tree_node_x.coalition
         maskout_node_list = list(
-            set(range(tree_node_x.data.x.shape[0])).difference(tree_node_x.coalition)
+            set(range(tree_node_x.data.x.shape[0])).difference(
+                tree_node_x.coalition
+            )
         )
         if (
             self.model_config.task_level == ModelTaskLevel.node
@@ -306,7 +314,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
-        """Computes explaination based on SubgraphX Explainer
+        r"""Computes explaination based on SubgraphX Explainer
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -365,7 +373,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         # create edge_mask from masked_node_list
         subgraph_edge_index, _, edge_mask = subgraph(
-            masked_node_list, edge_index, relabel_nodes=False, return_edge_mask=True
+            masked_node_list,
+            edge_index,
+            relabel_nodes=False,
+            return_edge_mask=True,
         )
 
         explanation = Explanation(
@@ -382,7 +393,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         return explanation
 
     def supports(self) -> bool:
-        """SubgraphXExplainer only supports Node and Graph Classification"""
+        r"""SubgraphXExplainer only supports Node and Graph Classification"""
         task_level = self.model_config.task_level
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
