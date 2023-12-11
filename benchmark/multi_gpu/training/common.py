@@ -192,7 +192,7 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
         }
         model.forward(fake_x_dict, fake_edge_index_dict)
 
-    model = DDP(model, device_ids=[device], find_unused_parameters=True)
+    model = DDP(model, device_ids=[device], find_unused_parameters=hetero)
     model.train()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
