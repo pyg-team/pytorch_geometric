@@ -10,7 +10,7 @@ from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
-    def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'y_index':
             return torch.tensor([value[0].max().item() + 1, self.num_nodes])
         else:

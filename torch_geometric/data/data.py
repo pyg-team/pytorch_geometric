@@ -508,7 +508,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         x: Optional[Tensor] = None,
         edge_index: OptTensor = None,
         edge_attr: OptTensor = None,
-        y: OptTensor = None,
+        y: Optional[Union[Tensor, int, float]] = None,
         pos: OptTensor = None,
         time: OptTensor = None,
         **kwargs,
