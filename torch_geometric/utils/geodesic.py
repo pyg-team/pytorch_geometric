@@ -14,7 +14,8 @@ def geodesic_distance(  # noqa: D417
     norm: bool = True,
     max_distance: Optional[float] = None,
     num_workers: int = 0,
-    **kwargs,
+    # Backward compatibility for `dest`:
+    **kwargs: Optional[Tensor],
 ) -> Tensor:
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dst` are given, this method only
@@ -94,7 +95,16 @@ def geodesic_distance(  # noqa: D417
 
     dst = None if dst is None else dst.detach().cpu().to(torch.int).numpy()
 
-    def _parallel_loop(pos, face, src, dst, max_distance, scale, i, dtype):
+    def _parallel_loop(
+        pos: Tensor,
+        face: Tensor,
+        src: Tensor,
+        dst: Optional[Tensor],
+        max_distance: float,
+        scale: float,
+        i: int,
+        dtype: torch.dtype,
+    ) -> Tensor:
         s = src[i:i + 1]
         d = None if dst is None else dst[i:i + 1]
         out = gdist.compute_gdist(pos, face, s, d, max_distance * scale)

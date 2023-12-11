@@ -59,12 +59,12 @@ class DGraphFin(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download '{self.raw_file_names}' from "
             f"'{self.url}' and move it to '{self.raw_dir}'")
@@ -81,7 +81,7 @@ class DGraphFin(InMemoryDataset):
     def num_classes(self) -> int:
         return 2
 
-    def process(self):
+    def process(self) -> None:
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
         path = osp.join(self.raw_dir, "dgraphfin.npz")
 

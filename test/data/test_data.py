@@ -517,3 +517,54 @@ def test_data_with_tensor_frame():
     assert data_sub.num_nodes == 3
     for key, value in sub_data.tf.feat_dict.items():
         assert torch.allclose(value, tf.feat_dict[key][mask])
+
+
+@pytest.mark.parametrize('num_nodes', [4])
+@pytest.mark.parametrize('num_edges', [8])
+def test_data_time_handling(num_nodes, num_edges):
+    data = Data(
+        x=torch.randn(num_nodes, 12),
+        edge_index=torch.randint(0, num_nodes, (2, num_edges)),
+        edge_attr=torch.rand((num_edges, 16)),
+        time=torch.arange(num_edges),
+        num_nodes=num_nodes,
+    )
+
+    assert data.is_edge_attr('time')
+    assert not data.is_node_attr('time')
+    assert data.is_sorted_by_time()
+
+    out = data.up_to(5)
+    assert out.num_edges == 6
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, :6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[:6])
+    assert torch.equal(out.time, data.time[:6])
+
+    out = data.snapshot(2, 5)
+    assert out.num_edges == 4
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, 2:6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[2:6, :])
+    assert torch.equal(out.time, data.time[2:6])
+
+    out = data.sort_by_time()
+    assert data.is_sorted_by_time()
+
+    out = data.concat(data)
+    assert out.num_nodes == 8
+    assert not out.is_sorted_by_time()
+
+    assert torch.allclose(out.x, torch.cat([data.x, data.x], dim=0))
+    assert torch.equal(
+        out.edge_index,
+        torch.cat([data.edge_index, data.edge_index], dim=1),
+    )
+    assert torch.allclose(
+        out.edge_attr,
+        torch.cat([data.edge_attr, data.edge_attr], dim=0),
+    )
+    assert torch.allclose(out.time, torch.cat([data.time, data.time], dim=0))
+
+    out = out.sort_by_time()
+    assert torch.equal(out.time, data.time.repeat_interleave(2))

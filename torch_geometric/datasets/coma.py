@@ -86,7 +86,7 @@ class CoMA(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
@@ -100,12 +100,12 @@ class CoMA(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download 'COMA_data.zip' from "
             f"'{self.url}' and move it to '{self.raw_dir}'")
 
-    def process(self):
+    def process(self) -> None:
         folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
         if len(folders) == 0:
             extract_zip(self.raw_paths[0], self.raw_dir, log=False)

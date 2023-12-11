@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 import pickle
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -98,7 +98,6 @@ class LRGBDataset(InMemoryDataset):
           - ~307.30
           - 11
     """
-
     names = [
         'pascalvoc-sp', 'coco-sp', 'pcqm-contact', 'peptides-func',
         'peptides-struct'
@@ -134,7 +133,7 @@ class LRGBDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.names
         assert split in ['train', 'val', 'test']
@@ -163,7 +162,7 @@ class LRGBDataset(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         fs.rm(self.raw_dir)
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
@@ -171,7 +170,7 @@ class LRGBDataset(InMemoryDataset):
                   self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         if self.name == 'pcqm-contact':
             # PCQM-Contact
             self.process_pcqm_contact()
@@ -242,7 +241,7 @@ class LRGBDataset(InMemoryDataset):
                 path = osp.join(self.processed_dir, f'{split}.pt')
                 self.save(data_list, path)
 
-    def label_remap_coco(self):
+    def label_remap_coco(self) -> Dict[int, int]:
         # Util function for name 'COCO-SP'
         # to remap the labels as the original label idxs are not contiguous
         original_label_idx = [
@@ -259,7 +258,7 @@ class LRGBDataset(InMemoryDataset):
 
         return label_map
 
-    def process_pcqm_contact(self):
+    def process_pcqm_contact(self) -> None:
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
                 graphs = torch.load(f)

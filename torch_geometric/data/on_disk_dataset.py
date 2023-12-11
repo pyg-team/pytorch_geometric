@@ -1,5 +1,5 @@
 import os
-from typing import Any, Callable, Iterable, List, Optional, Union
+from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
 from torch import Tensor
 
@@ -57,7 +57,7 @@ class OnDiskDataset(Dataset):
         backend: str = 'sqlite',
         schema: Schema = object,
         log: bool = True,
-    ):
+    ) -> None:
         if backend not in self.BACKENDS:
             raise ValueError(f"Database backend must be one of "
                              f"{set(self.BACKENDS.keys())} "
@@ -92,7 +92,7 @@ class OnDiskDataset(Dataset):
         self._numel = len(self._db)
         return self._db
 
-    def close(self):
+    def close(self) -> None:
         r"""Closes the connection to the underlying database."""
         if self._db is not None:
             self._db.close()
@@ -119,7 +119,7 @@ class OnDiskDataset(Dataset):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: BaseData):
+    def append(self, data: BaseData) -> None:
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(index, self.serialize(data))
@@ -127,9 +127,9 @@ class OnDiskDataset(Dataset):
 
     def extend(
         self,
-        data_list: List[BaseData],
+        data_list: Sequence[BaseData],
         batch_size: Optional[int] = None,
-    ):
+    ) -> None:
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)

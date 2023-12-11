@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -16,7 +16,7 @@ from torch_geometric.utils import coalesce
 
 
 class EgoData(Data):
-    def __inc__(self, key: str, value: Any, *args, **kwargs):
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'circle':
             return self.num_nodes
         elif key == 'circle_batch':
@@ -39,7 +39,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             all_featnames += featnames
     all_featnames = sorted(list(set(all_featnames)))
-    all_featnames = {key: i for i, key in enumerate(all_featnames)}
+    all_featnames_dict = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
     for i in range(0, len(files), 5):
@@ -65,24 +65,24 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             with open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
                 featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
-            indices = [all_featnames[featname] for featname in featnames]
+            indices = [all_featnames_dict[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
                           usecols=[0]).squeeze()
 
-        idx_assoc = {}
+        idx_assoc: Dict[str, int] = {}
         for i, j in enumerate(idx):
             idx_assoc[j] = i
 
-        circles = []
-        circles_batch = []
+        circles: List[int] = []
+        circles_batch: List[int] = []
         with open(circles_file, 'r') as f:
-            for i, circle in enumerate(f.read().split('\n')[:-1]):
-                circle = [idx_assoc[c] for c in circle.split()[1:]]
-                circles += circle
-                circles_batch += [i] * len(circle)
+            for i, line in enumerate(f.read().split('\n')[:-1]):
+                circle_indices = [idx_assoc[c] for c in line.split()[1:]]
+                circles += circle_indices
+                circles_batch += [i] * len(circle_indices)
         circle = torch.tensor(circles)
         circle_batch = torch.tensor(circles_batch)
 
@@ -198,7 +198,7 @@ class SNAPDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -217,14 +217,14 @@ class SNAPDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def _download(self):
+    def _download(self) -> None:
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
         os.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
-    def download(self):
+    def download(self) -> None:
         for name in self.available_datasets[self.name]:
             path = download_url(f'{self.url}/{name}', self.raw_dir)
             if name.endswith('.tar.gz'):
@@ -233,7 +233,7 @@ class SNAPDataset(InMemoryDataset):
                 extract_gz(path, self.raw_dir)
             os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         raw_dir = self.raw_dir
         filenames = os.listdir(self.raw_dir)
         if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
@@ -241,6 +241,7 @@ class SNAPDataset(InMemoryDataset):
 
         raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
 
+        data_list: Union[List[Data], List[EgoData]]
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
         elif self.name[:4] == 'soc-':
