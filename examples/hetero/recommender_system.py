@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 import torch.nn.functional as F
-from ordered_set import OrderedSet
 from sklearn.manifold import TSNE
 from torch.nn import Embedding, Linear
 from tqdm import tqdm
