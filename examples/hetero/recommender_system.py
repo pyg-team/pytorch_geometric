@@ -15,12 +15,11 @@ from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
-from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.nn import to_hetero
 from torch_geometric.nn.conv import SAGEConv
 from torch_geometric.nn.metrics import LinkPredNDCG, LinkPredPrecision
 from torch_geometric.nn.pool import MIPSKNNIndex
-from torch_geometric.loader import NeighborLoader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--epochs', type=int, default=20,
@@ -182,7 +181,7 @@ def write_recs(real_recs, val_data):
         return df
 
     movie_id_to_name = load_node_csv(movie_path, index_col='movieId')
-    
+
     # Get the ground truth
     val_user_pos_items = get_user_positive_items(val_data['user',
                                                           'movie'].edge_index)
@@ -218,14 +217,14 @@ def make_recommendations(model, inference_dataloader, k):
     for i, batch in enumerate(inference_dataloader):
         movie_embs, user_embs = get_embeddings(model, batch)
         mipsknn = MIPSKNNIndex(movie_embs)
-        knn_score, knn_index_ = mipsknn.search(user_embs, k, batch['user', 'movie'].edge_index)
-        knn_index_translated =  batch['movie'].n_id[knn_index_[:][:]]
-    
-        # Get the recommendations for user; 
-        for i, user in enumerate(batch['user'].n_id.detach().numpy()):
-            rec = knn_index_translated[i,:].tolist()
-            real_recs[user] = rec[:k]
+        knn_score, knn_index_ = mipsknn.search(
+            user_embs, k, batch['user', 'movie'].edge_index)
+        knn_index_translated = batch['movie'].n_id[knn_index_[:][:]]
 
+        # Get the recommendations for user;
+        for i, user in enumerate(batch['user'].n_id.detach().numpy()):
+            rec = knn_index_translated[i, :].tolist()
+            real_recs[user] = rec[:k]
 
     return real_recs
 
@@ -346,37 +345,39 @@ def compute_metrics(real_recs, inference_dataloader, k):
 
     precision = LinkPredPrecision(k)
     ndcg = LinkPredNDCG(k)
-    
+
     metrics = {}
     for batch in inference_dataloader:
         node_id = batch['user'].n_id
-        precision.update(rec_tensor[node_id], batch['user', 'movie'].edge_index)
+        precision.update(rec_tensor[node_id], batch['user',
+                                                    'movie'].edge_index)
         ndcg.update(rec_tensor[node_id], batch['user', 'movie'].edge_index)
-    
+
     metrics['precision'] = precision.compute()
     metrics['ndcg'] = ndcg.compute()
 
     return metrics
 
+
 eval_batch_size = 256
 
 train_node_dataloader = NeighborLoader(
     train_data,
-    num_neighbors=[-1]*2,
+    num_neighbors=[-1] * 2,
     input_nodes=('user', torch.arange(train_data['user'].num_nodes)),
     shuffle=False,
     batch_size=eval_batch_size,
 )
 val_node_dataloader = NeighborLoader(
     val_data,
-    num_neighbors=[-1]*2,
+    num_neighbors=[-1] * 2,
     input_nodes=('user', torch.arange(val_data['user'].num_nodes)),
     shuffle=False,
     batch_size=eval_batch_size,
 )
 test_node_dataloader = NeighborLoader(
     test_data,
-    num_neighbors=[-1]*2,
+    num_neighbors=[-1] * 2,
     input_nodes=('user', torch.arange(test_data['user'].num_nodes)),
     shuffle=False,
     batch_size=eval_batch_size,
@@ -389,7 +390,7 @@ for epoch in tqdm(range(0, EPOCHS)):
     real_recs = make_recommendations(model, train_node_dataloader, args.k)
     val_metrics = compute_metrics(real_recs, val_node_dataloader, args.k)
     test_metrics = compute_metrics(real_recs, test_node_dataloader, args.k)
-    
+
     if args.visualize_emb:
         visualize(model, train_data, val_data, real_recs, epoch)
 
