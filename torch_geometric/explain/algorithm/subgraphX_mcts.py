@@ -83,6 +83,7 @@ class MCTSNode(object):
         return {
             "data": self.data.to("cpu"),
             "coalition": self.coalition,
+            "subset": self.subset,
             "W": self.W,
             "N": self.N,
             "P": self.P,

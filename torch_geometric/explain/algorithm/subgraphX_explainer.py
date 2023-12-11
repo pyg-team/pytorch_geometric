@@ -210,6 +210,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     ) -> Tuple[List[Union[List[MCTSNode], MCTSNode]], Dict, List[int]]:
         with torch.no_grad():
             probs = model(x, edge_index, **kwargs).softmax(dim=-1)
+
         if saved_MCTSInfo_list is not None:
             results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
@@ -220,6 +221,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                     x, edge_index, score_func=self.get_reward_func(value_func)
                 )
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
+
         elif self.model_config.task_level == ModelTaskLevel.node:
             if node_idx is None:
                 raise ValueError("For Node task, node_idx must be provided to explain")
@@ -240,6 +242,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                     value_func, node_idx=self.mcts_state_map.new_node_idx
                 )
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
+
         else:
             raise ValueError(
                 f"Task level '{self.model_config.task_level.value}' not supported"
@@ -361,7 +364,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         node_mask = node_mask.unsqueeze(1)
 
         # create edge_mask from masked_node_list
-        subgraph_edge_index, subgraph_x, edge_mask = subgraph(
+        subgraph_edge_index, _, edge_mask = subgraph(
             masked_node_list, edge_index, relabel_nodes=False, return_edge_mask=True
         )
 
@@ -371,6 +374,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             node_mask=node_mask,
             edge_mask=edge_mask,
             results=results,
+            subselt=self.mcts_state_map.subset,
             related_pred=related_pred,
             masked_node_list=masked_node_list,
             explained_edge_list=subgraph_edge_index,

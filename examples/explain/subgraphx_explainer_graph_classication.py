@@ -106,6 +106,7 @@ def get_acc(model, dl):
 def main():
     # Seed everything
     seed_everything(42)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # initialize dataset
     dataset = BA2MotifDataset(root="data/")
@@ -151,7 +152,7 @@ def main():
         model=model,
         algorithm=SubgraphXExplainer(
             num_classes=dataset.num_classes,
-            device=torch.device("cpu"),
+            device=device,
             num_hops=num_layers,
             max_nodes=5,
             rollout=2,

@@ -15,7 +15,7 @@ from scipy.special import comb
 
 from torch_geometric.data import Batch, Data, Dataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import to_networkx, k_hop_subgraph
+from torch_geometric.utils import k_hop_subgraph
 
 
 def find_closest_node_result(results, max_nodes: int):
@@ -127,8 +127,6 @@ def l_shapley(
     subgraph_building_method="zero_filling",
 ):
     """shapley value where players are local neighbor nodes"""
-    # graph = to_networkx(data)
-    # num_nodes = graph.number_of_nodes()
     graph = data
     num_nodes = graph.num_nodes
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
@@ -224,16 +222,6 @@ def mc_l_shapley(
     sample_num=1000,
 ) -> float:
     """monte carlo sampling approximation of the l_shapley value"""
-    # graph = to_networkx(data)
-    # num_nodes = graph.number_of_nodes()
-    # subgraph_build_func = get_graph_build_func(subgraph_building_method)
-    # local_region = copy.copy(coalition)
-    # for k in range(local_radius - 1):
-    #     k_neiborhoood = []
-    #     for node in local_region:
-    #         k_neiborhoood += list(graph.neighbors(node))
-    #     local_region += k_neiborhoood
-    #     local_region = list(set(local_region))
 
     graph = data
     num_nodes = graph.num_nodes
@@ -391,18 +379,15 @@ def NC_mc_l_shapley(
 ) -> float:
     """monte carlo approximation of l_shapley where the
     target node is kept in both subgraph"""
-    graph = to_networkx(data)
-    num_nodes = graph.number_of_nodes()
+    graph = data
+    num_nodes = graph.num_nodes
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
-
-    local_region = copy.copy(coalition)
-    for k in range(local_radius - 1):
-        k_neiborhoood = []
-        for node in local_region:
-            k_neiborhoood += list(graph.neighbors(node))
-        local_region += k_neiborhoood
-        local_region = list(set(local_region))
-
+    local_region = list(
+        set(
+            coalition
+            + k_hop_subgraph(coalition, local_radius - 1, graph.edge_index)[0].tolist()
+        )
+    )
     coalition_placeholder = num_nodes
     set_exclude_masks = []
     set_include_masks = []
