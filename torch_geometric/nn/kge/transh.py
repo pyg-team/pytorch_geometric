@@ -156,10 +156,10 @@ class TransH(KGEModel):
 
         for r in range(self.num_relations):
             mask = (rel_type == r).bool()
-            _, tail_count = torch.unique(head_index[mask],
-                                         return_counts=True, dim=0)
-            _, head_count = torch.unique(tail_index[mask],
-                                         return_counts=True, dim=0)
+            _, tail_count = torch.unique(head_index[mask], return_counts=True,
+                                         dim=0)
+            _, head_count = torch.unique(tail_index[mask], return_counts=True,
+                                         dim=0)
             tph = torch.mean(tail_count, dtype=torch.float64)
             hpt = torch.mean(head_count, dtype=torch.float64)
             self.head_corruption_probs[r] = tph / (tph + hpt)
