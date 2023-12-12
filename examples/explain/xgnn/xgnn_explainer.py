@@ -14,6 +14,8 @@ from torch_geometric.datasets import TUDataset
 import random
 from xgnn_model import GCN_Graph
 
+print_list = []
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 args = {'device': device,
@@ -161,7 +163,7 @@ class GraphGenerator(torch.nn.Module):
 
 
 class RLGenExplainer(XGNNExplainer):
-    def __init__(self, candidate_set, validity_args):
+    def __init__(self, candidate_set, validity_args, initial_node_type = None):
         super(RLGenExplainer, self).__init__()
         self.candidate_set = candidate_set
         num_features = len(next(iter(self.candidate_set.values())))
@@ -172,6 +174,7 @@ class RLGenExplainer(XGNNExplainer):
         self.lambda_2 = 1
         self.num_classes = 2
         self.validity_args = validity_args
+        self.initial_node_type = initial_node_type
     
     def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
         
@@ -181,6 +184,10 @@ class RLGenExplainer(XGNNExplainer):
         graph_state_batch = graph_state_batch.to(device)
 
         gnn_output = pre_trained_gnn(graph_state_batch)
+
+        print_string = "target = " + str(target_class) + "   num_nodes = " + str(graph_state.num_nodes) + "   debug: reward_tf " + str(gnn_output)
+        print_list.append(print_string)
+
         probability_of_target_class = gnn_output[0][target_class]
 
         # print("target_class", target_class)
@@ -253,21 +260,17 @@ class RLGenExplainer(XGNNExplainer):
         for epoch in range(num_epochs):
             total_loss = 0
 
+            if self.initial_node_type is None:
+                # we sample from node IDs and candidate keys set which is now a dictionary, then create a data object with the correct node type and edge index
+                self.initial_node_type = random.choice(list(candidate_set.keys()))
 
-            # we sample from node IDs and candidate keys set which is now a dictionary, then create a data object with the correct node type and edge index
-            random_node_type = random.choice(list(candidate_set.keys()))
-            feature = candidate_set[random_node_type].unsqueeze(0)
+            
+            feature = candidate_set[self.initial_node_type].unsqueeze(0)
             edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
-            node_type = [random_node_type,]
+            node_type = [self.initial_node_type,]
             initial_graph = Data(x=feature, edge_index=edge_index, node_type=node_type)
             current_graph_state = initial_graph
-            # sample from candidate set and create initial graph state
-            # random_index = torch.randint(0, self.candidate_set.size(0), (1,))
-            # sampled_node = self.candidate_set[random_index] # sample a node from the candidate set
-            # edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
-            # initial_graph = Data(x=sampled_node, edge_index=edge_index)
-            # current_graph_state = initial_graph
-            
+        
             for step in range(self.max_steps):
                 ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
                 
@@ -318,7 +321,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(candidate_set=candidate_set, validity_args = max_valency),
+    algorithm = RLGenExplainer(candidate_set=candidate_set, validity_args = max_valency, initial_node_type = 'C'),
     explanation_type = 'generative',
     node_mask_type = None,
     edge_mask_type = None,
@@ -339,4 +342,11 @@ target = torch.tensor([0, 1])
 
 explanation = explainer(None, None, target=target) # Generates explanations for all classes at once
 print(explanation)
+
+# save print_list to file
+with open('/Users/blazpridgar/Documents/GitHub/pytorch_geometric/examples/explain/xgnn/print_list.txt', 'w') as f:
+    for item in print_list:
+        f.write("%s\n" % item)
+
+
 
