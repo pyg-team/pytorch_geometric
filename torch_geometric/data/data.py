@@ -642,7 +642,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
             return self.num_nodes

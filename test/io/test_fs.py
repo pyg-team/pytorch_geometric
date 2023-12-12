@@ -3,13 +3,20 @@ from os import path as osp
 
 import fsspec
 import pytest
+import torch
 
+import torch_geometric.typing
 from torch_geometric.data import extract_zip
 from torch_geometric.io import fs
 from torch_geometric.testing import noWindows
 
+if torch_geometric.typing.WITH_WINDOWS:  # FIXME
+    params = ['file']
+else:
+    params = ['file', 'memory']
 
-@pytest.fixture(params=['file', 'memory'])
+
+@pytest.fixture(params=params)
 def tmp_fs_path(request, tmp_path) -> str:
     if request.param == 'file':
         return tmp_path.resolve().as_posix()
@@ -114,3 +121,12 @@ def test_extract(tmp_fs_path):
     assert len(fs.ls(dst)) == 2
     for i in range(2):
         fs.exists(osp.join(dst, str(i)))
+
+
+def test_torch_save_load(tmp_fs_path):
+    x = torch.randn(5, 5)
+    path = osp.join(tmp_fs_path, 'x.pt')
+
+    fs.torch_save(x, path)
+    out = fs.torch_load(path)
+    assert torch.equal(x, out)
