@@ -192,7 +192,7 @@ class RLGenExplainer(XGNNExplainer):
             # Generate a final graph from the intermediate graph state
             _, final_graph = self.graph_generator(intermediate_graph_state_copy, self.candidate_set)
             # Evaluate the final graph
-            reward = self.reward_tf(pre_trained_gnn, final_graph, target_class, num_classes)
+            reward = self.reward_tf(pre_trained_gnn, final_graph, num_classes)
             final_rewards.append(reward)
 
             # delete intermediate graph state copy
@@ -216,7 +216,7 @@ class RLGenExplainer(XGNNExplainer):
         return 0
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
-        intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, target_class, num_classes)
+        intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, num_classes)
         # Assuming rollout function is defined to perform graph rollouts and evaluate
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
         # Compute graph validity score (R_tr)
