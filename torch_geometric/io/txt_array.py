@@ -30,7 +30,7 @@ def read_txt_array(
 ) -> Tensor:
     with fsspec.open(path, 'r') as f:
         out = f.read()
-        print(out)
+        print(out[:1000])
         src = out.split('\n')[:-1]
-        print(src)
+        print(src[:5])
     return parse_txt_array(src, sep, start, end, dtype, device)
