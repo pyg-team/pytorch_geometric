@@ -23,11 +23,10 @@ from xgnn_model import GCN_Graph
 
 
 
-# exrtact a mutagenic molecule from the dataset
+# exrtact a mutagenic and nonmutagenic molecule from the dataset
 dataset = TUDataset(root='/tmp/MUTAG', name='MUTAG')
 data = dataset[0]
-
-# print(data)
+data_nonmutag = dataset[1]
 
 # # plot the molecule
 # import matplotlib.pyplot as plt
@@ -54,7 +53,7 @@ class objectview(object):
         
 args = objectview(args)
         
-model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
+model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
 
 # Assume 'model_to_freeze' is the model you want to freeze
 for param in model.parameters():
@@ -68,9 +67,17 @@ if os.name == 'nt':
 model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 model.to(device)
 
+model.eval()
 # predict the class of the molecule
-gnn_output = model(data)
-# print(gnn_output)
+
+with torch.no_grad():
+    logits = model(data)
+    probabilities = torch.sigmoid(logits) # Convert logits to probabilities for binary classification
+    print("GNN probabilities data:", probabilities)
+    
+    logits = model(data_nonmutag)
+    probabilities = torch.sigmoid(logits) # Convert logits to probabilities for binary classification
+    print("GNN probabilities data_nonmutag:", probabilities)
 
 
 
@@ -90,21 +97,32 @@ gnn_output = model(data)
 # gnn_output tensor([[3.7371e-02, 1.4118e-12]])
 # gnn_output_sum tensor([0.0374])
 
-graph_state = Data(x = torch.tensor([[1., 0., 0., 0., 0., 0., 0.],
-                                    [0., 0., 1., 0., 0., 0., 0.],
-                                    [0., 0., 0., 1., 0., 0., 0.],
-                                    [0., 0., 0., 0., 1., 0., 0.],
-                                    [0., 0., 0., 0., 0., 0., 1.],
-                                    [0., 0., 0., 1., 0., 0., 0.],
-                                    [0., 1., 0., 0., 0., 0., 0.],
-                                    [0., 0., 1., 0., 0., 0., 0.]]),
-                    edge_index=torch.tensor([[0, 1, 0, 1, 4, 0, 4, 4, 5],
-                                            [1, 2, 3, 4, 5, 5, 1, 6, 7]]),
-                    node_type = [['C', 'O', 'F', 'I', 'Br', 'F', 'N', 'O']])
+import torch
+from torch_geometric.data import Data
 
-# predict the class of the molecule
-gnn_output = model(graph_state)
-print("GNN probabilities:", gnn_output)
+# Your existing graph_state definition
+graph_state = Data(x=torch.tensor([[1., 0., 0., 0., 0., 0., 0.],
+                                   [0., 0., 1., 0., 0., 0., 0.],
+                                   [0., 0., 0., 1., 0., 0., 0.],
+                                   [0., 0., 0., 0., 1., 0., 0.],
+                                   [0., 0., 0., 0., 0., 0., 1.],
+                                   [0., 0., 0., 1., 0., 0., 0.],
+                                   [0., 1., 0., 0., 0., 0., 0.],
+                                   [0., 0., 1., 0., 0., 0., 0.]]),
+                    edge_index=torch.tensor([[0, 1, 0, 1, 4, 0, 4, 4, 5],
+                                             [1, 2, 3, 4, 5, 5, 1, 6, 7]], dtype=torch.long))
+
+# Add batch information
+graph_state.batch = torch.zeros(graph_state.x.size(0), dtype=torch.long)
+
+# Model in evaluation mode
+model.eval()
+
+# Make prediction
+with torch.no_grad():
+    logits = model(graph_state)
+    probabilities = torch.sigmoid(logits) # Convert logits to probabilities for binary classification
+    print("GNN probabilities:", probabilities)
 
 # plot the molecule
 import matplotlib.pyplot as plt

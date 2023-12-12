@@ -33,7 +33,7 @@ class objectview(object):
         
 args = objectview(args)
         
-model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
+model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
 
 # Assume 'model_to_freeze' is the model you want to freeze
 for param in model.parameters():
@@ -176,39 +176,10 @@ class RLGenExplainer(XGNNExplainer):
         self.validity_args = validity_args
         self.initial_node_type = initial_node_type
     
-    def reward_tf(self, pre_trained_gnn, graph_state, target_class, num_classes):
-        
-        graph_state_batch = create_single_batch([graph_state,])
-        
-        # Move graph batch to the same device as your model
-        graph_state_batch = graph_state_batch.to(device)
+    def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
+        gnn_output = pre_trained_gnn(graph_state)
+        probability_of_target_class = torch.sigmoid(gnn_output).squeeze()
 
-        gnn_output = pre_trained_gnn(graph_state_batch)
-
-        # calculate sum of gnn output
-        gnn_output_sum = torch.sum(gnn_output, dim=1)
-
-
-        if gnn_output_sum.item() < 0.9:
-            # print each graph state details indivudally
-            # print(gnn_output_sum.item())
-            print("debug: reward_tf")
-            print("graph_state_batch", graph_state_batch)
-            print("graph_state_batch.x", graph_state_batch.x)
-            print("graph_state_batch.edge_index", graph_state_batch.edge_index)
-            print("graph_state_batch.node_type", graph_state_batch.node_type)
-            print("gnn_output", gnn_output)
-            print("gnn_output_sum", gnn_output_sum)
-
-        print_string = "target = " + str(target_class) + "   num_nodes = " + str(graph_state.num_nodes) + "   debug: reward_tf " + str(gnn_output) + "   sum = " + str(gnn_output_sum)
-        print_list.append(print_string)
-
-        probability_of_target_class = gnn_output[0][target_class]
-
-        # print("target_class", target_class)
-        # print("probability_of_target_class", probability_of_target_class)
-
-        # print("debug: reward_tf", probability_of_target_class - 1 / num_classes)
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
