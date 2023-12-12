@@ -9,7 +9,10 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -43,9 +46,9 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
-        timeout-minutes: 10
+        timeout-minutes: 100
         run: |
-          pytest --cov --cov-report=xml --durations 10
+          FULL_TEST=1 pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: steps.changed-files-specific.outputs.only_changed != 'true'

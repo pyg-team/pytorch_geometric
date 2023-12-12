@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Tuple
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -11,7 +11,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 def get_laplacian(
     edge_index: Tensor,
     edge_weight: OptTensor = None,
-    normalization: Optional[Literal['sym', 'rw']] = None,
+    normalization: Optional[str] = None,
     dtype: Optional[torch.dtype] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
