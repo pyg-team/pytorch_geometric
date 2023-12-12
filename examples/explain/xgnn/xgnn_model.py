@@ -5,11 +5,6 @@ from torch_geometric.nn import global_mean_pool
 from torch.nn.parameter import Parameter
 import math 
 
-# def reset_parameters(module):
-#     if isinstance(module, torch.nn.Linear):
-#         module.reset_parameters()
-#         print(module.parameters())
-
 ### GCN to predict graph property
 class GCN_Graph(torch.nn.Module):
     def __init__(self, input_dim, output_dim, dropout, emb = False):
@@ -24,10 +19,6 @@ class GCN_Graph(torch.nn.Module):
                                           GCNConv(in_channels = 48,        out_channels = 64)])
 
         self.pool = global_mean_pool # global averaging to obtain graph representation
-
-        # self.post_mp = torch.nn.Sequential(torch.nn.Linear(64, 32),
-        #                                    torch.nn.Dropout(self.dropout),
-        #                                    torch.nn.Linear(32, output_dim))
 
         self.fc1 = torch.nn.Linear(64, 32)
         self.fc2 = torch.nn.Linear(32, output_dim)
@@ -47,14 +38,22 @@ class GCN_Graph(torch.nn.Module):
       self.fc1.reset_parameters()
       self.fc2.reset_parameters()
 
-    def forward(self, batched_data):
+    def forward(self, data):
         # Extract important attributes of our mini-batch
-        x, edge_index, batch = batched_data.x, batched_data.edge_index, batched_data.batch
+        x, edge_index = data.x, data.edge_index
 
         for i in range(len(self.convs)):
             x = F.relu(self.convs[i](x, edge_index))
             if i < len(self.convs) - 1: # do not apply dropout on last layer
                 x = F.dropout(x, p=self.dropout, training=self.training)
+
+        # Check if 'batch' attribute is present
+        if hasattr(data, 'batch'):
+            batch = data.batch
+        else:
+            # For a single graph, use a zero tensor as the batch vector, 
+            # where its size equals the number of nodes.
+            batch = torch.zeros(data.num_nodes, dtype=torch.long, device=x.device)
 
         x = self.pool(x, batch)
         

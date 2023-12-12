@@ -38,9 +38,7 @@ def train(dataset, args, train_indices, val_indices, test_indices):
 
     # Model initialization
     model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
-
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay) # 
-    # scheduler = ReduceLROnPlateau(opt, mode='max', factor=0.5, patience=10, verbose=True)
 
     # Training loop
     losses = []
