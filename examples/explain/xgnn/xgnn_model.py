@@ -61,6 +61,6 @@ class GCN_Graph(torch.nn.Module):
         x = F.relu(self.fc1(x))
         x = F.dropout(x, self.dropout, training=self.training)
         x = self.fc2(x)
-        # x = F.softmax(x, dim=1)
-        x = F.sigmoid(x)
+        #x = F.sigmoid(x)
+        #x = F.softmax(x, dim=1)
         return x

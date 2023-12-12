@@ -21,16 +21,15 @@ def create_single_batch(dataset):
 
 def test(test_dataset, model):
     model.eval()
-    correct = 0
-    total = test_dataset.num_graphs
     with torch.no_grad():
-        pred = torch.round(model(test_dataset))
-        pred = pred.squeeze()
-        label = test_dataset.y.float()
-        labels_prob = torch.stack([1 - label, label], dim=1)
-        matches = (pred == labels_prob).float()
+        logits = model(test_dataset).squeeze() # Logits for each graph
+        probabilities = torch.sigmoid(logits) # Convert logits to probabilities
+        predictions = probabilities > 0.5 # Convert probabilities to binary predictions
+        correct = (predictions == test_dataset.y).float() # Assumes labels are 0 or 1
+        accuracy = correct.mean()
 
-    return torch.mean(matches)
+    return accuracy
+
 
 def train(dataset, args, train_indices, val_indices, test_indices):
     # Split dataset into training and testing (validation is not used here)
@@ -38,7 +37,7 @@ def train(dataset, args, train_indices, val_indices, test_indices):
     test_dataset = create_single_batch([dataset[i] for i in test_indices]).to(device)
 
     # Model initialization
-    model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
+    model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
 
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay) # 
     # scheduler = ReduceLROnPlateau(opt, mode='max', factor=0.5, patience=10, verbose=True)
@@ -54,8 +53,7 @@ def train(dataset, args, train_indices, val_indices, test_indices):
 
         pred = model(train_dataset)
         label = train_dataset.y.float()
-        labels_prob = torch.stack([1 - label, label], dim=1)
-        loss = model.loss(pred, labels_prob)
+        loss = model.loss(pred.squeeze(), label)
         loss.backward()
         opt.step()
         total_loss = loss.item()
@@ -88,7 +86,7 @@ args = {'device': device,
         'input_dim' : 7,
         'opt': 'adam',
         'opt_restart': 0,
-        'weight_decay': 5e-7,
+        'weight_decay': 5e-4,
         'lr': 0.007}
 
 args = objectview(args)
