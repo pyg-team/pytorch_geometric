@@ -10,9 +10,9 @@ from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.dist_neighbor_sampler import (
     DistNeighborSampler,
-    shutdown_rpc,
+    close_sampler,
 )
-from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
+from torch_geometric.distributed.rpc import init_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
 from torch_geometric.testing import onlyLinux, withPackage
@@ -88,15 +88,17 @@ def dist_neighbor_sampler(
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
+        rpc_worker_names={},
         num_neighbors=[-1, -1],
         shuffle=False,
         disjoint=disjoint,
     )
     # Close RPC & worker group at exit:
-    atexit.register(shutdown_rpc)
+    atexit.register(close_sampler, 0, dist_sampler)
 
     init_rpc(
         current_ctx=current_ctx,
+        rpc_worker_names={},
         master_addr='localhost',
         master_port=master_port,
     )
@@ -156,6 +158,7 @@ def dist_neighbor_sampler_temporal(
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
+        rpc_worker_names={},
         num_neighbors=num_neighbors,
         shuffle=False,
         disjoint=True,
@@ -163,10 +166,11 @@ def dist_neighbor_sampler_temporal(
         time_attr=time_attr,
     )
     # Close RPC & worker group at exit:
-    atexit.register(shutdown_rpc)
+    atexit.register(close_sampler, 0, dist_sampler)
 
     init_rpc(
         current_ctx=current_ctx,
+        rpc_worker_names={},
         master_addr='localhost',
         master_port=master_port,
     )
