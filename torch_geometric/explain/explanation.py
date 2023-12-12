@@ -486,3 +486,20 @@ class GenerativeExplanation(Data):
 
                 
         return sampled_graphs
+    
+    def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
+                        backend: Optional[str] = None):
+        r"""Visualizes the explanation graph
+
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            backend (str, optional): The graph drawing backend to use for
+                visualization (:obj:`"graphviz"`, :obj:`"networkx"`).
+                If set to :obj:`None`, will use the most appropriate
+                visualization backend based on available system packages.
+                (default: :obj:`None`)
+        """
+        
+        visualize_graph(self.edge_index)

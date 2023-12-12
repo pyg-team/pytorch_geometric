@@ -185,7 +185,22 @@ class RLGenExplainer(XGNNExplainer):
 
         gnn_output = pre_trained_gnn(graph_state_batch)
 
-        print_string = "target = " + str(target_class) + "   num_nodes = " + str(graph_state.num_nodes) + "   debug: reward_tf " + str(gnn_output)
+        # calculate sum of gnn output
+        gnn_output_sum = torch.sum(gnn_output, dim=1)
+
+
+        if gnn_output_sum.item() < 0.9:
+            # print each graph state details indivudally
+            # print(gnn_output_sum.item())
+            print("debug: reward_tf")
+            print("graph_state_batch", graph_state_batch)
+            print("graph_state_batch.x", graph_state_batch.x)
+            print("graph_state_batch.edge_index", graph_state_batch.edge_index)
+            print("graph_state_batch.node_type", graph_state_batch.node_type)
+            print("gnn_output", gnn_output)
+            print("gnn_output_sum", gnn_output_sum)
+
+        print_string = "target = " + str(target_class) + "   num_nodes = " + str(graph_state.num_nodes) + "   debug: reward_tf " + str(gnn_output) + "   sum = " + str(gnn_output_sum)
         print_list.append(print_string)
 
         probability_of_target_class = gnn_output[0][target_class]
