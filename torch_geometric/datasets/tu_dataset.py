@@ -1,16 +1,7 @@
-import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
-import torch
-
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.io import fs, read_tu_data
 
 
