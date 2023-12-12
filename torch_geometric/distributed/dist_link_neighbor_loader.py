@@ -115,8 +115,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             filter_per_worker=filter_per_worker,
             worker_init_fn=self.worker_init_fn,
             transform_sampler_output=self.channel_get,
-            persistent_workers=(kwargs['num_workers'] > 1)
-            **kwargs,
+            persistent_workers=(kwargs['num_workers'] > 1)**kwargs,
         )
 
     def __repr__(self) -> str:

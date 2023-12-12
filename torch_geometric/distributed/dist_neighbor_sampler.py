@@ -16,11 +16,11 @@ from torch_geometric.distributed.event_loop import (
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
     RPCRouter,
+    global_barrier,
     rpc_async,
     rpc_partition_to_workers,
     rpc_register,
     shutdown_rpc,
-    global_barrier,
 )
 from torch_geometric.distributed.utils import (
     BatchDict,
@@ -45,7 +45,6 @@ class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
     """
-
     def __init__(self, sampler: NeighborSampler):
         super().__init__()
         self.sampler = sampler
@@ -61,7 +60,6 @@ class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
     """
-
     def __init__(
         self,
         current_ctx: DistContext,
@@ -142,14 +140,12 @@ class DistNeighborSampler:
         if self.channel is None:
             # synchronous sampling
             return self.event_loop.run_task(
-                coro=self._sample_from(self.node_sample, inputs)
-            )
+                coro=self._sample_from(self.node_sample, inputs))
 
         # asynchronous sampling
         cb = kwargs.get("callback", None)
         self.event_loop.add_task(
-            coro=self._sample_from(self.node_sample, inputs), callback=cb
-        )
+            coro=self._sample_from(self.node_sample, inputs), callback=cb)
         return None
 
     async def _sample_from(
@@ -258,11 +254,8 @@ class DistNeighborSampler:
                     src = etype[0] if not self.csc else etype[2]
 
                     if node_dict.src[src].numel():
-                        seed_time = (
-                            seed_time_dict.get(src, None)
-                            if seed_time_dict is not None
-                            else None
-                        )
+                        seed_time = (seed_time_dict.get(src, None)
+                                     if seed_time_dict is not None else None)
                         if isinstance(self.num_neighbors, list):
                             one_hop_num = self.num_neighbors[i]
                         else:
@@ -275,8 +268,7 @@ class DistNeighborSampler:
                                 seed_time,
                                 batch_dict.src[src],
                                 etype,
-                            )
-                        )
+                            ))
 
                 for etype, task in task_dict.items():
                     out: HeteroSamplerOutput = await task
@@ -301,22 +293,19 @@ class DistNeighborSampler:
                     )
 
                     node_dict.with_dupl[dst] = torch.cat(
-                        [node_dict.with_dupl[dst], out.node]
-                    )
+                        [node_dict.with_dupl[dst], out.node])
                     edge_dict[etype] = torch.cat([edge_dict[etype], out.edge])
 
                     if self.disjoint:
                         batch_dict.with_dupl[dst] = torch.cat(
-                            [batch_dict.with_dupl[dst], out.batch]
-                        )
+                            [batch_dict.with_dupl[dst], out.batch])
 
                     num_sampled_nodes_dict[dst].append(len(node_dict.src[dst]))
                     num_sampled_edges_dict[etype].append(len(out.node))
                     sampled_nbrs_per_node_dict[etype] += out.metadata
 
-            sampled_nbrs_per_node_dict = remap_keys(
-                sampled_nbrs_per_node_dict, self._sampler.to_rel_type
-            )
+            sampled_nbrs_per_node_dict = remap_keys(sampled_nbrs_per_node_dict,
+                                                    self._sampler.to_rel_type)
 
             row_dict, col_dict = torch.ops.pyg.hetero_relabel_neighborhood(
                 self._sampler.node_types,
@@ -365,9 +354,8 @@ class DistNeighborSampler:
 
             # loop over the layers
             for i, one_hop_num in enumerate(self.num_neighbors):
-                out = await self.sample_one_hop(
-                    src, one_hop_num, seed_time, src_batch
-                )
+                out = await self.sample_one_hop(src, one_hop_num, seed_time,
+                                                src_batch)
                 if out.node.numel() == 0:
                     # no neighbors were sampled
                     num_zero_layers = self.num_hops - i
@@ -377,8 +365,7 @@ class DistNeighborSampler:
 
                 # remove duplicates
                 src, node, src_batch, batch = remove_duplicates(
-                    out, node, batch, self.disjoint
-                )
+                    out, node, batch, self.disjoint)
 
                 node_with_dupl.append(out.node)
                 edge.append(out.edge)
@@ -390,8 +377,7 @@ class DistNeighborSampler:
                     # Get the seed time for the next layer based on the
                     # previous seed_time and sampled neighbors per node info:
                     seed_time = torch.repeat_interleave(
-                        seed_time, torch.as_tensor(out.metadata[0])
-                    )
+                        seed_time, torch.as_tensor(out.metadata[0]))
 
                 num_sampled_nodes.append(len(src))
                 num_sampled_edges.append(len(out.node))
@@ -445,16 +431,13 @@ class DistNeighborSampler:
 
         sampled_nbrs_per_node = list(np.subtract(begin, end))
 
-        outputs[p_id].metadata = (sampled_nbrs_per_node,)
+        outputs[p_id].metadata = (sampled_nbrs_per_node, )
 
         if self.disjoint:
-            batch = [
-                [src_batch[i]] * nbrs_per_node
-                for i, nbrs_per_node in enumerate(sampled_nbrs_per_node)
-            ]
+            batch = [[src_batch[i]] * nbrs_per_node
+                     for i, nbrs_per_node in enumerate(sampled_nbrs_per_node)]
             outputs[p_id].batch = Tensor(
-                list(itertools.chain.from_iterable(batch))
-            ).type(torch.int64)
+                list(itertools.chain.from_iterable(batch))).type(torch.int64)
 
         return outputs[p_id]
 
@@ -526,7 +509,7 @@ class DistNeighborSampler:
             None,
             out_edge,
             out_batch if self.disjoint else None,
-            metadata=(out_sampled_nbrs_per_node,),
+            metadata=(out_sampled_nbrs_per_node, ),
         )
 
     async def sample_one_hop(
@@ -547,25 +530,21 @@ class DistNeighborSampler:
         partition_ids = self.graph_store.get_partition_ids_from_nids(srcs)
         partition_orders = torch.zeros(len(partition_ids), dtype=torch.long)
 
-        p_outputs: List[SamplerOutput] = [None] * self.graph_store.meta[
-            "num_parts"
-        ]
+        p_outputs: List[SamplerOutput] = [
+            None
+        ] * self.graph_store.meta["num_parts"]
         futs: List[torch.futures.Future] = []
 
         local_only = True
         single_partition = len(set(partition_ids.tolist())) == 1
 
         for i in range(self.graph_store.num_partitions):
-            p_id = (
-                self.graph_store.partition_idx + i
-            ) % self.graph_store.num_partitions
+            p_id = (self.graph_store.partition_idx +
+                    i) % self.graph_store.num_partitions
             p_mask = partition_ids == p_id
             p_srcs = torch.masked_select(srcs, p_mask)
-            p_seed_time = (
-                torch.masked_select(seed_time, p_mask)
-                if seed_time is not None
-                else None
-            )
+            p_seed_time = (torch.masked_select(seed_time, p_mask)
+                           if seed_time is not None else None)
 
             p_indices = torch.arange(len(p_srcs), dtype=torch.long)
             partition_orders[p_mask] = p_indices
@@ -573,9 +552,8 @@ class DistNeighborSampler:
             if p_srcs.shape[0] > 0:
                 if p_id == self.graph_store.partition_idx:
                     # Sample for one hop on a local machine:
-                    p_nbr_out = self._sample_one_hop(
-                        p_srcs, one_hop_num, p_seed_time, edge_type
-                    )
+                    p_nbr_out = self._sample_one_hop(p_srcs, one_hop_num,
+                                                     p_seed_time, edge_type)
                     p_outputs.pop(p_id)
                     p_outputs.insert(p_id, p_nbr_out)
 
@@ -587,30 +565,25 @@ class DistNeighborSampler:
                             to_worker,
                             self.rpc_sample_callee_id,
                             args=(p_srcs, one_hop_num, p_seed_time, edge_type),
-                        )
-                    )
+                        ))
 
         if not local_only:
             # Src nodes are remote
             res_fut_list = await to_asyncio_future(
-                torch.futures.collect_all(futs)
-            )
+                torch.futures.collect_all(futs))
             for i, res_fut in enumerate(res_fut_list):
-                p_id = (
-                    self.graph_store.partition_idx + i + 1
-                ) % self.graph_store.num_partitions
+                p_id = (self.graph_store.partition_idx + i +
+                        1) % self.graph_store.num_partitions
                 p_outputs.pop(p_id)
                 p_outputs.insert(p_id, res_fut.wait())
 
         # All src nodes are in the same partition
         if single_partition:
-            return self.get_sampler_output(
-                p_outputs, len(srcs), partition_ids[0], src_batch
-            )
+            return self.get_sampler_output(p_outputs, len(srcs),
+                                           partition_ids[0], src_batch)
 
-        return self.merge_sampler_outputs(
-            partition_ids, partition_orders, p_outputs, one_hop_num, src_batch
-        )
+        return self.merge_sampler_outputs(partition_ids, partition_orders,
+                                          p_outputs, one_hop_num, src_batch)
 
     def _sample_one_hop(
         self,
@@ -631,11 +604,8 @@ class DistNeighborSampler:
             rel_type = '__'.join(edge_type)
             colptr = self._sampler.colptr_dict[rel_type]
             row = self._sampler.row_dict[rel_type]
-            node_time = (
-                self.node_time.get(edge_type[2], None)
-                if self.node_time
-                else None
-            )
+            node_time = (self.node_time.get(edge_type[2], None)
+                         if self.node_time else None)
 
         out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
@@ -664,7 +634,7 @@ class DistNeighborSampler:
             col=None,
             edge=edge,
             batch=None,
-            metadata=(cumsum_neighbors_per_node,),
+            metadata=(cumsum_neighbors_per_node, ),
         )
 
     async def _collate_fn(
@@ -714,16 +684,12 @@ class DistNeighborSampler:
 
         else:  # Homo
             # Collect node labels.
-            nlabels = (
-                self.feature_store.labels[output.node]
-                if (self.feature_store.labels is not None)
-                else None
-            )
+            nlabels = (self.feature_store.labels[output.node] if
+                       (self.feature_store.labels is not None) else None)
             # Collect node features.
             if output.node is not None:
                 fut = self.feature_store.lookup_features(
-                    is_node_feat=True, index=output.node
-                )
+                    is_node_feat=True, index=output.node)
                 nfeats = await to_asyncio_future(fut)
                 nfeats = nfeats.to(torch.device("cpu"))
             # else:
@@ -731,8 +697,7 @@ class DistNeighborSampler:
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.feature_store.lookup_features(
-                    is_node_feat=False, index=output.edge
-                )
+                    is_node_feat=False, index=output.edge)
                 efeats = await to_asyncio_future(fut)
                 efeats = efeats.to(torch.device("cpu"))
             else:
