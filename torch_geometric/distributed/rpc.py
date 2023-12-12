@@ -2,10 +2,10 @@ import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List, Optional, Any
+from typing import Any, Callable, Dict, List, Optional
 
-from torch.distributed import rpc
 from torch._C._distributed_rpc import _is_current_rpc_agent_set
+from torch.distributed import rpc
 
 import torch_geometric.typing
 from torch_geometric.distributed.dist_context import DistContext, DistRole
@@ -47,7 +47,6 @@ def init_rpc(
     num_rpc_threads: int = 16,
     rpc_timeout: float = 240.0,
     rpc_worker_names: Optional[Dict[DistRole, List[str]]] = {},
-
 ):
     with _rpc_init_lock:
         if rpc_is_initialized():
@@ -74,7 +73,8 @@ def init_rpc(
         global_barrier(timeout=rpc_timeout)
 
 
-def shutdown_rpc(id: str = None, graceful: bool = True, timeout: float = 240.0):
+def shutdown_rpc(id: str = None, graceful: bool = True,
+                 timeout: float = 240.0):
     with _rpc_init_lock:
         if rpc_is_initialized():
             global_barrier(timeout=timeout)
@@ -84,7 +84,6 @@ def shutdown_rpc(id: str = None, graceful: bool = True, timeout: float = 240.0):
 
 class RPCRouter:
     r"""A router to get the worker based on the partition ID."""
-
     def __init__(self, partition_to_workers: List[List[str]]):
         for pid, rpc_worker_list in enumerate(partition_to_workers):
             if len(rpc_worker_list) == 0:
@@ -96,9 +95,8 @@ class RPCRouter:
         rpc_worker_list = self.partition_to_workers[partition_idx]
         worker_idx = self.rpc_worker_indices[partition_idx]
         router_worker = rpc_worker_list[worker_idx]
-        self.rpc_worker_indices[partition_idx] = (worker_idx + 1) % len(
-            rpc_worker_list
-        )
+        self.rpc_worker_indices[partition_idx] = (worker_idx +
+                                                  1) % len(rpc_worker_list)
         return router_worker
 
 
@@ -114,8 +112,7 @@ def rpc_partition_to_workers(
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
-        (ctx.role, num_partitions, current_partition_idx)
-    )
+        (ctx.role, num_partitions, current_partition_idx))
     for worker_name, (role, nparts, idx) in gathered_results.items():
         partition_to_workers[idx].append(worker_name)
     return partition_to_workers
@@ -123,7 +120,6 @@ def rpc_partition_to_workers(
 
 class RPCCallBase(ABC):
     r"""A wrapper base class for RPC calls in remote processes."""
-
     @abstractmethod
     def rpc_sync(self, *args, **kwargs):
         pass
