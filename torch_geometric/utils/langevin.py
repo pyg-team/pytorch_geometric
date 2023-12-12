@@ -3,15 +3,16 @@ This is used to sample score-based generative models, such as EDP-GNN.
 The method iteratively samples from a series of noise-conditional score models
 with varying noise levels.
 """
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 import torch
 from torch import Tensor
 
 
-def generate_initial_sample(batch_size: int, num_nodes: int,
-                            device: Optional[torch.device] = None) -> Tensor:
+def generate_initial_sample(
+        batch_size: int, num_nodes: int,
+        device: Optional[torch.device] = None) -> Tuple[Tensor, Tensor]:
     """Initialize a batch of adjacency matrices.
 
     The values are continuous and drawn from a folded normal distribution.
@@ -104,7 +105,7 @@ def _sample_step(score_func: Callable[[Tensor, Tensor], Tensor], adjs: Tensor,
     return new_adjs
 
 
-def mask_adjs(adjs, node_flags):
+def mask_adjs(adjs: Tensor, node_flags: Tensor) -> Tensor:
     """Use node_flags to mask out nodes in adjs that don't exist.
 
     Args:
