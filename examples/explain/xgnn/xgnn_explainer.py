@@ -158,13 +158,13 @@ class GraphGenerator(torch.nn.Module):
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
-
-
-
-
 class RLGenExplainer(XGNNExplainer):
-    def __init__(self, candidate_set, validity_args, initial_node_type = None):
-        super(RLGenExplainer, self).__init__()
+    def __init__(self, epochs = 100, 
+                       lr = 0.01, 
+                       candidate_set = None, 
+                       validity_args = None, 
+                       initial_node_type = None):
+        super(RLGenExplainer, self).__init__(epochs, lr)
         self.candidate_set = candidate_set
         num_features = len(next(iter(self.candidate_set.values())))
         self.graph_generator = GraphGenerator(num_features,
@@ -197,7 +197,6 @@ class RLGenExplainer(XGNNExplainer):
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
-        
         final_rewards = []
         for _ in range(num_rollouts):
             # make copy of intermediate graph state
@@ -216,21 +215,8 @@ class RLGenExplainer(XGNNExplainer):
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
         
-        
         # print("debug: rollout_reward", average_final_reward)
         return average_final_reward
-
-    # def evaluate_graph_validity(self, graph_state):
-    #     # check if graph has duplicated edges
-    #     edge_set = set()
-        
-    #     for edge in graph_state.edge_index:
-    #         sorted_edge = tuple(sorted(edge))
-    #         if sorted_edge in edge_set:
-    #             print("Graph has duplicated edges")
-    #             return -1
-    #         edge_set.add(sorted_edge)
-    #     return 0
 
     def evaluate_graph_validity(self, graph_state):
         # For mutag, node degrees cannot exceed valency
@@ -321,7 +307,11 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(candidate_set=candidate_set, validity_args = max_valency, initial_node_type = 'C'),
+    algorithm = RLGenExplainer(epochs = 100, 
+                               lr = 0.01,
+                               candidate_set=candidate_set, 
+                               validity_args = max_valency, 
+                               initial_node_type = 'C'),
     explanation_type = 'generative',
     node_mask_type = None,
     edge_mask_type = None,
