@@ -50,10 +50,10 @@ def get_dataset() -> Callable:
 
     # TODO Support memory filesystem on Windows.
     # TODO Support memory filesystem for all datasets.
-    if not support_memory_fs:
-        root = osp.join('/', 'tmp', 'pyg_test_datasets')
-    else:
-        root = 'memory://pyg_test_datasets'
+    # if not support_memory_fs:
+    #     root = osp.join('/', 'tmp', 'pyg_test_datasets')
+    # else:
+    root = 'memory://pyg_test_datasets'
 
     yield functools.partial(load_dataset, root)
 

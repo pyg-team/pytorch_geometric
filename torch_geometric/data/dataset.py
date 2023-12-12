@@ -220,7 +220,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        os.makedirs(self.raw_dir, exist_ok=True)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -251,7 +251,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        os.makedirs(self.processed_dir, exist_ok=True)
+        fs.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')

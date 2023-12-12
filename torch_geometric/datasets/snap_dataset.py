@@ -12,6 +12,7 @@ from torch_geometric.data import (
     extract_gz,
     extract_tar,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import coalesce
 
 
@@ -226,12 +227,15 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self) -> None:
         for name in self.available_datasets[self.name]:
-            path = download_url(f'{self.url}/{name}', self.raw_dir)
-            if name.endswith('.tar.gz'):
-                extract_tar(path, self.raw_dir)
-            elif name.endswith('.gz'):
-                extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            print(self.url, name)
+            fs.cp(f'{self.url}/{name}', self.raw_dir, extract=True)
+
+            # path = download_url(f'{self.url}/{name}', self.raw_dir)
+            # if name.endswith('.tar.gz'):
+            #     extract_tar(path, self.raw_dir)
+            # elif name.endswith('.gz'):
+            #     extract_gz(path, self.raw_dir)
+            # os.unlink(path)
 
     def process(self) -> None:
         raw_dir = self.raw_dir

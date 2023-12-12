@@ -93,7 +93,7 @@ def ls(
             for output in outputs:
                 output['name'] = fs.unstrip_protocol(output['name'])
         else:
-            outputs = [fs.unstrip_protocol(path) for output in outputs]
+            outputs = [fs.unstrip_protocol(output) for output in outputs]
 
     return outputs
 
@@ -114,7 +114,7 @@ def cp(
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
-        if use_cache:  # Cache seems to confuse the gcs filesystem.
+        if extract and use_cache:  # Cache seems to confuse the gcs filesystem.
             home_dir = torch_geometric.get_home_dir()
             cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
             kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
@@ -134,25 +134,28 @@ def cp(
     # recursively copy all files within this directory. Additionally, if the
     # destination folder does not yet exist, we inherit the basename from the
     # source folder.
-    if isdir(path1):
-        if exists(path2):
-            path2 = osp.join(path2, osp.basename(path1))
-        path1 = osp.join(path1, '**')
+    # print(path1)
+    # if isdir(path1):
+    #     if exists(path2):
+    #         path2 = osp.join(path2, osp.basename(path1))
+    #     path1 = osp.join(path1, '**')
 
     # Perform the copy:
     for open_file in fsspec.open_files(path1, **kwargs):
         with open_file as f_from:
-            if isfile(path1):
-                if isdir(path2):
-                    to_path = osp.join(path2, osp.basename(path1))
-                else:
-                    to_path = path2
-            else:
+            # if isfile(path1):
+            if True:
+                # if isdir(path2):
+                #     to_path = osp.join(path2, osp.basename(path1))
+                # else:
+                #     to_path = path2
+                # else:
                 # Open file has protocol stripped.
                 common_path = osp.commonprefix(
                     [fsspec.core.strip_protocol(path1), open_file.path])
                 to_path = osp.join(path2, open_file.path[len(common_path):])
             with fsspec.open(to_path, 'wb') as f_to:
+                print(to_path)
                 while True:
                     chunk = f_from.read(10 * 1024 * 1024)
                     if not chunk:
