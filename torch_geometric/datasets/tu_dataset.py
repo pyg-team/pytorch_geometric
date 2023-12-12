@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -196,7 +197,7 @@ class TUDataset(InMemoryDataset):
         path = download_url(f'{url}/{self.name}.zip', folder)
         extract_zip(path, folder)
         os.unlink(path)
-        fs.rm(self.raw_dir)
+        shutil.rmtree(self.raw_dir)
         os.rename(osp.join(folder, self.name), self.raw_dir)
 
         # TODO Does not work on Windows yet:
