@@ -113,11 +113,11 @@ test_indices = indices[train_size + val_size:]
 
 test_accs, losses, best_model, best_acc = train(dataset, args, train_indices, val_indices, test_indices)
 
-# try:
-#     torch.save(best_model.state_dict(), 'examples/explain/xgnn/mutag_model.pth')
-#     print("Model saved successfully.")
-# except Exception as e:
-#     print("Error saving model:", e)
+try:
+    torch.save(best_model.state_dict(), 'examples/explain/xgnn/mutag_model.pth')
+    print("Model saved successfully.")
+except Exception as e:
+    print("Error saving model:", e)
 
 print("Maximum test set accuracy: {0}".format(max(test_accs)))
 print("Minimum loss: {0}".format(min(losses)))
