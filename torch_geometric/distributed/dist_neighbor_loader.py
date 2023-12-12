@@ -108,7 +108,6 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             filter_per_worker=filter_per_worker,
             transform_sampler_output=self.channel_get,
             worker_init_fn=self.worker_init_fn,
-            persistent_workers=(kwargs['num_workers'] > 0),
             **kwargs,
         )
 
