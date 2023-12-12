@@ -9,6 +9,8 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
+    runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
       matrix:
