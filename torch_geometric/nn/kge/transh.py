@@ -53,7 +53,7 @@ class TransH(KGEModel):
                  bernoulli: bool = False):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
         self.bernoulli = bernoulli
-        self.head_corruption_probs = {}
+        self.head_corruption_probs = torch.zeros(num_relations)
 
         self.p_norm = p_norm
         self.margin = margin
@@ -127,6 +127,7 @@ class TransH(KGEModel):
         tail_index: Tensor,
         **kwargs,
     ) -> Tensor:
+
         if self.bernoulli:
             self.compute_corrupt_probs(head_index, rel_type, tail_index)
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
@@ -138,8 +139,7 @@ class TransH(KGEModel):
         head_index = head_index.clone()
         tail_index = tail_index.clone()
 
-        probs = torch.Tensor(
-            [self.head_corruption_probs[r.item()] for r in rel_type])
+        probs = self.head_corruption_probs[rel_type]
         corrupt_heads = torch.bernoulli(probs).bool()
         corrupt_tails = ~corrupt_heads
 
@@ -156,10 +156,10 @@ class TransH(KGEModel):
 
         for r in range(self.num_relations):
             mask = (rel_type == r).bool()
-            _, tail_count = torch.unique((head_index[mask]),
+            _, tail_count = torch.unique(head_index[mask],
                                          return_counts=True, dim=0)
-            _, head_count = torch.unique(tail_index[mask], return_counts=True,
-                                         dim=0)
+            _, head_count = torch.unique(tail_index[mask],
+                                         return_counts=True, dim=0)
             tph = torch.mean(tail_count, dtype=torch.float64)
             hpt = torch.mean(head_count, dtype=torch.float64)
             self.head_corruption_probs[r] = tph / (tph + hpt)
