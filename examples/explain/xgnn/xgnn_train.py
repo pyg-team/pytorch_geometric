@@ -86,7 +86,7 @@ args = {'device': device,
         'input_dim' : 7,
         'opt': 'adam',
         'opt_restart': 0,
-        'weight_decay': 5e-4,
+        'weight_decay': 1e-4,
         'lr': 0.007}
 
 args = objectview(args)
