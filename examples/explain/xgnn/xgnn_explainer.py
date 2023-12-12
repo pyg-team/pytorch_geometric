@@ -153,7 +153,10 @@ class GraphGenerator(torch.nn.Module):
         start_node_one_hot = torch.eye(start_node_probs.shape[0])[start_node]
         end_node_one_hot = torch.eye(end_node_probs.shape[0])[end_node]
 
+        # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
+
+
 
 
 
@@ -310,6 +313,9 @@ candidate_set = {'C': torch.tensor([1, 0, 0, 0, 0, 0, 0]),
 
 # validity_args_valency = {candidate_set[atom] : max_val for atom, max_val in max_valency.items()}
 
+kwargs = dict()
+kwargs['candidate_set'] = candidate_set
+
 explainer = Explainer(
     model = model,
     algorithm = RLGenExplainer(candidate_set=candidate_set, validity_args = max_valency),
@@ -322,6 +328,9 @@ explainer = Explainer(
         return_type = 'log_probs',
     ),
 )
+
+# create kwargs list for explainer and add candidate set
+
 
 print("EXPLAINER DONE!")
 

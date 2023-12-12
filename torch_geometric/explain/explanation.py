@@ -10,6 +10,8 @@ from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.visualization import visualize_graph
 
+from torch_geometric.data.batch import Batch
+
 
 class ExplanationMixin:
     @property
@@ -419,25 +421,68 @@ class GenerativeExplanation(Data):
         status = super().validate(raise_on_error)
         status &= self.validate_masks(raise_on_error)
         return status
+    
+    def create_single_batch(dataset):
+        data_list = [data for data in dataset]
+        batched_data = Batch.from_data_list(data_list)
+        return batched_data
 
-    def sample(self, n=1, class_index=None):
+    def sample_graphs(self, n=1, class_index=None):
         model = self.get('model')
         generative_models = self.get('generative_models')
+        candidate_set = self.get('candidate_set')
         if class_index is None or class_index not in generative_models:
             raise ValueError(f"The argument 'class_index' is expected to be one of the possible targets.")
         
-        if model is not None:
+        if model is None:
             raise ValueError(f"The attribute 'model' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
             
-        if generative_models is not None:
+        if generative_models is None:
             raise ValueError(f"The attribute 'generative_models' is not available "
                              f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")   
+                             f"(got {self.available_explanations})") 
 
-        for _ in range(n):
-            h, edge_index = generative_models[class_index].sample()
-            y_hat = model(h, edge_index)
+        if candidate_set is None:  
+            raise ValueError(f"The attribute 'candidate_set' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        else:
+            if not isinstance(candidate_set, dict):
+                raise ValueError(f"The attribute 'candidate_set' must be a dict "
+                                 f"in '{self.__class__.__name__}' "
+                                 f"(got {type(candidate_set)})")
+
+        # for _ in range(n): TODO: sample n graphs for each class
+        # create initial graph state
+        keys = list(candidate_set.keys())
+        random_node_type = keys[torch.randint(len(keys), (1,)).item()]
+        feature = candidate_set[random_node_type].unsqueeze(0)
+        edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
+        node_type = [random_node_type,]
+        initial_graph = Data(x=feature, edge_index=edge_index, node_type=node_type)
+
+        if class_index is not None:
+            current_graph_state = initial_graph
+            _, _ = generative_models[class_index](current_graph_state, candidate_set)
+            graph_state_batch = self.create_single_batch([current_graph_state,])
+            gnn_output = model(graph_state_batch)
+            probability_of_target_class = gnn_output[0][class_index]
+            return current_graph_state, probability_of_target_class
+        else:
+            sampled_graphs = []
+            for class_index, class_specific_generative_model in zip(range(len(generative_models)), generative_models):
+                # make copy of initial graph state
+                current_graph_state = Data(x=initial_graph.x.clone(), 
+                                           edge_index=initial_graph.edge_index.clone(), 
+                                           node_type=initial_graph.node_type.copy())
+                _, _ = class_specific_generative_model(current_graph_state, candidate_set)
+                graph_state_batch = self.create_single_batch([current_graph_state,])
+                gnn_output = model(graph_state_batch)
+                probability_of_target_class = gnn_output[0][class_index]
+                sampled_graphs.append((current_graph_state, probability_of_target_class))
                 
-        return (h, edge_index), y_hat
+
+                
+        return sampled_graphs

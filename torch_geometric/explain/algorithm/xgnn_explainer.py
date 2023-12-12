@@ -48,6 +48,10 @@ class XGNNExplainer(ExplainerAlgorithm):
         # for each class get a model
 
         print("debug: xgnn forward (file: xgnn_explainer.py)")
+
+        candidate_set = kwargs.get("candidate_set", None)
+        if candidate_set is None:
+            raise ValueError(f"candidate_set not found in kwargs. It is a mandatory argument for XGNNExplainer")
         
         generative_models = dict()
         for t in torch.unique(target):
@@ -57,7 +61,7 @@ class XGNNExplainer(ExplainerAlgorithm):
                                                                learning_rate = 0.01, 
                                                                **kwargs)
         # self._clean_model(model)
-        return GenerativeExplanation(model = model, generative_models = generative_models)
+        return GenerativeExplanation(model = model, generative_models = generative_models, candidate_set = candidate_set)
 
     def train_generative_model(self, model, for_class, num_epochs = 100, learning_rate = 0.01):
         """
