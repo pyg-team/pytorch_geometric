@@ -75,9 +75,7 @@ class XGNNExplainer(ExplainerAlgorithm):
         generative_models = dict()
         for t in torch.unique(target):
             generative_models[t] = self.train_generative_model(model, 
-                                                               for_class = t, 
-                                                               num_epochs = self.epochs, 
-                                                               learning_rate = self.lr, 
+                                                               for_class = t,
                                                                **kwargs)
         return GenerativeExplanation(model = model, 
                                      generative_models = generative_models)

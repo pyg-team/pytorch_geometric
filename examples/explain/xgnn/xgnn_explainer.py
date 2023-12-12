@@ -241,9 +241,9 @@ class RLGenExplainer(XGNNExplainer):
         return reward
 
     # Training function
-    def train_generative_model(self, model_to_explain, for_class, num_epochs, learning_rate):
-        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr=learning_rate)
-        for epoch in range(num_epochs):
+    def train_generative_model(self, model_to_explain, for_class):
+        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr)
+        for epoch in range(self.epochs):
             total_loss = 0
 
             if self.initial_node_type is None:
