@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Optional, Union, Dict
 import torch
 from torch import Tensor
-from torch_geometric.explain import ExplainerAlgorithm, GenerativeExplanation
+from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.explain import GenerativeExplanation
 
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
@@ -90,3 +91,6 @@ class XGNNExplainer(ExplainerAlgorithm):
             for_class: The class for which the explanation is generated.
         """
         pass
+    
+    def supports(self) -> bool:
+        return True
