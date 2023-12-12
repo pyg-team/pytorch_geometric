@@ -102,7 +102,7 @@ def read_file(
     print(path)
     out = read_txt_array(path, sep=',', dtype=dtype)
     print(out.shape)
-    return
+    return out
 
 
 def cat(seq: List[Optional[Tensor]]) -> Optional[Tensor]:
