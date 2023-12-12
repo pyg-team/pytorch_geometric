@@ -5,10 +5,10 @@ from torch_geometric.nn import global_mean_pool
 from torch.nn.parameter import Parameter
 import math 
 
-def reset_parameters(module):
-    if isinstance(module, torch.nn.Linear):
-        module.reset_parameters()
-        print(module.parameters())
+# def reset_parameters(module):
+#     if isinstance(module, torch.nn.Linear):
+#         module.reset_parameters()
+#         print(module.parameters())
 
 ### GCN to predict graph property
 class GCN_Graph(torch.nn.Module):
@@ -37,12 +37,9 @@ class GCN_Graph(torch.nn.Module):
 
     def reset_parameters(self):
       for conv in self.convs:
-          conv.lin = torch.nn.Linear(conv.in_channels, 
-                                     conv.out_channels,
-                                     bias = False) 
-          
+          conv.reset_parameters()
           stdv = 1. / math.sqrt(conv.lin.weight.size(1))
-          conv.lin.weight.data.uniform_(-stdv, stdv)
+          torch.nn.init.uniform_(conv.lin.weight, -stdv, stdv)
           
           conv.bias = Parameter(torch.FloatTensor(conv.out_channels))
           conv.bias.data.uniform_(-stdv, stdv)
@@ -64,6 +61,6 @@ class GCN_Graph(torch.nn.Module):
         x = F.relu(self.fc1(x))
         x = F.dropout(x, self.dropout, training=self.training)
         x = self.fc2(x)
-        x = F.softmax(x, dim=1)
-        
+        # x = F.softmax(x, dim=1)
+        x = F.sigmoid(x)
         return x
