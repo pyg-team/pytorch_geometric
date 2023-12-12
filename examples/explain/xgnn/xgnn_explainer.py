@@ -4,7 +4,7 @@ import os
 import torch
 import torch.nn.functional as F
 from torch_geometric.data import Data, Batch
-from torch_geometric.explain import Explainer, XGNNExplainer
+from torch_geometric.explain import Explainer, XGNNExplainer, GenerativeModelInterface
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
@@ -74,7 +74,7 @@ def check_edge_representation(data):
 
 
 
-class GraphGenerator(torch.nn.Module):
+class GraphGenerator(torch.nn.Module, GenerativeModelInterface):
     def __init__(self, candidate_set, initial_node_type = None):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
@@ -172,6 +172,9 @@ class GraphGenerator(torch.nn.Module):
 
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
+
+    def sample(self):
+        pass
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self, epochs, lr, candidate_set, validity_args, initial_node_type = None):

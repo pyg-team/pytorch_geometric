@@ -417,6 +417,12 @@ class GenerativeModelInterface(ABC):
         """
         pass
 
+# Generative Explanation holds a single generative model,
+# there are cases where it would be convenient to hold multiple, perhaps one for each class
+# however for this to be a general class, it could also happen that a single model is trained
+# for all the classes collectively, essentially making the way we call the methods of these 
+# ambigious.
+
 class GenerativeExplanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
@@ -446,49 +452,22 @@ class GenerativeExplanation(Data, ExplanationMixin):
         batched_data = Batch.from_data_list(data_list)
         return batched_data
 
-    def sample_graphs(self, n=1, class_index=None):
+    def sample_graphs(self, n=1, **kwargs):
         model = self.get('model')
-        generative_models = self.get('generative_models')
+        generative_model = self.get('generative_models')
 
-        if class_index is None or class_index not in generative_models:
-            raise ValueError(f"The argument 'class_index' is expected to be one of the possible targets.")
-        
         if model is None:
             raise ValueError(f"The attribute 'model' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
             
-        if generative_models is None:
-            raise ValueError(f"The attribute 'generative_models' is not available "
+        if generative_model is None:
+            raise ValueError(f"The attribute 'generative_model' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})") 
 
- 
-        # for _ in range(n): TODO: sample n graphs for each class
-        # create initial graph state
-        
-
-        if class_index is not None:
-            current_graph_state = initial_graph
-            _, _ = generative_models[class_index](current_graph_state, candidate_set)
-            graph_state_batch = self.create_single_batch([current_graph_state,])
-            gnn_output = model(graph_state_batch)
-            probability_of_target_class = gnn_output[0][class_index]
-            return current_graph_state, probability_of_target_class
-        else:
-            sampled_graphs = []
-            for class_index, class_specific_generative_model in zip(range(len(generative_models)), generative_models):
-                # make copy of initial graph state
-                current_graph_state = Data(x=initial_graph.x.clone(), 
-                                           edge_index=initial_graph.edge_index.clone(), 
-                                           node_type=initial_graph.node_type.copy())
-                _, _ = class_specific_generative_model(current_graph_state, candidate_set)
-                graph_state_batch = self.create_single_batch([current_graph_state,])
-                gnn_output = model(graph_state_batch)
-                probability_of_target_class = gnn_output[0][class_index]
-                sampled_graphs.append((current_graph_state, probability_of_target_class))
-                
-                
+        sampled_graphs = []
+        sampled_graphs = generative_model.sample(n, **kwargs) # we expect a list of Data objects (graphs)
         return sampled_graphs
     
     def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
