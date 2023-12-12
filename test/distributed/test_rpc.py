@@ -25,11 +25,9 @@ def run_rpc_feature_test(
         global_world_size=world_size,
         group_name='dist-feature-test',
     )
-    rpc_worker_names: Dict[DistRole, List[str]] = {}
 
     rpc.init_rpc(
         current_ctx=current_ctx,
-        rpc_worker_names=rpc_worker_names,
         master_addr='localhost',
         master_port=master_port,
     )
