@@ -29,5 +29,8 @@ def read_txt_array(
     device: Optional[torch.device] = None,
 ) -> Tensor:
     with fsspec.open(path, 'r') as f:
-        src = f.read().split('\n')[:-1]
+        out = f.read()
+        print(out)
+        src = out.split('\n')[:-1]
+        print(src)
     return parse_txt_array(src, sep, start, end, dtype, device)

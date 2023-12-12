@@ -97,8 +97,12 @@ def read_file(
     name: str,
     dtype: Optional[torch.dtype] = None,
 ) -> Tensor:
+    print('read file', folder, prefix, name)
     path = osp.join(folder, f'{prefix}_{name}.txt')
-    return read_txt_array(path, sep=',', dtype=dtype)
+    print(path)
+    out = read_txt_array(path, sep=',', dtype=dtype)
+    print(out.shape)
+    return
 
 
 def cat(seq: List[Optional[Tensor]]) -> Optional[Tensor]:
