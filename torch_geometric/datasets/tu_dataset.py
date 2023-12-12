@@ -1,7 +1,13 @@
+import os
 import os.path as osp
 from typing import Callable, List, Optional
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import fs, read_tu_data
 
 
@@ -184,10 +190,18 @@ class TUDataset(InMemoryDataset):
 
     def download(self) -> None:
         url = self.cleaned_url if self.cleaned else self.url
-        fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
-        for filename in fs.ls(osp.join(self.raw_dir, self.name)):
-            fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
-        fs.rm(osp.join(self.raw_dir, self.name))
+        folder = osp.join(self.root, self.name)
+        path = download_url(f'{url}/{self.name}.zip', folder)
+        extract_zip(path, folder)
+        os.unlink(path)
+        fs.rm(self.raw_dir)
+        os.rename(osp.join(folder, self.name), self.raw_dir)
+
+        # TODO Does not work on Windows yet:
+        # fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
+        # for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+        #     fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
+        # fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)

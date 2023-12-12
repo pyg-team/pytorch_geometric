@@ -50,7 +50,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 100
         run: |
-          FULL_TEST=1 pytest --cov --cov-report=xml --durations 10
+          FULL_TEST=1 pytest test/datasets test/io --cov --cov-report=xml --durations 10
         shell: bash
 
       - name: Upload coverage
