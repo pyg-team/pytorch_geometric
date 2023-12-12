@@ -1,6 +1,3 @@
-import copy
-from typing import Dict, List, Optional, Union
-
 import torch
 from torch import Tensor
 
@@ -11,7 +8,9 @@ from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.visualization import visualize_graph
 
 from torch_geometric.data.batch import Batch
-
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Union
+import copy
 
 class ExplanationMixin:
     @property
@@ -402,7 +401,22 @@ def _visualize_score(
 
     plt.close()
     
-    
+class GenerativeModelInterface(ABC):
+    r"""Abstract base class for graph generative models used in generative explanations.
+
+    Subclasses must implement the `sample` method, which should generate new graph samples.
+    """
+
+    @abstractmethod
+    def sample(self, *args, **kwargs) -> Data:
+        r"""
+        Generates a new graph sample.
+
+        Returns:
+            Data: A PyTorch Geometric Data object representing the generated graph.
+        """
+        pass
+
 class GenerativeExplanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
@@ -435,7 +449,7 @@ class GenerativeExplanation(Data, ExplanationMixin):
     def sample_graphs(self, n=1, class_index=None):
         model = self.get('model')
         generative_models = self.get('generative_models')
-        candidate_set = self.get('candidate_set')
+
         if class_index is None or class_index not in generative_models:
             raise ValueError(f"The argument 'class_index' is expected to be one of the possible targets.")
         
@@ -449,24 +463,10 @@ class GenerativeExplanation(Data, ExplanationMixin):
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})") 
 
-        if candidate_set is None:  
-            raise ValueError(f"The attribute 'candidate_set' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")
-        else:
-            if not isinstance(candidate_set, dict):
-                raise ValueError(f"The attribute 'candidate_set' must be a dict "
-                                 f"in '{self.__class__.__name__}' "
-                                 f"(got {type(candidate_set)})")
-
+ 
         # for _ in range(n): TODO: sample n graphs for each class
         # create initial graph state
-        keys = list(candidate_set.keys())
-        random_node_type = keys[torch.randint(len(keys), (1,)).item()]
-        feature = candidate_set[random_node_type].unsqueeze(0)
-        edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
-        node_type = [random_node_type,]
-        initial_graph = Data(x=feature, edge_index=edge_index, node_type=node_type)
+        
 
         if class_index is not None:
             current_graph_state = initial_graph
@@ -488,7 +488,6 @@ class GenerativeExplanation(Data, ExplanationMixin):
                 probability_of_target_class = gnn_output[0][class_index]
                 sampled_graphs.append((current_graph_state, probability_of_target_class))
                 
-
                 
         return sampled_graphs
     

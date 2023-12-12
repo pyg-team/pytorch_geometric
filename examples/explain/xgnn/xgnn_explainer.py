@@ -113,7 +113,6 @@ class GraphGenerator(torch.nn.Module):
         graph_state.edge_index = edge_index
         graph_state.node_type = node_type
 
-
     def forward(self, graph_state):
         # chechk if graph state is empty and initialize it if True
         if graph_state.x.shape[0] == 0:
@@ -173,10 +172,6 @@ class GraphGenerator(torch.nn.Module):
 
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
-
-
-
-
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self, epochs, lr, candidate_set, validity_args, initial_node_type = None):

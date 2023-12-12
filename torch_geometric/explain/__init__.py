@@ -1,5 +1,5 @@
 from .config import ExplainerConfig, ModelConfig, ThresholdConfig
-from .explanation import Explanation, HeteroExplanation, GenerativeExplanation
+from .explanation import Explanation, HeteroExplanation, GenerativeExplanation, GenerativeModelInterface
 from .algorithm import *  # noqa
 from .explainer import Explainer
 from .metric import *  # noqa
@@ -12,4 +12,5 @@ __all__ = [
     'HeteroExplanation',
     'Explainer',
     'GenerativeExplanation',
+    'GenerativeModelInterface',
 ]
