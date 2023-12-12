@@ -1,11 +1,10 @@
 import socket
-from typing import Dict, List
 
 import torch
 
 import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
-from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.rpc import RPCRouter
 from torch_geometric.testing import onlyLinux
 

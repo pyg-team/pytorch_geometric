@@ -1,4 +1,3 @@
-import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
@@ -7,7 +6,6 @@ from typing import Any, Callable, Dict, List, Optional
 from torch._C._distributed_rpc import _is_current_rpc_agent_set
 from torch.distributed import rpc
 
-import torch_geometric.typing
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 
 _rpc_init_lock = threading.RLock()

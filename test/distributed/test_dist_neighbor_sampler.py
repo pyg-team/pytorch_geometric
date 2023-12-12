@@ -10,7 +10,6 @@ from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.dist_neighbor_sampler import (
     DistNeighborSampler,
-    shutdown_rpc,
 )
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput

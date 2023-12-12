@@ -1,5 +1,4 @@
 import asyncio
-import atexit
 import logging
 from threading import BoundedSemaphore, Thread
 from typing import Callable, Optional

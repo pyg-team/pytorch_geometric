@@ -8,7 +8,7 @@ from torch_geometric.distributed import (
     LocalFeatureStore,
     LocalGraphStore,
 )
-from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.loader import LinkLoader
 from torch_geometric.sampler.base import NegativeSampling, SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor

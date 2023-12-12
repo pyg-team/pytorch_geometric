@@ -8,7 +8,7 @@ import torch.multiprocessing as mp
 from torch import Tensor
 
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.event_loop import (
     ConcurrentEventLoop,
     to_asyncio_future,
@@ -16,11 +16,9 @@ from torch_geometric.distributed.event_loop import (
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
     RPCRouter,
-    global_barrier,
     rpc_async,
     rpc_partition_to_workers,
     rpc_register,
-    shutdown_rpc,
 )
 from torch_geometric.distributed.utils import (
     BatchDict,
