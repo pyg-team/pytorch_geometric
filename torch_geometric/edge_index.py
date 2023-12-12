@@ -1360,6 +1360,7 @@ def matmul(
             rowptr, col, out_int32=rowptr.dtype != torch.int64)
 
     elif out.layout == torch.sparse_coo:  # pragma: no cover
+        out = out.coalesce()
         edge_index = out.indices()
 
     else:

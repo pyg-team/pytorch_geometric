@@ -160,7 +160,13 @@ def cp(
                     f_to.write(chunk)
 
     if use_cache and clear_cache and cache_dir is not None:
-        rm(cache_dir)
+        try:
+            rm(cache_dir)
+        except PermissionError:  # FIXME
+            # Windows test yield "PermissionError: The process cannot access
+            # the file because it is being used by another process"
+            # This is a quick workaround until we figure out the deeper issue.
+            pass
 
 
 def rm(path: str, recursive: bool = True) -> None:
