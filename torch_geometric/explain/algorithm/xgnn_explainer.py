@@ -86,3 +86,5 @@ class XGNNExplainer(ExplainerAlgorithm):
 
     def supports(self) -> bool:
         return True
+    
+    

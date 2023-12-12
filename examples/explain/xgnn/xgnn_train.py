@@ -7,8 +7,12 @@ from tqdm import trange
 import copy
 from tqdm.auto import trange
 import matplotlib.pyplot as plt
-
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from xgnn_model import GCN_Graph
+
+seed = 42
+np.random.seed(seed)
+torch.manual_seed(seed)
 
 def create_single_batch(dataset):
     data_list = [data for data in dataset]
@@ -36,7 +40,8 @@ def train(dataset, args, train_indices, val_indices, test_indices):
     # Model initialization
     model = GCN_Graph(args.input_dim, output_dim=2, dropout=args.dropout).to(device)
 
-    opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay) # weight_decay=args.weight_decay
+    opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay) # 
+    # scheduler = ReduceLROnPlateau(opt, mode='max', factor=0.5, patience=10, verbose=True)
 
     # Training loop
     losses = []
@@ -59,12 +64,15 @@ def train(dataset, args, train_indices, val_indices, test_indices):
         # Test accuracy
         if epoch % 10 == 0:
             test_acc = test(test_dataset, model)
+    
             test_accs.append(test_acc)
             if test_acc > best_acc:
                 best_acc = test_acc
                 best_model = copy.deepcopy(model)
         else:
             test_accs.append(test_accs[-1])
+        
+
 
     return test_accs, losses, best_model, best_acc
 
@@ -76,13 +84,12 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 args = {'device': device,
         'dropout': 0.1,
-        'epochs': 1000,
+        'epochs': 5000,
         'input_dim' : 7,
         'opt': 'adam',
-        'opt_scheduler': 'none',
         'opt_restart': 0,
-        'weight_decay': 5e-5,
-        'lr': 0.001}
+        'weight_decay': 5e-7,
+        'lr': 0.007}
 
 args = objectview(args)
 
@@ -112,11 +119,11 @@ try:
 except Exception as e:
     print("Error saving model:", e)
 
-# print("Maximum test set accuracy: {0}".format(max(test_accs)))
-# print("Minimum loss: {0}".format(min(losses)))
+print("Maximum test set accuracy: {0}".format(max(test_accs)))
+print("Minimum loss: {0}".format(min(losses)))
 
-# plt.title(dataset.name)
-# plt.plot(losses, label="training loss")
-# plt.plot(test_accs, label="test accuracy")
-# plt.legend()
-# plt.show()
+plt.title(dataset.name)
+plt.plot(losses, label="training loss")
+plt.plot(test_accs, label="test accuracy")
+plt.legend()
+plt.show()

@@ -2,17 +2,22 @@ from torch_geometric.nn import GCNConv
 import torch
 import torch.nn.functional as F
 from torch_geometric.nn import global_mean_pool
+from torch.nn.parameter import Parameter
+import math 
 
-def reset_parameters(module):
-    if isinstance(module, torch.nn.Linear):
-        module.reset_parameters()
-        print(module.parameters())
+# def reset_parameters(module):
+#     if isinstance(module, torch.nn.Linear):
+#         module.reset_parameters()
+#         print(module.parameters())
 
 ### GCN to predict graph property
 class GCN_Graph(torch.nn.Module):
     def __init__(self, input_dim, output_dim, dropout, emb = False):
         super(GCN_Graph, self).__init__()
 
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        
         self.dropout = dropout
         self.convs = torch.nn.ModuleList([GCNConv(in_channels = input_dim, out_channels = 32),
                                           GCNConv(in_channels = 32,        out_channels = 48),
@@ -33,6 +38,12 @@ class GCN_Graph(torch.nn.Module):
     def reset_parameters(self):
       for conv in self.convs:
           conv.reset_parameters()
+          stdv = 1. / math.sqrt(conv.lin.weight.size(1))
+          torch.nn.init.uniform_(conv.lin.weight, -stdv, stdv)
+          
+          conv.bias = Parameter(torch.FloatTensor(conv.out_channels))
+          conv.bias.data.uniform_(-stdv, stdv)
+          
       self.fc1.reset_parameters()
       self.fc2.reset_parameters()
 
@@ -42,18 +53,14 @@ class GCN_Graph(torch.nn.Module):
 
         for i in range(len(self.convs)):
             x = F.relu(self.convs[i](x, edge_index))
-            x = F.dropout(x, p=self.dropout, training=self.training)
-        # print(x)
-        # x = torch.mean(x, 1)
-        # print(x)
-        x = self.pool(x, batch)
-        # print(x)
+            if i < len(self.convs) - 1: # do not apply dropout on last layer
+                x = F.dropout(x, p=self.dropout, training=self.training)
 
+        x = self.pool(x, batch)
+        
         x = F.relu(self.fc1(x))
         x = F.dropout(x, self.dropout, training=self.training)
         x = self.fc2(x)
-        # print("size of x")
-        # print(x.size())
-        x = F.softmax(x, dim=1)
-        # print(x.size())
+        # x = F.softmax(x, dim=1)
+        x = F.sigmoid(x)
         return x
