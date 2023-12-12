@@ -403,7 +403,7 @@ def _visualize_score(
     plt.close()
     
     
-class GenerativeExplanation(Data):
+class GenerativeExplanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
@@ -416,10 +416,15 @@ class GenerativeExplanation(Data):
             Class for which the explanation is computed. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
+    
     def validate(self, raise_on_error: bool = True) -> bool:
-        r"""Validates the correctness of the :class:`Explanation` object."""
-        status = super().validate(raise_on_error)
-        status &= self.validate_masks(raise_on_error)
+        """Validates the correctness of the `GenerativeExplanation` object."""
+        status = super().validate(raise_on_error)        
+        # Check if 'model' and 'generative_models' attributes are not None
+        if self.get('model') is None or self.get('generative_models') is None:
+            if raise_on_error:
+                raise ValueError("Both 'model' and 'generative_models' must be set.")
+            status = False
         return status
     
     def create_single_batch(dataset):
