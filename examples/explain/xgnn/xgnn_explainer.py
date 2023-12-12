@@ -34,6 +34,7 @@ class objectview(object):
 args = objectview(args)
         
 model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
+model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
 
 # Assume 'model_to_freeze' is the model you want to freeze
 for param in model.parameters():
@@ -74,13 +75,12 @@ def check_edge_representation(data):
 
 
 class GraphGenerator(torch.nn.Module):
-    def __init__(self, num_node_features, num_candidate_node_types):
+    def __init__(self, candidate_set, initial_node_type = None):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
-        print("debug: GraphGenerator init")
-        print("num_node_features", num_node_features)
-        print("num_candidate_node_types", num_candidate_node_types)
-        print("debug: GraphGenerator init done")
+        self.candidate_set = candidate_set
+        self.initial_node_type = initial_node_type
+        num_node_features = len(next(iter(self.candidate_set.values())))
         self.gcn_layers = torch.nn.ModuleList([
             GCNConv(num_node_features, 16),
             GCNConv(16, 24),
@@ -100,10 +100,28 @@ class GraphGenerator(torch.nn.Module):
             torch.nn.Softmax(dim=0)
         )
 
-    def forward(self, graph_state, candidate_set):
+    def initialize_graph_state(self, graph_state):
+        if self.initial_node_type is None:
+            keys = list(self.candidate_set.keys())
+            self.initial_node_type = keys[torch.randint(len(keys), (1,)).item()]
+
+        feature = candidate_set[self.initial_node_type].unsqueeze(0)
+        edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
+        node_type = [self.initial_node_type,]
+        # update graph state
+        graph_state.x = feature
+        graph_state.edge_index = edge_index
+        graph_state.node_type = node_type
+
+
+    def forward(self, graph_state):
+        # chechk if graph state is empty and initialize it if True
+        if graph_state.x.shape[0] == 0:
+            self.initialize_graph_state(graph_state)
+
         # contatenate graph_state features with candidate_set features
         node_features_graph = graph_state.x
-        candidate_features = torch.stack(list(candidate_set.values()))
+        candidate_features = torch.stack(list(self.candidate_set.values()))
         node_features = torch.cat((node_features_graph, candidate_features), dim=0).float()
         
         # compute node encodings with GCN layers
@@ -142,10 +160,8 @@ class GraphGenerator(torch.nn.Module):
         num_nodes_graph = graph_state.x.shape[0]
         if end_node >= num_nodes_graph: 
             # add new node features to graph state
-            # graph_state.x = torch.cat((graph_state.x, node_features[end_node].unsqueeze(0).float()), dim=0).float() # TODO: make prettier
             graph_state.x = torch.cat([graph_state.x, node_features[end_node].unsqueeze(0).float()], dim=0)
-            # graph_state.node_type += [list(candidate_set.keys())[end_node - num_nodes_graph],] # TODO: make prettier
-            graph_state.node_type.append(list(candidate_set.keys())[end_node - num_nodes_graph])
+            graph_state.node_type.append(list(self.candidate_set.keys())[end_node - num_nodes_graph])
             new_edge = torch.tensor([[start_node], [num_nodes_graph]])
         else: 
             new_edge = torch.tensor([[start_node], [end_node]])
@@ -158,23 +174,20 @@ class GraphGenerator(torch.nn.Module):
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
+
+
+
+
 class RLGenExplainer(XGNNExplainer):
-    def __init__(self, epochs = 100, 
-                       lr = 0.01, 
-                       candidate_set = None, 
-                       validity_args = None, 
-                       initial_node_type = None):
+    def __init__(self, epochs, lr, candidate_set, validity_args, initial_node_type = None):
         super(RLGenExplainer, self).__init__(epochs, lr)
         self.candidate_set = candidate_set
-        num_features = len(next(iter(self.candidate_set.values())))
-        self.graph_generator = GraphGenerator(num_features,
-                                              len(self.candidate_set)) # TODO: get number of features out in a prettier way
+        self.graph_generator = GraphGenerator(candidate_set, initial_node_type)
         self.max_steps = 10
         self.lambda_1 = 1
         self.lambda_2 = 1
         self.num_classes = 2
         self.validity_args = validity_args
-        self.initial_node_type = initial_node_type
     
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
         gnn_output = pre_trained_gnn(graph_state)
@@ -183,6 +196,7 @@ class RLGenExplainer(XGNNExplainer):
         return probability_of_target_class - 1 / num_classes
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
+        
         final_rewards = []
         for _ in range(num_rollouts):
             # make copy of intermediate graph state
@@ -190,7 +204,7 @@ class RLGenExplainer(XGNNExplainer):
                                                  edge_index=intermediate_graph_state.edge_index.clone(), 
                                                  node_type=intermediate_graph_state.node_type.copy())
             # Generate a final graph from the intermediate graph state
-            _, final_graph = self.graph_generator(intermediate_graph_state_copy, self.candidate_set)
+            _, final_graph = self.graph_generator(intermediate_graph_state_copy)
             # Evaluate the final graph
             reward = self.reward_tf(pre_trained_gnn, final_graph, num_classes)
             final_rewards.append(reward)
@@ -201,8 +215,21 @@ class RLGenExplainer(XGNNExplainer):
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
         
+        
         # print("debug: rollout_reward", average_final_reward)
         return average_final_reward
+
+    # def evaluate_graph_validity(self, graph_state):
+    #     # check if graph has duplicated edges
+    #     edge_set = set()
+        
+    #     for edge in graph_state.edge_index:
+    #         sorted_edge = tuple(sorted(edge))
+    #         if sorted_edge in edge_set:
+    #             print("Graph has duplicated edges")
+    #             return -1
+    #         edge_set.add(sorted_edge)
+    #     return 0
 
     def evaluate_graph_validity(self, graph_state):
         # For mutag, node degrees cannot exceed valency
@@ -232,19 +259,12 @@ class RLGenExplainer(XGNNExplainer):
         for epoch in range(self.epochs):
             total_loss = 0
 
-            if self.initial_node_type is None:
-                # we sample from node IDs and candidate keys set which is now a dictionary, then create a data object with the correct node type and edge index
-                self.initial_node_type = random.choice(list(candidate_set.keys()))
+            # create empty graph state
+            empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
+            current_graph_state = empty_graph
 
-            
-            feature = candidate_set[self.initial_node_type].unsqueeze(0)
-            edge_index = torch.tensor([], dtype=torch.long).view(2, -1)
-            node_type = [self.initial_node_type,]
-            initial_graph = Data(x=feature, edge_index=edge_index, node_type=node_type)
-            current_graph_state = initial_graph
-        
             for step in range(self.max_steps):
-                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state, self.candidate_set)
+                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state)
                 
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
                 
