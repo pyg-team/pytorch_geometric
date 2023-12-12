@@ -138,7 +138,7 @@ class TUDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
-        out = torch.load(self.processed_paths[0])
+        out = fs.torch_load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
@@ -193,28 +193,13 @@ class TUDataset(InMemoryDataset):
 
     def download(self) -> None:
         url = self.cleaned_url if self.cleaned else self.url
-        folder = osp.join(self.root, self.name)
-        path = download_url(f'{url}/{self.name}.zip', folder)
-        extract_zip(path, folder)
-        os.unlink(path)
-        shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(folder, self.name), self.raw_dir)
-        print("=========")
-        print(fs.ls(self.raw_dir))
-        print("=========")
-
-        # TODO Does not work on Windows yet:
-        # fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
-        # for filename in fs.ls(osp.join(self.raw_dir, self.name)):
-        #     fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
-        # fs.rm(osp.join(self.raw_dir, self.name))
+        fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
+        for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+            fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
-        print("read tu data output")
-        print(self.data)
-        print(self.slices)
-        print(sizes)
 
         if self.pre_filter is not None or self.pre_transform is not None:
             data_list = [self.get(idx) for idx in range(len(self))]
@@ -229,8 +214,8 @@ class TUDataset(InMemoryDataset):
             self._data_list = None  # Reset cache.
 
         assert isinstance(self._data, Data)
-        torch.save((self._data.to_dict(), self.slices, sizes),
-                   self.processed_paths[0])
+        fs.torch_save((self._data.to_dict(), self.slices, sizes),
+                      self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
