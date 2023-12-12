@@ -2,6 +2,8 @@ import os
 import os.path as osp
 from typing import Callable, List, Optional
 
+import torch
+
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
@@ -135,7 +137,7 @@ class TUDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
-        out = fs.torch_load(self.processed_paths[0])
+        out = torch.load(self.processed_paths[0])
         if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
@@ -219,8 +221,8 @@ class TUDataset(InMemoryDataset):
             self._data_list = None  # Reset cache.
 
         assert isinstance(self._data, Data)
-        fs.torch_save((self._data.to_dict(), self.slices, sizes),
-                      self.processed_paths[0])
+        torch.save((self._data.to_dict(), self.slices, sizes),
+                   self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
