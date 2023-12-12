@@ -199,6 +199,9 @@ class TUDataset(InMemoryDataset):
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
         os.rename(osp.join(folder, self.name), self.raw_dir)
+        print("=========")
+        print(fs.ls(self.raw_dir))
+        print("=========")
 
         # TODO Does not work on Windows yet:
         # fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
@@ -208,6 +211,10 @@ class TUDataset(InMemoryDataset):
 
     def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
+        print("read tu data output")
+        print(self.data)
+        print(self.slices)
+        print(sizes)
 
         if self.pre_filter is not None or self.pre_transform is not None:
             data_list = [self.get(idx) for idx in range(len(self))]
