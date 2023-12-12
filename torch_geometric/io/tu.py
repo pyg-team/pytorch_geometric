@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
