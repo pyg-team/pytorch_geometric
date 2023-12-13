@@ -83,7 +83,7 @@ class PCPNetDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
 
         assert split in ['train', 'val', 'test']
 
@@ -114,12 +114,12 @@ class PCPNetDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return self.split + '_' + self.category + '.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         path_file = self.raw_paths
         with open(path_file[0], "r") as f:
             filenames = f.read().split('\n')[:-1]

@@ -108,31 +108,29 @@ blank_line_before_nested_class_or_def = false
 
 [tool.mypy]
 files = ["torch_geometric"]
-install_types = false  # FIXME Revert me (https://github.com/python/mypy/issues/10768)
-non_interactive = false  # FIXME Revert me (https://github.com/python/mypy/issues/10768)
+install_types = true
+non_interactive = true
 ignore_missing_imports = true
 show_error_codes = true
 warn_redundant_casts = true
 warn_unused_configs = true
 warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
 
 [[tool.mypy.overrides]]
 ignore_errors = true
 module = [
-    "torch_geometric.utils.*",
-    "torch_geometric.io.*",
     "torch_geometric.data.*",
     "torch_geometric.sampler.*",
     "torch_geometric.loader.*",
     "torch_geometric.transforms.*",
-    "torch_geometric.datasets.*",
     "torch_geometric.nn.*",
     "torch_geometric.explain.*",
     "torch_geometric.profile.*",
     "torch_geometric.contrib.*",
     "torch_geometric.graphgym.*",
     "torch_geometric.distributed.*",
-    "torch_geometric.config_store",
 ]
 
 [tool.isort]

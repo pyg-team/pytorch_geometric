@@ -129,7 +129,7 @@ class ShapeNet(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -152,6 +152,8 @@ class ShapeNet(InMemoryDataset):
                               'train, val, trainval or test'))
 
         self.load(path)
+
+        assert isinstance(self._data, Data)
         self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
@@ -168,14 +170,14 @@ class ShapeNet(InMemoryDataset):
         return list(self.category_ids.values()) + ['train_test_split']
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
             osp.join(f'{cats}_{split}.pt')
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
@@ -193,10 +195,10 @@ class ShapeNet(InMemoryDataset):
             if cat not in categories_ids:
                 continue
 
-            data = read_txt_array(osp.join(self.raw_dir, name))
-            pos = data[:, :3]
-            x = data[:, 3:6]
-            y = data[:, -1].type(torch.long)
+            tensor = read_txt_array(osp.join(self.raw_dir, name))
+            pos = tensor[:, :3]
+            x = tensor[:, 3:6]
+            y = tensor[:, -1].type(torch.long)
             data = Data(pos=pos, x=x, y=y, category=cat_idx[cat])
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
@@ -206,7 +208,7 @@ class ShapeNet(InMemoryDataset):
 
         return data_list
 
-    def process(self):
+    def process(self) -> None:
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
             path = osp.join(self.raw_dir, 'train_test_split',

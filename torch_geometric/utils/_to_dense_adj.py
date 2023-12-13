@@ -61,8 +61,8 @@ def to_dense_adj(
                 [5., 0.]]])
     """
     if batch is None:
-        num_nodes = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
-        batch = edge_index.new_zeros(num_nodes)
+        max_index = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+        batch = edge_index.new_zeros(max_index)
 
     if batch_size is None:
         batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1

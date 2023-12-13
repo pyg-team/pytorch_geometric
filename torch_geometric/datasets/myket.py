@@ -52,7 +52,7 @@ class MyketDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=TemporalData)
@@ -65,11 +65,11 @@ class MyketDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for file_name in self.raw_file_names:
             download_url(f'{self.url}/{file_name}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0], skiprows=1, header=None)

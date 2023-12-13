@@ -34,7 +34,7 @@ class MyTestEventDataset(EventDataset):
         return torch.stack([sub, rel, obj, t], dim=1)
 
     def process(self):
-        data_list = super().process()
+        data_list = self._process_data_list()
         self.save(data_list, self.processed_paths[0])
 
 

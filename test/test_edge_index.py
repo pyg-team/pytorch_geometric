@@ -7,8 +7,8 @@ import torch
 from torch import Tensor, tensor
 
 import torch_geometric
-from torch_geometric.data import EdgeIndex
-from torch_geometric.data.edge_index import (
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
     _scatter_spmm,
@@ -46,7 +46,10 @@ def test_basic(dtype, device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     adj.validate()
     assert isinstance(adj, EdgeIndex)
-    assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],')
+    if torch_geometric.typing.WITH_PT112:
+        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],')
+    else:
+        assert str(adj).startswith('tensor([[0, 1, 1, 2],')
     assert adj.dtype == dtype
     assert adj.device == device
     assert adj.sparse_size() == (3, 3)
@@ -385,6 +388,13 @@ def test_flip(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
     assert out._T_indptr is None
 
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
+    out = adj.flip(0)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device))
+    assert out.is_sorted_by_row
+    assert out.is_undirected == is_undirected
+
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
@@ -555,6 +565,7 @@ def test_to_sparse_csr(dtype, device):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.skipif(not torch_geometric.typing.WITH_PT112, reason="<1.12")
 def test_to_sparse_csc(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
     with pytest.raises(ValueError, match="not sorted"):

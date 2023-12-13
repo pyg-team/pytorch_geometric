@@ -143,10 +143,13 @@ def dropout_node(
 
     prob = torch.rand(num_nodes, device=edge_index.device)
     node_mask = prob > p
-    edge_index, _, edge_mask = subgraph(node_mask, edge_index,
-                                        num_nodes=num_nodes,
-                                        relabel_nodes=relabel_nodes,
-                                        return_edge_mask=True)
+    edge_index, _, edge_mask = subgraph(
+        node_mask,
+        edge_index,
+        relabel_nodes=relabel_nodes,
+        num_nodes=num_nodes,
+        return_edge_mask=True,
+    )
     return edge_index, edge_mask, node_mask
 
 
