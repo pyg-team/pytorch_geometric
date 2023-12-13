@@ -83,8 +83,7 @@ class ExpNormalSmearing(torch.nn.Module):
             self.register_buffer('betas', betas)
 
     def _initial_params(self) -> Tuple[Tensor, Tensor]:
-        r"""Initializes the means and betas for the radial basis functions.
-        """
+        r"""Initializes the means and betas for the radial basis functions."""
         start_value = torch.exp(torch.tensor(-self.cutoff))
         means = torch.linspace(start_value, 1, self.num_rbf)
         betas = torch.tensor([(2 / self.num_rbf * (1 - start_value))**-2] *
