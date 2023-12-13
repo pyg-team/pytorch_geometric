@@ -191,11 +191,9 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         start_node_one_hot = torch.eye(start_node_probs.shape[0])[start_node]
         end_node_one_hot = torch.eye(end_node_probs.shape[0])[end_node]
 
-        # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_logits.squeeze(), start_node_one_hot), (end_node_logits.squeeze(), end_node_one_hot)), graph_state
 
     def sample(self, num_samples: int, **kwargs):
-        # TODO: add sampling from the trained graph generator
         # extract num_nodes and max_steps from kwargs or set them to None
         num_nodes = kwargs.get('num_nodes', None)
         max_steps = kwargs.get('max_steps', None)
@@ -223,9 +221,9 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
                 # check if max_steps is reached (if max_steps is None, this will never be True)
                 max_steps_reached = max_steps is not None and step >= max_steps
                 # check if num_nodes is reached
-                num_nodes_reached = num_nodes is not None and G.x.shape[0] >= num_nodes
+                num_nodes_reached = num_nodes is not None and current_graph_state.x.shape[0] > num_nodes
             # add sampled graph to list
-            sampled_graphs.append(current_graph_state)
+            sampled_graphs.append(G)
             # reset current graph state
             current_graph_state = copy.deepcopy(empty_graph)
             # reset max_steps_reached and num_nodes_reached
@@ -246,6 +244,8 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
+        # helper function that computes the reward for a given graph state by evaluating the 
+        # graph with the pre-trained GNN.
         with torch.no_grad():
             gnn_output = pre_trained_gnn(graph_state)
             probability_of_target_class = torch.sigmoid(gnn_output).squeeze()
@@ -254,39 +254,31 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
-        
+        # helper function that performs rollouts and evaluates the graphs one step ahead of 
+        # the current graph state.
         final_rewards = []
         for _ in range(num_rollouts):
             # make copy of intermediate graph state
-            intermediate_graph_state_copy = Data(x=intermediate_graph_state.x.clone(), 
-                                                 edge_index=intermediate_graph_state.edge_index.clone(), 
-                                                 node_type=intermediate_graph_state.node_type.copy())
-            # Generate a final graph from the intermediate graph state
+            intermediate_graph_state_copy = copy.deepcopy(intermediate_graph_state)
             _, final_graph = self.graph_generator(intermediate_graph_state_copy)
             # Evaluate the final graph
             reward = self.reward_tf(pre_trained_gnn, final_graph, num_classes)
             final_rewards.append(reward)
 
-            # delete intermediate graph state copy
             del intermediate_graph_state_copy
 
         # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
-        
-        
-        # print("debug: rollout_reward", average_final_reward)
         return average_final_reward
 
 
     def evaluate_graph_validity(self, graph_state):
-        # For mutag, node degrees cannot exceed valency
+        # helper function that evaluates the validity of a graph based on the specific graph 
+        # rules of the dataset. For mutag, node degrees cannot exceed valency.
         degrees = torch.bincount(graph_state.edge_index.flatten(), minlength=graph_state.num_nodes)
-        # Check if any node degree exceeds valency
         node_type_valencies = torch.tensor([self.validity_args[type_] for type_ in graph_state.node_type])
         if torch.any(degrees > node_type_valencies):
-            # print("debug: evaluate_graph_validity", -1)
             return -1
-        # print("debug: evaluate_graph_validity", 0)
         return 0
         
         
@@ -403,16 +395,13 @@ print(explanation)
 
 explanation_set = explanation.explanation_set
 
-sampled_graph = explanation_set.sample(num_samples=2, num_nodes=5)[1]
+### SAMPLE SINGLE GRAPH
+sampled_graph = explanation_set.sample(num_samples=1, num_nodes=10)[0]
 
-print("SAMPLED GRAPH:", sampled_graph)
-print("SAMPLED GRAPH NODE TYPE:", sampled_graph.node_type)
-print("SAMPLED GRAPH EDGE INDEX:", sampled_graph.edge_index)
-
-# visualize sampled graph with default inbuild method
+# visualize sampled graph with DEFAULT inbuild method
 explanation.visualize_explanation_graph(sampled_graph, path='examples/explain/xgnn/sample_graph', backend='networkx')
 
-# visualize sampled graph with custom method
+# visualize sampled graph with CUSTOM method
 node_color_dict = {'C': '#0173B2', 
                    'N': '#DE8F05', 
                    'O': '#029E73', 
@@ -421,26 +410,51 @@ node_color_dict = {'C': '#0173B2',
                    'Cl': '#CA9161', 
                    'Br': '#FBAFE4'} # colorblind palette
 
-# get score for sampled graph
-score = model(sampled_graph)
-probability_score = torch.sigmoid(score)
-print("SCORE:", probability_score)
+# # get score for sampled graph
+# score = model(sampled_graph)
+# probability_score = torch.sigmoid(score)
 
-G = to_networkx(sampled_graph, to_undirected=True)
+# G = to_networkx(sampled_graph, to_undirected=True)
 
-node_type_dict = dict(enumerate(sampled_graph.node_type))
-nx.set_node_attributes(G, node_type_dict, 'node_type')
-labels = nx.get_node_attributes(G, 'node_type')
+# node_type_dict = dict(enumerate(sampled_graph.node_type))
+# nx.set_node_attributes(G, node_type_dict, 'node_type')
+# labels = nx.get_node_attributes(G, 'node_type')
+# node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
+# pos = nx.spring_layout(G)
+# fig, axe = plt.subplots(figsize=(8,8))
+# axe.set_title("Score: {:.2f}".format(probability_score.item()), loc="center")
+# # plot graph with scroe as title
+# nx.draw(G, pos=pos, ax=axe, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
 
-node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
-pos = nx.spring_layout(G)
-fig, axe = plt.subplots(figsize=(8,8))
-axe.set_title("Score: {:.2f}".format(probability_score.item()), loc="center")
-# plot graph with scroe as title
-nx.draw(G, pos=pos, ax=axe, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
+# # plt.savefig('examples/explain/xgnn/sample_graph_custom.png')
+# plt.show()
 
-# plt.savefig('examples/explain/xgnn/sample_graph_custom.png')
+### SAMPLE MULTIPLE GRAPHS
+sampled_graphs = []
+scores = []
+for i in range(3, 11):
+    sampled_graph = explanation_set.sample(num_samples=1, num_nodes=i)[0]
+    score = model(sampled_graph)
+    probability_score = torch.sigmoid(score)
+    sampled_graphs.append(sampled_graph)
+    scores.append(probability_score.item())
 
+# visualize sampled graphs with CUSTOM method
+fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+axes = axes.flatten()
+
+for i, (sampled_graph, score) in enumerate(zip(sampled_graphs, scores)):
+    G = to_networkx(sampled_graph, to_undirected=True)
+    node_type_dict = dict(enumerate(sampled_graph.node_type))
+    nx.set_node_attributes(G, node_type_dict, 'node_type')
+    labels = nx.get_node_attributes(G, 'node_type')
+    node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
+    pos = nx.spring_layout(G)
+    axes[i].set_title("Score: {:.5f}".format(score), loc="center")
+    # plot graph with scroe as title
+    nx.draw(G, pos=pos, ax=axes[i], cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
+
+# plt.savefig('examples/explain/xgnn/sample_graphs_custom.png')
 plt.show()
 
 
