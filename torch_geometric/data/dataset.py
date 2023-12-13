@@ -1,5 +1,4 @@
 import copy
-import os
 import os.path as osp
 import re
 import sys
