@@ -81,7 +81,7 @@ class GraphUNet(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
         edge_weight = x.new_ones(edge_index.size(1))

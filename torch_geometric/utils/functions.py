@@ -12,7 +12,6 @@ def cumsum(x: Tensor, dim: int = 0) -> Tensor:
             (default: :obj:`0`)
 
     Example:
-
         >>> x = torch.tensor([2, 4, 1])
         >>> cumsum(x)
         tensor([0, 2, 6, 7])

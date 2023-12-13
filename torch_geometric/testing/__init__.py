@@ -1,3 +1,8 @@
+r"""Testing package.
+
+This package provides helper methods and decorators to ease testing.
+"""
+
 from .decorators import (
     is_full_test,
     onlyFullTest,
@@ -13,6 +18,7 @@ from .decorators import (
     withPackage,
     withCUDA,
     disableExtensions,
+    withoutExtensions,
 )
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
@@ -38,6 +44,7 @@ __all__ = [
     'withPackage',
     'withCUDA',
     'disableExtensions',
+    'withoutExtensions',
     'assert_module',
     'MyFeatureStore',
     'MyGraphStore',

@@ -11,7 +11,7 @@ from torch_geometric.utils import degree
 @functional_transform('target_indegree')
 class TargetIndegree(BaseTransform):
     r"""Saves the globally normalized degree of target nodes
-    (functional name: :obj:`target_indegree`)
+    (functional name: :obj:`target_indegree`).
 
     .. math::
 

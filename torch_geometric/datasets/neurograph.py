@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class NeuroGraphDataset(InMemoryDataset):
@@ -55,6 +55,8 @@ class NeuroGraphDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://vanderbilt.box.com/shared/static'
     filenames = {
@@ -72,16 +74,18 @@ class NeuroGraphDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         assert name in self.filenames.keys()
         self.name = name
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def raw_file_names(self) -> str:
@@ -89,13 +93,13 @@ class NeuroGraphDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = f'{self.url}/{self.filenames[self.name]}'
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
@@ -103,19 +107,18 @@ class NeuroGraphDataset(InMemoryDataset):
         os.rename(
             osp.join(self.raw_dir, self.name, 'processed', f'{self.name}.pt'),
             osp.join(self.raw_dir, 'data.pt'))
-        shutil.rmtree(osp.join(self.raw_dir, self.name))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
-    def process(self):
+    def process(self) -> None:
         data, slices = torch.load(self.raw_paths[0])
 
         num_samples = slices['x'].size(0) - 1
         data_list: List[Data] = []
         for i in range(num_samples):
             x = data.x[slices['x'][i]:slices['x'][i + 1]]
-            edge_index = data.edge_index[
-                :,
-                slices['edge_index'][i]:slices['edge_index'][i + 1],
-            ]
+            start = slices['edge_index'][i]
+            end = slices['edge_index'][i + 1]
+            edge_index = data.edge_index[:, start:end]
             sample = Data(x=x, edge_index=edge_index, y=data.y[i])
 
             if self.pre_filter is not None and not self.pre_filter(sample):

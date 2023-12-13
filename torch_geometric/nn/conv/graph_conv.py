@@ -17,7 +17,7 @@ from torch_geometric.utils import spmm
 class GraphConv(MessagePassing):
     r"""The graph neural network operator from the `"Weisfeiler and Leman Go
     Neural: Higher-order Graph Neural Networks"
-    <https://arxiv.org/abs/1810.02244>`_ paper
+    <https://arxiv.org/abs/1810.02244>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2

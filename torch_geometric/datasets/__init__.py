@@ -104,7 +104,7 @@ from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
 
-import torch_geometric.datasets.utils  # noqa
+import torch_geometric.datasets.utils
 
 homo_datasets = [
     'KarateClub',

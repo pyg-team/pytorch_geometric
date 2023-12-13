@@ -50,6 +50,7 @@ jobs:
           pip install -e .[full,test]
 
       - name: Run tests
+        timeout-minutes: 20
         run: |
           FULL_TEST=1 pytest --cov --cov-report=xml
         shell: bash

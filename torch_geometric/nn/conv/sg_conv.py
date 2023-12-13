@@ -11,7 +11,7 @@ from torch_geometric.utils import spmm
 
 class SGConv(MessagePassing):
     r"""The simple graph convolutional operator from the `"Simplifying Graph
-    Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper
+    Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = {\left(\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
