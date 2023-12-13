@@ -174,6 +174,8 @@ class EDPConv(Module):
         out = torch.cat((a, x_i, x_j), dim=2)
         adj_out = self.nn_edge(out.reshape(
             (N * N, -1))).reshape(N, N, -1)  # N x N x C_out
+        # sum up with transposed output to be sure that matrix is symmetric
+        adj_out = adj_out + adj_out.permute((1, 0, 2))
         # create output edges' predictions
         edge_indices, edge_weights = [], []
         for i in range(adj_out.shape[-1]):
