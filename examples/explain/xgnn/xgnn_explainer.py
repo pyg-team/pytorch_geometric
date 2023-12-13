@@ -209,7 +209,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         
         # create empty graph state
         empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
-        current_graph_state = empty_graph
+        current_graph_state = copy.deepcopy(empty_graph)
 
         # sample graphs
         sampled_graphs = []
@@ -229,7 +229,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
             # add sampled graph to list
             sampled_graphs.append(current_graph_state)
             # reset current graph state
-            current_graph_state = empty_graph
+            current_graph_state = copy.deepcopy(empty_graph)
             # reset max_steps_reached and num_nodes_reached
             max_steps_reached = False
             num_nodes_reached = False
@@ -377,7 +377,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 2000, 
+    algorithm = RLGenExplainer(epochs = 200, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -405,7 +405,7 @@ print(explanation)
 
 explanation_set = explanation.explanation_set
 
-sampled_graph = explanation_set.sample(num_samples=1, num_nodes=10)[0]
+sampled_graph = explanation_set.sample(num_samples=2, num_nodes=5)[1]
 
 print("SAMPLED GRAPH:", sampled_graph)
 print("SAMPLED GRAPH NODE TYPE:", sampled_graph.node_type)
@@ -421,7 +421,7 @@ node_color_dict = {'C': '#0173B2',
                    'F': '#D55E00', 
                    'I': '#CC78BC', 
                    'Cl': '#CA9161', 
-                   'Br': '#FBAFE4'} # colorblinf palette
+                   'Br': '#FBAFE4'} # colorblind palette
 
 # get score for sampled graph
 score = model(sampled_graph)
@@ -436,13 +436,15 @@ labels = nx.get_node_attributes(G, 'node_type')
 
 node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
 pos = nx.spring_layout(G)
-plt.figure(figsize=(8, 8))
+fig, axe = plt.subplots(figsize=(8,8))
+axe.set_title("Score: {:.2f}".format(probability_score.item()), loc="center")
 # plot graph with scroe as title
-nx.draw(G, pos=pos, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
-plt.title(f"Score: {score}")
-plt.tight_layout()
+nx.draw(G, pos=pos, ax=axe, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
+
 # plt.savefig('examples/explain/xgnn/sample_graph_custom.png')
+
 plt.show()
+
 
 
 
