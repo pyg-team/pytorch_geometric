@@ -41,9 +41,8 @@ def init_fn(worker_id):
 @onlyLinux
 @onlyNeighborSampler
 def test_multithreading_neighbor_loader(spawn_context):
-    data = Data(x=torch.randn(1, 1))
     loader = NeighborLoader(
-        data,
+        data=Data(x=torch.randn(1, 1)),
         num_neighbors=[-1],
         batch_size=1,
         num_workers=2,
@@ -51,5 +50,4 @@ def test_multithreading_neighbor_loader(spawn_context):
     )
 
     with loader.enable_multithreading(2):
-        loader._get_iterator()
-        # runs assertion in init_fn
+        loader._get_iterator()  # Runs assertion in `init_fn`.

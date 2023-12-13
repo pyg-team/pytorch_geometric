@@ -210,7 +210,6 @@ class NodeLoader(
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
-
                     data = dist.utils.filter_dist_store(
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls, out.metadata)
