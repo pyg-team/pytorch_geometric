@@ -119,7 +119,9 @@ def construct_bipartite_edge_index(
                 elif edge_attr.dim() == value.dim():
                     value = value * edge_attr
                 else:
-                    raise ValueError(f"Incompatible edge_attr values between SparseTensor ({edge_attr.shape}) and edge_attr_dict ({value.shape}) for edge type {edge_type}.")
+                    raise ValueError(
+                        f"Incompatible edge_attr values between SparseTensor ({edge_attr.shape}) and edge_attr_dict ({value.shape}) for edge type {edge_type}."
+                    )
             edge_attrs.append(value)
 
     edge_index = torch.cat(edge_indices, dim=1)
