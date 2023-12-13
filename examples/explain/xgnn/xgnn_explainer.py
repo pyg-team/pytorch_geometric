@@ -354,15 +354,13 @@ class RLGenExplainer(XGNNExplainer):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#model = GCN().to(device)
-#data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 # extract features for the candidate set
 dataset = TUDataset(root='/tmp/MUTAG', name='MUTAG')
 all_features = torch.cat([data.x for data in dataset], dim=0)
 
-# we hope these are in the same order
+# Valency of atoms for validity check
 max_valency = {'C': 4, 'N': 5, 'O': 2, 'F': 1, 'I': 7, 'Cl': 7, 'Br': 5}
 
 # node type map that maps node type to a one hot vector encoding torch tensor please
@@ -374,14 +372,9 @@ candidate_set = {'C': torch.tensor([1, 0, 0, 0, 0, 0, 0]),
                  'Cl': torch.tensor([0, 0, 0, 0, 0, 1, 0]),
                  'Br': torch.tensor([0, 0, 0, 0, 0, 0, 1])}
 
-# validity_args_valency = {candidate_set[atom] : max_val for atom, max_val in max_valency.items()}
-
-kwargs = dict()
-kwargs['candidate_set'] = candidate_set
-
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 1000, 
+    algorithm = RLGenExplainer(epochs = 100, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -396,22 +389,24 @@ explainer = Explainer(
 
 # choose target class
 class_index = 1
-
-# empty x and edge_index tensors, since we are not explaining a specific graph
+# empty x and edge_index tensors, since we are not explaining one specific graph
 x = torch.tensor([])
 edge_index = torch.tensor([[], []])
 
-explanation = explainer(x, edge_index, for_class=class_index) 
-explanation_set = explanation.explanation_set
+explanation_mutagenic = explainer(x, edge_index, for_class=class_index) 
+explanation_set_mutagenic = explanation_mutagenic.explanation_set
 
-### SAMPLE SINGLE GRAPH
-sampled_graph = explanation_set.sample(num_samples=1, num_nodes=10)[0]
+###########################
+### SAMPLE SINGLE GRAPH ###
+###########################
+sampled_graph = explanation_set_mutagenic.sample(num_samples=1, num_nodes=10)[0]
 # visualize sampled graph with DEFAULT inbuild method
-explanation.visualize_explanation_graph(sampled_graph, path='examples/explain/xgnn/sample_graph', backend='networkx')
+explanation_mutagenic.visualize_explanation_graph(sampled_graph, path='examples/explain/xgnn/sample_graph', backend='networkx')
 
 
-
-### SAMPLE MULTIPLE GRAPHS
+##############################
+### SAMPLE MULTIPLE GRAPHS ###
+##############################
 node_color_dict = {'C': '#0173B2', 
                    'N': '#DE8F05', 
                    'O': '#029E73', 
@@ -420,11 +415,12 @@ node_color_dict = {'C': '#0173B2',
                    'Cl': '#CA9161', 
                    'Br': '#FBAFE4'} # colorblind palette
 
+# generate graphs of multiple sizes for mutagenic class
 
 sampled_graphs = []
 scores = []
 for i in range(3, 11):
-    sampled_graphs_i = explanation_set.sample(num_samples=5, num_nodes=i)
+    sampled_graphs_i = explanation_set_mutagenic.sample(num_samples=5, num_nodes=i)
     scores_i = []
     for sampled_graph in sampled_graphs_i:
         score = model(sampled_graph)
@@ -447,11 +443,56 @@ for i, (sampled_graph, score) in enumerate(zip(sampled_graphs, scores)):
     labels = nx.get_node_attributes(G, 'node_type')
     node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
     pos = nx.spring_layout(G)
-    axes[i].set_title("Score: {:.5f}".format(score), loc="center")
+    axes[i].set_title("Max_num_nodes = {}\nprobability = {:.5f}".format(i+3, score), loc="center", fontsize=10)
+    # set subtitle to score
+    axes
+    nx.draw(G, pos=pos, ax=axes[i], cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
+
+# plt.savefig('examples/explain/xgnn/sample_graphs_custom.png')
+fig.suptitle("Sampled explanation graphs for mutagenic class", fontsize=16)
+plt.show()
+
+plt.close()
+
+
+# generate graphs of multiple sizes for non-mutagenic class
+class_index = 0
+
+explanation_non_mutagenic = explainer(x, edge_index, for_class=class_index)
+explanation_set_non_mutagenic = explanation_non_mutagenic.explanation_set
+
+sampled_graphs = []
+scores = []
+for i in range(3, 11):
+    sampled_graphs_i = explanation_set_non_mutagenic.sample(num_samples=5, num_nodes=i)
+    scores_i = []
+    for sampled_graph in sampled_graphs_i:
+        score = model(sampled_graph)
+        probability_score = 1 - torch.sigmoid(score)
+        scores_i.append(probability_score.item())
+
+    # choose graph with best score
+    best_graph_index = scores_i.index(max(scores_i))
+    scores.append(scores_i[best_graph_index])
+    sampled_graphs.append(sampled_graphs_i[best_graph_index])
+
+# visualize sampled graphs with CUSTOM method
+fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+axes = axes.flatten()
+
+for i, (sampled_graph, score) in enumerate(zip(sampled_graphs, scores)):
+    G = to_networkx(sampled_graph, to_undirected=True)
+    node_type_dict = dict(enumerate(sampled_graph.node_type))
+    nx.set_node_attributes(G, node_type_dict, 'node_type')
+    labels = nx.get_node_attributes(G, 'node_type')
+    node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
+    pos = nx.spring_layout(G)
+    axes[i].set_title("Max_num_nodes = {}\nprobability = {:.5f}".format(i+3, score), loc="center", fontsize=10)
     # plot graph with scroe as title
     nx.draw(G, pos=pos, ax=axes[i], cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
 
 # plt.savefig('examples/explain/xgnn/sample_graphs_custom.png')
+fig.suptitle("Sampled explanation graphs for non-mutagenic class", fontsize=16)
 plt.show()
 
 
