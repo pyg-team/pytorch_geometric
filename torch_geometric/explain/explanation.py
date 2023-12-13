@@ -422,6 +422,10 @@ class ExplanationSetSampler(ABC):
 # for all the classes collectively, essentially making the way we call the methods of these 
 # ambigious.
 
+# This is aslo usefule so the user doesn't have to synchronize the train method with the sample method - 
+# no need for specifing for which class we want to sample or draw for, since the class is 
+# already specified in the generative model.
+
 class GenerativeExplanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
@@ -469,7 +473,7 @@ class GenerativeExplanation(Data, ExplanationMixin):
     
     def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
                         backend: Optional[str] = None):
-        r"""Visualizes the explanation graph
+        r"""Visualizes the explanation graph with edge weights set to be equal.
 
         Args:
             path (str, optional): The path to where the plot is saved.
@@ -482,4 +486,4 @@ class GenerativeExplanation(Data, ExplanationMixin):
                 (default: :obj:`None`)
         """
         
-        visualize_graph(self.edge_index)
+        visualize_graph(graph_state, path, backend)

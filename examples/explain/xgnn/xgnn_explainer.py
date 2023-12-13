@@ -34,7 +34,6 @@ class objectview(object):
 args = objectview(args)
         
 model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
-model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
 
 # Assume 'model_to_freeze' is the model you want to freeze
 for param in model.parameters():
@@ -315,12 +314,10 @@ explainer = Explainer(
                                validity_args = max_valency, 
                                initial_node_type = 'C'),
     explanation_type = 'generative',
-    node_mask_type = None,
-    edge_mask_type = None,
     model_config = dict(
-        mode = 'multiclass_classification',
-        task_level = 'node',
-        return_type = 'log_probs',
+        mode = 'binary_classification',
+        task_level = 'graph',
+        return_type = 'probs',
     ),
 )
 
