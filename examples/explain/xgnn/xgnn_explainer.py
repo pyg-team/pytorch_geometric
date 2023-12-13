@@ -217,16 +217,15 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         max_steps_reached = False
         num_nodes_reached = False
         for _ in range(num_samples):
+            step = 0
             while not max_steps_reached and not num_nodes_reached:
-                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.forward(current_graph_state)
+                G = copy.deepcopy(current_graph_state)
+                ((p_start, a_start), (p_end, a_end)), current_graph_state = self.forward(G)
+                step += 1
                 # check if max_steps is reached (if max_steps is None, this will never be True)
-                if max_steps is not None and new_graph_state.edge_index.shape[1] >= max_steps:
-                    max_steps_reached = True
+                max_steps_reached = max_steps is not None and step >= max_steps
                 # check if num_nodes is reached
-                if num_nodes is not None and new_graph_state.x.shape[0] >= num_nodes:
-                    num_nodes_reached = True
-                # update current graph state
-                current_graph_state = new_graph_state
+                num_nodes_reached = num_nodes is not None and G.x.shape[0] >= num_nodes
             # add sampled graph to list
             sampled_graphs.append(current_graph_state)
             # reset current graph state
@@ -312,7 +311,7 @@ class RLGenExplainer(XGNNExplainer):
     
     # Training function
     def train_generative_model(self, model_to_explain, for_class):
-        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr)  
+        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr, betas=(0.9, 0.99))  
         losses = []
         for epoch in trange(self.epochs):
             total_loss = 0
@@ -326,8 +325,8 @@ class RLGenExplainer(XGNNExplainer):
                 model.train()
                 optimizer.zero_grad()
                 #print(f"Step {step} of epoch {epoch} started")
-                      
-                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state)
+                new_graph_state = copy.deepcopy(current_graph_state)
+                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(new_graph_state)
                 
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
                 #print("Reward:", reward)
@@ -340,9 +339,9 @@ class RLGenExplainer(XGNNExplainer):
                 loss.backward()
                 optimizer.step()
                 
-                if reward >= 0:
+                if reward > 0:
                     current_graph_state = new_graph_state
-            print(f"Epoch {epoch} completed, Loss: {loss}")
+            #print(f"Epoch {epoch} completed, Loss: {loss}")
             losses.append(loss.item())
         
         self.plot_loss(losses)
@@ -378,7 +377,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 1000, 
+    algorithm = RLGenExplainer(epochs = 2000, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -427,7 +426,7 @@ node_color_dict = {'C': '#0173B2',
 # get score for sampled graph
 score = model(sampled_graph)
 probability_score = torch.sigmoid(score)
-print("SCORE:", score)
+print("SCORE:", probability_score)
 
 G = to_networkx(sampled_graph, to_undirected=True)
 
