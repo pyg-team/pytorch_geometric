@@ -4,8 +4,8 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url
-from torch_geometric.io import read_planetoid_data
+from torch_geometric.data import InMemoryDataset
+from torch_geometric.io import fs, read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):
@@ -151,11 +151,11 @@ class Planetoid(InMemoryDataset):
 
     def download(self) -> None:
         for name in self.raw_file_names:
-            download_url(f'{self.url}/{name}', self.raw_dir)
+            fs.cp(f'{self.url}/{name}', self.raw_dir)
         if self.split == 'geom-gcn':
             for i in range(10):
                 url = f'{self.geom_gcn_url}/splits/{self.name.lower()}'
-                download_url(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
+                fs.cp(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
 
     def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, self.name)

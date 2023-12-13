@@ -1,14 +1,9 @@
-import os
 from typing import Any, Callable, List, Optional, Tuple
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs
 
 
 class EllipticBitcoinDataset(InMemoryDataset):
@@ -82,9 +77,7 @@ class EllipticBitcoinDataset(InMemoryDataset):
 
     def download(self) -> None:
         for file_name in self.raw_file_names:
-            path = download_url(f'{self.url}/{file_name}.zip', self.raw_dir)
-            extract_zip(path, self.raw_dir)
-            os.remove(path)
+            fs.cp(f'{self.url}/{file_name}.zip', self.raw_dir, extract=True)
 
     def _process_df(self, feat_df: Any, edge_df: Any,
                     class_df: Any) -> Tuple[Any, Any, Any]:
