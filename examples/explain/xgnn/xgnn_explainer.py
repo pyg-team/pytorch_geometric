@@ -73,27 +73,12 @@ def masked_softmax(vector, mask):
     :param mask: A 1D tensor of the same size as vector, containing 1s (include) and 0s (exclude).
     :return: A 1D tensor representing the probability distribution.
     """
-    # Ensure the mask is boolean
     mask = mask.bool()
-
-    # Apply mask
     masked_vector = vector.masked_fill(~mask, float('-inf'))
-
-    # Apply softmax
     softmax_result = F.softmax(masked_vector, dim=0)
 
     return softmax_result
 
-
-def check_edge_representation(data):
-    # Convert edge indices to a set of tuples for easier comparison
-    edge_set = {tuple(edge) for edge in data.edge_index.t().tolist()}
-
-    for edge in edge_set:
-        reverse_edge = (edge[1], edge[0])
-        if reverse_edge not in edge_set:
-            return "Edges are represented as single, undirected edges"
-    return "Edges are represented with two directed edges, one in each direction"
 
 class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
     def __init__(self, candidate_set, dropout, initial_node_type = None):
@@ -122,6 +107,11 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
 
 
     def initialize_graph_state(self, graph_state):
+        """
+        Initializes the graph state with a single node.
+        
+        :param graph_state: The graph state to initialize.
+        """
         if self.initial_node_type is None:
             keys = list(self.candidate_set.keys())
             self.initial_node_type = keys[torch.randint(len(keys), (1,)).item()]
@@ -135,10 +125,15 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         graph_state.node_type = node_type
 
     def forward(self, graph_state):
+        """
+        Generates a new graph state from the given graph state.
+        
+        :param graph_state: The graph state to generate a new graph state from.
+        :return: A tuple containing the logits and one hot encoding of the start node, and the logits and one hot encoding of the end node.
+        """
         graph_state = copy.deepcopy(graph_state)
-        # check if graph state is empty and initialize it if True
         if graph_state.x.shape[0] == 0:
-            self.initialize_graph_state(graph_state)
+            self.initialize_graph_state(graph_state)    # initialize graph state if it is empty
 
         # contatenate graph_state features with candidate_set features
         node_features_graph = graph_state.x.detach().clone()
@@ -244,8 +239,14 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
-        # helper function that computes the reward for a given graph state by evaluating the 
-        # graph with the pre-trained GNN.
+        """
+        Computes the reward for the given graph state by evaluating the graph with the pre-trained GNN.
+        
+        :param pre_trained_gnn: The pre-trained GNN to use for computing the reward.
+        :param graph_state: The graph state to compute the reward for.
+        :param num_classes: The number of classes in the dataset.
+        :return: The reward for the given graph state.
+        """
         with torch.no_grad():
             gnn_output = pre_trained_gnn(graph_state)
             probability_of_target_class = torch.sigmoid(gnn_output).squeeze()
@@ -254,8 +255,16 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
-        # helper function that performs rollouts and evaluates the graphs one step ahead of 
-        # the current graph state.
+        """
+        Computes the rollout reward for the given graph state. 
+        
+        :param intermediate_graph_state: The intermediate graph state to compute the rollout reward for.
+        :param pre_trained_gnn: The pre-trained GNN to use for computing the reward.
+        :param target_class: The target class to explain.
+        :param num_classes: The number of classes in the dataset.
+        :param num_rollouts: The number of rollouts to perform.
+        :return: The rollout reward for the given graph state.
+        """
         final_rewards = []
         for _ in range(num_rollouts):
             # make copy of intermediate graph state
@@ -265,16 +274,20 @@ class RLGenExplainer(XGNNExplainer):
             reward = self.reward_tf(pre_trained_gnn, final_graph, num_classes)
             final_rewards.append(reward)
 
-            del intermediate_graph_state_copy
+            del intermediate_graph_state_copy   # delete intermediate graph state copy
 
-        # Average the rewards from all rollouts
         average_final_reward = sum(final_rewards) / len(final_rewards)
         return average_final_reward
 
 
     def evaluate_graph_validity(self, graph_state):
-        # helper function that evaluates the validity of a graph based on the specific graph 
-        # rules of the dataset. For mutag, node degrees cannot exceed valency.
+        """
+        Evaluates the validity of the given graph state. Dataset specific graph rules are implemented here.
+        
+        :param graph_state: The graph state to evaluate.
+        :return: 0 if the graph state is valid, -1  otherwise.
+        """
+        # For mutag, node degrees cannot exceed valency
         degrees = torch.bincount(graph_state.edge_index.flatten(), minlength=graph_state.num_nodes)
         node_type_valencies = torch.tensor([self.validity_args[type_] for type_ in graph_state.node_type])
         if torch.any(degrees > node_type_valencies):
@@ -283,11 +296,18 @@ class RLGenExplainer(XGNNExplainer):
         
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
+        """
+        Calculates the reward for the given graph state.
+        
+        :param graph_state: The graph state to calculate the reward for.
+        :param pre_trained_gnn: The pre-trained GNN to use for computing the reward.
+        :param target_class: The target class to explain.
+        :param num_classes: The number of classes in the dataset.
+        :return: The reward for the given graph state.
+        """
         intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, num_classes)
-        # Assuming rollout function is defined to perform graph rollouts and evaluate
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn, target_class, num_classes)
-        # Compute graph validity score (R_tr)
-        # defined based on the specific graph rules of the dataset
+        # Compute graph validity score (R_tr), based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
         return reward
@@ -299,31 +319,25 @@ class RLGenExplainer(XGNNExplainer):
         plt.show()
         
     
-    # Training function
     def train_generative_model(self, model_to_explain, for_class):
         optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr, betas=(0.9, 0.99))  
         losses = []
         for epoch in trange(self.epochs):
-            total_loss = 0
-
+            
             # create empty graph state
             empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
             current_graph_state = empty_graph
 
-            #print()
             for step in range(self.max_steps): 
                 model.train()
                 optimizer.zero_grad()
-                #print(f"Step {step} of epoch {epoch} started")
+
                 new_graph_state = copy.deepcopy(current_graph_state)
-                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(new_graph_state)
-                
+                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(new_graph_state)                
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
-                #print("Reward:", reward)
                 
                 LCE_start = F.cross_entropy(p_start, a_start)
                 LCE_end = F.cross_entropy(p_end, a_end)
-                
                 loss = -reward * (LCE_start + LCE_end)
                 
                 loss.backward()
