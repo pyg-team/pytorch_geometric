@@ -5,10 +5,8 @@ from typing import Any, Optional, Union
 
 import torch.multiprocessing as mp
 
+from torch_geometric.distributed import DistNeighborSampler
 from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.dist_neighbor_sampler import (
-    DistNeighborSampler,
-)
 from torch_geometric.distributed.rpc import (
     global_barrier,
     init_rpc,

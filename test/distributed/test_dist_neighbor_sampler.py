@@ -6,11 +6,12 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.dist_neighbor_sampler import (
+from torch_geometric.distributed import (
     DistNeighborSampler,
+    LocalFeatureStore,
+    LocalGraphStore,
 )
+from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
