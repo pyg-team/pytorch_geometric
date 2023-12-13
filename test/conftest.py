@@ -1,8 +1,10 @@
 import functools
+import logging
 import os.path as osp
 from typing import Callable
 
 import pytest
+import torch
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset
@@ -86,3 +88,9 @@ def disable_extensions():
 def without_extensions(request):
     request.getfixturevalue(request.param)
     return request.param == 'disable_extensions'
+
+
+@pytest.fixture(scope='function')
+def spawn_context():
+    torch.multiprocessing.set_start_method('spawn', force=True)
+    logging.info("Setting torch.multiprocessing context to 'spawn'")
