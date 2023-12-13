@@ -111,13 +111,13 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
 
         self.mlp_start_node = torch.nn.Sequential(
             torch.nn.Linear(32, 16),
-            torch.nn.ReLU6(),
-            torch.nn.Linear(16, 1)
+            torch.nn.Linear(16, 1),
+            torch.nn.ReLU6()
         )
         self.mlp_end_node = torch.nn.Sequential(
             torch.nn.Linear(32, 24),
-            torch.nn.ReLU6(),
-            torch.nn.Linear(24, 1)
+            torch.nn.Linear(24, 1),
+            torch.nn.ReLU6()
             )
 
 
@@ -164,10 +164,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         start_node_probs = masked_softmax(start_node_logits, candidate_set_mask).squeeze()
 
         # sample start node
-        try:
-            p_start = torch.distributions.Categorical(start_node_probs)
-        except:
-            print("debug: start_node_probs", start_node_probs)
+        p_start = torch.distributions.Categorical(start_node_probs)
         start_node = p_start.sample()
         
         # get end node probabilities and mask out start node
@@ -216,6 +213,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
 
         max_steps_reached = False
         num_nodes_reached = False
+        self.eval()
         for _ in range(num_samples):
             step = 0
             while not max_steps_reached and not num_nodes_reached:
@@ -377,7 +375,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 2000, 
+    algorithm = RLGenExplainer(epochs = 100, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
