@@ -134,7 +134,7 @@ class EdgeSamplerInput(CastMixin):
         row = row.clone().cpu()
         col = col.clone().cpu()
         if label is not None:
-            label = label.cpu()
+            label = label
         if time is not None:
             time = time.cpu()
 
@@ -147,7 +147,7 @@ class EdgeSamplerInput(CastMixin):
 
     def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
         if not isinstance(index, Tensor):
-            index = torch.tensor(index, dtype=torch.long)
+            index = torch.tensor(index, dtype=torch.long).cpu() 
 
         return EdgeSamplerInput(
             self.input_id[index] if self.input_id is not None else index,
