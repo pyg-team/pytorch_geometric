@@ -72,16 +72,19 @@ class XGNNExplainer(ExplainerAlgorithm):
         if index is not None:
             raise ValueError(f"Index not supported in '{self.__class__.__name__}'")
         
-        generative_models = dict()
+        explanation_sets = []
+        
         for t in torch.unique(target):
-            generative_models[t] = self.train_generative_model(model, 
-                                                               for_class = t,
-                                                               **kwargs)
-        return GenerativeExplanation(model = model, 
-                                     generative_models = generative_models)
+            generative_model_t = self.train_generative_model(model, 
+                                                             for_class = t,
+                                                             **kwargs)
+            explanation_sets.append(GenerativeExplanation(model = generative_model_t, 
+                                                          explanation_set = generative_model_t))
+            
+        return explanation_sets
 
     @abstractmethod
-    def train_generative_model(self, model, for_class) -> ExplanationSetSampler:
+    def train_generative_model(self, model, for_class, **kwargs) -> ExplanationSetSampler:
         r""" Abstract method to train the generative model. Must be implemented in subclasses.
         
         Args:
