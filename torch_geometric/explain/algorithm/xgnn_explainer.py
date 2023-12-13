@@ -65,6 +65,11 @@ class XGNNExplainer(ExplainerAlgorithm):
         Returns:
             Union[Explanation, HeteroExplanation]: The explanation result.
         """
+        # Validate 'for_class' argument
+        for_class = kwargs.get('for_class')
+        if for_class is None:
+            raise ValueError("The 'for_class' argument must be provided")
+        
         if isinstance(x, dict) or isinstance(edge_index, dict):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
@@ -72,16 +77,12 @@ class XGNNExplainer(ExplainerAlgorithm):
         if index is not None:
             raise ValueError(f"Index not supported in '{self.__class__.__name__}'")
         
-        explanation_sets = []
+        generative_model_t = self.train_generative_model(model, 
+                                                         for_class = for_class,
+                                                         **kwargs)
         
-        for t in torch.unique(target):
-            generative_model_t = self.train_generative_model(model, 
-                                                             for_class = t,
-                                                             **kwargs)
-            explanation_sets.append(GenerativeExplanation(model = generative_model_t, 
-                                                          explanation_set = generative_model_t))
-            
-        return explanation_sets
+        return GenerativeExplanation(model = generative_model_t, 
+                                      explanation_set = generative_model_t)
 
     @abstractmethod
     def train_generative_model(self, model, for_class, **kwargs) -> ExplanationSetSampler:
