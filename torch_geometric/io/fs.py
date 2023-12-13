@@ -108,6 +108,9 @@ def cp(
 ) -> None:
     kwargs: Dict[str, Any] = {}
 
+    is_path1_dir = isdir(path1)
+    is_path2_dir = isdir(path2)
+
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None
     if not islocal(path1):
@@ -121,11 +124,16 @@ def cp(
             path1 = f'simplecache::{path1}'
 
     # Handle automatic extraction:
+    multiple_files = False
     if extract and path1.endswith('.tar.gz'):
         kwargs.setdefault('tar', dict(compression='gzip'))
         path1 = f'tar://**::{path1}'
+        multiple_files = True
     elif extract and path1.endswith('.zip'):
         path1 = f'zip://**::{path1}'
+        multiple_files = True
+    elif extract and path1.endswith('.gz'):
+        kwargs.setdefault('compression', 'infer')
     elif extract:
         raise NotImplementedError(
             f"Automatic extraction of '{path1}' not yet supported")
@@ -134,28 +142,29 @@ def cp(
     # recursively copy all files within this directory. Additionally, if the
     # destination folder does not yet exist, we inherit the basename from the
     # source folder.
-    # print(path1)
-    # if isdir(path1):
-    #     if exists(path2):
-    #         path2 = osp.join(path2, osp.basename(path1))
-    #     path1 = osp.join(path1, '**')
+    if is_path1_dir:
+        if exists(path2):
+            path2 = osp.join(path2, osp.basename(path1))
+        path1 = osp.join(path1, '**')
+        multiple_files = True
 
     # Perform the copy:
     for open_file in fsspec.open_files(path1, **kwargs):
         with open_file as f_from:
-            # if isfile(path1):
-            if True:
-                # if isdir(path2):
-                #     to_path = osp.join(path2, osp.basename(path1))
-                # else:
-                #     to_path = path2
-                # else:
+            if not multiple_files:
+                if is_path2_dir:
+                    basename = osp.basename(path1)
+                    if extract and path1.endswith('.gz'):
+                        basename = '.'.join(basename.split('.')[:-1])
+                    to_path = osp.join(path2, basename)
+                else:
+                    to_path = path2
+            else:
                 # Open file has protocol stripped.
                 common_path = osp.commonprefix(
                     [fsspec.core.strip_protocol(path1), open_file.path])
                 to_path = osp.join(path2, open_file.path[len(common_path):])
             with fsspec.open(to_path, 'wb') as f_to:
-                print(to_path)
                 while True:
                     chunk = f_from.read(10 * 1024 * 1024)
                     if not chunk:

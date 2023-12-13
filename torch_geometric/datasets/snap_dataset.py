@@ -2,16 +2,11 @@ import os
 import os.path as osp
 from typing import Any, Callable, Dict, List, Optional, Union
 
+import fsspec
 import numpy as np
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_gz,
-    extract_tar,
-)
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.io import fs
 from torch_geometric.utils import coalesce
 
@@ -35,7 +30,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
     ]
     for i in range(4, len(files), 5):
         featnames_file = files[i]
-        with open(featnames_file, 'r') as f:
+        with fsspec.open(featnames_file, 'r') as f:
             featnames = f.read().split('\n')[:-1]
             featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             all_featnames += featnames
@@ -63,7 +58,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
             # Reorder `x` according to `featnames` ordering.
             x_all = torch.zeros(x.size(0), len(all_featnames))
-            with open(featnames_file, 'r') as f:
+            with fsspec.open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
                 featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
             indices = [all_featnames_dict[featname] for featname in featnames]
@@ -79,7 +74,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
 
         circles: List[int] = []
         circles_batch: List[int] = []
-        with open(circles_file, 'r') as f:
+        with fsspec.open(circles_file, 'r') as f:
             for i, line in enumerate(f.read().split('\n')[:-1]):
                 circle_indices = [idx_assoc[c] for c in line.split()[1:]]
                 circles += circle_indices
@@ -222,28 +217,20 @@ class SNAPDataset(InMemoryDataset):
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
-        os.makedirs(self.raw_dir, exist_ok=True)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     def download(self) -> None:
         for name in self.available_datasets[self.name]:
-            print(self.url, name)
             fs.cp(f'{self.url}/{name}', self.raw_dir, extract=True)
-
-            # path = download_url(f'{self.url}/{name}', self.raw_dir)
-            # if name.endswith('.tar.gz'):
-            #     extract_tar(path, self.raw_dir)
-            # elif name.endswith('.gz'):
-            #     extract_gz(path, self.raw_dir)
-            # os.unlink(path)
 
     def process(self) -> None:
         raw_dir = self.raw_dir
-        filenames = os.listdir(self.raw_dir)
-        if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
-            raw_dir = osp.join(raw_dir, filenames[0])
+        filenames = fs.ls(self.raw_dir)
+        if len(filenames) == 1 and fs.isdir(filenames[0]):
+            raw_dir = filenames[0]
 
-        raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
+        raw_files = fs.ls(raw_dir)
 
         data_list: Union[List[Data], List[EgoData]]
         if self.name[:4] == 'ego-':
