@@ -180,6 +180,8 @@ class Sphere(torch.nn.Module):
                 sh_2_4,
             ], dim=-1)
 
+        raise ValueError(f"'lmax' needs to be 1 or 2 (got {lmax})")
+
 
 class VecLayerNorm(torch.nn.Module):
     r"""Applies layer normalization to the input data.
@@ -217,8 +219,7 @@ class VecLayerNorm(torch.nn.Module):
 
     def reset_parameters(self):
         r"""Resets the normalization weights to their initial values."""
-        weight = torch.ones(self.hidden_channels)
-        self.weight.data.copy_(weight)
+        torch.nn.init.ones_(self.weight)
 
     def max_min_norm(self, vec: Tensor) -> Tensor:
         r"""Applies max-min normalization to the input tensor.
@@ -286,19 +287,19 @@ class Distance(torch.nn.Module):
             which distances are not computed.
         max_num_neighbors (int, optional): The maximum number of neighbors
             considered for each point. (default: :obj:`32`)
-        loop (bool, optional): If set to :obj:`False`, will not include
-            self-loops. (default: :obj:`True`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not
+            include self-loops. (default: :obj:`True`)
     """
     def __init__(
         self,
         cutoff: float,
         max_num_neighbors: int = 32,
-        loop: bool = True,
+        add_self_loops: bool = True,
     ) -> None:
         super().__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
-        self.loop = loop
+        self.add_self_loops = add_self_loops
 
     def forward(
         self,
@@ -322,12 +323,12 @@ class Distance(torch.nn.Module):
             pos,
             r=self.cutoff,
             batch=batch,
-            loop=self.loop,
+            loop=self.add_self_loops,
             max_num_neighbors=self.max_num_neighbors,
         )
         edge_vec = pos[edge_index[0]] - pos[edge_index[1]]
 
-        if self.loop:
+        if self.add_self_loops:
             mask = edge_index[0] != edge_index[1]
             edge_weight = torch.zeros(edge_vec.size(0), device=edge_vec.device)
             edge_weight[mask] = torch.norm(edge_vec[mask], dim=-1)
@@ -370,8 +371,8 @@ class NeighborEmbedding(MessagePassing):
         self.embedding.reset_parameters()
         torch.nn.init.xavier_uniform_(self.distance_proj.weight)
         torch.nn.init.xavier_uniform_(self.combine.weight)
-        self.distance_proj.bias.data.fill_(0)
-        self.combine.bias.data.fill_(0)
+        self.distance_proj.bias.data.zero_()
+        self.combine.bias.data.zero_()
 
     def forward(
         self,
@@ -430,7 +431,7 @@ class EdgeEmbedding(MessagePassing):
     def reset_parameters(self):
         r"""Resets the parameters of the module."""
         torch.nn.init.xavier_uniform_(self.edge_proj.weight)
-        self.edge_proj.bias.data.fill_(0)
+        self.edge_proj.bias.data.zero_()
 
     def forward(
         self,
@@ -545,27 +546,27 @@ class ViS_MP(MessagePassing):
         self.layernorm.reset_parameters()
         self.vec_layernorm.reset_parameters()
         torch.nn.init.xavier_uniform_(self.q_proj.weight)
-        self.q_proj.bias.data.fill_(0)
+        self.q_proj.bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.k_proj.weight)
-        self.k_proj.bias.data.fill_(0)
+        self.k_proj.bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.v_proj.weight)
-        self.v_proj.bias.data.fill_(0)
+        self.v_proj.bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.o_proj.weight)
-        self.o_proj.bias.data.fill_(0)
+        self.o_proj.bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.s_proj.weight)
-        self.s_proj.bias.data.fill_(0)
+        self.s_proj.bias.data.zero_()
 
         if not self.last_layer:
             torch.nn.init.xavier_uniform_(self.f_proj.weight)
-            self.f_proj.bias.data.fill_(0)
+            self.f_proj.bias.data.zero_()
             torch.nn.init.xavier_uniform_(self.w_src_proj.weight)
             torch.nn.init.xavier_uniform_(self.w_trg_proj.weight)
 
         torch.nn.init.xavier_uniform_(self.vec_proj.weight)
         torch.nn.init.xavier_uniform_(self.dk_proj.weight)
-        self.dk_proj.bias.data.fill_(0)
+        self.dk_proj.bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.dv_proj.weight)
-        self.dv_proj.bias.data.fill_(0)
+        self.dv_proj.bias.data.zero_()
 
     def forward(
         self,
@@ -785,8 +786,7 @@ class ViSNetBlock(torch.nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
         self.embedding = Embedding(max_z, hidden_channels)
-        self.distance = Distance(cutoff, max_num_neighbors=max_num_neighbors,
-                                 loop=True)
+        self.distance = Distance(cutoff, max_num_neighbors=max_num_neighbors)
         self.sphere = Sphere(lmax=lmax)
         self.distance_expansion = ExpNormalSmearing(cutoff, num_rbf,
                                                     trainable_rbf)
@@ -925,9 +925,9 @@ class GatedEquivariantBlock(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.vec1_proj.weight)
         torch.nn.init.xavier_uniform_(self.vec2_proj.weight)
         torch.nn.init.xavier_uniform_(self.update_net[0].weight)
-        self.update_net[0].bias.data.fill_(0)
+        self.update_net[0].bias.data.zero_()
         torch.nn.init.xavier_uniform_(self.update_net[2].weight)
-        self.update_net[2].bias.data.fill_(0)
+        self.update_net[2].bias.data.zero_()
 
     def forward(self, x: Tensor, v: Tensor) -> Tuple[Tensor, Tensor]:
         r"""Applies a gated equivariant operation to node features and vector
