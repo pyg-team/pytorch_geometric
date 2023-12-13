@@ -66,7 +66,7 @@ class XGNNExplainer(ExplainerAlgorithm):
             Union[Explanation, HeteroExplanation]: The explanation result.
         """
         # Validate 'for_class' argument
-        for_class = kwargs.get('for_class')
+        for_class = kwargs.pop('for_class', None)
         if for_class is None:
             raise ValueError("The 'for_class' argument must be provided")
         
