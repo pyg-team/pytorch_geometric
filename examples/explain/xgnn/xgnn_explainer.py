@@ -10,6 +10,8 @@ from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.datasets import TUDataset
+import matplotlib.pyplot as plt
+from tqdm import tqdm, trange
 
 
 import random
@@ -108,15 +110,13 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         self.mlp_start_node = torch.nn.Sequential(
             torch.nn.Linear(32, 16),
             torch.nn.ReLU6(),
-            torch.nn.Linear(16, 1),
-            #torch.nn.Softmax(dim=0)
+            torch.nn.Linear(16, 1)
         )
         self.mlp_end_node = torch.nn.Sequential(
             torch.nn.Linear(32, 24),
             torch.nn.ReLU6(),
-            torch.nn.Linear(24, 1),
-            #torch.nn.Softmax(dim=0)
-        )
+            torch.nn.Linear(24, 1)
+            )
 
 
     def initialize_graph_state(self, graph_state):
@@ -160,9 +160,6 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         candidate_set_mask[candidate_set_indices] = 0
         
         start_node_probs = masked_softmax(start_node_logits, candidate_set_mask).squeeze()
-        #start_node_probs = start_node_logits * candidate_set_mask
-        #start_node_probs = start_node_probs.squeeze()
-        #start_node_probs = custom_softmax(start_node_probs)
 
         # sample start node
         try:
@@ -270,10 +267,17 @@ class RLGenExplainer(XGNNExplainer):
         return reward
 
 
+    def plot_loss(self, losses):
+        plt.plot(losses, label="training loss")
+        plt.legend()
+        plt.show()
+        
+    
     # Training function
     def train_generative_model(self, model_to_explain, for_class):
-        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr)
-        for epoch in range(self.epochs):
+        optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr)  
+        losses = []
+        for epoch in trange(self.epochs):
             total_loss = 0
 
             # create empty graph state
@@ -305,8 +309,11 @@ class RLGenExplainer(XGNNExplainer):
                 if reward >= 0:
                     current_graph_state = new_graph_state
             print(f"Epoch {epoch} completed, Loss: {loss}")
+            losses.append(loss.item())
+        
+        self.plot_loss(losses)
             
-        return self.graph_generator 
+        return self.graph_generator
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -337,7 +344,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 10, 
+    algorithm = RLGenExplainer(epochs = 1000, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -356,7 +363,11 @@ print("EXPLAINER DONE!")
 
 class_index = 1
 
-explanation = explainer(None, None, for_class=class_index) # Generates explanations for all classes at once
+# empty x and edge_index tensors, since we are not explaining a specific graph
+x = torch.tensor([])
+edge_index = torch.tensor([[], []])
+
+explanation = explainer(x, edge_index, for_class=class_index) # Generates explanations for all classes at once
 print(explanation)
 
 
