@@ -12,7 +12,7 @@ def _is_compiling() -> bool:  # pragma: no cover
     return False
 
 
-def warn(message: str):
+def warn(message: str) -> None:
     if _is_compiling():
         return
 
@@ -22,7 +22,7 @@ def warn(message: str):
 def filterwarnings(
     action: Literal['default', 'error', 'ignore', 'always', 'module', 'once'],
     message: str,
-):
+) -> None:
     if _is_compiling():
         return
 
