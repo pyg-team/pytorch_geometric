@@ -1003,7 +1003,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def face(self) -> Optional[Tensor]:
         return self['face'] if 'face' in self._store else None
 
-    @time.setter
+    @face.setter
     def face(self, face: Optional[Tensor]):
         self._store.face = face
 
