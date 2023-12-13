@@ -97,13 +97,64 @@ def construct_bipartite_edge_index(
         # TODO Add support for SparseTensor w/o converting.
         is_sparse_tensor = isinstance(edge_index, SparseTensor)
         if is_sparse(edge_index):
-            edge_index, _ = to_edge_index(edge_index)
+            edge_index, edge_attr = to_edge_index(edge_index)
             edge_index = edge_index.flip([0])
-        else:
+        if not is_sparse_tensor:
             edge_index = edge_index.clone()
 
         edge_index[0] += src_offset
         edge_index[1] += dst_offset
+        edge_indices.append(edge_index)
+
+        if edge_attr_dict is not None:
+            if isinstance(edge_attr_dict, ParameterDict):
+                value = edge_attr_dict['__'.join(edge_type)]
+            else:
+                value = edge_attr_dict[edge_type]
+            if value.size(0) != edge_index.size(1):
+                value = value.expand(edge_index.size(1), -1)
+            if is_sparse_tensor and edge_attr is not None:
+                if edge_attr.dim() == 1:
+                    value = value * edge_attr[:, None]
+                elif edge_attr.dim() == value.dim():
+                    value = value * edge_attr
+                else:
+                    raise ValueError(f"Incompatible edge_attr values between SparseTensor ({edge_attr.shape}) and edge_attr_dict ({value.shape}) for edge type {edge_type}.")
+            edge_attrs.append(value)
+
+    edge_index = torch.cat(edge_indices, dim=1)
+
+    edge_attr: Optional[Tensor] = None
+    if edge_attr_dict is not None:
+        edge_attr = torch.cat(edge_attrs, dim=0)
+
+    if is_sparse_tensor:
+        n_src, n_dst = n_nodes
+        edge_index = SparseTensor(
+            row=edge_index[1],
+            col=edge_index[0],
+            value=edge_attr,
+            sparse_sizes=(n_dst, n_src),
+        )
+    # If not SparseTensor, edge_index.shape == ?
+    return edge_index, edge_attr
+
+def _construct_bipartite_edge_index_sparse(
+    edge_index_dict: Dict[EdgeType, Adj],
+    src_offset_dict: Dict[EdgeType, int],
+    dst_offset_dict: Dict[NodeType, int],
+    edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    n_nodes: Optional[Tuple[int, int]] = None,
+    ) -> Tuple[Adj, Optional[Tensor]]:
+    """"""
+    for edge_type, src_offset in src_offset_dict.items():
+        edge_index = edge_index_dict[edge_type]
+        dst_offset = dst_offset_dict[edge_type[-1]]
+
+        # TODO Add support for SparseTensor w/o converting.
+        edge_index.storage._row += src_offset
+        edge_index.storage._col += dst_offset
+        
         edge_indices.append(edge_index)
 
         if edge_attr_dict is not None:
@@ -122,11 +173,12 @@ def construct_bipartite_edge_index(
         edge_attr = torch.cat(edge_attrs, dim=0)
 
     if is_sparse_tensor:
+        n_src, n_dst = n_nodes
         edge_index = SparseTensor(
-            row=edge_index[0],
-            col=edge_index[1],
+            row=edge_index[1],
+            col=edge_index[0],
             value=edge_attr,
-            sparse_sizes=n_nodes,
-        ).t()
+            sparse_sizes=(n_dst, n_src),
+        )
     # If not SparseTensor, edge_index.shape == ?
     return edge_index, edge_attr
