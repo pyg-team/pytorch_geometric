@@ -30,10 +30,9 @@ class MultiChannelConv(MessagePassing):
     here MLP denotes a neural network, in original version it is an MLP.
 
     Args:
-        nn (torch.nn.Module): A neural network
-        :math:`\texttt{MLP}_{\texttt{Node}}`
-        that maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
-            shape :obj:`[-1, out_channels]`, *e.g.*, defined by
+        nn (torch.nn.Module): A neural network :math:`\text{MLP}_{\text{Node}}`
+            that maps node features :obj:`x` of shape :obj:`[-1, in_channels]`
+            to shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
         eps (float, optional): (Initial) :math:`\epsilon`-value.
             (default: :obj:`0.`)
@@ -107,34 +106,32 @@ class EDPConv(Module):
     operator from the `"Permutation Invariant Graph Generation via
     Score-Based Generative Modeling" <https://arxiv.org/abs/2003.00638>` paper.
 
-    TODO: Modify everything below
     1. Node feature inference
-    .. math::
-        \mathbf{x}^{\prime} = MultiChannelConv(X, edge_indices, edge_weights),
+        .. math::
+            \mathbf{x}^{\prime} = MultiChannelConv(X,edge_indices,edge_weights)
 
     2. Edge feature inference
-     .. math::
-     \mathbf{\widetilde{A}}^{\prime}_{[\cdot, i, j]} =
-     \texttt{MLP}_{\texttt{Edge}}
-     left( \texttt{CONCAT}(A_{[\cdot, i, j]}, X_i, X_j)  \right)
+        .. math::
+            \mathbf{\widetilde{A}}^{\prime}_{[\cdot, i, j]} =
+            \texttt{MLP}_{\texttt{Edge}}
+            left( \texttt{CONCAT}(A_{[\cdot, i, j]}, X_i, X_j)  \right)
 
     To ensure that matrix is symmetric,
-    .. math::
-     \mathbf{A}^{\prime} = \widetilde{A}^{\prime} + \widetilde{A}^{\prime}^T
-
+        .. math::
+            \mathbf{A}^{\prime}=\widetilde{A}^{\prime}+\widetilde{A}^{\prime}^T
 
     here :math:`A^T` denotes a transposed matrix :math:`A`.
 
     Args:
         nn_node (torch.nn.Module): A neural network
-        :math:`\texttt{MLP}_{\texttt{Node}}`
-         that maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
-            shape :obj:`[-1, out_channels]`, *e.g.*, defined by
+            :math:`\texttt{MLP}_{\texttt{Node}}`
+            that maps node features :obj:`x` of shape :obj:`[-1, in_channels]`
+            to shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
         nn_edge (torch.nn.Module): A neural network
-        :math:`\texttt{MLP}_{\texttt{Edge}}`
-        that maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
-            shape :obj:`[-1, out_channels]`, *e.g.*, defined by
+            :math:`\texttt{MLP}_{\texttt{Edge}}`
+            that maps node features :obj:`x` of shape :obj:`[-1, in_channels]`
+            to shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
         eps (float, optional): (Initial) :math:`\epsilon`-value.
             (default: :obj:`0.`)
@@ -145,12 +142,14 @@ class EDPConv(Module):
 
     Shapes:
         - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})` or
-          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
-          if bipartite,
+          node features :math:`(|\mathcal{V}|, F_{in})`
           edge indices :math:`(2, |\mathcal{E}|)`
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
-          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
+          edge weights :math:`(|\mathcal{E}|)`
+        - **output:**
+          node features :math:`(|\mathcal{V}|, F_{out})`
+          edge indices :math:`(2, |\mathcal{E'}|)` for each of C adj. matrices
+          edge weights :math:`(|\mathcal{E'}|)` for each of C adj. matrices
+
     """
     def __init__(self, nn_node: Callable, nn_edge: Callable, eps: float = 0.,
                  train_eps: bool = False, **kwargs):
