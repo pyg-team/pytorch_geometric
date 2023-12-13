@@ -401,14 +401,16 @@ def _visualize_score(
 
     plt.close()
     
+    
 class ExplanationSetSampler(ABC):
     r"""
     Serves as a base class for sampling from an "Explanation Set" of a neural network.
     This set comprises data points that maximize the network's activation. It can be
     extended by various generative models or fixed size datasets to perform sampling.
     """
+
     @abstractmethod
-    def sample(self, num_samples: int):
+    def sample(self, num_samples: int, **kwargs):
         r"""
         Abstract method to sample data points from the Explanation Set.
         
@@ -417,65 +419,70 @@ class ExplanationSetSampler(ABC):
         """
         pass
 
-class GenerativeExplanation(Data, ExplanationMixin):
+class GenerativeExplanation(Data):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
-    The explanation object is a :obj:`~torch_geometric.data.Data` object and
+    The generative explanation object is a :obj:`~torch_geometric.data.Data` object and
     holds the explanation set.
 
     Args:
-        explanation_set (torch.nn.Module, required):
+        explanation_set (ExplanationSetSampler, required):
             The explanation set used to explain NN activations, can be a finite set, 
             generative model or anything that can sample from the abstract explanation set.
-        **kwargs (optional): Additional attributes.
+        is_finite (bool, required): Indicates whether the explanation set is finite. Should be set appropriately in subclasses.        
     """
-    
+
     def validate(self, raise_on_error: bool = True) -> bool:
-        """Validates the correctness of the `GenerativeExplanation` object."""
-        status = super().validate(raise_on_error)        
-        # Check if 'model' and 'generative_models' attributes are not None
-        if self.get('model') is None or self.get('explanation_set') is None:
+        r"""Validates the correctness of the `GenerativeExplanation` object."""
+        status = super().validate(raise_on_error)
+        explanation_set = self.get("explanation_set")
+        is_finite = self.get('is_finite')
+        
+        if explanation_set is None or is_finite is None:
             if raise_on_error:
-                raise ValueError("Both 'model' and 'explanation_set' must be set.")
+                raise ValueError("Both 'explanation_set' and 'is_finite' must be set.")
             status = False
         return status
-    
-    def create_single_batch(dataset):
-        data_list = [data for data in dataset]
-        batched_data = Batch.from_data_list(data_list)
-        return batched_data
 
-    def sample_graphs(self, n=1, class_index=None, **kwargs):
-        model = self.get('model')
-        generative_model = self.get('generative_models')
+    def is_finite(self) -> bool:
+        r"""Check if the Explanation Set is finite."""
+        is_finite = self.get('is_finite')
+        return is_finite
 
-        if model is None:
-            raise ValueError(f"The attribute 'model' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")
-            
-        if generative_model is None:
-            raise ValueError(f"The attribute 'generative_model' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})") 
-
-        sampled_graphs = []
-        sampled_graphs = generative_model.sample(n, **kwargs) # we expect a list of Data objects (graphs)
-        return sampled_graphs
-    
-    def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
-                        backend: Optional[str] = None):
-        r"""Visualizes the explanation graph with edge weights set to be equal.
+    def get_explanation_set(self, **kwargs):
+        r"""
+        Retrieves the Explanation Set. If the set is not finite, expects 'num_samples' in kwargs to
+        be provided for the sake of sampling a finite subset of the explanation set.
 
         Args:
-            path (str, optional): The path to where the plot is saved.
-                If set to :obj:`None`, will visualize the plot on-the-fly.
-                (default: :obj:`None`)
-            backend (str, optional): The graph drawing backend to use for
-                visualization (:obj:`"graphviz"`, :obj:`"networkx"`).
-                If set to :obj:`None`, will use the most appropriate
-                visualization backend based on available system packages.
-                (default: :obj:`None`)
+            **kwargs: Key arguments, expected to contain 'num_samples' for infinite sets.
+
+        Raises:
+            ValueError: If the Explanation Set is infinite and 'num_samples' is not provided.
         """
-        
+        explanation_set = self.get("explanation_set")
+        if not isinstance(explanation_set, ExplanationSetSampler):
+            raise TypeError("'explanation_set' must extend ExplanationSetSampler")
+
+        is_finite = self.get('is_finite')
+        if not is_finite:
+            if 'num_samples' not in kwargs:
+                raise ValueError("Expected 'num_samples' argument for an infinite Explanation Set.")
+
+        return explanation_set.sample(**kwargs)
+
+    def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
+                                    backend: Optional[str] = None):
+        r"""
+        Visualizes the explanation graph with edge weights set to be equal.
+
+        Args:
+            graph_state: The state of the graph to be visualized.
+            path (Optional[str]): The path to where the plot is saved.
+                If set to `None`, will visualize the plot on-the-fly.
+            backend (Optional[str]): The graph drawing backend to use for
+                visualization (`"graphviz"`, `"networkx"`).
+                If set to `None`, will use the most appropriate
+                visualization backend based on available system packages.
+        """
         visualize_graph(graph_state, path, backend)

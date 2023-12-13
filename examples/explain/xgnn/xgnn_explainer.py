@@ -170,7 +170,8 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
-    def sample(self):
+    def sample(self, num_samples: int):
+        # TODO: add sampling from the trained graph generator
         pass
 
 class RLGenExplainer(XGNNExplainer):
