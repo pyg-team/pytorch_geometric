@@ -591,7 +591,7 @@ class ViS_MP(MessagePassing):
             dx (torch.Tensor): The residual scalar features of the nodes.
             dvec (torch.Tensor): The residual vector features of the nodes.
             df_ij (torch.Tensor, optional): The residual scalar features of the
-                edges, or None if this is the last layer.
+                edges, or :obj:`None` if this is the last layer.
         """
         x = self.layernorm(x)
         vec = self.vec_layernorm(vec)
@@ -637,13 +637,9 @@ class ViS_MP(MessagePassing):
 
         return v_j, vec_j
 
-    def edge_update(
-        self,
-        vec_i: Tensor,
-        vec_j: Tensor,
-        d_ij: Tensor,
-        f_ij: Tensor,
-    ) -> Tensor:
+    def edge_update(self, vec_i: Tensor, vec_j: Tensor, d_ij: Tensor,
+                    f_ij: Tensor) -> Tensor:
+
         w1 = self.vector_rejection(self.w_trg_proj(vec_i), d_ij)
         w2 = self.vector_rejection(self.w_src_proj(vec_j), -d_ij)
         w_dot = (w1 * w2).sum(dim=1)
@@ -663,7 +659,7 @@ class ViS_MP(MessagePassing):
         return x, vec
 
 
-class ViS_MP_Vertex(MessagePassing):
+class ViS_MP_Vertex(ViS_MP):
     r"""The message passing module with vertex geometric features of the
     equivariant vector-scalar interactive graph neural network (ViSNet)
     from the `"Enhancing Geometric Representations for Molecules with
@@ -691,187 +687,29 @@ class ViS_MP_Vertex(MessagePassing):
         trainable_vecnorm: bool,
         last_layer: bool = False,
     ) -> None:
-        super().__init__(aggr="add", node_dim=0)
+        super().__init__(num_heads, hidden_channels, cutoff, vecnorm_type,
+                         trainable_vecnorm, last_layer)
 
-        if hidden_channels % num_heads != 0:
-            raise ValueError(
-                f"The number of hidden channels (got {hidden_channels}) must "
-                f"be evenly divisible by the number of attention heads "
-                f"(got {num_heads})")
-
-        self.num_heads = num_heads
-        self.hidden_channels = hidden_channels
-        self.head_dim = hidden_channels // num_heads
-        self.last_layer = last_layer
-
-        self.layernorm = LayerNorm(hidden_channels)
-        self.vec_layernorm = VecLayerNorm(
-            hidden_channels,
-            trainable=trainable_vecnorm,
-            norm_type=vecnorm_type,
-        )
-
-        self.act = torch.nn.SiLU()
-        self.attn_activation = torch.nn.SiLU()
-
-        self.cutoff = CosineCutoff(cutoff)
-
-        self.vec_proj = Linear(hidden_channels, hidden_channels * 3, False)
-
-        self.q_proj = Linear(hidden_channels, hidden_channels)
-        self.k_proj = Linear(hidden_channels, hidden_channels)
-        self.v_proj = Linear(hidden_channels, hidden_channels)
-        self.dk_proj = Linear(hidden_channels, hidden_channels)
-        self.dv_proj = Linear(hidden_channels, hidden_channels)
-
-        self.s_proj = Linear(hidden_channels, hidden_channels * 2)
         if not self.last_layer:
             self.f_proj = Linear(hidden_channels, hidden_channels * 2)
-            self.w_src_proj = Linear(hidden_channels, hidden_channels, False)
-            self.w_trg_proj = Linear(hidden_channels, hidden_channels, False)
             self.t_src_proj = Linear(hidden_channels, hidden_channels, False)
             self.t_trg_proj = Linear(hidden_channels, hidden_channels, False)
 
-        self.o_proj = Linear(hidden_channels, hidden_channels * 3)
-
         self.reset_parameters()
-
-    @staticmethod
-    def vector_rejection(vec: Tensor, d_ij: Tensor) -> Tensor:
-        r"""Computes the component of :obj:`vec` orthogonal to :obj:`d_ij`.
-
-        Args:
-            vec (torch.Tensor): The input vector.
-            d_ij (torch.Tensor): The reference vector.
-        """
-        vec_proj = (vec * d_ij.unsqueeze(2)).sum(dim=1, keepdim=True)
-        return vec - vec_proj * d_ij.unsqueeze(2)
 
     def reset_parameters(self):
         r"""Resets the parameters of the module."""
-        self.layernorm.reset_parameters()
-        self.vec_layernorm.reset_parameters()
-        torch.nn.init.xavier_uniform_(self.q_proj.weight)
-        self.q_proj.bias.data.fill_(0)
-        torch.nn.init.xavier_uniform_(self.k_proj.weight)
-        self.k_proj.bias.data.fill_(0)
-        torch.nn.init.xavier_uniform_(self.v_proj.weight)
-        self.v_proj.bias.data.fill_(0)
-        torch.nn.init.xavier_uniform_(self.o_proj.weight)
-        self.o_proj.bias.data.fill_(0)
-        torch.nn.init.xavier_uniform_(self.s_proj.weight)
-        self.s_proj.bias.data.fill_(0)
+        super().reset_parameters()
 
         if not self.last_layer:
-            torch.nn.init.xavier_uniform_(self.f_proj.weight)
-            self.f_proj.bias.data.fill_(0)
-            torch.nn.init.xavier_uniform_(self.w_src_proj.weight)
-            torch.nn.init.xavier_uniform_(self.w_trg_proj.weight)
-            torch.nn.init.xavier_uniform_(self.t_src_proj.weight)
-            torch.nn.init.xavier_uniform_(self.t_trg_proj.weight)
+            if hasattr(self, 't_src_proj'):
+                torch.nn.init.xavier_uniform_(self.t_src_proj.weight)
+            if hasattr(self, 't_trg_proj'):
+                torch.nn.init.xavier_uniform_(self.t_trg_proj.weight)
 
-        torch.nn.init.xavier_uniform_(self.vec_proj.weight)
-        torch.nn.init.xavier_uniform_(self.dk_proj.weight)
-        self.dk_proj.bias.data.fill_(0)
-        torch.nn.init.xavier_uniform_(self.dv_proj.weight)
-        self.dv_proj.bias.data.fill_(0)
+    def edge_update(self, vec_i: Tensor, vec_j: Tensor, d_ij: Tensor,
+                    f_ij: Tensor) -> Tensor:
 
-    def forward(
-        self,
-        x: Tensor,
-        vec: Tensor,
-        edge_index: Tensor,
-        r_ij: Tensor,
-        f_ij: Tensor,
-        d_ij: Tensor,
-    ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
-        r"""Computes the residual scalar and vector features
-        of the nodes and scalar featues of the edges.
-
-        Args:
-            x (torch.Tensor): The scalar features of the nodes.
-            vec (torch.Tensor):The vector features of the nodes.
-            edge_index (torch.Tensor): The indices of the edges.
-            r_ij (torch.Tensor): The distances between connected nodes.
-            f_ij (torch.Tensor): The scalar features of the edges.
-            d_ij (torch.Tensor): The unit vectors of the edges
-
-        Returns:
-            dx (torch.Tensor): The residual scalar features
-                of the nodes.
-            dvec (torch.Tensor): The residual vector features
-                of the nodes.
-            df_ij (torch.Tensor, optional): The residual scalar features
-                of the edges, or None if this is the last layer.
-        """
-        x = self.layernorm(x)
-        vec = self.vec_layernorm(vec)
-
-        q = self.q_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        k = self.k_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        v = self.v_proj(x).reshape(-1, self.num_heads, self.head_dim)
-        dk = self.act(self.dk_proj(f_ij)).reshape(-1, self.num_heads,
-                                                  self.head_dim)
-        dv = self.act(self.dv_proj(f_ij)).reshape(-1, self.num_heads,
-                                                  self.head_dim)
-
-        vec1, vec2, vec3 = torch.split(self.vec_proj(vec),
-                                       self.hidden_channels, dim=-1)
-        vec_dot = (vec1 * vec2).sum(dim=1)
-
-        x, vec_out = self.propagate(
-            edge_index,
-            q=q,
-            k=k,
-            v=v,
-            dk=dk,
-            dv=dv,
-            vec=vec,
-            r_ij=r_ij,
-            d_ij=d_ij,
-            size=None,
-        )
-
-        o1, o2, o3 = torch.split(self.o_proj(x), self.hidden_channels, dim=1)
-        dx = vec_dot * o2 + o3
-        dvec = vec3 * o1.unsqueeze(1) + vec_out
-        if not self.last_layer:
-            df_ij = self.edge_updater(edge_index, vec=vec, d_ij=d_ij,
-                                      f_ij=f_ij)
-            return dx, dvec, df_ij
-        else:
-            return dx, dvec, None
-
-    def message(
-        self,
-        q_i: Tensor,
-        k_j: Tensor,
-        v_j: Tensor,
-        vec_j: Tensor,
-        dk: Tensor,
-        dv: Tensor,
-        r_ij: Tensor,
-        d_ij: Tensor,
-    ) -> Tuple[Tensor, Tensor]:
-        attn = (q_i * k_j * dk).sum(dim=-1)
-        attn = self.attn_activation(attn) * self.cutoff(r_ij).unsqueeze(1)
-
-        v_j = v_j * dv
-        v_j = (v_j * attn.unsqueeze(2)).view(-1, self.hidden_channels)
-
-        s1, s2 = torch.split(self.act(self.s_proj(v_j)), self.hidden_channels,
-                             dim=1)
-        vec_j = vec_j * s1.unsqueeze(1) + s2.unsqueeze(1) * d_ij.unsqueeze(2)
-
-        return v_j, vec_j
-
-    def edge_update(
-        self,
-        vec_i: Tensor,
-        vec_j: Tensor,
-        d_ij: Tensor,
-        f_ij: Tensor,
-    ) -> Tensor:
         w1 = self.vector_rejection(self.w_trg_proj(vec_i), d_ij)
         w2 = self.vector_rejection(self.w_src_proj(vec_j), -d_ij)
         w_dot = (w1 * w2).sum(dim=1)
@@ -885,54 +723,46 @@ class ViS_MP_Vertex(MessagePassing):
 
         return f1 * w_dot + f2 * t_dot
 
-    def aggregate(
-        self,
-        features: Tuple[Tensor, Tensor],
-        index: Tensor,
-        ptr: Optional[torch.Tensor],
-        dim_size: Optional[int],
-    ) -> Tuple[Tensor, Tensor]:
-        x, vec = features
-        x = scatter(x, index, dim=self.node_dim, dim_size=dim_size)
-        vec = scatter(vec, index, dim=self.node_dim, dim_size=dim_size)
-        return x, vec
-
 
 class ViSNetBlock(torch.nn.Module):
     r"""The representation module of the equivariant vector-scalar
-    interactive graph neural network (ViSNet) from the
-    `"Enhancing geometric representations for molecules
-    with equivariant vector-scalar interactive message passing"
-    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    interactive graph neural network (ViSNet) from the `"Enhancing Geometric
+    Representations for Molecules with Equivariant Vector-Scalar Interactive
+    Message Passing" <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
 
     Args:
-        lmax (int): The maximum degree
-            of the spherical harmonics.
-        vecnorm_type (str): The type of normalization
-            to apply to the vectors.
-        trainable_vecnorm (bool):  Whether the normalization weights
-            are trainable.
-        num_heads (int): The number of attention heads.
-        num_layers (int): The number of layers in the network.
-        hidden_channels (int): The number of hidden channels
-            in the node embeddings.
-        num_rbf (int): The number of radial basis functions.
-        trainable_rbf (bool):Whether the radial basis function
-            parameters are trainable.
-        max_z (int): The maximum atomic numbers.
-        cutoff (float): The cutoff distance.
-        max_num_neighbors (int):The maximum number of neighbors
-            considered for each atom.
-        vertex (bool): Whether to use vertex geometric features.
+        lmax (int, optional): The maximum degree of the spherical harmonics.
+            (default: :obj:`1`)
+        vecnorm_type (str, optional): The type of normalization to apply to the
+            vectors. (default: :obj:`None`)
+        trainable_vecnorm (bool, optional):  Whether the normalization weights
+            are trainable. (default: :obj:`False`)
+        num_heads (int, optional): The number of attention heads.
+            (default: :obj:`8`)
+        num_layers (int, optional): The number of layers in the network.
+            (default: :obj:`6`)
+        hidden_channels (int, optional): The number of hidden channels in the
+            node embeddings. (default: :obj:`128`)
+        num_rbf (int, optional): The number of radial basis functions.
+            (default: :obj:`32`)
+        trainable_rbf (bool, optional): Whether the radial basis function
+            parameters are trainable. (default: :obj:`False`)
+        max_z (int, optional): The maximum atomic numbers.
+            (default: :obj:`100`)
+        cutoff (float, optional): The cutoff distance. (default: :obj:`5.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors
+            considered for each atom. (default: :obj:`32`)
+        vertex (bool, optional): Whether to use vertex geometric features.
+            (default: :obj:`False`)
     """
     def __init__(
         self,
         lmax: int = 1,
-        vecnorm_type: str = "none",
+        vecnorm_type: Optional[str] = None,
         trainable_vecnorm: bool = False,
         num_heads: int = 8,
-        num_layers: int = 9,
-        hidden_channels: int = 256,
+        num_layers: int = 6,
+        hidden_channels: int = 128,
         num_rbf: int = 32,
         trainable_rbf: bool = False,
         max_z: int = 100,
@@ -941,6 +771,7 @@ class ViSNetBlock(torch.nn.Module):
         vertex: bool = False,
     ) -> None:
         super().__init__()
+
         self.lmax = lmax
         self.vecnorm_type = vecnorm_type
         self.trainable_vecnorm = trainable_vecnorm
@@ -984,6 +815,7 @@ class ViSNetBlock(torch.nn.Module):
             trainable=trainable_vecnorm,
             norm_type=vecnorm_type,
         )
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -997,14 +829,19 @@ class ViSNetBlock(torch.nn.Module):
         self.out_norm.reset_parameters()
         self.vec_out_norm.reset_parameters()
 
-    def forward(self, z, pos, batch):
+    def forward(
+        self,
+        z: Tensor,
+        pos: Tensor,
+        batch: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Computes the scalar and vector features of the nodes.
 
         Args:
             z (torch.Tensor): The atomic numbers.
             pos (torch.Tensor): The coordinates of the atoms.
-            batch (torch.Tensor): A batch vector,
-                which assigns each node to a specific example.
+            batch (torch.Tensor): A batch vector, which assigns each node to a
+                specific example.
 
         Returns:
             x (torch.Tensor): The scalar features of the nodes.
@@ -1019,7 +856,7 @@ class ViSNetBlock(torch.nn.Module):
         edge_vec = self.sphere(edge_vec)
         x = self.neighbor_embedding(z, x, edge_index, edge_weight, edge_attr)
         vec = torch.zeros(x.size(0), ((self.lmax + 1)**2) - 1, x.size(1),
-                          device=x.device)
+                          dtype=x.dtype, device=x.device)
         edge_attr = self.edge_embedding(edge_index, edge_attr, x)
 
         for attn in self.vis_mp_layers[:-1]:
@@ -1041,21 +878,21 @@ class ViSNetBlock(torch.nn.Module):
 
 
 class GatedEquivariantBlock(torch.nn.Module):
-    r"""Applies a gated equivariant operation
-    to scalar features and vector features from the
-    `"Equivariant message passing for the prediction
-    of tensorial properties and molecular spectra"
-    <https://arxiv.org/abs/2102.03150>`_ paper.
+    r"""Applies a gated equivariant operation to scalar features and vector
+    features from the `"Enhancing Geometric Representations for Molecules with
+    Equivariant Vector-Scalar Interactive Message Passing"
+    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
 
     Args:
-        hidden_channels (int): The number of hidden channels
-            in the node embeddings.
+        hidden_channels (int): The number of hidden channels in the node
+            embeddings.
         out_channels (int): The number of output channels.
-        intermediate_channels (int or None): The number of channels
-            in the intermediate layer,
-            or None to use the same number as 'hidden_channels'.
-        scalar_activation (bool): Whether to apply
-            a scalar activation function to the output node features.
+        intermediate_channels (int, optional): The number of channels in the
+            intermediate layer, or :obj:`None` to use the same number as
+            :obj:`hidden_channels`. (default: :obj:`None`)
+        scalar_activation (bool, optional): Whether to apply a scalar
+            activation function to the output node features.
+            (default: obj:`False`)
     """
     def __init__(
         self,
@@ -1081,6 +918,8 @@ class GatedEquivariantBlock(torch.nn.Module):
 
         self.act = torch.nn.SiLU() if scalar_activation else None
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         r"""Resets the parameters of the module."""
         torch.nn.init.xavier_uniform_(self.vec1_proj.weight)
@@ -1091,16 +930,12 @@ class GatedEquivariantBlock(torch.nn.Module):
         self.update_net[2].bias.data.fill_(0)
 
     def forward(self, x: Tensor, v: Tensor) -> Tuple[Tensor, Tensor]:
-        r"""Applies a gated equivariant operation
-        to node features and vector features.
+        r"""Applies a gated equivariant operation to node features and vector
+        features.
 
         Args:
             x (torch.Tensor): The scalar features of the nodes.
             v (torch.Tensor): The vector features of the nodes.
-
-        Returns:
-            x (torch.Tensor): The updated scalar features of the nodes.
-            v (torch.Tensor): The updated vector features of the nodes.
         """
         vec1 = torch.norm(self.vec1_proj(v), dim=-2)
         vec2 = self.vec2_proj(v)
@@ -1111,19 +946,21 @@ class GatedEquivariantBlock(torch.nn.Module):
 
         if self.act is not None:
             x = self.act(x)
+
         return x, v
 
 
 class EquivariantScalar(torch.nn.Module):
-    r"""Computes final scalar outputs based on
-    node features and vector features.
+    r"""Computes final scalar outputs based on node features and vector
+    features.
 
     Args:
-        hidden_channels (int): The number of hidden channels
-            in the node embeddings.
+        hidden_channels (int): The number of hidden channels in the node
+            embeddings.
     """
     def __init__(self, hidden_channels: int) -> None:
         super().__init__()
+
         self.output_network = torch.nn.ModuleList([
             GatedEquivariantBlock(
                 hidden_channels,
@@ -1165,8 +1002,9 @@ class Atomref(torch.nn.Module):
 
     Args:
         atomref (torch.Tensor, optional):  A tensor of atom reference values,
-            or None if not provided.
-        max_z (int): The maximum atomic numbers.
+            or :obj:`None` if not provided. (default: :obj:`None`)
+        max_z (int, optional): The maximum atomic numbers.
+            (default: :obj:`100`)
     """
     def __init__(
         self,
@@ -1174,6 +1012,7 @@ class Atomref(torch.nn.Module):
         max_z: int = 100,
     ) -> None:
         super().__init__()
+
         if atomref is None:
             atomref = torch.zeros(max_z, 1)
         else:
@@ -1181,9 +1020,11 @@ class Atomref(torch.nn.Module):
 
         if atomref.ndim == 1:
             atomref = atomref.view(-1, 1)
-        self.register_buffer("initial_atomref", atomref)
+
+        self.register_buffer('initial_atomref', atomref)
         self.atomref = Embedding(len(atomref), 1)
-        self.atomref.weight.data.copy_(atomref)
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets the parameters of the module."""
@@ -1195,54 +1036,56 @@ class Atomref(torch.nn.Module):
         Args:
             x (torch.Tensor): The atomic energies.
             z (torch.Tensor): The atomic numbers.
-
-        Returns:
-            x (torch.Tensor): The updated atomic energies.
         """
         return x + self.atomref(z)
 
 
 class ViSNet(torch.nn.Module):
-    r"""A PyTorch module that implements
-    the equivariant vector-scalar interactive graph neural network (ViSNet)
-    from the `"Enhancing geometric representations for molecules
-    with equivariant vector-scalar interactive message passing"
+    r"""A :pytorch:`PyTorch` module that implements the equivariant
+    vector-scalar interactive graph neural network (ViSNet) from the
+    `"Enhancing Geometric Representations for Molecules with Equivariant
+    Vector-Scalar Interactive Message Passing"
     <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
 
     Args:
-        lmax (int): The maximum degree
-            of the spherical harmonics.
-        vecnorm_type (str): The type of normalization
-            to apply to the vectors.
-        trainable_vecnorm (bool): Whether the normalization weights
-            are trainable.
-        num_heads (int): The number of attention heads.
-        num_layers (int): The number of layers in the network.
-        hidden_channels (int): The number of hidden channels
-            in the node embeddings.
-        num_rbf (int): The number of radial basis functions.
-        trainable_rbf (bool): Whether the radial basis function
-            parameters are trainable.
-        max_z (int): The maximum atomic numbers.
-        cutoff (float): The cutoff distance.
-        max_num_neighbors (int): The maximum number of neighbors
-            considered for each atom.
-        vertex (bool): Whether to use vertex geometric features.
+        lmax (int, optional): The maximum degree of the spherical harmonics.
+            (default: :obj:`1`)
+        vecnorm_type (str, optional): The type of normalization to apply to the
+            vectors. (default: :obj:`None`)
+        trainable_vecnorm (bool, optional):  Whether the normalization weights
+            are trainable. (default: :obj:`False`)
+        num_heads (int, optional): The number of attention heads.
+            (default: :obj:`8`)
+        num_layers (int, optional): The number of layers in the network.
+            (default: :obj:`6`)
+        hidden_channels (int, optional): The number of hidden channels in the
+            node embeddings. (default: :obj:`128`)
+        num_rbf (int, optional): The number of radial basis functions.
+            (default: :obj:`32`)
+        trainable_rbf (bool, optional): Whether the radial basis function
+            parameters are trainable. (default: :obj:`False`)
+        max_z (int, optional): The maximum atomic numbers.
+            (default: :obj:`100`)
+        cutoff (float, optional): The cutoff distance. (default: :obj:`5.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors
+            considered for each atom. (default: :obj:`32`)
+        vertex (bool, optional): Whether to use vertex geometric features.
+            (default: :obj:`False`)
         atomref (torch.Tensor, optional): A tensor of atom reference values,
-            or None if not provided.
-        reduce_op (str): The type of reduction operation to apply
-            ("add", "mean").
-        mean (float, optional): The mean of the output distribution,
-            or 0 if not provided.
-        std (float, optional): The standard deviation
-            of the output distribution, or 1 if not provided.
-        derivative (bool): Whether to compute the derivative of the output
-            with respect to the positions.
+            or :obj:`None` if not provided. (default: :obj:`None`)
+        reduce_op (str, optional): The type of reduction operation to apply
+            (:obj:`"sum"`, :obj:`"mean"`). (default: :obj:`"sum"`)
+        mean (float, optional): The mean of the output distribution.
+            (default: :obj:`0.0`)
+        std (float, optional): The standard deviation of the output
+            distribution. (default: :obj:`1.0`)
+        derivative (bool, optional): Whether to compute the derivative of the
+            output with respect to the positions. (default: :obj:`False`)
     """
     def __init__(
         self,
         lmax: int = 1,
-        vecnorm_type: str = "none",
+        vecnorm_type: Optional[str] = None,
         trainable_vecnorm: bool = False,
         num_heads: int = 8,
         num_layers: int = 6,
@@ -1254,9 +1097,9 @@ class ViSNet(torch.nn.Module):
         max_num_neighbors: int = 32,
         vertex: bool = False,
         atomref: Optional[Tensor] = None,
-        reduce_op: str = "add",
-        mean: Optional[float] = None,
-        std: Optional[float] = None,
+        reduce_op: str = "sum",
+        mean: float = 0.0,
+        std: float = 1.0,
         derivative: bool = False,
     ) -> None:
         super().__init__()
@@ -1281,12 +1124,8 @@ class ViSNet(torch.nn.Module):
         self.reduce_op = reduce_op
         self.derivative = derivative
 
-        mean = (torch.scalar_tensor(0)
-                if mean is None else torch.scalar_tensor(mean))
-        self.register_buffer("mean", mean)
-        std = (torch.scalar_tensor(1)
-               if std is None else torch.scalar_tensor(std))
-        self.register_buffer("std", std)
+        self.register_buffer('mean', torch.tensor(mean))
+        self.register_buffer('std', torch.tensor(std))
 
         self.reset_parameters()
 
@@ -1303,8 +1142,8 @@ class ViSNet(torch.nn.Module):
         pos: Tensor,
         batch: Tensor,
     ) -> Tuple[Tensor, Optional[Tensor]]:
-        r"""Computes the energies or properties (forces)
-        for a batch of molecules.
+        r"""Computes the energies or properties (forces) for a batch of
+        molecules.
 
         Args:
             z (torch.Tensor): The atomic numbers.
@@ -1342,4 +1181,5 @@ class ViSNet(torch.nn.Module):
                 raise RuntimeError(
                     "Autograd returned None for the force prediction.")
             return y, -dy
+
         return y, None
