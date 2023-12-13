@@ -171,10 +171,12 @@ def run(
         shuffle=True,
         drop_last=True,
     )
+    undirected_transform = torch_geometric.transforms.ToUndirected()
     train_loader = NeighborLoader(
         data,
         input_nodes=("paper", train_idx),
         num_neighbors=sizes,
+        transform=undirected_transform,
         **kwargs,
     )
 
@@ -183,12 +185,14 @@ def run(
             data,
             input_nodes=("paper", eval_idx),
             num_neighbors=sizes,
+            transform=undirected_transform,
             **kwargs,
         )
         test_loader = NeighborLoader(
             data,
             input_nodes=("paper", eval_idx),
             num_neighbors=sizes,
+            transform=undirected_transform,
             **kwargs,
         )
     if rank == 0:
