@@ -234,6 +234,7 @@ class LinkLoader(
                     self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
@@ -283,11 +284,11 @@ class LinkLoader(
                     self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
-
                     data = dist.utils.filter_dist_store(
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls, out.metadata)

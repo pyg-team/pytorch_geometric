@@ -167,6 +167,7 @@ class NodeLoader(
                     self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
@@ -204,6 +205,7 @@ class NodeLoader(
                     self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):

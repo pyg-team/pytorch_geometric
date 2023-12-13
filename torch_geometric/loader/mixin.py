@@ -217,8 +217,8 @@ class AffinityMixin:
             raise ValueError(f"Cannot use CPU affinity for worker ID "
                              f"{worker_id} on CPU {self.loader_cores}")
 
-        # Chain init_fn's:
-        self.worker_init_fn_old(worker_id)
+        # Chain worker init functions:
+        self._old_worker_init_fn(worker_id)
 
     @contextmanager
     def enable_cpu_affinity(
