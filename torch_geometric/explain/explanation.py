@@ -464,8 +464,7 @@ class GenerativeExplanation(Data):
         if not isinstance(explanation_set, ExplanationSetSampler):
             raise TypeError("'explanation_set' must extend ExplanationSetSampler")
 
-        is_finite = self.get('is_finite')
-        if not is_finite:
+        if not self.is_finite():
             if 'num_samples' not in kwargs:
                 raise ValueError("Expected 'num_samples' argument for an infinite Explanation Set.")
 
