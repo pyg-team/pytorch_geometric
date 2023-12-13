@@ -65,6 +65,11 @@ class XGNNExplainer(ExplainerAlgorithm):
         Returns:
             Union[Explanation, HeteroExplanation]: The explanation result.
         """
+        # Validate 'for_class' argument
+        for_class = kwargs.pop('for_class', None)
+        if for_class is None:
+            raise ValueError("The 'for_class' argument must be provided")
+        
         if isinstance(x, dict) or isinstance(edge_index, dict):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
@@ -73,12 +78,11 @@ class XGNNExplainer(ExplainerAlgorithm):
             raise ValueError(f"Index not supported in '{self.__class__.__name__}'")
         
         generative_model_t = self.train_generative_model(model, 
-                                                        for_class = target,
-                                                        **kwargs)
-        explanation = GenerativeExplanation(model = generative_model_t, 
-                                explanation_set = generative_model_t)
-            
-        return explanation
+                                                         for_class = for_class,
+                                                         **kwargs)
+        
+        return GenerativeExplanation(model = model, 
+                                      explanation_set = generative_model_t)
 
     @abstractmethod
     def train_generative_model(self, model, for_class, **kwargs) -> ExplanationSetSampler:

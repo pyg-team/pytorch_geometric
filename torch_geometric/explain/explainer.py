@@ -228,6 +228,10 @@ class Explainer:
 
         self.model.train(training)
 
+        if isinstance(explanation, GenerativeExplanation):
+            print("5. GENERATING EXPLANATION file(explainer.py)")
+            return explanation
+
         # Add explainer objectives to the `Explanation` object:
         explanation._model_config = self.model_config
         explanation.prediction = prediction
@@ -261,12 +265,6 @@ class Explainer:
                     explanation.set_value_dict(key, arg)
                 else:
                     explanation[key] = arg
-
-        elif isinstance(explanation, GenerativeExplanation):
-            ### TODO Everything ###
-
-            print("5. GENERATING EXPLANATION file(explainer.py)")
-            return explanation
 
         explanation.validate_masks()
         return explanation.threshold(self.threshold_config)
