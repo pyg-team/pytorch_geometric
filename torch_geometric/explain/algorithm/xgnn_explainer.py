@@ -3,7 +3,7 @@ from typing import Optional, Union, Dict
 import torch
 from torch import Tensor
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain import GenerativeExplanation, GenerativeModelInterface
+from torch_geometric.explain import GenerativeExplanation, ExplanationSetSampler
 
 class XGNNExplainer(ExplainerAlgorithm):
     r"""The XGNN-Explainer model from the `"XGNN: Towards Model-Level Explanations of Graph Neural Networks"
@@ -81,7 +81,7 @@ class XGNNExplainer(ExplainerAlgorithm):
                                      generative_models = generative_models)
 
     @abstractmethod
-    def train_generative_model(self, model, for_class) -> GenerativeModelInterface:
+    def train_generative_model(self, model, for_class) -> ExplanationSetSampler:
         r""" Abstract method to train the generative model. Must be implemented in subclasses.
         
         Args:

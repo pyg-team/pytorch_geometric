@@ -416,25 +416,17 @@ class ExplanationSetSampler(ABC):
             num_samples (int): The number of samples to generate.
         """
         pass
-# Generative Explanation holds a single generative model,
-# there are cases where it would be convenient to hold multiple, perhaps one for each class
-# however for this to be a general class, it could also happen that a single model is trained
-# for all the classes collectively, essentially making the way we call the methods of these 
-# ambigious.
-
-# This is aslo usefule so the user doesn't have to synchronize the train method with the sample method - 
-# no need for specifing for which class we want to sample or draw for, since the class is 
-# already specified in the generative model.
 
 class GenerativeExplanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
-    holds the generative model for a specific predicted class.
+    holds the explanation set.
 
     Args:
-        generative_model (torch.nn.Module, required):
-            The generative model used to generate the explanation graphs. (default: :obj:`None`)
+        explanation_set (torch.nn.Module, required):
+            The explanation set used to explain NN activations, can be a finite set, 
+            generative model or anything that can sample from the abstract explanation set.
         **kwargs (optional): Additional attributes.
     """
     
@@ -442,9 +434,9 @@ class GenerativeExplanation(Data, ExplanationMixin):
         """Validates the correctness of the `GenerativeExplanation` object."""
         status = super().validate(raise_on_error)        
         # Check if 'model' and 'generative_models' attributes are not None
-        if self.get('model') is None or self.get('generative_models') is None:
+        if self.get('model') is None or self.get('explanation_set') is None:
             if raise_on_error:
-                raise ValueError("Both 'model' and 'generative_models' must be set.")
+                raise ValueError("Both 'model' and 'explanation_set' must be set.")
             status = False
         return status
     
