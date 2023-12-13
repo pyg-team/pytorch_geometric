@@ -413,7 +413,7 @@ class NeighborEmbedding(MessagePassing):
         return x_j * W
 
 
-class EdgeEmbedding(MessagePassing):
+class EdgeEmbedding(torch.nn.Module):
     r"""The :class:`EdgeEmbedding` module from the `"Enhancing Geometric
     Representations for Molecules with Equivariant Vector-Scalar Interactive
     Message Passing" <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
@@ -424,7 +424,7 @@ class EdgeEmbedding(MessagePassing):
             embeddings.
     """
     def __init__(self, num_rbf: int, hidden_channels: int) -> None:
-        super().__init__(aggr=None)
+        super().__init__()
         self.edge_proj = Linear(num_rbf, hidden_channels)
         self.reset_parameters()
 
@@ -449,14 +449,9 @@ class EdgeEmbedding(MessagePassing):
         Returns:
             out_edge_attr (torch.Tensor): The edge embeddings.
         """
-        out_edge_attr = self.propagate(edge_index, x=x, edge_attr=edge_attr)
-        return out_edge_attr
-
-    def message(self, x_i: Tensor, x_j: Tensor, edge_attr: Tensor) -> Tensor:
+        x_j = x[edge_index[0]]
+        x_i = x[edge_index[1]]
         return (x_i + x_j) * self.edge_proj(edge_attr)
-
-    def aggregate(self, features: Tensor, index: Tensor) -> Tensor:
-        return features
 
 
 class ViS_MP(MessagePassing):
