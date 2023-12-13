@@ -4,65 +4,15 @@ import os
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.data import Data, Batch
+from torch_geometric.data import Data
 from torch_geometric.explain import Explainer, XGNNExplainer, ExplanationSetSampler
 from torch_geometric.nn import GCNConv
-from torch.nn import BatchNorm1d
-from torch_geometric.nn import global_mean_pool
 from torch_geometric.datasets import TUDataset
 from torch_geometric.utils import to_networkx
 import networkx as nx
 import matplotlib.pyplot as plt
 from tqdm import trange
-
-
-import random
 from xgnn_model import GCN_Graph
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-args = {'device': device,
-        'dropout': 0.1,
-        'epochs': 1000,
-        'input_dim' : 7,
-        'opt': 'adam',
-        'opt_scheduler': 'none',
-        'opt_restart': 0,
-        'weight_decay': 5e-5,
-        'lr': 0.001}
-class objectview(object):
-    def __init__(self, d):
-        self.__dict__ = d
-        
-args = objectview(args)
-        
-model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
-
-# Assume 'model_to_freeze' is the model you want to freeze
-for param in model.parameters():
-    param.requires_grad = False
-    
-# depending on os change path
-path = "examples/explain/xgnn/mutag_model.pth"
-if os.name == 'nt':
-    path = "examples\\explain\\xgnn\\mutag_model.pth"
-
-model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
-model.to(device)
-
-def create_single_batch(dataset):
-    data_list = [data for data in dataset]
-    batched_data = Batch.from_data_list(data_list)
-    return batched_data
-
-
-def custom_softmax(arr, axis=0):
-    non_zero_indices = torch.where(arr != 0)
-    arr_non_zero = arr[non_zero_indices]
-    arr_non_zero = F.softmax(arr_non_zero, dim=axis)
-    arr[non_zero_indices] = arr_non_zero
-    return arr
-
 
 def masked_softmax(vector, mask):
     """
@@ -78,7 +28,6 @@ def masked_softmax(vector, mask):
     softmax_result = F.softmax(masked_vector, dim=0)
 
     return softmax_result
-
 
 class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
     def __init__(self, candidate_set, dropout, initial_node_type = None):
@@ -107,7 +56,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
 
 
     def initialize_graph_state(self, graph_state):
-        """
+        r"""
         Initializes the graph state with a single node.
         
         :param graph_state: The graph state to initialize.
@@ -125,7 +74,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         graph_state.node_type = node_type
 
     def forward(self, graph_state):
-        """
+        r"""
         Generates a new graph state from the given graph state.
         
         :param graph_state: The graph state to generate a new graph state from.
@@ -147,7 +96,6 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
             node_encodings = F.relu6(gcn_layer(node_encodings, node_edges))
             node_encodings = F.dropout(node_encodings, self.dropout, training=self.training)
 
-            
         # get start node probabilities and mask out candidates
         start_node_logits = self.mlp_start_node(node_encodings)
         
@@ -155,7 +103,6 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         candidate_set_indices = torch.arange(node_features_graph.shape[0], node_encodings.shape[0])
         # set candidate set probabilities to 0
         candidate_set_mask[candidate_set_indices] = 0
-        
         start_node_probs = masked_softmax(start_node_logits, candidate_set_mask).squeeze()
 
         # sample start node
@@ -239,7 +186,7 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
-        """
+        r"""
         Computes the reward for the given graph state by evaluating the graph with the pre-trained GNN.
         
         :param pre_trained_gnn: The pre-trained GNN to use for computing the reward.
@@ -255,7 +202,7 @@ class RLGenExplainer(XGNNExplainer):
     
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
-        """
+        r"""
         Computes the rollout reward for the given graph state. 
         
         :param intermediate_graph_state: The intermediate graph state to compute the rollout reward for.
@@ -281,7 +228,7 @@ class RLGenExplainer(XGNNExplainer):
 
 
     def evaluate_graph_validity(self, graph_state):
-        """
+        r"""
         Evaluates the validity of the given graph state. Dataset specific graph rules are implemented here.
         
         :param graph_state: The graph state to evaluate.
@@ -296,7 +243,7 @@ class RLGenExplainer(XGNNExplainer):
         
         
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
-        """
+        r"""
         Calculates the reward for the given graph state.
         
         :param graph_state: The graph state to calculate the reward for.
@@ -312,12 +259,10 @@ class RLGenExplainer(XGNNExplainer):
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
         return reward
 
-
     def plot_loss(self, losses):
         plt.plot(losses, label="training loss")
         plt.legend()
         plt.show()
-        
     
     def train_generative_model(self, model_to_explain, for_class):
         optimizer = torch.optim.Adam(self.graph_generator.parameters(), lr = self.lr, betas=(0.9, 0.99))  
@@ -352,18 +297,49 @@ class RLGenExplainer(XGNNExplainer):
             
         return self.graph_generator
 
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+
+# Load pretrained model
+
+args = {'device': device,
+        'dropout': 0.1,
+        'epochs': 1000,
+        'input_dim' : 7,
+        'opt': 'adam',
+        'opt_scheduler': 'none',
+        'opt_restart': 0,
+        'weight_decay': 5e-5,
+        'lr': 0.001}
+class objectview(object):
+    def __init__(self, d):
+        self.__dict__ = d
+        
+args = objectview(args)
+        
+model = GCN_Graph(args.input_dim, output_dim=1, dropout=args.dropout).to(device)
+
+# Assume 'model_to_freeze' is the model you want to freeze
+for param in model.parameters():
+    param.requires_grad = False
+    
+# depending on os change path
+path = "examples/explain/xgnn/mutag_model.pth"
+if os.name == 'nt':
+    path = "examples\\explain\\xgnn\\mutag_model.pth"
+
+model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
+model.to(device)
+
+# Train generative model
 
 # extract features for the candidate set
 dataset = TUDataset(root='/tmp/MUTAG', name='MUTAG')
 all_features = torch.cat([data.x for data in dataset], dim=0)
 
-# Valency of atoms for validity check
+# graph validity check for number of edges depending on atom
 max_valency = {'C': 4, 'N': 5, 'O': 2, 'F': 1, 'I': 7, 'Cl': 7, 'Br': 5}
 
-# node type map that maps node type to a one hot vector encoding torch tensor please
+# node type map that maps node type to a one hot vector encoding torch tensor 
 candidate_set = {'C': torch.tensor([1, 0, 0, 0, 0, 0, 0]),
                  'N': torch.tensor([0, 1, 0, 0, 0, 0, 0]),
                  'O': torch.tensor([0, 0, 1, 0, 0, 0, 0]),
@@ -389,7 +365,8 @@ explainer = Explainer(
 
 # choose target class
 class_index = 1
-# empty x and edge_index tensors, since we are not explaining one specific graph
+
+# empty x and edge_index tensors, since we are not explaining one specific graph but existing explainer requires these
 x = torch.tensor([])
 edge_index = torch.tensor([[], []])
 
