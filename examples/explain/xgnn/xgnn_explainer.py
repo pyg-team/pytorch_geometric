@@ -280,7 +280,7 @@ class RLGenExplainer(XGNNExplainer):
             empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
             current_graph_state = empty_graph
 
-            print()
+            #print()
             for step in range(self.max_steps): 
                 model.train()
                 optimizer.zero_grad()
@@ -337,7 +337,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 100, 
+    algorithm = RLGenExplainer(epochs = 10, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -350,15 +350,13 @@ explainer = Explainer(
     ),
 )
 
-# create kwargs list for explainer and add candidate set
 
 
 print("EXPLAINER DONE!")
 
 class_index = 1
-target = torch.tensor([0, 1])
 
-explanation = explainer(None, None, target=target) # Generates explanations for all classes at once
+explanation = explainer(None, None, for_class=class_index) # Generates explanations for all classes at once
 print(explanation)
 
 

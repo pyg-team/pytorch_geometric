@@ -81,7 +81,7 @@ class XGNNExplainer(ExplainerAlgorithm):
                                                          for_class = for_class,
                                                          **kwargs)
         
-        return GenerativeExplanation(model = generative_model_t, 
+        return GenerativeExplanation(model = model, 
                                       explanation_set = generative_model_t)
 
     @abstractmethod
