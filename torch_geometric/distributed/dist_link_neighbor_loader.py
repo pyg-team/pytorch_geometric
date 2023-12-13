@@ -48,7 +48,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
-        neighbor_sampler: Optional[DistNeighborSampler] = None,
+        dist_sampler: Optional[DistNeighborSampler] = None,
         replace: bool = False,
         subgraph_type: Union[SubgraphType, str] = "directional",
         disjoint: bool = False,
@@ -78,8 +78,8 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
 
-        if neighbor_sampler is None:
-            neighbor_sampler = DistNeighborSampler(
+        if dist_sampler is None:
+            dist_sampler = DistNeighborSampler(
                 data=data,
                 current_ctx=current_ctx,
                 num_neighbors=num_neighbors,
@@ -93,20 +93,19 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
                 concurrency=concurrency,
             )
 
-        self.neighbor_sampler = neighbor_sampler
-
         DistLoader.__init__(
             self,
             channel=channel,
             master_addr=master_addr,
             master_port=master_port,
             current_ctx=current_ctx,
+            dist_sampler=dist_sampler,
             **kwargs,
         )
         LinkLoader.__init__(
             self,
             data=data,
-            link_sampler=neighbor_sampler,
+            link_sampler=dist_sampler,
             edge_label_index=edge_label_index,
             edge_label=edge_label,
             neg_sampling=neg_sampling,

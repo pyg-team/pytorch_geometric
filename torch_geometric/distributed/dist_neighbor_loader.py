@@ -47,7 +47,7 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         current_ctx: DistContext,
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
-        neighbor_sampler: Optional[DistNeighborSampler] = None,
+        dist_sampler: Optional[DistNeighborSampler] = None,
         replace: bool = False,
         subgraph_type: Union[SubgraphType, str] = "directional",
         disjoint: bool = False,
@@ -71,7 +71,7 @@ class DistNeighborLoader(NodeLoader, DistLoader):
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
 
-        if neighbor_sampler is None:
+        if dist_sampler is None:
             dist_sampler = DistNeighborSampler(
                 data=data,
                 current_ctx=current_ctx,

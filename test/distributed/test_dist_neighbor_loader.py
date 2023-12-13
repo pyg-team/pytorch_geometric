@@ -80,7 +80,7 @@ def dist_neighbor_loader_homo(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -130,7 +130,7 @@ def dist_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -151,10 +151,13 @@ def dist_neighbor_loader_hetero(
             if num_edges > 0:  # Test edge mapping:
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
-                global_edge_index_1 = torch.stack([
-                    batch[src].n_id[batch[edge_type].edge_index[0]],
-                    batch[dst].n_id[batch[edge_type].edge_index[1]],
-                ], dim=0)
+                global_edge_index_1 = torch.stack(
+                    [
+                        batch[src].n_id[batch[edge_type].edge_index[0]],
+                        batch[dst].n_id[batch[edge_type].edge_index[1]],
+                    ],
+                    dim=0,
+                )
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
 

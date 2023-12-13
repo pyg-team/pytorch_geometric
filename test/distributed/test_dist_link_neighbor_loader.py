@@ -84,7 +84,7 @@ def dist_link_neighbor_loader_homo(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -135,7 +135,7 @@ def dist_link_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -151,8 +151,8 @@ def dist_link_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+            assert batch[edge_type].edge_attr.size(
+                0) == batch[edge_type].edge_index.size(1)
 
 
 @onlyLinux
@@ -187,14 +187,30 @@ def test_dist_link_neighbor_loader_homo(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w0.start()
@@ -239,14 +255,32 @@ def test_dist_link_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w0.start()
