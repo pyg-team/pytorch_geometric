@@ -1,5 +1,6 @@
-import copy
+mport copy
 import math
+import time
 from typing import Any, Dict, Optional, Union
 
 import torch
@@ -11,7 +12,7 @@ import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
-from torch_geometric.utils import index_sort, scatter
+from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -55,13 +56,14 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data.
+    r"""Applies a linear tranformation to the incoming data
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
 
-    In contrast to :class:`torch.nn.Linear`, it supports lazy initialization
-    and customizable weight and bias initialization.
+    similar to :class:`torch.nn.Linear`.
+    It supports lazy initialization and customizable weight and bias
+    initialization.
 
     Args:
         in_channels (int): Size of each input sample. Will be initialized
@@ -83,14 +85,9 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        bias: bool = True,
-        weight_initializer: Optional[str] = None,
-        bias_initializer: Optional[str] = None,
-    ):
+    def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
+                 weight_initializer: Optional[str] = None,
+                 bias_initializer: Optional[str] = None):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -112,22 +109,13 @@ class Linear(torch.nn.Module):
         self.reset_parameters()
 
     def __deepcopy__(self, memo):
-        # PyTorch<1.13 cannot handle deep copies of uninitialized parameters :(
-        # TODO Drop this code once PyTorch 1.12 is no longer supported.
-        out = Linear(
-            self.in_channels,
-            self.out_channels,
-            self.bias is not None,
-            self.weight_initializer,
-            self.bias_initializer,
-        ).to(self.weight.device)
-
+        out = Linear(self.in_channels, self.out_channels, self.bias
+                     is not None, self.weight_initializer,
+                     self.bias_initializer)
         if self.in_channels > 0:
             out.weight = copy.deepcopy(self.weight, memo)
-
         if self.bias is not None:
             out.bias = copy.deepcopy(self.bias, memo)
-
         return out
 
     def reset_parameters(self):
@@ -136,8 +124,7 @@ class Linear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""Forward pass.
-
+        r"""
         Args:
             x (torch.Tensor): The input features.
         """
@@ -164,25 +151,6 @@ class Linear(torch.nn.Module):
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
 
-    def _load_from_state_dict(self, state_dict, prefix, *args, **kwargs):
-        weight = state_dict.get(prefix + 'weight', None)
-
-        if weight is not None and is_uninitialized_parameter(weight):
-            self.in_channels = -1
-            self.weight = torch.nn.parameter.UninitializedParameter()
-            if not hasattr(self, '_hook'):
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-
-        elif weight is not None and is_uninitialized_parameter(self.weight):
-            self.in_channels = weight.size(-1)
-            self.weight.materialize((self.out_channels, self.in_channels))
-            if hasattr(self, '_hook'):
-                self._hook.remove()
-                delattr(self, '_hook')
-
-        super()._load_from_state_dict(state_dict, prefix, *args, **kwargs)
-
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
@@ -190,14 +158,13 @@ class Linear(torch.nn.Module):
 
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
-    to types.
-
-    For type :math:`\kappa`, it computes
+    to types
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
 
+    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -235,7 +202,7 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._use_segment_matmul_heuristic_output: Optional[bool] = None
+        self._timing_cache = {}
 
         if self.in_channels == -1:
             self.weight = torch.nn.parameter.UninitializedParameter()
@@ -257,63 +224,107 @@ class HeteroLinear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels,
                     self.kwargs.get('bias_initializer', None))
 
-    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""Forward pass.
+    def forward_segmm(self, x: Tensor, type_vec_ptr: Tensor) -> Tensor:
+        assert self.weight is not None
+        out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
+        return out
 
+    def forward_naive(self, x: Tensor, type_vec_ptr: Tensor) -> Tensor:
+        out = x.new_empty(x.size(0), self.out_channels)
+
+        for i in range(self.num_types):
+            off_start, off_end = type_vec_ptr[i], type_vec_ptr[i + 1]
+            subset_out = x[off_start:off_end] @ self.weight[i]
+            # The data type may have changed with mixed precision:
+            out[off_start:off_end] = subset_out.to(out.dtype)
+
+        return out
+
+    @torch.jit.unused
+    def _update_timing_cache(self, x: Tensor, type_vec_ptr: Tensor,
+                             num_rows: int) -> bool:
+        measure_iter = 3
+        with torch.no_grad():
+            # only measure forward pass for now
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            start = time.perf_counter()
+            for _ in range(measure_iter):
+                _ = self.forward_segmm(x, type_vec_ptr)
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            end = time.perf_counter()
+            time_segmm = end - start
+
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            start = time.perf_counter()
+            for _ in range(measure_iter):
+                _ = self.forward_naive(x, type_vec_ptr)
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            end = time.perf_counter()
+            time_naive = end - start
+
+            # first entry is with segmm, second without
+            # if segmm is faster based on timings, use it
+            self._timing_cache[num_rows] = (time_segmm, time_naive)
+            use_segment_matmul = time_segmm < time_naive
+
+        return use_segment_matmul
+
+    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
+        r"""
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        use_segment_matmul = torch_geometric.backend.use_segment_matmul
-        # If `use_segment_matmul` is not specified, use a simple heuristic to
-        # determine whether `segment_matmul` can speed up computation given the
-        # observed input sizes:
-        if use_segment_matmul is None:
-            if self._use_segment_matmul_heuristic_output is None:
-                segment_count = scatter(torch.ones_like(type_vec), type_vec,
-                                        dim_size=self.num_types, reduce='sum')
+        perm: Optional[Tensor] = None
+        if not self.is_sorted:
+            if (type_vec[1:] < type_vec[:-1]).any():
+                type_vec, perm = index_sort(type_vec, self.num_types)
+                x = x[perm]
 
-                self._use_segment_matmul_heuristic_output = (
-                    torch_geometric.backend.use_segment_matmul_heuristic(
-                        num_segments=self.num_types,
-                        max_segment_size=int(segment_count.max()),
-                        in_channels=self.weight.size(1),
-                        out_channels=self.weight.size(2),
-                    ))
+        type_vec_ptr = index2ptr(type_vec, self.num_types)
 
-            assert self._use_segment_matmul_heuristic_output is not None
-            use_segment_matmul = self._use_segment_matmul_heuristic_output
+        if torch_geometric.backend.use_segment_matmul is None:
+            if torch_geometric.typing.WITH_SEGMM:
+                # to avoid too many measurements for dynamic shapes
+                # use "magnitude" of number of rows as target
+                num_rows = math.floor(math.log10(x.size(0)))
+                if num_rows in self._timing_cache:
+                    timings = self._timing_cache[num_rows]
+                    # first entry is with segmm, second without
+                    # if segmm is faster based on timings, use it
+                    use_segment_matmul = timings[0] < timings[1]
 
-        if use_segment_matmul and torch_geometric.typing.WITH_SEGMM:
-            assert self.weight is not None
+                elif num_rows not in self._timing_cache:
+                    use_segment_matmul = self._update_timing_cache(
+                        x, type_vec_ptr, num_rows)
 
-            perm: Optional[Tensor] = None
-            if not self.is_sorted:
-                if (type_vec[1:] < type_vec[:-1]).any():
-                    type_vec, perm = index_sort(type_vec, self.num_types)
-                    x = x[perm]
+                else:
+                    use_segment_matmul = False
 
-            type_vec_ptr = index2ptr(type_vec, self.num_types)
-            out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
-            if self.bias is not None:
-                out += self.bias[type_vec]
+            else:
+                use_segment_matmul = False
 
-            if perm is not None:  # Restore original order (if necessary).
-                out_unsorted = torch.empty_like(out)
-                out_unsorted[perm] = out
-                out = out_unsorted
         else:
-            out = x.new_empty(x.size(0), self.out_channels)
-            for i in range(self.num_types):
-                mask = type_vec == i
-                if mask.numel() == 0:
-                    continue
-                subset_out = F.linear(x[mask], self.weight[i].T)
-                # The data type may have changed with mixed precision:
-                out[mask] = subset_out.to(out.dtype)
+            use_segment_matmul = (torch_geometric.typing.WITH_SEGMM and
+                                  torch_geometric.backend.use_segment_matmul)
 
-            if self.bias is not None:
-                out += self.bias[type_vec]
+        if use_segment_matmul:
+            out = self.forward_segmm(x, type_vec_ptr)
+        else:
+            out = self.forward_naive(x, type_vec_ptr)
+
+        if self.bias is not None:
+            out += self.bias[type_vec]
+
+        if perm is not None:  # Restore original order (if necessary).
+            out_unsorted = torch.empty_like(out)
+            out_unsorted[perm] = out
+            out = out_unsorted
+
         return out
 
     @torch.no_grad()
@@ -333,14 +344,13 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary.
-
-    For key :math:`\kappa`, it computes
+    r"""Applies separate linear tranformations to the incoming data dictionary
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
 
+    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -407,8 +417,7 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""Forward pass.
-
+        r"""
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.
