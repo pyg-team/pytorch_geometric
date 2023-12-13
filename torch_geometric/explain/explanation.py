@@ -401,22 +401,21 @@ def _visualize_score(
 
     plt.close()
     
-class GenerativeModelInterface(ABC):
-    r"""Abstract base class for graph generative models used in generative explanations.
-
-    Subclasses must implement the `sample` method, which should generate new graph samples.
+class ExplanationSetSampler(ABC):
+    r"""
+    Serves as a base class for sampling from an "Explanation Set" of a neural network.
+    This set comprises data points that maximize the network's activation. It can be
+    extended by various generative models or fixed size datasets to perform sampling.
     """
-
     @abstractmethod
-    def sample(self, *args, **kwargs) -> Data:
+    def sample(self, num_samples: int):
         r"""
-        Generates a new graph sample.
-
-        Returns:
-            Data: A PyTorch Geometric Data object representing the generated graph.
+        Abstract method to sample data points from the Explanation Set.
+        
+        Args:
+            num_samples (int): The number of samples to generate.
         """
         pass
-
 # Generative Explanation holds a single generative model,
 # there are cases where it would be convenient to hold multiple, perhaps one for each class
 # however for this to be a general class, it could also happen that a single model is trained
@@ -432,8 +431,6 @@ class GenerativeExplanation(Data, ExplanationMixin):
     Args:
         generative_model (torch.nn.Module, required):
             The generative model used to generate the explanation graphs. (default: :obj:`None`)
-        for_class (int, required):
-            Class for which the explanation is computed. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     
@@ -452,7 +449,7 @@ class GenerativeExplanation(Data, ExplanationMixin):
         batched_data = Batch.from_data_list(data_list)
         return batched_data
 
-    def sample_graphs(self, n=1, **kwargs):
+    def sample_graphs(self, n=1, class_index=None, **kwargs):
         model = self.get('model')
         generative_model = self.get('generative_models')
 

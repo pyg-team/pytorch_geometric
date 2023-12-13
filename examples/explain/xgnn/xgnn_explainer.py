@@ -4,7 +4,7 @@ import os
 import torch
 import torch.nn.functional as F
 from torch_geometric.data import Data, Batch
-from torch_geometric.explain import Explainer, XGNNExplainer, GenerativeModelInterface
+from torch_geometric.explain import Explainer, XGNNExplainer, ExplanationSetSampler
 from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
@@ -72,9 +72,7 @@ def check_edge_representation(data):
             return "Edges are represented as single, undirected edges"
     return "Edges are represented with two directed edges, one in each direction"
 
-
-
-class GraphGenerator(torch.nn.Module, GenerativeModelInterface):
+class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
     def __init__(self, candidate_set, initial_node_type = None):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
