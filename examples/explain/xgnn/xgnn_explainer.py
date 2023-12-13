@@ -1,3 +1,4 @@
+import copy
 import os.path as osp
 import os
 
@@ -13,8 +14,6 @@ from torch_geometric.datasets import TUDataset
 
 import random
 from xgnn_model import GCN_Graph
-
-print_list = []
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -61,6 +60,27 @@ def custom_softmax(arr, axis=0):
     return arr
 
 
+def masked_softmax(vector, mask):
+    """
+    Apply softmax to only selected elements of the vector, as indicated by the mask.
+    The output will be a probability distribution where unselected elements are 0.
+    
+    :param vector: A 1D tensor of values.
+    :param mask: A 1D tensor of the same size as vector, containing 1s (include) and 0s (exclude).
+    :return: A 1D tensor representing the probability distribution.
+    """
+    # Ensure the mask is boolean
+    mask = mask.bool()
+
+    # Apply mask
+    masked_vector = vector.masked_fill(~mask, float('-inf'))
+
+    # Apply softmax
+    softmax_result = F.softmax(masked_vector, dim=0)
+
+    return softmax_result
+
+
 def check_edge_representation(data):
     # Convert edge indices to a set of tuples for easier comparison
     edge_set = {tuple(edge) for edge in data.edge_index.t().tolist()}
@@ -72,30 +92,32 @@ def check_edge_representation(data):
     return "Edges are represented with two directed edges, one in each direction"
 
 class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
-    def __init__(self, candidate_set, initial_node_type = None):
+    def __init__(self, candidate_set, dropout, initial_node_type = None):
         super(GraphGenerator, self).__init__()
         # TODO: Check 
         self.candidate_set = candidate_set
         self.initial_node_type = initial_node_type
+        self.dropout = dropout
         num_node_features = len(next(iter(self.candidate_set.values())))
         self.gcn_layers = torch.nn.ModuleList([
             GCNConv(num_node_features, 16),
             GCNConv(16, 24),
-            GCNConv(24, 32)
+            GCNConv(24, 32),
         ])
 
         self.mlp_start_node = torch.nn.Sequential(
             torch.nn.Linear(32, 16),
             torch.nn.ReLU6(),
             torch.nn.Linear(16, 1),
-            torch.nn.Softmax(dim=0)
+            #torch.nn.Softmax(dim=0)
         )
         self.mlp_end_node = torch.nn.Sequential(
             torch.nn.Linear(32, 24),
             torch.nn.ReLU6(),
             torch.nn.Linear(24, 1),
-            torch.nn.Softmax(dim=0)
+            #torch.nn.Softmax(dim=0)
         )
+
 
     def initialize_graph_state(self, graph_state):
         if self.initial_node_type is None:
@@ -111,45 +133,51 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         graph_state.node_type = node_type
 
     def forward(self, graph_state):
-        # chechk if graph state is empty and initialize it if True
+        graph_state = copy.deepcopy(graph_state)
+        # check if graph state is empty and initialize it if True
         if graph_state.x.shape[0] == 0:
             self.initialize_graph_state(graph_state)
 
         # contatenate graph_state features with candidate_set features
-        node_features_graph = graph_state.x
+        node_features_graph = graph_state.x.detach().clone()
         candidate_features = torch.stack(list(self.candidate_set.values()))
         node_features = torch.cat((node_features_graph, candidate_features), dim=0).float()
+        node_edges = graph_state.edge_index.detach().clone()
         
         # compute node encodings with GCN layers
         node_encodings = node_features
         for gcn_layer in self.gcn_layers:
-            node_encodings = gcn_layer(node_encodings, graph_state.edge_index)
+            node_encodings = F.relu6(gcn_layer(node_encodings, node_edges))
+            node_encodings = F.dropout(node_encodings, self.dropout, training=self.training)
+
+            
         # get start node probabilities and mask out candidates
-        start_node_probs = self.mlp_start_node(node_encodings)
+        start_node_logits = self.mlp_start_node(node_encodings)
         
-        candidate_set_mask = torch.ones_like(start_node_probs)
+        candidate_set_mask = torch.ones_like(start_node_logits)
         candidate_set_indices = torch.arange(node_features_graph.shape[0], node_encodings.shape[0])
+        # set candidate set probabilities to 0
         candidate_set_mask[candidate_set_indices] = 0
-        start_node_probs = start_node_probs * candidate_set_mask
-        # change 0 probabilities to very small number
-        #start_node_probs[start_node_probs == 0] = 1e-10
-        start_node_probs = start_node_probs.squeeze()
-        start_node_probs = custom_softmax(start_node_probs)
+        
+        start_node_probs = masked_softmax(start_node_logits, candidate_set_mask).squeeze()
+        #start_node_probs = start_node_logits * candidate_set_mask
+        #start_node_probs = start_node_probs.squeeze()
+        #start_node_probs = custom_softmax(start_node_probs)
 
         # sample start node
-        p_start = torch.distributions.Categorical(start_node_probs)
+        try:
+            p_start = torch.distributions.Categorical(start_node_probs)
+        except:
+            print("debug: start_node_probs", start_node_probs)
         start_node = p_start.sample()
         
         # get end node probabilities and mask out start node
         # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
-        end_node_probs = self.mlp_end_node(node_encodings)
-        start_node_mask = torch.ones_like(end_node_probs)
+        end_node_logits = self.mlp_end_node(node_encodings)
+        
+        start_node_mask = torch.ones_like(end_node_logits)
         start_node_mask[start_node] = 0
-        end_node_probs = end_node_probs * start_node_mask
-        # change 0 probabilities to very small number
-        #end_node_probs[end_node_probs == 0] = 1e-10
-        end_node_probs = end_node_probs.squeeze()
-        end_node_probs = custom_softmax(end_node_probs)
+        end_node_probs = masked_softmax(end_node_logits, start_node_mask).squeeze()
         
         # sample end node
         end_node = torch.distributions.Categorical(end_node_probs).sample()
@@ -168,7 +196,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         end_node_one_hot = torch.eye(end_node_probs.shape[0])[end_node]
 
         # TODO: Don't return graph_state, since it's getting modified in place
-        return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
+        return ((start_node_logits.squeeze(), start_node_one_hot), (end_node_logits.squeeze(), end_node_one_hot)), graph_state
 
     def sample(self, num_samples: int):
         # TODO: add sampling from the trained graph generator
@@ -178,18 +206,21 @@ class RLGenExplainer(XGNNExplainer):
     def __init__(self, epochs, lr, candidate_set, validity_args, initial_node_type = None):
         super(RLGenExplainer, self).__init__(epochs, lr)
         self.candidate_set = candidate_set
-        self.graph_generator = GraphGenerator(candidate_set, initial_node_type)
+        self.graph_generator = GraphGenerator(candidate_set, 0.1, initial_node_type)
         self.max_steps = 10
         self.lambda_1 = 1
         self.lambda_2 = 1
         self.num_classes = 2
         self.validity_args = validity_args
     
+    
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
-        gnn_output = pre_trained_gnn(graph_state)
-        probability_of_target_class = torch.sigmoid(gnn_output).squeeze()
+        with torch.no_grad():
+            gnn_output = pre_trained_gnn(graph_state)
+            probability_of_target_class = torch.sigmoid(gnn_output).squeeze()
 
         return probability_of_target_class - 1 / num_classes
+    
     
     def rollout_reward(self, intermediate_graph_state, pre_trained_gnn, target_class, num_classes, num_rollouts=5):
         
@@ -215,17 +246,6 @@ class RLGenExplainer(XGNNExplainer):
         # print("debug: rollout_reward", average_final_reward)
         return average_final_reward
 
-    # def evaluate_graph_validity(self, graph_state):
-    #     # check if graph has duplicated edges
-    #     edge_set = set()
-        
-    #     for edge in graph_state.edge_index:
-    #         sorted_edge = tuple(sorted(edge))
-    #         if sorted_edge in edge_set:
-    #             print("Graph has duplicated edges")
-    #             return -1
-    #         edge_set.add(sorted_edge)
-    #     return 0
 
     def evaluate_graph_validity(self, graph_state):
         # For mutag, node degrees cannot exceed valency
@@ -238,6 +258,7 @@ class RLGenExplainer(XGNNExplainer):
         # print("debug: evaluate_graph_validity", 0)
         return 0
         
+        
     def calculate_reward(self, graph_state, pre_trained_gnn, target_class, num_classes):
         intermediate_reward = self.reward_tf(pre_trained_gnn, graph_state, num_classes)
         # Assuming rollout function is defined to perform graph rollouts and evaluate
@@ -246,8 +267,8 @@ class RLGenExplainer(XGNNExplainer):
         # defined based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state) 
         reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
-        # print("debug: calculate_reward", reward)
         return reward
+
 
     # Training function
     def train_generative_model(self, model_to_explain, for_class):
@@ -259,24 +280,31 @@ class RLGenExplainer(XGNNExplainer):
             empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
             current_graph_state = empty_graph
 
-            for step in range(self.max_steps):
+            print()
+            for step in range(self.max_steps): 
+                model.train()
+                optimizer.zero_grad()
+                #print(f"Step {step} of epoch {epoch} started")
+                      
                 ((p_start, a_start), (p_end, a_end)), new_graph_state = self.graph_generator(current_graph_state)
                 
                 reward = self.calculate_reward(new_graph_state, model_to_explain, for_class, self.num_classes)
+                #print("Reward:", reward)
                 
                 LCE_start = F.cross_entropy(p_start, a_start)
                 LCE_end = F.cross_entropy(p_end, a_end)
                 
                 loss = -reward * (LCE_start + LCE_end)
-                total_loss += -reward * (LCE_start.item() + LCE_end.item())
+                #total_loss += -reward * (LCE_start.item() + LCE_end.item())
                 
-                optimizer.zero_grad()
+                #print(f"Step {step} of epoch {epoch} completed, Loss: {loss}")
+                
                 loss.backward()
                 optimizer.step()
                 
                 if reward >= 0:
                     current_graph_state = new_graph_state
-            print(f"Epoch {epoch} completed, Total Loss: {total_loss}")
+            print(f"Epoch {epoch} completed, Loss: {loss}")
             
         return self.graph_generator 
 
@@ -332,11 +360,5 @@ target = torch.tensor([0, 1])
 
 explanation = explainer(None, None, target=target) # Generates explanations for all classes at once
 print(explanation)
-
-# save print_list to file
-with open('/Users/blazpridgar/Documents/GitHub/pytorch_geometric/examples/explain/xgnn/print_list.txt', 'w') as f:
-    for item in print_list:
-        f.write("%s\n" % item)
-
 
 
