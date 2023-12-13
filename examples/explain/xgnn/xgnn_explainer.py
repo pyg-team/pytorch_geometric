@@ -367,7 +367,7 @@ kwargs['candidate_set'] = candidate_set
 
 explainer = Explainer(
     model = model,
-    algorithm = RLGenExplainer(epochs = 200, 
+    algorithm = RLGenExplainer(epochs = 1000, 
                                lr = 0.01,
                                candidate_set=candidate_set, 
                                validity_args = max_valency, 
@@ -380,28 +380,24 @@ explainer = Explainer(
     ),
 )
 
-
-
-print("EXPLAINER DONE!")
-
+# choose target class
 class_index = 1
 
 # empty x and edge_index tensors, since we are not explaining a specific graph
 x = torch.tensor([])
 edge_index = torch.tensor([[], []])
 
-explanation = explainer(x, edge_index, for_class=class_index) # Generates explanations for all classes at once
-print(explanation)
-
+explanation = explainer(x, edge_index, for_class=class_index) 
 explanation_set = explanation.explanation_set
 
 ### SAMPLE SINGLE GRAPH
 sampled_graph = explanation_set.sample(num_samples=1, num_nodes=10)[0]
-
 # visualize sampled graph with DEFAULT inbuild method
 explanation.visualize_explanation_graph(sampled_graph, path='examples/explain/xgnn/sample_graph', backend='networkx')
 
-# visualize sampled graph with CUSTOM method
+
+
+### SAMPLE MULTIPLE GRAPHS
 node_color_dict = {'C': '#0173B2', 
                    'N': '#DE8F05', 
                    'O': '#029E73', 
@@ -410,34 +406,21 @@ node_color_dict = {'C': '#0173B2',
                    'Cl': '#CA9161', 
                    'Br': '#FBAFE4'} # colorblind palette
 
-# # get score for sampled graph
-# score = model(sampled_graph)
-# probability_score = torch.sigmoid(score)
 
-# G = to_networkx(sampled_graph, to_undirected=True)
-
-# node_type_dict = dict(enumerate(sampled_graph.node_type))
-# nx.set_node_attributes(G, node_type_dict, 'node_type')
-# labels = nx.get_node_attributes(G, 'node_type')
-# node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
-# pos = nx.spring_layout(G)
-# fig, axe = plt.subplots(figsize=(8,8))
-# axe.set_title("Score: {:.2f}".format(probability_score.item()), loc="center")
-# # plot graph with scroe as title
-# nx.draw(G, pos=pos, ax=axe, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
-
-# # plt.savefig('examples/explain/xgnn/sample_graph_custom.png')
-# plt.show()
-
-### SAMPLE MULTIPLE GRAPHS
 sampled_graphs = []
 scores = []
 for i in range(3, 11):
-    sampled_graph = explanation_set.sample(num_samples=1, num_nodes=i)[0]
-    score = model(sampled_graph)
-    probability_score = torch.sigmoid(score)
-    sampled_graphs.append(sampled_graph)
-    scores.append(probability_score.item())
+    sampled_graphs_i = explanation_set.sample(num_samples=5, num_nodes=i)
+    scores_i = []
+    for sampled_graph in sampled_graphs_i:
+        score = model(sampled_graph)
+        probability_score = torch.sigmoid(score)
+        scores_i.append(probability_score.item())
+
+    # choose graph with best score
+    best_graph_index = scores_i.index(max(scores_i))
+    scores.append(scores_i[best_graph_index])
+    sampled_graphs.append(sampled_graphs_i[best_graph_index])
 
 # visualize sampled graphs with CUSTOM method
 fig, axes = plt.subplots(2, 4, figsize=(16, 8))
