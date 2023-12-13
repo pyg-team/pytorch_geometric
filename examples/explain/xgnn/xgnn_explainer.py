@@ -9,6 +9,9 @@ from torch_geometric.nn import GCNConv
 from torch.nn import BatchNorm1d
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.datasets import TUDataset
+from torch_geometric.utils import to_networkx
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 import random
@@ -170,9 +173,44 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         # TODO: Don't return graph_state, since it's getting modified in place
         return ((start_node_probs, start_node_one_hot), (end_node_probs, end_node_one_hot)), graph_state
 
-    def sample(self, num_samples: int):
+    def sample(self, num_samples: int, **kwargs):
         # TODO: add sampling from the trained graph generator
-        pass
+        # extract num_nodes and max_steps from kwargs or set them to None
+        num_nodes = kwargs.get('num_nodes', None)
+        max_steps = kwargs.get('max_steps', None)
+
+        # check that either num_nodes or max_steps is not None
+        if num_nodes is None and max_steps is None:
+            raise ValueError("Either num_nodes or max_steps must be specified")
+        
+        # create empty graph state
+        empty_graph = Data(x=torch.tensor([]), edge_index=torch.tensor([]), node_type=[])
+        current_graph_state = empty_graph
+
+        # sample graphs
+        sampled_graphs = []
+
+        max_steps_reached = False
+        num_nodes_reached = False
+        for _ in range(num_samples):
+            while not max_steps_reached and not num_nodes_reached:
+                ((p_start, a_start), (p_end, a_end)), new_graph_state = self.forward(current_graph_state)
+                # check if max_steps is reached (if max_steps is None, this will never be True)
+                if max_steps is not None and new_graph_state.edge_index.shape[1] >= max_steps:
+                    max_steps_reached = True
+                # check if num_nodes is reached
+                if num_nodes is not None and new_graph_state.x.shape[0] >= num_nodes:
+                    num_nodes_reached = True
+                # update current graph state
+                current_graph_state = new_graph_state
+            # add sampled graph to list
+            sampled_graphs.append(current_graph_state)
+            # reset current graph state
+            current_graph_state = empty_graph
+            # reset max_steps_reached and num_nodes_reached
+            max_steps_reached = False
+            num_nodes_reached = False
+        return sampled_graphs
 
 class RLGenExplainer(XGNNExplainer):
     def __init__(self, epochs, lr, candidate_set, validity_args, initial_node_type = None):
@@ -266,9 +304,20 @@ class RLGenExplainer(XGNNExplainer):
                 
                 LCE_start = F.cross_entropy(p_start, a_start)
                 LCE_end = F.cross_entropy(p_end, a_end)
+
+                # transform a_start to long tensor
+                # a_start = torch.tensor(a_start, dtype=torch.long)
+                # a_end = torch.tensor(a_end, dtype=torch.long)
+
+                # LCE_start = F.nll_loss(p_start, a_start)
+                # LCE_end = F.nll_loss(p_end, a_end)
+                
+
                 
                 loss = -reward * (LCE_start + LCE_end)
                 total_loss += -reward * (LCE_start.item() + LCE_end.item())
+
+                # print(f"Epoch {epoch}, Step {step}, Loss: {loss}")
                 
                 optimizer.zero_grad()
                 loss.backward()
@@ -328,15 +377,52 @@ explainer = Explainer(
 print("EXPLAINER DONE!")
 
 class_index = 1
-target = torch.tensor([0, 1])
+target = torch.tensor([0])
 
 explanation = explainer(None, None, target=target) # Generates explanations for all classes at once
 print(explanation)
 
-# save print_list to file
-with open('/Users/blazpridgar/Documents/GitHub/pytorch_geometric/examples/explain/xgnn/print_list.txt', 'w') as f:
-    for item in print_list:
-        f.write("%s\n" % item)
+explanation_set = explanation.explanation_set
+
+sampled_graph = explanation_set.sample(num_samples=1, num_nodes=10)[0]
+
+print("SAMPLED GRAPH:", sampled_graph)
+print("SAMPLED GRAPH NODE TYPE:", sampled_graph.node_type)
+print("SAMPLED GRAPH EDGE INDEX:", sampled_graph.edge_index)
+
+# visualize sampled graph with default inbuild method
+explanation.visualize_explanation_graph(sampled_graph, path='examples/explain/xgnn/sample_graph', backend='networkx')
+
+# visualize sampled graph with custom method
+node_color_dict = {'C': '#0173B2', 
+                   'N': '#DE8F05', 
+                   'O': '#029E73', 
+                   'F': '#D55E00', 
+                   'I': '#CC78BC', 
+                   'Cl': '#CA9161', 
+                   'Br': '#FBAFE4'} # colorblinf palette
+
+# get score for sampled graph
+score = model(sampled_graph)
+probability_score = torch.sigmoid(score)
+print("SCORE:", score)
+
+G = to_networkx(sampled_graph, to_undirected=True)
+
+node_type_dict = dict(enumerate(sampled_graph.node_type))
+nx.set_node_attributes(G, node_type_dict, 'node_type')
+labels = nx.get_node_attributes(G, 'node_type')
+
+node_color = [node_color_dict[key] for key in nx.get_node_attributes(G, 'node_type').values()]
+pos = nx.spring_layout(G)
+plt.figure(figsize=(8, 8))
+# plot graph with scroe as title
+nx.draw(G, pos=pos, cmap=plt.get_cmap('coolwarm'), node_color=node_color, labels=labels, font_color='white')
+plt.title(f"Score: {score}")
+plt.tight_layout()
+# plt.savefig('examples/explain/xgnn/sample_graph_custom.png')
+plt.show()
+
 
 
 

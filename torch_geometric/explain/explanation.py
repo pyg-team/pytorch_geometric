@@ -484,4 +484,5 @@ class GenerativeExplanation(Data):
                 If set to `None`, will use the most appropriate
                 visualization backend based on available system packages.
         """
-        visualize_graph(graph_state, path, backend)
+        edge_index = graph_state.edge_index
+        visualize_graph(edge_index, path=path, backend=backend)
