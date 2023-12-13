@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class BrcaTcga(InMemoryDataset):
@@ -40,6 +40,8 @@ class BrcaTcga(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -64,8 +66,10 @@ class BrcaTcga(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform, pre_filter)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -76,20 +80,20 @@ class BrcaTcga(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'brca_tcga'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         graph_feat = pd.read_csv(self.raw_paths[0], index_col=0).values
         graph_feat = torch.from_numpy(graph_feat).to(torch.float)
-        graph_label = np.loadtxt(self.raw_paths[1], delimiter=',')
-        graph_label = torch.from_numpy(graph_label).to(torch.float)
+        graph_labels = np.loadtxt(self.raw_paths[1], delimiter=',')
+        graph_label = torch.from_numpy(graph_labels).to(torch.float)
         edge_index = torch.load(self.raw_paths[2])
 
         data_list = []

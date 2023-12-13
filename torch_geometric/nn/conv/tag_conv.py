@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class TAGConv(MessagePassing):
     r"""The topology adaptive graph convolutional networks operator from the
     `"Topology Adaptive Graph Convolutional Networks"
-    <https://arxiv.org/abs/1710.10370>`_ paper
+    <https://arxiv.org/abs/1710.10370>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=0}^K \left( \mathbf{D}^{-1/2} \mathbf{A}

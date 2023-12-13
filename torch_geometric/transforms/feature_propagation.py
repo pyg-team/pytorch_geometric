@@ -12,7 +12,7 @@ class FeaturePropagation(BaseTransform):
     r"""The feature propagation operator from the `"On the Unreasonable
     Effectiveness of Feature propagation in Learning on Graphs with Missing
     Node Features" <https://arxiv.org/abs/2111.12128>`_ paper
-    (functional name: :obj:`feature_propagation`)
+    (functional name: :obj:`feature_propagation`).
 
     .. math::
         \mathbf{X}^{(0)} &= (1 - \mathbf{M}) \cdot \mathbf{X}

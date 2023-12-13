@@ -15,7 +15,6 @@ class IntegerFeatureEncoder(torch.nn.Module):
         num_classes (int): The number of classes/integers.
 
     Example:
-
         >>> encoder = IntegerFeatureEncoder(emb_dim=16, num_classes=10)
         >>> batch = torch.randint(0, 10, (10, 2))
         >>> encoder(batch).size()
@@ -42,7 +41,6 @@ class AtomEncoder(torch.nn.Module):
         emb_dim (int): The output embedding dimension.
 
     Example:
-
         >>> encoder = AtomEncoder(emb_dim=16)
         >>> batch = torch.randint(0, 10, (10, 3))
         >>> encoder(batch).size()
@@ -77,7 +75,6 @@ class BondEncoder(torch.nn.Module):
         emb_dim (int): The output embedding dimension.
 
     Example:
-
         >>> encoder = BondEncoder(emb_dim=16)
         >>> batch = torch.randint(0, 10, (10, 3))
         >>> encoder(batch).size()

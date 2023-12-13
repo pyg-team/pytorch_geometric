@@ -16,11 +16,13 @@ requirements:
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
     - psutil
+    - fsspec
     - tqdm
     - jinja2
     - pyparsing
     - numpy
     - scipy
+    - aiohttp
     - requests
     - scikit-learn
 

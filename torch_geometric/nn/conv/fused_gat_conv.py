@@ -52,7 +52,7 @@ class FusedGATConv(GATConv):  # pragma: no cover
 
         Args:
             edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
+            size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
         value = torch.arange(edge_index.size(1), dtype=torch.int,
@@ -66,8 +66,13 @@ class FusedGATConv(GATConv):  # pragma: no cover
 
         return (rowptr.int(), col.int()), (row.int(), colptr.int()), perm
 
-    def forward(self, x: Tensor, csr: Tuple[Tensor, Tensor],
-                csc: Tuple[Tensor, Tensor], perm: Tensor) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        csr: Tuple[Tensor, Tensor],
+        csc: Tuple[Tensor, Tensor],
+        perm: Tensor,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:

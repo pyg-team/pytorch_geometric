@@ -41,9 +41,10 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[full,test]
+          pip install -e .[test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
           pytest

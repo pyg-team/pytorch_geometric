@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -11,7 +11,7 @@ def to_nested_tensor(
     batch: Optional[Tensor] = None,
     ptr: Optional[Tensor] = None,
     batch_size: Optional[int] = None,
-) -> torch.Tensor:
+) -> Tensor:
     r"""Given a contiguous batch of tensors
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times *}`
     (with :math:`N_i` indicating the number of elements in example :math:`i`),
@@ -33,11 +33,11 @@ def to_nested_tensor(
     """
     if ptr is not None:
         offsets = ptr[1:] - ptr[:-1]
-        sizes: List[int] = offsets.tolist()
+        sizes = offsets.tolist()
         xs = list(torch.split(x, sizes, dim=0))
     elif batch is not None:
         offsets = scatter(torch.ones_like(batch), batch, dim_size=batch_size)
-        sizes: List[int] = offsets.tolist()
+        sizes = offsets.tolist()
         xs = list(torch.split(x, sizes, dim=0))
     else:
         xs = [x]
