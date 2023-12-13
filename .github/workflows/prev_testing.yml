@@ -14,10 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        torch-version: [1.11.0, 1.12.0, 1.13.0, 2.0.0]
+        torch-version: [1.12.0, 1.13.0, 2.0.0]
         include:
-          - torch-version: 1.11.0
-            torchvision-version: 0.12.0
           - torch-version: 1.12.0
             torchvision-version: 0.13.0
           - torch-version: 1.13.0
@@ -60,5 +58,6 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
           pytest

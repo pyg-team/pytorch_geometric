@@ -16,8 +16,10 @@ from torch_geometric.utils import scatter, spmm
 class WLConvContinuous(MessagePassing):
     r"""The Weisfeiler Lehman operator from the `"Wasserstein
     Weisfeiler-Lehman Graph Kernels" <https://arxiv.org/abs/1906.01277>`_
-    paper. Refinement is done though a degree-scaled mean aggregation and
-    works on nodes with continuous attributes:
+    paper.
+
+    Refinement is done though a degree-scaled mean aggregation and works on
+    nodes with continuous attributes:
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{2}\big(\mathbf{x}_i +

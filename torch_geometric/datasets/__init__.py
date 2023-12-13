@@ -92,6 +92,7 @@ from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
+from .rcdd import RCDD
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -103,7 +104,7 @@ from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
 
-import torch_geometric.datasets.utils  # noqa
+import torch_geometric.datasets.utils
 
 homo_datasets = [
     'KarateClub',
@@ -202,6 +203,7 @@ hetero_datasets = [
     'AmazonBook',
     'HM',
     'OSE_GVCS',
+    'RCDD',
 ]
 synthetic_datasets = [
     'FakeDataset',

@@ -8,62 +8,41 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pyright:
+  pytest:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 40
+
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            benchmark/**
+            conda/**
+            docker/**
+            docs/**
+            examples/**
+            graphgym/**
+            README.md
+            CHANGELOG.md
 
       - name: Setup packages
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
-        with:
-          full_install: false
 
-      - name: Install pyright
+      - name: Install main package
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install pyright
-
-      - name: Run pyright
-        continue-on-error: true
-        run: |
-          pyright
-
-  pylint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4.3.0
-        with:
-          python-version: 3.8
-
-      - name: Install dependencies
-        run: pip install pylint
-
-      - name: Run linting
-        continue-on-error: true
-        run: pylint **/*.py
-
-  mypy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4.3.0
-        with:
-          python-version: 3.8
-
-      - name: Install dependencies
-        run: pip install mypy
+          pip install mypy
+          pip install -e .[full,test]
 
       - name: Check type hints
-        continue-on-error: true
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric
+          mypy

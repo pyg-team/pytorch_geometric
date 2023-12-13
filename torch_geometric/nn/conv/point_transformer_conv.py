@@ -17,7 +17,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 class PointTransformerConv(MessagePassing):
     r"""The Point Transformer layer from the `"Point Transformer"
-    <https://arxiv.org/abs/2012.09164>`_ paper
+    <https://arxiv.org/abs/2012.09164>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i =  \sum_{j \in
