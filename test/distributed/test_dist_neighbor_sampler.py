@@ -21,20 +21,16 @@ from torch_geometric.testing import onlyLinux, withPackage
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
     if rank == 0:  # Partition 0:
         node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
-        edge_index = torch.tensor(
-            [  # Sorted by destination.
-                [1, 2, 3, 4, 5, 0, 0],
-                [0, 1, 2, 3, 4, 4, 9],
-            ]
-        )
+        edge_index = torch.tensor([  # Sorted by destination.
+            [1, 2, 3, 4, 5, 0, 0],
+            [0, 1, 2, 3, 4, 4, 9],
+        ])
     else:  # Partition 1:
         node_id = torch.tensor([0, 4, 5, 6, 7, 8, 9])
-        edge_index = torch.tensor(
-            [  # Sorted by destination.
-                [5, 6, 7, 8, 9, 5, 0],
-                [4, 5, 6, 7, 8, 9, 9],
-            ]
-        )
+        edge_index = torch.tensor([  # Sorted by destination.
+            [5, 6, 7, 8, 9, 5, 0],
+            [4, 5, 6, 7, 8, 9, 9],
+        ])
     feature_store = LocalFeatureStore.from_data(node_id)
     graph_store = LocalGraphStore.from_data(
         edge_id=None,
@@ -48,19 +44,16 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
     graph_store.partition_idx = rank
     graph_store.num_partitions = world_size
 
-    edge_index = torch.tensor(
-        [  # Create reference data:
-            [1, 2, 3, 4, 5, 0, 5, 6, 7, 8, 9, 0],
-            [0, 1, 2, 3, 4, 4, 9, 5, 6, 7, 8, 9],
-        ]
-    )
+    edge_index = torch.tensor([  # Create reference data:
+        [1, 2, 3, 4, 5, 0, 5, 6, 7, 8, 9, 0],
+        [0, 1, 2, 3, 4, 4, 9, 5, 6, 7, 8, 9],
+    ])
     data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
     if time_attr == 'time':  # Create node-level time data:
         data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
-        feature_store.put_tensor(
-            data.time, group_name=None, attr_name=time_attr
-        )
+        feature_store.put_tensor(data.time, group_name=None,
+                                 attr_name=time_attr)
 
     elif time_attr == 'edge_time':  # Create edge-level time data:
         data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
@@ -70,9 +63,8 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
         if rank == 1:
             edge_time = torch.tensor([4, 7, 7, 7, 7, 7, 11])
 
-        feature_store.put_tensor(
-            edge_time, group_name=None, attr_name=time_attr
-        )
+        feature_store.put_tensor(edge_time, group_name=None,
+                                 attr_name=time_attr)
 
     return (feature_store, graph_store), data
 
@@ -122,8 +114,7 @@ def dist_neighbor_sampler(
 
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
-        coro=dist_sampler.node_sample(inputs)
-    )
+        coro=dist_sampler.node_sample(inputs))
 
     sampler = NeighborSampler(
         data=data,
@@ -142,6 +133,7 @@ def dist_neighbor_sampler(
         assert torch.equal(out_dist.batch, out.batch)
     assert out_dist.num_sampled_nodes == out.num_sampled_nodes
     assert out_dist.num_sampled_edges == out.num_sampled_edges
+
 
 def dist_neighbor_sampler_temporal(
     world_size: int,
@@ -197,8 +189,7 @@ def dist_neighbor_sampler_temporal(
 
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
-        coro=dist_sampler.node_sample(inputs)
-    )
+        coro=dist_sampler.node_sample(inputs))
 
     sampler = NeighborSampler(
         data=data,
@@ -218,6 +209,7 @@ def dist_neighbor_sampler_temporal(
     assert torch.equal(out_dist.batch, out.batch)
     assert out_dist.num_sampled_nodes == out.num_sampled_nodes
     assert out_dist.num_sampled_edges == out.num_sampled_edges
+
 
 @onlyLinux
 @withPackage('pyg_lib')
