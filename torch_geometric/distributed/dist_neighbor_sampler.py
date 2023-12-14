@@ -596,10 +596,8 @@ class DistNeighborSampler:
             rel_type = '__'.join(edge_type)
             colptr = self._sampler.colptr_dict[rel_type]
             row = self._sampler.row_dict[rel_type]
-            node_time = self.node_time.get(edge_type[2],
-                                           None) if self.node_time else None
-            edge_time = self.edge_time.get(edge_type[2],
-                                           None) if self.edge_time else None
+            node_time = (self.node_time or {}).get(edge_type[2], None)
+            edge_time = (self.edge_time or {}).get(edge_type[2], None)
 
         out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
