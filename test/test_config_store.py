@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from torch_geometric.config_store import (
     class_from_dataclass,
@@ -26,7 +26,7 @@ def test_to_dataclass():
     fields = AddSelfLoopsConfig.__dataclass_fields__
 
     assert fields['attr'].name == 'attr'
-    assert fields['attr'].type == Optional[str]
+    assert fields['attr'].type == str
     assert fields['attr'].default == 'edge_weight'
 
     assert fields['fill_value'].name == 'fill_value'
@@ -145,4 +145,3 @@ def test_hydra_config_store():
     assert cfg.lr_scheduler.cooldown == 0
     assert cfg.lr_scheduler.min_lr == 0
     assert cfg.lr_scheduler.eps == 1e-08
-    assert not cfg.lr_scheduler.verbose

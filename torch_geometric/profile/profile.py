@@ -2,7 +2,8 @@ import os
 import pathlib
 import time
 from contextlib import ContextDecorator, contextmanager
-from typing import Any, List, NamedTuple, Tuple
+from dataclasses import dataclass
+from typing import Any, List, Tuple, Union
 
 import torch
 from torch.autograd.profiler import EventList
@@ -10,40 +11,54 @@ from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.profile.utils import (
     byte_to_megabyte,
+    get_gpu_memory_from_ipex,
     get_gpu_memory_from_nvidia_smi,
 )
 
 
-class Stats(NamedTuple):
+@dataclass
+class GPUStats:
     time: float
-    max_allocated_cuda: float
-    max_reserved_cuda: float
-    max_active_cuda: float
+    max_allocated_gpu: float
+    max_reserved_gpu: float
+    max_active_gpu: float
+
+
+@dataclass
+class CUDAStats(GPUStats):
     nvidia_smi_free_cuda: float
     nvidia_smi_used_cuda: float
 
 
-class StatsSummary(NamedTuple):
+@dataclass
+class GPUStatsSummary:
     time_mean: float
     time_std: float
-    max_allocated_cuda: float
-    max_reserved_cuda: float
-    max_active_cuda: float
+    max_allocated_gpu: float
+    max_reserved_gpu: float
+    max_active_gpu: float
+
+
+@dataclass
+class CUDAStatsSummary(GPUStatsSummary):
     min_nvidia_smi_free_cuda: float
     max_nvidia_smi_used_cuda: float
 
 
-def profileit():  # pragma: no cover
+def profileit(device: str):  # pragma: no cover
     r"""A decorator to facilitate profiling a function, *e.g.*, obtaining
     training runtime and memory statistics of a specific model on a specific
     dataset.
-    Returns a :obj:`Stats` object with the attributes :obj:`time`,
-    :obj:`max_active_cuda`, :obj:`max_reserved_cuda`, :obj:`max_active_cuda`,
-    :obj:`nvidia_smi_free_cuda`, :obj:`nvidia_smi_used_cuda`.
+    Returns a :obj:`GPUStats` if :obj:`device` is :obj:`xpu` or extended
+    object :obj:`CUDAStats`, if :obj:`device` is :obj:`cuda`.
+
+    Args:
+        device (str): Target device for profiling. Options are:
+            :obj:`cuda` and obj:`xpu`.
 
     .. code-block:: python
 
-        @profileit()
+        @profileit("cuda")
         def train(model, optimizer, x, edge_index, y):
             optimizer.zero_grad()
             out = model(x, edge_index)
@@ -55,56 +70,71 @@ def profileit():  # pragma: no cover
         loss, stats = train(model, x, edge_index, y)
     """
     def decorator(func):
-        def wrapper(*args, **kwargs) -> Tuple[Any, Stats]:
-            from pytorch_memlab import LineProfiler
-
+        def wrapper(
+                *args, **kwargs
+        ) -> Union[Tuple[Any, GPUStats], Tuple[Any, CUDAStats]]:
             model = args[0]
             if not isinstance(model, torch.nn.Module):
                 raise AttributeError(
                     'First argument for profiling needs to be torch.nn.Module')
+            if device not in ['cuda', 'xpu']:
+                raise AttributeError(
+                    "The profiling decorator supports only CUDA and "
+                    "XPU devices")
 
-            device = None
+            device_id = None
             for arg in list(args) + list(kwargs.values()):
                 if isinstance(arg, torch.Tensor):
-                    device = arg.get_device()
+                    device_id = arg.get_device()
                     break
-            if device is None:
+            if device_id is None:
                 raise AttributeError(
-                    "Could not infer CUDA device from the args in the "
+                    "Could not infer GPU device from the args in the "
                     "function being profiled")
-            if device == -1:
+            if device_id == -1:
                 raise RuntimeError(
                     "The profiling decorator does not support profiling "
-                    "on non CUDA devices")
+                    "on non GPU devices")
 
-            # Init `pytorch_memlab` for analyzing the model forward pass:
-            line_profiler = LineProfiler(target_gpu=device)
-            line_profiler.enable()
-            line_profiler.add_function(args[0].forward)
+            is_cuda = device == 'cuda'
+            torch_gpu = torch.cuda if is_cuda else torch.xpu
 
-            start = torch.cuda.Event(enable_timing=True)
-            end = torch.cuda.Event(enable_timing=True)
+            # `pytorch_memlab` supports only CUDA devices
+            if is_cuda:
+                from pytorch_memlab import LineProfiler
+
+                # Init `pytorch_memlab` for analyzing the model forward pass:
+                line_profiler = LineProfiler(target_gpu=device_id)
+                line_profiler.enable()
+                line_profiler.add_function(args[0].forward)
+
+            start = torch_gpu.Event(enable_timing=True)
+            end = torch_gpu.Event(enable_timing=True)
             start.record()
 
             out = func(*args, **kwargs)
 
             end.record()
-            torch.cuda.synchronize()
+            torch_gpu.synchronize()
             time = start.elapsed_time(end) / 1000
 
-            # Get the global memory statistics collected by `pytorch_memlab`:
-            memlab = read_from_memlab(line_profiler)
-            max_allocated_cuda, max_reserved_cuda, max_active_cuda = memlab
-            line_profiler.disable()
+            if is_cuda:
+                # Get the global memory statistics collected
+                # by `pytorch_memlab`:
+                memlab = read_from_memlab(line_profiler)
+                max_allocated, max_reserved, max_active = memlab
+                line_profiler.disable()
 
-            # Get additional information from `nvidia-smi`:
-            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(
-                device=device)
+                # Get additional information from `nvidia-smi`:
+                free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(
+                    device=device_id)
 
-            stats = Stats(time, max_allocated_cuda, max_reserved_cuda,
-                          max_active_cuda, free_cuda, used_cuda)
-
-            return out, stats
+                stats = CUDAStats(time, max_allocated, max_reserved,
+                                  max_active, free_cuda, used_cuda)
+                return out, stats
+            else:
+                stats = GPUStats(time, *get_gpu_memory_from_ipex())
+                return out, stats
 
         return wrapper
 
@@ -162,28 +192,37 @@ class timeit(ContextDecorator):
             self.__enter__()
 
 
-def get_stats_summary(stats_list: List[Stats]):  # pragma: no cover
+def get_stats_summary(
+    stats_list: Union[List[GPUStats], List[CUDAStats]]
+) -> Union[GPUStatsSummary, CUDAStatsSummary]:  # pragma: no cover
     r"""Creates a summary of collected runtime and memory statistics.
-    Returns a :obj:`StatsSummary` object with the attributes :obj:`time_mean`,
-    :obj:`time_std`,
-    :obj:`max_active_cuda`, :obj:`max_reserved_cuda`, :obj:`max_active_cuda`,
-    :obj:`min_nvidia_smi_free_cuda`, :obj:`max_nvidia_smi_used_cuda`.
+    Returns a :obj:`GPUStatsSummary` if list of :obj:`GPUStats` was passed,
+    otherwise (list of :obj:`CUDAStats` was passed),
+    returns a :obj:`CUDAStatsSummary`.
 
     Args:
-        stats_list (List[Stats]): A list of :obj:`Stats` objects, as returned
-            by :meth:`~torch_geometric.profile.profileit`.
+        stats_list (Union[List[GPUStats], List[CUDAStats]]): A list of
+            :obj:`GPUStats` or :obj:`CUDAStats` objects, as returned by
+            :meth:`~torch_geometric.profile.profileit`.
     """
-    return StatsSummary(
+    # calculate common statistics
+    kwargs = dict(
         time_mean=float(torch.tensor([s.time for s in stats_list]).mean()),
         time_std=float(torch.tensor([s.time for s in stats_list]).std()),
-        max_allocated_cuda=max([s.max_allocated_cuda for s in stats_list]),
-        max_reserved_cuda=max([s.max_reserved_cuda for s in stats_list]),
-        max_active_cuda=max([s.max_active_cuda for s in stats_list]),
-        min_nvidia_smi_free_cuda=min(
-            [s.nvidia_smi_free_cuda for s in stats_list]),
-        max_nvidia_smi_used_cuda=max(
-            [s.nvidia_smi_used_cuda for s in stats_list]),
-    )
+        max_allocated_gpu=max([s.max_allocated_gpu for s in stats_list]),
+        max_reserved_gpu=max([s.max_reserved_gpu for s in stats_list]),
+        max_active_gpu=max([s.max_active_gpu for s in stats_list]))
+
+    if all(isinstance(s, CUDAStats) for s in stats_list):
+        return CUDAStatsSummary(
+            **kwargs,
+            min_nvidia_smi_free_cuda=min(
+                [s.nvidia_smi_free_cuda for s in stats_list]),
+            max_nvidia_smi_used_cuda=max(
+                [s.nvidia_smi_used_cuda for s in stats_list]),
+        )
+    else:
+        return GPUStatsSummary(**kwargs)
 
 
 ###############################################################################

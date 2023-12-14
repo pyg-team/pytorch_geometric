@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import select
-from torch_geometric.utils.subgraph import hyper_subgraph
+from torch_geometric.utils._subgraph import hyper_subgraph
 
 
 class HyperGraphData(Data):
@@ -58,8 +58,7 @@ class HyperGraphData(Data):
 
     @property
     def num_edges(self) -> int:
-        r"""Returns the number of hyperedges in the hypergraph.
-        """
+        r"""Returns the number of hyperedges in the hypergraph."""
         if self.edge_index is None:
             return 0
         return max(self.edge_index[1]) + 1

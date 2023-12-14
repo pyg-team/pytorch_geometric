@@ -27,7 +27,6 @@ coverage.xml
 examples/**/*.png
 examples/**/*.pdf
 benchmark/results/
-docs/html/
-
+.mypy_cache/
 !torch_geometric/data/
 !test/data/

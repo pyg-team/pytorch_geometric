@@ -28,6 +28,7 @@ from torch_geometric.typing import (
 from torch_geometric.utils import (
     bipartite_subgraph,
     contains_isolated_nodes,
+    is_sparse,
     is_undirected,
     mask_select,
 )
@@ -332,7 +333,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
+        if is_sparse(value) and 'adj' in key:
             return (0, 1)
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
@@ -341,7 +342,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __inc__(self, key: str, value: Any,
                 store: Optional[NodeOrEdgeStorage] = None, *args,
                 **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)

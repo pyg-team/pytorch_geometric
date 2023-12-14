@@ -65,6 +65,8 @@ class AirfRANS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -94,7 +96,8 @@ class AirfRANS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if task not in self.tasks:
             raise ValueError(f"Expected 'task' to be in {self.tasks} "
                              f"got '{task}'")
@@ -102,7 +105,8 @@ class AirfRANS(InMemoryDataset):
         self.task = 'full' if task == 'scarce' and not train else task
         self.split = 'train' if train else 'test'
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -110,19 +114,15 @@ class AirfRANS(InMemoryDataset):
         return ['AirfRANS.pt', 'manifest.json']
 
     @property
-    def process(self) -> List[str]:
-        return ['AirfRANS.pt', 'manifest.json']
-
-    @property
     def processed_file_names(self) -> str:
         return f'{self.task}_{self.split}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[1], 'r') as f:
             manifest = json.load(f)
         total = manifest['full_train'] + manifest['full_test']

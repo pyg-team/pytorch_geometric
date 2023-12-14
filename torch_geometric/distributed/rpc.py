@@ -6,6 +6,7 @@ from typing import Callable, Dict, List, Optional
 
 from torch.distributed import rpc
 
+import torch_geometric.typing
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 
 _rpc_init_lock = threading.RLock()
@@ -94,7 +95,8 @@ def shutdown_rpc(graceful: bool = True):
         rpc.shutdown(graceful)
 
 
-atexit.register(shutdown_rpc, False)
+if not torch_geometric.typing.WITH_WINDOWS:
+    atexit.register(shutdown_rpc, False)
 
 
 class RPCRouter:

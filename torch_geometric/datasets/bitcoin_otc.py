@@ -31,6 +31,8 @@ class BitcoinOTC(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -52,11 +54,17 @@ class BitcoinOTC(InMemoryDataset):
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(self, root: str, edge_window_size: int = 10,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        edge_window_size: int = 10,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.edge_window_size = edge_window_size
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -69,39 +77,43 @@ class BitcoinOTC(InMemoryDataset):
 
     @property
     def num_nodes(self) -> int:
-        return self._data.edge_index.max().item() + 1
+        assert isinstance(self._data, Data)
+        assert self._data.edge_index is not None
+        return int(self._data.edge_index.max()) + 1
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_gz(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'r') as f:
-            data = f.read().split('\n')[:-1]
-            data = [[x for x in line.split(',')] for line in data]
+            lines = [[x for x in line.split(',')]
+                     for line in f.read().split('\n')[:-1]]
 
-            edge_index = [[int(line[0]), int(line[1])] for line in data]
-            edge_index = torch.tensor(edge_index, dtype=torch.long)
+            edge_indices = [[int(line[0]), int(line[1])] for line in lines]
+            edge_index = torch.tensor(edge_indices, dtype=torch.long)
             edge_index = edge_index - edge_index.min()
             edge_index = edge_index.t().contiguous()
-            num_nodes = edge_index.max().item() + 1
+            num_nodes = int(edge_index.max()) + 1
 
-            edge_attr = [int(line[2]) for line in data]
-            edge_attr = torch.tensor(edge_attr, dtype=torch.long)
+            edge_attrs = [int(line[2]) for line in lines]
+            edge_attr = torch.tensor(edge_attrs, dtype=torch.long)
 
-            stamps = [int(float(line[3])) for line in data]
-            stamps = [datetime.datetime.fromtimestamp(x) for x in stamps]
+            stamps = [
+                datetime.datetime.fromtimestamp(int(float(line[3])))
+                for line in lines
+            ]
 
         offset = datetime.timedelta(days=13.8)  # Results in 138 time steps.
-        graph_idx, factor = [], 1
+        graph_indices, factor = [], 1
         for t in stamps:
             factor = factor if t < stamps[0] + factor * offset else factor + 1
-            graph_idx.append(factor - 1)
-        graph_idx = torch.tensor(graph_idx, dtype=torch.long)
+            graph_indices.append(factor - 1)
+        graph_idx = torch.tensor(graph_indices, dtype=torch.long)
 
         data_list = []
-        for i in range(graph_idx.max().item() + 1):
+        for i in range(int(graph_idx.max()) + 1):
             mask = (graph_idx > (i - self.edge_window_size)) & (graph_idx <= i)
             data = Data()
             data.edge_index = edge_index[:, mask]

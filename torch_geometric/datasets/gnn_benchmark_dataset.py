@@ -45,6 +45,8 @@ class GNNBenchmarkDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -108,10 +110,16 @@ class GNNBenchmarkDataset(InMemoryDataset):
         'CSL': 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1',
     }
 
-    def __init__(self, root: str, name: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name
         assert self.name in self.names
 
@@ -122,7 +130,8 @@ class GNNBenchmarkDataset(InMemoryDataset):
                  "Instead, it is recommended to perform 5-fold cross "
                  "validation with stratifed sampling"))
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -162,12 +171,12 @@ class GNNBenchmarkDataset(InMemoryDataset):
         else:
             return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         if self.name == 'CSL':
             data_list = self.process_CSL()
             self.save(data_list, self.processed_paths[0])

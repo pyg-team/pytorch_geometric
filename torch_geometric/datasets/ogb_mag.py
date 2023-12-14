@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class OGB_MAG(InMemoryDataset):
@@ -42,6 +43,8 @@ class OGB_MAG(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip'
@@ -52,17 +55,24 @@ class OGB_MAG(InMemoryDataset):
                    'mag_transe_emb.zip'),
     }
 
-    def __init__(self, root: str, preprocess: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        preprocess: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         preprocess = None if preprocess is None else preprocess.lower()
         self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def num_classes(self) -> int:
+        assert isinstance(self._data, HeteroData)
         return int(self._data['paper'].y.max()) + 1
 
     @property
@@ -92,7 +102,7 @@ class OGB_MAG(InMemoryDataset):
         else:
             return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         if not all([osp.exists(f) for f in self.raw_paths[:5]]):
             path = download_url(self.url, self.raw_dir)
             extract_zip(path, self.raw_dir)
@@ -103,14 +113,14 @@ class OGB_MAG(InMemoryDataset):
             shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')
             shutil.move(path, self.raw_dir)
-            shutil.rmtree(osp.join(self.raw_dir, 'mag'))
+            fs.rm(osp.join(self.raw_dir, 'mag'))
             os.remove(osp.join(self.raw_dir, 'mag.zip'))
         if self.preprocess is not None:
             path = download_url(self.urls[self.preprocess], self.raw_dir)
             extract_zip(path, self.raw_dir)
             os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

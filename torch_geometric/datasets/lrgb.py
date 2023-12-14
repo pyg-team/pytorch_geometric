@@ -1,8 +1,7 @@
 import os
 import os.path as osp
 import pickle
-import shutil
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class LRGBDataset(InMemoryDataset):
@@ -58,6 +58,8 @@ class LRGBDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -96,7 +98,6 @@ class LRGBDataset(InMemoryDataset):
           - ~307.30
           - 11
     """
-
     names = [
         'pascalvoc-sp', 'coco-sp', 'pcqm-contact', 'peptides-func',
         'peptides-struct'
@@ -131,12 +132,14 @@ class LRGBDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.names
         assert split in ['train', 'val', 'test']
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
         self.load(path)
 
@@ -159,15 +162,15 @@ class LRGBDataset(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
-        shutil.rmtree(self.raw_dir)
+    def download(self) -> None:
+        fs.rm(self.raw_dir)
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, self.dwnld_file_name[self.name]),
                   self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         if self.name == 'pcqm-contact':
             # PCQM-Contact
             self.process_pcqm_contact()
@@ -238,7 +241,7 @@ class LRGBDataset(InMemoryDataset):
                 path = osp.join(self.processed_dir, f'{split}.pt')
                 self.save(data_list, path)
 
-    def label_remap_coco(self):
+    def label_remap_coco(self) -> Dict[int, int]:
         # Util function for name 'COCO-SP'
         # to remap the labels as the original label idxs are not contiguous
         original_label_idx = [
@@ -255,7 +258,7 @@ class LRGBDataset(InMemoryDataset):
 
         return label_map
 
-    def process_pcqm_contact(self):
+    def process_pcqm_contact(self) -> None:
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
                 graphs = torch.load(f)

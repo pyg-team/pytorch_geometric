@@ -37,6 +37,8 @@ class Wikidata5M(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -44,7 +46,8 @@ class Wikidata5M(InMemoryDataset):
         setting: str = 'transductive',
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if setting not in {'transductive', 'inductive'}:
             raise ValueError(f"Invalid 'setting' argument (got '{setting}')")
 
@@ -62,7 +65,8 @@ class Wikidata5M(InMemoryDataset):
             self.urls.append('https://www.dropbox.com/s/6sbhm0rwo4l73jq/'
                              'wikidata5m_transductive.tar.gz?dl=1')
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -79,14 +83,14 @@ class Wikidata5M(InMemoryDataset):
     def processed_file_names(self) -> str:
         return f'{self.setting}_data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for url in self.urls:
             download_url(url, self.raw_dir)
         path = osp.join(self.raw_dir, f'wikidata5m_{self.setting}.tar.gz')
         extract_tar(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import gzip
 
         entity_to_id: Dict[str, int] = {}
@@ -97,24 +101,26 @@ class Wikidata5M(InMemoryDataset):
 
         x = torch.load(self.raw_paths[1])
 
-        edge_index = []
-        edge_type = []
-        split_index = []
+        edge_indices = []
+        edge_types = []
+        split_indices = []
 
         rel_to_id: Dict[str, int] = {}
         for split, path in enumerate(self.raw_paths[2:]):
             with open(path, 'r') as f:
                 for line in f:
                     head, rel, tail = line[:-1].split('\t')
-                    edge_index.append([entity_to_id[head], entity_to_id[tail]])
+                    src = entity_to_id[head]
+                    dst = entity_to_id[tail]
+                    edge_indices.append([src, dst])
                     if rel not in rel_to_id:
                         rel_to_id[rel] = len(rel_to_id)
-                    edge_type.append(rel_to_id[rel])
-                    split_index.append(split)
+                    edge_types.append(rel_to_id[rel])
+                    split_indices.append(split)
 
-        edge_index = torch.tensor(edge_index).t().contiguous()
-        edge_type = torch.tensor(edge_type)
-        split_index = torch.tensor(split_index)
+        edge_index = torch.tensor(edge_indices).t().contiguous()
+        edge_type = torch.tensor(edge_types)
+        split_index = torch.tensor(split_indices)
 
         data = Data(
             x=x,

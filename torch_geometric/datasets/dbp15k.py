@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
@@ -12,7 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import read_txt_array
+from torch_geometric.io import fs, read_txt_array
 from torch_geometric.utils import sort_edge_index
 
 
@@ -37,16 +36,24 @@ class DBP15K(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
     file_id = '1ggYlYf2_kTyi7oF9g07oTNn3VDhjl7so'
 
-    def __init__(self, root: str, pair: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        pair: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         assert pair in ['en_zh', 'en_fr', 'en_ja', 'zh_en', 'fr_en', 'ja_en']
         self.pair = pair
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -57,14 +64,14 @@ class DBP15K(InMemoryDataset):
     def processed_file_names(self) -> str:
         return f'{self.pair}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.file_id), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'DBP15K'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         embs = {}
         with open(osp.join(self.raw_dir, 'sub.glove.300d'), 'r') as f:
             for i, line in enumerate(f):
@@ -115,14 +122,14 @@ class DBP15K(InMemoryDataset):
                 x_dict[int(info[0])] = torch.stack(hs, dim=0)
 
         idx = torch.tensor(list(x_dict.keys()))
-        assoc = torch.full((idx.max().item() + 1, ), -1, dtype=torch.long)
+        assoc = torch.full((int(idx.max()) + 1, ), -1, dtype=torch.long)
         assoc[idx] = torch.arange(idx.size(0))
 
         subj, obj = assoc[subj], assoc[obj]
         edge_index = torch.stack([subj, obj], dim=0)
         edge_index, rel = sort_edge_index(edge_index, rel)
 
-        xs = [None for _ in range(idx.size(0))]
+        xs = list(x_dict.values())
         for i in x_dict.keys():
             xs[assoc[i]] = x_dict[i]
         x = torch.nn.utils.rnn.pad_sequence(xs, batch_first=True)

@@ -1,5 +1,5 @@
-import os
-from typing import Callable, List, Optional, Union
+import os.path as osp
+from typing import Any, Callable, List, Optional, Union
 
 import numpy as np
 import torch
@@ -34,6 +34,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
             in an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed
             before being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         **kwargs (optional): The keyword arguments that are passed down to the
             :meth:`sklearn.datasets.make_classification` method for drawing
             node features.
@@ -47,8 +49,9 @@ class StochasticBlockModelDataset(InMemoryDataset):
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        **kwargs,
-    ):
+        force_reload: bool = False,
+        **kwargs: Any,
+    ) -> None:
         if not isinstance(block_sizes, torch.Tensor):
             block_sizes = torch.tensor(block_sizes, dtype=torch.long)
         if not isinstance(edge_probs, torch.Tensor):
@@ -67,12 +70,13 @@ class StochasticBlockModelDataset(InMemoryDataset):
         }
         self.kwargs.update(kwargs)
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.__class__.__name__, 'processed')
+        return osp.join(self.root, self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self) -> str:
@@ -84,7 +88,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
 
-    def process(self):
+    def process(self) -> None:
         from sklearn.datasets import make_classification
 
         edge_index = stochastic_blockmodel_graph(
@@ -148,12 +152,19 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             to :meth:`sklearn.datasets.make_classification` method in
             drawing node features.
     """
-    def __init__(self, root, num_classes: int, num_nodes_per_class: int,
-                 node_homophily_ratio: float, average_degree: float,
-                 num_channels: Optional[int] = None,
-                 is_undirected: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None, **kwargs):
+    def __init__(
+        self,
+        root: str,
+        num_classes: int,
+        num_nodes_per_class: int,
+        node_homophily_ratio: float,
+        average_degree: float,
+        num_channels: Optional[int] = None,
+        is_undirected: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._num_classes = num_classes
         self.num_nodes_per_class = num_nodes_per_class
@@ -182,5 +193,5 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
                 f'{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_'
                 f'{self.average_degree:.1f}.pt')
 
-    def process(self):
+    def process(self) -> None:
         return super().process()

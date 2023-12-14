@@ -86,6 +86,8 @@ class InfectionDataset(InMemoryDataset):
         if num_graphs is None and isinstance(max_path_length, list):
             num_graphs = len(max_path_length)
 
+        assert num_graphs is not None
+
         self.graph_generator = GraphGenerator.resolve(
             graph_generator,
             **(graph_generator_kwargs or {}),
@@ -128,6 +130,7 @@ class InfectionDataset(InMemoryDataset):
                   max_path_length: int) -> Explanation:
         data = self.graph_generator()
 
+        assert data.num_nodes is not None
         perm = torch.randperm(data.num_nodes)
         x = torch.zeros((data.num_nodes, 2))
         x[perm[:num_infected_nodes], 1] = 1  # Infected
@@ -137,6 +140,7 @@ class InfectionDataset(InMemoryDataset):
         y.fill_(max_path_length + 1)
         y[perm[:num_infected_nodes]] = 0  # Infected nodes have label `0`.
 
+        assert data.edge_index is not None
         edge_mask = torch.zeros(data.num_edges, dtype=torch.bool)
         for num_hops in range(1, max_path_length + 1):
             sub_node_index, _, _, sub_edge_mask = k_hop_subgraph(

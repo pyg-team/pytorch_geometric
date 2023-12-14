@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import pickle
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class AQSOL(InMemoryDataset):
@@ -47,6 +47,8 @@ class AQSOL(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in
             the final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -67,12 +69,18 @@ class AQSOL(InMemoryDataset):
     """
     url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 
-    def __init__(self, root: str, split: str = 'train',
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
         self.load(path)
 
@@ -87,14 +95,14 @@ class AQSOL(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
-        shutil.rmtree(self.raw_dir)
+    def download(self) -> None:
+        fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'asqol_graph_raw'), self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         for raw_path, path in zip(self.raw_paths, self.processed_paths):
             with open(raw_path, 'rb') as f:
                 graphs = pickle.load(f)

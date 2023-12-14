@@ -8,7 +8,7 @@ except ImportError:
     openmesh = None
 
 
-def read_ply(path):
+def read_ply(path: str) -> Data:
     if openmesh is None:
         raise ImportError('`read_ply` requires the `openmesh` package.')
 

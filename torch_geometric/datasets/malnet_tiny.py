@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
@@ -40,8 +40,9 @@ class MalNetTiny(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
-
     data_url = ('http://malnet.cc.gatech.edu/'
                 'graph-data/malnet-graphs-tiny.tar.gz')
     split_url = 'http://malnet.cc.gatech.edu/split-info/split_info_tiny.zip'
@@ -54,11 +55,13 @@ class MalNetTiny(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if split not in {'train', 'val', 'trainval', 'test', None}:
             raise ValueError(f'Split "{split}" found, but expected either '
                              f'"train", "val", "trainval", "test" or None')
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
         if split is not None:
@@ -80,7 +83,7 @@ class MalNetTiny(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['data.pt', 'split_slices.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.data_url, self.raw_dir)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
@@ -89,8 +92,8 @@ class MalNetTiny(InMemoryDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
-        y_map = {}
+    def process(self) -> None:
+        y_map: Dict[str, int] = {}
         data_list = []
         split_slices = [0]
 
@@ -107,8 +110,8 @@ class MalNetTiny(InMemoryDataset):
                 with open(path, 'r') as f:
                     edges = f.read().split('\n')[5:-1]
 
-                edge_index = [[int(s) for s in edge.split()] for edge in edges]
-                edge_index = torch.tensor(edge_index).t().contiguous()
+                edge_indices = [[int(s) for s in e.split()] for e in edges]
+                edge_index = torch.tensor(edge_indices).t().contiguous()
                 num_nodes = int(edge_index.max()) + 1
                 data = Data(edge_index=edge_index, y=y, num_nodes=num_nodes)
                 data_list.append(data)
