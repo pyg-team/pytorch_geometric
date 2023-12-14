@@ -23,7 +23,11 @@ class LargestConnectedComponents(BaseTransform):
             undirected edges produces a connected (undirected) graph.
             (default: :obj:`'weak'`)
     """
-    def __init__(self, num_components: int = 1, connection: str = 'weak'):
+    def __init__(
+        self,
+        num_components: int = 1,
+        connection: str = 'weak',
+    ) -> None:
         assert connection in ['strong', 'weak'], 'Unknown connection type'
         self.num_components = num_components
         self.connection = connection
@@ -31,6 +35,8 @@ class LargestConnectedComponents(BaseTransform):
     def forward(self, data: Data) -> Data:
         import numpy as np
         import scipy.sparse as sp
+
+        assert data.edge_index is not None
 
         adj = to_scipy_sparse_matrix(data.edge_index, num_nodes=data.num_nodes)
 

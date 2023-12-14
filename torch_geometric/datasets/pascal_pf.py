@@ -91,7 +91,7 @@ class PascalPF(InMemoryDataset):
         names = []
         data_list = []
         for filename in filenames:
-            name = filename.split(os.sep)[-1].split('.')[0]
+            name = osp.basename(filename).split('.')[0]
 
             pos = torch.from_numpy(loadmat(filename)['kps']).to(torch.float)
             mask = ~torch.isnan(pos[:, 0])

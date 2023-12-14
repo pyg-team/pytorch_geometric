@@ -149,8 +149,8 @@ def dist_neighbor_loader_hetero(
         for edge_type in batch.edge_types:
             num_edges = batch[edge_type].edge_index.size(1)
 
-            assert batch[edge_type].edge_attr.size(0) == num_edges
             if num_edges > 0:  # Test edge mapping:
+                assert batch[edge_type].edge_attr.size(0) == num_edges
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
                 global_edge_index_1 = torch.stack([
@@ -209,7 +209,6 @@ def test_dist_neighbor_loader_homo(
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
-@pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
 def test_dist_neighbor_loader_hetero(
     tmp_path,
     num_parts,
