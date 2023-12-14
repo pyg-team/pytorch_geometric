@@ -41,7 +41,7 @@ class OMDB(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
@@ -55,12 +55,12 @@ class OMDB(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train_data.pt', 'test_data.pt']
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download '{self.raw_file_names}' from "
             f"'{self.url}' and move it to '{self.raw_dir}'")
 
-    def process(self):
+    def process(self) -> None:
         from ase.io import read
 
         extract_tar(self.raw_paths[0], self.raw_dir, log=False)

@@ -60,7 +60,7 @@ class PascalPF(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.category = category.lower()
         assert self.category in self.categories
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -76,13 +76,13 @@ class PascalPF(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{self.category}.pt', f'{self.category}_pairs.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         from scipy.io import loadmat
 
         path = osp.join(self.raw_dir, 'Annotations', self.category, '*.mat')
@@ -91,7 +91,7 @@ class PascalPF(InMemoryDataset):
         names = []
         data_list = []
         for filename in filenames:
-            name = filename.split(os.sep)[-1].split('.')[0]
+            name = osp.basename(filename).split('.')[0]
 
             pos = torch.from_numpy(loadmat(filename)['kps']).to(torch.float)
             mask = ~torch.isnan(pos[:, 0])

@@ -33,7 +33,6 @@ class LINKXDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
                   'raw/master/data')
     gdrive_url = 'https://drive.google.com/uc?confirm=t&'
@@ -82,7 +81,7 @@ class LINKXDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform,
@@ -108,14 +107,13 @@ class LINKXDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename, path in self.datasets[self.name].items():
             download_url(path, self.raw_dir, filename=filename)
         if self.name in self.splits:
             download_url(self.splits[self.name], self.raw_dir)
 
-    def _process_wiki(self):
-
+    def _process_wiki(self) -> Data:
         paths = {x.split('/')[-1]: x for x in self.raw_paths}
         x = torch.load(paths['wiki_features2M.pt'])
         edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
@@ -123,7 +121,7 @@ class LINKXDataset(InMemoryDataset):
 
         return Data(x=x, edge_index=edge_index, y=y)
 
-    def _process_facebook(self):
+    def _process_facebook(self) -> Data:
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -147,6 +145,7 @@ class LINKXDataset(InMemoryDataset):
 
         if self.name in self.splits:
             splits = np.load(self.raw_paths[1], allow_pickle=True)
+            assert data.num_nodes is not None
             sizes = (data.num_nodes, len(splits))
             data.train_mask = torch.zeros(sizes, dtype=torch.bool)
             data.val_mask = torch.zeros(sizes, dtype=torch.bool)
@@ -159,7 +158,7 @@ class LINKXDataset(InMemoryDataset):
 
         return data
 
-    def _process_genius(self):
+    def _process_genius(self) -> Data:
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -169,7 +168,7 @@ class LINKXDataset(InMemoryDataset):
 
         return Data(x=x, edge_index=edge_index, y=y)
 
-    def process(self):
+    def process(self) -> None:
         if self.name in self.facebook_datasets:
             data = self._process_facebook()
         elif self.name == 'genius':

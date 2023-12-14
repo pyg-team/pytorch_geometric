@@ -15,6 +15,7 @@ from typing import (
     Set,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
@@ -538,6 +539,10 @@ class EdgeStorage(BaseStorage):
             f"'{self.__class__.__name__}' object has no attribute "
             f"'edge_index', 'adj' or 'adj_t'")
 
+    @edge_index.setter
+    def edge_index(self, edge_index: Optional[Tensor]) -> None:
+        self['edge_index'] = edge_index
+
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
@@ -581,6 +586,14 @@ class EdgeStorage(BaseStorage):
     @property
     def num_features(self) -> int:
         return self.num_edge_features
+
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
 
     def size(
         self, dim: Optional[int] = None

@@ -1,5 +1,4 @@
-from collections.abc import Mapping
-from typing import Iterable
+from typing import Any, Iterator, Mapping, Tuple
 
 
 class MappingView:
@@ -7,7 +6,7 @@ class MappingView:
         self._mapping = mapping
         self._args = args
 
-    def _keys(self) -> Iterable:
+    def _keys(self) -> Iterator[str]:
         if len(self._args) == 0:
             return self._mapping.keys()
         else:
@@ -24,17 +23,17 @@ class MappingView:
 
 
 class KeysView(MappingView):
-    def __iter__(self) -> Iterable:
+    def __iter__(self) -> Iterator[str]:
         yield from self._keys()
 
 
 class ValuesView(MappingView):
-    def __iter__(self) -> Iterable:
+    def __iter__(self) -> Iterator[Any]:
         for key in self._keys():
             yield self._mapping[key]
 
 
 class ItemsView(MappingView):
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
         for key in self._keys():
             yield (key, self._mapping[key])

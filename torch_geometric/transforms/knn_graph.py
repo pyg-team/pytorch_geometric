@@ -37,7 +37,7 @@ class KNNGraph(BaseTransform):
         flow: str = 'source_to_target',
         cosine: bool = False,
         num_workers: int = 1,
-    ):
+    ) -> None:
         self.k = k
         self.loop = loop
         self.force_undirected = force_undirected
@@ -46,13 +46,12 @@ class KNNGraph(BaseTransform):
         self.num_workers = num_workers
 
     def forward(self, data: Data) -> Data:
-        data.edge_attr = None
-        batch = data.batch if 'batch' in data else None
+        assert data.pos is not None
 
         edge_index = torch_geometric.nn.knn_graph(
             data.pos,
             self.k,
-            batch,
+            data.batch,
             loop=self.loop,
             flow=self.flow,
             cosine=self.cosine,
@@ -63,6 +62,7 @@ class KNNGraph(BaseTransform):
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
         data.edge_index = edge_index
+        data.edge_attr = None
 
         return data
 
