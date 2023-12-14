@@ -190,9 +190,10 @@ class DistNeighborSampler:
             if inputs.time is not None:
                 seed_time = inputs.time.to(self.device)
             elif self.node_time is not None:
-                seed_time = self.node_time[
-                    seed] if not self.is_hetero else self.node_time[
-                        input_type][seed]
+                if not self.is_hetero:
+                    seed_time = self.node_time[seed]
+                else:
+                    seed_time = self.node_time[input_type][seed]
             else:
                 raise ValueError("Seed time needs to be specified")
 
@@ -203,26 +204,14 @@ class DistNeighborSampler:
             seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
             seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
 
-            node_dict = NodeDict(self.node_types, self.num_hops)
-            batch_dict = BatchDict(self.node_types, self.num_hops)
+            node_dict = NodeDict(self.num_hops)
+            batch_dict = BatchDict(self.num_hops)
 
-            edge_dict: Dict[EdgeType, Tensor] = defaultdict()
-            edge_dict.update((k, torch.empty(0, dtype=torch.int64))
-                             for k in self.edge_types)
-
-            sampled_nbrs_per_node_dict: Dict[EdgeType,
-                                             List[List]] = defaultdict(list)
-            sampled_nbrs_per_node_dict.update(
-                (k, [[] for _ in range(self.num_hops)])
-                for k in self.edge_types)
-
-            num_sampled_edges_dict: Dict[EdgeType,
-                                         List[int]] = defaultdict(list)
-            num_sampled_edges_dict.update((k, []) for k in self.edge_types)
-
-            num_sampled_nodes_dict: Dict[NodeType,
-                                         List[int]] = defaultdict(list)
-            num_sampled_nodes_dict.update((k, [0]) for k in self.node_types)
+            edge_dict = defaultdict(lambda: torch.empty(0, dtype=torch.int64))
+            sampled_nbrs_per_node_dict = defaultdict(
+                lambda: [[] for _ in range(self.num_hops)])
+            num_sampled_nodes_dict = defaultdict(lambda: [0])
+            num_sampled_edges_dict = defaultdict(list)
 
             # Fill in node_dict and batch_dict with input data:
             for k, v in seed_dict.items():
@@ -240,19 +229,17 @@ class DistNeighborSampler:
 
             # Loop over the layers:
             for i in range(self.num_hops):
-                # Sample neighbors per edge type.
+                # Sample neighbors per edge type:
                 for edge_type in self.edge_types:
-                    # `src` is a dst node type of a given edge
+                    # `src` is a destination node type of a given edge.
                     src = edge_type[0] if not self.csc else edge_type[2]
 
                     if node_dict.src[src][i].numel() == 0:
-                        # There are no src nodes of this type in the
-                        # current layer.
+                        # No source nodes of this type in the current layer.
                         num_sampled_edges_dict[edge_type].append(0)
                         continue
 
-                    seed_time = (seed_time_dict.get(src, None)
-                                 if seed_time_dict is not None else None)
+                    seed_time = (seed_time_dict or {}).get(src, None)
 
                     if isinstance(self.num_neighbors, list):
                         one_hop_num = self.num_neighbors[i]
@@ -268,12 +255,11 @@ class DistNeighborSampler:
                         edge_type,
                     )
 
-                    if out.node.numel() == 0:
-                        # No neighbors were sampled.
+                    if out.node.numel() == 0:  # No neighbors were sampled.
                         num_sampled_edges_dict[edge_type].append(0)
                         continue
 
-                    # `dst` is a dst node type of a given edge
+                    # `dst` is a destination node type of a given edge.
                     dst = edge_type[2] if not self.csc else edge_type[0]
 
                     # Remove duplicates:
@@ -308,8 +294,7 @@ class DistNeighborSampler:
                         batch_dict.with_dupl[dst] = torch.cat(
                             [batch_dict.with_dupl[dst], out.batch])
 
-                    # Collect sampled neighbors per node separately
-                    # for each layer:
+                    # Collect sampled neighbors per node for each layer:
                     sampled_nbrs_per_node_dict[edge_type][i] += out.metadata[0]
 
                     num_sampled_edges_dict[edge_type].append(len(out.node))
@@ -359,18 +344,18 @@ class DistNeighborSampler:
             num_sampled_nodes = [seed.numel()]
             num_sampled_edges = []
 
-            # Loop over the layers
+            # Loop over the layers:
             for i, one_hop_num in enumerate(self.num_neighbors):
                 out = await self.sample_one_hop(src, one_hop_num, seed_time,
                                                 src_batch)
                 if out.node.numel() == 0:
-                    # no neighbors were sampled
+                    # No neighbors were sampled:
                     num_zero_layers = self.num_hops - i
                     num_sampled_nodes += num_zero_layers * [0]
                     num_sampled_edges += num_zero_layers * [0]
                     break
 
-                # Remove duplicates
+                # Remove duplicates:
                 src, node, src_batch, batch = remove_duplicates(
                     out, node, batch, self.disjoint)
 
@@ -607,8 +592,7 @@ class DistNeighborSampler:
             node_time = self.node_time
             edge_time = self.edge_time
         else:
-            # For a given edge type get sampler input data and evaluate sample
-            # function.
+            # Given edge type, get input data and evaluate sample function:
             rel_type = '__'.join(edge_type)
             colptr = self._sampler.colptr_dict[rel_type]
             row = self._sampler.row_dict[rel_type]

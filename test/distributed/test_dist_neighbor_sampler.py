@@ -78,24 +78,14 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
 def create_hetero_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feature_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-    graph_store.partition_idx = partition_idx
-    graph_store.num_partitions = num_partitions
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
 
-    feature_store.partition_idx = partition_idx
-    feature_store.num_partitions = num_partitions
-    feature_store.node_feat_pb = node_pb
-    feature_store.edge_feat_pb = edge_pb
-    feature_store.meta = meta
+    out = load_partition_info(tmp_path, rank)
+
+    feature_store.meta = graph_store.meta = out[0]
+    feature_store.num_partitions = graph_store.num_partitions = out[1]
+    feature_store.partition_idx = graph_store.partition_idx = out[2]
+    graph_store.node_feat_pb = graph_store.node_pb = out[3]
+    graph_store.edge_feat_pb = graph_store.edge_pb = out[4]
 
     return feature_store, graph_store
 
@@ -284,7 +274,7 @@ def dist_neighbor_sampler_hetero(
     dist_sampler.register_sampler_rpc()
     dist_sampler.init_event_loop()
 
-    # Create inputs nodes such that each belongs to a different partition
+    # Create inputs nodes such that each belongs to a different partition:
     node_pb_list = dist_data[1].node_pb[input_type].tolist()
     node_0 = node_pb_list.index(0)
     node_1 = node_pb_list.index(1)
@@ -313,10 +303,12 @@ def dist_neighbor_sampler_hetero(
     # Compare distributed output with single machine output:
     for k in data.node_types:
         assert torch.equal(out_dist.node[k].sort()[0], out.node[k].sort()[0])
-        if disjoint:
-            assert torch.equal(out_dist.batch[k].sort()[0],
-                               out.batch[k].sort()[0])
         assert out_dist.num_sampled_nodes[k] == out.num_sampled_nodes[k]
+        if disjoint:
+            assert torch.equal(
+                out_dist.batch[k].sort()[0],
+                out.batch[k].sort()[0],
+            )
 
 
 @onlyLinux
