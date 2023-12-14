@@ -91,7 +91,6 @@ for edge_name in edge_names:
             graph[edge_name][attr] = data_splits[i]
 
 BATCH_SIZE = 512
-
 train_dataloader = LinkNeighborLoader(
     data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
