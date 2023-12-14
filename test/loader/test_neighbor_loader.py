@@ -1,6 +1,4 @@
 import os.path as osp
-import subprocess
-from time import sleep
 
 import numpy as np
 import pytest
@@ -22,6 +20,7 @@ from torch_geometric.testing import (
     withPackage,
 )
 from torch_geometric.typing import (
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
     WITH_PYG_LIB,
     WITH_TORCH_SPARSE,
     WITH_WEIGHTED_NEIGHBOR_SAMPLE,
@@ -382,6 +381,51 @@ def test_custom_neighbor_loader():
     # Initialize feature store, graph store, and reference:
     feature_store = MyFeatureStore()
     graph_store = MyGraphStore()
+
+    # Set up node features:
+    x = torch.arange(100, 300)
+    feature_store.put_tensor(x, group_name=None, attr_name='x', index=None)
+
+    y = torch.arange(100, 300)
+    feature_store.put_tensor(y, group_name=None, attr_name='y', index=None)
+
+    # COO:
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo, edge_type=None, layout='coo',
+                               size=(100, 100))
+
+    data = Data(x=x, edge_index=edge_index, y=y, num_nodes=200)
+
+    # Construct neighbor loaders:
+    loader1 = NeighborLoader(data, batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    loader2 = NeighborLoader((feature_store, graph_store), batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    assert str(loader1) == str(loader2)
+    assert len(loader1) == len(loader2)
+
+    for batch1, batch2 in zip(loader1, loader2):
+        assert len(batch1) == len(batch2)
+        assert batch1.num_nodes == batch2.num_nodes
+        assert batch1.num_edges == batch2.num_edges
+        assert batch1.batch_size == batch2.batch_size
+
+        # Mapped indices of neighbors may be differently sorted ...
+        assert torch.allclose(batch1.x.sort()[0], batch2.x.sort()[0])
+        assert torch.allclose(batch1.y.sort()[0], batch2.y.sort()[0])
+
+
+@onlyNeighborSampler
+def test_custom_hetero_neighbor_loader():
+    # Initialize feature store, graph store, and reference:
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
     data = HeteroData()
 
     # Set up node features:
@@ -530,7 +574,7 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     seed = torch.arange(10)
 
     sample = torch.ops.pyg.neighbor_sample
-    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, True)
+    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
@@ -570,8 +614,8 @@ def test_pyg_lib_and_torch_sparse_hetero_equality():
 
     sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
-                  num_neighbors_dict, None, None, None, True, False, True,
-                  False, "uniform", True)
+                  num_neighbors_dict, None, None, None, None, True, False,
+                  True, False, "uniform", True)
     sample = torch.ops.torch_sparse.hetero_neighbor_sample
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
@@ -612,31 +656,6 @@ def test_memmap_neighbor_loader(tmp_path):
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
-
-
-@onlyLinux
-@onlyNeighborSampler
-@pytest.mark.parametrize('loader_cores', [None, [1]])
-def test_cpu_affinity_neighbor_loader(loader_cores):
-    data = Data(x=torch.randn(1, 1))
-    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                            num_workers=1)
-
-    out = []
-    with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator()
-        workers = iterator._workers
-        for worker in workers:
-            sleep(1)  # Gives time for worker to initialize.
-            process = subprocess.Popen(
-                ['taskset', '-c', '-p', f'{worker.pid}'],
-                stdout=subprocess.PIPE)
-            stdout = process.communicate()[0].decode('utf-8')
-            out.append(int(stdout.split(':')[1].strip()))
-        if not loader_cores:
-            assert out == [0]
-        else:
-            assert out == loader_cores
 
 
 @withPackage('pyg_lib')
@@ -784,6 +803,64 @@ def test_weighted_hetero_neighbor_loader():
     assert batch['paper', 'paper'].num_edges == 2
     global_edge_index = batch['paper'].n_id[batch['paper', 'paper'].edge_index]
     assert global_edge_index.tolist() == [[3, 4], [2, 3]]
+
+
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_homo_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = Data(edge_index=edge_index, edge_time=edge_time, num_nodes=5)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch.edge_time.numel() == batch.num_edges
+        if batch.edge_time.numel() > 0:
+            assert batch.edge_time.max() <= 4
+
+
+@pytest.mark.skipif(
+    not WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    reason="'pyg-lib' does not support weighted neighbor sampling",
+)
+def test_edge_level_temporal_hetero_neighbor_loader():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_time = torch.arange(edge_index.size(1))
+
+    data = HeteroData()
+    data['A'].num_nodes = 5
+    data['A', 'A'].edge_index = edge_index
+    data['A', 'A'].edge_time = edge_time
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_nodes='A',
+        input_time=torch.tensor([4, 4, 4, 4, 4]),
+        time_attr='edge_time',
+        batch_size=1,
+    )
+
+    for batch in loader:
+        assert batch['A', 'A'].edge_time.numel() == batch['A', 'A'].num_edges
+        if batch['A', 'A'].edge_time.numel() > 0:
+            assert batch['A', 'A'].edge_time.max() <= 4
 
 
 @withCUDA

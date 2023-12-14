@@ -30,13 +30,6 @@ repos:
         name: Lint yaml
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
-  # - repo: https://github.com/regebro/pyroma
-  #   rev: "4.2"
-  #   hooks:
-  #     - id: pyroma
-  #       name: Check packaging
-  #       args: [--min=10, .]
-
   - repo: https://github.com/google/yapf
     rev: v0.40.2
     hooks:
@@ -63,3 +56,13 @@ repos:
       - id: ruff
         name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        name: Format Markdown
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat_frontmatter
+          - mdformat_footnote

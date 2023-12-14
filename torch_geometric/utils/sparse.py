@@ -1,3 +1,4 @@
+import typing
 import warnings
 from typing import Any, List, Optional, Tuple, Union
 
@@ -183,15 +184,10 @@ def to_torch_coo_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
-            edge_attr = torch.ones(1, device=edge_index.device)
-            edge_attr = edge_attr.expand(edge_index.size(1))
-        else:
-            edge_attr = torch.ones(
-                edge_index.size(1),
-                device=edge_index.device,
-            )
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
+        # edge_attr = torch.ones(1, device=edge_index.device)
+        # edge_attr = edge_attr.expand(edge_index.size(1))
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     adj = torch.sparse_coo_tensor(
         indices=edge_index,
@@ -248,15 +244,10 @@ def to_torch_csr_tensor(
         edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
-            edge_attr = torch.ones(1, device=edge_index.device)
-            edge_attr = edge_attr.expand(edge_index.size(1))
-        else:
-            edge_attr = torch.ones(
-                edge_index.size(1),
-                device=edge_index.device,
-            )
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
+        # edge_attr = torch.ones(1, device=edge_index.device)
+        # edge_attr = edge_attr.expand(edge_index.size(1))
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     adj = torch.sparse_csr_tensor(
         crow_indices=index2ptr(edge_index[0], size[0]),
@@ -305,6 +296,8 @@ def to_torch_csc_tensor(
 
     """
     if not torch_geometric.typing.WITH_PT112:
+        if typing.TYPE_CHECKING:
+            raise NotImplementedError
         return torch_geometric.typing.MockTorchCSCTensor(
             edge_index, edge_attr, size)
 
@@ -318,15 +311,10 @@ def to_torch_csc_tensor(
                                          sort_by_row=False)
 
     if edge_attr is None:
-        if (torch_geometric.typing.WITH_PT20
-                and not torch_geometric.typing.WITH_ARM):
-            edge_attr = torch.ones(1, device=edge_index.device)
-            edge_attr = edge_attr.expand(edge_index.size(1))
-        else:
-            edge_attr = torch.ones(
-                edge_index.size(1),
-                device=edge_index.device,
-            )
+        # Expanded tensors are not yet supported in all PyTorch code paths :(
+        # edge_attr = torch.ones(1, device=edge_index.device)
+        # edge_attr = edge_attr.expand(edge_index.size(1))
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     adj = torch.sparse_csc_tensor(
         ccol_indices=index2ptr(edge_index[1], size[1]),
@@ -345,7 +333,7 @@ def to_torch_sparse_tensor(
     size: Optional[Union[int, Tuple[int, int]]] = None,
     is_coalesced: bool = False,
     layout: torch.layout = torch.sparse_coo,
-):
+) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor` with custom :obj:`layout`.
     See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
@@ -437,10 +425,10 @@ def get_sparse_diag(
 
 
 def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
-    size = adj.size()
-
     if value.dim() > 1:
-        size = size + value.size()[1:]
+        size = adj.size() + value.size()[1:]
+    else:
+        size = adj.size()
 
     if adj.layout == torch.sparse_coo:
         return torch.sparse_coo_tensor(
@@ -486,7 +474,7 @@ def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     # the individual sparse tensor layouts.
     assert dim in {0, 1, (0, 1)}
 
-    size = [0, 0]
+    size = (0, 0)
     edge_indices = []
     edge_attrs = []
     for tensor in tensors:
@@ -496,17 +484,14 @@ def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
 
         if dim == 0:
             edge_index[0] += size[0]
-            size[0] += tensor.size(0)
-            size[1] = max(size[1], tensor.size(1))
+            size = (size[0] + tensor.size(0), max(size[1], tensor.size(1)))
         elif dim == 1:
             edge_index[1] += size[1]
-            size[0] = max(size[0], tensor.size(0))
-            size[1] += tensor.size(1)
+            size = (max(size[0], tensor.size(0)), size[1] + tensor.size(1))
         else:
             edge_index[0] += size[0]
             edge_index[1] += size[1]
-            size[0] += tensor.size(0)
-            size[1] += tensor.size(1)
+            size = (size[0] + tensor.size(0), size[1] + tensor.size(1))
 
         edge_indices.append(edge_index)
         edge_attrs.append(edge_attr)

@@ -2,7 +2,7 @@ import logging
 import os
 import os.path as osp
 from collections import Counter
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 import torch
 
@@ -37,6 +37,8 @@ class Entities(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -73,13 +75,20 @@ class Entities(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
 
-    def __init__(self, root: str, name: str, hetero: bool = False,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        hetero: bool = False,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         self.hetero = hetero
         assert self.name in ['aifb', 'am', 'mutag', 'bgs']
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(
             self.processed_paths[0],
             data_cls=HeteroData if hetero else Data,
@@ -95,11 +104,11 @@ class Entities(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return self._data.edge_type.max().item() + 1
+        return int(self._data.edge_type.max()) + 1  # type: ignore
 
     @property
     def num_classes(self) -> int:
-        return self._data.train_y.max().item() + 1
+        return int(self._data.train_y.max()) + 1  # type: ignore
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -114,12 +123,12 @@ class Entities(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'hetero_data.pt' if self.hetero else 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.name), self.root)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import gzip
 
         import pandas as pd
@@ -130,7 +139,7 @@ class Entities(InMemoryDataset):
         with hide_stdout():
             g = rdf.Graph()
             with gzip.open(graph_file, 'rb') as f:
-                g.parse(file=f, format='nt')
+                g.parse(file=f, format='nt')  # type: ignore
 
         freq = Counter(g.predicates())
 
@@ -143,19 +152,20 @@ class Entities(InMemoryDataset):
         R = 2 * len(relations)
 
         relations_dict = {rel: i for i, rel in enumerate(relations)}
-        nodes_dict = {node: i for i, node in enumerate(nodes)}
+        nodes_dict = {str(node): i for i, node in enumerate(nodes)}
 
         edges = []
         for s, p, o in g.triples((None, None, None)):
-            src, dst, rel = nodes_dict[s], nodes_dict[o], relations_dict[p]
+            src, dst = nodes_dict[str(s)], nodes_dict[str(o)]
+            rel = relations_dict[p]
             edges.append([src, dst, 2 * rel])
             edges.append([dst, src, 2 * rel + 1])
 
-        edges = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        _, perm = index_sort(N * R * edges[0] + R * edges[1] + edges[2])
-        edges = edges[:, perm]
+        edge = torch.tensor(edges, dtype=torch.long).t().contiguous()
+        _, perm = index_sort(N * R * edge[0] + R * edge[1] + edge[2])
+        edge = edge[:, perm]
 
-        edge_index, edge_type = edges[:2], edges[2]
+        edge_index, edge_type = edge[:2], edge[2]
 
         if self.name == 'am':
             label_header = 'label_cateogory'
@@ -173,7 +183,6 @@ class Entities(InMemoryDataset):
         labels_df = pd.read_csv(task_file, sep='\t')
         labels_set = set(labels_df[label_header].values.tolist())
         labels_dict = {lab: i for i, lab in enumerate(list(labels_set))}
-        nodes_dict = {str(key): val for key, val in nodes_dict.items()}
 
         train_labels_df = pd.read_csv(train_file, sep='\t')
         train_indices, train_labels = [], []
@@ -209,9 +218,9 @@ class Entities(InMemoryDataset):
 
 
 class hide_stdout:
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         logging.getLogger().setLevel(self.level)

@@ -28,12 +28,14 @@ class Polar(BaseTransform):
         norm: bool = True,
         max_value: Optional[float] = None,
         cat: bool = True,
-    ):
+    ) -> None:
         self.norm = norm
         self.max = max_value
         self.cat = cat
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.edge_index is not None
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
         assert pos.dim() == 2 and pos.size(1) == 2
 

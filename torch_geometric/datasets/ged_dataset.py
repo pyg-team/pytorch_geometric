@@ -58,6 +58,8 @@ class GEDDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -129,13 +131,20 @@ class GEDDataset(InMemoryDataset):
         'Sb', 'Se', 'Ni', 'Te'
     ]
 
-    def __init__(self, root: str, name: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
@@ -153,11 +162,13 @@ class GEDDataset(InMemoryDataset):
         # Returns, e.g., ['LINUX_training.pt', 'LINUX_test.pt']
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-    def download(self):
+    def download(self) -> None:
         # Downloads the .tar/.zip file of the graphs and extracts them:
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
-        self.datasets[self.name]['extract'](path, self.raw_dir)
+        extract_fn = self.datasets[self.name]['extract']
+        assert callable(extract_fn)
+        extract_fn(path, self.raw_dir)
         os.unlink(path)
 
         # Downloads the pickle file containing pre-computed GEDs:
@@ -165,7 +176,7 @@ class GEDDataset(InMemoryDataset):
         path = download_url(self.url.format(name), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
 
-    def process(self):
+    def process(self) -> None:
         import networkx as nx
 
         ids, Ns = [], []
@@ -174,7 +185,7 @@ class GEDDataset(InMemoryDataset):
             # Find the paths of all raw graphs:
             names = glob.glob(osp.join(r_path, '*.gexf'))
             # Get sorted graph IDs given filename: 123.gexf -> 123
-            ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
+            ids.append(sorted([int(osp.basename(i)[:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:
@@ -198,6 +209,7 @@ class GEDDataset(InMemoryDataset):
                 # Create a one-hot encoded feature matrix denoting the atom
                 # type (for the `AIDS700nef` dataset):
                 if self.name == 'AIDS700nef':
+                    assert data.num_nodes is not None
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
@@ -223,9 +235,9 @@ class GEDDataset(InMemoryDataset):
         with open(path, 'rb') as f:
             obj = pickle.load(f)
             xs, ys, gs = [], [], []
-            for (x, y), g in obj.items():
-                xs += [assoc[x]]
-                ys += [assoc[y]]
+            for (_x, _y), g in obj.items():
+                xs += [assoc[_x]]
+                ys += [assoc[_y]]
                 gs += [g]
             # The pickle file does not contain GEDs for test graph pairs, i.e.
             # GEDs for (test_graph, test_graph) pairs are still float('inf'):

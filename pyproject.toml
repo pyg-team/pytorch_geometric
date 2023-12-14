@@ -32,7 +32,9 @@ dependencies=[
     "tqdm",
     "numpy",
     "scipy",
+    "fsspec",
     "jinja2",
+    "aiohttp",
     "requests",
     "pyparsing",
     "scikit-learn",
@@ -73,7 +75,7 @@ full = [
     "numba",
     "sympy",
     "pandas",
-    "captum",
+    "captum<0.7.0",
     "rdflib",
     "trimesh",
     "networkx",
@@ -104,34 +106,51 @@ based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
 
-[tool.flake8]
-ignore = ["F811", "W503", "W504"]
+[tool.mypy]
+files = ["torch_geometric"]
+install_types = true
+non_interactive = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
 
-[tool.pyright]
-include = ["torch_geometric/utils/*"]
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = [
+    "torch_geometric.data.*",
+    "torch_geometric.sampler.*",
+    "torch_geometric.loader.*",
+    "torch_geometric.transforms.*",
+    "torch_geometric.nn.*",
+    "torch_geometric.explain.*",
+    "torch_geometric.profile.*",
+    "torch_geometric.contrib.*",
+    "torch_geometric.graphgym.*",
+    "torch_geometric.distributed.*",
+]
 
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
-[tool.ruff]
-# https://docs.astral.sh/ruff/rules/
+[tool.ruff]  # https://docs.astral.sh/ruff/rules
 select = [
     "D",  # pydocstyle
 ]
 ignore = [
-    "D100",  # TODO: Don't ignore "Missing docstring in public module"
-    "D101",  # TODO: Don't ignore "Missing docstring in public class"
-    "D102",  # TODO: Don't ignore "Missing docstring in public method"
-    "D103",  # TODO: Don't ignore "Missing docstring in public function"
-    "D104",  # TODO: Don't ignore "Missing docstring in public package"
-    "D105",  # TODO: Don't ignore "Missing docstring in magic method"
-    "D106",  # TODO: Don't ignore "Missing docstring in public nested class"
-    "D107",  # TODO: Don't ignore "Missing docstring in __init__"
-    "D200",  # Ignore "One-line docstring should fit on one line"
-    "D205",  # Ignore "1 blank line required between summary line and description"
-
+    "D100",  # TODO Don't ignore "Missing docstring in public module"
+    "D101",  # TODO Don't ignore "Missing docstring in public class"
+    "D102",  # TODO Don't ignore "Missing docstring in public method"
+    "D103",  # TODO Don't ignore "Missing docstring in public function"
+    "D104",  # TODO Don't ignore "Missing docstring in public package"
+    "D105",  # Ignore "Missing docstring in magic method"
+    "D107",  # Ignore "Missing docstring in __init__"
+    "D205",  # Ignore "blank line required between summary line and description"
 ]
 src = ["torch_geometric"]
 line-length = 80
@@ -156,30 +175,15 @@ filterwarnings = [
     "ignore:Sparse CSR tensor support is in beta state:UserWarning",
     "ignore:Sparse CSC tensor support is in beta state:UserWarning",
     "ignore:torch.distributed._sharded_tensor will be deprecated:DeprecationWarning",
+    # Filter `torch.compile` warnings:
+    "ignore:pkg_resources is deprecated as an API",
+    "ignore:Deprecated call to `pkg_resources.declare_namespace",
     # Filter `captum` warnings:
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
 ]
-
-[tool.pylint.messages_control]
-disable = [
-    "import-outside-toplevel",
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "missing-function-docstring",
-    "empty-docstring",
-    "import-error",
-    "too-many-arguments",
-    "arguments-differ",
-    "invalid-name",
-    "redefined-builtin",
-]
-attr-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-argument-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-variable-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-generated-members = ["torch.*"]
 
 [tool.coverage.run]
 source = ["torch_geometric"]

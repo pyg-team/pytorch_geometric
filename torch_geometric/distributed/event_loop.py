@@ -11,8 +11,7 @@ import torch
 
 
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
-    r"""Convert a :class:`torch.futures.Future` to a standard asyncio future.
-    """
+    r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future."""
     loop = asyncio.get_event_loop()
     asyncio_future = loop.create_future()
 

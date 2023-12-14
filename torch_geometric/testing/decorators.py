@@ -50,9 +50,8 @@ def noWindows(func: Callable) -> Callable:
     )(func)
 
 
-def onlyPython(*args) -> Callable:
-    r"""A decorator to skip tests for any :python:`Python` version not listed.
-    """
+def onlyPython(*args: str) -> Callable:
+    r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
@@ -88,7 +87,7 @@ def onlyXPU(func: Callable) -> Callable:
     )(func)
 
 
-def onlyOnline(func: Callable):
+def onlyOnline(func: Callable) -> Callable:
     r"""A decorator to skip tests if there exists no connection to the
     internet.
     """
@@ -122,7 +121,7 @@ def onlyGraphviz(func: Callable) -> Callable:
     )(func)
 
 
-def onlyNeighborSampler(func: Callable):
+def onlyNeighborSampler(func: Callable) -> Callable:
     r"""A decorator to skip tests if no neighborhood sampler package is
     installed.
     """
@@ -154,7 +153,7 @@ def has_package(package: str) -> bool:
     return version in req.specifier
 
 
-def withPackage(*args) -> Callable:
+def withPackage(*args: str) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification.
     """
@@ -170,13 +169,13 @@ def withPackage(*args) -> Callable:
     return decorator
 
 
-def withCUDA(func: Callable):
+def withCUDA(func: Callable) -> Callable:
     r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
 
-    devices = [torch.device('cpu')]
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
     if torch.cuda.is_available():
-        devices.append(torch.device('cuda:0'))
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
@@ -187,12 +186,12 @@ def withCUDA(func: Callable):
                           f"order to test against '{device}'")
         else:
             import_module(backend)
-            devices.append(torch.device(device))
+            devices.append(pytest.param(torch.device(device), id=device))
 
     return pytest.mark.parametrize('device', devices)(func)
 
 
-def disableExtensions(func: Callable):
+def disableExtensions(func: Callable) -> Callable:
     r"""A decorator to temporarily disable the usage of the
     :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
     packages.
@@ -200,3 +199,17 @@ def disableExtensions(func: Callable):
     import pytest
 
     return pytest.mark.usefixtures('disable_extensions')(func)
+
+
+def withoutExtensions(func: Callable) -> Callable:
+    r"""A decorator to test both with and without the usage of extension
+    packages such as :obj:`torch_scatter`, :obj:`torch_sparse` and
+    :obj:`pyg_lib`.
+    """
+    import pytest
+
+    return pytest.mark.parametrize(
+        'without_extensions',
+        ['enable_extensions', 'disable_extensions'],
+        indirect=True,
+    )(func)

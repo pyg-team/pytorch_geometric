@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 import numpy as np
 import torch
@@ -129,6 +129,8 @@ class MD17(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -341,7 +343,8 @@ class MD17(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if name not in self.file_names:
             raise ValueError(f"Unknown dataset name '{name}'")
 
@@ -349,7 +352,8 @@ class MD17(InMemoryDataset):
         self.revised = 'revised' in name
         self.ccsd = 'CCSD' in self.name
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if len(self.processed_file_names) == 1 and train is not None:
             raise ValueError(
@@ -364,6 +368,7 @@ class MD17(InMemoryDataset):
         self.load(self.processed_paths[idx])
 
     def mean(self) -> float:
+        assert isinstance(self._data, Data)
         return float(self._data.energy.mean())
 
     @property
@@ -377,12 +382,12 @@ class MD17(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> Union[str, List[str]]:
         name = self.file_names[self.name]
         if self.revised:
             return osp.join('rmd17', 'npz_data', name)
         elif self.ccsd:
-            return name[:-4] + '-train.npz', name[:-4] + '-test.npz'
+            return [name[:-4] + '-train.npz', name[:-4] + '-test.npz']
         return name
 
     @property
@@ -392,7 +397,7 @@ class MD17(InMemoryDataset):
         else:
             return ['data.pt']
 
-    def download(self):
+    def download(self) -> None:
         if self.revised:
             path = download_url(self.revised_url, self.raw_dir)
             extract_tar(path, self.raw_dir, mode='r:bz2')
@@ -404,7 +409,7 @@ class MD17(InMemoryDataset):
                 extract_zip(path, self.raw_dir)
                 os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         it = zip(self.raw_paths, self.processed_paths)
         for raw_path, processed_path in it:
             raw_data = np.load(raw_path)

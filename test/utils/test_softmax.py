@@ -5,6 +5,9 @@ import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.utils import softmax
 
+CALCULATION_VIA_PTR_AVAILABLE = (torch_geometric.typing.WITH_SOFTMAX
+                                 or torch_geometric.typing.WITH_TORCH_SCATTER)
+
 
 def test_softmax():
     src = torch.tensor([1., 1., 1., 1.])
@@ -13,7 +16,7 @@ def test_softmax():
 
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert softmax(src, None, ptr).tolist() == out.tolist()
     else:
         with pytest.raises(ImportError):
@@ -22,7 +25,7 @@ def test_softmax():
     src = src.view(-1, 1)
     out = softmax(src, index)
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert softmax(src, None, ptr).tolist() == out.tolist()
 
     jit = torch.jit.script(softmax)
@@ -52,22 +55,22 @@ def test_softmax_dim():
 
     src = torch.randn(4)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 16)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 4)
     assert torch.allclose(softmax(src, index, dim=-1), src.softmax(dim=-1))
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(-1))
 
     src = torch.randn(4, 4, 16)
     assert torch.allclose(softmax(src, index, dim=1), src.softmax(dim=1))
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if CALCULATION_VIA_PTR_AVAILABLE:
         assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
 
 

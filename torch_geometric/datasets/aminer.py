@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import coalesce
 
 
@@ -33,14 +33,22 @@ class AMiner(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://www.dropbox.com/s/1bnz8r7mofx0osf/net_aminer.zip?dl=1'
     y_url = 'https://www.dropbox.com/s/nkocx16rpl4ydde/label.zip?dl=1'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -54,8 +62,8 @@ class AMiner(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        shutil.rmtree(self.raw_dir)
+    def download(self) -> None:
+        fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'net_aminer'), self.raw_dir)
@@ -64,7 +72,7 @@ class AMiner(InMemoryDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

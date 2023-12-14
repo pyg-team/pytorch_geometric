@@ -104,9 +104,8 @@ class AddMetaPaths(BaseTransform):
         drop_unconnected_node_types: bool = False,
         max_sample: Optional[int] = None,
         weighted: bool = False,
-        **kwargs,
-    ):
-
+        **kwargs: bool,
+    ) -> None:
         if 'drop_orig_edges' in kwargs:
             warnings.warn("'drop_orig_edges' is dprecated. Use "
                           "'drop_orig_edge_types' instead")
@@ -298,9 +297,13 @@ class AddRandomMetaPaths(BaseTransform):
                 f'walks_per_node={self.walks_per_node})')
 
 
-def postprocess(data: HeteroData, edge_types: List[EdgeType],
-                drop_orig_edge_types: bool, keep_same_node_type: bool,
-                drop_unconnected_node_types: bool):
+def postprocess(
+    data: HeteroData,
+    edge_types: List[EdgeType],
+    drop_orig_edge_types: bool,
+    keep_same_node_type: bool,
+    drop_unconnected_node_types: bool,
+) -> None:
 
     if drop_orig_edge_types:
         for i in edge_types:

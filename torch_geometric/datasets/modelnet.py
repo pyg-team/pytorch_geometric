@@ -1,11 +1,9 @@
 import glob
 import os
 import os.path as osp
-import shutil
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, List, Optional
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import (
     Data,
@@ -13,7 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import read_off
+from torch_geometric.io import fs, read_off
 
 
 class ModelNet(InMemoryDataset):
@@ -50,6 +48,8 @@ class ModelNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -91,10 +91,12 @@ class ModelNet(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         assert name in ['10', '40']
         self.name = name
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
 
@@ -109,24 +111,24 @@ class ModelNet(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         folder = osp.join(self.root, f'ModelNet{self.name}')
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
         # Delete osx metadata generated during compression of ModelNet10
         metadata_folder = osp.join(self.root, '__MACOSX')
         if osp.exists(metadata_folder):
-            shutil.rmtree(metadata_folder)
+            fs.rm(metadata_folder)
 
-    def process(self):
+    def process(self) -> None:
         self.save(self.process_set('train'), self.processed_paths[0])
         self.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
+    def process_set(self, dataset: str) -> List[Data]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 

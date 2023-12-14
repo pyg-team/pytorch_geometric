@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
@@ -24,6 +23,8 @@ class RelLinkPredDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -46,25 +47,31 @@ class RelLinkPredDataset(InMemoryDataset):
                       'RelationPrediction/master/data/FB-Toutanova')
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name
         assert name in ['FB15k-237']
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
     def num_relations(self) -> int:
-        return int(self._data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1  # type: ignore
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'processed')
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
@@ -77,11 +84,11 @@ class RelLinkPredDataset(InMemoryDataset):
             'valid.txt'
         ]
 
-    def download(self):
+    def download(self) -> None:
         for file_name in self.raw_file_names:
             download_url(f'{self.urls[self.name]}/{file_name}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(osp.join(self.raw_dir, 'entities.dict'), 'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             entities_dict = {key: int(value) for value, key in lines}

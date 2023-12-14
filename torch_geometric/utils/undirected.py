@@ -1,3 +1,4 @@
+import typing
 from typing import List, Optional, Tuple, Union
 
 import torch
@@ -7,24 +8,35 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import coalesce, sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload as overload
+
 MISSING = '???'
 
 
-@torch.jit._overload
-def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
-    pass
-
-
-@torch.jit._overload
-def is_undirected(edge_index, edge_attr, num_nodes):
-    # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
-    pass
-
-
+@overload
 def is_undirected(
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor]] = None,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> bool:
+    pass
+
+
+@overload
+def is_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: List[Tensor],
+    num_nodes: Optional[int] = None,
+) -> bool:
+    pass
+
+
+def is_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -88,27 +100,49 @@ def is_undirected(
     return True
 
 
-@torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, str, Optional[int], str) -> Tensor  # noqa
-    pass
-
-
-@torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, Optional[Tensor], Optional[int], str) -> Tuple[Tensor, Optional[Tensor]]  # noqa
-    pass
-
-
-@torch.jit._overload
-def to_undirected(edge_index, edge_attr, num_nodes, reduce):
-    # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
-    pass
-
-
+@overload
 def to_undirected(
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: str = MISSING,
+    num_nodes: Optional[int] = None,
+    reduce: str = 'add',
+) -> Tensor:
+    pass
+
+
+@overload
+def to_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    num_nodes: Optional[int] = None,
+    reduce: str = 'add',
+) -> Tuple[Tensor, Tensor]:
+    pass
+
+
+@overload
+def to_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    num_nodes: Optional[int] = None,
+    reduce: str = 'add',
+) -> Tuple[Tensor, Optional[Tensor]]:
+    pass
+
+
+@overload
+def to_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: List[Tensor],
+    num_nodes: Optional[int] = None,
+    reduce: str = 'add',
+) -> Tuple[Tensor, List[Tensor]]:
+    pass
+
+
+def to_undirected(  # noqa: F811
+    edge_index: Tensor,
+    edge_attr: Union[Optional[Tensor], List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
 ) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:

@@ -34,6 +34,8 @@ class WordNet18(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://raw.githubusercontent.com/villmow/'
@@ -44,8 +46,10 @@ class WordNet18(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -56,19 +60,19 @@ class WordNet18(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
             with open(path, 'r') as f:
-                data = [int(x) for x in f.read().split()[1:]]
-                data = torch.tensor(data, dtype=torch.long)
-                srcs.append(data[::3])
-                dsts.append(data[1::3])
-                edge_types.append(data[2::3])
+                edges = [int(x) for x in f.read().split()[1:]]
+                edge = torch.tensor(edges, dtype=torch.long)
+                srcs.append(edge[::3])
+                dsts.append(edge[1::3])
+                edge_types.append(edge[2::3])
 
         src = torch.cat(srcs, dim=0)
         dst = torch.cat(dsts, dim=0)
@@ -90,12 +94,17 @@ class WordNet18(InMemoryDataset):
         val_mask = val_mask[perm]
         test_mask = test_mask[perm]
 
-        data = Data(edge_index=edge_index, edge_type=edge_type,
-                    train_mask=train_mask, val_mask=val_mask,
-                    test_mask=test_mask, num_nodes=num_nodes)
+        data = Data(
+            edge_index=edge_index,
+            edge_type=edge_type,
+            train_mask=train_mask,
+            val_mask=val_mask,
+            test_mask=test_mask,
+            num_nodes=num_nodes,
+        )
 
         if self.pre_transform is not None:
-            data = self.pre_filter(data)
+            data = self.pre_transform(data)
 
         self.save([data], self.processed_paths[0])
 
@@ -115,6 +124,8 @@ class WordNet18RR(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://raw.githubusercontent.com/villmow/'
@@ -139,8 +150,10 @@ class WordNet18RR(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -151,34 +164,31 @@ class WordNet18RR(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         node2id, idx = {}, 0
 
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
             with open(path, 'r') as f:
-                data = f.read().split()
+                edges = f.read().split()
 
-                src = data[::3]
-                dst = data[2::3]
-                edge_type = data[1::3]
+                _src = edges[::3]
+                _dst = edges[2::3]
+                _edge_type = edges[1::3]
 
-                for i in chain(src, dst):
+                for i in chain(_src, _dst):
                     if i not in node2id:
                         node2id[i] = idx
                         idx += 1
 
-                src = [node2id[i] for i in src]
-                dst = [node2id[i] for i in dst]
-                edge_type = [self.edge2id[i] for i in edge_type]
-
-                srcs.append(torch.tensor(src, dtype=torch.long))
-                dsts.append(torch.tensor(dst, dtype=torch.long))
-                edge_types.append(torch.tensor(edge_type, dtype=torch.long))
+                srcs.append(torch.tensor([node2id[i] for i in _src]))
+                dsts.append(torch.tensor([node2id[i] for i in _dst]))
+                edge_types.append(
+                    torch.tensor([self.edge2id[i] for i in _edge_type]))
 
         src = torch.cat(srcs, dim=0)
         dst = torch.cat(dsts, dim=0)
@@ -205,6 +215,6 @@ class WordNet18RR(InMemoryDataset):
                     test_mask=test_mask, num_nodes=num_nodes)
 
         if self.pre_transform is not None:
-            data = self.pre_filter(data)
+            data = self.pre_transform(data)
 
         self.save([data], self.processed_paths[0])

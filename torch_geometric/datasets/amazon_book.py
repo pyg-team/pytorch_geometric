@@ -23,13 +23,21 @@ class AmazonBook(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://raw.githubusercontent.com/gusye1234/LightGCN-PyTorch/'
            'master/data/amazon-book')
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -40,11 +48,11 @@ class AmazonBook(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for name in self.raw_file_names:
             download_url(f'{self.url}/{name}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()
@@ -62,9 +70,9 @@ class AmazonBook(InMemoryDataset):
             with open(path, 'r') as f:
                 lines = f.readlines()
             for line in lines:
-                line = line.strip().split(' ')
-                for dst in line[1:]:
-                    rows.append(int(line[0]))
+                indices = line.strip().split(' ')
+                for dst in indices[1:]:
+                    rows.append(int(indices[0]))
                     cols.append(int(dst))
             index = torch.tensor([rows, cols])
 

@@ -27,13 +27,20 @@ class WikiCS(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
         is_undirected (bool, optional): Whether the graph is undirected.
             (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 is_undirected: Optional[bool] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        is_undirected: Optional[bool] = None,
+        force_reload: bool = False,
+    ) -> None:
         if is_undirected is None:
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
@@ -41,7 +48,8 @@ class WikiCS(InMemoryDataset):
                 f"'is_undirected=False' to restore the old behavior.")
             is_undirected = True
         self.is_undirected = is_undirected
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -52,11 +60,11 @@ class WikiCS(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data_undirected.pt' if self.is_undirected else 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for name in self.raw_file_names:
             download_url(f'{self.url}/{name}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'r') as f:
             data = json.load(f)
 
@@ -64,7 +72,7 @@ class WikiCS(InMemoryDataset):
         y = torch.tensor(data['labels'], dtype=torch.long)
 
         edges = [[(i, j) for j in js] for i, js in enumerate(data['links'])]
-        edges = list(chain(*edges))
+        edges = list(chain(*edges))  # type: ignore
         edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
         if self.is_undirected:
             edge_index = to_undirected(edge_index, num_nodes=x.size(0))

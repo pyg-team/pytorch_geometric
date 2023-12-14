@@ -2,7 +2,7 @@ import json
 import os
 import os.path as osp
 from collections import defaultdict
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
@@ -39,6 +39,8 @@ class HGBDataset(InMemoryDataset):
             an :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     names = {
         'acm': 'ACM',
@@ -64,10 +66,12 @@ class HGBDataset(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in set(self.names.keys())
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -87,13 +91,13 @@ class HGBDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.urls[self.name]
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         # node_types = {0: 'paper', 1, 'author', ...}
@@ -134,7 +138,7 @@ class HGBDataset(InMemoryDataset):
         # Extract node information:
         mapping_dict = {}  # Maps global node indices to local ones.
         x_dict = defaultdict(list)
-        num_nodes_dict = defaultdict(lambda: 0)
+        num_nodes_dict: Dict[str, int] = defaultdict(lambda: 0)
         with open(self.raw_paths[1], 'r') as f:  # `node.dat`
             xs = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for x in xs:

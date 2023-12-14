@@ -1,13 +1,14 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.deprecation import deprecated
 from torch_geometric.utils import barabasi_albert_graph
 
 
-def house():
+def house() -> Tuple[Tensor, Tensor]:
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
                                [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]])
     label = torch.tensor([1, 1, 2, 2, 3])
@@ -39,8 +40,11 @@ class BAShapes(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-    def __init__(self, connection_distribution: str = "random",
-                 transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        connection_distribution: str = "random",
+        transform: Optional[Callable] = None,
+    ) -> None:
         super().__init__(None, transform)
         assert connection_distribution in ['random', 'uniform']
 

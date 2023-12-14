@@ -271,6 +271,8 @@ class FeatureStore:
             their ordering to unique identify tensor values.
             (default: :obj:`None`)
     """
+    _tensor_attr_cls: TensorAttr
+
     def __init__(self, tensor_attr_cls: Optional[Any] = None):
         super().__init__()
         self.__dict__['_tensor_attr_cls'] = tensor_attr_cls or TensorAttr
@@ -455,8 +457,7 @@ class FeatureStore:
 
     @abstractmethod
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
-        r"""Obtains all tensor attributes stored in this :class:`FeatureStore`.
-        """
+        r"""Returns all registered tensor attributes."""
         pass
 
     # `AttrView` methods ######################################################

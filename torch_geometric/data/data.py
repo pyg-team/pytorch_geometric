@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
@@ -94,8 +95,18 @@ class BaseData:
 
     def update(self, data: 'BaseData') -> 'BaseData':
         r"""Updates the data object with the elements from another data object.
+        Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
+
+    def concat(self, data: 'BaseData') -> 'BaseData':
+        r"""Concatenates :obj:`self` with another :obj:`data` object.
+        All values needs to have matching shapes at non-concat dimensions.
+        """
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, data.stores):
+            store.concat(other_store)
+        return out
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
@@ -174,6 +185,14 @@ class BaseData:
         except TypeError:
             return None
 
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
+
     def size(
         self, dim: Optional[int] = None
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
@@ -203,7 +222,7 @@ class BaseData:
         offset: int = 0
         for store in self.node_stores:
             out[store._key] = offset
-            offset += store.num_nodes
+            offset = offset + store.num_nodes
         return out
 
     def generate_ids(self):
@@ -253,6 +272,39 @@ class BaseData:
         out = copy.copy(self)
         for store in out.edge_stores:
             store.coalesce()
+        return out
+
+    def is_sorted_by_time(self) -> bool:
+        r"""Returns :obj:`True` if :obj:`time` is sorted."""
+        return all([store.is_sorted_by_time() for store in self.stores])
+
+    def sort_by_time(self) -> 'BaseData':
+        r"""Sorts data associated with :obj:`time` according to :obj:`time`."""
+        out = copy.copy(self)
+        for store in out.stores:
+            store.sort_by_time()
+        return out
+
+    def snapshot(
+        self,
+        start_time: Union[float, int],
+        end_time: Union[float, int],
+    ) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        in period :obj:`[start_time, end_time]`.
+        """
+        out = copy.copy(self)
+        for store in out.stores:
+            store.snapshot(start_time, end_time)
+        return out
+
+    def up_to(self, end_time: Union[float, int]) -> 'BaseData':
+        r"""Returns a snapshot of :obj:`data` to only hold events that occurred
+        up to :obj:`end_time` (inclusive of :obj:`edge_time`).
+        """
+        out = copy.copy(self)
+        for store in out.stores:
+            store.up_to(end_time)
         return out
 
     def has_isolated_nodes(self) -> bool:
@@ -456,6 +508,8 @@ class Data(BaseData, FeatureStore, GraphStore):
             labels with arbitrary shape. (default: :obj:`None`)
         pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamps for each event with shape
+            :obj:`[num_edges]` or :obj:`[num_nodes]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def __init__(
@@ -463,8 +517,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         x: Optional[Tensor] = None,
         edge_index: OptTensor = None,
         edge_attr: OptTensor = None,
-        y: OptTensor = None,
+        y: Optional[Union[Tensor, int, float]] = None,
         pos: OptTensor = None,
+        time: OptTensor = None,
         **kwargs,
     ):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
@@ -487,6 +542,8 @@ class Data(BaseData, FeatureStore, GraphStore):
             self.y = y
         if pos is not None:
             self.pos = pos
+        if time is not None:
+            self.time = time
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -551,6 +608,14 @@ class Data(BaseData, FeatureStore, GraphStore):
             info = ',\n'.join(info)
             return f'{cls}(\n{info}\n)'
 
+    @property
+    def num_nodes(self) -> Optional[int]:
+        return super().num_nodes
+
+    @num_nodes.setter
+    def num_nodes(self, num_nodes: Optional[int]):
+        self._store.num_nodes = num_nodes
+
     def stores_as(self, data: 'Data'):
         return self
 
@@ -586,7 +651,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
             return self.num_nodes
@@ -883,29 +948,73 @@ class Data(BaseData, FeatureStore, GraphStore):
     def x(self) -> Optional[Tensor]:
         return self['x'] if 'x' in self._store else None
 
+    @x.setter
+    def x(self, x: Optional[Tensor]):
+        self._store.x = x
+
     @property
     def edge_index(self) -> Optional[Tensor]:
         return self['edge_index'] if 'edge_index' in self._store else None
+
+    @edge_index.setter
+    def edge_index(self, edge_index: Optional[Tensor]):
+        self._store.edge_index = edge_index
 
     @property
     def edge_weight(self) -> Optional[Tensor]:
         return self['edge_weight'] if 'edge_weight' in self._store else None
 
+    @edge_weight.setter
+    def edge_weight(self, edge_weight: Optional[Tensor]):
+        self._store.edge_weight = edge_weight
+
     @property
     def edge_attr(self) -> Optional[Tensor]:
         return self['edge_attr'] if 'edge_attr' in self._store else None
+
+    @edge_attr.setter
+    def edge_attr(self, edge_attr: Optional[Tensor]):
+        self._store.edge_attr = edge_attr
 
     @property
     def y(self) -> Optional[Union[Tensor, int, float]]:
         return self['y'] if 'y' in self._store else None
 
+    @y.setter
+    def y(self, y: Optional[Tensor]):
+        self._store.y = y
+
     @property
     def pos(self) -> Optional[Tensor]:
         return self['pos'] if 'pos' in self._store else None
 
+    @pos.setter
+    def pos(self, pos: Optional[Tensor]):
+        self._store.pos = pos
+
     @property
     def batch(self) -> Optional[Tensor]:
         return self['batch'] if 'batch' in self._store else None
+
+    @batch.setter
+    def batch(self, batch: Optional[Tensor]):
+        self._store.batch = batch
+
+    @property
+    def time(self) -> Optional[Tensor]:
+        return self['time'] if 'time' in self._store else None
+
+    @time.setter
+    def time(self, time: Optional[Tensor]):
+        self._store.time = time
+
+    @property
+    def face(self) -> Optional[Tensor]:
+        return self['face'] if 'face' in self._store else None
+
+    @face.setter
+    def face(self, face: Optional[Tensor]):
+        self._store.face = face
 
     # Deprecated functions ####################################################
 
@@ -1048,6 +1157,9 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = str(list(value.shape))
     elif isinstance(value, SparseTensor):
         out = str(value.sizes())[:-1] + f', nnz={value.nnz()}]'
+    elif isinstance(value, TensorFrame):
+        out = (f'{value.__class__.__name__}('
+               f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
     elif isinstance(value, Sequence):

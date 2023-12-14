@@ -201,7 +201,10 @@ class LocalFeatureStore(FeatureStore):
         pb = self.node_feat_pb if is_node_feat else self.edge_feat_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
-        partition_ids = pb[index]
+        if self.meta['is_hetero']:
+            partition_ids = pb[input_type][index]
+        else:
+            partition_ids = pb[index]
 
         local_mask = partition_ids == self.partition_idx
         local_ids = torch.masked_select(index, local_mask)
@@ -238,7 +241,11 @@ class LocalFeatureStore(FeatureStore):
         pb = self.node_feat_pb if is_node_feat else self.edge_feat_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
-        partition_ids = pb[index]
+        if self.meta['is_hetero']:
+            partition_ids = pb[input_type][index]
+        else:
+            partition_ids = pb[index]
+
         futs, indexes = [], []
         for pidx in range(0, self.num_partitions):
             if pidx == self.partition_idx:

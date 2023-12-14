@@ -48,7 +48,7 @@ model = GCN(
 ).to(device)
 
 # Compile the model into an optimized version and enforce zero graph breaks:
-model = torch_geometric.compile(model, dynamic=False, fullgraph=True)
+model = torch_geometric.compile(model, dynamic=False)
 
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),

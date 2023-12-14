@@ -72,6 +72,8 @@ class UPFD(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -89,11 +91,13 @@ class UPFD(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.root = root
         self.name = name
         self.feature = feature
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
@@ -115,15 +119,15 @@ class UPFD(InMemoryDataset):
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url.format(self.ids[self.name]), self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         x = sp.load_npz(
             osp.join(self.raw_dir, f'new_{self.feature}_feature.npz'))
         x = torch.from_numpy(x.todense()).to(torch.float)
@@ -140,7 +144,7 @@ class UPFD(InMemoryDataset):
         batch = torch.from_numpy(batch).to(torch.long)
 
         node_slice = cumsum(batch.bincount())
-        edge_slice = cumsum(batch[edge_index[0].bincount()])
+        edge_slice = cumsum(batch[edge_index[0]].bincount())
         graph_slice = torch.arange(y.size(0) + 1)
         self.slices = {
             'x': node_slice,

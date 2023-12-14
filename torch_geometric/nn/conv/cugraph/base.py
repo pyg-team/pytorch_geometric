@@ -31,7 +31,8 @@ except ImportError:
 
 
 class CuGraphModule(torch.nn.Module):  # pragma: no cover
-    r"""An abstract base class for implementing cugraph message passing layers.
+    r"""An abstract base class for implementing :obj:`cugraph`-based message
+    passing layers.
     """
     def __init__(self):
         super().__init__()
