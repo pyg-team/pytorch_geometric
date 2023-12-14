@@ -24,7 +24,7 @@ class RemoveDuplicatedEdges(BaseTransform):
         self,
         key: Union[str, List[str]] = ['edge_attr', 'edge_weight'],
         reduce: str = "add",
-    ):
+    ) -> None:
         if isinstance(key, str):
             key = [key]
 
@@ -39,10 +39,16 @@ class RemoveDuplicatedEdges(BaseTransform):
         for store in data.edge_stores:
             keys = [key for key in self.keys if key in store]
 
+            num_nodes, num_dst_nodes = store.size()
+            if num_nodes is None:
+                num_nodes = num_dst_nodes
+            elif num_dst_nodes is not None and num_dst_nodes > num_nodes:
+                num_nodes = num_dst_nodes
+
             store.edge_index, edge_attrs = coalesce(
                 edge_index=store.edge_index,
                 edge_attr=[store[key] for key in keys],
-                num_nodes=max(store.size()),
+                num_nodes=num_nodes,
                 reduce=self.reduce,
             )
 

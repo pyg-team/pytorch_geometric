@@ -20,11 +20,12 @@ class NormalizeRotation(BaseTransform):
         sort (bool, optional): If set to :obj:`True`, will sort eigenvectors
             according to their eigenvalues. (default: :obj:`False`)
     """
-    def __init__(self, max_points: int = -1, sort: bool = False):
+    def __init__(self, max_points: int = -1, sort: bool = False) -> None:
         self.max_points = max_points
         self.sort = sort
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
         pos = data.pos
 
         if self.max_points > 0 and pos.size(0) > self.max_points:

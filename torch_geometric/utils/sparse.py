@@ -143,7 +143,7 @@ def is_sparse(src: Any) -> bool:
 def to_torch_coo_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[Union[int, Tuple[Optional[int], Optional[int]]]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -177,7 +177,15 @@ def to_torch_coo_tensor(
     """
     if size is None:
         size = int(edge_index.max()) + 1
-    if not isinstance(size, (tuple, list)):
+
+    if isinstance(size, (tuple, list)):
+        num_src_nodes, num_dst_nodes = size
+        if num_src_nodes is None:
+            num_src_nodes = int(edge_index[0].max()) + 1
+        if num_dst_nodes is None:
+            num_dst_nodes = int(edge_index[1].max()) + 1
+        size = (num_src_nodes, num_dst_nodes)
+    else:
         size = (size, size)
 
     if not is_coalesced:
@@ -203,7 +211,7 @@ def to_torch_coo_tensor(
 def to_torch_csr_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[Union[int, Tuple[Optional[int], Optional[int]]]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -237,7 +245,15 @@ def to_torch_csr_tensor(
     """
     if size is None:
         size = int(edge_index.max()) + 1
-    if not isinstance(size, (tuple, list)):
+
+    if isinstance(size, (tuple, list)):
+        num_src_nodes, num_dst_nodes = size
+        if num_src_nodes is None:
+            num_src_nodes = int(edge_index[0].max()) + 1
+        if num_dst_nodes is None:
+            num_dst_nodes = int(edge_index[1].max()) + 1
+        size = (num_src_nodes, num_dst_nodes)
+    else:
         size = (size, size)
 
     if not is_coalesced:
@@ -263,7 +279,7 @@ def to_torch_csr_tensor(
 def to_torch_csc_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[Union[int, Tuple[Optional[int], Optional[int]]]] = None,
     is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
@@ -303,7 +319,15 @@ def to_torch_csc_tensor(
 
     if size is None:
         size = int(edge_index.max()) + 1
-    if not isinstance(size, (tuple, list)):
+
+    if isinstance(size, (tuple, list)):
+        num_src_nodes, num_dst_nodes = size
+        if num_src_nodes is None:
+            num_src_nodes = int(edge_index[0].max()) + 1
+        if num_dst_nodes is None:
+            num_dst_nodes = int(edge_index[1].max()) + 1
+        size = (num_src_nodes, num_dst_nodes)
+    else:
         size = (size, size)
 
     if not is_coalesced:
@@ -330,7 +354,7 @@ def to_torch_csc_tensor(
 def to_torch_sparse_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
+    size: Optional[Union[int, Tuple[Optional[int], Optional[int]]]] = None,
     is_coalesced: bool = False,
     layout: torch.layout = torch.sparse_coo,
 ) -> Tensor:
