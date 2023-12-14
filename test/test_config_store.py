@@ -111,7 +111,7 @@ def test_hydra_config_store():
     assert cfg.dataset.transform.AddSelfLoops.fill_value == 1.0
 
     # Check `cfg.model`:
-    assert len(cfg.model) == 13
+    assert len(cfg.model) == 12
     assert cfg.model._target_.split('.')[-1] == 'GCN'
     assert cfg.model.in_channels == 34
     assert cfg.model.out_channels == 4
