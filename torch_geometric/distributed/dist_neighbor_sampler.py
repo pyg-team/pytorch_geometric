@@ -28,10 +28,10 @@ from torch_geometric.distributed.utils import (
     remove_duplicates,
 )
 from torch_geometric.sampler import (
+    EdgeSamplerInput,
     HeteroSamplerOutput,
     NegativeSampling,
     NeighborSampler,
-    EdgeSamplerInput,
     NodeSamplerInput,
     SamplerOutput,
 )
