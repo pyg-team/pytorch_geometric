@@ -95,8 +95,6 @@ class Explainer:
 
         self.algorithm.connect(explainer_config, self.model_config)
 
-        print("1. INITIALIZING EXPLAINER (file: explainer.py)")
-
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
@@ -119,8 +117,6 @@ class Explainer:
             out = self.model(*args, **kwargs)
 
         self.model.train(training)
-
-        print("2. GETTING PREDICTION (file: explainer.py)")
 
         return out
 
@@ -148,8 +144,6 @@ class Explainer:
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
-
-        print("3. GETTING MASKED PREDICTION (file: explainer.py)")
 
         return out
 
@@ -205,8 +199,7 @@ class Explainer:
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
         elif self.explanation_type == ExplanationType.generative:
-            # TODO Everything
-            print("3.1. GENERATIVE EXPLANATION file(explainer.py)")
+            pass
      
      
         if isinstance(index, int):
@@ -214,8 +207,6 @@ class Explainer:
 
         training = self.model.training
         self.model.eval()
-
-        print("4. CALLING EXPLAINER (file: explainer.py)")
 
         explanation = self.algorithm(
             self.model,
@@ -229,7 +220,6 @@ class Explainer:
         self.model.train(training)
 
         if isinstance(explanation, GenerativeExplanation):
-            print("5. GENERATING EXPLANATION file(explainer.py)")
             return explanation
 
         # Add explainer objectives to the `Explanation` object:
@@ -288,7 +278,5 @@ class Explainer:
 
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)
-        
-        print("6. GETTING TARGET file(explainer.py)")
 
         return prediction
