@@ -222,7 +222,7 @@ class DistNeighborSampler:
             else:
                 raise ValueError("Seed time needs to be specified")
 
-        src_batch = torch.arange(batch_size) if self.disjoint else None
+        seed_batch = torch.arange(batch_size) if self.disjoint else None
         metadata = (seed, seed_time)
 
         if self.is_hetero:
@@ -273,8 +273,8 @@ class DistNeighborSampler:
                 num_sampled_nodes_dict[input_type].append(seed.numel())
 
                 if self.disjoint:
-                    batch_dict.src[input_type] = src_batch
-                    batch_dict.out[input_type] = src_batch.numpy()
+                    batch_dict.src[input_type] = seed_batch
+                    batch_dict.out[input_type] = seed_batch.numpy()
 
             # loop over the layers
             for i in range(self._sampler.num_hops):
@@ -372,7 +372,9 @@ class DistNeighborSampler:
         else:
             src = seed
             node = src.clone()
-            batch = src_batch.clone() if self.disjoint else None
+
+            src_batch = seed_batch.clone() if self.disjoint else None
+            batch = seed_batch.clone() if self.disjoint else None
 
             src_seed_time = seed_time.clone() if self.temporal else None
 
@@ -407,9 +409,12 @@ class DistNeighborSampler:
 
                 if self.temporal and i < self.num_hops - 1:
                     # Assign seed time based on src nodes subgraph IDs.
-                    src_seed_time = src_batch.clone()
-                    for batch_idx, time in enumerate(seed_time):
-                        src_seed_time[src_batch == batch_idx] = time
+                    src_seed_time = [
+                        seed_time[(seed_batch == batch_idx).nonzero()]
+                        for batch_idx in src_batch
+                    ]
+                    src_seed_time = torch.as_tensor(src_seed_time,
+                                                    dtype=torch.int64)
 
                 num_sampled_nodes.append(len(src))
                 num_sampled_edges.append(len(out.node))
