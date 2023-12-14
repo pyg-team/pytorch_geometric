@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
@@ -183,6 +184,14 @@ class BaseData:
             return sum([v.num_nodes for v in self.node_stores])
         except TypeError:
             return None
+
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
 
     def size(
         self, dim: Optional[int] = None

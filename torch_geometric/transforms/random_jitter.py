@@ -1,8 +1,5 @@
-import numbers
 from itertools import repeat
 from typing import Sequence, Union
-
-import torch
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -23,20 +20,28 @@ class RandomJitter(BaseTransform):
             If :obj:`translate` is a number instead of a sequence, the same
             range is used for each dimension.
     """
-    def __init__(self, translate: Union[float, int, Sequence]):
+    def __init__(
+        self,
+        translate: Union[float, int, Sequence[Union[float, int]]],
+    ) -> None:
         self.translate = translate
 
     def forward(self, data: Data) -> Data:
-        (n, dim), t = data.pos.size(), self.translate
-        if isinstance(t, numbers.Number):
-            t = list(repeat(t, times=dim))
-        assert len(t) == dim
+        assert data.pos is not None
+        num_nodes, dim = data.pos.size()
 
-        ts = []
+        if isinstance(self.translate, (int, float)):
+            translate = list(repeat(self.translate, times=dim))
+        else:
+            assert len(self.translate) == dim
+            translate = self.translate
+
+        jitter = data.pos.new_empty(num_nodes, dim)
         for d in range(dim):
-            ts.append(data.pos.new_empty(n).uniform_(-abs(t[d]), abs(t[d])))
+            jitter[:, d].uniform_(-abs(translate[d]), abs(translate[d]))
 
-        data.pos = data.pos + torch.stack(ts, dim=-1)
+        data.pos = data.pos + jitter
+
         return data
 
     def __repr__(self) -> str:
