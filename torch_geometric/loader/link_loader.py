@@ -5,7 +5,11 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.mixin import AffinityMixin
+from torch_geometric.loader.mixin import (
+    AffinityMixin,
+    LogMemoryMixin,
+    MultithreadingMixin,
+)
 from torch_geometric.loader.utils import (
     filter_custom_hetero_store,
     filter_custom_store,
@@ -24,7 +28,12 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputEdges, OptTensor
 
 
-class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
+class LinkLoader(
+        torch.utils.data.DataLoader,
+        AffinityMixin,
+        MultithreadingMixin,
+        LogMemoryMixin,
+):
     r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a

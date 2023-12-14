@@ -195,10 +195,10 @@ class ShapeNet(InMemoryDataset):
             if cat not in categories_ids:
                 continue
 
-            data = read_txt_array(osp.join(self.raw_dir, name))
-            pos = data[:, :3]
-            x = data[:, 3:6]
-            y = data[:, -1].type(torch.long)
+            tensor = read_txt_array(osp.join(self.raw_dir, name))
+            pos = tensor[:, :3]
+            x = tensor[:, 3:6]
+            y = tensor[:, -1].type(torch.long)
             data = Data(pos=pos, x=x, y=y, category=cat_idx[cat])
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

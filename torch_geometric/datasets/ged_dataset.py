@@ -185,7 +185,7 @@ class GEDDataset(InMemoryDataset):
             # Find the paths of all raw graphs:
             names = glob.glob(osp.join(r_path, '*.gexf'))
             # Get sorted graph IDs given filename: 123.gexf -> 123
-            ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
+            ids.append(sorted([int(osp.basename(i)[:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:

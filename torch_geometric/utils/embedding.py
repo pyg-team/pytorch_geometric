@@ -7,8 +7,8 @@ from torch import Tensor
 
 def get_embeddings(
     model: torch.nn.Module,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Tensor]:
     """Returns the output embeddings of all
     :class:`~torch_geometric.nn.conv.MessagePassing` layers in

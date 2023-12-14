@@ -108,6 +108,7 @@ class GeometricShapes(InMemoryDataset):
             paths = glob.glob(f'{folder}/*.off')
             for path in paths:
                 data = read_off(path)
+                assert data.pos is not None
                 data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)
                 data.y = torch.tensor([target])
                 data_list.append(data)

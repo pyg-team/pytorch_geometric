@@ -22,7 +22,7 @@ def get_home_dir() -> str:
     return home_dir
 
 
-def set_home_dir(path: str):
+def set_home_dir(path: str) -> None:
     r"""Set the cache directory used for storing all :pyg:`PyG`-related data.
 
     Args:

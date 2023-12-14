@@ -14,7 +14,8 @@ def geodesic_distance(  # noqa: D417
     norm: bool = True,
     max_distance: Optional[float] = None,
     num_workers: int = 0,
-    **kwargs,
+    # Backward compatibility for `dest`:
+    **kwargs: Optional[Tensor],
 ) -> Tensor:
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dst` are given, this method only

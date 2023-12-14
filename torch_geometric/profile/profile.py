@@ -213,9 +213,7 @@ def get_stats_summary(
         max_reserved_gpu=max([s.max_reserved_gpu for s in stats_list]),
         max_active_gpu=max([s.max_active_gpu for s in stats_list]))
 
-    if all(isinstance(s, GPUStats) for s in stats_list):
-        return GPUStatsSummary(**kwargs)
-    else:
+    if all(isinstance(s, CUDAStats) for s in stats_list):
         return CUDAStatsSummary(
             **kwargs,
             min_nvidia_smi_free_cuda=min(
@@ -223,6 +221,8 @@ def get_stats_summary(
             max_nvidia_smi_used_cuda=max(
                 [s.nvidia_smi_used_cuda for s in stats_list]),
         )
+    else:
+        return GPUStatsSummary(**kwargs)
 
 
 ###############################################################################
