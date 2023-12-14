@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
@@ -183,6 +184,14 @@ class BaseData:
             return sum([v.num_nodes for v in self.node_stores])
         except TypeError:
             return None
+
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
 
     def size(
         self, dim: Optional[int] = None
@@ -642,7 +651,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
             return self.num_nodes
@@ -998,6 +1007,14 @@ class Data(BaseData, FeatureStore, GraphStore):
     @time.setter
     def time(self, time: Optional[Tensor]):
         self._store.time = time
+
+    @property
+    def face(self) -> Optional[Tensor]:
+        return self['face'] if 'face' in self._store else None
+
+    @face.setter
+    def face(self, face: Optional[Tensor]):
+        self._store.face = face
 
     # Deprecated functions ####################################################
 

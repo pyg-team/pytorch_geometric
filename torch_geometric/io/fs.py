@@ -93,7 +93,7 @@ def ls(
             for output in outputs:
                 output['name'] = fs.unstrip_protocol(output['name'])
         else:
-            outputs = [fs.unstrip_protocol(path) for output in outputs]
+            outputs = [fs.unstrip_protocol(output) for output in outputs]
 
     return outputs
 
@@ -108,24 +108,32 @@ def cp(
 ) -> None:
     kwargs: Dict[str, Any] = {}
 
+    is_path1_dir = isdir(path1)
+    is_path2_dir = isdir(path2)
+
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None
     if not islocal(path1):
         if log and 'pytest' not in sys.modules:
             print(f'Downloading {path1}', file=sys.stderr)
 
-        if use_cache:  # Cache seems to confuse the gcs filesystem.
+        if extract and use_cache:  # Cache seems to confuse the gcs filesystem.
             home_dir = torch_geometric.get_home_dir()
             cache_dir = osp.join(home_dir, 'simplecache', uuid4().hex)
             kwargs.setdefault('simplecache', dict(cache_storage=cache_dir))
             path1 = f'simplecache::{path1}'
 
     # Handle automatic extraction:
+    multiple_files = False
     if extract and path1.endswith('.tar.gz'):
         kwargs.setdefault('tar', dict(compression='gzip'))
         path1 = f'tar://**::{path1}'
+        multiple_files = True
     elif extract and path1.endswith('.zip'):
         path1 = f'zip://**::{path1}'
+        multiple_files = True
+    elif extract and path1.endswith('.gz'):
+        kwargs.setdefault('compression', 'infer')
     elif extract:
         raise NotImplementedError(
             f"Automatic extraction of '{path1}' not yet supported")
@@ -134,17 +142,21 @@ def cp(
     # recursively copy all files within this directory. Additionally, if the
     # destination folder does not yet exist, we inherit the basename from the
     # source folder.
-    if isdir(path1):
+    if is_path1_dir:
         if exists(path2):
             path2 = osp.join(path2, osp.basename(path1))
         path1 = osp.join(path1, '**')
+        multiple_files = True
 
     # Perform the copy:
     for open_file in fsspec.open_files(path1, **kwargs):
         with open_file as f_from:
-            if isfile(path1):
-                if isdir(path2):
-                    to_path = osp.join(path2, osp.basename(path1))
+            if not multiple_files:
+                if is_path2_dir:
+                    basename = osp.basename(path1)
+                    if extract and path1.endswith('.gz'):
+                        basename = '.'.join(basename.split('.')[:-1])
+                    to_path = osp.join(path2, basename)
                 else:
                     to_path = path2
             else:
@@ -160,7 +172,13 @@ def cp(
                     f_to.write(chunk)
 
     if use_cache and clear_cache and cache_dir is not None:
-        rm(cache_dir)
+        try:
+            rm(cache_dir)
+        except PermissionError:  # FIXME
+            # Windows test yield "PermissionError: The process cannot access
+            # the file because it is being used by another process"
+            # This is a quick workaround until we figure out the deeper issue.
+            pass
 
 
 def rm(path: str, recursive: bool = True) -> None:

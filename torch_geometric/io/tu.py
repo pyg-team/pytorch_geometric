@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
@@ -21,7 +20,7 @@ def read_tu_data(
     prefix: str,
 ) -> Tuple[Data, Dict[str, Tensor], Dict[str, int]]:
     files = fs.glob(osp.join(folder, f'{prefix}_*.txt'))
-    names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
+    names = [osp.basename(f)[len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
