@@ -15,7 +15,7 @@ except ImportError:
 
 class EdgeConv(MessagePassing):
     r"""The edge convolutional operator from the `"Dynamic Graph CNN for
-    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper
+    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
@@ -114,10 +114,12 @@ class DynamicEdgeConv(MessagePassing):
         reset(self.nn)
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
-        # type: (Tensor, OptTensor) -> Tensor  # noqa
-        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
+        # forward_type: (Tensor, OptTensor) -> Tensor
+        # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)

@@ -1,11 +1,11 @@
 Installation
 ============
 
-:pyg:`PyG` is available for Python 3.8 to Python 3.11.
+:pyg:`PyG` is available for :python:`Python 3.8` to :python:`Python 3.11`.
 
 .. note::
-   We do not recommend installation as a root user on your system Python.
-   Please setup a virtual environment, *e.g.*, via `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_, or create a `Docker image <https://www.docker.com/>`_.
+   We do not recommend installation as a root user on your system :python:`Python`.
+   Please setup a virtual environment, *e.g.*, via :conda:`null` `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_, or create a `Docker image <https://www.docker.com/>`_.
 
 Quick Start
 -----------
@@ -16,8 +16,8 @@ Quick Start
 Installation via Anaconda
 -------------------------
 
-You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗
-If you have not yet installed :pytorch:`PyTorch`, install it via :obj:`conda` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
+You can now install :pyg:`PyG` via :conda:`null` `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗.
+If you have not yet installed :pytorch:`PyTorch`, install it via :conda:`null` :obj:`conda install` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
 Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 
 .. code-block:: none
@@ -173,7 +173,7 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       pip install --verbose torch_cluster
       pip install --verbose torch_spline_conv
 
-In rare cases, CUDA or Python path problems can prevent a successful installation.
+In rare cases, CUDA or :python:`Python` path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected common installation errors in the `Frequently Asked Questions <installation.html#frequently-asked-questions>`__ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.

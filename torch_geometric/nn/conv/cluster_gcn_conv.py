@@ -18,7 +18,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 class ClusterGCNConv(MessagePassing):
     r"""The ClusterGCN graph convolutional operator from the
     `"Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph
-    Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper
+    Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( \mathbf{\hat{A}} + \lambda \cdot

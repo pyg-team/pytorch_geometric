@@ -41,7 +41,8 @@ class DenseSAGEConv(torch.nn.Module):
 
     def forward(self, x: Tensor, adj: Tensor,
                 mask: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): Node feature tensor
                 :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with

@@ -1,5 +1,4 @@
 import math
-import numbers
 import random
 from typing import Tuple, Union
 
@@ -22,15 +21,20 @@ class RandomRotate(BaseTransform):
             \mathrm{degrees}]`.
         axis (int, optional): The rotation axis. (default: :obj:`0`)
     """
-    def __init__(self, degrees: Union[Tuple[float, float], float],
-                 axis: int = 0):
-        if isinstance(degrees, numbers.Number):
+    def __init__(
+        self,
+        degrees: Union[Tuple[float, float], float],
+        axis: int = 0,
+    ) -> None:
+        if isinstance(degrees, (int, float)):
             degrees = (-abs(degrees), abs(degrees))
         assert isinstance(degrees, (tuple, list)) and len(degrees) == 2
         self.degrees = degrees
         self.axis = axis
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+
         degree = math.pi * random.uniform(*self.degrees) / 180.0
         sin, cos = math.sin(degree), math.cos(degree)
 
@@ -43,6 +47,7 @@ class RandomRotate(BaseTransform):
                 matrix = [[cos, 0, -sin], [0, 1, 0], [sin, 0, cos]]
             else:
                 matrix = [[cos, sin, 0], [-sin, cos, 0], [0, 0, 1]]
+
         return LinearTransformation(torch.tensor(matrix))(data)
 
     def __repr__(self) -> str:

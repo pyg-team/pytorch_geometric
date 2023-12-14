@@ -51,7 +51,10 @@ class MLP(Sequential):
 class GENConv(MessagePassing):
     r"""The GENeralized Graph Convolution (GENConv) from the `"DeeperGCN: All
     You Need to Train Deeper GCNs" <https://arxiv.org/abs/2006.07739>`_ paper.
-    Supports SoftMax & PowerMean aggregation. The message construction is:
+
+    :class:`GENConv` supports both :math:`\textrm{softmax}` and
+    :math:`textrm{powermean}` aggregation.
+    Its message construction is given by:
 
     .. math::
         \mathbf{x}_i^{\prime} = \mathrm{MLP} \left( \mathbf{x}_i +

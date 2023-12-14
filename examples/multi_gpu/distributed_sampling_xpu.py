@@ -1,5 +1,4 @@
-"""
-Distributed GAT training, targeting XPU devices.
+"""Distributed GAT training, targeting XPU devices.
 PVC has 2 tiles, each reports itself as a separate
 device. DDP approach allows us to employ both tiles.
 

@@ -27,22 +27,30 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
 
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target", dtype=None):
-
+def gcn_norm(  # noqa: F811
+    edge_index: Adj,
+    edge_weight: OptTensor = None,
+    num_nodes: Optional[int] = None,
+    improved: bool = False,
+    add_self_loops: bool = True,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+):
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
@@ -108,7 +116,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classification with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper
+    <https://arxiv.org/abs/1609.02907>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
@@ -145,9 +153,11 @@ class GCNConv(MessagePassing):
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
+            self-loops to the input graph. By default, self-loops will be added
+            in case :obj:`normalize` is set to :obj:`True`, and not added
+            otherwise. (default: :obj:`None`)
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
+            symmetric normalization coefficients on-the-fly.
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
@@ -157,7 +167,8 @@ class GCNConv(MessagePassing):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+          or sparse matrix :math:`(|\mathcal{V}|, |\mathcal{V}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
@@ -170,13 +181,21 @@ class GCNConv(MessagePassing):
         out_channels: int,
         improved: bool = False,
         cached: bool = False,
-        add_self_loops: bool = True,
+        add_self_loops: Optional[bool] = None,
         normalize: bool = True,
         bias: bool = True,
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
+
+        if add_self_loops is None:
+            add_self_loops = normalize
+
+        if add_self_loops and not normalize:
+            raise ValueError(f"'{self.__class__.__name__}' does not support "
+                             f"adding self-loops to the graph when no "
+                             f"on-the-fly normalization is applied")
 
         self.in_channels = in_channels
         self.out_channels = out_channels

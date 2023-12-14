@@ -11,7 +11,7 @@ class BatchNorm(torch.nn.Module):
     r"""Applies batch normalization over a batch of features as described in
     the `"Batch Normalization: Accelerating Deep Network Training by
     Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
@@ -69,7 +69,8 @@ class BatchNorm(torch.nn.Module):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
         """
@@ -169,7 +170,8 @@ class HeteroBatchNorm(torch.nn.Module):
             torch.nn.init.zeros_(self.bias)
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.

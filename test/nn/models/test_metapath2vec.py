@@ -39,3 +39,25 @@ def test_metapath2vec(device):
     acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
                      torch.ones(20, 16), torch.randint(10, (20, )))
     assert 0 <= acc and acc <= 1
+
+
+def test_metapath2vec_empty_edges():
+    num_nodes_dict = {'a': 3, 'b': 4}
+    edge_index_dict = {
+        ('a', 'to', 'b'): torch.empty((2, 0), dtype=torch.long),
+        ('b', 'to', 'a'): torch.empty((2, 0), dtype=torch.long),
+    }
+    metapath = [('a', 'to', 'b'), ('b', 'to', 'a')]
+
+    model = MetaPath2Vec(
+        edge_index_dict,
+        embedding_dim=16,
+        metapath=metapath,
+        walk_length=10,
+        context_size=7,
+        walks_per_node=5,
+        num_negative_samples=5,
+        num_nodes_dict=num_nodes_dict,
+    )
+    loader = model.loader(batch_size=16, shuffle=True)
+    next(iter(loader))

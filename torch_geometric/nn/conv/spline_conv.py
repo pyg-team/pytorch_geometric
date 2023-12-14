@@ -21,7 +21,7 @@ except (ImportError, OSError):  # Fail gracefully on GLIBC errors
 class SplineConv(MessagePassing):
     r"""The spline-based convolutional operator from the `"SplineCNN: Fast
     Geometric Deep Learning with Continuous B-Spline Kernels"
-    <https://arxiv.org/abs/1711.08920>`_ paper
+    <https://arxiv.org/abs/1711.08920>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|} \sum_{j \in

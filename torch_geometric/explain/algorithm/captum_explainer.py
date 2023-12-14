@@ -57,7 +57,7 @@ class CaptumExplainer(ExplainerAlgorithm):
     ):
         super().__init__()
 
-        import captum.attr  # noqa
+        import captum.attr
 
         if isinstance(attribution_method, str):
             self.attribution_method_class = getattr(
@@ -138,7 +138,7 @@ class CaptumExplainer(ExplainerAlgorithm):
             *kwargs.values(),
         )
 
-        if isinstance(x, dict):
+        if isinstance(x, dict):  # Heterogeneous GNN:
             metadata = (list(x.keys()), list(edge_index.keys()))
             captum_model = CaptumHeteroModel(
                 model,
@@ -147,21 +147,24 @@ class CaptumExplainer(ExplainerAlgorithm):
                 metadata,
                 self.model_config,
             )
-        else:
+        else:  # Homogeneous GNN:
             metadata = None
-            captum_model = CaptumModel(model, mask_type, index,
-                                       self.model_config)
+            captum_model = CaptumModel(
+                model,
+                mask_type,
+                index,
+                self.model_config,
+            )
 
         self.attribution_method_instance = self.attribution_method_class(
             captum_model)
 
-        # In captum, the target is the class index for which
-        # the attribution is computed. With CaptumModel, we transform
-        # the binary classification into a multi-class. This way we can
-        # explain both classes and need to pass a target here as well.
+        # In Captum, the target is the class index for which the attribution is
+        # computed. Within CaptumModel, we transform the binary classification
+        # into a multi-class classification task.
         if self.model_config.mode == ModelMode.regression:
             target = None
-        else:
+        elif index is not None:
             target = target[index]
 
         attributions = self.attribution_method_instance.attribute(

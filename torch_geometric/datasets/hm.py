@@ -26,6 +26,8 @@ class HM(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = ('https://www.kaggle.com/competitions/'
            'h-and-m-personalized-fashion-recommendations/data')
@@ -36,9 +38,11 @@ class HM(InMemoryDataset):
         use_all_tables_as_node_types: bool = False,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.use_all_tables_as_node_types = use_all_tables_as_node_types
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -55,12 +59,12 @@ class HM(InMemoryDataset):
         else:
             return 'data_merged.pt'
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download {self.raw_file_names} from "
             f"'{self.url}' and move it to '{self.raw_dir}'")
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

@@ -1,7 +1,8 @@
 import enum
 import os
-from dataclasses import dataclass
-from typing import Any, Callable, Iterable, List, Optional, Union
+
+from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
+
 
 from torch import Tensor
 
@@ -66,11 +67,16 @@ class OnDiskDataset(Dataset):
         'rocksdb': RocksDatabase,
     }
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 backend: str = 'sqlite', schema: Schema = object,
-                 log: bool = True,
-                 graph_type: GraphType = GraphType.HOMOGENOUS):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        backend: str = 'sqlite',
+        schema: Schema = object,
+        log: bool = True,
+        graph_type: GraphType = GraphType.HOMOGENOUS,
+    ) -> None:
         if backend not in self.BACKENDS:
             raise ValueError(f"Database backend must be one of "
                              f"{set(self.BACKENDS.keys())} "
@@ -108,7 +114,7 @@ class OnDiskDataset(Dataset):
         self._numel = len(self._db)
         return self._db
 
-    def close(self):
+    def close(self) -> None:
         r"""Closes the connection to the underlying database."""
         if self._db is not None:
             self._db.close()
@@ -118,7 +124,8 @@ class OnDiskDataset(Dataset):
                   edge_labels: Optional[Iterable[EdgeAttr]] = None) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
-        schema."""
+        schema.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.serialize()` "
@@ -130,16 +137,20 @@ class OnDiskDataset(Dataset):
             edge_labels: Optional[Iterable[EdgeAttr]] = None) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
-        :class:`~torch_geometric.data.HeteroData` object."""
+        :class:`~torch_geometric.data.HeteroData` object.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.deserialize()` "
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: BaseData,
-               node_labels: Optional[Iterable[str]] = None,
-               edge_labels: Optional[Iterable[EdgeAttr]] = None):
+    def append(
+        self, 
+        data: BaseData,
+        node_labels: Optional[Iterable[str]] = None,
+        edge_labels: Optional[Iterable[EdgeAttr]] = None
+    ) -> None:
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(
@@ -148,10 +159,13 @@ class OnDiskDataset(Dataset):
         )
         self._numel += 1
 
-    def extend(self, data_list: List[BaseData],
-               batch_size: Optional[int] = None,
-               node_labels: Optional[Iterable[str]] = None,
-               edge_labels: Optional[Iterable[EdgeAttr]] = None):
+    def extend(
+        self,
+        data_list: Sequence[BaseData],
+        batch_size: Optional[int] = None,
+        node_labels: Optional[Iterable[str]] = None,
+        edge_labels: Optional[Iterable[EdgeAttr]] = None
+    ) -> None:
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)
