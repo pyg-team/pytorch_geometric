@@ -60,7 +60,8 @@ def test_forward(data, target, explanation_type):
         assert isinstance(explanation, Explanation)
         assert 'x' in explanation
         assert 'edge_index' in explanation
-        assert 'target' in explanation
+        if explanation_type != ExplanationType.generative:  # target is not used for generative explanation
+            assert 'target' in explanation
         assert 'node_mask' in explanation.available_explanations
         assert explanation.node_mask.size() == data.x.size()
 

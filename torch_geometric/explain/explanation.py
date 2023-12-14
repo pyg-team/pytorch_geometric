@@ -1,6 +1,3 @@
-import copy
-from typing import Dict, List, Optional, Union
-
 import torch
 from torch import Tensor
 
@@ -10,6 +7,10 @@ from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.visualization import visualize_graph
 
+from torch_geometric.data.batch import Batch
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Union
+import copy
 
 class ExplanationMixin:
     @property
@@ -399,3 +400,90 @@ def _visualize_score(
         plt.show()
 
     plt.close()
+    
+    
+class ExplanationSetSampler(ABC):
+    r"""
+    Serves as a base class for sampling from an "Explanation Set" of a neural network.
+    This set comprises data points that maximize the network's activation. It can be
+    extended by various generative models or fixed size datasets to perform sampling.
+    """
+
+    @abstractmethod
+    def sample(self, num_samples: int, **kwargs):
+        r"""
+        Abstract method to sample data points from the Explanation Set.
+        
+        Args:
+            num_samples (int): The number of samples to generate.
+        """
+        raise NotImplementedError("The method sample must be implemented in subclasses")
+
+
+class GenerativeExplanation(Data):
+    r"""Holds all the obtained explanations of a homogeneous graph.
+
+    The generative explanation object is a :obj:`~torch_geometric.data.Data` object and
+    holds the explanation set.
+
+    Args:
+        explanation_set (ExplanationSetSampler, required):
+            The explanation set used to explain NN activations, can be a finite set, 
+            generative model or anything that can sample from the abstract explanation set.
+        is_finite (bool, required): Indicates whether the explanation set is finite. Should be set appropriately in subclasses.        
+    """
+
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the `GenerativeExplanation` object."""
+        status = super().validate(raise_on_error)
+        explanation_set = self.get("explanation_set")
+        is_finite = self.get('is_finite')
+        
+        if explanation_set is None or is_finite is None:
+            if raise_on_error:
+                raise ValueError("Both 'explanation_set' and 'is_finite' must be set.")
+            status = False
+        return status
+
+    def is_finite(self) -> bool:
+        r"""Check if the Explanation Set is finite."""
+        is_finite = self.get('is_finite')
+        return is_finite
+
+    def get_explanation_set(self, **kwargs):
+        r"""
+        Retrieves the Explanation Set. If the set is not finite, expects 'num_samples' in kwargs to
+        be provided for the sake of sampling a finite subset of the explanation set.
+
+        Args:
+            **kwargs: Key arguments, expected to contain 'num_samples' for infinite sets.
+
+        Raises:
+            ValueError: If the Explanation Set is infinite and 'num_samples' is not provided.
+        """
+        explanation_set = self.get("explanation_set")
+        if not isinstance(explanation_set, ExplanationSetSampler):
+            raise TypeError("'explanation_set' must extend ExplanationSetSampler")
+
+        if not self.is_finite():
+            if 'num_samples' not in kwargs:
+                raise ValueError("Expected 'num_samples' argument for an infinite Explanation Set.")
+
+        return explanation_set.sample(**kwargs)
+
+    def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
+                                    backend: Optional[str] = None):
+        r"""
+        Visualizes the explanation graph with edge weights set to be equal.
+
+        Args:
+            graph_state: The state of the graph to be visualized.
+            path (Optional[str]): The path to where the plot is saved.
+                If set to `None`, will visualize the plot on-the-fly.
+            backend (Optional[str]): The graph drawing backend to use for
+                visualization (`"graphviz"`, `"networkx"`).
+                If set to `None`, will use the most appropriate
+                visualization backend based on available system packages.
+        """
+        edge_index = graph_state.edge_index
+        visualize_graph(edge_index, path=path, backend=backend)
