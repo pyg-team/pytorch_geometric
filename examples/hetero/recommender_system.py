@@ -96,7 +96,7 @@ train_dataloader = LinkNeighborLoader(
     data=train_data, num_neighbors=[5, 5, 5], neg_sampling_ratio=1,
     edge_label_index=(('user', 'rates', 'movie'),
                       train_data[('user', 'rates', 'movie')].edge_index),
-    edge_label_time=train_data[('user', 'rates', 'movie')].time,
+    edge_label_time=train_data[('user', 'rates', 'movie')].time-1,
     batch_size=BATCH_SIZE, shuffle=True, time_attr='time')
 
 
