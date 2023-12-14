@@ -1,10 +1,14 @@
 from abc import abstractmethod
-from typing import Optional, Union, Dict
+from typing import Dict, Optional, Union
+
 import torch
 from torch import Tensor
+
+from torch_geometric.explain import (
+    ExplanationSetSampler,
+    GenerativeExplanation,
+)
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain import (GenerativeExplanation,
-                                     ExplanationSetSampler)
 
 
 class XGNNExplainer(ExplainerAlgorithm):
@@ -40,7 +44,6 @@ class XGNNExplainer(ExplainerAlgorithm):
         training
             process of the generative model.
     """
-
     def __init__(self, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.epochs = epochs
@@ -86,9 +89,8 @@ class XGNNExplainer(ExplainerAlgorithm):
             raise ValueError(
                 f"Index not supported in '{self.__class__.__name__}'")
 
-        generative_model_t = self.train_generative_model(model,
-                                                         for_class=for_class,
-                                                         **kwargs)
+        generative_model_t = self.train_generative_model(
+            model, for_class=for_class, **kwargs)
 
         return GenerativeExplanation(model=model,
                                      explanation_set=generative_model_t)
@@ -96,7 +98,7 @@ class XGNNExplainer(ExplainerAlgorithm):
     @abstractmethod
     def train_generative_model(self, model, for_class,
                                **kwargs) -> ExplanationSetSampler:
-        r""" Abstract method to train the generative model.
+        r"""Abstract method to train the generative model.
         Must be implemented in subclasses.
 
         Args:

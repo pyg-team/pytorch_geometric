@@ -7,9 +7,8 @@ from torch import Tensor
 from torch_geometric.explain import (
     ExplainerAlgorithm,
     Explanation,
-    HeteroExplanation,
     GenerativeExplanation,
-    
+    HeteroExplanation,
 )
 from torch_geometric.explain.algorithm.utils import (
     clear_masks,
@@ -200,8 +199,7 @@ class Explainer:
             target = self.get_target(prediction)
         elif self.explanation_type == ExplanationType.generative:
             pass
-     
-     
+
         if isinstance(index, int):
             index = torch.tensor([index])
 

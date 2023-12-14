@@ -8,12 +8,6 @@ from .graphmask_explainer import GraphMaskExplainer
 from .xgnn_explainer import XGNNExplainer
 
 __all__ = classes = [
-    'ExplainerAlgorithm',
-    'DummyExplainer',
-    'GNNExplainer',
-    'CaptumExplainer',
-    'PGExplainer',
-    'AttentionExplainer',
-    'GraphMaskExplainer',
-    'XGNNExplainer'
+    'ExplainerAlgorithm', 'DummyExplainer', 'GNNExplainer', 'CaptumExplainer',
+    'PGExplainer', 'AttentionExplainer', 'GraphMaskExplainer', 'XGNNExplainer'
 ]

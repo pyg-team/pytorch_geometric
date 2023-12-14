@@ -1,16 +1,17 @@
+import copy
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Union
+
 import torch
 from torch import Tensor
 
+from torch_geometric.data.batch import Batch
 from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.visualization import visualize_graph
 
-from torch_geometric.data.batch import Batch
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
-import copy
 
 class ExplanationMixin:
     @property
@@ -400,24 +401,22 @@ def _visualize_score(
         plt.show()
 
     plt.close()
-    
-    
+
+
 class ExplanationSetSampler(ABC):
-    r"""
-    Serves as a base class for sampling from an "Explanation Set" of a neural network.
+    r"""Serves as a base class for sampling from an "Explanation Set" of a neural network.
     This set comprises data points that maximize the network's activation. It can be
     extended by various generative models or fixed size datasets to perform sampling.
     """
-
     @abstractmethod
     def sample(self, num_samples: int, **kwargs):
-        r"""
-        Abstract method to sample data points from the Explanation Set.
-        
+        r"""Abstract method to sample data points from the Explanation Set.
+
         Args:
             num_samples (int): The number of samples to generate.
         """
-        raise NotImplementedError("The method sample must be implemented in subclasses")
+        raise NotImplementedError(
+            "The method sample must be implemented in subclasses")
 
 
 class GenerativeExplanation(Data):
@@ -428,20 +427,20 @@ class GenerativeExplanation(Data):
 
     Args:
         explanation_set (ExplanationSetSampler, required):
-            The explanation set used to explain NN activations, can be a finite set, 
+            The explanation set used to explain NN activations, can be a finite set,
             generative model or anything that can sample from the abstract explanation set.
-        is_finite (bool, required): Indicates whether the explanation set is finite. Should be set appropriately in subclasses.        
+        is_finite (bool, required): Indicates whether the explanation set is finite. Should be set appropriately in subclasses.
     """
-
     def validate(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the `GenerativeExplanation` object."""
         status = super().validate(raise_on_error)
         explanation_set = self.get("explanation_set")
         is_finite = self.get('is_finite')
-        
+
         if explanation_set is None or is_finite is None:
             if raise_on_error:
-                raise ValueError("Both 'explanation_set' and 'is_finite' must be set.")
+                raise ValueError(
+                    "Both 'explanation_set' and 'is_finite' must be set.")
             status = False
         return status
 
@@ -451,8 +450,7 @@ class GenerativeExplanation(Data):
         return is_finite
 
     def get_explanation_set(self, **kwargs):
-        r"""
-        Retrieves the Explanation Set. If the set is not finite, expects 'num_samples' in kwargs to
+        r"""Retrieves the Explanation Set. If the set is not finite, expects 'num_samples' in kwargs to
         be provided for the sake of sampling a finite subset of the explanation set.
 
         Args:
@@ -463,18 +461,21 @@ class GenerativeExplanation(Data):
         """
         explanation_set = self.get("explanation_set")
         if not isinstance(explanation_set, ExplanationSetSampler):
-            raise TypeError("'explanation_set' must extend ExplanationSetSampler")
+            raise TypeError(
+                "'explanation_set' must extend ExplanationSetSampler")
 
         if not self.is_finite():
             if 'num_samples' not in kwargs:
-                raise ValueError("Expected 'num_samples' argument for an infinite Explanation Set.")
+                raise ValueError(
+                    "Expected 'num_samples' argument for an infinite Explanation Set."
+                )
 
         return explanation_set.sample(**kwargs)
 
-    def visualize_explanation_graph(self, graph_state, path: Optional[str] = None,
+    def visualize_explanation_graph(self, graph_state,
+                                    path: Optional[str] = None,
                                     backend: Optional[str] = None):
-        r"""
-        Visualizes the explanation graph with edge weights set to be equal.
+        r"""Visualizes the explanation graph with edge weights set to be equal.
 
         Args:
             graph_state: The state of the graph to be visualized.

@@ -2,6 +2,7 @@ import pytest
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.data import Data
 from torch_geometric.explain import Explainer, XGNNExplainer
 
@@ -19,8 +20,8 @@ class MLP_Graph(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
-    
-    
+
+
 # Mock explainer algorithm
 class ExampleExplainer(XGNNExplainer):
     def __init__(self, epochs, lr, candidate_set, validity_args):
@@ -54,20 +55,21 @@ class ExampleGraphGenerator():
 @pytest.fixture
 def setup_xgnn_explainer():
     mock_model = MLP_Graph(input_dim=7, output_dim=1)
-    
+
     explainer = Explainer(
-        model = mock_model,
-        algorithm = ExampleExplainer(epochs = 10, 
-                                lr = 0.01,
-                                candidate_set={'C': torch.tensor([1, 0, 0, 0, 0, 0, 0])},  # Simplified candidate set
-                                validity_args={'C': 4}),
-        explanation_type = 'generative',
-        model_config = dict(
-            mode = 'binary_classification',
-            task_level = 'graph',
-            return_type = 'probs',
-        )
-    )
+        model=mock_model,
+        algorithm=ExampleExplainer(
+            epochs=10,
+            lr=0.01,
+            candidate_set={'C': torch.tensor([1, 0, 0, 0, 0, 0,
+                                              0])},  # Simplified candidate set
+            validity_args={'C': 4}),
+        explanation_type='generative',
+        model_config=dict(
+            mode='binary_classification',
+            task_level='graph',
+            return_type='probs',
+        ))
 
     class_index = 1
     x = torch.tensor([])
@@ -80,7 +82,7 @@ def setup_xgnn_explainer():
 def test_explainer_output(setup_xgnn_explainer):
     explainer, x, edge_index, class_index = setup_xgnn_explainer
     explanation = explainer(x, edge_index, for_class=class_index)
-    
+
     # Check if explanation is of type Data
     assert isinstance(explanation, Data), "Explanation is not of type Data"
 
@@ -88,9 +90,8 @@ def test_explainer_output(setup_xgnn_explainer):
 # Test output of ExampleExplainer
 def test_sampler_output():
     sampled_graphs = ExampleGraphGenerator(Data()).sample()
-    
+
     # Check if sampled_graphs is a list of Data objects
     assert isinstance(sampled_graphs, list), "Sampled graphs is not a list"
-    assert all(isinstance(graph, Data) for graph in sampled_graphs), "Sampled graphs is not a list of Data objects"
-    
-    
+    assert all(isinstance(graph, Data) for graph in
+               sampled_graphs), "Sampled graphs is not a list of Data objects"

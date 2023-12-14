@@ -101,7 +101,8 @@ class ExplainerConfig(CastMixin):
                              f"'object' (got '{edge_mask_type.value}')")
 
         if node_mask_type is None and edge_mask_type is None:
-            if ExplanationType(explanation_type) is not ExplanationType.generative:
+            if ExplanationType(
+                    explanation_type) is not ExplanationType.generative:
                 raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
                                  "must be provided")
 
