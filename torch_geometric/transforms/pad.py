@@ -181,6 +181,13 @@ class _NumEdges:
         value: Union[int, Dict[EdgeType, int], None],
         num_nodes: _NumNodes,
     ) -> None:
+
+        if value is None:
+            if isinstance(num_nodes.value, int):
+                value = num_nodes.value * num_nodes.value
+            else:
+                value = {}
+
         self.value = value
         self.num_nodes = num_nodes
 
