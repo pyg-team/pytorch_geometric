@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -17,13 +16,19 @@ class NodeDict:
     2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
     """
-    def __init__(self, num_hops):
-        self.src: Dict[NodeType, List[Tensor]] = defaultdict(
-            lambda: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)])
-        self.with_dupl: Dict[NodeType, Tensor] = defaultdict(
-            lambda: torch.empty(0, dtype=torch.int64))
-        self.out: Dict[NodeType, Tensor] = defaultdict(
-            lambda: torch.empty(0, dtype=torch.int64))
+    def __init__(self, node_types, num_hops):
+        self.src: Dict[NodeType, List[Tensor]] = {
+            k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]
+            for k in node_types
+        }
+        self.with_dupl: Dict[NodeType, Tensor] = {
+            k: torch.empty(0, dtype=torch.int64)
+            for k in node_types
+        }
+        self.out: Dict[NodeType, Tensor] = {
+            k: torch.empty(0, dtype=torch.int64)
+            for k in node_types
+        }
 
 
 class BatchDict:
@@ -34,13 +39,19 @@ class BatchDict:
        output.
     3) The output subgraph IDs without duplicates.
     """
-    def __init__(self, num_hops):
-        self.src: Dict[NodeType, List[Tensor]] = defaultdict(
-            lambda: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)])
-        self.with_dupl: Dict[NodeType, Tensor] = defaultdict(
-            lambda: torch.empty(0, dtype=torch.int64))
-        self.out: Dict[NodeType, Tensor] = defaultdict(
-            lambda: torch.empty(0, dtype=torch.int64))
+    def __init__(self, node_types, num_hops):
+        self.src: Dict[NodeType, List[Tensor]] = {
+            k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]
+            for k in node_types
+        }
+        self.with_dupl: Dict[NodeType, Tensor] = {
+            k: torch.empty(0, dtype=torch.int64)
+            for k in node_types
+        }
+        self.out: Dict[NodeType, Tensor] = {
+            k: torch.empty(0, dtype=torch.int64)
+            for k in node_types
+        }
 
 
 def remove_duplicates(

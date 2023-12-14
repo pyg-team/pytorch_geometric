@@ -84,8 +84,8 @@ def create_hetero_data(tmp_path: str, rank: int):
     feature_store.meta = graph_store.meta = out[0]
     feature_store.num_partitions = graph_store.num_partitions = out[1]
     feature_store.partition_idx = graph_store.partition_idx = out[2]
-    graph_store.node_feat_pb = graph_store.node_pb = out[3]
-    graph_store.edge_feat_pb = graph_store.edge_pb = out[4]
+    feature_store.node_feat_pb = graph_store.node_pb = out[3]
+    feature_store.edge_feat_pb = graph_store.edge_pb = out[4]
 
     return feature_store, graph_store
 

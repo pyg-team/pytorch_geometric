@@ -1,6 +1,5 @@
 import itertools
 import logging
-from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -204,14 +203,25 @@ class DistNeighborSampler:
             seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
             seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
 
-            node_dict = NodeDict(self.num_hops)
-            batch_dict = BatchDict(self.num_hops)
+            node_dict = NodeDict(self.node_types, self.num_hops)
+            batch_dict = BatchDict(self.node_types, self.num_hops)
 
-            edge_dict = defaultdict(lambda: torch.empty(0, dtype=torch.int64))
-            sampled_nbrs_per_node_dict = defaultdict(
-                lambda: [[] for _ in range(self.num_hops)])
-            num_sampled_nodes_dict = defaultdict(lambda: [0])
-            num_sampled_edges_dict = defaultdict(list)
+            edge_dict: Dict[EdgeType, Tensor] = {
+                k: torch.empty(0, dtype=torch.int64)
+                for k in self.edge_types
+            }
+            sampled_nbrs_per_node_dict: Dict[EdgeType, List[List]] = {
+                k: [[] for _ in range(self.num_hops)]
+                for k in self.edge_types
+            }
+            num_sampled_edges_dict: Dict[EdgeType, List[int]] = {
+                k: []
+                for k in self.edge_types
+            }
+            num_sampled_nodes_dict: Dict[NodeType, List[int]] = {
+                k: [0]
+                for k in self.node_types
+            }
 
             # Fill in node_dict and batch_dict with input data:
             for k, v in seed_dict.items():
