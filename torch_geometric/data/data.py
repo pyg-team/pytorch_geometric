@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
@@ -183,6 +184,14 @@ class BaseData:
             return sum([v.num_nodes for v in self.node_stores])
         except TypeError:
             return None
+
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
 
     def size(
         self, dim: Optional[int] = None
@@ -950,6 +959,14 @@ class Data(BaseData, FeatureStore, GraphStore):
     @edge_index.setter
     def edge_index(self, edge_index: Optional[Tensor]):
         self._store.edge_index = edge_index
+
+    @property
+    def adj_t(self) -> Optional[Union[SparseTensor, Tensor]]:
+        return self['adj_t'] if 'adj_t' in self._store else None
+
+    @adj_t.setter
+    def adj_t(self, adj_t: Optional[Union[SparseTensor, Tensor]]):
+        self._store.adj_t = adj_t
 
     @property
     def edge_weight(self) -> Optional[Tensor]:
