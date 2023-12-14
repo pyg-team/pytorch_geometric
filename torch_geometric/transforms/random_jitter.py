@@ -30,6 +30,7 @@ class RandomJitter(BaseTransform):
         assert data.pos is not None
         num_nodes, dim = data.pos.size()
 
+        translate: Sequence[Union[float, int]]
         if isinstance(self.translate, (int, float)):
             translate = list(repeat(self.translate, times=dim))
         else:
