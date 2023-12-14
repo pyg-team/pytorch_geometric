@@ -446,6 +446,10 @@ class NodeStorage(BaseStorage):
                 return 0
         return None
 
+    @num_nodes.setter
+    def num_nodes(self, num_nodes: Optional[int]) -> None:
+        self['num_nodes'] = num_nodes
+
     @property
     def num_node_features(self) -> int:
         if 'x' in self and isinstance(self.x, Tensor):
