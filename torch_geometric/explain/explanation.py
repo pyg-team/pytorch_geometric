@@ -417,7 +417,8 @@ class ExplanationSetSampler(ABC):
         Args:
             num_samples (int): The number of samples to generate.
         """
-        pass
+        raise NotImplementedError("The method sample must be implemented in subclasses")
+
 
 class GenerativeExplanation(Data):
     r"""Holds all the obtained explanations of a homogeneous graph.

@@ -92,7 +92,8 @@ class XGNNExplainer(ExplainerAlgorithm):
             model: The model to explain.
             for_class: The class for which the explanation is generated.
         """
-        pass
+        raise NotImplementedError("The method train_generative_model must be implemented in subclasses")
+
     
     def supports(self) -> bool:
         return True

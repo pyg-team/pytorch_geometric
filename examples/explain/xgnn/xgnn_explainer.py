@@ -133,9 +133,7 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         start_node = p_start.sample()
         
         # get end node probabilities and mask out start node
-        # combined_features = torch.cat((node_features, node_features[start_node].unsqueeze(0)), dim=0)
         end_node_logits = self.mlp_end_node(node_encodings)
-        
         start_node_mask = torch.ones_like(end_node_logits)
         start_node_mask[start_node] = 0
         end_node_probs = masked_softmax(end_node_logits, start_node_mask).squeeze()
