@@ -69,7 +69,7 @@ class WebKB(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in ['cornell', 'texas', 'wisconsin']
 
@@ -95,30 +95,32 @@ class WebKB(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for f in self.raw_file_names[:2]:
             download_url(f'{self.url}/new_data/{self.name}/{f}', self.raw_dir)
         for f in self.raw_file_names[2:]:
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'r') as f:
-            data = f.read().split('\n')[1:-1]
-            x = [[float(v) for v in r.split('\t')[1].split(',')] for r in data]
-            x = torch.tensor(x, dtype=torch.float)
+            lines = f.read().split('\n')[1:-1]
+            xs = [[float(value) for value in line.split('\t')[1].split(',')]
+                  for line in lines]
+            x = torch.tensor(xs, dtype=torch.float)
 
-            y = [int(r.split('\t')[2]) for r in data]
-            y = torch.tensor(y, dtype=torch.long)
+            ys = [int(line.split('\t')[2]) for line in lines]
+            y = torch.tensor(ys, dtype=torch.long)
 
         with open(self.raw_paths[1], 'r') as f:
-            data = f.read().split('\n')[1:-1]
-            data = [[int(v) for v in r.split('\t')] for r in data]
-            edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
+            lines = f.read().split('\n')[1:-1]
+            edge_indices = [[int(value) for value in line.split('\t')]
+                            for line in lines]
+            edge_index = torch.tensor(edge_indices).t().contiguous()
             edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         train_masks, val_masks, test_masks = [], [], []
-        for f in self.raw_paths[2:]:
-            tmp = np.load(f)
+        for path in self.raw_paths[2:]:
+            tmp = np.load(path)
             train_masks += [torch.from_numpy(tmp['train_mask']).to(torch.bool)]
             val_masks += [torch.from_numpy(tmp['val_mask']).to(torch.bool)]
             test_masks += [torch.from_numpy(tmp['test_mask']).to(torch.bool)]

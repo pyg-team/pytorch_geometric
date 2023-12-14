@@ -26,7 +26,7 @@ from torch_geometric.nn.resolver import (
     normalization_resolver,
 )
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils.trim_to_layer import TrimToLayer
+from torch_geometric.utils._trim_to_layer import TrimToLayer
 
 
 class BasicGNN(torch.nn.Module):

@@ -75,7 +75,7 @@ class NeuroGraphDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert name in self.filenames.keys()
         self.name = name
 
@@ -99,7 +99,7 @@ class NeuroGraphDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = f'{self.url}/{self.filenames[self.name]}'
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
@@ -109,7 +109,7 @@ class NeuroGraphDataset(InMemoryDataset):
             osp.join(self.raw_dir, 'data.pt'))
         fs.rm(osp.join(self.raw_dir, self.name))
 
-    def process(self):
+    def process(self) -> None:
         data, slices = torch.load(self.raw_paths[0])
 
         num_samples = slices['x'].size(0) - 1

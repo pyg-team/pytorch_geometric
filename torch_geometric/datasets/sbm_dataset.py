@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 import numpy as np
 import torch
@@ -50,8 +50,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         if not isinstance(block_sizes, torch.Tensor):
             block_sizes = torch.tensor(block_sizes, dtype=torch.long)
         if not isinstance(edge_probs, torch.Tensor):
@@ -88,7 +88,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
 
-    def process(self):
+    def process(self) -> None:
         from sklearn.datasets import make_classification
 
         edge_index = stochastic_blockmodel_graph(
@@ -152,12 +152,19 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             to :meth:`sklearn.datasets.make_classification` method in
             drawing node features.
     """
-    def __init__(self, root, num_classes: int, num_nodes_per_class: int,
-                 node_homophily_ratio: float, average_degree: float,
-                 num_channels: Optional[int] = None,
-                 is_undirected: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None, **kwargs):
+    def __init__(
+        self,
+        root: str,
+        num_classes: int,
+        num_nodes_per_class: int,
+        node_homophily_ratio: float,
+        average_degree: float,
+        num_channels: Optional[int] = None,
+        is_undirected: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._num_classes = num_classes
         self.num_nodes_per_class = num_nodes_per_class
@@ -186,5 +193,5 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
                 f'{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_'
                 f'{self.average_degree:.1f}.pt')
 
-    def process(self):
+    def process(self) -> None:
         return super().process()

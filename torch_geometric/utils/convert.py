@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
 
 import scipy.sparse
 import torch
@@ -84,6 +84,7 @@ def to_networkx(
     edge_attrs: Optional[Iterable[str]] = None,
     graph_attrs: Optional[Iterable[str]] = None,
     to_undirected: Optional[Union[bool, str]] = False,
+    to_multi: bool = False,
     remove_self_loops: bool = False,
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
@@ -109,6 +110,11 @@ def to_networkx(
             to the lower triangle of the input adjacency matrix.
             Only applicable in case the :obj:`data` object holds a homogeneous
             graph. (default: :obj:`False`)
+        to_multi (bool, optional): if set to :obj:`True`, will return a
+            :class:`networkx.MultiGraph` or a :class:`networkx:MultiDiGraph`
+            (depending on the :obj:`to_undirected` option), which will not drop
+            duplicated edges that may exist in :obj:`data`.
+            (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self-loops in the resulting graph. (default: :obj:`False`)
 
@@ -128,14 +134,19 @@ def to_networkx(
 
     to_undirected_upper: bool = to_undirected == 'upper'
     to_undirected_lower: bool = to_undirected == 'lower'
-    to_undirected: bool = (to_undirected_upper or to_undirected_lower
-                           or to_undirected is True)
+
+    to_undirected = to_undirected is True
+    to_undirected |= to_undirected_upper or to_undirected_lower
+    assert isinstance(to_undirected, bool)
 
     if isinstance(data, HeteroData) and to_undirected:
         raise ValueError("'to_undirected' is not supported in "
                          "'to_networkx' for heterogeneous graphs")
 
-    G = nx.Graph() if to_undirected else nx.DiGraph()
+    if to_undirected:
+        G = nx.MultiGraph() if to_multi else nx.Graph()
+    else:
+        G = nx.MultiDiGraph() if to_multi else nx.DiGraph()
 
     def to_networkx_value(value: Any) -> Any:
         return value.tolist() if isinstance(value, Tensor) else value
@@ -144,51 +155,54 @@ def to_networkx(
         G.graph[key] = to_networkx_value(data[key])
 
     node_offsets = data.node_offsets
-    for store in data.node_stores:
-        start = node_offsets[store._key]
-        for i in range(store.num_nodes):
-            attr: Dict[str, Any] = {}
+    for node_store in data.node_stores:
+        start = node_offsets[node_store._key]
+        assert node_store.num_nodes is not None
+        for i in range(node_store.num_nodes):
+            node_kwargs: Dict[str, Any] = {}
             if isinstance(data, HeteroData):
-                attr['type'] = store._key
+                node_kwargs['type'] = node_store._key
             for key in node_attrs or []:
-                attr[key] = to_networkx_value(store[key][i])
-            G.add_node(start + i, **attr)
+                node_kwargs[key] = to_networkx_value(node_store[key][i])
 
-    for store in data.edge_stores:
-        for i, (v, w) in enumerate(store.edge_index.t().tolist()):
+            G.add_node(start + i, **node_kwargs)
+
+    for edge_store in data.edge_stores:
+        for i, (v, w) in enumerate(edge_store.edge_index.t().tolist()):
             if to_undirected_upper and v > w:
                 continue
             elif to_undirected_lower and v < w:
                 continue
-            elif remove_self_loops and v == w and not store.is_bipartite():
+            elif remove_self_loops and v == w and not edge_store.is_bipartite(
+            ):
                 continue
 
-            attr: Dict[str, Any] = {}
+            edge_kwargs: Dict[str, Any] = {}
             if isinstance(data, HeteroData):
-                v = v + node_offsets[store._key[0]]
-                w = w + node_offsets[store._key[-1]]
-                attr['type'] = store._key
+                v = v + node_offsets[edge_store._key[0]]
+                w = w + node_offsets[edge_store._key[-1]]
+                edge_kwargs['type'] = edge_store._key
             for key in edge_attrs or []:
-                attr[key] = to_networkx_value(store[key][i])
+                edge_kwargs[key] = to_networkx_value(edge_store[key][i])
 
-            G.add_edge(v, w, **attr)
+            G.add_edge(v, w, **edge_kwargs)
 
     return G
 
 
 def from_networkx(
     G: Any,
-    group_node_attrs: Optional[Union[List[str], all]] = None,
-    group_edge_attrs: Optional[Union[List[str], all]] = None,
+    group_node_attrs: Optional[Union[List[str], Literal['all']]] = None,
+    group_edge_attrs: Optional[Union[List[str], Literal['all']]] = None,
 ) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
-        group_node_attrs (List[str] or all, optional): The node attributes to
+        group_node_attrs (List[str] or "all", optional): The node attributes to
             be concatenated and added to :obj:`data.x`. (default: :obj:`None`)
-        group_edge_attrs (List[str] or all, optional): The edge attributes to
+        group_edge_attrs (List[str] or "all", optional): The edge attributes to
             be concatenated and added to :obj:`data.edge_attr`.
             (default: :obj:`None`)
 
@@ -220,51 +234,53 @@ def from_networkx(
         edge_index[0, i] = mapping[src]
         edge_index[1, i] = mapping[dst]
 
-    data = defaultdict(list)
+    data_dict: Dict[str, Any] = defaultdict(list)
+    data_dict['edge_index'] = edge_index
 
+    node_attrs: List[str] = []
     if G.number_of_nodes() > 0:
         node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
-    else:
-        node_attrs = {}
 
+    edge_attrs: List[str] = []
     if G.number_of_edges() > 0:
         edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
-    else:
-        edge_attrs = {}
+
+    if group_node_attrs is not None and not isinstance(group_node_attrs, list):
+        group_node_attrs = node_attrs
+
+    if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
+        group_edge_attrs = edge_attrs
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)].append(value)
+            data_dict[str(key)].append(value)
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
             key = f'edge_{key}' if key in node_attrs else key
-            data[str(key)].append(value)
+            data_dict[str(key)].append(value)
 
     for key, value in G.graph.items():
         if key == 'node_default' or key == 'edge_default':
             continue  # Do not load default attributes.
         key = f'graph_{key}' if key in node_attrs else key
-        data[str(key)] = value
+        data_dict[str(key)] = value
 
-    for key, value in data.items():
+    for key, value in data_dict.items():
         if isinstance(value, (tuple, list)) and isinstance(value[0], Tensor):
-            data[key] = torch.stack(value, dim=0)
+            data_dict[key] = torch.stack(value, dim=0)
         else:
             try:
-                data[key] = torch.tensor(value)
-            except (ValueError, TypeError, RuntimeError):
+                data_dict[key] = torch.as_tensor(value)
+            except Exception:
                 pass
 
-    data['edge_index'] = edge_index.view(2, -1)
-    data = Data.from_dict(data)
+    data = Data.from_dict(data_dict)
 
-    if group_node_attrs is all:
-        group_node_attrs = list(node_attrs)
     if group_node_attrs is not None:
         xs = []
         for key in group_node_attrs:
@@ -274,8 +290,6 @@ def from_networkx(
             del data[key]
         data.x = torch.cat(xs, dim=-1)
 
-    if group_edge_attrs is all:
-        group_edge_attrs = list(edge_attrs)
     if group_edge_attrs is not None:
         xs = []
         for key in group_edge_attrs:
@@ -360,7 +374,7 @@ def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     return edge_index, edge_weight
 
 
-def to_trimesh(data):
+def to_trimesh(data: 'torch_geometric.data.Data') -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`trimesh.Trimesh`.
 
@@ -377,12 +391,18 @@ def to_trimesh(data):
         <trimesh.Trimesh(vertices.shape=(4, 3), faces.shape=(2, 3))>
     """
     import trimesh
-    return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
-                           faces=data.face.detach().t().cpu().numpy(),
-                           process=False)
+
+    assert data.pos is not None
+    assert data.face is not None
+
+    return trimesh.Trimesh(
+        vertices=data.pos.detach().cpu().numpy(),
+        faces=data.face.detach().t().cpu().numpy(),
+        process=False,
+    )
 
 
-def from_trimesh(mesh):
+def from_trimesh(mesh: Any) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`trimesh.Trimesh` to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -407,8 +427,12 @@ def from_trimesh(mesh):
     return Data(pos=pos, face=face)
 
 
-def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
-               relabel_nodes: bool = True, directed: bool = True):
+def to_cugraph(
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    relabel_nodes: bool = True,
+    directed: bool = True,
+) -> Any:
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
 
@@ -519,22 +543,22 @@ def to_dgl(
 
     if isinstance(data, HeteroData):
         data_dict = {}
-        for edge_type, store in data.edge_items():
-            if store.get('edge_index') is not None:
-                row, col = store.edge_index
+        for edge_type, edge_store in data.edge_items():
+            if edge_store.get('edge_index') is not None:
+                row, col = edge_store.edge_index
             else:
-                row, col, _ = store['adj_t'].t().coo()
+                row, col, _ = edge_store['adj_t'].t().coo()
 
             data_dict[edge_type] = (row, col)
 
         g = dgl.heterograph(data_dict)
 
-        for node_type, store in data.node_items():
-            for attr, value in store.items():
+        for node_type, node_store in data.node_items():
+            for attr, value in node_store.items():
                 g.nodes[node_type].data[attr] = value
 
-        for edge_type, store in data.edge_items():
-            for attr, value in store.items():
+        for edge_type, edge_store in data.edge_items():
+            for attr, value in edge_store.items():
                 if attr in ['edge_index', 'adj_t']:
                     continue
                 g.edges[edge_type].data[attr] = value
@@ -582,6 +606,8 @@ def from_dgl(
 
     if not isinstance(g, dgl.DGLGraph):
         raise ValueError(f"Invalid data type (got '{type(g)}')")
+
+    data: Union[Data, HeteroData]
 
     if g.is_homogeneous:
         data = Data()

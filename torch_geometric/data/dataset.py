@@ -1,5 +1,4 @@
 import copy
-import os
 import os.path as osp
 import re
 import sys
@@ -16,6 +15,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -49,24 +49,24 @@ class Dataset(torch.utils.data.Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
         be present in order to skip downloading.
         """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
         must be present in order to skip processing.
         """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
@@ -88,13 +88,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -158,7 +158,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         elif y.numel() == y.size(0) and not torch.is_floating_point(y):
             return int(y.max()) + 1
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
+            num_classes = torch.unique(y).numel()
+            if num_classes > 2:
+                warnings.warn("Found floating-point labels while calling "
+                              "`dataset.num_classes`. Returning the number of "
+                              "unique elements. Please make sure that this "
+                              "is expected before proceeding.")
+            return num_classes
         else:
             return y.size(-1)
 
@@ -170,7 +176,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # may produce a tuple of data objects (e.g., when used in combination
         # with `RandomLinkSplit`, so we take care of this case here as well:
         data_list = _get_flattened_data_list([data for data in self])
-        y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        if 'y' in data_list[0] and isinstance(data_list[0].y, Tensor):
+            y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        else:
+            y = torch.as_tensor([data.y for data in data_list if 'y' in data])
 
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
@@ -210,7 +219,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        os.makedirs(self.raw_dir, exist_ok=True)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -241,7 +250,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        os.makedirs(self.processed_dir, exist_ok=True)
+        fs.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')

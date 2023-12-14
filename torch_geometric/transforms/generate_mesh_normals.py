@@ -12,7 +12,8 @@ class GenerateMeshNormals(BaseTransform):
     faces (functional name: :obj:`generate_mesh_normals`).
     """
     def forward(self, data: Data) -> Data:
-        assert 'face' in data
+        assert data.pos is not None
+        assert data.face is not None
         pos, face = data.pos, data.face
 
         vec1 = pos[face[1]] - pos[face[0]]

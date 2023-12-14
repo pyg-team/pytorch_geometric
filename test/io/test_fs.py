@@ -3,13 +3,20 @@ from os import path as osp
 
 import fsspec
 import pytest
+import torch
 
+import torch_geometric.typing
 from torch_geometric.data import extract_zip
 from torch_geometric.io import fs
 from torch_geometric.testing import noWindows
 
+if torch_geometric.typing.WITH_WINDOWS:  # FIXME
+    params = ['file']
+else:
+    params = ['file', 'memory']
 
-@pytest.fixture(params=['file', 'memory'])
+
+@pytest.fixture(params=params)
 def tmp_fs_path(request, tmp_path) -> str:
     if request.param == 'file':
         return tmp_path.resolve().as_posix()
@@ -44,14 +51,18 @@ def test_makedirs(tmp_fs_path):
     assert fs.isdir(path)
 
 
-def test_ls(tmp_fs_path):
+@pytest.mark.parametrize('detail', [False, True])
+def test_ls(tmp_fs_path, detail):
     for i in range(2):
         with fsspec.open(osp.join(tmp_fs_path, str(i)), 'w') as f:
             f.write('here')
-    res = fs.ls(tmp_fs_path)
+    res = fs.ls(tmp_fs_path, detail)
     assert len(res) == 2
     expected_protocol = fs.get_fs(tmp_fs_path).protocol
-    assert all(fs.get_fs(path).protocol == expected_protocol for path in res)
+    for output in res:
+        if detail:
+            output = output['name']
+        assert fs.get_fs(output).protocol == expected_protocol
 
 
 def test_cp(tmp_fs_path):
@@ -110,3 +121,12 @@ def test_extract(tmp_fs_path):
     assert len(fs.ls(dst)) == 2
     for i in range(2):
         fs.exists(osp.join(dst, str(i)))
+
+
+def test_torch_save_load(tmp_fs_path):
+    x = torch.randn(5, 5)
+    path = osp.join(tmp_fs_path, 'x.pt')
+
+    fs.torch_save(x, path)
+    out = fs.torch_load(path)
+    assert torch.equal(x, out)
