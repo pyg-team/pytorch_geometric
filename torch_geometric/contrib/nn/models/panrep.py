@@ -57,7 +57,8 @@ class PanRepHetero(torch.nn.Module):
         self.device = device
 
         # Initialize the encoder and decoders
-        self.encoder = RGCNEncoder(feature_dim, embed_dim, num_relations)
+        self.encoder = RGCNEncoder(feature_dim, embed_dim, num_relations,
+                                   device=device)
         self.decoders = {
             'crd':
             ClusterRecoverDecoderHomo(n_cluster, embed_dim, hidden_dim,
