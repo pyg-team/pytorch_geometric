@@ -47,6 +47,11 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     assert str(model) == f'GCN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
+    model = GCN(8, [16, 17, 18], out_channels=out_dim, dropout=dropout,
+                act=act, norm=norm, jk=jk)
+    assert str(model) == f'GCN(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
 
 @pytest.mark.parametrize('out_dim', out_dims)
 @pytest.mark.parametrize('dropout', dropouts)
@@ -59,6 +64,11 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     out_channels = 16 if out_dim is None else out_dim
 
     model = GraphSAGE(8, 16, num_layers=3, out_channels=out_dim,
+                      dropout=dropout, act=act, norm=norm, jk=jk)
+    assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+    model = GraphSAGE(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
                       dropout=dropout, act=act, norm=norm, jk=jk)
     assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
@@ -76,6 +86,11 @@ def test_gin(out_dim, dropout, act, norm, jk):
 
     model = GIN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
+    assert str(model) == f'GIN(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+    model = GIN(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
+                dropout=dropout, act=act, norm=norm, jk=jk)
     assert str(model) == f'GIN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -101,6 +116,11 @@ def test_gat(out_dim, dropout, act, norm, jk):
         assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
+        model = GAT(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
+                    dropout=dropout, act=act, norm=norm, jk=jk)
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
+        assert model(x, edge_index).size() == (3, out_channels)
+
 
 @pytest.mark.parametrize('out_dim', out_dims)
 @pytest.mark.parametrize('dropout', dropouts)
@@ -123,6 +143,11 @@ def test_pna(out_dim, dropout, act, norm, jk):
     assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
+    model = PNA(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
+                dropout=dropout, act=act, norm=norm, jk=jk)
+    assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
 
 @pytest.mark.parametrize('out_dim', out_dims)
 @pytest.mark.parametrize('dropout', dropouts)
@@ -136,6 +161,11 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
 
     model = EdgeCNN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                     act=act, norm=norm, jk=jk)
+    assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+    model = EdgeCNN(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
+                    dropout=dropout, act=act, norm=norm, jk=jk)
     assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -159,6 +189,14 @@ def test_one_layer_gnn(out_dim, jk):
 
     model = GraphSAGE(8, 16, num_layers=1, out_channels=out_dim, jk=jk)
     assert model(x, edge_index).size() == (3, out_channels)
+
+    model = GraphSAGE(8, [16], num_layers=1, out_channels=out_dim, jk=jk)
+    assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=1)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+    with pytest.raises(ValueError):
+        model = GraphSAGE(8, [16, 17, 18], num_layers=3, out_channels=out_dim,
+                          jk=jk)
 
 
 @pytest.mark.parametrize('norm', [
