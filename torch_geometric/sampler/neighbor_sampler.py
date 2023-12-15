@@ -234,16 +234,22 @@ class NeighborSampler(BaseSampler):
                 self.node_time: Optional[Dict[NodeType, Tensor]] = None
                 self.edge_time: Optional[Dict[NodeType, Tensor]] = None
 
-                # TODO Add support for edge-level temporal sampling.
                 if time_attr is not None:
                     for attr in time_attrs:  # Reset index for full data.
                         attr.index = None
                     time_tensors = feature_store.multi_get_tensor(time_attrs)
-                    self.node_time = {
+
+                    # Currently, we determine whether to use node-level or
+                    # edge-level temporal sampling based on the attribute name.
+                    time = {
                         time_attr.group_name: time_tensor
                         for time_attr, time_tensor in zip(
                             time_attrs, time_tensors)
                     }
+                    if time_attr == 'time':
+                        self.node_time = time
+                    else:
+                        self.edge_time = time
 
                 # Conversion to/from C++ string type (see above):
                 self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
