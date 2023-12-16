@@ -424,7 +424,6 @@ embed_dim = 3000
 num_motifs = 8
 
 index, node_features = get_all_node_features(imdb_graph, 'x')
-
 true_clusters = generate_cluster(n_cluster, node_features)
 
 metapath = {
@@ -442,10 +441,10 @@ dire = osp.dirname(osp.realpath(__file__))
 motif_features = txt_to_motif(dire + '/motif_feature.txt')
 
 
-def train(model, optimizer, num_epoch):
+def train(model, optimizer, num_epoch, g):
     for epoch in range(num_epoch):
         optimizer.zero_grad()
-        loss = model()
+        loss = model(g)
         loss.backward()
         optimizer.step()
         print('Epoch {}, loss {:.4f}'.format(epoch, loss.item()))
@@ -453,8 +452,8 @@ def train(model, optimizer, num_epoch):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = PanRepHetero(feature_dim, embed_dim, num_relations, n_cluster, h_dim,
-                     num_motifs, True, 2, imdb_graph, true_clusters,
-                     motif_features, rw_neighbors, device).to(device)
+                     num_motifs, True, 2, true_clusters, motif_features,
+                     rw_neighbors, device).to(device)
 
 num_epoch = 10
 lr = 0.005
@@ -463,4 +462,4 @@ weight_decay = 0
 optimizer = torch.optim.Adam(model.parameters(), lr=lr,
                              weight_decay=weight_decay)
 
-train(model, optimizer, num_epoch)
+train(model, optimizer, num_epoch, imdb_graph)

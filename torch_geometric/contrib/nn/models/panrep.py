@@ -29,7 +29,6 @@ class PanRepHetero(torch.nn.Module):
         Decoder.
         negative_rate (int): Negative sampling rate for metapath random walk
         decoder.
-        g (Graph): The input graph.
         true_clusters (Tensor): Ground truth clusters for the Cluster
         Recovery Decoder.
         motif_features (Tensor): Motif features for the Node Motif Decoder.
@@ -38,7 +37,7 @@ class PanRepHetero(torch.nn.Module):
         device (torch.device, optional): Device on which to run the model.
     """
     def __init__(self, feature_dim, embed_dim, num_relations, n_cluster,
-                 hidden_dim, num_motifs, single_layer, negative_rate, g,
+                 hidden_dim, num_motifs, single_layer, negative_rate,
                  true_clusters, motif_features, rw_neighbors, device):
         super(PanRepHetero, self).__init__()
         # Store parameters and data
@@ -50,7 +49,6 @@ class PanRepHetero(torch.nn.Module):
         self.num_motifs = num_motifs
         self.single_layer = single_layer
         self.negative_rate = negative_rate
-        self.g = g
         self.true_clusters = true_clusters
         self.motif_features = motif_features
         self.rw_neighbors = rw_neighbors
@@ -59,32 +57,35 @@ class PanRepHetero(torch.nn.Module):
         # Initialize the encoder and decoders
         self.encoder = RGCNEncoder(feature_dim, embed_dim, num_relations,
                                    device=device)
-        self.decoders = {
+        self.decoders = nn.ModuleDict({
             'crd':
-            ClusterRecoverDecoderHomo(n_cluster, embed_dim, hidden_dim,
-                                      device=device),
+            ClusterRecoverDecoderHomo(n_cluster, embed_dim, hidden_dim, device,
+                                      single_layer),
             'imd':
-            InformationMaximizationDecoder(embed_dim, device=device),
+            InformationMaximizationDecoder(embed_dim, device),
             'nmd':
-            NodeMotifDecoder(embed_dim, num_motifs, device=device,
+            NodeMotifDecoder(embed_dim, num_motifs, device,
                              single_layer=single_layer),
             'mrw':
-            MetapathRWalkDecoder(embed_dim, rw_neighbors, device=device,
-                                 negative_rate=negative_rate)
-        }
+            MetapathRWalkDecoder(embed_dim, rw_neighbors, device,
+                                 negative_rate)
+        })
 
-    def forward(self):
+    def forward(self, g):
         """Forward pass of the PanRepHetero model.
+
+        Args:
+            g (Graph): The input graph.
 
         Returns:
             Tensor: The sum of losses from each decoder in the model.
         """
         # Extract and process node features and edge data
-        index, node_features = get_all_node_features(self.g, 'x')
+        index, node_features = get_all_node_features(g, 'x')
         pos_samples = node_features.to(self.device)
-        neg_samples = generate_neg_samples(self.g, 'x')
-        edge_index = get_complete_edge_indices(self.g, index).to(self.device)
-        edge_type = get_edge_type(self.g).to(self.device)
+        neg_samples = generate_neg_samples(g, 'x')
+        edge_index = get_complete_edge_indices(g, index).to(self.device)
+        edge_type = get_edge_type(g).to(self.device)
 
         # Encode the positive and negative node samples
         pos_x = self.encoder(pos_samples, edge_index,
@@ -108,7 +109,7 @@ class PanRepHetero(torch.nn.Module):
                                          pos_x)
 
             if decoder_name == 'mrw':
-                mrw_loss = decoder_model(pyg_to_dgl(self.g), pos_embed_dict)
+                mrw_loss = decoder_model(pyg_to_dgl(g), pos_embed_dict)
 
         # Sum and return the total loss from all dec
         return crd_loss + imd_loss + nmd_loss + mrw_loss
