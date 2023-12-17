@@ -582,8 +582,8 @@ class RGCNEncoder(torch.nn.Module):
 
 intialized_rgcn_encoder = RGCNEncoder(feature_dim, embed_dim, num_relations,
                                       device=device).to(device)
-print("*************Start task_supervised node classification ",
-      "training without panrep pretrained node embeddings*************")
+print("""*************Start task_supervised node classification training
+    without panrep pretrained node embeddings*************""")
 node_classification_train(imdb_graph, intialized_rgcn_encoder,
                           rgcn_node_classifier, rgcn_optimizer, epochs=30,
                           device=device, panrep_initialization=False)
