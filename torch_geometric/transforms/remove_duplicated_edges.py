@@ -39,11 +39,8 @@ class RemoveDuplicatedEdges(BaseTransform):
         for store in data.edge_stores:
             keys = [key for key in self.keys if key in store]
 
-            num_nodes, num_dst_nodes = store.size()
-            if num_nodes is None:
-                num_nodes = num_dst_nodes
-            elif num_dst_nodes is not None and num_dst_nodes > num_nodes:
-                num_nodes = num_dst_nodes
+            size = [s for s in store.size() if s is not None]
+            num_nodes = max(size) if len(size) > 0 else None
 
             store.edge_index, edge_attrs = coalesce(
                 edge_index=store.edge_index,
