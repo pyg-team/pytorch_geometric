@@ -1,7 +1,6 @@
 # Standard library imports
 import math
 
-import dgl
 # PyTorch imports for deep learning
 import torch
 import torch.nn as nn
@@ -109,7 +108,7 @@ class PanRepHetero(torch.nn.Module):
                                          pos_x)
 
             if decoder_name == 'mrw':
-                mrw_loss = decoder_model(pyg_to_dgl(g), pos_embed_dict)
+                mrw_loss = decoder_model(g, 'x', pos_embed_dict)
 
         # Sum and return the total loss from all dec
         return crd_loss + imd_loss + nmd_loss + mrw_loss
@@ -400,11 +399,12 @@ class MetapathRWalkDecoder(torch.nn.Module):
         score = torch.sum(head_embed * r * tail_embed, dim=1)
         return score
 
-    def forward(self, graph, node_embed_dict):
+    def forward(self, g, ptr, node_embed_dict):
         """Forward pass of the MetapathRWalkDecoder.
 
         Args:
-            graph (Graph): The input graph.
+            g (Graph): The input graph.
+            ptr (str): A pointer to the feature of graph.
             node_embed_dict (dict): A dictionary containing node embeddings,
             keyed by node type.
 
@@ -420,9 +420,14 @@ class MetapathRWalkDecoder(torch.nn.Module):
         for node_type in self.mrw.keys():
             cur_node_type_neighbors = self.mrw[node_type]
             for neighbor_type in cur_node_type_neighbors.keys():
+                cur_node_ids = torch.arange(
+                    0,
+                    g.get_node_store(node_type)[ptr].shape[0])
                 neighbor_ids = cur_node_type_neighbors[neighbor_type][
-                    graph.dstnodes(node_type)]
-                all_neighbor_ids = graph.dstnodes(neighbor_type)
+                    cur_node_ids]
+                all_neighbor_ids = torch.arange(
+                    0,
+                    g.get_node_store(neighbor_type)[ptr].shape[0])
 
                 sampled_neighbors_ids = (torch.nonzero(
                     neighbor_ids[..., None] == all_neighbor_ids))
@@ -519,43 +524,6 @@ class NodeMotifDecoder(torch.nn.Module):
         # Compute the mean squared error loss normalized by the number of nodes
         loss = F.mse_loss(reconstructed, motif_features) / node_embed.shape[0]
         return loss
-
-
-def pyg_to_dgl(graph):
-    """Convert a graph from PyTorch Geometric (PyG) format to Deep Graph
-    Library (DGL) format.
-
-    This function takes a graph in PyG format and converts it into a DGL graph.
-    It iterates over
-    the relations in the PyG graph and constructs a dictionary that maps each
-    relation to its edge
-    indices, which is then used to create the DGL graph.
-
-    Args:
-        graph (PyG Graph): The graph in PyTorch Geometric format.
-
-    Returns:
-        DGLGraph: The graph in Deep Graph Library format.
-
-    Note:
-        This function assumes that the input PyG graph has an attribute
-        'edge_items' which contains
-        the relational data necessary for constructing a heterogeneous graph in
-        DGL.
-    """
-    # Dictionary to store relation to edge index mapping
-    rel_dic = {}
-
-    # Iterate over each relation and its data in the PyG graph
-    for rel, dic in graph.edge_items():
-        # Extract edge indices for the current relation
-        cur = dic['edge_index']
-        # Update relation dictionary with source and destination node indices
-        rel_dic[rel] = cur[0], cur[1]
-
-    # Create a DGL heterogeneous graph using the relation dictionary
-    dgl_graph = dgl.heterograph(rel_dic)
-    return dgl_graph
 
 
 def get_all_node_features(data, ptr):
