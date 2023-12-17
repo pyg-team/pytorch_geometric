@@ -4,10 +4,12 @@ import dgl
 import numpy as np
 import pandas as pd
 import torch
+import torch.nn as nn
 from sklearn.cluster import KMeans
 
 from torch_geometric.contrib.nn import PanRepHetero
 from torch_geometric.datasets import IMDB
+from torch_geometric.nn import RGCNConv
 
 # Some Notes to use this model:
 # To compute NMD loss, we first need to run our defined function
@@ -416,6 +418,7 @@ def convert_to_mtx(hetero_data):
             f.write(f"{edge[0]} {edge[1]}\n")
 
 
+# Preparation for training panrep
 num_relations = 4
 feature_dim = 3066
 n_cluster = 8
@@ -450,16 +453,137 @@ def train(model, optimizer, num_epoch, g):
         print('Epoch {}, loss {:.4f}'.format(epoch, loss.item()))
 
 
+# Start training panrep universal node embedddings
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = PanRepHetero(feature_dim, embed_dim, num_relations, n_cluster, h_dim,
                      num_motifs, True, 2, true_clusters, motif_features,
                      rw_neighbors, device).to(device)
-
-num_epoch = 10
+num_epoch = 50
 lr = 0.005
 weight_decay = 0
-
 optimizer = torch.optim.Adam(model.parameters(), lr=lr,
                              weight_decay=weight_decay)
-
 train(model, optimizer, num_epoch, imdb_graph)
+
+
+# Define a prediction model for node classification on movie_typed nodes
+class NodeClassifier(nn.Module):
+    def __init__(self, input_size, hidden_sizes, output_size):
+        super(NodeClassifier, self).__init__()
+        layers = []
+        all_sizes = [input_size] + hidden_sizes + [output_size]
+
+        for i in range(len(all_sizes) - 1):
+            layers.append(nn.Linear(all_sizes[i], all_sizes[i + 1]))
+            if i < len(all_sizes) - 2:
+                layers.append(nn.ReLU())
+
+        self.layers = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.layers(x)
+
+
+# Initialize two node classification headers for experiements
+# with or without PanRep pretrained node embeddings
+input_size = embed_dim
+hidden_sizes = [512, 256, 128]
+output_size = 3  # all movie nodes have 3 possible labels in our IMDB data
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+panrep_node_classifier = NodeClassifier(input_size, hidden_sizes,
+                                        output_size).to(device)
+rgcn_node_classifier = NodeClassifier(input_size, hidden_sizes,
+                                      output_size).to(device)
+
+
+# Define train function for node classification task
+def node_classification_train(g, embed_model, classification_model, optimizer,
+                              epochs, device, panrep_initialization=True):
+    classification_model.train()
+    if panrep_initialization:
+        encoder = embed_model.encoder
+    else:
+        encoder = embed_model
+
+    train_mask = g["movie"].train_mask
+    val_mask = g["movie"].val_mask
+
+    index, node_features = get_all_node_features(g, 'x')
+    movie_label = g["movie"].y.to(device)
+    node_features = node_features.to(device)
+    edge_index = get_complete_edge_indices(g, index).to(device)
+    edge_type = get_edge_type(g).to(device)
+    movie_num_nodes = 4278
+
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+
+        node_embed = encoder(node_features, edge_index, edge_type)
+        node_embed = node_embed[:movie_num_nodes, :]
+        pred = classification_model(node_embed)
+
+        train_pred = pred[train_mask].to(device)
+        train_labels = movie_label[train_mask].to(device)
+
+        loss_function = nn.CrossEntropyLoss()
+        loss = loss_function(train_pred, train_labels)
+        loss.backward()
+        optimizer.step()
+        pred_classes = torch.argmax(pred, dim=1)
+        correct = (
+            pred_classes[train_mask] == movie_label[train_mask]).sum().item()
+        accuracy = correct / train_mask.sum().item()
+
+        print(
+            f'Epoch {epoch}, Train Loss: {loss.item()}, Train Accu: {accuracy}'
+        )
+
+        val_loss, val_acc = node_classification_evaluate(
+            classification_model, pred, val_mask, movie_label)
+        print(f'Epoch {epoch}, Val Loss: {val_loss}, Val Accu: {val_acc}')
+
+
+# Define evaluation function for node classification task
+def node_classification_evaluate(model, pred, mask, label):
+    model.eval()
+    with torch.no_grad():
+        loss = nn.CrossEntropyLoss()(pred[mask], label[mask])
+        pred = torch.argmax(pred, dim=1)
+        correct = (pred[mask] == label[mask]).sum().item()
+        accuracy = correct / mask.sum().item()
+
+    return loss.item(), accuracy
+
+
+# Start Panrep_FT node classification training
+# We use the pretrained RGCN encoder from Panrep training here
+panrep_optimizer = torch.optim.Adam(panrep_node_classifier.parameters(),
+                                    lr=0.01)
+print("*************Start Panrep_FT node classification training*************")
+model.to(device)
+node_classification_train(imdb_graph, model, panrep_node_classifier,
+                          panrep_optimizer, epochs=30, device=device)
+
+# Start task_supervised node classification training
+# without panrep pretrained node embeddings
+# We use an unitialized RGCN encoder here
+rgcn_optimizer = torch.optim.Adam(rgcn_node_classifier.parameters(), lr=0.01)
+
+
+class RGCNEncoder(torch.nn.Module):
+    def __init__(self, in_channels, out_channels, num_relations, device):
+        super(RGCNEncoder, self).__init__()
+        self.conv = RGCNConv(in_channels, out_channels, num_relations)
+
+    def forward(self, x, edge_index, edge_type):
+        x = self.conv(x, edge_index, edge_type)
+        return x
+
+
+intialized_rgcn_encoder = RGCNEncoder(feature_dim, embed_dim, num_relations,
+                                      device=device).to(device)
+print("*************Start task_supervised node classification ",
+      "training without panrep pretrained node embeddings*************")
+node_classification_train(imdb_graph, intialized_rgcn_encoder,
+                          rgcn_node_classifier, rgcn_optimizer, epochs=30,
+                          device=device, panrep_initialization=False)
