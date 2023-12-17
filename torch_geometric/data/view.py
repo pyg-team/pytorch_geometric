@@ -1,16 +1,16 @@
-from typing import Any, Iterator, Mapping, Tuple
+from typing import Any, Iterator, Mapping, Set, Tuple
 
 
 class MappingView:
-    def __init__(self, mapping: Mapping, *args: str):
+    def __init__(self, mapping: Mapping[str, Any], *args: str):
         self._mapping = mapping
         self._args = args
 
-    def _keys(self) -> Iterator[str]:
+    def _keys(self) -> Set[str]:
         if len(self._args) == 0:
-            return self._mapping.keys()
+            return set(self._mapping.keys())
         else:
-            return [arg for arg in self._args if arg in self._mapping]
+            return {arg for arg in self._args if arg in self._mapping}
 
     def __len__(self) -> int:
         return len(self._keys())
@@ -19,7 +19,7 @@ class MappingView:
         mapping = {key: self._mapping[key] for key in self._keys()}
         return f'{self.__class__.__name__}({mapping})'
 
-    __class_getitem__ = classmethod(type([]))
+    __class_getitem__ = classmethod(type([]))  # type: ignore
 
 
 class KeysView(MappingView):
