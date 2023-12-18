@@ -31,7 +31,7 @@ def clean_runs(get_all_remote_pids, conn):
 
 
 def kill_proc(ip, port, pids):
-    """ssh to remote node and kill the specified proc."""
+    """Ssh to remote node and kill the specified proc."""
     curr_pid = os.getpid()
     killed_pids = []
     pids.sort()
