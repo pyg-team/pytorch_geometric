@@ -1,4 +1,5 @@
 import argparse
+import os
 import os.path as osp
 import time
 
@@ -16,37 +17,31 @@ from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.typing import Tuple
 
-
 @torch.no_grad()
-def test(model, test_loader, dataset_name):
-    evaluator = Evaluator(name=dataset_name)
+def test(model, loader):
     model.eval()
-    xs = []
-    y_true = []
-    for i, batch in enumerate(test_loader):
-        if i == 0:
-            device = batch.x.device
-        x = model(batch.x, batch.edge_index)[:batch.batch_size]
-        xs.append(x.cpu())
-        y_true.append(batch.y[:batch.batch_size].cpu())
-    xs = [t.to(device) for t in xs]
-    y_true = [t.to(device) for t in y_true]
-    y_pred = torch.cat(xs, dim=0).argmax(dim=-1, keepdim=True)
-    y_true = torch.cat(y_true, dim=0).unsqueeze(-1)
-    test_acc = evaluator.eval({
-        'y_true': y_true,
-        'y_pred': y_pred,
-    })['acc']
-    return test_acc
+    total_examples = total_correct = 0
+    for i, batch in enumerate(loader):
+        batch_time_start = time.time()
+        batch_size = batch.batch_size
+        out = model(batch.x, batch.edge_index)[:batch_size]
+        pred = out.argmax(dim=-1)
+        pred = int((pred == batch.y[:batch_size]).sum())
+        batch_acc = pred / batch_size
+        total_examples += batch_size
+        total_correct += pred
+    torch.distributed.barrier()
+
+    return total_correct / total_examples
 
 
 def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                       num_training_procs_per_node: int, dataset_name: str,
                       root_dir: str, node_label_file: str, in_channels: int,
                       out_channels: int, train_idx: torch.Tensor,
-                      test_idx: torch.Tensor, epochs: int, num_neighbors: str,
-                      batch_size: int, num_workers: int, concurrency: int,
-                      master_addr: str, training_pg_master_port: int,
+                      test_idx: torch.Tensor, epochs: int, num_neighbors: str, batch_size: int,
+                      num_workers: int, concurrency: int, learning_rate: float, master_addr: str,
+                      training_pg_master_port: int,
                       train_loader_master_port: int,
                       test_loader_master_port: int):
 
@@ -81,9 +76,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
     feature.feature_pb = node_pb
     feature.meta = meta
 
-    print(
-        f"-------- meta={meta}, partition_idx={partition_idx}, node_pb={node_pb} "
-    )
+    print(f"-------- meta={meta}, partition_idx={partition_idx}, node_pb={node_pb} ")
 
     # load the label file and put into graph as labels
     if node_label_file is not None:
@@ -129,7 +122,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         concurrency=concurrency, master_addr=master_addr,
         master_port=train_loader_master_port, async_sampling=True,
         filter_per_worker=False, current_ctx=current_ctx,
-        rpc_worker_names=rpc_worker_names)
+        drop_last=True,
+        )
 
     # setup the train seeds for the loader
     test_idx = test_idx.split(test_idx.size(0) //
@@ -142,7 +136,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         num_workers=num_workers, concurrency=concurrency,
         master_addr=master_addr, master_port=test_loader_master_port,
         async_sampling=True, filter_per_worker=False, current_ctx=current_ctx,
-        rpc_worker_names=rpc_worker_names)
+        drop_last=True,
+        )
 
     # Define model and optimizer.
     model = GraphSAGE(
@@ -152,24 +147,26 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         out_channels=out_channels,
     ).to(current_device)
     model = DistributedDataParallel(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    res = f'./res/partitions{num_nodes}_batchsize{batch_size}_lr{learning_rate}'
+    os.makedirs(res, exist_ok=True)
+
 
     # Train and test.
-    f = open(f'dist_train_sage_for_homo_rank{node_rank}.txt', 'a+')
+    f = open(f'{res}/dist_train_sage_for_homo_rank{node_rank}.txt', 'a+')
     for epoch in range(0, epochs):
         model.train()
         pbar = tqdm(total=train_idx.size(0))
         start = time.time()
         times = []
         for i, batch in enumerate(train_loader):
-            if i == len(train_loader) - 2:
-                break
             if i == 0:
                 pbar.set_description(f'Epoch {epoch:02d}')
             batch_time_start = time.time()
             optimizer.zero_grad()
-            out = model(batch.x, batch.edge_index)[:batch.batch_size]
-            loss = F.cross_entropy(out, batch.y[:batch.batch_size])
+            out = model(batch.x, batch.edge_index)[: batch.batch_size] 
+            loss = F.cross_entropy(out, batch.y[: batch.batch_size])
             loss.backward()
             optimizer.step()
             batch_time = time.time() - batch_time_start
@@ -178,9 +175,8 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 f"-------- dist_training: i={i}, batch loss={loss}, batch_time={batch_time} --------- "
             )
             pbar.update(batch_size)
-
-        torch.distributed.barrier()
         pbar.close()
+        torch.distributed.barrier()
 
         end = time.time()
         f.write(
@@ -196,10 +192,10 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
         print("\n")
 
         # Test accuracy.
-        if epoch % 5 == 0:
-            test_acc = test(model, test_loader, dataset_name)
+        if epoch % 5 == 0 and epoch>0:
+            print("  Test ... ")
+            test_acc = test(model, test_loader)
             torch.distributed.barrier()
-
             f.write(
                 f'-- [Trainer {current_ctx.rank}] Test Accuracy: {test_acc:.4f}\n'
             )
@@ -212,6 +208,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 "********************************************************************************************** "
             )
         print("\n\n")
+    torch.distributed.barrier()
     torch.distributed.destroy_process_group()
 
 
@@ -249,13 +246,6 @@ if __name__ == '__main__':
         help="Number of distributed nodes.",
     )
     parser.add_argument(
-        "--num_neighbors",
-        type=str,
-        default="15,10,5",
-        help="number of the layers",
-    )
-
-    parser.add_argument(
         "--node_rank",
         type=int,
         default=0,
@@ -270,7 +260,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--epochs",
         type=int,
-        default=3,
+        default=6,
         help="The number of training epochs.",
     )
     parser.add_argument(
@@ -279,6 +269,13 @@ if __name__ == '__main__':
         default=1024,
         help="Batch size for the training and testing dataloader.",
     )
+    parser.add_argument(
+        "--num_neighbors",
+        type=str,
+        default="15,10,5",
+        help="number of the layers",
+    )
+
     parser.add_argument(
         "--num_workers",
         type=int,
@@ -290,6 +287,12 @@ if __name__ == '__main__':
         type=int,
         default=2,
         help="concurrency number for mp.queue to send the sampler output.",
+    )
+    parser.add_argument(
+        "--learning_rate",
+        type=float,
+        default=0.0004,
+        help="learning rate",
     )
 
     parser.add_argument(
@@ -363,8 +366,8 @@ if __name__ == '__main__':
         run_training_proc,
         args=(args.num_nodes, args.node_rank, args.num_training_procs,
               args.dataset, root_dir, node_label_file, args.in_channel,
-              args.out_channel, train_idx, test_idx, args.epochs,
-              args.num_neighbors, args.batch_size, args.num_workers,
-              args.concurrency, args.master_addr, args.training_pg_master_port,
+              args.out_channel, train_idx, test_idx, args.epochs, args.num_neighbors, 
+              args.batch_size, args.num_workers, args.concurrency, args.learning_rate,
+              args.master_addr, args.training_pg_master_port,
               args.train_loader_master_port, args.test_loader_master_port),
         nprocs=args.num_training_procs, join=True)
