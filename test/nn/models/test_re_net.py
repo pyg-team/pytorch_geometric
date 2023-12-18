@@ -9,7 +9,7 @@ from torch_geometric.testing import is_full_test
 class MyTestEventDataset(EventDataset):
     def __init__(self, root, seq_len):
         super().__init__(root, pre_transform=RENet.pre_transform(seq_len))
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def num_nodes(self):
@@ -34,8 +34,8 @@ class MyTestEventDataset(EventDataset):
         return torch.stack([sub, rel, obj, t], dim=1)
 
     def process(self):
-        data_list = super().process()
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        data_list = self._process_data_list()
+        self.save(data_list, self.processed_paths[0])
 
 
 def test_re_net(tmp_path):

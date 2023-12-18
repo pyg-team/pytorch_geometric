@@ -41,15 +41,21 @@ class LaplacianLambdaMax(BaseTransform):
         self.is_undirected = is_undirected
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
+        num_nodes = data.num_nodes
+
         edge_weight = data.edge_attr
         if edge_weight is not None and edge_weight.numel() != data.num_edges:
             edge_weight = None
 
-        edge_index, edge_weight = get_laplacian(data.edge_index, edge_weight,
-                                                self.normalization,
-                                                num_nodes=data.num_nodes)
+        edge_index, edge_weight = get_laplacian(
+            data.edge_index,
+            edge_weight,
+            self.normalization,
+            num_nodes=num_nodes,
+        )
 
-        L = to_scipy_sparse_matrix(edge_index, edge_weight, data.num_nodes)
+        L = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes)
 
         eig_fn = eigs
         if self.is_undirected and self.normalization != 'rw':

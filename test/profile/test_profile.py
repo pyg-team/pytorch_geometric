@@ -1,4 +1,5 @@
-import os.path
+import os
+import os.path as osp
 import warnings
 
 import pytest
@@ -45,7 +46,7 @@ def test_timeit(device):
 @onlyCUDA
 @onlyOnline
 @withPackage('pytorch_memlab')
-def test_profileit(get_dataset):
+def test_profileit_cuda(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
 
     dataset = get_dataset(name='Cora')
@@ -54,7 +55,7 @@ def test_profileit(get_dataset):
                       out_channels=dataset.num_classes).cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    @profileit()
+    @profileit('cuda')
     def train(model, x, edge_index, y):
         model.train()
         optimizer.zero_grad()
@@ -66,11 +67,10 @@ def test_profileit(get_dataset):
     stats_list = []
     for epoch in range(5):
         _, stats = train(model, data.x, data.edge_index, data.y)
-        assert len(stats) == 6
         assert stats.time > 0
-        assert stats.max_allocated_cuda > 0
-        assert stats.max_reserved_cuda > 0
-        assert stats.max_active_cuda > 0
+        assert stats.max_allocated_gpu > 0
+        assert stats.max_reserved_gpu > 0
+        assert stats.max_active_gpu > 0
         assert stats.nvidia_smi_free_cuda > 0
         assert stats.nvidia_smi_used_cuda > 0
 
@@ -78,14 +78,55 @@ def test_profileit(get_dataset):
             stats_list.append(stats)
 
     stats_summary = get_stats_summary(stats_list)
-    assert len(stats_summary) == 7
     assert stats_summary.time_mean > 0
     assert stats_summary.time_std > 0
-    assert stats_summary.max_allocated_cuda > 0
-    assert stats_summary.max_reserved_cuda > 0
-    assert stats_summary.max_active_cuda > 0
+    assert stats_summary.max_allocated_gpu > 0
+    assert stats_summary.max_reserved_gpu > 0
+    assert stats_summary.max_active_gpu > 0
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
+
+
+@onlyXPU
+def test_profileit_xpu(get_dataset):
+    warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
+
+    dataset = get_dataset(name='Cora')
+    data = dataset[0].cuda()
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).cuda()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+    @profileit('xpu')
+    def train(model, x, edge_index, y):
+        model.train()
+        optimizer.zero_grad()
+        out = model(x, edge_index)
+        loss = F.cross_entropy(out, y)
+        loss.backward()
+        return float(loss)
+
+    stats_list = []
+    for epoch in range(5):
+        _, stats = train(model, data.x, data.edge_index, data.y)
+        assert stats.time > 0
+        assert stats.max_allocated_gpu > 0
+        assert stats.max_reserved_gpu > 0
+        assert stats.max_active_gpu > 0
+        assert not hasattr(stats, 'nvidia_smi_free_cuda')
+        assert not hasattr(stats, 'nvidia_smi_used_cuda')
+
+        if epoch >= 2:  # Warm-up
+            stats_list.append(stats)
+
+    stats_summary = get_stats_summary(stats_list)
+    assert stats_summary.time_mean > 0
+    assert stats_summary.time_std > 0
+    assert stats_summary.max_allocated_gpu > 0
+    assert stats_summary.max_reserved_gpu > 0
+    assert stats_summary.max_active_gpu > 0
+    assert not hasattr(stats_summary, 'min_nvidia_smi_free_cuda')
+    assert not hasattr(stats_summary, 'max_nvidia_smi_used_cuda')
 
 
 @withCUDA
@@ -105,7 +146,7 @@ def test_torch_profile(capfd, get_dataset, device):
         assert 'Self CUDA time total' in out
 
     rename_profile_file('test_profile')
-    assert os.path.exists('profile-test_profile.json')
+    assert osp.exists('profile-test_profile.json')
     os.remove('profile-test_profile.json')
 
 
@@ -128,7 +169,7 @@ def test_xpu_profile(capfd, get_dataset, export_chrome_trace):
         assert 'Self XPU' in out
 
     f_name = 'timeline.json'
-    f_exists = os.path.exists(f_name)
+    f_exists = osp.exists(f_name)
     if not export_chrome_trace:
         assert not f_exists
     else:

@@ -13,7 +13,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 class APPNP(MessagePassing):
     r"""The approximate personalized propagation of neural predictions layer
     from the `"Predict then Propagate: Graph Neural Networks meet Personalized
-    PageRank" <https://arxiv.org/abs/1810.05997>`_ paper
+    PageRank" <https://arxiv.org/abs/1810.05997>`_ paper.
 
     .. math::
         \mathbf{X}^{(0)} &= \mathbf{X}

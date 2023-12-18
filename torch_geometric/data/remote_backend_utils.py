@@ -16,7 +16,8 @@ def _internal_num_nodes(
 ) -> Union[int, Tuple[int, int]]:
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
-    in the feature and graph stores that reveal this number."""
+    in the feature and graph stores that reveal this number.
+    """
     def _matches_node_type(query: Union[NodeType, EdgeType],
                            node_type: NodeType) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType
@@ -79,7 +80,8 @@ def num_nodes(
     query: NodeType,
 ) -> int:
     r"""Returns the number of nodes in a given node type stored in a remote
-    backend."""
+    backend.
+    """
     return _internal_num_nodes(feature_store, graph_store, query)
 
 
@@ -89,5 +91,6 @@ def size(
     query: EdgeType,
 ) -> Tuple[int, int]:
     r"""Returns the size of an edge (number of source nodes, number of
-    destination nodes) in an edge stored in a remote backend."""
+    destination nodes) in an edge stored in a remote backend.
+    """
     return _internal_num_nodes(feature_store, graph_store, query)

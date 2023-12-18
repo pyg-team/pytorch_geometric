@@ -77,7 +77,7 @@ class PMLP(torch.nn.Module):
         x: torch.Tensor,
         edge_index: Optional[Tensor] = None,
     ) -> torch.Tensor:
-        """"""
+        """"""  # noqa: D419
         if not self.training and edge_index is None:
             raise ValueError(f"'edge_index' needs to be present during "
                              f"inference in '{self.__class__.__name__}'")

@@ -76,10 +76,10 @@ def parse_types(func: Callable) -> List[Tuple[Dict[str, str], str]]:
     source = inspect.getsource(func)
     signature = inspect.signature(func)
 
-    # Parse `# type: (...) -> ...` annotation. Note that it is allowed to pass
-    # multiple `# type:` annotations in `forward()`.
-    iterator = re.finditer(r'#\s*type:\s*\((.*)\)\s*->\s*(.*)\s*\n', source)
-    matches = list(iterator)
+    # Parse `# {forward_}type: (...) -> ...` annotation. Note that it is
+    # allowed to pass multiple `# {forward_}type:` annotations in `forward()`.
+    regex = r'#\s*(?:forward_)type:\s*\((.*)\)\s*->\s*(.*)\s*\n'
+    matches = list(re.finditer(regex, source))
 
     if len(matches) > 0:
         out = []

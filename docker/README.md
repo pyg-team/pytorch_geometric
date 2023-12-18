@@ -4,11 +4,10 @@ You can run PyG with CUDA 10.1 inside a docker image.
 The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu18.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
 1. Download the dockerfile to your host server.
-2. `$ docker build -t "custom image name"`
-3. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
+1. `$ docker build -t "custom image name"`
+1. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
 
 If you encounter any problems, please feel free to contact <liangshengwen@ict.ac.cn>.
-
 
 # Singularity
 
@@ -49,4 +48,5 @@ to run on the CPU, or
 ```
 singularity exec --nv geometric.sif python3 gat.py
 ```
+
 to run on the GPU.

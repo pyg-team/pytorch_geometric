@@ -21,7 +21,7 @@ except ImportError:
 class XConv(torch.nn.Module):
     r"""The convolutional operator on :math:`\mathcal{X}`-transformed points
     from the `"PointCNN: Convolution On X-Transformed Points"
-    <https://arxiv.org/abs/1801.07791>`_ paper
+    <https://arxiv.org/abs/1801.07791>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathrm{Conv}\left(\mathbf{K},

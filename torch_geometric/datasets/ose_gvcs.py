@@ -26,6 +26,19 @@ class OSE_GVCS(InMemoryDataset):
     The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
     composing the GVCS, and 290 directed edges, each representing one out of
     three relationships between machines.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            every access. (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     machines = [
         '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',
@@ -55,8 +68,10 @@ class OSE_GVCS(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -70,12 +85,12 @@ class OSE_GVCS(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         categories = []
@@ -103,8 +118,8 @@ class OSE_GVCS(InMemoryDataset):
         data['machine'].num_nodes = len(categories)
         data['machine'].category = torch.tensor(categories)
 
-        for rel, edge_index, in edges.items():
-            edge_index = torch.tensor(edge_index).t()
+        for rel, edge_indices, in edges.items():
+            edge_index = torch.tensor(edge_indices).t().contiguous()
             data['machine', rel, 'machine'].edge_index = edge_index
 
         if self.pre_transform is not None:

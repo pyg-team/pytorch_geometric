@@ -145,7 +145,7 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
 
         Args:
             x (torch.Tensor): Node feature tensor
@@ -175,7 +175,8 @@ class PerformerAttention(torch.nn.Module):
     @torch.no_grad()
     def redraw_projection_matrix(self):
         r"""As described in the paper, periodically redraw
-        examples to improve overall approximation of attention."""
+        examples to improve overall approximation of attention.
+        """
         num_rows = self.fast_attn.num_rows
         num_cols = self.fast_attn.num_cols
         projection_matrix = orthogonal_matrix(num_rows, num_cols)

@@ -1,8 +1,11 @@
 import os.path as osp
 import warnings
 from itertools import repeat
+from typing import Dict, List, Optional
 
+import fsspec
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
@@ -15,7 +18,7 @@ except ImportError:
     import pickle
 
 
-def read_planetoid_data(folder, prefix):
+def read_planetoid_data(folder: str, prefix: str) -> Data:
     names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
     items = [read_file(folder, prefix, name) for name in names]
     x, tx, allx, y, ty, ally, graph, test_index = items
@@ -27,7 +30,7 @@ def read_planetoid_data(folder, prefix):
         # There are some isolated nodes in the Citeseer graph, resulting in
         # none consecutive test indices. We need to identify them and add them
         # as zero vectors to `tx` and `ty`.
-        len_test_indices = (test_index.max() - test_index.min()).item() + 1
+        len_test_indices = int(test_index.max() - test_index.min()) + 1
 
         tx_ext = torch.zeros(len_test_indices, tx.size(1), dtype=tx.dtype)
         tx_ext[sorted_test_index - test_index.min(), :] = tx
@@ -75,7 +78,10 @@ def read_planetoid_data(folder, prefix):
     val_mask = index_to_mask(val_index, size=y.size(0))
     test_mask = index_to_mask(test_index, size=y.size(0))
 
-    edge_index = edge_index_from_dict(graph, num_nodes=y.size(0))
+    edge_index = edge_index_from_dict(
+        graph_dict=graph,  # type: ignore
+        num_nodes=y.size(0),
+    )
 
     data = Data(x=x, edge_index=edge_index, y=y)
     data.train_mask = train_mask
@@ -85,13 +91,13 @@ def read_planetoid_data(folder, prefix):
     return data
 
 
-def read_file(folder, prefix, name):
+def read_file(folder: str, prefix: str, name: str) -> Tensor:
     path = osp.join(folder, f'ind.{prefix.lower()}.{name}')
 
     if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)
 
-    with open(path, 'rb') as f:
+    with fsspec.open(path, 'rb') as f:
         warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
         out = pickle.load(f, encoding='latin1')
 
@@ -103,12 +109,16 @@ def read_file(folder, prefix, name):
     return out
 
 
-def edge_index_from_dict(graph_dict, num_nodes=None):
-    row, col = [], []
+def edge_index_from_dict(
+    graph_dict: Dict[int, List[int]],
+    num_nodes: Optional[int] = None,
+) -> Tensor:
+    rows: List[int] = []
+    cols: List[int] = []
     for key, value in graph_dict.items():
-        row += repeat(key, len(value))
-        col += value
-    edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
+        rows += repeat(key, len(value))
+        cols += value
+    edge_index = torch.stack([torch.tensor(rows), torch.tensor(cols)], dim=0)
 
     # NOTE: There are some duplicated edges and self loops in the datasets.
     #       Other implementations do not remove them!

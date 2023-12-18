@@ -80,13 +80,14 @@ class PrefetchLoader:
         first = True
         self.device_helper.maybe_init_stream()
 
+        batch = None
         for next_batch in self.loader:
 
             with self.device_helper.stream_context():
                 next_batch = self.non_blocking_transfer(next_batch)
 
             if not first:
-                yield batch  # noqa
+                yield batch
             else:
                 first = False
 

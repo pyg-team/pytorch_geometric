@@ -11,7 +11,6 @@ from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.data import Dataset, download_url, extract_zip
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
@@ -36,7 +35,7 @@ class SchNet(torch.nn.Module):
     r"""The continuous-filter convolutional neural network SchNet from the
     `"SchNet: A Continuous-filter Convolutional Neural Network for Modeling
     Quantum Interactions" <https://arxiv.org/abs/1706.08566>`_ paper that uses
-    the interactions blocks of the form
+    the interactions blocks of the form.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \odot
@@ -175,7 +174,8 @@ class SchNet(torch.nn.Module):
     ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`SchNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         import ase
         import schnetpack as spk  # noqa
 
@@ -188,7 +188,7 @@ class SchNet(torch.nn.Module):
         units[5] = ase.units.Bohr**2
 
         root = osp.expanduser(osp.normpath(root))
-        makedirs(root)
+        os.makedirs(root, exist_ok=True)
         folder = 'trained_schnet_models'
         if not osp.exists(osp.join(root, folder)):
             path = download_url(SchNet.url, root)
@@ -249,7 +249,7 @@ class SchNet(torch.nn.Module):
         net.lin2.bias = state.output_modules[0].out_net[1].out_net[1].bias
 
         mean = state.output_modules[0].atom_pool.average
-        net.readout = 'mean' if mean is True else 'add'
+        net.readout = aggr_resolver('mean' if mean is True else 'add')
 
         dipole = state.output_modules[0].__class__.__name__ == 'DipoleMoment'
         net.dipole = dipole
@@ -268,7 +268,8 @@ class SchNet(torch.nn.Module):
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
@@ -341,7 +342,8 @@ class RadiusInteractionGraph(torch.nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
     def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             pos (Tensor): Coordinates of each atom.
             batch (LongTensor, optional): Batch indices assigning each atom to
