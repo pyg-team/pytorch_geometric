@@ -71,7 +71,7 @@ def test_dataloader(num_workers, device):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
-@pytest.mark.parametrize('num_workers', [0])
+@pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader_on_disk_dataset(tmp_path, num_workers):
     dataset = OnDiskDataset(tmp_path)
     data1 = Data(x=torch.randn(3, 8))

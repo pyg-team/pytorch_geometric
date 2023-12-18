@@ -48,9 +48,6 @@ class Collater:
 
         raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
-    def collate_fn(self, batch: List[Any]) -> Any:
-        return self(batch)
-
 
 class DataLoader(torch.utils.data.DataLoader):
     r"""A data loader which merges data objects from a
