@@ -154,6 +154,9 @@ class OnDiskDataset(Dataset):
 
         return [self.deserialize(data) for data in data_list]
 
+    def __getitems__(self, indices: List[int]) -> List[BaseData]:
+        return self.multi_get(indices)
+
     def len(self) -> int:
         if self._numel is None:
             self._numel = len(self.db)
