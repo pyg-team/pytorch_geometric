@@ -58,7 +58,7 @@ class ToSparseTensor(BaseTransform):
         remove_edge_index: bool = True,
         fill_cache: bool = True,
         layout: Optional[int] = None,
-    ):
+    ) -> None:
         if layout not in {None, torch.sparse_coo, torch.sparse_csr}:
             raise ValueError(f"Unexpected sparse tensor layout "
                              f"(got '{layout}')")
@@ -97,33 +97,35 @@ class ToSparseTensor(BaseTransform):
 
             layout = self.layout
             size = store.size()[::-1]
-            value: Optional[Tensor] = None
+            edge_weight: Optional[Tensor] = None
             if self.attr is not None and self.attr in store:
-                value = store[self.attr]
+                edge_weight = store[self.attr]
 
             if layout is None and torch_geometric.typing.WITH_TORCH_SPARSE:
                 store.adj_t = SparseTensor(
                     row=store.edge_index[1],
                     col=store.edge_index[0],
-                    value=value,
+                    value=edge_weight,
                     sparse_sizes=size,
                     is_sorted=True,
                     trust_data=True,
                 )
 
             # TODO Multi-dimensional edge attributes only supported for COO.
-            elif ((value is not None and value.dim() > 1)
+            elif ((edge_weight is not None and edge_weight.dim() > 1)
                   or layout == torch.sparse_coo):
+                assert size[0] is not None and size[1] is not None
                 store.adj_t = to_torch_coo_tensor(
                     store.edge_index.flip([0]),
-                    edge_attr=value,
+                    edge_attr=edge_weight,
                     size=size,
                 )
 
             elif layout is None or layout == torch.sparse_csr:
+                assert size[0] is not None and size[1] is not None
                 store.adj_t = to_torch_csr_tensor(
                     store.edge_index.flip([0]),
-                    edge_attr=value,
+                    edge_attr=edge_weight,
                     size=size,
                 )
 
@@ -139,6 +141,6 @@ class ToSparseTensor(BaseTransform):
 
         return data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(attr={self.attr}, '
                 f'layout={self.layout})')
