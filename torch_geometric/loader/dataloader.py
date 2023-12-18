@@ -7,7 +7,6 @@ from torch.utils.data.dataloader import default_collate
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.datapipes import DatasetAdapter
-from torch_geometric.data.on_disk_dataset import OnDiskDataset
 from torch_geometric.typing import TensorFrame, torch_frame
 
 
@@ -50,8 +49,6 @@ class Collater:
         raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
     def collate_fn(self, batch: List[Any]) -> Any:
-        if isinstance(self.dataset, OnDiskDataset):
-            return self(self.dataset.multi_get(batch))
         return self(batch)
 
 
@@ -90,15 +87,10 @@ class DataLoader(torch.utils.data.DataLoader):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-        self.collator = Collater(dataset, follow_batch, exclude_keys)
-
-        if isinstance(dataset, OnDiskDataset):
-            dataset = range(len(dataset))
-
         super().__init__(
             dataset,
             batch_size,
             shuffle,
-            collate_fn=self.collator.collate_fn,
+            collate_fn=Collater(dataset, follow_batch, exclude_keys),
             **kwargs,
         )
