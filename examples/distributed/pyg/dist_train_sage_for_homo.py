@@ -86,9 +86,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
                 whole_node_labels[ntype] = torch.load(file)
         else:
             whole_node_labels = torch.load(node_label_file)
-    node_labels = whole_node_labels
-    graph.labels = node_labels
-    feature.labels = node_labels
+    feature.labels = whole_node_labels
 
     partition_data = (feature, graph)
 
