@@ -71,7 +71,7 @@ class PPI(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
 
         assert split in ['train', 'val', 'test']
 
@@ -92,15 +92,15 @@ class PPI(InMemoryDataset):
         return [f'{split}_{name}' for split, name in product(splits, files)]
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import networkx as nx
         from networkx.readwrite import json_graph
 
@@ -120,7 +120,7 @@ class PPI(InMemoryDataset):
             idx = torch.from_numpy(np.load(path)).to(torch.long)
             idx = idx - idx.min()
 
-            for i in range(idx.max().item() + 1):
+            for i in range(int(idx.max()) + 1):
                 mask = idx == i
 
                 G_s = G.subgraph(

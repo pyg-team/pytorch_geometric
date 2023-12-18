@@ -33,7 +33,7 @@ class Collater:
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
         elif isinstance(elem, TensorFrame):
-            return torch_frame.cat(batch, along='row')
+            return torch_frame.cat(batch, dim=0)
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):

@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Any, Tuple, Union
+from typing import Any, List, Literal, Tuple, Union, overload
 
 import torch
 from scipy.sparse.csgraph import minimum_spanning_tree
@@ -10,6 +10,27 @@ from torch_geometric.utils import (
     to_scipy_sparse_matrix,
     to_undirected,
 )
+
+
+@overload
+def tree_decomposition(mol: Any) -> Tuple[Tensor, Tensor, int]:
+    pass
+
+
+@overload
+def tree_decomposition(
+    mol: Any,
+    return_vocab: Literal[False],
+) -> Tuple[Tensor, Tensor, int]:
+    pass
+
+
+@overload
+def tree_decomposition(
+    mol: Any,
+    return_vocab: Literal[True],
+) -> Tuple[Tensor, Tensor, int, Tensor]:
+    pass
 
 
 def tree_decomposition(
@@ -35,44 +56,44 @@ def tree_decomposition(
     import rdkit.Chem as Chem
 
     # Cliques = rings and bonds.
-    cliques = [list(x) for x in Chem.GetSymmSSSR(mol)]
-    xs = [0] * len(cliques)
+    cliques: List[List[int]] = [list(x) for x in Chem.GetSymmSSSR(mol)]
+    xs: List[int] = [0] * len(cliques)
     for bond in mol.GetBonds():
         if not bond.IsInRing():
             cliques.append([bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()])
             xs.append(1)
 
-    # Generate `atom2clique` mappings.
-    atom2clique = [[] for i in range(mol.GetNumAtoms())]
+    # Generate `atom2cliques` mappings.
+    atom2cliques: List[List[int]] = [[] for i in range(mol.GetNumAtoms())]
     for c in range(len(cliques)):
         for atom in cliques[c]:
-            atom2clique[atom].append(c)
+            atom2cliques[atom].append(c)
 
     # Merge rings that share more than 2 atoms as they form bridged compounds.
     for c1 in range(len(cliques)):
         for atom in cliques[c1]:
-            for c2 in atom2clique[atom]:
+            for c2 in atom2cliques[atom]:
                 if c1 >= c2 or len(cliques[c1]) <= 2 or len(cliques[c2]) <= 2:
                     continue
                 if len(set(cliques[c1]) & set(cliques[c2])) > 2:
-                    cliques[c1] = set(cliques[c1]) | set(cliques[c2])
+                    cliques[c1] = list(set(cliques[c1]) | set(cliques[c2]))
                     xs[c1] = 2
                     cliques[c2] = []
                     xs[c2] = -1
     cliques = [c for c in cliques if len(c) > 0]
     xs = [x for x in xs if x >= 0]
 
-    # Update `atom2clique` mappings.
-    atom2clique = [[] for i in range(mol.GetNumAtoms())]
+    # Update `atom2cliques` mappings.
+    atom2cliques = [[] for i in range(mol.GetNumAtoms())]
     for c in range(len(cliques)):
         for atom in cliques[c]:
-            atom2clique[atom].append(c)
+            atom2cliques[atom].append(c)
 
     # Add singleton cliques in case there are more than 2 intersecting
     # cliques. We further compute the "initial" clique graph.
     edges = {}
     for atom in range(mol.GetNumAtoms()):
-        cs = atom2clique[atom]
+        cs = atom2cliques[atom]
         if len(cs) <= 1:
             continue
 
@@ -102,11 +123,11 @@ def tree_decomposition(
                     count = len(set(cliques[c1]) & set(cliques[c2]))
                     edges[(c1, c2)] = min(count, edges.get((c1, c2), 99))
 
-    # Update `atom2clique` mappings.
-    atom2clique = [[] for i in range(mol.GetNumAtoms())]
+    # Update `atom2cliques` mappings.
+    atom2cliques = [[] for i in range(mol.GetNumAtoms())]
     for c in range(len(cliques)):
         for atom in cliques[c]:
-            atom2clique[atom].append(c)
+            atom2cliques[atom].append(c)
 
     if len(edges) > 0:
         edge_index_T, weight = zip(*edges.items())
@@ -119,9 +140,9 @@ def tree_decomposition(
     else:
         edge_index = torch.empty((2, 0), dtype=torch.long)
 
-    rows = [[i] * len(atom2clique[i]) for i in range(mol.GetNumAtoms())]
+    rows = [[i] * len(atom2cliques[i]) for i in range(mol.GetNumAtoms())]
     row = torch.tensor(list(chain.from_iterable(rows)))
-    col = torch.tensor(list(chain.from_iterable(atom2clique)))
+    col = torch.tensor(list(chain.from_iterable(atom2cliques)))
     atom2clique = torch.stack([row, col], dim=0).to(torch.long)
 
     if return_vocab:

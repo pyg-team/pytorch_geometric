@@ -19,13 +19,14 @@ class TwoHop(BaseTransform):
     (functional name: :obj:`two_hop`).
     """
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        N = data.num_nodes
+        num_nodes = data.num_nodes
 
         if torch_geometric.typing.WITH_WINDOWS:
-            adj = to_torch_coo_tensor(edge_index, size=(N, N))
+            adj = to_torch_coo_tensor(edge_index, size=num_nodes)
         else:
-            adj = to_torch_csr_tensor(edge_index, size=(N, N))
+            adj = to_torch_csr_tensor(edge_index, size=num_nodes)
 
         adj = adj @ adj
 
@@ -40,6 +41,7 @@ class TwoHop(BaseTransform):
                                              *edge_attr.size()[1:])
             edge_attr = torch.cat([edge_attr, edge_attr2], dim=0)
 
-        data.edge_index, data.edge_attr = coalesce(edge_index, edge_attr, N)
+        data.edge_index, data.edge_attr = coalesce(edge_index, edge_attr,
+                                                   num_nodes)
 
         return data

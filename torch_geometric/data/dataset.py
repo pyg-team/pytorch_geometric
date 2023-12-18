@@ -1,12 +1,11 @@
 import copy
-import os
 import os.path as osp
 import re
 import sys
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import torch.utils.data
@@ -16,6 +15,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -49,24 +49,24 @@ class Dataset(torch.utils.data.Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
         be present in order to skip downloading.
         """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
         must be present in order to skip processing.
         """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
@@ -88,13 +88,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -158,7 +158,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         elif y.numel() == y.size(0) and not torch.is_floating_point(y):
             return int(y.max()) + 1
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
+            num_classes = torch.unique(y).numel()
+            if num_classes > 2:
+                warnings.warn("Found floating-point labels while calling "
+                              "`dataset.num_classes`. Returning the number of "
+                              "unique elements. Please make sure that this "
+                              "is expected before proceeding.")
+            return num_classes
         else:
             return y.size(-1)
 
@@ -170,7 +176,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # may produce a tuple of data objects (e.g., when used in combination
         # with `RandomLinkSplit`, so we take care of this case here as well:
         data_list = _get_flattened_data_list([data for data in self])
-        y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        if 'y' in data_list[0] and isinstance(data_list[0].y, Tensor):
+            y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        else:
+            y = torch.as_tensor([data.y for data in data_list if 'y' in data])
 
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
@@ -210,7 +219,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        os.makedirs(self.raw_dir, exist_ok=True)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -241,7 +250,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        os.makedirs(self.processed_dir, exist_ok=True)
+        fs.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
@@ -343,16 +352,16 @@ class Dataset(torch.utils.data.Dataset, ABC):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
-    def get_summary(self):
+    def get_summary(self) -> Any:
         r"""Collects summary statistics for the dataset."""
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self):  # pragma: no cover
+    def print_summary(self) -> None:
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
-    def to_datapipe(self):
+    def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
         The returned instance can then be used with :pyg:`PyG's` built-in
@@ -377,7 +386,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return DatasetAdapter(self)
 
 
-def overrides_method(cls, method_name: str):
+def overrides_method(cls, method_name: str) -> bool:
     from torch_geometric.data import InMemoryDataset
 
     if method_name in cls.__dict__:
@@ -409,7 +418,7 @@ def _repr(obj: Any) -> str:
     return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
 
 
-def _get_flattened_data_list(data_list: List[Any]) -> List[BaseData]:
+def _get_flattened_data_list(data_list: Iterable[Any]) -> List[BaseData]:
     outs: List[BaseData] = []
     for data in data_list:
         if isinstance(data, BaseData):

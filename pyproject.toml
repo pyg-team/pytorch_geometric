@@ -75,7 +75,7 @@ full = [
     "numba",
     "sympy",
     "pandas",
-    "captum",
+    "captum<0.7.0",
     "rdflib",
     "trimesh",
     "networkx",
@@ -106,8 +106,31 @@ based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
 
-[tool.pyright]
-include = ["torch_geometric/utils/*"]
+[tool.mypy]
+files = ["torch_geometric"]
+install_types = true
+non_interactive = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = [
+    "torch_geometric.data.*",
+    "torch_geometric.sampler.*",
+    "torch_geometric.loader.*",
+    "torch_geometric.nn.*",
+    "torch_geometric.explain.*",
+    "torch_geometric.profile.*",
+    "torch_geometric.contrib.*",
+    "torch_geometric.graphgym.*",
+    "torch_geometric.distributed.*",
+]
 
 [tool.isort]
 multi_line_output = 3
@@ -119,11 +142,11 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
-    "D100",  # TODO: Don't ignore "Missing docstring in public module"
-    "D101",  # TODO: Don't ignore "Missing docstring in public class"
-    "D102",  # TODO: Don't ignore "Missing docstring in public method"
-    "D103",  # TODO: Don't ignore "Missing docstring in public function"
-    "D104",  # TODO: Don't ignore "Missing docstring in public package"
+    "D100",  # TODO Don't ignore "Missing docstring in public module"
+    "D101",  # TODO Don't ignore "Missing docstring in public class"
+    "D102",  # TODO Don't ignore "Missing docstring in public method"
+    "D103",  # TODO Don't ignore "Missing docstring in public function"
+    "D104",  # TODO Don't ignore "Missing docstring in public package"
     "D105",  # Ignore "Missing docstring in magic method"
     "D107",  # Ignore "Missing docstring in __init__"
     "D205",  # Ignore "blank line required between summary line and description"
@@ -160,24 +183,6 @@ filterwarnings = [
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
 ]
-
-[tool.pylint.messages_control]
-disable = [
-    "import-outside-toplevel",
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "missing-function-docstring",
-    "empty-docstring",
-    "import-error",
-    "too-many-arguments",
-    "arguments-differ",
-    "invalid-name",
-    "redefined-builtin",
-]
-attr-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-argument-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-variable-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
-generated-members = ["torch.*"]
 
 [tool.coverage.run]
 source = ["torch_geometric"]

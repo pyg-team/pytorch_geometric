@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.coalesce import coalesce
+from torch_geometric.utils import coalesce
 
 
 def grid(
@@ -49,8 +49,10 @@ def grid_index(
 ) -> Tensor:
 
     w = width
-    kernel = [-w - 1, -1, w - 1, -w, 0, w, -w + 1, 1, w + 1]
-    kernel = torch.tensor(kernel, device=device)
+    kernel = torch.tensor(
+        [-w - 1, -1, w - 1, -w, 0, w, -w + 1, 1, w + 1],
+        device=device,
+    )
 
     row = torch.arange(height * width, dtype=torch.long, device=device)
     row = row.view(-1, 1).repeat(1, kernel.size(0))

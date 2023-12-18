@@ -58,7 +58,7 @@ class NELL(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -72,14 +72,14 @@ class NELL(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_tar(path, self.root)
         os.unlink(path)
         fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'nell_data'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, 'nell.0.001')
         data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])

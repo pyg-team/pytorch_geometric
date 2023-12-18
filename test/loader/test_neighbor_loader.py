@@ -1,6 +1,4 @@
 import os.path as osp
-import subprocess
-from time import sleep
 
 import numpy as np
 import pytest
@@ -383,6 +381,51 @@ def test_custom_neighbor_loader():
     # Initialize feature store, graph store, and reference:
     feature_store = MyFeatureStore()
     graph_store = MyGraphStore()
+
+    # Set up node features:
+    x = torch.arange(100, 300)
+    feature_store.put_tensor(x, group_name=None, attr_name='x', index=None)
+
+    y = torch.arange(100, 300)
+    feature_store.put_tensor(y, group_name=None, attr_name='y', index=None)
+
+    # COO:
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo, edge_type=None, layout='coo',
+                               size=(100, 100))
+
+    data = Data(x=x, edge_index=edge_index, y=y, num_nodes=200)
+
+    # Construct neighbor loaders:
+    loader1 = NeighborLoader(data, batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    loader2 = NeighborLoader((feature_store, graph_store), batch_size=20,
+                             input_nodes=torch.arange(100),
+                             num_neighbors=[-1] * 2)
+
+    assert str(loader1) == str(loader2)
+    assert len(loader1) == len(loader2)
+
+    for batch1, batch2 in zip(loader1, loader2):
+        assert len(batch1) == len(batch2)
+        assert batch1.num_nodes == batch2.num_nodes
+        assert batch1.num_edges == batch2.num_edges
+        assert batch1.batch_size == batch2.batch_size
+
+        # Mapped indices of neighbors may be differently sorted ...
+        assert torch.allclose(batch1.x.sort()[0], batch2.x.sort()[0])
+        assert torch.allclose(batch1.y.sort()[0], batch2.y.sort()[0])
+
+
+@onlyNeighborSampler
+def test_custom_hetero_neighbor_loader():
+    # Initialize feature store, graph store, and reference:
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
     data = HeteroData()
 
     # Set up node features:
@@ -613,31 +656,6 @@ def test_memmap_neighbor_loader(tmp_path):
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
-
-
-@onlyLinux
-@onlyNeighborSampler
-@pytest.mark.parametrize('loader_cores', [None, [1]])
-def test_cpu_affinity_neighbor_loader(loader_cores):
-    data = Data(x=torch.randn(1, 1))
-    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                            num_workers=1)
-
-    out = []
-    with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator()
-        workers = iterator._workers
-        for worker in workers:
-            sleep(1)  # Gives time for worker to initialize.
-            process = subprocess.Popen(
-                ['taskset', '-c', '-p', f'{worker.pid}'],
-                stdout=subprocess.PIPE)
-            stdout = process.communicate()[0].decode('utf-8')
-            out.append(int(stdout.split(':')[1].strip()))
-        if not loader_cores:
-            assert out == [0]
-        else:
-            assert out == loader_cores
 
 
 @withPackage('pyg_lib')

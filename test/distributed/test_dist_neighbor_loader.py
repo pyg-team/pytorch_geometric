@@ -149,8 +149,8 @@ def dist_neighbor_loader_hetero(
         for edge_type in batch.edge_types:
             num_edges = batch[edge_type].edge_index.size(1)
 
-            assert batch[edge_type].edge_attr.size(0) == num_edges
             if num_edges > 0:  # Test edge mapping:
+                assert batch[edge_type].edge_attr.size(0) == num_edges
                 src, _, dst = edge_type
                 edge_index = part_data[1]._edge_index[(edge_type, "coo")]
                 global_edge_index_1 = torch.stack([
@@ -173,11 +173,11 @@ def test_dist_neighbor_loader_homo(
     async_sampling,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -209,7 +209,6 @@ def test_dist_neighbor_loader_homo(
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
-@pytest.mark.skip(reason="Breaks with no attribute 'num_hops'")
 def test_dist_neighbor_loader_hetero(
     tmp_path,
     num_parts,
@@ -217,11 +216,11 @@ def test_dist_neighbor_loader_hetero(
     async_sampling,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,

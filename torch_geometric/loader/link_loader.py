@@ -5,8 +5,13 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.mixin import AffinityMixin
+from torch_geometric.loader.mixin import (
+    AffinityMixin,
+    LogMemoryMixin,
+    MultithreadingMixin,
+)
 from torch_geometric.loader.utils import (
+    filter_custom_hetero_store,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -23,7 +28,12 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputEdges, OptTensor
 
 
-class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
+class LinkLoader(
+        torch.utils.data.DataLoader,
+        AffinityMixin,
+        MultithreadingMixin,
+        LogMemoryMixin,
+):
     r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -224,20 +234,21 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                     self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
-                edge_index = torch.stack([out.row, out.col])
-                data = Data(edge_index=edge_index)
-
-                # TODO Respect `custom_cls`.
-                # TODO Integrate features.
 
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
+                    edge_index = torch.stack([out.row, out.col])
+                    data = Data(edge_index=edge_index)
                     # Metadata entries are populated in
                     # `DistributedNeighborSampler._collate_fn()`
                     data.x = out.metadata[-3]
                     data.y = out.metadata[-2]
                     data.edge_attr = out.metadata[-1]
+                else:
+                    data = filter_custom_store(  #
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -273,6 +284,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                     self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.link_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
@@ -281,7 +293,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls, out.metadata)
                 else:
-                    data = filter_custom_store(  #
+                    data = filter_custom_hetero_store(  #
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls)
 
