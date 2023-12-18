@@ -65,7 +65,7 @@ def dist_link_neighbor_loader_homo(
     )
 
     edge_label_index = part_data[1].get_edge_index(None, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -77,7 +77,6 @@ def dist_link_neighbor_loader_homo(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -85,15 +84,16 @@ def dist_link_neighbor_loader_homo(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.n_id.size() == (batch.num_nodes,)
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
+    assert loader.channel.empty()
 
 
 def dist_link_neighbor_loader_hetero(
@@ -117,7 +117,7 @@ def dist_link_neighbor_loader_hetero(
     )
 
     edge_label_index = part_data[1].get_edge_index(edge_type, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -129,7 +129,6 @@ def dist_link_neighbor_loader_hetero(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -137,7 +136,7 @@ def dist_link_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -153,8 +152,9 @@ def dist_link_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
+            assert (batch[edge_type].edge_attr.size(0) == 
                     batch[edge_type].edge_index.size(1))
+    assert loader.channel.empty()
 
 
 @onlyLinux
