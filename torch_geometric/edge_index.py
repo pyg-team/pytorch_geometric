@@ -1048,16 +1048,18 @@ def index_select(
     input: EdgeIndex,
     dim: int,
     index: Tensor,
+    *,
+    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    out = Tensor.__torch_function__(  #
-        torch.index_select, (Tensor, ), (input, dim, index))
+    output = Tensor.__torch_function__(  #
+        torch.index_select, (Tensor, ), (input, dim, index), dict(out=out))
 
     if dim == 1 or dim == -1:
-        out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size()
+        output = output.as_subclass(EdgeIndex)
+        output._sparse_size = input.sparse_size()
 
-    return out
+    return output
 
 
 @implements(torch.narrow)
