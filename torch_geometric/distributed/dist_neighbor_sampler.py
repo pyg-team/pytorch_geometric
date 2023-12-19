@@ -1,5 +1,6 @@
 import itertools
 import logging
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -8,7 +9,7 @@ import torch.multiprocessing as mp
 from torch import Tensor
 
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.event_loop import (
     ConcurrentEventLoop,
     to_asyncio_future,
@@ -19,7 +20,6 @@ from torch_geometric.distributed.rpc import (
     rpc_async,
     rpc_partition_to_workers,
     rpc_register,
-    shutdown_rpc,
 )
 from torch_geometric.distributed.utils import (
     BatchDict,
@@ -43,6 +43,7 @@ class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
     """
+
     def __init__(self, sampler: NeighborSampler):
         super().__init__()
         self.sampler = sampler
@@ -58,10 +59,10 @@ class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
     """
+
     def __init__(
         self,
         current_ctx: DistContext,
-        rpc_worker_names: Dict[DistRole, List[str]],
         data: Tuple[LocalFeatureStore, LocalGraphStore],
         num_neighbors: NumNeighborsType,
         channel: Optional[mp.Queue] = None,
@@ -75,7 +76,6 @@ class DistNeighborSampler:
         **kwargs,
     ):
         self.current_ctx = current_ctx
-        self.rpc_worker_names = rpc_worker_names
 
         self.feature_store, self.graph_store = data
         assert isinstance(self.graph_store, LocalGraphStore)
@@ -95,15 +95,7 @@ class DistNeighborSampler:
         self.with_edge_attr = self.feature_store.has_edge_attr()
         self.csc = True
 
-    def register_sampler_rpc(self) -> None:
-        partition2workers = rpc_partition_to_workers(
-            current_ctx=self.current_ctx,
-            num_partitions=self.graph_store.num_partitions,
-            current_partition_idx=self.graph_store.partition_idx,
-        )
-        self.rpc_router = RPCRouter(partition2workers)
-        self.feature_store.set_rpc_router(self.rpc_router)
-
+    def init_sampler_instance(self):
         self._sampler = NeighborSampler(
             data=(self.feature_store, self.graph_store),
             num_neighbors=self.num_neighbors,
@@ -120,12 +112,17 @@ class DistNeighborSampler:
         self.node_time = self._sampler.node_time
         self.edge_time = self._sampler.edge_time
 
+    def register_sampler_rpc(self) -> None:
+        partition2workers = rpc_partition_to_workers(
+            current_ctx=self.current_ctx,
+            num_partitions=self.graph_store.num_partitions,
+            current_partition_idx=self.graph_store.partition_idx,
+        )
+        self.rpc_router = RPCRouter(partition2workers)
+        self.feature_store.set_rpc_router(self.rpc_router)
+
         rpc_sample_callee = RPCSamplingCallee(self)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
-
-    def init_event_loop(self) -> None:
-        self.event_loop = ConcurrentEventLoop(self.concurrency)
-        self.event_loop.start_loop()
 
     # Node-based distributed sampling #########################################
 
@@ -135,6 +132,11 @@ class DistNeighborSampler:
         **kwargs,
     ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
         inputs = NodeSamplerInput.cast(inputs)
+        if self.event_loop is None:
+            self.event_loop = ConcurrentEventLoop(self.concurrency)
+            self.event_loop.start_loop()
+            logging.info(f"{self} uses {self.event_loop}")
+
         if self.channel is None:
             # synchronous sampling
             return self.event_loop.run_task(
@@ -152,7 +154,6 @@ class DistNeighborSampler:
         *args,
         **kwargs,
     ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
-
         sampler_output = await async_func(*args, **kwargs)
 
         if self.subgraph_type == SubgraphType.bidirectional:
@@ -714,17 +715,3 @@ class DistNeighborSampler:
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(pid={mp.current_process().pid})'
-
-
-# Sampling Utilities ##########################################################
-
-
-def close_sampler(worker_id: int, sampler: DistNeighborSampler):
-    # Make sure that mp.Queue is empty at exit and RAM is cleared:
-    try:
-        logging.info(f"Closing event loop for worker ID {worker_id}")
-        sampler.event_loop.shutdown_loop()
-    except AttributeError:
-        pass
-    logging.info(f"Closing RPC for worker ID {worker_id}")
-    shutdown_rpc(graceful=True)
