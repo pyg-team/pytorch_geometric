@@ -1,7 +1,7 @@
 import os.path as osp
 import warnings
 from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import fsspec
 import torch
@@ -122,7 +122,7 @@ def edge_index_from_dict(
     row = torch.tensor(rows)
     col = torch.tensor(cols)
 
-    edge_index = EdgeIndex(
+    edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
         torch.stack([row, col], dim=0),
         is_undirected=True,
         sparse_size=(num_nodes, num_nodes),
@@ -132,5 +132,6 @@ def edge_index_from_dict(
     #       Other implementations do not remove them!
     edge_index, _ = remove_self_loops(edge_index)
     edge_index = coalesce(edge_index, num_nodes=num_nodes, sort_by_row=False)
+    assert isinstance(edge_index, EdgeIndex)
 
     return edge_index
