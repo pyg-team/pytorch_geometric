@@ -365,6 +365,12 @@ def test_cat(dtype, device, is_undirected):
     assert out.size() == (4, 4)
     assert not isinstance(out, EdgeIndex)
 
+    inplace = torch.empty(2, 8, dtype=dtype, device=device)
+    out = torch.cat([adj1, adj2], dim=1, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
+
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)

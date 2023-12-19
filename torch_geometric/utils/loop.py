@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import (
@@ -105,22 +106,25 @@ def remove_self_loops(  # noqa: F811
         edge_index, value = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
-    edge_index = edge_index[:, mask]
+    out_edge_index = edge_index[:, mask]
+
+    if isinstance(edge_index, EdgeIndex):
+        out_edge_index._is_undirected = edge_index.is_undirected
 
     if layout is not None:
         assert edge_attr is None
         assert value is not None
         value = value[mask]
         if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
-            return to_torch_coo_tensor(edge_index, value, size, True), None
+            return to_torch_coo_tensor(out_edge_index, value, size, True), None
         elif str(layout) == 'torch.sparse_csr':
-            return to_torch_csr_tensor(edge_index, value, size, True), None
+            return to_torch_csr_tensor(out_edge_index, value, size, True), None
         raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
     if edge_attr is None:
-        return edge_index, None
+        return out_edge_index, None
     else:
-        return edge_index, edge_attr[mask]
+        return out_edge_index, edge_attr[mask]
 
 
 @overload

@@ -3,6 +3,8 @@ from typing import List, Optional, Tuple, Union
 
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -108,7 +110,13 @@ def sort_edge_index(  # noqa: F811
     _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
     if isinstance(edge_index, Tensor):
+        is_undirected = False
+        if isinstance(edge_index, EdgeIndex):
+            is_undirected = edge_index.is_undirected
         edge_index = edge_index[:, perm]
+        if isinstance(edge_index, EdgeIndex):
+            edge_index._is_undirected = is_undirected
+            edge_index._sort_order = SortOrder('row' if sort_by_row else 'col')
     elif isinstance(edge_index, tuple):
         edge_index = (edge_index[0][perm], edge_index[1][perm])
     else:

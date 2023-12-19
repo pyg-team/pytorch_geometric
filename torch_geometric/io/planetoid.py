@@ -7,6 +7,7 @@ import fsspec
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.typing import SparseTensor
@@ -112,17 +113,24 @@ def read_file(folder: str, prefix: str, name: str) -> Tensor:
 def edge_index_from_dict(
     graph_dict: Dict[int, List[int]],
     num_nodes: Optional[int] = None,
-) -> Tensor:
+) -> EdgeIndex:
     rows: List[int] = []
     cols: List[int] = []
     for key, value in graph_dict.items():
         rows += repeat(key, len(value))
         cols += value
-    edge_index = torch.stack([torch.tensor(rows), torch.tensor(cols)], dim=0)
+    row = torch.tensor(rows)
+    col = torch.tensor(cols)
+
+    edge_index = EdgeIndex(
+        torch.stack([row, col], dim=0),
+        is_undirected=True,
+        sparse_size=(num_nodes, num_nodes),
+    )
 
     # NOTE: There are some duplicated edges and self loops in the datasets.
     #       Other implementations do not remove them!
     edge_index, _ = remove_self_loops(edge_index)
-    edge_index = coalesce(edge_index, num_nodes=num_nodes)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes, sort_by_row=False)
 
     return edge_index

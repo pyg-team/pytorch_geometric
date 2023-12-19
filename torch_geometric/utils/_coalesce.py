@@ -4,6 +4,8 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -133,6 +135,10 @@ def coalesce(  # noqa: F811
     idx[1:] = edge_index[1 - int(sort_by_row)]
     idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
 
+    is_undirected = False
+    if isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
     if not is_sorted:
         idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
         if isinstance(edge_index, Tensor):
@@ -146,6 +152,10 @@ def coalesce(  # noqa: F811
         elif isinstance(edge_attr, (list, tuple)):
             edge_attr = [e[perm] for e in edge_attr]
 
+    if isinstance(edge_index, EdgeIndex):
+        edge_index._sort_order = SortOrder('row' if sort_by_row else 'col')
+        edge_index._is_undirected = is_undirected
+
     mask = idx[1:] > idx[:-1]
 
     # Only perform expensive merging in case there exists duplicates:
@@ -158,6 +168,8 @@ def coalesce(  # noqa: F811
 
     if isinstance(edge_index, Tensor):
         edge_index = edge_index[:, mask]
+        if isinstance(edge_index, EdgeIndex):
+            edge_index._is_undirected = is_undirected
     elif isinstance(edge_index, tuple):
         edge_index = (edge_index[0][mask], edge_index[1][mask])
     else:
