@@ -85,7 +85,7 @@ def dist_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes,)
+        assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes

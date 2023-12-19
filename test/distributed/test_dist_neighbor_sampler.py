@@ -6,13 +6,9 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.distributed import (
-    DistNeighborSampler,
-    LocalFeatureStore,
-    LocalGraphStore,
-)
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.distributed import (
+    DistNeighborSampler,
     LocalFeatureStore,
     LocalGraphStore,
     Partitioner,
@@ -90,9 +86,8 @@ def create_hetero_data(tmp_path: str, rank: int):
     graph_store.partition_idx = feature_store.partition_idx = partition_idx
     graph_store.num_partitions = feature_store.num_partitions = num_partitions
     graph_store.node_pb = feature_store.node_feat_pb = node_pb
-    graph_store.edge_pb =  feature_store.edge_feat_pb = edge_pb
+    graph_store.edge_pb = feature_store.edge_feat_pb = edge_pb
     graph_store.meta = feature_store.meta = meta
-
 
     return feature_store, graph_store
 
@@ -142,8 +137,7 @@ def dist_neighbor_sampler(
 
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
-        coro=dist_sampler.node_sample(inputs)
-    )
+        coro=dist_sampler.node_sample(inputs))
 
     sampler = NeighborSampler(
         data=data,
@@ -218,8 +212,7 @@ def dist_neighbor_sampler_temporal(
 
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
-        coro=dist_sampler.node_sample(inputs)
-    )
+        coro=dist_sampler.node_sample(inputs))
 
     sampler = NeighborSampler(
         data=data,
@@ -298,8 +291,7 @@ def dist_neighbor_sampler_hetero(
 
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
-        coro=dist_sampler.node_sample(inputs)
-    )
+        coro=dist_sampler.node_sample(inputs))
 
     sampler = NeighborSampler(
         data=data,
