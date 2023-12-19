@@ -425,15 +425,24 @@ def test_index_select(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
-    out = adj.index_select(1, tensor([1, 3], device=device))
+    index = tensor([1, 3], device=device)
+    out = adj.index_select(1, index)
     assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert isinstance(out, EdgeIndex)
     assert not out.is_sorted
     assert not out.is_undirected
 
-    out = adj.index_select(0, tensor([0], device=device))
+    index = tensor([0], device=device)
+    out = adj.index_select(0, index)
     assert out.equal(tensor([[0, 1, 1, 2]], device=device))
     assert not isinstance(out, EdgeIndex)
+
+    index = tensor([1, 3], device=device)
+    inplace = torch.empty(2, 2, dtype=dtype, device=device)
+    out = torch.index_select(adj, 1, index, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
 
 
 @withCUDA
