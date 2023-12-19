@@ -15,9 +15,10 @@ class TwoHop(BaseTransform):
     def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        num_nodes = data.num_nodes
+        N = data.num_nodes
 
-        edge_index = EdgeIndex(edge_index).sort_by('row')[0]
+        edge_index = EdgeIndex(edge_index, sparse_size=(N, N))
+        edge_index = edge_index.sort_by('row')[0]
         edge_index2, _ = edge_index @ edge_index
         edge_index2, _ = remove_self_loops(edge_index2)
         edge_index = torch.cat([edge_index, edge_index2], dim=1)
@@ -28,7 +29,6 @@ class TwoHop(BaseTransform):
                                              *edge_attr.size()[1:])
             edge_attr = torch.cat([edge_attr, edge_attr2], dim=0)
 
-        data.edge_index, data.edge_attr = coalesce(edge_index, edge_attr,
-                                                   num_nodes)
+        data.edge_index, data.edge_attr = coalesce(edge_index, edge_attr, N)
 
         return data
