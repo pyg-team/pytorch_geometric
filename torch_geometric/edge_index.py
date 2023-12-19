@@ -207,7 +207,7 @@ class EdgeIndex(Tensor):
         cls: Type,
         data: Any,
         *args: Any,
-        sparse_size: Tuple[Optional[int], Optional[int]] = (None, None),
+        sparse_size: Optional[Tuple[Optional[int], Optional[int]]] = None,
         sort_order: Optional[Union[str, SortOrder]] = None,
         is_undirected: bool = False,
         **kwargs: Any,
@@ -227,6 +227,14 @@ class EdgeIndex(Tensor):
         assert_two_dimensional(data)
         assert_contiguous(data)
 
+        if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            sparse_size = sparse_size or data.sparse_size()
+            sort_order = sort_order or data.sort_order
+            is_undirected = is_undirected or data.is_undirected
+
+        if sparse_size is None:
+            sparse_size = (None, None)
+
         if is_undirected:
             assert_symmetric(sparse_size)
             if sparse_size[0] is not None and sparse_size[1] is None:
@@ -243,6 +251,13 @@ class EdgeIndex(Tensor):
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
+
+        if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            out._indptr = data._indptr
+            out._T_perm = data._T_perm
+            out._T_index = data._T_index
+            out._T_indptr = data._T_indptr
+            out._value = out._value
 
         return out
 

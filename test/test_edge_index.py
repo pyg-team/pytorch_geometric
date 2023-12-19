@@ -74,6 +74,22 @@ def test_basic(dtype, device):
     assert out.device == device
 
 
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_identity(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3), **kwargs)
+
+    out = EdgeIndex(adj)
+    assert out.data_ptr() == adj.data_ptr()
+    assert out.dtype == adj.dtype
+    assert out.device == adj.device
+    assert out.sparse_size() == adj.sparse_size()
+    assert out.sort_order == adj.sort_order
+    assert out.is_undirected == adj.is_undirected
+
+
 def test_set_tuple_item():
     tmp = (0, 1, 2)
     assert set_tuple_item(tmp, 0, 3) == (3, 1, 2)
