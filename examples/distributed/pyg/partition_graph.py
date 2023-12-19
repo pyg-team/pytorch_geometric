@@ -14,24 +14,26 @@ def partition_dataset(
     num_parts: int,
     recursive: bool = False,
 ):
-    save_dir = osp.join(f'{root_dir}-{num_parts}parts',
-                        f'{ogbn_dataset}-partitions')
-    dataset = PygNodePropPredDataset(ogbn_dataset)
+    dataset_dir = osp.join('./data/dataset', f'{ogbn_dataset}')
+    dataset = PygNodePropPredDataset(name=ogbn_dataset, root=dataset_dir)
     data = dataset[0]
 
-    partitioner = Partitioner(data, num_parts, save_dir, recursive)
+    save_dir = osp.join(f'{root_dir}', f'{num_parts}-parts')
+
+    partitions_dir = osp.join(save_dir, f'{ogbn_dataset}-partitions')
+    partitioner = Partitioner(data, num_parts, partitions_dir, recursive)
     partitioner.generate_partition()
     split_idx = dataset.get_idx_split()
 
     print('-- Saving label ...')
-    label_dir = osp.join(root_dir, f'{ogbn_dataset}-label')
+    label_dir = osp.join(save_dir, f'{ogbn_dataset}-label')
     os.makedirs(label_dir, exist_ok=True)
     torch.save(data.y.squeeze(), osp.join(label_dir, 'label.pt'))
 
     print('-- Partitioning training indices ...')
     train_idx = split_idx['train']
     train_idx = train_idx.split(train_idx.size(0) // num_parts)
-    train_part_dir = osp.join(root_dir, f'{ogbn_dataset}-train-partitions')
+    train_part_dir = osp.join(save_dir, f'{ogbn_dataset}-train-partitions')
     os.makedirs(train_part_dir, exist_ok=True)
     for i in range(num_parts):
         torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
@@ -39,7 +41,7 @@ def partition_dataset(
     print('-- Partitioning test indices ...')
     test_idx = split_idx['test']
     test_idx = test_idx.split(test_idx.size(0) // num_parts)
-    test_part_dir = osp.join(root_dir, f'{ogbn_dataset}-test-partitions')
+    test_part_dir = osp.join(save_dir, f'{ogbn_dataset}-test-partitions')
     os.makedirs(test_part_dir, exist_ok=True)
     for i in range(num_parts):
         torch.save(test_idx[i], osp.join(test_part_dir, f'partition{i}.pt'))

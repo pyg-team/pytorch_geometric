@@ -4,6 +4,7 @@ import os.path as osp
 
 import torch
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.distributed import Partitioner
 
@@ -14,22 +15,26 @@ def partition_dataset(
     num_parts: int,
     recursive: bool = False,
 ):
-    save_dir = osp.join(root_dir, f'{ogbn_dataset}-partitions')
-    dataset = OGB_MAG(root=ogbn_dataset, preprocess='metapath2vec')
+    dataset_dir = osp.join('./data/dataset', f'{ogbn_dataset}')
+    dataset = OGB_MAG(root=dataset_dir, preprocess='metapath2vec',
+                      transform=T.ToUndirected(merge=True))
     data = dataset[0]
 
-    partitioner = Partitioner(data, num_parts, save_dir, recursive)
+    save_dir = osp.join(f'{root_dir}', f'{num_parts}-parts')
+
+    partitions_dir = osp.join(save_dir, f'{ogbn_dataset}-partitions')
+    partitioner = Partitioner(data, num_parts, partitions_dir, recursive)
     partitioner.generate_partition()
 
     print('-- Saving label ...')
-    label_dir = osp.join(root_dir, f'{ogbn_dataset}-label')
+    label_dir = osp.join(save_dir, f'{ogbn_dataset}-label')
     os.makedirs(label_dir, exist_ok=True)
     torch.save(data['paper'].y.squeeze(), osp.join(label_dir, 'label.pt'))
 
     print('-- Partitioning training indices ...')
     train_idx = data['paper'].train_mask.nonzero().view(-1)
     train_idx = train_idx.split(train_idx.size(0) // num_parts)
-    train_part_dir = osp.join(root_dir, f'{ogbn_dataset}-train-partitions')
+    train_part_dir = osp.join(save_dir, f'{ogbn_dataset}-train-partitions')
     os.makedirs(train_part_dir, exist_ok=True)
     for i in range(num_parts):
         torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
@@ -37,7 +42,7 @@ def partition_dataset(
     print('-- Partitioning test indices ...')
     test_idx = data['paper'].test_mask.nonzero().view(-1)
     test_idx = test_idx.split(test_idx.size(0) // num_parts)
-    test_part_dir = osp.join(root_dir, f'{ogbn_dataset}-test-partitions')
+    test_part_dir = osp.join(save_dir, f'{ogbn_dataset}-test-partitions')
     os.makedirs(test_part_dir, exist_ok=True)
     for i in range(num_parts):
         torch.save(test_idx[i], osp.join(test_part_dir, f'partition{i}.pt'))
