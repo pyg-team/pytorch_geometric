@@ -1,6 +1,9 @@
 from typing import Any, Callable
 
-from torch.utils.data.dataloader import _BaseDataLoaderIter
+from torch.utils.data.dataloader import (
+    _BaseDataLoaderIter,
+    _MultiProcessingDataLoaderIter,
+)
 
 
 class DataLoaderIterator:
@@ -19,6 +22,7 @@ class DataLoaderIterator:
       with full parallelization power (which usually executes faster).
     * It lets us naturally support data already being present on the GPU.
     """
+
     def __init__(self, iterator: _BaseDataLoaderIter, transform_fn: Callable):
         self.iterator = iterator
         self.transform_fn = transform_fn
@@ -34,3 +38,7 @@ class DataLoaderIterator:
 
     def __next__(self) -> Any:
         return self.transform_fn(next(self.iterator))
+
+    def __del__(self) -> Any:
+        if isinstance(self.iterator, _MultiProcessingDataLoaderIter):
+            self.iterator.__del__()
