@@ -2,12 +2,12 @@ import asyncio
 import logging
 from threading import BoundedSemaphore, Thread
 from typing import Callable, Optional
-
+import atexit
 import torch
 
-# This code is taken from alibaba graphlearn-for-pytorch repository:
+# Based on graphlearn-for-pytorch repository python/distributed/event_loop.py
 # https://github.com/alibaba/graphlearn-for-pytorch/blob/main/graphlearn_torch/
-# python/distributed/event_loop.py
+# LICENSE: Apache v2
 
 
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
@@ -34,6 +34,7 @@ class ConcurrentEventLoop:
     Args:
         concurrency: max processing concurrency.
     """
+
     def __init__(self, concurrency: int):
         self._concurrency = concurrency
         self._sem = BoundedSemaphore(concurrency)
@@ -41,15 +42,21 @@ class ConcurrentEventLoop:
         self._runner_t = Thread(target=self._run_loop)
         self._runner_t.daemon = True
 
+        def cleanup():
+            for _ in range(self._concurrency):
+                self._sem.acquire()
+            for _ in range(self._concurrency):
+                self._sem.release()
+            if self._runner_t.is_alive():
+                self._loop.stop()
+                self._runner_t.join(timeout=1)
+                logging.info(f'{self}: Closed `ConcurrentEventLoop`')
+                
+        atexit.register(cleanup)
+
     def start_loop(self):
         if not self._runner_t.is_alive():
             self._runner_t.start()
-
-    def shutdown_loop(self):
-        self.wait_all()
-        if self._runner_t.is_alive():
-            self._loop.stop()
-            self._runner_t.join(timeout=1)
 
     def wait_all(self):
         r"""Wait for all pending tasks to be finished."""
@@ -69,6 +76,7 @@ class ConcurrentEventLoop:
 
         Note that any result returned by :obj:`callback` will be ignored.
         """
+
         def on_done(f: asyncio.futures.Future):
             try:
                 res = f.result()
