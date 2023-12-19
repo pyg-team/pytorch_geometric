@@ -952,7 +952,6 @@ def cat(
     if len(tensors) == 1:
         return tensors[0]
 
-    # TODO Support `out`.
     output = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim),
                                        dict(out=out))
 
