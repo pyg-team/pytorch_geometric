@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import (
@@ -104,8 +105,15 @@ def remove_self_loops(  # noqa: F811
         size = (edge_index.size(0), edge_index.size(1))
         edge_index, value = to_edge_index(edge_index)
 
+    is_undirected = False
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
+
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        edge_index._is_undirected = is_undirected
 
     if layout is not None:
         assert edge_attr is None

@@ -960,17 +960,20 @@ def contiguous(tensor: EdgeIndex) -> EdgeIndex:
 def cat(
     tensors: List[Union[EdgeIndex, Tensor]],
     dim: int = 0,
+    *,
+    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
     if len(tensors) == 1:
         return tensors[0]
 
-    out = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim))
+    output = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim),
+                                       dict(out=out))
 
     if dim != 1 and dim != -1:  # No valid `EdgeIndex` anymore.
-        return out
+        return output
 
-    out = out.as_subclass(EdgeIndex)
+    output = output.as_subclass(EdgeIndex)
 
     # Post-process `sparse_size`:
     num_rows: Optional[int] = 0
@@ -989,7 +992,7 @@ def cat(
         assert isinstance(num_cols, int)
         num_cols = max(num_cols, tensor.num_cols)
 
-    out._sparse_size = (num_rows, num_cols)
+    output._sparse_size = (num_rows, num_cols)
 
     # Post-process `is_undirected`:
     is_undirected = True
@@ -999,9 +1002,9 @@ def cat(
         else:
             is_undirected = False
 
-    out._is_undirected = is_undirected
+    output._is_undirected = is_undirected
 
-    return out
+    return output
 
 
 @implements(torch.flip)
