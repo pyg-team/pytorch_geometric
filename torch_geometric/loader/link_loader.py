@@ -262,7 +262,6 @@ class LinkLoader(
             data.num_sampled_edges = out.num_sampled_edges
 
             data.input_id = out.metadata[0]
-            data.batch_size = out.metadata[0].size(0)
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
                 data.edge_label_index = out.metadata[1]
