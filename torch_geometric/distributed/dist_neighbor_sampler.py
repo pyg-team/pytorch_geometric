@@ -1,6 +1,5 @@
 import itertools
 import logging
-from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -133,7 +132,7 @@ class DistNeighborSampler:
         if self.event_loop is None:
             self.event_loop = ConcurrentEventLoop(self.concurrency)
             self.event_loop.start_loop()
-            logging.info(f"{self} uses {self.event_loop}")
+            logging.info(f'{self} uses {self.event_loop}')
 
         if self.channel is None:
             # synchronous sampling

@@ -35,7 +35,7 @@ def global_barrier(timeout: Optional[int] = None) -> None:
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
-        logging.error("Failed to respond to global barrier")
+        logging.error('Failed to respond to global barrier')
 
 
 def init_rpc(
@@ -75,12 +75,11 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
                  timeout: float = 240.0):
     with _rpc_init_lock:
         if rpc_is_initialized():
-            logging.info(f"Shutdown rpc start {id} (graceful={graceful})")
             global_barrier(timeout=timeout)
             rpc.shutdown(graceful, timeout)
-            logging.info(f"Closed RPC in {id} (graceful={graceful})")
+            logging.debug(f'Closed RPC in {id} (graceful={graceful})')
         else:
-            logging.info(f"RPC isn't initialized.")
+            logging.error(f'RPC in {id} not initialized.')
 
 
 class RPCRouter:
@@ -88,7 +87,7 @@ class RPCRouter:
     def __init__(self, partition_to_workers: List[List[str]]):
         for pid, rpc_worker_list in enumerate(partition_to_workers):
             if len(rpc_worker_list) == 0:
-                raise ValueError("No RPC worker is in worker list")
+                raise ValueError('No RPC worker is in worker list')
         self.partition_to_workers = partition_to_workers
         self.rpc_worker_indices = [0 for _ in range(len(partition_to_workers))]
 
