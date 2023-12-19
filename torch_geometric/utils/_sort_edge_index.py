@@ -1,6 +1,7 @@
 import typing
 from typing import List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex
@@ -111,12 +112,12 @@ def sort_edge_index(  # noqa: F811
 
     if isinstance(edge_index, Tensor):
         is_undirected = False
-        if isinstance(edge_index, EdgeIndex):
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
             is_undirected = edge_index.is_undirected
         edge_index = edge_index[:, perm]
-        if isinstance(edge_index, EdgeIndex):
-            edge_index._is_undirected = is_undirected
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
             edge_index._sort_order = SortOrder('row' if sort_by_row else 'col')
+            edge_index._is_undirected = is_undirected
     elif isinstance(edge_index, tuple):
         edge_index = (edge_index[0][perm], edge_index[1][perm])
     else:

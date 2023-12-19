@@ -106,13 +106,13 @@ def remove_self_loops(  # noqa: F811
         edge_index, value = to_edge_index(edge_index)
 
     is_undirected = False
-    if isinstance(edge_index, EdgeIndex):
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
         is_undirected = edge_index.is_undirected
 
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
 
-    if isinstance(edge_index, EdgeIndex):
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
         edge_index._is_undirected = is_undirected
 
     if layout is not None:
