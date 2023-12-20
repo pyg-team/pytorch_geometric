@@ -8,17 +8,15 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.distributed import (
+    DistNeighborSampler,
     LocalFeatureStore,
     LocalGraphStore,
     Partitioner,
 )
 from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.dist_neighbor_sampler import (
-    DistNeighborSampler,
-    close_sampler,
-)
+from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.partition import load_partition_info
-from torch_geometric.distributed.rpc import init_rpc
+from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
 from torch_geometric.testing import onlyLinux, withPackage
@@ -78,14 +76,18 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
 def create_hetero_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feature_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-
-    out = load_partition_info(tmp_path, rank)
-
-    feature_store.meta = graph_store.meta = out[0]
-    feature_store.num_partitions = graph_store.num_partitions = out[1]
-    feature_store.partition_idx = graph_store.partition_idx = out[2]
-    feature_store.node_feat_pb = graph_store.node_pb = out[3]
-    feature_store.edge_feat_pb = graph_store.edge_pb = out[4]
+    (
+        meta,
+        num_partitions,
+        partition_idx,
+        node_pb,
+        edge_pb,
+    ) = load_partition_info(tmp_path, rank)
+    graph_store.partition_idx = feature_store.partition_idx = partition_idx
+    graph_store.num_partitions = feature_store.num_partitions = num_partitions
+    graph_store.node_pb = feature_store.node_feat_pb = node_pb
+    graph_store.edge_pb = feature_store.edge_feat_pb = edge_pb
+    graph_store.meta = feature_store.meta = meta
 
     return feature_store, graph_store
 
@@ -109,23 +111,22 @@ def dist_neighbor_sampler(
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         num_neighbors=[-1, -1],
         shuffle=False,
         disjoint=disjoint,
     )
     # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
+    atexit.register(shutdown_rpc)
 
     init_rpc(
         current_ctx=current_ctx,
-        rpc_worker_names={},
         master_addr='localhost',
         master_port=master_port,
     )
-
+    dist_sampler.init_sampler_instance()
     dist_sampler.register_sampler_rpc()
-    dist_sampler.init_event_loop()
+    dist_sampler.event_loop = ConcurrentEventLoop(2)
+    dist_sampler.event_loop.start_loop()
 
     if rank == 0:  # Seed nodes:
         input_node = torch.tensor([1, 6])
@@ -179,7 +180,6 @@ def dist_neighbor_sampler_temporal(
     dist_sampler = DistNeighborSampler(
         data=dist_data,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         num_neighbors=num_neighbors,
         shuffle=False,
         disjoint=True,
@@ -187,16 +187,17 @@ def dist_neighbor_sampler_temporal(
         time_attr=time_attr,
     )
     # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
+    atexit.register(shutdown_rpc)
 
     init_rpc(
         current_ctx=current_ctx,
-        rpc_worker_names={},
         master_addr='localhost',
         master_port=master_port,
     )
+    dist_sampler.init_sampler_instance()
     dist_sampler.register_sampler_rpc()
-    dist_sampler.init_event_loop()
+    dist_sampler.event_loop = ConcurrentEventLoop(2)
+    dist_sampler.event_loop.start_loop()
 
     if rank == 0:  # Seed nodes:
         input_node = torch.tensor([1, 6], dtype=torch.int64)
@@ -212,6 +213,7 @@ def dist_neighbor_sampler_temporal(
     # Evaluate distributed node sample function:
     out_dist = dist_sampler.event_loop.run_task(
         coro=dist_sampler.node_sample(inputs))
+
     sampler = NeighborSampler(
         data=data,
         num_neighbors=num_neighbors,
@@ -262,19 +264,19 @@ def dist_neighbor_sampler_hetero(
     )
 
     # Close RPC & worker group at exit:
-    atexit.register(close_sampler, 0, dist_sampler)
+    atexit.register(shutdown_rpc)
 
     init_rpc(
         current_ctx=current_ctx,
-        rpc_worker_names={},
         master_addr='localhost',
         master_port=master_port,
     )
-
+    dist_sampler.init_sampler_instance()
     dist_sampler.register_sampler_rpc()
-    dist_sampler.init_event_loop()
+    dist_sampler.event_loop = ConcurrentEventLoop(2)
+    dist_sampler.event_loop.start_loop()
 
-    # Create inputs nodes such that each belongs to a different partition:
+    # Create inputs nodes such that each belongs to a different partition
     node_pb_list = dist_data[1].node_pb[input_type].tolist()
     node_0 = node_pb_list.index(0)
     node_1 = node_pb_list.index(1)
