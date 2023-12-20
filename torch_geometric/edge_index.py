@@ -973,6 +973,9 @@ def cat(
     if dim != 1 and dim != -1:  # No valid `EdgeIndex` anymore.
         return output
 
+    if any([not isinstance(tensor, EdgeIndex) for tensor in tensors]):
+        return output
+
     output = output.as_subclass(EdgeIndex)
 
     # Post-process `sparse_size`:
@@ -995,14 +998,10 @@ def cat(
     output._sparse_size = (num_rows, num_cols)
 
     # Post-process `is_undirected`:
-    is_undirected = True
-    for tensor in tensors:
-        if isinstance(tensor, EdgeIndex):
-            is_undirected = tensor.is_undirected
-        else:
-            is_undirected = False
-
-    output._is_undirected = is_undirected
+    output._is_undirected = all([
+        isinstance(tensor, EdgeIndex) and tensor.is_undirected
+        for tensor in tensors
+    ])
 
     return output
 

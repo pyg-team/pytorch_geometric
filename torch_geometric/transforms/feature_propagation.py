@@ -1,10 +1,13 @@
+from typing import Optional
+
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csc_tensor
+from torch_geometric.utils import is_torch_sparse_tensor
 
 
 @functional_transform('feature_propagation')
@@ -50,28 +53,46 @@ class FeaturePropagation(BaseTransform):
         missing_mask = self.missing_mask.to(data.x.device)
         known_mask = ~missing_mask
 
+        x = data.x.clone()
+        x[missing_mask] = 0.
+        out = x
+
         if data.edge_index is not None:
-            edge_weight = data.edge_attr
-            if 'edge_weight' in data:
-                edge_weight = data.edge_weight
-            adj_t = to_torch_csc_tensor(
-                edge_index=data.edge_index,
-                edge_attr=edge_weight,
-                size=data.size(0),
-            ).t()
-            adj_t, _ = gcn_norm(adj_t, add_self_loops=False)
+            num_nodes = data.num_nodes
+            edge_index = EdgeIndex(
+                data.edge_index,
+                sparse_size=(num_nodes, num_nodes),
+            )
+
+            value: Optional[Tensor] = None
+            if data.edge_weight is not None:
+                value = data.edge_weight
+            elif data.edge_attr is not None and data.edge_attr.dim() == 1:
+                value = data.edge_attr
+
+            edge_index, value = gcn_norm(  #
+                edge_index, value, num_nodes=num_nodes, add_self_loops=True)
+
+            edge_index, perm = edge_index.sort_by('col')
+            value = value[perm]
+
+            for _ in range(self.num_iterations):
+                out = edge_index.matmul(out, value, transpose=True)
+                out[known_mask] = x[known_mask]  # Reset.
+
         elif is_torch_sparse_tensor(data.adj_t):
             adj_t, _ = gcn_norm(data.adj_t, add_self_loops=False)
+
+            for _ in range(self.num_iterations):
+                out = adj_t @ out
+                out[known_mask] = x[known_mask]  # Reset.
         else:
             adj_t = gcn_norm(data.adj_t, add_self_loops=False)
 
-        x = data.x.clone()
-        x[missing_mask] = 0.
+            for _ in range(self.num_iterations):
+                out = adj_t @ out
+                out[known_mask] = x[known_mask]  # Reset.
 
-        out = x
-        for _ in range(self.num_iterations):
-            out = adj_t @ out
-            out[known_mask] = x[known_mask]  # Reset.
         data.x = out
 
         return data
