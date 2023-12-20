@@ -474,8 +474,7 @@ class GenerativeExplanation(Data):
             if 'num_samples' not in kwargs:
                 raise ValueError(
                     "Expected 'num_samples' argument for an infinite",
-                    "Explanation Set."
-                )
+                    "Explanation Set.")
 
         return explanation_set.sample(**kwargs)
 

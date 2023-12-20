@@ -108,8 +108,7 @@ class XGNNExplainer(ExplainerAlgorithm):
         """
         raise NotImplementedError(
             "The method train_generative_model must be implemented",
-            "in subclasses"
-        )
+            "in subclasses")
 
     def supports(self) -> bool:
         return True

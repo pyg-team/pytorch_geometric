@@ -216,9 +216,8 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
                 max_steps_reached = max_steps is not None and step >= max_steps
                 # check if num_nodes is reached
                 num_nodes_reached = (num_nodes is not None
-                                     and
-                                     current_graph_state.x.shape[0] > num_nodes
-                                     )
+                                     and current_graph_state.x.shape[0]
+                                     > num_nodes)
             # add sampled graph to list
             sampled_graphs.append(G)
             # reset current graph state
@@ -349,8 +348,7 @@ class RLGenExplainer(XGNNExplainer):
         # Compute graph validity score (R_tr),
         # based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state)
-        reward = (intermediate_reward +
-                  self.lambda_1 * final_graph_reward +
+        reward = (intermediate_reward + self.lambda_1 * final_graph_reward +
                   self.lambda_2 * graph_validity_score)
         return reward
 
