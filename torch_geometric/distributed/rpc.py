@@ -95,8 +95,8 @@ class RPCRouter:
         rpc_worker_list = self.partition_to_workers[partition_idx]
         worker_idx = self.rpc_worker_indices[partition_idx]
         router_worker = rpc_worker_list[worker_idx]
-        self.rpc_worker_indices[partition_idx] = ((worker_idx +
-                                                  1) % len(rpc_worker_list))
+        self.rpc_worker_indices[partition_idx] = ((worker_idx + 1) %
+                                                  len(rpc_worker_list))
         return router_worker
 
 
