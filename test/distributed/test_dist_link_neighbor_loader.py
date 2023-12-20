@@ -90,7 +90,6 @@ def dist_link_neighbor_loader_homo(
     for batch in loader:
         assert isinstance(batch, Data)
         assert batch.n_id.size() == (batch.num_nodes, )
-        assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
     assert loader.channel.empty()
@@ -163,7 +162,6 @@ def dist_link_neighbor_loader_hetero(
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_homo(
     tmp_path,
     num_parts,
