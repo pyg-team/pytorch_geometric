@@ -4,6 +4,8 @@ import pytest
 import torch
 
 from torch_geometric.nn.metrics import (
+    LinkPredF1,
+    LinkPredMAP,
     LinkPredNDCG,
     LinkPredPrecision,
     LinkPredRecall,
@@ -62,6 +64,28 @@ def test_recall():
     result = metric.compute()
 
     assert float(result) == pytest.approx(0.5 * (2 / 3 + 0.5))
+
+
+def test_f1():
+    pred_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
+    edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]])
+
+    metric = LinkPredF1(k=2)
+    assert str(metric) == f'LinkPredF1(k={2})'
+    metric.update(pred_mat, edge_label_index)
+    result = metric.compute()
+    assert float(result) == pytest.approx(0.6500)
+
+
+def test_map():
+    pred_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
+    edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]])
+
+    metric = LinkPredMAP(k=2)
+    assert str(metric) == f'LinkPredMAP(k={2})'
+    metric.update(pred_mat, edge_label_index)
+    result = metric.compute()
+    assert float(result) == pytest.approx(0.6250)
 
 
 def test_ndcg():
