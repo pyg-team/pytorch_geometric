@@ -18,6 +18,7 @@ class KGEModel(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -113,15 +114,15 @@ class KGEModel(torch.nn.Module):
                 (default: :obj:`10`)
             log (bool, optional): If set to :obj:`False`, will not print a
                 progress bar to the console. (default: :obj:`True`)
-            filtered (bool, optional): If set to :obj:`True`, does evaluation 
-                in the filtered setting, as described in 
-                [Bordes et al, 2013](https://dl.acm.org/doi/10.5555/2999792.2999923). 
-                This mode filters out all tails present in the training, validation, 
-                or test set for any (head,relation) from the candidate set of tails 
+            filtered (bool, optional): If set to :obj:`True`, does evaluation
+                in the filtered setting, as described in
+                [Bordes et al, 2013](https://dl.acm.org/doi/10.5555/2999792.2999923).
+                This mode filters out all tails present in the training, validation,
+                or test set for any (head,relation) from the candidate set of tails
                 while computing the rank. (default: :obj:`False`)
-            neighbors (List[List[List[int]]], optional): List of tails present in the 
-                training, validation or test set for any (head,relation) pair in the 
-                dataset. Specifically, if :math:`(h,r,t)` is present in the dataset, 
+            neighbors (List[List[List[int]]], optional): List of tails present in the
+                training, validation or test set for any (head,relation) pair in the
+                dataset. Specifically, if :math:`(h,r,t)` is present in the dataset,
                 :math:`t` is present in :math:`neighbors[h][r]`. (default: :obj:`None`)
         """
         arange = range(head_index.numel())
@@ -144,7 +145,8 @@ class KGEModel(torch.nn.Module):
                         # Do not filter out the gold answer
                         continue
                     mask_indices.append(e_id)
-                mask_indices = torch.LongTensor(mask_indices).to(head_index.device)
+                mask_indices = torch.LongTensor(
+                    mask_indices).to(head_index.device)
                 flattened_scores.index_fill_(0, mask_indices, -100)
             rank = int((flattened_scores.argsort(
                 descending=True) == t).nonzero().view(-1))
