@@ -1,13 +1,11 @@
 import math
-
 import torch
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
-
 from torch_geometric.nn import GCNConv, global_mean_pool
 
 
-### GCN to predict graph property
+# GCN to predict graph property
 class GCN_Graph(torch.nn.Module):
     def __init__(self, input_dim, output_dim, dropout, emb=False):
         super(GCN_Graph, self).__init__()
@@ -22,7 +20,8 @@ class GCN_Graph(torch.nn.Module):
             GCNConv(in_channels=48, out_channels=64)
         ])
 
-        self.pool = global_mean_pool  # global averaging to obtain graph representation
+        # global averaging to obtain graph representation
+        self.pool = global_mean_pool
 
         self.fc1 = torch.nn.Linear(64, 32)
         self.fc2 = torch.nn.Linear(32, output_dim)
@@ -65,6 +64,5 @@ class GCN_Graph(torch.nn.Module):
         x = F.relu(self.fc1(x))
         x = F.dropout(x, self.dropout, training=self.training)
         x = self.fc2(x)
-        #x = F.sigmoid(x)
-        #x = F.softmax(x, dim=1)
+
         return x

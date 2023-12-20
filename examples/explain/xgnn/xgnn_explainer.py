@@ -1,6 +1,5 @@
 import copy
 import os
-import os.path as osp
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -21,8 +20,9 @@ from torch_geometric.utils import to_networkx
 
 
 def masked_softmax(vector, mask):
-    """Apply softmax to only selected elements of the vector, as indicated by the mask.
-    The output will be a probability distribution where unselected elements are 0.
+    """Apply softmax to only selected elements of the vector, as indicated by
+    the mask. The output will be a probability distribution where unselected
+    elements are 0.
 
     Args:
         vector (torch.Tensor): Input vector.
@@ -39,7 +39,8 @@ def masked_softmax(vector, mask):
 
 
 class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
-    """Graph generator that generates a new graph state from a given graph state.
+    """Graph generator that generates a new graph state from a given graph
+    state.
 
     Inherits:
         torch.nn.Module: Base class for all neural network modules.
@@ -48,7 +49,8 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
     Args:
         candidate_set (dict): Set of candidate nodes for graph generation.
         dropout (float): Dropout rate for regularization.
-        initial_node_type (str, optional): Initial node type for graph initialization.
+        initial_node_type (str, optional): Initial node type for graph
+        initialization.
     """
     def __init__(self, candidate_set, dropout, initial_node_type=None):
         super(GraphGenerator, self).__init__()
@@ -74,7 +76,8 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         r"""Initializes the graph state with a single node.
 
         Args:
-            graph_state (torch_geometric.data.Data): The graph state to initialize.
+            graph_state (torch_geometric.data.Data): The graph state to
+            initialize.
 
         Returns:
             torch_geometric.data.Data: The initialized graph state.
@@ -98,10 +101,12 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
         """Generates a new graph state from the given graph state.
 
         Args:
-            graph_state (torch_geometric.data.Data): The graph state to generate a new graph state from.
+            graph_state (torch_geometric.data.Data): The graph state to
+            generate a new graph state from.
 
         Returns:
-            ((torch.Tensor, torch.Tensor), (torch.Tensor, torch.Tensor)): The logits and one hot encodings for the start and end node.
+            ((torch.Tensor, torch.Tensor), (torch.Tensor, torch.Tensor)): The
+            logits and one hot encodings for the start and end node.
             torch_geometric.data.Data: The new graph state.
         """
         graph_state = copy.deepcopy(graph_state)
@@ -207,11 +212,13 @@ class GraphGenerator(torch.nn.Module, ExplanationSetSampler):
                 ((p_start, a_start),
                  (p_end, a_end)), current_graph_state = self.forward(G)
                 step += 1
-                # check if max_steps is reached (if max_steps is None, this will never be True)
+                # check if max_steps is reached
                 max_steps_reached = max_steps is not None and step >= max_steps
                 # check if num_nodes is reached
-                num_nodes_reached = num_nodes is not None and current_graph_state.x.shape[
-                    0] > num_nodes
+                num_nodes_reached = (num_nodes is not None
+                                     and
+                                     current_graph_state.x.shape[0] > num_nodes
+                                     )
             # add sampled graph to list
             sampled_graphs.append(G)
             # reset current graph state
@@ -233,7 +240,8 @@ class RLGenExplainer(XGNNExplainer):
         lr (float): Learning rate.
         candidate_set (dict): Set of candidate nodes for graph generation.
         validity_args (dict): Arguments for graph validity check.
-        initial_node_type (str, optional): Initial node type for graph initialization.
+        initial_node_type (str, optional): Initial node type for graph
+        initialization.
     """
     def __init__(self, epochs, lr, candidate_set, validity_args,
                  initial_node_type=None):
@@ -248,11 +256,13 @@ class RLGenExplainer(XGNNExplainer):
         self.validity_args = validity_args
 
     def reward_tf(self, pre_trained_gnn, graph_state, num_classes):
-        r"""Computes the reward for the given graph state by evaluating the graph with the pre-trained GNN.
+        r"""Computes the reward for the given graph state by evaluating the
+        graph with the pre-trained GNN.
 
         Args:
-            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for computing the reward.
-            graph_state (torch_geometric.data.Data): The graph state to compute the reward for.
+            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for
+            computing the reward. graph_state (torch_geometric.data.Data): The
+            graph state to compute the reward for.
             num_classes (int): The number of classes in the dataset.
 
         Returns:
@@ -269,8 +279,10 @@ class RLGenExplainer(XGNNExplainer):
         r"""Computes the rollout reward for the given graph state.
 
         Args:
-            intermediate_graph_state (torch_geometric.data.Data): The intermediate graph state to compute the rollout reward for.
-            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for computing the reward.
+            intermediate_graph_state (torch_geometric.data.Data): The
+            intermediate graph state to compute the rollout reward for.
+            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for
+            computing the reward.
             target_class (int): The target class to explain.
             num_classes (int): The number of classes in the dataset.
             num_rollouts (int): The number of rollouts to perform.
@@ -289,19 +301,22 @@ class RLGenExplainer(XGNNExplainer):
             reward = self.reward_tf(pre_trained_gnn, final_graph, num_classes)
             final_rewards.append(reward)
 
-            del intermediate_graph_state_copy  # delete intermediate graph state copy
+            del intermediate_graph_state_copy
 
         average_final_reward = sum(final_rewards) / len(final_rewards)
         return average_final_reward
 
     def evaluate_graph_validity(self, graph_state):
-        r"""Evaluates the validity of the given graph state. Dataset specific graph rules are implemented here.
+        r"""Evaluates the validity of the given graph state. Dataset specific
+        graph rules are implemented here.
 
         Args:
-            graph_state (torch_geometric.data.Data): The graph state to evaluate.
+            graph_state (torch_geometric.data.Data): The graph state to
+            evaluate.
 
         Returns:
-            int: The graph validity score. 0 if the graph is valid, -1 otherwise.
+            int: The graph validity score. 0 if the graph is valid,
+            -1 otherwise.
         """
         # For mutag, node degrees cannot exceed valency
         degrees = torch.bincount(graph_state.edge_index.flatten(),
@@ -317,8 +332,10 @@ class RLGenExplainer(XGNNExplainer):
         r"""Calculates the reward for the given graph state.
 
         Args:
-            graph_state (torch_geometric.data.Data): The graph state to compute the reward for.
-            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for computing the reward.
+            graph_state (torch_geometric.data.Data): The graph state to compute
+            the reward for.
+            pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for
+            computing the reward.
             target_class (int): The target class to explain.
             num_classes (int): The number of classes in the dataset.
 
@@ -329,13 +346,17 @@ class RLGenExplainer(XGNNExplainer):
                                              num_classes)
         final_graph_reward = self.rollout_reward(graph_state, pre_trained_gnn,
                                                  target_class, num_classes)
-        # Compute graph validity score (R_tr), based on the specific graph rules of the dataset
+        # Compute graph validity score (R_tr),
+        # based on the specific graph rules of the dataset
         graph_validity_score = self.evaluate_graph_validity(graph_state)
-        reward = intermediate_reward + self.lambda_1 * final_graph_reward + self.lambda_2 * graph_validity_score
+        reward = (intermediate_reward +
+                  self.lambda_1 * final_graph_reward +
+                  self.lambda_2 * graph_validity_score)
         return reward
 
     def train_generative_model(self, model_to_explain, for_class):
-        """Trains the generative model for the given number of epochs. We use RL approach to train the generative model.
+        """Trains the generative model for the given number of epochs. We us
+        RL approach to train the generative model.
 
         Args:
             model_to_explain (_type_): The model to explain.
@@ -454,16 +475,17 @@ explainer = Explainer(
 # choose target class
 class_index = 1
 
-# empty x and edge_index tensors, since we are not explaining one specific graph but existing explainer requires these
+# empty x and edge_index tensors, since we are not explaining one
+# specific graph, but existing explainer requires these
 x = torch.tensor([])
 edge_index = torch.tensor([[], []])
 
 explanation_mutagenic = explainer(x, edge_index, for_class=class_index)
 explanation_set_mutagenic = explanation_mutagenic.explanation_set
 
-###########################
-### SAMPLE SINGLE GRAPH ###
-###########################
+#######################
+# SAMPLE SINGLE GRAPH #
+#######################
 sampled_graph = explanation_set_mutagenic.sample(num_samples=1,
                                                  num_nodes=10)[0]
 # visualize sampled graph with DEFAULT inbuild method
@@ -471,9 +493,9 @@ explanation_mutagenic.visualize_explanation_graph(
     sampled_graph, path='examples/explain/xgnn/sample_graph',
     backend='networkx')
 
-##############################
-### SAMPLE MULTIPLE GRAPHS ###
-##############################
+##########################
+# SAMPLE MULTIPLE GRAPHS #
+##########################
 node_color_dict = {
     'C': '#0173B2',
     'N': '#DE8F05',

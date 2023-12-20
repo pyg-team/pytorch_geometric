@@ -104,9 +104,11 @@ class XGNNExplainer(ExplainerAlgorithm):
         Args:
             model: The model to explain.
             for_class: The class for which the explanation is generated.
+            **kwargs: Additional keyword arguments.
         """
         raise NotImplementedError(
-            "The method train_generative_model must be implemented in subclasses"
+            "The method train_generative_model must be implemented",
+            "in subclasses"
         )
 
     def supports(self) -> bool:

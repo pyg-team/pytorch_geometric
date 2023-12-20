@@ -1,11 +1,8 @@
-import copy
 
+import copy
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import torch.optim as optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tqdm import trange
 from tqdm.auto import trange
 from xgnn_model import GCN_Graph
 
@@ -26,12 +23,14 @@ def create_single_batch(dataset):
 def test(test_dataset, model):
     model.eval()
     with torch.no_grad():
-        logits = model(test_dataset).squeeze()  # Logits for each graph
-        probabilities = torch.sigmoid(
-            logits)  # Convert logits to probabilities
-        predictions = probabilities > 0.5  # Convert probabilities to binary predictions
-        correct = (
-            predictions == test_dataset.y).float()  # Assumes labels are 0 or 1
+        # Logits for each graph
+        logits = model(test_dataset).squeeze()
+        # Convert logits to probabilities
+        probabilities = torch.sigmoid(logits)
+        # Convert probabilities to binary predictions
+        predictions = probabilities > 0.5
+        # Assumes labels are 0 or 1
+        correct = (predictions == test_dataset.y).float()
         accuracy = correct.mean()
 
     return accuracy
