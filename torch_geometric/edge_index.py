@@ -8,6 +8,7 @@ from typing import (
     List,
     Literal,
     Optional,
+    Sequence,
     Set,
     Tuple,
     Type,
@@ -62,12 +63,31 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
-def set_tuple_item(values: Tuple, dim: int, value: Any) -> Tuple:
+def set_tuple_item(
+    values: Tuple[Any, ...],
+    dim: int,
+    value: Any,
+) -> Tuple[Any, ...]:
     if dim < -len(values) or dim >= len(values):
         raise IndexError("tuple index out of range")
 
     dim = dim + len(values) if dim < 0 else dim
     return values[:dim] + (value, ) + values[dim + 1:]
+
+
+def maybe_add(
+    value: Sequence[Optional[int]],
+    other: Union[int, Sequence[Optional[int]]],
+    alpha: int = 1,
+) -> Tuple[Optional[int], ...]:
+
+    if isinstance(other, int):
+        return tuple(v + alpha * other if v is not None else None
+                     for v in value)
+
+    assert len(value) == len(other)
+    return tuple(v + alpha * o if v is not None and o is not None else None
+                 for v, o in zip(value, other))
 
 
 def assert_valid_dtype(tensor: Tensor) -> None:
@@ -1125,6 +1145,83 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
             out._sort_order = input._sort_order
 
     return out
+
+
+def postprocess_add_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    out: Tensor,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    if out.dtype not in SUPPORTED_DTYPES:
+        return out
+    if out.dim() != 2 or out.size(0) != 2:
+        return out
+
+    output: EdgeIndex = out.as_subclass(EdgeIndex)
+
+    if isinstance(other, int):
+        size = maybe_add(input._sparse_size, other, alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.numel() <= 1:
+        size = maybe_add(input._sparse_size, int(other), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.size() == (2, 1):
+        size = maybe_add(input._sparse_size, other.view(-1).tolist(), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._T_perm = input._T_perm
+        if torch.equal(other[0], other[1]):
+            output._is_undirected = input.is_undirected
+
+    elif isinstance(other, EdgeIndex):
+        size = maybe_add(input._sparse_size, other._sparse_size, alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+
+    return output
+
+
+@implements(torch.add)
+@implements(Tensor.add)
+def add(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+    out: Optional[Tensor] = None,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        torch.add, (Tensor, ), (input, other), dict(alpha=alpha, out=out))
+
+    return postprocess_add_(input, other, output, alpha)
+
+
+@implements(Tensor.add_)
+def add_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        Tensor.add_, (Tensor, ), (input, other), dict(alpha=alpha))
+
+    return postprocess_add_(input, other, output, alpha)
 
 
 # Sparse-Dense Matrix Multiplication ##########################################
