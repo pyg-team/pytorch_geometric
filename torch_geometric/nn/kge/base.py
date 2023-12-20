@@ -18,7 +18,6 @@ class KGEModel(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -139,8 +138,8 @@ class KGEModel(torch.nn.Module):
                         # Do not filter out the gold answer
                         continue
                     mask_indices.append(e_id)
-                mask_indices = torch.LongTensor(
-                    mask_indices).to(head_index.device)
+                mask_indices = torch.LongTensor(mask_indices).to(
+                    head_index.device)
                 flattened_scores.index_fill_(0, mask_indices, -100)
             rank = int((flattened_scores.argsort(
                 descending=True) == t).nonzero().view(-1))
