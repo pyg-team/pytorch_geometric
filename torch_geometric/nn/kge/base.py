@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 import torch
 from torch import Tensor
@@ -98,6 +98,8 @@ class KGEModel(torch.nn.Module):
         batch_size: int,
         k: int = 10,
         log: bool = True,
+        filtered: bool = False,
+        neighbors: List[List[List[int]]] = None
     ) -> Tuple[float, float, float]:
         r"""Evaluates the model quality by computing Mean Rank, MRR and
         Hits@:math:`k` across all possible tail entities.
@@ -111,6 +113,16 @@ class KGEModel(torch.nn.Module):
                 (default: :obj:`10`)
             log (bool, optional): If set to :obj:`False`, will not print a
                 progress bar to the console. (default: :obj:`True`)
+            filtered (bool, optional): If set to :obj:`True`, does evaluation 
+                in the filtered setting, as described in 
+                [Bordes et al, 2013](https://dl.acm.org/doi/10.5555/2999792.2999923). 
+                This mode filters out all tails present in the training, validation, 
+                or test set for any (head,relation) from the candidate set of tails 
+                while computing the rank. (default: :obj:`False`)
+            neighbors (List[List[List[int]]], optional): List of tails present in the 
+                training, validation or test set for any (head,relation) pair in the 
+                dataset. Specifically, if :math:`(h,r,t)` is present in the dataset, 
+                :math:`t` is present in :math:`neighbors[h][r]`. (default: :obj:`None`)
         """
         arange = range(head_index.numel())
         arange = tqdm(arange) if log else arange
@@ -123,7 +135,18 @@ class KGEModel(torch.nn.Module):
             tail_indices = torch.arange(self.num_nodes, device=t.device)
             for ts in tail_indices.split(batch_size):
                 scores.append(self(h.expand_as(ts), r.expand_as(ts), ts))
-            rank = int((torch.cat(scores).argsort(
+            flattened_scores = torch.cat(scores)
+            if filtered:
+                curr_neighbours = neighbors[h.item()][r.item()]
+                mask_indices = []
+                for e_id in curr_neighbours:
+                    if e_id == t.item():
+                        # Do not filter out the gold answer
+                        continue
+                    mask_indices.append(e_id)
+                mask_indices = torch.LongTensor(mask_indices).to(head_index.device)
+                flattened_scores.index_fill_(0, mask_indices, -1)
+            rank = int((flattened_scores.argsort(
                 descending=True) == t).nonzero().view(-1))
             mean_ranks.append(rank)
             reciprocal_ranks.append(1 / (rank + 1))
