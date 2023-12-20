@@ -21,6 +21,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
             undirected.
+        num_graphs (int, optional): number of graphs that have to be created 
+            and are part of the returned dataset (default: obj:1)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
@@ -30,7 +32,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes
+        pre_transform (callable, optional): A function/transform that takesnum_graphs
             in an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed
             before being saved to disk. (default: :obj:`None`)
@@ -45,6 +47,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         root: str,
         block_sizes: Union[List[int], Tensor],
         edge_probs: Union[List[List[float]], Tensor],
+        num_graphs: int = 1,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
@@ -57,6 +60,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         if not isinstance(edge_probs, torch.Tensor):
             edge_probs = torch.tensor(edge_probs, dtype=torch.float)
 
+        assert num_graphs > 0, f'Cannot generate zero or a negative ammount of graphs (num_graphs={num_graphs})'
+        self.num_graphs = num_graphs 
         self.block_sizes = block_sizes
         self.edge_probs = edge_probs
         self.num_channels = num_channels
@@ -85,8 +90,9 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         edge_probs = self.edge_probs.view(-1).tolist()
         hash2 = '-'.join([f'{x:.1f}' for x in edge_probs])
+        hash3 = str(self.num_graphs)
 
-        return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
+        return f'data_{self.num_channels}_{hash1}_{hash2}_{hash3}.pt'
 
     def process(self) -> None:
         from sklearn.datasets import make_classification
@@ -97,26 +103,30 @@ class StochasticBlockModelDataset(InMemoryDataset):
         num_samples = int(self.block_sizes.sum())
         num_classes = self.block_sizes.size(0)
 
-        x = None
-        if self.num_channels is not None:
-            x, y_not_sorted = make_classification(
-                n_samples=num_samples,
-                n_features=self.num_channels,
-                n_classes=num_classes,
-                weights=self.block_sizes / num_samples,
-                **self.kwargs,
-            )
-            x = x[np.argsort(y_not_sorted)]
-            x = torch.from_numpy(x).to(torch.float)
+        data_list = [] 
+        for _ in range(self.num_graphs):
+            x = None
+            if self.num_channels is not None:
+                x, y_not_sorted = make_classification(
+                    n_samples=num_samples,
+                    n_features=self.num_channels,
+                    n_classes=num_classes,
+                    weights=self.block_sizes / num_samples,
+                    **self.kwargs,
+                )
+                x = x[np.argsort(y_not_sorted)]
+                x = torch.from_numpy(x).to(torch.float)
 
-        y = torch.arange(num_classes).repeat_interleave(self.block_sizes)
+            y = torch.arange(num_classes).repeat_interleave(self.block_sizes)
 
-        data = Data(x=x, edge_index=edge_index, y=y)
+            data = Data(x=x, edge_index=edge_index, y=y)
 
-        if self.pre_transform is not None:
-            data = self.pre_transform(data)
+            if self.pre_transform is not None:
+                data = self.pre_transform(data)
+            
+            data_list.append(data)
 
-        self.save([data], self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
 
 class RandomPartitionGraphDataset(StochasticBlockModelDataset):
@@ -140,6 +150,8 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             (default: :obj:`None`)
         is_undirected (bool, optional): Whether the graph to generate is
             undirected. (default: :obj:`True`)
+        num_graphs (int, optional): number of graphs that have to be created 
+            and are part of the returned dataset (default: obj:1)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
@@ -161,6 +173,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         average_degree: float,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
+        num_graphs: int = 1,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         **kwargs: Any,
@@ -183,7 +196,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         for r in range(num_classes):
             edge_probs[r][r] = p_in
 
-        super().__init__(root, block_sizes, edge_probs, num_channels,
+        super().__init__(root, block_sizes, edge_probs, num_graphs, num_channels,
                          is_undirected, transform, pre_transform, **kwargs)
         self.load(self.processed_paths[0])
 
@@ -195,3 +208,4 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
 
     def process(self) -> None:
         return super().process()
+
