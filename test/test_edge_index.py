@@ -74,6 +74,22 @@ def test_basic(dtype, device):
     assert out.device == device
 
 
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_identity(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3), **kwargs)
+
+    out = EdgeIndex(adj)
+    assert out.data_ptr() == adj.data_ptr()
+    assert out.dtype == adj.dtype
+    assert out.device == adj.device
+    assert out.sparse_size() == adj.sparse_size()
+    assert out.sort_order == adj.sort_order
+    assert out.is_undirected == adj.is_undirected
+
+
 def test_set_tuple_item():
     tmp = (0, 1, 2)
     assert set_tuple_item(tmp, 0, 3) == (3, 1, 2)
@@ -365,6 +381,12 @@ def test_cat(dtype, device, is_undirected):
     assert out.size() == (4, 4)
     assert not isinstance(out, EdgeIndex)
 
+    inplace = torch.empty(2, 8, dtype=dtype, device=device)
+    out = torch.cat([adj1, adj2], dim=1, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
+
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
@@ -403,15 +425,24 @@ def test_index_select(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
-    out = adj.index_select(1, tensor([1, 3], device=device))
+    index = tensor([1, 3], device=device)
+    out = adj.index_select(1, index)
     assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert isinstance(out, EdgeIndex)
     assert not out.is_sorted
     assert not out.is_undirected
 
-    out = adj.index_select(0, tensor([0], device=device))
+    index = tensor([0], device=device)
+    out = adj.index_select(0, index)
     assert out.equal(tensor([[0, 1, 1, 2]], device=device))
     assert not isinstance(out, EdgeIndex)
+
+    index = tensor([1, 3], device=device)
+    inplace = torch.empty(2, 2, dtype=dtype, device=device)
+    out = torch.index_select(adj, 1, index, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
 
 
 @withCUDA
