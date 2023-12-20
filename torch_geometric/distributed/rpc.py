@@ -44,7 +44,7 @@ def init_rpc(
     master_port: int,
     num_rpc_threads: int = 16,
     rpc_timeout: float = 240.0,
-    rpc_worker_names: Optional[Dict[DistRole, List[str]]] = {},
+    rpc_worker_names: Optional[Dict[DistRole, List[str]]] = None,
 ):
     with _rpc_init_lock:
         if rpc_is_initialized():
