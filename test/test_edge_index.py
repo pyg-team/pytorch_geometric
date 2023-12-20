@@ -68,7 +68,7 @@ def test_basic(dtype, device):
     assert out.dtype == dtype
     assert out.device == device
 
-    out = adj + 1
+    out = adj * 1
     assert not isinstance(out, EdgeIndex)
     assert out.dtype == dtype
     assert out.device == device
