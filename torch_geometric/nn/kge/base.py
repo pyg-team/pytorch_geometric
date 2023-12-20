@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import List, Tuple
 
 import torch
 from torch import Tensor
@@ -92,15 +92,9 @@ class KGEModel(torch.nn.Module):
 
     @torch.no_grad()
     def test(
-        self,
-        head_index: Tensor,
-        rel_type: Tensor,
-        tail_index: Tensor,
-        batch_size: int,
-        k: int = 10,
-        log: bool = True,
-        filtered: bool = False,
-        neighbors: List[List[List[int]]] = None
+            self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
+            batch_size: int, k: int = 10, log: bool = True,
+            filtered: bool = False, neighbors: List[List[List[int]]] = None
     ) -> Tuple[float, float, float]:
         r"""Evaluates the model quality by computing Mean Rank, MRR and
         Hits@:math:`k` across all possible tail entities.
