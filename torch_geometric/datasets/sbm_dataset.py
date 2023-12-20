@@ -21,7 +21,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
             undirected.
-        num_graphs (int, optional): number of graphs that have to be created 
+        num_graphs (int, optional): number of graphs that have to be created
             and are part of the returned dataset (default: obj:1)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
@@ -61,7 +61,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
             edge_probs = torch.tensor(edge_probs, dtype=torch.float)
 
         assert num_graphs > 0, f'Cannot generate zero or a negative ammount of graphs (num_graphs={num_graphs})'
-        self.num_graphs = num_graphs 
+        self.num_graphs = num_graphs
         self.block_sizes = block_sizes
         self.edge_probs = edge_probs
         self.num_channels = num_channels
@@ -103,7 +103,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         num_samples = int(self.block_sizes.sum())
         num_classes = self.block_sizes.size(0)
 
-        data_list = [] 
+        data_list = []
         for _ in range(self.num_graphs):
             x = None
             if self.num_channels is not None:
@@ -123,7 +123,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
             if self.pre_transform is not None:
                 data = self.pre_transform(data)
-            
+
             data_list.append(data)
 
         self.save(data_list, self.processed_paths[0])
@@ -150,7 +150,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             (default: :obj:`None`)
         is_undirected (bool, optional): Whether the graph to generate is
             undirected. (default: :obj:`True`)
-        num_graphs (int, optional): number of graphs that have to be created 
+        num_graphs (int, optional): number of graphs that have to be created
             and are part of the returned dataset (default: obj:1)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
@@ -196,8 +196,9 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         for r in range(num_classes):
             edge_probs[r][r] = p_in
 
-        super().__init__(root, block_sizes, edge_probs, num_graphs, num_channels,
-                         is_undirected, transform, pre_transform, **kwargs)
+        super().__init__(root, block_sizes, edge_probs, num_graphs,
+                         num_channels, is_undirected, transform, pre_transform,
+                         **kwargs)
         self.load(self.processed_paths[0])
 
     @property
@@ -208,4 +209,3 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
 
     def process(self) -> None:
         return super().process()
-
