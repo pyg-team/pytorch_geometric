@@ -37,7 +37,11 @@ class BasicGNN(torch.nn.Module):
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
             dimensionalities.
-        hidden_channels (int): Size of each hidden sample.
+        hidden_channels (int or List[int]): Size of each hidden sample.
+            If type is `int` it determines the size of every layer.
+            If it is list of integers, each element of the list specifies the
+            size of the corresponding hidden layer, thus allowing for varying
+            layer sizes.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
@@ -70,8 +74,8 @@ class BasicGNN(torch.nn.Module):
     def __init__(
         self,
         in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
+        hidden_channels: Union[int, List[int]],
+        num_layers: Optional[int],
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
@@ -84,10 +88,6 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        self.in_channels = in_channels
-        self.hidden_channels = hidden_channels
-        self.num_layers = num_layers
-
         self.dropout = torch.nn.Dropout(p=dropout)
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
@@ -95,26 +95,45 @@ class BasicGNN(torch.nn.Module):
         self.norm = norm if isinstance(norm, str) else None
         self.norm_kwargs = norm_kwargs
 
-        if out_channels is not None:
-            self.out_channels = out_channels
-        else:
-            self.out_channels = hidden_channels
+        if isinstance(hidden_channels, list):
+            if len(set(hidden_channels)) > 1 and jk is not None:
+                raise ValueError(
+                    """A list of `hidden_channels` with varying sizes is not
+                    supported when `JumpingKnowledge` (jk) is enabled.""")
+            if num_layers is not None:
+                raise ValueError(
+                    "Using `hidden_channels` as a list and `num_layers`")
+        if isinstance(hidden_channels, int):
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` is missing")
+            hidden_channels = [hidden_channels] * (num_layers - 1)
+
+        if out_channels is None:
+            out_channels = hidden_channels[-1]
+
+        if in_channels is not None:
+            if out_channels is None:
+                out_channels = hidden_channels
+
+            channel_list = [in_channels] + hidden_channels + [out_channels]
+
+        self.channel_list = channel_list
 
         self.convs = ModuleList()
-        if num_layers > 1:
+
+        if self.num_layers > 1:
             self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
-            else:
-                in_channels = hidden_channels
-        for _ in range(num_layers - 2):
+                self.init_conv(channel_list[0], channel_list[1], **kwargs))
+
+        iterator = zip(channel_list[1:-1], channel_list[2:])
+        for in_channels, out_channels in iterator:
+
+            if isinstance(self.in_channels, (tuple, list)):
+                in_channels = (in_channels, in_channels)
+
             self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
-            else:
-                in_channels = hidden_channels
+                self.init_conv(in_channels, out_channels, **kwargs))
+
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
             self.convs.append(
@@ -137,7 +156,7 @@ class BasicGNN(torch.nn.Module):
             norm_params = inspect.signature(norm_layer.forward).parameters
             self.supports_norm_batch = 'batch' in norm_params
 
-        for _ in range(num_layers - 1):
+        for _ in range(self.num_layers - 1):
             self.norms.append(copy.deepcopy(norm_layer))
 
         if jk is not None:
@@ -146,13 +165,13 @@ class BasicGNN(torch.nn.Module):
             self.norms.append(torch.nn.Identity())
 
         if jk is not None and jk != 'last':
-            self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
+            self.jk = JumpingKnowledge(jk, hidden_channels[0], self.num_layers)
 
         if jk is not None:
             if jk == 'cat':
-                in_channels = num_layers * hidden_channels
+                in_channels = self.num_layers * hidden_channels[0]
             else:
-                in_channels = hidden_channels
+                in_channels = hidden_channels[0]
             self.lin = Linear(in_channels, self.out_channels)
 
         # We define `trim_to_layer` functionality as a module such that we can
@@ -162,6 +181,21 @@ class BasicGNN(torch.nn.Module):
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
+
+    @property
+    def in_channels(self) -> int:
+        r"""Size of each input sample."""
+        return self.channel_list[0]
+
+    @property
+    def out_channels(self) -> int:
+        r"""Size of each output sample."""
+        return self.channel_list[-1]
+
+    @property
+    def num_layers(self) -> int:
+        r"""The number of layers."""
+        return len(self.channel_list) - 1
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
