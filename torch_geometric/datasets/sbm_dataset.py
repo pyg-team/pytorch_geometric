@@ -61,9 +61,9 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         assert num_graphs > 0
 
-        self.num_graphs = num_graphs
         self.block_sizes = block_sizes
         self.edge_probs = edge_probs
+        self.num_graphs = num_graphs
         self.num_channels = num_channels
         self.is_undirected = is_undirected
 
