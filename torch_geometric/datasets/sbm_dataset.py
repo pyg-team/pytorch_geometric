@@ -21,8 +21,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
             undirected.
-        num_graphs (int, optional): number of graphs that have to be created
-            and are part of the returned dataset (default: obj:1)
+        num_graphs (int, optional): The number of graphs. (default: :obj:`1`)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
@@ -32,7 +31,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takesnum_graphs
+        pre_transform (callable, optional): A function/transform that takes
             in an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed
             before being saved to disk. (default: :obj:`None`)
@@ -60,7 +59,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         if not isinstance(edge_probs, torch.Tensor):
             edge_probs = torch.tensor(edge_probs, dtype=torch.float)
 
-        assert num_graphs > 0, f'Cannot generate zero or a negative ammount of graphs (num_graphs={num_graphs})'
+        assert num_graphs > 0
+
         self.num_graphs = num_graphs
         self.block_sizes = block_sizes
         self.edge_probs = edge_probs
@@ -90,9 +90,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         edge_probs = self.edge_probs.view(-1).tolist()
         hash2 = '-'.join([f'{x:.1f}' for x in edge_probs])
-        hash3 = str(self.num_graphs)
 
-        return f'data_{self.num_channels}_{hash1}_{hash2}_{hash3}.pt'
+        return f'data_{self.num_channels}_{hash1}_{hash2}_{self.num_graphs}.pt'
 
     def process(self) -> None:
         from sklearn.datasets import make_classification
@@ -145,13 +144,12 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         num_nodes_per_class (int): The number of nodes per class.
         node_homophily_ratio (float): The degree of node homophily.
         average_degree (float): The average degree of the graph.
+        num_graphs (int, optional): The number of graphs. (default: :obj:`1`)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
         is_undirected (bool, optional): Whether the graph to generate is
             undirected. (default: :obj:`True`)
-        num_graphs (int, optional): number of graphs that have to be created
-            and are part of the returned dataset (default: obj:1)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
@@ -171,9 +169,9 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         num_nodes_per_class: int,
         node_homophily_ratio: float,
         average_degree: float,
+        num_graphs: int = 1,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
-        num_graphs: int = 1,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         **kwargs: Any,
@@ -199,13 +197,12 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         super().__init__(root, block_sizes, edge_probs, num_graphs,
                          num_channels, is_undirected, transform, pre_transform,
                          **kwargs)
-        self.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:
         return (f'data_{self.num_channels}_{self._num_classes}_'
                 f'{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_'
-                f'{self.average_degree:.1f}.pt')
+                f'{self.average_degree:.1f}_{self.num_graphs}.pt')
 
     def process(self) -> None:
         return super().process()
