@@ -71,7 +71,6 @@ def dist_neighbor_loader_homo(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -81,7 +80,7 @@ def dist_neighbor_loader_homo(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -94,6 +93,7 @@ def dist_neighbor_loader_homo(
             batch.n_id[batch.edge_index],
             edge_index[:, batch.e_id],
         )
+    assert loader.channel.empty()
 
 
 def dist_neighbor_loader_hetero(
@@ -124,7 +124,6 @@ def dist_neighbor_loader_hetero(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -132,7 +131,7 @@ def dist_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -159,6 +158,7 @@ def dist_neighbor_loader_hetero(
                 ], dim=0)
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
+    assert loader.channel.empty()
 
 
 @onlyLinux

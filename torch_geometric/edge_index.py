@@ -8,6 +8,7 @@ from typing import (
     List,
     Literal,
     Optional,
+    Sequence,
     Set,
     Tuple,
     Type,
@@ -62,12 +63,46 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
-def set_tuple_item(values: Tuple, dim: int, value: Any) -> Tuple:
+def set_tuple_item(
+    values: Tuple[Any, ...],
+    dim: int,
+    value: Any,
+) -> Tuple[Any, ...]:
     if dim < -len(values) or dim >= len(values):
         raise IndexError("tuple index out of range")
 
     dim = dim + len(values) if dim < 0 else dim
     return values[:dim] + (value, ) + values[dim + 1:]
+
+
+def maybe_add(
+    value: Sequence[Optional[int]],
+    other: Union[int, Sequence[Optional[int]]],
+    alpha: int = 1,
+) -> Tuple[Optional[int], ...]:
+
+    if isinstance(other, int):
+        return tuple(v + alpha * other if v is not None else None
+                     for v in value)
+
+    assert len(value) == len(other)
+    return tuple(v + alpha * o if v is not None and o is not None else None
+                 for v, o in zip(value, other))
+
+
+def maybe_sub(
+    value: Sequence[Optional[int]],
+    other: Union[int, Sequence[Optional[int]]],
+    alpha: int = 1,
+) -> Tuple[Optional[int], ...]:
+
+    if isinstance(other, int):
+        return tuple(v - alpha * other if v is not None else None
+                     for v in value)
+
+    assert len(value) == len(other)
+    return tuple(v - alpha * o if v is not None and o is not None else None
+                 for v, o in zip(value, other))
 
 
 def assert_valid_dtype(tensor: Tensor) -> None:
@@ -207,7 +242,7 @@ class EdgeIndex(Tensor):
         cls: Type,
         data: Any,
         *args: Any,
-        sparse_size: Tuple[Optional[int], Optional[int]] = (None, None),
+        sparse_size: Optional[Tuple[Optional[int], Optional[int]]] = None,
         sort_order: Optional[Union[str, SortOrder]] = None,
         is_undirected: bool = False,
         **kwargs: Any,
@@ -227,6 +262,14 @@ class EdgeIndex(Tensor):
         assert_two_dimensional(data)
         assert_contiguous(data)
 
+        if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            sparse_size = sparse_size or data.sparse_size()
+            sort_order = sort_order or data.sort_order
+            is_undirected = is_undirected or data.is_undirected
+
+        if sparse_size is None:
+            sparse_size = (None, None)
+
         if is_undirected:
             assert_symmetric(sparse_size)
             if sparse_size[0] is not None and sparse_size[1] is None:
@@ -243,6 +286,13 @@ class EdgeIndex(Tensor):
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
+
+        if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            out._indptr = data._indptr
+            out._T_perm = data._T_perm
+            out._T_index = data._T_index
+            out._T_indptr = data._T_indptr
+            out._value = out._value
 
         return out
 
@@ -945,17 +995,20 @@ def contiguous(tensor: EdgeIndex) -> EdgeIndex:
 def cat(
     tensors: List[Union[EdgeIndex, Tensor]],
     dim: int = 0,
+    *,
+    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
     if len(tensors) == 1:
         return tensors[0]
 
-    out = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim))
+    output = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim),
+                                       dict(out=out))
 
     if dim != 1 and dim != -1:  # No valid `EdgeIndex` anymore.
-        return out
+        return output
 
-    out = out.as_subclass(EdgeIndex)
+    output = output.as_subclass(EdgeIndex)
 
     # Post-process `sparse_size`:
     num_rows: Optional[int] = 0
@@ -974,7 +1027,7 @@ def cat(
         assert isinstance(num_cols, int)
         num_cols = max(num_cols, tensor.num_cols)
 
-    out._sparse_size = (num_rows, num_cols)
+    output._sparse_size = (num_rows, num_cols)
 
     # Post-process `is_undirected`:
     is_undirected = True
@@ -984,9 +1037,9 @@ def cat(
         else:
             is_undirected = False
 
-    out._is_undirected = is_undirected
+    output._is_undirected = is_undirected
 
-    return out
+    return output
 
 
 @implements(torch.flip)
@@ -1030,16 +1083,18 @@ def index_select(
     input: EdgeIndex,
     dim: int,
     index: Tensor,
+    *,
+    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    out = Tensor.__torch_function__(  #
-        torch.index_select, (Tensor, ), (input, dim, index))
+    output = Tensor.__torch_function__(  #
+        torch.index_select, (Tensor, ), (input, dim, index), dict(out=out))
 
     if dim == 1 or dim == -1:
-        out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size()
+        output = output.as_subclass(EdgeIndex)
+        output._sparse_size = input.sparse_size()
 
-    return out
+    return output
 
 
 @implements(torch.narrow)
@@ -1105,6 +1160,155 @@ def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
             out._sort_order = input._sort_order
 
     return out
+
+
+def postprocess_add_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    out: Tensor,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    if out.dtype not in SUPPORTED_DTYPES:
+        return out
+    if out.dim() != 2 or out.size(0) != 2:
+        return out
+
+    output: EdgeIndex = out.as_subclass(EdgeIndex)
+
+    if isinstance(other, int):
+        size = maybe_add(input._sparse_size, other, alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.numel() <= 1:
+        size = maybe_add(input._sparse_size, int(other), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.size() == (2, 1):
+        size = maybe_add(input._sparse_size, other.view(-1).tolist(), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._T_perm = input._T_perm
+        if torch.equal(other[0], other[1]):
+            output._is_undirected = input.is_undirected
+
+    elif isinstance(other, EdgeIndex):
+        size = maybe_add(input._sparse_size, other._sparse_size, alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+
+    return output
+
+
+@implements(torch.add)
+@implements(Tensor.add)
+def add(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+    out: Optional[Tensor] = None,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        torch.add, (Tensor, ), (input, other), dict(alpha=alpha, out=out))
+
+    return postprocess_add_(input, other, output, alpha)
+
+
+@implements(Tensor.add_)
+def add_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        Tensor.add_, (Tensor, ), (input, other), dict(alpha=alpha))
+
+    return postprocess_add_(input, other, output, alpha)
+
+
+def postprocess_sub_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    out: Tensor,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    if out.dtype not in SUPPORTED_DTYPES:
+        return out
+    if out.dim() != 2 or out.size(0) != 2:
+        return out
+
+    output: EdgeIndex = out.as_subclass(EdgeIndex)
+
+    if isinstance(other, int):
+        size = maybe_sub(input._sparse_size, other, alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.numel() <= 1:
+        size = maybe_sub(input._sparse_size, int(other), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._is_undirected = input.is_undirected
+        output._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.size() == (2, 1):
+        size = maybe_sub(input._sparse_size, other.view(-1).tolist(), alpha)
+        assert len(size) == 2
+        output._sparse_size = size
+        output._sort_order = input._sort_order
+        output._T_perm = input._T_perm
+        if torch.equal(other[0], other[1]):
+            output._is_undirected = input.is_undirected
+
+    return output
+
+
+@implements(torch.sub)
+@implements(Tensor.sub)
+def sub(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+    out: Optional[Tensor] = None,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        torch.sub, (Tensor, ), (input, other), dict(alpha=alpha, out=out))
+
+    return postprocess_sub_(input, other, output, alpha)
+
+
+@implements(Tensor.sub_)
+def sub_(
+    input: EdgeIndex,
+    other: Union[int, Tensor],
+    *,
+    alpha: int = 1,
+) -> Union[EdgeIndex, Tensor]:
+
+    output = Tensor.__torch_function__(  #
+        Tensor.sub_, (Tensor, ), (input, other), dict(alpha=alpha))
+
+    return postprocess_sub_(input, other, output, alpha)
 
 
 # Sparse-Dense Matrix Multiplication ##########################################
