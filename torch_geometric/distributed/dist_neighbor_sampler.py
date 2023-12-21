@@ -126,7 +126,7 @@ class DistNeighborSampler:
         rpc_sample_callee = RPCSamplingCallee(self)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
-    def init_event_loop(self):
+    def init_event_loop(self) -> None:
         if self.event_loop is None:
             self.event_loop = ConcurrentEventLoop(self.concurrency)
             self.event_loop.start_loop()
