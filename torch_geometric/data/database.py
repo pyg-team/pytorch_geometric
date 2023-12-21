@@ -112,13 +112,9 @@ class Database(ABC):
         """
         raise NotImplementedError
 
-    def multi_insert(
-        self,
-        indices: Union[Iterable[int], Tensor, slice, range],
-        data_list: Iterable[Any],
-        batch_size: Optional[int] = None,
-        log: bool = False,
-    ):
+    def multi_insert(self, indices: Union[Iterable[int], Tensor, slice,
+                                          range], data_list: Iterable[Any],
+                     batch_size: Optional[int] = None, log: bool = False):
         r"""Inserts a chunk of data at the specified indices.
 
         Args:
@@ -144,10 +140,8 @@ class Database(ABC):
             offsets = range(0, length, batch_size)
 
         for start in offsets:
-            self._multi_insert(
-                indices[start:start + batch_size],
-                data_list[start:start + batch_size],
-            )
+            self._multi_insert(indices[start:start + batch_size],
+                               data_list[start:start + batch_size])
 
     def _multi_insert(
         self,
@@ -160,7 +154,7 @@ class Database(ABC):
             self.insert(index, data)
 
     @abstractmethod
-    def get(self, index: int) -> Any:
+    def get(self, index: int, **kwargs) -> Any:
         r"""Gets data from the specified index.
 
         Args:
@@ -168,11 +162,8 @@ class Database(ABC):
         """
         raise NotImplementedError
 
-    def multi_get(
-        self,
-        indices: Union[Iterable[int], Tensor, slice, range],
-        batch_size: Optional[int] = None,
-    ) -> List[Any]:
+    def multi_get(self, indices: Union[Iterable[int], Tensor, slice, range],
+                  batch_size: Optional[int] = None, **kwargs) -> List[Any]:
         r"""Gets a chunk of data from the specified indices.
 
         Args:
@@ -190,13 +181,14 @@ class Database(ABC):
         data_list: List[Any] = []
         for start in range(0, length, batch_size):
             chunk_indices = indices[start:start + batch_size]
-            data_list.extend(self._multi_get(chunk_indices))
+            data_list.extend(self._multi_get(chunk_indices, **kwargs))
         return data_list
 
-    def _multi_get(self, indices: Union[Iterable[int], Tensor]) -> List[Any]:
+    def _multi_get(self, indices: Union[Iterable[int], Tensor],
+                   **kwargs) -> List[Any]:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
-        return [self.get(index) for index in indices]
+        return [self.get(index, **kwargs) for index in indices]
 
     # Helper functions ########################################################
 
@@ -266,7 +258,8 @@ class SQLiteDatabase(Database):
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
-    def __init__(self, path: str, name: str, schema: Schema = object):
+    def __init__(self, path: str, name: str, schema: Schema = object,
+                 db_indices: Optional[List[str]] = None):
         super().__init__(schema)
 
         warnings.filterwarnings('ignore', '.*given buffer is not writable.*')
@@ -287,11 +280,21 @@ class SQLiteDatabase(Database):
             f'  {col_name} {self._to_sql_type(type_info)}' for col_name,
             type_info in zip(self._col_names, self.schema.values())
         ])
+        if db_indices:
+            sql_schema += ',\n'.join(f'  {idx} TEXT NULL'
+                                     for idx in db_indices)
+
         query = (f'CREATE TABLE IF NOT EXISTS {self.name} (\n'
                  f'  id INTEGER PRIMARY KEY,\n'
                  f'{sql_schema}\n'
                  f')')
         self.cursor.execute(query)
+        if db_indices:
+            for idx in db_indices:
+                index_query = (f'CREATE INDEX ID NOT EXISTS '
+                               f'{self.name}_{idx} ON '
+                               f'{self.name} ({idx})')
+                self.cursor.execute(index_query)
 
     def connect(self):
         import sqlite3
@@ -311,7 +314,11 @@ class SQLiteDatabase(Database):
             raise RuntimeError("No open database connection")
         return self._cursor
 
-    def insert(self, index: int, data: Any):
+    def insert(
+        self,
+        index: int,
+        data: Any,
+    ):
         query = (f'INSERT INTO {self.name} '
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
@@ -335,18 +342,24 @@ class SQLiteDatabase(Database):
         self.cursor.executemany(query, data_list)
         self._connection.commit()
 
-    def get(self, index: int) -> Any:
+    def get(
+        self,
+        index: int,
+        db_indices: Optional[Dict[str, Any]] = None,
+    ) -> Any:
         query = (f'SELECT {self._joined_col_names} FROM {self.name} '
                  f'WHERE id = ?')
-        self.cursor.execute(query, (index, ))
+        for k in db_indices:
+            query += f' AND {k} = ?'
+        self.cursor.execute(query, (index, *[v for v in db_indices.values()]))
         return self._deserialize(self.cursor.fetchone())
 
     def multi_get(
         self,
         indices: Union[Iterable[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
+        db_indices: Optional[Dict[str, str]] = None,
     ) -> List[Any]:
-
         if isinstance(indices, slice):
             indices = self.slice_to_range(indices)
         elif isinstance(indices, Tensor):
@@ -369,8 +382,11 @@ class SQLiteDatabase(Database):
 
         query = (f'SELECT {self._joined_col_names} '
                  f'FROM {self.name} INNER JOIN {join_table_name} '
-                 f'ON {self.name}.id = {join_table_name}.id '
-                 f'ORDER BY {join_table_name}.row_id')
+                 f'ON {self.name}.id = {join_table_name}.id ')
+        if db_indices:
+            for k in db_indices:
+                query += f' AND {k} = ?'
+        query += f'ORDER BY {join_table_name}.row_id'
         self.cursor.execute(query)
 
         if batch_size is None:

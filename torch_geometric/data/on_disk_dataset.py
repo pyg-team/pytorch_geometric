@@ -1,5 +1,8 @@
+import enum
 import os
+
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
+
 
 from torch import Tensor
 
@@ -7,6 +10,21 @@ from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
+
+
+class GraphType(enum.Enum):
+    HOMOGENOUS = 0
+    HETEROGENOUS = 1
+
+
+@dataclass
+class EdgeAttr:
+    source: str
+    type: str
+    dest: str
+
+    def __str__(self) -> str:
+        return f'{self.type}_{self.source}_{self.dest}'
 
 
 class OnDiskDataset(Dataset):
@@ -57,6 +75,7 @@ class OnDiskDataset(Dataset):
         backend: str = 'sqlite',
         schema: Schema = object,
         log: bool = True,
+        graph_type: GraphType = GraphType.HOMOGENOUS,
     ) -> None:
         if backend not in self.BACKENDS:
             raise ValueError(f"Database backend must be one of "
@@ -68,6 +87,7 @@ class OnDiskDataset(Dataset):
 
         self._db: Optional[Database] = None
         self._numel: Optional[int] = None
+        self.graph_type = graph_type
 
         super().__init__(root, transform, pre_filter=pre_filter, log=log)
 
@@ -85,6 +105,8 @@ class OnDiskDataset(Dataset):
         cls = self.BACKENDS[self.backend]
         if issubclass(cls, SQLiteDatabase):
             kwargs['name'] = self.__class__.__name__
+            if self.graph_type == GraphType.HETEROGENOUS:
+                kwargs['db_indices'] = ['node_attr', 'edge_attr']
 
         os.makedirs(self.processed_dir, exist_ok=True)
         path = self.processed_paths[0]
@@ -97,7 +119,9 @@ class OnDiskDataset(Dataset):
         if self._db is not None:
             self._db.close()
 
-    def serialize(self, data: BaseData) -> Any:
+    def serialize(self, data: BaseData,
+                  node_labels: Optional[Iterable[str]] = None,
+                  edge_labels: Optional[Iterable[EdgeAttr]] = None) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
         schema.
@@ -108,7 +132,9 @@ class OnDiskDataset(Dataset):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def deserialize(self, data: Any) -> BaseData:
+    def deserialize(
+            self, data: Any, node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[EdgeAttr]] = None) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object.
@@ -119,40 +145,70 @@ class OnDiskDataset(Dataset):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: BaseData) -> None:
+    def append(
+        self, 
+        data: BaseData,
+        node_labels: Optional[Iterable[str]] = None,
+        edge_labels: Optional[Iterable[EdgeAttr]] = None
+    ) -> None:
         r"""Appends the data object to the dataset."""
         index = len(self)
-        self.db.insert(index, self.serialize(data))
+        self.db.insert(
+            index,
+            self.serialize(data, node_labels, edge_labels),
+        )
         self._numel += 1
 
     def extend(
         self,
         data_list: Sequence[BaseData],
         batch_size: Optional[int] = None,
+        node_labels: Optional[Iterable[str]] = None,
+        edge_labels: Optional[Iterable[EdgeAttr]] = None
     ) -> None:
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)
-        data_list = [self.serialize(data) for data in data_list]
+        data_list = [
+            self.serialize(data, node_labels, edge_labels)
+            for data in data_list
+        ]
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
-    def get(self, idx: int) -> BaseData:
+    def get(self, idx: int, node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[EdgeAttr]] = None) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.deserialize(self.db.get(idx))
+        indices = []
+        if node_labels:
+            indices.extend(node_labels)
+        if edge_labels:
+            indices.extend([str(edge) for edge in edge_labels])
+        return self.deserialize(self.db.get(idx, indices), node_labels,
+                                edge_labels)
 
     def multi_get(
-        self,
-        indices: Union[Iterable[int], Tensor, slice, range],
-        batch_size: Optional[int] = None,
+            self, indices: Union[Iterable[int], Tensor, slice,
+                                 range], batch_size: Optional[int] = None,
+            node_labels: Optional[Iterable[str]] = None,
+            edge_labels: Optional[Iterable[EdgeAttr]] = None
     ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
-        if len(indices) == 1:
-            data_list = [self.db.get(indices[0])]
-        else:
-            data_list = self.db.multi_get(indices, batch_size)
+        db_indices = []
+        if node_labels:
+            db_indices.extend(node_labels)
+        if edge_labels:
+            db_indices.extend([str(edge) for edge in edge_labels])
 
-        return [self.deserialize(data) for data in data_list]
+        if len(indices) == 1:
+            data_list = [self.db.get(indices[0], db_indices)]
+        else:
+            data_list = self.db.multi_get(indices, batch_size, db_indices)
+
+        return [
+            self.deserialize(data, node_labels, edge_labels)
+            for data in data_list
+        ]
 
     def __getitems__(self, indices: List[int]) -> List[BaseData]:
         return self.multi_get(indices)
