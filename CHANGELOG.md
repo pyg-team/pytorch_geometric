@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added PanRep: Graph neural networks for extracting universal node embeddings in heterogeneous graphs([#8623](https://github.com/pyg-team/pytorch_geometric/pull/8623))
 - Added noise scheduler utility for diffusion based graph generative models ([#8347](https://github.com/pyg-team/pytorch_geometric/pull/8347))
 - Added the equivariant `ViSNet` model ([#8287](https://github.com/pyg-team/pytorch_geometric/pull/8287))
 - Added temporal-related capabilities to `Data` ([#8454](https://github.com/pyg-team/pytorch_geometric/pull/8454))
