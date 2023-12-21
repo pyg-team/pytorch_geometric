@@ -33,7 +33,7 @@ class GeoGNNConv(torch.nn.Module):
         self.act = nn.ReLU() if last_act else None
         self.dropout = nn.Dropout(p=dropout_rate)
 
-    def forward(self, x, edge_index, batch, edge_attr=None):
+    def forward(self, x, edge_index, edge_attr, batch):
         """Performs a forward pass of the GeoGNNConv.
 
         Args:
