@@ -182,7 +182,7 @@ def _collate(
         key = str(key)
         sizes = torch.tensor([value.num_rows for value in values])
         slices = cumsum(sizes)
-        value = torch_frame.cat(values, along='row')
+        value = torch_frame.cat(values, dim=0)
         return value, slices, None
 
     elif is_sparse(elem) and increment:
