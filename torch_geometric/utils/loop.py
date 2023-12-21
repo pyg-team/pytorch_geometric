@@ -182,10 +182,19 @@ def segregate_self_loops(  # noqa: F811
     mask = edge_index[0] != edge_index[1]
     inv_mask = ~mask
 
+    is_undirected = False
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
     loop_edge_index = edge_index[:, inv_mask]
     loop_edge_attr = None if edge_attr is None else edge_attr[inv_mask]
     edge_index = edge_index[:, mask]
     edge_attr = None if edge_attr is None else edge_attr[mask]
+
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        assert isinstance(loop_edge_index, EdgeIndex)
+        edge_index._is_undirected = is_undirected
+        loop_edge_index._is_undirected = is_undirected
 
     return edge_index, edge_attr, loop_edge_index, loop_edge_attr
 
