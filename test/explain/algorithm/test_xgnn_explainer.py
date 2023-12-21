@@ -1,8 +1,5 @@
-from abc import abstractmethod
-
 import pytest
 import torch
-
 from torch_geometric.explain import GenerativeExplanation, XGNNExplainer
 
 

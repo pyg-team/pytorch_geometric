@@ -260,8 +260,9 @@ class RLGenExplainer(XGNNExplainer):
 
         Args:
             pre_trained_gnn (torch.nn.Module): The pre-trained GNN to use for
-            computing the reward. graph_state (torch_geometric.data.Data): The
-            graph state to compute the reward for.
+            computing the reward.
+            graph_state (torch_geometric.data.Data): The graph state to compute
+            the reward for.
             num_classes (int): The number of classes in the dataset.
 
         Returns:
