@@ -4,8 +4,9 @@ from torch_geometric.contrib.nn.conv.geognn_conv import GeoGNNConv
 from torch_geometric.nn import global_mean_pool
 
 
-class GNNModel(torch.nn.Module):
-    """GeoGNN from the paper `Geometry-enhanced molecular
+class GeoGNN(torch.nn.Module):
+    """Modified version of GeoGNN from the
+    paper `Geometry-enhanced molecular
     representation learning for property prediction`
     <https://www.nature.com/articles/s42256-021-00438-4>`_.
 
@@ -16,7 +17,7 @@ class GNNModel(torch.nn.Module):
             Defaults to 0.2.
     """
     def __init__(self, embedding_size, layer_num, dropout=0.2):
-        super(GNNModel, self).__init__()
+        super(GeoGNN, self).__init__()
         self.layer_num = layer_num
         self.embedding_size = embedding_size
 
@@ -30,7 +31,7 @@ class GNNModel(torch.nn.Module):
         self.graph_pool = global_mean_pool
 
     def forward(self, ab_graph, ba_graph):
-        """Forward pass of the GNNModel.
+        """Forward pass of GeoGNN.
 
         Args:
             ab_graph (torch_geometric.data.Data): Atom bond graph.
@@ -59,13 +60,10 @@ class GNNModel(torch.nn.Module):
         for layer_id in range(self.layer_num):
             edge_hidden = self.layers[layer_id](ba_x, ba_edge_index,
                                                 ba_edge_attr, ba_batch)
-            ba_graph.x = edge_hidden
 
-            ab_edge_attr = ba_graph.x[ba_edge_index]
+            ab_edge_attr = edge_hidden
             node_hidden = self.layers[layer_id](ab_x, ab_edge_index,
                                                 ab_edge_attr, ab_batch)
-
-            ab_graph.x = node_hidden
 
             node_hidden_list.append(node_hidden)
             edge_hidden_list.append(edge_hidden)
