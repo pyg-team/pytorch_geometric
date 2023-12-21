@@ -15,12 +15,11 @@ ADSORBATE_ELEMS = ["C", "H", "O", "N", "S"]
 
 
 class FGDataset(InMemoryDataset):
-    """FG-dataset from the `"Fast evaluation of the adsorption energy
+    r"""FG-dataset from the `"Fast evaluation of the adsorption energy
     of organic molecules on metals via graph neural networks"
-    <https://doi.org/10.1038/s43588-023-00437-y>`, consisting of 222
+    <https://www.nature.com/articles/s43588-023-00437-y>`_, consisting of 222
     closed-shell organic molecules adsorbed on 14 different transition metals.
     Graphs are generated from the DFT structures stored in the ASE database.
-    Dataset link: `<https://zenodo.org/doi/10.5281/zenodo.10410522>`.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -164,9 +163,8 @@ def row_to_data(row, tol: float, scaling_factor: float, second_order: bool,
     return graph
 
 
-def atoms_to_graph(
-        atoms, tol: float, scaling_factor: float, second_order: bool
-) -> tuple[list[int], list[str], list[tuple[int, int]]]:
+def atoms_to_graph(atoms, tol: float, scaling_factor: float,
+                   second_order: bool) -> tuple:
     """Get nodes and edges from ASE Atoms object.
 
     Args:
@@ -220,9 +218,6 @@ def get_voronoi_neighborlist(atoms, tol: float, sf: float) -> np.ndarray:
     Returns:
         np.ndarray: connectivity of the system.
                     Each row represents a pair of connected atoms.
-
-    Notes:
-        Each connection is represented only in one direction.
     """
     RADII = {
         "Cd": 1.44,
@@ -297,7 +292,7 @@ def fragment_filter(graph: Data) -> bool:
     ]
     adsorbate_nodes = []
     for node_idx in range(graph.num_nodes):
-        idx = where(graph.x[node_idx, :] == 1)[0][0].item()
+        idx = where(graph.x[node_idx, :] == 1)[0].item()
         if idx in adsorbate_elems_idxs:
             adsorbate_nodes.append(node_idx)
     subgraph = graph.subgraph(tensor(adsorbate_nodes))
@@ -337,7 +332,7 @@ def H_filter(graph: Data) -> bool:
         for j in range(graph.num_edges):
             if node_idx == graph.edge_index[0, j]:
                 other_atom = where(
-                    graph.x[graph.edge_index[1, j], :] == 1)[0][0].item()
+                    graph.x[graph.edge_index[1, j], :] == 1)[0].item()
                 counter += 1 if other_atom in adsorbate_elems_idxs else 0
         if counter > 1:
             print(f"{graph.formula}: Wrong H connectivity.\n")
@@ -359,16 +354,16 @@ def C_filter(graph: Data) -> bool:
     adsorbate_elems_idxs = [
         graph.node_feats.index(elem) for elem in ADSORBATE_ELEMS
     ]
-    C_index = adsorbate_elems_idxs[graph.node_feats.index("C")]
+    C_idx = adsorbate_elems_idxs[graph.node_feats.index("C")]
     C_nodes_idxs = [
-        i for i in range(graph.num_nodes) if graph.x[i, C_index] == 1
+        i for i in range(graph.num_nodes) if graph.x[i, C_idx] == 1
     ]
-    for node_index in C_nodes_idxs:
+    for node_idx in C_nodes_idxs:
         counter = 0  # edges between C and adsorbate atoms
         for j in range(graph.num_edges):
-            if node_index == graph.edge_index[0, j]:
+            if node_idx == graph.edge_index[0, j]:
                 other_atom = where(
-                    graph.x[graph.edge_index[1, j], :] == 1)[0][0].item()
+                    graph.x[graph.edge_index[1, j], :] == 1)[0].item()
                 counter += 1 if other_atom in adsorbate_elems_idxs else 0
         if counter > 4:
             print(f"{graph.formula}: Wrong C connectivity.\n")
@@ -391,9 +386,9 @@ def adsorption_filter(graph: Data) -> bool:
     adsorbate_elems_idxs = [
         graph.node_feats.index(elem) for elem in ADSORBATE_ELEMS
     ]
-    for node_index in range(graph.num_nodes):
-        index = where(graph.x[node_index, :] == 1)[0][0].item()
-        if index not in adsorbate_elems_idxs:
+    for node_idx in range(graph.num_nodes):
+        idx = where(graph.x[node_idx, :] == 1)[0].item()
+        if idx not in adsorbate_elems_idxs:
             return True
     print(f"{graph.formula}: No surface representation.\n")
     return False
