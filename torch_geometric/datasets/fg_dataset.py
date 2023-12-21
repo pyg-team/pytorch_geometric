@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import os
 from itertools import product
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 import numpy as np
 from scipy.spatial import Voronoi
@@ -102,13 +102,15 @@ class FGDataset(InMemoryDataset):
     def process(self) -> None:
         from ase.db import connect
 
+        ncpu = os.cpu_count()
+        assert ncpu is not None, "No CPU found!"
         db = connect(self.raw_paths[0])
         args_list = []
         for row in db.select():
             args_list.append(
                 (row, self.tol, self.sf, self.second_order, self.ohe_elems))
 
-        with mp.Pool(os.cpu_count() // 2) as pool:
+        with mp.Pool(ncpu // 2 + 1) as pool:
             data_list = pool.starmap(row_to_data, args_list)
         data_list = [data for data in data_list if fg_filter(data)]
 
@@ -121,12 +123,12 @@ class FGDataset(InMemoryDataset):
         self.save(data_list, self.processed_paths[0])
 
 
-def row_to_data(row, tol: float, scaling_factor: float, second_order: bool,
-                ohe_elems: OneHotEncoder) -> Data:
+def row_to_data(row: Any, tol: float, scaling_factor: float,
+                second_order: bool, ohe_elems: OneHotEncoder) -> Data:
     """Create Data object from ASE database row.
 
     Args:
-        row (AtomsRow): ASE database row.
+        row (ase.db.core.AtomsRow): ASE database row.
         tol (float): tolerance for distance between two atoms to be connected.
         scaling_factor (float): scaling factor for the surface atoms' radii.
         second_order (bool): Include second-order surface neighbours.
@@ -163,12 +165,12 @@ def row_to_data(row, tol: float, scaling_factor: float, second_order: bool,
     return graph
 
 
-def atoms_to_graph(atoms, tol: float, scaling_factor: float,
+def atoms_to_graph(atoms: Any, tol: float, scaling_factor: float,
                    second_order: bool) -> tuple:
     """Get nodes and edges from ASE Atoms object.
 
     Args:
-        atoms (Atoms): ASE Atoms object of the adsorbate-surface system.
+        atoms (ase.atoms.Atoms): ASE Atoms of the adsorbate-surface system.
         tol (float): tolerance for the distance between
                      two atoms to be considered connected.
         scaling_factor (float): scaling factor for the surface atoms' radii.
@@ -206,11 +208,11 @@ def atoms_to_graph(atoms, tol: float, scaling_factor: float,
     return idxs, elems, neighborlist
 
 
-def get_voronoi_neighborlist(atoms, tol: float, sf: float) -> np.ndarray:
+def get_voronoi_neighborlist(atoms: Any, tol: float, sf: float) -> np.ndarray:
     """Get connectivity list considering periodic boundary conditions.
 
     Args:
-        atoms (Atoms): Atoms object representing the adsorbate-metal surface.
+        atoms (ase.atoms.Atoms): ASE Atoms of the adsorbate-surface system.
         tol (float): Tolerance for the distance criterion
                      between two atoms to be considered connected.
         sf (float): Scaling factor for the covalent radii of the metal atoms.
@@ -287,6 +289,8 @@ def fragment_filter(graph: Data) -> bool:
     """
     from networkx import is_connected
 
+    assert graph.x is not None, "x should not be None"
+    assert graph.num_nodes is not None, "num_nodes should not be None"
     adsorbate_elems_idxs = [
         graph.node_feats.index(elem) for elem in ADSORBATE_ELEMS
     ]
@@ -319,6 +323,10 @@ def H_filter(graph: Data) -> bool:
         (bool): True = Correct connectivity for all H atoms in the adsorbate
                 False = Bad connectivity for at least one H atom
     """
+    assert graph.x is not None, "x should not be None"
+    assert graph.edge_index is not None, "edge_index should not be None"
+    assert graph.num_edges is not None, "num_edges should not be None"
+    assert graph.num_nodes is not None, "num_nodes should not be None"
     adsorbate_elems_idxs = [
         graph.node_feats.index(elem) for elem in ADSORBATE_ELEMS
     ]
@@ -351,6 +359,10 @@ def C_filter(graph: Data) -> bool:
         (bool): True = Correct connectivity for all C atoms in the adsorbate
                 False = Bad connectivity for at least one C atom
     """
+    assert graph.x is not None, "x should not be None"
+    assert graph.edge_index is not None, "edge_index should not be None"
+    assert graph.num_edges is not None, "num_edges should not be None"
+    assert graph.num_nodes is not None, "num_nodes should not be None"
     adsorbate_elems_idxs = [
         graph.node_feats.index(elem) for elem in ADSORBATE_ELEMS
     ]
@@ -381,6 +393,8 @@ def adsorption_filter(graph: Data) -> bool:
         (bool): True = Metal presence in the graph
                 False = Metal absence in the graph
     """
+    assert graph.x is not None, "x should not be None"
+    assert graph.num_nodes is not None, "num_nodes should not be None"
     if graph.metal == "N/A":  # gas-phase molecule
         return True
     adsorbate_elems_idxs = [
