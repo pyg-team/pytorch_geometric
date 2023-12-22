@@ -222,6 +222,18 @@ def test_add_remaining_self_loops():
     assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
                                [0., 1., 0.]]
 
+    edge_index = EdgeIndex(
+        edge_index,
+        sparse_size=(2, 2),
+        sort_order='row',
+        is_undirected=True,
+    )
+    out, _ = add_remaining_self_loops(edge_index)
+    assert out.tolist() == expected
+    assert out.sparse_size() == (2, 2)
+    assert out.sort_order is None
+    assert out.is_undirected
+
 
 def test_add_remaining_self_loops_without_initial_loops():
     edge_index = torch.tensor([[0, 1], [1, 0]])
