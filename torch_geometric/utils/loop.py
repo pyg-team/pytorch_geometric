@@ -459,11 +459,15 @@ def add_self_loops(  # noqa: F811
         N = maybe_num_nodes(edge_index, num_nodes)
         size = (N, N)
 
-    loop_index = EdgeIndex(
-        torch.arange(0, N, device=edge_index.device).unsqueeze(0).repeat(2, 1),
-        sparse_size=(N, N),
-        is_undirected=True,
-    )
+    device = edge_index.device
+    if torch.jit.is_scripting():
+        loop_index = torch.arange(0, N, device=device).view(1, -1).repeat(2, 1)
+    else:
+        loop_index = EdgeIndex(
+            torch.arange(0, N, device=device).view(1, -1).repeat(2, 1),
+            sparse_size=(N, N),
+            is_undirected=True,
+        )
     full_edge_index = torch.cat([edge_index, loop_index], dim=1)
 
     if is_sparse:
