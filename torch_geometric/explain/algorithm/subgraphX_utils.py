@@ -14,7 +14,7 @@ from scipy.special import comb
 
 from torch_geometric.data import Batch, Data, Dataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import k_hop_subgraph
+from torch_geometric.utils import k_hop_subgraph, subgraph
 
 
 def find_closest_node_result(results, max_nodes: int):
@@ -126,7 +126,7 @@ def l_shapley(
     coalition: list,
     data: Data,
     local_radius: int,
-    value_func: str,
+    value_func: Callable,
     subgraph_building_method="zero_filling",
 ):
     """shapley value where players are local neighbor nodes"""
@@ -183,7 +183,7 @@ def l_shapley(
 def mc_shapley(
     coalition: list,
     data: Data,
-    value_func: str,
+    value_func: Callable,
     subgraph_building_method="zero_filling",
     sample_num=1000,
 ) -> float:
@@ -232,7 +232,7 @@ def mc_l_shapley(
     coalition: list,
     data: Data,
     local_radius: int,
-    value_func: str,
+    value_func: Callable,
     subgraph_building_method="zero_filling",
     sample_num=1000,
 ) -> float:
@@ -261,6 +261,8 @@ def mc_l_shapley(
         split_idx = np.where(
             random_nodes_permutation == coalition_placeholder
         )[0][0]
+        if split_idx == 0:
+            continue
         selected_nodes = random_nodes_permutation[:split_idx]
         set_exclude_mask = np.ones(num_nodes)
         set_exclude_mask[local_region] = 0.0
@@ -309,11 +311,13 @@ def graph_build_split(
     """subgraph building through spliting the selected nodes
     from the original graph
     """
-    ret_X = X
-    row, col = edge_index
-    edge_mask = (node_mask[row] == 1) & (node_mask[col] == 1)
-    ret_edge_index = edge_index[:, edge_mask]
-    return ret_X, ret_edge_index
+    subset = torch.where(node_mask == 1)[0]
+    ret_edge_index, _ = subgraph(
+        subset,
+        edge_index,
+        relabel_nodes=True,
+    )
+    return X[subset], ret_edge_index
 
 
 def gnn_score(
@@ -391,7 +395,7 @@ def NC_mc_l_shapley(
     coalition: list,
     data: Data,
     local_radius: int,
-    value_func: str,
+    value_func: Callable,
     node_idx: int = -1,
     subgraph_building_method="zero_filling",
     sample_num=1000,
@@ -455,7 +459,7 @@ def sparsity(
         return 1.0 - len(coalition) / data.num_nodes
 
     elif subgraph_building_method == "split":
-        row, col = data.edge_index
+        row, col = data.edge_index.cpu()
         node_mask = torch.zeros(data.x.shape[0])
         node_mask[coalition] = 1.0
         edge_mask = (node_mask[row] == 1) & (node_mask[col] == 1)
@@ -467,7 +471,7 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
 
     def value_func(batch, **kwargs):
         with torch.no_grad():
-            logits = gnnNets(batch.x, batch.edge_index, **kwargs)
+            logits = gnnNets(batch.x, batch.edge_index, batch.batch, **kwargs)
             probs = torch.softmax(logits, dim=-1)
             score = probs[:, target_class]
         return score
@@ -478,12 +482,10 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
 def GnnNetsNC2valueFunc(gnnNets_NC, node_idx, target_class) -> Callable:
     """Value Function for Node Classification (NC) Task"""
 
-    def value_func(data: Data) -> torch.Tensor:
+    def value_func(batch) -> torch.Tensor:
         with torch.no_grad():
-            logits = gnnNets_NC(data.x, data.edge_index)
+            logits = gnnNets_NC(batch.x, batch.edge_index, batch.batch)
             probs = F.softmax(logits, dim=-1)
-            batch_size = data.batch.max() + 1
-            probs = probs.reshape(batch_size, -1, probs.shape[-1])
             score = probs[:, node_idx, target_class]
             return score
 

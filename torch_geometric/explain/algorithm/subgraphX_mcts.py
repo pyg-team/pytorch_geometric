@@ -81,7 +81,6 @@ class MCTSNode(object):
         return {
             "data": self.data.to("cpu"),
             "coalition": self.coalition,
-            "subset": self.subset,
             "W": self.W,
             "N": self.N,
             "P": self.P,
@@ -228,7 +227,9 @@ class MCTS(object):
             else:
                 expand_nodes = all_nodes
 
-            for curr_node in expand_nodes[: self.expand_atoms]:
+            for curr_node in np.random.permutation(expand_nodes)[
+                : self.expand_atoms
+            ]:
                 # for each node, pruning it and get the remaining sub-graph
                 # here we check the resulting sub-graphs and
                 # only keep the largest one
