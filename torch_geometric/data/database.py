@@ -335,11 +335,6 @@ class SQLiteDatabase(Database):
         self.cursor.executemany(query, data_list)
         self._connection.commit()
 
-        query = f'SELECT COUNT(*) FROM {self.name}'
-        self.cursor.execute(query)
-        out = self.cursor.fetchone()
-        print(self.name, out)
-
     def get(self, index: int) -> Any:
         query = (f'SELECT {self._joined_col_names} FROM {self.name} '
                  f'WHERE id = ?')
@@ -397,9 +392,7 @@ class SQLiteDatabase(Database):
     def __len__(self) -> int:
         query = f'SELECT COUNT(*) FROM {self.name}'
         self.cursor.execute(query)
-        out = self.cursor.fetchone()[0]
-        print(self.name, out)
-        return out
+        return self.cursor.fetchone()[0]
 
     # Helper functions ########################################################
 
