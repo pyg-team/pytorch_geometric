@@ -363,6 +363,7 @@ class SQLiteDatabase(Database):
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
         self.cursor.executemany(query, zip(indices, range(len(indices))))
+        self._connection.commit()
 
         query = f'SELECT * FROM {join_table_name}'
         self.cursor.execute(query)
