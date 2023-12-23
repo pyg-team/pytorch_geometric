@@ -6,8 +6,10 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import (
     SparseTensor,
     TensorFrame,
@@ -175,6 +177,14 @@ def _collate(
             out = elem.new(storage).resize_(*shape)
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
+
+        if increment and isinstance(value, EdgeIndex) and values[0].is_sorted:
+            # Check whether the whole `EdgeIndex` is sorted by row:
+            if values[0].is_sorted_by_row and (value[0].diff() >= 0).all():
+                value._sort_order = SortOrder.ROW
+            # Check whether the whole `EdgeIndex` is sorted by column:
+            elif values[0].is_sorted_by_col and (value[1].diff() >= 0).all():
+                value._sort_order = SortOrder.COL
 
         return value, slices, incs
 
