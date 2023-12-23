@@ -36,6 +36,10 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
 
+      - name: Install optional dependencies
+        run: |
+          pip install --verbose git+https://github.com/the-virtual-brain/tvb-geodesic.git
+
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
