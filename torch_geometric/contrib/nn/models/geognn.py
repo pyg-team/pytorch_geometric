@@ -58,12 +58,15 @@ class GeoGNN(torch.nn.Module):
         edge_hidden_list = [ba_x]
 
         for layer_id in range(self.layer_num):
-            edge_hidden = self.layers[layer_id](ba_x, ba_edge_index,
-                                                ba_edge_attr, ba_batch)
 
-            ab_edge_attr = edge_hidden
-            node_hidden = self.layers[layer_id](ab_x, ab_edge_index,
-                                                ab_edge_attr, ab_batch)
+            node_hidden = self.layers[layer_id](node_hidden_list[layer_id],
+                                                ab_edge_index,
+                                                edge_hidden_list[layer_id],
+                                                ab_batch)
+
+            edge_hidden = self.layers[layer_id](edge_hidden_list[layer_id],
+                                                ba_edge_index, ba_edge_attr,
+                                                ba_batch)
 
             node_hidden_list.append(node_hidden)
             edge_hidden_list.append(edge_hidden)
