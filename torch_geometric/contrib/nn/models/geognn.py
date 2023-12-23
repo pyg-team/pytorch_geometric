@@ -17,7 +17,7 @@ class GeoGNN(torch.nn.Module):
             Defaults to 0.2.
     """
     def __init__(self, embedding_size, layer_num, dropout=0.2):
-        super(GeoGNN, self).__init__()
+        super().__init__()
         self.layer_num = layer_num
         self.embedding_size = embedding_size
 
