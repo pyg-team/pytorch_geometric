@@ -135,7 +135,9 @@ class OnDiskDataset(Dataset):
         end = start + len(data_list)
         data_list = [self.serialize(data) for data in data_list]
         self.db.multi_insert(range(start, end), data_list, batch_size)
+        print(end - start)
         self._numel += (end - start)
+        print(self._numel)
 
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
@@ -161,6 +163,7 @@ class OnDiskDataset(Dataset):
         return self.multi_get(indices)
 
     def len(self) -> int:
+        print("len", self._numel)
         if self._numel is None:
             self._numel = len(self.db)
         return self._numel

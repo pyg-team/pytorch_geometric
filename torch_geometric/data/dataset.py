@@ -109,6 +109,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
             self._process()
 
     def indices(self) -> Sequence:
+        print("INDICES")
+        print(self.len())
+        print(self._indices)
         return range(self.len()) if self._indices is None else self._indices
 
     @property
@@ -263,6 +266,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""
+        print("DRIN")
         return len(self.indices())
 
     def __getitem__(
