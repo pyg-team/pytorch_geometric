@@ -5,6 +5,7 @@ from collections import namedtuple
 import pytest
 import torch
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import (
@@ -184,6 +185,30 @@ def test_heterogeneous_dataloader(num_workers):
 
         for store in batch.stores:
             assert id(batch) == id(store._parent())
+
+
+@pytest.mark.parametrize('num_workers', num_workers_list)
+def test_edge_index_dataloader(num_workers):
+    edge_index = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+        is_undirected=True,
+    )
+    data = Data(edge_index=edge_index)
+
+    loader = DataLoader(
+        [data, data, data, data],
+        batch_size=2,
+        num_workers=num_workers,
+    )
+    assert len(loader) == 2
+
+    for batch in loader:
+        assert isinstance(batch.edge_index, EdgeIndex)
+        assert batch.edge_index.sparse_size() == (6, 6)
+        assert batch.edge_index.sort_order == 'row'
+        assert batch.edge_index.is_undirected
 
 
 @withPackage('torch_frame')
