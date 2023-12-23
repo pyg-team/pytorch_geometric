@@ -188,14 +188,21 @@ def test_heterogeneous_dataloader(num_workers):
 
 
 @pytest.mark.parametrize('num_workers', num_workers_list)
-def test_edge_index_dataloader(num_workers):
+@pytest.mark.parametrize('sort_order', [None, 'row', 'col'])
+def test_edge_index_dataloader(num_workers, sort_order):
+    if sort_order == 'col':
+        edge_index = [[1, 0, 2, 1], [0, 1, 1, 2]]
+    else:
+        edge_index = [[0, 1, 1, 2], [1, 0, 2, 1]]
+
     edge_index = EdgeIndex(
-        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        edge_index,
         sparse_size=(3, 3),
-        sort_order='row',
+        sort_order=sort_order,
         is_undirected=True,
     )
     data = Data(edge_index=edge_index)
+    assert data.num_nodes == 3
 
     loader = DataLoader(
         [data, data, data, data],
@@ -207,7 +214,7 @@ def test_edge_index_dataloader(num_workers):
     for batch in loader:
         assert isinstance(batch.edge_index, EdgeIndex)
         assert batch.edge_index.sparse_size() == (6, 6)
-        assert batch.edge_index.sort_order == 'row'
+        assert batch.edge_index.sort_order == sort_order
         assert batch.edge_index.is_undirected
 
 
