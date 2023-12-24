@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Type, TypeVar
 
 import torch
 from torch import Tensor
@@ -19,15 +19,17 @@ from torch_geometric.typing import (
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
+T = TypeVar('T')
+
 
 def collate(
-    cls,
+    cls: Type[T],
     data_list: List[BaseData],
     increment: bool = True,
     add_batch: bool = True,
     follow_batch: Optional[List[str]] = None,
     exclude_keys: Optional[List[str]] = None,
-) -> Tuple[BaseData, Mapping, Mapping]:
+) -> Tuple[T, Mapping, Mapping]:
     # Collates a list of `data` objects into a single object of type `cls`.
     # `collate` can handle both homogeneous and heterogeneous data objects by
     # individually collating all their stores.

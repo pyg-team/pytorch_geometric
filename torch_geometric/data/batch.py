@@ -1,10 +1,11 @@
 import inspect
 from collections.abc import Sequence
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Type, Union
 
 import numpy as np
 import torch
 from torch import Tensor
+from typing_extensions import Self
 
 from torch_geometric.data.collate import collate
 from torch_geometric.data.data import BaseData, Data
@@ -16,7 +17,7 @@ class DynamicInheritance(type):
     # A meta class that sets the base class of a `Batch` object, e.g.:
     # * `Batch(Data)` in case `Data` objects are batched together
     # * `Batch(HeteroData)` in case `HeteroData` objects are batched together
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
         base_cls = kwargs.pop('_base_cls', Data)
 
         if issubclass(base_cls, Batch):
@@ -28,7 +29,7 @@ class DynamicInheritance(type):
             # problems between `DynamicInheritance` and the metaclass of
             # `base_cls`. In particular, it creates a new common metaclass
             # from the defined metaclasses.
-            class MetaResolver(type(cls), type(base_cls)):
+            class MetaResolver(type(cls), type(base_cls)):  # type: ignore
                 pass
 
             if name not in globals():
@@ -49,7 +50,7 @@ class DynamicInheritance(type):
 
 
 class DynamicInheritanceGetter:
-    def __call__(self, cls, base_cls):
+    def __call__(self, cls: Type, base_cls: Type) -> Self:
         return cls(_base_cls=base_cls)
 
 
@@ -79,9 +80,12 @@ class Batch(metaclass=DynamicInheritance):
     tensors of the same attribute should be concatenated together.
     """
     @classmethod
-    def from_data_list(cls, data_list: List[BaseData],
-                       follow_batch: Optional[List[str]] = None,
-                       exclude_keys: Optional[List[str]] = None):
+    def from_data_list(
+        cls,
+        data_list: List[BaseData],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
+    ) -> Self:
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
         list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects.
@@ -99,9 +103,9 @@ class Batch(metaclass=DynamicInheritance):
             exclude_keys=exclude_keys,
         )
 
-        batch._num_graphs = len(data_list)
-        batch._slice_dict = slice_dict
-        batch._inc_dict = inc_dict
+        batch._num_graphs = len(data_list)  # type: ignore
+        batch._slice_dict = slice_dict  # type: ignore
+        batch._inc_dict = inc_dict  # type: ignore
 
         return batch
 
@@ -121,8 +125,8 @@ class Batch(metaclass=DynamicInheritance):
             cls=self.__class__.__bases__[-1],
             batch=self,
             idx=idx,
-            slice_dict=self._slice_dict,
-            inc_dict=self._inc_dict,
+            slice_dict=getattr(self, '_slice_dict'),
+            inc_dict=getattr(self, '_inc_dict'),
             decrement=True,
         )
 
@@ -139,23 +143,24 @@ class Batch(metaclass=DynamicInheritance):
         via :meth:`from_data_list` in order to be able to reconstruct the
         initial objects.
         """
+        index: Sequence[int]
         if isinstance(idx, slice):
-            idx = list(range(self.num_graphs)[idx])
+            index = list(range(self.num_graphs)[idx])
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:
-            idx = idx.flatten().tolist()
+            index = idx.flatten().tolist()
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
-            idx = idx.flatten().nonzero(as_tuple=False).flatten().tolist()
+            index = idx.flatten().nonzero(as_tuple=False).flatten().tolist()
 
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
-            idx = idx.flatten().tolist()
+            index = idx.flatten().tolist()
 
         elif isinstance(idx, np.ndarray) and idx.dtype == bool:
-            idx = idx.flatten().nonzero()[0].flatten().tolist()
+            index = idx.flatten().nonzero()[0].flatten().tolist()
 
         elif isinstance(idx, Sequence) and not isinstance(idx, str):
-            pass
+            index = idx
 
         else:
             raise IndexError(
@@ -163,17 +168,17 @@ class Batch(metaclass=DynamicInheritance):
                 f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
-        return [self.get_example(i) for i in idx]
+        return [self.get_example(i) for i in index]
 
     def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
-            return self.get_example(idx)
+            return self.get_example(idx)  # type: ignore
         elif isinstance(idx, str) or (isinstance(idx, tuple)
                                       and isinstance(idx[0], str)):
             # Accessing attributes or node/edge types:
-            return super().__getitem__(idx)
+            return super().__getitem__(idx)  # type: ignore
         else:
             return self.index_select(idx)
 
@@ -207,6 +212,6 @@ class Batch(metaclass=DynamicInheritance):
     def __len__(self) -> int:
         return self.num_graphs
 
-    def __reduce__(self):
+    def __reduce__(self) -> Any:
         state = self.__dict__.copy()
         return DynamicInheritanceGetter(), self.__class__.__bases__, state
