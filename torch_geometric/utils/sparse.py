@@ -508,7 +508,7 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
                 offset = torch.tensor([[num_rows], [0]], device=tensor.device)
                 indices.append(tensor.indices() + offset)
             values.append(tensor.values())
-            num_rows += tensor.size(1)
+            num_rows += tensor.size(0)
             num_cols = max(num_cols, tensor.size(1))
 
     elif dim == 1:
@@ -519,7 +519,7 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
                 offset = torch.tensor([[0], [num_cols]], device=tensor.device)
                 indices.append(tensor.indices() + offset)
             values.append(tensor.values())
-            num_rows = max(num_rows, tensor.size(1))
+            num_rows = max(num_rows, tensor.size(0))
             num_cols += tensor.size(1)
 
     else:
@@ -624,7 +624,7 @@ def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             else:
                 rows.append(tensor.row_indices() + num_rows)
             values.append(tensor.values())
-            num_rows += tensor.size(1)
+            num_rows += tensor.size(0)
             num_cols = max(num_cols, tensor.size(1))
 
         return torch.sparse_coo_tensor(

@@ -257,7 +257,10 @@ def test_to_edge_index():
 @pytest.mark.parametrize('dim', [0, 1, (0, 1)])
 def test_cat(layout, dim, device):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
-    edge_weight = torch.rand(4, 2, device=device)
+    if torch_geometric.typing.WITH_PT20:
+        edge_weight = torch.rand(4, 2, device=device)
+    else:
+        edge_weight = torch.rand(4, device=device)
 
     adj = to_torch_sparse_tensor(edge_index, edge_weight, layout=layout)
 
@@ -265,15 +268,24 @@ def test_cat(layout, dim, device):
     edge_index, edge_weight = to_edge_index(out.to_sparse_csr())
 
     if dim == 0:
-        assert out.size() == (6, 3, 2)
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (6, 3, 2)
+        else:
+            assert out.size() == (6, 3)
         assert edge_index[0].tolist() == [0, 1, 1, 2, 3, 4, 4, 5]
         assert edge_index[1].tolist() == [1, 0, 2, 1, 1, 0, 2, 1]
     elif dim == 1:
-        assert out.size() == (3, 6, 2)
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (3, 6, 2)
+        else:
+            assert out.size() == (3, 6)
         assert edge_index[0].tolist() == [0, 0, 1, 1, 1, 1, 2, 2]
         assert edge_index[1].tolist() == [1, 4, 0, 2, 3, 5, 1, 4]
     else:
-        assert out.size() == (6, 6, 2)
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (6, 6, 2)
+        else:
+            assert out.size() == (6, 6)
         assert edge_index[0].tolist() == [0, 1, 1, 2, 3, 4, 4, 5]
         assert edge_index[1].tolist() == [1, 0, 2, 1, 4, 3, 5, 4]
 
