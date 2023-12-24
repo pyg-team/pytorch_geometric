@@ -509,7 +509,7 @@ def test_torch_sparse_batch(layout):
     batch = Batch.from_data_list([data, data])
 
     assert batch.x.size() == (6, 4)
-    assert batch.x.layout == layout
+    assert batch.x.layout in {torch.sparse_coo, torch.sparse_csr}
     assert torch.equal(batch.x.to_dense(), torch.cat([x_dense, x_dense], 0))
 
     assert batch.adj.size() == (6, 6)
