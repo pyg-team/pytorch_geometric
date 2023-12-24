@@ -62,7 +62,9 @@ def _internal_num_nodes(
         if _matches_node_type(query, edge_attr.edge_type[-1]):
             num_cols = num_cols or edge_attr.size[-1]
 
-        if num_rows is not None and num_cols is not None:
+        if node_query and (num_rows is not None or num_cols is not None):
+            return num_rows or num_cols
+        if not node_query and num_rows is not None and num_cols is not None:
             return num_rows if node_query else (num_rows, num_cols)
 
     # 2. Check the node types stored in the FeatureStore:
@@ -73,7 +75,7 @@ def _internal_num_nodes(
     ]
     if node_query:
         if len(matching_attrs) > 0:
-            size = feature_store.get_tensor_size(matching_attrs)
+            size = feature_store.get_tensor_size(matching_attrs[0])
             if size is not None:
                 return size[0]
     else:
