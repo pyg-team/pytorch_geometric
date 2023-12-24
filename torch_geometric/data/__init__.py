@@ -77,7 +77,7 @@ ClusterData = deprecated(  # type: ignore
 )(ClusterData)
 ClusterLoader = deprecated(  # type: ignore
     details="use 'loader.ClusterLoader' instead",
-    func_names='data.ClusterLoader',
+    func_name='data.ClusterLoader',
 )(ClusterLoader)
 GraphSAINTSampler = deprecated(  # type: ignore
     details="use 'loader.GraphSAINTSampler' instead",
