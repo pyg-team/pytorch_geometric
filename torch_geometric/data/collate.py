@@ -1,13 +1,15 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Type, TypeVar
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import (
     SparseTensor,
     TensorFrame,
@@ -17,15 +19,17 @@ from torch_geometric.typing import (
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
+T = TypeVar('T')
+
 
 def collate(
-    cls,
+    cls: Type[T],
     data_list: List[BaseData],
     increment: bool = True,
     add_batch: bool = True,
     follow_batch: Optional[List[str]] = None,
     exclude_keys: Optional[List[str]] = None,
-) -> Tuple[BaseData, Mapping, Mapping]:
+) -> Tuple[T, Mapping, Mapping]:
     # Collates a list of `data` objects into a single object of type `cls`.
     # `collate` can handle both homogeneous and heterogeneous data objects by
     # individually collating all their stores.
@@ -175,6 +179,14 @@ def _collate(
             out = elem.new(storage).resize_(*shape)
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
+
+        if increment and isinstance(value, EdgeIndex) and values[0].is_sorted:
+            # Check whether the whole `EdgeIndex` is sorted by row:
+            if values[0].is_sorted_by_row and (value[0].diff() >= 0).all():
+                value._sort_order = SortOrder.ROW
+            # Check whether the whole `EdgeIndex` is sorted by column:
+            elif values[0].is_sorted_by_col and (value[1].diff() >= 0).all():
+                value._sort_order = SortOrder.COL
 
         return value, slices, incs
 

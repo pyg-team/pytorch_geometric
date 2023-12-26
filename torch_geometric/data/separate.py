@@ -9,8 +9,8 @@ from torch_geometric.typing import SparseTensor, TensorFrame
 from torch_geometric.utils import narrow
 
 
-def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
-             inc_dict: Any = None, decrement: bool = True) -> BaseData:
+def separate(cls, batch: Any, idx: int, slice_dict: Any, inc_dict: Any = None,
+             decrement: bool = True) -> BaseData:
     # Separates the individual element from a `batch` at index `idx`.
     # `separate` can handle both homogeneous and heterogeneous data objects by
     # individually separating all their stores.
