@@ -159,10 +159,10 @@ def withPackage(*args: str) -> Callable:
     """
     na_packages = set(package for package in args if not has_package(package))
 
-    if len(na_packages) > 1:
-        reason = f"Packages {na_packages} not found"
-    else:
+    if len(na_packages) == 1:
         reason = f"Package {list(na_packages)[0]} not found"
+    else:
+        reason = f"Packages {na_packages} not found"
 
     def decorator(func: Callable) -> Callable:
         import pytest
