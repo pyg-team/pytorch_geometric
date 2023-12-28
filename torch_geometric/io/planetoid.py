@@ -61,8 +61,8 @@ def read_planetoid_data(folder: str, prefix: str) -> Data:
         value = x[row, col]
 
         mask = ~index_to_mask(test_index, size=len(graph))
-        mask[:allx.size(0)] = True
-        isolated_idx = mask.nonzero().view(-1)[allx.size(0):]
+        mask[:allx.size(0)] = False
+        isolated_idx = mask.nonzero().view(-1)
 
         row = torch.cat([row, isolated_idx])
         col = torch.cat([col, torch.arange(isolated_idx.size(0)) + x.size(1)])
