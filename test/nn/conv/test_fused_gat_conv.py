@@ -10,15 +10,15 @@ def test_to_graph_format() -> None:
     csr, csc, perm = FusedGATConv.to_graph_format(edge_index, size=(4, 4))
 
     assert csr[0].dtype == torch.int
-    assert torch.equal(csr[0], torch.tensor([0, 1, 2, 3, 4]))
+    assert torch.equal(csr[0], torch.tensor([0, 1, 2, 3, 4], dtype=torch.int))
     assert csr[1].dtype == torch.int
-    assert torch.equal(csr[1], torch.tensor([0, 0, 1, 1]))
+    assert torch.equal(csr[1], torch.tensor([0, 0, 1, 1], dtype=torch.int))
     assert csc[0].dtype == torch.int
-    assert torch.equal(csc[0], torch.tensor([0, 1, 2, 3]))
+    assert torch.equal(csc[0], torch.tensor([0, 1, 2, 3], dtype=torch.int))
     assert csc[1].dtype == torch.int
-    assert torch.equal(csc[1], torch.tensor([0, 2, 4, 4, 4]))
+    assert torch.equal(csc[1], torch.tensor([0, 2, 4, 4, 4], dtype=torch.int))
     assert perm.dtype == torch.int
-    assert torch.equal(perm, torch.tensor([0, 1, 2, 3]))
+    assert torch.equal(perm, torch.tensor([0, 1, 2, 3], dtype=torch.int))
 
 
 @onlyCUDA

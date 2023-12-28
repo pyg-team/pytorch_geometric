@@ -56,6 +56,8 @@ class FusedGATConv(GATConv):  # pragma: no cover
             size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
+        edge_index = edge_index.to(torch.int)
+
         edge_index = sort_edge_index(edge_index, sort_by_row=True)
         rowptr = index2ptr(edge_index[0], size=size[0] if size else None)
         col = edge_index[1]
@@ -66,7 +68,7 @@ class FusedGATConv(GATConv):  # pragma: no cover
         row = edge_index[0]
         colptr = index2ptr(edge_index[1], size=size[1] if size else None)
 
-        return (rowptr.int(), col.int()), (row.int(), colptr.int()), perm
+        return (rowptr, col), (row, colptr), perm
 
     def forward(
         self,
