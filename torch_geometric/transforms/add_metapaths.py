@@ -140,6 +140,7 @@ class AddMetaPaths(BaseTransform):
 
             edge_type = metapath[0]
             edge_weight = self._get_edge_weight(data, edge_type)
+            # TODO Drop `torch-sparse` requirement.
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
                 sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)

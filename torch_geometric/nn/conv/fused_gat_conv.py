@@ -58,6 +58,7 @@ class FusedGATConv(GATConv):  # pragma: no cover
         value = torch.arange(edge_index.size(1), dtype=torch.int,
                              device=edge_index.device)
 
+        # TODO Drop `torch-sparse` requirement.
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=size)
         adj.set_value_(value, layout='csr')
 

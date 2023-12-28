@@ -52,7 +52,7 @@ def collate(
     exclude_keys = set(exclude_keys or [])
 
     # Group all storage objects of every data object in the `data_list` by key,
-    # i.e. `key_to_store_list = { key: [store_1, store_2, ...], ... }`:
+    # i.e. `key_to_stores = { key: [store_1, store_2, ...], ... }`:
     key_to_stores = defaultdict(list)
     for data in data_list:
         for store in data.stores:
@@ -96,14 +96,17 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
+            # If parts of the data are already on GPU, make sure that auxiliary
+            # data like `batch` or `ptr` are also created on GPU:
             if isinstance(value, Tensor) and value.is_cuda:
                 device = value.device
 
             out_store[attr] = value
-            if key is not None:
+
+            if key is not None:  # Heterogeneous:
                 slice_dict[key][attr] = slices
                 inc_dict[key][attr] = incs
-            else:
+            else:  # Homogeneous:
                 slice_dict[attr] = slices
                 inc_dict[attr] = incs
 
@@ -113,7 +116,7 @@ def collate(
                 out_store[f'{attr}_batch'] = batch
                 out_store[f'{attr}_ptr'] = ptr
 
-        # In case the storage holds node, we add a top-level batch vector it:
+        # In case of node-level storages, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].can_infer_num_nodes):
             repeats = [store.num_nodes for store in stores]

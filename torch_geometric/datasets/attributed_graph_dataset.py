@@ -12,7 +12,6 @@ from torch_geometric.data import (
     extract_zip,
 )
 from torch_geometric.io import fs
-from torch_geometric.typing import SparseTensor
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -160,9 +159,14 @@ class AttributedGraphDataset(InMemoryDataset):
     def process(self) -> None:
         import pandas as pd
 
-        x = sp.load_npz(self.raw_paths[0])
+        x = sp.load_npz(self.raw_paths[0]).tocsr()
         if x.shape[-1] > 10000 or self.name == 'mag':
-            x = SparseTensor.from_scipy(x).to(torch.float)
+            x = torch.sparse_csr_tensor(
+                crow_indices=x.indptr,
+                col_indices=x.indices,
+                values=x.data,
+                size=x.shape,
+            )
         else:
             x = torch.from_numpy(x.todense()).to(torch.float)
 
