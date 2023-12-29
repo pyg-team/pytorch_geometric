@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric import EdgeIndex
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
@@ -71,10 +72,12 @@ def test_homo_neighbor_loader_basic(
     dtype,
     filter_per_worker,
 ):
+    if dtype != torch.int64 and not torch_geometric.typing.WITH_PT20:
+        return
+    induced = SubgraphType.induced
     if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
         return
-    if (dtype != torch.int64
-            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
+    if dtype != torch.int64 and (not WITH_PYG_LIB or subgraph_type == induced):
         return
 
     torch.manual_seed(12345)
@@ -142,10 +145,12 @@ def test_homo_neighbor_loader_basic(
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
 def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
+    if dtype != torch.int64 and not torch_geometric.typing.WITH_PT20:
+        return
+    induced = SubgraphType.induced
     if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
         return
-    if (dtype != torch.int64
-            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
+    if dtype != torch.int64 and (not WITH_PYG_LIB or subgraph_type == induced):
         return
 
     torch.manual_seed(12345)
