@@ -263,6 +263,7 @@ class EdgeIndex(Tensor):
         assert_contiguous(data)
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            # TODO Cached data might be invalided here.
             sparse_size = sparse_size or data.sparse_size()
             sort_order = sort_order or data.sort_order
             is_undirected = is_undirected or data.is_undirected
@@ -630,13 +631,13 @@ class EdgeIndex(Tensor):
 
         out = self.__class__(edge_index)
 
-        # We can mostly inherit metadata and cache:
+        # We can inherit metadata and (mostly) cache:
         out._sparse_size = self.sparse_size()
         out._sort_order = sort_order
         out._is_undirected = self.is_undirected
 
-        out._indptr = self._T_indptr
-        out._T_indptr = self._indptr
+        out._indptr = self._indptr
+        out._T_indptr = self._T_indptr
 
         # NOTE We cannot copy CSR<>CSC permutations since we don't require that
         # local neighborhoods are sorted, and thus they may run out of sync.

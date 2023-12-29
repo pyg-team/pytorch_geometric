@@ -2,7 +2,6 @@ import torch
 from torch import tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.testing import withPackage
 from torch_geometric.transforms import AddMetaPaths, AddRandomMetaPaths
 from torch_geometric.utils import coalesce
 
@@ -20,8 +19,7 @@ def generate_data() -> HeteroData:
     return data
 
 
-@withPackage('torch_sparse')
-def test_add_metapaths():
+def test_add_metapaths() -> None:
     data = generate_data()
     # Test transform options:
     metapaths = [[('p', 'c'), ('c', 'p')]]
@@ -74,8 +72,7 @@ def test_add_metapaths():
     assert list(meta.metapath_dict.keys()) == new_edge_types
 
 
-@withPackage('torch_sparse')
-def test_add_metapaths_max_sample():
+def test_add_metapaths_max_sample() -> None:
     torch.manual_seed(12345)
 
     data = generate_data()
@@ -87,8 +84,7 @@ def test_add_metapaths_max_sample():
     assert meta['metapath_0'].edge_index.size(1) < 9
 
 
-@withPackage('torch_sparse')
-def test_add_weighted_metapaths():
+def test_add_weighted_metapaths() -> None:
     torch.manual_seed(12345)
 
     data = HeteroData()
@@ -146,8 +142,7 @@ def test_add_weighted_metapaths():
     assert edge_weight.tolist() == [1, 2, 2, 4]
 
 
-@withPackage('torch_sparse')
-def test_add_random_metapaths():
+def test_add_random_metapaths() -> None:
     data = generate_data()
 
     # Test transform options:
