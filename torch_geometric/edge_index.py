@@ -934,6 +934,45 @@ class SortReturnType(NamedTuple):
     indices: Union[Tensor, slice]
 
 
+@implements(Tensor.__repr__)
+def __repr__(
+    tensor: EdgeIndex,
+    *,
+    tensor_contents: Optional[str] = None,
+) -> str:
+    # Monkey-patch `torch._tensor_str._add_suffixes`. There might exist better
+    # solutions to attach additional metadata, but this seems to be the most
+    # straightforward one to inherit most of the `torch.Tensor` print logic:
+    orig_fn = torch._tensor_str._add_suffixes
+
+    def _add_suffixes(
+        tensor_str: str,
+        suffixes: List[str],
+        indent: int,
+        force_newline: bool,
+    ) -> str:
+
+        num_rows, num_cols = tensor.sparse_size()
+        if num_rows is not None or num_cols is not None:
+            size_repr = f"({num_rows or '?'}, {num_cols or '?'})"
+            suffixes.append(f'sparse_size={size_repr}')
+
+        suffixes.append(f'nnz={tensor.size(1)}')
+
+        if tensor.is_sorted:
+            suffixes.append(f'sort_order={tensor.sort_order}')
+
+        if tensor.is_undirected:
+            suffixes.append('is_undirected=True')
+
+        return orig_fn(tensor_str, suffixes, indent, force_newline)
+
+    torch._tensor_str._add_suffixes = _add_suffixes
+    out = torch._tensor_str._str(tensor, tensor_contents=tensor_contents)
+    torch._tensor_str._add_suffixes = orig_fn
+    return out
+
+
 def apply_(
     tensor: EdgeIndex,
     fn: Callable,
