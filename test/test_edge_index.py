@@ -11,6 +11,7 @@ from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
+    SortReturnType,
     _scatter_spmm,
     _torch_sparse_spmm,
     _TorchSPMM,
@@ -311,7 +312,7 @@ def test_sort_by(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values.equal(adj)
@@ -319,7 +320,7 @@ def test_sort_by(dtype, device, is_undirected):
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values[0].equal(tensor([0, 1, 1, 2], device=device))

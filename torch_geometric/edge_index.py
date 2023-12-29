@@ -7,6 +7,7 @@ from typing import (
     Dict,
     List,
     Literal,
+    NamedTuple,
     Optional,
     Sequence,
     Set,
@@ -293,6 +294,15 @@ class EdgeIndex(Tensor):
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr
             out._value = out._value
+
+            # Reset metadata if cache is invalidated:
+            num_rows = sparse_size[0]
+            if num_rows is not None and num_rows != data.sparse_size(0):
+                out._indptr = None
+
+            num_cols = sparse_size[1]
+            if num_cols is not None and num_cols != data.sparse_size(1):
+                out._T_indptr = None
 
         return out
 
@@ -595,7 +605,7 @@ class EdgeIndex(Tensor):
         self,
         sort_order: Union[str, SortOrder],
         stable: bool = False,
-    ) -> torch.return_types.sort:
+    ) -> 'SortReturnType':
         r"""Sorts the elements by row or column indices.
 
         Args:
@@ -610,10 +620,7 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            return torch.return_types.sort([  # type: ignore
-                self,
-                slice(None, None, None),
-            ])
+            return SortReturnType(self, slice(None, None, None))
 
         if self.is_sorted:
             (row, col), perm = self._sort_by_transpose()
@@ -630,20 +637,20 @@ class EdgeIndex(Tensor):
 
         out = self.__class__(edge_index)
 
-        # We can mostly inherit metadata and cache:
+        # We can inherit metadata and (mostly) cache:
         out._sparse_size = self.sparse_size()
         out._sort_order = sort_order
         out._is_undirected = self.is_undirected
 
-        out._indptr = self._T_indptr
-        out._T_indptr = self._indptr
+        out._indptr = self._indptr
+        out._T_indptr = self._T_indptr
 
         # NOTE We cannot copy CSR<>CSC permutations since we don't require that
         # local neighborhoods are sorted, and thus they may run out of sync.
 
         out._value = self._value
 
-        return torch.return_types.sort([out, perm])  # type: ignore
+        return SortReturnType(out, perm)
 
     def to_dense(  # type: ignore
         self,
@@ -652,6 +659,13 @@ class EdgeIndex(Tensor):
         dtype: Optional[torch.dtype] = None,
     ) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a dense :class:`torch.Tensor`.
+
+        .. warning::
+
+            In case of duplicated edges, the behavior is non-deterministic (one
+            of the values from :obj:`value` will be picked arbitrarily). For
+            deterministic behavior, consider calling
+            :meth:`~torch_geometric.utils.coalesce` beforehand.
 
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
@@ -662,8 +676,6 @@ class EdgeIndex(Tensor):
             dtype (torch.dtype, optional): The data type of the returned
                 tensor. (default: :obj:`None`)
         """
-        # TODO Respect duplicated edges.
-
         dtype = value.dtype if value is not None else dtype
 
         size = self.get_sparse_size()
@@ -904,6 +916,11 @@ class EdgeIndex(Tensor):
         # For all other PyTorch functions, we return a vanilla PyTorch tensor.
         _types = tuple(Tensor if issubclass(t, cls) else t for t in types)
         return Tensor.__torch_function__(func, _types, args, kwargs)
+
+
+class SortReturnType(NamedTuple):
+    values: EdgeIndex
+    indices: Union[Tensor, slice]
 
 
 def apply_(
