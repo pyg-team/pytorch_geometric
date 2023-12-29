@@ -108,6 +108,7 @@ def test_homo_neighbor_loader_basic(
         assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert isinstance(batch.edge_index, EdgeIndex)
+        batch.edge_index.validate()
         size = (batch.num_nodes, batch.num_nodes)
         assert batch.edge_index.sparse_size() == size
         assert batch.edge_index.sort_order == 'col'
@@ -219,6 +220,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         for edge_type, edge_index in batch.edge_index_dict.items():
             src, _, dst = edge_type
             assert isinstance(edge_index, EdgeIndex)
+            edge_index.validate()
             size = (batch[src].num_nodes, batch[dst].num_nodes)
             assert edge_index.sparse_size() == size
             assert edge_index.sort_order == 'col'
