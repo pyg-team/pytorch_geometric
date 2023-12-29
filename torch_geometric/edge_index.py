@@ -264,7 +264,6 @@ class EdgeIndex(Tensor):
         assert_contiguous(data)
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
-            # TODO Cached data might be invalidated here.
             sparse_size = sparse_size or data.sparse_size()
             sort_order = sort_order or data.sort_order
             is_undirected = is_undirected or data.is_undirected
@@ -295,6 +294,15 @@ class EdgeIndex(Tensor):
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr
             out._value = out._value
+
+            # Reset metadata if cache is invalidated:
+            num_rows = sparse_size[0]
+            if num_rows is not None and num_rows != data.sparse_size(0):
+                out._indptr = None
+
+            num_cols = sparse_size[1]
+            if num_cols is not None and num_cols != data.sparse_size(1):
+                out._T_indptr = None
 
         return out
 
@@ -652,6 +660,13 @@ class EdgeIndex(Tensor):
     ) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a dense :class:`torch.Tensor`.
 
+        .. warning::
+
+            In case of duplicate edges, the behavior is non-deterministic (one
+            of the values from :obj:`value` will be picked arbitrarily). For
+            deterministic behavior, consider calling
+            :meth:`~torch_geometric.utils.coalesce` beforehand.
+
         Args:
             value (torch.Tensor, optional): The values for non-zero elements.
                 If not specified, non-zero elements will be assigned a value of
@@ -661,8 +676,6 @@ class EdgeIndex(Tensor):
             dtype (torch.dtype, optional): The data type of the returned
                 tensor. (default: :obj:`None`)
         """
-        # TODO Respect duplicated edges.
-
         dtype = value.dtype if value is not None else dtype
 
         size = self.get_sparse_size()
