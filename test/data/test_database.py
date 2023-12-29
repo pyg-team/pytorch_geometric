@@ -149,7 +149,7 @@ def test_database_schema(tmp_path, Database):
     db.close()
 
 
-@pytest.mark.parametrize('Database', [SQLiteDatabase])  # TODO
+@pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
 def test_edge_index(tmp_path, Database):
     kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
 
