@@ -371,6 +371,11 @@ def test_cat(dtype, device, is_undirected):
     assert not out.is_sorted
     assert out.is_undirected == is_undirected
 
+    assert out._cat_metadata.nnz == [4, 4]
+    assert out._cat_metadata.sparse_size == [(3, 3), (4, 4)]
+    assert out._cat_metadata.sort_order == [None, None]
+    assert out._cat_metadata.is_undirected == [is_undirected, is_undirected]
+
     out = torch.cat([adj1, adj2, adj3], dim=1)
     assert out.size() == (2, 12)
     assert isinstance(out, EdgeIndex)

@@ -54,6 +54,13 @@ class SortOrder(Enum):
     COL = 'col'
 
 
+class CatMetadata(NamedTuple):
+    nnz: List[int]
+    sparse_size: List[Tuple[Optional[int], Optional[int]]]
+    sort_order: List[Optional[SortOrder]]
+    is_undirected: List[bool]
+
+
 def implements(torch_function: Callable) -> Callable:
     r"""Registers a :pytorch:`PyTorch` function override."""
     @functools.wraps(torch_function)
@@ -238,6 +245,10 @@ class EdgeIndex(Tensor):
 
     # A cached "1"-value vector for `torch.sparse` matrix multiplication:
     _value: Optional[Tensor] = None
+
+    # Whenever we perform a concatenation of edge indices, we cache the
+    # original metadata to be able to reconstruct individual edge indices:
+    _cat_metadata: Optional[CatMetadata] = None
 
     def __new__(
         cls: Type,
@@ -1030,30 +1041,39 @@ def cat(
 
     output = output.as_subclass(EdgeIndex)
 
-    # Post-process `sparse_size`:
-    num_rows: Optional[int] = 0
-    for tensor in tensors:
-        if not isinstance(tensor, EdgeIndex) or tensor.num_rows is None:
-            num_rows = None
-            break
-        assert isinstance(num_rows, int)
-        num_rows = max(num_rows, tensor.num_rows)
+    nnz_list = [t.size(1) for t in tensors]
+    sparse_size_list = [t.sparse_size() for t in tensors]  # type: ignore
+    sort_order_list = [t._sort_order for t in tensors]  # type: ignore
+    is_undirected_list = [t.is_undirected for t in tensors]  # type: ignore
 
-    num_cols: Optional[int] = 0
-    for tensor in tensors:
-        if not isinstance(tensor, EdgeIndex) or tensor.num_cols is None:
-            num_cols = None
+    # Post-process `sparse_size`:
+    total_num_rows: Optional[int] = 0
+    for num_rows, _ in sparse_size_list:
+        if num_rows is None:
+            total_num_rows = None
             break
-        assert isinstance(num_cols, int)
-        num_cols = max(num_cols, tensor.num_cols)
+        assert isinstance(total_num_rows, int)
+        total_num_rows = max(num_rows, total_num_rows)
+
+    total_num_cols: Optional[int] = 0
+    for _, num_cols in sparse_size_list:
+        if num_cols is None:
+            total_num_cols = None
+            break
+        assert isinstance(total_num_cols, int)
+        num_cols = max(num_cols, total_num_cols)
 
     output._sparse_size = (num_rows, num_cols)
 
     # Post-process `is_undirected`:
-    output._is_undirected = all([
-        isinstance(tensor, EdgeIndex) and tensor.is_undirected
-        for tensor in tensors
-    ])
+    output._is_undirected = all(is_undirected_list)
+
+    output._cat_metadata = CatMetadata(
+        nnz=nnz_list,
+        sparse_size=sparse_size_list,
+        sort_order=sort_order_list,
+        is_undirected=is_undirected_list,
+    )
 
     return output
 
