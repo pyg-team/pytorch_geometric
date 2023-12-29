@@ -450,7 +450,7 @@ class SQLiteDatabase(Database):
             col = row_dict[key]
 
             if isinstance(col, Tensor) and not isinstance(schema, TensorInfo):
-                self.schema[key] = TensorInfo(
+                self.schema[key] = schema = TensorInfo(
                     col.dtype,
                     is_edge_index=isinstance(col, EdgeIndex),
                 )
