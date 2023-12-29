@@ -22,7 +22,6 @@ def partition_dataset(
     data_dir = osp.join(abs_dir, root_dir)
 
     dataset_dir = osp.join(data_dir, 'dataset')
-
     data = get_dataset_with_transformation(dataset_name, dataset_dir,
                                            use_sparse_tensor, bf16)[0]
 
