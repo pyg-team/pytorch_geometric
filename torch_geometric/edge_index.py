@@ -662,7 +662,7 @@ class EdgeIndex(Tensor):
 
         .. warning::
 
-            In case of duplicate edges, the behavior is non-deterministic (one
+            In case of duplicated edges, the behavior is non-deterministic (one
             of the values from :obj:`value` will be picked arbitrarily). For
             deterministic behavior, consider calling
             :meth:`~torch_geometric.utils.coalesce` beforehand.
