@@ -1,7 +1,7 @@
 import pickle
 import warnings
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from uuid import uuid4
@@ -10,28 +10,42 @@ import torch
 from torch import Tensor
 from tqdm import tqdm
 
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.utils.mixin import CastMixin
 
 
 @dataclass
 class TensorInfo(CastMixin):
     dtype: torch.dtype
-    size: Tuple[int, ...] = field(default_factory=lambda: (-1, ))
+    size: Tuple[int, ...] = (-1, )
+    is_edge_index: bool = False
+
+    def __post_init__(self) -> None:
+        if self.is_edge_index:
+            self.size = (2, -1)
 
 
 def maybe_cast_to_tensor_info(value: Any) -> Union[Any, TensorInfo]:
     if not isinstance(value, dict):
         return value
-    if len(value) < 1 or len(value) > 2:
+    if len(value) < 1 or len(value) > 3:
         return value
-    if len(value) == 1 and 'dtype' not in value:
+    if 'dtype' not in value:
         return value
-    if len(value) == 2 and 'dtype' not in value and 'size' not in value:
+    if len(set(value.keys()) | {'dtype', 'size', 'is_edge_index'}) != 3:
         return value
     return TensorInfo.cast(value)
 
 
 Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
+
+SORT_ORDER_TO_INDEX: Dict[Optional[SortOrder], int] = {
+    None: -1,
+    SortOrder.ROW: 0,
+    SortOrder.COL: 1,
+}
+INDEX_TO_SORT_ORDER = {v: k for k, v in SORT_ORDER_TO_INDEX.items()}
 
 
 class Database(ABC):
@@ -432,15 +446,35 @@ class SQLiteDatabase(Database):
         # `schema`, we modify the schema in-place for improved efficiency.
         out: List[Any] = []
         row_dict = self._to_dict(row)
-        for key, col_schema in self.schema.items():
+        for key, schema in self.schema.items():
             col = row_dict[key]
-            if isinstance(self.schema[key], TensorInfo):
+
+            if isinstance(col, Tensor) and not isinstance(schema, TensorInfo):
+                self.schema[key] = TensorInfo(
+                    col.dtype,
+                    is_edge_index=isinstance(col, EdgeIndex),
+                )
+
+            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+                assert isinstance(col, EdgeIndex)
+
+                num_rows, num_cols = col.sparse_size()
+                meta = torch.tensor([
+                    num_rows if num_rows is not None else -1,
+                    num_cols if num_cols is not None else -1,
+                    SORT_ORDER_TO_INDEX[col._sort_order],
+                    col.is_undirected,
+                ], dtype=torch.long)
+
+                out.append(meta.numpy().tobytes() + col.numpy().tobytes())
+
+            elif isinstance(schema, TensorInfo):
+                assert isinstance(col, Tensor)
                 out.append(col.numpy().tobytes())
-            elif isinstance(col, Tensor):
-                self.schema[key] = TensorInfo(dtype=col.dtype)
-                out.append(col.numpy().tobytes())
-            elif self.schema[key] in {int, float, str}:
+
+            elif schema in {int, float, str}:
                 out.append(col)
+
             else:
                 out.append(pickle.dumps(col))
 
@@ -453,18 +487,41 @@ class SQLiteDatabase(Database):
         #   information from `schema`
         # * object: Load via pickle
         out_dict = {}
-        for i, (key, col_schema) in enumerate(self.schema.items()):
+        for i, (key, schema) in enumerate(self.schema.items()):
             value = row[i]
-            if isinstance(col_schema, TensorInfo):
-                if len(value) > 0:
-                    tensor = torch.frombuffer(value, dtype=col_schema.dtype)
+
+            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+                meta = torch.frombuffer(value[:32], dtype=torch.long).tolist()
+                num_rows = meta[0] if meta[0] >= 0 else None
+                num_cols = meta[1] if meta[1] >= 0 else None
+                sort_order = INDEX_TO_SORT_ORDER[meta[2]]
+                is_undirected = meta[3] > 0
+
+                if len(value) > 32:
+                    tensor = torch.frombuffer(value[32:], dtype=schema.dtype)
                 else:
-                    tensor = torch.empty(0, dtype=col_schema.dtype)
-                out_dict[key] = tensor.view(*col_schema.size)
-            elif col_schema == float:
+                    tensor = torch.empty(0, dtype=schema.dtype)
+
+                out_dict[key] = EdgeIndex(
+                    tensor.view(*schema.size),
+                    sparse_size=(num_rows, num_cols),
+                    sort_order=sort_order,
+                    is_undirected=is_undirected,
+                )
+
+            elif isinstance(schema, TensorInfo):
+                if len(value) > 0:
+                    tensor = torch.frombuffer(value, dtype=schema.dtype)
+                else:
+                    tensor = torch.empty(0, dtype=schema.dtype)
+                out_dict[key] = tensor.view(*schema.size)
+
+            elif schema == float:
                 out_dict[key] = value if value is not None else float('NaN')
-            elif col_schema in {int, str}:
+
+            elif schema in {int, str}:
                 out_dict[key] = value
+
             else:
                 out_dict[key] = pickle.loads(value)
 
