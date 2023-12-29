@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, cast
 
 import torch
 from torch import Tensor
@@ -200,7 +200,7 @@ class AddMetaPaths(BaseTransform):
         prob = (self.max_sample * (1. / deg))[edge_index[0]]
         mask = torch.rand_like(prob) < prob
 
-        edge_index = edge_index[:, mask]
+        edge_index = cast(EdgeIndex, edge_index[:, mask])
         assert isinstance(edge_index, EdgeIndex)
         if edge_weight is not None:
             edge_weight = edge_weight[mask]

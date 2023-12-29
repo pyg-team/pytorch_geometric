@@ -7,6 +7,7 @@ from typing import (
     Dict,
     List,
     Literal,
+    NamedTuple,
     Optional,
     Sequence,
     Set,
@@ -263,7 +264,7 @@ class EdgeIndex(Tensor):
         assert_contiguous(data)
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
-            # TODO Cached data might be invalided here.
+            # TODO Cached data might be invalidated here.
             sparse_size = sparse_size or data.sparse_size()
             sort_order = sort_order or data.sort_order
             is_undirected = is_undirected or data.is_undirected
@@ -596,7 +597,7 @@ class EdgeIndex(Tensor):
         self,
         sort_order: Union[str, SortOrder],
         stable: bool = False,
-    ) -> torch.return_types.sort:
+    ) -> 'SortReturnType':
         r"""Sorts the elements by row or column indices.
 
         Args:
@@ -611,10 +612,7 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            return torch.return_types.sort([  # type: ignore
-                self,
-                slice(None, None, None),
-            ])
+            return SortReturnType(self, slice(None, None, None))
 
         if self.is_sorted:
             (row, col), perm = self._sort_by_transpose()
@@ -644,7 +642,7 @@ class EdgeIndex(Tensor):
 
         out._value = self._value
 
-        return torch.return_types.sort([out, perm])  # type: ignore
+        return SortReturnType(out, perm)
 
     def to_dense(  # type: ignore
         self,
@@ -905,6 +903,11 @@ class EdgeIndex(Tensor):
         # For all other PyTorch functions, we return a vanilla PyTorch tensor.
         _types = tuple(Tensor if issubclass(t, cls) else t for t in types)
         return Tensor.__torch_function__(func, _types, args, kwargs)
+
+
+class SortReturnType(NamedTuple):
+    values: EdgeIndex
+    indices: Union[Tensor, slice]
 
 
 def apply_(
