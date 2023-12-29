@@ -47,10 +47,17 @@ def test_basic(dtype, device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     adj.validate()
     assert isinstance(adj, EdgeIndex)
+
+    dtype_str = '' if dtype == torch.long else f', dtype={dtype}'
     if torch_geometric.typing.WITH_PT112:
-        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],')
+        assert str(adj) == (
+            f'EdgeIndex([[0, 1, 1, 2],\n'
+            f'           [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
     else:
-        assert str(adj).startswith('tensor([[0, 1, 1, 2],')
+        assert str(adj) == (
+            f'tensor([[0, 1, 1, 2],\n'
+            f'        [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
+
     assert adj.dtype == dtype
     assert adj.device == device
     assert adj.sparse_size() == (3, 3)

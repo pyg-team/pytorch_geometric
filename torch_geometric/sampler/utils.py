@@ -135,7 +135,12 @@ def to_bidirectional(
     if edge_id is not None:
         edge_id = torch.cat([edge_id, rev_edge_id], dim=0)
 
-    (row, col), edge_id = coalesce(edge_index, edge_id, reduce='any')
+    (row, col), edge_id = coalesce(
+        edge_index,
+        edge_id,
+        sort_by_row=False,
+        reduce='any',
+    )
 
     return row, col, edge_id
 
