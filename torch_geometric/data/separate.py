@@ -75,15 +75,16 @@ def _separate(
         start, end = int(slices[idx]), int(slices[idx + 1])
         value = narrow(values, cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
-        if (decrement and incs is not None
-                and (incs.dim() > 1 or int(incs[idx]) != 0)):
-            value = value - incs[idx].to(value.device)
 
         if isinstance(values, EdgeIndex) and values._cat_metadata is not None:
             # Reconstruct original `EdgeIndex` metadata:
             value._sparse_size = values._cat_metadata.sparse_size[idx]
             value._sort_order = values._cat_metadata.sort_order[idx]
             value._is_undirected = values._cat_metadata.is_undirected[idx]
+
+        if (decrement and incs is not None
+                and (incs.dim() > 1 or int(incs[idx]) != 0)):
+            value = value - incs[idx].to(value.device)
 
         return value
 
@@ -95,8 +96,8 @@ def _separate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         for i, dim in enumerate(cat_dims):
             start, end = int(slices[idx][i]), int(slices[idx + 1][i])
-            value = values.narrow(dim, start, end - start)
-        return value
+            values = values.narrow(dim, start, end - start)
+        return values
 
     elif isinstance(values, TensorFrame):
         key = str(key)
