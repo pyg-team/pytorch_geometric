@@ -132,7 +132,7 @@ class InMemoryDataset(Dataset, ABC):
         out = fs.torch_load(path)
         assert isinstance(out, tuple)
         assert len(out) == 2 or len(out) == 3
-        if len(out) == 2:  # Backward compatibility
+        if len(out) == 2:  # Backward compatibility.
             data, self.slices = out
         else:
             data, self.slices, data_cls = out
