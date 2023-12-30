@@ -11,6 +11,7 @@ from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
+    SortReturnType,
     _scatter_spmm,
     _torch_sparse_spmm,
     _TorchSPMM,
@@ -46,10 +47,17 @@ def test_basic(dtype, device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     adj.validate()
     assert isinstance(adj, EdgeIndex)
+
+    dtype_str = '' if dtype == torch.long else f', dtype={dtype}'
     if torch_geometric.typing.WITH_PT112:
-        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],')
+        assert str(adj) == (
+            f'EdgeIndex([[0, 1, 1, 2],\n'
+            f'           [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
     else:
-        assert str(adj).startswith('tensor([[0, 1, 1, 2],')
+        assert str(adj) == (
+            f'tensor([[0, 1, 1, 2],\n'
+            f'        [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
+
     assert adj.dtype == dtype
     assert adj.device == device
     assert adj.sparse_size() == (3, 3)
@@ -311,7 +319,7 @@ def test_sort_by(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values.equal(adj)
@@ -319,7 +327,7 @@ def test_sort_by(dtype, device, is_undirected):
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values[0].equal(tensor([0, 1, 1, 2], device=device))
@@ -369,6 +377,11 @@ def test_cat(dtype, device, is_undirected):
     assert out.sparse_size() == (4, 4)
     assert not out.is_sorted
     assert out.is_undirected == is_undirected
+
+    assert out._cat_metadata.nnz == [4, 4]
+    assert out._cat_metadata.sparse_size == [(3, 3), (4, 4)]
+    assert out._cat_metadata.sort_order == [None, None]
+    assert out._cat_metadata.is_undirected == [is_undirected, is_undirected]
 
     out = torch.cat([adj1, adj2, adj3], dim=1)
     assert out.size() == (2, 12)
