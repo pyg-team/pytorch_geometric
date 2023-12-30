@@ -113,6 +113,11 @@ def maybe_sub(
                  for v, o in zip(value, other))
 
 
+def ptr2index(ptr: Tensor, output_size: Optional[int] = None) -> Tensor:
+    index = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
+    return index.repeat_interleave(ptr.diff(), output_size=output_size)
+
+
 def assert_valid_dtype(tensor: Tensor) -> None:
     if tensor.dtype not in SUPPORTED_DTYPES:
         raise ValueError(f"'EdgeIndex' holds an unsupported data type "
@@ -270,14 +275,51 @@ class EdgeIndex(Tensor):
                             f"{set(kwargs.keys())})")
 
         assert isinstance(data, Tensor)
-        assert_valid_dtype(data)
-        assert_two_dimensional(data)
-        assert_contiguous(data)
+
+        indptr: Optional[Tensor] = None
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            indptr = data._indptr
             sparse_size = sparse_size or data.sparse_size()
             sort_order = sort_order or data.sort_order
             is_undirected = is_undirected or data.is_undirected
+
+        # Convert `torch.sparse` tensors to `EdgeIndex` representation:
+        if data.layout == torch.sparse_coo:
+            sort_order = SortOrder.ROW
+            sparse_size = sparse_size or (data.size(0), data.size(1))
+            data = data.indices()
+
+        if data.layout == torch.sparse_csr:
+            indptr = data.crow_indices()
+            col = data.col_indices()
+
+            assert isinstance(indptr, Tensor)
+            row = ptr2index(indptr, output_size=col.numel())
+
+            sort_order = SortOrder.ROW
+            sparse_size = sparse_size or (data.size(0), data.size(1))
+            if sparse_size[0] is not None and sparse_size[0] != data.size(0):
+                indptr = None
+            data = torch.stack([row, col], dim=0)
+
+        if (torch_geometric.typing.WITH_PT112
+                and data.layout == torch.sparse_csc):
+            row = data.row_indices()
+            indptr = data.ccol_indices()
+
+            assert isinstance(indptr, Tensor)
+            col = ptr2index(indptr, output_size=row.numel())
+
+            sort_order = SortOrder.COL
+            sparse_size = sparse_size or (data.size(0), data.size(1))
+            if sparse_size[1] is not None and sparse_size[1] != data.size(1):
+                indptr = None
+            data = torch.stack([row, col], dim=0)
+
+        assert_valid_dtype(data)
+        assert_two_dimensional(data)
+        assert_contiguous(data)
 
         if sparse_size is None:
             sparse_size = (None, None)
@@ -298,9 +340,9 @@ class EdgeIndex(Tensor):
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
+        out._indptr = indptr
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
-            out._indptr = data._indptr
             out._T_perm = data._T_perm
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr
