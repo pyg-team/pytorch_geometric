@@ -98,6 +98,28 @@ def test_identity(dtype, device, is_undirected):
     assert out.is_undirected == adj.is_undirected
 
 
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sparse_tensor(dtype, device):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=True)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
+
+    out = EdgeIndex(adj.to_sparse_coo())
+    assert out.equal(adj)
+    assert out.sort_order == 'row'
+    assert out.sparse_size() == (3, 3)
+
+    out = EdgeIndex(adj.to_sparse_csr())
+    assert out.equal(adj)
+    assert out.sort_order == 'row'
+    assert out.sparse_size() == (3, 3)
+
+    out = EdgeIndex(adj.to_sparse_csc())
+    assert out.equal(adj.sort_by('col')[0])
+    assert out.sort_order == 'col'
+    assert out.sparse_size() == (3, 3)
+
+
 def test_set_tuple_item():
     tmp = (0, 1, 2)
     assert set_tuple_item(tmp, 0, 3) == (3, 1, 2)
