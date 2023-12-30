@@ -276,13 +276,15 @@ class EdgeIndex(Tensor):
 
         assert isinstance(data, Tensor)
 
+        indptr: Optional[Tensor] = None
+
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            indptr = data._indptr
             sparse_size = sparse_size or data.sparse_size()
             sort_order = sort_order or data.sort_order
             is_undirected = is_undirected or data.is_undirected
 
         # Convert `torch.sparse` tensors to `EdgeIndex` representation:
-        indptr: Optional[Tensor] = None
         if data.layout == torch.sparse_coo:
             sort_order = SortOrder.ROW
             sparse_size = sparse_size or (data.size(0), data.size(1))
@@ -341,7 +343,6 @@ class EdgeIndex(Tensor):
         out._indptr = indptr
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
-            out._indptr = data._indptr
             out._T_perm = data._T_perm
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr

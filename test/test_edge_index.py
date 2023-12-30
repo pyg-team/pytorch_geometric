@@ -48,15 +48,15 @@ def test_basic(dtype, device):
     adj.validate()
     assert isinstance(adj, EdgeIndex)
 
-    dtype_str = '' if dtype == torch.long else f', dtype={dtype}'
     if torch_geometric.typing.WITH_PT112:
-        assert str(adj) == (
-            f'EdgeIndex([[0, 1, 1, 2],\n'
-            f'           [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
+        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],\n'
+                                   '           [1, 0, 2, 1]], ')
     else:
-        assert str(adj) == (
-            f'tensor([[0, 1, 1, 2],\n'
-            f'        [1, 0, 2, 1]]{dtype_str}, sparse_size=(3, 3), nnz=4)')
+        assert str(adj).startswith('tensor([[0, 1, 1, 2],\n'
+                                   '        [1, 0, 2, 1]], ')
+    assert str(adj).endswith('sparse_size=(3, 3), nnz=4)')
+    assert (f"device='{device}'" in str(adj)) == adj.is_cuda
+    assert (f'dtype={dtype}' in str(adj)) == (dtype != torch.long)
 
     assert adj.dtype == dtype
     assert adj.device == device
@@ -108,16 +108,19 @@ def test_sparse_tensor(dtype, device):
     assert out.equal(adj)
     assert out.sort_order == 'row'
     assert out.sparse_size() == (3, 3)
+    assert out._indptr is None
 
     out = EdgeIndex(adj.to_sparse_csr())
     assert out.equal(adj)
     assert out.sort_order == 'row'
     assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
 
     out = EdgeIndex(adj.to_sparse_csc())
     assert out.equal(adj.sort_by('col')[0])
     assert out.sort_order == 'col'
     assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
 
 
 def test_set_tuple_item():
