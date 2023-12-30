@@ -126,7 +126,7 @@ class DistNeighborSampler:
         rpc_sample_callee = RPCSamplingCallee(self)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
-    def init_event_loop(self):
+    def init_event_loop(self) -> None:
         if self.event_loop is None:
             self.event_loop = ConcurrentEventLoop(self.concurrency)
             self.event_loop.start_loop()
@@ -228,15 +228,18 @@ class DistNeighborSampler:
             else:
                 raise ValueError("Seed time needs to be specified")
 
+        # Heterogeneous Neighborhood Sampling #################################
+
         if self.is_hetero:
             if input_type is None:
                 raise ValueError("Input type should be defined")
 
-            seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
-            seed_time_dict: Dict[NodeType, Tensor] = {input_type: seed_time}
-
             node_dict = NodeDict(self.node_types, self.num_hops)
             batch_dict = BatchDict(self.node_types, self.num_hops)
+
+            seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
+            if self.temporal:
+                node_dict.seed_time[input_type][0] = seed_time.clone()
 
             edge_dict: Dict[EdgeType, Tensor] = {
                 k: torch.empty(0, dtype=torch.int64)
@@ -281,8 +284,6 @@ class DistNeighborSampler:
                         num_sampled_edges_dict[edge_type].append(0)
                         continue
 
-                    seed_time = (seed_time_dict or {}).get(src, None)
-
                     if isinstance(self.num_neighbors, list):
                         one_hop_num = self.num_neighbors[i]
                     else:
@@ -292,7 +293,7 @@ class DistNeighborSampler:
                     out = await self.sample_one_hop(
                         node_dict.src[src][i],
                         one_hop_num,
-                        seed_time,
+                        node_dict.seed_time[src][i],
                         batch_dict.src[src][i],
                         edge_type,
                     )
@@ -306,9 +307,9 @@ class DistNeighborSampler:
 
                     # Remove duplicates:
                     (
-                        node_src,
+                        src_node,
                         node_dict.out[dst],
-                        batch_src,
+                        src_batch,
                         batch_dict.out[dst],
                     ) = remove_duplicates(
                         out,
@@ -319,10 +320,10 @@ class DistNeighborSampler:
 
                     # Create src nodes for the next layer:
                     node_dict.src[dst][i + 1] = torch.cat(
-                        [node_dict.src[dst][i + 1], node_src])
+                        [node_dict.src[dst][i + 1], src_node])
                     if self.disjoint:
                         batch_dict.src[dst][i + 1] = torch.cat(
-                            [batch_dict.src[dst][i + 1], batch_src])
+                            [batch_dict.src[dst][i + 1], src_batch])
 
                     # Save sampled nodes with duplicates to be able to create
                     # local edge indices:
@@ -335,6 +336,18 @@ class DistNeighborSampler:
                     if self.disjoint:
                         batch_dict.with_dupl[dst] = torch.cat(
                             [batch_dict.with_dupl[dst], out.batch])
+
+                    if self.temporal and i < self.num_hops - 1:
+                        # Assign seed time based on source node subgraph ID:
+                        src_seed_time = [
+                            seed_time[(seed_batch == batch_idx).nonzero()]
+                            for batch_idx in src_batch
+                        ]
+                        src_seed_time = torch.as_tensor(
+                            src_seed_time, dtype=torch.int64)
+
+                        node_dict.seed_time[dst][i + 1] = torch.cat(
+                            [node_dict.seed_time[dst][i + 1], src_seed_time])
 
                     # Collect sampled neighbors per node for each layer:
                     sampled_nbrs_per_node_dict[edge_type][i] += out.metadata[0]
@@ -371,6 +384,9 @@ class DistNeighborSampler:
                 num_sampled_edges=num_sampled_edges_dict,
                 metadata=metadata,
             )
+
+        # Homogeneous Neighborhood Sampling ###################################
+
         else:
             src = seed
             node = src.clone()
@@ -797,8 +813,9 @@ class DistNeighborSampler:
             rel_type = '__'.join(edge_type)
             colptr = self._sampler.colptr_dict[rel_type]
             row = self._sampler.row_dict[rel_type]
-            node_time = (self.node_time or {}).get(edge_type[2], None)
-            edge_time = (self.edge_time or {}).get(edge_type[2], None)
+            # `node_time` is a destination node time:
+            node_time = (self.node_time or {}).get(edge_type[0], None)
+            edge_time = (self.edge_time or {}).get(edge_type, None)
 
         out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
