@@ -73,8 +73,11 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
     return (feature_store, graph_store), data
 
 
-def create_hetero_data(tmp_path: str, rank: int,
-                       time_attr: Optional[str] = None):
+def create_hetero_data(
+    tmp_path: str,
+    rank: int,
+    time_attr: Optional[str] = None,
+):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feature_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
     (
@@ -102,14 +105,15 @@ def create_hetero_data(tmp_path: str, rank: int,
             attr_name=time_attr,
         )
     elif time_attr == 'edge_time':  # Create edge-level time data:
-        for i, (attr,
-                edge_index) in enumerate(graph_store._edge_index.items()):
+        i = 0
+        for attr, edge_index in graph_store._edge_index.items():
+            time = torch.full((edge_index.size(1), ), i, dtype=torch.int64)
             feature_store.put_tensor(
-                tensor=torch.full((edge_index.size(1), ), i,
-                                  dtype=torch.int64),
+                tensor=time,
                 group_name=attr[0],
                 attr_name=time_attr,
             )
+            i += 1
 
     return feature_store, graph_store
 
@@ -547,8 +551,11 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
 @withPackage('pyg_lib')
 @pytest.mark.parametrize('seed_time', [None, [0, 0], [2, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
-def test_dist_neighbor_sampler_temporal_hetero(tmp_path, seed_time,
-                                               temporal_strategy):
+def test_dist_neighbor_sampler_temporal_hetero(
+    tmp_path,
+    seed_time,
+    temporal_strategy,
+):
     if seed_time is not None:
         seed_time = torch.tensor(seed_time)
 
@@ -600,7 +607,10 @@ def test_dist_neighbor_sampler_temporal_hetero(tmp_path, seed_time,
 @pytest.mark.parametrize('seed_time', [[0, 0], [1, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_neighbor_sampler_edge_level_temporal_hetero(
-        tmp_path, seed_time, temporal_strategy):
+    tmp_path,
+    seed_time,
+    temporal_strategy,
+):
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')

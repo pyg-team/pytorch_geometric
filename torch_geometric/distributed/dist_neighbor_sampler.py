@@ -228,7 +228,7 @@ class DistNeighborSampler:
             else:
                 raise ValueError("Seed time needs to be specified")
 
-        # Heterogeneus Neighborhood Sampling ##################################
+        # Heterogeneous Neighborhood Sampling #################################
 
         if self.is_hetero:
             if input_type is None:
@@ -238,8 +238,8 @@ class DistNeighborSampler:
             batch_dict = BatchDict(self.node_types, self.num_hops)
 
             seed_dict: Dict[NodeType, Tensor] = {input_type: seed}
-            node_dict.seed_time[input_type][0] = seed_time.clone(
-            ) if self.temporal else None
+            if self.temporal:
+                node_dict.seed_time[input_type][0] = seed_time.clone()
 
             edge_dict: Dict[EdgeType, Tensor] = {
                 k: torch.empty(0, dtype=torch.int64)
@@ -338,7 +338,7 @@ class DistNeighborSampler:
                             [batch_dict.with_dupl[dst], out.batch])
 
                     if self.temporal and i < self.num_hops - 1:
-                        # Assign seed time based on source nodes subgraph IDs.
+                        # Assign seed time based on source node subgraph ID:
                         src_seed_time = [
                             seed_time[(seed_batch == batch_idx).nonzero()]
                             for batch_idx in src_batch
@@ -385,7 +385,7 @@ class DistNeighborSampler:
                 metadata=metadata,
             )
 
-        # Homogeneus Neighborhood Sampling ####################################
+        # Homogeneous Neighborhood Sampling ###################################
 
         else:
             src = seed
