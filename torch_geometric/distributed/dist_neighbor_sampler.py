@@ -126,6 +126,12 @@ class DistNeighborSampler:
         rpc_sample_callee = RPCSamplingCallee(self)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
+    def init_event_loop(self):
+        if self.event_loop is None:
+            self.event_loop = ConcurrentEventLoop(self.concurrency)
+            self.event_loop.start_loop()
+            logging.info(f'{self} uses {self.event_loop}')
+
     # Node-based distributed sampling #########################################
 
     def sample_from_nodes(
@@ -133,12 +139,9 @@ class DistNeighborSampler:
         inputs: NodeSamplerInput,
         **kwargs,
     ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
-        inputs = NodeSamplerInput.cast(inputs)
-        if self.event_loop is None:
-            self.event_loop = ConcurrentEventLoop(self.concurrency)
-            self.event_loop.start_loop()
-            logging.info(f'{self} uses {self.event_loop}')
+        self.init_event_loop()
 
+        inputs = NodeSamplerInput.cast(inputs)
         if self.channel is None:
             # synchronous sampling
             return self.event_loop.run_task(
@@ -158,6 +161,8 @@ class DistNeighborSampler:
         neg_sampling: Optional[NegativeSampling] = None,
         **kwargs,
     ) -> Optional[Union[SamplerOutput, HeteroSamplerOutput]]:
+        self.init_event_loop()
+
         if self.channel is None:
             # synchronous sampling
             return self.event_loop.run_task(coro=self._sample_from(
