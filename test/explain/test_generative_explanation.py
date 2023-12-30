@@ -4,9 +4,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torch_geometric.data import Data
-from torch_geometric.explain import (Explainer, XGNNExplainer,
-                                     GenerativeExplanation,
-                                     ExplanationSetSampler)
+from torch_geometric.explain import (
+    Explainer,
+    ExplanationSetSampler,
+    GenerativeExplanation,
+    XGNNExplainer,
+)
 
 
 # Mock model for testing
