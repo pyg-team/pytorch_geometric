@@ -4,7 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torch_geometric.data import Data
-from torch_geometric.explain import Explainer, XGNNExplainer
+from torch_geometric.explain import (Explainer, XGNNExplainer,
+                                     GenerativeExplanation,
+                                     ExplanationSetSampler)
 
 
 # Mock model for testing
@@ -42,7 +44,7 @@ class ExampleExplainer(XGNNExplainer):
 
 
 # Mock graph generator
-class ExampleGraphGenerator():
+class ExampleGraphGenerator(torch.nn.Module, ExplanationSetSampler):
     def __init__(self, graph):
         self.graph = graph
 
@@ -95,3 +97,21 @@ def test_sampler_output():
     assert isinstance(sampled_graphs, list), "Sampled graphs is not a list"
     assert all(isinstance(graph, Data) for graph in
                sampled_graphs), "Sampled graphs is not a list of Data objects"
+
+
+# Test is_finite method
+def test_is_finite():
+    gen_explanation = GenerativeExplanation(
+        explanation_set=ExampleGraphGenerator, is_finite=True)
+    assert gen_explanation.is_finite() is True
+
+    gen_explanation = GenerativeExplanation(
+        explanation_set=ExampleGraphGenerator, is_finite=False)
+    assert gen_explanation.is_finite() is False
+
+
+# Test get_explanation_set method
+def test_get_explanation_set():
+    gen_explanation = GenerativeExplanation(
+        explanation_set=ExampleGraphGenerator(Data()), is_finite=True)
+    assert isinstance(gen_explanation.get_explanation_set(), list)
