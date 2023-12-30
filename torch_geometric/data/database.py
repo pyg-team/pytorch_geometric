@@ -1,37 +1,51 @@
 import pickle
 import warnings
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from uuid import uuid4
 
 import torch
 from torch import Tensor
 from tqdm import tqdm
 
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.utils.mixin import CastMixin
 
 
 @dataclass
 class TensorInfo(CastMixin):
     dtype: torch.dtype
-    size: Tuple[int, ...] = field(default_factory=lambda: (-1, ))
+    size: Tuple[int, ...] = (-1, )
+    is_edge_index: bool = False
+
+    def __post_init__(self) -> None:
+        if self.is_edge_index:
+            self.size = (2, -1)
 
 
 def maybe_cast_to_tensor_info(value: Any) -> Union[Any, TensorInfo]:
     if not isinstance(value, dict):
         return value
-    if len(value) < 1 or len(value) > 2:
+    if len(value) < 1 or len(value) > 3:
         return value
-    if len(value) == 1 and 'dtype' not in value:
+    if 'dtype' not in value:
         return value
-    if len(value) == 2 and 'dtype' not in value and 'size' not in value:
+    if len(set(value.keys()) | {'dtype', 'size', 'is_edge_index'}) != 3:
         return value
     return TensorInfo.cast(value)
 
 
 Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
+
+SORT_ORDER_TO_INDEX: Dict[Optional[SortOrder], int] = {
+    None: -1,
+    SortOrder.ROW: 0,
+    SortOrder.COL: 1,
+}
+INDEX_TO_SORT_ORDER = {v: k for k, v in SORT_ORDER_TO_INDEX.items()}
 
 
 class Database(ABC):
@@ -82,28 +96,25 @@ class Database(ABC):
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
-    def __init__(self, schema: Schema = object):
-        schema = maybe_cast_to_tensor_info(schema)
-        schema = self._to_dict(schema)
-        schema = {
+    def __init__(self, schema: Schema = object) -> None:
+        schema_dict = self._to_dict(maybe_cast_to_tensor_info(schema))
+        self.schema: Dict[Union[str, int], Any] = {
             key: maybe_cast_to_tensor_info(value)
-            for key, value in schema.items()
+            for key, value in schema_dict.items()
         }
 
-        self.schema: Dict[Union[str, int], Any] = schema
-
-    def connect(self):
+    def connect(self) -> None:
         r"""Connects to the database.
         Databases will automatically connect on instantiation.
         """
         pass
 
-    def close(self):
+    def close(self) -> None:
         r"""Closes the connection to the database."""
         pass
 
     @abstractmethod
-    def insert(self, index: int, data: Any):
+    def insert(self, index: int, data: Any) -> None:
         r"""Inserts data at the specified index.
 
         Args:
@@ -114,11 +125,11 @@ class Database(ABC):
 
     def multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
-        data_list: Iterable[Any],
+        indices: Union[Sequence[int], Tensor, slice, range],
+        data_list: Sequence[Any],
         batch_size: Optional[int] = None,
         log: bool = False,
-    ):
+    ) -> None:
         r"""Inserts a chunk of data at the specified indices.
 
         Args:
@@ -151,9 +162,9 @@ class Database(ABC):
 
     def _multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor, range],
-        data_list: Iterable[Any],
-    ):
+        indices: Union[Sequence[int], Tensor, range],
+        data_list: Sequence[Any],
+    ) -> None:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
         for index, data in zip(indices, data_list):
@@ -170,7 +181,7 @@ class Database(ABC):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: Union[Sequence[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[Any]:
         r"""Gets a chunk of data from the specified indices.
@@ -193,7 +204,7 @@ class Database(ABC):
             data_list.extend(self._multi_get(chunk_indices))
         return data_list
 
-    def _multi_get(self, indices: Union[Iterable[int], Tensor]) -> List[Any]:
+    def _multi_get(self, indices: Union[Sequence[int], Tensor]) -> List[Any]:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
         return [self.get(index) for index in indices]
@@ -201,7 +212,9 @@ class Database(ABC):
     # Helper functions ########################################################
 
     @staticmethod
-    def _to_dict(value) -> Dict[Union[str, int], Any]:
+    def _to_dict(
+        value: Union[Dict[Union[int, str], Any], Sequence[Any], Any],
+    ) -> Dict[Union[str, int], Any]:
         if isinstance(value, dict):
             return value
         if isinstance(value, (tuple, list)):
@@ -223,7 +236,7 @@ class Database(ABC):
 
     def __getitem__(
         self,
-        key: Union[int, Iterable[int], Tensor, slice, range],
+        key: Union[int, Sequence[int], Tensor, slice, range],
     ) -> Union[Any, List[Any]]:
 
         if isinstance(key, int):
@@ -233,9 +246,9 @@ class Database(ABC):
 
     def __setitem__(
         self,
-        key: Union[int, Iterable[int], Tensor, slice, range],
-        value: Union[Any, Iterable[Any]],
-    ):
+        key: Union[int, Sequence[int], Tensor, slice, range],
+        value: Union[Any, Sequence[Any]],
+    ) -> None:
         if isinstance(key, int):
             self.insert(key, value)
         else:
@@ -266,7 +279,7 @@ class SQLiteDatabase(Database):
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
-    def __init__(self, path: str, name: str, schema: Schema = object):
+    def __init__(self, path: str, name: str, schema: Schema = object) -> None:
         super().__init__(schema)
 
         warnings.filterwarnings('ignore', '.*given buffer is not writable.*')
@@ -293,12 +306,12 @@ class SQLiteDatabase(Database):
                  f')')
         self.cursor.execute(query)
 
-    def connect(self):
+    def connect(self) -> None:
         import sqlite3
         self._connection = sqlite3.connect(self.path)
         self._cursor = self._connection.cursor()
 
-    def close(self):
+    def close(self) -> None:
         if self._connection is not None:
             self._connection.commit()
             self._connection.close()
@@ -306,23 +319,29 @@ class SQLiteDatabase(Database):
             self._cursor = None
 
     @property
+    def connection(self) -> Any:
+        if self._connection is None:
+            raise RuntimeError("No open database connection")
+        return self._connection
+
+    @property
     def cursor(self) -> Any:
         if self._cursor is None:
             raise RuntimeError("No open database connection")
         return self._cursor
 
-    def insert(self, index: int, data: Any):
+    def insert(self, index: int, data: Any) -> None:
         query = (f'INSERT INTO {self.name} '
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
         self.cursor.execute(query, (index, *self._serialize(data)))
-        self._connection.commit()
+        self.connection.commit()
 
     def _multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor, range],
-        data_list: Iterable[Any],
-    ):
+        indices: Union[Sequence[int], Tensor, range],
+        data_list: Sequence[Any],
+    ) -> None:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
 
@@ -333,7 +352,7 @@ class SQLiteDatabase(Database):
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
         self.cursor.executemany(query, data_list)
-        self._connection.commit()
+        self.connection.commit()
 
     def get(self, index: int) -> Any:
         query = (f'SELECT {self._joined_col_names} FROM {self.name} '
@@ -343,7 +362,7 @@ class SQLiteDatabase(Database):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: Union[Sequence[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[Any]:
 
@@ -363,6 +382,7 @@ class SQLiteDatabase(Database):
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
         self.cursor.executemany(query, zip(indices, range(len(indices))))
+        self.connection.commit()
 
         query = f'SELECT * FROM {join_table_name}'
         self.cursor.execute(query)
@@ -376,7 +396,7 @@ class SQLiteDatabase(Database):
         if batch_size is None:
             data_list = self.cursor.fetchall()
         else:
-            data_list: List[Any] = []
+            data_list = []
             while True:
                 chunk_list = self.cursor.fetchmany(size=batch_size)
                 if len(chunk_list) == 0:
@@ -426,15 +446,35 @@ class SQLiteDatabase(Database):
         # `schema`, we modify the schema in-place for improved efficiency.
         out: List[Any] = []
         row_dict = self._to_dict(row)
-        for key, col_schema in self.schema.items():
+        for key, schema in self.schema.items():
             col = row_dict[key]
-            if isinstance(self.schema[key], TensorInfo):
+
+            if isinstance(col, Tensor) and not isinstance(schema, TensorInfo):
+                self.schema[key] = schema = TensorInfo(
+                    col.dtype,
+                    is_edge_index=isinstance(col, EdgeIndex),
+                )
+
+            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+                assert isinstance(col, EdgeIndex)
+
+                num_rows, num_cols = col.sparse_size()
+                meta = torch.tensor([
+                    num_rows if num_rows is not None else -1,
+                    num_cols if num_cols is not None else -1,
+                    SORT_ORDER_TO_INDEX[col._sort_order],
+                    col.is_undirected,
+                ], dtype=torch.long)
+
+                out.append(meta.numpy().tobytes() + col.numpy().tobytes())
+
+            elif isinstance(schema, TensorInfo):
+                assert isinstance(col, Tensor)
                 out.append(col.numpy().tobytes())
-            elif isinstance(col, Tensor):
-                self.schema[key] = TensorInfo(dtype=col.dtype)
-                out.append(col.numpy().tobytes())
-            elif self.schema[key] in {int, float, str}:
+
+            elif schema in {int, float, str}:
                 out.append(col)
+
             else:
                 out.append(pickle.dumps(col))
 
@@ -447,18 +487,41 @@ class SQLiteDatabase(Database):
         #   information from `schema`
         # * object: Load via pickle
         out_dict = {}
-        for i, (key, col_schema) in enumerate(self.schema.items()):
+        for i, (key, schema) in enumerate(self.schema.items()):
             value = row[i]
-            if isinstance(col_schema, TensorInfo):
-                if len(value) > 0:
-                    tensor = torch.frombuffer(value, dtype=col_schema.dtype)
+
+            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+                meta = torch.frombuffer(value[:32], dtype=torch.long).tolist()
+                num_rows = meta[0] if meta[0] >= 0 else None
+                num_cols = meta[1] if meta[1] >= 0 else None
+                sort_order = INDEX_TO_SORT_ORDER[meta[2]]
+                is_undirected = meta[3] > 0
+
+                if len(value) > 32:
+                    tensor = torch.frombuffer(value[32:], dtype=schema.dtype)
                 else:
-                    tensor = torch.empty(0, dtype=col_schema.dtype)
-                out_dict[key] = tensor.view(*col_schema.size)
-            elif col_schema == float:
+                    tensor = torch.empty(0, dtype=schema.dtype)
+
+                out_dict[key] = EdgeIndex(
+                    tensor.view(*schema.size),
+                    sparse_size=(num_rows, num_cols),
+                    sort_order=sort_order,
+                    is_undirected=is_undirected,
+                )
+
+            elif isinstance(schema, TensorInfo):
+                if len(value) > 0:
+                    tensor = torch.frombuffer(value, dtype=schema.dtype)
+                else:
+                    tensor = torch.empty(0, dtype=schema.dtype)
+                out_dict[key] = tensor.view(*schema.size)
+
+            elif schema == float:
                 out_dict[key] = value if value is not None else float('NaN')
-            elif col_schema in {int, str}:
+
+            elif schema in {int, str}:
                 out_dict[key] = value
+
             else:
                 out_dict[key] = pickle.loads(value)
 
@@ -494,7 +557,7 @@ class RocksDatabase(Database):
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
-    def __init__(self, path: str, schema: Schema = object):
+    def __init__(self, path: str, schema: Schema = object) -> None:
         super().__init__(schema)
 
         import rocksdict
@@ -505,14 +568,14 @@ class RocksDatabase(Database):
 
         self.connect()
 
-    def connect(self):
+    def connect(self) -> None:
         import rocksdict
         self._db = rocksdict.Rdict(
             self.path,
             options=rocksdict.Options(raw_mode=True),
         )
 
-    def close(self):
+    def close(self) -> None:
         if self._db is not None:
             self._db.close()
             self._db = None
@@ -527,17 +590,16 @@ class RocksDatabase(Database):
     def to_key(index: int) -> bytes:
         return index.to_bytes(8, byteorder='big', signed=True)
 
-    def insert(self, index: int, data: Any):
+    def insert(self, index: int, data: Any) -> None:
         self.db[self.to_key(index)] = self._serialize(data)
 
     def get(self, index: int) -> Any:
         return self._deserialize(self.db[self.to_key(index)])
 
-    def _multi_get(self, indices: Union[Iterable[int], Tensor]) -> List[Any]:
+    def _multi_get(self, indices: Union[Sequence[int], Tensor]) -> List[Any]:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
-        indices = [self.to_key(index) for index in indices]
-        data_list = self.db[indices]
+        data_list = self.db[[self.to_key(index) for index in indices]]
         return [self._deserialize(data) for data in data_list]
 
     # Helper functions ########################################################

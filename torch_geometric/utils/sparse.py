@@ -488,42 +488,203 @@ def ptr2index(ptr: Tensor) -> Tensor:
     return ind.repeat_interleave(ptr[1:] - ptr[:-1])
 
 
-def index2ptr(index: Tensor, size: int) -> Tensor:
+def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
+    if size is None:
+        size = int(index.max()) + 1 if index.numel() > 0 else 0
+
     return torch._convert_indices_from_coo_to_csr(
         index, size, out_int32=index.dtype == torch.int32)
 
 
-def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
-    # TODO (matthias) We can make this more efficient by directly operating on
-    # the individual sparse tensor layouts.
+def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     assert dim in {0, 1, (0, 1)}
+    assert tensors[0].layout == torch.sparse_coo
 
-    size = (0, 0)
-    edge_indices = []
-    edge_attrs = []
-    for tensor in tensors:
-        assert is_torch_sparse_tensor(tensor)
-        edge_index, edge_attr = to_edge_index(tensor)
-        edge_index = edge_index.clone()
+    indices, values = [], []
+    num_rows = num_cols = 0
 
-        if dim == 0:
-            edge_index[0] += size[0]
-            size = (size[0] + tensor.size(0), max(size[1], tensor.size(1)))
-        elif dim == 1:
-            edge_index[1] += size[1]
-            size = (max(size[0], tensor.size(0)), size[1] + tensor.size(1))
-        else:
-            edge_index[0] += size[0]
-            edge_index[1] += size[1]
-            size = (size[0] + tensor.size(0), size[1] + tensor.size(1))
+    if dim == 0:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                indices.append(tensor.indices())
+            else:
+                offset = torch.tensor([[num_rows], [0]], device=tensor.device)
+                indices.append(tensor.indices() + offset)
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols = max(num_cols, tensor.size(1))
 
-        edge_indices.append(edge_index)
-        edge_attrs.append(edge_attr)
+    elif dim == 1:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                indices.append(tensor.indices())
+            else:
+                offset = torch.tensor([[0], [num_cols]], device=tensor.device)
+                indices.append(tensor.indices() + offset)
+            values.append(tensor.values())
+            num_rows = max(num_rows, tensor.size(0))
+            num_cols += tensor.size(1)
 
-    return to_torch_sparse_tensor(
-        edge_index=torch.cat(edge_indices, dim=1),
-        edge_attr=torch.cat(edge_attrs, dim=0),
-        size=size,
-        is_coalesced=dim == (0, 1),
-        layout=tensors[0].layout,
+    else:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                indices.append(tensor.indices())
+            else:
+                offset = torch.tensor([[num_rows], [num_cols]],
+                                      device=tensor.device)
+                indices.append(tensor.indices() + offset)
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols += tensor.size(1)
+
+    return torch.sparse_coo_tensor(
+        indices=torch.cat(indices, dim=-1),
+        values=torch.cat(values),
+        size=(num_rows, num_cols) + values[-1].size()[1:],
+        device=tensor.device,
     )
+
+
+def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
+    assert dim in {0, 1, (0, 1)}
+    assert tensors[0].layout == torch.sparse_csr
+
+    rows, cols, values = [], [], []
+    num_rows = num_cols = nnz = 0
+
+    if dim == 0:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                rows.append(tensor.crow_indices())
+            else:
+                rows.append(tensor.crow_indices()[1:] + nnz)
+            cols.append(tensor.col_indices())
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols = max(num_cols, tensor.size(1))
+            nnz += cols[-1].numel()
+
+        return torch.sparse_csr_tensor(
+            crow_indices=torch.cat(rows),
+            col_indices=torch.cat(cols),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+    elif dim == 1:
+        for i, tensor in enumerate(tensors):
+            rows.append(ptr2index(tensor.crow_indices()))
+            if i == 0:
+                cols.append(tensor.col_indices())
+            else:
+                cols.append(tensor.col_indices() + num_cols)
+            values.append(tensor.values())
+            num_rows = max(num_rows, tensor.size(0))
+            num_cols += tensor.size(1)
+
+        return torch.sparse_coo_tensor(
+            indices=torch.stack((torch.cat(rows), torch.cat(cols)), 0),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+    else:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                rows.append(tensor.crow_indices())
+                cols.append(tensor.col_indices())
+            else:
+                rows.append(tensor.crow_indices()[1:] + nnz)
+                cols.append(tensor.col_indices() + num_cols)
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols += tensor.size(1)
+            nnz += cols[-1].numel()
+
+        return torch.sparse_csr_tensor(
+            crow_indices=torch.cat(rows),
+            col_indices=torch.cat(cols),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+
+def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
+    assert dim in {0, 1, (0, 1)}
+    assert tensors[0].layout == torch.sparse_csc
+
+    rows, cols, values = [], [], []
+    num_rows = num_cols = nnz = 0
+
+    if dim == 0:
+        for i, tensor in enumerate(tensors):
+            cols.append(ptr2index(tensor.ccol_indices()))
+            if i == 0:
+                rows.append(tensor.row_indices())
+            else:
+                rows.append(tensor.row_indices() + num_rows)
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols = max(num_cols, tensor.size(1))
+
+        return torch.sparse_coo_tensor(
+            indices=torch.stack((torch.cat(rows), torch.cat(cols)), 0),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+    elif dim == 1:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                cols.append(tensor.ccol_indices())
+            else:
+                cols.append(tensor.ccol_indices()[1:] + nnz)
+            rows.append(tensor.row_indices())
+            values.append(tensor.values())
+            num_rows = max(num_rows, tensor.size(0))
+            num_cols += tensor.size(1)
+            nnz += rows[-1].numel()
+
+        return torch.sparse_csc_tensor(
+            row_indices=torch.cat(rows),
+            ccol_indices=torch.cat(cols),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+    else:
+        for i, tensor in enumerate(tensors):
+            if i == 0:
+                rows.append(tensor.row_indices())
+                cols.append(tensor.ccol_indices())
+            else:
+                rows.append(tensor.row_indices() + num_rows)
+                cols.append(tensor.ccol_indices()[1:] + nnz)
+            values.append(tensor.values())
+            num_rows += tensor.size(0)
+            num_cols += tensor.size(1)
+            nnz += rows[-1].numel()
+
+        return torch.sparse_csc_tensor(
+            row_indices=torch.cat(rows),
+            ccol_indices=torch.cat(cols),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+
+
+def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
+    assert is_torch_sparse_tensor(tensors[0])
+
+    if tensors[0].layout == torch.sparse_coo:
+        return cat_coo(tensors, dim)
+    elif tensors[0].layout == torch.sparse_csr:
+        return cat_csr(tensors, dim)
+    else:
+        return cat_csc(tensors, dim)

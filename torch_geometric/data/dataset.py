@@ -5,7 +5,16 @@ import sys
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch.utils.data
@@ -286,6 +295,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         else:
             return self.index_select(idx)
+
+    def __iter__(self) -> Iterator[BaseData]:
+        for i in range(len(self)):
+            yield self[i]
 
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
