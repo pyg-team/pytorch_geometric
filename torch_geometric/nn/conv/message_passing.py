@@ -2,6 +2,7 @@ import inspect
 import os.path as osp
 import random
 import re
+import typing
 from inspect import Parameter
 from itertools import chain
 from typing import (
@@ -12,6 +13,7 @@ from typing import (
     Optional,
     OrderedDict,
     Set,
+    Tuple,
     Union,
     get_type_hints,
 )
@@ -41,6 +43,11 @@ from torch_geometric.utils import (
     to_edge_index,
 )
 from torch_geometric.utils.sparse import ptr2index
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]
@@ -196,10 +203,26 @@ class MessagePassing(torch.nn.Module):
 
     # Utilities ###############################################################
 
+    @overload
     def _check_input(
         self,
-        edge_index: Adj,
+        edge_index: Tensor,
         size: Size,
+    ) -> List[Optional[int]]:
+        pass
+
+    @overload
+    def _check_input(  # noqa: F811
+        self,
+        edge_index: SparseTensor,
+        size: Size,
+    ) -> List[Optional[int]]:
+        pass
+
+    def _check_input(  # noqa: F811
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        size: Optional[Tuple[int, int]],
     ) -> List[Optional[int]]:
 
         if is_sparse(edge_index):
@@ -211,6 +234,10 @@ class MessagePassing(torch.nn.Module):
                      'use of a reverse message passing flow, pass in the '
                      'transposed sparse tensor to the message passing module, '
                      'e.g., `adj_t.t()`.'))
+
+            if isinstance(edge_index, SparseTensor):
+                return [edge_index.size(1), edge_index.size(0)]
+            return [edge_index.size(1), edge_index.size(0)]
 
             return [edge_index.size(1), edge_index.size(0)]
 
@@ -249,7 +276,30 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def _lift(self, src: Tensor, edge_index: Adj, dim: int) -> Tensor:
+    @overload
+    def _lift(
+        self,
+        src: Tensor,
+        edge_index: Tensor,
+        dim: int,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def _lift(  # noqa: F811
+        self,
+        src: Tensor,
+        edge_index: SparseTensor,
+        dim: int,
+    ) -> Tensor:
+        pass
+
+    def _lift(  # noqa: F811
+        self,
+        src: Tensor,
+        edge_index: Union[Tensor, SparseTensor],
+        dim: int,
+    ) -> Tensor:
         if is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
             if edge_index.layout == torch.sparse_coo:
@@ -316,12 +366,32 @@ class MessagePassing(torch.nn.Module):
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
              'or `torch.sparse.Tensor` for argument `edge_index`.'))
 
+    @overload
     def _collect(
         self,
         args: Set[str],
-        edge_index: Adj,
+        edge_index: Tensor,
         size: List[Optional[int]],
-        kwargs: Any,
+        kwargs: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        pass
+
+    @overload
+    def _collect(  # noqa: F811
+        self,
+        args: Set[str],
+        edge_index: SparseTensor,
+        size: List[Optional[int]],
+        kwargs: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        pass
+
+    def _collect(  # noqa: F811
+        self,
+        args: Set[str],
+        edge_index: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: Dict[str, Any],
     ) -> Dict[str, Any]:
 
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
@@ -952,7 +1022,6 @@ class MessagePassing(torch.nn.Module):
             edge_update_args=self.inspector.keys(['edge_update']),
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
-            check_input=inspect.getsource(self._check_input)[:-1],
         )
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
