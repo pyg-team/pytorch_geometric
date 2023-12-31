@@ -44,7 +44,6 @@ from torch_geometric.utils import (
 )
 from torch_geometric.utils.sparse import ptr2index
 
-if typing.TYPE_CHECKING:
     from typing import overload
 else:
     from torch.jit import _overload_method as overload
@@ -237,8 +236,6 @@ class MessagePassing(torch.nn.Module):
 
             if isinstance(edge_index, SparseTensor):
                 return [edge_index.size(1), edge_index.size(0)]
-            return [edge_index.size(1), edge_index.size(0)]
-
             return [edge_index.size(1), edge_index.size(0)]
 
         elif isinstance(edge_index, Tensor):
