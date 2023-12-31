@@ -189,7 +189,7 @@ class MessagePassing(torch.nn.Module):
     def __repr__(self) -> str:
         channels_repr = ''
         if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
-            channels_repr = f'{self.in_channels, self.out_channels}'
+            channels_repr = f'{self.in_channels}, {self.out_channels}'
         elif hasattr(self, 'channels'):
             channels_repr = f'{self.channels}'
         return f'{self.__class__.__name__}({channels_repr})'
