@@ -1,6 +1,16 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import torch
 from torch import Tensor
@@ -20,6 +30,8 @@ from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
 T = TypeVar('T')
+SliceDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
+IncDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 
 
 def collate(
@@ -27,9 +39,9 @@ def collate(
     data_list: List[BaseData],
     increment: bool = True,
     add_batch: bool = True,
-    follow_batch: Optional[List[str]] = None,
-    exclude_keys: Optional[List[str]] = None,
-) -> Tuple[T, Mapping, Mapping]:
+    follow_batch: Optional[Iterable[str]] = None,
+    exclude_keys: Optional[Iterable[str]] = None,
+) -> Tuple[T, SliceDictType, IncDictType]:
     # Collates a list of `data` objects into a single object of type `cls`.
     # `collate` can handle both homogeneous and heterogeneous data objects by
     # individually collating all their stores.
@@ -40,13 +52,13 @@ def collate(
         # Materialize `data_list` to keep the `_parent` weakref alive.
         data_list = list(data_list)
 
-    if cls != data_list[0].__class__:
-        out = cls(_base_cls=data_list[0].__class__)  # Dynamic inheritance.
+    if cls != data_list[0].__class__:  # Dynamic inheritance.
+        out = cls(_base_cls=data_list[0].__class__)  # type: ignore
     else:
         out = cls()
 
     # Create empty stores:
-    out.stores_as(data_list[0])
+    out.stores_as(data_list[0])  # type: ignore
 
     follow_batch = set(follow_batch or [])
     exclude_keys = set(exclude_keys or [])
@@ -69,9 +81,10 @@ def collate(
     #   We also need to make use of `inc_dict` when re-constructuing individual
     #   elements as attributes that got incremented need to be decremented
     #   while separating to obtain original values.
-    device = None
-    slice_dict, inc_dict = defaultdict(dict), defaultdict(dict)
-    for out_store in out.stores:
+    device: Optional[torch.device] = None
+    slice_dict: SliceDictType = {}
+    inc_dict: IncDictType = {}
+    for out_store in out.stores:  # type: ignore
         key = out_store._key
         stores = key_to_stores[key]
         for attr in stores[0].keys():
@@ -104,8 +117,15 @@ def collate(
             out_store[attr] = value
 
             if key is not None:  # Heterogeneous:
-                slice_dict[key][attr] = slices
-                inc_dict[key][attr] = incs
+                store_slice_dict = slice_dict.get(key, {})
+                assert isinstance(store_slice_dict, dict)
+                store_slice_dict[attr] = slices
+                slice_dict[key] = store_slice_dict
+
+                store_inc_dict = inc_dict.get(key, {})
+                assert isinstance(store_inc_dict, dict)
+                store_inc_dict[attr] = incs
+                inc_dict[key] = store_inc_dict
             else:  # Homogeneous:
                 slice_dict[attr] = slices
                 inc_dict[attr] = incs
@@ -119,7 +139,7 @@ def collate(
         # In case of node-level storages, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].can_infer_num_nodes):
-            repeats = [store.num_nodes for store in stores]
+            repeats = [store.num_nodes or 0 for store in stores]
             out_store.batch = repeat_interleave(repeats, device=device)
             out_store.ptr = cumsum(torch.tensor(repeats, device=device))
 
