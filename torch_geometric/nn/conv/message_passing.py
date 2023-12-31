@@ -2,7 +2,6 @@ import inspect
 import os.path as osp
 import random
 import re
-from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain
 from typing import (
@@ -11,6 +10,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    OrderedDict,
     Set,
     Union,
     get_type_hints,
@@ -914,7 +914,7 @@ class MessagePassing(torch.nn.Module):
         ]
         flattened_forward_types = list(chain.from_iterable(forward_types))
 
-        keep_annotation = len(forward_types) < 2
+        keep_annotation = len(flattened_forward_types) < 2
         forward_header = func_header_repr(self.forward, keep_annotation)
         forward_body = func_body_repr(self.forward, keep_annotation)
 
