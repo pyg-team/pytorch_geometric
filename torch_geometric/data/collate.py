@@ -125,7 +125,7 @@ def collate(
                 store_inc_dict = inc_dict.get(key, {})
                 assert isinstance(store_inc_dict, dict)
                 store_inc_dict[attr] = incs
-                inc_dict[key] = store_slice_dict
+                inc_dict[key] = store_inc_dict
             else:  # Homogeneous:
                 slice_dict[attr] = slices
                 inc_dict[attr] = incs
