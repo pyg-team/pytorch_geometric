@@ -1,5 +1,6 @@
+import ast
 import copy
-from typing import Tuple, Union
+from typing import Any, NamedTuple, Tuple, Union
 
 import pytest
 import torch
@@ -22,6 +23,101 @@ from torch_geometric.utils import (
     to_torch_csc_tensor,
 )
 
+# class PropagateArgs(NamedTuple):
+#     x: Tensor
+
+# Loc = lambda cls, **kw: cls(annotation=None, lineno=1, col_offset=0, **kw)
+# def create_function():
+#     ast.FunctionDef(name='propagate',
+#                     args=)
+# PropArgs = NamedTuple('PropagateArgs', x=Tensor)
+
+PROP_ARG_DICT = {}
+
+
+class MyModule(torch.nn.Module):
+    # class PropArgs(NamedTuple):
+    #     x: Tensor
+
+    def __init__(self):
+        super().__init__()
+
+        # code_obj = self.propagate.__code__
+        # print(code_obj)
+        # print(code_obj.co_argcount)
+        # print(code_obj.co_varnames)
+        # print(code_obj.co_code)
+
+        PropArgs = NamedTuple('PropArgs', x=Tensor, y=str)
+        self.NAME_TO_INDEX = {'x': 0, 'y': 1}
+
+        globals()['PropArgs'] = PropArgs
+        # self.PropArgs.__globals__ = globals()
+
+        # def propagate(
+        #     self,
+        #     edge_index: Union[Tensor, SparseTensor],
+        #     x: Tensor,
+        # ) -> Tensor:
+        #     if isinstance(edge_index, Tensor):
+        #         return scatter(x[edge_index[0]], edge_index[1])
+        #     else:
+        #         return spmm(edge_index, x)
+
+        # self.__class__.propagate = propagate
+
+    def _name_to_index(self, name: str) -> Union[int, str]:
+        return self.NAME_TO_INDEX[name]
+
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Union[Tensor, SparseTensor],
+    ) -> Tensor:
+
+        return self.propagate(edge_index, x=x)
+
+    def propagate(
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        x: Tensor,
+    ) -> Tensor:
+
+        kwargs = PropArgs(x, 'hehe')  # type: ignore
+
+        # x = kwargs['x']
+        if isinstance(edge_index, Tensor):
+            return scatter(kwargs[self._name_to_index('x')][edge_index[0]],
+                           edge_index[1])
+        else:
+            return spmm(edge_index, kwargs[self._name_to_index('x')])
+        pass
+
+
+def test_my_module():
+    import inspect
+
+    import torch._dynamo as dynamo
+
+    module = MyModule()
+
+    # module.__class__.propagate = propagate
+    source = inspect.getsource(module.__class__)
+    # print()
+    # print(source)
+    # jit_module = torch.jit.script(module)
+
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    module(x, edge_index)
+
+    explanation = dynamo.explain(module)(x, edge_index)
+    print(explanation.graph_break_count)
+    # adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+
+    # out = jit_module(x, edge_index)
+    # out = jit_module(x, adj)
+
 
 class MyConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
@@ -37,7 +133,7 @@ class MyConv(MessagePassing):
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -74,12 +170,13 @@ def test_my_conv_basic():
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     value = torch.randn(edge_index.size(1))
-    adj1 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
+    # adj1 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
+    # if torch_geometric.typing.WITH_TORCH_SPARSE:
+    #     adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
+    return
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
     assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)

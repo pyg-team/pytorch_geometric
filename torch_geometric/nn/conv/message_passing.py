@@ -1021,6 +1021,7 @@ class MessagePassing(torch.nn.Module):
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
         )
+        print(jit_module_repr)
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
