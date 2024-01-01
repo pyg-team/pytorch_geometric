@@ -3,6 +3,7 @@ from typing import Optional
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -52,8 +53,8 @@ def softmax(
                 [0.8062, 0.1938, 1.0000, 1.0000]])
     """
     if ptr is not None:
-        if (src.device.type == 'cpu'
-                and torch_geometric.typing.WITH_SOFTMAX):  # pragma: no cover
+        if (src.device.type == 'cpu' and torch_geometric.typing.WITH_SOFTMAX
+                and not is_compiling()):  # pragma: no cover
             return pyg_lib.ops.softmax_csr(src, ptr, dim)
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
