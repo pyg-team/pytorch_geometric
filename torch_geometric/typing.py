@@ -260,6 +260,10 @@ class MockTorchCSCTensor:
         )
 
 
+def is_compiling() -> bool:  # pragma: no cover
+    return torch._dynamo.is_compiling() if WITH_PT21 else False
+
+
 # Types for accessing data ####################################################
 
 # Node-types are denoted by a single string, e.g.: `data['paper']`:

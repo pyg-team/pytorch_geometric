@@ -53,7 +53,7 @@ class ToHeteroLinear(torch.nn.Module):
         x_dict: Dict[Union[NodeType, EdgeType], Tensor],
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
 
-        if not torch_geometric.typing.WITH_PYG_LIB:
+        if not torch_geometric.typing.WITH_PYG_LIB or is_compiling():
             return {
                 key:
                 F.linear(x_dict[key], self.hetero_module.weight[i].t()) +

@@ -1607,12 +1607,12 @@ def _spmm(
         raise ValueError(f"'matmul(..., transpose=True)' requires "
                          f"'{cls_name}' to be sorted by colums")
 
-    if (torch_geometric.typing.WITH_TORCH_SPARSE
+    if (torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling()
             and other.is_cuda):  # pragma: no cover
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     if value is not None and value.requires_grad:
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
+        if torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling():
             return _torch_sparse_spmm(input, other, value, reduce, transpose)
         return _scatter_spmm(input, other, value, reduce, transpose)
 
@@ -1628,7 +1628,7 @@ def _spmm(
             and not other.requires_grad):
         return _TorchSPMM.apply(input, other, value, reduce, transpose)
 
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
+    if torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling():
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     return _scatter_spmm(input, other, value, reduce, transpose)

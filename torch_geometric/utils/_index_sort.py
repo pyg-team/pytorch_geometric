@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import pyg_lib
+from torch_geometric.typing import is_compiling, pyg_lib
 
 
 def index_sort(
@@ -26,6 +26,6 @@ def index_sort(
             guarantees that the order of equivalent elements is preserved.
             (default: :obj:`False`)
     """
-    if stable or not torch_geometric.typing.WITH_INDEX_SORT:
+    if stable or not torch_geometric.typing.WITH_INDEX_SORT or is_compiling():
         return inputs.sort(stable=stable)
     return pyg_lib.ops.index_sort(inputs, max_value=max_value)

@@ -47,15 +47,12 @@ def compile(
 
     Specifically, it
 
-    1. temporarily disables the usage of the extension packages
-       :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib`
-
-    2. converts all instances of
+    1. converts all instances of
        :class:`~torch_geometric.nn.conv.MessagePassing` modules into their
        jittable instances
        (see :meth:`torch_geometric.nn.conv.MessagePassing.jittable`)
 
-    3. disables generation of device asserts during fused gather/scatter calls
+    2. disables generation of device asserts during fused gather/scatter calls
        to avoid performance impacts
 
     .. note::
@@ -74,16 +71,6 @@ def compile(
             return out
 
         return fn
-
-    # Disable the usage of external extension packages:
-    # TODO (matthias) Disable only temporarily
-    prev_state = {
-        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-    }
-    warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
-    for key in prev_state.keys():
-        setattr(torch_geometric.typing, key, False)
 
     # Adjust the logging level of `torch.compile`:
     # TODO (matthias) Disable only temporarily

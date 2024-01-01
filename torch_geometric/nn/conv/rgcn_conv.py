@@ -252,7 +252,8 @@ class RGCNConv(MessagePassing):
                 use_segment_matmul = self._use_segment_matmul_heuristic_output
 
             if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
-                    and self.num_bases is None and x_l.is_floating_point()
+                    and not is_compiling() and self.num_bases is None
+                    and x_l.is_floating_point()
                     and isinstance(edge_index, Tensor)):
 
                 if not self.is_sorted:
@@ -292,7 +293,8 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if torch_geometric.typing.WITH_SEGMM and edge_type_ptr is not None:
+        if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
+                and edge_type_ptr is not None):
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 

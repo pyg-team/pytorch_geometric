@@ -284,7 +284,8 @@ class HeteroLinear(torch.nn.Module):
             assert self._use_segment_matmul_heuristic_output is not None
             use_segment_matmul = self._use_segment_matmul_heuristic_output
 
-        if use_segment_matmul and torch_geometric.typing.WITH_SEGMM:
+        if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
+                and not is_compiling()):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -422,7 +423,7 @@ class HeteroDictLinear(torch.nn.Module):
             use_segment_matmul = len(x_dict) >= 10
 
         if (use_segment_matmul and torch_geometric.typing.WITH_GMM
-                and not torch.jit.is_scripting()):
+                and not is_compiling() and not torch.jit.is_scripting()):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
