@@ -902,6 +902,9 @@ class MessagePassing(torch.nn.Module):
                 with :meth:`forward` types based on :obj:`typing`, *e.g.*,
                 :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        if 'Jittable' in self.__class__.__name__:
+            return self
+
         try:
             from jinja2 import Template
         except ImportError:
@@ -1025,5 +1028,4 @@ class MessagePassing(torch.nn.Module):
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
-        module.jittable = None
         return module

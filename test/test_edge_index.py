@@ -19,7 +19,6 @@ from torch_geometric.edge_index import (
 )
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     onlyCUDA,
     onlyLinux,
     withCUDA,
@@ -1080,7 +1079,6 @@ def test_torch_script():
 
 
 @onlyLinux
-@disableExtensions
 @withPackage('torch>=2.1.0')
 def test_compile():
     import torch._dynamo as dynamo

@@ -5,7 +5,6 @@ import torch_geometric.typing
 from torch_geometric.nn import MLPAggregation, SAGEConv
 from torch_geometric.testing import (
     assert_module,
-    disableExtensions,
     is_full_test,
     onlyLinux,
     withCUDA,
@@ -133,7 +132,6 @@ def test_multi_aggr_sage_conv(aggr_kwargs):
 
 @withCUDA
 @onlyLinux
-@disableExtensions
 @withPackage('torch>=2.1.0')
 def test_compile_multi_aggr_sage_conv(device):
     import torch._dynamo as dynamo
@@ -154,4 +152,4 @@ def test_compile_multi_aggr_sage_conv(device):
 
     expected = conv(x, edge_index)
     out = compiled_conv(x, edge_index)
-    assert torch.allclose(out, expected)
+    assert torch.allclose(out, expected, atol=1e-6)
