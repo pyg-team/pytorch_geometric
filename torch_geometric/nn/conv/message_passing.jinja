@@ -266,3 +266,13 @@ class {{cls_name}}({{parent_cls_name}}):
         raise ValueError("Explainability of message passing modules "
                          "is only supported on the Python module")
 
+{%- for (arg_types, return_type_repr) in forward_types %}
+
+    @torch.jit._overload_method
+    {{forward_header}}
+        # type: ({{arg_types|join(', ')}}) -> {{return_type_repr}}
+        pass
+{%- endfor %}
+
+    {{forward_header}}
+{{forward_body}}

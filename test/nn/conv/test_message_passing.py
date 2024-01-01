@@ -1,6 +1,6 @@
 import ast
 import copy
-from typing import Any, NamedTuple, Tuple, Union
+from typing import Any, Final, List, NamedTuple, Tuple, Union
 
 import pytest
 import torch
@@ -38,6 +38,7 @@ PROP_ARG_DICT = {}
 class MyModule(torch.nn.Module):
     # class PropArgs(NamedTuple):
     #     x: Tensor
+    indices: Final[List[int]] = [0, 1]
 
     def __init__(self):
         super().__init__()
@@ -52,6 +53,7 @@ class MyModule(torch.nn.Module):
         self.NAME_TO_INDEX = {'x': 0, 'y': 1}
 
         globals()['PropArgs'] = PropArgs
+
         # self.PropArgs.__globals__ = globals()
 
         # def propagate(
@@ -66,7 +68,7 @@ class MyModule(torch.nn.Module):
 
         # self.__class__.propagate = propagate
 
-    def _name_to_index(self, name: str) -> Union[int, str]:
+    def _name_to_index(self, name: str) -> int:
         return self.NAME_TO_INDEX[name]
 
     def forward(
@@ -85,13 +87,27 @@ class MyModule(torch.nn.Module):
 
         kwargs = PropArgs(x, 'hehe')  # type: ignore
 
+        # kwargs = (kwargs[key] for key in self.indices)
+
+        return self.message_and_aggregate(
+            edge_index,
+            *kwargs,
+        )
+
         # x = kwargs['x']
-        if isinstance(edge_index, Tensor):
-            return scatter(kwargs[self._name_to_index('x')][edge_index[0]],
-                           edge_index[1])
-        else:
-            return spmm(edge_index, kwargs[self._name_to_index('x')])
         pass
+
+    def message_and_aggregate(
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        x: Tensor,
+        y: str,
+    ) -> Tensor:
+
+        if isinstance(edge_index, Tensor):
+            return scatter(x[edge_index[0]], edge_index[1], dim_size=x.size(0))
+        else:
+            return spmm(edge_index, x)
 
 
 def test_my_module():
@@ -105,7 +121,7 @@ def test_my_module():
     source = inspect.getsource(module.__class__)
     # print()
     # print(source)
-    # jit_module = torch.jit.script(module)
+    jit_module = torch.jit.script(module)
 
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])

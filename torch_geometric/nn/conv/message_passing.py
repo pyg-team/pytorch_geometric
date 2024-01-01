@@ -203,23 +203,7 @@ class MessagePassing(torch.nn.Module):
 
     # Utilities ###############################################################
 
-    @overload
     def _check_input(
-        self,
-        edge_index: Tensor,
-        size: Size,
-    ) -> List[Optional[int]]:
-        pass
-
-    @overload
-    def _check_input(  # noqa: F811
-        self,
-        edge_index: SparseTensor,
-        size: Size,
-    ) -> List[Optional[int]]:
-        pass
-
-    def _check_input(  # noqa: F811
         self,
         edge_index: Union[Tensor, SparseTensor],
         size: Optional[Tuple[int, int]],
@@ -274,25 +258,7 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    @overload
     def _lift(
-        self,
-        src: Tensor,
-        edge_index: Tensor,
-        dim: int,
-    ) -> Tensor:
-        pass
-
-    @overload
-    def _lift(  # noqa: F811
-        self,
-        src: Tensor,
-        edge_index: SparseTensor,
-        dim: int,
-    ) -> Tensor:
-        pass
-
-    def _lift(  # noqa: F811
         self,
         src: Tensor,
         edge_index: Union[Tensor, SparseTensor],
@@ -364,27 +330,7 @@ class MessagePassing(torch.nn.Module):
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
              'or `torch.sparse.Tensor` for argument `edge_index`.'))
 
-    @overload
     def _collect(
-        self,
-        args: Set[str],
-        edge_index: Tensor,
-        size: List[Optional[int]],
-        kwargs: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        pass
-
-    @overload
-    def _collect(  # noqa: F811
-        self,
-        args: Set[str],
-        edge_index: SparseTensor,
-        size: List[Optional[int]],
-        kwargs: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        pass
-
-    def _collect(  # noqa: F811
         self,
         args: Set[str],
         edge_index: Union[Tensor, SparseTensor],
@@ -1021,7 +967,6 @@ class MessagePassing(torch.nn.Module):
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
         )
-        print(jit_module_repr)
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
