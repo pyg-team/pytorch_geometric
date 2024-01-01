@@ -38,9 +38,7 @@ models_dict = {
 
 def get_dataset_with_transformation(name, root, use_sparse_tensor=False,
                                     bf16=False):
-    abs_path = '' if osp.isabs(root) else osp.dirname(osp.realpath(__file__))
-    path = osp.join(abs_path, root, name)
-
+    path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
     transform = T.ToSparseTensor(
         remove_edge_index=False) if use_sparse_tensor else None
     if name == 'ogbn-mag':
