@@ -124,7 +124,7 @@
       $("#command pre").text('conda install pyg -c pyg');
     }
 
-    else if (os == "windows") {
+    else if (os == "windows" || os == "mac") {
       $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
 

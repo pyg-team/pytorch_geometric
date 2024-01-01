@@ -5,13 +5,7 @@ from typing import Any, Dict, Optional, Tuple, Type, Union
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    Dataset,
-    FeatureStore,
-    GraphStore,
-    HeteroData,
-)
+from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.loader import DataLoader, LinkLoader, NodeLoader
 from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
@@ -20,12 +14,12 @@ try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
     no_pytorch_lightning = False
 except (ImportError, ModuleNotFoundError):
-    PLLightningDataModule = object
+    PLLightningDataModule = object  # type: ignore
     no_pytorch_lightning = True
 
 
 class LightningDataModule(PLLightningDataModule):
-    def __init__(self, has_val: bool, has_test: bool, **kwargs):
+    def __init__(self, has_val: bool, has_test: bool, **kwargs: Any) -> None:
         super().__init__()
 
         if no_pytorch_lightning:
@@ -34,10 +28,10 @@ class LightningDataModule(PLLightningDataModule):
                 "Run 'pip install pytorch_lightning' to install the library.")
 
         if not has_val:
-            self.val_dataloader = None
+            self.val_dataloader = None  # type: ignore
 
         if not has_test:
-            self.test_dataloader = None
+            self.test_dataloader = None  # type: ignore
 
         kwargs.setdefault('batch_size', 1)
         kwargs.setdefault('num_workers', 0)
@@ -66,8 +60,8 @@ class LightningData(LightningDataModule):
         loader: str = 'neighbor',
         graph_sampler: Optional[BaseSampler] = None,
         eval_loader_kwargs: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         kwargs.setdefault('batch_size', 1)
         kwargs.setdefault('num_workers', 0)
 
@@ -124,7 +118,8 @@ class LightningData(LightningDataModule):
             )
             sampler_kwargs.setdefault('share_memory',
                                       self.kwargs['num_workers'] > 0)
-            self.graph_sampler = NeighborSampler(data, **sampler_kwargs)
+            self.graph_sampler: BaseSampler = NeighborSampler(
+                data, **sampler_kwargs)
 
         elif graph_sampler is not None:
             sampler_kwargs, self.loader_kwargs = split_kwargs(
@@ -172,14 +167,16 @@ class LightningData(LightningDataModule):
         shuffle &= self.loader_kwargs.get('batch_sampler', None) is None
         return shuffle
 
-    def prepare_data(self):
+    def prepare_data(self) -> None:
         if self.loader == 'full':
+            assert self.trainer is not None
             try:
                 num_devices = self.trainer.num_devices
             except AttributeError:
                 # PyTorch Lightning < 1.6 backward compatibility:
-                num_devices = self.trainer.num_processes
-                num_devices = max(num_devices, self.trainer.num_gpus)
+                num_devices = self.trainer.num_processes  # type: ignore
+                num_gpus = self.trainer.num_gpus  # type: ignore
+                num_devices = max(num_devices, num_gpus)
 
             if num_devices > 1:
                 raise ValueError(
@@ -187,12 +184,12 @@ class LightningData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def full_dataloader(self, **kwargs) -> DataLoader:
+    def full_dataloader(self, **kwargs: Any) -> torch.utils.data.DataLoader:
         warnings.filterwarnings('ignore', '.*does not have many workers.*')
         warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
 
         return torch.utils.data.DataLoader(
-            [self.data],
+            [self.data],  # type: ignore
             collate_fn=lambda xs: xs[0],
             **kwargs,
         )
@@ -245,8 +242,8 @@ class LightningDataset(LightningDataModule):
         val_dataset: Optional[Dataset] = None,
         test_dataset: Optional[Dataset] = None,
         pred_dataset: Optional[Dataset] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             has_val=val_dataset is not None,
             has_test=test_dataset is not None,
@@ -258,7 +255,7 @@ class LightningDataset(LightningDataModule):
         self.test_dataset = test_dataset
         self.pred_dataset = pred_dataset
 
-    def dataloader(self, dataset: Dataset, **kwargs) -> DataLoader:
+    def dataloader(self, dataset: Dataset, **kwargs: Any) -> DataLoader:
         return DataLoader(dataset, **kwargs)
 
     def train_dataloader(self) -> DataLoader:
@@ -268,10 +265,15 @@ class LightningDataset(LightningDataModule):
         shuffle &= self.kwargs.get('sampler', None) is None
         shuffle &= self.kwargs.get('batch_sampler', None) is None
 
-        return self.dataloader(self.train_dataset, shuffle=shuffle,
-                               **self.kwargs)
+        return self.dataloader(
+            self.train_dataset,
+            shuffle=shuffle,
+            **self.kwargs,
+        )
 
     def val_dataloader(self) -> DataLoader:
+        assert self.val_dataset is not None
+
         kwargs = copy.copy(self.kwargs)
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
@@ -279,6 +281,8 @@ class LightningDataset(LightningDataModule):
         return self.dataloader(self.val_dataset, shuffle=False, **kwargs)
 
     def test_dataloader(self) -> DataLoader:
+        assert self.test_dataset is not None
+
         kwargs = copy.copy(self.kwargs)
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
@@ -286,6 +290,8 @@ class LightningDataset(LightningDataModule):
         return self.dataloader(self.test_dataset, shuffle=False, **kwargs)
 
     def predict_dataloader(self) -> DataLoader:
+        assert self.pred_dataset is not None
+
         kwargs = copy.copy(self.kwargs)
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
@@ -293,10 +299,13 @@ class LightningDataset(LightningDataModule):
         return self.dataloader(self.pred_dataset, shuffle=False, **kwargs)
 
     def __repr__(self) -> str:
-        kwargs = kwargs_repr(train_dataset=self.train_dataset,
-                             val_dataset=self.val_dataset,
-                             test_dataset=self.test_dataset,
-                             pred_dataset=self.pred_dataset, **self.kwargs)
+        kwargs = kwargs_repr(
+            train_dataset=self.train_dataset,
+            val_dataset=self.val_dataset,
+            test_dataset=self.test_dataset,
+            pred_dataset=self.pred_dataset,
+            **self.kwargs,
+        )
         return f'{self.__class__.__name__}({kwargs})'
 
 
@@ -388,8 +397,8 @@ class LightningNodeData(LightningData):
         loader: str = 'neighbor',
         node_sampler: Optional[BaseSampler] = None,
         eval_loader_kwargs: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         if input_train_nodes is None:
             input_train_nodes = infer_input_nodes(data, split='train')
 
@@ -436,8 +445,8 @@ class LightningNodeData(LightningData):
         input_time: OptTensor = None,
         input_id: OptTensor = None,
         node_sampler: Optional[BaseSampler] = None,
-        **kwargs,
-    ) -> DataLoader:
+        **kwargs: Any,
+    ) -> torch.utils.data.DataLoader:
         if self.loader == 'full':
             return self.full_dataloader(**kwargs)
 
@@ -452,7 +461,7 @@ class LightningNodeData(LightningData):
             **kwargs,
         )
 
-    def train_dataloader(self) -> DataLoader:
+    def train_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_train_nodes,
             self.input_train_time,
@@ -462,7 +471,7 @@ class LightningNodeData(LightningData):
             **self.loader_kwargs,
         )
 
-    def val_dataloader(self) -> DataLoader:
+    def val_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_val_nodes,
             self.input_val_time,
@@ -472,7 +481,7 @@ class LightningNodeData(LightningData):
             **self.eval_loader_kwargs,
         )
 
-    def test_dataloader(self) -> DataLoader:
+    def test_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_test_nodes,
             self.input_test_time,
@@ -482,7 +491,7 @@ class LightningNodeData(LightningData):
             **self.eval_loader_kwargs,
         )
 
-    def predict_dataloader(self) -> DataLoader:
+    def predict_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_pred_nodes,
             self.input_pred_time,
@@ -564,7 +573,7 @@ class LightningLinkData(LightningData):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+        data: Union[Data, HeteroData],
         input_train_edges: InputEdges = None,
         input_train_labels: OptTensor = None,
         input_train_time: OptTensor = None,
@@ -580,8 +589,8 @@ class LightningLinkData(LightningData):
         loader: str = 'neighbor',
         link_sampler: Optional[BaseSampler] = None,
         eval_loader_kwargs: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             data=data,
             has_val=input_val_edges is not None,
@@ -619,8 +628,8 @@ class LightningLinkData(LightningData):
         input_time: OptTensor = None,
         input_id: OptTensor = None,
         link_sampler: Optional[BaseSampler] = None,
-        **kwargs,
-    ) -> DataLoader:
+        **kwargs: Any,
+    ) -> torch.utils.data.DataLoader:
         if self.loader == 'full':
             return self.full_dataloader(**kwargs)
 
@@ -636,7 +645,7 @@ class LightningLinkData(LightningData):
             **kwargs,
         )
 
-    def train_dataloader(self) -> DataLoader:
+    def train_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_train_edges,
             self.input_train_labels,
@@ -647,7 +656,7 @@ class LightningLinkData(LightningData):
             **self.loader_kwargs,
         )
 
-    def val_dataloader(self) -> DataLoader:
+    def val_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_val_edges,
             self.input_val_labels,
@@ -658,7 +667,7 @@ class LightningLinkData(LightningData):
             **self.eval_loader_kwargs,
         )
 
-    def test_dataloader(self) -> DataLoader:
+    def test_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_test_edges,
             self.input_test_labels,
@@ -669,7 +678,7 @@ class LightningLinkData(LightningData):
             **self.eval_loader_kwargs,
         )
 
-    def predict_dataloader(self) -> DataLoader:
+    def predict_dataloader(self) -> torch.utils.data.DataLoader:
         return self.dataloader(
             self.input_pred_edges,
             self.input_pred_labels,
@@ -684,7 +693,7 @@ class LightningLinkData(LightningData):
 ###############################################################################
 
 
-# TODO support Tuple[FeatureStore, GraphStore]
+# TODO Support Tuple[FeatureStore, GraphStore]
 def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
     attr_name: Optional[str] = None
     if f'{split}_mask' in data:
@@ -700,7 +709,10 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
     if isinstance(data, Data):
         return data[attr_name]
     if isinstance(data, HeteroData):
-        input_nodes_dict = data.collect(attr_name)
+        input_nodes_dict = {
+            node_type: store[attr_name]
+            for node_type, store in data.node_items() if attr_name in store
+        }
         if len(input_nodes_dict) != 1:
             raise ValueError(f"Could not automatically determine the input "
                              f"nodes of {data} since there exists multiple "
@@ -709,7 +721,7 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
     return None
 
 
-def kwargs_repr(**kwargs) -> str:
+def kwargs_repr(**kwargs: Any) -> str:
     return ', '.join([f'{k}={v}' for k, v in kwargs.items() if v is not None])
 
 

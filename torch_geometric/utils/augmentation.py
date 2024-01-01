@@ -154,7 +154,7 @@ def mask_feature(
 
 
 def add_random_edge(
-    edge_index,
+    edge_index: Tensor,
     p: float = 0.5,
     force_undirected: bool = False,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,

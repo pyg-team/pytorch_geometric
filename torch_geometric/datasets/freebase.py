@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
@@ -47,7 +47,7 @@ class FB15k_237(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
 
@@ -65,19 +65,22 @@ class FB15k_237(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process(self):
-        data_list, node_dict, rel_dict = [], {}, {}
+    def process(self) -> None:
+        data_list: List[Data] = []
+        node_dict: Dict[str, int] = {}
+        rel_dict: Dict[str, int] = {}
+
         for path in self.raw_paths:
             with open(path, 'r') as f:
-                data = [x.split('\t') for x in f.read().split('\n')[:-1]]
+                lines = [x.split('\t') for x in f.read().split('\n')[:-1]]
 
-            edge_index = torch.empty((2, len(data)), dtype=torch.long)
-            edge_type = torch.empty(len(data), dtype=torch.long)
-            for i, (src, rel, dst) in enumerate(data):
+            edge_index = torch.empty((2, len(lines)), dtype=torch.long)
+            edge_type = torch.empty(len(lines), dtype=torch.long)
+            for i, (src, rel, dst) in enumerate(lines):
                 if src not in node_dict:
                     node_dict[src] = len(node_dict)
                 if dst not in node_dict:

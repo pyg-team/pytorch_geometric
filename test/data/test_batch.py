@@ -5,6 +5,7 @@ import pytest
 import torch
 
 import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Batch, Data, HeteroData
 from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.typing import SparseTensor
@@ -105,6 +106,46 @@ def test_batch_basic():
     assert data_list[2].num_nodes == 4
 
     torch_geometric.set_debug(True)
+
+
+def test_edge_index():
+    edge_index1 = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+        is_undirected=True,
+    )
+    edge_index2 = EdgeIndex(
+        [[1, 0, 2, 1, 3, 2], [0, 1, 1, 2, 2, 3]],
+        sparse_size=(4, 4),
+        sort_order='col',
+    )
+
+    data1 = Data(edge_index=edge_index1)
+    data2 = Data(edge_index=edge_index2)
+
+    batch = Batch.from_data_list([data1, data2])
+
+    assert len(batch) == 2
+    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1]))
+    assert batch.ptr.equal(torch.tensor([0, 3, 7]))
+    assert isinstance(batch.edge_index, EdgeIndex)
+    assert batch.edge_index.equal(
+        torch.tensor([
+            [0, 1, 1, 2, 4, 3, 5, 4, 6, 5],
+            [1, 0, 2, 1, 3, 4, 4, 5, 5, 6],
+        ]))
+    assert batch.edge_index.sparse_size() == (7, 7)
+    assert batch.edge_index.sort_order is None
+    assert not batch.edge_index.is_undirected
+
+    for i, edge_index in enumerate([edge_index1, edge_index2]):
+        data = batch[i]
+        assert isinstance(data.edge_index, EdgeIndex)
+        assert data.edge_index.equal(edge_index)
+        assert data.edge_index.sparse_size() == edge_index.sparse_size()
+        assert data.edge_index.sort_order == edge_index.sort_order
+        assert data.edge_index.is_undirected == edge_index.is_undirected
 
 
 @withPackage('torch_sparse')
@@ -509,7 +550,7 @@ def test_torch_sparse_batch(layout):
     batch = Batch.from_data_list([data, data])
 
     assert batch.x.size() == (6, 4)
-    assert batch.x.layout == layout
+    assert batch.x.layout in {torch.sparse_coo, torch.sparse_csr}
     assert torch.equal(batch.x.to_dense(), torch.cat([x_dense, x_dense], 0))
 
     assert batch.adj.size() == (6, 6)

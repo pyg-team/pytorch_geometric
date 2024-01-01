@@ -306,15 +306,14 @@ class GraphStore:
         store: bool = False,
     ) -> ConversionOutputType:
 
-        is_hetero = True  # Default.
+        edge_attrs: List[EdgeAttr] = self.get_all_edge_attrs()
+
         if hasattr(self, 'meta'):  # `LocalGraphStore` hack.
             is_hetero = self.meta.get('is_hetero', False)
+        else:
+            is_hetero = all(attr.edge_type is not None for attr in edge_attrs)
 
         if not is_hetero:
-            edge_attrs: List[EdgeAttr] = []
-            for attr in self.get_all_edge_attrs():
-                edge_attrs.append(attr)
-
             return self._edge_to_layout(edge_attrs[0], layout, store)
 
         # Obtain all edge attributes, grouped by type:

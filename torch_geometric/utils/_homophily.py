@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, overload
 
 import torch
 from torch import Tensor
@@ -7,8 +7,32 @@ from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import degree, scatter
 
 
-def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
-              method: str = 'edge') -> Union[float, Tensor]:
+@overload
+def homophily(
+    edge_index: Adj,
+    y: Tensor,
+    batch: None = ...,
+    method: str = ...,
+) -> float:
+    pass
+
+
+@overload
+def homophily(
+    edge_index: Adj,
+    y: Tensor,
+    batch: Tensor,
+    method: str = ...,
+) -> Tensor:
+    pass
+
+
+def homophily(
+    edge_index: Adj,
+    y: Tensor,
+    batch: OptTensor = None,
+    method: str = 'edge',
+) -> Union[float, Tensor]:
     r"""The homophily of a graph characterizes how likely nodes with the same
     label are near each other in a graph.
 

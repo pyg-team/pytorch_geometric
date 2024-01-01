@@ -6,12 +6,17 @@ import tarfile
 import zipfile
 
 
-def maybe_log(path, log=True):
+def maybe_log(path: str, log: bool = True) -> None:
     if log and 'pytest' not in sys.modules:
         print(f'Extracting {path}', file=sys.stderr)
 
 
-def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True):
+def extract_tar(
+    path: str,
+    folder: str,
+    mode: str = 'r:gz',
+    log: bool = True,
+) -> None:
     r"""Extracts a tar archive to a specific folder.
 
     Args:
@@ -26,7 +31,7 @@ def extract_tar(path: str, folder: str, mode: str = 'r:gz', log: bool = True):
         f.extractall(folder)
 
 
-def extract_zip(path: str, folder: str, log: bool = True):
+def extract_zip(path: str, folder: str, log: bool = True) -> None:
     r"""Extracts a zip archive to a specific folder.
 
     Args:
@@ -40,7 +45,7 @@ def extract_zip(path: str, folder: str, log: bool = True):
         f.extractall(folder)
 
 
-def extract_bz2(path: str, folder: str, log: bool = True):
+def extract_bz2(path: str, folder: str, log: bool = True) -> None:
     r"""Extracts a bz2 archive to a specific folder.
 
     Args:
@@ -56,7 +61,7 @@ def extract_bz2(path: str, folder: str, log: bool = True):
             w.write(r.read())
 
 
-def extract_gz(path: str, folder: str, log: bool = True):
+def extract_gz(path: str, folder: str, log: bool = True) -> None:
     r"""Extracts a gz archive to a specific folder.
 
     Args:
