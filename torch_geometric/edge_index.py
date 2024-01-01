@@ -1667,7 +1667,7 @@ def matmul(
         sparse_input = sparse_input.t()
 
     if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
-        other = other.to_sparse_coo(input_value)
+        other = other.to_sparse_coo(other_value)
     elif other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)
     else:
