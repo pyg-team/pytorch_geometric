@@ -18,15 +18,15 @@ def partition_dataset(
     recursive: bool = False,
     use_sparse_tensor: bool = False,
 ):
-    abs_dir = '' if osp.isabs(root_dir) else osp.dirname(
-        osp.realpath(__file__))
-    data_dir = osp.join(abs_dir, root_dir)
+    if not osp.isabs(root_dir):
+        path = osp.dirname(osp.realpath(__file__))
+        root_dir = osp.join(path, root_dir)
 
-    dataset_dir = osp.join(data_dir, 'dataset', dataset_name)
+    dataset_dir = osp.join(root_dir, 'dataset', dataset_name)
     dataset = get_dataset(dataset_name, dataset_dir, use_sparse_tensor)
     data = dataset[0]
 
-    save_dir = osp.join(f'{data_dir}', 'partitions', f'{dataset_name}',
+    save_dir = osp.join(root_dir, 'partitions', dataset_name,
                         f'{num_parts}-parts')
 
     partitions_dir = osp.join(save_dir, f'{dataset_name}-partitions')
@@ -41,8 +41,8 @@ def partition_dataset(
 
     torch.save(split_data.y.squeeze(), osp.join(label_dir, 'label.pt'))
 
-    train_idx, valid_idx, test_idx = get_idx_split(dataset, dataset_name,
-                                                   split_data)
+    train_idx, val_idx, test_idx = get_idx_split(dataset, dataset_name,
+                                                 split_data)
 
     print('-- Partitioning training indices ...')
     train_idx = train_idx.split(train_idx.size(0) // num_parts)
@@ -52,11 +52,11 @@ def partition_dataset(
         torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
 
     print('-- Partitioning validation indices ...')
-    valid_idx = valid_idx.split(valid_idx.size(0) // num_parts)
-    valid_part_dir = osp.join(save_dir, f'{dataset_name}-valid-partitions')
-    os.makedirs(valid_part_dir, exist_ok=True)
+    val_idx = val_idx.split(val_idx.size(0) // num_parts)
+    val_part_dir = osp.join(save_dir, f'{dataset_name}-val-partitions')
+    os.makedirs(val_part_dir, exist_ok=True)
     for i in range(num_parts):
-        torch.save(valid_idx[i], osp.join(valid_part_dir, f'partition{i}.pt'))
+        torch.save(val_idx[i], osp.join(val_part_dir, f'partition{i}.pt'))
 
     print('-- Partitioning test indices ...')
     test_idx = test_idx.split(test_idx.size(0) // num_parts)
@@ -67,43 +67,46 @@ def partition_dataset(
 
 
 def get_dataset(name, dataset_dir, use_sparse_tensor=False):
-    transform = T.ToSparseTensor(
-        remove_edge_index=False) if use_sparse_tensor else None
-    if name == 'ogbn-mag':
-        if transform is None:
-            transform = T.ToUndirected(merge=True)
-        else:
-            transform = T.Compose([T.ToUndirected(merge=True), transform])
-        dataset = OGB_MAG(root=dataset_dir, preprocess='metapath2vec',
-                          transform=transform)
-    elif name == 'ogbn-products':
-        if transform is None:
-            transform = T.RemoveDuplicatedEdges()
-        else:
-            transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
+    transforms = []
+    if use_sparse_tensor:
+        transforms = [T.ToSparseTensor(remove_edge_index=False)]
 
-        dataset = PygNodePropPredDataset('ogbn-products', root=dataset_dir,
-                                         transform=transform)
+    if name == 'ogbn-mag':
+        transforms = [T.ToUndirected(merge=True)] + transforms
+        return OGB_MAG(
+            root=dataset_dir,
+            preprocess='metapath2vec',
+            transform=T.Compose(transforms),
+        )
+
+    elif name == 'ogbn-products':
+        transforms = [T.RemoveDuplicatedEdges()] + transforms
+        return PygNodePropPredDataset(
+            'ogbn-products',
+            root=dataset_dir,
+            transform=T.Compose(transforms),
+        )
 
     elif name == 'Reddit':
-        dataset = Reddit(root=dataset_dir, transform=transform)
-
-    return dataset
+        return Reddit(
+            root=dataset_dir,
+            transform=transforms[0] if use_sparse_tensor else None,
+        )
 
 
 def get_idx_split(dataset, dataset_name, split_data):
     if dataset_name == 'ogbn-mag' or dataset_name == 'Reddit':
         train_idx = mask_to_index(split_data.train_mask)
         test_idx = mask_to_index(split_data.test_mask)
-        valid_idx = mask_to_index(split_data.val_mask)
+        val_idx = mask_to_index(split_data.val_mask)
 
     elif dataset_name == 'ogbn-products':
         split_idx = dataset.get_idx_split()
         train_idx = split_idx['train']
         test_idx = split_idx['test']
-        valid_idx = split_idx['valid']
+        val_idx = split_idx['valid']
 
-    return train_idx, valid_idx, test_idx
+    return train_idx, val_idx, test_idx
 
 
 if __name__ == '__main__':
@@ -112,13 +115,11 @@ if __name__ == '__main__':
 
     add('--dataset', type=str, choices=['ogbn-mag', 'ogbn-products', 'Reddit'],
         default='ogbn-products')
-    add('--root_dir', default='../../../data', type=str,
-        help='relative path to look for the datasets')
+    add('--root_dir', default='../../../data', type=str)
     add('--num_partitions', type=int, default=4)
     add('--recursive', action='store_true')
-    # TODO (kgajdamo) add support for arguments below.
-    # add('--use-sparse-tensor', action='store_true',
-    #     help='use torch_sparse.SparseTensor as graph storage format')
+    # TODO (kgajdamo) Add support for arguments below:
+    # add('--use-sparse-tensor', action='store_true')
     # add('--bf16', action='store_true')
     args = parser.parse_args()
 
