@@ -12,6 +12,12 @@ JIT_WARNING = ("Could not convert the 'model' into a jittable version. "
                "the following error: {error}")
 
 
+def is_compiling() -> bool:  # pragma: no cover
+    if torch_geometric.typing.WITH_PT21:
+        return torch._dynamo.is_compiling()
+    return False
+
+
 def to_jittable(model: torch.nn.Module) -> torch.nn.Module:
     if isinstance(model, torch_geometric.nn.MessagePassing):
         try:

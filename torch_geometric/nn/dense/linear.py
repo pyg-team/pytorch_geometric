@@ -9,6 +9,7 @@ from torch.nn.parameter import Parameter
 
 import torch_geometric.backend
 import torch_geometric.typing
+from torch_geometric.compile import is_compiling
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort, scatter

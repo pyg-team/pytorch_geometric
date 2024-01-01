@@ -3,6 +3,7 @@ from typing import Optional
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.compile import is_compiling
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.num_nodes import maybe_num_nodes

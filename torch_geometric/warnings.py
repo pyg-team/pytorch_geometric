@@ -1,7 +1,7 @@
 import warnings
 from typing import Literal
 
-from torch_geometric.typing import is_compiling
+from torch_geometric.compile import is_compiling
 
 
 def warn(message: str) -> None:
