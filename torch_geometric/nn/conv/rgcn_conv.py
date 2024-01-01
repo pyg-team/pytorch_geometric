@@ -7,7 +7,7 @@ from torch.nn import Parameter as Param
 
 import torch_geometric.backend
 import torch_geometric.typing
-from torch_geometric.compile import is_compiling
+from torch_geometric import is_compiling
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (

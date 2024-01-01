@@ -9,7 +9,7 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
-from torch_geometric.compile import to_jittable
+from torch_geometric._compile import to_jittable
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.compile import is_compiling
+from torch_geometric import is_compiling
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import cumsum, scatter
 

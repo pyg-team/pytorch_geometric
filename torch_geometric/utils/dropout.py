@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.compile import is_compiling
+from torch_geometric import is_compiling
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import cumsum, degree, sort_edge_index, subgraph

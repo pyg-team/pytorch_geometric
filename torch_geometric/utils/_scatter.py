@@ -4,8 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import warnings
-from torch_geometric.compile import is_compiling
+from torch_geometric import is_compiling, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
