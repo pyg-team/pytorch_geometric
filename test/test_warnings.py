@@ -15,4 +15,5 @@ def test_warn():
 def test_no_warn_if_compiling(_):
     """No warning should be raised to avoid graph breaks when compiling."""
     with warnings.catch_warnings():
+        warnings.simplefilter('error')
         warn('test')
