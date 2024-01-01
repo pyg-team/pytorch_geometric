@@ -23,9 +23,7 @@ del data['user'].num_nodes
 data = T.ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
-# Perform a temporal link-level split into train, val, and test edges:
-split_ratio = [0.8, 0.1, 0.1]
-
+# Perform a 80/10/10 temporal link-level split:
 perm = torch.argsort(data['user', 'movie'].time)
 train_idx = perm[:int(0.8 * perm.size(0))]
 val_idx = perm[int(0.8 * perm.size(0)):int(0.9 * perm.size(0))]
