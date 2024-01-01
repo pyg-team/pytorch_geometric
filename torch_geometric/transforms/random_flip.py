@@ -15,11 +15,13 @@ class RandomFlip(BaseTransform):
         p (float, optional): Probability that node positions will be flipped.
             (default: :obj:`0.5`)
     """
-    def __init__(self, axis: int, p: float = 0.5):
+    def __init__(self, axis: int, p: float = 0.5) -> None:
         self.axis = axis
         self.p = p
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+
         if random.random() < self.p:
             pos = data.pos.clone()
             pos[..., self.axis] = -pos[..., self.axis]

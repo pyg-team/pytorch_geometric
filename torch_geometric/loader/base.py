@@ -1,6 +1,9 @@
 from typing import Any, Callable
 
-from torch.utils.data.dataloader import _BaseDataLoaderIter
+from torch.utils.data.dataloader import (
+    _BaseDataLoaderIter,
+    _MultiProcessingDataLoaderIter,
+)
 
 
 class DataLoaderIterator:
@@ -34,3 +37,7 @@ class DataLoaderIterator:
 
     def __next__(self) -> Any:
         return self.transform_fn(next(self.iterator))
+
+    def __del__(self) -> Any:
+        if isinstance(self.iterator, _MultiProcessingDataLoaderIter):
+            self.iterator.__del__()

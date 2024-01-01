@@ -28,6 +28,9 @@ class SamplePoints(BaseTransform):
         self.include_normals = include_normals
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.face is not None
+
         pos, face = data.pos, data.face
         assert pos.size(1) == 3 and face.size(0) == 3
 

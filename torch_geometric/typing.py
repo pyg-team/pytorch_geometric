@@ -1,9 +1,8 @@
 import inspect
 import os
-import platform
 import sys
 import warnings
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -11,15 +10,15 @@ from torch import Tensor
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
+WITH_PT22 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 2
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
-WITH_ARM = platform.machine() != 'x86_64'
 
 if not hasattr(torch, 'sparse_csc'):
-    torch.sparse_csc = -1
+    torch.sparse_csc = torch.sparse_coo
 
 try:
     import pyg_lib  # noqa
@@ -84,7 +83,7 @@ except Exception as e:
     WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
     class TorchCluster:
-        def __getattr__(self, key: str):
+        def __getattr__(self, key: str) -> Any:
             raise ImportError(f"'{key}' requires 'torch-cluster'")
 
     torch_cluster = TorchCluster()
@@ -109,7 +108,7 @@ except Exception as e:
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
 
-    class SparseStorage:
+    class SparseStorage:  # type: ignore
         def __init__(
             self,
             row: Optional[Tensor] = None,
@@ -127,7 +126,7 @@ except Exception as e:
         ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
-    class SparseTensor:
+    class SparseTensor:  # type: ignore
         def __init__(
             self,
             row: Optional[Tensor] = None,
@@ -191,7 +190,7 @@ except Exception as e:
         ) -> Tensor:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
-    class torch_sparse:
+    class torch_sparse:  # type: ignore
         @staticmethod
         def matmul(src: SparseTensor, other: Tensor,
                    reduce: str = "sum") -> Tensor:
@@ -229,7 +228,7 @@ except Exception:
     torch_frame = object
     WITH_TORCH_FRAME = False
 
-    class TensorFrame:
+    class TensorFrame:  # type: ignore
         pass
 
 
@@ -280,27 +279,26 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
-    def __new__(cls, *args):
+    def __new__(cls, *args: Any) -> 'EdgeTypeStr':
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
             args = tuple(args[0])
 
         if len(args) == 1 and isinstance(args[0], str):
-            args = args[0]  # An edge type string was passed.
+            arg = args[0]  # An edge type string was passed.
 
         elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
             # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
-            args = (args[0], DEFAULT_REL, args[1])
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join((args[0], DEFAULT_REL, args[1]))
 
         elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
             # A `(src, rel, dst)` edge type was passed:
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join(args)
 
         else:
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
-        return str.__new__(cls, args)
+        return str.__new__(cls, arg)
 
     def to_tuple(self) -> EdgeType:
         r"""Returns the original edge type."""
@@ -339,6 +337,7 @@ Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
 
 MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
+MaybeHeteroAdjTensor = Union[Tensor, Dict[EdgeType, Adj]]
 MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 # Types for sampling ##########################################################

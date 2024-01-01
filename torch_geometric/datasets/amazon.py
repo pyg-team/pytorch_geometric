@@ -61,7 +61,7 @@ class Amazon(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower()
         assert self.name in ['computers', 'photo']
         super().__init__(root, transform, pre_transform,
@@ -84,10 +84,10 @@ class Amazon(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(self.url + self.raw_file_names, self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])

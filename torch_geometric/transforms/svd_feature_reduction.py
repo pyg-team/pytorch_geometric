@@ -18,6 +18,8 @@ class SVDFeatureReduction(BaseTransform):
         self.out_channels = out_channels
 
     def forward(self, data: Data) -> Data:
+        assert data.x is not None
+
         if data.x.size(-1) > self.out_channels:
             U, S, _ = torch.linalg.svd(data.x)
             data.x = torch.mm(U[:, :self.out_channels],

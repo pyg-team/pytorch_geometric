@@ -77,7 +77,6 @@ def dist_link_neighbor_loader_homo(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -85,15 +84,15 @@ def dist_link_neighbor_loader_homo(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
         assert isinstance(batch, Data)
         assert batch.n_id.size() == (batch.num_nodes, )
-        assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
+    assert loader.channel.empty()
 
 
 def dist_link_neighbor_loader_hetero(
@@ -129,7 +128,6 @@ def dist_link_neighbor_loader_hetero(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -137,7 +135,7 @@ def dist_link_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -155,6 +153,7 @@ def dist_link_neighbor_loader_hetero(
         for edge_type in batch.edge_types:
             assert (batch[edge_type].edge_attr.size(0) ==
                     batch[edge_type].edge_index.size(1))
+    assert loader.channel.empty()
 
 
 @onlyLinux
@@ -163,7 +162,6 @@ def dist_link_neighbor_loader_hetero(
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_homo(
     tmp_path,
     num_parts,
@@ -171,12 +169,12 @@ def test_dist_link_neighbor_loader_homo(
     async_sampling,
     neg_ratio,
 ):
+    addr = '127.0.0.1'
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -222,11 +220,11 @@ def test_dist_link_neighbor_loader_hetero(
     edge_type,
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]
-    s.close()
-    addr = 'localhost'
+    addr = '127.0.0.1'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.bind((addr, 0))
+        port = sock.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,

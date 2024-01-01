@@ -54,7 +54,7 @@ class RelLinkPredDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name
         assert name in ['FB15k-237']
         super().__init__(root, transform, pre_transform,
@@ -63,7 +63,7 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return int(self._data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1  # type: ignore
 
     @property
     def raw_dir(self) -> str:
@@ -84,11 +84,11 @@ class RelLinkPredDataset(InMemoryDataset):
             'valid.txt'
         ]
 
-    def download(self):
+    def download(self) -> None:
         for file_name in self.raw_file_names:
             download_url(f'{self.urls[self.name]}/{file_name}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(osp.join(self.raw_dir, 'entities.dict'), 'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             entities_dict = {key: int(value) for value, key in lines}

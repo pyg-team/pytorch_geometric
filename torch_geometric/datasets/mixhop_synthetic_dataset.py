@@ -44,7 +44,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.homophily = homophily
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         super().__init__(root, transform, pre_transform,
@@ -69,11 +69,11 @@ class MixHopSyntheticDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         x = torch.from_numpy(np.load(self.raw_paths[0]))
         y = torch.from_numpy(np.load(self.raw_paths[1])).argmax(dim=-1)
 
