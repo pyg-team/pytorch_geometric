@@ -140,15 +140,36 @@ class AddMetaPaths(BaseTransform):
 
             edge_type = metapath[0]
             edge_index, edge_weight = self._edge_index(data, edge_type)
+            print(edge_type)
+            if edge_weight is not None:
+                print(edge_index.shape, edge_weight.shape)
+            else:
+                print(edge_index.shape)
 
             if self.max_sample is not None:
                 edge_index, edge_weight = self._sample(edge_index, edge_weight)
 
+                print('sample', edge_type)
+                if edge_weight is not None:
+                    print(edge_index.shape, edge_weight.shape)
+                else:
+                    print(edge_index.shape)
+
             for i, edge_type in enumerate(metapath[1:]):
                 edge_index2, edge_weight2 = self._edge_index(data, edge_type)
 
+                print("ITERATION", i)
+                print(edge_type)
+                if edge_weight2 is not None:
+                    print(edge_index2.shape, edge_weight2.shape)
+                else:
+                    print(edge_index2.shape)
+
                 edge_index, edge_weight = edge_index.matmul(
                     edge_index2, edge_weight, edge_weight2)
+
+                print("OUTPUT")
+                print(edge_index.shape, edge_weight.shape)
 
                 if not self.weighted:
                     edge_weight = None
@@ -156,6 +177,13 @@ class AddMetaPaths(BaseTransform):
                 if self.max_sample is not None:
                     edge_index, edge_weight = self._sample(
                         edge_index, edge_weight)
+
+                    print('sample', edge_type)
+                    if edge_weight is not None:
+                        print(edge_index.shape, edge_weight.shape)
+                    else:
+                        print(edge_index.shape)
+                print("===================")
 
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = edge_index
