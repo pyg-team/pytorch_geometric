@@ -90,7 +90,7 @@ def get_dataset(name, dataset_dir, use_sparse_tensor=False):
     elif name == 'Reddit':
         return Reddit(
             root=dataset_dir,
-            transform=transforms[0] if use_sparse_tensor else None,
+            transform=T.Compose(transforms),
         )
 
 
