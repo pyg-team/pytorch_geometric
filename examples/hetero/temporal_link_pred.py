@@ -13,7 +13,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
-data = dataset[0].to(device)
+data = dataset[0]
 
 # Add user node features for message passing:
 data['user'].x = torch.eye(data['user'].num_nodes, device=device)
@@ -34,10 +34,12 @@ test_idx = perm[int(0.9 * perm.size(0)):]
 edge_index = data['user', 'movie'].edge_index
 kwargs = dict(
     data=data,
-    num_neighbors=[5, 5, 5],
-    batch_size=1,
+    num_neighbors=[20, 10],
+    batch_size=1024,
     time_attr='time',
     temporal_strategy='last',
+    num_workers=4,
+    persistent_workers=True,
 )
 train_loader = LinkNeighborLoader(
     edge_label_index=(('user', 'movie'), edge_index[:, train_idx]),
@@ -114,7 +116,7 @@ def train():
             batch.edge_index_dict,
             batch['user', 'movie'].edge_label_index,
         )
-        target = batch['user', 'movie'].edge_label
+        target = batch['user', 'movie'].edge_label.float()
         loss = F.mse_loss(pred, target)
         loss.backward()
         optimizer.step()
@@ -137,7 +139,7 @@ def test(loader):
             batch['user', 'movie'].edge_label_index,
         ).clamp(min=0, max=5)
         preds.append(pred)
-        targets.append(batch['user', 'movie'].edge_label)
+        targets.append(batch['user', 'movie'].edge_label.float())
 
     pred = torch.cat(preds, dim=0)
     target = torch.cat(targets, dim=0)
