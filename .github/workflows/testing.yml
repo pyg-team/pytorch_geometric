@@ -9,11 +9,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    runs-on: ubunut-latest
 
     steps:
       - name: Checkout repository
@@ -49,9 +45,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 10
         run: |
-          # pytest --cov --cov-report=xml --durations 10
-          pytest test/transforms/test_add_metapaths.py
-        shell: bash
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: steps.changed-files-specific.outputs.only_changed != 'true'
