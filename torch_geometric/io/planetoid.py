@@ -1,13 +1,12 @@
 import os.path as osp
 import warnings
 from itertools import repeat
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 import fsspec
 import torch
 from torch import Tensor
 
-from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import (
@@ -118,7 +117,7 @@ def read_file(folder: str, prefix: str, name: str) -> Tensor:
 def edge_index_from_dict(
     graph_dict: Dict[int, List[int]],
     num_nodes: Optional[int] = None,
-) -> EdgeIndex:
+) -> Tensor:
     rows: List[int] = []
     cols: List[int] = []
     for key, value in graph_dict.items():
@@ -126,17 +125,19 @@ def edge_index_from_dict(
         cols += value
     row = torch.tensor(rows)
     col = torch.tensor(cols)
+    edge_index = torch.stack([row, col], dim=0)
 
-    edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
-        torch.stack([row, col], dim=0),
-        is_undirected=True,
-        sparse_size=(num_nodes, num_nodes),
-    )
+    # `torch.compile` is not yet ready for `EdgeIndex` :(
+    # from torch_geometric import EdgeIndex
+    # edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
+    #     torch.stack([row, col], dim=0),
+    #     is_undirected=True,
+    #     sparse_size=(num_nodes, num_nodes),
+    # )
 
     # NOTE: There are some duplicated edges and self loops in the datasets.
     #       Other implementations do not remove them!
     edge_index, _ = remove_self_loops(edge_index)
     edge_index = coalesce(edge_index, num_nodes=num_nodes, sort_by_row=False)
-    assert isinstance(edge_index, EdgeIndex)
 
     return edge_index
