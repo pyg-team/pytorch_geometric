@@ -113,7 +113,7 @@ class HGTConv(MessagePassing):
             outs.append(x)
             offset[key] = cumsum
             cumsum += x.size(0)
-        return torch.cat(outs, dim=0), offset
+        return torch.cat(outs, dim=0), offset, cumsum
 
     def _construct_src_node_feat(
         self, k_dict: Dict[str, Tensor], v_dict: Dict[str, Tensor],
@@ -151,7 +151,7 @@ class HGTConv(MessagePassing):
         k = self.k_rel(ks, type_vec).view(H, -1, D).transpose(0, 1)
         v = self.v_rel(vs, type_vec).view(H, -1, D).transpose(0, 1)
 
-        return k, v, offset
+        return k, v, offset, cumsum
 
     def forward(
         self,
@@ -188,13 +188,16 @@ class HGTConv(MessagePassing):
             q_dict[key] = q.view(-1, H, D)
             v_dict[key] = v.view(-1, H, D)
 
-        q, dst_offset = self._cat(q_dict)
-        k, v, src_offset = self._construct_src_node_feat(
+        q, dst_offset, n_dst = self._cat(q_dict)
+        k, v, src_offset, n_src = self._construct_src_node_feat(
             k_dict, v_dict, edge_index_dict)
-
         edge_index, edge_attr = construct_bipartite_edge_index(
-            edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
-
+            edge_index_dict,
+            src_offset,
+            dst_offset,
+            edge_attr_dict=self.p_rel,
+            n_nodes=(n_src, n_dst),
+        )
         out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
                              size=None)
 
