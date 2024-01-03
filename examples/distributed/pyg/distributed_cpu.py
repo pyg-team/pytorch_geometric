@@ -1,7 +1,7 @@
 import argparse
-from contextlib import nullcontext
 import os.path as osp
 import time
+from contextlib import nullcontext
 
 import torch
 import torch.distributed
@@ -34,9 +34,9 @@ def test(
 ):
     def test_homo(batch):
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)[: batch.batch_size]
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y_pred = out.argmax(dim=-1)
-        y_true = batch.y[: batch.batch_size]
+        y_true = batch.y[:batch.batch_size]
         return y_pred, y_true
 
     def test_hetero(batch):
@@ -53,17 +53,14 @@ def test(
     total_examples = total_correct = 0
     # Save result at each iteration
     log = open(logfile, 'a+') if logfile else nullcontext()
-    multithreading = (
-        test_loader.enable_multithreading(num_loader_threads)
-        if test_loader.num_workers > 0
-        else nullcontext()
-    )  # speeds up dataloading on CPU
+    multithreading = (test_loader.enable_multithreading(num_loader_threads)
+                      if test_loader.num_workers > 0 else nullcontext()
+                      )  # speeds up dataloading on CPU
     with log:
         with multithreading:
             if progress_bar:
-                test_loader = tqdm(
-                    test_loader, desc=f'[Node {dist_context.rank}] Test'
-                )
+                test_loader = tqdm(test_loader,
+                                   desc=f'[Node {dist_context.rank}] Test')
             batch_time = time.time()
             for i, batch in enumerate(test_loader):
                 y_pred, y_true = test_fn(batch)
@@ -93,8 +90,8 @@ def train(
     def train_homo(batch):
         batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[: batch.batch_size]
-        loss = F.cross_entropy(out, batch.y[: batch.batch_size])
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        loss = F.cross_entropy(out, batch.y[:batch.batch_size])
         loss.backward()
         optimizer.step()
         return loss
@@ -114,18 +111,14 @@ def train(
     train_fn = train_hetero if hetero else train_homo
     # Save result at each iteration
     log = open(logfile, 'a+') if logfile else nullcontext()
-    multithreading = (
-        train_loader.enable_multithreading(num_loader_threads)
-        if train_loader.num_workers > 0
-        else nullcontext()
-    )
+    multithreading = (train_loader.enable_multithreading(num_loader_threads)
+                      if train_loader.num_workers > 0 else nullcontext())
 
     with log:
         with multithreading:
             if progress_bar:
-                train_loader = tqdm(
-                    train_loader, desc=f'[Node {dist_context.rank}] Train'
-                )
+                train_loader = tqdm(train_loader,
+                                    desc=f'[Node {dist_context.rank}] Train')
             batch_time = time.time()
             for i, batch in enumerate(train_loader):
                 loss = train_fn(batch)
@@ -166,8 +159,7 @@ def run_proc(
     else:
         raise NotImplementedError(
             f'This example supports only OGB datasets: (ogbn-products, ogbn-mag), '
-            f'got {dataset}'
-        )
+            f'got {dataset}')
 
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
@@ -177,15 +169,13 @@ def run_proc(
             root_dir,
             f'{dataset}-train-partitions',
             f'partition{node_rank}.pt',
-        )
-    )
+        ))
     test_idx = torch.load(
         osp.join(
             root_dir,
             f'{dataset}-test-partitions',
             f'partition{node_rank}.pt',
-        )
-    )
+        ))
 
     if hetero:
         train_idx = ('paper', train_idx)
@@ -198,18 +188,15 @@ def run_proc(
         partition_idx,
         node_pb,
         edge_pb,
-    ) = load_partition_info(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+    ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
+                            node_rank)
     print(f'meta={meta}, partition_idx={partition_idx}')
     # load partition into graph
     graph = LocalGraphStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
     # load partition into feature
     feature = LocalFeatureStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
 
     # setup the partition information in LocalGraphStore and LocalFeatureStore
     graph.num_partitions = feature.num_partitions = num_partitions
@@ -239,9 +226,8 @@ def run_proc(
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
-    persistent_workers = (
-        True if num_workers > 0 else False
-    )  # Keep workers RPC alive outside the iterator loop
+    persistent_workers = (True if num_workers > 0 else False
+                          )  # Keep workers RPC alive outside the iterator loop
     print('--- Initialize distributed loaders ...')
     # Create distributed neighbor loader for training
     train_loader = pyg_dist.DistNeighborLoader(
@@ -352,8 +338,7 @@ def run_proc(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Arguments for distributed training of supervised SAGE.'
-    )
+        description='Arguments for distributed training of supervised SAGE.')
     parser.add_argument(
         '--dataset',
         type=str,
@@ -418,7 +403,8 @@ if __name__ == '__main__':
         '--async_sampling',
         type=bool,
         default=True,
-        help='When set to True, samplers will process RPC request asynchronously.',
+        help=
+        'When set to True, samplers will process RPC request asynchronously.',
     )
     parser.add_argument(
         '--master_addr',
@@ -430,19 +416,22 @@ if __name__ == '__main__':
         '--ddp_port',
         type=int,
         default=11111,
-        help='The port used for PyTorch\'s process group initialization across training processes.',
+        help=
+        'The port used for PyTorch\'s process group initialization across training processes.',
     )
     parser.add_argument(
         '--train_loader_port',
         type=int,
         default=11112,
-        help='The port used for RPC initialization across all sampling workers of training loader.',
+        help=
+        'The port used for RPC initialization across all sampling workers of training loader.',
     )
     parser.add_argument(
         '--test_loader_port',
         type=int,
         default=11113,
-        help='The port used for RPC initialization across all sampling workers of testing loader.',
+        help=
+        'The port used for RPC initialization across all sampling workers of testing loader.',
     )
     parser.add_argument('--logging', action='store_true')
     parser.add_argument('--progress_bar', action='store_true')
