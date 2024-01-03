@@ -67,7 +67,9 @@ def test(
                 total_correct += int((y_pred == y_true).sum())
                 total_examples += y_pred.size(0)
                 batch_acc = int((y_pred == y_true).sum()) / y_pred.size(0)
-                result = f'[Node {dist_context.rank}] Test: it={i}, acc={batch_acc:.4}, time={(time.time() - batch_time):.4}'
+                result = (f'[Node {dist_context.rank}] Test: '
+                          f'it={i}, acc={batch_acc:.4}, '
+                          f'time={(time.time() - batch_time):.4}')
                 batch_time = time.time()
                 log.write(f'{result}\n')
                 if not progress_bar:
@@ -122,7 +124,9 @@ def train(
             batch_time = time.time()
             for i, batch in enumerate(train_loader):
                 loss = train_fn(batch)
-                result = f'[Node {dist_context.rank}] Train: it={i}, loss={loss:.4}, time={(time.time() - batch_time):.4}'
+                result = (f'[Node {dist_context.rank}] Train: '
+                          f'it={i}, loss={loss:.4}, '
+                          f'time={(time.time() - batch_time):.4}')
                 batch_time = time.time()
                 log.write(f'{result}\n')
                 if not progress_bar:
@@ -157,9 +161,8 @@ def run_proc(
     elif dataset == 'ogbn-products':
         hetero = False
     else:
-        raise NotImplementedError(
-            f'This example supports only OGB datasets: (ogbn-products, ogbn-mag), '
-            f'got {dataset}')
+        raise NotImplementedError(f'This example supports only OGB datasets: '
+                                  f'(ogbn-products, ogbn-mag), got {dataset}')
 
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
@@ -274,7 +277,7 @@ def run_proc(
 
     @torch.no_grad()
     def init_params():
-        # Initialize lazy parameters via forwarding a single batch to the model:
+        # Init parameters via forwarding a single batch to the model:
         print('--- Init parameters of the hetero model ...')
         with train_loader as iterator:
             batch = next(iter(iterator))
@@ -311,9 +314,9 @@ def run_proc(
             num_loader_threads,
             progress_bar,
         )
-        print(
-            f'[Node {current_ctx.rank}] Epoch {epoch}: Train Loss = {loss:.4f}, Train Time = {(time.time() - start):.2f}'
-        )
+        print(f'[Node {current_ctx.rank}] Epoch {epoch}: \
+                Train Loss = {loss:.4f}, \
+                Train Time = {(time.time() - start):.2f}')
 
         # Test accuracy.
         if i % 5 == 0:
@@ -329,9 +332,9 @@ def run_proc(
                 num_loader_threads,
                 progress_bar,
             )
-            print(
-                f'[Node {current_ctx.rank}] Epoch {epoch}: Test Accuracy = {acc:.4f}, Test Time = {(time.time() - start):.2f}'
-            )
+            print(f'[Node {current_ctx.rank}] Epoch {epoch}: '
+                  f'Test Accuracy = {acc:.4f}, '
+                  f'Test Time = {(time.time() - start):.2f}')
     print(f'--- [Node {current_ctx.rank}] Closing ---')
     torch.distributed.destroy_process_group()
 
@@ -403,8 +406,7 @@ if __name__ == '__main__':
         '--async_sampling',
         type=bool,
         default=True,
-        help=
-        'When set to True, samplers will process RPC request asynchronously.',
+        help='If True, samplers process RPC request asynchronously.',
     )
     parser.add_argument(
         '--master_addr',
@@ -416,31 +418,26 @@ if __name__ == '__main__':
         '--ddp_port',
         type=int,
         default=11111,
-        help=
-        'The port used for PyTorch\'s process group initialization across training processes.',
+        help='The port used for PyTorch\'s DDP communication.',
     )
     parser.add_argument(
         '--train_loader_port',
         type=int,
         default=11112,
-        help=
-        'The port used for RPC initialization across all sampling workers of training loader.',
+        help='The port used for RPC comm across train loader samplers.',
     )
     parser.add_argument(
         '--test_loader_port',
         type=int,
         default=11113,
-        help=
-        'The port used for RPC initialization across all sampling workers of testing loader.',
+        help='The port used for RPC comm across test loader samplers.',
     )
     parser.add_argument('--logging', action='store_true')
     parser.add_argument('--progress_bar', action='store_true')
 
     args = parser.parse_args()
 
-    print(
-        '--- Distributed training example of supervised SAGE with OGB Dataset ---'
-    )
+    print('--- Distributed training example with SAGE and OGB dataset ---')
     print(f'* total nodes: {args.num_nodes}')
     print(f'* node rank: {args.node_rank}')
     print(f'* dataset: {args.dataset}')
