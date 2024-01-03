@@ -2,7 +2,7 @@
 
 **[Distributed PyG](https://github.com/pyg-team/pytorch_geometric/tree/master/torch_geometric/distributed)** implements scalable solution for distributed graph neural network (GNN) training, built exclusively on the powerful PyTorch Geometric (PyG) library.
 
-Current application can be deployed on a cluster of arbitrary size using multiple CPUs. PyG native GPU application is under development and soon will be released. 
+Current application can be deployed on a cluster of arbitrary size using multiple CPUs. PyG native GPU application is under development and soon will be released.
 
 The solution is designed to effortlessly distribute the training of large-scale graph neural networks across multiple nodes, thanks to the integration of Distributed Data Parallelism (DDP) for model training and Remote Procedure Call (RPC) for efficient sampling and fetching of non-local features.
 The design includes a number of custom classes, i.e. `DistNeighborSampler` that implements CPU sampling algorithms from local & remote data remaining consistent data structure at the output; an integrated `DistLoader` which ensures safe opening & closing of RPC connection between the samplers; a METIS-based `Partitioner` and many more.
