@@ -140,7 +140,7 @@ def run_proc(
     local_proc_rank: int,
     num_nodes: int,
     node_rank: int,
-    dataset: str,fnum
+    dataset: str,
     dataset_root_dir: str,
     master_addr: str,
     ddp_port: int,
