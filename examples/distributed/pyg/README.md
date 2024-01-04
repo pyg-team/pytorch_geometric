@@ -5,7 +5,7 @@
 Current application can be deployed on a cluster of arbitrary size using multiple CPUs. PyG native GPU application is under development and soon will be released.
 
 The solution is designed to effortlessly distribute the training of large-scale graph neural networks across multiple nodes, thanks to the integration of Distributed Data Parallelism (DDP) for model training and Remote Procedure Call (RPC) for efficient sampling and fetching of non-local features.
-The design includes a number of custom classes, i.e. `DistNeighborSampler` that implements CPU sampling algorithms from local & remote data remaining consistent data structure at the output; an integrated `DistLoader` which ensures safe opening & closing of RPC connection between the samplers; a METIS-based `Partitioner` and many more.
+The design includes a number of custom classes, i.e. `DistNeighborSampler` that implements CPU sampling algorithms and feature extraction from local & remote data remaining consistent data structure at the output; an integrated `DistLoader` which ensures safe opening & closing of RPC connection between the samplers; a METIS-based `Partitioner` and many more.
 
 ## Distributed Sage for Ogbn-Product (Homo Multi-Node) Example
 
@@ -16,7 +16,7 @@ To run the example please refer to the steps below.
 
 ## Requirements
 
-- Latest PyG and pyg-lib.
+- Latest [PyG](https://github.com/pyg-team/pytorch_geometric) and [pyg-lib](https://github.com/pyg-team/pyg-lib)
 - Password-less SSH needs to be set up on all the nodes that you are using ([Linux SSH manual](https://linuxize.com/post/how-to-setup-passwordless-ssh-login/)).
 - All nodes need to have a consistent environments installed, specifically torch and pyg-lib versions must be the same. You might want to consider using docker containers.
 - \[Optional\] In some cases Linux firewall might be blocking TCP connection issues. Ensure that firewall settings allow for all nodes to communicate ([Linux firewall manual](https://ubuntu.com/server/docs/security-firewall)). For this example TCP ports 11111, 11112, 11113 should be open (i.e. `sudo ufw allow 11111`).
@@ -30,7 +30,7 @@ In distributed training, each node in the cluster holds a partition of the graph
 Here, we use `ogbn-products` and partition it into two partitions (in default) by the [partition example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py) :
 
 ```bash
-python partition_graph.py --dataset=ogbn-products --root_dir=./data/products --num_partitions=2
+python partition_graph.py --dataset=ogbn-products --root_dir=../../../data --num_partitions=2
 ```
 
 **Caution:** Partitioning with METIS is non-deterministic!

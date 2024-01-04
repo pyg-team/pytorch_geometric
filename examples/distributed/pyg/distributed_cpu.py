@@ -351,7 +351,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--dataset_root_dir',
         type=str,
-        default='../../data/partitions/ogbn-products/2-parts',
+        default='../../../data/partitions/ogbn-products/2-parts',
         help='The root directory (relative path) of partitioned ogbn dataset.',
     )
     parser.add_argument(
@@ -375,7 +375,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_epochs',
         type=int,
-        default=10,
+        default=100,
         help='The number of training epochs.',
     )
     parser.add_argument(
