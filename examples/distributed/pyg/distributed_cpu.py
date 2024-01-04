@@ -25,7 +25,7 @@ from torch_geometric.nn import GraphSAGE, to_hetero
 def test(
     model,
     test_loader,
-    hetero,
+    is_hetero,
     dist_context,
     device,
     logfile=None,
@@ -48,7 +48,7 @@ def test(
         y_true = batch['paper'].y[:batch_size]
         return y_pred, y_true
 
-    test_fn = test_hetero if hetero else test_homo
+    test_fn = test_hetero if is_hetero else test_homo
     model.eval()
     total_examples = total_correct = 0
     # Save result at each iteration
@@ -79,7 +79,7 @@ def test(
 
 
 def train(
-    hetero,
+    is_hetero,
     model,
     train_loader,
     optimizer,
@@ -110,7 +110,7 @@ def train(
         optimizer.step()
         return loss
 
-    train_fn = train_hetero if hetero else train_homo
+    train_fn = train_hetero if is_hetero else train_homo
     # Save result at each iteration
     log = open(logfile, 'a+') if logfile else nullcontext()
     multithreading = (train_loader.enable_multithreading(num_loader_threads)
@@ -157,9 +157,9 @@ def run_proc(
     logfile: str,
 ):
     if dataset == 'ogbn-mag':
-        hetero = True
+        is_hetero = True
     elif dataset == 'ogbn-products':
-        hetero = False
+        is_hetero = False
     else:
         raise NotImplementedError(f'This example supports only OGB datasets: '
                                   f'(ogbn-products, ogbn-mag), got {dataset}')
@@ -180,7 +180,7 @@ def run_proc(
             f'partition{node_rank}.pt',
         ))
 
-    if hetero:
+    if is_hetero:
         train_idx = ('paper', train_idx)
         test_idx = ('paper', test_idx)
 
@@ -268,10 +268,10 @@ def run_proc(
     print('--- Initialize model ...')
     # Define model and optimizer.
     model = GraphSAGE(
-        in_channels=128 if hetero else 100,  # num_features
+        in_channels=128 if is_hetero else 100,  # num_features
         hidden_channels=64,
         num_layers=len(num_neighbors),
-        out_channels=349 if hetero else 47,  # num_classes in dataset
+        out_channels=349 if is_hetero else 47,  # num_classes in dataset
     ).to(current_device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
 
@@ -286,7 +286,7 @@ def run_proc(
             del batch
             torch.distributed.barrier()
 
-    if hetero:
+    if is_hetero:
         # Turn model to hetero and initialize parameters
         metadata = [meta['node_types'], [tuple(e) for e in meta['edge_types']]]
         model = to_hetero(model, metadata).to(current_device)
@@ -294,7 +294,7 @@ def run_proc(
         torch.distributed.barrier()
 
     # Enable DDP
-    model = DistributedDataParallel(model, find_unused_parameters=hetero)
+    model = DistributedDataParallel(model, find_unused_parameters=is_hetero)
     torch.distributed.barrier()
 
     # Train and test
@@ -304,7 +304,7 @@ def run_proc(
         epoch = i + 1
         print(f'Train Epoch {epoch}/{num_epochs}')
         loss = train(
-            hetero,
+            is_hetero,
             model,
             train_loader,
             optimizer,
@@ -325,7 +325,7 @@ def run_proc(
             acc = test(
                 model,
                 test_loader,
-                hetero,
+                is_hetero,
                 current_ctx,
                 current_device,
                 logfile,
