@@ -264,3 +264,129 @@ def test_from_partition_hetero_data(tmp_path):
         node_types.add(attr.edge_type[0])
         node_types.add(attr.edge_type[2])
     assert node_types == set(data.node_types)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_temporal_data(tmp_path):
+    data = FakeDataset()[0]
+    data.time = torch.arange(data.num_nodes, dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    feat_store1 = LocalFeatureStore.from_partition(tmp_path, pid=0)
+    feat_store2 = LocalFeatureStore.from_partition(tmp_path, pid=1)
+
+    time_attr1 = feat_store1.get_all_tensor_attrs()[1]
+    assert time_attr1.attr_name == 'time'
+    time1 = feat_store1.get_tensor(time_attr1)
+
+    time_attr2 = feat_store2.get_all_tensor_attrs()[1]
+    assert time_attr2.attr_name == 'time'
+    time2 = feat_store2.get_tensor(time_attr2)
+
+    assert time1.size(0) == data.num_nodes
+    assert time2.size(0) == data.num_nodes
+    assert torch.equal(time1, data.time)
+    assert torch.equal(time2, data.time)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_edge_level_temporal_data(tmp_path):
+    data = FakeDataset(edge_dim=2)[0]
+    data.edge_time = torch.arange(data.edge_index.size(1), dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    feat_store1 = LocalFeatureStore.from_partition(tmp_path, pid=0)
+    feat_store2 = LocalFeatureStore.from_partition(tmp_path, pid=1)
+
+    time_attr1 = feat_store1.get_all_tensor_attrs()[2]
+    assert time_attr1.attr_name == 'edge_time'
+    time1 = feat_store1.get_tensor(time_attr1)
+
+    time_attr2 = feat_store2.get_all_tensor_attrs()[2]
+    assert time_attr2.attr_name == 'edge_time'
+    time2 = feat_store2.get_tensor(time_attr2)
+
+    edge_id1 = feat_store1.get_global_id(group_name=(None, None))
+    edge_id2 = feat_store2.get_global_id(group_name=(None, None))
+
+    assert time1.size(0) + time2.size(0) == data.edge_index.size(1)
+    assert torch.equal(data.edge_time[edge_id1], time1)
+    assert torch.equal(data.edge_time[edge_id2], time2)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_hetero_temporal_data(tmp_path):
+    data = FakeHeteroDataset()[0]
+
+    for ntype in data.node_types:
+        data[ntype].time = torch.arange(data[ntype].num_nodes,
+                                        dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    feat_store1 = LocalFeatureStore.from_partition(tmp_path, pid=0)
+    feat_store2 = LocalFeatureStore.from_partition(tmp_path, pid=1)
+
+    attrs1 = feat_store1.get_all_tensor_attrs()
+    attrs2 = feat_store2.get_all_tensor_attrs()
+
+    times1 = {
+        attr.group_name: feat_store1.get_tensor(attr)
+        for attr in attrs1 if attr.attr_name == 'time'
+    }
+    times2 = {
+        attr.group_name: feat_store2.get_tensor(attr)
+        for attr in attrs2 if attr.attr_name == 'time'
+    }
+
+    for node_type in data.node_types:
+        assert times1[node_type].size(0) == data[node_type].num_nodes
+        assert times2[node_type].size(0) == data[node_type].num_nodes
+        assert torch.equal(times1[node_type], data[node_type].time)
+        assert torch.equal(times2[node_type], data[node_type].time)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_hetero_edge_level_temporal_data(tmp_path):
+    data = FakeHeteroDataset(edge_dim=2)[0]
+
+    for etype in data.edge_types:
+        data[etype].edge_time = torch.arange(data[etype].edge_index.size(1),
+                                             dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    feat_store1 = LocalFeatureStore.from_partition(tmp_path, pid=0)
+    feat_store2 = LocalFeatureStore.from_partition(tmp_path, pid=1)
+
+    attrs1 = feat_store1.get_all_tensor_attrs()
+    attrs2 = feat_store2.get_all_tensor_attrs()
+
+    times1 = {
+        attr.group_name: feat_store1.get_tensor(attr)
+        for attr in attrs1 if attr.attr_name == 'edge_time'
+    }
+    times2 = {
+        attr.group_name: feat_store2.get_tensor(attr)
+        for attr in attrs2 if attr.attr_name == 'edge_time'
+    }
+
+    for edge_type in data.edge_types:
+        edge_id1 = feat_store1.get_global_id(group_name=edge_type)
+        edge_id2 = feat_store2.get_global_id(group_name=edge_type)
+        assert times1[edge_type].size(0) + times2[edge_type].size(
+            0) == data[edge_type].edge_index.size(1)
+        assert torch.equal(data[edge_type].edge_time[edge_id1],
+                           times1[edge_type])
+        assert torch.equal(data[edge_type].edge_time[edge_id2],
+                           times2[edge_type])
