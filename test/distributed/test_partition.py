@@ -104,6 +104,106 @@ def test_partition_hetero_data(tmp_path):
 
 
 @pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_partition_data_temporal(tmp_path):
+    data = FakeDataset()[0]
+
+    data.time = torch.arange(data.num_nodes, dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    node_feats0_path = osp.join(tmp_path, 'part_0', 'node_feats.pt')
+    assert osp.exists(node_feats0_path)
+    node_feats0 = torch.load(node_feats0_path)
+
+    node_feats1_path = osp.join(tmp_path, 'part_1', 'node_feats.pt')
+    assert osp.exists(node_feats1_path)
+    node_feats1 = torch.load(node_feats1_path)
+
+    assert torch.equal(data.time, node_feats0['time'])
+    assert torch.equal(data.time, node_feats1['time'])
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_partition_data_edge_level_temporal(tmp_path):
+    data = FakeDataset(edge_dim=2)[0]
+
+    data.edge_time = torch.arange(data.edge_index.size(1), dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    edge_feats0_path = osp.join(tmp_path, 'part_0', 'edge_feats.pt')
+    assert osp.exists(edge_feats0_path)
+    edge_feats0 = torch.load(edge_feats0_path)
+
+    edge_feats1_path = osp.join(tmp_path, 'part_1', 'edge_feats.pt')
+    assert osp.exists(edge_feats1_path)
+    edge_feats1 = torch.load(edge_feats1_path)
+
+    assert torch.equal(data.edge_time[edge_feats0['global_id']],
+                       edge_feats0['edge_time'])
+    assert torch.equal(data.edge_time[edge_feats1['global_id']],
+                       edge_feats1['edge_time'])
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_partition_hetero_data_temporal(tmp_path):
+    data = FakeHeteroDataset()[0]
+
+    for ntype in data.node_types:
+        data[ntype].time = torch.arange(data[ntype].num_nodes,
+                                        dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    node_feats0_path = osp.join(tmp_path, 'part_0', 'node_feats.pt')
+    assert osp.exists(node_feats0_path)
+    node_feats0 = torch.load(node_feats0_path)
+
+    node_feats1_path = osp.join(tmp_path, 'part_1', 'node_feats.pt')
+    assert osp.exists(node_feats1_path)
+    node_feats1 = torch.load(node_feats1_path)
+
+    for ntype in data.node_types:
+        assert torch.equal(data[ntype].time, node_feats0[ntype]['time'])
+        assert torch.equal(data[ntype].time, node_feats1[ntype]['time'])
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_partition_hetero_data_edge_level_temporal(tmp_path):
+    data = FakeHeteroDataset(edge_dim=2)[0]
+
+    for etype in data.edge_types:
+        data[etype].edge_time = torch.arange(data[etype].edge_index.size(1),
+                                             dtype=torch.int64)
+
+    num_parts = 2
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    edge_feats0_path = osp.join(tmp_path, 'part_0', 'edge_feats.pt')
+    assert osp.exists(edge_feats0_path)
+    edge_feats0 = torch.load(edge_feats0_path)
+
+    edge_feats1_path = osp.join(tmp_path, 'part_1', 'edge_feats.pt')
+    assert osp.exists(edge_feats1_path)
+    edge_feats1 = torch.load(edge_feats1_path)
+
+    for etype in data.edge_types:
+        assert torch.equal(
+            data[etype].edge_time[edge_feats0[etype]['global_id']],
+            edge_feats0[etype]['edge_time'])
+        assert torch.equal(
+            data[etype].edge_time[edge_feats1[etype]['global_id']],
+            edge_feats1[etype]['edge_time'])
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_from_partition_data(tmp_path):
     data = FakeDataset()[0]
     num_parts = 2
