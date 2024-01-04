@@ -140,7 +140,7 @@ def run_proc(
     local_proc_rank: int,
     num_nodes: int,
     node_rank: int,
-    dataset: str,
+    dataset: str,fnum
     dataset_root_dir: str,
     master_addr: str,
     ddp_port: int,
@@ -270,7 +270,7 @@ def run_proc(
     model = GraphSAGE(
         in_channels=128 if hetero else 100,  # num_features
         hidden_channels=64,
-        num_layers=3,
+        num_layers=len(num_neighbors),
         out_channels=349 if hetero else 47,  # num_classes in dataset
     ).to(current_device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
@@ -346,7 +346,7 @@ if __name__ == '__main__':
         '--dataset',
         type=str,
         default='ogbn-products',
-        help='The name of ogbn dataset: (ogbn-products, ogbn-mag)',
+        help='Name of ogbn dataset: (ogbn-products, ogbn-mag)',
     )
     parser.add_argument(
         '--dataset_root_dir',
