@@ -94,7 +94,6 @@ class GravNetConv(MessagePassing):
         if isinstance(x, Tensor):
             x = (x, x)
             is_bipartite = False
-        assert isinstance(x, tuple)
 
         if x[0].dim() != 2:
             raise ValueError("Static graphs not supported in 'GravNetConv'")

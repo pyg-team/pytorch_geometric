@@ -83,7 +83,6 @@ class CGConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)

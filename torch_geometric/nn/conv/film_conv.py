@@ -124,7 +124,6 @@ class FiLMConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         beta, gamma = self.film_skip(x[1]).split(self.out_channels, dim=-1)
         out = gamma * self.lin_skip(x[1]) + beta

@@ -113,7 +113,6 @@ class ResGatedGraphConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         # In case edge features are not given, we can compute key, query and
         # value tensors in node-level space, which is a bit more efficient:

@@ -210,7 +210,6 @@ class GENConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         if hasattr(self, 'lin_src'):
             x = (self.lin_src(x[0]), x[1])

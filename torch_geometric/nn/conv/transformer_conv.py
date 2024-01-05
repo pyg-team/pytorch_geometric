@@ -181,7 +181,6 @@ class TransformerConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         query = self.lin_query(x[1]).view(-1, H, C)
         key = self.lin_key(x[0]).view(-1, H, C)

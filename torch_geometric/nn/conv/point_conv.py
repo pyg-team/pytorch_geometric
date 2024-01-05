@@ -87,11 +87,9 @@ class PointNetConv(MessagePassing):
 
         if not isinstance(x, tuple):
             x = (x, None)
-        assert isinstance(x, tuple)
 
         if isinstance(pos, Tensor):
             pos = (pos, pos)
-        assert isinstance(pos, tuple)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):

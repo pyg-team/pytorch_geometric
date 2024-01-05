@@ -126,7 +126,6 @@ class SAGEConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         if self.project and hasattr(self, 'lin'):
             x = (self.lin(x[0]).relu(), x[1])

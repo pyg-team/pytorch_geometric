@@ -102,7 +102,6 @@ class SignedConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         # propagate_type: (x: PairTensor)
         if self.first_aggr:

@@ -128,7 +128,6 @@ class SplineConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         if not x[0].is_cuda:
             warnings.warn(

@@ -106,15 +106,12 @@ class PPFConv(MessagePassing):
 
         if not isinstance(x, tuple):
             x = (x, None)
-        assert isinstance(x, tuple)
 
         if isinstance(pos, Tensor):
             pos = (pos, pos)
-        assert isinstance(pos, tuple)
 
         if isinstance(normal, Tensor):
             normal = (normal, normal)
-        assert isinstance(normal, tuple)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):

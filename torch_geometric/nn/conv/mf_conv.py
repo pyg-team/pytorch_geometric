@@ -83,7 +83,6 @@ class MFConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x = (x, x)
-        assert isinstance(x, tuple)
 
         x_r = x[1]
 
