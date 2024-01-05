@@ -14,6 +14,13 @@ def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
     from.
 
+    .. note::
+        This function counts the number of message passing layers as an
+        approximation of the total number of hops covered by the model.
+        Its about may not necessarily correct in case message passing layers
+        perform multi-hop aggregation, *e.g.*, as in
+        :class:`~torch_geometric.nn.conv.ChebConv`.
+
     Example:
         >>> class GNN(torch.nn.Module):
         ...     def __init__(self):
