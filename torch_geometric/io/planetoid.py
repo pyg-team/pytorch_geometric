@@ -1,17 +1,20 @@
 import os.path as osp
 import warnings
 from itertools import repeat
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 import fsspec
 import torch
 from torch import Tensor
 
-from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import coalesce, index_to_mask, remove_self_loops
+from torch_geometric.utils import (
+    coalesce,
+    index_to_mask,
+    remove_self_loops,
+    to_torch_csr_tensor,
+)
 
 try:
     import cPickle as pickle
@@ -53,21 +56,22 @@ def read_planetoid_data(folder: str, prefix: str) -> Data:
         x[test_index] = x[sorted_test_index]
 
         # Creating feature vectors for relations.
-        row, col, value = SparseTensor.from_dense(x).coo()
-        rows, cols, values = [row], [col], [value]
+        row, col = x.nonzero(as_tuple=True)
+        value = x[row, col]
 
-        mask1 = index_to_mask(test_index, size=len(graph))
-        mask2 = index_to_mask(torch.arange(allx.size(0), len(graph)),
-                              size=len(graph))
-        mask = ~mask1 | ~mask2
-        isolated_index = mask.nonzero(as_tuple=False).view(-1)[allx.size(0):]
+        mask = ~index_to_mask(test_index, size=len(graph))
+        mask[:allx.size(0)] = False
+        isolated_idx = mask.nonzero().view(-1)
 
-        rows += [isolated_index]
-        cols += [torch.arange(isolated_index.size(0)) + x.size(1)]
-        values += [torch.ones(isolated_index.size(0))]
+        row = torch.cat([row, isolated_idx])
+        col = torch.cat([col, torch.arange(isolated_idx.size(0)) + x.size(1)])
+        value = torch.cat([value, value.new_ones(isolated_idx.size(0))])
 
-        x = SparseTensor(row=torch.cat(rows), col=torch.cat(cols),
-                         value=torch.cat(values))
+        x = to_torch_csr_tensor(
+            edge_index=torch.stack([row, col], dim=0),
+            edge_attr=value,
+            size=(x.size(0), isolated_idx.size(0) + x.size(1)),
+        )
     else:
         x = torch.cat([allx, tx], dim=0)
         x[test_index] = x[sorted_test_index]
@@ -113,7 +117,7 @@ def read_file(folder: str, prefix: str, name: str) -> Tensor:
 def edge_index_from_dict(
     graph_dict: Dict[int, List[int]],
     num_nodes: Optional[int] = None,
-) -> EdgeIndex:
+) -> Tensor:
     rows: List[int] = []
     cols: List[int] = []
     for key, value in graph_dict.items():
@@ -121,17 +125,19 @@ def edge_index_from_dict(
         cols += value
     row = torch.tensor(rows)
     col = torch.tensor(cols)
+    edge_index = torch.stack([row, col], dim=0)
 
-    edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
-        torch.stack([row, col], dim=0),
-        is_undirected=True,
-        sparse_size=(num_nodes, num_nodes),
-    )
+    # `torch.compile` is not yet ready for `EdgeIndex` :(
+    # from torch_geometric import EdgeIndex
+    # edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
+    #     torch.stack([row, col], dim=0),
+    #     is_undirected=True,
+    #     sparse_size=(num_nodes, num_nodes),
+    # )
 
     # NOTE: There are some duplicated edges and self loops in the datasets.
     #       Other implementations do not remove them!
     edge_index, _ = remove_self_loops(edge_index)
     edge_index = coalesce(edge_index, num_nodes=num_nodes, sort_by_row=False)
-    assert isinstance(edge_index, EdgeIndex)
 
     return edge_index

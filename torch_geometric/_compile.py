@@ -12,6 +12,15 @@ JIT_WARNING = ("Could not convert the 'model' into a jittable version. "
                "the following error: {error}")
 
 
+def is_compiling() -> bool:
+    r"""Returns :obj:`True` in case :pytorch:`PyTorch` is compiling via
+    :meth:`torch.compile`.
+    """
+    if torch_geometric.typing.WITH_PT21:
+        return torch._dynamo.is_compiling()
+    return False  # pragma: no cover
+
+
 def to_jittable(model: torch.nn.Module) -> torch.nn.Module:
     if isinstance(model, torch_geometric.nn.MessagePassing):
         try:
@@ -47,15 +56,12 @@ def compile(
 
     Specifically, it
 
-    1. temporarily disables the usage of the extension packages
-       :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib`
-
-    2. converts all instances of
+    1. converts all instances of
        :class:`~torch_geometric.nn.conv.MessagePassing` modules into their
        jittable instances
        (see :meth:`torch_geometric.nn.conv.MessagePassing.jittable`)
 
-    3. disables generation of device asserts during fused gather/scatter calls
+    2. disables generation of device asserts during fused gather/scatter calls
        to avoid performance impacts
 
     .. note::
@@ -74,16 +80,6 @@ def compile(
             return out
 
         return fn
-
-    # Disable the usage of external extension packages:
-    # TODO (matthias) Disable only temporarily
-    prev_state = {
-        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-    }
-    warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
-    for key in prev_state.keys():
-        setattr(torch_geometric.typing, key, False)
 
     # Adjust the logging level of `torch.compile`:
     # TODO (matthias) Disable only temporarily

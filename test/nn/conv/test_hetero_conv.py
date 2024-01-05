@@ -17,7 +17,6 @@ from torch_geometric.nn import (
 )
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     get_random_edge_index,
     onlyLinux,
     withCUDA,
@@ -182,7 +181,6 @@ def test_hetero_conv_with_dot_syntax_node_types():
 
 @withCUDA
 @onlyLinux
-@disableExtensions
 @withPackage('torch>=2.1.0')
 def test_compile_hetero_conv_graph_breaks(device):
     import torch._dynamo as dynamo

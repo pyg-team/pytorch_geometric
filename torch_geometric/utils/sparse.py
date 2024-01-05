@@ -488,7 +488,10 @@ def ptr2index(ptr: Tensor) -> Tensor:
     return ind.repeat_interleave(ptr[1:] - ptr[:-1])
 
 
-def index2ptr(index: Tensor, size: int) -> Tensor:
+def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
+    if size is None:
+        size = int(index.max()) + 1 if index.numel() > 0 else 0
+
     return torch._convert_indices_from_coo_to_csr(
         index, size, out_int32=index.dtype == torch.int32)
 

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added the `FGDataset` ([#8657](https://github.com/pyg-team/pytorch_geometric/pull/8657))
+- Added an example for edge-level temporal sampling on a heterogenous graph ([#8383](https://github.com/pyg-team/pytorch_geometric/pull/8383))
 - Added the `num_graphs` option to the `StochasticBlockModelDataset` ([#8648](https://github.com/pyg-team/pytorch_geometric/pull/8648))
 - Added noise scheduler utility for diffusion based graph generative models ([#8347](https://github.com/pyg-team/pytorch_geometric/pull/8347))
 - Added the equivariant `ViSNet` model ([#8287](https://github.com/pyg-team/pytorch_geometric/pull/8287))
@@ -44,12 +45,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Sparse node features in `NELL` and `AttributedGraphDataset` are now represented as `torch.sparse_csr_tensor` instead of `torch_sparse.SparseTensor` ([#8679](https://github.com/pyg-team/pytorch_geometric/pull/8679))
 - Accelerated mini-batching of `torch.sparse` tensors ([#8670](https://github.com/pyg-team/pytorch_geometric/pull/8670))
 - Fixed RPC timeout due to worker closing in `DistLoader` with `atexit` not executed correctly in `worker_init_fn` ([#8605](https://github.com/pyg-team/pytorch_geometric/pull/8605))
 - `ExplainerDataset` will now contain node labels for any motif generator ([#8519](https://github.com/pyg-team/pytorch_geometric/pull/8519))
 - Made `utils.softmax` faster via `softmax_csr` ([#8399](https://github.com/pyg-team/pytorch_geometric/pull/8399))
 - Made `utils.mask.mask_select` faster ([#8369](https://github.com/pyg-team/pytorch_geometric/pull/8369))
-- Update `DistNeighborSampler` for homogeneous graphs ([#8209](https://github.com/pyg-team/pytorch_geometric/pull/8209), [#8367](https://github.com/pyg-team/pytorch_geometric/pull/8367), [#8375](https://github.com/pyg-team/pytorch_geometric/pull/8375))
+- Update `DistNeighborSampler` ([#8209](https://github.com/pyg-team/pytorch_geometric/pull/8209), [#8367](https://github.com/pyg-team/pytorch_geometric/pull/8367), [#8375](https://github.com/pyg-team/pytorch_geometric/pull/8375), ([#8624](https://github.com/pyg-team/pytorch_geometric/pull/8624))
 - Update `GraphStore` and `FeatureStore` to support distributed training ([#8083](https://github.com/pyg-team/pytorch_geometric/pull/8083))
 - Disallow the usage of `add_self_loops=True` in `GCNConv(normalize=False)` ([#8210](https://github.com/pyg-team/pytorch_geometric/pull/8210))
 - Disable device asserts during `torch_geometric.compile` ([#8220](https://github.com/pyg-team/pytorch_geometric/pull/8220))
@@ -61,6 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed a bug in which `InMemoryDataset` did not reconstruct the correct data class when a `pre_transform` has modified it ([#8692](https://github.com/pyg-team/pytorch_geometric/pull/8692))
 - Fixed a bug in which transforms were not applied for `OnDiskDataset` ([#8663](https://github.com/pyg-team/pytorch_geometric/pull/8663))
 - Fixed mini-batch computation in `DMoNPooing` loss function ([#8285](https://github.com/pyg-team/pytorch_geometric/pull/8285))
 - Fixed `NaN` handling in `SQLDatabase` ([#8479](https://github.com/pyg-team/pytorch_geometric/pull/8479))
@@ -82,6 +85,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed batching of `HeteroData` converted using `ToSparseTensor()` when `torch_sparse` is not installed ([#8356](https://github.com/pyg-team/pytorch_geometric/pull/8356))
 
 ### Removed
+
+- Removed disabling of extension packages during `torch_geometric.compile` ([#8698](https://github.com/pyg-team/pytorch_geometric/pull/8698))
 
 ## \[2.4.0\] - 2023-10-12
 
