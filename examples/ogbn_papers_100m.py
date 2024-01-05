@@ -81,11 +81,10 @@ if args.cugraph_data_loader:
     fs.add_data(data.x, "N", "x")
     fs.add_data(data.y, "N", "y")
     cugraph_store = CuGraphStore(fs, G, N)
-    train_loader = CuGraphNeighborLoader(
-        cugraph_store,
-        input_nodes=split_idx['train'],
-        shuffle=True, drop_last=True,
-        **kwargs)
+    train_loader = CuGraphNeighborLoader(cugraph_store,
+                                         input_nodes=split_idx['train'],
+                                         shuffle=True, drop_last=True,
+                                         **kwargs)
     val_loader = CuGraphNeighborLoader(cugraph_store,
                                        input_nodes=split_idx['valid'],
                                        **kwargs)

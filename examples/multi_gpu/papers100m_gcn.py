@@ -155,13 +155,10 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             for epoch in range(epochs):
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
-                BulkSampleLoader(
-                    cugraph_store,
-                    cugraph_store,
-                    input_nodes=split_idx['train'],
-                    directory=train_path,
-                    shuffle=True, drop_last=True,
-                    **kwargs)
+                BulkSampleLoader(cugraph_store, cugraph_store,
+                                 input_nodes=split_idx['train'],
+                                 directory=train_path, shuffle=True,
+                                 drop_last=True, **kwargs)
 
             print('validation', len(split_idx['valid']))
             eval_loader = CuGraphNeighborLoader(cugraph_store,
