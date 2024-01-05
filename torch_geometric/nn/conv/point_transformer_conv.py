@@ -134,7 +134,7 @@ class PointTransformerConv(MessagePassing):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairTensor, pos: PairTensor, alpha: PairTensor)
-        out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha)
         return out
 
     def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,

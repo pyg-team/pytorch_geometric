@@ -87,8 +87,7 @@ class TAGConv(MessagePassing):
         out = self.lins[0](x)
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                               size=None)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
             out = out + lin.forward(x)
 
         if self.bias is not None:

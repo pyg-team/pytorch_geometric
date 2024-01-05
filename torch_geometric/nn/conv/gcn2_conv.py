@@ -135,7 +135,7 @@ class GCN2Conv(MessagePassing):
                     edge_index = cache
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
+        x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
         x.mul_(1 - self.alpha)
         x_0 = self.alpha * x_0[:x.size(0)]

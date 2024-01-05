@@ -45,7 +45,7 @@ class GATEConv(MessagePassing):
         alpha = self.edge_updater(edge_index, x=x, edge_attr=edge_attr)
 
         # propagate_type: (x: Tensor, alpha: Tensor)
-        out = self.propagate(edge_index, x=x, alpha=alpha, size=None)
+        out = self.propagate(edge_index, x=x, alpha=alpha)
         out = out + self.bias
         return out
 

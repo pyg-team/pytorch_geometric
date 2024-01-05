@@ -58,7 +58,7 @@ class EdgeConv(MessagePassing):
             x = (x, x)
 
         # propagate_type: (x: PairTensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
@@ -136,7 +136,7 @@ class DynamicEdgeConv(MessagePassing):
         edge_index = knn(x[0], x[1], self.k, b[0], b[1]).flip([0])
 
         # propagate_type: (x: PairTensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))

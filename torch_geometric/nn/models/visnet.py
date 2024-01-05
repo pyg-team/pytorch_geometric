@@ -404,7 +404,7 @@ class NeighborEmbedding(MessagePassing):
         W = self.distance_proj(edge_attr) * C.view(-1, 1)
 
         x_neighbors = self.embedding(z)
-        x_neighbors = self.propagate(edge_index, x=x_neighbors, W=W, size=None)
+        x_neighbors = self.propagate(edge_index, x=x_neighbors, W=W)
         x_neighbors = self.combine(torch.cat([x, x_neighbors], dim=1))
         return x_neighbors
 
@@ -604,7 +604,7 @@ class ViS_MP(MessagePassing):
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(edge_index, q=q, k=k, v=v, dk=dk, dv=dv,
-                                    vec=vec, r_ij=r_ij, d_ij=d_ij, size=None)
+                                    vec=vec, r_ij=r_ij, d_ij=d_ij)
 
         o1, o2, o3 = torch.split(self.o_proj(x), self.hidden_channels, dim=1)
         dx = vec_dot * o2 + o3
