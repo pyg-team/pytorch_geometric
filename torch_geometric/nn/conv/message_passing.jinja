@@ -34,23 +34,6 @@ class EdgeUpdater_Collect_{{uid}}(NamedTuple):
 
 class {{cls_name}}({{parent_cls_name}}):
 
-    def _lift(self, src: Tensor, edge_index: Adj, dim: int) -> Tensor:
-        if isinstance(edge_index, Tensor):
-            index = edge_index[dim]
-            return src.index_select(self.node_dim, index)
-
-        elif isinstance(edge_index, SparseTensor):
-            row, col, _ = edge_index.coo()
-            if dim == 0:
-                return src.index_select(self.node_dim, col)
-            elif dim == 1:
-                return src.index_select(self.node_dim, row)
-
-        raise ValueError(
-            ('`MessagePassing.propagate` only supports integer tensors of '
-             'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
-             'argument `edge_index`.'))
-
     def _collect(
         self,
         edge_def: Union[Tensor, SparseTensor],
