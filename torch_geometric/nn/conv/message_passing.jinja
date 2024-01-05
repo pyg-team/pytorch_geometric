@@ -51,17 +51,13 @@ class {{cls_name}}({{parent_cls_name}}):
              'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
              'argument `edge_index`.'))
 
-    @torch.jit._overload_method
-    def _collect(self, edge_def, size, kwargs):
-        # type: (Tensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
-        pass
+    def _collect(
+        self,
+        edge_def: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: Propagate_{{uid}},
+    ) -> Collect_{{uid}}:
 
-    @torch.jit._overload_method
-    def _collect(self, edge_def, size, kwargs):
-        # type: (SparseTensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
-        pass
-
-    def _collect(self, edge_def, size, kwargs):
         init = torch.zeros(1)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in user_args %}
@@ -130,17 +126,13 @@ class {{cls_name}}({{parent_cls_name}}):
         return Collect_{{uid}}({% for k in collect_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
 {% if edge_updater_types|length > 0 %}
-    @torch.jit._overload_method
-    def _collect_edge(self, edge_def, size, kwargs):
-        # type: (Tensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
-        pass
+    def _collect_edge(
+        self,
+        edge_def: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: EdgeUpdater_{{uid}},
+    ) -> EdgeUpdater_Collect_{{uid}}:
 
-    @torch.jit._overload_method
-    def _collect_edge(self, edge_def, size, kwargs):
-        # type: (SparseTensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
-        pass
-
-    def _collect_edge(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in edge_user_args %}
