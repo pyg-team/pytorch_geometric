@@ -2,8 +2,8 @@ import inspect
 import os.path as osp
 import random
 import re
+import warnings
 from inspect import Parameter
-from itertools import chain
 from typing import (
     Any,
     Callable,
@@ -22,18 +22,9 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.conv.utils.inspector import (
-    Inspector,
-    func_body_repr,
-    func_header_repr,
-)
+from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
-from torch_geometric.nn.conv.utils.typing import (
-    parse_types,
-    resolve_types,
-    sanitize,
-    split_types_repr,
-)
+from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -644,6 +635,10 @@ class MessagePassing(torch.nn.Module):
 
     @explain.setter
     def explain(self, explain: Optional[bool]) -> None:
+        if torch.jit.is_scripting():
+            raise ValueError("Explainability of message passing modules "
+                             "is only supported on the Python module")
+
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -837,21 +832,15 @@ class MessagePassing(torch.nn.Module):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module that can be used in combination with
         :meth:`torch.jit.script`.
-
-        Args:
-            typing (str, optional): If given, will generate a concrete instance
-                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
-                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        if typing is not None:
+            warnings.warn("The 'typing' argument in 'MessagePassing.jittable' "
+                          "is deprecated and will be removed soon")
+
         if 'Jittable' in self.__class__.__name__:
             return self
 
-        try:
-            from jinja2 import Template
-        except ImportError:
-            raise ModuleNotFoundError(
-                "No module named 'jinja2' found on this machine. "
-                "Run 'pip install jinja2' to install the library.")
+        from jinja2 import Template
 
         source = inspect.getsource(self.__class__)
 
@@ -920,22 +909,6 @@ class MessagePassing(torch.nn.Module):
         # specific to the argument used for edge updates.
         edge_collect_types = self.inspector.types(['edge_update'])
 
-        # Collect `forward()` header, body and @overload types.
-        forward_types = [
-            resolve_types(*types) for types in parse_types(self.forward)
-        ]
-        flattened_forward_types = list(chain.from_iterable(forward_types))
-
-        keep_annotation = len(flattened_forward_types) < 2
-        forward_header = func_header_repr(self.forward, keep_annotation)
-        forward_body = func_body_repr(self.forward, keep_annotation)
-
-        if keep_annotation:
-            flattened_forward_types = []
-        elif typing is not None:
-            flattened_forward_types = []
-            forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
-
         root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
@@ -953,9 +926,6 @@ class MessagePassing(torch.nn.Module):
             collect_types=collect_types,
             user_args=self._user_args,
             edge_user_args=self._edge_user_args,
-            forward_header=forward_header,
-            forward_types=flattened_forward_types,
-            forward_body=forward_body,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),

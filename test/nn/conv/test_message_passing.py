@@ -34,10 +34,17 @@ class MyConv(MessagePassing):
         self.lin_l = Linear(in_channels[0], out_channels)
         self.lin_r = Linear(in_channels[1], out_channels)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_weight: OptTensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
+
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
