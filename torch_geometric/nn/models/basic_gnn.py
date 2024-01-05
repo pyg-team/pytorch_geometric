@@ -381,7 +381,7 @@ class BasicGNN(torch.nn.Module):
 
         return x_all
 
-    def jittable(self, use_sparse_tensor: bool = False) -> 'BasicGNN':
+    def jittable(self) -> 'BasicGNN':
         r"""Produces a new jittable instance module that can be used in
         combination with :meth:`torch.jit.script`.
         """
