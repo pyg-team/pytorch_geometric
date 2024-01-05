@@ -189,17 +189,16 @@ def row_to_data(row: Any, tol: float, scaling_factor: float,
 
     idxs = list(adsorbate_idxs.union(surface_idxs))
     elems = [atoms[index].symbol for index in idxs]
-    nl = [pair for pair in nl if pair[0] in idxs and pair[1] in idxs]
-    elem_array = np.array(list(elems)).reshape(-1, 1)
+    elem_array = np.array(elems).reshape(-1, 1)
     elem_enc = ohe_elems.transform(elem_array).toarray()
-    x = from_numpy(elem_enc).float()
+    mask = np.logical_and(np.isin(nl[:, 0], idxs), np.isin(nl[:, 1], idxs))
+    nl = nl[mask]
     edges = [(idxs.index(pair[0]), idxs.index(pair[1])) for pair in nl]
     edge_tails = [x for x, _ in edges] + [y for _, y in edges]
     edge_heads = [y for _, y in edges] + [x for x, _ in edges]
-    edge_index = tensor([edge_tails, edge_heads], dtype=long)
     graph = Data(
-        x=x,
-        edge_index=edge_index,
+        x=from_numpy(elem_enc).float(),
+        edge_index=tensor([edge_tails, edge_heads], dtype=long),
         ase_atoms=atoms,
         formula=row.get("formula"),
         metal=row.get("metal"),
