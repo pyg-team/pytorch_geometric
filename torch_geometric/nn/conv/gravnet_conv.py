@@ -83,15 +83,18 @@ class GravNetConv(MessagePassing):
         self.lin_out2.reset_parameters()
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
         # forward_type: (Tensor, OptTensor) -> Tensor
         # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
             is_bipartite = False
+        assert isinstance(x, tuple)
 
         if x[0].dim() != 2:
             raise ValueError("Static graphs not supported in 'GravNetConv'")

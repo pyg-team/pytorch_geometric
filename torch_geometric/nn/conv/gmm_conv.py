@@ -131,7 +131,8 @@ class GMMConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None):
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         if not self.separate_gaussians:
