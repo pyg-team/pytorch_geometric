@@ -67,30 +67,51 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.loader import DataListLoader
 from torch_geometric.loader import DenseDataLoader
 
-NeighborSampler = deprecated("use 'loader.NeighborSampler' instead",
-                             'data.NeighborSampler')(NeighborSampler)
-ClusterData = deprecated("use 'loader.ClusterData' instead",
-                         'data.ClusterData')(ClusterData)
-ClusterLoader = deprecated("use 'loader.ClusterLoader' instead",
-                           'data.ClusterLoader')(ClusterLoader)
-GraphSAINTSampler = deprecated("use 'loader.GraphSAINTSampler' instead",
-                               'data.GraphSAINTSampler')(GraphSAINTSampler)
-GraphSAINTNodeSampler = deprecated(
-    "use 'loader.GraphSAINTNodeSampler' instead",
-    'data.GraphSAINTNodeSampler')(GraphSAINTNodeSampler)
-GraphSAINTEdgeSampler = deprecated(
-    "use 'loader.GraphSAINTEdgeSampler' instead",
-    'data.GraphSAINTEdgeSampler')(GraphSAINTEdgeSampler)
-GraphSAINTRandomWalkSampler = deprecated(
-    "use 'loader.GraphSAINTRandomWalkSampler' instead",
-    'data.GraphSAINTRandomWalkSampler')(GraphSAINTRandomWalkSampler)
-ShaDowKHopSampler = deprecated("use 'loader.ShaDowKHopSampler' instead",
-                               'data.ShaDowKHopSampler')(ShaDowKHopSampler)
-RandomNodeSampler = deprecated("use 'loader.RandomNodeLoader' instead",
-                               'data.RandomNodeSampler')(RandomNodeLoader)
-DataLoader = deprecated("use 'loader.DataLoader' instead",
-                        'data.DataLoader')(DataLoader)
-DataListLoader = deprecated("use 'loader.DataListLoader' instead",
-                            'data.DataListLoader')(DataListLoader)
-DenseDataLoader = deprecated("use 'loader.DenseDataLoader' instead",
-                             'data.DenseDataLoader')(DenseDataLoader)
+NeighborSampler = deprecated(  # type: ignore
+    details="use 'loader.NeighborSampler' instead",
+    func_name='data.NeighborSampler',
+)(NeighborSampler)
+ClusterData = deprecated(  # type: ignore
+    details="use 'loader.ClusterData' instead",
+    func_name='data.ClusterData',
+)(ClusterData)
+ClusterLoader = deprecated(  # type: ignore
+    details="use 'loader.ClusterLoader' instead",
+    func_name='data.ClusterLoader',
+)(ClusterLoader)
+GraphSAINTSampler = deprecated(  # type: ignore
+    details="use 'loader.GraphSAINTSampler' instead",
+    func_name='data.GraphSAINTSampler',
+)(GraphSAINTSampler)
+GraphSAINTNodeSampler = deprecated(  # type: ignore
+    details="use 'loader.GraphSAINTNodeSampler' instead",
+    func_name='data.GraphSAINTNodeSampler',
+)(GraphSAINTNodeSampler)
+GraphSAINTEdgeSampler = deprecated(  # type: ignore
+    details="use 'loader.GraphSAINTEdgeSampler' instead",
+    func_name='data.GraphSAINTEdgeSampler',
+)(GraphSAINTEdgeSampler)
+GraphSAINTRandomWalkSampler = deprecated(  # type: ignore
+    details="use 'loader.GraphSAINTRandomWalkSampler' instead",
+    func_name='data.GraphSAINTRandomWalkSampler',
+)(GraphSAINTRandomWalkSampler)
+ShaDowKHopSampler = deprecated(  # type: ignore
+    details="use 'loader.ShaDowKHopSampler' instead",
+    func_name='data.ShaDowKHopSampler',
+)(ShaDowKHopSampler)
+RandomNodeSampler = deprecated(
+    details="use 'loader.RandomNodeLoader' instead",
+    func_name='data.RandomNodeSampler',
+)(RandomNodeLoader)
+DataLoader = deprecated(  # type: ignore
+    details="use 'loader.DataLoader' instead",
+    func_name='data.DataLoader',
+)(DataLoader)
+DataListLoader = deprecated(  # type: ignore
+    details="use 'loader.DataListLoader' instead",
+    func_name='data.DataListLoader',
+)(DataListLoader)
+DenseDataLoader = deprecated(  # type: ignore
+    details="use 'loader.DenseDataLoader' instead",
+    func_name='data.DenseDataLoader',
+)(DenseDataLoader)

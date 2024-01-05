@@ -1,4 +1,4 @@
-mport copy
+import copy
 import math
 import time
 from typing import Any, Dict, Optional, Union
@@ -10,6 +10,7 @@ from torch.nn.parameter import Parameter
 
 import torch_geometric.backend
 import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
@@ -56,7 +57,7 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data
+    r"""Applies a linear tranformation to the incoming data.
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
@@ -124,9 +125,8 @@ class Linear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The input features.
+        r"""Args:
+        x (torch.Tensor): The input features.
         """
         return F.linear(x, self.weight, self.bias)
 
@@ -158,7 +158,7 @@ class Linear(torch.nn.Module):
 
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
-    to types
+    to types.
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
@@ -274,10 +274,9 @@ class HeteroLinear(torch.nn.Module):
         return use_segment_matmul
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The input features.
-            type_vec (torch.Tensor): A vector that maps each entry to a type.
+        r"""Args:
+        x (torch.Tensor): The input features.
+        type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         perm: Optional[Tensor] = None
         if not self.is_sorted:
@@ -288,7 +287,11 @@ class HeteroLinear(torch.nn.Module):
         type_vec_ptr = index2ptr(type_vec, self.num_types)
 
         if torch_geometric.backend.use_segment_matmul is None:
-            if torch_geometric.typing.WITH_SEGMM:
+            use_segment_matmul = False
+
+            # TODO check cses of compiling and scripting properly
+            if torch_geometric.typing.WITH_SEGMM and not is_compiling(
+            ) and not torch.jit.is_scripting():
                 # to avoid too many measurements for dynamic shapes
                 # use "magnitude" of number of rows as target
                 num_rows = math.floor(math.log10(x.size(0)))
@@ -302,15 +305,12 @@ class HeteroLinear(torch.nn.Module):
                     use_segment_matmul = self._update_timing_cache(
                         x, type_vec_ptr, num_rows)
 
-                else:
-                    use_segment_matmul = False
-
-            else:
-                use_segment_matmul = False
-
         else:
+            # TODO check cases of compiling and scripting properly
             use_segment_matmul = (torch_geometric.typing.WITH_SEGMM and
-                                  torch_geometric.backend.use_segment_matmul)
+                                  torch_geometric.backend.use_segment_matmul
+                                  and not is_compiling()
+                                  and not torch.jit.is_scripting())
 
         if use_segment_matmul:
             out = self.forward_segmm(x, type_vec_ptr)
@@ -344,7 +344,7 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary
+    r"""Applies separate linear tranformations to the incoming data dictionary.
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
@@ -417,10 +417,9 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""
-        Args:
-            x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
-                features for each individual type.
+        r"""Args:
+        x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
+            features for each individual type.
         """
         out_dict = {}
 
@@ -431,7 +430,7 @@ class HeteroDictLinear(torch.nn.Module):
             use_segment_matmul = len(x_dict) >= 10
 
         if (use_segment_matmul and torch_geometric.typing.WITH_GMM
-                and not torch.jit.is_scripting()):
+                and not is_compiling() and not torch.jit.is_scripting()):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:

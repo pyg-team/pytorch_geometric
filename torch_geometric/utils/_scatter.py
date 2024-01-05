@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import warnings
+from torch_geometric import is_compiling, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
@@ -88,9 +88,10 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         # in case the input does not require gradients:
         if reduce in ['min', 'max', 'amin', 'amax']:
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or not src.is_cuda or not src.requires_grad):
+                    or is_compiling() or not src.is_cuda
+                    or not src.requires_grad):
 
-                if src.is_cuda and src.requires_grad:
+                if src.is_cuda and src.requires_grad and not is_compiling():
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
@@ -106,9 +107,9 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
         if reduce == 'mul':
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or not src.is_cuda):
+                    or is_compiling() or not src.is_cuda):
 
-                if src.is_cuda:
+                if src.is_cuda and not is_compiling():
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
@@ -185,7 +186,7 @@ def scatter_argmax(
     dim_size: Optional[int] = None,
 ) -> Tensor:
 
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling():
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
         return out[1]
 

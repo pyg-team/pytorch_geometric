@@ -34,29 +34,7 @@ class EdgeUpdater_Collect_{{uid}}(NamedTuple):
 
 class {{cls_name}}({{parent_cls_name}}):
 
-    @torch.jit._overload_method
-    def _check_input(self, edge_index, size):
-        # type: (Tensor, Size) -> List[Optional[int]]
-        pass
-
-    @torch.jit._overload_method
-    def _check_input(self, edge_index, size):
-        # type: (SparseTensor, Size) -> List[Optional[int]]
-        pass
-
-{{check_input}}
-
-    @torch.jit._overload_method
-    def _lift(self, src, edge_index, dim):
-        # type: (Tensor, Tensor, int) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def _lift(self, src, edge_index, dim):
-        # type: (Tensor, SparseTensor, int) -> Tensor
-        pass
-
-    def _lift(self, src, edge_index, dim):
+    def _lift(self, src: Tensor, edge_index: Adj, dim: int) -> Tensor:
         if isinstance(edge_index, Tensor):
             index = edge_index[dim]
             return src.index_select(self.node_dim, index)

@@ -21,6 +21,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
             undirected.
+        num_graphs (int, optional): The number of graphs. (default: :obj:`1`)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
@@ -45,6 +46,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         root: str,
         block_sizes: Union[List[int], Tensor],
         edge_probs: Union[List[List[float]], Tensor],
+        num_graphs: int = 1,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
@@ -57,8 +59,11 @@ class StochasticBlockModelDataset(InMemoryDataset):
         if not isinstance(edge_probs, torch.Tensor):
             edge_probs = torch.tensor(edge_probs, dtype=torch.float)
 
+        assert num_graphs > 0
+
         self.block_sizes = block_sizes
         self.edge_probs = edge_probs
+        self.num_graphs = num_graphs
         self.num_channels = num_channels
         self.is_undirected = is_undirected
 
@@ -86,7 +91,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
         edge_probs = self.edge_probs.view(-1).tolist()
         hash2 = '-'.join([f'{x:.1f}' for x in edge_probs])
 
-        return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
+        return f'data_{self.num_channels}_{hash1}_{hash2}_{self.num_graphs}.pt'
 
     def process(self) -> None:
         from sklearn.datasets import make_classification
@@ -97,26 +102,30 @@ class StochasticBlockModelDataset(InMemoryDataset):
         num_samples = int(self.block_sizes.sum())
         num_classes = self.block_sizes.size(0)
 
-        x = None
-        if self.num_channels is not None:
-            x, y_not_sorted = make_classification(
-                n_samples=num_samples,
-                n_features=self.num_channels,
-                n_classes=num_classes,
-                weights=self.block_sizes / num_samples,
-                **self.kwargs,
-            )
-            x = x[np.argsort(y_not_sorted)]
-            x = torch.from_numpy(x).to(torch.float)
+        data_list = []
+        for _ in range(self.num_graphs):
+            x = None
+            if self.num_channels is not None:
+                x, y_not_sorted = make_classification(
+                    n_samples=num_samples,
+                    n_features=self.num_channels,
+                    n_classes=num_classes,
+                    weights=self.block_sizes / num_samples,
+                    **self.kwargs,
+                )
+                x = x[np.argsort(y_not_sorted)]
+                x = torch.from_numpy(x).to(torch.float)
 
-        y = torch.arange(num_classes).repeat_interleave(self.block_sizes)
+            y = torch.arange(num_classes).repeat_interleave(self.block_sizes)
 
-        data = Data(x=x, edge_index=edge_index, y=y)
+            data = Data(x=x, edge_index=edge_index, y=y)
 
-        if self.pre_transform is not None:
-            data = self.pre_transform(data)
+            if self.pre_transform is not None:
+                data = self.pre_transform(data)
 
-        self.save([data], self.processed_paths[0])
+            data_list.append(data)
+
+        self.save(data_list, self.processed_paths[0])
 
 
 class RandomPartitionGraphDataset(StochasticBlockModelDataset):
@@ -135,6 +144,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         num_nodes_per_class (int): The number of nodes per class.
         node_homophily_ratio (float): The degree of node homophily.
         average_degree (float): The average degree of the graph.
+        num_graphs (int, optional): The number of graphs. (default: :obj:`1`)
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
@@ -159,6 +169,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         num_nodes_per_class: int,
         node_homophily_ratio: float,
         average_degree: float,
+        num_graphs: int = 1,
         num_channels: Optional[int] = None,
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
@@ -183,15 +194,15 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         for r in range(num_classes):
             edge_probs[r][r] = p_in
 
-        super().__init__(root, block_sizes, edge_probs, num_channels,
-                         is_undirected, transform, pre_transform, **kwargs)
-        self.load(self.processed_paths[0])
+        super().__init__(root, block_sizes, edge_probs, num_graphs,
+                         num_channels, is_undirected, transform, pre_transform,
+                         **kwargs)
 
     @property
     def processed_file_names(self) -> str:
         return (f'data_{self.num_channels}_{self._num_classes}_'
                 f'{self.num_nodes_per_class}_{self.node_homophily_ratio:.1f}_'
-                f'{self.average_degree:.1f}.pt')
+                f'{self.average_degree:.1f}_{self.num_graphs}.pt')
 
     def process(self) -> None:
         return super().process()

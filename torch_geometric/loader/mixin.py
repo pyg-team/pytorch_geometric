@@ -251,7 +251,7 @@ class AffinityMixin:
                 "Use `enable_multithreading` for better performance.")
 
         self.loader_cores = loader_cores[:] if loader_cores else None
-        if loader_cores is None:
+        if self.loader_cores is None:
             numa_info = get_numa_nodes_cores()
 
             if numa_info and len(numa_info[0]) > self.num_workers:
@@ -283,7 +283,7 @@ class AffinityMixin:
         try:
             self.worker_init_fn = self._aff_init_fn
             logging.debug(f"{self.num_workers} data loader workers are "
-                          f"assigned to CPUs {loader_cores}")
+                          f"assigned to CPUs {self.loader_cores}")
             yield
         finally:
             self.worker_init_fn = self._old_worker_init_fn

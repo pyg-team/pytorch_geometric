@@ -159,12 +159,14 @@ def withPackage(*args: str) -> Callable:
     """
     na_packages = set(package for package in args if not has_package(package))
 
+    if len(na_packages) == 1:
+        reason = f"Package {list(na_packages)[0]} not found"
+    else:
+        reason = f"Packages {na_packages} not found"
+
     def decorator(func: Callable) -> Callable:
         import pytest
-        return pytest.mark.skipif(
-            len(na_packages) > 0,
-            reason=f"Package(s) {na_packages} are not installed",
-        )(func)
+        return pytest.mark.skipif(len(na_packages) > 0, reason=reason)(func)
 
     return decorator
 

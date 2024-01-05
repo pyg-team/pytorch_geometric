@@ -1,13 +1,14 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, cast
 
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import EdgeType, SparseTensor
+from torch_geometric.typing import EdgeType
 from torch_geometric.utils import coalesce, degree
 
 
@@ -90,10 +91,10 @@ class AddMetaPaths(BaseTransform):
         max_sample (int, optional): If set, will sample at maximum
             :obj:`max_sample` neighbors within metapaths. Useful in order to
             tackle very dense metapath edges. (default: :obj:`None`)
-        weighted (bool, optional): If set to :obj:`True` compute weights for
-            each metapath edge and store them in :obj:`edge_weight`. The weight
-            of each metapath edge is computed as the number of metapaths from
-            the start to the end of the metapath edge.
+        weighted (bool, optional): If set to :obj:`True`, computes weights for
+            each metapath edge and stores them in :obj:`edge_weight`. The
+            weight of each metapath edge is computed as the number of metapaths
+            from the start to the end of the metapath edge.
             (default :obj:`False`)
     """
     def __init__(
@@ -130,37 +131,34 @@ class AddMetaPaths(BaseTransform):
         self.weighted = weighted
 
     def forward(self, data: HeteroData) -> HeteroData:
-        edge_types = data.edge_types  # save original edge types
+        edge_types = data.edge_types  # Save original edge types.
         data.metapath_dict = {}
 
         for j, metapath in enumerate(self.metapaths):
             for edge_type in metapath:
-                assert data._to_canonical(
-                    edge_type) in edge_types, f"'{edge_type}' not present"
+                assert data._to_canonical(edge_type) in edge_types
 
             edge_type = metapath[0]
-            edge_weight = self._get_edge_weight(data, edge_type)
-            adj1 = SparseTensor.from_edge_index(
-                edge_index=data[edge_type].edge_index,
-                sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
+            edge_index, edge_weight = self._edge_index(data, edge_type)
 
             if self.max_sample is not None:
-                adj1 = self.sample_adj(adj1)
+                edge_index, edge_weight = self._sample(edge_index, edge_weight)
 
             for i, edge_type in enumerate(metapath[1:]):
-                edge_weight = self._get_edge_weight(data, edge_type)
-                adj2 = SparseTensor.from_edge_index(
-                    edge_index=data[edge_type].edge_index,
-                    sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
+                edge_index2, edge_weight2 = self._edge_index(data, edge_type)
 
-                adj1 = adj1 @ adj2
+                edge_index, edge_weight = edge_index.matmul(
+                    edge_index2, edge_weight, edge_weight2)
+
+                if not self.weighted:
+                    edge_weight = None
 
                 if self.max_sample is not None:
-                    adj1 = self.sample_adj(adj1)
+                    edge_index, edge_weight = self._sample(
+                        edge_index, edge_weight)
 
-            row, col, edge_weight = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
-            data[new_edge_type].edge_index = torch.vstack([row, col])
+            data[new_edge_type].edge_index = edge_index
             if self.weighted:
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
@@ -170,25 +168,44 @@ class AddMetaPaths(BaseTransform):
 
         return data
 
-    def sample_adj(self, adj: SparseTensor) -> SparseTensor:
-        row, col, _ = adj.coo()
-        deg = degree(row, num_nodes=adj.size(0))
-        prob = (self.max_sample * (1. / deg))[row]
-        mask = torch.rand_like(prob) < prob
-        return adj.masked_select_nnz(mask, layout='coo')
+    def _edge_index(
+        self,
+        data: HeteroData,
+        edge_type: EdgeType,
+    ) -> Tuple[EdgeIndex, Optional[Tensor]]:
 
-    def _get_edge_weight(self, data: HeteroData,
-                         edge_type: EdgeType) -> torch.Tensor:
-        if self.weighted:
-            edge_weight = data[edge_type].get('edge_weight', None)
-            if edge_weight is None:
-                edge_weight = torch.ones(
-                    data[edge_type].num_edges,
-                    device=data[edge_type].edge_index.device)
-            assert edge_weight.ndim == 1
-        else:
-            edge_weight = None
-        return edge_weight
+        edge_index = EdgeIndex(
+            data[edge_type].edge_index,
+            sparse_size=data[edge_type].size(),
+        )
+        edge_index, perm = edge_index.sort_by('row')
+
+        if not self.weighted:
+            return edge_index, None
+
+        edge_weight = data[edge_type].get('edge_weight')
+        if edge_weight is not None:
+            assert edge_weight.dim() == 1
+            edge_weight = edge_weight[perm]
+
+        return edge_index, edge_weight
+
+    def _sample(
+        self,
+        edge_index: EdgeIndex,
+        edge_weight: Optional[Tensor],
+    ) -> Tuple[EdgeIndex, Optional[Tensor]]:
+
+        deg = degree(edge_index[0], num_nodes=edge_index.get_sparse_size(0))
+        prob = (self.max_sample * (1. / deg))[edge_index[0]]
+        mask = torch.rand_like(prob) < prob
+
+        edge_index = cast(EdgeIndex, edge_index[:, mask])
+        assert isinstance(edge_index, EdgeIndex)
+        if edge_weight is not None:
+            edge_weight = edge_weight[mask]
+
+        return edge_index, edge_weight
 
 
 @functional_transform('add_random_metapaths')
@@ -260,10 +277,11 @@ class AddRandomMetaPaths(BaseTransform):
                 self.walks_per_node[j])
 
             for i, edge_type in enumerate(metapath):
-                edge_index = data[edge_type].edge_index
-                adj = SparseTensor(row=edge_index[0], col=edge_index[1],
-                                   sparse_sizes=data[edge_type].size())
-                col, mask = self.sample(adj, start)
+                edge_index = EdgeIndex(
+                    data[edge_type].edge_index,
+                    sparse_size=data[edge_type].size(),
+                )
+                col, mask = self.sample(edge_index, start)
                 row, col = row[mask], col[mask]
                 start = col
 
@@ -277,18 +295,23 @@ class AddRandomMetaPaths(BaseTransform):
         return data
 
     @staticmethod
-    def sample(adj: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
-        """Sample a neighbor form :obj:`adj` for each node in :obj:`subset`."""
-        rowcount = adj.storage.rowcount()[subset]
+    def sample(edge_index: EdgeIndex, subset: Tensor) -> Tuple[Tensor, Tensor]:
+        """Sample neighbors from :obj:`edge_index` for each node in
+        :obj:`subset`.
+        """
+        edge_index, _ = edge_index.sort_by('row')
+        rowptr = edge_index.get_indptr()
+        rowcount = rowptr.diff()[subset]
+
         mask = rowcount > 0
         offset = torch.zeros_like(subset)
-        offset[mask] = adj.storage.rowptr()[subset[mask]]
+        offset[mask] = rowptr[subset[mask]]
 
         rand = torch.rand((rowcount.size(0), 1), device=subset.device)
         rand.mul_(rowcount.to(rand.dtype).view(-1, 1))
         rand = rand.to(torch.long)
         rand.add_(offset.view(-1, 1))
-        col = adj.storage.col()[rand].squeeze()
+        col = edge_index[1][rand].squeeze()
         return col, mask
 
     def __repr__(self) -> str:
@@ -312,7 +335,7 @@ def postprocess(
             else:
                 del data[i]
 
-    # remove nodes not connected by any edge type.
+    # Remove nodes not connected by any edge type:
     if drop_unconnected_node_types:
         new_edge_types = data.edge_types
         node_types = data.node_types

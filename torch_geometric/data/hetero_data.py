@@ -922,7 +922,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             if isinstance(values[0], TensorFrame):
-                value = torch_frame.cat(values, along='row')
+                value = torch_frame.cat(values, dim=0)
             else:
                 dim = self.__cat_dim__(key, values[0], self.node_stores[0])
                 dim = values[0].dim() + dim if dim < 0 else dim

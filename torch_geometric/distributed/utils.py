@@ -29,6 +29,10 @@ class NodeDict:
             k: torch.empty(0, dtype=torch.int64)
             for k in node_types
         }
+        self.seed_time: Dict[NodeType, List[Tensor]] = {
+            k: num_hops * [torch.empty(0, dtype=torch.int64)]
+            for k in node_types
+        }
 
 
 class BatchDict:
