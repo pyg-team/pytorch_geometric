@@ -21,6 +21,14 @@ class FGDataset(InMemoryDataset):
     closed-shell organic molecules adsorbed on 14 different transition metals.
     Graphs are generated from the DFT structures stored in the ASE database.
 
+    .. note::
+        The final dataset size depends on the chosen conversion parameters.
+        You can use the arguments :obj:`tol` and :obj:`sf` to change the
+        conversion settings. The size of the graphs depends on the surface
+        neighbor connectivity. You can use the argument :obj:`second_order` to
+        include second-order surface neighbors in the graph. The provided
+        statistics are computed with the default conversion settings.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
@@ -44,6 +52,23 @@ class FGDataset(InMemoryDataset):
             (default: :obj:`1.5`)
         second_order (bool, optional): Whether to include second-order
             surface neighbors in the graph. (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 6532
+          - ~15.7
+          - ~39.8
+          - 19
+          - 3
     """
 
     url = "https://zenodo.org/records/10410523/files/FGdataset.db?download=1"
@@ -100,7 +125,11 @@ class FGDataset(InMemoryDataset):
         download_url(self.url, self.raw_dir)
 
     def process(self) -> None:
-        from ase.db import connect
+        try:
+            from ase.db import connect
+        except ImportError:
+            raise ImportError(
+                "Please install ASE to preprocess the FG-dataset.")
 
         ncpu = os.cpu_count()
         assert ncpu is not None, "No CPU found!"
@@ -137,51 +166,7 @@ def row_to_data(row: Any, tol: float, scaling_factor: float,
     Returns:
         graph (Data): PyG Data object.
     """
-    idxs, elems, nl = atoms_to_graph(row.toatoms(), tol, scaling_factor,
-                                     second_order)
-    elem_array = np.array(list(elems)).reshape(-1, 1)
-    elem_enc = ohe_elems.transform(elem_array).toarray()
-    x = from_numpy(elem_enc).float()
-    edges = [(idxs.index(pair[0]), idxs.index(pair[1])) for pair in nl]
-    edge_tails = [x for x, _ in edges] + [y for _, y in edges]
-    edge_heads = [y for _, y in edges] + [x for x, _ in edges]
-    edge_index = tensor([edge_tails, edge_heads], dtype=long)
-    graph = Data(
-        x=x,
-        edge_index=edge_index,
-        ase_atoms=row.toatoms(),
-        formula=row.get("formula"),
-        metal=row.get("metal"),
-        facet=row.get("facet"),
-        energy=row.get("energy"),
-        scaled_energy=row.get("scaled_energy"),
-        e_ads=row.get("e_ads"),
-        e_mol=row.get("e_mol"),
-        e_slab=row.get("e_slab"),
-        node_feats=list(ohe_elems.categories_[0]),
-        note=row.get("note"),
-    )
-    print("Graph generated for {}\n".format(graph.formula))
-    return graph
-
-
-def atoms_to_graph(atoms: Any, tol: float, scaling_factor: float,
-                   second_order: bool) -> tuple:
-    """Get nodes and edges from ASE Atoms object.
-
-    Args:
-        atoms (ase.atoms.Atoms): ASE Atoms of the adsorbate-surface system.
-        tol (float): tolerance for the distance between
-                     two atoms to be considered connected.
-        scaling_factor (float): scaling factor for the surface atoms' radii.
-        second_order (bool): Include second-order surface neighbours.
-
-    Returns:
-        tuple[list[int], list[str], list[tuple[int, int]]]:
-            - list[int]: indices of the atoms in the ensemble.
-            - list[str]: chemical elements of the atoms in the ensemble.
-            - list[tuple[int, int]]: connectivity list of the ensemble.
-    """
+    atoms = row.toatoms()
     adsorbate_idxs = {
         atom.index
         for atom in atoms if atom.symbol in ADSORBATE_ELEMS
@@ -204,8 +189,31 @@ def atoms_to_graph(atoms: Any, tol: float, scaling_factor: float,
 
     idxs = list(adsorbate_idxs.union(surface_idxs))
     elems = [atoms[index].symbol for index in idxs]
-    neighborlist = [pair for pair in nl if pair[0] in idxs and pair[1] in idxs]
-    return idxs, elems, neighborlist
+    nl = [pair for pair in nl if pair[0] in idxs and pair[1] in idxs]
+    elem_array = np.array(list(elems)).reshape(-1, 1)
+    elem_enc = ohe_elems.transform(elem_array).toarray()
+    x = from_numpy(elem_enc).float()
+    edges = [(idxs.index(pair[0]), idxs.index(pair[1])) for pair in nl]
+    edge_tails = [x for x, _ in edges] + [y for _, y in edges]
+    edge_heads = [y for _, y in edges] + [x for x, _ in edges]
+    edge_index = tensor([edge_tails, edge_heads], dtype=long)
+    graph = Data(
+        x=x,
+        edge_index=edge_index,
+        ase_atoms=atoms,
+        formula=row.get("formula"),
+        metal=row.get("metal"),
+        facet=row.get("facet"),
+        energy=row.get("energy"),
+        scaled_energy=row.get("scaled_energy"),
+        e_ads=row.get("e_ads"),
+        e_mol=row.get("e_mol"),
+        e_slab=row.get("e_slab"),
+        node_feats=list(ohe_elems.categories_[0]),
+        note=row.get("note"),
+    )
+    print("Graph generated for {}\n".format(graph.formula))
+    return graph
 
 
 def get_voronoi_neighborlist(atoms: Any, tol: float, sf: float) -> np.ndarray:
