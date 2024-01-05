@@ -18,6 +18,9 @@ import torch_geometric
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
 os.environ['CUDF_SPILL'] = '1'
+
+# Ensures that a CUDA context is not created on import of rapids.
+# Allows pytorch to create the context instead
 os.environ['RAPIDS_NO_INITIALIZE'] = '1'
 
 
