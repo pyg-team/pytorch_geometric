@@ -1,3 +1,4 @@
+import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -22,6 +23,11 @@ from torch_geometric.utils import (
     softmax,
 )
 from torch_geometric.utils.sparse import set_sparse_value
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class GATv2Conv(MessagePassing):
@@ -197,7 +203,37 @@ class GATv2Conv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
+    @overload
     def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: None = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: SparseTensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, SparseTensor]:
+        pass
+
+    def forward(  # noqa: F811
         self,
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
@@ -208,10 +244,6 @@ class GATv2Conv(MessagePassing):
             Tuple[Tensor, Tuple[Tensor, Tensor]],
             Tuple[Tensor, SparseTensor],
     ]:
-        # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""Runs the forward pass of the module.
 
         Args:
@@ -266,8 +298,7 @@ class GATv2Conv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
-                             size=None)
+        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr)
 
         alpha = self._alpha
         assert alpha is not None
