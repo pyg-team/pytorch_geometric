@@ -1,14 +1,9 @@
-import os
 from typing import Any, Callable, List, Optional, Tuple
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs
 
 
 class EllipticBitcoinDataset(InMemoryDataset):
@@ -63,7 +58,7 @@ class EllipticBitcoinDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -80,17 +75,15 @@ class EllipticBitcoinDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for file_name in self.raw_file_names:
-            path = download_url(f'{self.url}/{file_name}.zip', self.raw_dir)
-            extract_zip(path, self.raw_dir)
-            os.remove(path)
+            fs.cp(f'{self.url}/{file_name}.zip', self.raw_dir, extract=True)
 
     def _process_df(self, feat_df: Any, edge_df: Any,
                     class_df: Any) -> Tuple[Any, Any, Any]:
         return feat_df, edge_df, class_df
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         feat_df = pd.read_csv(self.raw_paths[0], header=None)

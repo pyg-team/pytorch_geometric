@@ -2,14 +2,16 @@ import copy
 import os.path as osp
 import warnings
 from abc import ABC
-from collections.abc import Mapping, Sequence
 from typing import (
     Any,
     Callable,
     Dict,
     Iterable,
     List,
+    Mapping,
+    MutableSequence,
     Optional,
+    Sequence,
     Tuple,
     Type,
     Union,
@@ -61,11 +63,11 @@ class InMemoryDataset(Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         raise NotImplementedError
 
     def __init__(
@@ -76,12 +78,13 @@ class InMemoryDataset(Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform, pre_filter, log,
                          force_reload)
-        self._data = None
-        self.slices = None
-        self._data_list: Optional[List[BaseData]] = None
+
+        self._data: Optional[BaseData] = None
+        self.slices: Optional[Dict[str, Tensor]] = None
+        self._data_list: Optional[MutableSequence[Optional[BaseData]]] = None
 
     @property
     def num_classes(self) -> int:
@@ -119,21 +122,29 @@ class InMemoryDataset(Dataset, ABC):
         return data
 
     @classmethod
-    def save(cls, data_list: List[BaseData], path: str):
+    def save(cls, data_list: Sequence[BaseData], path: str) -> None:
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
-        fs.torch_save((data.to_dict(), slices), path)
+        fs.torch_save((data.to_dict(), slices, data.__class__), path)
 
-    def load(self, path: str, data_cls: Type[BaseData] = Data):
+    def load(self, path: str, data_cls: Type[BaseData] = Data) -> None:
         r"""Loads the dataset from the file path :obj:`path`."""
-        data, self.slices = fs.torch_load(path)
-        if isinstance(data, dict):  # Backward compatibility.
-            data = data_cls.from_dict(data)
-        self.data = data
+        out = fs.torch_load(path)
+        assert isinstance(out, tuple)
+        assert len(out) == 2 or len(out) == 3
+        if len(out) == 2:  # Backward compatibility.
+            data, self.slices = out
+        else:
+            data, self.slices, data_cls = out
+
+        if not isinstance(data, dict):  # Backward compatibility.
+            self.data = data
+        else:
+            self.data = data_cls.from_dict(data)
 
     @staticmethod
     def collate(
-        data_list: List[BaseData],
+        data_list: Sequence[BaseData],
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
         r"""Collates a list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects to the internal

@@ -1,6 +1,6 @@
+import copy
 import warnings
-from copy import copy
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -96,8 +96,11 @@ class RandomLinkSplit(BaseTransform):
         neg_sampling_ratio: float = 1.0,
         disjoint_train_ratio: Union[int, float] = 0.0,
         edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
-        rev_edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
-    ):
+        rev_edge_types: Optional[Union[
+            EdgeType,
+            List[Optional[EdgeType]],
+        ]] = None,
+    ) -> None:
         if isinstance(edge_types, list):
             if rev_edge_types is None:
                 rev_edge_types = [None] * len(edge_types)
@@ -119,19 +122,30 @@ class RandomLinkSplit(BaseTransform):
     def forward(
         self,
         data: Union[Data, HeteroData],
-    ) -> Union[Data, HeteroData]:
+    ) -> Tuple[
+            Union[Data, HeteroData],
+            Union[Data, HeteroData],
+            Union[Data, HeteroData],
+    ]:
         edge_types = self.edge_types
         rev_edge_types = self.rev_edge_types
 
-        train_data, val_data, test_data = copy(data), copy(data), copy(data)
+        train_data = copy.copy(data)
+        val_data = copy.copy(data)
+        test_data = copy.copy(data)
 
         if isinstance(data, HeteroData):
+            assert isinstance(train_data, HeteroData)
+            assert isinstance(val_data, HeteroData)
+            assert isinstance(test_data, HeteroData)
+
             if edge_types is None:
                 raise ValueError(
                     "The 'RandomLinkSplit' transform expects 'edge_types' to "
                     "be specified when operating on 'HeteroData' objects")
 
             if not isinstance(edge_types, list):
+                assert not isinstance(rev_edge_types, list)
                 edge_types = [edge_types]
                 rev_edge_types = [rev_edge_types]
 
@@ -140,12 +154,22 @@ class RandomLinkSplit(BaseTransform):
             val_stores = [val_data[edge_type] for edge_type in edge_types]
             test_stores = [test_data[edge_type] for edge_type in edge_types]
         else:
+            assert isinstance(train_data, Data)
+            assert isinstance(val_data, Data)
+            assert isinstance(test_data, Data)
+
             rev_edge_types = [None]
+
+            train_data = copy.copy(data)
+            val_data = copy.copy(data)
+            test_data = copy.copy(data)
+
             stores = [data._store]
             train_stores = [train_data._store]
             val_stores = [val_data._store]
             test_stores = [test_data._store]
 
+        assert isinstance(rev_edge_types, list)
         for item in zip(stores, train_stores, val_stores, test_stores,
                         rev_edge_types):
             store, train_store, val_store, test_store, rev_edge_type = item
@@ -153,7 +177,8 @@ class RandomLinkSplit(BaseTransform):
             is_undirected = self.is_undirected
             is_undirected &= not store.is_bipartite()
             is_undirected &= (rev_edge_type is None
-                              or store._key == data[rev_edge_type]._key)
+                              or (isinstance(data, HeteroData)
+                                  and store._key == data[rev_edge_type]._key))
 
             edge_index = store.edge_index
             if is_undirected:
@@ -254,7 +279,7 @@ class RandomLinkSplit(BaseTransform):
         store: EdgeStorage,
         index: Tensor,
         is_undirected: bool,
-        rev_edge_type: EdgeType,
+        rev_edge_type: Optional[EdgeType],
     ) -> EdgeStorage:
 
         edge_attrs = {key for key in store.keys() if store.is_edge_attr(key)}

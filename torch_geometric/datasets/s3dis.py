@@ -58,7 +58,7 @@ class S3DIS(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -74,7 +74,7 @@ class S3DIS(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
@@ -82,7 +82,7 @@ class S3DIS(InMemoryDataset):
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import h5py
 
         with open(self.raw_paths[0], 'r') as f:
@@ -93,9 +93,9 @@ class S3DIS(InMemoryDataset):
 
         xs, ys = [], []
         for filename in filenames:
-            f = h5py.File(osp.join(self.raw_dir, filename))
-            xs += torch.from_numpy(f['data'][:]).unbind(0)
-            ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
+            h5 = h5py.File(osp.join(self.raw_dir, filename))
+            xs += torch.from_numpy(h5['data'][:]).unbind(0)
+            ys += torch.from_numpy(h5['label'][:]).to(torch.long).unbind(0)
 
         test_area = f'Area_{self.test_area}'
         train_data_list, test_data_list = [], []

@@ -88,7 +88,7 @@ class DBLP(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
@@ -104,12 +104,12 @@ class DBLP(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         node_types = ['author', 'paper', 'term', 'conference']

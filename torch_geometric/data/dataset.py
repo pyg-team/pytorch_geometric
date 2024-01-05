@@ -1,12 +1,20 @@
 import copy
-import os
 import os.path as osp
 import re
 import sys
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch.utils.data
@@ -16,6 +24,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -49,24 +58,24 @@ class Dataset(torch.utils.data.Dataset, ABC):
             (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
         be present in order to skip downloading.
         """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
         must be present in order to skip processing.
         """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
@@ -88,13 +97,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
         pre_filter: Optional[Callable] = None,
         log: bool = True,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(fs.normpath(root))
 
-        self.root = root
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -219,7 +228,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        os.makedirs(self.raw_dir, exist_ok=True)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
 
     @property
@@ -250,7 +259,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        os.makedirs(self.processed_dir, exist_ok=True)
+        fs.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
@@ -286,6 +295,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         else:
             return self.index_select(idx)
+
+    def __iter__(self) -> Iterator[BaseData]:
+        for i in range(len(self)):
+            yield self[i]
 
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
@@ -352,16 +365,16 @@ class Dataset(torch.utils.data.Dataset, ABC):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
-    def get_summary(self):
+    def get_summary(self) -> Any:
         r"""Collects summary statistics for the dataset."""
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self):  # pragma: no cover
+    def print_summary(self) -> None:
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
-    def to_datapipe(self):
+    def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
         The returned instance can then be used with :pyg:`PyG's` built-in
@@ -386,7 +399,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return DatasetAdapter(self)
 
 
-def overrides_method(cls, method_name: str):
+def overrides_method(cls, method_name: str) -> bool:
     from torch_geometric.data import InMemoryDataset
 
     if method_name in cls.__dict__:
@@ -418,7 +431,7 @@ def _repr(obj: Any) -> str:
     return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
 
 
-def _get_flattened_data_list(data_list: List[Any]) -> List[BaseData]:
+def _get_flattened_data_list(data_list: Iterable[Any]) -> List[BaseData]:
     outs: List[BaseData] = []
     for data in data_list:
         if isinstance(data, BaseData):

@@ -37,15 +37,17 @@ class Distance(BaseTransform):
         self.interval = interval
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.edge_index is not None
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         dist = torch.norm(pos[col] - pos[row], p=2, dim=-1).view(-1, 1)
 
         if self.norm and dist.numel() > 0:
-            max_value = dist.max() if self.max is None else self.max
+            max_val = float(dist.max()) if self.max is None else self.max
 
             length = self.interval[1] - self.interval[0]
-            dist = length * (dist / max_value) + self.interval[0]
+            dist = length * (dist / max_val) + self.interval[0]
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
