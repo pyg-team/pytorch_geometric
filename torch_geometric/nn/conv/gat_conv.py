@@ -1,3 +1,4 @@
+import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -24,6 +25,11 @@ from torch_geometric.utils import (
     softmax,
 )
 from torch_geometric.utils.sparse import set_sparse_value
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class GATConv(MessagePassing):
@@ -195,7 +201,40 @@ class GATConv(MessagePassing):
         glorot(self.att_edge)
         zeros(self.bias)
 
+    @overload
     def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights: None = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: SparseTensor,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, SparseTensor]:
+        pass
+
+    def forward(  # noqa: F811
         self,
         x: Union[Tensor, OptPairTensor],
         edge_index: Adj,
@@ -207,10 +246,6 @@ class GATConv(MessagePassing):
             Tuple[Tensor, Tuple[Tensor, Tensor]],
             Tuple[Tensor, SparseTensor],
     ]:
-        # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # forward_type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""Runs the forward pass of the module.
 
         Args:

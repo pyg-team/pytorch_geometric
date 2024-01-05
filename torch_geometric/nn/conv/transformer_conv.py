@@ -1,4 +1,5 @@
 import math
+import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -9,6 +10,11 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
 from torch_geometric.utils import softmax
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class TransformerConv(MessagePassing):
@@ -149,7 +155,37 @@ class TransformerConv(MessagePassing):
         if self.beta:
             self.lin_beta.reset_parameters()
 
+    @overload
     def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: None = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: SparseTensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, SparseTensor]:
+        pass
+
+    def forward(  # noqa: F811
         self,
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
@@ -160,10 +196,6 @@ class TransformerConv(MessagePassing):
             Tuple[Tensor, Tuple[Tensor, Tensor]],
             Tuple[Tensor, SparseTensor],
     ]:
-        # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
-        # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""Runs the forward pass of the module.
 
         Args:

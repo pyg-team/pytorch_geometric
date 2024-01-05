@@ -1,3 +1,4 @@
+import typing
 from typing import Callable, Optional, Union
 
 import torch
@@ -11,6 +12,11 @@ try:
     from torch_cluster import knn
 except ImportError:
     knn = None
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class EdgeConv(MessagePassing):
@@ -114,13 +120,27 @@ class DynamicEdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
+    @overload
     def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: PairTensor,
+        batch: Optional[PairTensor] = None,
+    ) -> Tensor:
+        pass
+
+    def forward(  # noqa: F811
         self,
         x: Union[Tensor, PairTensor],
         batch: Union[OptTensor, Optional[PairTensor]] = None,
     ) -> Tensor:
-        # forward_type: (Tensor, OptTensor) -> Tensor
-        # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         if isinstance(x, Tensor):
             x = (x, x)

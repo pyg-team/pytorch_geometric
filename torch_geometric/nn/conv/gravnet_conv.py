@@ -1,3 +1,4 @@
+import typing
 import warnings
 from typing import Optional, Union
 
@@ -12,6 +13,11 @@ try:
     from torch_cluster import knn
 except ImportError:
     knn = None
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class GravNetConv(MessagePassing):
@@ -82,13 +88,27 @@ class GravNetConv(MessagePassing):
         self.lin_out1.reset_parameters()
         self.lin_out2.reset_parameters()
 
+    @overload
     def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: PairTensor,
+        batch: Optional[PairTensor] = None,
+    ) -> Tensor:
+        pass
+
+    def forward(  # noqa: F811
         self,
         x: Union[Tensor, PairTensor],
         batch: Union[OptTensor, Optional[PairTensor]] = None,
     ) -> Tensor:
-        # forward_type: (Tensor, OptTensor) -> Tensor
-        # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):
