@@ -47,7 +47,7 @@ class SparseLinear(MessagePassing):
     ) -> Tensor:
         # propagate_type: (weight: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, weight=self.weight,
-                             edge_weight=edge_weight, size=None)
+                             edge_weight=edge_weight)
 
         if self.bias is not None:
             out = out + self.bias

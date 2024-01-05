@@ -197,7 +197,7 @@ class FAConv(MessagePassing):
 
         # propagate_type: (x: Tensor, alpha: PairTensor, edge_weight: OptTensor)  # noqa
         out = self.propagate(edge_index, x=x, alpha=(alpha_l, alpha_r),
-                             edge_weight=edge_weight, size=None)
+                             edge_weight=edge_weight)
 
         alpha = self._alpha
         self._alpha = None

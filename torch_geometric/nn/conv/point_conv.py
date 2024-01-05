@@ -100,7 +100,7 @@ class PointNetConv(MessagePassing):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos)
 
         if self.global_nn is not None:
             out = self.global_nn(out)

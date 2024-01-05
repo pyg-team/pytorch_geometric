@@ -220,7 +220,7 @@ class TransformerConv(MessagePassing):
 
         # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor) # noqa
         out = self.propagate(edge_index, query=query, key=key, value=value,
-                             edge_attr=edge_attr, size=None)
+                             edge_attr=edge_attr)
 
         alpha = self._alpha
         self._alpha = None

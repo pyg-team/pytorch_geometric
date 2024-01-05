@@ -124,8 +124,7 @@ class ResGatedGraphConv(MessagePassing):
             k, q, v = x[1], x[0], x[0]
 
         # propagate_type: (k: Tensor, q: Tensor, v: Tensor, edge_attr: OptTensor)  # noqa
-        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
-                             size=None)
+        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr)
 
         if self.root_weight:
             out = out + self.lin_skip(x[1])

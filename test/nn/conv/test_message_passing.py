@@ -72,7 +72,7 @@ class MyConvWithSelfLoops(MessagePassing):
         edge_index, _ = add_self_loops(edge_index)
 
         # propagate_type: (x: Tensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
 
 def test_my_conv_basic():
@@ -240,7 +240,7 @@ class MyMultipleAggrConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
 
 @pytest.mark.parametrize('multi_aggr_tuple', [
@@ -513,7 +513,7 @@ class MyMultipleOutputConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tuple[Tensor, Tensor]:
         # propagate_type: (x: Tensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
     def message(self, x_j: Tensor) -> Tuple[Tensor, Tensor]:
         return x_j, x_j
@@ -584,7 +584,7 @@ class MyAggregatorConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: TEnsor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.propagate(edge_index, x=x)
 
 
 @pytest.mark.parametrize('aggr_module', [

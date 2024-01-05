@@ -134,7 +134,7 @@ class FiLMConv(MessagePassing):
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
             out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
-                                       beta=beta, gamma=gamma, size=None)
+                                       beta=beta, gamma=gamma)
         else:
             for i, (lin, film) in enumerate(zip(self.lins, self.films)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
@@ -145,12 +145,12 @@ class FiLMConv(MessagePassing):
                     adj_t = torch_sparse.masked_select_nnz(
                         edge_index, mask, layout='coo')
                     out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
-                                               gamma=gamma, size=None)
+                                               gamma=gamma)
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
                     out = out + self.propagate(edge_index[:, mask], x=lin(
-                        x[0]), beta=beta, gamma=gamma, size=None)
+                        x[0]), beta=beta, gamma=gamma)
 
         return out
 

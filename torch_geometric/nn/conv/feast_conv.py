@@ -93,7 +93,7 @@ class FeaStConv(MessagePassing):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=x, size=None)
+        out = self.propagate(edge_index, x=x)
 
         if self.bias is not None:
             out = out + self.bias

@@ -118,8 +118,7 @@ class ClusterGCNConv(MessagePassing):
             edge_weight[row == col] += self.diag_lambda * deg_inv
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
         out = self.lin_out(out) + self.lin_root(x)
 
         return out
