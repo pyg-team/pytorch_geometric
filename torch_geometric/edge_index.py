@@ -130,7 +130,7 @@ def assert_two_dimensional(tensor: Tensor) -> None:
     if tensor.dim() != 2:
         raise ValueError(f"'EdgeIndex' needs to be two-dimensional "
                          f"(got {tensor.dim()} dimensions)")
-    if tensor.size(0) != 2:
+    if not torch.jit.is_tracing() and tensor.size(0) != 2:
         raise ValueError(f"'EdgeIndex' needs to have a shape of "
                          f"[2, *] (got {list(tensor.size())})")
 
@@ -142,7 +142,8 @@ def assert_contiguous(tensor: Tensor) -> None:
 
 
 def assert_symmetric(size: Tuple[Optional[int], Optional[int]]) -> None:
-    if size[0] is not None and size[1] is not None and size[0] != size[1]:
+    if (not torch.jit.is_tracing() and size[0] is not None
+            and size[1] is not None and size[0] != size[1]):
         raise ValueError(f"'EdgeIndex' is undirected but received a "
                          f"non-symmetric size (got {list(size)})")
 

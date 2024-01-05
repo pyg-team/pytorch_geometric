@@ -252,13 +252,43 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
+    def _index_select(
+        self,
+        src: Tensor,
+        edge_index: Tensor,
+        dim: int,
+    ) -> Tensor:
+
+        try:
+            index = edge_index[dim]
+            return src.index_select(self.node_dim, index)
+        except (IndexError, RuntimeError) as e:
+            if index.numel() > 0 and index.min() < 0:
+                raise IndexError(
+                    f"Found negative indices in 'edge_index' (got "
+                    f"{index.min().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
+
+            if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
+                raise IndexError(
+                    f"Found indices in 'edge_index' that are larger "
+                    f"than {src.size(self.node_dim) - 1} (got "
+                    f"{index.max().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
+
+            raise e
+
     def _lift(
         self,
         src: Tensor,
         edge_index: Union[Tensor, SparseTensor],
         dim: int,
     ) -> Tensor:
-        if is_torch_sparse_tensor(edge_index):
+        if not torch.jit.is_scripting() and is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
             if edge_index.layout == torch.sparse_coo:
                 index = edge_index._indices()[1 - dim]
@@ -278,39 +308,10 @@ class MessagePassing(torch.nn.Module):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):
-            try:
+            if torch.jit.is_scripting():  # Try/catch blocks are not supported.
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
-            except (IndexError, RuntimeError) as e:
-                if index.min() < 0 or index.max() >= src.size(self.node_dim):
-                    raise IndexError(
-                        f"Encountered an index error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices in "
-                        f"the interval [0, {src.size(self.node_dim) - 1}] "
-                        f"(got interval "
-                        f"[{int(index.min())}, {int(index.max())}])")
-                else:
-                    raise e
-
-                if index.numel() > 0 and index.min() < 0:
-                    raise ValueError(
-                        f"Found negative indices in 'edge_index' (got "
-                        f"{index.min().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                if (index.numel() > 0
-                        and index.max() >= src.size(self.node_dim)):
-                    raise ValueError(
-                        f"Found indices in 'edge_index' that are larger "
-                        f"than {src.size(self.node_dim) - 1} (got "
-                        f"{index.max().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                raise e
+            return self._index_select(src, edge_index, dim)
 
         elif isinstance(edge_index, SparseTensor):
             row, col, _ = edge_index.coo()
