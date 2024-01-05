@@ -154,11 +154,38 @@ class LinkPredRecall(LinkPredMetric):
     """
     higher_is_better: bool = True
 
-    def __init__(self, k: int):
-        super().__init__(k)
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        return pred_isin_mat.sum(dim=-1) / y_count.clamp(min=1e-7)
+
+
+class LinkPredF1(LinkPredMetric):
+    r"""A link prediction metric to compute F1@:math`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        return pred_isin_mat.sum(dim=1) / y_count.clamp(min=1e-7)
+        isin_count = pred_isin_mat.sum(dim=-1)
+        precision = isin_count / self.k
+        recall = isin_count = isin_count / y_count.clamp(min=1e-7)
+        return 2 * precision * recall / (precision + recall).clamp(min=1e-7)
+
+
+class LinkPredMAP(LinkPredMetric):
+    r"""A link prediction metric to compute MAP@:math`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        cum_precision = (torch.cumsum(pred_isin_mat, dim=1) /
+                         torch.arange(1, self.k + 1, device=y_count.device))
+        return ((cum_precision * pred_isin_mat).sum(dim=-1) /
+                y_count.clamp(min=1e-7, max=self.k))
 
 
 class LinkPredNDCG(LinkPredMetric):

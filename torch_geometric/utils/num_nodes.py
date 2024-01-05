@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
 if typing.TYPE_CHECKING:
@@ -44,6 +45,8 @@ def maybe_num_nodes(  # noqa: F811
 ) -> int:
     if num_nodes is not None:
         return num_nodes
+    elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        return max(edge_index.get_sparse_size())
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))

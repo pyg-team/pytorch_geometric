@@ -47,7 +47,7 @@ model = GCN(
     out_channels=dataset.num_classes,
 ).to(device)
 
-# Compile the model into an optimized version and enforce zero graph breaks:
+# Compile the model into an optimized version:
 model = torch_geometric.compile(model, dynamic=False)
 
 optimizer = torch.optim.Adam([

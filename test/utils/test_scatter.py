@@ -3,8 +3,9 @@ from itertools import product
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import disableExtensions, withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import group_argsort, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
@@ -95,12 +96,14 @@ def test_group_argsort(num_groups, descending, device):
 
 
 @withCUDA
-@disableExtensions
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
     index = torch.tensor([2, 2, 0, 0, 3], device=device)
 
+    old_state = torch_geometric.typing.WITH_TORCH_SCATTER
+    torch_geometric.typing.WITH_TORCH_SCATTER = False
     argmax = scatter_argmax(src, index, dim_size=6)
+    torch_geometric.typing.WITH_TORCH_SCATTER = old_state
     assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
 
 

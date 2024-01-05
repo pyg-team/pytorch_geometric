@@ -24,7 +24,7 @@ class ToDevice(BaseTransform):
         device: Union[int, str],
         attrs: Optional[List[str]] = None,
         non_blocking: bool = False,
-    ):
+    ) -> None:
         self.device = device
         self.attrs = attrs or []
         self.non_blocking = non_blocking
@@ -36,5 +36,5 @@ class ToDevice(BaseTransform):
         return data.to(self.device, *self.attrs,
                        non_blocking=self.non_blocking)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.device})'

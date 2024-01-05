@@ -152,7 +152,13 @@ class OnDiskDataset(Dataset):
         else:
             data_list = self.db.multi_get(indices, batch_size)
 
-        return [self.deserialize(data) for data in data_list]
+        data_list = [self.deserialize(data) for data in data_list]
+        if self.transform is not None:
+            data_list = [self.transform(data) for data in data_list]
+        return data_list
+
+    def __getitems__(self, indices: List[int]) -> List[BaseData]:
+        return self.multi_get(indices)
 
     def len(self) -> int:
         if self._numel is None:
