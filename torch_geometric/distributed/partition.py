@@ -175,9 +175,9 @@ class Partitioner:
                         data.edge_index[:, global_eid],
                         torch.stack((global_row, global_col), dim=0),
                     )
-                    global_eid = global_eid - edge_offset[edge_type]
+                    offsetted_eid = global_eid - edge_offset[edge_type]
                     assert torch.equal(
-                        self.data[edge_type].edge_index[:, global_eid],
+                        self.data[edge_type].edge_index[:, offsetted_eid],
                         torch.stack((
                             global_row - node_offset[src],
                             global_col - node_offset[dst],
@@ -193,7 +193,7 @@ class Partitioner:
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask][perm]
                         efeat[edge_type] = {
-                            'global_id': global_eid,
+                            'global_id': offsetted_eid,
                             'feats': dict(edge_attr=edge_attr),
                         }
                         if 'edge_time' in part_data:
