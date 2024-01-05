@@ -201,8 +201,12 @@ class GATConv(MessagePassing):
         edge_index: Adj,
         edge_attr: OptTensor = None,
         size: Size = None,
-        return_attention_weights=None,
-    ):
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa

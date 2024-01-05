@@ -74,11 +74,17 @@ class MFConv(MessagePassing):
         for lin in self.lins_r:
             lin.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
+
         x_r = x[1]
 
         deg = x[0]  # Dummy.

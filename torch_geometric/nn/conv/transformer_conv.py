@@ -154,8 +154,12 @@ class TransformerConv(MessagePassing):
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
         edge_attr: OptTensor = None,
-        return_attention_weights=None,
-    ):
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
