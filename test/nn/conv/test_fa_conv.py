@@ -28,14 +28,11 @@ def test_fa_conv():
         assert torch.allclose(conv(x, x_0, adj2.t()), out)
 
     if is_full_test():
-        t = '(Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, x_0, edge_index), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, x_0, adj2.t()), out)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, x_0, adj2.t()), out)
 
     conv.reset_parameters()
     assert conv._cached_edge_index is None
@@ -68,20 +65,15 @@ def test_fa_conv():
         assert conv._alpha is None
 
     if is_full_test():
-        t = ('(Tensor, Tensor, Tensor, OptTensor, bool) '
-             '-> Tuple[Tensor, Tuple[Tensor, Tensor]]')
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         result = jit(x, x_0, edge_index, return_attention_weights=True)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 10)
         assert result[1][1].size() == (10, )
         assert conv._alpha is None
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = ('(Tensor, Tensor, SparseTensor, OptTensor, bool) '
-             '-> Tuple[Tensor, SparseTensor]')
-        jit = torch.jit.script(conv.jittable(t))
-        result = jit(x, x_0, adj2.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out)
-        assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
-        assert conv._alpha is None
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            result = jit(x, x_0, adj2.t(), return_attention_weights=True)
+            assert torch.allclose(result[0], out)
+            assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
+            assert conv._alpha is None

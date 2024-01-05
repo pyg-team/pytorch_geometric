@@ -153,19 +153,13 @@ def test_my_conv_jittable():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
 
-    conv.jittable()  # Should succeed.
-    torch.jit.script(conv.jittable())  # Should succeed.
-
-    t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
+    jit = torch.jit.script(conv.jittable())
     assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
     assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
-        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
         jit.fuse = False
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
@@ -175,8 +169,7 @@ def test_my_conv_jittable():
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
 
-    t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
+    jit = torch.jit.script(conv.jittable())
     assert torch.allclose(jit((x1, x2), edge_index, value), out1)
     assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out1)
     assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)), out2)
@@ -184,8 +177,6 @@ def test_my_conv_jittable():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, value, (4, 2))
 
-        t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
         assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
         jit.fuse = False
@@ -273,14 +264,11 @@ def test_my_multiple_aggr_conv_jittable():
     conv = MyMultipleAggrConv()
     out = conv(x, edge_index)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
+    jit = torch.jit.script(conv.jittable())
     assert torch.allclose(jit(x, edge_index), out)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        t = '(Tensor, SparseTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, adj.t()), out)
 
 
@@ -347,14 +335,11 @@ def test_my_edge_conv_jittable():
     conv = MyEdgeConv()
     out = conv(x, edge_index)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
+    jit = torch.jit.script(conv.jittable())
     assert torch.allclose(jit(x, edge_index), out)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        t = '(Tensor, SparseTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, adj.t()), out)
 
 

@@ -33,14 +33,11 @@ def test_transformer_conv(edge_dim, concat):
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1, edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, edge_attr, return_attention_weights=True)
@@ -57,9 +54,7 @@ def test_transformer_conv(edge_dim, concat):
         assert conv._alpha is None
 
     if is_full_test():
-        t = ('(Tensor, Tensor, Optional[Tensor], bool) -> '
-             'Tuple[Tensor, Tuple[Tensor, Tensor]]')
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         result = jit(x1, edge_index, edge_attr, return_attention_weights=True)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 4)
@@ -67,14 +62,11 @@ def test_transformer_conv(edge_dim, concat):
         assert result[1][1].min() >= 0 and result[1][1].max() <= 1
         assert conv._alpha is None
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = ('(Tensor, SparseTensor, Optional[Tensor], bool) -> '
-             'Tuple[Tensor, SparseTensor]')
-        jit = torch.jit.script(conv.jittable(t))
-        result = jit(x1, adj2.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out, atol=1e-6)
-        assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
-        assert conv._alpha is None
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            result = jit(x1, adj2.t(), return_attention_weights=True)
+            assert torch.allclose(result[0], out, atol=1e-6)
+            assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
+            assert conv._alpha is None
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -94,11 +86,8 @@ def test_transformer_conv(edge_dim, concat):
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(PairTensor, Tensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(PairTensor, SparseTensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)

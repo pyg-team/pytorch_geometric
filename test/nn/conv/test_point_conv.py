@@ -37,14 +37,11 @@ def test_point_net_conv():
         assert torch.allclose(conv(x1, pos1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(OptTensor, Tensor, Tensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1, pos1, edge_index), out, atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(OptTensor, Tensor, SparseTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, pos1, adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, pos1, adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -63,12 +60,9 @@ def test_point_net_conv():
                               atol=1e-6)
 
     if is_full_test():
-        t = '(PairOptTensor, PairTensor, Tensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, None), (pos1, pos2), edge_index), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(PairOptTensor, PairTensor, SparseTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, None), (pos1, pos2), adj2.t()), out,
-                              atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, None), (pos1, pos2), adj2.t()), out,
+                                  atol=1e-6)
