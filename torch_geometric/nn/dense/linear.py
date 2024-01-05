@@ -62,9 +62,8 @@ class Linear(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
 
-    similar to :class:`torch.nn.Linear`.
-    It supports lazy initialization and customizable weight and bias
-    initialization.
+    In contrast to :class:`torch.nn.Linear`, it supports lazy initialization
+    and customizable weight and bias initialization.
 
     Args:
         in_channels (int): Size of each input sample. Will be initialized
@@ -86,9 +85,14 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
-                 weight_initializer: Optional[str] = None,
-                 bias_initializer: Optional[str] = None):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool = True,
+        weight_initializer: Optional[str] = None,
+        bias_initializer: Optional[str] = None,
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -110,13 +114,22 @@ class Linear(torch.nn.Module):
         self.reset_parameters()
 
     def __deepcopy__(self, memo):
-        out = Linear(self.in_channels, self.out_channels, self.bias
-                     is not None, self.weight_initializer,
-                     self.bias_initializer)
+        # PyTorch<1.13 cannot handle deep copies of uninitialized parameters :(
+        # TODO Drop this code once PyTorch 1.12 is no longer supported.
+        out = Linear(
+            self.in_channels,
+            self.out_channels,
+            self.bias is not None,
+            self.weight_initializer,
+            self.bias_initializer,
+        ).to(self.weight.device)
+
         if self.in_channels > 0:
             out.weight = copy.deepcopy(self.weight, memo)
+
         if self.bias is not None:
             out.bias = copy.deepcopy(self.bias, memo)
+
         return out
 
     def reset_parameters(self):
@@ -125,8 +138,10 @@ class Linear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The input features.
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The input features.
         """
         return F.linear(x, self.weight, self.bias)
 
@@ -151,6 +166,25 @@ class Linear(torch.nn.Module):
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
 
+    def _load_from_state_dict(self, state_dict, prefix, *args, **kwargs):
+        weight = state_dict.get(prefix + 'weight', None)
+
+        if weight is not None and is_uninitialized_parameter(weight):
+            self.in_channels = -1
+            self.weight = torch.nn.parameter.UninitializedParameter()
+            if not hasattr(self, '_hook'):
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
+
+        elif weight is not None and is_uninitialized_parameter(self.weight):
+            self.in_channels = weight.size(-1)
+            self.weight.materialize((self.out_channels, self.in_channels))
+            if hasattr(self, '_hook'):
+                self._hook.remove()
+                delattr(self, '_hook')
+
+        super()._load_from_state_dict(state_dict, prefix, *args, **kwargs)
+
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
@@ -160,11 +194,12 @@ class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
     to types.
 
+    For type :math:`\kappa`, it computes
+
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -224,6 +259,7 @@ class HeteroLinear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels,
                     self.kwargs.get('bias_initializer', None))
 
+    @torch.jit.unused
     def forward_segmm(self, x: Tensor, type_vec_ptr: Tensor) -> Tensor:
         assert self.weight is not None
         out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
@@ -274,7 +310,7 @@ class HeteroLinear(torch.nn.Module):
         return use_segment_matmul
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""Forward Pass.
+        r"""Forward pass.
 
         Args:
             x (torch.Tensor): The input features.
@@ -348,11 +384,12 @@ class HeteroLinear(torch.nn.Module):
 class HeteroDictLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data dictionary.
 
+    For key :math:`\kappa`, it computes
+
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
-        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}.
 
-    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -419,7 +456,7 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""Forward Pass.
+        r"""Forward pass.
 
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
