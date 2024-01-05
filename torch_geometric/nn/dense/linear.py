@@ -274,9 +274,11 @@ class HeteroLinear(torch.nn.Module):
         return use_segment_matmul
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""Args:
-        x (torch.Tensor): The input features.
-        type_vec (torch.Tensor): A vector that maps each entry to a type.
+        r"""Forward Pass.
+
+        Args:
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         perm: Optional[Tensor] = None
         if not self.is_sorted:
@@ -417,9 +419,11 @@ class HeteroDictLinear(torch.nn.Module):
         self,
         x_dict: Dict[str, Tensor],
     ) -> Dict[str, Tensor]:
-        r"""Args:
-        x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
-            features for each individual type.
+        r"""Forward Pass.
+
+        Args:
+            x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
+                features for each individual type.
         """
         out_dict = {}
 
