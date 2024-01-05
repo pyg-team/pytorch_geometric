@@ -117,11 +117,16 @@ class SAGEConv(MessagePassing):
         if self.root_weight:
             self.lin_r.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         if self.project and hasattr(self, 'lin'):
             x = (self.lin(x[0]).relu(), x[1])

@@ -54,7 +54,8 @@ class WLConvContinuous(MessagePassing):
     ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,

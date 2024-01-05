@@ -78,14 +78,20 @@ class PointNetConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x: Union[OptTensor, PairOptTensor],
-                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+    def forward(
+        self,
+        x: Union[OptTensor, PairOptTensor],
+        pos: Union[Tensor, PairTensor],
+        edge_index: Adj,
+    ) -> Tensor:
 
         if not isinstance(x, tuple):
-            x: PairOptTensor = (x, None)
+            x = (x, None)
+        assert isinstance(x, tuple)
 
         if isinstance(pos, Tensor):
-            pos: PairTensor = (pos, pos)
+            pos = (pos, pos)
+        assert isinstance(pos, tuple)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):

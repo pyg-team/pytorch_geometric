@@ -55,7 +55,9 @@ class EdgeConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
+
         # propagate_type: (x: PairTensor)
         return self.propagate(edge_index, x=x, size=None)
 
@@ -122,7 +124,8 @@ class DynamicEdgeConv(MessagePassing):
         # forward_type: (PairTensor, Optional[PairTensor]) -> Tensor
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         if x[0].dim() != 2:
             raise ValueError("Static graphs not supported in DynamicEdgeConv")

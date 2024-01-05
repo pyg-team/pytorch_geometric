@@ -127,7 +127,8 @@ class SplineConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
+        assert isinstance(x, tuple)
 
         if not x[0].is_cuda:
             warnings.warn(
