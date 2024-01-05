@@ -104,11 +104,15 @@ class ResGatedGraphConv(MessagePassing):
         if self.bias is not None:
             zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         # In case edge features are not given, we can compute key, query and
         # value tensors in node-level space, which is a bit more efficient:

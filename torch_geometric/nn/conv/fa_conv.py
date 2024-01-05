@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple, Union
 
 import torch.nn.functional as F
 from torch import Tensor
@@ -103,8 +103,12 @@ class FAConv(MessagePassing):
         x_0: Tensor,
         edge_index: Adj,
         edge_weight: OptTensor = None,
-        return_attention_weights=None,
-    ):
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         # forward_type: (Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa

@@ -105,13 +105,13 @@ class PPFConv(MessagePassing):
     ) -> Tensor:
 
         if not isinstance(x, tuple):
-            x: PairOptTensor = (x, None)
+            x = (x, None)
 
         if isinstance(pos, Tensor):
-            pos: PairTensor = (pos, pos)
+            pos = (pos, pos)
 
         if isinstance(normal, Tensor):
-            normal: PairTensor = (normal, normal)
+            normal = (normal, normal)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):

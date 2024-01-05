@@ -154,8 +154,12 @@ class TransformerConv(MessagePassing):
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
         edge_attr: OptTensor = None,
-        return_attention_weights=None,
-    ):
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # forward_type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
@@ -176,7 +180,7 @@ class TransformerConv(MessagePassing):
         H, C = self.heads, self.out_channels
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         query = self.lin_query(x[1]).view(-1, H, C)
         key = self.lin_key(x[0]).view(-1, H, C)

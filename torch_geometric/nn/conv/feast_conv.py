@@ -80,8 +80,9 @@ class FeaStConv(MessagePassing):
         normal(self.bias, mean=0, std=0.1)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):

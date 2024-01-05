@@ -115,11 +115,15 @@ class FiLMConv(MessagePassing):
         self.lin_skip.reset_parameters()
         reset(self.film_skip)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_type: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_type: OptTensor = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         beta, gamma = self.film_skip(x[1]).split(self.out_channels, dim=-1)
         out = gamma * self.lin_skip(x[1]) + beta
@@ -135,9 +139,9 @@ class FiLMConv(MessagePassing):
             for i, (lin, film) in enumerate(zip(self.lins, self.films)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
                 if isinstance(edge_index, SparseTensor):
-                    edge_type = edge_index.storage.value()
-                    assert edge_type is not None
-                    mask = edge_type == i
+                    _edge_type = edge_index.storage.value()
+                    assert _edge_type is not None
+                    mask = _edge_type == i
                     adj_t = torch_sparse.masked_select_nnz(
                         edge_index, mask, layout='coo')
                     out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
