@@ -1,10 +1,13 @@
+from typing import Optional, Tuple
+
 import pytest
 import torch
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.nn import GATConv
 from torch_geometric.testing import is_full_test, withCUDA
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
@@ -26,7 +29,21 @@ def test_gat_conv():
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Adj,
+                size: Size = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, size=size)
+
+        jit = torch.jit.script(MyModule())
         assert torch.allclose(jit(x1, edge_index), out)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 
@@ -53,15 +70,43 @@ def test_gat_conv():
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
-        result = jit(x1, edge_index, return_attention_weights=True)
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Tensor,
+            ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+                return self.conv(x, edge_index, return_attention_weights=True)
+
+        jit = torch.jit.script(MyModule())
+        result = jit(x1, edge_index)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 7)
         assert result[1][1].size() == (7, 2)
         assert result[1][1].min() >= 0 and result[1][1].max() <= 1
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            result = jit(x1, adj2.t(), return_attention_weights=True)
+
+            class MyModule(torch.nn.Module):
+                def __init__(self):
+                    super().__init__()
+                    self.conv = conv.jittable()
+
+                def forward(
+                    self,
+                    x: Tensor,
+                    edge_index: SparseTensor,
+                ) -> Tuple[Tensor, SparseTensor]:
+                    return self.conv(x, edge_index,
+                                     return_attention_weights=True)
+
+            jit = torch.jit.script(MyModule())
+            result = jit(x1, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
@@ -86,7 +131,21 @@ def test_gat_conv():
         assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tuple[Tensor, Optional[Tensor]],
+                edge_index: Adj,
+                size: Size = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, size=size)
+
+        jit = torch.jit.script(MyModule())
         assert torch.allclose(jit((x1, x2), edge_index), out1)
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
         assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)
