@@ -173,6 +173,11 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
+        # TODO Make MessagePassing jittable by default:
+        # * Create `PropagateArgs(NamedTuple)`, `CollectArgs(NamedTuple)` and
+        # `EdgeCollectArgs(NamedTuple)`.
+        # Override `propagate`.
+
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         if self.aggr_module is not None:

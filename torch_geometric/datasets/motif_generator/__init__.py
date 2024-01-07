@@ -5,5 +5,9 @@ from .cycle import CycleMotif
 from .grid import GridMotif
 
 __all__ = classes = [
-    'MotifGenerator', 'CustomMotif', 'HouseMotif', 'CycleMotif', 'GridMotif'
+    'MotifGenerator',
+    'CustomMotif',
+    'HouseMotif',
+    'CycleMotif',
+    'GridMotif',
 ]
