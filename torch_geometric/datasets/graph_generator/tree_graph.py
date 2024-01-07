@@ -1,85 +1,80 @@
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.datasets.graph_generator import GraphGenerator
+from torch_geometric.utils import to_undirected
 
 
-def tree(depth: int, branch: int, dtype: Optional[torch.dtype] = None,
-         device: Optional[torch.device] = None) -> Tuple[Tensor, Tensor]:
-    """Generates a tree graph with the given depth and branching factor, along with node positions.
+def tree(
+    depth: int,
+    branch: int = 2,
+    undirected: bool = False,
+    device: Optional[torch.device] = None,
+) -> Tuple[Tensor, Tensor]:
+    """Generates a tree graph with the given depth and branch size, along with
+    node-level depth indicators.
 
     Args:
         depth (int): The depth of the tree.
-        branch (int): The branching factor of the tree.
-        dtype (torch.dtype, optional): The desired data type of the returned position tensor. (default: :obj:`None`)
-        device (torch.device, optional): The desired device of the returned tensors. (default: :obj:`None`)
-
-    Returns:
-        Tuple[Tensor, Tensor]: Edge indices of the tree graph and positions of the nodes.
-
-    Example:
-        >>> edge_index, pos = tree(depth=3, branch=2)
-        >>> edge_index
-        >>> pos
+        branch (int, optional): The branch size of the tree.
+            (default: :obj:`2`)
+        undirected (bool, optional): If set to :obj:`True`, the tree graph will
+            be undirected. (default: :obj:`False`)
+        device (torch.device, optional): The desired device of the returned
+            tensors. (default: :obj:`None`)
     """
-    edges = []
-    positions = []
-    node_count = 0
+    edges: List[Tuple[int, int]] = []
+    depths: List[int] = [0]
 
-    def add_edges(node, current_depth, x, y):
-        nonlocal node_count
+    def add_edges(node: int, current_depth: int):
+        node_count = len(depths)
+
         if current_depth < depth:
-            dx = 1 / (2**current_depth)  # Horizontal spacing
-            child_y = y - 1  # Move down the tree for each level
             for i in range(branch):
-                node_count += 1
-                child_x = x + (i - branch / 2 +
-                               0.5) * dx  # Calculate x-position for child
-                edges.append((node, node_count))
-                positions.append((child_x, child_y))
-                add_edges(node_count, current_depth + 1, child_x, child_y)
+                edges.append((node, node_count + i))
+                depths.append(current_depth + 1)
 
-    # Root node at center-top
-    positions.append((0.5, 0))
-    add_edges(0, 0, 0.5, 0)
+            for i in range(branch):
+                add_edges(node=node_count + i, current_depth=current_depth + 1)
 
-    edge_index = torch.tensor(edges, dtype=torch.long,
-                              device=device).t().contiguous()
-    pos = torch.tensor(positions,
-                       dtype=dtype if dtype is not None else torch.float,
-                       device=device)
-    return edge_index, pos
+    add_edges(node=0, current_depth=0)
+
+    edge_index = torch.tensor(edges, device=device).t().contiguous()
+    if undirected:
+        edge_index = to_undirected(edge_index, num_nodes=len(depths))
+    depth = torch.tensor(depths, device=device)
+    return edge_index, depth
 
 
 class TreeGraph(GraphGenerator):
-    r"""Generates two-dimensional grid graphs.
-    See :meth:`~torch_geometric.utils.grid` for more information.
+    r"""Generates tree graphs.
 
     Args:
         depth (int): The depth of the tree.
-        branck (int): The branch of the tree.
-        dtype (:obj:`torch.dtype`, optional): The desired data type of the
-            returned position tensor. (default: :obj:`None`)
+        branch (int, optional): The branch size of the tree.
+            (default: :obj:`2`)
+        undirected (bool, optional): If set to :obj:`True`, the tree graph will
+            be undirected. (default: :obj:`False`)
     """
     def __init__(
         self,
         depth: int,
-        branch: int,
-        dtype: Optional[torch.dtype] = None,
+        branch: int = 2,
+        undirected: bool = False,
     ):
         super().__init__()
         self.depth = depth
         self.branch = branch
-        self.dtype = dtype
+        self.undirected = undirected
 
     def __call__(self) -> Data:
-        edge_index, pos = tree(depth=self.depth, branch=self.branch,
-                               dtype=self.dtype)
-        return Data(edge_index=edge_index, pos=pos)
+        edge_index, depth = tree(self.depth, self.branch, self.undirected)
+        num_nodes = depth.numel()
+        return Data(edge_index=edge_index, depth=depth, num_nodes=num_nodes)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(depth={self.depth}, '
-                f'branch={self.branch})')
+                f'branch={self.branch}, undirected={self.undirected})')
