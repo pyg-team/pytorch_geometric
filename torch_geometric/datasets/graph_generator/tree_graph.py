@@ -29,7 +29,7 @@ def tree(
     edges: List[Tuple[int, int]] = []
     depths: List[int] = [0]
 
-    def add_edges(node: int, current_depth: int):
+    def add_edges(node: int, current_depth: int) -> None:
         node_count = len(depths)
 
         if current_depth < depth:
@@ -45,8 +45,8 @@ def tree(
     edge_index = torch.tensor(edges, device=device).t().contiguous()
     if undirected:
         edge_index = to_undirected(edge_index, num_nodes=len(depths))
-    depth = torch.tensor(depths, device=device)
-    return edge_index, depth
+
+    return edge_index, torch.tensor(depths, device=device)
 
 
 class TreeGraph(GraphGenerator):
@@ -64,7 +64,7 @@ class TreeGraph(GraphGenerator):
         depth: int,
         branch: int = 2,
         undirected: bool = False,
-    ):
+    ) -> None:
         super().__init__()
         self.depth = depth
         self.branch = branch
