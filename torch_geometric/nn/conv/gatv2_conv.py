@@ -11,6 +11,7 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
     Adj,
+    NoneType,
     OptTensor,
     PairTensor,
     SparseTensor,
@@ -209,7 +210,7 @@ class GATv2Conv(MessagePassing):
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
         edge_attr: OptTensor = None,
-        return_attention_weights: None = None,
+        return_attention_weights: NoneType = None,
     ) -> Tensor:
         pass
 
