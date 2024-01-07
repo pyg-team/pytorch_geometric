@@ -7,7 +7,13 @@ from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+from torch_geometric.typing import (
+    Adj,
+    NoneType,
+    OptPairTensor,
+    OptTensor,
+    SparseTensor,
+)
 from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import set_sparse_value
 
@@ -110,7 +116,7 @@ class FAConv(MessagePassing):
         x_0: Tensor,
         edge_index: Adj,
         edge_weight: OptTensor = None,
-        return_attention_weights: None = None,
+        return_attention_weights: NoneType = None,
     ) -> Tensor:
         pass
 

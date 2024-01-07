@@ -8,7 +8,13 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
+from torch_geometric.typing import (
+    Adj,
+    NoneType,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+)
 from torch_geometric.utils import softmax
 
 if typing.TYPE_CHECKING:
@@ -161,7 +167,7 @@ class TransformerConv(MessagePassing):
         x: Union[Tensor, PairTensor],
         edge_index: Adj,
         edge_attr: OptTensor = None,
-        return_attention_weights: None = None,
+        return_attention_weights: NoneType = None,
     ) -> Tensor:
         pass
 

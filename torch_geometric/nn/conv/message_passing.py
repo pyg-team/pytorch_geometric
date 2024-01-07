@@ -909,6 +909,17 @@ class MessagePassing(torch.nn.Module):
         # specific to the argument used for edge updates.
         edge_collect_types = self.inspector.types(['edge_update'])
 
+        # Collect `forward()` function in case it is overloaded. This is
+        # necessary since TorchScript cannot handle inheritance of overloaded
+        # forward functions.
+        # TODO This is very hacky and should be resolved soon.
+        forward_repr = ''
+        start = source.find('    @overload\n    def forward')
+        if start >= 0:
+            forward_repr = inspect.getsource(self.forward)
+            end = source.find(forward_repr) + len(forward_repr)
+            forward_repr = source[start:end]
+
         root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
@@ -934,6 +945,7 @@ class MessagePassing(torch.nn.Module):
             edge_update_args=self.inspector.keys(['edge_update']),
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
+            forward_repr=forward_repr,
         )
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)

@@ -9,9 +9,9 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import NoneType  # noqa
 from torch_geometric.typing import (
     Adj,
+    NoneType,
     OptPairTensor,
     OptTensor,
     Size,
@@ -208,7 +208,7 @@ class GATConv(MessagePassing):
         edge_index: Adj,
         edge_attr: OptTensor = None,
         size: Size = None,
-        return_attention_weights: None = None,
+        return_attention_weights: NoneType = None,
     ) -> Tensor:
         pass
 
