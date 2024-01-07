@@ -76,6 +76,7 @@ from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
+from .fg_dataset import FGDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -185,6 +186,7 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'FGDataset',
 ]
 
 hetero_datasets = [
