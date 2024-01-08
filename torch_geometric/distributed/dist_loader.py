@@ -41,6 +41,7 @@ class DistLoader:
             :meth:`~torch.distributed.rpc.rpc_async` if necessary.
             (default: :obj:`180`)
     """
+
     def __init__(
         self,
         current_ctx: DistContext,
@@ -55,10 +56,12 @@ class DistLoader:
         if master_addr is None and os.environ.get('MASTER_ADDR') is not None:
             master_addr = os.environ['MASTER_ADDR']
         if master_addr is None:
-            raise ValueError(f"Missing master address for RPC communication "
-                             f"in '{self.__class__.__name__}'. Try to provide "
-                             f"it or set it via the 'MASTER_ADDR' environment "
-                             f"variable.")
+            raise ValueError(
+                f"Missing master address for RPC communication "
+                f"in '{self.__class__.__name__}'. Try to provide "
+                f"it or set it via the 'MASTER_ADDR' environment "
+                f"variable."
+            )
 
         if master_port is None and os.environ.get('MASTER_PORT') is not None:
             # Select next port to MASTER_PORT used for DDP.
@@ -66,10 +69,12 @@ class DistLoader:
             # provide distinct ports for each.
             master_port = int(os.environ['MASTER_PORT']) + 1
         if master_port is None:
-            raise ValueError(f"Missing master port for RPC communication in "
-                             f"'{self.__class__.__name__}'. Try to provide it "
-                             f"or set it via the 'MASTER_ADDR' environment "
-                             f"variable.")
+            raise ValueError(
+                f"Missing master port for RPC communication in "
+                f"'{self.__class__.__name__}'. Try to provide it "
+                f"or set it via the 'MASTER_ADDR' environment "
+                f"variable."
+            )
 
         assert num_rpc_threads > 0
         assert rpc_timeout > 0
@@ -84,8 +89,9 @@ class DistLoader:
         self.rpc_timeout = rpc_timeout
         self.num_workers = kwargs.get('num_workers', 0)
 
-        logging.info(f"[{self}] MASTER_ADDR={master_addr}, "
-                     f"MASTER_PORT={master_port}")
+        logging.info(
+            f"[{self}] MASTER_ADDR={master_addr}, " f"MASTER_PORT={master_port}"
+        )
 
         if self.num_workers == 0:  # Initialize RPC in main process:
             self.worker_init_fn(0)
@@ -110,10 +116,10 @@ class DistLoader:
             self.current_ctx_worker = DistContext(
                 world_size=self.current_ctx.world_size * num_sampler_proc,
                 rank=self.current_ctx.rank * num_sampler_proc + worker_id,
-                global_world_size=self.current_ctx.world_size *
-                num_sampler_proc,
-                global_rank=self.current_ctx.rank * num_sampler_proc +
-                worker_id,
+                global_world_size=self.current_ctx.world_size
+                * num_sampler_proc,
+                global_rank=self.current_ctx.rank * num_sampler_proc
+                + worker_id,
                 group_name='mp_sampling_worker',
             )
 
@@ -126,7 +132,8 @@ class DistLoader:
             )
             logging.info(
                 f"RPC initiated in worker-{worker_id} "
-                f"(current_ctx_worker={self.current_ctx_worker.worker_name})")
+                f"(current_ctx_worker={self.current_ctx_worker.worker_name})"
+            )
             self.dist_sampler.init_sampler_instance()
             self.dist_sampler.register_sampler_rpc()
             global_barrier(timeout=10)  # Wait for all workers to initialize.
@@ -135,8 +142,10 @@ class DistLoader:
             atexit.register(shutdown_rpc, self.current_ctx_worker.worker_name)
 
         except RuntimeError:
-            raise RuntimeError(f"`{self}.init_fn()` could not initialize the "
-                               f"worker loop of the neighbor sampler")
+            raise RuntimeError(
+                f"`{self}.init_fn()` could not initialize the "
+                f"worker loop of the neighbor sampler"
+            )
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(pid={self.pid})'
@@ -146,6 +155,8 @@ class DistLoader:
         return self._iterator
 
     def __exit__(self, *args) -> None:
-        del self._iterator
+        if self._iterator:
+            del self._iterator
+            self._iterator = None
         if self.channel:
             self.reset_channel()
