@@ -269,7 +269,7 @@ def run_proc(
     # Define model and optimizer.
     model = GraphSAGE(
         in_channels=128 if is_hetero else 100,  # num_features
-        hidden_channels=64,
+        hidden_channels=256,
         num_layers=len(num_neighbors),
         out_channels=349 if is_hetero else 47,  # num_classes in dataset
     ).to(current_device)

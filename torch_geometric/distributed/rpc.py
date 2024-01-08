@@ -75,10 +75,10 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
                  timeout: float = 240.0):
     with _rpc_init_lock:
         if rpc_is_initialized():
-            logging.info(f"Shutdown rpc start {id} (graceful={graceful})")
+            logging.info(f"Shutdown rpc {id} (graceful={graceful})")
             rpc.shutdown(graceful, timeout)
         else:
-            logging.error(f'RPC in {id} not initialized.')
+            logging.info(f'RPC in {id} not initialized.')
 
 
 class RPCRouter:

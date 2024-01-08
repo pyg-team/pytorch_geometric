@@ -906,8 +906,8 @@ class DistNeighborSampler:
                 )
                 nfeats = await to_asyncio_future(fut)
                 nfeats = nfeats.to(torch.device("cpu"))
-            # else:
-            efeats = None
+            else:
+                nfeats = None
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.feature_store.lookup_features(
