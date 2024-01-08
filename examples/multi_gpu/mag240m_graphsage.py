@@ -15,6 +15,7 @@ from torchmetrics import Accuracy
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
+from torch_geometric.transforms import ToUndirected
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, to_hetero
@@ -336,7 +337,7 @@ if __name__ == "__main__":
     print("Loading Data...")
     dataset = MAG240MDataset()
     data = dataset.to_pyg_hetero_data()
-    data = torch_geometric.transforms.ToUndirected(data)
+    data = ToUndirected(data)
     print("Data =", data)
 
     if args.subgraph < 1.0:
