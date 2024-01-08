@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added end-to-end example for distributed CPU training using native PyG solution using OGB and GraphSAGE ([#8713](https://github.com/pyg-team/pytorch_geometric/pull/8713))
+- Added `TreeGraph` and `GridMotif` generators ([#8736](https://github.com/pyg-team/pytorch_geometric/pull/8736))
 - Added an example for edge-level temporal sampling on a heterogenous graph ([#8383](https://github.com/pyg-team/pytorch_geometric/pull/8383))
 - Added the `num_graphs` option to the `StochasticBlockModelDataset` ([#8648](https://github.com/pyg-team/pytorch_geometric/pull/8648))
 - Added noise scheduler utility for diffusion based graph generative models ([#8347](https://github.com/pyg-team/pytorch_geometric/pull/8347))
@@ -58,6 +59,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated the `typing` argument in `MessagePassing.jittable()` ([#8731](https://github.com/pyg-team/pytorch_geometric/pull/8731))
 - Deprecated `torch_geometric.data.makedirs` in favor of `os.makedirs` ([#8421](https://github.com/pyg-team/pytorch_geometric/pull/8421))
 - Deprecated `DataParallel` in favor of `DistributedDataParallel` ([#8250](https://github.com/pyg-team/pytorch_geometric/pull/8250))
 

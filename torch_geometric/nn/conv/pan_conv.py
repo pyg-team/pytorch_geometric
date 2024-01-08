@@ -94,7 +94,7 @@ class PANConv(MessagePassing):
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.
         M = deg_inv_sqrt.view(1, -1) * adj_t * deg_inv_sqrt.view(-1, 1)
 
-        out = self.propagate(M, x=x, edge_weight=None, size=None)
+        out = self.propagate(M, x=x, edge_weight=None)
         out = self.lin(out)
         return out, M
 

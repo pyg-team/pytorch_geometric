@@ -1,10 +1,13 @@
+from typing import Optional, Tuple
+
 import pytest
 import torch
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.nn import TransformerConv
 from torch_geometric.testing import is_full_test
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
@@ -33,14 +36,25 @@ def test_transformer_conv(edge_dim, concat):
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Adj,
+                edge_attr: Optional[Tensor] = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, edge_attr)
+
+        jit = torch.jit.script(MyModule())
         assert torch.allclose(jit(x1, edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, edge_attr, return_attention_weights=True)
@@ -57,24 +71,49 @@ def test_transformer_conv(edge_dim, concat):
         assert conv._alpha is None
 
     if is_full_test():
-        t = ('(Tensor, Tensor, Optional[Tensor], bool) -> '
-             'Tuple[Tensor, Tuple[Tensor, Tensor]]')
-        jit = torch.jit.script(conv.jittable(t))
-        result = jit(x1, edge_index, edge_attr, return_attention_weights=True)
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Tensor,
+                edge_attr: Optional[Tensor],
+            ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+                return self.conv(x, edge_index, edge_attr,
+                                 return_attention_weights=True)
+
+        jit = torch.jit.script(MyModule())
+        result = jit(x1, edge_index, edge_attr)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 4)
         assert result[1][1].size() == (4, 2)
         assert result[1][1].min() >= 0 and result[1][1].max() <= 1
         assert conv._alpha is None
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = ('(Tensor, SparseTensor, Optional[Tensor], bool) -> '
-             'Tuple[Tensor, SparseTensor]')
-        jit = torch.jit.script(conv.jittable(t))
-        result = jit(x1, adj2.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out, atol=1e-6)
-        assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
-        assert conv._alpha is None
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+
+            class MyModule(torch.nn.Module):
+                def __init__(self):
+                    super().__init__()
+                    self.conv = conv.jittable()
+
+                def forward(
+                    self,
+                    x: Tensor,
+                    edge_index: SparseTensor,
+                ) -> Tuple[Tensor, SparseTensor]:
+                    return self.conv(x, edge_index,
+                                     return_attention_weights=True)
+
+            jit = torch.jit.script(MyModule())
+            result = jit(x1, adj2.t())
+            assert torch.allclose(result[0], out, atol=1e-6)
+            assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
+            assert conv._alpha is None
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -94,11 +133,22 @@ def test_transformer_conv(edge_dim, concat):
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(PairTensor, Tensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv.jittable()
+
+            def forward(
+                self,
+                x: Tuple[Tensor, Tensor],
+                edge_index: Adj,
+                edge_attr: Optional[Tensor] = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, edge_attr)
+
+        jit = torch.jit.script(MyModule())
         assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(PairTensor, SparseTensor, Optional[Tensor], NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)

@@ -27,14 +27,9 @@ def test_gravnet_conv():
     assert out22.size() == (4, 32)
 
     if is_full_test():
-        t = '(Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1), out11)
         assert torch.allclose(jit(x1, batch1), out12)
 
-        t = '(PairTensor, Optional[PairTensor]) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2)), out21)
         assert torch.allclose(jit((x1, x2), (batch1, batch2)), out22)
-
-        torch.jit.script(conv.jittable())  # Test without explicit typing.

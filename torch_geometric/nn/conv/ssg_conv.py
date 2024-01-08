@@ -102,8 +102,7 @@ class SSGConv(MessagePassing):
             h = x * self.alpha
             for k in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)
-                x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                                   size=None)
+                x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
                 h = h + (1 - self.alpha) / self.K * x
             if self.cached:
                 self._cached_h = h

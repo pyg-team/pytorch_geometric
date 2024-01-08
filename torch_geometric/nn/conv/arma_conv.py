@@ -124,8 +124,7 @@ class ARMAConv(MessagePassing):
                 out = out @ self.weight[0 if self.shared_weights else t - 1]
 
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
-                                 size=None)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
             root = root @ self.root_weight[0 if self.shared_weights else t]

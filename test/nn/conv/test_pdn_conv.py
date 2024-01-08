@@ -22,14 +22,11 @@ def test_pdn_conv():
         assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_pdn_conv_with_sparse_node_input_feature():
@@ -51,11 +48,8 @@ def test_pdn_conv_with_sparse_node_input_feature():
         assert torch.allclose(conv(x, adj.t(), edge_attr), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, edge_index, edge_attr), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t(), edge_attr), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj.t(), edge_attr), out, atol=1e-6)
