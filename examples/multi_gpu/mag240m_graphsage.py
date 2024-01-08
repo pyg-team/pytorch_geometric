@@ -336,6 +336,7 @@ if __name__ == "__main__":
     print("Loading Data...")
     dataset = MAG240MDataset()
     data = dataset.to_pyg_hetero_data()
+    data = torch_geometric.transforms.ToUndirected(data)
     print("Data =", data)
 
     if args.subgraph < 1.0:
