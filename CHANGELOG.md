@@ -46,7 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `num_graphs` option to the `StochasticBlockModelDataset` ([#8648](https://github.com/pyg-team/pytorch_geometric/pull/8648))
 - Added noise scheduler utility for diffusion based graph generative models ([#8347](https://github.com/pyg-team/pytorch_geometric/pull/8347))
 - Added the equivariant `ViSNet` model ([#8287](https://github.com/pyg-team/pytorch_geometric/pull/8287))
-- Added temporal-related capabilities to `Data` ([#8454](https://github.com/pyg-team/pytorch_geometric/pull/8454))
+- Added temporal-related capabilities to `Data` and `HeteroData` ([#8454](https://github.com/pyg-team/pytorch_geometric/pull/8454), [#8739](https://github.com/pyg-team/pytorch_geometric/pull/8739))
 - Added support for returning multi graphs in `to_networkx` ([#8575](https://github.com/pyg-team/pytorch_geometric/pull/8575))
 - Added support for XPU device in `profileit` decorator ([#8532](https://github.com/pyg-team/pytorch_geometric/pull/8532))
 - Added `KNNIndex` exclusion logic ([#8573](https://github.com/pyg-team/pytorch_geometric/pull/8573))
