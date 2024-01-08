@@ -860,9 +860,9 @@ class DistNeighborSampler:
             # Collect node labels of input node type.
             node_labels = self.feature_store.labels
             if node_labels is not None:
-                nlabels = node_labels[output.node[self.input_type]]
-            else:
-                nlabels = None
+                nlabels = {
+                    self.input_type: node_labels[output.node[self.input_type]]
+                }
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
@@ -894,12 +894,16 @@ class DistNeighborSampler:
 
         else:  # Homo
             # Collect node labels.
-            nlabels = (self.feature_store.labels[output.node] if
-                       (self.feature_store.labels is not None) else None)
+            nlabels = (
+                self.feature_store.labels[output.node]
+                if (self.feature_store.labels is not None)
+                else None
+            )
             # Collect node features.
             if output.node is not None:
                 fut = self.feature_store.lookup_features(
-                    is_node_feat=True, index=output.node)
+                    is_node_feat=True, index=output.node
+                )
                 nfeats = await to_asyncio_future(fut)
                 nfeats = nfeats.to(torch.device("cpu"))
             # else:
@@ -907,7 +911,8 @@ class DistNeighborSampler:
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.feature_store.lookup_features(
-                    is_node_feat=False, index=output.edge)
+                    is_node_feat=False, index=output.edge
+                )
                 efeats = await to_asyncio_future(fut)
                 efeats = efeats.to(torch.device("cpu"))
             else:

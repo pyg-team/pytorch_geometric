@@ -16,18 +16,17 @@ class NodeDict:
     2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
     """
+
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
             k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]
             for k in node_types
         }
         self.with_dupl: Dict[NodeType, Tensor] = {
-            k: torch.empty(0, dtype=torch.int64)
-            for k in node_types
+            k: torch.empty(0, dtype=torch.int64) for k in node_types
         }
         self.out: Dict[NodeType, Tensor] = {
-            k: torch.empty(0, dtype=torch.int64)
-            for k in node_types
+            k: torch.empty(0, dtype=torch.int64) for k in node_types
         }
         self.seed_time: Dict[NodeType, List[Tensor]] = {
             k: num_hops * [torch.empty(0, dtype=torch.int64)]
@@ -43,18 +42,17 @@ class BatchDict:
        output.
     3) The output subgraph IDs without duplicates.
     """
+
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
             k: (num_hops + 1) * [torch.empty(0, dtype=torch.int64)]
             for k in node_types
         }
         self.with_dupl: Dict[NodeType, Tensor] = {
-            k: torch.empty(0, dtype=torch.int64)
-            for k in node_types
+            k: torch.empty(0, dtype=torch.int64) for k in node_types
         }
         self.out: Dict[NodeType, Tensor] = {
-            k: torch.empty(0, dtype=torch.int64)
-            for k in node_types
+            k: torch.empty(0, dtype=torch.int64) for k in node_types
         }
 
 
@@ -64,7 +62,6 @@ def remove_duplicates(
     batch: Optional[Tensor] = None,
     disjoint: bool = False,
 ) -> Tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor]]:
-
     num_nodes = node.numel()
     node_combined = torch.cat([node, out.node])
 
@@ -129,18 +126,18 @@ def filter_dist_store(
             required_node_attrs.append(attr)
             data[attr.group_name].num_nodes = attr.index.size(0)
 
-    if nfeats is not None:
+    if nfeats:
         for attr in required_node_attrs:
             if nfeats[attr.group_name] is not None:
                 data[attr.group_name][attr.attr_name] = nfeats[attr.group_name]
 
-    if efeats is not None:
+    if efeats:
         for attr in required_edge_attrs:
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
 
-    if nlabels is not None:
-        data[input_type].y = nlabels
+    if nlabels:
+        data[input_type].y = nlabels[input_type]
 
     return data
 

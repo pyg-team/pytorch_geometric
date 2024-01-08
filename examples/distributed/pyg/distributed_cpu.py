@@ -15,10 +15,10 @@ from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import GraphSAGE, to_hetero
 
-# import logging
-# logging.basicConfig(
-#     format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
-# )
+import logging
+logging.basicConfig(
+    format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
+)
 
 
 @torch.no_grad()

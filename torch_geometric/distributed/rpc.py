@@ -75,9 +75,8 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
                  timeout: float = 240.0):
     with _rpc_init_lock:
         if rpc_is_initialized():
-            global_barrier(timeout=timeout)
+            logging.info(f"Shutdown rpc start {id} (graceful={graceful})")
             rpc.shutdown(graceful, timeout)
-            logging.debug(f'Closed RPC in {id} (graceful={graceful})')
         else:
             logging.error(f'RPC in {id} not initialized.')
 
