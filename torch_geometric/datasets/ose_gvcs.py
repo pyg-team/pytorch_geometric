@@ -69,7 +69,7 @@ class OSE_GVCS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
@@ -85,12 +85,12 @@ class OSE_GVCS(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         categories = []
@@ -118,8 +118,8 @@ class OSE_GVCS(InMemoryDataset):
         data['machine'].num_nodes = len(categories)
         data['machine'].category = torch.tensor(categories)
 
-        for rel, edge_index, in edges.items():
-            edge_index = torch.tensor(edge_index).t()
+        for rel, edge_indices, in edges.items():
+            edge_index = torch.tensor(edge_indices).t().contiguous()
             data['machine', rel, 'machine'].edge_index = edge_index
 
         if self.pre_transform is not None:

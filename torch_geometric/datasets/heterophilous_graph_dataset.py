@@ -78,7 +78,7 @@ class HeterophilousGraphDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name.lower().replace('-', '_')
         assert self.name in [
             'roman_empire',
@@ -108,10 +108,10 @@ class HeterophilousGraphDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(f'{self.url}/{self.name}.npz', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         raw = np.load(self.raw_paths[0], 'r')
         x = torch.from_numpy(raw['node_features'])
         y = torch.from_numpy(raw['node_labels'])

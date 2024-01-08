@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from itertools import product
-from typing import Callable, Optional
+from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -48,12 +48,12 @@ class FakeDataset(InMemoryDataset):
         num_channels: int = 64,
         edge_dim: int = 0,
         num_classes: int = 10,
-        task: str = "auto",
+        task: str = 'auto',
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        **kwargs,
-    ):
+        **kwargs: Union[int, Sequence[int]],
+    ) -> None:
         super().__init__(None, transform)
 
         if task == 'auto':
@@ -85,11 +85,15 @@ class FakeDataset(InMemoryDataset):
         data.edge_index = get_edge_index(num_nodes, num_nodes, self.avg_degree,
                                          self.is_undirected, remove_loops=True)
 
-        if self.num_channels > 0 and self.task == 'graph':
-            data.x = torch.randn(num_nodes, self.num_channels) + data.y
-        elif self.num_channels > 0 and self.task == 'node':
-            data.x = torch.randn(num_nodes,
-                                 self.num_channels) + data.y.unsqueeze(1)
+        if self.num_channels > 0:
+            x = torch.randn(num_nodes, self.num_channels)
+            if self._num_classes > 0 and self.task == 'node':
+                assert isinstance(data.y, Tensor)
+                x = x + data.y.unsqueeze(1)
+            elif self._num_classes > 0 and self.task == 'graph':
+                assert isinstance(data.y, Tensor)
+                x = x + data.y
+            data.x = x
         else:
             data.num_nodes = num_nodes
 
@@ -149,8 +153,8 @@ class FakeHeteroDataset(InMemoryDataset):
         task: str = "auto",
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        **kwargs,
-    ):
+        **kwargs: Union[int, Sequence[int]],
+    ) -> None:
         super().__init__(None, transform)
 
         if task == 'auto':
@@ -159,14 +163,14 @@ class FakeHeteroDataset(InMemoryDataset):
 
         self.node_types = [f'v{i}' for i in range(max(num_node_types, 1))]
 
-        edge_types = []
+        edge_types: List[Tuple[str, str]] = []
         edge_type_product = list(product(self.node_types, self.node_types))
         while len(edge_types) < max(num_edge_types, 1):
             edge_types.extend(edge_type_product)
         random.shuffle(edge_types)
 
-        self.edge_types = []
-        count = defaultdict(lambda: 0)
+        self.edge_types: List[Tuple[str, str, str]] = []
+        count: Dict[Tuple[str, str], int] = defaultdict(lambda: 0)
         for edge_type in edge_types[:max(num_edge_types, 1)]:
             rel = f'e{count[edge_type]}'
             count[edge_type] += 1
@@ -238,7 +242,7 @@ def get_num_nodes(avg_num_nodes: int, avg_degree: float) -> int:
     return random.randint(min_num_nodes, max_num_nodes)
 
 
-def get_num_channels(num_channels) -> int:
+def get_num_channels(num_channels: int) -> int:
     min_num_channels = 3 * num_channels // 4
     max_num_channels = 5 * num_channels // 4
     return random.randint(min_num_channels, max_num_channels)

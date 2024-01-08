@@ -10,9 +10,9 @@ KeyType = Tuple[Optional[str], Optional[str]]
 
 
 class MyFeatureStore(FeatureStore):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.store: Dict[KeyType, Tuple[Tensor, Tensor]] = {}  # type: ignore
+        self.store: Dict[KeyType, Tuple[Tensor, Tensor]] = {}
 
     @staticmethod
     def key(attr: TensorAttr) -> KeyType:
@@ -67,5 +67,5 @@ class MyFeatureStore(FeatureStore):
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         return [self._tensor_attr_cls.cast(*key) for key in self.store.keys()]
 
-    def __len__(self):
+    def __len__(self) -> int:
         raise NotImplementedError

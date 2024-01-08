@@ -33,6 +33,7 @@ from torch_geometric.utils import (
     contains_isolated_nodes,
     is_torch_sparse_tensor,
     is_undirected,
+    select,
     sort_edge_index,
 )
 
@@ -285,6 +286,95 @@ class BaseStorage(MutableMapping):
         either for all attributes or only the ones given in :obj:`*args`.
         """
         return self.apply_(lambda x: x.record_stream(stream), *args)
+
+    # Time Handling ###########################################################
+
+    def _cat_dims(self, keys: List[int]) -> Dict[str, int]:
+        return {
+            key: self._parent().__cat_dim__(key, self[key], self)
+            for key in keys
+        }
+
+    def _select(
+        self,
+        keys: List[str],
+        index_or_mask: Tensor,
+    ) -> 'BaseStorage':
+
+        for key, dim in self._cat_dims(keys).items():
+            self[key] = select(self[key], index_or_mask, dim)
+
+        return self
+
+    def concat(self, other: 'GlobalStorage') -> 'GlobalStorage':
+        if not (set(self.keys()) == set(other.keys())):
+            raise AttributeError('Given storage is not compatible')
+
+        for key, dim in self._cat_dims(self.keys()).items():
+            value1 = self[key]
+            value2 = other[key]
+
+            if key in {'num_nodes', 'num_edges'}:
+                self[key] = value1 + value2
+
+            elif isinstance(value1, list):
+                self[key] = value1 + value2
+
+            elif isinstance(value1, Tensor):
+                self[key] = torch.cat([value1, value2], dim=dim)
+
+            else:
+                raise NotImplementedError(
+                    f"'{self.__class__.__name__}.concat' not yet implemented "
+                    f"for '{type(value1)}'")
+
+        return self
+
+    def is_sorted_by_time(self) -> bool:
+        if 'time' in self:
+            return bool(torch.all(self.time[:-1] <= self.time[1:]))
+        return True
+
+    def sort_by_time(self) -> 'GlobalStorage':
+        if self.is_sorted_by_time():
+            return self
+
+        if 'time' in self:
+            _, perm = torch.sort(self.time, stable=True)
+
+            if self.is_node_attr('time'):
+                keys = self.node_attrs()
+            elif self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+
+            self._select(keys, perm)
+
+        return self
+
+    def snapshot(
+        self,
+        start_time: Union[float, int],
+        end_time: Union[float, int],
+    ) -> 'GlobalStorage':
+        if 'time' in self:
+            mask = (self.time >= start_time) & (self.time <= end_time)
+
+            if self.is_node_attr('time'):
+                keys = self.node_attrs()
+            elif self.is_edge_attr('time'):
+                keys = self.edge_attrs()
+
+            self._select(keys, mask)
+
+            if self.is_node_attr('time') and 'num_nodes' in self:
+                self.num_nodes = int(mask.sum())
+
+        return self
+
+    def up_to(self, time: Union[float, int]) -> 'GlobalStorage':
+        if 'time' in self:
+            return self.snapshot(self.time.min().item(), time)
+        return self
 
 
 class NodeStorage(BaseStorage):
