@@ -20,6 +20,7 @@ data = data.to(device)
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
 data = T.ToUndirected()(data)
+data.edge_index = data.edge_index.to(torch.int64)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # Perform a link-level split into training, validation, and test edges:
