@@ -93,20 +93,24 @@ class SignedConv(MessagePassing):
         self.lin_neg_l.reset_parameters()
         self.lin_neg_r.reset_parameters()
 
-    def forward(self, x: Union[Tensor, PairTensor], pos_edge_index: Adj,
-                neg_edge_index: Adj):
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        pos_edge_index: Adj,
+        neg_edge_index: Adj,
+    ):
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: PairTensor)
         if self.first_aggr:
 
-            out_pos = self.propagate(pos_edge_index, x=x, size=None)
+            out_pos = self.propagate(pos_edge_index, x=x)
             out_pos = self.lin_pos_l(out_pos)
             out_pos = out_pos + self.lin_pos_r(x[1])
 
-            out_neg = self.propagate(neg_edge_index, x=x, size=None)
+            out_neg = self.propagate(neg_edge_index, x=x)
             out_neg = self.lin_neg_l(out_neg)
             out_neg = out_neg + self.lin_neg_r(x[1])
 
@@ -115,17 +119,17 @@ class SignedConv(MessagePassing):
         else:
             F_in = self.in_channels
 
-            out_pos1 = self.propagate(pos_edge_index, size=None,
+            out_pos1 = self.propagate(pos_edge_index,
                                       x=(x[0][..., :F_in], x[1][..., :F_in]))
-            out_pos2 = self.propagate(neg_edge_index, size=None,
+            out_pos2 = self.propagate(neg_edge_index,
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
             out_pos = torch.cat([out_pos1, out_pos2], dim=-1)
             out_pos = self.lin_pos_l(out_pos)
             out_pos = out_pos + self.lin_pos_r(x[1][..., :F_in])
 
-            out_neg1 = self.propagate(pos_edge_index, size=None,
+            out_neg1 = self.propagate(pos_edge_index,
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
-            out_neg2 = self.propagate(neg_edge_index, size=None,
+            out_neg2 = self.propagate(neg_edge_index,
                                       x=(x[0][..., :F_in], x[1][..., :F_in]))
             out_neg = torch.cat([out_neg1, out_neg2], dim=-1)
             out_neg = self.lin_neg_l(out_neg)

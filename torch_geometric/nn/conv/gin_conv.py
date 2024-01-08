@@ -70,11 +70,15 @@ class GINConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
@@ -169,11 +173,16 @@ class GINEConv(MessagePassing):
         if self.lin is not None:
             self.lin.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)

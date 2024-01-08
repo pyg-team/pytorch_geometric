@@ -30,15 +30,12 @@ def test_gmm_conv(separate_gaussians):
         assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1, edge_index, value), out)
         assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj2.t()), out)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out)
 
     # Test bipartite message passing:
     adj1 = to_torch_coo_tensor(edge_index, value, size=(4, 2))
@@ -64,19 +61,16 @@ def test_gmm_conv(separate_gaussians):
         assert torch.allclose(conv((x1, None), adj2.t()), out2)
 
     if is_full_test():
-        t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index, value), out1)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
                               out1)
         assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
                               out2)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj2.t()), out1)
-        assert torch.allclose(jit((x1, None), adj2.t()), out2)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, x2), adj2.t()), out1)
+            assert torch.allclose(jit((x1, None), adj2.t()), out2)
 
 
 @pytest.mark.parametrize('separate_gaussians', [True, False])

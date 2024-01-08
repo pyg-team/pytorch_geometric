@@ -121,7 +121,6 @@ def test_rgat_conv_jittable():
         assert torch.allclose(conv(x, adj2.t(), edge_type), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, edge_index, edge_type),
                               conv(x, edge_index, edge_type))

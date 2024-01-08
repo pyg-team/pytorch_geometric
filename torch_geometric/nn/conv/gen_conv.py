@@ -209,7 +209,7 @@ class GENConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         if hasattr(self, 'lin_src'):
             x = (self.lin_src(x[0]), x[1])

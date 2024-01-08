@@ -77,7 +77,7 @@ class SimpleConv(MessagePassing):
                     edge_index = torch_sparse.set_diag(edge_index)
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,

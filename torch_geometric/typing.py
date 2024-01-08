@@ -126,6 +126,12 @@ except Exception as e:
         ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
+        def value(self) -> Optional[Tensor]:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
+        def rowcount(self) -> Tensor:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
     class SparseTensor:  # type: ignore
         def __init__(
             self,
@@ -148,6 +154,10 @@ except Exception as e:
             is_sorted: bool = False,
             trust_data: bool = False,
         ) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        @property
+        def storage(self) -> SparseStorage:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod
