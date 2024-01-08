@@ -20,7 +20,6 @@ data = data.to(device)
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
 data = T.ToUndirected()(data)
-data.edge_index = data.edge_index.to(torch.int64)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # Perform a link-level split into training, validation, and test edges:
@@ -42,7 +41,7 @@ _, edge_weight = gcn_norm(
     num_nodes=train_data['movie'].num_nodes,
     add_self_loops=False,
 )
-edge_index = train_data['movie', 'movie'].edge_index[:, edge_weight > 0.002]
+edge_index = train_data['movie', 'movie'].edge_index[:, edge_weight > 0.002].to(torch.int64)
 
 train_data['movie', 'metapath_0', 'movie'].edge_index = edge_index
 val_data['movie', 'metapath_0', 'movie'].edge_index = edge_index
