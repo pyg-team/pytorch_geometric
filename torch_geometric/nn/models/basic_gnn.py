@@ -25,7 +25,7 @@ from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils._trim_to_layer import TrimToLayer
 
 
@@ -175,45 +175,17 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    @torch.jit._overload_method
-    def forward(  # noqa
-        x,
-        edge_index,
-        edge_weight=None,
-        edge_attr=None,
-        batch=None,
-        batch_size=None,
-        num_sampled_nodes_per_hop=None,
-        num_sampled_edges_per_hop=None,
-    ):
-        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
-        pass
-
-    @torch.jit._overload_method
-    def forward(  # noqa
-        x,
-        edge_index,
-        edge_weight=None,
-        edge_attr=None,
-        batch=None,
-        batch_size=None,
-        num_sampled_nodes_per_hop=None,
-        num_sampled_edges_per_hop=None,
-    ):
-        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
-        pass
-
-    def forward(  # noqa
+    def forward(
         self,
         x: Tensor,
-        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
+        edge_index: Adj,
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
         batch: OptTensor = None,
         batch_size: Optional[int] = None,
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
-    ):
+    ) -> Tensor:
         r"""Forward pass.
 
         Args:
@@ -409,84 +381,16 @@ class BasicGNN(torch.nn.Module):
 
         return x_all
 
-    def jittable(self, use_sparse_tensor: bool = False) -> 'BasicGNN':
+    def jittable(self) -> 'BasicGNN':
         r"""Produces a new jittable instance module that can be used in
         combination with :meth:`torch.jit.script`.
         """
-        class EdgeIndexJittable(torch.nn.Module):
-            def __init__(self, child: BasicGNN):
-                super().__init__()
-                self.child = child
-
-            def reset_parameters(self):
-                self.child.reset_parameters()
-
-            def forward(
-                self,
-                x: Tensor,
-                edge_index: Tensor,
-                edge_weight: OptTensor = None,
-                edge_attr: OptTensor = None,
-                batch: OptTensor = None,
-                batch_size: Optional[int] = None,
-                num_sampled_nodes_per_hop: Optional[List[int]] = None,
-                num_sampled_edges_per_hop: Optional[List[int]] = None,
-            ) -> Tensor:
-                return self.child(
-                    x,
-                    edge_index,
-                    edge_weight,
-                    edge_attr,
-                    batch,
-                    batch_size,
-                    num_sampled_nodes_per_hop,
-                    num_sampled_edges_per_hop,
-                )
-
-            def __repr__(self) -> str:
-                return str(self.child)
-
-        class SparseTensorJittable(torch.nn.Module):
-            def __init__(self, child: BasicGNN):
-                super().__init__()
-                self.child = child
-
-            def reset_parameters(self):
-                self.child.reset_parameters()
-
-            def forward(
-                self,
-                x: Tensor,
-                edge_index: SparseTensor,
-                edge_weight: OptTensor = None,
-                edge_attr: OptTensor = None,
-                batch: OptTensor = None,
-                batch_size: Optional[int] = None,
-                num_sampled_nodes_per_hop: Optional[List[int]] = None,
-                num_sampled_edges_per_hop: Optional[List[int]] = None,
-            ) -> Tensor:
-                return self.child(
-                    x,
-                    edge_index,
-                    edge_weight,
-                    edge_attr,
-                    batch,
-                    batch_size,
-                    num_sampled_nodes_per_hop,
-                    num_sampled_edges_per_hop,
-                )
-
-            def __repr__(self) -> str:
-                return str(self.child)
-
         out = copy.deepcopy(self)
         convs = [conv.jittable() for conv in out.convs]
         out.convs = torch.nn.ModuleList(convs)
         out._trim = None  # TODO Trimming is currently not support in JIT mode.
 
-        if use_sparse_tensor:
-            return SparseTensorJittable(out)
-        return EdgeIndexJittable(out)
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

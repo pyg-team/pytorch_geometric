@@ -109,7 +109,7 @@ class HEATConv(MessagePassing):
 
         # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
-                             edge_attr=edge_attr, size=None)
+                             edge_attr=edge_attr)
 
         if self.concat:
             if self.root_weight:

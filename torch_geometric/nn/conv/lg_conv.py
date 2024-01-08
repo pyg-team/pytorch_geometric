@@ -47,8 +47,7 @@ class LGConv(MessagePassing):
                                   dtype=x.dtype)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                              size=None)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j

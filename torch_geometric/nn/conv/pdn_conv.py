@@ -109,7 +109,7 @@ class PDNConv(MessagePassing):
         x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_attr)
 
         if self.bias is not None:
             out = out + self.bias
