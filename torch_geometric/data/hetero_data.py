@@ -24,6 +24,7 @@ from torch_geometric.typing import (
     QueryType,
     SparseTensor,
     TensorFrame,
+    TimeType,
     torch_frame,
 )
 from torch_geometric.utils import (
@@ -777,6 +778,74 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if node_type not in node_types:
                 del data[node_type]
         return data
+
+    def concat(self, hetero_data: Self) -> Self:
+        r"""Concatenates :obj:`self` with another :obj:`hetero_data` object.
+        All values needs to have matching shapes at non-concat dimensions.
+        """
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, hetero_data.stores):
+            store.concat(other_store)
+        return out
+
+    def is_sorted_by_time(
+            self, types: Union[List[EdgeType], List[NodeType]]) -> bool:
+        r"""Returns :obj:`True` if :obj:`time` exists and is sorted for all
+        :obj:`types` (either edge types or node types).
+        """
+        if not types:
+            return False
+
+        for t in [self._to_canonical(t) for t in types]:
+            if 'time' not in self[t]:
+                return False
+            if not self[t].is_sorted_by_time():
+                return False
+
+        return True
+
+    def sort_by_time(self, types: Union[List[EdgeType],
+                                        List[NodeType]]) -> Self:
+        r"""Sorts data associated with :obj:`time` according to :obj:`time` for
+        all :obj:`types` (either edge types or node types).
+        """
+        if not types:
+            return self
+
+        out = copy.copy(self)
+        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
+        for t in [self._to_canonical(t) for t in types]:
+            out[t].sort_by_time()
+        return out
+
+    def snapshot(self, types: Union[List[EdgeType], List[NodeType]],
+                 start_time: TimeType, end_time: TimeType) -> Self:
+        r"""Returns a snapshot restricted by :obj:`start_time` and
+        :obj:`end_time` for all :obj:`types` (either edge types or node
+        types).
+        """
+        if not types:
+            return self
+
+        out = copy.copy(self)
+        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
+        for t in [self._to_canonical(t) for t in types]:
+            out[t].snapshot(start_time, end_time)
+        return out
+
+    def up_to(self, types: Union[List[EdgeType], List[NodeType]],
+              end_time: TimeType) -> Self:
+        r"""Returns a snapshot restricted by :obj:`end_time` for all
+        :obj:`types` (either edge types or node).
+        """
+        if not types:
+            return self
+
+        out = copy.copy(self)
+        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
+        for t in [self._to_canonical(t) for t in types]:
+            out[t].up_to(end_time)
+        return out
 
     def to_homogeneous(
         self,

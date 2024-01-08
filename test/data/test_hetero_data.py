@@ -587,6 +587,66 @@ def test_hetero_data_update():
                        other['paper', 'paper'].edge_index)
 
 
+def test_hetero_data_time_handling():
+    data = HeteroData()
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(200, 128)
+    rel1 = ('paper', 'to', 'paper')
+    rel2 = ('paper', 'to', 'author')
+    rel3 = ('author', 'to', 'paper')
+    data[rel1].edge_index = get_random_edge_index(100, 100, 250)
+    data[rel1].time = torch.arange(0, 250, 1)
+    data[rel2].edge_index = get_random_edge_index(100, 200, 500)
+    data[rel2].time = torch.randint(0, 500, (500, ))
+    data[rel3].edge_index = get_random_edge_index(200, 100, 1000)
+    data[rel3].time = torch.randint(0, 1000, (1000, ))
+
+    for rel in (rel1, rel2, rel3):
+        assert data[rel].is_edge_attr('time')
+        assert not data[rel].is_node_attr('time')
+    assert data.is_sorted_by_time([rel1])
+    assert not data.is_sorted_by_time([rel2])
+    assert not data.is_sorted_by_time([rel3])
+
+    out = data.up_to([rel1], 49)
+    assert out[rel1].num_edges == 50
+    assert torch.allclose(out['paper'].x, data['paper'].x)
+    assert torch.allclose(out['author'].x, data['author'].x)
+    assert torch.equal(out[rel1].edge_index, data[rel1].edge_index[:, :50])
+    assert torch.equal(out[rel1].time, data[rel1].time[:50])
+
+    out = data.snapshot([rel1], 10, 49)
+    assert out[rel1].num_edges == 40
+    assert torch.allclose(out['paper'].x, data['paper'].x)
+    assert torch.allclose(out['author'].x, data['author'].x)
+    assert torch.equal(out[rel1].edge_index, data[rel1].edge_index[:, 10:50])
+    assert torch.equal(out[rel1].time, data[rel1].time[10:50])
+
+    out = data.sort_by_time([rel2])
+    assert out.is_sorted_by_time([rel2])
+
+    other_data = copy.copy(data)
+    other_data[rel1].time = torch.arange(250, 500, 1)
+    other_data[rel2].time = torch.randint(500, 1000, (500, ))
+    other_data[rel3].time = torch.randint(1000, 2000, (1000, ))
+    out = data.concat(other_data)
+    assert out.is_sorted_by_time([rel1])
+    assert not out.is_sorted_by_time([rel2])
+    assert not out.is_sorted_by_time([rel3])
+    assert torch.allclose(out['paper'].x,
+                          torch.cat([data['paper'].x, data['paper'].x], dim=0))
+    assert torch.allclose(
+        out['author'].x, torch.cat([data['author'].x, data['author'].x],
+                                   dim=0))
+    for rel in [rel1, rel2, rel3]:
+        assert torch.equal(
+            out[rel].edge_index,
+            torch.cat([data[rel].edge_index, data[rel].edge_index], dim=1))
+        assert torch.equal(
+            out[rel].time,
+            torch.cat([data[rel].time, other_data[rel].time], dim=0))
+
+
 # Feature Store ###############################################################
 
 
