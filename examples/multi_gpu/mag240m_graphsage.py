@@ -18,9 +18,8 @@ from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, to_hetero
-from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.nn.models import GraphSage
-
+from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
 def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
