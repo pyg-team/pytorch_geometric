@@ -32,16 +32,13 @@ def test_ssg_conv():
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-        assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
+            assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)

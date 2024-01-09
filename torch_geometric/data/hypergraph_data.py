@@ -4,8 +4,9 @@ from typing import Any, List, Optional
 
 import torch
 from torch import Tensor
+from typing_extensions import Self
 
-from torch_geometric.data import Data
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import select
 from torch_geometric.utils._subgraph import hyper_subgraph
@@ -50,11 +51,23 @@ class HyperGraphData(Data):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
-    def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
-                 edge_attr: OptTensor = None, y: OptTensor = None,
-                 pos: OptTensor = None, **kwargs):
-        super().__init__(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y,
-                         pos=pos, **kwargs)
+    def __init__(
+        self,
+        x: OptTensor = None,
+        edge_index: OptTensor = None,
+        edge_attr: OptTensor = None,
+        y: OptTensor = None,
+        pos: OptTensor = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            x=x,
+            edge_index=edge_index,
+            edge_attr=edge_attr,
+            y=y,
+            pos=pos,
+            **kwargs,
+        )
 
     @property
     def num_edges(self) -> int:
@@ -64,23 +77,28 @@ class HyperGraphData(Data):
         return max(self.edge_index[1]) + 1
 
     @property
-    def num_nodes(self) -> int:
+    def num_nodes(self) -> Optional[int]:
         num_nodes = super().num_nodes
 
-        # For a hyper graph, the `edge_index[1]`
-        # does not contain node indicies. Therefore,
-        # the below code is to prevent the `num_nodes`
-        # being estimated as the number of hyperedges.
+        # For hypergraphs, `edge_index[1]` does not contain node indices.
+        # Therefore, the below code is used to prevent `num_nodes` being
+        # estimated as the number of hyperedges.
         if (self.edge_index is not None and num_nodes == self.num_edges):
             return max(self.edge_index[0]) + 1
+
         return num_nodes
+
+    @num_nodes.setter
+    def num_nodes(self, num_nodes: Optional[int]) -> None:
+        self._store.num_nodes = num_nodes
 
     def is_edge_attr(self, key: str) -> bool:
         val = super().is_edge_attr(key)
         if not val and self.edge_index is not None:
             return key in self and self[key].size(0) == self.num_edges
+        return val
 
-    def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'edge_index':
             return torch.tensor([[self.num_nodes], [self.num_edges]])
         else:
@@ -114,13 +132,14 @@ class HyperGraphData(Data):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
+        assert self.edge_index is not None
         out = hyper_subgraph(subset, self.edge_index, relabel_nodes=True,
                              num_nodes=self.num_nodes, return_edge_mask=True)
         edge_index, _, edge_mask = out
 
         data = copy.copy(self)
 
-        for key, value in self:
+        for key, value in self.items():
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
@@ -137,7 +156,7 @@ class HyperGraphData(Data):
 
         return data
 
-    def edge_subgraph(self, subset: Tensor) -> 'Data':
+    def edge_subgraph(self, subset: Tensor) -> Self:
         raise NotImplementedError
 
     def to_heterogeneous(
@@ -146,7 +165,7 @@ class HyperGraphData(Data):
         edge_type: Optional[Tensor] = None,
         node_type_names: Optional[List[NodeType]] = None,
         edge_type_names: Optional[List[EdgeType]] = None,
-    ):
+    ) -> HeteroData:
         raise NotImplementedError
 
     def has_isolated_nodes(self) -> bool:
@@ -174,7 +193,7 @@ class HyperGraphData(Data):
             warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
                           raise_on_error)
 
-        if 'edge_index' in self:
+        if self.edge_index is not None:
             if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
                 status = False
                 warn_or_raise(
@@ -182,7 +201,7 @@ class HyperGraphData(Data):
                     f"'{cls_name}' (found {self.edge_index.size()})",
                     raise_on_error)
 
-        if 'edge_index' in self and self.edge_index.numel() > 0:
+        if self.edge_index is not None and self.edge_index.numel() > 0:
             if self.edge_index.min() < 0:
                 status = False
                 warn_or_raise(
@@ -200,7 +219,7 @@ class HyperGraphData(Data):
         return status
 
 
-def warn_or_raise(msg: str, raise_on_error: bool = True):
+def warn_or_raise(msg: str, raise_on_error: bool = True) -> None:
     if raise_on_error:
         raise ValueError(msg)
     else:

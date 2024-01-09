@@ -149,7 +149,7 @@ class HANConv(MessagePassing):
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
             # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
             out = self.propagate(edge_index, x=(x_src, x_dst),
-                                 alpha=(alpha_src, alpha_dst), size=None)
+                                 alpha=(alpha_src, alpha_dst))
 
             out = F.relu(out)
             out_dict[dst_type].append(out)

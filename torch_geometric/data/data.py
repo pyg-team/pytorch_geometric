@@ -13,11 +13,13 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    overload,
 )
 
 import numpy as np
 import torch
 from torch import Tensor
+from typing_extensions import Self
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
@@ -69,7 +71,7 @@ class BaseData:
     def __repr__(self) -> str:
         raise NotImplementedError
 
-    def stores_as(self, data: 'BaseData'):
+    def stores_as(self, data: Self):
         raise NotImplementedError
 
     @property
@@ -92,13 +94,13 @@ class BaseData:
         r"""Returns a :obj:`NamedTuple` of stored key/value pairs."""
         raise NotImplementedError
 
-    def update(self, data: 'BaseData') -> 'BaseData':
+    def update(self, data: Self) -> Self:
         r"""Updates the data object with the elements from another data object.
         Added elements will override existing ones (in case of duplicates).
         """
         raise NotImplementedError
 
-    def concat(self, data: 'BaseData') -> 'BaseData':
+    def concat(self, data: Self) -> Self:
         r"""Concatenates :obj:`self` with another :obj:`data` object.
         All values needs to have matching shapes at non-concat dimensions.
         """
@@ -184,6 +186,14 @@ class BaseData:
         except TypeError:
             return None
 
+    @overload
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
+        pass
+
+    @overload
+    def size(self, dim: int) -> Optional[int]:
+        pass
+
     def size(
         self, dim: Optional[int] = None
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
@@ -236,7 +246,7 @@ class BaseData:
         return all(
             [store.is_sorted(sort_by_row) for store in self.edge_stores])
 
-    def sort(self, sort_by_row: bool = True) -> 'Data':
+    def sort(self, sort_by_row: bool = True) -> Self:
         r"""Sorts edge indices :obj:`edge_index` and their corresponding edge
         features.
 
@@ -256,7 +266,7 @@ class BaseData:
         """
         return all([store.is_coalesced() for store in self.edge_stores])
 
-    def coalesce(self) -> 'Data':
+    def coalesce(self) -> Self:
         r"""Sorts and removes duplicated entries from edge indices
         :obj:`edge_index`.
         """
@@ -269,7 +279,7 @@ class BaseData:
         r"""Returns :obj:`True` if :obj:`time` is sorted."""
         return all([store.is_sorted_by_time() for store in self.stores])
 
-    def sort_by_time(self) -> 'BaseData':
+    def sort_by_time(self) -> Self:
         r"""Sorts data associated with :obj:`time` according to :obj:`time`."""
         out = copy.copy(self)
         for store in out.stores:
@@ -280,7 +290,7 @@ class BaseData:
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
-    ) -> 'BaseData':
+    ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
         """
@@ -289,7 +299,7 @@ class BaseData:
             store.snapshot(start_time, end_time)
         return out
 
-    def up_to(self, end_time: Union[float, int]) -> 'BaseData':
+    def up_to(self, end_time: Union[float, int]) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         up to :obj:`end_time` (inclusive of :obj:`edge_time`).
         """
@@ -607,7 +617,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def num_nodes(self, num_nodes: Optional[int]):
         self._store.num_nodes = num_nodes
 
-    def stores_as(self, data: 'Data'):
+    def stores_as(self, data: Self):
         return self
 
     @property
@@ -628,7 +638,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def to_namedtuple(self) -> NamedTuple:
         return self._store.to_namedtuple()
 
-    def update(self, data: Union['Data', Dict[str, Any]]) -> 'Data':
+    def update(self, data: Union[Self, Dict[str, Any]]) -> Self:
         for key, value in data.items():
             self[key] = value
         return self
@@ -700,7 +710,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         """
         return self._store.is_edge_attr(key)
 
-    def subgraph(self, subset: Tensor) -> 'Data':
+    def subgraph(self, subset: Tensor) -> Self:
         r"""Returns the induced subgraph given by the node indices
         :obj:`subset`.
 
@@ -742,7 +752,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         return data
 
-    def edge_subgraph(self, subset: Tensor) -> 'Data':
+    def edge_subgraph(self, subset: Tensor) -> Self:
         r"""Returns the induced subgraph given by the edge indices
         :obj:`subset`.
         Will currently preserve all the nodes in the graph, even if they are
@@ -887,7 +897,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     ###########################################################################
 
     @classmethod
-    def from_dict(cls, mapping: Dict[str, Any]) -> 'Data':
+    def from_dict(cls, mapping: Dict[str, Any]) -> Self:
         r"""Creates a :class:`~torch_geometric.data.Data` object from a
         dictionary.
         """
@@ -998,6 +1008,14 @@ class Data(BaseData, FeatureStore, GraphStore):
     @time.setter
     def time(self, time: Optional[Tensor]):
         self._store.time = time
+
+    @property
+    def face(self) -> Optional[Tensor]:
+        return self['face'] if 'face' in self._store else None
+
+    @face.setter
+    def face(self, face: Optional[Tensor]):
+        self._store.face = face
 
     # Deprecated functions ####################################################
 

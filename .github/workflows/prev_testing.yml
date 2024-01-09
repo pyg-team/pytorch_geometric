@@ -32,7 +32,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v34
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             benchmark/**

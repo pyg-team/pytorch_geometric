@@ -9,14 +9,13 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
-from torch_geometric.compile import to_jittable
+from torch_geometric._compile import to_jittable
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
@@ -208,7 +207,6 @@ def test_basic_gnn_inference(get_dataset, jk):
 @withCUDA
 @onlyLinux
 @onlyFullTest
-@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_compile(device):
     x = torch.randn(3, 8, device=device)
@@ -334,7 +332,6 @@ def test_trim_to_layer():
 
 @withCUDA
 @onlyLinux
-@disableExtensions
 @withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):

@@ -125,14 +125,22 @@ class InMemoryDataset(Dataset, ABC):
     def save(cls, data_list: Sequence[BaseData], path: str) -> None:
         r"""Saves a list of data objects to the file path :obj:`path`."""
         data, slices = cls.collate(data_list)
-        fs.torch_save((data.to_dict(), slices), path)
+        fs.torch_save((data.to_dict(), slices, data.__class__), path)
 
     def load(self, path: str, data_cls: Type[BaseData] = Data) -> None:
         r"""Loads the dataset from the file path :obj:`path`."""
-        data, self.slices = fs.torch_load(path)
-        if isinstance(data, dict):  # Backward compatibility.
-            data = data_cls.from_dict(data)
-        self.data = data
+        out = fs.torch_load(path)
+        assert isinstance(out, tuple)
+        assert len(out) == 2 or len(out) == 3
+        if len(out) == 2:  # Backward compatibility.
+            data, self.slices = out
+        else:
+            data, self.slices, data_cls = out
+
+        if not isinstance(data, dict):  # Backward compatibility.
+            self.data = data
+        else:
+            self.data = data_cls.from_dict(data)
 
     @staticmethod
     def collate(

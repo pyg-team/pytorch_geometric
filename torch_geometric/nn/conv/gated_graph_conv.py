@@ -76,8 +76,7 @@ class GatedGraphConv(MessagePassing):
         for i in range(self.num_layers):
             m = torch.matmul(x, self.weight[i])
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight,
-                               size=None)
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
             x = self.rnn(m, x)
 
         return x
