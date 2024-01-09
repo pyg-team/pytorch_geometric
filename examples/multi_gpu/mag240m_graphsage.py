@@ -96,12 +96,12 @@ def run(
         batch_size=batch_size,
         num_workers=get_num_workers(max(n_devices, 1)),
         persistent_workers=True,
+        shuffle=True,
     )
     train_loader = NeighborLoader(
         data,
         input_nodes=("paper", train_idx),
         num_neighbors=sizes,
-        shuffle=True,
         drop_last=True,
         **kwargs,
     )
