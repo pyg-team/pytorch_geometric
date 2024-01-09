@@ -18,7 +18,7 @@ from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, to_hetero
-from torch_geometric.nn.models import GraphSage
+from torch_geometric.nn.models import GraphSAGE
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
@@ -68,7 +68,7 @@ def run(
     if rank == 0:
         print("Setting up GNN...")
     acc = Accuracy(task="multiclass", num_classes=out_channels)
-    model = GraphSage(
+    model = GraphSAGE(
         in_channels=data["paper"].x.size(-1),
         hidden_channels=hidden_channels,
         num_layers=len(sizes),
