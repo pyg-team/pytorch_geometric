@@ -18,6 +18,7 @@ from torch_geometric.utils.sparse import index2ptr
 
 MEASURE_ITER = 3
 
+
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(torch.nn.parameter, 'UninitializedParameter'):
         return False
