@@ -16,6 +16,7 @@ from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
+MEASURE_ITER = 3
 
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(torch.nn.parameter, 'UninitializedParameter'):
@@ -279,13 +280,12 @@ class HeteroLinear(torch.nn.Module):
     @torch.jit.unused
     def _update_timing_cache(self, x: Tensor, type_vec_ptr: Tensor,
                              num_rows: int) -> bool:
-        measure_iter = 3
         with torch.no_grad():
             # only measure forward pass for now
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
             start = time.perf_counter()
-            for _ in range(measure_iter):
+            for _ in range(MEASURE_ITER):
                 _ = self.forward_segmm(x, type_vec_ptr)
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
@@ -295,7 +295,7 @@ class HeteroLinear(torch.nn.Module):
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
             start = time.perf_counter()
-            for _ in range(measure_iter):
+            for _ in range(MEASURE_ITER):
                 _ = self.forward_naive(x, type_vec_ptr)
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
