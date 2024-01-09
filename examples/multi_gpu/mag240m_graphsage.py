@@ -97,7 +97,7 @@ def run(
 
     kwargs = dict(
         batch_size=batch_size,
-        num_workers=get_num_workers(max(n_devices, 1)),
+        num_workers=16,
         persistent_workers=True,
         shuffle=True,
     )
@@ -187,18 +187,6 @@ def run(
     if n_devices > 1:
         dist.destroy_process_group()
     torch.save(model, 'trained_gnn.pt')
-
-
-def get_num_workers(world_size):
-    num_work = None
-    if hasattr(os, "sched_getaffinity"):
-        try:
-            num_work = len(os.sched_getaffinity(0)) / (2 * world_size)
-        except Exception:
-            pass
-    if num_work is None:
-        num_work = os.cpu_count() / (2 * world_size)
-    return int(num_work)
 
 
 if __name__ == "__main__":
