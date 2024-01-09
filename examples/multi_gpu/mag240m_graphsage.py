@@ -19,104 +19,28 @@ from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.typing import Adj, EdgeType, NodeType
+from torch_geometric.nn.models import GraphSage
 
 
-class HomoGNN(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        hidden_channels: int,
-        num_layers: int,
-        heads: int = 4,
-        dropout: float = 0.5,
-    ):
-        super().__init__()
-        self.dropout = dropout
-        self.num_layers = num_layers
 
-        self.conv1 = SAGEConv(in_channels, hidden_channels)
-        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
-        self.lin = Linear(hidden_channels, out_channels)
-
-    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        x = x.to(torch.float)
-        x = self.conv1(x, edge_index).relu()
-        x = F.dropout(x, p=self.dropout, training=self.training)
-        x = self.conv2(x, edge_index).relu()
-        x = F.dropout(x, p=self.dropout, training=self.training)
-        return self.lin(x)
-
-
-class HeteroGNN(torch.nn.Module):
-    def __init__(
-        self,
-        metadata: Tuple[List[NodeType], List[EdgeType]],
-        in_channels: int,
-        out_channels: int,
-        hidden_channels: int,
-        num_nodes_dict: Dict[NodeType, int],
-        num_layers: int,
-        heads: int = 4,
-        dropout: float = 0.5,
-        debug: bool = False,
-    ):
-        super().__init__()
-        model = HomoGNN(
-            in_channels,
-            out_channels,
-            hidden_channels,
-            num_layers,
-            heads=heads,
-            dropout=dropout,
-        )
-        self.model = to_hetero(model, metadata, aggr="sum", debug=debug)
-        self.acc = Accuracy(task="multiclass", num_classes=out_channels)
-
-    def forward(
-        self,
-        x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType, Tensor],
-    ) -> Dict[NodeType, Tensor]:
-        return self.model(x_dict, edge_index_dict)
-
-    def common_step(self, batch: Batch,
-                    ddp_module=None) -> Tuple[Tensor, Tensor]:
+def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
         batch_size = batch["paper"].batch_size
-        # for node_type, embed in self.embeds.items():
-        #     batch[node_type].x = embed(batch[node_type].n_id)
-        # # w/o this to_hetero model fails
-        for node_type in batch.node_types:
-            if node_type not in batch.x_dict.keys():
-                paper_x = batch["paper"].x
-                # (NOTE) embeddings take too much memory
-                batch[node_type].x = torch.zeros(
-                    size=(torch.numel(batch[node_type].n_id),
-                          paper_x.size(-1)),
-                    device=paper_x.device,
-                    dtype=paper_x.dtype,
-                )
-        if ddp_module is None:
-            y_hat = self(batch.x_dict,
-                         batch.edge_index_dict)["paper"][:batch_size]
-        else:
-            y_hat = ddp_module(batch.x_dict,
-                               batch.edge_index_dict)["paper"][:batch_size]
+        y_hat = model(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
         y = batch["paper"].y[:batch_size].to(torch.long)
         return y_hat, y
 
-    def training_step(self, batch: Batch, ddp_module=None) -> Tensor:
-        y_hat, y = self.common_step(batch, ddp_module)
+    def training_step(batch: Batch, acc, model) -> Tensor:
+        y_hat, y = common_step(batch, model)
         train_loss = F.cross_entropy(y_hat, y)
         train_acc = self.acc(y_hat.softmax(dim=-1), y)
         return train_loss, train_acc
 
-    def validation_step(self, batch: Batch):
-        y_hat, y = self.common_step(batch)
-        return self.acc(y_hat.softmax(dim=-1), y)
+    def validation_step(batch: Batch, acc, model):
+        y_hat, y = common_step(batch, model)
+        return acc(y_hat.softmax(dim=-1), y)
 
-    def predict_step(self, batch: Batch):
-        y_hat, y = self.common_step(batch)
+    def predict_step(batch: Batch):
+        y_hat, y = common_step(batch, model)
         return y_hat
 
 
@@ -144,25 +68,30 @@ def run(
         dist.init_process_group("nccl", rank=rank, world_size=n_devices)
     if rank == 0:
         print("Setting up GNN...")
-    model = HeteroGNN(
-        data.metadata(),
-        data["paper"].x.size(-1),
-        data.num_classes,
-        hidden_channels,
-        num_nodes_dict=data.collect("num_nodes"),
+    acc = Accuracy(task="multiclass", num_classes=out_channels)
+    model = GraphSage(
+        in_channels=data["paper"].x.size(-1),
+        hidden_channels=hidden_channels,
         num_layers=len(sizes),
         dropout=dropout,
         debug=debug,
+        norm='batch',
     )
+    model = to_hetero(model, metadata, aggr="sum", debug=debug)
+
     if rank == 0:
         print(f"# GNN Params: \
             {sum([p.numel() for p in model.parameters()])/10**6:.1f}M")
         print('Setting up NeighborLoaders...')
     train_idx = data["paper"].train_mask.nonzero(as_tuple=False).view(-1)
-    if n_devices > 1:
-        # Split training indices into `n_devices` many chunks:
-        train_idx = train_idx.split(train_idx.size(0) // n_devices)[rank]
     eval_idx = data["paper"].val_mask.nonzero(as_tuple=False).view(-1)
+    test_idx = data["paper"].test_mask.nonzero(as_tuple=False).view(-1)
+    if n_devices > 1:
+        # Split indices into `n_devices` many chunks:
+        train_idx = train_idx.split(train_idx.size(0) // n_devices)[rank]
+        eval_idx = eval_idx.split(eval_idx.size(0) // n_devices)[rank]
+        test_idx = test_idx.split(test_idx.size(0) // n_devices)[rank]
+
 
     kwargs = dict(
         batch_size=batch_size,
@@ -178,19 +107,18 @@ def run(
         **kwargs,
     )
 
-    if rank == 0:
-        eval_loader = NeighborLoader(
-            data,
-            input_nodes=("paper", eval_idx),
-            num_neighbors=sizes,
-            **kwargs,
-        )
-        test_loader = NeighborLoader(
-            data,
-            input_nodes=("paper", eval_idx),
-            num_neighbors=sizes,
-            **kwargs,
-        )
+    eval_loader = NeighborLoader(
+        data,
+        input_nodes=("paper", eval_idx),
+        num_neighbors=sizes,
+        **kwargs,
+    )
+    test_loader = NeighborLoader(
+        data,
+        input_nodes=("paper", test_idx),
+        num_neighbors=sizes,
+        **kwargs,
+    )
     if rank == 0:
         print("Final setup...")
     if n_devices > 0:
@@ -231,34 +159,34 @@ def run(
                     Step Time: {iter_time:.4f}s")
         if n_devices > 1:
             dist.barrier()
-        if rank == 0:
-            print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
-                Train Acc:{sum_acc / i * 100.0:.2f}%, \
-                Average Step Time: \
-                {time_sum/(i - num_warmup_iters_for_timing):.4f}s")
-            model.eval()
-            acc_sum = 0
-            with torch.no_grad():
-                for i, batch in enumerate(eval_loader):
-                    if i >= eval_steps:
-                        break
-                    if n_devices > 0:
-                        batch = batch.to(rank, "x", "y", "edge_index")
-                    acc_sum += model.validation_step(batch)
-                print(f"Validation Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%")
-    if n_devices > 1:
-        dist.barrier()
-    if rank == 0:
+        print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
+            Train Acc:{sum_acc / i * 100.0:.2f}%, \
+            Average Step Time: \
+            {time_sum/(i - num_warmup_iters_for_timing):.4f}s")
         model.eval()
         acc_sum = 0
         with torch.no_grad():
-            for i, batch in enumerate(test_loader):
+            for i, batch in enumerate(eval_loader):
                 if i >= eval_steps:
                     break
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
                 acc_sum += model.validation_step(batch)
-            print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
+            torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+            print(f"Validation Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%")
+    if n_devices > 1:
+        dist.barrier()
+    model.eval()
+    acc_sum = 0
+    with torch.no_grad():
+        for i, batch in enumerate(test_loader):
+            if i >= eval_steps:
+                break
+            if n_devices > 0:
+                batch = batch.to(rank, "x", "y", "edge_index")
+            acc_sum += model.validation_step(batch)
+        torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+        print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
     torch.save(model, 'trained_gnn.pt')
