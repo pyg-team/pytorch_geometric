@@ -67,11 +67,12 @@ def run(
         dist.init_process_group("nccl", rank=rank, world_size=n_devices)
     if rank == 0:
         print("Setting up GNN...")
-    acc = Accuracy(task="multiclass", num_classes=out_channels)
+    acc = Accuracy(task="multiclass", num_classes=data.num_classes)
     model = GraphSAGE(
         in_channels=data["paper"].x.size(-1),
         hidden_channels=hidden_channels,
         num_layers=len(sizes),
+        out_channels=data.num_classes,
         dropout=dropout,
         debug=debug,
         norm='batch',
@@ -131,10 +132,6 @@ def run(
     for epoch in range(1, num_epochs + 1):
         model.train()
         time_sum, sum_acc = 0, 0
-        if rank == 0:
-            print("right before for loop over train loader...")
-        if rank == 0 and epoch == 0:
-            print("Training beginning...")
         for i, batch in enumerate(train_loader):
             if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
                 break
