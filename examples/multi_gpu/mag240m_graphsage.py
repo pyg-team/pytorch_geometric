@@ -28,15 +28,18 @@ def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
     y = batch["paper"].y[:batch_size].to(torch.long)
     return y_hat, y
 
+
 def training_step(batch: Batch, acc, model) -> Tensor:
     y_hat, y = common_step(batch, model)
     train_loss = F.cross_entropy(y_hat, y)
     train_acc = acc(y_hat.softmax(dim=-1), y)
     return train_loss, train_acc
 
+
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
     return acc(y_hat.softmax(dim=-1), y)
+
 
 def predict_step(batch: Batch):
     y_hat, y = common_step(batch, model)
@@ -92,7 +95,6 @@ def run(
         eval_idx = eval_idx.split(eval_idx.size(0) // n_devices)[rank]
         test_idx = test_idx.split(test_idx.size(0) // n_devices)[rank]
 
-
     kwargs = dict(
         batch_size=batch_size,
         num_workers=get_num_workers(max(n_devices, 1)),
@@ -126,7 +128,7 @@ def run(
     if rank == 0:
         print("about to make optimizer")
     if n_devices > 1:
-        model= DistributedDataParallel(model, device_ids=[rank])
+        model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(ddp.parameters(), lr=0.001)
 
     for epoch in range(1, num_epochs + 1):
@@ -165,7 +167,8 @@ def run(
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
                 acc_sum += validation_step(batch, acc, model)
-            torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+            torch.distributed.all_reduce(acc_sum,
+                                         op=torch.distributed.ReduceOp.MEAN)
             print(f"Validation Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%")
     if n_devices > 1:
         dist.barrier()
@@ -178,7 +181,8 @@ def run(
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
             acc_sum += validation_step(batch, acc, model)
-        torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
+        torch.distributed.all_reduce(acc_sum,
+                                     op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
@@ -278,8 +282,7 @@ if __name__ == "__main__":
             )
         except ProcessExitedException as e:
             print("torch.multiprocessing.spawn.ProcessExitedException:", e)
-            print(
-                "Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
+            print("Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
 
     else:
         if args.n_devices == 1:
