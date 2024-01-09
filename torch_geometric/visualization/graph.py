@@ -59,7 +59,8 @@ def visualize_graph(
         backend = 'graphviz' if has_graphviz() else 'networkx'
 
     if backend.lower() == 'networkx':
-        return _visualize_graph_via_networkx(edge_index, edge_weight, path, **kwargs)
+        return _visualize_graph_via_networkx(edge_index, edge_weight, path,
+                                             **kwargs)
     elif backend.lower() == 'graphviz':
         return _visualize_graph_via_graphviz(edge_index, edge_weight, path)
 
@@ -103,11 +104,11 @@ def _visualize_graph_via_networkx(
 ) -> Any:
     import matplotlib.pyplot as plt
     import networkx as nx
-    
+
     node_label = kwargs['node_label']
     color_dict = kwargs['color_dict']
     target_node = kwargs['target_node']
-    
+
     g = nx.DiGraph()
     node_size = 800
 
@@ -132,8 +133,8 @@ def _visualize_graph_via_networkx(
                 connectionstyle="arc3,rad=0.1",
             ),
         )
-        
-    node_color = ['white'] * len(g.nodes) 
+
+    node_color = ['white'] * len(g.nodes)
     if node_label != None:
         assert color_dict != None
         node_color = []
@@ -146,15 +147,14 @@ def _visualize_graph_via_networkx(
                 print("kylin")
                 node_color[i] = 'red'
                 break
-            
-    nodes = nx.draw_networkx_nodes(g, pos, node_size=node_size, 
-                                   node_color=node_color,
-                                   margins=0.1)
+
+    nodes = nx.draw_networkx_nodes(g, pos, node_size=node_size,
+                                   node_color=node_color, margins=0.1)
     nodes.set_edgecolor('black')
-    
+
     if kwargs['draw_node_idx'] == True:
         nx.draw_networkx_labels(g, pos, font_size=10)
-        
+
     if path is not None:
         plt.savefig(path)
     else:

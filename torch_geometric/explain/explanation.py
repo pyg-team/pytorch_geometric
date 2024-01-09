@@ -233,8 +233,7 @@ class Explanation(Data, ExplanationMixin):
         return _visualize_score(score, feat_labels, path, top_k)
 
     def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None,
-                        **kwargs):
+                        backend: Optional[str] = None, **kwargs):
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -247,7 +246,7 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
-            **kwargs: include 
+            **kwargs: include
         """
         edge_mask = self.get('edge_mask')
         if edge_mask is None:
