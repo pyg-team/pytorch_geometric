@@ -24,10 +24,10 @@ from torch_geometric.nn.models import GraphSage
 
 
 def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
-        batch_size = batch["paper"].batch_size
-        y_hat = model(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
-        y = batch["paper"].y[:batch_size].to(torch.long)
-        return y_hat, y
+    batch_size = batch["paper"].batch_size
+    y_hat = model(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
+    y = batch["paper"].y[:batch_size].to(torch.long)
+    return y_hat, y
 
 def training_step(batch: Batch, acc, model) -> Tensor:
     y_hat, y = common_step(batch, model)
