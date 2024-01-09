@@ -80,7 +80,7 @@ def run(
         debug=debug,
         norm='batch',
     )
-    model = to_hetero(model, metadata, aggr="sum", debug=debug)
+    model = to_hetero(model, data.metadata(), aggr="sum", debug=debug)
 
     if rank == 0:
         print(f"# GNN Params: \
