@@ -4,8 +4,10 @@ from typing import Dict, List, Optional, Union
 
 import torch
 from tqdm import tqdm
+from typing_extensions import Self
 
 from torch_geometric.data import Dataset, HeteroData
+from torch_geometric.typing import EdgeType, NodeType
 
 
 @dataclass
@@ -19,7 +21,10 @@ class Stats:
     max: float
 
     @classmethod
-    def from_data(cls, data: Union[List[int], List[float], torch.Tensor]):
+    def from_data(
+        cls,
+        data: Union[List[int], List[float], torch.Tensor],
+    ) -> Self:
         if not isinstance(data, torch.Tensor):
             data = torch.tensor(data)
         data = data.to(torch.float)
@@ -41,8 +46,8 @@ class Summary:
     num_graphs: int
     num_nodes: Stats
     num_edges: Stats
-    num_nodes_per_type: Optional[Dict[str, Stats]] = None
-    num_edges_per_type: Optional[Dict[str, Stats]] = None
+    num_nodes_per_type: Optional[Dict[NodeType, Stats]] = None
+    num_edges_per_type: Optional[Dict[EdgeType, Stats]] = None
 
     @classmethod
     def from_dataset(
@@ -50,7 +55,7 @@ class Summary:
         dataset: Dataset,
         progress_bar: Optional[bool] = None,
         per_type: bool = True,
-    ):
+    ) -> Self:
         r"""Creates a summary of a :class:`~torch_geometric.data.Dataset`
         object.
 
@@ -73,36 +78,35 @@ class Summary:
             dataset = tqdm(dataset)
 
         num_nodes, num_edges = [], []
-        num_nodes_per_type = defaultdict(list)
-        num_edges_per_type = defaultdict(list)
+        _num_nodes_per_type = defaultdict(list)
+        _num_edges_per_type = defaultdict(list)
 
         for data in dataset:
+            assert data.num_nodes is not None
             num_nodes.append(data.num_nodes)
             num_edges.append(data.num_edges)
 
             if per_type and isinstance(data, HeteroData):
                 for node_type in data.node_types:
-                    num_nodes_per_type[node_type].append(
+                    _num_nodes_per_type[node_type].append(
                         data[node_type].num_nodes)
                 for edge_type in data.edge_types:
-                    num_edges_per_type[edge_type].append(
+                    _num_edges_per_type[edge_type].append(
                         data[edge_type].num_edges)
 
-        if len(num_nodes_per_type) > 0:
+        num_nodes_per_type = None
+        if len(_num_nodes_per_type) > 0:
             num_nodes_per_type = {
                 node_type: Stats.from_data(num_nodes_list)
-                for node_type, num_nodes_list in num_nodes_per_type.items()
+                for node_type, num_nodes_list in _num_nodes_per_type.items()
             }
-        else:
-            num_nodes_per_type = None
 
-        if len(num_edges_per_type) > 0:
+        num_edges_per_type = None
+        if len(_num_edges_per_type) > 0:
             num_edges_per_type = {
                 edge_type: Stats.from_data(num_edges_list)
-                for edge_type, num_edges_list in num_edges_per_type.items()
+                for edge_type, num_edges_list in _num_edges_per_type.items()
             }
-        else:
-            num_edges_per_type = None
 
         return cls(
             name=name,

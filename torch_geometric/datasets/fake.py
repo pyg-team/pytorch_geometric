@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from itertools import product
-from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -52,7 +52,7 @@ class FakeDataset(InMemoryDataset):
         is_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        **kwargs: Union[int, Sequence[int]],
+        **kwargs: Union[int, Tuple[int, ...]],
     ) -> None:
         super().__init__(None, transform)
 
@@ -153,7 +153,7 @@ class FakeHeteroDataset(InMemoryDataset):
         task: str = "auto",
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        **kwargs: Union[int, Sequence[int]],
+        **kwargs: Union[int, Tuple[int, ...]],
     ) -> None:
         super().__init__(None, transform)
 

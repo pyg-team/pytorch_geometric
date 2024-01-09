@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import (
@@ -104,8 +105,15 @@ def remove_self_loops(  # noqa: F811
         size = (edge_index.size(0), edge_index.size(1))
         edge_index, value = to_edge_index(edge_index)
 
+    is_undirected = False
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
+
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        edge_index._is_undirected = is_undirected
 
     if layout is not None:
         assert edge_attr is None
@@ -174,10 +182,19 @@ def segregate_self_loops(  # noqa: F811
     mask = edge_index[0] != edge_index[1]
     inv_mask = ~mask
 
+    is_undirected = False
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
     loop_edge_index = edge_index[:, inv_mask]
     loop_edge_attr = None if edge_attr is None else edge_attr[inv_mask]
     edge_index = edge_index[:, mask]
     edge_attr = None if edge_attr is None else edge_attr[mask]
+
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        assert isinstance(loop_edge_index, EdgeIndex)
+        edge_index._is_undirected = is_undirected
+        loop_edge_index._is_undirected = is_undirected
 
     return edge_index, edge_attr, loop_edge_index, loop_edge_attr
 
@@ -442,8 +459,15 @@ def add_self_loops(  # noqa: F811
         N = maybe_num_nodes(edge_index, num_nodes)
         size = (N, N)
 
-    loop_index = torch.arange(0, N, device=edge_index.device)
-    loop_index = loop_index.unsqueeze(0).repeat(2, 1)
+    device = edge_index.device
+    if torch.jit.is_scripting():
+        loop_index = torch.arange(0, N, device=device).view(1, -1).repeat(2, 1)
+    else:
+        loop_index = EdgeIndex(
+            torch.arange(0, N, device=device).view(1, -1).repeat(2, 1),
+            sparse_size=(N, N),
+            is_undirected=True,
+        )
     full_edge_index = torch.cat([edge_index, loop_index], dim=1)
 
     if is_sparse:
@@ -598,8 +622,15 @@ def add_remaining_self_loops(  # noqa: F811
     N = maybe_num_nodes(edge_index, num_nodes)
     mask = edge_index[0] != edge_index[1]
 
-    loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
-    loop_index = loop_index.unsqueeze(0).repeat(2, 1)
+    device = edge_index.device
+    if torch.jit.is_scripting():
+        loop_index = torch.arange(0, N, device=device).view(1, -1).repeat(2, 1)
+    else:
+        loop_index = EdgeIndex(
+            torch.arange(0, N, device=device).view(1, -1).repeat(2, 1),
+            sparse_size=(N, N),
+            is_undirected=True,
+        )
 
     if edge_attr is not None:
 
@@ -611,7 +642,17 @@ def add_remaining_self_loops(  # noqa: F811
 
         edge_attr = torch.cat([edge_attr[mask], loop_attr], dim=0)
 
-    edge_index = torch.cat([edge_index[:, mask], loop_index], dim=1)
+    is_undirected = False
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        is_undirected = edge_index.is_undirected
+
+    edge_index = edge_index[:, mask]
+
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        edge_index._is_undirected = is_undirected
+
+    edge_index = torch.cat([edge_index, loop_index], dim=1)
+
     return edge_index, edge_attr
 
 

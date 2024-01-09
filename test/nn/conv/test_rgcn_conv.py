@@ -83,8 +83,7 @@ def test_rgcn_conv(cls, conf, device):
             assert torch.allclose(conv(idx1, adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        t = '(OptTensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1, edge_index, edge_type), out1, atol=1e-3)
         if num_blocks is None:
             assert torch.allclose(jit(idx1, edge_index, edge_type), out2,
@@ -92,13 +91,11 @@ def test_rgcn_conv(cls, conf, device):
             assert torch.allclose(jit(None, edge_index, edge_type), out2,
                                   atol=1e-3)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj.t()), out1)
-        if num_blocks is None:
-            assert torch.allclose(jit(idx1, adj.t()), out2, atol=1e-3)
-            assert torch.allclose(jit(None, adj.t()), out2, atol=1e-3)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj.t()), out1)
+            if num_blocks is None:
+                assert torch.allclose(jit(idx1, adj.t()), out2, atol=1e-3)
+                assert torch.allclose(jit(None, adj.t()), out2, atol=1e-3)
 
     # Test bipartite message passing:
     conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum').to(device)
@@ -121,8 +118,7 @@ def test_rgcn_conv(cls, conf, device):
             assert torch.allclose(conv((idx1, idx2), adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        t = '(Tuple[OptTensor, Tensor], Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index, edge_type), out1,
                               atol=1e-3)
         if num_blocks is None:
@@ -131,10 +127,10 @@ def test_rgcn_conv(cls, conf, device):
             assert torch.allclose(jit((idx1, idx2), edge_index, edge_type),
                                   out2, atol=1e-3)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tuple[OptTensor, Tensor], SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-3)
-        if num_blocks is None:
-            assert torch.allclose(jit((None, idx2), adj.t()), out2, atol=1e-3)
-            assert torch.allclose(jit((idx1, idx2), adj.t()), out2, atol=1e-3)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-3)
+            if num_blocks is None:
+                assert torch.allclose(jit((None, idx2), adj.t()), out2,
+                                      atol=1e-3)
+                assert torch.allclose(jit((idx1, idx2), adj.t()), out2,
+                                      atol=1e-3)

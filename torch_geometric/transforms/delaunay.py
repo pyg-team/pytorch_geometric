@@ -12,6 +12,8 @@ class Delaunay(BaseTransform):
     (functional name: :obj:`delaunay`).
     """
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+
         if data.pos.size(0) < 2:
             data.edge_index = torch.tensor([], dtype=torch.long,
                                            device=data.pos.device).view(2, 0)

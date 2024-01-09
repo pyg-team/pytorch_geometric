@@ -27,7 +27,7 @@ def add_node_attr(
 ) -> Data:
     # TODO Move to `BaseTransform`.
     if attr_name is None:
-        if 'x' in data:
+        if data.x is not None:
             x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
             data.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
         else:
@@ -67,15 +67,18 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         k: int,
         attr_name: Optional[str] = 'laplacian_eigenvector_pe',
         is_undirected: bool = False,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         self.k = k
         self.attr_name = attr_name
         self.is_undirected = is_undirected
         self.kwargs = kwargs
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         num_nodes = data.num_nodes
+        assert num_nodes is not None
+
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
             data.edge_weight,
@@ -89,12 +92,12 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             from numpy.linalg import eig, eigh
             eig_fn = eig if not self.is_undirected else eigh
 
-            eig_vals, eig_vecs = eig_fn(L.todense())
+            eig_vals, eig_vecs = eig_fn(L.todense())  # type: ignore
         else:
             from scipy.sparse.linalg import eigs, eigsh
             eig_fn = eigs if not self.is_undirected else eigsh
 
-            eig_vals, eig_vecs = eig_fn(
+            eig_vals, eig_vecs = eig_fn(  # type: ignore
                 L,
                 k=self.k + 1,
                 which='SR' if not self.is_undirected else 'SA',
@@ -129,17 +132,20 @@ class AddRandomWalkPE(BaseTransform):
         self,
         walk_length: int,
         attr_name: Optional[str] = 'random_walk_pe',
-    ):
+    ) -> None:
         self.walk_length = walk_length
         self.attr_name = attr_name
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         row, col = data.edge_index
         N = data.num_nodes
+        assert N is not None
 
-        value = data.edge_weight
-        if value is None:
+        if data.edge_weight is None:
             value = torch.ones(data.num_edges, device=row.device)
+        else:
+            value = data.edge_weight
         value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
         value = 1.0 / value
 

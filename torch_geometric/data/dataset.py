@@ -5,7 +5,16 @@ import sys
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch.utils.data
@@ -287,6 +296,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         else:
             return self.index_select(idx)
 
+    def __iter__(self) -> Iterator[BaseData]:
+        for i in range(len(self)):
+            yield self[i]
+
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
         Indices :obj:`idx` can be a slicing object, *e.g.*, :obj:`[2:5]`, a
@@ -352,16 +365,16 @@ class Dataset(torch.utils.data.Dataset, ABC):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
-    def get_summary(self):
+    def get_summary(self) -> Any:
         r"""Collects summary statistics for the dataset."""
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self):  # pragma: no cover
+    def print_summary(self) -> None:
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
-    def to_datapipe(self):
+    def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
         The returned instance can then be used with :pyg:`PyG's` built-in
@@ -386,7 +399,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return DatasetAdapter(self)
 
 
-def overrides_method(cls, method_name: str):
+def overrides_method(cls, method_name: str) -> bool:
     from torch_geometric.data import InMemoryDataset
 
     if method_name in cls.__dict__:
@@ -418,7 +431,7 @@ def _repr(obj: Any) -> str:
     return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
 
 
-def _get_flattened_data_list(data_list: List[Any]) -> List[BaseData]:
+def _get_flattened_data_list(data_list: Iterable[Any]) -> List[BaseData]:
     outs: List[BaseData] = []
     for data in data_list:
         if isinstance(data, BaseData):

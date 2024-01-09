@@ -1,3 +1,4 @@
+import copy
 from typing import Optional
 
 import torch
@@ -45,7 +46,7 @@ class GATEConv(MessagePassing):
         alpha = self.edge_updater(edge_index, x=x, edge_attr=edge_attr)
 
         # propagate_type: (x: Tensor, alpha: Tensor)
-        out = self.propagate(edge_index, x=x, alpha=alpha, size=None)
+        out = self.propagate(edge_index, x=x, alpha=alpha)
         out = out + self.bias
         return out
 
@@ -150,9 +151,10 @@ class AttentiveFP(torch.nn.Module):
         x = self.gru(h, x).relu_()
 
         for conv, gru in zip(self.atom_convs, self.atom_grus):
-            h = F.elu_(conv(x, edge_index))
+            h = conv(x, edge_index)
+            h = F.elu(h)
             h = F.dropout(h, p=self.dropout, training=self.training)
-            x = gru(h, x).relu_()
+            x = gru(h, x).relu()
 
         # Molecule Embedding:
         row = torch.arange(batch.size(0), device=batch.device)
@@ -169,11 +171,12 @@ class AttentiveFP(torch.nn.Module):
         return self.lin2(out)
 
     def jittable(self) -> 'AttentiveFP':
-        self.gate_conv = self.gate_conv.jittable()
-        self.atom_convs = torch.nn.ModuleList(
-            [conv.jittable() for conv in self.atom_convs])
-        self.mol_conv = self.mol_conv.jittable()
-        return self
+        out = copy.deepcopy(self)
+        out.gate_conv = out.gate_conv.jittable()
+        convs = [conv.jittable() for conv in out.atom_convs]
+        out.atom_convs = torch.nn.ModuleList(convs)
+        out.mol_conv = out.mol_conv.jittable()
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('

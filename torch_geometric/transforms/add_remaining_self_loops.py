@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Union
 
 from torch import Tensor
 
@@ -27,8 +27,11 @@ class AddRemainingSelfLoops(BaseTransform):
             according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`1.`)
     """
-    def __init__(self, attr: Optional[str] = 'edge_weight',
-                 fill_value: Union[float, Tensor, str] = 1.0):
+    def __init__(
+        self,
+        attr: str = 'edge_weight',
+        fill_value: Union[float, Tensor, str] = 1.0,
+    ):
         self.attr = attr
         self.fill_value = fill_value
 
@@ -40,10 +43,11 @@ class AddRemainingSelfLoops(BaseTransform):
             if store.is_bipartite() or 'edge_index' not in store:
                 continue
 
-            store.edge_index, edge_weight = add_remaining_self_loops(
-                store.edge_index, getattr(store, self.attr, None),
-                fill_value=self.fill_value, num_nodes=store.size(0))
-
-            setattr(store, self.attr, edge_weight)
+            store.edge_index, store[self.attr] = add_remaining_self_loops(
+                store.edge_index,
+                edge_attr=store.get(self.attr, None),
+                fill_value=self.fill_value,
+                num_nodes=store.size(0),
+            )
 
         return data
