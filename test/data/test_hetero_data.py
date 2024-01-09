@@ -608,14 +608,14 @@ def test_hetero_data_time_handling():
     assert not data.is_sorted_by_time([rel2])
     assert not data.is_sorted_by_time([rel3])
 
-    out = data.up_to([rel1], 49)
+    out = data.up_to(49, [rel1])
     assert out[rel1].num_edges == 50
     assert torch.allclose(out['paper'].x, data['paper'].x)
     assert torch.allclose(out['author'].x, data['author'].x)
     assert torch.equal(out[rel1].edge_index, data[rel1].edge_index[:, :50])
     assert torch.equal(out[rel1].time, data[rel1].time[:50])
 
-    out = data.snapshot([rel1], 10, 49)
+    out = data.snapshot(10, 49, [rel1])
     assert out[rel1].num_edges == 40
     assert torch.allclose(out['paper'].x, data['paper'].x)
     assert torch.allclose(out['author'].x, data['author'].x)

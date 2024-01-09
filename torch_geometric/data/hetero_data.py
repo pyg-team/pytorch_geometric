@@ -789,14 +789,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return out
 
     def is_sorted_by_time(
-            self, types: Union[List[EdgeType], List[NodeType]]) -> bool:
+            self, types: Optional[List[NodeOrEdgeType]] = None) -> bool:
         r"""Returns :obj:`True` if :obj:`time` exists and is sorted for all
-        :obj:`types` (either edge types or node types).
+        :obj:`types`. If :obj:`types` is set to :obj:`None`, will check all
+        currently hold types.
         """
         if not types:
-            return False
+            types = self.node_types + self.edge_types
 
-        for t in [self._to_canonical(t) for t in types]:
+        for t in types:
             if 'time' not in self[t]:
                 return False
             if not self[t].is_sorted_by_time():
@@ -804,46 +805,45 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return True
 
-    def sort_by_time(self, types: Union[List[EdgeType],
-                                        List[NodeType]]) -> Self:
+    def sort_by_time(self,
+                     types: Optional[List[NodeOrEdgeType]] = None) -> Self:
         r"""Sorts data associated with :obj:`time` according to :obj:`time` for
-        all :obj:`types` (either edge types or node types).
+        all :obj:`types`. If :obj:`types` is set to :obj:`None`, will sort all
+        currently hold types.
         """
         if not types:
-            return self
+            types = self.node_types + self.edge_types
 
         out = copy.copy(self)
-        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
-        for t in [self._to_canonical(t) for t in types]:
+        for t in types:
             out[t].sort_by_time()
         return out
 
-    def snapshot(self, types: Union[List[EdgeType], List[NodeType]],
-                 start_time: TimeType, end_time: TimeType) -> Self:
+    def snapshot(self, start_time: TimeType, end_time: TimeType,
+                 types: Optional[List[NodeOrEdgeType]] = None) -> Self:
         r"""Returns a snapshot restricted by :obj:`start_time` and
-        :obj:`end_time` for all :obj:`types` (either edge types or node
-        types).
+        :obj:`end_time` for all :obj:`types`. If :obj:`types` is set to
+        :obj:`None`, will apply to all currently hold types.
         """
         if not types:
-            return self
+            types = self.node_types + self.edge_types
 
         out = copy.copy(self)
-        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
-        for t in [self._to_canonical(t) for t in types]:
+        for t in types:
             out[t].snapshot(start_time, end_time)
         return out
 
-    def up_to(self, types: Union[List[EdgeType], List[NodeType]],
-              end_time: TimeType) -> Self:
+    def up_to(self, end_time: TimeType,
+              types: Optional[List[NodeOrEdgeType]] = None) -> Self:
         r"""Returns a snapshot restricted by :obj:`end_time` for all
-        :obj:`types` (either edge types or node).
+        :obj:`types`. If :obj:`types` is set to :obj:`None`, will apply to
+        all currently hold types.
         """
         if not types:
-            return self
+            types = self.node_types + self.edge_types
 
         out = copy.copy(self)
-        # TODO: should we limit `out` to be a [edge|node]_type_subgraph?
-        for t in [self._to_canonical(t) for t in types]:
+        for t in types:
             out[t].up_to(end_time)
         return out
 
