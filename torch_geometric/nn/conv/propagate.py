@@ -1,6 +1,7 @@
 import importlib
 import os
 import os.path as osp
+import re
 import sys
 from typing import Any
 
@@ -21,6 +22,7 @@ def module_from_template(
     with open(template_path, 'r') as f:
         template = Template(f.read())
     module_repr = template.render(**kwargs)
+    print(module_repr)
 
     instance_dir = osp.join(get_home_dir(), 'propagate')
     os.makedirs(instance_dir, exist_ok=True)
@@ -33,3 +35,9 @@ def module_from_template(
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def type_hint_to_str(type_hint: Any) -> str:
+    type_repr = str(type_hint)
+    type_repr = re.sub(r'<class \'(.*)\'>', r'\1', type_repr)
+    return type_repr

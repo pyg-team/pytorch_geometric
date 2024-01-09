@@ -22,6 +22,10 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.conv.propagate import (
+    module_from_template,
+    type_hint_to_str,
+)
 from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
@@ -172,6 +176,43 @@ class MessagePassing(torch.nn.Module):
         self._message_and_aggregate_forward_hooks: HookDict = OrderedDict()
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
+
+        # Parse `propagate_types` and generate an efficient `propagate` method:
+        source = inspect.getsource(self.__class__)
+
+        if hasattr(self, 'propagate_type'):
+            assert isinstance(self.propagate_type, dict)
+            propagate_types = {
+                name: type_hint_to_str(type_hint)
+                for name, type_hint in self.propagate_type.items()
+            }
+        else:
+            match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
+            if match is not None:
+                propagate_types = dict([
+                    re.split(r'\s*:\s*', t)
+                    for t in split_types_repr(match.group(1))
+                ])
+            else:
+                raise NotImplementedError  # TODO
+
+        propagate_return_type = type_hint_to_str(
+            get_type_hints(self.update).get('return', Tensor))
+        print(propagate_return_type)
+
+        root_dir = osp.dirname(osp.realpath(__file__))
+        module = module_from_template(
+            module_name='torch_geometric.nn.conv.sage_conv_propagate',
+            module='torch_geometric.nn.conv.sage_conv',
+            template_path=osp.join(root_dir, 'propagate.jinja'),
+            propagate_types=propagate_types,
+            propagate_return_type=propagate_return_type,
+        )
+
+        self.__class__.propagate = module.propagate
+
+        # print(match)
+        # print(propagate_types)
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""

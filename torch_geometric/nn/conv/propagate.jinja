@@ -1,8 +1,48 @@
-from typing import Optional, NamedTuple
+import typing
+from typing import *
 
+import torch
 from torch import Tensor
 
+from torch_geometric.typing import *
+from torch_geometric import is_compiling
+from torch_geometric.utils import is_sparse
 
-class Propagate(NamedTuple):
-    x: Tensor
-    edge_attr: Optional[Tensor]
+from {{module}} import *
+
+
+class PropagateArgs(NamedTuple):
+{%- for name, type_hint in propagate_types.items() %}
+    {{name}}: {{type_hint}}
+{%- endfor %}
+
+class CollectArgs(NamedTuple):
+    pass
+
+
+def propagate(
+    self,
+    edge_index: Union[Tensor, SparseTensor],
+{%- for name, type_hint in propagate_types.items() %}
+    {{name}}: {{type_hint}},
+{%- endfor %}
+    size: Optional[Tuple[int, int]] = None,
+) -> {{propagate_return_type}}:
+
+    decomposed_layers = 1 if self.explain is True else self.decomposed_layers
+
+    if not torch.jit.is_scripting() and not is_compiling():
+        for hook in self._propagate_forward_pre_hooks.values():
+            res = hook(self, (edge_index, size, kwargs))
+            if res is not None:
+                edge_index, size, kwargs = res
+
+    mutable_size = self._check_input(edge_index, size)
+
+    fuse = is_sparse(edge_index) and self.fuse and self.explain is not True
+    if fuse:
+        raise NotImplementedError
+    else:
+        pass
+
+    return x[0]

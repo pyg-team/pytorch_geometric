@@ -63,6 +63,10 @@ class SAGEConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
+    propagate_type = {
+        'x': OptPairTensor,
+    }
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
