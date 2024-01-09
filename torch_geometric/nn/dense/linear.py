@@ -328,7 +328,7 @@ class HeteroLinear(torch.nn.Module):
         if torch_geometric.backend.use_segment_matmul is None:
             use_segment_matmul = False
 
-            # TODO check cses of compiling and scripting properly
+            # TODO check cases of compiling and scripting properly
             if torch_geometric.typing.WITH_SEGMM and not is_compiling(
             ) and not torch.jit.is_scripting():
                 # to avoid too many measurements for dynamic shapes
