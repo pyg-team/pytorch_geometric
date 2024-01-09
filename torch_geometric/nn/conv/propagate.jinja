@@ -1,0 +1,8 @@
+from typing import Optional, NamedTuple
+
+from torch import Tensor
+
+
+class Propagate(NamedTuple):
+    x: Tensor
+    edge_attr: Optional[Tensor]
