@@ -80,6 +80,12 @@ for explanation_type in ['phenomenon', 'model']:
 
     # Explanation ROC AUC over all test nodes:
     targets, preds = [], []
+    # The color for each node class label. For BAshape dataset, according to GNNExplainer Fig.3
+    color_dict = {0: 'orange',
+                  1: 'green',
+                  2: 'green',
+                  3: 'green'}
+    
     node_indices = range(400, data.num_nodes, 5)
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
         target = data.y if explanation_type == 'phenomenon' else None
@@ -94,3 +100,12 @@ for explanation_type in ['phenomenon', 'model']:
 
     auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
     print(f'Mean ROC AUC (explanation type {explanation_type:10}): {auc:.4f}')
+    
+node_index = 500
+explanation = explainer(data.x, data.edge_index, index=node_index, target=data.y)
+explanation.visualize_graph(f"GNNExplainer_BAshapes_{node_index}.png", 
+                                    node_label = data.y,
+                                    color_dict = color_dict,
+                                    target_node = node_index,
+                                    draw_node_idx = False,
+                                    )
