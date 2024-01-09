@@ -29,19 +29,19 @@ def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
         y = batch["paper"].y[:batch_size].to(torch.long)
         return y_hat, y
 
-    def training_step(batch: Batch, acc, model) -> Tensor:
-        y_hat, y = common_step(batch, model)
-        train_loss = F.cross_entropy(y_hat, y)
-        train_acc = self.acc(y_hat.softmax(dim=-1), y)
-        return train_loss, train_acc
+def training_step(batch: Batch, acc, model) -> Tensor:
+    y_hat, y = common_step(batch, model)
+    train_loss = F.cross_entropy(y_hat, y)
+    train_acc = acc(y_hat.softmax(dim=-1), y)
+    return train_loss, train_acc
 
-    def validation_step(batch: Batch, acc, model):
-        y_hat, y = common_step(batch, model)
-        return acc(y_hat.softmax(dim=-1), y)
+def validation_step(batch: Batch, acc, model):
+    y_hat, y = common_step(batch, model)
+    return acc(y_hat.softmax(dim=-1), y)
 
-    def predict_step(batch: Batch):
-        y_hat, y = common_step(batch, model)
-        return y_hat
+def predict_step(batch: Batch):
+    y_hat, y = common_step(batch, model)
+    return y_hat
 
 
 def run(
@@ -97,13 +97,13 @@ def run(
         batch_size=batch_size,
         num_workers=get_num_workers(max(n_devices, 1)),
         persistent_workers=True,
-        shuffle=True,
-        drop_last=True,
     )
     train_loader = NeighborLoader(
         data,
         input_nodes=("paper", train_idx),
         num_neighbors=sizes,
+        shuffle=True,
+        drop_last=True,
         **kwargs,
     )
 
@@ -126,11 +126,8 @@ def run(
     if rank == 0:
         print("about to make optimizer")
     if n_devices > 1:
-        ddp = DistributedDataParallel(model, device_ids=[rank])
-        optimizer = torch.optim.Adam(ddp.parameters(), lr=0.001)
-    else:
-        ddp = None
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+        model= DistributedDataParallel(model, device_ids=[rank])
+    optimizer = torch.optim.Adam(ddp.parameters(), lr=0.001)
 
     for epoch in range(1, num_epochs + 1):
         model.train()
@@ -146,7 +143,7 @@ def run(
             optimizer.zero_grad()
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
-            loss, train_acc = model.training_step(batch, ddp)
+            loss, train_acc = training_step(batch, acc, model)
             sum_acc += train_acc
             loss.backward()
             optimizer.step()
@@ -171,7 +168,7 @@ def run(
                     break
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
-                acc_sum += model.validation_step(batch)
+                acc_sum += validation_step(batch, acc, model)
             torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
             print(f"Validation Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%")
     if n_devices > 1:
@@ -184,7 +181,7 @@ def run(
                 break
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
-            acc_sum += model.validation_step(batch)
+            acc_sum += validation_step(batch, acc, model)
         torch.distributed.all_reduce(acc_sum, op=torch.distributed.ReduceOp.MEAN)
         print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
     if n_devices > 1:
@@ -202,21 +199,6 @@ def get_num_workers(world_size):
     if num_work is None:
         num_work = os.cpu_count() / (2 * world_size)
     return int(num_work)
-
-
-def estimate_hetero_data_size(data):
-    out_bytes = 0
-    for n_type in data.node_types:
-        for attr_name, n_attr in data.get_node_store(n_type).items():
-            if isinstance(n_attr, torch.Tensor) and attr_name != 'x':
-                # ignore paper features since their read from disk w/ np memmap
-                out_bytes += n_attr.numel() * 64
-    for e_type in data.edge_types:
-        try:
-            out_bytes += data[e_type].edge_index.numel() * 64
-        except:  # noqa
-            continue
-    return out_bytes
 
 
 if __name__ == "__main__":
@@ -242,7 +224,6 @@ if __name__ == "__main__":
     parser.add_argument("--n_devices", type=int, default=1,
                         help="0 devices for CPU, or 1-8 to use GPUs")
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument('--evaluate', action='store_true')
     args = parser.parse_args()
     args.sizes = [int(i) for i in args.sizes.split("-")]
     print(args)
@@ -276,82 +257,51 @@ if __name__ == "__main__":
                                              args.subgraph)]
             for n_type in data.node_types
         })
-    if not args.evaluate:
-        if args.n_devices > 1:
-            print("Let's use", args.n_devices, "GPUs!")
-            from torch.multiprocessing.spawn import ProcessExitedException
-            try:
-                mp.spawn(
-                    run,
-                    args=(
-                        data,
-                        args.n_devices,
-                        args.epochs,
-                        args.num_steps_per_epoch,
-                        args.log_every_n_steps,
-                        args.batch_size,
-                        args.sizes,
-                        args.hidden_channels,
-                        args.dropout,
-                        args.eval_steps,
-                        args.num_warmup_iters_for_timing,
-                        args.debug,
-                    ),
-                    nprocs=args.n_devices,
-                    join=True,
-                )
-            except ProcessExitedException as e:
-                print("torch.multiprocessing.spawn.ProcessExitedException:", e)
-                print(
-                    "Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
-
-        else:
-            if args.n_devices == 1:
-                print("Using a single GPU")
-            else:
-                print("Using CPU")
-            run(
-                0,
-                data,
-                args.n_devices,
-                args.epochs,
-                args.num_steps_per_epoch,
-                args.log_every_n_steps,
-                args.batch_size,
-                args.sizes,
-                args.hidden_channels,
-                args.dropout,
-                args.eval_steps,
-                args.num_warmup_iters_for_timing,
-                args.debug,
+    if args.n_devices > 1:
+        print("Let's use", args.n_devices, "GPUs!")
+        from torch.multiprocessing.spawn import ProcessExitedException
+        try:
+            mp.spawn(
+                run,
+                args=(
+                    data,
+                    args.n_devices,
+                    args.epochs,
+                    args.num_steps_per_epoch,
+                    args.log_every_n_steps,
+                    args.batch_size,
+                    args.sizes,
+                    args.hidden_channels,
+                    args.dropout,
+                    args.eval_steps,
+                    args.num_warmup_iters_for_timing,
+                    args.debug,
+                ),
+                nprocs=args.n_devices,
+                join=True,
             )
-    else:  # eval
-        model = torch.load('trained_gnn.pt')
-        evaluator = MAG240MEvaluator()
-        test_idx = data["paper"].test_mask.nonzero(as_tuple=False).view(-1)
-        kwargs = dict(
-            batch_size=16,
-            num_workers=get_num_workers(1),
-            persistent_workers=True,
-            shuffle=True,
-        )
-        test_loader = NeighborLoader(
+        except ProcessExitedException as e:
+            print("torch.multiprocessing.spawn.ProcessExitedException:", e)
+            print(
+                "Exceptions/SIGBUS/Errors may be caused by a lack of RAM")
+
+    else:
+        if args.n_devices == 1:
+            print("Using a single GPU")
+        else:
+            print("Using CPU")
+        run(
+            0,
             data,
-            input_nodes=("paper", test_idx),
-            num_neighbors=[160] * len(args.sizes),
-            **kwargs,
+            args.n_devices,
+            args.epochs,
+            args.num_steps_per_epoch,
+            args.log_every_n_steps,
+            args.batch_size,
+            args.sizes,
+            args.hidden_channels,
+            args.dropout,
+            args.eval_steps,
+            args.num_warmup_iters_for_timing,
+            args.debug,
         )
-        model.eval()
-        device = 'cuda' if (torch.cuda.is_available()
-                            and args.n_devices > 0) else 'cpu'
-        model.to(device)
-        y_preds = []
-        print("Evaluating...")
-        for batch in tqdm(test_loader):
-            batch = batch.to(device, "x", "y", "edge_index")
-            with torch.no_grad():
-                y_pred = model.predict_step(batch).argmax(dim=-1).cpu()
-                y_preds.append(y_pred)
-        res = {'y_pred': torch.cat(y_preds, dim=0)}
-        evaluator.save_test_submission(res, 'results/', mode='test-dev')
-        print("Done!")
