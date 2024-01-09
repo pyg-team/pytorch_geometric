@@ -2,9 +2,8 @@ import inspect
 import os.path as osp
 import random
 import re
-import typing
+import warnings
 from inspect import Parameter
-from itertools import chain
 from typing import (
     Any,
     Callable,
@@ -23,18 +22,9 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.conv.utils.inspector import (
-    Inspector,
-    func_body_repr,
-    func_header_repr,
-)
+from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
-from torch_geometric.nn.conv.utils.typing import (
-    parse_types,
-    resolve_types,
-    sanitize,
-    split_types_repr,
-)
+from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -43,11 +33,6 @@ from torch_geometric.utils import (
     to_edge_index,
 )
 from torch_geometric.utils.sparse import ptr2index
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload_method as overload
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]
@@ -203,23 +188,7 @@ class MessagePassing(torch.nn.Module):
 
     # Utilities ###############################################################
 
-    @overload
     def _check_input(
-        self,
-        edge_index: Tensor,
-        size: Size,
-    ) -> List[Optional[int]]:
-        pass
-
-    @overload
-    def _check_input(  # noqa: F811
-        self,
-        edge_index: SparseTensor,
-        size: Size,
-    ) -> List[Optional[int]]:
-        pass
-
-    def _check_input(  # noqa: F811
         self,
         edge_index: Union[Tensor, SparseTensor],
         size: Optional[Tuple[int, int]],
@@ -274,31 +243,43 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    @overload
-    def _lift(
+    def _index_select(
         self,
         src: Tensor,
         edge_index: Tensor,
         dim: int,
     ) -> Tensor:
-        pass
 
-    @overload
-    def _lift(  # noqa: F811
-        self,
-        src: Tensor,
-        edge_index: SparseTensor,
-        dim: int,
-    ) -> Tensor:
-        pass
+        try:
+            index = edge_index[dim]
+            return src.index_select(self.node_dim, index)
+        except (IndexError, RuntimeError) as e:
+            if index.numel() > 0 and index.min() < 0:
+                raise IndexError(
+                    f"Found negative indices in 'edge_index' (got "
+                    f"{index.min().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
 
-    def _lift(  # noqa: F811
+            if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
+                raise IndexError(
+                    f"Found indices in 'edge_index' that are larger "
+                    f"than {src.size(self.node_dim) - 1} (got "
+                    f"{index.max().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
+
+            raise e
+
+    def _lift(
         self,
         src: Tensor,
         edge_index: Union[Tensor, SparseTensor],
         dim: int,
     ) -> Tensor:
-        if is_torch_sparse_tensor(edge_index):
+        if not torch.jit.is_scripting() and is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
             if edge_index.layout == torch.sparse_coo:
                 index = edge_index._indices()[1 - dim]
@@ -318,39 +299,10 @@ class MessagePassing(torch.nn.Module):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):
-            try:
+            if torch.jit.is_scripting():  # Try/catch blocks are not supported.
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
-            except (IndexError, RuntimeError) as e:
-                if index.min() < 0 or index.max() >= src.size(self.node_dim):
-                    raise IndexError(
-                        f"Encountered an index error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices in "
-                        f"the interval [0, {src.size(self.node_dim) - 1}] "
-                        f"(got interval "
-                        f"[{int(index.min())}, {int(index.max())}])")
-                else:
-                    raise e
-
-                if index.numel() > 0 and index.min() < 0:
-                    raise ValueError(
-                        f"Found negative indices in 'edge_index' (got "
-                        f"{index.min().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                if (index.numel() > 0
-                        and index.max() >= src.size(self.node_dim)):
-                    raise ValueError(
-                        f"Found indices in 'edge_index' that are larger "
-                        f"than {src.size(self.node_dim) - 1} (got "
-                        f"{index.max().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                raise e
+            return self._index_select(src, edge_index, dim)
 
         elif isinstance(edge_index, SparseTensor):
             row, col, _ = edge_index.coo()
@@ -364,27 +316,7 @@ class MessagePassing(torch.nn.Module):
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
              'or `torch.sparse.Tensor` for argument `edge_index`.'))
 
-    @overload
     def _collect(
-        self,
-        args: Set[str],
-        edge_index: Tensor,
-        size: List[Optional[int]],
-        kwargs: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        pass
-
-    @overload
-    def _collect(  # noqa: F811
-        self,
-        args: Set[str],
-        edge_index: SparseTensor,
-        size: List[Optional[int]],
-        kwargs: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        pass
-
-    def _collect(  # noqa: F811
         self,
         args: Set[str],
         edge_index: Union[Tensor, SparseTensor],
@@ -703,6 +635,10 @@ class MessagePassing(torch.nn.Module):
 
     @explain.setter
     def explain(self, explain: Optional[bool]) -> None:
+        if torch.jit.is_scripting():
+            raise ValueError("Explainability of message passing modules "
+                             "is only supported on the Python module")
+
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -896,21 +832,15 @@ class MessagePassing(torch.nn.Module):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module that can be used in combination with
         :meth:`torch.jit.script`.
-
-        Args:
-            typing (str, optional): If given, will generate a concrete instance
-                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
-                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        if typing is not None:
+            warnings.warn("The 'typing' argument in 'MessagePassing.jittable' "
+                          "is deprecated and will be removed soon")
+
         if 'Jittable' in self.__class__.__name__:
             return self
 
-        try:
-            from jinja2 import Template
-        except ImportError:
-            raise ModuleNotFoundError(
-                "No module named 'jinja2' found on this machine. "
-                "Run 'pip install jinja2' to install the library.")
+        from jinja2 import Template
 
         source = inspect.getsource(self.__class__)
 
@@ -979,21 +909,16 @@ class MessagePassing(torch.nn.Module):
         # specific to the argument used for edge updates.
         edge_collect_types = self.inspector.types(['edge_update'])
 
-        # Collect `forward()` header, body and @overload types.
-        forward_types = [
-            resolve_types(*types) for types in parse_types(self.forward)
-        ]
-        flattened_forward_types = list(chain.from_iterable(forward_types))
-
-        keep_annotation = len(flattened_forward_types) < 2
-        forward_header = func_header_repr(self.forward, keep_annotation)
-        forward_body = func_body_repr(self.forward, keep_annotation)
-
-        if keep_annotation:
-            flattened_forward_types = []
-        elif typing is not None:
-            flattened_forward_types = []
-            forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
+        # Collect `forward()` function in case it is overloaded. This is
+        # necessary since TorchScript cannot handle inheritance of overloaded
+        # forward functions.
+        # TODO This is very hacky and should be resolved soon.
+        forward_repr = ''
+        start = source.find('    @overload\n    def forward')
+        if start >= 0:
+            forward_repr = inspect.getsource(self.forward)
+            end = source.find(forward_repr) + len(forward_repr)
+            forward_repr = source[start:end]
 
         root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
@@ -1012,9 +937,6 @@ class MessagePassing(torch.nn.Module):
             collect_types=collect_types,
             user_args=self._user_args,
             edge_user_args=self._edge_user_args,
-            forward_header=forward_header,
-            forward_types=flattened_forward_types,
-            forward_body=forward_body,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
@@ -1023,6 +945,7 @@ class MessagePassing(torch.nn.Module):
             edge_update_args=self.inspector.keys(['edge_update']),
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
+            forward_repr=forward_repr,
         )
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)

@@ -183,7 +183,7 @@ class EGConv(MessagePassing):
         # [num_nodes, num_aggregators, (out_channels // num_heads) * num_bases]
         # propagate_type: (x: Tensor, symnorm_weight: OptTensor)
         aggregated = self.propagate(edge_index, x=bases,
-                                    symnorm_weight=symnorm_weight, size=None)
+                                    symnorm_weight=symnorm_weight)
 
         weightings = weightings.view(-1, self.num_heads,
                                      self.num_bases * len(self.aggregators))

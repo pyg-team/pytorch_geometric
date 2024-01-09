@@ -102,8 +102,7 @@ class MixHopConv(MessagePassing):
 
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                               size=None)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
             outs.append(lin.forward(x))
 

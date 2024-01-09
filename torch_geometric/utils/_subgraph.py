@@ -31,8 +31,8 @@ def get_num_hops(model: torch.nn.Module) -> int:
         ...         self.lin = Linear(16, 2)
         ...
         ...     def forward(self, x, edge_index):
-        ...         x = torch.F.relu(self.conv1(x, edge_index))
-        ...         x = self.conv2(x, edge_index)
+        ...         x = self.conv1(x, edge_index).relu()
+        ...         x = self.conv2(x, edge_index).relu()
         ...         return self.lin(x)
         >>> get_num_hops(GNN())
         2

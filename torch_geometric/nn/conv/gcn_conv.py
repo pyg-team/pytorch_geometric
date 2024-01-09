@@ -260,8 +260,7 @@ class GCNConv(MessagePassing):
         x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
         if self.bias is not None:
             out = out + self.bias

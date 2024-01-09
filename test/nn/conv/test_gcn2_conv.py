@@ -31,16 +31,13 @@ def test_gcn2_conv():
         assert torch.allclose(conv(x, x_0, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x, x_0, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, x_0, edge_index, value), out2, atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, x_0, adj3.t()), out1, atol=1e-6)
-        assert torch.allclose(jit(x, x_0, adj4.t()), out2, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, x_0, adj3.t()), out1, atol=1e-6)
+            assert torch.allclose(jit(x, x_0, adj4.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, x_0, edge_index)
