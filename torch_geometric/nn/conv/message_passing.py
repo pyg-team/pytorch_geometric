@@ -218,11 +218,8 @@ class MessagePassing(torch.nn.Module):
             update_args=self.inspector.keys(['update']),
         )
 
-        self.__class__.propagate = module.propagate
-        self.__class__._collect = module._collect
-
-        # print(match)
-        # print(propagate_types)
+        self.propagate_jit = module.propagate
+        self._collect_jit = module._collect
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
