@@ -22,6 +22,7 @@ NON_FLOAT_PADDING_VALUE = -1
 
 
 def _dense_pad_tensor(
+    key,
     values,
     float_padding_value: float = FLOAT_PADDING_VALUE,
     non_float_padding_value: int = NON_FLOAT_PADDING_VALUE,
@@ -29,6 +30,7 @@ def _dense_pad_tensor(
     """Densely pads a list of `torch.Tensor` along a new `batch_dim=0`.
 
     Args:
+        key (str): The key of the attribute to be padded.
         values (list): A list of values to be padded.
         float_padding_value (float, optional): The padding value for `float` dtype tensors.
         non_float_padding_value (int, optional): The padding value for non-`float` (e.g., `int`) dtype tensors.
@@ -49,7 +51,7 @@ def _dense_pad_tensor(
             if dtype in [torch.uint8, torch.bool]:
                 # NOTE: We cannot use `torch.nn.utils.rnn.pad_sequence` directly with unsigned integer/boolean tensors.
                 values = [value.long() for value in values]
-            if elem.dim() == 2 and elem.shape[0] == 2:
+            if "edge_index" in key and elem.dim() == 2 and elem.shape[0] == 2:
                 # Concatenate `edge_index` tensors.
                 # NOTE: Here, we assume dimension `0` denotes the source and target node indices and dimension `1` denotes the number of edges.
                 values = [
@@ -112,6 +114,7 @@ def _dense_padded_collate(
         padding_value = (float_padding_value if torch.is_floating_point(elem)
                          else non_float_padding_value)
         values, mask = _dense_pad_tensor(
+            key,
             values,
             float_padding_value=float_padding_value,
             non_float_padding_value=non_float_padding_value,
@@ -155,7 +158,7 @@ def _dense_padded_collate(
             "Dense padding collation for TensorFrames is not supported (tested) yet."
         )
         values, mask = _dense_pad_tensor(
-            values, non_float_padding_value=non_float_padding_value)
+            key, values, non_float_padding_value=non_float_padding_value)
         value = torch_frame.cat(values, along="row")
         return value, mask
 
@@ -165,7 +168,7 @@ def _dense_padded_collate(
             "Dense padding collation for SparseTensors is not supported (tested) yet."
         )
         values, mask = _dense_pad_tensor(
-            values, non_float_padding_value=non_float_padding_value)
+            key, values, non_float_padding_value=non_float_padding_value)
         if is_torch_sparse_tensor(elem):
             value = cat(values, dim=cat_dim)
         else:
