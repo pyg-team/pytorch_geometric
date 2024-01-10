@@ -52,7 +52,7 @@ def narrow(src: Union[Tensor, List[Any]], dim: int, start: int,
         start (int): The starting dimension.
         length (int): The distance to the ending dimension.
     """
-    if is_torch_sparse_tensor(src):
+    if isinstance(src, Tensor) and is_torch_sparse_tensor(src):
         # TODO Sparse tensors in `torch.sparse` do not yet support `narrow`.
         index = torch.arange(start, start + length, device=src.device)
         return src.index_select(dim, index)

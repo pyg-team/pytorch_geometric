@@ -1,9 +1,8 @@
 import inspect
 import os
-import platform
 import sys
 import warnings
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -17,7 +16,6 @@ WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
-WITH_ARM = platform.machine() != 'x86_64'
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = torch.sparse_coo
@@ -85,7 +83,7 @@ except Exception as e:
     WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
     class TorchCluster:
-        def __getattr__(self, key: str):
+        def __getattr__(self, key: str) -> Any:
             raise ImportError(f"'{key}' requires 'torch-cluster'")
 
     torch_cluster = TorchCluster()
@@ -128,6 +126,12 @@ except Exception as e:
         ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
+        def value(self) -> Optional[Tensor]:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
+        def rowcount(self) -> Tensor:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
     class SparseTensor:  # type: ignore
         def __init__(
             self,
@@ -150,6 +154,10 @@ except Exception as e:
             is_sorted: bool = False,
             trust_data: bool = False,
         ) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        @property
+        def storage(self) -> SparseStorage:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod
@@ -281,27 +289,26 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
-    def __new__(cls, *args):
+    def __new__(cls, *args: Any) -> 'EdgeTypeStr':
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
             args = tuple(args[0])
 
         if len(args) == 1 and isinstance(args[0], str):
-            args = args[0]  # An edge type string was passed.
+            arg = args[0]  # An edge type string was passed.
 
         elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
             # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
-            args = (args[0], DEFAULT_REL, args[1])
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join((args[0], DEFAULT_REL, args[1]))
 
         elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
             # A `(src, rel, dst)` edge type was passed:
-            args = EDGE_TYPE_STR_SPLIT.join(args)
+            arg = EDGE_TYPE_STR_SPLIT.join(args)
 
         else:
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
-        return str.__new__(cls, args)
+        return str.__new__(cls, arg)
 
     def to_tuple(self) -> EdgeType:
         r"""Returns the original edge type."""
@@ -340,6 +347,7 @@ Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
 
 MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
+MaybeHeteroAdjTensor = Union[Tensor, Dict[EdgeType, Adj]]
 MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 # Types for sampling ##########################################################

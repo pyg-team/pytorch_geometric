@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csr_tensor
+from torch_geometric import EdgeIndex
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 try:
@@ -106,16 +106,9 @@ def get_ppr(
         _get_ppr_numba = numba.jit(nopython=True, parallel=True)(_get_ppr)
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-    if not is_torch_sparse_tensor(edge_index):
-        size = (num_nodes, num_nodes)
-        edge_index = to_torch_csr_tensor(edge_index, size=size)
-    else:
-        edge_index = edge_index.to_sparse_csr()
-
-    assert edge_index.layout == torch.sparse_csr
-
-    rowptr, col = edge_index.crow_indices(), edge_index.col_indices()
+    edge_index = EdgeIndex(edge_index, sparse_size=(num_nodes, num_nodes))
+    edge_index = edge_index.sort_by('row')[0]
+    (rowptr, col), _ = edge_index.get_csr()
 
     cols, weights = _get_ppr_numba(
         rowptr.cpu().numpy(),

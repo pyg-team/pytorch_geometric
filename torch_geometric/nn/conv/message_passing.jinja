@@ -34,56 +34,13 @@ class EdgeUpdater_Collect_{{uid}}(NamedTuple):
 
 class {{cls_name}}({{parent_cls_name}}):
 
-    @torch.jit._overload_method
-    def _check_input(self, edge_index, size):
-        # type: (Tensor, Size) -> List[Optional[int]]
-        pass
+    def _collect(
+        self,
+        edge_def: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: Propagate_{{uid}},
+    ) -> Collect_{{uid}}:
 
-    @torch.jit._overload_method
-    def _check_input(self, edge_index, size):
-        # type: (SparseTensor, Size) -> List[Optional[int]]
-        pass
-
-{{check_input}}
-
-    @torch.jit._overload_method
-    def _lift(self, src, edge_index, dim):
-        # type: (Tensor, Tensor, int) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def _lift(self, src, edge_index, dim):
-        # type: (Tensor, SparseTensor, int) -> Tensor
-        pass
-
-    def _lift(self, src, edge_index, dim):
-        if isinstance(edge_index, Tensor):
-            index = edge_index[dim]
-            return src.index_select(self.node_dim, index)
-
-        elif isinstance(edge_index, SparseTensor):
-            row, col, _ = edge_index.coo()
-            if dim == 0:
-                return src.index_select(self.node_dim, col)
-            elif dim == 1:
-                return src.index_select(self.node_dim, row)
-
-        raise ValueError(
-            ('`MessagePassing.propagate` only supports integer tensors of '
-             'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
-             'argument `edge_index`.'))
-
-    @torch.jit._overload_method
-    def _collect(self, edge_def, size, kwargs):
-        # type: (Tensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
-        pass
-
-    @torch.jit._overload_method
-    def _collect(self, edge_def, size, kwargs):
-        # type: (SparseTensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
-        pass
-
-    def _collect(self, edge_def, size, kwargs):
         init = torch.zeros(1)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in user_args %}
@@ -152,17 +109,13 @@ class {{cls_name}}({{parent_cls_name}}):
         return Collect_{{uid}}({% for k in collect_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
 {% if edge_updater_types|length > 0 %}
-    @torch.jit._overload_method
-    def _collect_edge(self, edge_def, size, kwargs):
-        # type: (Tensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
-        pass
+    def _collect_edge(
+        self,
+        edge_def: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: EdgeUpdater_{{uid}},
+    ) -> EdgeUpdater_Collect_{{uid}}:
 
-    @torch.jit._overload_method
-    def _collect_edge(self, edge_def, size, kwargs):
-        # type: (SparseTensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
-        pass
-
-    def _collect_edge(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in edge_user_args %}
@@ -233,17 +186,15 @@ class {{cls_name}}({{parent_cls_name}}):
 
 {% endif %}
 
-    @torch.jit._overload_method
-    def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (Tensor, {{ prop_types.values()|join(', ') }}, Size) -> {{ prop_return_type }}
-        pass
+    def propagate(
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        {% for name, type_hint in prop_types.items() %}
+        {{ name }}: {{ type_hint }},
+        {% endfor %}
+        size: Size=None,
+    ) -> {{ prop_return_type }}:
 
-    @torch.jit._overload_method
-    def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (SparseTensor, {{ prop_types.values()|join(', ') }}, Size) -> {{ prop_return_type }}
-        pass
-
-    def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
         the_size = self._check_input(edge_index, size)
         in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
@@ -259,17 +210,14 @@ class {{cls_name}}({{parent_cls_name}}):
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
 
 {% if edge_updater_types|length > 0 %}
-    @torch.jit._overload_method
-    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
-        # type: (Tensor{% for v in edge_updater_types.values() %}, {{v}} {% endfor %}) -> {{ edge_updater_return_type }}
-        pass
+    def edge_updater(
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        {% for name, type_hint in edge_updater_types.items() %}
+        {{ name }}: {{ type_hint }},
+        {% endfor %}
+    ) -> {{ edge_updater_return_type }}:
 
-    @torch.jit._overload_method
-    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
-        # type: (SparseTensor{% for v in edge_updater_types.values() %}, {{v}} {% endfor %}) -> {{ edge_updater_return_type }}
-        pass
-
-    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
         the_size = self._check_input(edge_index, size=None)
         in_kwargs = EdgeUpdater_{{uid}}({% for k in edge_updater_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
         kwargs = self._collect_edge(edge_index, the_size, in_kwargs)
@@ -279,22 +227,4 @@ class {{cls_name}}({{parent_cls_name}}):
         pass
 {% endif %}
 
-    @property
-    def explain(self) -> Optional[bool]:
-        return self._explain
-
-    @explain.setter
-    def explain(self, explain: Optional[bool]):
-        raise ValueError("Explainability of message passing modules "
-                         "is only supported on the Python module")
-
-{%- for (arg_types, return_type_repr) in forward_types %}
-
-    @torch.jit._overload_method
-    {{forward_header}}
-        # type: ({{arg_types|join(', ')}}) -> {{return_type_repr}}
-        pass
-{%- endfor %}
-
-    {{forward_header}}
-{{forward_body}}
+{{ forward_repr }}

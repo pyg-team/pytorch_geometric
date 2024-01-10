@@ -1,3 +1,4 @@
+import copy
 import math
 
 import torch
@@ -30,24 +31,14 @@ class SparseLinear(MessagePassing):
                               a=math.sqrt(5))
         inits.uniform(self.in_channels, self.bias)
 
-    @torch.jit._overload_method
-    def forward(self, edge_index, edge_weight=None):  # noqa: F811
-        # type: (Tensor, OptTensor) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def forward(self, edge_index, edge_weight=None):  # noqa: F811
-        # type: (SparseTensor, OptTensor) -> Tensor
-        pass
-
-    def forward(  # noqa: F811
+    def forward(
         self,
         edge_index: Adj,
         edge_weight: OptTensor = None,
     ) -> Tensor:
         # propagate_type: (weight: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, weight=self.weight,
-                             edge_weight=edge_weight, size=None)
+                             edge_weight=edge_weight)
 
         if self.bias is not None:
             out = out + self.bias
@@ -149,17 +140,7 @@ class LINKX(torch.nn.Module):
         self.cat_lin2.reset_parameters()
         self.final_mlp.reset_parameters()
 
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
-        # type: (OptTensor, SparseTensor, OptTensor) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):  # noqa: F811
-        # type: (OptTensor, Tensor, OptTensor) -> Tensor
-        pass
-
-    def forward(  # noqa: F811
+    def forward(
         self,
         x: OptTensor,
         edge_index: Adj,
@@ -182,51 +163,10 @@ class LINKX(torch.nn.Module):
 
         return self.final_mlp(out.relu_())
 
-    def jittable(self, use_sparse_tensor: bool = False) -> torch.nn.Module:
-        class EdgeIndexJittable(torch.nn.Module):
-            def __init__(self, child: LINKX):
-                super().__init__()
-                self.child = child
-
-            def reset_parameters(self):
-                self.child.reset_parameters()
-
-            def forward(
-                self,
-                x: Tensor,
-                edge_index: Tensor,
-                edge_weight: OptTensor = None,
-            ) -> Tensor:
-                return self.child(x, edge_index, edge_weight)
-
-            def __repr__(self) -> str:
-                return str(self.child)
-
-        class SparseTensorJittable(torch.nn.Module):
-            def __init__(self, child: LINKX):
-                super().__init__()
-                self.child = child
-
-            def reset_parameters(self):
-                self.child.reset_parameters()
-
-            def forward(
-                self,
-                x: Tensor,
-                edge_index: SparseTensor,
-                edge_weight: OptTensor = None,
-            ):
-                return self.child(x, edge_index, edge_weight)
-
-            def __repr__(self) -> str:
-                return str(self.child)
-
-        if self.edge_lin.jittable is not None:
-            self.edge_lin = self.edge_lin.jittable()
-
-        if use_sparse_tensor:
-            return SparseTensorJittable(self)
-        return EdgeIndexJittable(self)
+    def jittable(self) -> 'LINKX':
+        out = copy.deepcopy(self)
+        out.edge_lin = out.edge_lin.jittable()
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_nodes={self.num_nodes}, '

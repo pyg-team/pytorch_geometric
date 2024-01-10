@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import warnings
+from torch_geometric import is_compiling, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
@@ -12,8 +12,13 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
-    def scatter(src: Tensor, index: Tensor, dim: int = 0,
-                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+    def scatter(
+        src: Tensor,
+        index: Tensor,
+        dim: int = 0,
+        dim_size: Optional[int] = None,
+        reduce: str = 'sum',
+    ) -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -81,28 +86,30 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
         # For "min" and "max" reduction, we prefer `scatter_reduce_` on CPU or
         # in case the input does not require gradients:
-        if reduce == 'min' or reduce == 'max':
+        if reduce in ['min', 'max', 'amin', 'amax']:
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or not src.is_cuda or not src.requires_grad):
+                    or is_compiling() or not src.is_cuda
+                    or not src.requires_grad):
 
-                if src.is_cuda and src.requires_grad:
+                if src.is_cuda and src.requires_grad and not is_compiling():
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
-                    dim, index, src, reduce=f'a{reduce}', include_self=False)
+                    dim, index, src, reduce=f'a{reduce[-3:]}',
+                    include_self=False)
 
             return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
-                                         reduce=reduce)
+                                         reduce=reduce[-3:])
 
         # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
         if reduce == 'mul':
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or not src.is_cuda):
+                    or is_compiling() or not src.is_cuda):
 
-                if src.is_cuda:
+                if src.is_cuda and not is_compiling():
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
@@ -119,8 +126,13 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
 else:  # pragma: no cover
 
-    def scatter(src: Tensor, index: Tensor, dim: int = 0,
-                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+    def scatter(
+        src: Tensor,
+        index: Tensor,
+        dim: int = 0,
+        dim_size: Optional[int] = None,
+        reduce: str = 'sum',
+    ) -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
@@ -138,8 +150,8 @@ else:  # pragma: no cover
                 minimal-sized output tensor according to
                 :obj:`index.max() + 1`. (default: :obj:`None`)
             reduce (str, optional): The reduce operation (:obj:`"sum"`,
-                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
-                (default: :obj:`"sum"`)
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
+                :obj:`"any"`). (default: :obj:`"sum"`)
         """
         if reduce == 'any':
             dim = src.dim() + dim if dim < 0 else dim
@@ -154,6 +166,10 @@ else:  # pragma: no cover
 
         if not torch_geometric.typing.WITH_TORCH_SCATTER:
             raise ImportError("'scatter' requires the 'torch-scatter' package")
+
+        if reduce == 'amin' or reduce == 'amax':
+            reduce = reduce[-3:]
+
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)
 
@@ -163,10 +179,14 @@ def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     return src.view(size).expand_as(ref)
 
 
-def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
-                   dim_size: Optional[int] = None) -> Tensor:
+def scatter_argmax(
+    src: Tensor,
+    index: Tensor,
+    dim: int = 0,
+    dim_size: Optional[int] = None,
+) -> Tensor:
 
-    if torch_geometric.typing.WITH_TORCH_SCATTER:
+    if torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling():
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
         return out[1]
 
@@ -176,7 +196,7 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
     assert src.numel() == index.numel()
 
     if dim_size is None:
-        dim_size = index.max() + 1 if index.numel() > 0 else 0
+        dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
         res = src.new_empty(dim_size)
@@ -184,7 +204,7 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
                             include_self=False)
     elif torch_geometric.typing.WITH_PT111:
         res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
-                                   output_size=dim_size)
+                                   output_size=dim_size)  # type: ignore
     else:
         raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
 

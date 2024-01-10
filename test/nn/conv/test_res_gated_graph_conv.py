@@ -28,14 +28,11 @@ def test_res_gated_graph_conv(edge_dim):
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit(x1, edge_index, edge_attr), out, atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -52,12 +49,9 @@ def test_res_gated_graph_conv(edge_dim):
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        t = '(PairTensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out,
                               atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)

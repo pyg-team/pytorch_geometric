@@ -249,7 +249,7 @@ class SchNet(torch.nn.Module):
         net.lin2.bias = state.output_modules[0].out_net[1].out_net[1].bias
 
         mean = state.output_modules[0].atom_pool.average
-        net.readout = 'mean' if mean is True else 'add'
+        net.readout = aggr_resolver('mean' if mean is True else 'add')
 
         dipole = state.output_modules[0].__class__.__name__ == 'DipoleMoment'
         net.dipole = dipole

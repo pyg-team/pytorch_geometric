@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import scatter
+from torch_geometric.utils import cumsum, scatter
 
 try:
     import torchmetrics  # noqa
@@ -19,21 +19,20 @@ class LinkPredMetric(BaseMetric, ABC):
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
-        top_k (int): The number of top-:math:`k` predictions to evaluate
-            against.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
-    is_differentiable: Optional[bool] = None
+    is_differentiable: bool = False
+    full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    full_state_update: Optional[bool] = None
 
-    def __init__(self, top_k: int):
+    def __init__(self, k: int):
         super().__init__()
 
-        if top_k <= 0:
-            raise ValueError(f"'top_k' needs to be a positive integer in "
-                             f"'{self.__class__.__name__}' (got {top_k})")
+        if k <= 0:
+            raise ValueError(f"'k' needs to be a positive integer in "
+                             f"'{self.__class__.__name__}' (got {k})")
 
-        self.top_k = top_k
+        self.k = k
 
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
@@ -50,16 +49,20 @@ class LinkPredMetric(BaseMetric, ABC):
         r"""Updates the state variables based on the current mini-batch
         prediction.
 
+        :meth:`update` can be repeated multiple times to accumulate the results
+        of successive predictions, *e.g.*, inside a mini-batch training or
+        evaluation loop.
+
         Args:
             pred_index_mat (torch.Tensor): The top-:math:`k` predictions of
                 every example in the mini-batch with shape
-                :obj:`[batch_size, top_k]`.
+                :obj:`[batch_size, k]`.
             edge_label_index (torch.Tensor): The ground-truth indices for every
                 example in the mini-batch, given in COO format of shape
                 :obj:`[2, num_ground_truth_indices]`.
         """
-        if pred_index_mat.size(1) != self.top_k:
-            raise ValueError(f"Expected 'pred_index_mat' to hold {self.top_k} "
+        if pred_index_mat.size(1) != self.k:
+            raise ValueError(f"Expected 'pred_index_mat' to hold {self.k} "
                              f"many indices for every entry "
                              f"(got {pred_index_mat.size(1)})")
 
@@ -128,15 +131,85 @@ class LinkPredMetric(BaseMetric, ABC):
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.top_k})'
+        return f'{self.__class__.__name__}(k={self.k})'
 
 
 class LinkPredPrecision(LinkPredMetric):
     r"""A link prediction metric to compute Precision@:math`k`.
 
     Args:
-        top_k (int): The number of top-:math:`k` predictions to evaluate
-            against.
+        k (int): The number of top-:math:`k` predictions to evaluate against.
     """
+    higher_is_better: bool = True
+
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        return pred_isin_mat.sum(dim=-1) / self.top_k
+        return pred_isin_mat.sum(dim=-1) / self.k
+
+
+class LinkPredRecall(LinkPredMetric):
+    r"""A link prediction metric to compute Recall@:math:`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        return pred_isin_mat.sum(dim=-1) / y_count.clamp(min=1e-7)
+
+
+class LinkPredF1(LinkPredMetric):
+    r"""A link prediction metric to compute F1@:math`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        isin_count = pred_isin_mat.sum(dim=-1)
+        precision = isin_count / self.k
+        recall = isin_count = isin_count / y_count.clamp(min=1e-7)
+        return 2 * precision * recall / (precision + recall).clamp(min=1e-7)
+
+
+class LinkPredMAP(LinkPredMetric):
+    r"""A link prediction metric to compute MAP@:math`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        cum_precision = (torch.cumsum(pred_isin_mat, dim=1) /
+                         torch.arange(1, self.k + 1, device=y_count.device))
+        return ((cum_precision * pred_isin_mat).sum(dim=-1) /
+                y_count.clamp(min=1e-7, max=self.k))
+
+
+class LinkPredNDCG(LinkPredMetric):
+    r"""A link prediction metric to compute the Normalized Discounted
+    Cumulative Gain (NDCG).
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def __init__(self, k: int):
+        super().__init__(k=k)
+
+        dtype = torch.get_default_dtype()
+        multiplier = 1.0 / torch.arange(2, k + 2, dtype=dtype).log2()
+
+        self.register_buffer('multiplier', multiplier)
+        self.register_buffer('idcg', cumsum(multiplier))
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        dcg = (pred_isin_mat * self.multiplier.view(1, -1)).sum(dim=-1)
+        idcg = self.idcg[y_count.clamp(max=self.k)]
+
+        out = dcg / idcg
+        out[out.isnan() | out.isinf()] = 0.0
+        return out

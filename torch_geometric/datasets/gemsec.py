@@ -40,7 +40,7 @@ class GemsecDeezer(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name
         assert self.name in ['HU', 'HR', 'RO']
         super().__init__(root, transform, pre_transform,
@@ -63,10 +63,10 @@ class GemsecDeezer(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(osp.join(self.url, self.name + '.npz'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
         y = torch.from_numpy(data['target']).to(torch.long)
         edge_index = torch.from_numpy(data['edges']).to(torch.long)

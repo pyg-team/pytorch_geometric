@@ -71,7 +71,7 @@ class MovieLens1M(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
@@ -84,7 +84,7 @@ class MovieLens1M(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.remove(path)
@@ -92,7 +92,7 @@ class MovieLens1M(InMemoryDataset):
         fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

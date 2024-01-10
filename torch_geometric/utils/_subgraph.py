@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Literal, Optional, Tuple, Union, overload
 
 import torch
 from torch import Tensor
@@ -14,6 +14,14 @@ def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
     from.
 
+    .. note::
+
+        This function counts the number of message passing layers as an
+        approximation of the total number of hops covered by the model.
+        Its output may not necessarily be correct in case message passing
+        layers perform multi-hop aggregation, *e.g.*, as in
+        :class:`~torch_geometric.nn.conv.ChebConv`.
+
     Example:
         >>> class GNN(torch.nn.Module):
         ...     def __init__(self):
@@ -23,8 +31,8 @@ def get_num_hops(model: torch.nn.Module) -> int:
         ...         self.lin = Linear(16, 2)
         ...
         ...     def forward(self, x, edge_index):
-        ...         x = torch.F.relu(self.conv1(x, edge_index))
-        ...         x = self.conv2(x, edge_index)
+        ...         x = self.conv1(x, edge_index).relu()
+        ...         x = self.conv2(x, edge_index).relu()
         ...         return self.lin(x)
         >>> get_num_hops(GNN())
         2
@@ -37,14 +45,52 @@ def get_num_hops(model: torch.nn.Module) -> int:
     return num_hops
 
 
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
+    return_edge_mask: Literal[False],
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
+    return_edge_mask: Literal[True],
+) -> Tuple[Tensor, OptTensor, Tensor]:
+    pass
+
+
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
     edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
+    *,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, Tensor]]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -290,8 +336,10 @@ def k_hop_subgraph(
     node_mask = row.new_empty(num_nodes, dtype=torch.bool)
     edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
 
-    if isinstance(node_idx, (int, list, tuple)):
-        node_idx = torch.tensor([node_idx], device=row.device).flatten()
+    if isinstance(node_idx, int):
+        node_idx = torch.tensor([node_idx], device=row.device)
+    elif isinstance(node_idx, (list, tuple)):
+        node_idx = torch.tensor(node_idx, device=row.device)
     else:
         node_idx = node_idx.to(row.device)
 
@@ -315,11 +363,48 @@ def k_hop_subgraph(
     edge_index = edge_index[:, edge_mask]
 
     if relabel_nodes:
-        node_idx = row.new_full((num_nodes, ), -1)
-        node_idx[subset] = torch.arange(subset.size(0), device=row.device)
-        edge_index = node_idx[edge_index]
+        mapping = row.new_full((num_nodes, ), -1)
+        mapping[subset] = torch.arange(subset.size(0), device=row.device)
+        edge_index = mapping[edge_index]
 
     return subset, edge_index, inv, edge_mask
+
+
+@overload
+def hyper_subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def hyper_subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
+    return_edge_mask: Literal[False],
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def hyper_subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = ...,
+    relabel_nodes: bool = ...,
+    num_nodes: Optional[int] = ...,
+    *,
+    return_edge_mask: Literal[True],
+) -> Tuple[Tensor, OptTensor, Tensor]:
+    pass
 
 
 def hyper_subgraph(
@@ -329,7 +414,7 @@ def hyper_subgraph(
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, Tensor]]:
     r"""Returns the induced subgraph of the hyper graph of
     :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 

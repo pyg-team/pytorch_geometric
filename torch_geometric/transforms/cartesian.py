@@ -37,17 +37,19 @@ class Cartesian(BaseTransform):
         self.interval = interval
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.edge_index is not None
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         cart = pos[row] - pos[col]
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
         if self.norm and cart.numel() > 0:
-            max_value = cart.abs().max() if self.max is None else self.max
+            max_val = float(cart.abs().max()) if self.max is None else self.max
 
             length = self.interval[1] - self.interval[0]
             center = (self.interval[0] + self.interval[1]) / 2
-            cart = length * cart / (2 * max_value) + center
+            cart = length * cart / (2 * max_val) + center
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo

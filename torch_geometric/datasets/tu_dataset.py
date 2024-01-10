@@ -123,22 +123,33 @@ class TUDataset(InMemoryDataset):
         use_node_attr: bool = False,
         use_edge_attr: bool = False,
         cleaned: bool = False,
-    ):
+    ) -> None:
         self.name = name
         self.cleaned = cleaned
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
         out = fs.torch_load(self.processed_paths[0])
-        if not isinstance(out, tuple) or len(out) != 3:
+        if not isinstance(out, tuple) or len(out) < 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        data, self.slices, self.sizes = out
-        self.data = Data.from_dict(data) if isinstance(data, dict) else data
+        assert len(out) == 3 or len(out) == 4
 
+        if len(out) == 3:  # Backward compatibility.
+            data, self.slices, self.sizes = out
+            data_cls = Data
+        else:
+            data, self.slices, self.sizes, data_cls = out
+
+        if not isinstance(data, dict):  # Backward compatibility.
+            self.data = data
+        else:
+            self.data = data_cls.from_dict(data)
+
+        assert isinstance(self._data, Data)
         if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
             self._data.x = self._data.x[:, num_node_attributes:]
@@ -181,14 +192,14 @@ class TUDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.cleaned_url if self.cleaned else self.url
         fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
         for filename in fs.ls(osp.join(self.raw_dir, self.name)):
             fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
         fs.rm(osp.join(self.raw_dir, self.name))
 
-    def process(self):
+    def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
 
         if self.pre_filter is not None or self.pre_transform is not None:
@@ -203,8 +214,11 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        fs.torch_save((self._data.to_dict(), self.slices, sizes),
-                      self.processed_paths[0])
+        assert isinstance(self._data, Data)
+        fs.torch_save(
+            (self._data.to_dict(), self.slices, sizes, self._data.__class__),
+            self.processed_paths[0],
+        )
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

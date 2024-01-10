@@ -99,8 +99,11 @@ def parse_types(func: Callable) -> List[Tuple[Dict[str, str], str]]:
         return [(arg_types, return_type_repr(signature))]
 
 
-def resolve_types(arg_types: Dict[str, str],
-                  return_type_repr: str) -> List[Tuple[List[str], str]]:
+def resolve_types(
+    arg_types: Dict[str, str],
+    return_type_repr: str,
+) -> List[Tuple[List[str], str]]:
+
     out = []
     for type_repr in arg_types.values():
         if type_repr[:5] == 'Union':

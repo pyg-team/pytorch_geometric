@@ -2,16 +2,17 @@ import inspect
 import os.path as osp
 import random
 import re
-from collections import OrderedDict
+import warnings
 from inspect import Parameter
-from itertools import chain
 from typing import (
     Any,
     Callable,
     Dict,
     List,
     Optional,
+    OrderedDict,
     Set,
+    Tuple,
     Union,
     get_type_hints,
 )
@@ -21,18 +22,9 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.conv.utils.inspector import (
-    Inspector,
-    func_body_repr,
-    func_header_repr,
-)
+from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
-from torch_geometric.nn.conv.utils.typing import (
-    parse_types,
-    resolve_types,
-    sanitize,
-    split_types_repr,
-)
+from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -43,11 +35,7 @@ from torch_geometric.utils import (
 from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
-
-
-def ptr2ind(ptr: Tensor) -> Tensor:
-    ind = torch.arange(ptr.numel() - 1, device=ptr.device)
-    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+HookDict = OrderedDict[int, Callable]
 
 
 class MessagePassing(torch.nn.Module):
@@ -69,8 +57,8 @@ class MessagePassing(torch.nn.Module):
 
     Args:
         aggr (str or [str] or Aggregation, optional): The aggregation scheme
-            to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
-            :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
+            to use, *e.g.*, :obj:`"sum"` :obj:`"mean"`, :obj:`"min"`,
+            :obj:`"max"` or :obj:`"mul"`.
             In addition, can be any
             :class:`~torch_geometric.nn.aggr.Aggregation` module (or any string
             that automatically resolves to it).
@@ -119,16 +107,21 @@ class MessagePassing(torch.nn.Module):
 
     def __init__(
         self,
-        aggr: Optional[Union[str, List[str], Aggregation]] = "add",
+        aggr: Optional[Union[str, List[str], Aggregation]] = 'sum',
         *,
         aggr_kwargs: Optional[Dict[str, Any]] = None,
         flow: str = "source_to_target",
         node_dim: int = -2,
         decomposed_layers: int = 1,
-        **kwargs,
-    ):
+    ) -> None:
         super().__init__()
 
+        if flow not in ['source_to_target', 'target_to_source']:
+            raise ValueError(f"Expected 'flow' to be either 'source_to_target'"
+                             f" or 'target_to_source' (got '{flow}')")
+
+        # Cast `aggr` into a string representation for backward compatibility:
+        self.aggr: Optional[Union[str, List[str]]]
         if aggr is None:
             self.aggr = None
         elif isinstance(aggr, (str, Aggregation)):
@@ -137,16 +130,11 @@ class MessagePassing(torch.nn.Module):
             self.aggr = [str(x) for x in aggr]
 
         self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
-
         self.flow = flow
-
-        if flow not in ['source_to_target', 'target_to_source']:
-            raise ValueError(f"Expected 'flow' to be either 'source_to_target'"
-                             f" or 'target_to_source' (got '{flow}')")
-
         self.node_dim = node_dim
         self.decomposed_layers = decomposed_layers
 
+        # Collect attribute names requested in message passing hooks:
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
@@ -155,47 +143,56 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.update, pop_first=True)
         self.inspector.inspect(self.edge_update)
 
-        self._user_args = self.inspector.keys(
+        self._user_args: Set[str] = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
-        self._fused_user_args = self.inspector.keys(
+        self._fused_user_args: Set[str] = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
-        self._edge_user_args = self.inspector.keys(['edge_update']).difference(
-            self.special_args)
+        self._edge_user_args: Set[str] = self.inspector.keys(
+            ['edge_update']).difference(self.special_args)
 
-        # Support for "fused" message passing.
+        # Support for "fused" message passing:
         self.fuse = self.inspector.implements('message_and_aggregate')
         if self.aggr is not None:
             self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
         # Support for explainability.
         self._explain: Optional[bool] = None
-        self._edge_mask = None
-        self._loop_mask = None
-        self._apply_sigmoid = True
+        self._edge_mask: Optional[Tensor] = None
+        self._loop_mask: Optional[Tensor] = None
+        self._apply_sigmoid: bool = True
 
         # Hooks:
-        self._propagate_forward_pre_hooks = OrderedDict()
-        self._propagate_forward_hooks = OrderedDict()
-        self._message_forward_pre_hooks = OrderedDict()
-        self._message_forward_hooks = OrderedDict()
-        self._aggregate_forward_pre_hooks = OrderedDict()
-        self._aggregate_forward_hooks = OrderedDict()
-        self._message_and_aggregate_forward_pre_hooks = OrderedDict()
-        self._message_and_aggregate_forward_hooks = OrderedDict()
-        self._edge_update_forward_pre_hooks = OrderedDict()
-        self._edge_update_forward_hooks = OrderedDict()
+        self._propagate_forward_pre_hooks: HookDict = OrderedDict()
+        self._propagate_forward_hooks: HookDict = OrderedDict()
+        self._message_forward_pre_hooks: HookDict = OrderedDict()
+        self._message_forward_hooks: HookDict = OrderedDict()
+        self._aggregate_forward_pre_hooks: HookDict = OrderedDict()
+        self._aggregate_forward_hooks: HookDict = OrderedDict()
+        self._message_and_aggregate_forward_pre_hooks: HookDict = OrderedDict()
+        self._message_and_aggregate_forward_hooks: HookDict = OrderedDict()
+        self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
+        self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         if self.aggr_module is not None:
             self.aggr_module.reset_parameters()
 
-    def forward(self, *args, **kwargs) -> Any:
-        r"""Runs the forward pass of the module."""
-        pass
+    def __repr__(self) -> str:
+        channels_repr = ''
+        if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
+            channels_repr = f'{self.in_channels}, {self.out_channels}'
+        elif hasattr(self, 'channels'):
+            channels_repr = f'{self.channels}'
+        return f'{self.__class__.__name__}({channels_repr})'
 
-    def _check_input(self, edge_index, size):
-        the_size: List[Optional[int]] = [None, None]
+    # Utilities ###############################################################
+
+    def _check_input(
+        self,
+        edge_index: Union[Tensor, SparseTensor],
+        size: Optional[Tuple[int, int]],
+    ) -> List[Optional[int]]:
 
         if is_sparse(edge_index):
             if self.flow == 'target_to_source':
@@ -206,9 +203,11 @@ class MessagePassing(torch.nn.Module):
                      'use of a reverse message passing flow, pass in the '
                      'transposed sparse tensor to the message passing module, '
                      'e.g., `adj_t.t()`.'))
-            the_size[0] = edge_index.size(1)
-            the_size[1] = edge_index.size(0)
-            return the_size
+
+            if isinstance(edge_index, SparseTensor):
+                return [edge_index.size(1), edge_index.size(0)]
+            return [edge_index.size(1), edge_index.size(0)]
+
         elif isinstance(edge_index, Tensor):
             int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
 
@@ -222,17 +221,20 @@ class MessagePassing(torch.nn.Module):
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
-            if size is not None:
-                the_size[0] = size[0]
-                the_size[1] = size[1]
-            return the_size
+
+            return list(size) if size is not None else [None, None]
 
         raise ValueError(
             ('`MessagePassing.propagate` only supports integer tensors of '
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` or '
              '`torch.sparse.Tensor` for argument `edge_index`.'))
 
-    def _set_size(self, size: List[Optional[int]], dim: int, src: Tensor):
+    def _set_size(
+        self,
+        size: List[Optional[int]],
+        dim: int,
+        src: Tensor,
+    ) -> None:
         the_size = size[dim]
         if the_size is None:
             size[dim] = src.size(self.node_dim)
@@ -241,8 +243,43 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def _lift(self, src, edge_index, dim):
-        if is_torch_sparse_tensor(edge_index):
+    def _index_select(
+        self,
+        src: Tensor,
+        edge_index: Tensor,
+        dim: int,
+    ) -> Tensor:
+
+        try:
+            index = edge_index[dim]
+            return src.index_select(self.node_dim, index)
+        except (IndexError, RuntimeError) as e:
+            if index.numel() > 0 and index.min() < 0:
+                raise IndexError(
+                    f"Found negative indices in 'edge_index' (got "
+                    f"{index.min().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
+
+            if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
+                raise IndexError(
+                    f"Found indices in 'edge_index' that are larger "
+                    f"than {src.size(self.node_dim) - 1} (got "
+                    f"{index.max().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
+
+            raise e
+
+    def _lift(
+        self,
+        src: Tensor,
+        edge_index: Union[Tensor, SparseTensor],
+        dim: int,
+    ) -> Tensor:
+        if not torch.jit.is_scripting() and is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
             if edge_index.layout == torch.sparse_coo:
                 index = edge_index._indices()[1 - dim]
@@ -262,39 +299,10 @@ class MessagePassing(torch.nn.Module):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):
-            try:
+            if torch.jit.is_scripting():  # Try/catch blocks are not supported.
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
-            except (IndexError, RuntimeError) as e:
-                if index.min() < 0 or index.max() >= src.size(self.node_dim):
-                    raise IndexError(
-                        f"Encountered an index error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices in "
-                        f"the interval [0, {src.size(self.node_dim) - 1}] "
-                        f"(got interval "
-                        f"[{int(index.min())}, {int(index.max())}])")
-                else:
-                    raise e
-
-                if index.numel() > 0 and index.min() < 0:
-                    raise ValueError(
-                        f"Found negative indices in 'edge_index' (got "
-                        f"{index.min().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                if (index.numel() > 0
-                        and index.max() >= src.size(self.node_dim)):
-                    raise ValueError(
-                        f"Found indices in 'edge_index' that are larger "
-                        f"than {src.size(self.node_dim) - 1} (got "
-                        f"{index.max().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                raise e
+            return self._index_select(src, edge_index, dim)
 
         elif isinstance(edge_index, SparseTensor):
             row, col, _ = edge_index.coo()
@@ -308,7 +316,14 @@ class MessagePassing(torch.nn.Module):
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
              'or `torch.sparse.Tensor` for argument `edge_index`.'))
 
-    def _collect(self, args, edge_index, size, kwargs):
+    def _collect(
+        self,
+        args: Set[str],
+        edge_index: Union[Tensor, SparseTensor],
+        size: List[Optional[int]],
+        kwargs: Dict[str, Any],
+    ) -> Dict[str, Any]:
+
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 
         out = {}
@@ -376,7 +391,18 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
+    # Message Passing #########################################################
+
+    def forward(self, *args: Any, **kwargs: Any) -> Any:
+        r"""Runs the forward pass of the module."""
+        pass
+
+    def propagate(
+        self,
+        edge_index: Adj,
+        size: Size = None,
+        **kwargs: Any,
+    ) -> Tensor:
         r"""The initial call to start propagating messages.
 
         Args:
@@ -416,12 +442,12 @@ class MessagePassing(torch.nn.Module):
             if res is not None:
                 edge_index, size, kwargs = res
 
-        size = self._check_input(edge_index, size)
+        mutable_size = self._check_input(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
         if is_sparse(edge_index) and self.fuse and not self.explain:
-            coll_dict = self._collect(self._fused_user_args, edge_index, size,
-                                      kwargs)
+            coll_dict = self._collect(self._fused_user_args, edge_index,
+                                      mutable_size, kwargs)
 
             msg_aggr_kwargs = self.inspector.distribute(
                 'message_and_aggregate', coll_dict)
@@ -453,8 +479,8 @@ class MessagePassing(torch.nn.Module):
                     for arg in decomp_args:
                         kwargs[arg] = decomp_kwargs[arg][i]
 
-                coll_dict = self._collect(self._user_args, edge_index, size,
-                                          kwargs)
+                coll_dict = self._collect(self._user_args, edge_index,
+                                          mutable_size, kwargs)
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
@@ -495,40 +521,7 @@ class MessagePassing(torch.nn.Module):
                 out = torch.cat(decomp_out, dim=-1)
 
         for hook in self._propagate_forward_hooks.values():
-            res = hook(self, (edge_index, size, kwargs), out)
-            if res is not None:
-                out = res
-
-        return out
-
-    def edge_updater(self, edge_index: Adj, **kwargs):
-        r"""The initial call to compute or update features for each edge in the
-        graph.
-
-        Args:
-            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
-                :class:`torch_sparse.SparseTensor` or a
-                :class:`torch.sparse.Tensor` that defines the underlying graph
-                connectivity/message passing flow.
-                See :meth:`propagate` for more information.
-            **kwargs: Any additional data which is needed to compute or update
-                features for each edge in the graph.
-        """
-        for hook in self._edge_update_forward_pre_hooks.values():
-            res = hook(self, (edge_index, kwargs))
-            if res is not None:
-                edge_index, kwargs = res
-
-        size = self._check_input(edge_index, size=None)
-
-        coll_dict = self._collect(self._edge_user_args, edge_index, size,
-                                  kwargs)
-
-        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
-        out = self.edge_update(**edge_kwargs)
-
-        for hook in self._edge_update_forward_hooks.values():
-            res = hook(self, (edge_index, kwargs), out)
+            res = hook(self, (edge_index, mutable_size, kwargs), out)
             if res is not None:
                 out = res
 
@@ -546,12 +539,106 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
+    def aggregate(
+        self,
+        inputs: Tensor,
+        index: Tensor,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+    ) -> Tensor:
+        r"""Aggregates messages from neighbors as
+        :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
+
+        Takes in the output of message computation as first argument and any
+        argument which was initially passed to :meth:`propagate`.
+
+        By default, this function will delegate its call to the underlying
+        :class:`~torch_geometric.nn.aggr.Aggregation` module to reduce messages
+        as specified in :meth:`__init__` by the :obj:`aggr` argument.
+        """
+        return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
+                                dim=self.node_dim)
+
+    def message_and_aggregate(
+        self,
+        adj_t: Adj,
+    ) -> Tensor:
+        r"""Fuses computations of :func:`message` and :func:`aggregate` into a
+        single function.
+        If applicable, this saves both time and memory since messages do not
+        explicitly need to be materialized.
+        This function will only gets called in case it is implemented and
+        propagation takes place based on a :obj:`torch_sparse.SparseTensor`
+        or a :obj:`torch.sparse.Tensor`.
+        """
+        raise NotImplementedError
+
+    def update(self, inputs: Tensor) -> Tensor:
+        r"""Updates node embeddings in analogy to
+        :math:`\gamma_{\mathbf{\Theta}}` for each node
+        :math:`i \in \mathcal{V}`.
+        Takes in the output of aggregation as first argument and any argument
+        which was initially passed to :meth:`propagate`.
+        """
+        return inputs
+
+    # Edge-level Updates ######################################################
+
+    def edge_updater(self, edge_index: Adj, **kwargs: Any) -> Tensor:
+        r"""The initial call to compute or update features for each edge in the
+        graph.
+
+        Args:
+            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
+                :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying graph
+                connectivity/message passing flow.
+                See :meth:`propagate` for more information.
+            **kwargs: Any additional data which is needed to compute or update
+                features for each edge in the graph.
+        """
+        for hook in self._edge_update_forward_pre_hooks.values():
+            res = hook(self, (edge_index, kwargs))
+            if res is not None:
+                edge_index, kwargs = res
+
+        mutable_size = self._check_input(edge_index, size=None)
+
+        coll_dict = self._collect(self._edge_user_args, edge_index,
+                                  mutable_size, kwargs)
+
+        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        out = self.edge_update(**edge_kwargs)
+
+        for hook in self._edge_update_forward_hooks.values():
+            res = hook(self, (edge_index, kwargs), out)
+            if res is not None:
+                out = res
+
+        return out
+
+    def edge_update(self) -> Tensor:
+        r"""Computes or updates features for each edge in the graph.
+        This function can take any argument as input which was initially passed
+        to :meth:`edge_updater`.
+        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
+        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
+        raise NotImplementedError
+
+    # Explainability ##########################################################
+
     @property
     def explain(self) -> Optional[bool]:
         return self._explain
 
     @explain.setter
-    def explain(self, explain: Optional[bool]):
+    def explain(self, explain: Optional[bool]) -> None:
+        if torch.jit.is_scripting():
+            raise ValueError("Explainability of message passing modules "
+                             "is only supported on the Python module")
+
         if explain:
             methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
@@ -588,57 +675,12 @@ class MessagePassing(torch.nn.Module):
         size[self.node_dim] = -1
         return inputs * edge_mask.view(size)
 
-    def aggregate(self, inputs: Tensor, index: Tensor,
-                  ptr: Optional[Tensor] = None,
-                  dim_size: Optional[int] = None) -> Tensor:
-        r"""Aggregates messages from neighbors as
-        :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
+    # Hooks ###################################################################
 
-        Takes in the output of message computation as first argument and any
-        argument which was initially passed to :meth:`propagate`.
-
-        By default, this function will delegate its call to the underlying
-        :class:`~torch_geometric.nn.aggr.Aggregation` module to reduce messages
-        as specified in :meth:`__init__` by the :obj:`aggr` argument.
-        """
-        return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
-                                dim=self.node_dim)
-
-    def message_and_aggregate(
+    def register_propagate_forward_pre_hook(
         self,
-        adj_t: Union[SparseTensor, Tensor],
-    ) -> Tensor:
-        r"""Fuses computations of :func:`message` and :func:`aggregate` into a
-        single function.
-        If applicable, this saves both time and memory since messages do not
-        explicitly need to be materialized.
-        This function will only gets called in case it is implemented and
-        propagation takes place based on a :obj:`torch_sparse.SparseTensor`
-        or a :obj:`torch.sparse.Tensor`.
-        """
-        raise NotImplementedError
-
-    def update(self, inputs: Tensor) -> Tensor:
-        r"""Updates node embeddings in analogy to
-        :math:`\gamma_{\mathbf{\Theta}}` for each node
-        :math:`i \in \mathcal{V}`.
-        Takes in the output of aggregation as first argument and any argument
-        which was initially passed to :meth:`propagate`.
-        """
-        return inputs
-
-    def edge_update(self) -> Tensor:
-        r"""Computes or updates features for each edge in the graph.
-        This function can take any argument as input which was initially passed
-        to :meth:`edge_updater`.
-        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
-        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
-        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
-        """
-        raise NotImplementedError
-
-    def register_propagate_forward_pre_hook(self,
-                                            hook: Callable) -> RemovableHandle:
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
 
         The hook will be called every time before :meth:`propagate` is invoked.
@@ -659,8 +701,10 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_propagate_forward_hook(self,
-                                        hook: Callable) -> RemovableHandle:
+    def register_propagate_forward_hook(
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
 
         The hook will be called every time after :meth:`propagate` has computed
@@ -682,8 +726,10 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_hooks[handle.id] = hook
         return handle
 
-    def register_message_forward_pre_hook(self,
-                                          hook: Callable) -> RemovableHandle:
+    def register_message_forward_pre_hook(
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`message` is invoked.
         See :meth:`register_propagate_forward_pre_hook` for more information.
@@ -702,8 +748,10 @@ class MessagePassing(torch.nn.Module):
         self._message_forward_hooks[handle.id] = hook
         return handle
 
-    def register_aggregate_forward_pre_hook(self,
-                                            hook: Callable) -> RemovableHandle:
+    def register_aggregate_forward_pre_hook(
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`aggregate` is invoked.
         See :meth:`register_propagate_forward_pre_hook` for more information.
@@ -712,8 +760,10 @@ class MessagePassing(torch.nn.Module):
         self._aggregate_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_aggregate_forward_hook(self,
-                                        hook: Callable) -> RemovableHandle:
+    def register_aggregate_forward_hook(
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
         The hook will be called every time after :meth:`aggregate` has computed
         an output.
@@ -724,7 +774,9 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     def register_message_and_aggregate_forward_pre_hook(
-            self, hook: Callable) -> RemovableHandle:
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`message_and_aggregate`
         is invoked.
@@ -735,7 +787,9 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     def register_message_and_aggregate_forward_hook(
-            self, hook: Callable) -> RemovableHandle:
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
         The hook will be called every time after :meth:`message_and_aggregate`
         has computed an output.
@@ -746,7 +800,9 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     def register_edge_update_forward_pre_hook(
-            self, hook: Callable) -> RemovableHandle:
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`edge_update` is
         invoked. See :meth:`register_propagate_forward_pre_hook` for more
@@ -756,8 +812,10 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_edge_update_forward_hook(self,
-                                          hook: Callable) -> RemovableHandle:
+    def register_edge_update_forward_hook(
+        self,
+        hook: Callable,
+    ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
         The hook will be called every time after :meth:`edge_update` has
         computed an output.
@@ -767,28 +825,28 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
+    # TorchScript Support #####################################################
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module that can be used in combination with
         :meth:`torch.jit.script`.
-
-        Args:
-            typing (str, optional): If given, will generate a concrete instance
-                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
-                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
-        try:
-            from jinja2 import Template
-        except ImportError:
-            raise ModuleNotFoundError(
-                "No module named 'jinja2' found on this machine. "
-                "Run 'pip install jinja2' to install the library.")
+        if typing is not None:
+            warnings.warn("The 'typing' argument in 'MessagePassing.jittable' "
+                          "is deprecated and will be removed soon")
+
+        if 'Jittable' in self.__class__.__name__:
+            return self
+
+        from jinja2 import Template
 
         source = inspect.getsource(self.__class__)
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
         if hasattr(self, 'propagate_type'):
+            assert isinstance(self.propagate_type, dict)
             prop_types = {
                 k: sanitize(str(v))
                 for k, v in self.propagate_type.items()
@@ -803,15 +861,18 @@ class MessagePassing(torch.nn.Module):
                     'or via\n\n'
                     '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                     'inside the `MessagePassing` module.')
-            prop_types = split_types_repr(match.group(1))
-            prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
+            prop_types = dict([
+                re.split(r'\s*:\s*', t)
+                for t in split_types_repr(match.group(1))
+            ])
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
         if 'edge_update' in self.__class__.__dict__.keys():
             if hasattr(self, 'edge_updater_type'):
+                assert isinstance(self.edge_updater_type, dict)
                 edge_updater_types = {
                     k: sanitize(str(v))
-                    for k, v in self.edge_updater.items()
+                    for k, v in self.edge_updater_type.items()
                 }
             else:
                 match = re.search(r'#\s*edge_updater_type:\s*\((.*)\)', source)
@@ -823,9 +884,10 @@ class MessagePassing(torch.nn.Module):
                         '"arg2": type2, ... }\n\n or via\n\n'
                         '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
-                edge_updater_types = split_types_repr(match.group(1))
-                edge_updater_types = dict(
-                    [re.split(r'\s*:\s*', t) for t in edge_updater_types])
+                edge_updater_types = dict([
+                    re.split(r'\s*:\s*', t)
+                    for t in split_types_repr(match.group(1))
+                ])
         else:
             edge_updater_types = {}
 
@@ -847,20 +909,16 @@ class MessagePassing(torch.nn.Module):
         # specific to the argument used for edge updates.
         edge_collect_types = self.inspector.types(['edge_update'])
 
-        # Collect `forward()` header, body and @overload types.
-        forward_types = parse_types(self.forward)
-        forward_types = [resolve_types(*types) for types in forward_types]
-        forward_types = list(chain.from_iterable(forward_types))
-
-        keep_annotation = len(forward_types) < 2
-        forward_header = func_header_repr(self.forward, keep_annotation)
-        forward_body = func_body_repr(self.forward, keep_annotation)
-
-        if keep_annotation:
-            forward_types = []
-        elif typing is not None:
-            forward_types = []
-            forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
+        # Collect `forward()` function in case it is overloaded. This is
+        # necessary since TorchScript cannot handle inheritance of overloaded
+        # forward functions.
+        # TODO This is very hacky and should be resolved soon.
+        forward_repr = ''
+        start = source.find('    @overload\n    def forward')
+        if start >= 0:
+            forward_repr = inspect.getsource(self.forward)
+            end = source.find(forward_repr) + len(forward_repr)
+            forward_repr = source[start:end]
 
         root = osp.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
@@ -879,9 +937,6 @@ class MessagePassing(torch.nn.Module):
             collect_types=collect_types,
             user_args=self._user_args,
             edge_user_args=self._edge_user_args,
-            forward_header=forward_header,
-            forward_types=forward_types,
-            forward_body=forward_body,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
@@ -890,17 +945,10 @@ class MessagePassing(torch.nn.Module):
             edge_update_args=self.inspector.keys(['edge_update']),
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
-            check_input=inspect.getsource(self._check_input)[:-1],
+            forward_repr=forward_repr,
         )
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
-        module.jittable = None
         return module
-
-    def __repr__(self) -> str:
-        if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
-            return (f'{self.__class__.__name__}({self.in_channels}, '
-                    f'{self.out_channels})')
-        return f'{self.__class__.__name__}()'

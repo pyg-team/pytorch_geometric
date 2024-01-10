@@ -26,8 +26,8 @@ def assert_module(
     atol: float = 1e-08,
     rtol: float = 1e-05,
     equal_nan: bool = False,
-    **kwargs,
-):
+    **kwargs: Any,
+) -> Any:
     r"""Asserts that the output of a :obj:`module` is correct.
 
     Specifically, this method tests that:
