@@ -198,12 +198,10 @@ class MessagePassing(torch.nn.Module):
 
         propagate_return_type = type_hint_to_str(
             get_type_hints(self.update).get('return', Tensor))
-        print(propagate_return_type)
 
         # Parse `_collect()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
-        print(collect_types)
 
         root_dir = osp.dirname(osp.realpath(__file__))
         module = module_from_template(
