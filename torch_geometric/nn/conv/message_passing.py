@@ -200,6 +200,11 @@ class MessagePassing(torch.nn.Module):
             get_type_hints(self.update).get('return', Tensor))
         print(propagate_return_type)
 
+        # Parse `_collect()` types to format `{arg:1, type1, ...}`.
+        collect_types = self.inspector.types(
+            ['message', 'aggregate', 'update'])
+        print(collect_types)
+
         root_dir = osp.dirname(osp.realpath(__file__))
         module = module_from_template(
             module_name='torch_geometric.nn.conv.sage_conv_propagate',
@@ -207,9 +212,16 @@ class MessagePassing(torch.nn.Module):
             template_path=osp.join(root_dir, 'propagate.jinja'),
             propagate_types=propagate_types,
             propagate_return_type=propagate_return_type,
+            collect_types=collect_types,
+            message_args=self.inspector.keys(['message']),
+            aggregate_args=self.inspector.keys(['aggregate']),
+            message_and_aggregate_args=self.inspector.keys(
+                ['message_and_aggregate']),
+            update_args=self.inspector.keys(['update']),
         )
 
         self.__class__.propagate = module.propagate
+        self.__class__._collect = module._collect
 
         # print(match)
         # print(propagate_types)
