@@ -23,6 +23,7 @@ from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.propagate import (
+    find_parenthesis_content,
     module_from_template,
     type_hint_to_str,
 )
@@ -178,8 +179,6 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
         # Parse `propagate_types` and generate an efficient `propagate` method:
-        source = inspect.getsource(self.__class__)
-
         if hasattr(self, 'propagate_type'):
             assert isinstance(self.propagate_type, dict)
             propagate_types = {
@@ -187,14 +186,22 @@ class MessagePassing(torch.nn.Module):
                 for name, type_hint in self.propagate_type.items()
             }
         else:
-            match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
+            source = inspect.getsource(self.forward)
+            match = find_parenthesis_content(source, prefix='propagate_type:')
             if match is not None:
-                propagate_types = dict([
-                    re.split(r'\s*:\s*', t)
-                    for t in split_types_repr(match.group(1))
-                ])
+                propagate_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
             else:
-                raise NotImplementedError  # TODO
+                bla = find_parenthesis_content(source, prefix='self.propagate')
+                # Find all keyword arguments:
+                blas = bla.split(',')
+                blas = [
+                    x[:x.find('=')].strip() for x in blas if x.find('=') >= 0
+                ]
+                propagate_types = {
+                    x: 'Tensor'
+                    for x in blas if x not in {'edge_index', 'size'}
+                }
 
         propagate_return_type = type_hint_to_str(
             get_type_hints(self.update).get('return', Tensor))
@@ -900,7 +907,7 @@ class MessagePassing(torch.nn.Module):
                 for k, v in self.propagate_type.items()
             }
         else:
-            match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
+            match = find_parenthesis_content(source, prefix='propagate_type:')
             if match is None:
                 raise TypeError(
                     'TorchScript support requires the definition of the types '
@@ -909,10 +916,8 @@ class MessagePassing(torch.nn.Module):
                     'or via\n\n'
                     '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                     'inside the `MessagePassing` module.')
-            prop_types = dict([
-                re.split(r'\s*:\s*', t)
-                for t in split_types_repr(match.group(1))
-            ])
+            prop_types = dict(
+                [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
         if 'edge_update' in self.__class__.__dict__.keys():
@@ -923,7 +928,7 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater_type.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_type:\s*\((.*)\)', source)
+                match = find_parenthesis_content(source, 'edge_updater_type:')
                 if match is None:
                     raise TypeError(
                         'TorchScript support requires the definition of the '
@@ -932,10 +937,8 @@ class MessagePassing(torch.nn.Module):
                         '"arg2": type2, ... }\n\n or via\n\n'
                         '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
-                edge_updater_types = dict([
-                    re.split(r'\s*:\s*', t)
-                    for t in split_types_repr(match.group(1))
-                ])
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
         else:
             edge_updater_types = {}
 
