@@ -1,86 +1,154 @@
 import inspect
-import re
-from collections import OrderedDict
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Set,
+    Tuple,
+    Type,
+    Union,
+)
 
-from torch_geometric.nn.conv.utils.typing import parse_types
+from torch import Tensor
+
+
+class Param(NamedTuple):
+    type: Type
+    default: Any
 
 
 class Inspector:
-    def __init__(self, base_class: Any):
-        self.base_class: Any = base_class
-        self.params: Dict[str, Dict[str, Any]] = {}
+    r"""Inspects a given class and collects information about its instance
+    methods.
 
-    def inspect(self, func: Callable,
-                pop_first: bool = False) -> Dict[str, Any]:
-        params = inspect.signature(func).parameters
-        params = OrderedDict(params)
-        if pop_first:
-            params.popitem(last=False)
-        self.params[func.__name__] = params
+    Args:
+        cls (Type): The class to inspect.
+    """
+    def __init__(self, cls: Type):
+        self._cls = cls
+        self._types: Dict[str, Tuple[Dict[str, Param], Type]] = {}
 
-    def keys(self, func_names: Optional[List[str]] = None) -> Set[str]:
-        keys = []
-        for func in func_names or list(self.params.keys()):
-            keys += self.params[func].keys()
-        return set(keys)
-
-    def _implements(self, cls, func_name: str) -> bool:
-        if cls.__name__ == 'MessagePassing':
-            return False
-        if func_name in cls.__dict__.keys():
-            return True
-        return any(self._implements(c, func_name) for c in cls.__bases__)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self._cls.__name__})'
 
     def implements(self, func_name: str) -> bool:
-        return self._implements(self.base_class.__class__, func_name)
+        r"""Returns :obj:`True` in case the inspected class implements the
+        :obj:`func_name` method.
 
-    def types(self, func_names: Optional[List[str]] = None) -> Dict[str, str]:
-        out: Dict[str, str] = {}
-        for func_name in func_names or list(self.params.keys()):
-            func = getattr(self.base_class, func_name)
-            arg_types = parse_types(func)[0][0]
-            for key in self.params[func_name].keys():
-                if key in out and out[key] != arg_types[key]:
-                    raise ValueError(
-                        (f'Found inconsistent types for argument {key}. '
-                         f'Expected type {out[key]} but found type '
-                         f'{arg_types[key]}.'))
-                out[key] = arg_types[key]
-        return out
+        Args:
+            func_name (str): The function name to check for existence.
+        """
+        func = getattr(self._cls, func_name, None)
+        if not callable(func):
+            return False
+        return not getattr(func, '__isabstractmethod__', False)
 
-    def distribute(self, func_name, kwargs: Dict[str, Any]):
-        out = {}
-        for key, param in self.params[func_name].items():
-            data = kwargs.get(key, inspect.Parameter.empty)
-            if data is inspect.Parameter.empty:
-                if param.default is inspect.Parameter.empty:
-                    raise TypeError(f'Required parameter {key} is empty.')
-                data = param.default
-            out[key] = data
-        return out
+    def inspect(
+        self,
+        func: Union[Callable, str],
+        pop_first: bool = False,
+    ) -> Tuple[Dict[str, Type], Type]:
+        r"""Inspect the function signature of :obj:`func` and returns a tuple
+        of argument types and return type.
 
+        Args:
+            func (callabel or str): The function to inspect.
+            pop_first (bool, optional): If set to :obj:`True`, will not inspect
+                the first argument of the function.
+        """
+        if isinstance(func, str):
+            func = getattr(self._cls, func)
 
-def func_header_repr(func: Callable, keep_annotation: bool = True) -> str:
-    source = inspect.getsource(func)
-    signature = inspect.signature(func)
+        if func.__name__ in self._types:
+            return self._types[func.__name__]
 
-    if keep_annotation:
-        return ''.join(re.split(r'(\).*?:.*?\n)', source,
-                                maxsplit=1)[:2]).strip()
+        signature = inspect.signature(func)
 
-    params_repr = ['self']
-    for param in signature.parameters.values():
-        params_repr.append(param.name)
-        if param.default is not inspect.Parameter.empty:
-            params_repr[-1] += f'={param.default}'
+        arg_types: Dict[str, Type] = {}
+        for arg_name, param in signature.parameters.items():
+            if arg_name == 'self':
+                continue
 
-    return f'def {func.__name__}({", ".join(params_repr)}):'
+            arg_type = param.annotation
+            arg_type = Tensor if arg_type is inspect._empty else arg_type
+            arg_types[arg_name] = Param(arg_type, param.default)
 
+        if pop_first:
+            arg_types.pop(list(arg_types.keys())[0])
 
-def func_body_repr(func: Callable, keep_annotation: bool = True) -> str:
-    source = inspect.getsource(func)
-    body_repr = re.split(r'\).*?:.*?\n', source, maxsplit=1)[1]
-    if not keep_annotation:
-        body_repr = re.sub(r'\s*# type:.*\n', '', body_repr)
-    return body_repr
+        return_type = signature.return_annotation
+        return_type = Tensor if return_type is inspect._empty else return_type
+
+        self._types[func.__name__] = (arg_types, return_type)
+        return (arg_types, return_type)
+
+    def get_flat_arg_types(
+        self,
+        funcs: List[Union[Callable, str]],
+    ) -> Dict[str, Type]:
+        r"""Returns the union of argument types of all inspected functions in
+        :obj:`funcs`.
+
+        Args:
+            funcs (List[str or callable]): The functions to collect information
+                from.
+        """
+        flat_arg_types: Dict[str, Type] = {}
+        for func in funcs:
+            func_name = func if isinstance(func, str) else func.__name__
+            if func_name not in self._types:
+                raise ValueError(f"Could not collect arguments for function "
+                                 f"'{func_name}'. Did you forget to inspect "
+                                 f"it?")
+            arg_types = self._types[func_name][0]
+            for arg_name, (arg_type, _) in arg_types.items():
+                if arg_name not in flat_arg_types:
+                    flat_arg_types[arg_name] = arg_type
+                elif flat_arg_types[arg_name] != arg_type:
+                    raise ValueError(f"Found inconsistent types for argument "
+                                     f"'{arg_name}'. Expected type "
+                                     f"'{flat_arg_types[arg_name]}' but found "
+                                     f"type '{arg_type}'.")
+        return flat_arg_types
+
+    def get_flat_arg_names(
+        self,
+        funcs: List[Union[Callable, str]],
+    ) -> Set[str]:
+        r"""Returns the union of argument names of all inspected functions in
+        :obj:`funcs`.
+
+        Args:
+            funcs (List[str or callable]): The functions to collect information
+                from.
+        """
+        return set(self.get_flat_arg_types(funcs).keys())
+
+    def collect(
+        self,
+        func: Union[Callable, str],
+        kwargs: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        r"""Collects the inputs of the inspected function :obj:`func` from a
+        data blob.
+
+        Args:
+            func (callabel or str): The function to collect inputs for.
+            kwargs (dict[str, Any]): The data blob to serve inputs.
+        """
+        func_name = func if isinstance(func, str) else func.__name__
+        if func_name not in self._types:
+            raise ValueError(f"Could not collect arguments for function "
+                             f"'{func_name}'. Did you forget to inspect it?")
+
+        out_dict: Dict[str, Any] = {}
+        for arg_name, (arg_type, default) in self._types[func_name][0].items():
+            if arg_name not in kwargs:
+                if default is inspect._empty:
+                    raise TypeError(f"Required parameter '{arg_name}' missing")
+                out_dict[arg_name] = default
+            else:
+                out_dict[arg_name] = kwargs[arg_name]
+        return out_dict

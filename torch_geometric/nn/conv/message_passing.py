@@ -3,6 +3,7 @@ import os.path as osp
 import random
 import re
 import warnings
+from abc import ABC, abstractmethod
 from inspect import Parameter
 from typing import (
     Any,
@@ -618,6 +619,7 @@ class MessagePassing(torch.nn.Module):
         return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
                                 dim=self.node_dim)
 
+    @abstractmethod
     def message_and_aggregate(
         self,
         adj_t: Adj,
@@ -630,7 +632,7 @@ class MessagePassing(torch.nn.Module):
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`
         or a :obj:`torch.sparse.Tensor`.
         """
-        raise NotImplementedError
+        pass
 
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
