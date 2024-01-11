@@ -120,7 +120,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 initializing distributed graph")
             cugraph_store = CuGraphStore(fs, G, N, multi_gpu=True)
             print("Distributed graph initialization complete.")
-        
+
         if rank != 0:
             print(f"Rank {rank} waiting for distributed graph initialization")
         dist.barrier()
@@ -149,15 +149,13 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
                 BulkSampleLoader(cugraph_store, cugraph_store,
                                  input_nodes=split_idx['valid'],
-                                 directory=eval_path,
-                                 **kwargs)
+                                 directory=eval_path, **kwargs)
 
             print('test', len(split_idx['test']))
             test_path = os.path.join(tempdir, f'samples_test')
             BulkSampleLoader(cugraph_store, cugraph_store,
                              input_nodes=split_idx['test'],
-                             directory=test_path,
-                             **kwargs)
+                             directory=test_path, **kwargs)
 
         dist.barrier()
     else:
@@ -167,9 +165,9 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                       num_workers=num_work, shuffle=True,
                                       drop_last=True, **kwargs)
         eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
-                                        num_workers=num_work, **kwargs)
+                                     num_workers=num_work, **kwargs)
         test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
-                                        num_workers=num_work, **kwargs)
+                                     num_workers=num_work, **kwargs)
 
     dist.barrier()
     eval_steps = 1000
@@ -214,11 +212,11 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                          world_size)[rank]
 
             eval_loader = BulkSampleLoader(cugraph_store, cugraph_store,
-                                            directory=eval_path,
-                                            input_files=input_files)
+                                           directory=eval_path,
+                                           input_files=input_files)
         if rank == 0:
             print("Average Training Iteration Time:",
-                    (time.time() - start) / (i - warmup_steps), "s/iter")
+                  (time.time() - start) / (i - warmup_steps), "s/iter")
         with Join([model], divide_by_initial_world_size=False):
             acc_sum = 0.0
             with torch.no_grad():
@@ -234,11 +232,13 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                    batch.y[:batch_size])
+                                   batch.y[:batch_size])
 
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=rank)
+            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                                   device=rank)
             dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            nb = torch.tensor(float(i), dtype=torch.float32, device=acc_sum.device)
+            nb = torch.tensor(float(i), dtype=torch.float32,
+                              device=acc_sum.device)
             dist.all_reduce(nb, op=dist.ReduceOp.SUM)
         dist.barrier()
         if rank == 0:
@@ -251,8 +251,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             input_files = np.array_split(np.array(os.listdir(test_path)),
                                          world_size)[rank]
             test_loader = BulkSampleLoader(cugraph_store, cugraph_store,
-                                            directory=test_path,
-                                            input_files=input_files)
+                                           directory=test_path,
+                                           input_files=input_files)
         acc_sum = 0.0
         with torch.no_grad():
             for i, batch in enumerate(test_loader):
@@ -264,11 +264,13 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 batch.y = batch.y.to(torch.long)
                 out = model.module(batch.x, batch.edge_index)
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                batch.y[:batch_size])
-            
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=rank)
+                               batch.y[:batch_size])
+
+            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                                   device=rank)
             dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            nb = torch.tensor(float(i), dtype=torch.float32, device=acc_sum.device)
+            nb = torch.tensor(float(i), dtype=torch.float32,
+                              device=acc_sum.device)
             dist.all_reduce(nb, op=dist.ReduceOp.SUM)
     dist.barrier()
     if rank == 0:
@@ -316,7 +318,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     wall_clock_start = time.perf_counter()
 
-    dataset = PygNodePropPredDataset(name='ogbn-papers100M', root='/datasets/abarghi/ogb_datasets')
+    dataset = PygNodePropPredDataset(name='ogbn-papers100M',
+                                     root='/datasets/abarghi/ogb_datasets')
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
@@ -341,5 +344,5 @@ if __name__ == '__main__':
             run_train,
             args=(data, world_size, model, args.epochs, args.batch_size,
                   args.fan_out, split_idx, dataset.num_classes,
-                  args.cugraph_data_loader, wall_clock_start,
-                  tempdir), nprocs=world_size, join=True)
+                  args.cugraph_data_loader, wall_clock_start, tempdir),
+            nprocs=world_size, join=True)
