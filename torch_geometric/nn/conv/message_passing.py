@@ -193,6 +193,8 @@ class MessagePassing(torch.nn.Module):
                     [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
             else:
                 bla = find_parenthesis_content(source, prefix='self.propagate')
+                if bla is None:  # No `self.propagate` call:
+                    return
                 # Find all keyword arguments:
                 blas = bla.split(',')
                 blas = [
@@ -212,8 +214,8 @@ class MessagePassing(torch.nn.Module):
 
         root_dir = osp.dirname(osp.realpath(__file__))
         module = module_from_template(
-            module_name='torch_geometric.nn.conv.sage_conv_propagate',
-            module='torch_geometric.nn.conv.sage_conv',
+            module_name=f'{self.__module__}_propagate',
+            module=self.__module__,
             template_path=osp.join(root_dir, 'propagate.jinja'),
             propagate_types=propagate_types,
             propagate_return_type=propagate_return_type,
