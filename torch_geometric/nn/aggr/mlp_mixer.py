@@ -23,7 +23,7 @@ class _MLPMixer(Module):
         in_channels: int,
         out_channels: int,
         dropout: float = 0.0,
-    ):
+    ) -> None:
         super().__init__()
         self.dropout = dropout
         self.token_norm = LayerNorm(in_channels)
@@ -35,7 +35,7 @@ class _MLPMixer(Module):
         self.head_norm = LayerNorm(in_channels)
         self.head_lin = Linear(in_channels, out_channels)
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.token_norm.reset_parameters()
         self.token_lin1.reset_parameters()
         self.token_lin2.reset_parameters()
@@ -93,14 +93,15 @@ class MLPMixerAggregation(Aggregation):
     """
     def __init__(
         self,
-        num_tokens: int = 30,  # num_edges per node
+        num_tokens: int,
         in_channels: int,
         out_channels: int,
         max_num_elements: int,
         **kwargs,
     ) -> None:
+        super().__init__(max_num_elements=max_num_elements)
         self.mlp_mixer = _MLPMixer(
-            num_tokens=num_tokens,
+            num_tokens=30,
             in_channels=5,
             out_channels=7,
             dropout=0.5,
