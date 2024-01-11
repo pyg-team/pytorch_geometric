@@ -35,9 +35,9 @@ def test(
 ):
     def test_homo(batch):
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)[: batch.batch_size]
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y_pred = out.argmax(dim=-1)
-        y_true = batch.y[: batch.batch_size]
+        y_true = batch.y[:batch.batch_size]
         return y_pred, y_true
 
     def test_hetero(batch):
@@ -52,27 +52,22 @@ def test(
     test_fn = test_hetero if is_hetero else test_homo
     total_examples = total_correct = 0
     # Save result at each iteration
-    multithreading = (
-        test_loader.enable_multithreading(num_loader_threads)
-        if test_loader.num_workers > 0
-        else nullcontext()
-    )  # speeds up dataloading on CPU
+    multithreading = (test_loader.enable_multithreading(num_loader_threads)
+                      if test_loader.num_workers > 0 else nullcontext()
+                      )  # speeds up dataloading on CPU
     with multithreading:
         if progress_bar:
-            test_loader = tqdm(
-                test_loader, desc=f'[Node {dist_context.rank}] Test'
-            )
+            test_loader = tqdm(test_loader,
+                               desc=f'[Node {dist_context.rank}] Test')
         batch_time = time.time()
         for i, batch in enumerate(test_loader):
             y_pred, y_true = test_fn(batch)
             total_correct += int((y_pred == y_true).sum())
             total_examples += y_pred.size(0)
             batch_acc = int((y_pred == y_true).sum()) / y_pred.size(0)
-            result = (
-                f'[Node {dist_context.rank}] Test: '
-                f'epoch={epoch}, it={i}, acc={batch_acc:.4}, '
-                f'time={(time.time() - batch_time):.4}'
-            )
+            result = (f'[Node {dist_context.rank}] Test: '
+                      f'epoch={epoch}, it={i}, acc={batch_acc:.4}, '
+                      f'time={(time.time() - batch_time):.4}')
             batch_time = time.time()
             if logfile:
                 log = open(logfile, 'a+')
@@ -99,8 +94,8 @@ def training(
     def train_homo(batch):
         batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[: batch.batch_size]
-        loss = F.cross_entropy(out, batch.y[: batch.batch_size])
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        loss = F.cross_entropy(out, batch.y[:batch.batch_size])
         loss.backward()
         optimizer.step()
         return loss
@@ -119,24 +114,18 @@ def training(
 
     train_fn = train_hetero if is_hetero else train_homo
     # Save result at each iteration
-    multithreading = (
-        train_loader.enable_multithreading(num_loader_threads)
-        if train_loader.num_workers > 0
-        else nullcontext()
-    )
+    multithreading = (train_loader.enable_multithreading(num_loader_threads)
+                      if train_loader.num_workers > 0 else nullcontext())
     with multithreading:
         if progress_bar:
-            train_loader = tqdm(
-                train_loader, desc=f'[Node {dist_context.rank}] Train'
-            )
+            train_loader = tqdm(train_loader,
+                                desc=f'[Node {dist_context.rank}] Train')
         batch_time = time.time()
         for i, batch in enumerate(train_loader):
             loss = train_fn(batch)
-            result = (
-                f'[Node {dist_context.rank}] Train: '
-                f'epoch={epoch}, it={i}, loss={loss:.4}, '
-                f'time={(time.time() - batch_time):.4}'
-            )
+            result = (f'[Node {dist_context.rank}] Train: '
+                      f'epoch={epoch}, it={i}, loss={loss:.4}, '
+                      f'time={(time.time() - batch_time):.4}')
             batch_time = time.time()
             if logfile:
                 log = open(logfile, 'a+')
@@ -174,10 +163,8 @@ def run_proc(
     elif dataset == 'ogbn-products':
         is_hetero = False
     else:
-        raise NotImplementedError(
-            f'This example supports only OGB datasets: '
-            f'(ogbn-products, ogbn-mag), got {dataset}'
-        )
+        raise NotImplementedError(f'This example supports only OGB datasets: '
+                                  f'(ogbn-products, ogbn-mag), got {dataset}')
 
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
@@ -187,15 +174,13 @@ def run_proc(
             root_dir,
             f'{dataset}-train-partitions',
             f'partition{node_rank}.pt',
-        )
-    )
+        ))
     test_idx = torch.load(
         osp.join(
             root_dir,
             f'{dataset}-test-partitions',
             f'partition{node_rank}.pt',
-        )
-    )
+        ))
 
     if is_hetero:
         train_idx = ('paper', train_idx)
@@ -208,18 +193,15 @@ def run_proc(
         partition_idx,
         node_pb,
         edge_pb,
-    ) = load_partition_info(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+    ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
+                            node_rank)
     print(f'meta={meta}, partition_idx={partition_idx}')
     # load partition into graph
     graph = LocalGraphStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
     # load partition into feature
     feature = LocalFeatureStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
 
     # setup the partition information in LocalGraphStore and LocalFeatureStore
     graph.num_partitions = feature.num_partitions = num_partitions
@@ -249,9 +231,8 @@ def run_proc(
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
-    persistent_workers = (
-        True if num_workers > 0 else False
-    )  # Keep workers RPC alive outside the iterator loop
+    persistent_workers = (True if num_workers > 0 else False
+                          )  # Keep workers RPC alive outside the iterator loop
     print('--- Initialize distributed loaders ...')
     # Create distributed neighbor loader for training
     train_loader = pyg_dist.DistNeighborLoader(
@@ -339,11 +320,9 @@ def run_proc(
             num_loader_threads,
             progress_bar,
         )
-        print(
-            f'[Node {current_ctx.rank}] Epoch {epoch}: \
+        print(f'[Node {current_ctx.rank}] Epoch {epoch}: \
                 Train Loss = {loss:.4f}, \
-                Train Time = {(time.time() - start):.2f}'
-        )
+                Train Time = {(time.time() - start):.2f}')
 
         # Test accuracy.
         if i % 5 == 0:
@@ -361,19 +340,16 @@ def run_proc(
                 num_loader_threads,
                 progress_bar,
             )
-            print(
-                f'[Node {current_ctx.rank}] Epoch {epoch}: '
-                f'Test Accuracy = {acc:.4f}, '
-                f'Test Time = {(time.time() - start):.2f}'
-            )
+            print(f'[Node {current_ctx.rank}] Epoch {epoch}: '
+                  f'Test Accuracy = {acc:.4f}, '
+                  f'Test Time = {(time.time() - start):.2f}')
     print(f'--- [Node {current_ctx.rank}] Closing ---')
     torch.distributed.destroy_process_group()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Arguments for distributed training of supervised SAGE.'
-    )
+        description='Arguments for distributed training of supervised SAGE.')
     parser.add_argument(
         '--dataset',
         type=str,
