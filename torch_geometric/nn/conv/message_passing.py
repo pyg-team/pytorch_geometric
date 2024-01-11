@@ -3,7 +3,7 @@ import os.path as osp
 import random
 import re
 import warnings
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from inspect import Parameter
 from typing import (
     Any,
@@ -144,17 +144,18 @@ class MessagePassing(torch.nn.Module):
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.params['aggregate'].pop('aggr', None)
+        # TODO
+        # self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
         self.inspector.inspect(self.edge_update)
 
-        self._user_args: Set[str] = self.inspector.keys(
+        self._user_args: Set[str] = self.inspector.get_flat_arg_names(
             ['message', 'aggregate', 'update']).difference(self.special_args)
-        self._fused_user_args: Set[str] = self.inspector.keys(
+        self._fused_user_args: Set[str] = self.inspector.get_flat_arg_names(
             ['message_and_aggregate', 'update']).difference(self.special_args)
-        self._edge_user_args: Set[str] = self.inspector.keys(
-            ['edge_update']).difference(self.special_args)
+        self._edge_user_args: Set[str] = self.inspector.get_arg_names(
+            'edge_update').difference(self.special_args)
 
         # Support for "fused" message passing:
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -189,13 +190,13 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_types=prop_types,
                 propagate_return_type=prop_return_type,
-                collect_types=self.inspector.types(
+                collect_types=self.inspector.get_flat_arg_types(
                     ['message', 'aggregate', 'update']),
-                message_args=self.inspector.keys(['message']),
-                aggregate_args=self.inspector.keys(['aggregate']),
-                message_and_aggregate_args=self.inspector.keys(
-                    ['message_and_aggregate']),
-                update_args=self.inspector.keys(['update']),
+                message_args=self.inspector.get_arg_names('message'),
+                aggregate_args=self.inspector.get_arg_names('aggregate'),
+                message_and_aggregate_args=self.inspector.get_arg_names(
+                    'message_and_aggregate'),
+                update_args=self.inspector.get_arg_names('update'),
             )
 
             self.propagate_jit = module.propagate
@@ -509,8 +510,8 @@ class MessagePassing(torch.nn.Module):
             coll_dict = self._collect(self._fused_user_args, edge_index,
                                       mutable_size, kwargs)
 
-            msg_aggr_kwargs = self.inspector.distribute(
-                'message_and_aggregate', coll_dict)
+            msg_aggr_kwargs = self.inspector.collect('message_and_aggregate',
+                                                     coll_dict)
             for hook in self._message_and_aggregate_forward_pre_hooks.values():
                 res = hook(self, (edge_index, msg_aggr_kwargs))
                 if res is not None:
@@ -521,7 +522,7 @@ class MessagePassing(torch.nn.Module):
                 if res is not None:
                     out = res
 
-            update_kwargs = self.inspector.distribute('update', coll_dict)
+            update_kwargs = self.inspector.collect('update', coll_dict)
             out = self.update(out, **update_kwargs)
 
         else:  # Otherwise, run both functions in separation.
@@ -542,7 +543,7 @@ class MessagePassing(torch.nn.Module):
                 coll_dict = self._collect(self._user_args, edge_index,
                                           mutable_size, kwargs)
 
-                msg_kwargs = self.inspector.distribute('message', coll_dict)
+                msg_kwargs = self.inspector.collect('message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -554,11 +555,11 @@ class MessagePassing(torch.nn.Module):
                         out = res
 
                 if self.explain:
-                    explain_msg_kwargs = self.inspector.distribute(
+                    explain_msg_kwargs = self.inspector.collect(
                         'explain_message', coll_dict)
                     out = self.explain_message(out, **explain_msg_kwargs)
 
-                aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
+                aggr_kwargs = self.inspector.collect('aggregate', coll_dict)
                 for hook in self._aggregate_forward_pre_hooks.values():
                     res = hook(self, (aggr_kwargs, ))
                     if res is not None:
@@ -571,7 +572,7 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         out = res
 
-                update_kwargs = self.inspector.distribute('update', coll_dict)
+                update_kwargs = self.inspector.collect('update', coll_dict)
                 out = self.update(out, **update_kwargs)
 
                 if decomposed_layers > 1:
@@ -668,7 +669,7 @@ class MessagePassing(torch.nn.Module):
         coll_dict = self._collect(self._edge_user_args, edge_index,
                                   mutable_size, kwargs)
 
-        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        edge_kwargs = self.inspector.collect('edge_update', coll_dict)
         out = self.edge_update(**edge_kwargs)
 
         for hook in self._edge_update_forward_hooks.values():
@@ -707,8 +708,8 @@ class MessagePassing(torch.nn.Module):
 
         self._explain = explain
         self.inspector.inspect(self.explain_message, pop_first=True)
-        self._user_args = self.inspector.keys(methods).difference(
-            self.special_args)
+        self._user_args = self.inspector.get_flat_arg_names(
+            methods).difference(self.special_args)
 
     def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
         # NOTE Replace this method in custom explainers per message-passing
@@ -937,12 +938,12 @@ class MessagePassing(torch.nn.Module):
             edge_updater_return_type = edge_updater_return_type.__name__
 
         # Parse `_collect()` types to format `{arg:1, type1, ...}`.
-        collect_types = self.inspector.types(
+        collect_types = self.inspector.get_flat_arg_types(
             ['message', 'aggregate', 'update'])
 
         # Parse `_collect()` types to format `{arg:1, type1, ...}`,
         # specific to the argument used for edge updates.
-        edge_collect_types = self.inspector.types(['edge_update'])
+        edge_collect_types = self.inspector.get_arg_types('edge_update')
 
         # Collect `forward()` function in case it is overloaded. This is
         # necessary since TorchScript cannot handle inheritance of overloaded
@@ -972,10 +973,11 @@ class MessagePassing(torch.nn.Module):
             collect_types=collect_types,
             user_args=self._user_args,
             edge_user_args=self._edge_user_args,
-            msg_args=self.inspector.keys(['message']),
-            aggr_args=self.inspector.keys(['aggregate']),
-            msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
-            update_args=self.inspector.keys(['update']),
+            msg_args=self.inspector.get_arg_names('message'),
+            aggr_args=self.inspector.get_arg_names('aggregate'),
+            msg_and_aggr_args=self.inspector.get_arg_names(
+                'message_and_aggregate'),
+            update_args=self.inspector.get_arg_names('update'),
             edge_collect_types=edge_collect_types,
             edge_update_args=self.inspector.keys(['edge_update']),
             edge_updater_types=edge_updater_types,

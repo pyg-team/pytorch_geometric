@@ -48,7 +48,7 @@ class Inspector:
     def inspect(
         self,
         func: Union[Callable, str],
-        pop_first: bool = False,
+        exclude: Optional[List[Union[int, str]] = None,
     ) -> Tuple[Dict[str, Type], Type]:
         r"""Inspect the function signature of :obj:`func` and returns a tuple
         of argument types and return type.
