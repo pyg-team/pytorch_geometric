@@ -279,6 +279,8 @@ class Inspector:
                                      f"'{type_repr}' of the "
                                      f"'self.{func.__name__}' call")
                 name = name_and_content[0]
+                if exclude is not None and name in exclude:
+                    continue
                 param_dict[name] = Parameter(name, Tensor, inspect._empty)
             return param_dict
 
