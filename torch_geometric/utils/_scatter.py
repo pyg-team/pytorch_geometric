@@ -65,8 +65,6 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
 
         # For "any" reduction, we use regular `scatter_`:
-        if index.dtype != torch.int64:
-            index = index.to(torch.int64)
         if reduce == 'any':
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_(dim, index, src)

@@ -41,9 +41,7 @@ _, edge_weight = gcn_norm(
     num_nodes=train_data['movie'].num_nodes,
     add_self_loops=False,
 )
-edge_index = train_data['movie', 'movie'].edge_index[:,
-                                                     edge_weight > 0.002].to(
-                                                         torch.int64)
+edge_index = train_data['movie', 'movie'].edge_index[:, edge_weight > 0.002]
 
 train_data['movie', 'metapath_0', 'movie'].edge_index = edge_index
 val_data['movie', 'metapath_0', 'movie'].edge_index = edge_index
