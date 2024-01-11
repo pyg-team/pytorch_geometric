@@ -2,9 +2,9 @@
 
 | Example                                                | Description                                                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| [`hetero_conv_dblp.py`](./hetero_conv_dblp.py)         | Show-cases how to use the `HeteroConv(...)` wrapper; Trains it for node classification on the `DBLP` dataset.                          |
-| [`to_hetero_mag.py`](./to_hetero_mag.py)               | Show-cases how to use the `to_hetero(...)` functionality; Trains it for node classification on the `ogb-mag` dataset.                  |
-| [`hetero_link_pred.py`](./hetero_link_pred.py)         | Show-cases how to use the `to_hetero(...)` functionality; Trains it for link prediction on the `MovieLens` dataset.                    |
+| [`hetero_conv_dblp.py`](./hetero_conv_dblp.py)         | Shows how to use the `HeteroConv(...)` wrapper; Trains it for node classification on the `DBLP` dataset.                               |
+| [`to_hetero_mag.py`](./to_hetero_mag.py)               | Shows how to use the `to_hetero(...)` functionality; Trains it for node classification on the `ogb-mag` dataset.                       |
+| [`hetero_link_pred.py`](./hetero_link_pred.py)         | Shows how to use the `to_hetero(...)` functionality; Trains it for link prediction on the `MovieLens` dataset.                         |
 | [`hgt_dblp.py`](./hgt_dblp.py)                         | Trains a Heterogeneous Graph Transformer (HGT) model for node classification on the `DBLP` dataset.                                    |
 | [`hierarchical_sage.py`](./hierarchical_sage.py)       | Shows how to perform hierarchical sampling; Trains a heterogeneous `GraphSAGE` model for node classification on the `ogb-mag` dataset. |
 | [`load_csv.py`](./load_csv.py)                         | Shows how to create heterogeneous graphs from raw `*.csv` data.                                                                        |
