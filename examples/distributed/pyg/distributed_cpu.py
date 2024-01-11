@@ -15,10 +15,10 @@ from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import GraphSAGE, to_hetero
 
-import logging
-logging.basicConfig(
-    format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
-)
+# import logging
+# logging.basicConfig(
+#     format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
+# )
 
 
 @torch.no_grad()
@@ -28,15 +28,16 @@ def test(
     is_hetero,
     dist_context,
     device,
+    epoch,
     logfile=None,
     num_loader_threads=10,
     progress_bar=True,
 ):
     def test_homo(batch):
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index)[: batch.batch_size]
         y_pred = out.argmax(dim=-1)
-        y_true = batch.y[:batch.batch_size]
+        y_true = batch.y[: batch.batch_size]
         return y_pred, y_true
 
     def test_hetero(batch):
@@ -49,42 +50,48 @@ def test(
         return y_pred, y_true
 
     test_fn = test_hetero if is_hetero else test_homo
-    model.eval()
     total_examples = total_correct = 0
     # Save result at each iteration
-    log = open(logfile, 'a+') if logfile else nullcontext()
-    multithreading = (test_loader.enable_multithreading(num_loader_threads)
-                      if test_loader.num_workers > 0 else nullcontext()
-                      )  # speeds up dataloading on CPU
-    with log:
-        with multithreading:
-            if progress_bar:
-                test_loader = tqdm(test_loader,
-                                   desc=f'[Node {dist_context.rank}] Test')
+    multithreading = (
+        test_loader.enable_multithreading(num_loader_threads)
+        if test_loader.num_workers > 0
+        else nullcontext()
+    )  # speeds up dataloading on CPU
+    with multithreading:
+        if progress_bar:
+            test_loader = tqdm(
+                test_loader, desc=f'[Node {dist_context.rank}] Test'
+            )
+        batch_time = time.time()
+        for i, batch in enumerate(test_loader):
+            y_pred, y_true = test_fn(batch)
+            total_correct += int((y_pred == y_true).sum())
+            total_examples += y_pred.size(0)
+            batch_acc = int((y_pred == y_true).sum()) / y_pred.size(0)
+            result = (
+                f'[Node {dist_context.rank}] Test: '
+                f'epoch={epoch}, it={i}, acc={batch_acc:.4}, '
+                f'time={(time.time() - batch_time):.4}'
+            )
             batch_time = time.time()
-            for i, batch in enumerate(test_loader):
-                y_pred, y_true = test_fn(batch)
-                total_correct += int((y_pred == y_true).sum())
-                total_examples += y_pred.size(0)
-                batch_acc = int((y_pred == y_true).sum()) / y_pred.size(0)
-                result = (f'[Node {dist_context.rank}] Test: '
-                          f'it={i}, acc={batch_acc:.4}, '
-                          f'time={(time.time() - batch_time):.4}')
-                batch_time = time.time()
+            if logfile:
+                log = open(logfile, 'a+')
                 log.write(f'{result}\n')
-                if not progress_bar:
-                    print(result)
+                log.close()
+            if not progress_bar:
+                print(result)
     torch.distributed.barrier()
     return total_correct / total_examples
 
 
-def train(
+def training(
     is_hetero,
     model,
     train_loader,
     optimizer,
     dist_context,
     device,
+    epoch,
     logfile=None,
     num_loader_threads=10,
     progress_bar=True,
@@ -92,8 +99,8 @@ def train(
     def train_homo(batch):
         batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
-        loss = F.cross_entropy(out, batch.y[:batch.batch_size])
+        out = model(batch.x, batch.edge_index)[: batch.batch_size]
+        loss = F.cross_entropy(out, batch.y[: batch.batch_size])
         loss.backward()
         optimizer.step()
         return loss
@@ -112,25 +119,31 @@ def train(
 
     train_fn = train_hetero if is_hetero else train_homo
     # Save result at each iteration
-    log = open(logfile, 'a+') if logfile else nullcontext()
-    multithreading = (train_loader.enable_multithreading(num_loader_threads)
-                      if train_loader.num_workers > 0 else nullcontext())
-
-    with log:
-        with multithreading:
-            if progress_bar:
-                train_loader = tqdm(train_loader,
-                                    desc=f'[Node {dist_context.rank}] Train')
+    multithreading = (
+        train_loader.enable_multithreading(num_loader_threads)
+        if train_loader.num_workers > 0
+        else nullcontext()
+    )
+    with multithreading:
+        if progress_bar:
+            train_loader = tqdm(
+                train_loader, desc=f'[Node {dist_context.rank}] Train'
+            )
+        batch_time = time.time()
+        for i, batch in enumerate(train_loader):
+            loss = train_fn(batch)
+            result = (
+                f'[Node {dist_context.rank}] Train: '
+                f'epoch={epoch}, it={i}, loss={loss:.4}, '
+                f'time={(time.time() - batch_time):.4}'
+            )
             batch_time = time.time()
-            for i, batch in enumerate(train_loader):
-                loss = train_fn(batch)
-                result = (f'[Node {dist_context.rank}] Train: '
-                          f'it={i}, loss={loss:.4}, '
-                          f'time={(time.time() - batch_time):.4}')
-                batch_time = time.time()
+            if logfile:
+                log = open(logfile, 'a+')
                 log.write(f'{result}\n')
-                if not progress_bar:
-                    print(result)
+                log.close()
+            if not progress_bar:
+                print(result)
 
     torch.distributed.barrier()
     return loss
@@ -161,8 +174,10 @@ def run_proc(
     elif dataset == 'ogbn-products':
         is_hetero = False
     else:
-        raise NotImplementedError(f'This example supports only OGB datasets: '
-                                  f'(ogbn-products, ogbn-mag), got {dataset}')
+        raise NotImplementedError(
+            f'This example supports only OGB datasets: '
+            f'(ogbn-products, ogbn-mag), got {dataset}'
+        )
 
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
@@ -172,13 +187,15 @@ def run_proc(
             root_dir,
             f'{dataset}-train-partitions',
             f'partition{node_rank}.pt',
-        ))
+        )
+    )
     test_idx = torch.load(
         osp.join(
             root_dir,
             f'{dataset}-test-partitions',
             f'partition{node_rank}.pt',
-        ))
+        )
+    )
 
     if is_hetero:
         train_idx = ('paper', train_idx)
@@ -191,15 +208,18 @@ def run_proc(
         partition_idx,
         node_pb,
         edge_pb,
-    ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
-                            node_rank)
+    ) = load_partition_info(
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
     print(f'meta={meta}, partition_idx={partition_idx}')
     # load partition into graph
     graph = LocalGraphStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
     # load partition into feature
     feature = LocalFeatureStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
 
     # setup the partition information in LocalGraphStore and LocalFeatureStore
     graph.num_partitions = feature.num_partitions = num_partitions
@@ -229,8 +249,9 @@ def run_proc(
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
-    persistent_workers = (True if num_workers > 0 else False
-                          )  # Keep workers RPC alive outside the iterator loop
+    persistent_workers = (
+        True if num_workers > 0 else False
+    )  # Keep workers RPC alive outside the iterator loop
     print('--- Initialize distributed loaders ...')
     # Create distributed neighbor loader for training
     train_loader = pyg_dist.DistNeighborLoader(
@@ -240,6 +261,7 @@ def run_proc(
         device=current_device,
         num_neighbors=num_neighbors,
         shuffle=True,
+        drop_last=True,
         persistent_workers=persistent_workers,
         batch_size=batch_size,
         num_workers=num_workers,
@@ -256,6 +278,7 @@ def run_proc(
         device=current_device,
         num_neighbors=num_neighbors,
         shuffle=False,
+        drop_last=True,
         persistent_workers=persistent_workers,
         batch_size=batch_size,
         num_workers=num_workers,
@@ -273,12 +296,11 @@ def run_proc(
         num_layers=len(num_neighbors),
         out_channels=349 if is_hetero else 47,  # num_classes in dataset
     ).to(current_device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
 
     @torch.no_grad()
     def init_params():
         # Init parameters via forwarding a single batch to the model:
-        print('--- Init parameters of the hetero model ...')
+        print('--- Initialize parameters of the hetero model ...')
         with train_loader as iterator:
             batch = next(iter(iterator))
             batch = batch.to(current_device, 'edge_index')
@@ -295,6 +317,7 @@ def run_proc(
 
     # Enable DDP
     model = DistributedDataParallel(model, find_unused_parameters=is_hetero)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
     torch.distributed.barrier()
 
     # Train and test
@@ -303,45 +326,54 @@ def run_proc(
         start = time.time()
         epoch = i + 1
         print(f'Train Epoch {epoch}/{num_epochs}')
-        loss = train(
+        model.train()
+        loss = training(
             is_hetero,
             model,
             train_loader,
             optimizer,
             current_ctx,
             current_device,
+            epoch,
             logfile,
             num_loader_threads,
             progress_bar,
         )
-        print(f'[Node {current_ctx.rank}] Epoch {epoch}: \
+        print(
+            f'[Node {current_ctx.rank}] Epoch {epoch}: \
                 Train Loss = {loss:.4f}, \
-                Train Time = {(time.time() - start):.2f}')
+                Train Time = {(time.time() - start):.2f}'
+        )
 
         # Test accuracy.
         if i % 5 == 0:
             start = time.time()
             print(f'Test Epoch {epoch}/{num_epochs}')
+            model.eval()
             acc = test(
                 model,
                 test_loader,
                 is_hetero,
                 current_ctx,
                 current_device,
+                epoch,
                 logfile,
                 num_loader_threads,
                 progress_bar,
             )
-            print(f'[Node {current_ctx.rank}] Epoch {epoch}: '
-                  f'Test Accuracy = {acc:.4f}, '
-                  f'Test Time = {(time.time() - start):.2f}')
+            print(
+                f'[Node {current_ctx.rank}] Epoch {epoch}: '
+                f'Test Accuracy = {acc:.4f}, '
+                f'Test Time = {(time.time() - start):.2f}'
+            )
     print(f'--- [Node {current_ctx.rank}] Closing ---')
     torch.distributed.destroy_process_group()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Arguments for distributed training of supervised SAGE.')
+        description='Arguments for distributed training of supervised SAGE.'
+    )
     parser.add_argument(
         '--dataset',
         type=str,
@@ -399,7 +431,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--concurrency',
         type=int,
-        default=10,
+        default=4,
         help='Number of max concurrent RPC for each sampler.',
     )
     parser.add_argument(

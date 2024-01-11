@@ -38,7 +38,6 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         All other arguments follow the interface of
         :class:`torch_geometric.loader.NeighborLoader`.
     """
-
     def __init__(
         self,
         data: Tuple[LocalFeatureStore, LocalGraphStore],
@@ -55,7 +54,7 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         temporal_strategy: str = "uniform",
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
-        concurrency: int = 16,
+        concurrency: int = 1,
         num_rpc_threads: int = 16,
         filter_per_worker: Optional[bool] = False,
         async_sampling: bool = True,
@@ -67,11 +66,9 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         assert concurrency >= 1, "RPC concurrency must be greater than 1"
 
         if input_time is not None and time_attr is None:
-            raise ValueError(
-                "Received conflicting 'input_time' and "
-                "'time_attr' arguments: 'input_time' is set "
-                "while 'time_attr' is not set."
-            )
+            raise ValueError("Received conflicting 'input_time' and "
+                             "'time_attr' arguments: 'input_time' is set "
+                             "while 'time_attr' is not set.")
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
 
