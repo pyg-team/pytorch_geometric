@@ -64,6 +64,11 @@ def pyg_num_work(world_size):
 
 def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
     if cugraph_data_loader:
+        import rmm
+        rmm.reinitialize(
+              pool_allocator=True,
+              devices=[rank]
+        )
         import cupy
         cupy.cuda.Device(rank).use()
         from rmm.allocators.cupy import rmm_cupy_allocator
