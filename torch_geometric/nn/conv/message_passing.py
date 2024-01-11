@@ -178,6 +178,29 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
+        # Test code for performing on-the-fly TorchScript support:
+        if getattr(self, 'jit_on_init', False):
+            root_dir = osp.dirname(osp.realpath(__file__))
+            prop_types, prop_return_type = self._get_propagate_types()
+            module = module_from_template(
+                module_name=f'{self.__module__}_propagate',
+                module=self.__module__,
+                template_path=osp.join(root_dir, 'propagate.jinja'),
+                propagate_types=prop_types,
+                propagate_return_type=prop_return_type,
+                collect_types=self.inspector.types(
+                    ['message', 'aggregate', 'update']),
+                message_args=self.inspector.keys(['message']),
+                aggregate_args=self.inspector.keys(['aggregate']),
+                message_and_aggregate_args=self.inspector.keys(
+                    ['message_and_aggregate']),
+                update_args=self.inspector.keys(['update']),
+            )
+
+            self.propagate_jit = module.propagate
+            self._collect_jit = module._collect
+
+    def _get_propagate_types(self) -> Tuple[Dict[str, str], str]:
         # Parse `propagate_types` and generate an efficient `propagate` method:
         if hasattr(self, 'propagate_type'):
             assert isinstance(self.propagate_type, dict)
@@ -192,43 +215,22 @@ class MessagePassing(torch.nn.Module):
                 propagate_types = dict(
                     [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
             else:
-                bla = find_parenthesis_content(source, prefix='self.propagate')
-                if bla is None:  # No `self.propagate` call:
+                match = find_parenthesis_content(source, 'self.propagate')
+                if match is None:  # No `self.propagate` call:
                     return
-                # Find all keyword arguments:
-                blas = bla.split(',')
-                blas = [
-                    x[:x.find('=')].strip() for x in blas if x.find('=') >= 0
+                args = [  # Find all keyword argument names:
+                    arg[:arg.find('=')].strip() for arg in match.split(',')
+                    if arg.find('=') >= 0
                 ]
                 propagate_types = {
-                    x: 'Tensor'
-                    for x in blas if x not in {'edge_index', 'size'}
+                    arg: 'Tensor'
+                    for arg in args if arg not in {'edge_index', 'size'}
                 }
 
         propagate_return_type = type_hint_to_str(
             get_type_hints(self.update).get('return', Tensor))
 
-        # Parse `_collect()` types to format `{arg:1, type1, ...}`.
-        collect_types = self.inspector.types(
-            ['message', 'aggregate', 'update'])
-
-        root_dir = osp.dirname(osp.realpath(__file__))
-        module = module_from_template(
-            module_name=f'{self.__module__}_propagate',
-            module=self.__module__,
-            template_path=osp.join(root_dir, 'propagate.jinja'),
-            propagate_types=propagate_types,
-            propagate_return_type=propagate_return_type,
-            collect_types=collect_types,
-            message_args=self.inspector.keys(['message']),
-            aggregate_args=self.inspector.keys(['aggregate']),
-            message_and_aggregate_args=self.inspector.keys(
-                ['message_and_aggregate']),
-            update_args=self.inspector.keys(['update']),
-        )
-
-        self.propagate_jit = module.propagate
-        self._collect_jit = module._collect
+        return propagate_types, propagate_return_type
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
@@ -902,24 +904,7 @@ class MessagePassing(torch.nn.Module):
         source = inspect.getsource(self.__class__)
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
-        if hasattr(self, 'propagate_type'):
-            assert isinstance(self.propagate_type, dict)
-            prop_types = {
-                k: sanitize(str(v))
-                for k, v in self.propagate_type.items()
-            }
-        else:
-            match = find_parenthesis_content(source, prefix='propagate_type:')
-            if match is None:
-                raise TypeError(
-                    'TorchScript support requires the definition of the types '
-                    'passed to `propagate()`. Please specify them via\n\n'
-                    'propagate_type = {"arg1": type1, "arg2": type2, ... }\n\n'
-                    'or via\n\n'
-                    '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
-                    'inside the `MessagePassing` module.')
-            prop_types = dict(
-                [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
+        prop_types, prop_return_type = self._get_propagate_types()
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
         if 'edge_update' in self.__class__.__dict__.keys():
@@ -943,11 +928,6 @@ class MessagePassing(torch.nn.Module):
                     [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
         else:
             edge_updater_types = {}
-
-        type_hints = get_type_hints(self.__class__.update)
-        prop_return_type = type_hints.get('return', 'Tensor')
-        if str(prop_return_type)[:6] == '<class':
-            prop_return_type = prop_return_type.__name__
 
         type_hints = get_type_hints(self.__class__.edge_update)
         edge_updater_return_type = type_hints.get('return', 'Tensor')
