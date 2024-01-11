@@ -40,25 +40,7 @@ def start_dask_cluster():
     client.run(enable_spilling)
 
     print("Dask Cluster Setup Complete")
-    del client
-    return cluster
-
-
-def create_dask_client(scheduler_address):
-    from cugraph.dask.comms import comms as Comms
-    from dask.distributed import Client, Lock
-
-    client = Client(scheduler_address)
-    lock = Lock('comms_init')
-    if lock.acquire(timeout=100):
-        try:
-            Comms.initialize(p2p=True)
-        finally:
-            lock.release()
-    else:
-        raise RuntimeError("Failed to acquire lock to initialize comms")
-
-    return client
+    return client, cluster
 
 
 def shutdown_dask_client(client):
@@ -98,17 +80,17 @@ def init_pytorch_worker(rank, world_size, cugraph_data_loader=False):
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes, cugraph_data_loader, wall_clock_start,
-              scheduler_address=None, tempdir=None):
+              tempdir=None):
     init_pytorch_worker(
         rank,
         world_size,
         cugraph_data_loader=cugraph_data_loader,
     )
 
-    if cugraph_data_loader:
-        print(f'creating dask client on rank {rank}')
-        client = create_dask_client(scheduler_address)
-        print(f'created dask client on rank {rank}')
+    if cugraph_data_loader and rank == 0:
+        client, cluster = start_dask_cluster()
+        from cugraph.dask.comms import comms as Comms
+        Comms.initialize(p2p=True)
     else:
         split_idx['train'] = split_idx['train'].split(
             split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
@@ -125,36 +107,36 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     if cugraph_data_loader:
         import cugraph
         from cugraph_pyg.data import CuGraphStore
-        from cugraph_pyg.loader import BulkSampleLoader, CuGraphNeighborLoader
+        from cugraph_pyg.loader import BulkSampleLoader
         G = {("N", "E", "N"): data.edge_index}
         N = {"N": data.num_nodes}
         fs = cugraph.gnn.FeatureStore(backend="torch")
         fs.add_data(data.x, "N", "x")
         fs.add_data(data.y, "N", "y")
-
-        from distributed import Event as Dask_Event
-        event = Dask_Event("cugraph_store_creation_event")
         dist.barrier()
 
         if rank == 0:
             print("Rank 0 creating its cugraph store and \
                 initializing distributed graph")
             cugraph_store = CuGraphStore(fs, G, N, multi_gpu=True)
-            event.set()
             print("Distributed graph initialization complete.")
-        else:
+        
+        if rank != 0:
             print(f"Rank {rank} waiting for distributed graph initialization")
-            if event.wait(timeout=1000):
-                print(f"Rank {rank} proceeding with store creation")
-                cugraph_store = CuGraphStore(fs, {
-                    k: len(v)
-                    for k, v in G.items()
-                }, N, multi_gpu=False)
-                print(f"Rank {rank} created store")
-
         dist.barrier()
-        if rank == 0:
 
+        if rank != 0:
+            print(f"Rank {rank} proceeding with store creation")
+            cugraph_store = CuGraphStore(fs, {
+                k: len(v)
+                for k, v in G.items()
+            }, N, multi_gpu=False)
+            print(f"Rank {rank} created store")
+        dist.barrier()
+
+        if rank == 0:
+            # Direct cuGraph to sample offline prior to the training loop
+            # Sampling will occur in parallel but will be initiated on rank 0
             for epoch in range(epochs):
                 train_path = os.path.join(tempdir, f'samples_{epoch}')
                 os.mkdir(train_path)
@@ -163,13 +145,19 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                  directory=train_path, shuffle=True,
                                  drop_last=True, **kwargs)
 
-            print('validation', len(split_idx['valid']))
-            eval_loader = CuGraphNeighborLoader(cugraph_store,
-                                                input_nodes=split_idx['valid'],
-                                                **kwargs)
-            test_loader = CuGraphNeighborLoader(cugraph_store,
-                                                input_nodes=split_idx['test'],
-                                                **kwargs)
+                print('validation', len(split_idx['valid']))
+                eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
+                BulkSampleLoader(cugraph_store, cugraph_store,
+                                 input_nodes=split_idx['valid'],
+                                 directory=eval_path,
+                                 **kwargs)
+
+            print('test', len(split_idx['test']))
+            test_path = os.path.join(tempdir, f'samples_test')
+            BulkSampleLoader(cugraph_store, cugraph_store,
+                             input_nodes=split_idx['test'],
+                             directory=test_path,
+                             **kwargs)
 
         dist.barrier()
     else:
@@ -178,12 +166,10 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                       num_workers=num_work, shuffle=True,
                                       drop_last=True, **kwargs)
-
-        if rank == 0:
-            eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
-                                         num_workers=num_work, **kwargs)
-            test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
-                                         num_workers=num_work, **kwargs)
+        eval_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
+                                        num_workers=num_work, **kwargs)
+        test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
+                                        num_workers=num_work, **kwargs)
 
     dist.barrier()
     eval_steps = 1000
@@ -201,7 +187,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             train_loader = BulkSampleLoader(cugraph_store, cugraph_store,
                                             directory=train_path,
                                             input_files=input_files)
-        with Join([model]):
+        with Join([model], divide_by_initial_world_size=False):
             for i, batch in enumerate(train_loader):
                 if i >= warmup_steps:
                     start = time.time()
@@ -221,33 +207,25 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                           ", Loss: " + str(loss))
         dist.barrier()
-        with Join([model]):
-            if rank == 0:
-                print("Average Training Iteration Time:",
-                      (time.time() - start) / (i - warmup_steps), "s/iter")
-                acc_sum = 0.0
-                with torch.no_grad():
-                    for i, batch in enumerate(eval_loader):
-                        if i >= eval_steps:
-                            break
+        if cugraph_data_loader:
+            eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
 
-                        batch = batch.to(rank)
-                        if isinstance(batch, torch_geometric.data.HeteroData):
-                            batch = batch.to_homogeneous()
-                        batch_size = batch.num_sampled_nodes[0]
+            input_files = np.array_split(np.array(os.listdir(eval_path)),
+                                         world_size)[rank]
 
-                        batch.y = batch.y.to(torch.long)
-                        out = model.module(batch.x, batch.edge_index)
-                        acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                       batch.y[:batch_size])
-                print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-        dist.barrier()
-
-    with Join([model]):
+            eval_loader = BulkSampleLoader(cugraph_store, cugraph_store,
+                                            directory=eval_path,
+                                            input_files=input_files)
         if rank == 0:
+            print("Average Training Iteration Time:",
+                    (time.time() - start) / (i - warmup_steps), "s/iter")
+        with Join([model], divide_by_initial_world_size=False):
             acc_sum = 0.0
             with torch.no_grad():
-                for i, batch in enumerate(test_loader):
+                for i, batch in enumerate(eval_loader):
+                    if i >= eval_steps:
+                        break
+
                     batch = batch.to(rank)
                     if isinstance(batch, torch_geometric.data.HeteroData):
                         batch = batch.to_homogeneous()
@@ -256,11 +234,50 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                   batch.y[:batch_size])
-                print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-    dist.barrier()
+                                    batch.y[:batch_size])
 
-    if cugraph_data_loader:
+            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=rank)
+            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+            nb = torch.tensor(float(i), dtype=torch.float32, device=acc_sum.device)
+            dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+        dist.barrier()
+        if rank == 0:
+            print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+
+    with Join([model], divide_by_initial_world_size=False):
+        if cugraph_data_loader:
+            test_path = os.path.join(tempdir, f'samples_test')
+
+            input_files = np.array_split(np.array(os.listdir(test_path)),
+                                         world_size)[rank]
+            test_loader = BulkSampleLoader(cugraph_store, cugraph_store,
+                                            directory=test_path,
+                                            input_files=input_files)
+        acc_sum = 0.0
+        with torch.no_grad():
+            for i, batch in enumerate(test_loader):
+                batch = batch.to(rank)
+                if isinstance(batch, torch_geometric.data.HeteroData):
+                    batch = batch.to_homogeneous()
+                batch_size = batch.num_sampled_nodes[0]
+
+                batch.y = batch.y.to(torch.long)
+                out = model.module(batch.x, batch.edge_index)
+                acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                                batch.y[:batch_size])
+            
+            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=rank)
+            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+            nb = torch.tensor(float(i), dtype=torch.float32, device=acc_sum.device)
+            dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+    dist.barrier()
+    if rank == 0:
+        print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+
+    if cugraph_data_loader and rank == 0:
+        import gc
+        del cugraph_store
+        gc.collect()
         shutdown_dask_client(client)
     dist.barrier()
     if rank == 0:
@@ -280,7 +297,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--use_gat_conv",
         action='store_true',
-        help="Wether or not to use GATConv. (Defaults to using GCNConv)",
+        help="Whether or not to use GATConv. (Defaults to using GCNConv)",
     )
     parser.add_argument(
         "--n_gat_conv_heads",
@@ -291,16 +308,15 @@ if __name__ == '__main__':
     parser.add_argument(
         "--cugraph_data_loader",
         action='store_true',
-        help="Wether or not to use CuGraph for Neighbor Loading. \
+        help="Whether or not to use CuGraph for Neighbor Loading. \
             \nNote that this requires more GPU memory or \
             a reduction in batch_size/fan_out/hidden_channels/num_layers",
     )
 
     args = parser.parse_args()
     wall_clock_start = time.perf_counter()
-    cluster = start_dask_cluster() if args.cugraph_data_loader else None
 
-    dataset = PygNodePropPredDataset(name='ogbn-papers100M')
+    dataset = PygNodePropPredDataset(name='ogbn-papers100M', root='/datasets/abarghi/ogb_datasets')
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
@@ -326,8 +342,4 @@ if __name__ == '__main__':
             args=(data, world_size, model, args.epochs, args.batch_size,
                   args.fan_out, split_idx, dataset.num_classes,
                   args.cugraph_data_loader, wall_clock_start,
-                  None if cluster is None else cluster.scheduler_address,
                   tempdir), nprocs=world_size, join=True)
-
-    if cluster is not None:
-        cluster.close()
