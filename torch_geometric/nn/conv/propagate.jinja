@@ -20,8 +20,8 @@ class CollectArgs(NamedTuple):
 def _collect(
     self,
     edge_index: Union[Tensor, SparseTensor],
-{%- for name, type_hint in propagate_types.items() %}
-    {{name}}: {{type_hint}},
+{%- for param in propagate_types %}
+    {{param.name}}: {{param.type}},
 {%- endfor %}
     size: List[Optional[int]],
 ) -> CollectArgs:
@@ -73,8 +73,8 @@ def _collect(
 def propagate(
     self,
     edge_index: Union[Tensor, SparseTensor],
-{%- for name, type_hint in propagate_types.items() %}
-    {{name}}: {{type_hint}},
+{%- for param in propagate_types %}
+    {{param.name}}: {{param.type}},
 {%- endfor %}
     size: Size = None,
 ) -> {{propagate_return_type}}:
@@ -83,12 +83,12 @@ def propagate(
 
     if not torch.jit.is_scripting() and not is_compiling():
         for hook in self._propagate_forward_pre_hooks.values():
-            kwargs = dict({% for name in propagate_types %}{{name}}={{name}}{% if not loop.last %}, {% endif %}{% endfor %})
+            kwargs = dict({% for param in propagate_types %}{{param.name}}={{param.name}}{% if not loop.last %}, {% endif %}{% endfor %})
             res = hook(self, (edge_index, size, kwargs))
             if res is not None:
                 edge_index, size, kwargs = res
-{%- for name, type_hint in propagate_types.items() %}
-                {{name}} = kwargs['{{name}}']
+{%- for param in propagate_types %}
+                {{param.name}} = kwargs['{{param.name}}']
 {%- endfor %}
 
     mutable_size = self._check_input(edge_index, size)
@@ -98,7 +98,7 @@ def propagate(
         raise NotImplementedError
 
     else:
-        kwargs = self._collect(edge_index, {% for name in propagate_types %}{{name}}, {% endfor %}mutable_size)
+        kwargs = self._collect(edge_index, {% for param in propagate_types %}{{param.name}}, {% endfor %}mutable_size)
         out = self.message({% for name in message_args %}{{name}}=kwargs.{{name}}{% if not loop.last %}, {% endif %}{% endfor %})
         out = self.aggregate(out{% for name in aggregate_args %}, {{name}}=kwargs.{{name}}{% endfor %})
         out = self.update(out{% for name in update_args %}, {{name}}=kwargs.{{name}}{% endfor %})
