@@ -13,7 +13,6 @@ from typing import (
     OrderedDict,
     Set,
     Tuple,
-    Type,
     Union,
 )
 
