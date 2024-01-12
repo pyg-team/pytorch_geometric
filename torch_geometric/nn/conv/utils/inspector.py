@@ -40,7 +40,7 @@ class Inspector:
         return f'{self.__class__.__name__}({self._cls.__name__})'
 
     def eval_type(self, value: Union[str, Type]) -> Type:
-        r"""Returns the type hint of an object."""
+        r"""Returns the type hint of a string."""
         if isinstance(value, str):
             value = typing.ForwardRef(value)
         return typing._eval_type(value, self._globals, None)
