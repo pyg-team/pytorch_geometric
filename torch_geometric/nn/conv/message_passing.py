@@ -179,6 +179,11 @@ class MessagePassing(torch.nn.Module):
         if getattr(self, 'jit_on_init', False):
             root_dir = osp.dirname(osp.realpath(__file__))
             prop_types, prop_return_type = self._get_propagate_types()
+            prop_types = {
+                param.name: type_hint_to_str(param.type)
+                for param in prop_types.values()
+            }
+            prop_return_type = type_hint_to_str(prop_return_type)
             module = module_from_template(
                 module_name=f'{self.__module__}_propagate',
                 module=self.__module__,
@@ -600,7 +605,7 @@ class MessagePassing(torch.nn.Module):
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`
         or a :obj:`torch.sparse.Tensor`.
         """
-        pass
+        raise NotImplementedError
 
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
