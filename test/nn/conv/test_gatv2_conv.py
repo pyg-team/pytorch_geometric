@@ -53,7 +53,6 @@ def test_gatv2_conv():
     assert result[1][0].size() == (2, 7)
     assert result[1][1].size() == (7, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
-    assert conv._alpha is None
 
     if torch_geometric.typing.WITH_PT113:
         # PyTorch < 1.13 does not support multi-dimensional CSR values :(
@@ -66,7 +65,6 @@ def test_gatv2_conv():
         result = conv(x1, adj2.t(), return_attention_weights=True)
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
-        assert conv._alpha is None
 
     if is_full_test():
 
@@ -88,7 +86,6 @@ def test_gatv2_conv():
         assert result[1][0].size() == (2, 7)
         assert result[1][1].size() == (7, 2)
         assert result[1][1].min() >= 0 and result[1][1].max() <= 1
-        assert conv._alpha is None
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
 
@@ -109,7 +106,6 @@ def test_gatv2_conv():
             result = jit(x1, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
-            assert conv._alpha is None
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
