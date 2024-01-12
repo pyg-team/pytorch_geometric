@@ -1,4 +1,5 @@
 import inspect
+from typing import Any, Dict, Final, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -9,6 +10,39 @@ from torch_geometric.nn.conv.utils.inspector import (
     Parameter,
     Signature,
 )
+from torch_geometric.typing import OptPairTensor
+
+
+def test_eval_type():
+    inspector = Inspector(SAGEConv)
+
+    assert inspector.eval_type('Tensor') == Tensor
+    assert inspector.eval_type('List[Tensor]') == List[Tensor]
+    assert inspector.eval_type('Tuple[Tensor, int]') == Tuple[Tensor, int]
+    assert inspector.eval_type('Tuple[int, ...]') == Tuple[int, ...]
+
+
+def test_type_repr():
+    inspector = Inspector(SAGEConv)
+
+    assert inspector.type_repr(Any) == 'typing.Any'
+    assert inspector.type_repr(Final) == 'typing.Final'
+    assert inspector.type_repr(OptPairTensor) == (
+        'Tuple[Tensor, Optional[Tensor]]')
+    assert inspector.type_repr(
+        Final[Optional[Tensor]]) == ('typing.Final[Optional[Tensor]]')
+    assert inspector.type_repr(Union[None, Tensor]) == 'Optional[Tensor]'
+    assert inspector.type_repr(Optional[Tensor]) == 'Optional[Tensor]'
+    assert inspector.type_repr(Set[Tensor]) == 'typing.Set[Tensor]'
+    assert inspector.type_repr(List) == 'List'
+    assert inspector.type_repr(Tuple) == 'Tuple'
+    assert inspector.type_repr(Set) == 'typing.Set'
+    assert inspector.type_repr(Dict) == 'typing.Dict'
+    assert inspector.type_repr(Dict[str, Tuple[Tensor, Tensor]]) == (  #
+        'typing.Dict[str, Tuple[Tensor, Tensor]]')
+    assert inspector.type_repr(Tuple[int, ...]) == 'Tuple[int, ...]'
+    assert inspector.type_repr(Union[int, str, None]) == (  #
+        'Union[int, str, None]')
 
 
 def test_inspector_sage_conv() -> None:

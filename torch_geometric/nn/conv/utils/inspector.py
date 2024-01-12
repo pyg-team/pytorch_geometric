@@ -1,5 +1,7 @@
 import inspect
 import re
+import sys
+import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, Union
 
 from torch import Tensor
@@ -27,9 +29,65 @@ class Inspector:
         self._cls = cls
         self._signature_dict: Dict[str, Signature] = {}
         self._source: Optional[str] = None
+        self._globals = sys.modules[cls.__module__].__dict__
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
+
+    def eval_type(self, value: Union[str, Type]) -> Type:
+        r"""Returns the type hint of an object."""
+        if isinstance(value, str):
+            value = typing.ForwardRef(value, is_argument=True, is_class=False)
+        return typing._eval_type(value, self._globals, None)
+
+    def type_repr(self, obj: Union[str, Type]) -> str:
+        r"""Returns the type hint representation of an object."""
+        if isinstance(obj, str):
+            return obj
+
+        if obj is type(None):
+            return 'None'
+
+        if obj is ...:
+            return '...'
+
+        if hasattr(obj, '__module__') and obj.__module__ == 'typing':
+            name = obj._name
+            if name is None:
+                name = str(obj.__origin__).split('.')[-1]
+
+            if not hasattr(obj, '__args__') or len(obj.__args__) == 0:
+                if name not in self._globals:
+                    name = f'{obj.__module__}.{name}'
+                return name
+
+            args = obj.__args__
+
+            # Convert `Union[*, None]` to `Optional[*]`:
+            if (name == 'Union' and len(args) == 2
+                    and any([arg is type(None) for arg in args])
+                    and ('Optional' in self._globals
+                         or obj.__module__ in self._globals)):
+                name = 'Optional'
+
+            # Remove `None` from `Optional` arguments:
+            if name == 'Optional':
+                args = [arg for arg in args if arg is not type(None)]
+
+            if name not in self._globals:
+                name = f'{obj.__module__}.{name}'
+
+            args_repr = ', '.join([self.type_repr(arg) for arg in args])
+            return f'{name}[{args_repr}]'
+
+        if hasattr(obj, '__module__') and hasattr(obj, '__qualname__'):
+            if obj.__module__ == 'builtins':
+                return obj.__qualname__
+            if obj.__qualname__ in self._globals:
+                return obj.__qualname__
+            return f'{obj.__module__}.{obj.__qualname__}'
+
+        return str(obj)
 
     def implements(self, func_name: str) -> bool:
         r"""Returns :obj:`True` in case the inspected class implements the
