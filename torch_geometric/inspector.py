@@ -39,13 +39,13 @@ class Inspector:
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
 
-    def eval_type(self, value: Union[str, Type]) -> Type:
+    def eval_type(self, value: Any) -> Type:
         r"""Returns the type hint of a string."""
         if isinstance(value, str):
             value = typing.ForwardRef(value)
-        return typing._eval_type(value, self._globals, None)
+        return typing._eval_type(value, self._globals, None)  # type: ignore
 
-    def type_repr(self, obj: Union[Type, str]) -> str:
+    def type_repr(self, obj: Any) -> str:
         r"""Returns the type hint representation of an object."""
         def _get_name(name: str, module: str) -> str:
             return name if name in self._globals else f'{module}.{name}'
@@ -72,11 +72,11 @@ class Inspector:
 
             # Convert `Union[*, None]` to `Optional[*]`.
             # This is only necessary for old Python versions, e.g. 3.8.
-            # Only convert to `Optional` if `Optional` is actually importable:
+            # TODO Only convert to `Optional` if `Optional` is importable.
             if (name == 'Union' and len(args) == 2
                     and any([arg is type(None) for arg in args])
                     and ('Optional' in self._globals
-                         or obj.__module__ in self._globals or True)):  # TODO
+                         or obj.__module__ in self._globals or True)):
                 name = 'Optional'
 
             if name == 'Optional':  # Remove `None` from `Optional` arguments:
@@ -119,6 +119,7 @@ class Inspector:
         """
         if isinstance(func, str):
             func = getattr(self._cls, func)
+        assert callable(func)
 
         if func.__name__ in self._signature_dict:
             return self._signature_dict[func.__name__]
@@ -329,6 +330,7 @@ class Inspector:
                 given by their name or index. (default: :obj:`None`)
         """
         func_name = func if isinstance(func, str) else func.__name__
+        param_dict: Dict[str, Parameter] = {}
 
         # Three ways to specify the parameters of an unknown function header:
         # 1. Defined as class attributes in `{func_name}_type`.
@@ -342,7 +344,6 @@ class Inspector:
                 raise ValueError(f"'{func_name}_type' is expected to be a "
                                  f"dictionary (got '{type(type_dict)}')")
 
-            param_dict: Dict[str, Parameter] = {}
             for name, param_type in type_dict.items():
                 param_dict[name] = Parameter(
                     name=name,
@@ -355,12 +356,12 @@ class Inspector:
         # (2) Find type annotation:
         match = find_parenthesis_content(self.source, f'{func_name}_type:')
         if match is not None:
-            param_dict: Dict[str, Parameter] = {}
             for arg in split(match, sep=','):
                 name_and_type_repr = re.split(r'\s*:\s*', arg)
                 if len(name_and_type_repr) != 2:
                     raise ValueError(f"Could not parse the argument '{arg}' "
                                      f"of the '{func_name}_type' annoitation")
+
                 name, type_repr = name_and_type_repr
                 param_dict[name] = Parameter(
                     name=name,
@@ -373,17 +374,20 @@ class Inspector:
         # (3) Parse the function call:
         match = find_parenthesis_content(self.source, f'self.{func_name}')
         if match is not None:
-            param_dict: Dict[str, Parameter] = {}
             for i, kwarg in enumerate(split(match, sep=',')):
                 if exclude is not None and i in exclude:
                     continue
+
                 name_and_content = re.split(r'\s*=\s*', kwarg)
                 if len(name_and_content) != 2:
                     raise ValueError(f"Could not parse the keyword argument "
                                      f"'{kwarg}' in 'self.{func_name}(...)'")
+
                 name, _ = name_and_content
+
                 if exclude is not None and name in exclude:
                     continue
+
                 param_dict[name] = Parameter(
                     name=name,
                     type=Tensor,
@@ -399,11 +403,11 @@ def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
     r"""Returns the content of :obj:`{prefix}.*(...)` within :obj:`source`."""
     match = re.search(prefix, source)
     if match is None:
-        return
+        return None
 
     offset = source[match.start():].find('(')
     if offset < 0:
-        return
+        return None
 
     source = source[match.start() + offset:]
 
@@ -421,6 +425,8 @@ def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
             content = re.sub(' +', ' ', content)
             content = content.strip()
             return content
+
+    return None
 
 
 def split(content: str, sep: str) -> List[str]:

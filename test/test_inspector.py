@@ -4,12 +4,8 @@ from typing import Any, Dict, Final, List, Optional, Set, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.inspector import Inspector, Parameter, Signature
 from torch_geometric.nn import GATConv, SAGEConv
-from torch_geometric.nn.conv.utils.inspector import (
-    Inspector,
-    Parameter,
-    Signature,
-)
 from torch_geometric.typing import OptPairTensor
 
 

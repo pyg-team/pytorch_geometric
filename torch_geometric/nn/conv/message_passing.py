@@ -20,9 +20,9 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
+from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.propagate import module_from_template
-from torch_geometric.nn.conv.utils.inspector import Inspector, Signature
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
