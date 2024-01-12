@@ -1,8 +1,8 @@
 import inspect
 import os.path as osp
 import random
-import re
 import warnings
+from abc import abstractmethod
 from inspect import Parameter
 from typing import (
     Any,
@@ -13,8 +13,8 @@ from typing import (
     OrderedDict,
     Set,
     Tuple,
+    Type,
     Union,
-    get_type_hints,
 )
 
 import torch
@@ -23,13 +23,11 @@ from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.propagate import (
-    find_parenthesis_content,
     module_from_template,
     type_hint_to_str,
 )
 from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
-from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -140,20 +138,19 @@ class MessagePassing(torch.nn.Module):
         self.decomposed_layers = decomposed_layers
 
         # Collect attribute names requested in message passing hooks:
-        self.inspector = Inspector(self)
-        self.inspector.inspect(self.message)
-        self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.params['aggregate'].pop('aggr', None)
-        self.inspector.inspect(self.message_and_aggregate, pop_first=True)
-        self.inspector.inspect(self.update, pop_first=True)
-        self.inspector.inspect(self.edge_update)
+        self.inspector = Inspector(self.__class__)
+        self.inspector.inspect_signature(self.message)
+        self.inspector.inspect_signature(self.aggregate, exclude=[0, 'aggr'])
+        self.inspector.inspect_signature(self.message_and_aggregate, [0])
+        self.inspector.inspect_signature(self.update, exclude=[0])
+        self.inspector.inspect_signature(self.edge_update)
 
-        self._user_args: Set[str] = self.inspector.keys(
-            ['message', 'aggregate', 'update']).difference(self.special_args)
-        self._fused_user_args: Set[str] = self.inspector.keys(
-            ['message_and_aggregate', 'update']).difference(self.special_args)
-        self._edge_user_args: Set[str] = self.inspector.keys(
-            ['edge_update']).difference(self.special_args)
+        self._user_args: List[str] = self.inspector.get_flat_param_names(
+            ['message', 'aggregate', 'update'], exclude=self.special_args)
+        self._fused_user_args: List[str] = self.inspector.get_flat_param_names(
+            ['message_and_aggregate', 'update'], exclude=self.special_args)
+        self._edge_user_args: List[str] = self.inspector.get_param_names(
+            'edge_update', exclude=self.special_args)
 
         # Support for "fused" message passing:
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -182,55 +179,33 @@ class MessagePassing(torch.nn.Module):
         if getattr(self, 'jit_on_init', False):
             root_dir = osp.dirname(osp.realpath(__file__))
             prop_types, prop_return_type = self._get_propagate_types()
+            prop_types = {
+                param.name: type_hint_to_str(param.type)
+                for param in prop_types.values()
+            }
+            prop_return_type = type_hint_to_str(prop_return_type)
+            collect_types = self.inspector.get_flat_params(
+                ['message', 'aggregate', 'update'])
+            collect_types = {
+                param.name: type_hint_to_str(param.type)
+                for param in collect_types
+            }
             module = module_from_template(
                 module_name=f'{self.__module__}_propagate',
                 module=self.__module__,
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_types=prop_types,
                 propagate_return_type=prop_return_type,
-                collect_types=self.inspector.types(
-                    ['message', 'aggregate', 'update']),
-                message_args=self.inspector.keys(['message']),
-                aggregate_args=self.inspector.keys(['aggregate']),
-                message_and_aggregate_args=self.inspector.keys(
-                    ['message_and_aggregate']),
-                update_args=self.inspector.keys(['update']),
+                collect_types=collect_types,
+                message_args=self.inspector.get_param_names('message'),
+                aggregate_args=self.inspector.get_param_names('aggregate'),
+                message_and_aggregate_args=self.inspector.get_param_names(
+                    'message_and_aggregate'),
+                update_args=self.inspector.get_param_names('update'),
             )
 
             self.propagate_jit = module.propagate
             self._collect_jit = module._collect
-
-    def _get_propagate_types(self) -> Tuple[Dict[str, str], str]:
-        # Parse `propagate_types` and generate an efficient `propagate` method:
-        if hasattr(self, 'propagate_type'):
-            assert isinstance(self.propagate_type, dict)
-            propagate_types = {
-                name: type_hint_to_str(type_hint)
-                for name, type_hint in self.propagate_type.items()
-            }
-        else:
-            source = inspect.getsource(self.forward)
-            match = find_parenthesis_content(source, prefix='propagate_type:')
-            if match is not None:
-                propagate_types = dict(
-                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
-            else:
-                match = find_parenthesis_content(source, 'self.propagate')
-                if match is None:  # No `self.propagate` call:
-                    return
-                args = [  # Find all keyword argument names:
-                    arg[:arg.find('=')].strip() for arg in match.split(',')
-                    if arg.find('=') >= 0
-                ]
-                propagate_types = {
-                    arg: 'Tensor'
-                    for arg in args if arg not in {'edge_index', 'size'}
-                }
-
-        propagate_return_type = type_hint_to_str(
-            get_type_hints(self.update).get('return', Tensor))
-
-        return propagate_types, propagate_return_type
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
@@ -508,7 +483,7 @@ class MessagePassing(torch.nn.Module):
             coll_dict = self._collect(self._fused_user_args, edge_index,
                                       mutable_size, kwargs)
 
-            msg_aggr_kwargs = self.inspector.distribute(
+            msg_aggr_kwargs = self.inspector.collect_param_data(
                 'message_and_aggregate', coll_dict)
             for hook in self._message_and_aggregate_forward_pre_hooks.values():
                 res = hook(self, (edge_index, msg_aggr_kwargs))
@@ -520,7 +495,8 @@ class MessagePassing(torch.nn.Module):
                 if res is not None:
                     out = res
 
-            update_kwargs = self.inspector.distribute('update', coll_dict)
+            update_kwargs = self.inspector.collect_param_data(
+                'update', coll_dict)
             out = self.update(out, **update_kwargs)
 
         else:  # Otherwise, run both functions in separation.
@@ -541,7 +517,8 @@ class MessagePassing(torch.nn.Module):
                 coll_dict = self._collect(self._user_args, edge_index,
                                           mutable_size, kwargs)
 
-                msg_kwargs = self.inspector.distribute('message', coll_dict)
+                msg_kwargs = self.inspector.collect_param_data(
+                    'message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -553,11 +530,12 @@ class MessagePassing(torch.nn.Module):
                         out = res
 
                 if self.explain:
-                    explain_msg_kwargs = self.inspector.distribute(
+                    explain_msg_kwargs = self.inspector.collect_param_data(
                         'explain_message', coll_dict)
                     out = self.explain_message(out, **explain_msg_kwargs)
 
-                aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
+                aggr_kwargs = self.inspector.collect_param_data(
+                    'aggregate', coll_dict)
                 for hook in self._aggregate_forward_pre_hooks.values():
                     res = hook(self, (aggr_kwargs, ))
                     if res is not None:
@@ -570,7 +548,8 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         out = res
 
-                update_kwargs = self.inspector.distribute('update', coll_dict)
+                update_kwargs = self.inspector.collect_param_data(
+                    'update', coll_dict)
                 out = self.update(out, **update_kwargs)
 
                 if decomposed_layers > 1:
@@ -618,6 +597,7 @@ class MessagePassing(torch.nn.Module):
         return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
                                 dim=self.node_dim)
 
+    @abstractmethod
     def message_and_aggregate(
         self,
         adj_t: Adj,
@@ -666,7 +646,8 @@ class MessagePassing(torch.nn.Module):
         coll_dict = self._collect(self._edge_user_args, edge_index,
                                   mutable_size, kwargs)
 
-        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        edge_kwargs = self.inspector.collect_param_data(
+            'edge_update', coll_dict)
         out = self.edge_update(**edge_kwargs)
 
         for hook in self._edge_update_forward_hooks.values():
@@ -676,6 +657,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
+    @abstractmethod
     def edge_update(self) -> Tensor:
         r"""Computes or updates features for each edge in the graph.
         This function can take any argument as input which was initially passed
@@ -704,9 +686,9 @@ class MessagePassing(torch.nn.Module):
             methods = ['message', 'aggregate', 'update']
 
         self._explain = explain
-        self.inspector.inspect(self.explain_message, pop_first=True)
-        self._user_args = self.inspector.keys(methods).difference(
-            self.special_args)
+        self.inspector.inspect_signature(self.explain_message, exclude=[0])
+        self._user_args = self.inspector.get_flat_param_names(
+            methods, exclude=self.special_args)
 
     def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
         # NOTE Replace this method in custom explainers per message-passing
@@ -886,6 +868,18 @@ class MessagePassing(torch.nn.Module):
 
     # TorchScript Support #####################################################
 
+    def _get_propagate_types(self) -> Tuple[Dict[str, Parameter], Type]:
+        param_dict = self.inspector.get_params_from_method_call(
+            'propagate', exclude=[0, 'edge_index', 'size'])
+        return_type = self.inspector.get_signature('update').return_type
+        return param_dict, return_type
+
+    def _get_edge_updater_types(self) -> Tuple[Dict[str, Parameter], Type]:
+        param_dict = self.inspector.get_params_from_method_call(
+            'edge_updater', exclude=[0, 'edge_index'])
+        return_type = self.inspector.get_signature('edge_update').return_type
+        return param_dict, return_type
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
@@ -901,46 +895,38 @@ class MessagePassing(torch.nn.Module):
 
         from jinja2 import Template
 
-        source = inspect.getsource(self.__class__)
+        source = self.inspector.source
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
         prop_types, prop_return_type = self._get_propagate_types()
+        prop_types = {
+            param.name: type_hint_to_str(param.type)
+            for param in prop_types.values()
+        }
+        prop_return_type = type_hint_to_str(prop_return_type)
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
-        if 'edge_update' in self.__class__.__dict__.keys():
-            if hasattr(self, 'edge_updater_type'):
-                assert isinstance(self.edge_updater_type, dict)
-                edge_updater_types = {
-                    k: sanitize(str(v))
-                    for k, v in self.edge_updater_type.items()
-                }
-            else:
-                match = find_parenthesis_content(source, 'edge_updater_type:')
-                if match is None:
-                    raise TypeError(
-                        'TorchScript support requires the definition of the '
-                        'types passed to `edge_updater()`. Please specify '
-                        'them via\n\n edge_updater_type = {"arg1": type1, '
-                        '"arg2": type2, ... }\n\n or via\n\n'
-                        '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
-                        '\n\ninside the `MessagePassing` module.')
-                edge_updater_types = dict(
-                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
-        else:
-            edge_updater_types = {}
-
-        type_hints = get_type_hints(self.__class__.edge_update)
-        edge_updater_return_type = type_hints.get('return', 'Tensor')
-        if str(edge_updater_return_type)[:6] == '<class':
-            edge_updater_return_type = edge_updater_return_type.__name__
+        edge_types, edge_return_type = self._get_edge_updater_types()
+        edge_types = {
+            param.name: type_hint_to_str(param.type)
+            for param in edge_types.values()
+        }
+        edge_return_type = type_hint_to_str(edge_return_type)
 
         # Parse `_collect()` types to format `{arg:1, type1, ...}`.
-        collect_types = self.inspector.types(
+        collect_types = self.inspector.get_flat_params(
             ['message', 'aggregate', 'update'])
+        collect_types = {
+            param.name: type_hint_to_str(param.type)
+            for param in collect_types
+        }
 
-        # Parse `_collect()` types to format `{arg:1, type1, ...}`,
-        # specific to the argument used for edge updates.
-        edge_collect_types = self.inspector.types(['edge_update'])
+        # Parse `_edge_collect()` types to format `{arg:1, type1, ...}`.
+        edge_collect_types = self.inspector.get_params('edge_update')
+        edge_collect_types = {
+            param.name: type_hint_to_str(param.type)
+            for param in edge_collect_types
+        }
 
         # Collect `forward()` function in case it is overloaded. This is
         # necessary since TorchScript cannot handle inheritance of overloaded
@@ -970,14 +956,15 @@ class MessagePassing(torch.nn.Module):
             collect_types=collect_types,
             user_args=self._user_args,
             edge_user_args=self._edge_user_args,
-            msg_args=self.inspector.keys(['message']),
-            aggr_args=self.inspector.keys(['aggregate']),
-            msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
-            update_args=self.inspector.keys(['update']),
+            msg_args=self.inspector.get_param_names('message'),
+            aggr_args=self.inspector.get_param_names('aggregate'),
+            msg_and_aggr_args=self.inspector.get_param_names(
+                'message_and_aggregate'),
+            update_args=self.inspector.get_param_names('update'),
             edge_collect_types=edge_collect_types,
-            edge_update_args=self.inspector.keys(['edge_update']),
-            edge_updater_types=edge_updater_types,
-            edge_updater_return_type=edge_updater_return_type,
+            edge_update_args=self.inspector.get_param_names('edge_update'),
+            edge_updater_types=edge_types,
+            edge_updater_return_type=edge_return_type,
             forward_repr=forward_repr,
         )
         # Instantiate a class from the rendered JIT module representation.
