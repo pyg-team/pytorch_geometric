@@ -21,8 +21,6 @@ def module_from_template(
     with open(template_path, 'r') as f:
         template = Template(f.read())
     module_repr = template.render(**kwargs)
-    print()
-    print(module_repr)
 
     instance_dir = osp.join(get_home_dir(), 'propagate')
     os.makedirs(instance_dir, exist_ok=True)
