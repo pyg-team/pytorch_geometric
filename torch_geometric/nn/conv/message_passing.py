@@ -678,7 +678,11 @@ class MessagePassing(torch.nn.Module):
         self._user_args = self.inspector.get_flat_param_names(
             methods, exclude=self.special_args)
 
-    def explain_message(self, inputs: Tensor, size_i: Optional[int]) -> Tensor:
+    def explain_message(
+        self,
+        inputs: Tensor,
+        dim_size: Optional[int],
+    ) -> Tensor:
         # NOTE Replace this method in custom explainers per message-passing
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
@@ -696,7 +700,8 @@ class MessagePassing(torch.nn.Module):
         # `edge_mask` (but do not train these entries).
         if inputs.size(self.node_dim) != edge_mask.size(0):
             edge_mask = edge_mask[self._loop_mask]
-            loop = edge_mask.new_ones(size_i)
+            assert dim_size is not None
+            loop = edge_mask.new_ones(dim_size)
             edge_mask = torch.cat([edge_mask, loop], dim=0)
         assert inputs.size(self.node_dim) == edge_mask.size(0)
 
