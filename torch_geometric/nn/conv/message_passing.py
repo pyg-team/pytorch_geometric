@@ -683,6 +683,7 @@ class MessagePassing(torch.nn.Module):
         inputs: Tensor,
         dim_size: Optional[int],
     ) -> Tensor:
+        return inputs
         # NOTE Replace this method in custom explainers per message-passing
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)

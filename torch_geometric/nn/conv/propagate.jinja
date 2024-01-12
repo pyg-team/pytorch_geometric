@@ -228,7 +228,7 @@ def propagate(
                 out = res if res is not None else out
         # End Message Forward Hook #############################################
 
-{%- if with_explain %}
+{% if with_explain %}
         out = self.explain_message(
             out,
 {%- for name in explain_message_args %}
