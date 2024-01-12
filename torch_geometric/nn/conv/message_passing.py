@@ -13,7 +13,6 @@ from typing import (
     OrderedDict,
     Set,
     Tuple,
-    Type,
     Union,
 )
 
@@ -22,11 +21,8 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.conv.propagate import (
-    module_from_template,
-    type_hint_to_str,
-)
-from torch_geometric.nn.conv.utils.inspector import Inspector
+from torch_geometric.nn.conv.propagate import module_from_template
+from torch_geometric.nn.conv.utils.inspector import Inspector, Signature
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
@@ -178,16 +174,15 @@ class MessagePassing(torch.nn.Module):
         # Test code for performing on-the-fly TorchScript support:
         if getattr(self, 'jit_on_init', False):
             root_dir = osp.dirname(osp.realpath(__file__))
-            prop_types, prop_return_type = self._get_propagate_types()
+            signature = self._get_propagate_signature()
             prop_types = {
-                param.name: type_hint_to_str(param.type)
-                for param in prop_types.values()
+                param.name: param.type_repr
+                for param in signature.param_dict.values()
             }
-            prop_return_type = type_hint_to_str(prop_return_type)
             collect_types = self.inspector.get_flat_params(
                 ['message', 'aggregate', 'update'])
             collect_types = {
-                param.name: type_hint_to_str(param.type)
+                param.name: param.type_repr
                 for param in collect_types
             }
             module = module_from_template(
@@ -195,7 +190,7 @@ class MessagePassing(torch.nn.Module):
                 module=self.__module__,
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_types=prop_types,
-                propagate_return_type=prop_return_type,
+                propagate_return_type=signature.return_type_repr,
                 collect_types=collect_types,
                 message_args=self.inspector.get_param_names('message'),
                 aggregate_args=self.inspector.get_param_names('aggregate'),
@@ -868,17 +863,27 @@ class MessagePassing(torch.nn.Module):
 
     # TorchScript Support #####################################################
 
-    def _get_propagate_types(self) -> Tuple[Dict[str, Parameter], Type]:
+    def _get_propagate_signature(self) -> Signature:
         param_dict = self.inspector.get_params_from_method_call(
             'propagate', exclude=[0, 'edge_index', 'size'])
-        return_type = self.inspector.get_signature('update').return_type
-        return param_dict, return_type
+        update_signature = self.inspector.get_signature('update')
 
-    def _get_edge_updater_types(self) -> Tuple[Dict[str, Parameter], Type]:
+        return Signature(
+            param_dict=param_dict,
+            return_type=update_signature.return_type,
+            return_type_repr=update_signature.return_type_repr,
+        )
+
+    def _get_edge_updater_signature(self) -> Signature:
         param_dict = self.inspector.get_params_from_method_call(
             'edge_updater', exclude=[0, 'edge_index'])
-        return_type = self.inspector.get_signature('edge_update').return_type
-        return param_dict, return_type
+        edge_update_signature = self.inspector.get_signature('edge_update')
+
+        return Signature(
+            param_dict=param_dict,
+            return_type=edge_update_signature.return_type,
+            return_type_repr=edge_update_signature.return_type_repr,
+        )
 
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
@@ -898,33 +903,31 @@ class MessagePassing(torch.nn.Module):
         source = self.inspector.source
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
-        prop_types, prop_return_type = self._get_propagate_types()
+        prop_signature = self._get_propagate_signature()
         prop_types = {
-            param.name: type_hint_to_str(param.type)
-            for param in prop_types.values()
+            param.name: param.type_repr
+            for param in prop_signature.param_dict.values()
         }
-        prop_return_type = type_hint_to_str(prop_return_type)
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
-        edge_types, edge_return_type = self._get_edge_updater_types()
+        edge_signature = self._get_edge_updater_signature()
         edge_types = {
-            param.name: type_hint_to_str(param.type)
-            for param in edge_types.values()
+            param.name: param.type_repr
+            for param in edge_signature.param_dict.values()
         }
-        edge_return_type = type_hint_to_str(edge_return_type)
 
         # Parse `_collect()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.get_flat_params(
             ['message', 'aggregate', 'update'])
         collect_types = {
-            param.name: type_hint_to_str(param.type)
+            param.name: param.type_repr
             for param in collect_types
         }
 
         # Parse `_edge_collect()` types to format `{arg:1, type1, ...}`.
         edge_collect_types = self.inspector.get_params('edge_update')
         edge_collect_types = {
-            param.name: type_hint_to_str(param.type)
+            param.name: param.type_repr
             for param in edge_collect_types
         }
 
@@ -951,7 +954,7 @@ class MessagePassing(torch.nn.Module):
             cls_name=cls_name,
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
-            prop_return_type=prop_return_type,
+            prop_return_type=prop_signature.return_type_repr,
             fuse=self.fuse,
             collect_types=collect_types,
             user_args=self._user_args,
@@ -964,7 +967,7 @@ class MessagePassing(torch.nn.Module):
             edge_collect_types=edge_collect_types,
             edge_update_args=self.inspector.get_param_names('edge_update'),
             edge_updater_types=edge_types,
-            edge_updater_return_type=edge_return_type,
+            edge_updater_return_type=edge_signature.return_type_repr,
             forward_repr=forward_repr,
         )
         # Instantiate a class from the rendered JIT module representation.

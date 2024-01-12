@@ -1,5 +1,7 @@
 import inspect
 import re
+import sys
+import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, Union
 
 from torch import Tensor
@@ -7,13 +9,15 @@ from torch import Tensor
 
 class Parameter(NamedTuple):
     name: str
-    type: Union[Type, str]
+    type: Type
+    type_repr: str
     default: Any
 
 
 class Signature(NamedTuple):
     param_dict: Dict[str, Parameter]
     return_type: Type
+    return_type_repr: str
 
 
 class Inspector:
@@ -28,8 +32,63 @@ class Inspector:
         self._signature_dict: Dict[str, Signature] = {}
         self._source: Optional[str] = None
 
+    @property
+    def _globals(self) -> Dict[str, Any]:
+        return sys.modules[self._cls.__module__].__dict__
+
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
+
+    def eval_type(self, value: Union[str, Type]) -> Type:
+        r"""Returns the type hint of a string."""
+        if isinstance(value, str):
+            value = typing.ForwardRef(value)
+        return typing._eval_type(value, self._globals, None)
+
+    def type_repr(self, obj: Union[Type, str]) -> str:
+        r"""Returns the type hint representation of an object."""
+        def _get_name(name: str, module: str) -> str:
+            return name if name in self._globals else f'{module}.{name}'
+
+        if isinstance(obj, str):
+            return obj
+
+        if obj is type(None):
+            return 'None'
+
+        if obj is ...:
+            return '...'
+
+        if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
+            name = obj._name
+            if name is None:  # In some cases, `_name` is not populated.
+                name = str(obj.__origin__).split('.')[-1]
+
+            args = getattr(obj, '__args__', None)
+            if args is None or len(args) == 0:
+                return _get_name(name, obj.__module__)
+            if all(isinstance(arg, typing.TypeVar) for arg in args):
+                return _get_name(name, obj.__module__)
+
+            # Convert `Union[*, None]` to `Optional[*]`.
+            # This is only necessary for old Python versions, e.g. 3.8.
+            # Only convert to `Optional` if `Optional` is actually importable:
+            if (name == 'Union' and len(args) == 2
+                    and any([arg is type(None) for arg in args])
+                    and ('Optional' in self._globals
+                         or obj.__module__ in self._globals or True)):  # TODO
+                name = 'Optional'
+
+            if name == 'Optional':  # Remove `None` from `Optional` arguments:
+                args = [arg for arg in obj.__args__ if arg is not type(None)]
+
+            args_repr = ', '.join([self.type_repr(arg) for arg in args])
+            return f'{_get_name(name, obj.__module__)}[{args_repr}]'
+
+        if obj.__module__ == 'builtins':
+            return obj.__qualname__
+
+        return _get_name(obj.__qualname__, obj.__module__)
 
     def implements(self, func_name: str) -> bool:
         r"""Returns :obj:`True` in case the inspected class implements the
@@ -73,18 +132,25 @@ class Inspector:
                 continue
 
             param_type = param.annotation
+            # Mimic TorchScript to auto-infer `Tensor` on non-present types:
+            param_type = Tensor if param_type is inspect._empty else param_type
+
             param_dict[param.name] = Parameter(
                 name=param.name,
-                # Mimic TorchScript which auto-infers `Tensor` on empty types:
-                type=Tensor if param_type is inspect._empty else param_type,
+                type=self.eval_type(param_type),
+                type_repr=self.type_repr(param_type),
                 default=param.default,
             )
 
         return_type = signature.return_annotation
+        # Mimic TorchScript to auto-infer `Tensor` on non-present types:
         return_type = Tensor if return_type is inspect._empty else return_type
 
         self._signature_dict[func.__name__] = Signature(
-            param_dict, return_type)
+            param_dict=param_dict,
+            return_type=self.eval_type(return_type),
+            return_type_repr=self.type_repr(return_type),
+        )
 
         return self._signature_dict[func.__name__]
 
@@ -110,9 +176,16 @@ class Inspector:
         if exclude is None:
             return signature
 
-        param_dict = signature.param_dict
-        param_dict = {k: v for k, v in param_dict.items() if k not in exclude}
-        return Signature(param_dict, signature.return_type)
+        param_dict = {
+            name: param
+            for name, param in signature.param_dict.items()
+            if name not in exclude
+        }
+        return Signature(
+            param_dict=param_dict,
+            return_type=signature.return_type,
+            return_type_repr=signature.return_type_repr,
+        )
 
     def get_params(
         self,
@@ -165,8 +238,12 @@ class Inspector:
                     if default is inspect._empty:
                         default = param.default
 
-                    out_dict[param.name] = Parameter(  #
-                        param.name, param.type, default)
+                    out_dict[param.name] = Parameter(
+                        name=param.name,
+                        type=param.type,
+                        type_repr=param.type_repr,
+                        default=default,
+                    )
 
                 if expected is None:
                     out_dict[param.name] = param
@@ -264,41 +341,55 @@ class Inspector:
             if not isinstance(type_dict, dict):
                 raise ValueError(f"'{func_name}_type' is expected to be a "
                                  f"dictionary (got '{type(type_dict)}')")
-            return {
-                name: Parameter(name, param_type, inspect._empty)
-                for name, param_type in type_dict.items()
-            }
+
+            param_dict: Dict[str, Parameter] = {}
+            for name, param_type in type_dict.items():
+                param_dict[name] = Parameter(
+                    name=name,
+                    type=self.eval_type(param_type),
+                    type_repr=self.type_repr(param_type),
+                    default=inspect._empty,
+                )
+            return param_dict
 
         # (2) Find type annotation:
         match = find_parenthesis_content(self.source, f'{func_name}_type:')
         if match is not None:
             param_dict: Dict[str, Parameter] = {}
-            for type_repr in split(match, sep=','):
-                name_and_type = re.split(r'\s*:\s*', type_repr)
-                if len(name_and_type) != 2:
-                    raise ValueError(f"Could not parse the argument "
-                                     f"'{type_repr}' of the "
-                                     f"'{func_name}_type' annotation")
-                name, param_type = name_and_type[0], name_and_type[1]
-                param_dict[name] = Parameter(name, param_type, inspect._empty)
+            for arg in split(match, sep=','):
+                name_and_type_repr = re.split(r'\s*:\s*', arg)
+                if len(name_and_type_repr) != 2:
+                    raise ValueError(f"Could not parse the argument '{arg}' "
+                                     f"of the '{func_name}_type' annoitation")
+                name, type_repr = name_and_type_repr
+                param_dict[name] = Parameter(
+                    name=name,
+                    type=self.eval_type(type_repr),
+                    type_repr=type_repr,
+                    default=inspect._empty,
+                )
             return param_dict
 
         # (3) Parse the function call:
         match = find_parenthesis_content(self.source, f'self.{func_name}')
         if match is not None:
             param_dict: Dict[str, Parameter] = {}
-            for i, type_repr in enumerate(split(match, sep=',')):
+            for i, kwarg in enumerate(split(match, sep=',')):
                 if exclude is not None and i in exclude:
                     continue
-                name_and_content = re.split(r'\s*=\s*', type_repr)
+                name_and_content = re.split(r'\s*=\s*', kwarg)
                 if len(name_and_content) != 2:
                     raise ValueError(f"Could not parse the keyword argument "
-                                     f"'{type_repr}' of the "
-                                     f"'self.{func_name}' call")
-                name = name_and_content[0]
+                                     f"'{kwarg}' in 'self.{func_name}(...)'")
+                name, _ = name_and_content
                 if exclude is not None and name in exclude:
                     continue
-                param_dict[name] = Parameter(name, Tensor, inspect._empty)
+                param_dict[name] = Parameter(
+                    name=name,
+                    type=Tensor,
+                    type_repr=self.type_repr(Tensor),
+                    default=inspect._empty,
+                )
             return param_dict
 
         return {}  # (4) No function call found:

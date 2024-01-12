@@ -6,6 +6,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import OptPairTensor  # noqa
 from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor
 
 try:
