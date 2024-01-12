@@ -29,7 +29,10 @@ class Inspector:
         self._cls = cls
         self._signature_dict: Dict[str, Signature] = {}
         self._source: Optional[str] = None
-        self._globals = sys.modules[cls.__module__].__dict__
+
+    @property
+    def _globals(self) -> Dict[str, Any]:
+        return sys.modules[self._cls.__module__].__dict__
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
