@@ -1,9 +1,8 @@
 import importlib
 import os
 import os.path as osp
-import re
 import sys
-from typing import Any, Optional, Union
+from typing import Any
 
 from jinja2 import Template
 
@@ -34,40 +33,3 @@ def module_from_template(
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module
-
-
-def type_hint_to_str(type_hint: Any) -> str:
-    if (getattr(type_hint, '__origin__', None) == Union
-            and len(getattr(type_hint, '__args__', [])) == 2):
-        arg1, arg2 = type_hint.__args__
-        if arg1 is type(None):
-            return f'typing.Optional[{type_hint_to_str(arg2)}]'
-        if arg2 is type(None):
-            return f'typing.Optional[{type_hint_to_str(arg1)}]'
-
-    type_repr = str(type_hint)
-    type_repr = re.sub(r'<class \'(.*)\'>', r'\1', type_repr)
-    return type_repr
-
-
-def find_parenthesis_content(text: str, prefix: str) -> Optional[str]:
-    match = re.search(prefix, text)
-    if match is None:
-        return
-
-    offset = text[match.start():].find('(')
-    if offset < 0:
-        return
-
-    content = text[match.start() + offset:]
-
-    num_opened = num_closed = 0
-    for end, char in enumerate(content):
-        if char == '(':
-            num_opened += 1
-        if char == ')':
-            num_closed += 1
-        if num_opened > 0 and num_opened == num_closed:
-            content = content[1:end]
-            content = content.replace('\n', ' ').replace('#', ' ')
-            return re.sub(' +', ' ', content.replace('\n', ' ')).strip()

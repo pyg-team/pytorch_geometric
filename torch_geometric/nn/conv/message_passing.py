@@ -174,24 +174,13 @@ class MessagePassing(torch.nn.Module):
         # Test code for performing on-the-fly TorchScript support:
         if getattr(self, 'jit_on_init', False):
             root_dir = osp.dirname(osp.realpath(__file__))
-            signature = self._get_propagate_signature()
-            prop_types = {
-                param.name: param.type_repr
-                for param in signature.param_dict.values()
-            }
-            collect_types = self.inspector.get_flat_params(
-                ['message', 'aggregate', 'update'])
-            collect_types = {
-                param.name: param.type_repr
-                for param in collect_types
-            }
             module = module_from_template(
                 module_name=f'{self.__module__}_propagate',
                 module=self.__module__,
                 template_path=osp.join(root_dir, 'propagate.jinja'),
-                propagate_types=prop_types,
-                propagate_return_type=signature.return_type_repr,
-                collect_types=collect_types,
+                propagate_signature=self._get_propagate_signature(),
+                collect_param_dict=self.inspector.get_flat_param_dict(
+                    ['message', 'aggregate', 'update']),
                 message_args=self.inspector.get_param_names('message'),
                 aggregate_args=self.inspector.get_param_names('aggregate'),
                 message_and_aggregate_args=self.inspector.get_param_names(
