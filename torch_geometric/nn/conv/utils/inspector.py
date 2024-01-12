@@ -334,7 +334,8 @@ def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
 
 def split(content: str, sep: str) -> List[str]:
     r"""Splits :obj:`content` based on :obj:`sep`.
-    :obj:`sep` inside parentheses or square brackets are ignored."""
+    :obj:`sep` inside parentheses or square brackets are ignored.
+    """
     assert len(sep) == 1
     outs: List[str] = []
 
