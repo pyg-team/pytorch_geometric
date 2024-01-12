@@ -176,7 +176,9 @@ class Aggregation(torch.nn.Module):
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment(x, ptr, reduce=reduce)
 
-        assert index is not None
+        if index is None:
+            raise NotImplementedError(
+                "Aggregation requires 'index' to be specified")
         return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(
