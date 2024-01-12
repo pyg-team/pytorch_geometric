@@ -943,8 +943,6 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
-        print(collect_types)
-
         uid = '%06x' % random.randrange(16**6)
         cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
@@ -969,8 +967,6 @@ class MessagePassing(torch.nn.Module):
             edge_updater_return_type=edge_return_type,
             forward_repr=forward_repr,
         )
-        print()
-        print(jit_module_repr)
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
