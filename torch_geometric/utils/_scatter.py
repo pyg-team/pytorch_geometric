@@ -245,8 +245,8 @@ def group_argsort(
             elements. (default: :obj:`False`)
 
     Example:
-        >>> src = torch.tensor([0, 0, 1, 1, 1, 1, 2, 2, 2])
-        >>> index = torch.tensor([0, 1, 5, 4, 3, 2, 6, 7, 8])
+        >>> src = torch.tensor([0, 1, 5, 4, 3, 2, 6, 7, 8])
+        >>> index = torch.tensor([0, 0, 1, 1, 1, 1, 2, 2, 2])
         >>> group_argsort(src, index)
         tensor([0, 1, 3, 2, 1, 0, 0, 1, 2])
     """
