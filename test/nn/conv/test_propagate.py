@@ -10,8 +10,11 @@ def test_propagate():
 
     old_propagate = conv.__class__.propagate
     old_collect = conv.__class__._collect
-    conv.__class__.propagate = conv.propagate_jit
-    conv.__class__._collect = conv._collect_jit
-    torch.jit.script(conv)
-    conv.__class__.propagate = old_propagate
-    conv.__class__._collect = old_collect
+
+    try:
+        conv.__class__.propagate = conv.propagate_jit
+        conv.__class__._collect = conv._collect_jit
+        torch.jit.script(conv)
+    finally:
+        conv.__class__.propagate = old_propagate
+        conv.__class__._collect = old_collect
