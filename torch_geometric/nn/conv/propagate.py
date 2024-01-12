@@ -3,7 +3,7 @@ import os
 import os.path as osp
 import re
 import sys
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from jinja2 import Template
 
@@ -37,8 +37,8 @@ def module_from_template(
 
 
 def type_hint_to_str(type_hint: Any) -> str:
-    if (getattr(type_hint, '__origin', None) == 'typing.Union'
-            and len(getattr(type_hint, '__args__'), []) == 2):
+    if (getattr(type_hint, '__origin__', None) == Union
+            and len(getattr(type_hint, '__args__', [])) == 2):
         arg1, arg2 = type_hint.__args__
         if arg1 is type(None):
             return f'typing.Optional[{type_hint_to_str(arg2)}]'
