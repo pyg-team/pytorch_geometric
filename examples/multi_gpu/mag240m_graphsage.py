@@ -81,7 +81,8 @@ def run(
     )
     # node IDs as features
     data['author'].x = torch.arange(data['author'].num_nodes).reshape(-1, 1)
-    data['institution'].x = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
+    data['institution'].x = torch.arange(
+        data['institution'].num_nodes).reshape(-1, 1)
     model = to_hetero(model, data.metadata(), aggr="sum", debug=debug)
 
     if rank == 0:
