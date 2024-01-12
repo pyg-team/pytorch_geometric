@@ -40,11 +40,14 @@ class Inspector:
     def eval_type(self, value: Union[str, Type]) -> Type:
         r"""Returns the type hint of an object."""
         if isinstance(value, str):
-            value = typing.ForwardRef(value, is_argument=True, is_class=False)
+            value = typing.ForwardRef(value)
         return typing._eval_type(value, self._globals, None)
 
     def type_repr(self, obj: Union[str, Type]) -> str:
         r"""Returns the type hint representation of an object."""
+        def _get_name(name: str, module: str) -> str:
+            return name if name in self._globals else f'{module}.{name}'
+
         if isinstance(obj, str):
             return obj
 
@@ -54,43 +57,36 @@ class Inspector:
         if obj is ...:
             return '...'
 
-        if hasattr(obj, '__module__') and obj.__module__ == 'typing':
+        if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
             name = obj._name
-            if name is None:
+            if name is None:  # In some cases, `_name` is not populated.
                 name = str(obj.__origin__).split('.')[-1]
 
-            if not hasattr(obj, '__args__') or len(obj.__args__) == 0:
-                if name not in self._globals:
-                    name = f'{obj.__module__}.{name}'
-                return name
+            args = getattr(obj, '__args__', None)
+            if args is None or len(args) == 0:
+                return _get_name(name, obj.__module__)
+            if all(isinstance(arg, typing.TypeVar) for arg in args):
+                return _get_name(name, obj.__module__)
 
-            args = obj.__args__
-
-            # Convert `Union[*, None]` to `Optional[*]`:
+            # Convert `Union[*, None]` to `Optional[*]`.
+            # This is only necessary for old Python versions, e.g. 3.8.
+            # Only convert to `Optional` if `Optional` is actually importable:
             if (name == 'Union' and len(args) == 2
                     and any([arg is type(None) for arg in args])
                     and ('Optional' in self._globals
                          or obj.__module__ in self._globals)):
                 name = 'Optional'
 
-            # Remove `None` from `Optional` arguments:
-            if name == 'Optional':
-                args = [arg for arg in args if arg is not type(None)]
-
-            if name not in self._globals:
-                name = f'{obj.__module__}.{name}'
+            if name == 'Optional':  # Remove `None` from `Optional` arguments:
+                args = [arg for arg in obj.__args__ if arg is not type(None)]
 
             args_repr = ', '.join([self.type_repr(arg) for arg in args])
-            return f'{name}[{args_repr}]'
+            return f'{_get_name(name, obj.__module__)}[{args_repr}]'
 
-        if hasattr(obj, '__module__') and hasattr(obj, '__qualname__'):
-            if obj.__module__ == 'builtins':
-                return obj.__qualname__
-            if obj.__qualname__ in self._globals:
-                return obj.__qualname__
-            return f'{obj.__module__}.{obj.__qualname__}'
+        if obj.__module__ == 'builtins':
+            return obj.__qualname__
 
-        return str(obj)
+        return _get_name(obj.__qualname__, obj.__module__)
 
     def implements(self, func_name: str) -> bool:
         r"""Returns :obj:`True` in case the inspected class implements the
