@@ -943,6 +943,8 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
+        print(collect_types)
+
         uid = '%06x' % random.randrange(16**6)
         cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
