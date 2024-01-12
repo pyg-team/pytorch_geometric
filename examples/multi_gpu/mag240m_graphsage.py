@@ -128,7 +128,7 @@ def run(
         print("about to make optimizer")
     if n_devices > 1:
         model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(ddp.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1, num_epochs + 1):
         model.train()
