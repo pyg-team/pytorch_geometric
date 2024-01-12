@@ -79,6 +79,9 @@ def run(
         dropout=dropout,
         norm='batch',
     )
+    # node IDs as features
+    data['author'].x = torch.arange(data['author'].num_nodes)
+    data['institution'].x = torch.arange(data['institution'].num_nodes)
     model = to_hetero(model, data.metadata(), aggr="sum", debug=debug)
 
     if rank == 0:
