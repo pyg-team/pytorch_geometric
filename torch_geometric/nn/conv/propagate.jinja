@@ -67,7 +67,11 @@ def _collect(
     size_j = size[j]
     dim_size = size_i
 
-    return CollectArgs({% for name in collect_param_dict %}{{name}}{% if not loop.last %}, {% endif %}{% endfor %})
+    return CollectArgs(
+{%- for name in collect_param_dict %}
+        {{name}},
+{%- endfor %}
+    )
 
 
 def propagate(
@@ -79,27 +83,170 @@ def propagate(
     size: Size = None,
 ) -> {{propagate_signature.return_type_repr}}:
 
-    decomposed_layers = 1 if self.explain is True else self.decomposed_layers
+    assert self.decomposed_layers == 1  # TODO
 
+    # Begin Propagate Forward Pre Hook #########################################
     if not torch.jit.is_scripting() and not is_compiling():
         for hook in self._propagate_forward_pre_hooks.values():
-            kwargs = dict({% for name in propagate_signature.param_dict %}{{name}}={{name}}{% if not loop.last %}, {% endif %}{% endfor %})
-            res = hook(self, (edge_index, size, kwargs))
-            if res is not None:
-                edge_index, size, kwargs = res
+            hook_kwargs = dict(
 {%- for name in propagate_signature.param_dict %}
-                {{name}} = kwargs['{{name}}']
+                {{name}}={{name}},
 {%- endfor %}
+            )
+            res = hook(self, (edge_index, size, hook_kwargs))
+            if res is not None:
+                edge_index, size, hook_kwargs = res
+{%- for name in propagate_signature.param_dict %}
+                {{name}} = hook_kwargs['{{name}}']
+{%- endfor %}
+    # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
     fuse = is_sparse(edge_index) and self.fuse and self.explain is not True
 
     if fuse:
-        raise NotImplementedError
+        assert isinstance(edge_index, SparseTensor)  # TODO
+
+        # Begin Message and Aggregate Forward Pre Hook #########################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._message_and_aggregate_forward_pre_hooks.values():
+                hook_kwargs = dict(
+{%- for name in message_and_aggregate_args %}
+                    {{name}}={{name}},
+{%- endfor %}
+                )
+                res = hook(self, (edge_index, hook_kwargs))
+                if res is not None:
+                    edge_index, hook_kwargs = res
+{%- for name in message_and_aggregate_args %}
+                    {{name}} = hook_kwargs['{{name}}']
+{%- endfor %}
+        # End Message And Aggregate Forward Pre Hook ##########################
+
+        out = self.message_and_aggregate(
+            edge_index,
+{%- for name in message_and_aggregate_args %}
+            {{name}},
+{%- endfor %}
+        )
+
+        # Begin Message And Aggregate Forward Hook #############################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._message_and_aggregate_forward_hooks.values():
+                hook_kwargs = dict(
+{%- for name in message_and_aggregate_args %}
+                    {{name}}={{name}},
+{%- endfor %}
+                )
+                res = hook(self, (edge_index, hook_kwargs, ), out)
+                out = res if res is not None else out
+        # End Message And Aggregate Forward Hook ###############################
+
+        out = self.update(
+            out,
+{%- for name in update_args %}
+            {{name}}={{name}},
+{%- endfor %}
+        )
 
     else:
-        kwargs = self._collect(edge_index, {% for name in propagate_signature.param_dict %}{{name}}, {% endfor %}mutable_size)
-        out = self.message({% for name in message_args %}{{name}}=kwargs.{{name}}{% if not loop.last %}, {% endif %}{% endfor %})
-        out = self.aggregate(out{% for name in aggregate_args %}, {{name}}=kwargs.{{name}}{% endfor %})
-        out = self.update(out{% for name in update_args %}, {{name}}=kwargs.{{name}}{% endfor %})
-        return out
+        kwargs = self._collect(
+            edge_index,
+{%- for name in propagate_signature.param_dict %}
+            {{name}},
+{%- endfor %}
+            mutable_size,
+        )
+
+        # Begin Message Forward Pre Hook #######################################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._message_forward_pre_hooks.values():
+                hook_kwargs = dict(
+{%- for name in message_args %}
+                    {{name}}=kwargs.{{name}},
+{%- endfor %}
+                )
+                res = hook(self, (hook_kwargs, ))
+                hook_kwargs = res[0] if isinstance(res, tuple) else res
+                if res is not None:
+{%- for name in message_args %}
+                    kwargs.{{name}} = hook_kwargs['{{name}}']
+{%- endfor %}
+        # End Message Forward Pre Hook #########################################
+
+        out = self.message(
+{%- for name in message_args %}
+            {{name}}=kwargs.{{name}},
+{%- endfor %}
+        )
+
+        # Begin Message Forward Hook ###########################################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._message_forward_hooks.values():
+                hook_kwargs = dict(
+{%- for name in message_args %}
+                    {{name}}=kwargs.{{name}},
+{%- endfor %}
+                )
+                res = hook(self, (hook_kwargs, ), out)
+                out = res if res is not None else out
+        # End Message Forward Hook #############################################
+
+        if self.explain is True:  # TODO
+            raise NotImplementedError
+
+        # Begin Aggregate Forward Pre Hook #####################################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._aggregate_forward_pre_hooks.values():
+                hook_kwargs = dict(
+{%- for name in aggregate_args %}
+                    {{name}}=kwargs.{{name}},
+{%- endfor %}
+                )
+                res = hook(self, (hook_kwargs, ))
+                hook_kwargs = res[0] if isinstance(res, tuple) else res
+                if res is not None:
+{%- for name in aggregate_args %}
+                    kwargs.{{name}} = hook_kwargs['{{name}}']
+{%- endfor %}
+        # End Aggregate Forward Pre Hook #######################################
+
+        out = self.aggregate(
+            out,
+{%- for name in aggregate_args %}
+            {{name}}=kwargs.{{name}},
+{%- endfor %}
+        )
+
+        # Begin Aggregate Forward Hook #########################################
+        if not torch.jit.is_scripting() and not is_compiling():
+            for hook in self._aggregate_forward_hooks.values():
+                hook_kwargs = dict(
+{%- for name in aggregate_args %}
+                    {{name}}=kwargs.{{name}},
+{%- endfor %}
+                )
+                res = hook(self, (hook_kwargs, ), out)
+                out = res if res is not None else out
+        # End Aggregate Forward Hook ###########################################
+
+        out = self.update(
+            out,
+{%- for name in update_args %}
+            {{name}}=kwargs.{{name}},
+{%- endfor %}
+        )
+
+    # Begin Propagate Forward Hook ############################################
+    if not torch.jit.is_scripting() and not is_compiling():
+        for hook in self._propagate_forward_hooks.values():
+            hook_kwargs = dict(
+{%- for name in message_args %}
+                {{name}}=kwargs.{{name}},
+{%- endfor %}
+            )
+            res = hook(self, (edge_index, mutable_size, hook_kwargs), out)
+            out = res if res is not None else out
+    # End Propagate Forward Hook ##############################################
+
+    return out
