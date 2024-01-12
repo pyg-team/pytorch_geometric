@@ -9,8 +9,8 @@ from {{module}} import *
 
 
 class Propagate_{{uid}}(NamedTuple):
-{%- for param in prop_types %}
-    {{param.name}}: {{param.type}}
+{%- for k, v in prop_types.items() %}
+    {{k}}: {{v}}
 {%- endfor %}
 
 {% if edge_updater_types|length > 0 %}
@@ -27,8 +27,8 @@ class Collect_{{uid}}(NamedTuple):
 
 {% if edge_updater_types|length > 0 %}
 class EdgeUpdater_Collect_{{uid}}(NamedTuple):
-{%- for param in edge_collect_types %}
-    {{param.name}}: {{param.type}}
+{%- for k, v in edge_collect_types.items() %}
+    {{k}}: {{v}}
 {%- endfor %}
 {% endif %}
 
@@ -118,11 +118,11 @@ class {{cls_name}}({{parent_cls_name}}):
 
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
-{% for param in edge_collect_types %}
-{%- if param.name[-2:] not in ['_i', '_j'] %}
-        {{param.name}} = kwargs.{{param.name}}
+{% for arg in edge_user_args %}
+{%- if arg[-2:] not in ['_i', '_j'] %}
+        {{arg}} = kwargs.{{arg}}
 {%- else %}
-        {{param.name}}: {{param}} = {% if edge_collect_types[arg][:8] == 'Optional' %}None{% else %}init{% endif %}
+        {{arg}}: {{edge_collect_types[arg]}} = {% if edge_collect_types[arg][:8] == 'Optional' %}None{% else %}init{% endif %}
         data = kwargs.{{arg[:-2]}}
         if isinstance(data, (tuple, list)):
             assert len(data) == 2
@@ -189,14 +189,14 @@ class {{cls_name}}({{parent_cls_name}}):
     def propagate(
         self,
         edge_index: Union[Tensor, SparseTensor],
-        {% for param in prop_types %}
-        {{ param.name }}: {{ param.type }},
+        {% for name, type_hint in prop_types.items() %}
+        {{ name }}: {{ type_hint }},
         {% endfor %}
         size: Size=None,
     ) -> {{ prop_return_type }}:
 
         the_size = self._check_input(edge_index, size)
-        in_kwargs = Propagate_{{uid}}({% for param in prop_types %}{{param.name}}={{param.name}}{{ ", " if not loop.last }}{% endfor %})
+        in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
         {% if fuse %}
         if isinstance(edge_index, SparseTensor):

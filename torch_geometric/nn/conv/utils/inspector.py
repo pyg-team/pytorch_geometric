@@ -26,7 +26,7 @@ class Inspector:
     def __init__(self, cls: Type):
         self._cls = cls
         self._signature_dict: Dict[str, Signature] = {}
-        self._body_dict: Dict[str, str] = {}
+        self._source: Optional[str] = None
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
@@ -226,6 +226,14 @@ class Inspector:
 
     # Inspecting Method Bodies ################################################
 
+    @property
+    def source(self) -> str:
+        r"""Returns the source code of :obj:`cls`."""
+        if self._source is not None:
+            return self._source
+        self._source = inspect.getsource(self._cls)
+        return self._source
+
     def get_params_from_method_call(
         self,
         func: Union[Callable, str],
@@ -262,8 +270,7 @@ class Inspector:
             }
 
         # (2) Find type annotation:
-        source = inspect.getsource(self._cls)
-        match = find_parenthesis_content(source, f'{func_name}_type:')
+        match = find_parenthesis_content(self.source, f'{func_name}_type:')
         if match is not None:
             param_dict: Dict[str, Parameter] = {}
             for type_repr in split(match, sep=','):
@@ -277,7 +284,7 @@ class Inspector:
             return param_dict
 
         # (3) Parse the function call:
-        match = find_parenthesis_content(source, f'self.{func_name}')
+        match = find_parenthesis_content(self.source, f'self.{func_name}')
         if match is not None:
             param_dict: Dict[str, Parameter] = {}
             for i, type_repr in enumerate(split(match, sep=',')):
