@@ -77,7 +77,6 @@ def run(
         num_layers=len(sizes),
         out_channels=data.num_classes,
         dropout=dropout,
-        debug=debug,
         norm='batch',
     )
     model = to_hetero(model, data.metadata(), aggr="sum", debug=debug)
