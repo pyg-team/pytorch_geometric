@@ -6,7 +6,9 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling
-from torch_geometric.utils import is_sparse
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils.sparse import ptr2index
+from torch_geometric.typing import SparseTensor
 
 from {{module}} import *
 
@@ -27,42 +29,71 @@ def _collect(
 ) -> CollectArgs:
 
     i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
-{% for name in collect_param_dict %}
+
+    # Collect special arguments:
+    if isinstance(edge_index, Tensor) and is_torch_sparse_tensor(edge_index):
+{%- if 'edge_index' in collect_param_dict %}
+        raise ValueError("Cannot collect 'edge_indices' for sparse matrices")
+{%- endif %}
+        adj_t = edge_index
+        if adj_t.layout == torch.sparse_coo:
+            edge_index_i = adj_t.indices()[0]
+            edge_index_j = adj_t.indices()[1]
+            ptr = None
+        elif adj_t.layout == torch.sparse_csr:
+            ptr = adj_t.crow_indices()
+            edge_index_j = adj_t.col_indices()
+            edge_index_i = ptr2index(ptr, output_size=edge_index_j.numel())
+        else:
+            raise ValueError(f"Recieved invalid layout '{adj_t.layout}'")
+
+    elif isinstance(edge_index, SparseTensor):
+{%- if 'edge_index' in collect_param_dict %}
+        raise ValueError("Cannot collect 'edge_indices' for sparse matrices")
+{%- endif %}
+        adj_t = edge_index
+        edge_index_i, edge_index_j, _value = adj_t.coo()
+        ptr, _, _ = adj_t.csr()
+
+    elif isinstance(edge_index, Tensor):
+{%- if 'adj_t' in collect_param_dict %}
+        raise ValueError("Cannot collect 'adj_t' for edge indices")
+{%- endif %}
+        edge_index_i = edge_index[i]
+        edge_index_j = edge_index[j]
+        ptr = None
+
+    # Collect user-defined arguments:
+{%- for name in collect_param_dict %}
 {%- if name.endswith('_i') or name.endswith('_j') %}
-    # Collect `{{name}}`:
+    # ({{loop.index}}) - Collect `{{name}}`:
     if isinstance({{name[:-2]}}, (tuple, list)):
         assert len({{name[:-2]}}) == 2
         _{{name[:-2]}}_0, _{{name[:-2]}}_1 = {{name[:-2]}}[0], {{name[:-2]}}[1]
         if isinstance(_{{name[:-2]}}_0, Tensor):
             self._set_size(size, 0, _{{name[:-2]}}_0)
 {%- if name.endswith('_j') %}
-            {{name}} = self._lift(_{{name[:-2]}}_0, edge_index, {{name[-1]}})
+            {{name}} = _{{name[:-2]}}_0.index_select(self.node_dim, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
         if isinstance(_{{name[:-2]}}_1, Tensor):
             self._set_size(size, 1, _{{name[:-2]}}_1)
 {%- if name.endswith('_i') %}
-            {{name}} = self._lift(_{{name[:-2]}}_1, edge_index, {{name[-1]}})
+            {{name}} = _{{name[:-2]}}_1.index_select(self.node_dim, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
     elif isinstance({{name[:-2]}}, Tensor):
         self._set_size(size, 0, {{name[:-2]}})
         self._set_size(size, 1, {{name[:-2]}})
-        {{name}} = self._lift({{name[:-2]}}, edge_index, {{name[-1]}})
+        {{name}} = {{name[:-2]}}.index_select(self.node_dim, edge_index_{{name[-1]}})
     else:
         {{name}} = None
 {%- endif %}
 {%- endfor %}
 
-    assert isinstance(edge_index, Tensor)
-    adj_t = None
-    edge_index_i = edge_index[i]
-    edge_index_j = edge_index[j]
-    ptr = None
     index = edge_index_i
-
     size_i = size[i]
     size_j = size[j]
     dim_size = size_i
@@ -105,7 +136,6 @@ def propagate(
     fuse = is_sparse(edge_index) and self.fuse and self.explain is not True
 
     if fuse:
-        assert isinstance(edge_index, SparseTensor)  # TODO
 
         # Begin Message and Aggregate Forward Pre Hook #########################
         if not torch.jit.is_scripting() and not is_compiling():
@@ -150,6 +180,7 @@ def propagate(
         )
 
     else:
+
         kwargs = self._collect(
             edge_index,
 {%- for name in propagate_signature.param_dict %}

@@ -189,7 +189,7 @@ class MessagePassing(torch.nn.Module):
             )
 
             self.propagate_jit = module.propagate
-            self._collect_jit = module._collect
+            self.collect_jit = module._collect
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
