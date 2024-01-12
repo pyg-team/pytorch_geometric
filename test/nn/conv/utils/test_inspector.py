@@ -13,7 +13,7 @@ from torch_geometric.nn.conv.utils.inspector import (
 from torch_geometric.typing import OptPairTensor
 
 
-def test_eval_type():
+def test_eval_type() -> None:
     inspector = Inspector(SAGEConv)
 
     assert inspector.eval_type('Tensor') == Tensor
@@ -22,7 +22,7 @@ def test_eval_type():
     assert inspector.eval_type('Tuple[int, ...]') == Tuple[int, ...]
 
 
-def test_type_repr():
+def test_type_repr() -> None:
     inspector = Inspector(SAGEConv)
 
     assert inspector.type_repr(Any) == 'typing.Any'
@@ -53,10 +53,12 @@ def test_inspector_sage_conv() -> None:
 
     out = inspector.inspect_signature(SAGEConv.message)
     assert isinstance(out, Signature)
-    assert out.param_dict == {'x_j': Parameter('x_j', Tensor, inspect._empty)}
+    assert out.param_dict == {
+        'x_j': Parameter('x_j', Tensor, 'Tensor', inspect._empty)
+    }
     assert out.return_type == Tensor
     assert inspector.get_flat_params(['message', 'message']) == [
-        Parameter('x_j', Tensor, inspect._empty),
+        Parameter('x_j', Tensor, 'Tensor', inspect._empty),
     ]
     assert inspector.get_flat_param_names(['message']) == ['x_j']
 
@@ -66,7 +68,7 @@ def test_inspector_sage_conv() -> None:
     assert torch.allclose(data['x_j'], kwargs['x_j'])
 
     assert inspector.get_params_from_method_call(SAGEConv.propagate) == {
-        'x': Parameter('x', 'OptPairTensor', inspect._empty),
+        'x': Parameter('x', OptPairTensor, 'OptPairTensor', inspect._empty),
     }
 
 
@@ -79,13 +81,13 @@ def test_inspector_gat_conv() -> None:
     out = inspector.inspect_signature(GATConv.message)
     assert isinstance(out, Signature)
     assert out.param_dict == {
-        'x_j': Parameter('x_j', Tensor, inspect._empty),
-        'alpha': Parameter('alpha', Tensor, inspect._empty),
+        'x_j': Parameter('x_j', Tensor, 'Tensor', inspect._empty),
+        'alpha': Parameter('alpha', Tensor, 'Tensor', inspect._empty),
     }
     assert out.return_type == Tensor
     assert inspector.get_flat_params(['message', 'message']) == [
-        Parameter('x_j', Tensor, inspect._empty),
-        Parameter('alpha', Tensor, inspect._empty),
+        Parameter('x_j', Tensor, 'Tensor', inspect._empty),
+        Parameter('alpha', Tensor, 'Tensor', inspect._empty),
     ]
     assert inspector.get_flat_param_names(['message']) == ['x_j', 'alpha']
 
@@ -96,8 +98,8 @@ def test_inspector_gat_conv() -> None:
     assert torch.allclose(data['alpha'], kwargs['alpha'])
 
     assert inspector.get_params_from_method_call(SAGEConv.propagate) == {
-        'x': Parameter('x', 'OptPairTensor', inspect._empty),
-        'alpha': Parameter('alpha', 'Tensor', inspect._empty),
+        'x': Parameter('x', OptPairTensor, 'OptPairTensor', inspect._empty),
+        'alpha': Parameter('alpha', Tensor, 'Tensor', inspect._empty),
     }
 
 
@@ -107,7 +109,7 @@ def test_get_params_from_method_call() -> None:
 
     inspector = Inspector(FromMethodCall1)
     assert inspector.get_params_from_method_call('propagate') == {
-        'x': Parameter('x', Tensor, inspect._empty),
+        'x': Parameter('x', Tensor, 'Tensor', inspect._empty),
     }
 
     class FromMethodCall2:
@@ -116,7 +118,7 @@ def test_get_params_from_method_call() -> None:
 
     inspector = Inspector(FromMethodCall2)
     assert inspector.get_params_from_method_call('propagate') == {
-        'x': Parameter('x', 'Tensor', inspect._empty),
+        'x': Parameter('x', Tensor, 'Tensor', inspect._empty),
     }
 
     class FromMethodCall3:
@@ -130,7 +132,7 @@ def test_get_params_from_method_call() -> None:
     inspector = Inspector(FromMethodCall3)
     exclude = [0, 'size']
     assert inspector.get_params_from_method_call('propagate', exclude) == {
-        'x': Parameter('x', Tensor, inspect._empty),
+        'x': Parameter('x', Tensor, 'Tensor', inspect._empty),
     }
 
     class FromMethodCall4:
