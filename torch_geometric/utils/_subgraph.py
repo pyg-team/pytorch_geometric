@@ -282,8 +282,9 @@ def k_hop_subgraph(
         flow (str, optional): The flow direction of :math:`k`-hop aggregation
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
-        directed (bool, optional): If set to :obj:`False`, will include all
-            edges between all sampled nodes. (default: :obj:`True`)
+        directed (bool, optional): If set to :obj:`True`, will only include
+            directed edges to the seed nodes :obj:`node_idx`.
+            (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
              :class:`BoolTensor`)
