@@ -188,6 +188,20 @@ class Inspector:
             return_type_repr=signature.return_type_repr,
         )
 
+    def get_param_dict(
+        self,
+        func: Union[Callable, str],
+        exclude: Optional[List[str]] = None,
+    ) -> Dict[str, Parameter]:
+        r"""Returns the parameters of the inspected function :obj:`func`.
+
+        Args:
+            func (str or callable): The function.
+            exclude (list[str], optional): The parameter names to exclude.
+                (default: :obj:`None`)
+        """
+        return self.get_signature(func, exclude).param_dict
+
     def get_params(
         self,
         func: Union[Callable, str],
@@ -200,14 +214,13 @@ class Inspector:
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
-        signature = self.get_signature(func, exclude)
-        return [param for param in signature.param_dict.values()]
+        return list(self.get_param_dict(func, exclude).values())
 
-    def get_flat_params(
+    def get_flat_param_dict(
         self,
         funcs: List[Union[Callable, str]],
         exclude: Optional[List[str]] = None,
-    ) -> List[Parameter]:
+    ) -> Dict[str, Parameter]:
         r"""Returns the union of parameters of all inspected functions in
         :obj:`funcs`.
 
@@ -216,11 +229,11 @@ class Inspector:
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
-        out_dict: Dict[str, Parameter] = {}
+        param_dict: Dict[str, Parameter] = {}
         for func in funcs:
             params = self.get_params(func, exclude)
             for param in params:
-                expected = out_dict.get(param.name)
+                expected = param_dict.get(param.name)
                 if expected is not None and param.type != expected.type:
                     raise ValueError(f"Found inconsistent types for argument "
                                      f"'{param.name}'. Expected type "
@@ -239,7 +252,7 @@ class Inspector:
                     if default is inspect._empty:
                         default = param.default
 
-                    out_dict[param.name] = Parameter(
+                    param_dict[param.name] = Parameter(
                         name=param.name,
                         type=param.type,
                         type_repr=param.type_repr,
@@ -247,9 +260,24 @@ class Inspector:
                     )
 
                 if expected is None:
-                    out_dict[param.name] = param
+                    param_dict[param.name] = param
 
-        return list(out_dict.values())
+        return param_dict
+
+    def get_flat_params(
+        self,
+        funcs: List[Union[Callable, str]],
+        exclude: Optional[List[str]] = None,
+    ) -> List[Parameter]:
+        r"""Returns the union of parameters of all inspected functions in
+        :obj:`funcs`.
+
+        Args:
+            funcs (list[str or callable]): The functions.
+            exclude (list[str], optional): The parameter names to exclude.
+                (default: :obj:`None`)
+        """
+        return list(self.get_flat_param_dict(funcs, exclude).values())
 
     def get_param_names(
         self,
@@ -263,7 +291,7 @@ class Inspector:
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
-        return [param.name for param in self.get_params(func, exclude)]
+        return list(self.get_param_dict(func, exclude).keys())
 
     def get_flat_param_names(
         self,
@@ -278,7 +306,7 @@ class Inspector:
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
-        return [param.name for param in self.get_flat_params(funcs, exclude)]
+        return list(self.get_flat_param_dict(funcs, exclude).keys())
 
     def collect_param_data(
         self,
