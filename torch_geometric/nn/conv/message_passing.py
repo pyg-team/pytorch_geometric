@@ -136,6 +136,7 @@ class MessagePassing(torch.nn.Module):
         # Collect attribute names requested in message passing hooks:
         self.inspector = Inspector(self.__class__)
         self.inspector.inspect_signature(self.message)
+        self.inspector.inspect_signature(self.explain_message, exclude=[0])
         self.inspector.inspect_signature(self.aggregate, exclude=[0, 'aggr'])
         self.inspector.inspect_signature(self.message_and_aggregate, [0])
         self.inspector.inspect_signature(self.update, exclude=[0])
@@ -180,12 +181,15 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_signature=self._get_propagate_signature(),
                 collect_param_dict=self.inspector.get_flat_param_dict(
-                    ['message', 'aggregate', 'update']),
+                    ['message', 'explain_message', 'aggregate', 'update']),
                 message_args=self.inspector.get_param_names('message'),
+                explain_message_args=self.inspector.get_param_names(
+                    'explain_message'),
                 aggregate_args=self.inspector.get_param_names('aggregate'),
                 message_and_aggregate_args=self.inspector.get_param_names(
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
+                with_explain=True,
             )
 
             self.propagate_jit = module.propagate
@@ -674,7 +678,7 @@ class MessagePassing(torch.nn.Module):
         self._user_args = self.inspector.get_flat_param_names(
             methods, exclude=self.special_args)
 
-    def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
+    def explain_message(self, inputs: Tensor, size_i: Optional[int]) -> Tensor:
         # NOTE Replace this method in custom explainers per message-passing
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)

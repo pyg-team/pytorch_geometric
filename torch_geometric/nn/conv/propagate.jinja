@@ -65,7 +65,8 @@ def _collect(
 
     # Collect user-defined arguments:
 {%- for name in collect_param_dict %}
-{%- if name.endswith('_i') or name.endswith('_j') %}
+{%- if (name.endswith('_i') or name.endswith('_j')) and
+        name not in ['edge_index_i', 'edge_index_j', 'size_i', 'size_j'] %}
     # ({{loop.index}}) - Collect `{{name}}`:
     if isinstance({{name[:-2]}}, (tuple, list)):
         assert len({{name[:-2]}}) == 2
@@ -133,7 +134,11 @@ def propagate(
     # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
-    fuse = is_sparse(edge_index) and self.fuse and self.explain is not True
+{%- if with_explain %}
+    fuse = False  # Disable `fuse` for explainability.
+{%- else %}
+    fuse = is_sparse(edge_index) and self.fuse
+{% endif %}
 
     if fuse:
 
@@ -223,8 +228,14 @@ def propagate(
                 out = res if res is not None else out
         # End Message Forward Hook #############################################
 
-        if self.explain is True:  # TODO
-            raise NotImplementedError
+{%- if with_explain %}
+        out = self.explain_message(
+            out,
+{%- for name in explain_message_args %}
+            {{name}}=kwargs.{{name}},
+{%- endfor %}
+        )
+{%- endif %}
 
         # Begin Aggregate Forward Pre Hook #####################################
         if not torch.jit.is_scripting() and not is_compiling():
