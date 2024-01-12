@@ -122,7 +122,7 @@ class Inspector:
         r"""Returns the parameters of the inspected function :obj:`func`.
 
         Args:
-            funcs (str or callable): The function.
+            func (str or callable): The function.
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
@@ -181,7 +181,7 @@ class Inspector:
         r"""Returns the parameter names of the inspected function :obj:`func`.
 
         Args:
-            funcs (str or callable): The function.
+            func (str or callable): The function.
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
