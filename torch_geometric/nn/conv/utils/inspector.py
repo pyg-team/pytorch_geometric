@@ -1,6 +1,5 @@
 import inspect
 import re
-from itertools import chain
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, Union
 
 from torch import Tensor
@@ -8,7 +7,7 @@ from torch import Tensor
 
 class Parameter(NamedTuple):
     name: str
-    type: Type
+    type: Union[Type, str]
     default: Any
 
 
@@ -55,7 +54,7 @@ class Inspector:
         of parameter types and return type.
 
         Args:
-            func (callabel or str): The function to inspect.
+            func (callabel or str): The function.
             exclude (list[int or str]): A list of parameters to exclude, either
                 given by their name or index. (default: :obj:`None`)
         """
@@ -143,7 +142,36 @@ class Inspector:
             exclude (list[str], optional): The parameter names to exclude.
                 (default: :obj:`None`)
         """
-        return list(set(chain(self.get_params(f, exclude) for f in funcs)))
+        out_dict: Dict[str, Parameter] = {}
+        for func in funcs:
+            params = self.get_params(func, exclude)
+            for param in params:
+                expected = out_dict.get(param.name)
+                if expected is not None and param.type != expected.type:
+                    raise ValueError(f"Found inconsistent types for argument "
+                                     f"'{param.name}'. Expected type "
+                                     f"'{expected.type}' but found type "
+                                     f"'{param.type}'.")
+
+                if expected is not None and param.default != expected.default:
+                    if (param.default is not inspect._empty
+                            and expected.default is not inspect._empty):
+                        raise ValueError(f"Found inconsistent defaults for "
+                                         f"argument '{param.name}'. Expected "
+                                         f"'{expected.default}'  but found "
+                                         f"'{param.default}'.")
+
+                    default = expected.default
+                    if default is inspect._empty:
+                        default = param.default
+
+                    out_dict[param.name] = Parameter(  #
+                        param.name, param.type, default)
+
+                if expected is None:
+                    out_dict[param.name] = param
+
+        return list(out_dict.values())
 
     def get_param_names(
         self,
@@ -198,42 +226,24 @@ class Inspector:
 
     # Inspecting Method Bodies ################################################
 
-    def inspect_body(self, func: Union[Callable, str]) -> str:
-        r"""Inspects the function body of :obj:`func` and returns its content.
-
-        Args:
-            func (callabel or str): The function to inspect.
-        """
-        if isinstance(func, str):
-            func = getattr(self._cls, func)
-
-        if func.__name__ in self._body_dict:
-            return self._body_dict[func.__name__]
-
-        self._body_dict[func.__name__] = inspect.getsource(func)
-        return self._body_dict[func.__name__]
-
-    def get_body(self, func: Union[Callable, str]) -> str:
-        r"""Returns the function body of the inspected function :obj:`func`.
-
-        Args:
-            func (callabel or str): The function.
-        """
-        func_name = func if isinstance(func, str) else func.__name__
-        body = self._body_dict.get(func_name)
-        if body is None:
-            raise IndexError(f"Could not access body for function "
-                             f"'{func_name}'. Did you forget to inspect it?")
-        return body
-
     def get_params_from_method_call(
         self,
         func: Union[Callable, str],
-        exclude: Optional[List[Union[int, str]] = None,
+        exclude: Optional[List[Union[int, str]]] = None,
     ) -> Dict[str, Parameter]:
+        r"""Parses a method call of :obj:`func` and returns its keyword
+        arguments.
 
-        if isinstance(func, str):
-            func = getattr(self._cls, func)
+        .. note::
+            The method is required to be called via keyword arguments in case
+            type annotations are not found.
+
+        Args:
+            func (callabel or str): The function.
+            exclude (list[int or str]): A list of parameters to exclude, either
+                given by their name or index. (default: :obj:`None`)
+        """
+        func_name = func if isinstance(func, str) else func.__name__
 
         # Three ways to specify the parameters of an unknown function header:
         # 1. Defined as class attributes in `{func_name}_type`.
@@ -241,10 +251,10 @@ class Inspector:
         # 3. Defined via parsing of the function call.
 
         # (1) Find class attribute:
-        if hasattr(self, f'{func.__name__}_type'):
-            type_dict = getattr(self, f'{func.__name__}_type')
+        if hasattr(self._cls, f'{func_name}_type'):
+            type_dict = getattr(self._cls, f'{func_name}_type')
             if not isinstance(type_dict, dict):
-                raise ValueError(f"'{func.__name__}_type' is expected to be a "
+                raise ValueError(f"'{func_name}_type' is expected to be a "
                                  f"dictionary (got '{type(type_dict)}')")
             return {
                 name: Parameter(name, param_type, inspect._empty)
@@ -252,24 +262,24 @@ class Inspector:
             }
 
         # (2) Find type annotation:
-        source = inspect.getsource(func)
-        match = find_parenthesis_content(source, f'{func.__name__}_type')
+        source = inspect.getsource(self._cls)
+        match = find_parenthesis_content(source, f'{func_name}_type:')
         if match is not None:
-            param_dict = Dict[str, Parameter] = {}
+            param_dict: Dict[str, Parameter] = {}
             for type_repr in split(match, sep=','):
                 name_and_type = re.split(r'\s*:\s*', type_repr)
                 if len(name_and_type) != 2:
                     raise ValueError(f"Could not parse the argument "
                                      f"'{type_repr}' of the "
-                                     f"'{func.__name__}_type' annotation")
-                name, param_type = name_and_type[0], eval(name_and_type[1])
+                                     f"'{func_name}_type' annotation")
+                name, param_type = name_and_type[0], name_and_type[1]
                 param_dict[name] = Parameter(name, param_type, inspect._empty)
             return param_dict
 
         # (3) Parse the function call:
-        match = find_parenthesis_content(source, f'self.{func.__name__}')
+        match = find_parenthesis_content(source, f'self.{func_name}')
         if match is not None:
-            param_dict = Dict[str, Parameter] = {}
+            param_dict: Dict[str, Parameter] = {}
             for i, type_repr in enumerate(split(match, sep=',')):
                 if exclude is not None and i in exclude:
                     continue
@@ -277,7 +287,7 @@ class Inspector:
                 if len(name_and_content) != 2:
                     raise ValueError(f"Could not parse the keyword argument "
                                      f"'{type_repr}' of the "
-                                     f"'self.{func.__name__}' call")
+                                     f"'self.{func_name}' call")
                 name = name_and_content[0]
                 if exclude is not None and name in exclude:
                     continue
@@ -288,6 +298,7 @@ class Inspector:
 
 
 def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
+    r"""Returns the content of :obj:`{prefix}.*(...)` within :obj:`source`."""
     match = re.search(prefix, source)
     if match is None:
         return
@@ -296,8 +307,10 @@ def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
     if offset < 0:
         return
 
+    source = source[match.start() + offset:]
+
     depth = 0
-    for end, char in enumerate(source[match.start() + offset]):
+    for end, char in enumerate(source):
         if char == '(':
             depth += 1
         if char == ')':
@@ -313,6 +326,8 @@ def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
 
 
 def split(content: str, sep: str) -> List[str]:
+    r"""Splits :obj:`content` based on :obj:`sep`.
+    :obj:`sep` inside parentheses or square brackets are ignored."""
     assert len(sep) == 1
     outs: List[str] = []
 
@@ -325,5 +340,6 @@ def split(content: str, sep: str) -> List[str]:
         elif char == sep and depth == 0:
             outs.append(content[start:end].strip())
             start = end + 1
-    outs.append(content[start:].strip())
+    if start != len(content):  # Respect dangling `sep`:
+        outs.append(content[start:].strip())
     return outs
