@@ -37,6 +37,14 @@ def module_from_template(
 
 
 def type_hint_to_str(type_hint: Any) -> str:
+    if (getattr(type_hint, '__origin', None) == 'typing.Union'
+            and len(getattr(type_hint, '__args__'), []) == 2):
+        arg1, arg2 = type_hint.__args__
+        if arg1 is type(None):
+            return f'typing.Optional[{type_hint_to_str(arg2)}]'
+        if arg2 is type(None):
+            return f'typing.Optional[{type_hint_to_str(arg1)}]'
+
     type_repr = str(type_hint)
     type_repr = re.sub(r'<class \'(.*)\'>', r'\1', type_repr)
     return type_repr
