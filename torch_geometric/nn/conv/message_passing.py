@@ -184,14 +184,19 @@ class MessagePassing(torch.nn.Module):
                 for param in prop_types.values()
             }
             prop_return_type = type_hint_to_str(prop_return_type)
+            collect_types = self.inspector.get_flat_params(
+                ['message', 'aggregate', 'update'])
+            collect_types = {
+                param.name: type_hint_to_str(param.type)
+                for param in collect_types
+            }
             module = module_from_template(
                 module_name=f'{self.__module__}_propagate',
                 module=self.__module__,
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_types=prop_types,
                 propagate_return_type=prop_return_type,
-                collect_types=self.inspector.get_flat_params(
-                    ['message', 'aggregate', 'update']),
+                collect_types=collect_types,
                 message_args=self.inspector.get_param_names('message'),
                 aggregate_args=self.inspector.get_param_names('aggregate'),
                 message_and_aggregate_args=self.inspector.get_param_names(
