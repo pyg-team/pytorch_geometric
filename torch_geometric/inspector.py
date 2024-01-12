@@ -361,6 +361,7 @@ class Inspector:
                 if len(name_and_type_repr) != 2:
                     raise ValueError(f"Could not parse the argument '{arg}' "
                                      f"of the '{func_name}_type' annoitation")
+
                 name, type_repr = name_and_type_repr
                 param_dict[name] = Parameter(
                     name=name,
@@ -376,13 +377,17 @@ class Inspector:
             for i, kwarg in enumerate(split(match, sep=',')):
                 if exclude is not None and i in exclude:
                     continue
+
                 name_and_content = re.split(r'\s*=\s*', kwarg)
                 if len(name_and_content) != 2:
                     raise ValueError(f"Could not parse the keyword argument "
                                      f"'{kwarg}' in 'self.{func_name}(...)'")
+
                 name, _ = name_and_content
+
                 if exclude is not None and name in exclude:
                     continue
+
                 param_dict[name] = Parameter(
                     name=name,
                     type=Tensor,
