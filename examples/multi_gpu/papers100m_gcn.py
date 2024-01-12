@@ -155,7 +155,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                  directory=eval_path, **kwargs)
 
             print('test', len(split_idx['test']))
-            test_path = os.path.join(tempdir, f'samples_test')
+            test_path = os.path.join(tempdir, 'samples_test')
             BulkSampleLoader(cugraph_store, cugraph_store,
                              input_nodes=split_idx['test'],
                              directory=test_path, **kwargs)
@@ -249,7 +249,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
     with Join([model], divide_by_initial_world_size=False):
         if cugraph_data_loader:
-            test_path = os.path.join(tempdir, f'samples_test')
+            test_path = os.path.join(tempdir, 'samples_test')
 
             input_files = np.array_split(np.array(os.listdir(test_path)),
                                          world_size)[rank]
