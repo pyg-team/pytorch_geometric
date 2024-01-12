@@ -22,6 +22,11 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.conv.propagate import (
+    find_parenthesis_content,
+    module_from_template,
+    type_hint_to_str,
+)
 from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 from torch_geometric.nn.conv.utils.typing import sanitize, split_types_repr
@@ -172,6 +177,60 @@ class MessagePassing(torch.nn.Module):
         self._message_and_aggregate_forward_hooks: HookDict = OrderedDict()
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
+
+        # Test code for performing on-the-fly TorchScript support:
+        if getattr(self, 'jit_on_init', False):
+            root_dir = osp.dirname(osp.realpath(__file__))
+            prop_types, prop_return_type = self._get_propagate_types()
+            module = module_from_template(
+                module_name=f'{self.__module__}_propagate',
+                module=self.__module__,
+                template_path=osp.join(root_dir, 'propagate.jinja'),
+                propagate_types=prop_types,
+                propagate_return_type=prop_return_type,
+                collect_types=self.inspector.types(
+                    ['message', 'aggregate', 'update']),
+                message_args=self.inspector.keys(['message']),
+                aggregate_args=self.inspector.keys(['aggregate']),
+                message_and_aggregate_args=self.inspector.keys(
+                    ['message_and_aggregate']),
+                update_args=self.inspector.keys(['update']),
+            )
+
+            self.propagate_jit = module.propagate
+            self._collect_jit = module._collect
+
+    def _get_propagate_types(self) -> Tuple[Dict[str, str], str]:
+        # Parse `propagate_types` and generate an efficient `propagate` method:
+        if hasattr(self, 'propagate_type'):
+            assert isinstance(self.propagate_type, dict)
+            propagate_types = {
+                name: type_hint_to_str(type_hint)
+                for name, type_hint in self.propagate_type.items()
+            }
+        else:
+            source = inspect.getsource(self.forward)
+            match = find_parenthesis_content(source, prefix='propagate_type:')
+            if match is not None:
+                propagate_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
+            else:
+                match = find_parenthesis_content(source, 'self.propagate')
+                if match is None:  # No `self.propagate` call:
+                    return
+                args = [  # Find all keyword argument names:
+                    arg[:arg.find('=')].strip() for arg in match.split(',')
+                    if arg.find('=') >= 0
+                ]
+                propagate_types = {
+                    arg: 'Tensor'
+                    for arg in args if arg not in {'edge_index', 'size'}
+                }
+
+        propagate_return_type = type_hint_to_str(
+            get_type_hints(self.update).get('return', Tensor))
+
+        return propagate_types, propagate_return_type
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
@@ -845,26 +904,7 @@ class MessagePassing(torch.nn.Module):
         source = inspect.getsource(self.__class__)
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
-        if hasattr(self, 'propagate_type'):
-            assert isinstance(self.propagate_type, dict)
-            prop_types = {
-                k: sanitize(str(v))
-                for k, v in self.propagate_type.items()
-            }
-        else:
-            match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
-            if match is None:
-                raise TypeError(
-                    'TorchScript support requires the definition of the types '
-                    'passed to `propagate()`. Please specify them via\n\n'
-                    'propagate_type = {"arg1": type1, "arg2": type2, ... }\n\n'
-                    'or via\n\n'
-                    '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
-                    'inside the `MessagePassing` module.')
-            prop_types = dict([
-                re.split(r'\s*:\s*', t)
-                for t in split_types_repr(match.group(1))
-            ])
+        prop_types, prop_return_type = self._get_propagate_types()
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
         if 'edge_update' in self.__class__.__dict__.keys():
@@ -875,7 +915,7 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater_type.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_type:\s*\((.*)\)', source)
+                match = find_parenthesis_content(source, 'edge_updater_type:')
                 if match is None:
                     raise TypeError(
                         'TorchScript support requires the definition of the '
@@ -884,17 +924,10 @@ class MessagePassing(torch.nn.Module):
                         '"arg2": type2, ... }\n\n or via\n\n'
                         '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
-                edge_updater_types = dict([
-                    re.split(r'\s*:\s*', t)
-                    for t in split_types_repr(match.group(1))
-                ])
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in split_types_repr(match)])
         else:
             edge_updater_types = {}
-
-        type_hints = get_type_hints(self.__class__.update)
-        prop_return_type = type_hints.get('return', 'Tensor')
-        if str(prop_return_type)[:6] == '<class':
-            prop_return_type = prop_return_type.__name__
 
         type_hints = get_type_hints(self.__class__.edge_update)
         edge_updater_return_type = type_hints.get('return', 'Tensor')

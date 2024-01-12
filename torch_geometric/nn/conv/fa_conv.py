@@ -201,7 +201,8 @@ class FAConv(MessagePassing):
         alpha_l = self.att_l(x)
         alpha_r = self.att_r(x)
 
-        # propagate_type: (x: Tensor, alpha: PairTensor, edge_weight: OptTensor)  # noqa
+        # propagate_type: (x: Tensor, alpha: PairTensor,
+        #                  edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, alpha=(alpha_l, alpha_r),
                              edge_weight=edge_weight)
 

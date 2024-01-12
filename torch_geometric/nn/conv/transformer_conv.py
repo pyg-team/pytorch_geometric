@@ -224,7 +224,8 @@ class TransformerConv(MessagePassing):
         key = self.lin_key(x[0]).view(-1, H, C)
         value = self.lin_value(x[0]).view(-1, H, C)
 
-        # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor) # noqa
+        # propagate_type: (query: Tensor, key:Tensor, value: Tensor,
+        #                  edge_attr: OptTensor)
         out = self.propagate(edge_index, query=query, key=key, value=value,
                              edge_attr=edge_attr)
 

@@ -17,9 +17,7 @@ def get_home_dir() -> str:
     if _home_dir is not None:
         return _home_dir
 
-    home_dir = os.getenv(ENV_PYG_HOME, DEFAULT_CACHE_DIR)
-    home_dir = osp.expanduser(home_dir)
-    return home_dir
+    return osp.expanduser(os.getenv(ENV_PYG_HOME, DEFAULT_CACHE_DIR))
 
 
 def set_home_dir(path: str) -> None:
