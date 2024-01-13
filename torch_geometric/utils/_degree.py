@@ -26,7 +26,6 @@ def degree(index: Tensor, num_nodes: Optional[int] = None,
         tensor([3, 1, 1])
     """
     N = maybe_num_nodes(index, num_nodes)
-    print(N, index)
     out = torch.zeros((N, ), dtype=dtype, device=index.device)
     one = torch.ones((index.size(0), ), dtype=out.dtype, device=out.device)
     return out.scatter_add_(0, index, one)
