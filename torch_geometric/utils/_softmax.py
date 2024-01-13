@@ -52,10 +52,13 @@ def softmax(
                 [0.7607, 0.2393, 1.0000, 1.0000],
                 [0.8062, 0.1938, 1.0000, 1.0000]])
     """
-    if ptr is not None:
-        if (src.device.type == 'cpu' and torch_geometric.typing.WITH_SOFTMAX
-                and not is_compiling()):  # pragma: no cover
-            return pyg_lib.ops.softmax_csr(src, ptr, dim)
+    if (ptr is not None and src.device.type == 'cpu'
+            and torch_geometric.typing.WITH_SOFTMAX
+            and not is_compiling()):  # pragma: no cover
+        return pyg_lib.ops.softmax_csr(src, ptr, dim)
+
+    if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
+            and not is_compiling()):
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
         count = ptr[1:] - ptr[:-1]
