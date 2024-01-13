@@ -76,6 +76,6 @@ def softmax(
         out_sum = scatter(out, index, dim, dim_size=N, reduce='sum') + 1e-16
         out_sum = out_sum.index_select(dim, index)
     else:
-        raise NotImplementedError
+        raise NotImplementedError("'softmax' requires 'index' to be specified")
 
     return out / out_sum
