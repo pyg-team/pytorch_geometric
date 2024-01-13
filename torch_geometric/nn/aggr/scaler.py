@@ -82,9 +82,7 @@ class DegreeScalerAggregation(Aggregation):
         out = self.aggr(x, index, ptr, dim_size, dim)
 
         assert index is not None
-        print(index, dim_size, out.dtype)
         deg = degree(index, num_nodes=dim_size, dtype=out.dtype)
-        return out
         size = [1] * len(out.size())
         size[dim] = -1
         deg = deg.view(size)
