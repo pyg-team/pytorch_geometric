@@ -74,21 +74,21 @@ def _collect(
         if isinstance(_{{name[:-2]}}_0, Tensor):
             self._set_size(size, 0, _{{name[:-2]}}_0)
 {%- if name.endswith('_j') %}
-            {{name}} = _{{name[:-2]}}_0.index_select(self.node_dim, edge_index_{{name[-1]}})
+            {{name}} = self._index_select(_{{name[:-2]}}_0, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
         if isinstance(_{{name[:-2]}}_1, Tensor):
             self._set_size(size, 1, _{{name[:-2]}}_1)
 {%- if name.endswith('_i') %}
-            {{name}} = _{{name[:-2]}}_1.index_select(self.node_dim, edge_index_{{name[-1]}})
+            {{name}} = self._index_select(_{{name[:-2]}}_1, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
     elif isinstance({{name[:-2]}}, Tensor):
         self._set_size(size, 0, {{name[:-2]}})
         self._set_size(size, 1, {{name[:-2]}})
-        {{name}} = {{name[:-2]}}.index_select(self.node_dim, edge_index_{{name[-1]}})
+        {{name}} = self._index_select(_{{name[:-2]}}, edge_index_{{name[-1]}})
     else:
         {{name}} = None
 {%- endif %}
@@ -138,7 +138,7 @@ def propagate(
     fuse = False  # Disable `fuse` for explainability.
 {%- else %}
     fuse = is_sparse(edge_index) and self.fuse
-{% endif %}
+{%- endif %}
 
     if fuse:
 
@@ -228,7 +228,8 @@ def propagate(
                 out = res if res is not None else out
         # End Message Forward Hook #############################################
 
-{% if with_explain %}
+{%- if with_explain %}
+
         out = self.explain_message(
             out,
 {%- for name in explain_message_args %}

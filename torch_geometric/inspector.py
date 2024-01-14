@@ -188,6 +188,18 @@ class Inspector:
             return_type_repr=signature.return_type_repr,
         )
 
+    def remove_signature(
+        self,
+        func: Union[Callable, str],
+    ) -> Optional[Signature]:
+        r"""Removes the inspected function signature :obj:`func`.
+
+        Args:
+            func (callabel or str): The function.
+        """
+        func_name = func if isinstance(func, str) else func.__name__
+        return self._signature_dict.pop(func_name, None)
+
     def get_param_dict(
         self,
         func: Union[Callable, str],

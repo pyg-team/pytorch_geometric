@@ -20,6 +20,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
+from torch_geometric import is_compiling
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.propagate import module_from_template
@@ -181,7 +182,7 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_signature=self._get_propagate_signature(),
                 collect_param_dict=self.inspector.get_flat_param_dict(
-                    ['message', 'explain_message', 'aggregate', 'update']),
+                    ['message', 'aggregate', 'update']),
                 message_args=self.inspector.get_param_names('message'),
                 explain_message_args=self.inspector.get_param_names(
                     'explain_message'),
@@ -189,7 +190,6 @@ class MessagePassing(torch.nn.Module):
                 message_and_aggregate_args=self.inspector.get_param_names(
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
-                with_explain=True,
             )
 
             self.propagate_jit = module.propagate
@@ -265,15 +265,14 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def _index_select(
-        self,
-        src: Tensor,
-        edge_index: Tensor,
-        dim: int,
-    ) -> Tensor:
+    def _index_select(self, src: Tensor, index) -> Tensor:
+        if torch.jit.is_scripting() or is_compiling():
+            return src.index_select(self.node_dim, index)
+        else:
+            return self._index_select_safe(src, index)
 
+    def _index_select_safe(self, src: Tensor, index: Tensor) -> Tensor:
         try:
-            index = edge_index[dim]
             return src.index_select(self.node_dim, index)
         except (IndexError, RuntimeError) as e:
             if index.numel() > 0 and index.min() < 0:
@@ -324,7 +323,7 @@ class MessagePassing(torch.nn.Module):
             if torch.jit.is_scripting():  # Try/catch blocks are not supported.
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
-            return self._index_select(src, edge_index, dim)
+            return self._index_select(src, edge_index[dim])
 
         elif isinstance(edge_index, SparseTensor):
             row, col, _ = edge_index.coo()
@@ -683,7 +682,6 @@ class MessagePassing(torch.nn.Module):
         inputs: Tensor,
         dim_size: Optional[int],
     ) -> Tensor:
-        return inputs
         # NOTE Replace this method in custom explainers per message-passing
         # layer to customize how messages shall be explained, e.g., via:
         # conv.explain_message = explain_message.__get__(conv, MessagePassing)
@@ -691,8 +689,8 @@ class MessagePassing(torch.nn.Module):
         edge_mask = self._edge_mask
 
         if edge_mask is None:
-            raise ValueError(f"Could not find a pre-defined 'edge_mask' as "
-                             f"part of {self.__class__.__name__}.")
+            raise ValueError("Could not find a pre-defined 'edge_mask' "
+                             "to explain. Did you forget to initialize it?")
 
         if self._apply_sigmoid:
             edge_mask = edge_mask.sigmoid()
@@ -700,8 +698,8 @@ class MessagePassing(torch.nn.Module):
         # Some ops add self-loops to `edge_index`. We need to do the same for
         # `edge_mask` (but do not train these entries).
         if inputs.size(self.node_dim) != edge_mask.size(0):
-            edge_mask = edge_mask[self._loop_mask]
             assert dim_size is not None
+            edge_mask = edge_mask[self._loop_mask]
             loop = edge_mask.new_ones(dim_size)
             edge_mask = torch.cat([edge_mask, loop], dim=0)
         assert inputs.size(self.node_dim) == edge_mask.size(0)
