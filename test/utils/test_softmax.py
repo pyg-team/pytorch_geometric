@@ -17,10 +17,10 @@ def test_softmax():
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
     if CALCULATION_VIA_PTR_AVAILABLE:
-        assert softmax(src, None, ptr).tolist() == out.tolist()
+        assert softmax(src, ptr=ptr).tolist() == out.tolist()
     else:
-        with pytest.raises(ImportError):
-            softmax(src, None, ptr)
+        with pytest.raises(NotImplementedError, match="requires 'index'"):
+            softmax(src, ptr=ptr)
 
     src = src.view(-1, 1)
     out = softmax(src, index)
