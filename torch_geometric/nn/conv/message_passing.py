@@ -137,15 +137,13 @@ class MessagePassing(torch.nn.Module):
         # Collect attribute names requested in message passing hooks:
         self.inspector = Inspector(self.__class__)
         self.inspector.inspect_signature(self.message)
-        self.inspector.inspect_signature(self.explain_message, exclude=[0])
         self.inspector.inspect_signature(self.aggregate, exclude=[0, 'aggr'])
         self.inspector.inspect_signature(self.message_and_aggregate, [0])
         self.inspector.inspect_signature(self.update, exclude=[0])
         self.inspector.inspect_signature(self.edge_update)
 
         self._user_args: List[str] = self.inspector.get_flat_param_names(
-            ['message', 'explain_message', 'aggregate', 'update'],
-            exclude=self.special_args)
+            ['message', 'aggregate', 'update'], exclude=self.special_args)
         self._fused_user_args: List[str] = self.inspector.get_flat_param_names(
             ['message_and_aggregate', 'update'], exclude=self.special_args)
         self._edge_user_args: List[str] = self.inspector.get_param_names(
@@ -183,10 +181,8 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 propagate_signature=self._get_propagate_signature(),
                 collect_param_dict=self.inspector.get_flat_param_dict(
-                    ['message', 'explain_message', 'aggregate', 'update']),
+                    ['message', 'aggregate', 'update']),
                 message_args=self.inspector.get_param_names('message'),
-                explain_message_args=self.inspector.get_param_names(
-                    'explain_message'),
                 aggregate_args=self.inspector.get_param_names('aggregate'),
                 message_and_aggregate_args=self.inspector.get_param_names(
                     'message_and_aggregate'),
@@ -668,12 +664,16 @@ class MessagePassing(torch.nn.Module):
             raise ValueError("Explainability of message passing modules "
                              "is only supported on the Python module")
 
+        if explain:
+            self.inspector.remove_signature(self.explain_message)
+            self.inspector.inspect_signature(self.explain_message, exclude=[0])
+            methods = ['message', 'explain_message', 'aggregate', 'update']
+        else:
+            methods = ['message', 'aggregate', 'update']
+
         self._explain = explain
-        self.inspector.remove_signature(self.explain_message)
-        self.inspector.inspect_signature(self.explain_message, exclude=[0])
         self._user_args = self.inspector.get_flat_param_names(
-            ['message', 'explain_message', 'aggregate', 'update'],
-            exclude=self.special_args)
+            methods, exclude=self.special_args)
 
     def explain_message(
         self,
