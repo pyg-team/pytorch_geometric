@@ -669,6 +669,7 @@ class MessagePassing(torch.nn.Module):
                              "is only supported on the Python module")
 
         self._explain = explain
+        self.inspector.remove_signature(self.explain_message)
         self.inspector.inspect_signature(self.explain_message, exclude=[0])
         self._user_args = self.inspector.get_flat_param_names(
             ['message', 'explain_message', 'aggregate', 'update'],
