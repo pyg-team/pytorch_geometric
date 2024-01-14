@@ -65,7 +65,8 @@ def _collect(
 
     # Collect user-defined arguments:
 {%- for name in collect_param_dict %}
-{%- if name.endswith('_i') or name.endswith('_j') %}
+{%- if (name.endswith('_i') or name.endswith('_j')) and
+        name not in ['edge_index_i', 'edge_index_j', 'size_i', 'size_j'] %}
     # ({{loop.index}}) - Collect `{{name}}`:
     if isinstance({{name[:-2]}}, (tuple, list)):
         assert len({{name[:-2]}}) == 2
@@ -73,21 +74,21 @@ def _collect(
         if isinstance(_{{name[:-2]}}_0, Tensor):
             self._set_size(size, 0, _{{name[:-2]}}_0)
 {%- if name.endswith('_j') %}
-            {{name}} = _{{name[:-2]}}_0.index_select(self.node_dim, edge_index_{{name[-1]}})
+            {{name}} = self._index_select(_{{name[:-2]}}_0, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
         if isinstance(_{{name[:-2]}}_1, Tensor):
             self._set_size(size, 1, _{{name[:-2]}}_1)
 {%- if name.endswith('_i') %}
-            {{name}} = _{{name[:-2]}}_1.index_select(self.node_dim, edge_index_{{name[-1]}})
+            {{name}} = self._index_select(_{{name[:-2]}}_1, edge_index_{{name[-1]}})
         else:
             {{name}} = None
 {%- endif %}
     elif isinstance({{name[:-2]}}, Tensor):
         self._set_size(size, 0, {{name[:-2]}})
         self._set_size(size, 1, {{name[:-2]}})
-        {{name}} = {{name[:-2]}}.index_select(self.node_dim, edge_index_{{name[-1]}})
+        {{name}} = self._index_select(_{{name[:-2]}}, edge_index_{{name[-1]}})
     else:
         {{name}} = None
 {%- endif %}
@@ -133,7 +134,11 @@ def propagate(
     # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
-    fuse = is_sparse(edge_index) and self.fuse and self.explain is not True
+{%- if with_explain %}
+    fuse = False  # Disable `fuse` for explainability.
+{%- else %}
+    fuse = is_sparse(edge_index) and self.fuse
+{%- endif %}
 
     if fuse:
 
@@ -223,8 +228,15 @@ def propagate(
                 out = res if res is not None else out
         # End Message Forward Hook #############################################
 
-        if self.explain is True:  # TODO
-            raise NotImplementedError
+{%- if with_explain %}
+
+        out = self.explain_message(
+            out,
+{%- for name in explain_message_args %}
+            {{name}}=kwargs.{{name}},
+{%- endfor %}
+        )
+{%- endif %}
 
         # Begin Aggregate Forward Pre Hook #####################################
         if not torch.jit.is_scripting() and not is_compiling():
