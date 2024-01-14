@@ -71,23 +71,27 @@ python distributed_cpu.py \
 See PR [#8241](https://github.com/pyg-team/pytorch_geometric/pull/8241)
 
 There are two methods to run the distributed e2e test with one script in one terminal for multiple nodes.
-1) launch.py
+
+1. launch.py
+
 ```bash
-    python launch.py 
-          --workspace {workspace}/pytorch_geometric   
-          --num_nodes 2 
-          --dataset_root_dir {dataset_dir}/mag/2-parts 
-          --dataset ogbn-mag 
-          --batch_size 1024 
-          --learning_rate 0.0004 
-          --part_config {dataset_dir}/mag/2-parts/ogbn-mag-partitions/META.json 
-          --ip_config {workspace}/pytorch_geometric/ip_config.yaml 
-          'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python 
+    python launch.py
+          --workspace {workspace}/pytorch_geometric
+          --num_nodes 2
+          --dataset_root_dir {dataset_dir}/mag/2-parts
+          --dataset ogbn-mag
+          --batch_size 1024
+          --learning_rate 0.0004
+          --part_config {dataset_dir}/mag/2-parts/ogbn-mag-partitions/META.json
+          --ip_config {workspace}/pytorch_geometric/ip_config.yaml
+          'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
           {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=12345'
-   ```
-3) run_dist.sh
-   
-    All parameter setting are inside run_dist.sh and you just need run with
+```
+
+3. run_dist.sh
+
+   All parameter setting are inside run_dist.sh and you just need run with
+
    ```bash
     ./run_dist.sh
    ```
