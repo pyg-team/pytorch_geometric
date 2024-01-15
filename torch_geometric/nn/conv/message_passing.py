@@ -173,7 +173,7 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
         # Test code for performing on-the-fly TorchScript support:
-        if self.decomposed_layers <= 1:
+        if getattr(self, 'jit_on_init') and self.decomposed_layers <= 1:
             root_dir = osp.dirname(osp.realpath(__file__))
             base_module = f'{self.__module__}_{self.__class__.__name__}'
             module = module_from_template(
@@ -191,8 +191,8 @@ class MessagePassing(torch.nn.Module):
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
             )
-            self.__class__.propagate = module.propagate
-            self.__class__.collect = module.collect
+            self.propagate_jit = module.propagate
+            self.collect_jit = module.collect
 
             module = module_from_template(
                 module_name=f'{base_module}_edge_updater',
@@ -204,8 +204,8 @@ class MessagePassing(torch.nn.Module):
                 collect_param_dict=self.inspector.get_param_dict(
                     'edge_update'),
             )
-            self.__class__.edge_updater = module.edge_updater
-            self.__class__.edge_collect = module.edge_collect
+            self.edge_updater_jit = module.edge_updater
+            self.edge_collect_jit = module.edge_collect
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
