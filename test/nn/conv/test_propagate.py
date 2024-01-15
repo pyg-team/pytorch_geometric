@@ -13,7 +13,6 @@ def test_propagate(fuse):
     conv.__class__.jit_on_init = False
 
     old_propagate = conv.__class__.propagate
-    old_collect = conv.__class__._collect
 
     try:
         conv.__class__.propagate = conv.propagate_jit
@@ -30,7 +29,6 @@ def test_propagate(fuse):
 
     finally:
         conv.__class__.propagate = old_propagate
-        conv.__class__._collect = old_collect
 
 
 def test_edge_updater():
@@ -39,7 +37,6 @@ def test_edge_updater():
     conv.__class__.jit_on_init = False
 
     old_propagate = conv.__class__.propagate
-    old_collect = conv.__class__._collect
     old_edge_updater = conv.__class__.edge_updater
 
     try:
@@ -59,5 +56,4 @@ def test_edge_updater():
 
     finally:
         conv.__class__.propagate = old_propagate
-        conv.__class__._collect = old_collect
         conv.__class__.edge_updater = old_edge_updater
