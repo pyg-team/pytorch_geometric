@@ -186,7 +186,7 @@ def test_my_conv_jittable():
 
 
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])
-def test_my_conv_aggr(aggr):
+def test_my_conv_multiple_aggr(aggr):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     edge_weight = torch.randn(edge_index.size(1))
@@ -238,7 +238,7 @@ class MyMultipleAggrConv(MessagePassing):
     (dict(mode='cat'), 3),
     (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1)
 ])
-def test_my_multiple_aggr_conv(multi_aggr_tuple):
+def test_my_conv_multiple_aggr_conv(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the 'proj'
     # mode keeps output dimensions unchanged.

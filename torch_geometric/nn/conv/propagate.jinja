@@ -1,5 +1,5 @@
 import typing
-from typing import NamedTuple
+from typing import List, NamedTuple, Optional, Union
 
 import torch
 from torch import Tensor
@@ -8,7 +8,7 @@ import torch_geometric.typing
 from torch_geometric import is_compiling
 from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import ptr2index
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import Size, SparseTensor
 
 from {{module}} import *
 
@@ -47,6 +47,15 @@ def _collect(
         else:
             raise ValueError(f"Recieved invalid layout '{adj_t.layout}'")
 
+{%- if 'edge_weight' in collect_param_dict %}
+        edge_weight = adj_t.values()
+{%- elif 'edge_attr' in collect_param_dict %}
+        _value = adj_t.values()
+        edge_attr = None if _value.dim() == 1 else _value
+{%- elif 'edge_type' in collect_param_dict %}
+        edge_type = adj_t.values()
+{%- endif %}
+
     elif isinstance(edge_index, SparseTensor):
 {%- if 'edge_index' in collect_param_dict %}
         raise ValueError("Cannot collect 'edge_indices' for sparse matrices")
@@ -54,6 +63,14 @@ def _collect(
         adj_t = edge_index
         edge_index_i, edge_index_j, _value = adj_t.coo()
         ptr, _, _ = adj_t.csr()
+
+{%- if 'edge_weight' in collect_param_dict %}
+        edge_weight = _value
+{%- elif 'edge_attr' in collect_param_dict %}
+        edge_attr = None if _value is None or _value.dim() == 1 else _value
+{%- elif 'edge_type' in collect_param_dict %}
+        edge_type = _value
+{%- endif %}
 
     elif isinstance(edge_index, Tensor):
 {%- if 'adj_t' in collect_param_dict %}
@@ -88,7 +105,7 @@ def _collect(
     elif isinstance({{name[:-2]}}, Tensor):
         self._set_size(size, 0, {{name[:-2]}})
         self._set_size(size, 1, {{name[:-2]}})
-        {{name}} = self._index_select(_{{name[:-2]}}, edge_index_{{name[-1]}})
+        {{name}} = self._index_select({{name[:-2]}}, edge_index_{{name[-1]}})
     else:
         {{name}} = None
 {%- endif %}
@@ -114,8 +131,6 @@ def propagate(
 {%- endfor %}
     size: Size = None,
 ) -> {{propagate_signature.return_type_repr}}:
-
-    assert self.decomposed_layers == 1  # TODO
 
     # Begin Propagate Forward Pre Hook #########################################
     if not torch.jit.is_scripting() and not is_compiling():
