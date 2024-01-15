@@ -85,7 +85,7 @@ There are two methods to run the distributed e2e test with one script in one ter
           --part_config {dataset_dir}/mag/2-parts/ogbn-mag-partitions/META.json
           --ip_config {workspace}/pytorch_geometric/ip_config.yaml
           'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
-          {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=12345'
+          {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
 ```
 
 3. run_dist.sh
