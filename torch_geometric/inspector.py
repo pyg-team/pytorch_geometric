@@ -30,7 +30,7 @@ class Inspector:
     def __init__(self, cls: Type):
         self._cls = cls
         self._signature_dict: Dict[str, Signature] = {}
-        self._source_dict: Dict[str, None] = {}
+        self._source_dict: Dict[str, str] = {}
 
     @property
     def _globals(self) -> Dict[str, Any]:
