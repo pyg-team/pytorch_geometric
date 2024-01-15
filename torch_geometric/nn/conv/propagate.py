@@ -4,7 +4,7 @@ import os.path as osp
 import sys
 from typing import Any
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 
 from torch_geometric import get_home_dir
 
@@ -18,8 +18,8 @@ def module_from_template(
     if module_name in sys.modules:  # If module is already loaded, return it:
         return sys.modules[module_name]
 
-    with open(template_path, 'r') as f:
-        template = Template(f.read())
+    env = Environment(loader=FileSystemLoader(osp.dirname(template_path)))
+    template = env.get_template(osp.basename(template_path))
     module_repr = template.render(**kwargs)
 
     instance_dir = osp.join(get_home_dir(), 'propagate')

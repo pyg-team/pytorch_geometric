@@ -324,7 +324,7 @@ class GATv2Conv(MessagePassing):
 
     def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
                     index: Tensor, ptr: OptTensor,
-                    size_i: Optional[int]) -> Tensor:
+                    dim_size: Optional[int]) -> Tensor:
         x = x_i + x_j
 
         if edge_attr is not None:
@@ -337,7 +337,7 @@ class GATv2Conv(MessagePassing):
 
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
-        alpha = softmax(alpha, index, ptr, size_i)
+        alpha = softmax(alpha, index, ptr, dim_size)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return alpha
 
