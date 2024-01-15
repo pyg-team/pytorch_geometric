@@ -551,16 +551,28 @@ def test_explain_message():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 
     conv = MyExplainConv()
-    assert conv(x, edge_index).abs().sum() != 0.
-
     conv.explain = True
+    assert conv.propagate.__module__.endswith('message_passing')
 
     with pytest.raises(ValueError, match="pre-defined 'edge_mask'"):
         conv(x, edge_index)
 
-    conv._edge_mask = torch.tensor([0, 0, 0, 0], dtype=torch.float)
+    conv._edge_mask = torch.tensor([0.0, 0.0, 0.0, 0.0])
     conv._apply_sigmoid = False
     assert conv(x, edge_index).abs().sum() == 0.
+
+    conv._edge_mask = torch.tensor([1.0, 1.0, 1.0, 1.0])
+    conv._apply_sigmoid = False
+    out1 = conv(x, edge_index)
+
+    # TorchScript should still work since it relies on class methods
+    # (but without explainability).
+    torch.jit.script(conv)
+
+    conv.explain = False
+    assert conv.propagate.__module__.endswith('MyExplainConv_propagate')
+    out2 = conv(x, edge_index)
+    assert torch.allclose(out1, out2)
 
 
 class MyAggregatorConv(MessagePassing):

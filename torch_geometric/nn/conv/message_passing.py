@@ -9,6 +9,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    NamedTuple,
     Optional,
     OrderedDict,
     Set,
@@ -36,6 +37,11 @@ from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]
+
+
+class FunctionCache(NamedTuple):
+    orig_fn: Callable
+    jinja_fn: Callable
 
 
 class MessagePassing(torch.nn.Module):
@@ -132,7 +138,6 @@ class MessagePassing(torch.nn.Module):
         self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         self.flow = flow
         self.node_dim = node_dim
-        self.decomposed_layers = decomposed_layers
 
         # Collect attribute names requested in message passing hooks:
         self.inspector = Inspector(self.__class__)
@@ -154,12 +159,6 @@ class MessagePassing(torch.nn.Module):
         if self.aggr is not None:
             self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
-        # Support for explainability.
-        self._explain: Optional[bool] = None
-        self._edge_mask: Optional[Tensor] = None
-        self._loop_mask: Optional[Tensor] = None
-        self._apply_sigmoid: bool = True
-
         # Hooks:
         self._propagate_forward_pre_hooks: HookDict = OrderedDict()
         self._propagate_forward_hooks: HookDict = OrderedDict()
@@ -172,12 +171,12 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-        # Test code for performing on-the-fly TorchScript support:
-        if getattr(self, 'jit_on_init', False) and self.decomposed_layers <= 1:
-            root_dir = osp.dirname(osp.realpath(__file__))
-            base_module = f'{self.__module__}_{self.__class__.__name__}'
+        root_dir = osp.dirname(osp.realpath(__file__))
+        jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
+        # Optimize `propagate()` via `*.jinja` templates:
+        if not self.propagate.__module__.startswith(jinja_prefix):
             module = module_from_template(
-                module_name=f'{base_module}_propagate',
+                module_name=f'{jinja_prefix}_propagate',
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 # Keyword arguments:
                 module=self.__module__,
@@ -191,11 +190,19 @@ class MessagePassing(torch.nn.Module):
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
             )
-            self.propagate_jit = module.propagate
-            self.collect_jit = module.collect
 
+            # Cache to potentially disable later on:
+            self.__class__._orig_propagate = self.__class__.propagate
+            self.__class__._jinja_propagate = module.propagate
+
+            self.__class__.propagate = module.propagate
+            self.__class__.collect = module.collect
+
+        # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
+        if (self.inspector.implements('edge_update')
+                and not self.edge_updater.__module__.startswith(jinja_prefix)):
             module = module_from_template(
-                module_name=f'{base_module}_edge_updater',
+                module_name=f'{jinja_prefix}_edge_updater',
                 template_path=osp.join(root_dir, 'edge_updater.jinja'),
                 # Keyword arguments:
                 module=self.__module__,
@@ -204,8 +211,18 @@ class MessagePassing(torch.nn.Module):
                 collect_param_dict=self.inspector.get_param_dict(
                     'edge_update'),
             )
-            self.edge_updater_jit = module.edge_updater
-            self.edge_collect_jit = module.edge_collect
+
+            self.__class__.edge_updater = module.edge_updater
+            self.__class__.edge_collect = module.edge_collect
+
+        # Explainability:
+        self._explain: Optional[bool] = None
+        self._edge_mask: Optional[Tensor] = None
+        self._loop_mask: Optional[Tensor] = None
+        self._apply_sigmoid: bool = True
+
+        # Inference Decomposition:
+        self.decomposed_layers = decomposed_layers
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
@@ -680,6 +697,29 @@ class MessagePassing(torch.nn.Module):
         """
         raise NotImplementedError
 
+    # Inference Decomposition #################################################
+
+    @property
+    def decomposed_layers(self) -> int:
+        return self._decomposed_layers
+
+    @decomposed_layers.setter
+    def decomposed_layers(self, decomposed_layers: int) -> None:
+        if torch.jit.is_scripting():
+            raise ValueError("Inference decomposition of message passing "
+                             "modules is only supported on the Python module")
+
+        self._decomposed_layers = decomposed_layers
+
+        if decomposed_layers != 1:
+            self.propagate = self.__class__._orig_propagate.__get__(
+                self, MessagePassing)
+
+        elif ((self.explain is None or self.explain is False)
+              and not self.propagate.__module__.endswith('_propagate')):
+            self.propagate = self.__class__._jinja_propagate.__get__(
+                self, MessagePassing)
+
     # Explainability ##########################################################
 
     @property
@@ -692,16 +732,26 @@ class MessagePassing(torch.nn.Module):
             raise ValueError("Explainability of message passing modules "
                              "is only supported on the Python module")
 
-        if explain:
+        self._explain = explain
+
+        if explain is True:
+            assert self.decomposed_layers == 1
             self.inspector.remove_signature(self.explain_message)
             self.inspector.inspect_signature(self.explain_message, exclude=[0])
-            methods = ['message', 'explain_message', 'aggregate', 'update']
+            self._user_args = self.inspector.get_flat_param_names(
+                funcs=['message', 'explain_message', 'aggregate', 'update'],
+                exclude=self.special_args,
+            )
+            self.propagate = self.__class__._orig_propagate.__get__(
+                self, MessagePassing)
         else:
-            methods = ['message', 'aggregate', 'update']
-
-        self._explain = explain
-        self._user_args = self.inspector.get_flat_param_names(
-            methods, exclude=self.special_args)
+            self._user_args = self.inspector.get_flat_param_names(
+                funcs=['message', 'aggregate', 'update'],
+                exclude=self.special_args,
+            )
+            if self.decomposed_layers == 1:
+                self.propagate = self.__class__._jinja_propagate.__get__(
+                    self, MessagePassing)
 
     def explain_message(
         self,
@@ -899,7 +949,7 @@ class MessagePassing(torch.nn.Module):
 
     def _get_edge_updater_signature(self) -> Signature:
         param_dict = self.inspector.get_params_from_method_call(
-            'edge_updater', exclude=[0, 'edge_index'])
+            'edge_updater', exclude=[0, 'edge_index', 'size'])
         edge_update_signature = self.inspector.get_signature('edge_update')
 
         return Signature(
