@@ -191,8 +191,6 @@ class MessagePassing(torch.nn.Module):
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
             )
-            print(module)
-
             self.propagate_jit = module.propagate
             self.collect_jit = module._collect
 
@@ -206,7 +204,6 @@ class MessagePassing(torch.nn.Module):
                 collect_param_dict=self.inspector.get_param_dict(
                     'edge_update'),
             )
-
             self.edge_updater_jit = module.edge_updater
             self.edge_collect_jit = module._edge_collect
 
