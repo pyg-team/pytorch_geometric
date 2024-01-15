@@ -216,9 +216,10 @@ class {{cls_name}}({{parent_cls_name}}):
         {% for name, type_hint in edge_updater_types.items() %}
         {{ name }}: {{ type_hint }},
         {% endfor %}
+        size: Size=None,
     ) -> {{ edge_updater_return_type }}:
 
-        the_size = self._check_input(edge_index, size=None)
+        the_size = self._check_input(edge_index, size)
         in_kwargs = EdgeUpdater_{{uid}}({% for k in edge_updater_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
         kwargs = self._collect_edge(edge_index, the_size, in_kwargs)
         return self.edge_update({% for k in edge_update_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
