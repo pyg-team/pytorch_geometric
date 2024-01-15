@@ -9,7 +9,6 @@ from typing import (
     Callable,
     Dict,
     List,
-    NamedTuple,
     Optional,
     OrderedDict,
     Set,
@@ -37,11 +36,6 @@ from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]
-
-
-class FunctionCache(NamedTuple):
-    orig_fn: Callable
-    jinja_fn: Callable
 
 
 class MessagePassing(torch.nn.Module):
