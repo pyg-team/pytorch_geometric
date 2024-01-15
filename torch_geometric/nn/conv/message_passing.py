@@ -173,7 +173,7 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
         # Test code for performing on-the-fly TorchScript support:
-        if getattr(self, 'jit_on_init') and self.decomposed_layers <= 1:
+        if getattr(self, 'jit_on_init', False) and self.decomposed_layers <= 1:
             root_dir = osp.dirname(osp.realpath(__file__))
             base_module = f'{self.__module__}_{self.__class__.__name__}'
             module = module_from_template(
