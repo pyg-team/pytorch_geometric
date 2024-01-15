@@ -41,11 +41,7 @@ def propagate(
     # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
-{%- if with_explain %}
-    fuse = False  # Disable `fuse` for explainability.
-{%- else %}
     fuse = is_sparse(edge_index) and self.fuse
-{%- endif %}
 
     if fuse:
 
@@ -112,9 +108,15 @@ def propagate(
                 res = hook(self, (hook_kwargs, ))
                 hook_kwargs = res[0] if isinstance(res, tuple) else res
                 if res is not None:
-{%- for name in message_args %}
-                    kwargs.{{name}} = hook_kwargs['{{name}}']
+                    kwargs = CollectArgs(
+{%- for name in collect_param_dict %}
+{%- if name in message_args %}
+                        {{name}}=hook_kwargs['{{name}}'],
+{%- else %}
+                        {{name}}=kwargs.{{name}},
+{%- endif %}
 {%- endfor %}
+                    )
         # End Message Forward Pre Hook #########################################
 
         out = self.message(
@@ -135,16 +137,6 @@ def propagate(
                 out = res if res is not None else out
         # End Message Forward Hook #############################################
 
-{%- if with_explain %}
-
-        out = self.explain_message(
-            out,
-{%- for name in explain_message_args %}
-            {{name}}=kwargs.{{name}},
-{%- endfor %}
-        )
-{%- endif %}
-
         # Begin Aggregate Forward Pre Hook #####################################
         if not torch.jit.is_scripting() and not is_compiling():
             for hook in self._aggregate_forward_pre_hooks.values():
@@ -156,9 +148,15 @@ def propagate(
                 res = hook(self, (hook_kwargs, ))
                 hook_kwargs = res[0] if isinstance(res, tuple) else res
                 if res is not None:
-{%- for name in aggregate_args %}
-                    kwargs.{{name}} = hook_kwargs['{{name}}']
+                    kwargs = CollectArgs(
+{%- for name in collect_param_dict %}
+{%- if name in aggregate_args %}
+                        {{name}}=hook_kwargs['{{name}}'],
+{%- else %}
+                        {{name}}=kwargs.{{name}},
+{%- endif %}
 {%- endfor %}
+                    )
         # End Aggregate Forward Pre Hook #######################################
 
         out = self.aggregate(
@@ -191,8 +189,8 @@ def propagate(
     if not torch.jit.is_scripting() and not is_compiling():
         for hook in self._propagate_forward_hooks.values():
             hook_kwargs = dict(
-{%- for name in message_args %}
-                {{name}}=kwargs.{{name}},
+{%- for name in signature.param_dict %}
+                {{name}}={{name}},
 {%- endfor %}
             )
             res = hook(self, (edge_index, mutable_size, hook_kwargs), out)

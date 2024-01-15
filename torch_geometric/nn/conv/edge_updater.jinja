@@ -39,15 +39,17 @@ def edge_updater(
         for hook in self._edge_update_forward_pre_hooks.values():
             hook_kwargs = dict(
 {%- for name in collect_param_dict %}
-                {{name}}={{name}},
+                {{name}}=kwargs.{{name}},
 {%- endfor %}
             )
             res = hook(self, (edge_index, size, hook_kwargs))
             if res is not None:
                 edge_index, size, hook_kwargs = res
-{%- for name in signature.param_dict %}
-                kwargs.{{name}} = hook_kwargs['{{name}}']
+                kwargs = CollectArgs(
+{%- for name in collect_param_dict %}
+                    {{name}}=hook_kwargs['{{name}}'],
 {%- endfor %}
+                )
     # End Edge Update Forward Pre Hook #########################################
 
     out = self.edge_update(

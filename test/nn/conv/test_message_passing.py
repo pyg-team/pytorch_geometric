@@ -568,7 +568,7 @@ class MyAggregatorConv(MessagePassing):
         super().__init__(**kwargs)
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        # propagate_type: (x: TEnsor)
+        # propagate_type: (x: Tensor)
         return self.propagate(edge_index, x=x)
 
 

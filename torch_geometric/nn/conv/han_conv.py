@@ -7,6 +7,7 @@ from torch import Tensor, nn
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
+from torch_geometric.typing import PairTensor  # noqa
 from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils import softmax
 
