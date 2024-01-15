@@ -75,12 +75,7 @@ class UPFD(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
-    ids = {
-        'politifact': '1KOmSrlGcC50PjkvRVbyb_WoWHVql06J-',
-        'gossipcop': '1VskhAQ92PrT4sWEKQ2v2-AJhEcpp4A81',
-    }
+    url = 'https://data.pyg.org/datasets/upfd_{}.zip'
 
     def __init__(
         self,
@@ -93,13 +88,16 @@ class UPFD(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
+        assert name in ['politifact', 'gossipcop']
+        assert split in ['train', 'val', 'test']
+
         self.root = root
         self.name = name
         self.feature = feature
+
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
-        assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
         self.load(path)
 
@@ -123,7 +121,7 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self) -> None:
-        path = download_url(self.url.format(self.ids[self.name]), self.raw_dir)
+        path = download_url(self.url.format(self.name), self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
