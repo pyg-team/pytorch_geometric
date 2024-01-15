@@ -17,7 +17,7 @@ def test_propagate(fuse):
 
     try:
         conv.__class__.propagate = conv.propagate_jit
-        conv.__class__._collect = conv.collect_jit
+        conv.__class__.collect = conv.collect_jit
         jit = torch.jit.script(conv)
 
         x = torch.randn(4, 16)
@@ -44,9 +44,9 @@ def test_edge_updater():
 
     try:
         conv.__class__.propagate = conv.propagate_jit
-        conv.__class__._collect = conv.collect_jit
+        conv.__class__.collect = conv.collect_jit
         conv.__class__.edge_updater = conv.edge_updater_jit
-        conv.__class__._edge_collect = conv.edge_collect_jit
+        conv.__class__.edge_collect = conv.edge_collect_jit
         torch.jit.script(conv)
 
         x = torch.randn(4, 16)

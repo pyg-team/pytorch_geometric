@@ -181,7 +181,7 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'propagate.jinja'),
                 # Keyword arguments:
                 module=self.__module__,
-                collect_name='_collect',
+                collect_name='collect',
                 signature=self._get_propagate_signature(),
                 collect_param_dict=self.inspector.get_flat_param_dict(
                     ['message', 'aggregate', 'update']),
@@ -192,20 +192,20 @@ class MessagePassing(torch.nn.Module):
                 update_args=self.inspector.get_param_names('update'),
             )
             self.propagate_jit = module.propagate
-            self.collect_jit = module._collect
+            self.collect_jit = module.collect
 
             module = module_from_template(
                 module_name=f'{base_module}_edge_updater',
                 template_path=osp.join(root_dir, 'edge_updater.jinja'),
                 # Keyword arguments:
                 module=self.__module__,
-                collect_name='_edge_collect',
+                collect_name='edge_collect',
                 signature=self._get_edge_updater_signature(),
                 collect_param_dict=self.inspector.get_param_dict(
                     'edge_update'),
             )
             self.edge_updater_jit = module.edge_updater
-            self.edge_collect_jit = module._edge_collect
+            self.edge_collect_jit = module.edge_collect
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
