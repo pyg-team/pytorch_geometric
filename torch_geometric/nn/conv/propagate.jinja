@@ -59,7 +59,7 @@ def propagate(
 {%- for name in message_and_aggregate_args %}
                     {{name}} = hook_kwargs['{{name}}']
 {%- endfor %}
-        # End Message And Aggregate Forward Pre Hook ##########################
+        # End Message and Aggregate Forward Pre Hook ##########################
 
         out = self.message_and_aggregate(
             edge_index,
@@ -68,7 +68,7 @@ def propagate(
 {%- endfor %}
         )
 
-        # Begin Message And Aggregate Forward Hook #############################
+        # Begin Message and Aggregate Forward Hook #############################
         if not torch.jit.is_scripting() and not is_compiling():
             for hook in self._message_and_aggregate_forward_hooks.values():
                 hook_kwargs = dict(
@@ -78,7 +78,7 @@ def propagate(
                 )
                 res = hook(self, (edge_index, hook_kwargs, ), out)
                 out = res if res is not None else out
-        # End Message And Aggregate Forward Hook ###############################
+        # End Message and Aggregate Forward Hook ###############################
 
         out = self.update(
             out,

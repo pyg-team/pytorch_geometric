@@ -30,7 +30,7 @@ class Inspector:
     def __init__(self, cls: Type):
         self._cls = cls
         self._signature_dict: Dict[str, Signature] = {}
-        self._source: Optional[str] = None
+        self._source_dict: Dict[str, str] = {}
 
     @property
     def _globals(self) -> Dict[str, Any]:
@@ -344,13 +344,17 @@ class Inspector:
 
     # Inspecting Method Bodies ################################################
 
-    @property
-    def source(self) -> str:
+    def get_source(self, cls: Optional[Type] = None) -> str:
         r"""Returns the source code of :obj:`cls`."""
-        if self._source is not None:
-            return self._source
-        self._source = inspect.getsource(self._cls)
-        return self._source
+        cls = cls or self._cls
+        if cls.__name__ in self._source_dict:
+            return self._source_dict[cls.__name__]
+        try:
+            source = inspect.getsource(cls)
+        except Exception:
+            source = ''
+        self._source_dict[cls.__name__] = source
+        return source
 
     def get_params_from_method_call(
         self,
@@ -394,47 +398,51 @@ class Inspector:
             return param_dict
 
         # (2) Find type annotation:
-        match = find_parenthesis_content(self.source, f'{func_name}_type:')
-        if match is not None:
-            for arg in split(match, sep=','):
-                name_and_type_repr = re.split(r'\s*:\s*', arg)
-                if len(name_and_type_repr) != 2:
-                    raise ValueError(f"Could not parse the argument '{arg}' "
-                                     f"of the '{func_name}_type' annoitation")
+        for cls in self._cls.__mro__:
+            source = self.get_source(cls)
+            match = find_parenthesis_content(source, f'{func_name}_type:')
+            if match is not None:
+                for arg in split(match, sep=','):
+                    name_and_type_repr = re.split(r'\s*:\s*', arg)
+                    if len(name_and_type_repr) != 2:
+                        raise ValueError(f"Could not parse argument '{arg}' "
+                                         f"of '{func_name}_type' annotation")
 
-                name, type_repr = name_and_type_repr
-                param_dict[name] = Parameter(
-                    name=name,
-                    type=self.eval_type(type_repr),
-                    type_repr=type_repr,
-                    default=inspect._empty,
-                )
-            return param_dict
+                    name, type_repr = name_and_type_repr
+                    param_dict[name] = Parameter(
+                        name=name,
+                        type=self.eval_type(type_repr),
+                        type_repr=type_repr,
+                        default=inspect._empty,
+                    )
+                return param_dict
 
         # (3) Parse the function call:
-        match = find_parenthesis_content(self.source, f'self.{func_name}')
-        if match is not None:
-            for i, kwarg in enumerate(split(match, sep=',')):
-                if exclude is not None and i in exclude:
-                    continue
+        for cls in self._cls.__mro__:
+            source = self.get_source(cls)
+            match = find_parenthesis_content(source, f'self.{func_name}')
+            if match is not None:
+                for i, kwarg in enumerate(split(match, sep=',')):
+                    if exclude is not None and i in exclude:
+                        continue
 
-                name_and_content = re.split(r'\s*=\s*', kwarg)
-                if len(name_and_content) != 2:
-                    raise ValueError(f"Could not parse the keyword argument "
-                                     f"'{kwarg}' in 'self.{func_name}(...)'")
+                    name_and_content = re.split(r'\s*=\s*', kwarg)
+                    if len(name_and_content) != 2:
+                        raise ValueError(f"Could not parse keyword argument "
+                                         f"'{kwarg}' in 'self.{func_name}()'")
 
-                name, _ = name_and_content
+                    name, _ = name_and_content
 
-                if exclude is not None and name in exclude:
-                    continue
+                    if exclude is not None and name in exclude:
+                        continue
 
-                param_dict[name] = Parameter(
-                    name=name,
-                    type=Tensor,
-                    type_repr=self.type_repr(Tensor),
-                    default=inspect._empty,
-                )
-            return param_dict
+                    param_dict[name] = Parameter(
+                        name=name,
+                        type=Tensor,
+                        type_repr=self.type_repr(Tensor),
+                        default=inspect._empty,
+                    )
+                return param_dict
 
         return {}  # (4) No function call found:
 
