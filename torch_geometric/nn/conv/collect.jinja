@@ -120,7 +120,8 @@ def {{collect_name}}(
 {%- if name not in signature.param_dict and
        not name.endswith('_i') and
        not name.endswith('_j') and
-       name not in ['edge_index', 'adj_t', 'size', 'ptr', 'index', 'dim_size'] %}
+       name not in ['edge_index', 'adj_t', 'size', 'ptr', 'index', 'dim_size'] and
+       '_empty' not in param.default.__name__ %}
     {{name}} = {{param.default}}
 {%- endif %}
 {%- endfor %}

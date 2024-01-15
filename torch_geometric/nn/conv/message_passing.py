@@ -967,7 +967,7 @@ class MessagePassing(torch.nn.Module):
 
         from jinja2 import Template
 
-        source = self.inspector.source
+        source = self.inspector.get_source()
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
         prop_signature = self._get_propagate_signature()
