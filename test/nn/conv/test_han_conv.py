@@ -6,7 +6,7 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, to_torch_csc_tensor
 
 
-def test_han_conv():
+def test_han_conv_basic():
     x_dict = {
         'author': torch.randn(6, 16),
         'paper': torch.randn(5, 12),

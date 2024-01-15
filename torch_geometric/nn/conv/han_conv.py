@@ -148,7 +148,7 @@ class HANConv(MessagePassing):
             x_dst = x_node_dict[dst_type]
             alpha_src = (x_src * lin_src).sum(dim=-1)
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
-            # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
+            # propagate_type: (x: PairTensor, alpha: PairTensor)
             out = self.propagate(edge_index, x=(x_src, x_dst),
                                  alpha=(alpha_src, alpha_dst))
 
