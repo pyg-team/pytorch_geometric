@@ -175,11 +175,14 @@ class MessagePassing(torch.nn.Module):
         # Test code for performing on-the-fly TorchScript support:
         if getattr(self, 'jit_on_init', False) and self.decomposed_layers == 1:
             root_dir = osp.dirname(osp.realpath(__file__))
+            base_module = f'{self.__module__}_{self.__class__.__name__}'
             module = module_from_template(
-                module_name=f'{self.__module__}_propagate',
-                module=self.__module__,
+                module_name=f'{base_module}_propagate',
                 template_path=osp.join(root_dir, 'propagate.jinja'),
-                propagate_signature=self._get_propagate_signature(),
+                # Keyword arguments:
+                module=self.__module__,
+                collect_name='_collect',
+                signature=self._get_propagate_signature(),
                 collect_param_dict=self.inspector.get_flat_param_dict(
                     ['message', 'aggregate', 'update']),
                 message_args=self.inspector.get_param_names('message'),
@@ -188,9 +191,24 @@ class MessagePassing(torch.nn.Module):
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
             )
+            print(module)
 
             self.propagate_jit = module.propagate
             self.collect_jit = module._collect
+
+            module = module_from_template(
+                module_name=f'{base_module}_edge_updater',
+                template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                # Keyword arguments:
+                module=self.__module__,
+                collect_name='_edge_collect',
+                signature=self._get_edge_updater_signature(),
+                collect_param_dict=self.inspector.get_param_dict(
+                    'edge_update'),
+            )
+
+            self.edge_updater_jit = module.edge_updater
+            self.edge_collect_jit = module._edge_collect
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
@@ -607,7 +625,12 @@ class MessagePassing(torch.nn.Module):
 
     # Edge-level Updates ######################################################
 
-    def edge_updater(self, edge_index: Adj, **kwargs: Any) -> Tensor:
+    def edge_updater(
+        self,
+        edge_index: Adj,
+        size: Size = None,
+        **kwargs: Any,
+    ) -> Tensor:
         r"""The initial call to compute or update features for each edge in the
         graph.
 
@@ -617,13 +640,21 @@ class MessagePassing(torch.nn.Module):
                 :class:`torch.sparse.Tensor` that defines the underlying graph
                 connectivity/message passing flow.
                 See :meth:`propagate` for more information.
+            size ((int, int), optional): The size :obj:`(N, M)` of the
+                assignment matrix in case :obj:`edge_index` is a
+                :class:`torch.Tensor`.
+                If set to :obj:`None`, the size will be automatically inferred
+                and assumed to be quadratic.
+                This argument is ignored in case :obj:`edge_index` is a
+                :class:`torch_sparse.SparseTensor` or
+                a :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.
         """
         for hook in self._edge_update_forward_pre_hooks.values():
-            res = hook(self, (edge_index, kwargs))
+            res = hook(self, (edge_index, size, kwargs))
             if res is not None:
-                edge_index, kwargs = res
+                edge_index, size, kwargs = res
 
         mutable_size = self._check_input(edge_index, size=None)
 
@@ -635,7 +666,7 @@ class MessagePassing(torch.nn.Module):
         out = self.edge_update(**edge_kwargs)
 
         for hook in self._edge_update_forward_hooks.values():
-            res = hook(self, (edge_index, kwargs), out)
+            res = hook(self, (edge_index, size, kwargs), out)
             if res is not None:
                 out = res
 
