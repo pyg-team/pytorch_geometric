@@ -47,12 +47,15 @@ def {{collect_name}}(
             raise ValueError(f"Received invalid layout '{adj_t.layout}'")
 
 {%- if 'edge_weight' in collect_param_dict %}
-        edge_weight = adj_t.values()
+        if edge_weight is None:
+            edge_weight = adj_t.values()
 {%- elif 'edge_attr' in collect_param_dict %}
-        _value = adj_t.values()
-        edge_attr = None if _value.dim() == 1 else _value
+        if edge_attr is None:
+            _value = adj_t.values()
+            edge_attr = None if _value.dim() == 1 else _value
 {%- elif 'edge_type' in collect_param_dict %}
-        edge_type = adj_t.values()
+        if edge_type is None:
+            edge_type = adj_t.values()
 {%- endif %}
 
     elif isinstance(edge_index, SparseTensor):
@@ -64,11 +67,14 @@ def {{collect_name}}(
         ptr, _, _ = adj_t.csr()
 
 {%- if 'edge_weight' in collect_param_dict %}
-        edge_weight = _value
+        if edge_weight is None:
+            edge_weight = _value
 {%- elif 'edge_attr' in collect_param_dict %}
-        edge_attr = None if _value is None or _value.dim() == 1 else _value
+        if edge_attr is None:
+            edge_attr = None if _value is None or _value.dim() == 1 else _value
 {%- elif 'edge_type' in collect_param_dict %}
-        edge_type = _value
+        if edge_type is None:
+            edge_type = _value
 {%- endif %}
 
     elif isinstance(edge_index, Tensor):
@@ -102,17 +108,26 @@ def {{collect_name}}(
             {{name}} = None
 {%- endif %}
     elif isinstance({{name[:-2]}}, Tensor):
-        self._set_size(size, 0, {{name[:-2]}})
-        self._set_size(size, 1, {{name[:-2]}})
+        self._set_size(size, {{name[-1]}}, {{name[:-2]}})
         {{name}} = self._index_select({{name[:-2]}}, edge_index_{{name[-1]}})
     else:
         {{name}} = None
 {%- endif %}
 {%- endfor %}
 
+    # Collect default arguments:
+{%- for name, param in collect_param_dict.items() %}
+{%- if name not in signature.param_dict and
+       not name.endswith('_i') and
+       not name.endswith('_j') and
+       name not in ['edge_index', 'adj_t', 'size', 'ptr', 'index', 'dim_size'] %}
+    {{name}} = {{param.default}}
+{%- endif %}
+{%- endfor %}
+
     index = edge_index_i
-    size_i = size[i]
-    size_j = size[j]
+    size_i = size[i] if size[i] is not None else size[j]
+    size_j = size[j] if size[j] is not None else size[i]
     dim_size = size_i
 
     return CollectArgs(

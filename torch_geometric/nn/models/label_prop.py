@@ -80,7 +80,7 @@ class LabelPropagation(MessagePassing):
 
         res = (1 - self.alpha) * out
         for _ in range(self.num_layers):
-            # propagate_type: (y: Tensor, edge_weight: OptTensor)
+            # propagate_type: (x: Tensor, edge_weight: OptTensor)
             out = self.propagate(edge_index, x=out, edge_weight=edge_weight)
             out.mul_(self.alpha).add_(res)
             if post_step is not None:
