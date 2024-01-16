@@ -43,8 +43,8 @@ def spmm(
         return torch_sparse.matmul(src, other, reduce)
 
     if not is_torch_sparse_tensor(src):
-        raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
-                         f"or a `torch.sparse.Tensor` (got {type(src)}).")
+        raise ValueError("'src' must be a 'torch_sparse.SparseTensor' or a "
+                         "'torch.sparse.Tensor'")
 
     # `torch.sparse.mm` only supports reductions on CPU for PyTorch>=2.0.
     # This will currently throw on error for CUDA tensors.

@@ -1,4 +1,3 @@
-import copy
 import math
 
 import torch
@@ -8,7 +7,7 @@ from torch.nn import BatchNorm1d, Parameter
 from torch_geometric.nn import inits
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import MLP
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import spmm
 
 
@@ -51,8 +50,7 @@ class SparseLinear(MessagePassing):
         else:
             return edge_weight.view(-1, 1) * weight_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              weight: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, weight: Tensor) -> Tensor:
         return spmm(adj_t, weight, reduce=self.aggr)
 
 
@@ -162,11 +160,6 @@ class LINKX(torch.nn.Module):
             out = out + self.cat_lin2(x)
 
         return self.final_mlp(out.relu_())
-
-    def jittable(self) -> 'LINKX':
-        out = copy.deepcopy(self)
-        out.edge_lin = out.edge_lin.jittable()
-        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_nodes={self.num_nodes}, '
