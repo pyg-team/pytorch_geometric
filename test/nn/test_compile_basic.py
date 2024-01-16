@@ -1,6 +1,5 @@
 import torch
 
-import torch_geometric
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyFullTest,
@@ -54,27 +53,27 @@ def test_torch_compile(device):
     matrix = torch.randn(x.size(-1), x.size(-1), device=device)
 
     expected = gather_scatter(x, edge_index)
-    compiled_op = torch_geometric.compile(gather_scatter)
+    compiled_op = torch.compile(gather_scatter)
     out = compiled_op(x, edge_index)
     assert torch.allclose(out, expected, atol=1e-6)
 
     expected = gather_cat_scatter(x, edge_index)
-    compiled_op = torch_geometric.compile(gather_cat_scatter)
+    compiled_op = torch.compile(gather_cat_scatter)
     out = compiled_op(x, edge_index)
     assert torch.allclose(out, expected, atol=1e-6)
 
     expected = gather_weight_scatter(x, edge_index, edge_weight)
-    compiled_op = torch_geometric.compile(gather_weight_scatter)
+    compiled_op = torch.compile(gather_weight_scatter)
     out = compiled_op(x, edge_index, edge_weight)
     assert torch.allclose(out, expected, atol=1e-6)
 
     expected = gather_transform_scatter(x, edge_index, matrix)
-    compiled_op = torch_geometric.compile(gather_transform_scatter)
+    compiled_op = torch.compile(gather_transform_scatter)
     out = compiled_op(x, edge_index, matrix)
     assert torch.allclose(out, expected, atol=1e-6)
 
     expected = fused_gather_scatter(x, edge_index)
-    compiled_op = torch_geometric.compile(fused_gather_scatter)
+    compiled_op = torch.compile(fused_gather_scatter)
     out = compiled_op(x, edge_index)
     assert torch.allclose(out, expected, atol=1e-6)
 
@@ -99,7 +98,7 @@ if __name__ == '__main__':
         benchmark(
             funcs=[
                 gather_scatter,
-                torch_geometric.compile(gather_scatter),
+                torch.compile(gather_scatter),
             ],
             func_names=['Vanilla', 'Compiled'],
             args=(x, edge_index, reduce),
@@ -111,7 +110,7 @@ if __name__ == '__main__':
         benchmark(
             funcs=[
                 gather_cat_scatter,
-                torch_geometric.compile(gather_cat_scatter),
+                torch.compile(gather_cat_scatter),
             ],
             func_names=['Vanilla Cat', 'Compiled Cat'],
             args=(x, edge_index, reduce),
@@ -123,7 +122,7 @@ if __name__ == '__main__':
         benchmark(
             funcs=[
                 gather_weight_scatter,
-                torch_geometric.compile(gather_weight_scatter),
+                torch.compile(gather_weight_scatter),
             ],
             func_names=['Vanilla Weight', 'Compiled Weight'],
             args=(x, edge_index, edge_weight, reduce),
@@ -135,7 +134,7 @@ if __name__ == '__main__':
         benchmark(
             funcs=[
                 gather_transform_scatter,
-                torch_geometric.compile(gather_transform_scatter),
+                torch.compile(gather_transform_scatter),
             ],
             func_names=['Vanilla Transform', 'Compiled Transform'],
             args=(x, edge_index, matrix, reduce),
@@ -147,7 +146,7 @@ if __name__ == '__main__':
     benchmark(
         funcs=[
             fused_gather_scatter,
-            torch_geometric.compile(fused_gather_scatter),
+            torch.compile(fused_gather_scatter),
         ],
         func_names=['Vanilla Fused', 'Compiled Fused'],
         args=(x, edge_index),
