@@ -43,7 +43,7 @@ When we deal with one really big graph and one single machine can not cover one 
 --------------------------------------
 
 
-
+asd
 The first step for distributed training is to partition the graph into multiples which can be used by multiple nodes.
 
 There are two partition examples in latest pyg from `here <https://github.com/pyg-team/pytorch_geometric/edit/master/examples/distributed/pyg>`__ for homo/hetero partition cases. Here we will use the ``ogbn-products`` as homo dataset/``ogbn-mags`` as hetero dataset to demonstrate how to partition it into two parts for distributed training.
