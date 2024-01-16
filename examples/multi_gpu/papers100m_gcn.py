@@ -101,6 +101,10 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     else:
         split_idx['train'] = split_idx['train'].split(
             split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
+        split_idx['valid'] = split_idx['valid'].split(
+            split_idx['valid'].size(0) // world_size, dim=0)[rank].clone()
+        split_idx['test'] = split_idx['test'].split(
+            split_idx['test'].size(0) // world_size, dim=0)[rank].clone()
     model = model.to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
