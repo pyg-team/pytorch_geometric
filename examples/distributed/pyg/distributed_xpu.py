@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import os
 import time
 from contextlib import nullcontext
 
@@ -15,10 +16,15 @@ from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import GraphSAGE, to_hetero
 
-# import logging
-# logging.basicConfig(
-#     format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
-# )
+import intel_extension_for_pytorch as ipex
+import oneccl_bindings_for_pytorch  # noqa
+from benchmark.multi_gpu.training.common import maybe_synchronize
+
+import logging
+
+logging.basicConfig(
+    format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
+)
 
 
 @torch.no_grad()
@@ -35,9 +41,9 @@ def test(
 ):
     def test_homo(batch):
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index)[: batch.batch_size]
         y_pred = out.argmax(dim=-1)
-        y_true = batch.y[:batch.batch_size]
+        y_true = batch.y[: batch.batch_size]
         return y_pred, y_true
 
     def test_hetero(batch):
@@ -52,22 +58,27 @@ def test(
     test_fn = test_hetero if is_hetero else test_homo
     total_examples = total_correct = 0
     # Save result at each iteration
-    multithreading = (test_loader.enable_multithreading(num_loader_threads)
-                      if test_loader.num_workers > 0 else nullcontext()
-                      )  # speeds up dataloading on CPU
+    multithreading = (
+        test_loader.enable_multithreading(num_loader_threads)
+        if test_loader.num_workers > 0
+        else nullcontext()
+    )  # speeds up dataloading on CPU
     with multithreading:
         if progress_bar:
-            test_loader = tqdm(test_loader,
-                               desc=f'[Node {dist_context.rank}] Test')
+            test_loader = tqdm(
+                test_loader, desc=f'[Node {dist_context.rank}] Test'
+            )
         batch_time = time.time()
         for i, batch in enumerate(test_loader):
             y_pred, y_true = test_fn(batch)
             total_correct += int((y_pred == y_true).sum())
             total_examples += y_pred.size(0)
             batch_acc = int((y_pred == y_true).sum()) / y_pred.size(0)
-            result = (f'[Node {dist_context.rank}] Test: '
-                      f'epoch={epoch}, it={i}, acc={batch_acc:.4}, '
-                      f'time={(time.time() - batch_time):.4}')
+            result = (
+                f'[Node {dist_context.rank}] Test: '
+                f'epoch={epoch}, it={i}, acc={batch_acc:.4}, '
+                f'time={(time.time() - batch_time):.4}'
+            )
             batch_time = time.time()
             if logfile:
                 log = open(logfile, 'a+')
@@ -75,6 +86,8 @@ def test(
                 log.close()
             if not progress_bar:
                 print(result)
+
+    maybe_synchronize('xpu')
     torch.distributed.barrier()
     return total_correct / total_examples
 
@@ -94,8 +107,8 @@ def training(
     def train_homo(batch):
         batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
-        loss = F.cross_entropy(out, batch.y[:batch.batch_size])
+        out = model(batch.x, batch.edge_index)[: batch.batch_size]
+        loss = F.cross_entropy(out, batch.y[: batch.batch_size])
         loss.backward()
         optimizer.step()
         return loss
@@ -114,18 +127,24 @@ def training(
 
     train_fn = train_hetero if is_hetero else train_homo
     # Save result at each iteration
-    multithreading = (train_loader.enable_multithreading(num_loader_threads)
-                      if train_loader.num_workers > 0 else nullcontext())
+    multithreading = (
+        train_loader.enable_multithreading(num_loader_threads)
+        if train_loader.num_workers > 0
+        else nullcontext()
+    )
     with multithreading:
         if progress_bar:
-            train_loader = tqdm(train_loader,
-                                desc=f'[Node {dist_context.rank}] Train')
+            train_loader = tqdm(
+                train_loader, desc=f'[Node {dist_context.rank}] Train'
+            )
         batch_time = time.time()
         for i, batch in enumerate(train_loader):
             loss = train_fn(batch)
-            result = (f'[Node {dist_context.rank}] Train: '
-                      f'epoch={epoch}, it={i}, loss={loss:.4}, '
-                      f'time={(time.time() - batch_time):.4}')
+            result = (
+                f'[Node {dist_context.rank}] Train: '
+                f'epoch={epoch}, it={i}, loss={loss:.4}, '
+                f'time={(time.time() - batch_time):.4}'
+            )
             batch_time = time.time()
             if logfile:
                 log = open(logfile, 'a+')
@@ -134,6 +153,7 @@ def training(
             if not progress_bar:
                 print(result)
 
+    maybe_synchronize('xpu')
     torch.distributed.barrier()
     return loss
 
@@ -163,28 +183,14 @@ def run_proc(
     elif dataset == 'ogbn-products':
         is_hetero = False
     else:
-        raise NotImplementedError(f'This example supports only OGB datasets: '
-                                  f'(ogbn-products, ogbn-mag), got {dataset}')
+        raise NotImplementedError(
+            f'This example supports only OGB datasets: '
+            f'(ogbn-products, ogbn-mag), got {dataset}'
+        )
 
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
     node_label_file = osp.join(root_dir, f'{dataset}-label', 'label.pt')
-    train_idx = torch.load(
-        osp.join(
-            root_dir,
-            f'{dataset}-train-partitions',
-            f'partition{node_rank}.pt',
-        ))
-    test_idx = torch.load(
-        osp.join(
-            root_dir,
-            f'{dataset}-test-partitions',
-            f'partition{node_rank}.pt',
-        ))
-
-    if is_hetero:
-        train_idx = ('paper', train_idx)
-        test_idx = ('paper', test_idx)
 
     # load partition information
     (
@@ -193,15 +199,18 @@ def run_proc(
         partition_idx,
         node_pb,
         edge_pb,
-    ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
-                            node_rank)
+    ) = load_partition_info(
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
     print(f'meta={meta}, partition_idx={partition_idx}')
     # load partition into graph
     graph = LocalGraphStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
     # load partition into feature
     feature = LocalFeatureStore.from_partition(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank)
+        osp.join(root_dir, f'{dataset}-partitions'), node_rank
+    )
 
     # setup the partition information in LocalGraphStore and LocalFeatureStore
     graph.num_partitions = feature.num_partitions = num_partitions
@@ -213,25 +222,54 @@ def run_proc(
     partition_data = (feature, graph)
 
     # Initialize distributed context
+    mpi_rank = int(os.environ.get("PMI_RANK", -1))
+    mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
+
     current_ctx = DistContext(
-        rank=node_rank,
-        global_world_size=num_nodes,
-        global_rank=node_rank,
-        group_name='distributed-sage-supervised-Node',
+        world_size=num_nodes * mpi_world_size,
+        rank=node_rank * mpi_world_size + mpi_rank,
+        group_name='distributed-sage-xpu',
     )
-    current_device = torch.device('cpu')
+    current_device = torch.device('xpu')
+
+    train_idx = torch.load(
+        osp.join(
+            root_dir,
+            f'{dataset}-train-partitions',
+            f'partition{node_rank}.pt',
+        )
+    )
+    test_idx = torch.load(
+        osp.join(
+            root_dir,
+            f'{dataset}-test-partitions',
+            f'partition{node_rank}.pt',
+        )
+    )
+    train_idx = (
+        "paper",
+        train_idx.split(train_idx.size(0) // mpi_world_size)[mpi_rank],
+    )
+    test_idx = (
+        "paper",
+        test_idx.split(test_idx.size(0) // mpi_world_size)[mpi_rank],
+    )
+    if is_hetero:
+        train_idx = ('paper', train_idx)
+        test_idx = ('paper', test_idx)
 
     print('--- Initialize DDP training group ...')
     # Initialize DDP training process group.
     torch.distributed.init_process_group(
-        backend='gloo',
+        backend='ccl',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
-    persistent_workers = (True if num_workers > 0 else False
-                          )  # Keep workers RPC alive outside the iterator loop
+    persistent_workers = (
+        True if num_workers > 0 else False
+    )  # Keep workers RPC alive outside the iterator loop
     print('--- Initialize distributed loaders ...')
     # Create distributed neighbor loader for training
     train_loader = pyg_dist.DistNeighborLoader(
@@ -287,6 +325,7 @@ def run_proc(
             model(batch.x_dict, batch.edge_index_dict)
             del batch
             torch.distributed.barrier()
+            maybe_synchronize('xpu')
 
     if is_hetero:
         # Turn model to hetero and initialize parameters
@@ -294,11 +333,14 @@ def run_proc(
         model = to_hetero(model, metadata).to(current_device)
         init_params()
         torch.distributed.barrier()
+        maybe_synchronize('xpu')
 
     # Enable DDP
     model = DistributedDataParallel(model, find_unused_parameters=is_hetero)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
+    model, optimizer = ipex.optimize(model, optimizer=optimizer)
     torch.distributed.barrier()
+    maybe_synchronize('xpu')
 
     # Train and test
     print(f'--- Start training for {num_epochs} epochs ...')
@@ -319,9 +361,11 @@ def run_proc(
             num_loader_threads,
             progress_bar,
         )
-        print(f'[Node {current_ctx.rank}] Epoch {epoch}: \
+        print(
+            f'[Node {current_ctx.rank}] Epoch {epoch}: \
                 Train Loss = {loss:.4f}, \
-                Train Time = {(time.time() - start):.2f}')
+                Train Time = {(time.time() - start):.2f}'
+        )
 
         # Test accuracy.
         if i % 5 == 0:
@@ -339,16 +383,20 @@ def run_proc(
                 num_loader_threads,
                 progress_bar,
             )
-            print(f'[Node {current_ctx.rank}] Epoch {epoch}: '
-                  f'Test Accuracy = {acc:.4f}, '
-                  f'Test Time = {(time.time() - start):.2f}')
+            print(
+                f'[Node {current_ctx.rank}] Epoch {epoch}: '
+                f'Test Accuracy = {acc:.4f}, '
+                f'Test Time = {(time.time() - start):.2f}'
+            )
     print(f'--- [Node {current_ctx.rank}] Closing ---')
+    maybe_synchronize('xpu')
     torch.distributed.destroy_process_group()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Arguments for distributed training of supervised SAGE.')
+        description='Arguments for distributed training of supervised SAGE.'
+    )
     parser.add_argument(
         '--dataset',
         type=str,
