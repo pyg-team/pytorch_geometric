@@ -243,11 +243,20 @@ def group_argsort(
             (default: :obj:`False`)
         stable (bool, optional): Controls the relative order of equivalent
             elements. (default: :obj:`False`)
+
+    Example:
+        >>> src = torch.tensor([0, 1, 5, 4, 3, 2, 6, 7, 8])
+        >>> index = torch.tensor([0, 0, 1, 1, 1, 1, 2, 2, 2])
+        >>> group_argsort(src, index)
+        tensor([0, 1, 3, 2, 1, 0, 0, 1, 2])
     """
     # Only implemented under certain conditions for now :(
     assert src.dim() == 1 and index.dim() == 1
     assert dim == 0 or dim == -1
-    assert src.numel() == index.numel() and src.numel() > 0
+    assert src.numel() == index.numel()
+
+    if src.numel() == 0:
+        return torch.zeros_like(src)
 
     # Normalize `src` to range [0, 1]:
     src = src - src.min()

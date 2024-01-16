@@ -143,6 +143,7 @@ def trim_to_layer(
 
 
 class TrimToLayer(torch.nn.Module):
+    @torch.jit.unused
     def forward(
         self,
         layer: int,

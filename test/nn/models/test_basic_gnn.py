@@ -9,7 +9,6 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
-from torch_geometric._compile import to_jittable
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
@@ -139,11 +138,11 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-def test_jittable():
+def test_jit():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    model = GCN(8, 16, num_layers=2).jittable()
+    model = GCN(8, 16, num_layers=2)
     model = torch.jit.script(model)
 
     assert model(x, edge_index).size() == (3, 16)
@@ -244,6 +243,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
+        pe.extern('torch_geometric.inspector')
         pe.extern('torch_geometric.utils._trim_to_layer')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
@@ -350,8 +350,12 @@ def test_compile_graph_breaks(Model, device):
         kwargs['scalers'] = ['identity', 'amplification', 'attenuation']
         kwargs['deg'] = torch.tensor([1, 2, 1])
 
-    model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
-    model = to_jittable(model).to(device)
+    model = Model(
+        in_channels=8,
+        hidden_channels=16,
+        num_layers=2,
+        **kwargs,
+    ).to(device)
 
     explanation = dynamo.explain(model)(x, edge_index)
     assert explanation.graph_break_count == 0

@@ -483,9 +483,9 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
     raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
 
 
-def ptr2index(ptr: Tensor) -> Tensor:
-    ind = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
-    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+def ptr2index(ptr: Tensor, output_size: Optional[int] = None) -> Tensor:
+    index = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
+    return index.repeat_interleave(ptr.diff(), output_size=output_size)
 
 
 def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
