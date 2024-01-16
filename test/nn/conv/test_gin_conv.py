@@ -34,7 +34,7 @@ def test_gin_conv():
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index), out, atol=1e-6)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out, atol=1e-6)
 
@@ -59,7 +59,6 @@ def test_gin_conv():
         assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index), out1)
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
         assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)
@@ -92,7 +91,7 @@ def test_gine_conv():
         assert torch.allclose(conv(x1, adj.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index, value), out)
         assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
 
@@ -113,7 +112,6 @@ def test_gine_conv():
         assert torch.allclose(conv((x1, None), adj.t()), out2)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(jit((x1, x2), edge_index, value), out1)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
                               out1)

@@ -20,7 +20,7 @@ def test_dna_conv(channels, num_layers):
     assert out.size() == (4, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
@@ -29,7 +29,7 @@ def test_dna_conv(channels, num_layers):
     assert out.size() == (4, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
@@ -39,7 +39,7 @@ def test_dna_conv(channels, num_layers):
     assert out.size() == (4, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
 
@@ -68,7 +68,7 @@ def test_dna_conv_sparse_tensor(channels, num_layers):
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
 

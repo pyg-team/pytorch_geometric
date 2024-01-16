@@ -151,7 +151,8 @@ class GMMConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_attr: Tensor):
+    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
+        assert edge_attr is not None
         EPS = 1e-15
         F, M = self.rel_in_channels, self.out_channels
         (E, D), K = edge_attr.size(), self.kernel_size

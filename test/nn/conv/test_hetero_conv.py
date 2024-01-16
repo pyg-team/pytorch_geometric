@@ -193,8 +193,8 @@ def test_compile_hetero_conv_graph_breaks(device):
     data['b', 'to', 'a'].edge_index = edge_index.flip([0])
 
     conv = HeteroConv({
-        ('a', 'to', 'b'): SAGEConv(16, 32).jittable(),
-        ('b', 'to', 'a'): SAGEConv(16, 32).jittable(),
+        ('a', 'to', 'b'): SAGEConv(16, 32),
+        ('b', 'to', 'a'): SAGEConv(16, 32),
     }).to(device)
 
     explanation = dynamo.explain(conv)(data.x_dict, data.edge_index_dict)

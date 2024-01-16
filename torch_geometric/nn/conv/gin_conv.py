@@ -92,8 +92,7 @@ class GINConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)
@@ -193,7 +192,8 @@ class GINEConv(MessagePassing):
 
         return self.nn(out)
 
-    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
+        assert edge_attr is not None
         if self.lin is None and x_j.size(-1) != edge_attr.size(-1):
             raise ValueError("Node and edge feature dimensionalities do not "
                              "match. Consider setting the 'edge_dim' "
