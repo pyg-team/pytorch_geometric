@@ -212,7 +212,7 @@ def test_compile(device):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
     model = GCN(8, 16, num_layers=3).to(device)
-    compiled_model = torch_geometric.compile(model)
+    compiled_model = torch.compile(model)
 
     expected = model(x, edge_index)
     out = compiled_model(x, edge_index)
@@ -413,7 +413,7 @@ if __name__ == '__main__':
         print(f'Model: {Model.__name__}')
 
         model = Model(64, 64, num_layers=3).to(args.device)
-        compiled_model = torch_geometric.compile(model)
+        compiled_model = torch.compile(model)
 
         benchmark(
             funcs=[model, compiled_model],
