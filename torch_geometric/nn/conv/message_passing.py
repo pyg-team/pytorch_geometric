@@ -21,8 +21,8 @@ from torch.utils.hooks import RemovableHandle
 from torch_geometric import is_compiling
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.conv.propagate import module_from_template
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
+from torch_geometric.template import module_from_template
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
     is_sparse,
@@ -170,6 +170,7 @@ class MessagePassing(torch.nn.Module):
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
                     template_path=osp.join(root_dir, 'propagate.jinja'),
+                    tmp_dirname='message_passing',
                     # Keyword arguments:
                     module=self.__module__,
                     collect_name='collect',
@@ -201,6 +202,7 @@ class MessagePassing(torch.nn.Module):
             module = module_from_template(
                 module_name=f'{jinja_prefix}_edge_updater',
                 template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                tmp_dirname='message_passing',
                 # Keyword arguments:
                 module=self.__module__,
                 collect_name='edge_collect',
