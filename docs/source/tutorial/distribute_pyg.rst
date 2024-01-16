@@ -5,7 +5,7 @@ The architecture seamlessly distributes large-scale graph neural network trainin
 
 Key Advantages
 --------------------------------------
-.. (TODO: add links) 
+.. (TODO: add links)
 1) Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
 2) Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
 3) The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph and feature storage.
@@ -14,10 +14,10 @@ Key Advantages
 6) Incorporating asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT library.
 7) Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks
 
-<<< 
+<<<
 
 
-When we deal with one really big graph and one single machine can not cover one whole big graph we need partition this graph into 
+When we deal with one really big graph and one single machine can not cover one whole big graph we need partition this graph into
 multiple partitioned subgraph and load into multiple nodes for further sampling and training as shown in figure below for whole flow.
 1) In partition algorithm we used the pyg metis algorithm to do the partition and also we keep the halonodes when splitting the graph. Halonodes is to keep one remote node which make the edge information all kept.
 2) After partition we will use the graphstore/featurestore to load the partition information including graph topo, features and ids. Butt they are different for graph / features over the different nodes.
