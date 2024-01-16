@@ -192,8 +192,7 @@ class GINEConv(MessagePassing):
 
         return self.nn(out)
 
-    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
-        assert edge_attr is not None
+    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         if self.lin is None and x_j.size(-1) != edge_attr.size(-1):
             raise ValueError("Node and edge feature dimensionalities do not "
                              "match. Consider setting the 'edge_dim' "

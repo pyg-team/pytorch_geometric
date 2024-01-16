@@ -482,13 +482,9 @@ def test_my_default_arg_conv():
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert conv(x, adj2.t()).view(-1).tolist() == [0, 0, 0, 0]
 
-
-def test_my_default_arg_conv_jit():
-    conv = MyDefaultArgConv()
-
-    # This should not succeed in JIT mode.
-    with pytest.raises((RuntimeError, AttributeError)):
-        torch.jit.script(conv.jit)
+    jit = torch.jit.script(conv)
+    assert jit(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
+    assert jit(x, adj1.t()).view(-1).tolist() == [0, 0, 0, 0]
 
 
 class MyMultipleOutputConv(MessagePassing):
