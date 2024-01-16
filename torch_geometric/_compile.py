@@ -26,9 +26,9 @@ def compile(
     `here <https://pytorch.org/docs/stable/generated/torch.compile.html>`__).
 
     .. note::
-        :meth:`torch_geometric.compile` is now deprecated in favor of
+        :meth:`torch_geometric.compile` is deprecated in favor of
         :meth:`torch.compile`.
     """
-    warnings.warn("'torch_geometric.compile' is now deprecated in favor of "
+    warnings.warn("'torch_geometric.compile' is deprecated in favor of "
                   "'torch.compile'")
     return torch.compile(model, *args, **kwargs)
