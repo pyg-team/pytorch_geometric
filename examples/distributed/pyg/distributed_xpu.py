@@ -228,6 +228,8 @@ def run_proc(
     current_ctx = DistContext(
         world_size=num_nodes * mpi_world_size,
         rank=node_rank * mpi_world_size + mpi_rank,
+        global_world_size=num_nodes * mpi_world_size,
+        global_rank=node_rank * mpi_world_size + mpi_rank,
         group_name='distributed-sage-xpu',
     )
     current_device = torch.device('xpu')
