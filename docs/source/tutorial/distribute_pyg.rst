@@ -1,31 +1,26 @@
 Distributed Training for PyG
 =================================================
 
-As we all know there are two distributed application scenarios:
+The architecture seamlessly distributes large-scale graph neural network training across multiple nodes by integrating Distributed Data Parallelism (DDP) for model training and employing Remote Procedure Call (RPC) for efficient sampling and retrieval of non-local features. Custom classes, such as DistNeighborSampler, implement CPU sampling algorithms and feature extraction from both local and remote data, maintaining a consistent data structure at the output. The integrated DistLoader ensures the secure opening and closing of RPC connections between the samplers, and a METIS-based Partitioner contributes to effective graph partitioning.
 
-1) when data is really big we can use ``torch.distribute.ddp`` to do DDP/data parallel over multiple nodes.
-2) When model is really big we can do distributed model parallel over multiple nodes.
+Key Advantages
+--------------------------------------
+.. (TODO: add links) 
+1) Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
+2) Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
+3) The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph and feature storage.
+4) ``DistNeighborSampler`` with remote sampling capabilities
+5) The ``DistLoader``/``DistNeighborLoader``/``DistLinkLoader`` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard PyG Loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
+6) Incorporating asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT library.
+7) Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks
 
-For the scenario 1) When the data is graph we need to do two steps a) distributed sampling first and b) distributed training like torch DDP.
-In the following tutorial we will introduce the distributed training for PyG by step-by-step.
-
-Brief Summary for Key features on distributed training for PyG:
-
-1) Large-Graph into Partitions with halonodes
-2) Separate GraphStore /FeatureStore
-3) DistNeighborLoader with multi-processes
-4) DistNeighborSampler with local/remote capabilities
-5) ``torch.distribute.DDP`` /``torch.distribute.RPC`` as main commu. Tech.
-6) Homo/Hereto support for distributed
-7) Node/Edge Sampling supported for distributed
+<<< 
 
 
-
-When we deal with one really big graph and one single machine can not cover one whole big graph we need partition this graph into multiple partitioned subgraph and load into multiple nodes for further sampling and training as shown in figure below for whole flow.
-
+When we deal with one really big graph and one single machine can not cover one whole big graph we need partition this graph into 
+multiple partitioned subgraph and load into multiple nodes for further sampling and training as shown in figure below for whole flow.
 1) In partition algorithm we used the pyg metis algorithm to do the partition and also we keep the halonodes when splitting the graph. Halonodes is to keep one remote node which make the edge information all kept.
 2) After partition we will use the graphstore/featurestore to load the partition information including graph topo, features and ids. Butt they are different for graph / features over the different nodes.
-
 3) Then we will do sampling for the subgraph in locally / remotely based on input seeds. Some seeds in locally and other are in remote. We will use ``torch.distribute.rpc`` to remotely execute the same function as locally. After done with locally/remotely we will merge together.
 4) Based on the sampled global node ids we still will look up the features based on these sampled node ids. We still will do locally/remotely and combine together.
 5) Last one is to formalize into PyG data format for data loader
@@ -42,8 +37,6 @@ When we deal with one really big graph and one single machine can not cover one 
 1. Graph Partitioning
 --------------------------------------
 
-
-asd
 The first step for distributed training is to partition the graph into multiples which can be used by multiple nodes.
 
 There are two partition examples in latest pyg from `here <https://github.com/pyg-team/pytorch_geometric/edit/master/examples/distributed/pyg>`__ for homo/hetero partition cases. Here we will use the ``ogbn-products`` as homo dataset/``ogbn-mags`` as hetero dataset to demonstrate how to partition it into two parts for distributed training.
