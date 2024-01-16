@@ -344,6 +344,17 @@ class Inspector:
 
     # Inspecting Method Bodies ################################################
 
+    @property
+    def can_read_source(self) -> bool:
+        r"""Returns :obj:`True` if able to read the source file of the
+        inspected class.
+        """
+        try:
+            inspect.getfile(self._cls)
+            return True
+        except Exception:
+            return False
+
     def get_source(self, cls: Optional[Type] = None) -> str:
         r"""Returns the source code of :obj:`cls`."""
         cls = cls or self._cls
