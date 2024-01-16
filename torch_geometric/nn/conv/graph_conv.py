@@ -4,13 +4,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import (
-    Adj,
-    OptPairTensor,
-    OptTensor,
-    Size,
-    SparseTensor,
-)
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import spmm
 
 
@@ -96,6 +90,5 @@ class GraphConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)

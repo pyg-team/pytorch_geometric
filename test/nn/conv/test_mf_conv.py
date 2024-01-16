@@ -22,7 +22,7 @@ def test_mf_conv():
         assert torch.allclose(conv(x1, adj.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index), out)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 
@@ -46,7 +46,7 @@ def test_mf_conv():
         assert torch.allclose(conv((x1, None), adj.t()), out2)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit((x1, x2), edge_index), out1)
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
         assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)

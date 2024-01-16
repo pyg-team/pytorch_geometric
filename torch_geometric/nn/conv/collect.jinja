@@ -85,6 +85,17 @@ def {{collect_name}}(
         edge_index_j = edge_index[j]
         ptr = None
 
+{%- if 'edge_weight' in collect_param_dict and
+    collect_param_dict['edge_weight'].type_repr.endswith('Tensor') %}
+    assert edge_weight is not None
+{%- elif 'edge_attr' in collect_param_dict and
+    collect_param_dict['edge_attr'].type_repr.endswith('Tensor') %}
+    assert edge_attr is not None
+{%- elif 'edge_type' in collect_param_dict and
+    collect_param_dict['edge_type'].type_repr.endswith('Tensor') %}
+    assert edge_type is not None
+{%- endif %}
+
     # Collect user-defined arguments:
 {%- for name in collect_param_dict %}
 {%- if (name.endswith('_i') or name.endswith('_j')) and

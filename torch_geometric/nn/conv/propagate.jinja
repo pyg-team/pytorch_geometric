@@ -45,6 +45,7 @@ def propagate(
 
     if fuse:
 
+{%- if fuse %}
         # Begin Message and Aggregate Forward Pre Hook #########################
         if not torch.jit.is_scripting() and not is_compiling():
             for hook in self._message_and_aggregate_forward_pre_hooks.values():
@@ -86,6 +87,9 @@ def propagate(
             {{name}}={{name}},
 {%- endfor %}
         )
+{%- else %}
+        raise NotImplementedError("'message_and_aggregate' not implemented")
+{%- endif %}
 
     else:
 

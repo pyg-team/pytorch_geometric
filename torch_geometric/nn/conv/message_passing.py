@@ -183,6 +183,7 @@ class MessagePassing(torch.nn.Module):
                 message_and_aggregate_args=self.inspector.get_param_names(
                     'message_and_aggregate'),
                 update_args=self.inspector.get_param_names('update'),
+                fuse=self.fuse,
             )
 
             # Cache to potentially disable later on:
@@ -608,10 +609,7 @@ class MessagePassing(torch.nn.Module):
                                 dim=self.node_dim)
 
     @abstractmethod
-    def message_and_aggregate(
-        self,
-        adj_t: Adj,
-    ) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not

@@ -28,7 +28,7 @@ def test_point_transformer_conv():
         assert torch.allclose(conv(x1, pos1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, pos1, edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -59,7 +59,7 @@ def test_point_transformer_conv():
         assert torch.allclose(conv((x1, x2), (pos1, pos2), adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit((x1, x2), (pos1, pos2), edge_index), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
