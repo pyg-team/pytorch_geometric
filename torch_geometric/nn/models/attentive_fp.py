@@ -1,4 +1,3 @@
-import copy
 from typing import Optional
 
 import torch
@@ -169,14 +168,6 @@ class AttentiveFP(torch.nn.Module):
         # Predictor:
         out = F.dropout(out, p=self.dropout, training=self.training)
         return self.lin2(out)
-
-    def jittable(self) -> 'AttentiveFP':
-        out = copy.deepcopy(self)
-        out.gate_conv = out.gate_conv.jittable()
-        convs = [conv.jittable() for conv in out.atom_convs]
-        out.atom_convs = torch.nn.ModuleList(convs)
-        out.mol_conv = out.mol_conv.jittable()
-        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('

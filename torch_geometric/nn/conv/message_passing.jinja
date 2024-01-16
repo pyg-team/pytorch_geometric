@@ -47,7 +47,7 @@ class {{cls_name}}({{parent_cls_name}}):
 {%- if arg[-2:] not in ['_i', '_j'] %}
         {{arg}} = kwargs.{{arg}}
 {%- else %}
-        {{arg}}: {{collect_types[arg]}} = {% if collect_types[arg][:8] == 'Optional' %}None{% else %}init{% endif %}
+        {{arg}}: {{collect_types[arg]}} = {% if 'Optional' in collect_types[arg] %}None{% else %}init{% endif %}
         data = kwargs.{{arg[:-2]}}
         if isinstance(data, (tuple, list)):
             assert len(data) == 2
@@ -97,9 +97,9 @@ class {{cls_name}}({{parent_cls_name}}):
                 edge_type = value
             {% endif %}
 
-        {% if collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}
-        {% if collect_types.get('edge_attr', 'Optional')[:8] != 'Optional' %}assert edge_attr is not None{% endif %}
-        {% if collect_types.get('edge_type', 'Optional')[:8] != 'Optional' %}assert edge_type is not None{% endif %}
+        {% if 'Optional' not in collect_types.get('edge_weight', 'Optional') %}assert edge_weight is not None{% endif %}
+        {% if 'Optional' not in collect_types.get('edge_attr', 'Optional') %}assert edge_attr is not None{% endif %}
+        {% if 'Optional' not in collect_types.get('edge_type', 'Optional') %}assert edge_type is not None{% endif %}
 
         index = edge_index_i
         size_i = size[1] if size[1] is not None else size[0]
@@ -122,7 +122,7 @@ class {{cls_name}}({{parent_cls_name}}):
 {%- if arg[-2:] not in ['_i', '_j'] %}
         {{arg}} = kwargs.{{arg}}
 {%- else %}
-        {{arg}}: {{edge_collect_types[arg]}} = {% if edge_collect_types[arg][:8] == 'Optional' %}None{% else %}init{% endif %}
+        {{arg}}: {{edge_collect_types[arg]}} = {% if 'Optional' in edge_collect_types %}None{% else %}init{% endif %}
         data = kwargs.{{arg[:-2]}}
         if isinstance(data, (tuple, list)):
             assert len(data) == 2
@@ -172,9 +172,9 @@ class {{cls_name}}({{parent_cls_name}}):
                 edge_type = value
             {% endif %}
 
-        {% if edge_collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}
-        {% if edge_collect_types.get('edge_attr', 'Optional')[:8] != 'Optional' %}assert edge_attr is not None{% endif %}
-        {% if edge_collect_types.get('edge_type', 'Optional')[:8] != 'Optional' %}assert edge_type is not None{% endif %}
+        {% if 'Optional' not in edge_collect_types.get('edge_weight', 'Optional') %}assert edge_weight is not None{% endif %}
+        {% if 'Optional' not in edge_collect_types.get('edge_attr', 'Optional') %}assert edge_attr is not None{% endif %}
+        {% if 'Optional' not in edge_collect_types.get('edge_type', 'Optional') %}assert edge_type is not None{% endif %}
 
         index = edge_index_i
         size_i = size[1] if size[1] is not None else size[0]
@@ -216,9 +216,10 @@ class {{cls_name}}({{parent_cls_name}}):
         {% for name, type_hint in edge_updater_types.items() %}
         {{ name }}: {{ type_hint }},
         {% endfor %}
+        size: Size=None,
     ) -> {{ edge_updater_return_type }}:
 
-        the_size = self._check_input(edge_index, size=None)
+        the_size = self._check_input(edge_index, size)
         in_kwargs = EdgeUpdater_{{uid}}({% for k in edge_updater_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
         kwargs = self._collect_edge(edge_index, the_size, in_kwargs)
         return self.edge_update({% for k in edge_update_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})

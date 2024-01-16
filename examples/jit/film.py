@@ -26,12 +26,11 @@ class FiLM(torch.nn.Module):
         self.dropout = dropout
 
         self.convs = torch.nn.ModuleList()
-        self.convs.append(FiLMConv(in_channels, hidden_channels).jittable())
+        self.convs.append(FiLMConv(in_channels, hidden_channels))
         for _ in range(num_layers - 2):
-            conv = FiLMConv(hidden_channels, hidden_channels).jittable()
+            conv = FiLMConv(hidden_channels, hidden_channels)
             self.convs.append(conv)
-        self.last_conv = FiLMConv(hidden_channels, out_channels,
-                                  act=None).jittable()
+        self.last_conv = FiLMConv(hidden_channels, out_channels, act=None)
 
         self.norms = torch.nn.ModuleList()
         for _ in range(num_layers - 1):

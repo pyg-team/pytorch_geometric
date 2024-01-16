@@ -121,7 +121,8 @@ class PPFConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
-        # propagate_type: (x: PairOptTensor, pos: PairTensor, normal: PairTensor)  # noqa
+        # propagate_type: (x: PairOptTensor, pos: PairTensor,
+        #                  normal: PairTensor)
         out = self.propagate(edge_index, x=x, pos=pos, normal=normal)
 
         if self.global_nn is not None:

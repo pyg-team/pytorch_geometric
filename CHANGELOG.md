@@ -45,6 +45,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Return an empty tensor from `utils.group_argsort` if its input tensor is empty ([#8752](https://github.com/pyg-team/pytorch_geometric/pull/8752))
+- GNN layers are now jittable by default ([#8745](https://github.com/pyg-team/pytorch_geometric/pull/8745))
 - Sparse node features in `NELL` and `AttributedGraphDataset` are now represented as `torch.sparse_csr_tensor` instead of `torch_sparse.SparseTensor` ([#8679](https://github.com/pyg-team/pytorch_geometric/pull/8679))
 - Accelerated mini-batching of `torch.sparse` tensors ([#8670](https://github.com/pyg-team/pytorch_geometric/pull/8670))
 - Fixed RPC timeout due to worker closing in `DistLoader` with `atexit` not executed correctly in `worker_init_fn` ([#8605](https://github.com/pyg-team/pytorch_geometric/pull/8605))
@@ -58,6 +60,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated the usage of `torch_geometric.compile`; Use `torch.compile` instead ([#8780](https://github.com/pyg-team/pytorch_geometric/pull/8780))
 - Deprecated the `typing` argument in `MessagePassing.jittable()` ([#8731](https://github.com/pyg-team/pytorch_geometric/pull/8731))
 - Deprecated `torch_geometric.data.makedirs` in favor of `os.makedirs` ([#8421](https://github.com/pyg-team/pytorch_geometric/pull/8421))
 - Deprecated `DataParallel` in favor of `DistributedDataParallel` ([#8250](https://github.com/pyg-team/pytorch_geometric/pull/8250))

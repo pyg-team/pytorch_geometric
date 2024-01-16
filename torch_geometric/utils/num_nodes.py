@@ -1,4 +1,3 @@
-import typing
 from copy import copy
 from typing import Dict, Optional, Tuple, Union
 
@@ -9,37 +8,8 @@ import torch_geometric
 from torch_geometric import EdgeIndex
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload as overload
 
-
-@overload
 def maybe_num_nodes(
-    edge_index: Tensor,
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-@overload
-def maybe_num_nodes(  # noqa: F811
-    edge_index: Tuple[Tensor, Tensor],
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-@overload
-def maybe_num_nodes(  # noqa: F811
-    edge_index: SparseTensor,
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-def maybe_num_nodes(  # noqa: F811
     edge_index: Union[Tensor, Tuple[Tensor, Tensor], SparseTensor],
     num_nodes: Optional[int] = None,
 ) -> int:
