@@ -21,7 +21,7 @@ class GIN(torch.nn.Module):
                 ReLU(),
                 Linear(hidden_channels, hidden_channels),
             )
-            self.convs.append(GINConv(mlp).jittable())
+            self.convs.append(GINConv(mlp))
             in_channels = hidden_channels
 
         self.lin1 = Linear(hidden_channels, hidden_channels)
