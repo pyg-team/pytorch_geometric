@@ -165,12 +165,11 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-        can_compile = hasattr(self.__class__, '__file__')
         root_dir = osp.dirname(osp.realpath(__file__))
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
         if not self.propagate.__module__.startswith(jinja_prefix):
-            if can_compile:
+            if self.inspector.can_read_source:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
                     template_path=osp.join(root_dir, 'propagate.jinja'),
@@ -199,8 +198,9 @@ class MessagePassing(torch.nn.Module):
                 self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
-        if (can_compile and self.inspector.implements('edge_update')
-                and not self.edge_updater.__module__.startswith(jinja_prefix)):
+        if (self.inspector.implements('edge_update')
+                and not self.edge_updater.__module__.startswith(jinja_prefix)
+                and self.inspector.can_read_source):
             module = module_from_template(
                 module_name=f'{jinja_prefix}_edge_updater',
                 template_path=osp.join(root_dir, 'edge_updater.jinja'),
