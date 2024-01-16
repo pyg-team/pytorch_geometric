@@ -1,6 +1,4 @@
-import inspect
 import os.path as osp
-import random
 import warnings
 from abc import abstractmethod
 from inspect import Parameter
@@ -24,7 +22,6 @@ from torch_geometric import is_compiling
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.propagate import module_from_template
-from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -955,93 +952,15 @@ class MessagePassing(torch.nn.Module):
             return_type_repr=edge_update_signature.return_type_repr,
         )
 
-    @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module that can be used in combination with
         :meth:`torch.jit.script`.
+
+        .. note::
+            :meth:`jittable` is deprecated and a no-op from :pyg:`PyG` 2.5
+            onwards.
         """
-        if typing is not None:
-            warnings.warn("The 'typing' argument in 'MessagePassing.jittable' "
-                          "is deprecated and will be removed soon")
-
-        if 'Jittable' in self.__class__.__name__:
-            return self
-
-        from jinja2 import Template
-
-        source = self.inspector.get_source()
-
-        # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
-        prop_signature = self._get_propagate_signature()
-        prop_types = {
-            param.name: param.type_repr
-            for param in prop_signature.param_dict.values()
-        }
-
-        # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
-        edge_signature = self._get_edge_updater_signature()
-        edge_types = {
-            param.name: param.type_repr
-            for param in edge_signature.param_dict.values()
-        }
-
-        # Parse `_collect()` types to format `{arg:1, type1, ...}`.
-        collect_types = self.inspector.get_flat_params(
-            ['message', 'aggregate', 'update'])
-        collect_types = {
-            param.name: param.type_repr
-            for param in collect_types
-        }
-
-        # Parse `_edge_collect()` types to format `{arg:1, type1, ...}`.
-        edge_collect_types = self.inspector.get_params('edge_update')
-        edge_collect_types = {
-            param.name: param.type_repr
-            for param in edge_collect_types
-        }
-
-        # Collect `forward()` function in case it is overloaded. This is
-        # necessary since TorchScript cannot handle inheritance of overloaded
-        # forward functions.
-        # TODO This is very hacky and should be resolved soon.
-        forward_repr = ''
-        start = source.find('    @overload\n    def forward')
-        if start >= 0:
-            forward_repr = inspect.getsource(self.forward)
-            end = source.find(forward_repr) + len(forward_repr)
-            forward_repr = source[start:end]
-
-        root = osp.dirname(osp.realpath(__file__))
-        with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
-            template = Template(f.read())
-
-        uid = '%06x' % random.randrange(16**6)
-        cls_name = f'{self.__class__.__name__}Jittable_{uid}'
-        jit_module_repr = template.render(
-            uid=uid,
-            module=str(self.__class__.__module__),
-            cls_name=cls_name,
-            parent_cls_name=self.__class__.__name__,
-            prop_types=prop_types,
-            prop_return_type=prop_signature.return_type_repr,
-            fuse=self.fuse,
-            collect_types=collect_types,
-            user_args=self._user_args,
-            edge_user_args=self._edge_user_args,
-            msg_args=self.inspector.get_param_names('message'),
-            aggr_args=self.inspector.get_param_names('aggregate'),
-            msg_and_aggr_args=self.inspector.get_param_names(
-                'message_and_aggregate'),
-            update_args=self.inspector.get_param_names('update'),
-            edge_collect_types=edge_collect_types,
-            edge_update_args=self.inspector.get_param_names('edge_update'),
-            edge_updater_types=edge_types,
-            edge_updater_return_type=edge_signature.return_type_repr,
-            forward_repr=forward_repr,
-        )
-        # Instantiate a class from the rendered JIT module representation.
-        cls = class_from_module_repr(cls_name, jit_module_repr)
-        module = cls.__new__(cls)
-        module.__dict__ = self.__dict__.copy()
-        return module
+        warnings.warn(f"'{self.__class__.__name__}.jittable' is deprecated "
+                      f"and a no-op. Please remove its usage.")
+        return self
