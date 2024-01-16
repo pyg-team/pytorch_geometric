@@ -86,7 +86,7 @@ if __name__ == '__main__':
     x = torch.randn(num_edges, 64, device=args.device)
     index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
-    compiled_softmax = torch_geometric.compile(softmax)
+    compiled_softmax = torch.compile(softmax)
 
     def dense_softmax(x, index):
         x = x.view(num_nodes, -1, x.size(-1))

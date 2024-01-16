@@ -2,7 +2,6 @@ import pytest
 import torch
 from torch import Tensor
 
-import torch_geometric
 from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
@@ -36,7 +35,7 @@ def test_compile_conv(device, Conv):
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
 
     conv = Conv(16, 32).to(device)
-    out = torch_geometric.compile(conv)(x, edge_index)
+    out = torch.compile(conv)(x, edge_index)
     assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
 
 
@@ -54,7 +53,7 @@ if __name__ == '__main__':
 
     conv = MySAGEConv(64, 64).to(args.device)
     benchmark(
-        funcs=[conv, torch_geometric.compile(conv)],
+        funcs=[conv, torch.compile(conv)],
         func_names=['Vanilla', 'Compiled'],
         args=(x, edge_index),
         num_steps=50 if args.device == 'cpu' else 500,
@@ -66,7 +65,7 @@ if __name__ == '__main__':
         print(f'Conv: {Conv.__name__}')
 
         conv = Conv(64, 64).to(args.device)
-        compiled_conv = torch_geometric.compile(conv)
+        compiled_conv = torch.compile(conv)
 
         benchmark(
             funcs=[conv, compiled_conv],

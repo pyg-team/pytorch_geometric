@@ -1101,7 +1101,7 @@ def test_compile():
     explanation = dynamo.explain(model)(x, edge_index)
     assert explanation.graph_break_count <= 0
 
-    compiled_model = torch_geometric.compile(model)
+    compiled_model = torch.compile(model)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
 
