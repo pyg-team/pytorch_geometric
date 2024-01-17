@@ -2,8 +2,6 @@ from typing import Optional
 
 import torch
 
-from torch_geometric import is_compiling
-
 # If set to `True`, PyG is configured to use the `segment_matmul` and
 # `grouped_matmul` kernels from `pyg-lib` to parallelize matrix multiplication
 # across segments/groups of potentially varying size.
