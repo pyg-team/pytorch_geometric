@@ -9,7 +9,7 @@ import torch.multiprocessing as mp
 import torch.nn.functional as F
 from ogb.lsc import MAG240MDataset, MAG240MEvaluator
 from torch import Tensor
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 from tqdm import tqdm
@@ -17,7 +17,7 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
-from torch_geometric.nn import SAGEConv, HeteroConv
+from torch_geometric.nn import HeteroConv, SAGEConv
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
@@ -44,15 +44,16 @@ def predict_step(batch: Batch):
     y_hat, y = common_step(batch, model)
     return y_hat
 
+
 class GraphSAGE(torch.nn.Module):
     def __init__(
-        in_channels,
-        hidden_channels,
-        num_layers,
-        out_channels,
-        dropout,
-        norm,
-        metadata=data.metadata(),
+            in_channels,
+            hidden_channels,
+            num_layers,
+            out_channels,
+            dropout,
+            norm,
+            metadata=data.metadata(),
     ):
         super().__init__()
 
@@ -93,8 +94,8 @@ def run(
     )
     # node IDs as features
     data['author'].x = torch.arange(data['author'].num_nodes).reshape(-1, 1)
-    data['institution'].x = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
-
+    data['institution'].x = torch.arange(
+        data['institution'].num_nodes).reshape(-1, 1)
 
     if rank == 0:
         print(f"# GNN Params: \
