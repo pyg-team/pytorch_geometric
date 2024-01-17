@@ -250,11 +250,11 @@ def run_proc(
     )
     train_idx = (
         "paper",
-        train_idx.split(train_idx.size(0) // mpi_world_size)[mpi_rank],
+        train_idx.split(train_idx.size(0) // mpi_world_size)[mpi_rank].clone(),
     )
     test_idx = (
         "paper",
-        test_idx.split(test_idx.size(0) // mpi_world_size)[mpi_rank],
+        test_idx.split(test_idx.size(0) // mpi_world_size)[mpi_rank].clone(),
     )
     if is_hetero:
         train_idx = ('paper', train_idx)
@@ -541,6 +541,7 @@ if __name__ == '__main__':
             args.progress_bar,
             logfile,
         ),
+        nprocs=2,
         join=True,
     )
     print('--- Finished training processes ...')
