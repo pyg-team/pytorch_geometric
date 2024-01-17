@@ -1,5 +1,6 @@
 import copy
 import math
+import sys
 import time
 from typing import Any, Dict, Optional, Union
 
@@ -15,7 +16,7 @@ from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
-import sys
+
 if "pytest" in sys.modules:
     MEASURE_ITER = 1
 else:
