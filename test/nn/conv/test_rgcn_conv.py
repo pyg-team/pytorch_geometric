@@ -3,7 +3,12 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
-from torch_geometric.testing import is_full_test, withCUDA, withPackage, onlyLinux
+from torch_geometric.testing import (
+    is_full_test,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
@@ -160,7 +165,9 @@ def test_compile_rgcn_conv(cls, conf, device):
     explanation = torch._dynamo.explain(conv)((x1, x2), edge_index, edge_type)
     assert explanation.graph_break_count == 0
     if num_blocks is None:
-        explanation = torch._dynamo.explain(conv)((None, idx2), edge_index, edge_type)
+        explanation = torch._dynamo.explain(conv)((None, idx2), edge_index,
+                                                  edge_type)
         assert explanation.graph_break_count == 0
-        explanation = torch._dynamo.explain(conv)((idx1, idx2), edge_index, edge_type)
+        explanation = torch._dynamo.explain(conv)((idx1, idx2), edge_index,
+                                                  edge_type)
         assert explanation.graph_break_count == 0

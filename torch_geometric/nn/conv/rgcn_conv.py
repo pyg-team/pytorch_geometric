@@ -221,7 +221,8 @@ class RGCNConv(MessagePassing):
 
         else:  # No regularization/Basis-decomposition ========================
 
-            use_segment_matmul: Optional[bool] = torch_geometric.backend.use_segment_matmul
+            use_segment_matmul: Optional[
+                bool] = torch_geometric.backend.use_segment_matmul
             use_segment_matmul = not is_compiling()
             # If `use_segment_matmul` is not specified, use a simple heuristic
             # to determine whether `segment_matmul` can speed up computation
@@ -242,8 +243,7 @@ class RGCNConv(MessagePassing):
                 use_segment_matmul = self._use_segment_matmul_heuristic_output
 
             if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
-                    and self.num_bases is None
-                    and x_l.is_floating_point()
+                    and self.num_bases is None and x_l.is_floating_point()
                     and isinstance(edge_index, Tensor)):
 
                 if not self.is_sorted:
