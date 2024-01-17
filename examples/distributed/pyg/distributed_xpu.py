@@ -267,6 +267,9 @@ def run_proc(
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
+    logging.info("DDP CONNECTED")
+    maybe_synchronize('xpu')
+    torch.distributed.barrier()
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
     persistent_workers = (
         True if num_workers > 0 else False
