@@ -95,6 +95,7 @@ def run(
     data['author'].x = torch.arange(data['author'].num_nodes).reshape(-1, 1)
     data['institution'].x = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
 
+
     if rank == 0:
         print(f"# GNN Params: \
             {sum([p.numel() for p in model.parameters()])/10**6:.1f}M")
