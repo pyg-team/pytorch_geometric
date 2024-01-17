@@ -159,7 +159,6 @@ def training(
 
 
 def run_proc(
-    local_proc_rank: int,
     num_nodes: int,
     node_rank: int,
     dataset: str,
@@ -520,28 +519,23 @@ if __name__ == '__main__':
         logfile = None
 
     print('--- Launching training processes ...')
-    torch.multiprocessing.spawn(
-        run_proc,
-        args=(
-            args.num_nodes,
-            args.node_rank,
-            args.dataset,
-            args.dataset_root_dir,
-            args.master_addr,
-            args.ddp_port,
-            args.train_loader_port,
-            args.test_loader_port,
-            args.num_epochs,
-            args.batch_size,
-            args.num_neighbors,
-            args.async_sampling,
-            args.concurrency,
-            args.num_workers,
-            args.num_loader_threads,
-            args.progress_bar,
-            logfile,
-        ),
-        nprocs=2,
-        join=True,
+    run_proc(    
+        args.num_nodes,
+        args.node_rank,
+        args.dataset,
+        args.dataset_root_dir,
+        args.master_addr,
+        args.ddp_port,
+        args.train_loader_port,
+        args.test_loader_port,
+        args.num_epochs,
+        args.batch_size,
+        args.num_neighbors,
+        args.async_sampling,
+        args.concurrency,
+        args.num_workers,
+        args.num_loader_threads,
+        args.progress_bar,
+        logfile,
     )
     print('--- Finished training processes ...')
