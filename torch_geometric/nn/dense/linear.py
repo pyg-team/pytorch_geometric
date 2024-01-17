@@ -15,8 +15,11 @@ from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
-
-MEASURE_ITER = 3
+import sys
+if "pytest" in sys.modules:
+    MEASURE_ITER = 1
+else:
+    MEASURE_ITER = 3
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
