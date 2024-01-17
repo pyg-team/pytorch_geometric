@@ -401,14 +401,17 @@ class NeighborSampler(BaseSampler):
                     node = {k: v[1] for k, v in node.items()}
 
             elif torch_geometric.typing.WITH_TORCH_SPARSE:
-                if self.disjoint and not torch_geometric.WITH_PYG_LIB:
-                    raise ValueError("'disjoint' sampling not supported for "
-                                     "neighbor sampling via 'torch-sparse'. "
-                                     "Please install 'pyg-lib' for improved "
-                                     "and optimized sampling routines.")
-                elif self.disjoint:
-                    raise ValueError("'disjoint' sampling not supported for "
-                                     "neighbor sampling via 'torch-sparse'.")
+                if self.disjoint:
+                    if self.subgraph_type == SubgraphType.induced:
+                        raise ValueError("'disjoint' sampling not supported "
+                                         "for neighbor sampling with "
+                                         "`subgraph_type='induced'`")
+                    else:
+                        raise ValueError("'disjoint' sampling not supported "
+                                         "for neighbor sampling via "
+                                         "'torch-sparse'. Please install "
+                                         "'pyg-lib' for improved and "
+                                         "optimized sampling routines.")
 
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
