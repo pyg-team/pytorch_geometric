@@ -215,6 +215,7 @@ def run_proc(
     # Initialize distributed context
     current_ctx = DistContext(
         rank=node_rank,
+        world_size=num_nodes,
         global_world_size=num_nodes,
         global_rank=node_rank,
         group_name='distributed-sage-supervised-Node',
