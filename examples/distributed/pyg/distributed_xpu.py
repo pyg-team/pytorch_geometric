@@ -444,7 +444,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_workers',
         type=int,
-        default=4,
+        default=0,
         help='Number of sampler sub-processes.',
     )
     parser.add_argument(
