@@ -3,8 +3,8 @@ import torch
 import argparse
 import torch.distributed as dist
 
-os.environ['MASTER_ADDR'] = '10.211.176.217'
-os.environ['MASTER_PORT'] = '11111'
+master_addr = '10.211.176.217'
+master_port = '11111'
 node_rank = int(os.environ.get("RANK", -1))
 mpi_rank = int(os.environ.get("PMI_RANK", -1))
 mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
@@ -17,6 +17,7 @@ dist.init_process_group(
     backend='ccl',
     rank=node_rank * mpi_world_size + mpi_rank,
     world_size=2 * mpi_world_size,
+    init_method='tcp://{}:{}'.format(master_addr, ddp_port),
 )
 test_tensor = torch.tensor(rank)
 
