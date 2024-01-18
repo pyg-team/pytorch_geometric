@@ -31,6 +31,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/dataset
    tutorial/application
    tutorial/multi_gpu
+   tutorial/distributed_pyg
 
 .. toctree::
    :maxdepth: 1
