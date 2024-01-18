@@ -1,22 +1,28 @@
 Distributed Training for PyG
 =================================================
 
-In real life applications graphs often consists of billions of nodes that can't be fitted in a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP)<https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating Remote Procedure Call (RPC) for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default PyG stack. In the future the solution will be also available for Intel's GPUs.
+In real life applications graphs often consists of billions of nodes that can't be fitted into a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating Remote Procedure Call (RPC) for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default PyG stack. In the future the solution will also be available for Intel's GPUs.
 
 Key Advantages
 --------------------------------------
 .. (TODO: add links)
-1) Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
-2) Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
-3) The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph structure information and feature storage.
-4) ``DistNeighborSampler`` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure `Data`/`HeteroData` at the output
-5) The ``DistLoader``/``DistNeighborLoader``/``DistLinkLoader`` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard PyG Loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
-6) Incorporating Python's `asyncio` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT library.
-7) Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks.
+#. Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
+#. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
+#. The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph structure information and feature storage.
+#. ``DistNeighborSampler`` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure ``Data``/``HeteroData`` at the output
+#. The ``DistLoader``/``DistNeighborLoader``/``DistLinkLoader`` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard PyG Loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
+#. Incorporating Python's `asyncio` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT distributed library.
+#. Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks.
 
 .. figure:: ../_static/thumbnails/distribute_pyg_flow.png
   :align: center
   :width: 90%
+
+The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
+
+* `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ for graph partitioning
+* `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/distributed_cpu.py>`_ for end-to-end GNN (GraphSAGE) model training with homogenous or heterogenous data
+
 
 1. Graph Partitioning
 --------------------------------------
