@@ -120,12 +120,68 @@ Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use 
 
 1.2 Partitioning algorithm & outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: ../_static/thumbnails/distribute_partition_algorithm.png
-  :align: center
-  :width: 90%
-
-
+.. code-block:: python
+    
+    |-- ogbn-mag
+    |   `-- 2-parts
+    |       |-- ogbn-mag-label
+    |       |   `-- label.pt
+    |       |-- ogbn-mag-partitions
+    |       |   |-- META.json
+    |       |   |-- edge_map
+    |       |   |   |-- author__affiliated_with__institution.pt
+    |       |   |   |-- author__writes__paper.pt
+    |       |   |   |-- field_of_study__rev_has_topic__paper.pt
+    |       |   |   |-- institution__rev_affiliated_with__author.pt
+    |       |   |   |-- paper__cites__paper.pt
+    |       |   |   |-- paper__has_topic__field_of_study.pt
+    |       |   |   `-- paper__rev_writes__author.pt
+    |       |   |-- node_map
+    |       |   |   |-- author.pt
+    |       |   |   |-- field_of_study.pt
+    |       |   |   |-- institution.pt
+    |       |   |   `-- paper.pt
+    |       |   |-- part_0
+    |       |   |   |-- edge_feats.pt
+    |       |   |   |-- graph.pt
+    |       |   |   `-- node_feats.pt
+    |       |   `-- part_1
+    |       |       |-- edge_feats.pt
+    |       |       |-- graph.pt
+    |       |       `-- node_feats.pt
+    |       |-- ogbn-mag-test-partitions
+    |       |   |-- partition0.pt
+    |       |   `-- partition1.pt
+    |       |-- ogbn-mag-train-partitions
+    |       |   |-- partition0.pt
+    |       |   `-- partition1.pt
+    |       `-- ogbn-mag-val-partitions
+    |           |-- partition0.pt
+    |           `-- partition1.pt
+    `-- ogbn-products
+        `-- 2-parts
+            |-- ogbn-products-label
+            |   `-- label.pt
+            |-- ogbn-products-partitions
+            |   |-- META.json
+            |   |-- edge_map.pt
+            |   |-- node_map.pt
+            |   |-- part_0
+            |   |   |-- graph.pt
+            |   |   `-- node_feats.pt
+            |   `-- part_1
+            |       |-- graph.pt
+            |       `-- node_feats.pt
+            |-- ogbn-products-test-partitions
+            |   |-- partition0.pt
+            |   `-- partition1.pt
+            |-- ogbn-products-train-partitions
+            |   |-- partition0.pt
+            |   `-- partition1.pt
+            `-- ogbn-products-val-partitions
+                |-- partition0.pt
+                `-- partition1.pt
+  
 We used metis algorithm to do the partition work with the PyG's ClusterData API. During the partition we keep the halonode when cutting the edges with another partition as shown in the figure above.
 
 Under the partition folder there are four folders:
@@ -325,7 +381,7 @@ The working flow is from load partition into graphstore/featurestore, distNeighb
 
 .. figure:: ../_static/thumbnails/distribute_distloader.png
   :align: center
-  :width: 50%
+  :width: 40%
 
 Distributed class ``DistLoader`` is used to create distributed data loading routines like initializing the parameters of current_ctx, rpc_worker_names, master_addr/port, channel, num_rpc_threads, num_workers, etc and then at the same time will initialize the context/rpc for distributed sampling based on ``worker_init_fn``.
 
@@ -643,13 +699,36 @@ Here, we use ``ogbn-products`` and partition it into two partitions (in default)
 
 .. code-block:: python
 
-    python partition_graph.py --dataset=ogbn-products --root_dir=./data/products --num_partitions=2
+    python partition_graph.py --dataset=ogbn-products --root_dir=../../../data --num_partitions=2
 
 The generated partition will have the folder below.
 
-.. figure:: ../_static/thumbnails/distribute_homo_partition.png
-  :align: center
-  :width: 40%
+.. code-block:: python
+
+    `-- ogbn-products
+        `-- 2-parts
+            |-- ogbn-products-label
+            |   `-- label.pt
+            |-- ogbn-products-partitions
+            |   |-- META.json
+            |   |-- edge_map.pt
+            |   |-- node_map.pt
+            |   |-- part_0
+            |   |   |-- graph.pt
+            |   |   `-- node_feats.pt
+            |   `-- part_1
+            |       |-- graph.pt
+            |       `-- node_feats.pt
+            |-- ogbn-products-test-partitions
+            |   |-- partition0.pt
+            |   `-- partition1.pt
+            |-- ogbn-products-train-partitions
+            |   |-- partition0.pt
+            |   `-- partition1.pt
+            `-- ogbn-products-val-partitions
+                |-- partition0.pt
+                `-- partition1.pt
+
 
 You can put/move the products partition folder into one public folder that each node can access this shared folder.
 
@@ -662,16 +741,20 @@ For example, running the example in two nodes:
 .. code-block:: python
 
     # Node 0:
-    python dist_train_sage_for_homo.py \
-      --dataset_root_dir=your partition folder \
-      --num_nodes=2 --node_rank=0 --num_training_procs=1 \
-      --master_addr= master ip
-
+    python distributed_cpu.py \
+      --dataset=ogbn-products
+      --dataset_root_dir=<partition folder directory> \
+      --num_nodes=2 \
+      --node_rank=0 \
+      --master_addr=<master ip>
+    
     # Node 1:
-    python dist_train_sage_for_homo.py \
-      --dataset_root_dir=your partition folder \
-      --num_nodes=2 --node_rank=1 --num_training_procs=1 \
-      --master_addr= master ip
+    python distributed_cpu.py \
+      --dataset=ogbn-products
+      --dataset_root_dir=<partition folder directory> \
+      --num_nodes=2 \
+      --node_rank=1 \
+      --master_addr=<master ip>
 
 
 **Notes:**
@@ -687,17 +770,52 @@ For example, running the example in two nodes:
 1) Prepare and partition the data
 
 
-Here, we use ``ogbn-mags`` and partition it into two partitions (in default) by the [`partition example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_hetero_graph.py>`__] :
+Here, we use ``ogbn-mags`` and partition it into two partitions (in default) by the [`partition example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`__] :
 
 .. code-block:: python
 
-    python partition_hetero_graph.py --dataset=ogbn-mag --root_dir=./data/mag --num_partitions=2
+    python partition_graph.py --dataset=ogbn-mag --root_dir=../../../data --num_partitions=2
 
 The generated partition will have the folder below.
 
-.. figure:: ../_static/thumbnails/distribute_hetero_partition.png
-  :align: center
-  :width: 40%
+.. code-block:: python
+
+    |-- ogbn-mag
+    |   `-- 2-parts
+    |       |-- ogbn-mag-label
+    |       |   `-- label.pt
+    |       |-- ogbn-mag-partitions
+    |       |   |-- META.json
+    |       |   |-- edge_map
+    |       |   |   |-- author__affiliated_with__institution.pt
+    |       |   |   |-- author__writes__paper.pt
+    |       |   |   |-- field_of_study__rev_has_topic__paper.pt
+    |       |   |   |-- institution__rev_affiliated_with__author.pt
+    |       |   |   |-- paper__cites__paper.pt
+    |       |   |   |-- paper__has_topic__field_of_study.pt
+    |       |   |   `-- paper__rev_writes__author.pt
+    |       |   |-- node_map
+    |       |   |   |-- author.pt
+    |       |   |   |-- field_of_study.pt
+    |       |   |   |-- institution.pt
+    |       |   |   `-- paper.pt
+    |       |   |-- part_0
+    |       |   |   |-- edge_feats.pt
+    |       |   |   |-- graph.pt
+    |       |   |   `-- node_feats.pt
+    |       |   `-- part_1
+    |       |       |-- edge_feats.pt
+    |       |       |-- graph.pt
+    |       |       `-- node_feats.pt
+    |       |-- ogbn-mag-test-partitions
+    |       |   |-- partition0.pt
+    |       |   `-- partition1.pt
+    |       |-- ogbn-mag-train-partitions
+    |       |   |-- partition0.pt
+    |       |   `-- partition1.pt
+    |       `-- ogbn-mag-val-partitions
+    |           |-- partition0.pt
+    |           `-- partition1.pt
 
 
 You can put/move the products partition folder into one public folder that each node can access this shared folder.
@@ -710,18 +828,20 @@ For example, running the example in two nodes:
 .. code-block:: python
 
     # Node 0:
-    python dist_train_sage_for_hetero.py \
-      --dataset_root_dir=your partition folder \
-      --dataset=ogbn-mags \
-      --num_nodes=2 --node_rank=0 --num_training_procs=1 \
-      --master_addr= master ip
-
+    python distributed_cpu.py \
+      --dataset=ogbn-mag
+      --dataset_root_dir=<partition folder directory> \
+      --num_nodes=2 \
+      --node_rank=0 \
+      --master_addr=<master ip>
+    
     # Node 1:
-    python dist_train_sage_for_hetero.py \
-      --dataset_root_dir=your partition folder \
-      --dataset=ogbn-mags \
-      --num_nodes=2 --node_rank=1 --num_training_procs=1 \
-      --master_addr= master ip
+    python distributed_cpu.py \
+      --dataset=ogbn-mag
+      --dataset_root_dir=<partition folder directory> \
+      --num_nodes=2 \
+      --node_rank=1 \
+      --master_addr=<master ip>
 
 
 
@@ -758,7 +878,17 @@ In the launch.py you need setup the parameters as below
 
 .. code-block:: python
 
-    python launch.py --workspace ./distributed_pyg/pytorch_geometric --num_nodes 2 --num_neighbors 15,10,5 --num_training_procs 1 --dataset_root_dir ./partition_ds/products --dataset ogbn-product --epochs 20 --batch_size 1024 --num_workers 2 --concurrency 2 --part_config ./partition_ds/products/ogbn-products-partitions/META.json --ip_config ./distributed_pyg/pytorch_geometric/ip_config.yaml 'cd /home/userXXX; source anaconda3/envs/PyGDistributed/bin/activate; cd /home/userXXX/distributed_pyg/pytorch_geometric; /home/userXXX/anaconda3/envs/PyGDistributed/bin/python /home/userXXX/distributed_pyg/pytorch_geometric/e2e_homo.py'
+        python launch.py
+          --workspace {workspace}/pytorch_geometric
+          --num_nodes 2
+          --dataset_root_dir {dataset_dir}/mag/2-parts
+          --dataset ogbn-mag
+          --batch_size 1024
+          --learning_rate 0.0004
+          --part_config {dataset_dir}/mag/2-parts/ogbn-mag-partitions/META.json
+          --ip_config {workspace}/pytorch_geometric/ip_config.yaml
+          'cd /home/XXX; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
+          {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
 
 
 3) **run_dist.sh**
@@ -771,43 +901,44 @@ The below .sh example is assume that you have the anaconda virtual environment i
 
     #!/bin/bash
 
-    CONDA_ENV=/home/userXXX/anaconda3/envs/PyGDistributed
-    PYG_WORKSPACE=$PWD    #/home/userXXX/distributed_pyg/pytorch_geometric
+    CONDA_ENV=/home/XXX/anaconda3/envs/pyg24
+    PYG_WORKSPACE=$PWD
     PY_EXEC=${CONDA_ENV}/bin/python
-    EXEC_SCRIPT=${PYG_WORKSPACE}/e2e_homo.py
-
+    EXEC_SCRIPT=${PYG_WORKSPACE}/distributed_cpu.py
+    
     # node number
     NUM_NODES=2
-
+    
     # dataset folder
-    DATASET_ROOT_DIR="/home/userXXX/partition_ds/products"
-
+    DATASET_ROOT_DIR="/home/XXX/mag/2-parts"
+    
     # process number for training
     NUM_TRAINING_PROCS=1
-
+    
     # dataset name
-    DATASET=ogbn-product
-
+    DATASET=ogbn-mag
+    
     # num epochs to run for
-    EPOCHS=20
-
+    NUM_EPOCHS=100
+    
     BATCH_SIZE=1024
-
+    
     # number of workers for sampling
     NUM_WORKERS=2
     CONCURRENCY=2
-
+    
     #partition data directory
-    PART_CONFIG="/home/userXXX/partition_ds/products/ogbn-products-partitions/META.json"
+    PART_CONFIG="/home/XXX/mag/2-parts/ogbn-products-partitions/META.json"
     NUMPART=2
-
+    
+    DDP_PORT=12351
     # fanout per layer
     NUM_NEIGHBORS="15,10,5"
-
+    
     #ip_config path
     IP_CONFIG=${PYG_WORKSPACE}/ip_config.yaml
-
-
+    
+    
     # Folder and filename where you want your logs.
     logdir="logs"
     mkdir -p "logs"
@@ -816,5 +947,8 @@ The below .sh example is assume that you have the anaconda virtual environment i
     set -x
 
     # stdout stored in /logdir/logname.out
-    python launch.py --workspace ${PYG_WORKSPACE} --num_nodes ${NUM_NODES} --num_neighbors ${NUM_NEIGHBORS} --num_training_procs ${NUM_TRAINING_PROCS} --dataset_root_dir ${DATASET_ROOT_DIR} --dataset ${DATASET} --epochs ${EPOCHS} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --concurrency ${CONCURRENCY} --part_config ${PART_CONFIG} --ip_config ${IP_CONFIG} "cd /home/userXXX; source anaconda3/envs/PyGDistributed/bin/activate; cd ${PYG_WORKSPACE}; ${PY_EXEC} ${EXEC_SCRIPT}" |& tee ${logdir}/${logname}.txt
+    python launch.py --workspace ${PYG_WORKSPACE} --num_nodes ${NUM_NODES} --num_neighbors ${NUM_NEIGHBORS} --dataset_root_dir ${DATASET_ROOT_DIR} --dataset ${DATASET}  --num_epochs ${NUM_EPOCHS} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --concurrency ${CONCURRENCY} --ddp_port ${DDP_PORT} --part_config ${PART_CONFIG} --ip_config ${IP_CONFIG} "cd /home/XXX; source ${CONDA_ENV}/bin/activate; cd ${PYG_WORKSPACE}; ${PY_EXEC} ${EXEC_SCRIPT}" |& tee ${logdir}/${logname}.txt
     set +x
+
+
+    
