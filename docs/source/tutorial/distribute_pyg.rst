@@ -271,11 +271,6 @@ At the same time we also store the partition information like num_partitions, pa
 3. Torch RPC and dist Context
 ---------------------------------------------------
 
-.. figure:: ../_static/thumbnails/distribute_torch_rpc.png
-  :align: center
-  :width: 90%
-
-
 In the distributed pyg two torch.distributed parallel technologies are used:
 
 + ``torch.distributed.ddp`` used for data parallel on training side
@@ -330,7 +325,7 @@ The working flow is from load partition into graphstore/featurestore, distNeighb
 
 .. figure:: ../_static/thumbnails/distribute_distloader.png
   :align: center
-  :width: 90%
+  :width: 50%
 
 Distributed class ``DistLoader`` is used to create distributed data loading routines like initializing the parameters of current_ctx, rpc_worker_names, master_addr/port, channel, num_rpc_threads, num_workers, etc and then at the same time will initialize the context/rpc for distributed sampling based on ``worker_init_fn``.
 
