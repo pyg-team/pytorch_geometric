@@ -15,11 +15,12 @@ class FaceToEdge(BaseTransform):
         remove_faces (bool, optional): If set to :obj:`False`, the face tensor
             will not be removed.
     """
-    def __init__(self, remove_faces: bool = True):
+    def __init__(self, remove_faces: bool = True) -> None:
         self.remove_faces = remove_faces
 
     def forward(self, data: Data) -> Data:
         if hasattr(data, 'face'):
+            assert data.face is not None
             face = data.face
             edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)

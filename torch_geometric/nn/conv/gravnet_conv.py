@@ -6,6 +6,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import OptPairTensor  # noqa
 from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor
 
 try:
@@ -83,14 +84,14 @@ class GravNetConv(MessagePassing):
         self.lin_out2.reset_parameters()
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
-        # type: (Tensor, OptTensor) -> Tensor  # noqa
-        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
             is_bipartite = False
 
         if x[0].dim() != 2:

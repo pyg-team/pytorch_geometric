@@ -165,12 +165,7 @@ class NeighborSampler(BaseSampler):
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = [
-                attr for attr in feature_store.get_all_tensor_attrs()
-                if isinstance(attr.group_name, NodeType)  # Heterogeneous ...
-                or attr.group_name is None  # ... or homogeneous.
-            ]
-            self.node_types = list(set(attr.group_name for attr in node_attrs))
+            attrs = [attr for attr in feature_store.get_all_tensor_attrs()]
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
@@ -199,26 +194,39 @@ class NeighborSampler(BaseSampler):
 
                 # We obtain all features with `node_attr.name=time_attr`:
                 time_attrs = [
-                    copy.copy(attr) for attr in node_attrs
+                    copy.copy(attr) for attr in attrs
                     if attr.attr_name == time_attr
                 ]
 
             if not self.is_hetero:
+                self.node_types = [None]
                 self.num_nodes = max(edge_attrs[0].size)
                 self.edge_weight: Optional[Tensor] = None
 
                 self.node_time: Optional[Tensor] = None
+                self.edge_time: Optional[Tensor] = None
+
                 if time_attr is not None:
                     if len(time_attrs) != 1:
                         raise ValueError("Temporal sampling specified but did "
                                          "not find any temporal data")
                     time_attrs[0].index = None  # Reset index for full data.
                     time_tensor = feature_store.get_tensor(time_attrs[0])
-                    self.node_time = time_tensor
+                    # Currently, we determine whether to use node-level or
+                    # edge-level temporal sampling based on the attribute name.
+                    if time_attr == 'time':
+                        self.node_time = time_tensor
+                    else:
+                        self.edge_time = time_tensor
 
                 self.row, self.colptr, self.perm = graph_store.csc()
 
             else:
+                node_types = [
+                    attr.group_name for attr in attrs
+                    if isinstance(attr.group_name, str)
+                ]
+                self.node_types = list(set(node_types))
                 self.num_nodes = {
                     node_type: remote_backend_utils.size(*data, node_type)
                     for node_type in self.node_types
@@ -226,17 +234,27 @@ class NeighborSampler(BaseSampler):
                 self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None
 
                 self.node_time: Optional[Dict[NodeType, Tensor]] = None
-                self.edge_time: Optional[Dict[NodeType, Tensor]] = None
+                self.edge_time: Optional[Dict[EdgeType, Tensor]] = None
 
                 if time_attr is not None:
                     for attr in time_attrs:  # Reset index for full data.
                         attr.index = None
+
                     time_tensors = feature_store.multi_get_tensor(time_attrs)
-                    self.node_time = {
-                        time_attr.group_name: time_tensor
-                        for time_attr, time_tensor in zip(
-                            time_attrs, time_tensors)
+                    time = {
+                        attr.group_name: time_tensor
+                        for attr, time_tensor in zip(time_attrs, time_tensors)
                     }
+
+                    group_names = [attr.group_name for attr in time_attrs]
+                    if all([isinstance(g, str) for g in group_names]):
+                        self.node_time = time
+                    elif all([isinstance(g, tuple) for g in group_names]):
+                        self.edge_time = time
+                    else:
+                        raise ValueError(
+                            f"Found time attribute '{time_attr}' for both "
+                            f"node-level and edge-level types")
 
                 # Conversion to/from C++ string type (see above):
                 self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}

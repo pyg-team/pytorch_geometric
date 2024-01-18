@@ -95,14 +95,14 @@ class AQSOL(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
+    def download(self) -> None:
         fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'asqol_graph_raw'), self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         for raw_path, path in zip(self.raw_paths, self.processed_paths):
             with open(raw_path, 'rb') as f:
                 graphs = pickle.load(f)

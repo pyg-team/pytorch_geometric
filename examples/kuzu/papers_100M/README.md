@@ -7,7 +7,7 @@ The dataset contains approximately 100 million nodes and 1.6 billion edges.
 ## Prepare the data
 
 1. Download the dataset from [`http://snap.stanford.edu/ogb/data/nodeproppred/papers100M-bin.zip`](http://snap.stanford.edu/ogb/data/nodeproppred/papers100M-bin.zip) and put the `*.zip` file into this directory.
-2. Run `python prepare_data.py`.
+1. Run `python prepare_data.py`.
    The script will automatically extract the data and convert it to the format that Kùzu can read.
    A Kùzu database instance is then created under `papers_100M` and the data is loaded into the it.
 

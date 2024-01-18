@@ -50,7 +50,7 @@ def noWindows(func: Callable) -> Callable:
     )(func)
 
 
-def onlyPython(*args) -> Callable:
+def onlyPython(*args: str) -> Callable:
     r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
@@ -87,7 +87,7 @@ def onlyXPU(func: Callable) -> Callable:
     )(func)
 
 
-def onlyOnline(func: Callable):
+def onlyOnline(func: Callable) -> Callable:
     r"""A decorator to skip tests if there exists no connection to the
     internet.
     """
@@ -121,7 +121,7 @@ def onlyGraphviz(func: Callable) -> Callable:
     )(func)
 
 
-def onlyNeighborSampler(func: Callable):
+def onlyNeighborSampler(func: Callable) -> Callable:
     r"""A decorator to skip tests if no neighborhood sampler package is
     installed.
     """
@@ -153,23 +153,25 @@ def has_package(package: str) -> bool:
     return version in req.specifier
 
 
-def withPackage(*args) -> Callable:
+def withPackage(*args: str) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification.
     """
     na_packages = set(package for package in args if not has_package(package))
 
+    if len(na_packages) == 1:
+        reason = f"Package {list(na_packages)[0]} not found"
+    else:
+        reason = f"Packages {na_packages} not found"
+
     def decorator(func: Callable) -> Callable:
         import pytest
-        return pytest.mark.skipif(
-            len(na_packages) > 0,
-            reason=f"Package(s) {na_packages} are not installed",
-        )(func)
+        return pytest.mark.skipif(len(na_packages) > 0, reason=reason)(func)
 
     return decorator
 
 
-def withCUDA(func: Callable):
+def withCUDA(func: Callable) -> Callable:
     r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
 
@@ -191,7 +193,7 @@ def withCUDA(func: Callable):
     return pytest.mark.parametrize('device', devices)(func)
 
 
-def disableExtensions(func: Callable):
+def disableExtensions(func: Callable) -> Callable:
     r"""A decorator to temporarily disable the usage of the
     :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
     packages.
@@ -199,3 +201,17 @@ def disableExtensions(func: Callable):
     import pytest
 
     return pytest.mark.usefixtures('disable_extensions')(func)
+
+
+def withoutExtensions(func: Callable) -> Callable:
+    r"""A decorator to test both with and without the usage of extension
+    packages such as :obj:`torch_scatter`, :obj:`torch_sparse` and
+    :obj:`pyg_lib`.
+    """
+    import pytest
+
+    return pytest.mark.parametrize(
+        'without_extensions',
+        ['enable_extensions', 'disable_extensions'],
+        indirect=True,
+    )(func)

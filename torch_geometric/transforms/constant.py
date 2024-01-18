@@ -42,6 +42,7 @@ class Constant(BaseTransform):
         for store in data.node_stores:
             if self.node_types is None or store._key in self.node_types:
                 num_nodes = store.num_nodes
+                assert num_nodes is not None
                 c = torch.full((num_nodes, 1), self.value, dtype=torch.float)
 
                 if hasattr(store, 'x') and self.cat:

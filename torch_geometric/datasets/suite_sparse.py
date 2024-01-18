@@ -1,9 +1,11 @@
 import os.path as osp
 from typing import Callable, Optional
 
+import fsspec
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs
 
 
 class SuiteSparseMatrixCollection(InMemoryDataset):
@@ -37,7 +39,7 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.group = group
         self.name = name
         super().__init__(root, transform, pre_transform,
@@ -60,24 +62,23 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        url = self.url.format(self.group, self.name)
-        download_url(url, self.raw_dir)
+    def download(self) -> None:
+        fs.cp(self.url.format(self.group, self.name), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         from scipy.io import loadmat
 
-        mat = loadmat(self.raw_paths[0])['Problem'][0][0][2].tocsr().tocoo()
+        with fsspec.open(self.raw_paths[0], 'rb') as f:
+            mat = loadmat(f)['Problem'][0][0][2].tocsr().tocoo()
 
         row = torch.from_numpy(mat.row).to(torch.long)
         col = torch.from_numpy(mat.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        edge_attr = torch.from_numpy(mat.data).to(torch.float)
-        if torch.all(edge_attr == 1.):
-            edge_attr = None
+        value = torch.from_numpy(mat.data).to(torch.float)
+        edge_attr = None if torch.all(value == 1.0) else value
 
-        size = torch.Size(mat.shape)
+        size: Optional[torch.Size] = torch.Size(mat.shape)
         if mat.shape[0] == mat.shape[1]:
             size = None
 

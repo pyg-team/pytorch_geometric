@@ -28,12 +28,13 @@ class TargetIndegree(BaseTransform):
         norm: bool = True,
         max_value: Optional[float] = None,
         cat: bool = True,
-    ):
+    ) -> None:
         self.norm = norm
         self.max = max_value
         self.cat = cat
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         col, pseudo = data.edge_index[1], data.edge_attr
 
         deg = degree(col, data.num_nodes)

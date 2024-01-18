@@ -1,8 +1,10 @@
+import math
 import os.path as osp
 
 import pytest
 import torch
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data, RocksDatabase, SQLiteDatabase
 from torch_geometric.data.database import TensorInfo
 from torch_geometric.profile import benchmark
@@ -17,7 +19,7 @@ if has_package('rocksdict'):
 
 @pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
 @pytest.mark.parametrize('batch_size', [None, 1])
-def test_databases_single_tensor(tmp_path, Database, batch_size):
+def test_database_single_tensor(tmp_path, Database, batch_size):
     kwargs = dict(path=osp.join(tmp_path, 'storage.db'))
     if Database == SQLiteDatabase:
         kwargs['name'] = 'test_table'
@@ -56,7 +58,7 @@ def test_databases_single_tensor(tmp_path, Database, batch_size):
 
 
 @pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
-def test_databases_schema(tmp_path, Database):
+def test_database_schema(tmp_path, Database):
     kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
 
     path = osp.join(tmp_path, 'tuple_storage.db')
@@ -70,9 +72,9 @@ def test_databases_schema(tmp_path, Database):
         4: object,
     }
 
-    data1 = (1, 0.1, 'a', torch.randn(2, 8), Data(x=torch.randn(1, 8)))
-    data2 = (2, 0.2, 'b', torch.randn(2, 16), Data(x=torch.randn(2, 8)))
-    data3 = (3, 0.3, 'c', torch.randn(2, 32), Data(x=torch.randn(3, 8)))
+    data1 = (1, 0.1, 'a', torch.randn(2, 8), Data(x=torch.randn(8)))
+    data2 = (2, float('inf'), 'b', torch.randn(2, 16), Data(x=torch.randn(8)))
+    data3 = (3, float('NaN'), 'c', torch.randn(2, 32), Data(x=torch.randn(8)))
     db.insert(0, data1)
     db.multi_insert([1, 2], [data2, data3])
 
@@ -81,7 +83,10 @@ def test_databases_schema(tmp_path, Database):
 
     for out, data in zip([out1, out2, out3], [data1, data2, data3]):
         assert out[0] == data[0]
-        assert out[1] == data[1]
+        if math.isnan(data[1]):
+            assert math.isnan(out[1])
+        else:
+            assert out[1] == data[1]
         assert out[2] == data[2]
         assert torch.equal(out[3], data[3])
         assert isinstance(out[4], Data) and len(out[4]) == 1
@@ -140,6 +145,46 @@ def test_databases_schema(tmp_path, Database):
         assert torch.equal(out['tensor'], data['tensor'])
         assert isinstance(out['data'], Data) and len(out['data']) == 1
         assert torch.equal(out['data'].x, data['data'].x)
+
+    db.close()
+
+
+@pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
+def test_edge_index(tmp_path, Database):
+    kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
+
+    path = osp.join(tmp_path, 'tuple_storage.db')
+    schema = dict(dtype=torch.long, is_edge_index=True)
+    db = Database(path, schema=schema, **kwargs)
+    assert db.schema == {
+        0: TensorInfo(dtype=torch.long, size=(2, -1), is_edge_index=True),
+    }
+
+    adj1 = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+        is_undirected=True,
+    )
+    adj2 = EdgeIndex(
+        [[1, 0, 2, 1, 3, 2], [0, 1, 1, 2, 2, 3]],
+        sparse_size=(4, 4),
+        sort_order='col',
+    )
+    adj3 = EdgeIndex([[], []], dtype=torch.long)
+
+    db.insert(0, adj1)
+    db.multi_insert([1, 2], [adj2, adj3])
+
+    out1 = db.get(0)
+    out2, out3 = db.multi_get([1, 2])
+
+    for out, adj in zip([out1, out2, out3], [adj1, adj2, adj3]):
+        assert adj.equal(out)
+        assert adj.dtype == out.dtype
+        assert adj.sparse_size() == out.sparse_size()
+        assert adj.sort_order == out.sort_order
+        assert adj.is_undirected == out.is_undirected
 
     db.close()
 
