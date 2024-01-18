@@ -14,11 +14,6 @@ Key Advantages
 #. Incorporating Python's `asyncio` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT distributed library.
 #. Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks.
 
-.. figure:: ../_static/thumbnails/distribute_pyg_flow.png
-  :align: center
-  :width: 90%
-
-
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
 
 * `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ for graph partitioning
@@ -31,14 +26,13 @@ The purpose of this manual is to guide you through the most important steps of d
 The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The ``Partitoner`` build on top of ``ClusterData``, uses pyg-lib implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
-.. figure:: ../_figures/DGL_metis.png
+.. figure:: ../_static/thumbnails/distribute_pyg_flow.png
   :align: center
-  :width: 90%
-  :alt: Graph partitioning example with METIS.
+  :width: 70%
+  :alt: Example of graph partitioning with METIS algorithm.
 
+Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
   
-
-
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``,``Reddit``, and heterogenous:``ogbn-mag``, ``Movielens`` datasets.
 The ``Partitioner`` can also process temporal attributes of the nodes which is presented in the `Movielens`` dataset partitioning.
 ** Important note: **
@@ -67,106 +61,6 @@ The result of partitioning, for a two-part split of homogenous ``ogbn-products``
 
 
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
-
-1.1 Partitioning the graph
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-First, in ``examples/distributed/pyg/partition_graph.py`` script we use the following script to load the ``ogbn-products`` dataset and partition it into ``num_parts``:
-
-.. code-block:: python
-
-    from ogb.nodeproppred import PygNodePropPredDataset
-    from torch_geometric.distributed import Partitioner
-
-    dataset = PygNodePropPredDataset(ogbn_dataset)
-    data = dataset[0]
-
-    partitioner = Partitioner(data, num_parts, save_dir, recursive)
-    partitioner.generate_partition()
-    split_idx = dataset.get_idx_split()
-
-    print('-- Saving label ...')
-    label_dir = osp.join(root_dir, f'{ogbn_dataset}-label')
-    os.makedirs(label_dir, exist_ok=True)
-    torch.save(data.y.squeeze(), osp.join(label_dir, 'label.pt'))
-
-    print('-- Partitioning training indices ...')
-    train_idx = split_idx['train']
-    train_idx = train_idx.split(train_idx.size(0) // num_parts)
-    train_part_dir = osp.join(root_dir, f'{ogbn_dataset}-train-partitions')
-    os.makedirs(train_part_dir, exist_ok=True)
-    for i in range(num_parts):
-        torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
-
-Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use the following script to load the ``ogbn-mags`` dataset and partition it into ``num_parts``:
-
-.. code-block:: python
-
-    from torch_geometric.datasets import OGB_MAG
-    from torch_geometric.distributed import Partitioner
-
-    dataset = OGB_MAG(root=ogbn_dataset, preprocess='metapath2vec')
-    data = dataset[0]
-
-    partitioner = Partitioner(data, num_parts, save_dir, recursive)
-    partitioner.generate_partition()
-
-    print('-- Saving label ...')
-    label_dir = osp.join(root_dir, f'{ogbn_dataset}-label')
-    os.makedirs(label_dir, exist_ok=True)
-    torch.save(data['paper'].y.squeeze(), osp.join(label_dir, 'label.pt'))
-
-    print('-- Partitioning training indices ...')
-    train_idx = data['paper'].train_mask.nonzero().view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // num_parts)
-    train_part_dir = osp.join(root_dir, f'{ogbn_dataset}-train-partitions')
-    os.makedirs(train_part_dir, exist_ok=True)
-    for i in range(num_parts):
-        torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
-
-
-1.2 Partitioning algorithm & outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: ../_figures/DGL_metis.png
-  :align: center
-  :width: 90%
-
-
-We used metis algorithm to do the partition work with the PyG's ClusterData API. During the partition we keep the halonode when cutting the edges with another partition as shown in the figure above.
-
-Under the partition folder there are four folders:
-
-1) labels:
-  + label.pt:   labels
-
-2) partition:
-  + edge_map.pt:   partition book between edge_id and partition_id
-  + node_map.pt:   partition book between node_id and partition_id
-  + META.json:  {'num_parts': 2, 'is_hetero': false, 'node_types': self.node_types, 'edge_types': self.edge_types, 'is_sorted': true }
-  + part0:      partition 0
-
-    - graph.pt:     graph topo
-    - node_feats.pt:   node features
-    - edge_feats.pt:   edge features
-  + part1:      partition 1
-
-    - graph.pt:     graph topo
-    - node_feats.pt:   node features
-    - edge_feats.pt:   edge features
-3) training:
-  + partion0.pt:  training seeds for partition0
-  + partion1.pt:  training seeds for partition1
-
-4) test:
-  + partion0.pt:  test seeds for partition0
-  + partion0.pt:  test seeds for partition1
-
-
-In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
-
-
-
 
 2. LocalGraphStore and LocalFeatureStore
 ----------------------------------------
@@ -218,8 +112,6 @@ There are four parts for LocalGraphStore:
 + API for feature lookup
 
   - API function ``lookup_features()`` is to lookup the features from local partition and remote partitions which will include the sub-apis of ``_remote_lookup_features()`` and ``_local_lookup_features()``.
-
-
 
 
 2.2 Loading partition into Stores
@@ -274,14 +166,12 @@ Based on the above APIs from LFS/LGS you can load the partitions into graphstore
 At the same time we also store the partition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label into graphstore/featurestore. Finally we construct one tuple structure to provide the input for the DistNeighborLoader/DistNeighborSampler like (featurestore, graphstore).
 
 
-
 3. Torch RPC and dist Context
 ---------------------------------------------------
 
 .. figure:: ../_static/thumbnails/distribute_torch_rpc.png
   :align: center
   :width: 90%
-
 
 In the distributed pyg two torch.distributed parallel technologies are used:
 
