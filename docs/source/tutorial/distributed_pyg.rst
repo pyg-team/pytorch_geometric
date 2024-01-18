@@ -166,7 +166,7 @@ Based on the above APIs from LFS/LGS you can load the partitions into graphstore
 At the same time we also store the partition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label into graphstore/featurestore. Finally we construct one tuple structure to provide the input for the DistNeighborLoader/DistNeighborSampler like (featurestore, graphstore).
 
 
-3. Torch RPC and dist Context
+3. Setting up communication using DDP & RPC
 ---------------------------------------------------
 
 .. figure:: ../_static/thumbnails/distribute_torch_rpc.png
@@ -175,39 +175,22 @@ At the same time we also store the partition information like num_partitions, pa
 
 In the distributed pyg two torch.distributed parallel technologies are used:
 
-+ ``torch.distributed.ddp`` used for data parallel on training side
-+ ``torch.distributed.rpc`` for remote sampling over multiple nodes. there are two times to use RPC in distributed sampling:
+* ``torch.distributed.ddp`` for data parallel on the training side
+* ``torch.distributed.rpc`` for remote sampling calls & feature retrieval from distributed database stored in LGS/LFS
 
-  - Node sampling over different partitions belong to different nodes
-  - Feature looking up over the different nodes
+In this context, we opted for torch.distributed.rpc over alternatives such as gRPC because torch.distributed.rpc inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using torch.distributed.rpc helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
 
-Here we used the torch.distributed.rpc instead of gRPC, etc because torch.distributed.rpc already understand tensor type data. Some other RPC like gRPC need to serialize /digitalize the json or other user data into tensor type which will put more serialize/digitalize overhead in loss backward for gradient communication.
-
-
+The DDP group is initialzied in a standard way in the main training script. 
 .. code-block:: python
-
-    # Initialize distributed context.
-    current_ctx = DistContext(
-        world_size=num_nodes * num_training_procs_per_node,
-        rank=node_rank * num_training_procs_per_node + local_proc_rank,
-        global_world_size=num_nodes * num_training_procs_per_node,
-        global_rank=node_rank * num_training_procs_per_node + local_proc_rank,
-        group_name='distributed-sage-supervised-trainer')
-    current_device = torch.device('cpu')
-    rpc_worker_names = {}
 
     # Initialize DDP training process group.
     torch.distributed.init_process_group(
         backend='gloo', rank=current_ctx.rank,
         world_size=current_ctx.world_size,
-        init_method='tcp://{}:{}'.format(master_addr, training_pg_master_port))
+        init_method='tcp://{}:{}'.format(master_addr, ddp_port))
+For CPU-based sampling the recommended backed is `gloo`.
 
-Distributed class ``DistContext`` is used to contain the distributed information like world_size, rank, global_world_size, global_rank, group_name, etc which is easy for distributed communication.
-
-In the ``torch.distributed.ddp`` communication we support all kinds of backend, like NCCL, Gloo, MPI, etc.
-
-
-
+The RPC group initialization is more complicated ...
 
 4. Distributed NeighborLoader
 ------------------------------------
