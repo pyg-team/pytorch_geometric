@@ -18,6 +18,7 @@ Key Advantages
   :align: center
   :width: 90%
 
+
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
 
 * `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ for graph partitioning
@@ -30,7 +31,13 @@ The purpose of this manual is to guide you through the most important steps of d
 The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The ``Partitoner`` build on top of ``ClusterData``, uses pyg-lib implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
-.. DGL metis figure goes here
+.. figure:: ../_figures/DGL_metis.png
+  :align: center
+  :width: 90%
+  :alt: Graph partitioning example with METIS.
+
+  
+
 
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``,``Reddit``, and heterogenous:``ogbn-mag``, ``Movielens`` datasets.
 The ``Partitioner`` can also process temporal attributes of the nodes which is presented in the `Movielens`` dataset partitioning.
@@ -121,7 +128,7 @@ Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use 
 1.2 Partitioning algorithm & outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: ../_static/thumbnails/distribute_partition_algorithm.png
+.. figure:: ../_figures/DGL_metis.png
   :align: center
   :width: 90%
 
