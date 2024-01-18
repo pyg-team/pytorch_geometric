@@ -159,6 +159,7 @@ def test_compile_rgcn_conv(cls, conf, device):
     edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
     conv = cls(4, 32, 2, num_bases, num_blocks, aggr='sum').to(device)
     explanation = torch._dynamo.explain(conv)(x1, edge_index, edge_type)
+    assert explanation.graph_break_count == 0
 
     # Test bipartite message passing:
     conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum').to(device)
