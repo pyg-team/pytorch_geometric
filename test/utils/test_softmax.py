@@ -17,10 +17,10 @@ def test_softmax():
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
     if CALCULATION_VIA_PTR_AVAILABLE:
-        assert softmax(src, None, ptr).tolist() == out.tolist()
+        assert softmax(src, ptr=ptr).tolist() == out.tolist()
     else:
-        with pytest.raises(ImportError):
-            softmax(src, None, ptr)
+        with pytest.raises(NotImplementedError, match="requires 'index'"):
+            softmax(src, ptr=ptr)
 
     src = src.view(-1, 1)
     out = softmax(src, index)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     x = torch.randn(num_edges, 64, device=args.device)
     index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
-    compiled_softmax = torch_geometric.compile(softmax)
+    compiled_softmax = torch.compile(softmax)
 
     def dense_softmax(x, index):
         x = x.view(num_nodes, -1, x.size(-1))

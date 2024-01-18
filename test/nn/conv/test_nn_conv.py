@@ -37,7 +37,7 @@ def test_nn_conv(device):
         assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index, value), out)
         assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
 
@@ -72,7 +72,7 @@ def test_nn_conv(device):
         assert torch.allclose(conv((x1, None), adj2.t()), out2)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit((x1, x2), edge_index, value), out1)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
                               out1)

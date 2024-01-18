@@ -32,7 +32,7 @@ def test_sg_conv():
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
 

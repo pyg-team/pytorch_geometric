@@ -31,7 +31,7 @@ def test_gcn2_conv():
         assert torch.allclose(conv(x, x_0, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, x_0, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, x_0, edge_index, value), out2, atol=1e-6)
 
