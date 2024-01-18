@@ -8,6 +8,7 @@ from torch.nn import Parameter as Param
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric._compile import allow_in_graph
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
@@ -220,17 +221,16 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
+            if is_compiling():
+                disable_use_segment_matmul()
 
-            use_segment_matmul: Optional[
-                bool] = torch_geometric.backend.use_segment_matmul
-            use_segment_matmul = not is_compiling()
+            use_segment_matmul = torch_geometric.backend.use_segment_matmul
             # If `use_segment_matmul` is not specified, use a simple heuristic
             # to determine whether `segment_matmul` can speed up computation
             # given the observed input sizes:
             if use_segment_matmul is None:
                 segment_count = scatter(torch.ones_like(edge_type), edge_type,
                                         dim_size=self.num_relations)
-
                 self._use_segment_matmul_heuristic_output = (
                     torch_geometric.backend.use_segment_matmul_heuristic(
                         num_segments=self.num_relations,
@@ -373,3 +373,13 @@ class FastRGCNConv(RGCNConv):
             inputs = norm * inputs
 
         return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size)
+
+
+# NOTE By updating the global flag directly in the RGCNConv.forward() without
+# allow_in_graph decorator, we see a graph break due to the following reason:
+# > Reason: store_attr
+# See https://pytorch.org/docs/main/torch.compiler_faq.html
+# #compiling-functions-besides-the-ones-which-are-supported-escape-hatch
+@allow_in_graph
+def disable_use_segment_matmul() -> None:
+    torch_geometric.backend.use_segment_matmul = False

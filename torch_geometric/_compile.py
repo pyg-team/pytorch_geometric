@@ -15,6 +15,13 @@ def is_compiling() -> bool:
     return False  # pragma: no cover
 
 
+def allow_in_graph(fn: Any) -> Union[list, Any]:
+    r"""See :func:`torch._dynamo.allow_in_graph`."""
+    if torch_geometric.typing.WITH_PT21:
+        return torch._dynamo.allow_in_graph(fn)
+    return fn  # pragma: no cover
+
+
 def compile(
     model: Optional[torch.nn.Module] = None,
     *args: Any,
