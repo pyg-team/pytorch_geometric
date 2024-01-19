@@ -4,7 +4,7 @@ Distributed Training for PyG
 In real life applications graphs often consists of billions of nodes that can't be fitted into a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating `Remote Procedure Call (RPC) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default PyG stack. In the future the solution will also be available for Intel's GPUs.
 
 Key Advantages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------
 .. (TODO: add links)
 #. Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
 #. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
@@ -21,7 +21,7 @@ The purpose of this manual is to guide you through the most important steps of d
 
 
 1. Graph Partitioning
---------------------------------------
+------------------------
 
 The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The ``Partitoner`` build on top of ``ClusterData``, uses pyg-lib implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
@@ -32,7 +32,7 @@ Please note that METIS requires undirected, homogenous graph as input, but ``Par
   :alt: Example of graph partitioning with METIS algorithm.
 
 **Figure:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
-  
+
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``, ``Reddit`` , and heterogenous: ``ogbn-mag``, ``Movielens`` datasets.
 The ``Partitioner`` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
 ** Important note: **
@@ -63,94 +63,321 @@ The result of partitioning, for a two-part split of homogenous ``ogbn-products``
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
 
 2. LocalGraphStore and LocalFeatureStore
-----------------------------------------
+-------------------------------------------
 
 .. figure:: ../_static/thumbnails/distribute_graph_feature_store.png
   :align: center
   :width: 90%
 
-2.1 Architecture for LGS/LFS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.1 LocalGraphStore
+~~~~~~~~~~~~~~~~~~~~~
 
-1) LocalGraphStore
+:class:`torch_geometric.distributed.LocalGraphStore` is a class designed to act as a local graph store for distributed training. It implements the :class:`torch_geometric.data.GraphStore` interface, providing features for efficient management of partition-related information and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
-There are three parts for LocalGraphStore:
+Key Features
+~~~~~~~~~~~~~~~
 
-+ Graph Stores:
+1. **Partition Edge Index Storage:**
 
-  - graph topology, edge IDs, and parition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label
+* Stores information about local graph connections within partition.
 
-+ APIs for PyG Data:
+2. **Global Node and Edge Identifiers:**
 
-  - API function ``from_data()`` is to creates a local graph store from a homogeneous PyG graph
-  - API function ``from_hetero_data()`` is to creates a local graph store from a heterogeneous PyG graph
+* Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
 
+3. **Homogeneous and Heterogeneous Graph Support:**
 
-+ API for Partition:
+* Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
-  - API function ``from_partition()`` is to creates a local graph store from one PyG data partition.
+4. **Edge Attribute Storage:**
 
+* Stores edge attributes and global identifiers.
 
-2) LocalFeatureStore
+5. **Initialization Methods:**
 
-There are four parts for LocalGraphStore:
+* Provides convenient methods for initializing the graph store from data or partition.
 
-+ Features Stores:
+Initialization and Usage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  - node/edge features, node IDs, and parition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label
+- Instances of :class:`torch_geometric.distributed.LocalGraphStore` can be created using the provided initialization methods.
 
-+ APIs for PyG Data:
+- Edge indices, edge attributes, edge ids and other relevant information can be added or retrieved using the provided methods.
 
-  - API function ``from_data()`` is to creates a local feature store from homogeneous PyG tensors
-  - API function ``from_hetero_data()`` is to creates a local feature store from heterogeneous PyG tensors
+Example Usage
+~~~~~~~~~~~~~~~~~
 
-
-+ API for Partition:
-
-  - API function ``from_partition()`` is to creates a local feature store from one PyG data partition.
-
-+ API for feature lookup
-
-  - API function ``lookup_features()`` is to lookup the features from local partition and remote partitions which will include the sub-apis of ``_remote_lookup_features()`` and ``_local_lookup_features()``.
-
-
-2.2 Loading partition into Stores
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Based on the above APIs from LFS/LGS you can load the partitions into graphstore/featurestore over the multiple nodes as below code:
+Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalGraphStore` and using it for distributed training:
 
 .. code-block:: python
 
-    # load partition into graph
-    graph = LocalGraphStore.from_partition(
+    import torch
+    from torch_geometric.distributed import LocalGraphStore
+
+    # Create an instance of LocalGraphStore
+    graph_store = LocalGraphStore()
+
+    edge_id = torch.tensor([0, 1, 2, 3])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    # Access or modify attributes
+    graph_store.num_partitions = 2
+    graph_store.partition_idx = 1
+
+    # Store edge information
+    graph_store.put_edge_index(
+        edge_index,
+        edge_type=None,
+        layout='coo',
+        size=(100, 100),
+    )
+    graph_store.put_edge_id(
+        edge_id,
+        edge_type=None,
+        layout='coo',
+        size=(100, 100),
+    )
+
+    # Retrieve edge information
+    edge_attr = graph_store.get_all_edge_attrs()[0]
+    retrieved_edge_index = graph_store.get_edge_index(edge_attr)
+    retrieved_edge_id = graph_store.get_edge_id(edge_attr)
+
+    # ...
+
+    # Remove edge information
+    graph_store.remove_edge_index(edge_attr)
+    graph_store.remove_edge_id(edge_attr)
+
+    # ...
+
+
+Initialization from Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:class:`torch_geometric.distributed.LocalGraphStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
+
+* :func:`torch_geometric.distributed.LocalGraphStore.from_data`: Creates a local graph store from homogeneous data.
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalGraphStore
+
+    # Example data for homogeneous graph:
+    edge_id = torch.tensor([0, 1, 2, 3])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    num_nodes = 3
+
+    # Create a LocalGraphStore from homogeneous data:
+    graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
+
+
+* :func:`torch_geometric.distributed.LocalGraphStore.from_hetero_data`: Creates a local graph store from heterogeneous data.
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalGraphStore
+
+    # Example data for heterogeneous graph:
+    edge_id_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2, 3]),
+    }
+    edge_index_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+    }
+    num_nodes_dict = {'v0': 2, 'v1': 2}
+
+    # Create a LocalGraphStore from heterogeneous data:
+    graph_store = LocalGraphStore.from_hetero_data(edge_id_dict, edge_index_dict, num_nodes_dict)
+
+
+2.2 LocalFeatureStore
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+:class:`torch_geometric.distributed.LocalFeatureStore` is a class that implements the :class:`~torch_geometric.data.FeatureStore` interface. It serves as a local feature store for distributed training in Graph Neural Networks (GNNs). The local feature store is responsible for managing and distributing node and edge features across different partitions and machines during the training process.
+
+Key Features
+~~~~~~~~~~~~~~~~
+
+1. **Node and Edge Feature Storage:**
+
+* It extends the :class:`~torch_geometric.data.FeatureStore` class and provides functionalities for storing, retrieving, and distributing node and edge features. Features are stored locally for the nodes or edges within the partition managed by each machine or device.
+
+2. **Global Node and Edge Identifiers:**
+
+* Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
+
+3. **Homogeneous and Heterogeneous Graph Support:**
+
+* Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
+
+4. **Remote Feature Lookup:**
+
+* Implements mechanisms for looking up features in both local and remote nodes during distributed training.
+
+5. **Initialization Methods:**
+
+* Provides convenient methods for initializing the graph store from data or partition.
+
+Initialization and Usage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Instances of :class:`torch_geometric.distributed.LocalFeatureStore` can be created using the provided initialization methods.
+
+* Features, global identifiers, and other relevant information can be added or retrieved using the provided methods.
+
+* The class is designed to work seamlessly in distributed training scenarios, allowing for efficient feature handling across partitions.
+
+Example Usage
+~~~~~~~~~~~~~~~~~
+
+Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalFeatureStore` and using it for distributed training:
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalFeatureStore
+    from torch_geometric.distributed.event_loop import to_asyncio_future
+
+    async def get_node_features():
+        # Create a LocalFeatureStore instance:
+        feature_store = LocalFeatureStore()
+
+        # Add global node identifiers and node features:
+        node_ids = torch.tensor([0, 1, 2])
+        node_features = torch.randn((3, 64))  # Assuming 64-dimensional node features
+        feature_store.put_global_id(node_ids, group_name=None)
+        feature_store.put_tensor(node_features, group_name=None, attr_name='x')
+
+        feature_store.num_partitions = 2
+        feature_store.node_feat_pb = torch.tensor([0, 0, 1])
+        feature_store.meta = {'is_hetero': False}
+
+        # Retrieve node features for a specific node ID:
+        node_id_to_lookup = torch.tensor([1])
+        future = feature_store.lookup_features(node_id_to_lookup)
+
+        nfeat = await to_asyncio_future(future)
+
+        return nfeat
+
+    # Use the retrieved features in the GNN training process
+    # ...
+
+
+Initialization from Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:class:`torch_geometric.distributed.LocalFeatureStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
+
+* :func:`torch_geometric.distributed.LocalFeatureStore.from_data`: Creates a local feature store from homogeneous data.
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalFeatureStore
+
+    # Example data for homogeneous graph:
+    node_id = torch.tensor([0, 1, 2])
+    x = torch.rand((3, 4))
+    y = torch.tensor([1, 0, 1])
+    edge_id = torch.tensor([0, 1, 2])
+    edge_attr = torch.rand((3, 5))
+
+    # Create a LocalFeatureStore from homogeneous data:
+    feature_store = LocalFeatureStore.from_data(
+        node_id=node_id,
+        x=x,
+        y=y,
+        edge_id=edge_id,
+        edge_attr=edge_attr
+    )
+
+* :func:`torch_geometric.distributed.LocalFeatureStore.from_hetero_data`: Creates a local feature store from heterogeneous data.
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalFeatureStore
+
+    # Example data for heterogeneous graph:
+    node_id_dict = {
+        'v0': torch.tensor([0, 1]),
+        'v1': torch.tensor([2, 3, 4]),
+    }
+
+    x_dict = {
+        'v0': torch.rand((2, 4)),
+        'v1': torch.rand((3, 4)),
+    }
+
+    y_dict = {
+        'v0': torch.tensor([1, 0]),
+        'v1': torch.tensor([1, 0, 1]),
+    }
+
+    edge_id_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2]),
+    }
+
+    edge_attr_dict = {
+        ('v0', 'e0', 'v1'): torch.rand((3, 5)),
+    }
+
+    # Create a LocalFeatureStore from heterogeneous data:
+    feature_store = LocalFeatureStore.from_hetero_data(
+        node_id_dict=node_id_dict,
+        x_dict=x_dict,
+        y_dict=y_dict,
+        edge_id_dict=edge_id_dict,
+        edge_attr_dict=edge_attr_dict
+    )
+
+Initialization of LocalFeatureStore and LocalGraphStore from Partition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:class:`torch_geometric.distributed.LocalFeatureStore` and :class:`torch_geometric.distributed.LocalGraphStore` provide a class methods for creating instances from a specified partition:
+
+* :func:`torch_geometric.distributed.from_partition`: Creates a local feature store / local graph store from a partition.
+
+.. code-block:: python
+
+    # Load partition into graph:
+    graph_store = LocalGraphStore.from_partition(
         osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
-    edge_attrs = graph.get_all_edge_attrs()
 
-    # load partition into feature
-    feature = LocalFeatureStore.from_partition(
+    # Load partition into feature:
+    feature_store = LocalFeatureStore.from_partition(
         osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
 
-    # load partition information
-    (meta, num_partitions, partition_idx, node_pb,
-     edge_pb) = load_partition_info(
-         osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
+    # Load partition information:
+     (
+         meta,
+         num_partitions,
+         partition_idx,
+         node_pb,
+         edge_pb,
+     ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
+                             node_rank)
 
-    # setup the partition information in graph
-    graph.num_partitions = num_partitions
-    graph.partition_idx = partition_idx
-    graph.node_pb = node_pb
-    graph.edge_pb = edge_pb
-    graph.meta = meta
+    # Setup the partition information in graph store:
+    graph_store.num_partitions = num_partitions
+    graph_store.partition_idx = partition_idx
+    graph_store.node_pb = node_pb
+    graph_store.edge_pb = edge_pb
+    graph_store.meta = meta
 
-    # setup the partition information in feature
-    feature.num_partitions = num_partitions
-    feature.partition_idx = partition_idx
-    feature.node_feat_pb = node_pb
-    feature.edge_feat_pb = edge_pb
-    feature.feature_pb = node_pb
-    feature.meta = meta
+    # Setup the partition information in feature store:
+    feature_store.num_partitions = num_partitions
+    feature_store.partition_idx = partition_idx
+    feature_store.node_feat_pb = node_pb
+    feature_store.edge_feat_pb = edge_pb
+    feature_store.feature_pb = node_pb
+    feature_store.meta = meta
 
-    # load the label file and put into graph as labels
+    # Load the label file and put into graph as labels:
     if node_label_file is not None:
         if isinstance(node_label_file, dict):
             whole_node_labels = {}
@@ -159,24 +386,22 @@ Based on the above APIs from LFS/LGS you can load the partitions into graphstore
         else:
             whole_node_labels = torch.load(node_label_file)
     node_labels = whole_node_labels
-    graph.labels = node_labels
+    graph_store.labels = node_labels
 
-    partition_data = (feature, graph)
-
-At the same time we also store the partition information like num_partitions, partition_idx, node_pb (node partition book), edge_pb (edge partition book), partition_meta, partition label into graphstore/featurestore. Finally we construct one tuple structure to provide the input for the DistNeighborLoader/DistNeighborSampler like (featurestore, graphstore).
+    partition_data = (feature_store, graph_store)
 
 
-3. Setting up communication using DDP & RPC
+1. Setting up communication using DDP & RPC
 ---------------------------------------------------
 
 In this distributed training implementation two `torch.distributed` communication technologies are used:
 
-* ``torch.distributed.ddp`` for data parallel model training 
+* ``torch.distributed.ddp`` for data parallel model training
 * ``torch.distributed.rpc`` for remote sampling calls & feature retrieval from distributed database
 
 In this context, we opted for ``torch.distributed.rpc`` over alternatives such as gRPC because PyTorch RPC inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using this method helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
 
-The DDP group is initialzied in a standard way in the main training script. 
+The DDP group is initialzied in a standard way in the main training script.
 
 .. code-block:: python
 
@@ -324,81 +549,96 @@ There are several key features for ``DistNeighborLoader`` and  ``DistLoader``:
         pbar.close()
 
 
-
-
-
-
 5. Distributed Sampling
----------------------------------------------------
+------------------------------------
 
-The figure below shows the architecture of the deployment mode:
+:class:`torch_geometric.distributed.DistNeighborSampler` is a module designed for efficient distributed training of Graph Neural Networks. It addresses the challenges of sampling neighbors in a distributed environment, where graph data is partitioned across multiple machines or devices. The sampler ensures that GNNs can effectively learn from large-scale graphs, maintaining scalability and performance.
 
+5.1 Asynchronous Neighbor Sampling and Feature Collection:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: ../_static/thumbnails/distribute_arch.png
+* Asynchronous neighbor sampling: Asynchronous sampling is implemented using asynchronous ``torch.distributed.RPC`` calls. It allows machines to independently sample neighbors without strict synchronization. Each machine autonomously selects neighbors from its local graph partition, without waiting for others to complete their sampling processes. This approach enhances parallelism, as machines can progress asynchronously leading to faster training. In addition to asynchronous sampling, Distributed Neighbor Sampler also provides asynchronous feature collection.
+
+5.2 Customizable Sampling Strategies:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Users can customize neighbor sampling strategies based on their specific requirements. The module provides flexibility in defining sampling techniques, such as:
+
+* Node sampling
+* Edge sampling
+* Disjoint sampling
+* Node-based temporal sampling
+* Edge-based temporal sampling
+
+Additionally, each of these methods is supported for both homogeneous and heterogeneous graph sampling.
+
+5.3 Distributed Neighbor Sampling Workflow Key Steps:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1) Distributed node sampling: Utilizing the training seeds provided by the loader, the neighbor sampling procedure is executed. These training seeds may originate from either local or remote partitions. For nodes within a local partition, the neighbor sampling occurs on the local machine. Conversely, for nodes associated with a remote partition, the neighbor sampling is conducted on the machine responsible for storing the respective partition.
+
+2) Distributed feature lookup: Each partition stores the features of its nodes and edges. Consequently, if the output of a sampler on a specific machine includes sampled nodes or edges that do not pertain to its partition, the machine must initiate an RPC request to the machine to which these nodes (or edges) belong in order to retrieve information about their features.
+
+3) Form into PyG data format: Based on the sampler output and the acquired node (or edge) features, a Data/HeteroData object is created. This object forms a batch used in subsequent computational operations of the model. Note that this step occurs within the loader.
+
+5.4 Algorithm Overview:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section outlines the Distributed Neighbor Sampling Algorithm. The algorithm focuses on efficiently sampling neighbors across distributed nodes to facilitate effective learning on large-scale graph-structured data.
+
+.. figure:: ../_static/thumbnails/distribute_neighborsampler.png
   :align: center
   :width: 90%
 
-There are two communication groups. One is ddp group used for distributed training. Another is rpc group used for distributed sampling including node sampling and feature collection over multiple partitions.
+While the mechanism is analogous, the distributed sampling process diverges from single-machine sampling. In distributed training, seed nodes can belong to different partitions, leading to simultaneous sampling on multiple machines for a single batch. Consequently, synchronization of sampling results across machines is necessary to obtain seed nodes for the subsequent layer, requiring modifications to the basic algorithm.
 
-From this diagram there are two nodes and each node will load one partition in graphstore/featurestore for their respective partition.
+The accompanying image illustrates a graph divided into two partitions, each associated with a distinct machine. For nodes `[0, 1, 5, 6]` in the batch, the objective is to sample all neighbors within a single layer. The process unfolds as follows:
 
+1) In the initial step, the algorithm checks whether the seed nodes belong to the local partition. If affirmative, sampling is executed on the local machine.
 
-distributed training in PyG has two basic roles: sampler and trainer:
+2) If the seed nodes belong to a remote partition, an RPC request is dispatched from the local machine to the remote machine to initiate sampling.
 
-- **Sampler Process** creates the distributed sampler for distributed neighbor sampling and feature collection based on torch.distributed.rpc.
-  The sampled results will be sent to the sampling message channel to be consumed by trainers.
+3) Upon completion of the neighbor sampling process, results from remote machines are transmitted to the local machine, where they are merged and arranged based on the sampling order (seed nodes first, followed by sampled neighbors in the order of individual seed node sampling). The final step involves removing duplicate nodes.
 
-- **Trainer Process** corresponds to a participant of PyTorch's DDP training, loads sampled results from the sampling message channel, and conducts model training.
+4)
+  * If all layers have been sampled, as is the case in this example, the features of the sampled nodes (or edges in the case of edge sampling) are obtained, and the results are passed to the message channel.
 
+  * If not, new input nodes for the next layer are acquired. In the context of the image example, these nodes would be `[2, 4, 3, 10, 7]`, and the entire process starts from the beginning.
 
+5.5. Distributed Neighbor Sampler Code Structure:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The working flow is -
+This section provides an overview of the key code structure elements of the Distributed Neighbor Sampler.
 
-+ **distributed node sampling**:  Based on training seeds (some seeds are in local and some are in remote nodes) the distributed node sampling will be performed. After the local sampling and remote sampling under these seeds the sampling results will be merged.
+* :func:`torch_geomeric.distribued.DistNeighborSampler.node_sample`:
 
-+ **distributed feature lookup**: Based on the sampled global node ids (some are in local and some are in remote nodes) the distributed feature lookup still will be performance. Finally the local/remote features will be merged also.
+  * :func:`torch_geomeric.distribued.DistNeighborSampler.node_sample`, is responsible for performing layer-by-layer distributed sampling from either a :class:`torch_geomeric.sampler.NodeSamplerInput` or :class:`torch_geomeric.distributed.utils.DistEdgeHeteroSamplerInput` object.
 
-+ **form into PyG data format**:  Based on sampled nodes/features these sampled messages will be formed into PyG data as dataloader output for trainer input.
+  * It supports both homogeneous and heterogeneous graphs, adapting its behavior accordingly.
 
+  * The sampling procedure takes into account temporal aspects.
 
+  * Following the sampling of a single layer, the :func:`torch_geometric.distributed.utils.remove_duplicates` function is utilized to remove duplicates among the sampled nodes in the result.
 
+  * Upon completion of the sampling process, the :func:`torch.ops.pyg.relabel_neighborhood` (or in the case of hetero graphs: :func:`torch.ops.pyg.hetero_relabel_neighborhood`) function is employed to perform mappings from global to local node indices.
 
-The key code structure of distributed class ``DistNeighborSampler`` shown as below.
-
-The key steps for distributed node sampling -
-
-+ ``node_sample()``:
-  - Node sampling function based on layer-by-layer sampling, each layer of which is done by ``simple_one_hop()``.
-  - After one layer sampled there will remove duplication in sampled results
-  - Add with the sampled nodes from previous layers
-
-+ ``simple_one_hop()``:
-  - one layer sampling including the local sampling and remote node sampling
-  - return the merged sampled results
-
-+ ``_simple_one_hop()``:
-  - meta sampling algorithm from ``pyg_lib`` based on graphstore/featurestore tuple input
-  - c++ based implementation
+  * The output of the sampling procedure is returned, encapsulated in either a :class:`torch_geomeric.sampler.SamplerOutput` or :class:`torch_geomeric.sampler.HeteroSamplerOutput` object.
 
 .. code-block:: python
 
-    def node_sample(
+    async def node_sample(
         self,
-        inputs: Union[NodeSamplerInput, EdgeSamplerInput],..
-        ):
+        inputs: Union[NodeSamplerInput, DistEdgeHeteroSamplerInput],
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         # ...
-        # for homo ..
-        # loop over the layers
+        # Loop over the layers and perform sampling:
         for i, one_hop_num in enumerate(self.num_neighbors):
-            out = await self.sample_one_hop(src, one_hop_num, seed_time,
-                                                src_batch)
-            # remove duplicates
+            out = await self.sample_one_hop(src, one_hop_num,
+                                                src_seed_time, src_batch)
+            # Remove duplicates:
             src, node, src_batch, batch = remove_duplicates(
-                    out, node, batch, self.disjoint)
-
-            node_with_dupl.append(out.node)
-            edge.append(out.edge)
-
+                out, node, batch, self.disjoint)
+        # ...
         row, col = torch.ops.pyg.relabel_neighborhood(
                 seed,
                 torch.cat(node_with_dupl),
@@ -421,6 +661,20 @@ The key steps for distributed node sampling -
         )
         return sampler_output
 
+* :func:`torch_geometric.distributed.DistNeighborSampler.sample_one_hop`:
+
+  * This function is designed to sample one-hop neighbors for a given set of source nodes (:obj:`srcs`).
+
+  * Using the input data, which consists of the indices of the source nodes :obj:`srcs` and their node type :obj:`src_node_type`, the assignment of these nodes to specific partitions is determined by invoking the :func:`torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` function.
+
+  * Based on the :obj:`partition_ids` values produced by :func:`torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` it handles scenarios where the source nodes may be located on either local or remote partitions and executes the sampling accordingly using :func:`torch_geomeric.distributed.DistNeighborSampler._sample_one_hop` function.
+
+  * In scenarios where nodes are associated with a local partition, sampling occurs on the local machine. Conversely, if the nodes belong to a remote partition, the local machine, utilizing ``torch.disributed.RPC``, sends a request to the remote machine for conducting sampling. The outcome of this sampling procedure is stored in the `torch.Futures` object.
+
+  * The results from local and remote machines are merged in a :func:`torch_geometric.distributed.DistNeighborSampler.merge_sampler_outputs` to provide a comprehensive output.
+
+.. code-block:: python
+
     async def sample_one_hop(
         self,
         srcs: Tensor,
@@ -431,7 +685,15 @@ The key steps for distributed node sampling -
     ) -> SamplerOutput:
 
         # ...
+        partition_ids = self.graph_store.get_partition_ids_from_nids(
+            srcs, src_node_type)
+        # ...
         for i in range(self.graph_store.num_partitions):
+            p_id = (self.graph_store.partition_idx +
+                    i) % self.graph_store.num_partitions
+            p_mask = partition_ids == p_id
+            p_srcs = torch.masked_select(srcs, p_mask)
+            # ...
             if p_srcs.shape[0] > 0:
                 if p_id == self.graph_store.partition_idx:
                     # Sample for one hop on a local machine:
@@ -449,8 +711,19 @@ The key steps for distributed node sampling -
                             self.rpc_sample_callee_id,
                             args=(p_srcs, one_hop_num, p_seed_time, edge_type),
                         ))
+        # ...
         return self.merge_sampler_outputs(partition_ids, partition_orders,
                                           p_outputs, one_hop_num, src_batch)
+
+* :func:`torch_geometric.distributed.DistNeighborSampler._sample_one_hop`
+
+  * The primary objective of this function is to invoke the :pyg:`PyG` native neighbor sampling function :func:`torch.ops.pyg.neighbor_sample`, using a :func:`torch.ops.pyg.dist_neighbor_sample` wrapper specifically tailored for distributed behavior.
+
+  * The function is designed to perform one-hop neighbor sampling.
+
+  * The function produces a :class:`torch_geomeric.sampler.SamplerOutput`` as its output, encapsulating three key pieces of information: the identifiers of the sampled nodes (:obj:`node`), the identifiers of the sampled edges (:obj:`edge`), and the cumulative sum of neighbors per node (:obj:`cumsum_neighbors_per_node`). :obj:`cumsum_neighbors_per_node` stores information about the cumulated sum of the sampled neighbors by each sorce node, that is further needed to relabel global nodes indices into local within a subgraph. This argument is specific for distributed training.
+
+.. code-block:: python
 
     def _sample_one_hop(
         self,
@@ -487,54 +760,68 @@ The key steps for distributed node sampling -
             metadata=(cumsum_neighbors_per_node, ),
         )
 
+5.6. Edge Sampling
+~~~~~~~~~~~~~~~~~~~~~~~
 
-One example based on the DistNeighborSampler is shown as below.
+* Edge sampling in the context of distributed training closely mirrors the methodology employed on a single machine. This process is facilitated by invoking the :func:`torch_geometric.distributed.edge_sample` function, a mechanism designed for distributed asynchronous sampling from an edge sampler input. Similarly to the single machine case, the :func:`torch_geometric.distributed.edge_sample` function invokes the :func:`torch_geometric.distributed.node_sample` function (but from the distributed package).
+
+* The :class:`torch_geometric.distributed.utils.DistEdgeHeteroSamplerInput` class has been designed to hold the input parameters required for the distributed heterogeneous link sampling process within the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` method. This scenario specifically applies when dealing with edges where the source and target node types are distinct. In other cases, the :class:`torch_geomeric.sampler.NodeSamplerInput` objetc is used as input to the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` function.
+
+.. code-block:: python
+
+        async def edge_sample(
+        self,
+        inputs: EdgeSamplerInput,
+        sample_fn: Callable,
+        num_nodes: Union[int, Dict[NodeType, int]],
+        disjoint: bool,
+        node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
+        neg_sampling: Optional[NegativeSampling] = None,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        # ...
+
+        # Heterogeneus Neighborhood Sampling ##################################
+
+        if input_type is not None:
+            if input_type[0] != input_type[-1]:  # Two distinct node types:
+
+            # ...
+                out = await sample_fn(
+                    DistEdgeHeteroSamplerInput(
+                        input_id=inputs.input_id,
+                        node_dict=seed_dict,
+                        time_dict=seed_time_dict,
+                        input_type=input_type,
+                    ))
+
+            else:
+                # Only a single node type: Merge both source and destination.
+                # ...
+
+                out = await sample_fn(
+                    NodeSamplerInput(
+                        input_id=inputs.input_id,
+                        node=seed,
+                        time=seed_time,
+                        input_type=input_type[0],  # csc
+                    ))
+        # ...
+
+        # Homogeneus Neighborhood Sampling ####################################
+
+        else:
+        # ...
+
+            out = await sample_fn(
+                NodeSamplerInput(
+                    input_id=inputs.input_id,
+                    node=seed,
+                    time=seed_time,
+                    input_type=None,
+                ))
 
 
-.. figure:: ../_static/thumbnails/distribute_neighborsampler.png
-  :align: center
-  :width: 90%
-
-
-Key steps in this example as -
-
-1) Input node is located on a local partition?
--> Sample on a local machine
-
-2) Input node is located on a remote partition?
--> the local machine initiates an RPC request to the remote machine to perform sampling
-
-3) All nodes sampled?
--> merge the outputs from all machines and rearrange nodes according to the sampling order
--> remove duplicates
-
-4) All layers sampled?
-
-+ yes -> collect node and edge features -> send results to the message channel
-
-+ no -> obtain new input nodes for the subsequent layer -> go back to 1.
-
-
-
-
-
-
-
-
-
-6. Edge Sampling
-------------------------------------
-
-
-
-
-
-
-
-
-
-
-7. Installation & Run for Homo/Hetero Example
+1. Installation & Run for Homo/Hetero Example
 ---------------------------------------------
 
 7.1 Installation
