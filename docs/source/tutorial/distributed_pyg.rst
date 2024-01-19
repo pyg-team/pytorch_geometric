@@ -28,13 +28,13 @@ Please note that METIS requires undirected, homogenous graph as input, but ``Par
 
 .. figure:: ../_figures/DGL_metis.png
   :align: center
-  :width: 70%
+  :width: 50%
   :alt: Example of graph partitioning with METIS algorithm.
 
 **Figure:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
   
-Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``,``Reddit``, and heterogenous:``ogbn-mag``, ``Movielens`` datasets.
-The ``Partitioner`` can also process temporal attributes of the nodes which is presented in the `Movielens`` dataset partitioning.
+Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``, ``Reddit`` , and heterogenous: ``ogbn-mag``, ``Movielens`` datasets.
+The ``Partitioner`` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
 ** Important note: **
 As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
 
@@ -169,18 +169,15 @@ At the same time we also store the partition information like num_partitions, pa
 3. Setting up communication using DDP & RPC
 ---------------------------------------------------
 
-.. figure:: ../_static/thumbnails/distribute_torch_rpc.png
-  :align: center
-  :width: 90%
+In this distributed training implementation two `torch.distributed` communication technologies are used:
 
-In the distributed pyg two torch.distributed parallel technologies are used:
+* ``torch.distributed.ddp`` for data parallel model training 
+* ``torch.distributed.rpc`` for remote sampling calls & feature retrieval from distributed database
 
-* ``torch.distributed.ddp`` for data parallel on the training side
-* ``torch.distributed.rpc`` for remote sampling calls & feature retrieval from distributed database stored in LGS/LFS
-
-In this context, we opted for torch.distributed.rpc over alternatives such as gRPC because torch.distributed.rpc inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using torch.distributed.rpc helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
+In this context, we opted for ``torch.distributed.rpc`` over alternatives such as gRPC because PyTorch RPC inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using this method helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
 
 The DDP group is initialzied in a standard way in the main training script. 
+
 .. code-block:: python
 
     # Initialize DDP training process group.
@@ -188,9 +185,47 @@ The DDP group is initialzied in a standard way in the main training script.
         backend='gloo', rank=current_ctx.rank,
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port))
-For CPU-based sampling the recommended backed is `gloo`.
+**Note:** For CPU-based sampling the recommended backed is `gloo`.
 
-The RPC group initialization is more complicated ...
+The RPC group initialization is more complicated as it needs to happen in each sampler process. This can be done my modifying ``worker_init_fn`` that is called at initialization of worker processes by torch base class ``_MultiProcessingDataLoaderIter``. We provide a customized init function:
+
+.. code-block:: python
+
+    def worker_init_fn(self, worker_id: int):
+        try:
+            num_sampler_proc = self.num_workers if self.num_workers > 0 else 1
+            self.current_ctx_worker = DistContext(
+                world_size=self.current_ctx.world_size * num_sampler_proc,
+                rank=self.current_ctx.rank * num_sampler_proc + worker_id,
+                global_world_size=self.current_ctx.world_size *
+                num_sampler_proc,
+                global_rank=self.current_ctx.rank * num_sampler_proc +
+                worker_id,
+                group_name='mp_sampling_worker',
+            )
+
+            init_rpc(
+                current_ctx=self.current_ctx_worker,
+                master_addr=self.master_addr,
+                master_port=self.master_port,
+                num_rpc_threads=self.num_rpc_threads,
+                rpc_timeout=self.rpc_timeout,
+            )
+            logging.info(
+                f"RPC initiated in worker-{worker_id} "
+                f"(current_ctx_worker={self.current_ctx_worker.worker_name})")
+            self.dist_sampler.init_sampler_instance()
+            self.dist_sampler.register_sampler_rpc()
+            global_barrier(timeout=10)  # Wait for all workers to initialize.
+
+            # close RPC & worker group at exit:
+            atexit.register(shutdown_rpc, self.current_ctx_worker.worker_name)
+
+        except RuntimeError:
+            raise RuntimeError(f"`{self}.init_fn()` could not initialize the "
+                               f"worker loop of the neighbor sampler")
+
+This functions first sets a unique ``DistContext`` for each worker and assigns its group and rank, subsequently it initializes a standard PyG ``NeighborSampler`` that provides basic functionality also for distributed data processing, and finally registers a new RPC worker within worker's sub-process.
 
 4. Distributed NeighborLoader
 ------------------------------------
