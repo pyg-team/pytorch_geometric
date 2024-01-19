@@ -7,17 +7,6 @@ from typing import Dict, List, Optional
 import numpy as np
 import torch
 import torch_frame
-from torch import Tensor
-from torch.nn import BCEWithLogitsLoss, L1Loss
-from torch_frame.config.text_embedder import TextEmbedderConfig
-from torch_frame.data import TensorFrame
-from torch_geometric.data import HeteroData
-from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import MLP
-from torch_geometric.seed import seed_everything
-from torch_geometric.typing import EdgeType, NodeType
-from tqdm import tqdm
-
 from relbench.data import RelBenchDataset
 from relbench.data.task import TaskType
 from relbench.datasets import get_dataset
@@ -26,18 +15,34 @@ from relbench.external.graph import (
     get_train_table_input,
     make_pkey_fkey_graph,
 )
-from relbench.external.nn import HeteroEncoder, HeteroGraphSAGE, HeteroTemporalEncoder
+from relbench.external.nn import (
+    HeteroEncoder,
+    HeteroGraphSAGE,
+    HeteroTemporalEncoder,
+)
 from sentence_transformers import SentenceTransformer
+from torch import Tensor
+from torch.nn import BCEWithLogitsLoss, L1Loss
+from torch_frame.config.text_embedder import TextEmbedderConfig
+from torch_frame.data import TensorFrame
+from tqdm import tqdm
+
+from torch_geometric.data import HeteroData
+from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import MLP
+from torch_geometric.seed import seed_everything
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class GloveTextEmbedding:
     def __init__(self, device: Optional[torch.device] = None):
         self.model = SentenceTransformer(
-            "sentence-transformers/average_word_embeddings_glove.6B.300d", device=device
-        )
+            "sentence-transformers/average_word_embeddings_glove.6B.300d",
+            device=device)
 
     def __call__(self, sentences: List[str]) -> Tensor:
         return torch.from_numpy(self.model.encode(sentences))
+
 
 # Stores the informative text columns to retain for each table:
 dataset_to_informative_text_cols = {}
@@ -82,11 +87,9 @@ data: HeteroData = make_pkey_fkey_graph(
     dataset.db,
     col_to_stype_dict=col_to_stype_dict,
     text_embedder_cfg=TextEmbedderConfig(
-        text_embedder=GloveTextEmbedding(device=device), batch_size=256
-    ),
+        text_embedder=GloveTextEmbedding(device=device), batch_size=256),
     cache_dir=os.path.join(root_dir, f"{args.dataset}_materialized_cache"),
 )
-
 
 loader_dict: Dict[str, NeighborLoader] = {}
 for split, table in [
@@ -135,7 +138,8 @@ class Model(torch.nn.Module):
         )
         self.temporal_encoder = HeteroTemporalEncoder(
             node_types=[
-                node_type for node_type in data.node_types if "time" in data[node_type]
+                node_type for node_type in data.node_types
+                if "time" in data[node_type]
             ],
             channels=args.channels,
         )
@@ -174,7 +178,7 @@ class Model(torch.nn.Module):
             num_sampled_edges_dict,
         )
 
-        return self.head(x_dict[entity_table][: seed_time.size(0)])
+        return self.head(x_dict[entity_table][:seed_time.size(0)])
 
 
 model = Model().to(device)
@@ -240,11 +244,13 @@ for epoch in range(1, args.epochs + 1):
     train_loss = train()
     val_pred = test(loader_dict["val"])
     val_metrics = task.evaluate(val_pred, task.val_table)
-    print(f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}")
+    print(
+        f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}"
+    )
 
     if (higher_is_better and val_metrics[tune_metric] > best_val_metric) or (
-        not higher_is_better and val_metrics[tune_metric] < best_val_metric
-    ):
+            not higher_is_better
+            and val_metrics[tune_metric] < best_val_metric):
         best_val_metric = val_metrics[tune_metric]
         state_dict = copy.deepcopy(model.state_dict())
 
