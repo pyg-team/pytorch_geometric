@@ -124,7 +124,7 @@ def Sequential(
         children.append(child)
 
     root_dir = osp.dirname(osp.realpath(__file__))
-    hex_repr = uuid1.hex().hex[:6]
+    hex_repr = uuid1().hex[:6]
     print("HEX", hex_repr)
     module = module_from_template(
         module_name=f'torch_geometric.nn.sequential_{hex_repr}',
