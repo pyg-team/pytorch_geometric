@@ -123,8 +123,8 @@ def Sequential(
 
         children.append(child)
 
-    root_dir = osp.dirname(osp.realpath(__file__))
     uid = '%06x' % random.randrange(16**6)
+    root_dir = osp.dirname(osp.realpath(__file__))
     module = module_from_template(
         module_name=f'torch_geometric.nn.sequential_{uid}',
         template_path=osp.join(root_dir, 'sequential.jinja'),
