@@ -1,6 +1,6 @@
 import os.path as osp
+import random
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
-from uuid import uuid1
 
 import torch
 from torch import Tensor
@@ -124,10 +124,9 @@ def Sequential(
         children.append(child)
 
     root_dir = osp.dirname(osp.realpath(__file__))
-    hex_repr = uuid1().hex[:6]
-    print("HEX", hex_repr)
+    uid = '%06x' % random.randrange(16**6)
     module = module_from_template(
-        module_name=f'torch_geometric.nn.sequential_{hex_repr}',
+        module_name=f'torch_geometric.nn.sequential_{uid}',
         template_path=osp.join(root_dir, 'sequential.jinja'),
         tmp_dirname='sequential',
         # Keyword arguments:
