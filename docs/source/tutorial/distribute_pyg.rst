@@ -16,7 +16,9 @@ Key Advantages
 
 .. figure:: ../_static/thumbnails/distribute_pyg_flow.png
   :align: center
-  :width: 90%
+  :width: 70%
+
+                                                          Figure 1  Key ideas for distributed PyG 
 
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
 
@@ -222,7 +224,7 @@ In distributed training, each node in the cluster holds a partition of the graph
 
 .. figure:: ../_static/thumbnails/distribute_graph_feature_store.png
   :align: center
-  :width: 90%
+  :width: 70%
 
 2.1 Architecture for LGS/LFS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,7 +370,8 @@ In the ``torch.distributed.ddp`` communication we support all kinds of backend, 
 
 .. figure:: ../_static/thumbnails/distribute_neighborloader.png
   :align: center
-  :width: 90%
+  :width: 70%
+
 
 Distributed class ``DistNeighborLoader`` is used to provide batch-sized data for distributed trainer. This class will have the input of data partition, num_neighbors, train_idx, batch_size, shuffle flag, device, number of sampler workers, master addr/port for ddp, context and rpc_worker_names, etc.
 
@@ -472,7 +475,7 @@ The figure below shows the architecture of the deployment mode:
 
 .. figure:: ../_static/thumbnails/distribute_arch.png
   :align: center
-  :width: 90%
+  :width: 70%
 
 There are two communication groups. One is ddp group used for distributed training. Another is rpc group used for distributed sampling including node sampling and feature collection over multiple partitions.
 
@@ -629,7 +632,7 @@ One example based on the DistNeighborSampler is shown as below.
 
 .. figure:: ../_static/thumbnails/distribute_neighborsampler.png
   :align: center
-  :width: 90%
+  :width: 70%
 
 
 Key steps in this example as -
