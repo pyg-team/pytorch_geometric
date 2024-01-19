@@ -121,7 +121,7 @@ Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use 
 1.2 Partitioning algorithm & outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: python
-    
+
     |-- ogbn-mag
     |   `-- 2-parts
     |       |-- ogbn-mag-label
@@ -181,7 +181,7 @@ Second, in ``examples/distributed/pyg/partition_hetero_graph.py`` script we use 
             `-- ogbn-products-val-partitions
                 |-- partition0.pt
                 `-- partition1.pt
-  
+
 We used metis algorithm to do the partition work with the PyG's ClusterData API. During the partition we keep the halonode when cutting the edges with another partition as shown in the figure above.
 
 Under the partition folder there are four folders:
@@ -747,7 +747,7 @@ For example, running the example in two nodes:
       --num_nodes=2 \
       --node_rank=0 \
       --master_addr=<master ip>
-    
+
     # Node 1:
     python distributed_cpu.py \
       --dataset=ogbn-products
@@ -834,7 +834,7 @@ For example, running the example in two nodes:
       --num_nodes=2 \
       --node_rank=0 \
       --master_addr=<master ip>
-    
+
     # Node 1:
     python distributed_cpu.py \
       --dataset=ogbn-mag
@@ -905,40 +905,40 @@ The below .sh example is assume that you have the anaconda virtual environment i
     PYG_WORKSPACE=$PWD
     PY_EXEC=${CONDA_ENV}/bin/python
     EXEC_SCRIPT=${PYG_WORKSPACE}/distributed_cpu.py
-    
+
     # node number
     NUM_NODES=2
-    
+
     # dataset folder
     DATASET_ROOT_DIR="/home/XXX/mag/2-parts"
-    
+
     # process number for training
     NUM_TRAINING_PROCS=1
-    
+
     # dataset name
     DATASET=ogbn-mag
-    
+
     # num epochs to run for
     NUM_EPOCHS=100
-    
+
     BATCH_SIZE=1024
-    
+
     # number of workers for sampling
     NUM_WORKERS=2
     CONCURRENCY=2
-    
+
     #partition data directory
     PART_CONFIG="/home/XXX/mag/2-parts/ogbn-products-partitions/META.json"
     NUMPART=2
-    
+
     DDP_PORT=12351
     # fanout per layer
     NUM_NEIGHBORS="15,10,5"
-    
+
     #ip_config path
     IP_CONFIG=${PYG_WORKSPACE}/ip_config.yaml
-    
-    
+
+
     # Folder and filename where you want your logs.
     logdir="logs"
     mkdir -p "logs"
@@ -951,4 +951,4 @@ The below .sh example is assume that you have the anaconda virtual environment i
     set +x
 
 
-    
+
