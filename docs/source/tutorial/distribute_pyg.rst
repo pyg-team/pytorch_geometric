@@ -18,7 +18,6 @@ Key Advantages
   :align: center
   :width: 70%
 
-                                                          Figure 1  Key ideas for distributed PyG
 
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
 
