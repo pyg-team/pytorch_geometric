@@ -245,7 +245,7 @@ for epoch in range(1, args.epochs + 1):
     val_pred = test(loader_dict["val"])
     val_metrics = task.evaluate(val_pred, task.val_table)
     print(
-        f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}"
+        f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}" #noqa
     )
 
     if (higher_is_better and val_metrics[tune_metric] > best_val_metric) or (
