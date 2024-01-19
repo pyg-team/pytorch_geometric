@@ -23,6 +23,10 @@ def module_from_template(
     template = env.get_template(osp.basename(template_path))
     module_repr = template.render(**kwargs)
 
+    if template_path.endswith('sequential.jinja'):
+        print()
+        print(module_repr)
+
     instance_dir = osp.join(get_home_dir(), tmp_dirname)
     os.makedirs(instance_dir, exist_ok=True)
     instance_path = osp.join(instance_dir, f'{module_name}.py')
