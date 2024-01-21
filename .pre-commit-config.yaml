@@ -11,6 +11,9 @@ repos:
         name: No commits to master
       - id: end-of-file-fixer
         name: End-of-file fixer
+      - name: mixed-line-ending
+        id: mixed-line-ending
+        args: [--fix, lf]
       - id: trailing-whitespace
         name: Remove trailing whitespaces
       - id: check-toml
