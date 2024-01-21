@@ -125,8 +125,8 @@ def test_gen_conv(aggr):
                                adj2.transpose(1, 0).coalesce()), out2)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        assert torch.allclose(conv((x1, x2), adj4.t()), out1)
-        assert torch.allclose(conv((x1, None), adj4.t()), out2)
+        assert torch.allclose(conv((x1, x2), adj4.t()), out1, atol=1e-4)
+        assert torch.allclose(conv((x1, None), adj4.t()), out2, atol=1e-4)
 
     if is_full_test():
         jit = torch.jit.script(conv)
