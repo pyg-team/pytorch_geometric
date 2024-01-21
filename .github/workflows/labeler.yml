@@ -1,7 +1,7 @@
 name: PR Labeler
 
 on:  # yamllint disable-line rule:truthy
-  pull_request:
+  pull_request_target:
 
 jobs:
 
