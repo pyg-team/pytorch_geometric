@@ -68,7 +68,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- Fixed Google Drive download issues  ([#8804](https://github.com/pyg-team/pytorch_geometric/pull/8804))
+- Fixed Google Drive download issues ([#8804](https://github.com/pyg-team/pytorch_geometric/pull/8804))
 - Fixed a bug in which `InMemoryDataset` did not reconstruct the correct data class when a `pre_transform` has modified it ([#8692](https://github.com/pyg-team/pytorch_geometric/pull/8692))
 - Fixed a bug in which transforms were not applied for `OnDiskDataset` ([#8663](https://github.com/pyg-team/pytorch_geometric/pull/8663))
 - Fixed mini-batch computation in `DMoNPooing` loss function ([#8285](https://github.com/pyg-team/pytorch_geometric/pull/8285))
