@@ -141,7 +141,6 @@ def construct_bipartite_edge_index(
         edge_attr = torch.cat(edge_attrs, dim=0)
 
     if is_sparse_tensor:
-        # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
             row=edge_index[1],
             col=edge_index[0],
