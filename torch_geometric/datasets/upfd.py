@@ -9,7 +9,7 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import read_txt_array
@@ -75,7 +75,10 @@ class UPFD(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    url = 'https://data.pyg.org/datasets/upfd_{}.zip'
+    file_ids = {
+        'politifact': '1KOmSrlGcC50PjkvRVbyb_WoWHVql06J-',
+        'gossipcop': '1VskhAQ92PrT4sWEKQ2v2-AJhEcpp4A81',
+    }
 
     def __init__(
         self,
@@ -121,7 +124,8 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self) -> None:
-        path = download_url(self.url.format(self.name), self.raw_dir)
+        id = self.file_ids[self.name]
+        path = download_google_url(id, self.raw_dir, 'data.zip')
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
