@@ -5,9 +5,9 @@ import os.path as osp
 from typing import List, Optional, Union
 
 import torch
+import torch_geometric.distributed as pyg_dist
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.distributed.utils import as_str
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
 from torch_geometric.utils import index_sort
@@ -67,6 +67,7 @@ class Partitioner:
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
+
     def __init__(
         self,
         data: Union[Data, HeteroData],
@@ -135,7 +136,7 @@ class Partitioner:
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start:edge_start + num_edges]
+                edge_id = edge_perm[edge_start : edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += num_edges
 
@@ -159,8 +160,9 @@ class Partitioner:
                     # Sort on col to avoid keeping track of permuations in
                     # NeighborSampler when converting to CSC format:
                     num_cols = col.size()[0]
-                    global_col, perm = index_sort(global_col,
-                                                  max_value=num_cols)
+                    global_col, perm = index_sort(
+                        global_col, max_value=num_cols
+                    )
                     global_row = global_row[perm]
                     global_eid = edge_id[mask][perm]
                     assert torch.equal(
@@ -170,10 +172,13 @@ class Partitioner:
                     local_eid = global_eid - edge_offset[edge_type]
                     assert torch.equal(
                         self.data[edge_type].edge_index[:, local_eid],
-                        torch.stack((
-                            global_row - node_offset[src],
-                            global_col - node_offset[dst],
-                        ), dim=0),
+                        torch.stack(
+                            (
+                                global_row - node_offset[src],
+                                global_col - node_offset[dst],
+                            ),
+                            dim=0,
+                        ),
                     )
                     graph[edge_type] = {
                         'edge_id': global_eid,
@@ -230,7 +235,7 @@ class Partitioner:
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
                 num_edges = part_data.num_edges
-                edge_id = edge_perm[edge_start:edge_start + num_edges]
+                edge_id = edge_perm[edge_start : edge_start + num_edges]
                 edge_map[edge_id] = pid
                 edge_start += num_edges
 
@@ -256,8 +261,9 @@ class Partitioner:
                 )
                 if 'edge_attr' in part_data:
                     edge_attr = part_data.edge_attr[perm]
-                    assert torch.equal(self.data.edge_attr[edge_id, :],
-                                       edge_attr)
+                    assert torch.equal(
+                        self.data.edge_attr[edge_id, :], edge_attr
+                    )
 
                 torch.save(
                     {
@@ -265,19 +271,25 @@ class Partitioner:
                         'row': global_row,
                         'col': global_col,
                         'size': (data.num_nodes, data.num_nodes),
-                    }, osp.join(path, 'graph.pt'))
+                    },
+                    osp.join(path, 'graph.pt'),
+                )
 
                 torch.save(
                     {
                         'global_id': node_id,
                         'feats': dict(x=part_data.x),
-                    }, osp.join(path, 'node_feats.pt'))
+                    },
+                    osp.join(path, 'node_feats.pt'),
+                )
                 if 'edge_attr' in part_data:
                     torch.save(
                         {
                             'global_id': edge_id,
                             'feats': dict(edge_attr=part_data.edge_attr[perm]),
-                        }, osp.join(path, 'edge_feats.pt'))
+                        },
+                        osp.join(path, 'edge_feats.pt'),
+                    )
 
             logging.info('Saving partition mapping info')
             torch.save(node_map, osp.join(self.root, 'node_map.pt'))
@@ -319,13 +331,14 @@ def load_partition_info(
         node_pb_dir = osp.join(root_dir, 'node_map')
         for ntype in meta['node_types']:
             node_pb_dict[ntype] = torch.load(
-                osp.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+                osp.join(node_pb_dir, f'{pyg_dist.utils.as_str(ntype)}.pt')
+            )
 
         edge_pb_dict = {}
         edge_pb_dir = osp.join(root_dir, 'edge_map')
         for etype in meta['edge_types']:
             edge_pb_dict[tuple(etype)] = torch.load(
-                osp.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+                osp.join(edge_pb_dir, f'{pyg_dist.utils.as_str(etype)}.pt')
+            )
 
-        return (meta, num_partitions, partition_idx, node_pb_dict,
-                edge_pb_dict)
+        return (meta, num_partitions, partition_idx, node_pb_dict, edge_pb_dict)
