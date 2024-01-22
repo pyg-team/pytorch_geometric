@@ -292,7 +292,10 @@ def run_proc(
 
     if is_hetero:
         # Turn model to hetero and initialize parameters
-        metadata = [graph.meta['node_types'], [tuple(e) for e in graph.meta['edge_types']]]
+        metadata = [
+            graph.meta['node_types'],
+            [tuple(e) for e in graph.meta['edge_types']],
+        ]
         model = to_hetero(model, metadata).to(current_device)
         init_params()
         torch.distributed.barrier()
@@ -347,7 +350,7 @@ if __name__ == '__main__':
         '--dataset',
         type=str,
         default='ogbn-products',
-        choices=['ogbn-products', 'ognb-mag'],
+        choices=['ogbn-products', 'ogbn-mag'],
         help='Name of ogbn dataset: (ogbn-products, ogbn-mag)',
     )
     parser.add_argument(
