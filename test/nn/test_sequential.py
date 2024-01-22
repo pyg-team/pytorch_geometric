@@ -47,11 +47,11 @@ def test_sequential():
     assert isinstance(model[3], ReLU)
     assert isinstance(model[4], Linear)
 
-    assert model.module_headers[0] == (['x', 'edge_index'], ['x'])
-    assert model.module_headers[1] == (['x'], ['x'])
-    assert model.module_headers[2] == (['x', 'edge_index'], ['x'])
-    assert model.module_headers[3] == (['x'], ['x'])
-    assert model.module_headers[4] == (['x'], ['x'])
+    assert model._module_descs[0] == 'x, edge_index -> x'
+    assert model._module_descs[1] == 'x -> x'
+    assert model._module_descs[2] == 'x, edge_index -> x'
+    assert model._module_descs[3] == 'x -> x'
+    assert model._module_descs[4] == 'x -> x'
 
     out = model(x, edge_index)
     assert out.size() == (4, 7)
@@ -73,14 +73,14 @@ def test_sequential():
     assert out.size() == (1, 7)
 
 
-def test_sequential_jittable():
+def test_sequential_jit():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     model = Sequential('x: Tensor, edge_index: Tensor', [
-        (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(16, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
-        (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
     ])
@@ -90,9 +90,9 @@ def test_sequential_jittable():
         adj_t = SparseTensor.from_edge_index(edge_index).t()
 
         model = Sequential('x: Tensor, edge_index: SparseTensor', [
-            (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+            (GCNConv(16, 64), 'x, edge_index -> x'),
             ReLU(inplace=True),
-            (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+            (GCNConv(64, 64), 'x, edge_index -> x'),
             ReLU(inplace=True),
             Linear(64, 7),
         ])

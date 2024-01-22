@@ -41,54 +41,11 @@ class Inspector:
 
     def eval_type(self, value: Any) -> Type:
         r"""Returns the type hint of a string."""
-        if isinstance(value, str):
-            value = typing.ForwardRef(value)
-        return typing._eval_type(value, self._globals, None)  # type: ignore
+        return eval_type(value, self._globals)
 
     def type_repr(self, obj: Any) -> str:
         r"""Returns the type hint representation of an object."""
-        def _get_name(name: str, module: str) -> str:
-            return name if name in self._globals else f'{module}.{name}'
-
-        if isinstance(obj, str):
-            return obj
-
-        if obj is type(None):
-            return 'None'
-
-        if obj is ...:
-            return '...'
-
-        if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
-            name = obj._name
-            if name is None:  # In some cases, `_name` is not populated.
-                name = str(obj.__origin__).split('.')[-1]
-
-            args = getattr(obj, '__args__', None)
-            if args is None or len(args) == 0:
-                return _get_name(name, obj.__module__)
-            if all(isinstance(arg, typing.TypeVar) for arg in args):
-                return _get_name(name, obj.__module__)
-
-            # Convert `Union[*, None]` to `Optional[*]`.
-            # This is only necessary for old Python versions, e.g. 3.8.
-            # TODO Only convert to `Optional` if `Optional` is importable.
-            if (name == 'Union' and len(args) == 2
-                    and any([arg is type(None) for arg in args])
-                    and ('Optional' in self._globals
-                         or obj.__module__ in self._globals or True)):
-                name = 'Optional'
-
-            if name == 'Optional':  # Remove `None` from `Optional` arguments:
-                args = [arg for arg in obj.__args__ if arg is not type(None)]
-
-            args_repr = ', '.join([self.type_repr(arg) for arg in args])
-            return f'{_get_name(name, obj.__module__)}[{args_repr}]'
-
-        if obj.__module__ == 'builtins':
-            return obj.__qualname__
-
-        return _get_name(obj.__qualname__, obj.__module__)
+        return type_repr(obj, self._globals)
 
     def implements(self, func_name: str) -> bool:
         r"""Returns :obj:`True` in case the inspected class implements the
@@ -456,6 +413,57 @@ class Inspector:
                 return param_dict
 
         return {}  # (4) No function call found:
+
+
+def eval_type(value: Any, _globals: Dict[str, Any]) -> Type:
+    r"""Returns the type hint of a string."""
+    if isinstance(value, str):
+        value = typing.ForwardRef(value)
+    return typing._eval_type(value, _globals, None)  # type: ignore
+
+
+def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
+    r"""Returns the type hint representation of an object."""
+    def _get_name(name: str, module: str) -> str:
+        return name if name in _globals else f'{module}.{name}'
+
+    if isinstance(obj, str):
+        return obj
+
+    if obj is type(None):
+        return 'None'
+
+    if obj is ...:
+        return '...'
+
+    if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
+        name = obj._name
+        if name is None:  # In some cases, `_name` is not populated.
+            name = str(obj.__origin__).split('.')[-1]
+
+        args = getattr(obj, '__args__', None)
+        if args is None or len(args) == 0:
+            return _get_name(name, obj.__module__)
+        if all(isinstance(arg, typing.TypeVar) for arg in args):
+            return _get_name(name, obj.__module__)
+
+        # Convert `Union[*, None]` to `Optional[*]`.
+        # This is only necessary for old Python versions, e.g. 3.8.
+        # TODO Only convert to `Optional` if `Optional` is importable.
+        if (name == 'Union' and len(args) == 2
+                and any([arg is type(None) for arg in args])):
+            name = 'Optional'
+
+        if name == 'Optional':  # Remove `None` from `Optional` arguments:
+            args = [arg for arg in obj.__args__ if arg is not type(None)]
+
+        args_repr = ', '.join([type_repr(arg, _globals) for arg in args])
+        return f'{_get_name(name, obj.__module__)}[{args_repr}]'
+
+    if obj.__module__ == 'builtins':
+        return obj.__qualname__
+
+    return _get_name(obj.__qualname__, obj.__module__)
 
 
 def find_parenthesis_content(source: str, prefix: str) -> Optional[str]:
