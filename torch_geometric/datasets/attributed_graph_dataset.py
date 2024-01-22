@@ -8,7 +8,7 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import fs
@@ -98,8 +98,6 @@ class AttributedGraphDataset(InMemoryDataset):
           - 2,000
           - 100
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     datasets = {
         'wiki': '1EPhlbziZTQv19OsTrKrAJwsElbVPEbiV',
         'cora': '1FyVnpdsTT-lhkVPotUW8OVeuCi1vi3Ey',
@@ -145,8 +143,8 @@ class AttributedGraphDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self) -> None:
-        url = self.url.format(self.datasets[self.name])
-        path = download_url(url, self.raw_dir)
+        id = self.datasets[self.name]
+        path = download_google_url(id, self.raw_dir, 'data.zip')
         extract_zip(path, self.raw_dir)
         os.unlink(path)
         path = osp.join(self.raw_dir, f'{self.name}.attr')

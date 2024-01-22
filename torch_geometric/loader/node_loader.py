@@ -103,20 +103,22 @@ class NodeLoader(
         if filter_per_worker is None:
             filter_per_worker = infer_filter_per_worker(data)
 
-        # Remove for PyTorch Lightning:
+        self.data = data
+        self.node_sampler = node_sampler
+        self.input_nodes = input_nodes
+        self.input_time = input_time
+        self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
+        self.filter_per_worker = filter_per_worker
+        self.custom_cls = custom_cls
+        self.input_id = input_id
+
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes, input_id = get_input_nodes(
             data, input_nodes, input_id)
-
-        self.data = data
-        self.node_sampler = node_sampler
-        self.transform = transform
-        self.transform_sampler_output = transform_sampler_output
-        self.filter_per_worker = filter_per_worker
-        self.custom_cls = custom_cls
 
         self.input_data = NodeSamplerInput(
             input_id=input_id,

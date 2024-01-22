@@ -1,7 +1,7 @@
 name: PR Labeler
 
 on:  # yamllint disable-line rule:truthy
-  pull_request:
+  pull_request_target:
 
 jobs:
 
@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Add PR labels
-        uses: actions/labeler@v4
+        uses: actions/labeler@v5
         continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"

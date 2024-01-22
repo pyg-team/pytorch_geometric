@@ -227,8 +227,8 @@ class BasicGNN(torch.nn.Module):
         xs: List[Tensor] = []
         assert len(self.convs) == len(self.norms)
         for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
-            if (num_sampled_nodes_per_hop is not None
-                    and not torch.jit.is_scripting()):
+            if (not torch.jit.is_scripting()
+                    and num_sampled_nodes_per_hop is not None):
                 x, edge_index, value = self._trim(
                     i,
                     num_sampled_nodes_per_hop,
@@ -380,17 +380,6 @@ class BasicGNN(torch.nn.Module):
             pbar.close()
 
         return x_all
-
-    def jittable(self) -> 'BasicGNN':
-        r"""Produces a new jittable instance module that can be used in
-        combination with :meth:`torch.jit.script`.
-        """
-        out = copy.deepcopy(self)
-        convs = [conv.jittable() for conv in out.convs]
-        out.convs = torch.nn.ModuleList(convs)
-        out._trim = None  # TODO Trimming is currently not support in JIT mode.
-
-        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

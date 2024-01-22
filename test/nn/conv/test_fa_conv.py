@@ -33,7 +33,7 @@ def test_fa_conv():
         class MyModule(torch.nn.Module):
             def __init__(self):
                 super().__init__()
-                self.conv = conv.jittable()
+                self.conv = conv
 
             def forward(
                 self,
@@ -84,7 +84,7 @@ def test_fa_conv():
         class MyModule(torch.nn.Module):
             def __init__(self):
                 super().__init__()
-                self.conv = conv.jittable()
+                self.conv = conv
 
             def forward(
                 self,
@@ -107,7 +107,7 @@ def test_fa_conv():
             class MyModule(torch.nn.Module):
                 def __init__(self):
                     super().__init__()
-                    self.conv = conv.jittable()
+                    self.conv = conv
 
                 def forward(
                     self,

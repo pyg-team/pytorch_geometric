@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import PairTensor  # noqa
 from torch_geometric.typing import (
     Adj,
     NoneType,
