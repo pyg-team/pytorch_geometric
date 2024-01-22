@@ -1,54 +1,54 @@
 documentation:
-- changed-files:
-  - any-glob-to-any-file: "docs/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "docs/**/*"
 
 example:
-- changed-files:
-  - any-glob-to-any-file: "examples/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "examples/**/*"
 
 data:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/data/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/data/**/*"
 
 dataset:
-- changed-files:
-  - any-glob-to-any-file: [ "torch_geometric/io/**/*", "torch_geometric/datasets/**/*" ]
+  - changed-files:
+      - any-glob-to-any-file: ["torch_geometric/io/**/*", "torch_geometric/datasets/**/*"]
 
 sampler:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/sampler/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/sampler/**/*"
 
 loader:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/loader/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/loader/**/*"
 
 nn:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/nn/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/nn/**/*"
 
 explain:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/explain/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/explain/**/*"
 
 transform:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/transforms/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/transforms/**/*"
 
 utils:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/utils/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/utils/**/*"
 
 contrib:
-- changed-files:
-  - any-glob-to-any-file: "torch_geometric/contrib/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/contrib/**/*"
 
 graphgym:
-- changed-files:
-  - any-glob-to-any-file: [ "graphgym/**/*", "torch_geometric/graphgym/**/*" ]
+  - changed-files:
+      - any-glob-to-any-file: ["graphgym/**/*", "torch_geometric/graphgym/**/*"]
 
 benchmark:
-- changed-files:
-  - any-glob-to-any-file: [ "benchmark/**/*", "torch_geometric/profile/**/*" ]
+  - changed-files:
+      - any-glob-to-any-file: ["benchmark/**/*", "torch_geometric/profile/**/*"]
 
 skip-changelog:
- - head-branch: ['^skip']
+  - head-branch: ['^skip']
