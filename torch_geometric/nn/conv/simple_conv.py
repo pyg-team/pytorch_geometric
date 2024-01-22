@@ -95,6 +95,6 @@ class SimpleConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
+        assert isinstance(self.aggr, str)
         return spmm(adj_t, x[0], reduce=self.aggr)

@@ -34,8 +34,8 @@ def test_signed_conv():
         assert torch.allclose(conv2(out1, adj2.t(), adj2.t()), out2)
 
     if is_full_test() and torch_geometric.typing.WITH_PT112:
-        jit1 = torch.jit.script(conv1.jittable())
-        jit2 = torch.jit.script(conv2.jittable())
+        jit1 = torch.jit.script(conv1)
+        jit2 = torch.jit.script(conv2)
         assert torch.allclose(jit1(x, edge_index, edge_index), out1)
         assert torch.allclose(jit2(out1, edge_index, edge_index), out2)
 
@@ -63,8 +63,6 @@ def test_signed_conv():
                               out2[:2], atol=1e-6)
 
     if is_full_test() and torch_geometric.typing.WITH_PT112:
-        jit1 = torch.jit.script(conv1.jittable())
-        jit2 = torch.jit.script(conv2.jittable())
         assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index),
                               out1[:2], atol=1e-6)
         assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),

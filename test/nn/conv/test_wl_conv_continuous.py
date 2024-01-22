@@ -21,7 +21,7 @@ def test_wl_conv():
         assert torch.allclose(conv(x, adj.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out)
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
@@ -44,7 +44,6 @@ def test_wl_conv():
         assert torch.allclose(conv((x1, x2), adj.t()), out2)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
         assert torch.allclose(
             jit((x1, None), edge_index, edge_weight, size=(4, 2)), out1)
         assert torch.allclose(jit((x1, x2), edge_index, edge_weight), out2)

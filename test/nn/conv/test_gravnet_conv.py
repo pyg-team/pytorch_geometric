@@ -27,7 +27,7 @@ def test_gravnet_conv():
     assert out22.size() == (4, 32)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1), out11)
         assert torch.allclose(jit(x1, batch1), out12)
 

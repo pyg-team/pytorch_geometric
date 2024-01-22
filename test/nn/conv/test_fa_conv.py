@@ -33,7 +33,7 @@ def test_fa_conv():
         class MyModule(torch.nn.Module):
             def __init__(self):
                 super().__init__()
-                self.conv = conv.jittable()
+                self.conv = conv
 
             def forward(
                 self,
@@ -68,7 +68,7 @@ def test_fa_conv():
     assert conv._alpha is None
 
     result = conv(x, x_0, adj1.t(), return_attention_weights=True)
-    assert torch.allclose(result[0], out)
+    assert torch.allclose(result[0], out, atol=1e-6)
     assert result[1][0].size() == torch.Size([4, 4])
     assert result[1][0]._nnz() == 10
     assert conv._alpha is None
@@ -84,7 +84,7 @@ def test_fa_conv():
         class MyModule(torch.nn.Module):
             def __init__(self):
                 super().__init__()
-                self.conv = conv.jittable()
+                self.conv = conv
 
             def forward(
                 self,
@@ -107,7 +107,7 @@ def test_fa_conv():
             class MyModule(torch.nn.Module):
                 def __init__(self):
                     super().__init__()
-                    self.conv = conv.jittable()
+                    self.conv = conv
 
                 def forward(
                     self,

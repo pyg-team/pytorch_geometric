@@ -129,8 +129,6 @@ class GATv2Conv(MessagePassing):
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
           (|\mathcal{E}|, H)))` if bipartite
     """
-    _alpha: OptTensor
-
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -190,8 +188,6 @@ class GATv2Conv(MessagePassing):
             self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
-
-        self._alpha = None
 
         self.reset_parameters()
 
@@ -298,12 +294,12 @@ class GATv2Conv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
-        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr)
+        # edge_updater_type: (x: PairTensor, edge_attr: OptTensor)
+        alpha = self.edge_updater(edge_index, x=(x_l, x_r),
+                                  edge_attr=edge_attr)
 
-        alpha = self._alpha
-        assert alpha is not None
-        self._alpha = None
+        # propagate_type: (x: PairTensor, alpha: Tensor)
+        out = self.propagate(edge_index, x=(x_l, x_r), alpha=alpha)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -326,9 +322,9 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
-                index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+    def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
+                    index: Tensor, ptr: OptTensor,
+                    dim_size: Optional[int]) -> Tensor:
         x = x_i + x_j
 
         if edge_attr is not None:
@@ -341,9 +337,11 @@ class GATv2Conv(MessagePassing):
 
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
-        alpha = softmax(alpha, index, ptr, size_i)
-        self._alpha = alpha
+        alpha = softmax(alpha, index, ptr, dim_size)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+        return alpha
+
+    def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
         return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self) -> str:
