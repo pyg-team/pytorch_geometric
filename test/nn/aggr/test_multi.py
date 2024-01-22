@@ -40,7 +40,7 @@ def test_multi_aggr(multi_aggr_tuple):
     assert out.size() == (4, expand * x.size(1))
 
     if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(ImportError, match="'segment' requires"):
+        with pytest.raises(NotImplementedError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))

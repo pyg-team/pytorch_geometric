@@ -289,8 +289,9 @@ class RGCNConv(MessagePassing):
 
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        adj_t = adj_t.set_value(None)
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None)
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

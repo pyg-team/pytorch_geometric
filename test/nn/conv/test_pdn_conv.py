@@ -22,7 +22,7 @@ def test_pdn_conv():
         assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -48,7 +48,7 @@ def test_pdn_conv_with_sparse_node_input_feature():
         assert torch.allclose(conv(x, adj.t(), edge_attr), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:

@@ -61,12 +61,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated `MessagePassing.jittable` ([#8781](https://github.com/pyg-team/pytorch_geometric/pull/8781))
+- Deprecated the usage of `torch_geometric.compile`; Use `torch.compile` instead ([#8780](https://github.com/pyg-team/pytorch_geometric/pull/8780))
 - Deprecated the `typing` argument in `MessagePassing.jittable()` ([#8731](https://github.com/pyg-team/pytorch_geometric/pull/8731))
 - Deprecated `torch_geometric.data.makedirs` in favor of `os.makedirs` ([#8421](https://github.com/pyg-team/pytorch_geometric/pull/8421))
 - Deprecated `DataParallel` in favor of `DistributedDataParallel` ([#8250](https://github.com/pyg-team/pytorch_geometric/pull/8250))
 
 ### Fixed
 
+- Fixed Google Drive download issues ([#8804](https://github.com/pyg-team/pytorch_geometric/pull/8804))
 - Fixed a bug in which `InMemoryDataset` did not reconstruct the correct data class when a `pre_transform` has modified it ([#8692](https://github.com/pyg-team/pytorch_geometric/pull/8692))
 - Fixed a bug in which transforms were not applied for `OnDiskDataset` ([#8663](https://github.com/pyg-team/pytorch_geometric/pull/8663))
 - Fixed mini-batch computation in `DMoNPooing` loss function ([#8285](https://github.com/pyg-team/pytorch_geometric/pull/8285))

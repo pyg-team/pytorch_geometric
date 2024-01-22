@@ -115,7 +115,7 @@ class MFConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)
