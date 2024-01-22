@@ -240,7 +240,7 @@ def run_proc(
         device=current_device,
         num_neighbors=num_neighbors,
         shuffle=False,
-        drop_last=True,
+        drop_last=False,
         persistent_workers=persistent_workers,
         batch_size=batch_size,
         num_workers=num_workers,
@@ -259,17 +259,6 @@ def run_proc(
         out_channels=349 if is_hetero else 47,  # num_classes in dataset
     ).to(current_device)
 
-    @torch.no_grad()
-    def init_params():
-        # Init parameters via forwarding a single batch to the model:
-        print('--- Initialize parameters of the hetero model ...')
-        with train_loader as iterator:
-            batch = next(iter(iterator))
-            batch = batch.to(current_device, 'edge_index')
-            model(batch.x_dict, batch.edge_index_dict)
-            del batch
-            torch.distributed.barrier()
-
     if is_hetero:
         # Turn model to hetero and initialize parameters
         metadata = [
@@ -277,7 +266,6 @@ def run_proc(
             [tuple(e) for e in graph.meta['edge_types']],
         ]
         model = to_hetero(model, metadata).to(current_device)
-        init_params()
         torch.distributed.barrier()
 
     # Enable DDP
