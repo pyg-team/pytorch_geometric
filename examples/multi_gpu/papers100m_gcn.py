@@ -326,7 +326,7 @@ if __name__ == '__main__':
     wall_clock_start = time.perf_counter()
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M',
-                                     root='/datasets/abarghi/ogb_datasets')
+                                     root='/datasets/ogb_datasets')
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
