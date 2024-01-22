@@ -1678,7 +1678,8 @@ def matmul(
 
     rowptr: Optional[Tensor] = None
     if out.layout == torch.sparse_csr:
-        rowptr, col = out.crow_indices(), out.col_indices()
+        rowptr = out.crow_indices().to(input.dtype)
+        col = out.col_indices().to(input.dtype)
         edge_index = torch._convert_indices_from_csr_to_coo(
             rowptr, col, out_int32=rowptr.dtype != torch.int64)
 

@@ -1,5 +1,4 @@
 import json
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
@@ -7,7 +6,7 @@ import numpy as np
 import scipy.sparse as sp
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_google_url
 
 
 class Reddit2(InMemoryDataset):
@@ -51,8 +50,6 @@ class Reddit2(InMemoryDataset):
           - 602
           - 41
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     adj_full_id = '1sncK996BM5lpuDf75lDFqCiDZyErc1c2'
     feats_id = '1ZsHaJ0ussP1W722krmEIp_8pwKAoi5b3'
     class_map_id = '1JF3Pjv9OboMNYs2aXRQGbJbc4t_nDd5u'
@@ -78,17 +75,10 @@ class Reddit2(InMemoryDataset):
         return 'data.pt'
 
     def download(self) -> None:
-        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
-
-        path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
-
-        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
-
-        path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'role.json'))
+        download_google_url(self.adj_full_id, self.raw_dir, 'adj_full.npz')
+        download_google_url(self.feats_id, self.raw_dir, 'feats.npy')
+        download_google_url(self.class_map_id, self.raw_dir, 'class_map.json')
+        download_google_url(self.role_id, self.raw_dir, 'role.json')
 
     def process(self) -> None:
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))

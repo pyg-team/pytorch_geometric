@@ -83,36 +83,9 @@ def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
 def create_hetero_data(
     tmp_path: str,
     rank: int,
-    time_attr: Optional[str] = None,
 ):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feature_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-
-    if time_attr == 'time':  # Create node-level time data:
-        feature_store.put_tensor(
-            tensor=torch.full(
-                (len(feature_store.node_feat_pb['v0']),), 1, dtype=torch.int64
-            ),
-            group_name='v0',
-            attr_name=time_attr,
-        )
-        feature_store.put_tensor(
-            tensor=torch.full(
-                (len(feature_store.node_feat_pb['v1']),), 2, dtype=torch.int64
-            ),
-            group_name='v1',
-            attr_name=time_attr,
-        )
-    elif time_attr == 'edge_time':  # Create edge-level time data:
-        i = 0
-        for attr, edge_index in graph_store._edge_index.items():
-            time = torch.full((edge_index.size(1),), i, dtype=torch.int64)
-            feature_store.put_tensor(
-                tensor=time,
-                group_name=attr[0],
-                attr_name=time_attr,
-            )
-            i += 1
 
     return feature_store, graph_store
 
@@ -352,7 +325,7 @@ def dist_neighbor_sampler_temporal_hetero(
     temporal_strategy: str = 'uniform',
     time_attr: str = 'time',
 ):
-    dist_data = create_hetero_data(tmp_path, rank, time_attr)
+    dist_data = create_hetero_data(tmp_path, rank)
 
     current_ctx = DistContext(
         rank=rank,
@@ -578,17 +551,15 @@ def test_dist_neighbor_sampler_temporal_hetero(
         edge_dim=2,
     )[0]
 
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
-
-    # The partition generation script does not currently support temporal data.
-    # Therefore, it needs to be added after generating partitions.
     data['v0'].time = torch.full(
         (data.num_nodes_dict['v0'],), 1, dtype=torch.int64
     )
     data['v1'].time = torch.full(
         (data.num_nodes_dict['v1'],), 2, dtype=torch.int64
     )
+
+    partitioner = Partitioner(data, world_size, tmp_path)
+    partitioner.generate_partition()
 
     w0 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,
@@ -652,15 +623,13 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
         edge_dim=2,
     )[0]
 
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
-
-    # The partition generation script does not currently support temporal data.
-    # Therefore, it needs to be added after generating partitions.
     for i, edge_type in enumerate(data.edge_types):
         data[edge_type].edge_time = torch.full(
             (data[edge_type].edge_index.size(1),), i, dtype=torch.int64
         )
+
+    partitioner = Partitioner(data, world_size, tmp_path)
+    partitioner.generate_partition()
 
     w0 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,

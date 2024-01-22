@@ -36,7 +36,7 @@ def test_simple_conv(aggr, combine_root):
         assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index), out)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 

@@ -229,7 +229,7 @@ class EGConv(MessagePassing):
 
         return torch.stack(outs, dim=1) if len(outs) > 1 else outs[0]
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         adj_t_2 = adj_t
         if len(self.aggregators) > 1 and 'symnorm' in self.aggregators:
             if isinstance(adj_t, SparseTensor):

@@ -94,6 +94,10 @@ def test_group_argsort(num_groups, descending, device):
 
     assert torch.equal(out, expected)
 
+    empty_tensor = torch.tensor([], device=device)
+    out = group_argsort(empty_tensor, empty_tensor)
+    assert out.numel() == 0
+
 
 @withCUDA
 def test_scatter_argmax(device):
