@@ -87,29 +87,26 @@ class Partitioner:
 
     @property
     def is_node_level_time(self) -> bool:
-        if 'time' in self.data:
-            if self.is_hetero:
-                for store in self.data.node_stores:
-                    if 'time' in store:
-                        return True
-            else:
-                if self.data.is_node_attr('time'):
-                    return True
-        return False
+        if 'time' not in self.data:
+            return False
+
+        if self.is_hetero:
+            return any(['time' in store for store in self.data.node_stores])
+
+        return self.data.is_node_attr('time')
 
     @property
     def is_edge_level_time(self) -> bool:
         if 'edge_time' in self.data:
             return True
-        if 'time' in self.data:
-            if self.is_hetero:
-                for store in self.data.edge_stores:
-                    if 'time' in store:
-                        return True
-            else:
-                if self.data.is_edge_attr('time'):
-                    return True
-        return False
+
+        if 'time' not in self.data:
+            return False
+
+        if self.is_hetero:
+            return any(['time' in store for store in self.data.edge_stores])
+
+        return self.data.is_edge_attr('time')
 
     @property
     def node_types(self) -> Optional[List[NodeType]]:
@@ -123,14 +120,10 @@ class Partitioner:
         r"""Generates the partition."""
         os.makedirs(self.root, exist_ok=True)
 
-        is_node_level_time = self.is_node_level_time
-        is_edge_level_time = self.is_edge_level_time
-
-        if self.is_hetero and is_node_level_time:
-            # Get temporal information before converting data to homogeneous.
-            time_data = {
-                ntype: self.data[ntype].time
-                for ntype in self.data.node_types
+        if self.is_hetero and self.is_node_level_time:
+            time_data = {  # Get temporal information before converting data:
+                node_type: self.data[node_type].time
+                for node_type in self.data.node_types
             }
 
         data = self.data.to_homogeneous() if self.is_hetero else self.data
@@ -225,7 +218,7 @@ class Partitioner:
                             'global_id': offsetted_eid,
                             'feats': dict(edge_attr=edge_attr),
                         }
-                        if is_edge_level_time:
+                        if self.is_edge_level_time:
                             edge_time = part_data.edge_time[mask][perm]
                             efeat[edge_type].update({'edge_time': edge_time})
 
@@ -241,7 +234,7 @@ class Partitioner:
                         'id': node_id[mask] - node_offset[node_type],
                         'feats': dict(x=x),
                     }
-                    if is_node_level_time:
+                    if self.is_node_level_time:
                         nfeat[node_type].update({'time': time_data[node_type]})
 
                 torch.save(nfeat, osp.join(path, 'node_feats.pt'))
@@ -314,7 +307,7 @@ class Partitioner:
                     'global_id': node_id,
                     'feats': dict(x=part_data.x),
                 }
-                if is_node_level_time:
+                if self.is_node_level_time:
                     nfeat.update({'time': data.time})
 
                 torch.save(nfeat, osp.join(path, 'node_feats.pt'))
@@ -324,7 +317,7 @@ class Partitioner:
                         'global_id': edge_id,
                         'feats': dict(edge_attr=part_data.edge_attr[perm]),
                     }
-                    if is_edge_level_time:
+                    if self.is_edge_level_time:
                         efeat.update({'edge_time': part_data.edge_time[perm]})
 
                     torch.save(efeat, osp.join(path, 'edge_feats.pt'))
