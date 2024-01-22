@@ -452,7 +452,7 @@ The RPC group initialization is more complicated as it needs to happen in each s
 
 This functions first sets a unique ``DistContext`` for each worker and assigns its group and rank, subsequently it initializes a standard PyG ``NeighborSampler`` that provides basic functionality also for distributed data processing, and finally registers a new RPC worker within worker's sub-process.
 
-4. Distributed NeighborLoader
+4. Distributed Loader
 ------------------------------------
 
 .. figure:: ../_static/thumbnails/distribute_neighborloader.png
@@ -485,69 +485,6 @@ There are several key features for ``DistNeighborLoader`` and  ``DistLoader``:
 + RPC requests can be executed in synchronous or asynchronous manner with asyncio module.
 + ``DistLoader`` consumes input in custom format (``LocalFeatureStore``, ``LocalGraphStore``) and outputs standard Data\HeteroData object.
 + The same principles apply to ``DistLinkNeighborLoader``
-
-
-.. code-block:: python
-
-    # setup the train seeds for the loader
-    train_idx = train_idx.split(
-        train_idx.size(0) // num_training_procs_per_node)[local_proc_rank]
-
-    num_neighbors = [15, 10, 5]
-    # Create distributed neighbor loader for training
-    train_loader = pyg_dist.DistNeighborLoader(
-        data=partition_data, num_neighbors=num_neighbors,
-        input_nodes=train_idx, batch_size=batch_size, shuffle=True,
-        device=torch.device('cpu'), num_workers=num_workers,
-        concurrency=concurrency, master_addr=master_addr,
-        master_port=train_loader_master_port, async_sampling=True,
-        filter_per_worker=False, current_ctx=current_ctx,
-        rpc_worker_names=rpc_worker_names)
-
-    # setup the train seeds for the loader
-    test_idx = test_idx.split(test_idx.size(0) //
-                              num_training_procs_per_node)[local_proc_rank]
-
-    # Create distributed neighbor loader for testing.
-    test_loader = pyg_dist.DistNeighborLoader(
-        data=partition_data, num_neighbors=num_neighbors, input_nodes=test_idx,
-        batch_size=batch_size, shuffle=True, device=torch.device('cpu'),
-        num_workers=num_workers, concurrency=concurrency,
-        master_addr=master_addr, master_port=test_loader_master_port,
-        async_sampling=True, filter_per_worker=False, current_ctx=current_ctx,
-        rpc_worker_names=rpc_worker_names)
-
-    # Define model and optimizer.
-    model = GraphSAGE(
-        in_channels=in_channels,
-        hidden_channels=256,
-        num_layers=3,
-        out_channels=out_channels,
-    ).to(current_device)
-    model = DistributedDataParallel(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.004)
-
-    # Train and test.
-    f = open(f'dist_train_sage_for_homo_rank{node_rank}.txt', 'a+')
-    for epoch in range(0, epochs):
-        model.train()
-        pbar = tqdm(total=train_idx.size(0))
-        start = time.time()
-        for i, batch in enumerate(train_loader):
-            if i == 0:
-                pbar.set_description(f'Epoch {epoch:02d}')
-            optimizer.zero_grad()
-            out = model(
-                batch.x,
-                batch.edge_index)[:batch.batch_size].log_softmax(dim=-1)
-            loss = F.nll_loss(out, batch.y[:batch.batch_size])
-            loss.backward()
-            optimizer.step()
-            if i == len(train_loader) - 1:
-                torch.distributed.barrier()
-            pbar.update(batch_size)
-        pbar.close()
-
 
 5. Distributed Sampling
 ------------------------------------
