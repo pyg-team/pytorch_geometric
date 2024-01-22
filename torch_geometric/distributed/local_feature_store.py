@@ -418,11 +418,12 @@ class LocalFeatureStore(FeatureStore):
             partition_idx,
             node_pb,
             edge_pb,
-        ) = load_partition_info(part_dir)
+        ) = load_partition_info(root, pid)
         feat_store.num_partitions = num_partitions
         feat_store.partition_idx = partition_idx
         feat_store.node_feat_pb = node_pb
         feat_store.edge_feat_pb = edge_pb
+        feat_store.meta = meta
 
         node_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'node_feats.pt')):

@@ -181,11 +181,12 @@ class LocalGraphStore(GraphStore):
             partition_idx,
             node_pb,
             edge_pb,
-        ) = load_partition_info(part_dir)
+        ) = load_partition_info(root, pid)
         graph_store.num_partitions = num_partitions
         graph_store.partition_idx = partition_idx
         graph_store.node_pb = node_pb
         graph_store.edge_pb = edge_pb
+        graph_store.meta = meta
 
         graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
         graph_store.is_sorted = meta['is_sorted']
