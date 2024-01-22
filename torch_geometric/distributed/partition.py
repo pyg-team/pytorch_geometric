@@ -86,6 +86,29 @@ class Partitioner:
         return isinstance(self.data, HeteroData)
 
     @property
+    def is_node_level_time(self) -> bool:
+        if 'time' not in self.data:
+            return False
+
+        if self.is_hetero:
+            return any(['time' in store for store in self.data.node_stores])
+
+        return self.data.is_node_attr('time')
+
+    @property
+    def is_edge_level_time(self) -> bool:
+        if 'edge_time' in self.data:
+            return True
+
+        if 'time' not in self.data:
+            return False
+
+        if self.is_hetero:
+            return any(['time' in store for store in self.data.edge_stores])
+
+        return self.data.is_edge_attr('time')
+
+    @property
     def node_types(self) -> Optional[List[NodeType]]:
         return self.data.node_types if self.is_hetero else None
 
@@ -96,6 +119,13 @@ class Partitioner:
     def generate_partition(self):
         r"""Generates the partition."""
         os.makedirs(self.root, exist_ok=True)
+
+        if self.is_hetero and self.is_node_level_time:
+            time_data = {  # Get temporal information before converting data:
+                node_type: self.data[node_type].time
+                for node_type in self.data.node_types
+            }
+
         data = self.data.to_homogeneous() if self.is_hetero else self.data
         cluster_data = ClusterData(
             data,
@@ -167,9 +197,9 @@ class Partitioner:
                         data.edge_index[:, global_eid],
                         torch.stack((global_row, global_col), dim=0),
                     )
-                    local_eid = global_eid - edge_offset[edge_type]
+                    offsetted_eid = global_eid - edge_offset[edge_type]
                     assert torch.equal(
-                        self.data[edge_type].edge_index[:, local_eid],
+                        self.data[edge_type].edge_index[:, offsetted_eid],
                         torch.stack((
                             global_row - node_offset[src],
                             global_col - node_offset[dst],
@@ -185,9 +215,12 @@ class Partitioner:
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask][perm]
                         efeat[edge_type] = {
-                            'global_id': global_eid,
+                            'global_id': offsetted_eid,
                             'feats': dict(edge_attr=edge_attr),
                         }
+                        if self.is_edge_level_time:
+                            edge_time = part_data.edge_time[mask][perm]
+                            efeat[edge_type].update({'edge_time': edge_time})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
                 torch.save(graph, osp.join(path, 'graph.pt'))
@@ -201,6 +234,9 @@ class Partitioner:
                         'id': node_id[mask] - node_offset[node_type],
                         'feats': dict(x=x),
                     }
+                    if self.is_node_level_time:
+                        nfeat[node_type].update({'time': time_data[node_type]})
+
                 torch.save(nfeat, osp.join(path, 'node_feats.pt'))
 
             logging.info('Saving partition mapping info')
@@ -267,17 +303,24 @@ class Partitioner:
                         'size': (data.num_nodes, data.num_nodes),
                     }, osp.join(path, 'graph.pt'))
 
-                torch.save(
-                    {
-                        'global_id': node_id,
-                        'feats': dict(x=part_data.x),
-                    }, osp.join(path, 'node_feats.pt'))
+                nfeat = {
+                    'global_id': node_id,
+                    'feats': dict(x=part_data.x),
+                }
+                if self.is_node_level_time:
+                    nfeat.update({'time': data.time})
+
+                torch.save(nfeat, osp.join(path, 'node_feats.pt'))
+
                 if 'edge_attr' in part_data:
-                    torch.save(
-                        {
-                            'global_id': edge_id,
-                            'feats': dict(edge_attr=part_data.edge_attr[perm]),
-                        }, osp.join(path, 'edge_feats.pt'))
+                    efeat = {
+                        'global_id': edge_id,
+                        'feats': dict(edge_attr=part_data.edge_attr[perm]),
+                    }
+                    if self.is_edge_level_time:
+                        efeat.update({'edge_time': part_data.edge_time[perm]})
+
+                    torch.save(efeat, osp.join(path, 'edge_feats.pt'))
 
             logging.info('Saving partition mapping info')
             torch.save(node_map, osp.join(self.root, 'node_map.pt'))

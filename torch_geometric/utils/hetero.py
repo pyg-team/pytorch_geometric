@@ -84,6 +84,7 @@ def construct_bipartite_edge_index(
     src_offset_dict: Dict[EdgeType, int],
     dst_offset_dict: Dict[NodeType, int],
     edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Adj, Optional[Tensor]]:
     """Constructs a tensor of edge indices by concatenating edge indices
     for each edge type. The edge indices are increased by the offset of the
@@ -102,6 +103,8 @@ def construct_bipartite_edge_index(
         edge_attr_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
             dictionary holding edge features for each individual edge type.
             (default: :obj:`None`)
+        num_nodes (int, optional): The final number of nodes in the bipartite
+            adjacency matrix. (default: :obj:`None`)
     """
     is_sparse_tensor = False
     edge_indices: List[Tensor] = []
@@ -138,11 +141,11 @@ def construct_bipartite_edge_index(
         edge_attr = torch.cat(edge_attrs, dim=0)
 
     if is_sparse_tensor:
-        # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
             row=edge_index[1],
             col=edge_index[0],
             value=edge_attr,
+            sparse_sizes=(num_nodes, num_nodes),
         )
 
     return edge_index, edge_attr
