@@ -12,7 +12,6 @@ from tqdm import tqdm
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import GraphSAGE, to_hetero
 
 # import logging
@@ -82,7 +81,7 @@ def test(
                 print(result)
     total_acc = total_correct / total_examples
     print(
-        f'[Node {dist_context.rank}] Epoch {epoch}: '
+        f'[Node {dist_context.rank}] Epoch {epoch} END: '
         f'Total Test Accuracy = {total_acc:.4f}, '
         f'Total Test Time = {(time.time() - start_time):.2f}'
     )
@@ -150,9 +149,9 @@ def training(
             if not progress_bar:
                 print(result)
     print(
-        f'[Node {dist_context.rank}] Epoch {epoch}: \
-            Final Train Loss = {loss:.4f}, \
-            Total Train Time = {(time.time() - start_time):.2f}'
+        f'[Node {dist_context.rank}] Epoch {epoch} END: '
+        f'Final Train Loss = {loss:.4f}, '
+        f'Total Train Time = {(time.time() - start_time):.2f}'
     )
     torch.distributed.barrier()
 
@@ -201,17 +200,6 @@ def run_proc(
         train_idx = ('paper', train_idx)
         test_idx = ('paper', test_idx)
 
-    # load partition information
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(
-        osp.join(root_dir, f'{dataset}-partitions'), node_rank
-    )
-    print(f'meta={meta}, partition_idx={partition_idx}')
     # load partition into graph
     graph = LocalGraphStore.from_partition(
         osp.join(root_dir, f'{dataset}-partitions'), node_rank
@@ -220,15 +208,9 @@ def run_proc(
     feature = LocalFeatureStore.from_partition(
         osp.join(root_dir, f'{dataset}-partitions'), node_rank
     )
-
-    # setup the partition information in LocalGraphStore and LocalFeatureStore
-    graph.num_partitions = feature.num_partitions = num_partitions
-    graph.partition_idx = feature.partition_idx = partition_idx
-    graph.node_pb = feature.node_feat_pb = node_pb
-    graph.edge_pb = feature.edge_feat_pb = edge_pb
-    graph.meta = feature.meta = meta
     feature.labels = torch.load(node_label_file)
     partition_data = (feature, graph)
+    print(f'Partition metadata: {graph.meta}')
 
     # Initialize distributed context
     current_ctx = DistContext(
@@ -310,7 +292,7 @@ def run_proc(
 
     if is_hetero:
         # Turn model to hetero and initialize parameters
-        metadata = [meta['node_types'], [tuple(e) for e in meta['edge_types']]]
+        metadata = [graph.meta['node_types'], [tuple(e) for e in graph.meta['edge_types']]]
         model = to_hetero(model, metadata).to(current_device)
         init_params()
         torch.distributed.barrier()
