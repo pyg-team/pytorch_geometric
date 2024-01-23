@@ -5,7 +5,6 @@ In real life applications graphs often consists of billions of nodes that can't 
 
 Key Advantages
 -----------------
-.. (TODO: add links)
 #. Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
 #. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
 #. The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph structure information and feature storage.
@@ -452,40 +451,6 @@ The RPC group initialization is more complicated as it needs to happen in each s
 
 This functions first sets a unique ``DistContext`` for each worker and assigns its group and rank, subsequently it initializes a standard PyG ``NeighborSampler`` that provides basic functionality also for distributed data processing, and finally registers a new RPC worker within worker's sub-process.
 
-4. Distributed Loader
-------------------------------------
-
-.. figure:: ../_static/thumbnails/distribute_neighborloader.png
-  :align: center
-  :width: 90%
-
-Distributed class ``DistNeighborLoader`` is used to provide batch-sized data for distributed trainer. This class will have the input of data partition, num_neighbors, train_idx, batch_size, shuffle flag, device, number of sampler workers, master addr/port for ddp, context and rpc_worker_names, etc.
-
-As the DistNeighborLoader architecture shown above there are the separate processes for sampler and trainer.
-
-+ **Main process**:   cover the loading of data partition, distloader and model training, etc
-+ **Sampler process**: cover the distNeighborSampler and message queue like here we used ``torch.mp.queue`` to send the sampler message from one process to another.
-
-The working flow is from load partition into graphstore/featurestore, distNeighborSampler with local and remote sampling,  sampled nodes/features to be formed into PyG data for dataloader and finally into trainer for training.
-
-.. figure:: ../_static/thumbnails/distribute_distloader.png
-  :align: center
-  :width: 90%
-
-Distributed class ``DistLoader`` is used to create distributed data loading routines like initializing the parameters of current_ctx, rpc_worker_names, master_addr/port, channel, num_rpc_threads, num_workers, etc and then at the same time will initialize the context/rpc for distributed sampling based on ``worker_init_fn``.
-
-Distributed class ``NodeLoader`` is used to do the distributed node sampling and feature collection from local/remotely based on the function of ``collate_fn`` and ``filter_fn`` in ``NodeLoader`` and finally formed sampled results into PyG data for dataloader output.
-
-
-There are several key features for ``DistNeighborLoader`` and  ``DistLoader``:
-
-+ ``DistNeighborLoader`` inherits all basic functionality from PyG Loaders and rely on PyTorch multiprocessing backend with modified ``_worker_loop`` arguments.
-+ Modified args passed to the ``worker_init_fn`` control process initialization and closing behaviors, i.e. establish RPC and close it at process exit.
-+ Each loader handles a number (num_workers) of spawned sampler subprocesses that exchange data through RPC.
-+ RPC requests can be executed in synchronous or asynchronous manner with asyncio module.
-+ ``DistLoader`` consumes input in custom format (``LocalFeatureStore``, ``LocalGraphStore``) and outputs standard Data\HeteroData object.
-+ The same principles apply to ``DistLinkNeighborLoader``
-
 5. Distributed Sampling
 ------------------------------------
 
@@ -758,207 +723,24 @@ This section provides an overview of the key code structure elements of the Dist
                 ))
 
 
-1. Installation & Run for Homo/Hetero Example
----------------------------------------------
-
-7.1 Installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Requirement:
-
-- latest PyG
-- environment
-        (1) Password-less ssh needs to be set up on all the nodes that you are using.
-
-        (2) A network file system (NFS) is set up for all the nodes to access.
-
-        (3) To perform distributed sampling, files and codes need to be accessed across multiple machines. A distributed file system (i.e., NFS, SSHFS, Ceph, ...) is required to allow you for synchnonizing files such as partition information.
-
-
-7.2 Run for Homo Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-1) Prepare and partition the data
-
-In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we partition the ``ogbn-products`` dataset into multiple partitions, each of which corresponds to a specific training node.
-
-Here, we use ``ogbn-products`` and partition it into two partitions (in default) by the `[partition example] <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`__
-
-.. code-block:: python
-
-    python partition_graph.py --dataset=ogbn-products --root_dir=./data/products --num_partitions=2
-
-The generated partition will have the folder below.
-
-.. figure:: ../_static/thumbnails/distribute_homo_partition.png
-  :align: center
-  :width: 40%
-
-You can put/move the products partition folder into one public folder that each node can access this shared folder.
-
-
-
-2) Run the example in each training node
-
-For example, running the example in two nodes:
-
-.. code-block:: python
-
-    # Node 0:
-    python dist_train_sage_for_homo.py \
-      --dataset_root_dir=your partition folder \
-      --num_nodes=2 --node_rank=0 --num_training_procs=1 \
-      --master_addr= master ip
-
-    # Node 1:
-    python dist_train_sage_for_homo.py \
-      --dataset_root_dir=your partition folder \
-      --num_nodes=2 --node_rank=1 --num_training_procs=1 \
-      --master_addr= master ip
-
-
-**Notes:**
-
-1. You should change the `master_addr` to the IP of `node#0`.
-2. In default this example will use the num_workers = 2 for number of sampling workers and concurrency=2 for mp.queue. you can also add these argument to speed up the training like "--num_workers=8 --concurrency=8"
-3. All nodes need to use the same partitioned data when running `dist_train_sage_for_homo.py`.
-
-
-7.3 Run for Hetero Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-1) Prepare and partition the data
-
-
-Here, we use ``ogbn-mags`` and partition it into two partitions (in default) by the [`partition example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_hetero_graph.py>`__] :
-
-.. code-block:: python
-
-    python partition_hetero_graph.py --dataset=ogbn-mag --root_dir=./data/mag --num_partitions=2
-
-The generated partition will have the folder below.
-
-.. figure:: ../_static/thumbnails/distribute_hetero_partition.png
-  :align: center
-  :width: 40%
-
-
-You can put/move the products partition folder into one public folder that each node can access this shared folder.
-
-
-2) Run the example in each training node
-
-For example, running the example in two nodes:
-
-.. code-block:: python
-
-    # Node 0:
-    python dist_train_sage_for_hetero.py \
-      --dataset_root_dir=your partition folder \
-      --dataset=ogbn-mags \
-      --num_nodes=2 --node_rank=0 --num_training_procs=1 \
-      --master_addr= master ip
-
-    # Node 1:
-    python dist_train_sage_for_hetero.py \
-      --dataset_root_dir=your partition folder \
-      --dataset=ogbn-mags \
-      --num_nodes=2 --node_rank=1 --num_training_procs=1 \
-      --master_addr= master ip
-
-
-
-8. Run with Launch.py
+4. Distributed data loading
 ------------------------------------
 
-As you can see the run in previous paragraph we need run the script in separate nodes which is not easy for the case of big partition numbers. So in this chapter we will use one script to run just in one node for multiple partitions.
+.. figure:: ../_static/thumbnails/distribute_neighborloader.png
+  :align: center
+  :width: 90%
 
-The requirement for this single-script run is that you still need multiple nodes with NFS supported & ssh with password-less.
+Distributed loader class :class:`DistLoader` is used to provide a simple API for the sampling engine described above. It wraps up initialization and cleanup of sampler processes with the modified :func:`worker_init_fn`, which is described in detail in :ref:. The distributed class is integrated with standard PyG class:`NodeLoader' through inhertance in class:`DistNeighborLoader` and PyG class:`LinkLoader` through class:`DistLinkNeighborLoader`.
 
-In the followings we will show the files to run with single-scripts.
-
-1) **ip_config.yaml**
-
-There are the 2 ip and 2 ports list for 2 partitions inside this file as example below.
-
-+ x.x.x.10 1234
-+ x.x.x.12 1234
-
-The node with first IP address will be the host node to run with launch.py as below.
-
-
-2) **launch.py**
-
-In the launch.py you need setup the parameters as below
-
-+ workspace
-+ parameters used in e2e example
-+ part_config:  "partition config"
-+ ip_config:  "ip_config.yaml"
-+ remote cmd & "e2e_xxx.py" in remote nodes
-
-
+What makes batch generation slightly different from the single-node case is the step of local and remote feature fetching that follows node sampling. In a traditional workflow the output of iterator is passed directly to the loader, where ``Data`` object is created using func:`torch_geometric.NodeLoader.filter_fn`. Normally in this step node/edge attributes are assigned from the input ``Data`` object held in the loader. In distributed case, the output node indices need to pass through sampler's internal func:`torch_geometric.DistNeighborSampler._collate_fn` that requests all parititions to return attribute values. Due to asynchronous processing of this step between all sampler sub-processes, the samplers may be forced to return output to ``mp.Queue``, rather than directly to the output. Therefore at loader's initializaton we spcify:
 
 .. code-block:: python
 
-    python launch.py --workspace ./distributed_pyg/pytorch_geometric --num_nodes 2 --num_neighbors 15,10,5 --num_training_procs 1 --dataset_root_dir ./partition_ds/products --dataset ogbn-product --epochs 20 --batch_size 1024 --num_workers 2 --concurrency 2 --part_config ./partition_ds/products/ogbn-products-partitions/META.json --ip_config ./distributed_pyg/pytorch_geometric/ip_config.yaml 'cd /home/userXXX; source anaconda3/envs/PyGDistributed/bin/activate; cd /home/userXXX/distributed_pyg/pytorch_geometric; /home/userXXX/anaconda3/envs/PyGDistributed/bin/python /home/userXXX/distributed_pyg/pytorch_geometric/e2e_homo.py'
+        channel = torch.multiprocessing.Queue() if async_sampling else None
+        
+        transform_sampler_output=self.channel_get if channel else None
 
 
-3) **run_dist.sh**
-
-You also create one .sh file to run this distributed script with all parameters inside of this .sh file and if you need run another setting you just need change a little settting in this .sh file.
-
-The below .sh example is assume that you have the anaconda virtual environment in all nodes.
-
-.. code-block:: python
-
-    #!/bin/bash
-
-    CONDA_ENV=/home/userXXX/anaconda3/envs/PyGDistributed
-    PYG_WORKSPACE=$PWD    #/home/userXXX/distributed_pyg/pytorch_geometric
-    PY_EXEC=${CONDA_ENV}/bin/python
-    EXEC_SCRIPT=${PYG_WORKSPACE}/e2e_homo.py
-
-    # node number
-    NUM_NODES=2
-
-    # dataset folder
-    DATASET_ROOT_DIR="/home/userXXX/partition_ds/products"
-
-    # process number for training
-    NUM_TRAINING_PROCS=1
-
-    # dataset name
-    DATASET=ogbn-product
-
-    # num epochs to run for
-    EPOCHS=20
-
-    BATCH_SIZE=1024
-
-    # number of workers for sampling
-    NUM_WORKERS=2
-    CONCURRENCY=2
-
-    #partition data directory
-    PART_CONFIG="/home/userXXX/partition_ds/products/ogbn-products-partitions/META.json"
-    NUMPART=2
-
-    # fanout per layer
-    NUM_NEIGHBORS="15,10,5"
-
-    #ip_config path
-    IP_CONFIG=${PYG_WORKSPACE}/ip_config.yaml
-
-
-    # Folder and filename where you want your logs.
-    logdir="logs"
-    mkdir -p "logs"
-    logname=log_${DATASET}_${NUMPART}_$RANDOM
-    echo $logname
-    set -x
-
-    # stdout stored in /logdir/logname.out
-    python launch.py --workspace ${PYG_WORKSPACE} --num_nodes ${NUM_NODES} --num_neighbors ${NUM_NEIGHBORS} --num_training_procs ${NUM_TRAINING_PROCS} --dataset_root_dir ${DATASET_ROOT_DIR} --dataset ${DATASET} --epochs ${EPOCHS} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --concurrency ${CONCURRENCY} --part_config ${PART_CONFIG} --ip_config ${IP_CONFIG} "cd /home/userXXX; source anaconda3/envs/PyGDistributed/bin/activate; cd ${PYG_WORKSPACE}; ${PY_EXEC} ${EXEC_SCRIPT}" |& tee ${logdir}/${logname}.txt
-    set +x
+X. Running the example
+-----------------------------
+The instructions to generate partition data from ``OGB`` datasets and run end-to-end examples are provided here: `examples/distributed/pyg/README.md<https://github.com/pyg-team/pytorch_geometric/tree/master/examples/distributed/pyg/README.md>`_
