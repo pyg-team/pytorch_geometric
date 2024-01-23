@@ -107,7 +107,7 @@ def sort_edge_index(  # noqa: F811
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
-        if torch_geometric.typing.WITH_PT113:
+        if not torch_geometric.typing.WITH_PT113:
             raise ValueError("'sort_edge_index' will result in an overflow")
         perm = lexsort(keys=[
             edge_index[int(sort_by_row)],
