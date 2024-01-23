@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
@@ -129,6 +130,9 @@ def coalesce(  # noqa: F811
     """
     num_edges = edge_index[0].size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    if num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
+        raise ValueError("'coalesce' will result in an overflow. Aborting.")
 
     idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1
