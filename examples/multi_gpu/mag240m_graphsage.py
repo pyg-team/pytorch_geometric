@@ -17,7 +17,7 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
-from torch_geometric.nn import SAGEConv, HeteroConv
+from torch_geometric.nn import HeteroConv, SAGEConv
 from torch_geometric.nn.norm import BatchNorm
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
