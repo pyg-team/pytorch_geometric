@@ -77,6 +77,7 @@ class SAGEConvLayer(torch.nn.Module):
 
 class GraphSAGE(torch.nn.Module):
     def __init__(
+        self,
         in_channels,
         hidden_channels,
         num_layers,
