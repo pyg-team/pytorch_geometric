@@ -46,7 +46,7 @@ def predict_step(batch: Batch):
     return y_hat
 
 
-class SAGEConvLayer(nn.Module):
+class SAGEConvLayer(torch.nn.Module):
     def __init__(
         self,
         in_feat,
