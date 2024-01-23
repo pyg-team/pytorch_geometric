@@ -21,13 +21,13 @@ The purpose of this manual is to guide you through the most important steps of d
 
 .. figure:: ../_figures/dist_proc.png
   :align: center
-  :width: 90%
+  :width: 100%
   :alt: Dist PyG schematic breakdown.
 **Figure:** Schematic breakdown of the main components.
 
 Graph Partitioning
 ~~~~~~~~~~~~~~~~~~
-The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The :class:`pytorch_geometric.distributed.Partitoner` build on top of ``ClusterData``, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
+The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The :class:`pytorch_geometric.distributed.Partitoner` build on top of :class:`pytorch_geometric.loader`ClusterData`, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
 .. figure:: ../_figures/DGL_metis.png
@@ -42,7 +42,7 @@ The ``Partitioner`` can also process temporal attributes of the nodes which is p
 ** Important note: **
 As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
 
-The result of partitioning, for a two-part split of homogenous ``ogbn-products`` is as follows:
+The result of partitioning, for a two-part split of homogenous ``ogbn-products`` is:
 
 #. ogbn-products-labels:
     * label.pt:   target node/edge labels
