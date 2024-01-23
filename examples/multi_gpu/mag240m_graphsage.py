@@ -61,9 +61,9 @@ class SAGEConvLayer(torch.nn.Module):
             e_type: SAGEConv(in_feat, out_feat)
             for e_type in metadata[1]
         })
-        self.dropout_conv = nn.Dropout(dropout)
+        self.dropout_conv = torch.nn.Dropout(dropout)
         self.activation = torch.nn.ReLU()
-        self.normalizations = nn.ModuleDict()
+        self.normalizations = torch.nn.ModuleDict()
         for node in metadata[0]:
             self.normalizations[node] = BatchNorm(out_feat)
 
