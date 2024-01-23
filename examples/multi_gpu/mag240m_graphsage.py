@@ -18,12 +18,13 @@ from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import SAGEConv, HeteroConv
+from torch_geometric.nn.norm import BatchNorm
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
 def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
     batch_size = batch["paper"].batch_size
-    y_hat = model(batch.x_dict, batch.edge_index_dict)["paper"][:batch_size]
+    y_hat = model(batch)["paper"][:batch_size]
     y = batch["paper"].y[:batch_size].to(torch.long)
     return y_hat, y
 
@@ -44,6 +45,32 @@ def predict_step(batch: Batch):
     y_hat, y = common_step(batch, model)
     return y_hat
 
+
+class SAGEConvLayer(nn.Module):
+    def __init__(
+        self,
+        in_feat,
+        out_feat,
+        dropout,
+        metadata,
+    ):
+        super().__init__()
+        self.in_feat = in_feat
+        self.out_feat = out_feat
+        self.conv = HeteroConv({e_type: conv_type(in_feat, out_feat, **kwargs) for e_type in metadata[1]})
+        self.dropout_conv = nn.Dropout(dropout)
+        self.activation = torch.nn.ReLU()
+        self.normalizations = nn.ModuleDict()
+        for node in metadata[0]:
+            self.normalizations[node] = BatchNorm(out_feat)
+
+    def forward(self, x_dict, edge_index_dict):
+        h = self.conv(x_dict, edge_index_dict)
+        for node_type in h.keys():
+            h[node_type] = self.normalizations[node_type](self.activation(self.dropout_conv(h[node_type])))
+        return h
+
+
 class GraphSAGE(torch.nn.Module):
     def __init__(
         in_channels,
@@ -51,10 +78,32 @@ class GraphSAGE(torch.nn.Module):
         num_layers,
         out_channels,
         dropout,
-        norm,
-        metadata=data.metadata(),
+        data,
     ):
         super().__init__()
+        self.num_layers = num_layers
+        self.author_embed = torch.nn.Embedding(data['author'].num_nodes, in_channels)
+        self.institution_embed = torch.nn.Embedding(data['institution'].num_nodes, in_channels)
+        self.metadata = data.metadata()
+        self.input_conv = SAGEConvLayer(in_channels, hidden_channels, dropout, self.metadata)
+        self.hidden_convs = []
+        if self.num_layers > 2:
+            for i in range(num_layers - 2):
+                self.hidden_convs.append(SAGEConvLayer(hidden_channels, hidden_channels, dropout, self.metadata))
+        self.output_conv = SAGEConvLayer(hidden_channels, out_channels, dropout, self.metadata)
+
+    def forward(self, batch):
+        x_dict = {'paper': batch['paper'].x}
+        x_dict['author'] = self.author_embed(batch['author'].n_id)
+        x_dict['institution'] = self.institution_embed(batch['institution'].n_id)
+        edge_index_dict = batch.collect('edge_index')
+        x_dict = self.input_conv(x_dict, edge_index_dict)
+        if self.num_layers > 2:
+            for i in range(num_layers - 2):
+                x_dict = self.hidden_convs[i](x_dict, edge_index_dict)
+        x_dict = self.output_conv(x_dict, edge_index_dict)
+        return x_dict
+
 
 
 def run(
@@ -88,12 +137,11 @@ def run(
         num_layers=len(sizes),
         out_channels=data.num_classes,
         dropout=dropout,
-        norm='batch',
-        metadata=data.metadata(),
+        data=data,
     )
-    # node IDs as features
-    data['author'].x = torch.arange(data['author'].num_nodes).reshape(-1, 1)
-    data['institution'].x = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
+    # store node IDs for embeddings
+    data['author'].n_id = torch.arange(data['author'].num_nodes).reshape(-1, 1)
+    data['institution'].n_id = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
 
 
     if rank == 0:
@@ -197,10 +245,13 @@ def run(
             acc_sum += validation_step(batch, acc, model)
         torch.distributed.all_reduce(acc_sum,
                                      op=torch.distributed.ReduceOp.MEAN)
-        print(f"Test Accuracy: {acc_sum/(i + 1) * 100.0:.4f}%", )
+        final_test_acc = acc_sum/(i + 1) * 100.0
+        print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
-    torch.save(model, 'trained_gnn.pt')
+    torch.save(model, 'trained_graphsage_for_mag240m.pt')
+    assert final_test_acc >= 68.0
+
 
 
 if __name__ == "__main__":
