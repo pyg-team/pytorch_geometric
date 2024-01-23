@@ -335,8 +335,8 @@ Initialization from Data
         edge_attr_dict=edge_attr_dict
     )
 
-Initialization of LocalFeatureStore and LocalGraphStore from Partition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.3 Initialization of LocalFeatureStore and LocalGraphStore from Partition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :class:`torch_geometric.distributed.LocalFeatureStore` and :class:`torch_geometric.distributed.LocalGraphStore` provide a class methods for creating instances from a specified partition:
 
