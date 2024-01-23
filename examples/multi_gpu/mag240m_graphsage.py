@@ -58,7 +58,7 @@ class SAGEConvLayer(torch.nn.Module):
         self.in_feat = in_feat
         self.out_feat = out_feat
         self.conv = HeteroConv({
-            e_type: conv_type(in_feat, out_feat, **kwargs)
+            e_type: SAGEConv(in_feat, out_feat, **kwargs)
             for e_type in metadata[1]
         })
         self.dropout_conv = nn.Dropout(dropout)
