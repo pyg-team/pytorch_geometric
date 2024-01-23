@@ -39,7 +39,8 @@ args = parser.parse_args()
 wall_clock_start = time.perf_counter()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-dataset = PygNodePropPredDataset(name='ogbn-papers100M')
+dataset = PygNodePropPredDataset(name='ogbn-papers100M',
+                                 root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
 if args.cugraph_data_loader:
     from cugraph.testing.mg_utils import enable_spilling
