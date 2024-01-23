@@ -1,11 +1,11 @@
-=================================================
+========
 Distributed Training for PyG
-=================================================
+========
 
 In real life applications graphs often consists of billions of nodes that can't be fitted into a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating `Remote Procedure Call (RPC) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default  :pyg:`PyG` stack. In the future the solution will also be available for Intel's GPUs.
 
-Key Advantages
-~~~~~~~~~~~~~~~~
+**Key Advantages:**
+
 #. Balanced graph partitioning with METIS for large graph databases, using :class:`pytorch_geometric.distributed.Partitoner`
 #. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
 #. The implementation of a custom :class:`pytorch_geometric.distributed.GraphStore`/:class:`pytorch_geometric.distributed.`FeatureStore` API provides a flexible and tailored interface for large graph structure information and feature storage.
@@ -22,15 +22,17 @@ The purpose of this manual is to guide you through the most important steps of d
 .. figure:: ../_figures/dist_proc.png
   :align: center
   :width: 90%
+  :alt: Dist PyG schematic breakdown.
+**Figure:** Schematic breakdown of the main components.
 
 Graph Partitioning
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The :class:`pytorch_geometric.distributed.Partitoner` build on top of ``ClusterData``, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
 .. figure:: ../_figures/DGL_metis.png
   :align: center
-  :width: 50%
+  :width: 60%
   :alt: Example of graph partitioning with METIS algorithm.
 
 **Figure:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
@@ -65,15 +67,15 @@ The result of partitioning, for a two-part split of homogenous ``ogbn-products``
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
 
 Distributed data storage
--------------------------
+~~~~~~~~~~~~~~~~~~
 
 LocalGraphStore
-~~~~~~~~~~~~~~~~
+-------------
 
 :class:`torch_geometric.distributed.LocalGraphStore` is a class designed to act as a local graph store for distributed training. It implements the :class:`torch_geometric.data.GraphStore` interface, providing features for efficient management of partition-related information and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 Key Features
-~~~~~~~~~~~~~~~~
+-------------
 
 1. **Partition Edge Index Storage:** Stores information about local graph connections within partition.
 
@@ -86,14 +88,14 @@ Key Features
 5. **Initialization Methods:** Provides convenient methods for initializing the graph store from data or partition.
 
 Initialization and Usage
-~~~~~~~~~~~~~~~~
+-------------
 
 - Instances of :class:`torch_geometric.distributed.LocalGraphStore` can be created using the provided initialization methods.
 
 - Edge indices, edge attributes, edge ids and other relevant information can be added or retrieved using the provided methods.
 
 Example Usage
-~~~~~~~~~~~~~~~~
+-------------
 
 Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalGraphStore` and using it for distributed training:
 
@@ -141,7 +143,7 @@ Below is an example of creating an instance of :class:`torch_geometric.distribut
 
 
 Initialization from Data
-~~~~~~~~~~~~~~~~
+-------------
 
 :class:`torch_geometric.distributed.LocalGraphStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
 
@@ -186,7 +188,7 @@ LocalFeatureStore
 :class:`torch_geometric.distributed.LocalFeatureStore` is a class that implements the :class:`~torch_geometric.data.FeatureStore` interface. It serves as a local feature store for distributed training in Graph Neural Networks (GNNs). The local feature store is responsible for managing and distributing node and edge features across different partitions and machines during the training process.
 
 Key Features
-~~~~~~~~~~~~~~~~
+-------------
 
 1. **Node and Edge Feature Storage:**
 
@@ -209,7 +211,7 @@ Key Features
 * Provides convenient methods for initializing the graph store from data or partition.
 
 Initialization and Usage
-~~~~~~~~~~~~~~~~
+-------------
 
 * Instances of :class:`torch_geometric.distributed.LocalFeatureStore` can be created using the provided initialization methods.
 
@@ -218,7 +220,7 @@ Initialization and Usage
 * The class is designed to work seamlessly in distributed training scenarios, allowing for efficient feature handling across partitions.
 
 Example Usage
-~~~~~~~~~~~~~~~~
+-------------
 
 Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalFeatureStore` and using it for distributed training:
 
@@ -255,7 +257,7 @@ Below is an example of creating an instance of :class:`torch_geometric.distribut
 
 
 Initialization from Data
-~~~~~~~~~~~~~~~~
+-------------
 
 :class:`torch_geometric.distributed.LocalFeatureStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
 
@@ -323,7 +325,7 @@ Initialization from Data
     )
 
 Initialization of LocalFeatureStore and LocalGraphStore from Partition
-~~~~~~~~~~~~~~~~
+-------------
 
 :class:`torch_geometric.distributed.LocalFeatureStore` and :class:`torch_geometric.distributed.LocalGraphStore` provide a class methods for creating instances from a specified partition:
 
@@ -379,7 +381,7 @@ Initialization of LocalFeatureStore and LocalGraphStore from Partition
 
 
 Setting up communication using DDP & RPC
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this distributed training implementation two `torch.distributed` communication technologies are used:
 
@@ -440,17 +442,17 @@ The RPC group initialization is more complicated as it needs to happen in each s
 This functions first sets a unique ``DistContext`` for each worker and assigns its group and rank, subsequently it initializes a standard PyG ``NeighborSampler`` that provides basic functionality also for distributed data processing, and finally registers a new RPC worker within worker's sub-process.
 
 Distributed Sampling
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :class:`torch_geometric.distributed.DistNeighborSampler` is a module designed for efficient distributed training of Graph Neural Networks. It addresses the challenges of sampling neighbors in a distributed environment, where graph data is partitioned across multiple machines or devices. The sampler ensures that GNNs can effectively learn from large-scale graphs, maintaining scalability and performance.
 
 Asynchronous Neighbor Sampling and Feature Collection:
-~~~~~~~~~~~~~~~~
+----------------
 
 * Asynchronous neighbor sampling: Asynchronous sampling is implemented using asynchronous ``torch.distributed.RPC`` calls. It allows machines to independently sample neighbors without strict synchronization. Each machine autonomously selects neighbors from its local graph partition, without waiting for others to complete their sampling processes. This approach enhances parallelism, as machines can progress asynchronously leading to faster training. In addition to asynchronous sampling, Distributed Neighbor Sampler also provides asynchronous feature collection.
 
 Customizable Sampling Strategies:
-~~~~~~~~~~~~~~~~
+----------------
 
 Users can customize neighbor sampling strategies based on their specific requirements. The module provides flexibility in defining sampling techniques, such as:
 
@@ -463,7 +465,7 @@ Users can customize neighbor sampling strategies based on their specific require
 Additionally, each of these methods is supported for both homogeneous and heterogeneous graph sampling.
 
 Distributed Neighbor Sampling Workflow Key Steps:
-~~~~~~~~~~~~~~~~
+-----------------
 
 1) Distributed node sampling: Utilizing the training seeds provided by the loader, the neighbor sampling procedure is executed. These training seeds may originate from either local or remote partitions. For nodes within a local partition, the neighbor sampling occurs on the local machine. Conversely, for nodes associated with a remote partition, the neighbor sampling is conducted on the machine responsible for storing the respective partition.
 
@@ -472,7 +474,7 @@ Distributed Neighbor Sampling Workflow Key Steps:
 3) Form into PyG data format: Based on the sampler output and the acquired node (or edge) features, a Data/HeteroData object is created. This object forms a batch used in subsequent computational operations of the model. Note that this step occurs within the loader.
 
 Algorithm Overview:
-~~~~~~~~~~~~~~~~
+-------------------
 
 This section outlines the Distributed Neighbor Sampling Algorithm. The algorithm focuses on efficiently sampling neighbors across distributed nodes to facilitate effective learning on large-scale graph-structured data.
 
@@ -496,7 +498,7 @@ The accompanying image illustrates a graph divided into two partitions, each ass
   * If not, new input nodes for the next layer are acquired. In the context of the image example, these nodes would be `[2, 4, 3, 10, 7]`, and the entire process starts from the beginning.
 
 Distributed Neighbor Sampler Code Structure:
-~~~~~~~~~~~~~~~~
+-----------------------
 
 This section provides an overview of the key code structure elements of the Distributed Neighbor Sampler.
 
@@ -651,7 +653,7 @@ This section provides an overview of the key code structure elements of the Dist
         )
 
 Edge Sampling
-~~~~~~~~~~~~~~~~
+------------------
 
 * Edge sampling in the context of distributed training closely mirrors the methodology employed on a single machine. This process is facilitated by invoking the :func:`torch_geometric.distributed.edge_sample` function, a mechanism designed for distributed asynchronous sampling from an edge sampler input. Similarly to the single machine case, the :func:`torch_geometric.distributed.edge_sample` function invokes the :func:`torch_geometric.distributed.node_sample` function (but from the distributed package).
 
@@ -712,7 +714,7 @@ Edge Sampling
 
 
 Distributed Data Loading
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Distributed loader class :class:`DistLoader` is used to provide a simple API for the sampling engine described above. It wraps up initialization and cleanup of sampler processes with the modified :func:`worker_init_fn`, which is described in detail in :ref:. The distributed class is integrated with standard PyG class:`NodeLoader' through inhertance in class:`DistNeighborLoader` and PyG class:`LinkLoader` through class:`DistLinkNeighborLoader`.
 
@@ -726,5 +728,5 @@ What makes batch generation slightly different from the single-node case is the 
 
 
 Running the Example
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The instructions to generate partition data from ``OGB`` datasets and run end-to-end examples are provided here: `examples/distributed/pyg/README.md<https://github.com/pyg-team/pytorch_geometric/tree/master/examples/distributed/pyg/README.md>`_
