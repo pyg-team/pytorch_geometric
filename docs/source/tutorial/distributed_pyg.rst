@@ -1,16 +1,17 @@
+=================================================
 Distributed Training for PyG
 =================================================
 
-In real life applications graphs often consists of billions of nodes that can't be fitted into a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating `Remote Procedure Call (RPC) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default PyG stack. In the future the solution will also be available for Intel's GPUs.
+In real life applications graphs often consists of billions of nodes that can't be fitted into a single system memory. This is when the distributed training comes in handy. By allocating a number of partitions of the large graph into a cluster of CPUs one can deploy a synchronized model training on the whole database at once, by making use of `PyTorch Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ training. The architecture seamlessly distributes graph neural network training across multiple nodes by integrating `Remote Procedure Call (RPC) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features into standard DDP for model training. This distributed training implementation doesn't require any additonal packages to be installed on top of a default  :pyg:`PyG` stack. In the future the solution will also be available for Intel's GPUs.
 
 Key Advantages
------------------
-#. Balanced graph partitioning with METIS for large graph databases, using ``Partitoner``
+~~~~~~~~~~~~~~~
+#. Balanced graph partitioning with METIS for large graph databases, using :class:`pytorch_geometric.distributed.Partitoner`
 #. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
-#. The implementation of a custom ``GraphStore``/``FeatureStore`` API provides a flexible and tailored interface for large graph structure information and feature storage.
-#. ``DistNeighborSampler`` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure ``Data``/``HeteroData`` at the output
-#. The ``DistLoader``/``DistNeighborLoader``/``DistLinkLoader`` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard PyG Loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
-#. Incorporating Python's `asyncio` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT distributed library.
+#. The implementation of a custom :class:`pytorch_geometric.distributed.GraphStore`/:class:`pytorch_geometric.distributed.`FeatureStore` API provides a flexible and tailored interface for large graph structure information and feature storage.
+#. :class:`pytorch_geometric.distributed.`DistNeighborSampler` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure ``Data``/``HeteroData`` at the output
+#. The :class:`pytorch_geometric.distributed.`DistLoader`/:class:`pytorch_geometric.distributed.`DistNeighborLoader`/:class:`pytorch_geometric.distributed.`DistLinkLoader` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard  :pyg:`PyG`  loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
+#. Incorporating Python's ``asyncio`` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT distributed library.
 #. Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks.
 
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
@@ -22,7 +23,7 @@ The purpose of this manual is to guide you through the most important steps of d
 1. Graph Partitioning
 ------------------------
 
-The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The ``Partitoner`` build on top of ``ClusterData``, uses pyg-lib implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
+The first step for distributed training is to split the graph into multiple smaller partitions, which can then be loaded into nodes of the cluster. This is a pre-processing step that can be done once as the resulting dataset ``.pt`` files can be reused. The :class:`pytorch_geometric.distributed.Partitoner` build on top of ``ClusterData``, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated. The vertices shared between partitions are so called "halo nodes".
 Please note that METIS requires undirected, homogenous graph as input, but ``Partitioner`` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
 .. figure:: ../_figures/DGL_metis.png
@@ -61,10 +62,10 @@ The result of partitioning, for a two-part split of homogenous ``ogbn-products``
 
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
 
-2. LocalGraphStore and LocalFeatureStore
+2. Distributed data storage
 -------------------------------------------
 
-.. figure:: ../_static/thumbnails/distribute_graph_feature_store.png
+.. figure:: ../_figures/dist_store.png
   :align: center
   :width: 90%
 
@@ -76,25 +77,15 @@ In distributed training, each node in the cluster holds a partition of the graph
 Key Features
 ~~~~~~~~~~~~~~~
 
-1. **Partition Edge Index Storage:**
+1. **Partition Edge Index Storage:** Stores information about local graph connections within partition.
 
-* Stores information about local graph connections within partition.
+2. **Global Node and Edge Identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
 
-2. **Global Node and Edge Identifiers:**
+3. **Homogeneous and Heterogeneous Graph Support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
-* Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
+4. **Edge Attribute Storage:** Stores edge attributes and global identifiers.
 
-3. **Homogeneous and Heterogeneous Graph Support:**
-
-* Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
-
-4. **Edge Attribute Storage:**
-
-* Stores edge attributes and global identifiers.
-
-5. **Initialization Methods:**
-
-* Provides convenient methods for initializing the graph store from data or partition.
+5. **Initialization Methods:** Provides convenient methods for initializing the graph store from data or partition.
 
 Initialization and Usage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -488,7 +479,7 @@ Additionally, each of these methods is supported for both homogeneous and hetero
 
 This section outlines the Distributed Neighbor Sampling Algorithm. The algorithm focuses on efficiently sampling neighbors across distributed nodes to facilitate effective learning on large-scale graph-structured data.
 
-.. figure:: ../_static/thumbnails/distribute_neighborsampler.png
+.. figure:: ../_figures/dist_sampler.png
   :align: center
   :width: 90%
 
@@ -726,7 +717,7 @@ This section provides an overview of the key code structure elements of the Dist
 4. Distributed data loading
 ------------------------------------
 
-.. figure:: ../_static/thumbnails/distribute_neighborloader.png
+.. figure:: ../_figures/dist_proc.png
   :align: center
   :width: 90%
 
