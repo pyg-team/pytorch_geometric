@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import PairTensor  # noqa
 from torch_geometric.typing import (
     Adj,
     NoneType,
@@ -201,7 +202,8 @@ class FAConv(MessagePassing):
         alpha_l = self.att_l(x)
         alpha_r = self.att_r(x)
 
-        # propagate_type: (x: Tensor, alpha: PairTensor, edge_weight: OptTensor)  # noqa
+        # propagate_type: (x: Tensor, alpha: PairTensor,
+        #                  edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, alpha=(alpha_l, alpha_r),
                              edge_weight=edge_weight)
 

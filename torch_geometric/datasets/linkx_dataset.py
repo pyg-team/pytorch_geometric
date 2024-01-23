@@ -35,7 +35,7 @@ class LINKXDataset(InMemoryDataset):
     """
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
                   'raw/master/data')
-    gdrive_url = 'https://drive.google.com/uc?confirm=t&'
+    gdrive_url = 'https://drive.usercontent.google.com/download?confirm=t'
 
     facebook_datasets = [
         'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
@@ -62,11 +62,11 @@ class LINKXDataset(InMemoryDataset):
         },
         'wiki': {
             'wiki_views2M.pt':
-            f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
+            f'{gdrive_url}&id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
             'wiki_edges2M.pt':
-            f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
+            f'{gdrive_url}&id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
             'wiki_features2M.pt':
-            f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
+            f'{gdrive_url}&id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
         }
     }
 

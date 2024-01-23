@@ -9,7 +9,7 @@ import torch.multiprocessing as mp
 import torch.nn.functional as F
 from ogb.lsc import MAG240MDataset, MAG240MEvaluator
 from torch import Tensor
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 from tqdm import tqdm
@@ -17,8 +17,12 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
+<<<<<<< HEAD
 from torch_geometric.nn import SAGEConv, HeteroConv
 from torch_geometric.nn.norm import BatchNorm
+=======
+from torch_geometric.nn import HeteroConv, SAGEConv
+>>>>>>> 22686124d059110419f404edd3a0840878bb7897
 from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
@@ -142,7 +146,6 @@ def run(
     # store node IDs for embeddings
     data['author'].n_id = torch.arange(data['author'].num_nodes).reshape(-1, 1)
     data['institution'].n_id = torch.arange(data['institution'].num_nodes).reshape(-1, 1)
-
 
     if rank == 0:
         print(f"# GNN Params: \

@@ -1,5 +1,3 @@
-import copy
-
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -83,11 +81,6 @@ class RECT_L(torch.nn.Module):
             y = y[mask]
             mean = scatter(x[mask], y, dim=0, reduce='mean')
             return mean[y]
-
-    def jittable(self) -> 'RECT_L':
-        out = copy.deepcopy(self)
-        out.conv = out.conv.jittable()
-        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

@@ -28,7 +28,7 @@ def test_spline_conv():
         assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
         assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
 
@@ -52,7 +52,7 @@ def test_spline_conv():
         assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit((x1, x2), edge_index, value), out1)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
                               out1, atol=1e-6)
