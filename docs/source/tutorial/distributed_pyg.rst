@@ -147,11 +147,9 @@ Example data for homogeneous graph:
     # Create a LocalGraphStore from homogeneous data:
     graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
 
-    node_id = torch.tensor([0, 1, 2])
-    x = torch.rand((3, 4))
-    y = torch.tensor([1, 0, 1])
-    edge_id = torch.tensor([0, 1, 2])
-    edge_attr = torch.rand((3, 5))
+    node_id = torch.tensor([0, 1, 2, 3])
+    x = torch.rand((4, 4))
+    y = torch.tensor([1, 0, 1, 1])
 
     # Create a LocalFeatureStore from homogeneous data:
     feature_store = LocalFeatureStore.from_data(
@@ -173,9 +171,9 @@ Example data for heterogeneous graph:
         ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2, 3]),
     }
     edge_index_dict = {
-        ('v0', 'e0', 'v1'): torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+        ('v0', 'e0', 'v1'): torch.tensor([[0, 1, 1, 0], [2, 3, 3, 4]]),
     }
-    num_nodes_dict = {'v0': 2, 'v1': 2}
+    num_nodes_dict = {'v0': 2, 'v1': 3}
 
     # Create a LocalGraphStore from heterogeneous data:
     graph_store = LocalGraphStore.from_hetero_data(edge_id_dict, edge_index_dict, num_nodes_dict)
@@ -192,12 +190,7 @@ Example data for heterogeneous graph:
         'v0': torch.tensor([1, 0]),
         'v1': torch.tensor([1, 0, 1]),
     }
-    edge_id_dict = {
-        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2]),
-    }
-    edge_attr_dict = {
-        ('v0', 'e0', 'v1'): torch.rand((3, 5)),
-    }
+
     # Create a LocalFeatureStore from heterogeneous data:
     feature_store = LocalFeatureStore.from_hetero_data(
         node_id_dict=node_id_dict,
