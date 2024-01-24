@@ -75,6 +75,24 @@ class SAGEConvLayer(torch.nn.Module):
         return h
 
 
+class Embedder(torch.nn.Module):
+    def __init__(
+        self,
+        in_channels,
+        data,
+    ):
+        super().__init__()
+        self.author_embed = torch.nn.Embedding(data['author'].num_nodes,
+                                               in_channels)
+        self.institution_embed = torch.nn.Embedding(
+            data['institution'].num_nodes, in_channels)
+
+    def forward(self, batch):
+        batch['author'].x = self.author_embed(batch['author'].n_id)
+        batch['institution'].x = self.institution_embed(
+            batch['institution'].n_id)
+        return batch
+
 class GraphSAGE(torch.nn.Module):
     def __init__(
         self,
@@ -83,15 +101,11 @@ class GraphSAGE(torch.nn.Module):
         num_layers,
         out_channels,
         dropout,
-        data,
+        metadata
     ):
         super().__init__()
         self.num_layers = num_layers
-        self.author_embed = torch.nn.Embedding(data['author'].num_nodes,
-                                               in_channels)
-        self.institution_embed = torch.nn.Embedding(
-            data['institution'].num_nodes, in_channels)
-        self.metadata = data.metadata()
+        self.metadata = metadata
         self.input_conv = SAGEConvLayer(in_channels, hidden_channels, dropout,
                                         self.metadata)
         self.hidden_convs = []
@@ -104,10 +118,7 @@ class GraphSAGE(torch.nn.Module):
                                          dropout, self.metadata)
 
     def forward(self, batch):
-        x_dict = {'paper': batch['paper'].x}
-        x_dict['author'] = self.author_embed(batch['author'].n_id)
-        x_dict['institution'] = self.institution_embed(
-            batch['institution'].n_id)
+        x_dict = batch.collect('x')
         edge_index_dict = batch.collect('edge_index')
         x_dict = self.input_conv(x_dict, edge_index_dict)
         if self.num_layers > 2:
@@ -142,13 +153,14 @@ def run(
     if rank == 0:
         print("Setting up GNN...")
     acc = Accuracy(task="multiclass", num_classes=data.num_classes)
+    embedder = Embedder(in_channels, data)
     model = GraphSAGE(
         in_channels=data["paper"].x.size(-1),
         hidden_channels=hidden_channels,
         num_layers=len(sizes),
         out_channels=data.num_classes,
         dropout=dropout,
-        data=data,
+        metadata=data.metadata(),
     )
     # store node IDs for embeddings
     data['author'].n_id = torch.arange(data['author'].num_nodes).reshape(-1, 1)
@@ -212,6 +224,7 @@ def run(
                 break
             since = time.time()
             optimizer.zero_grad()
+            batch = embedder(batch)
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
             loss, train_acc = training_step(batch, acc, model)
@@ -237,6 +250,7 @@ def run(
             for i, batch in enumerate(eval_loader):
                 if i >= eval_steps:
                     break
+                batch = embedder(batch)
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
                 acc_sum += validation_step(batch, acc, model)
@@ -251,6 +265,7 @@ def run(
         for i, batch in enumerate(test_loader):
             if i >= eval_steps:
                 break
+            batch = embedder(batch)
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
             acc_sum += validation_step(batch, acc, model)
