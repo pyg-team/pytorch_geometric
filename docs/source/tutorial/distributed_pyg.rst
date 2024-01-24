@@ -74,7 +74,7 @@ In case of a heterogenous graph partition, in main paritition foler node and edg
         * author.pt
         * paper.pt
         * ...
-    
+
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
 
 Distributed data storage
@@ -95,7 +95,7 @@ LocalGraphStore
 
 #. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
 
-#. **Edge attribute storage:** Stores unique edge identifiers of type :class:`~torch_geomeric.data.EdgeAttr` per each edge type. 
+#. **Edge attribute storage:** Stores unique edge identifiers of type :class:`~torch_geomeric.data.EdgeAttr` per each edge type.
 
 
 LocalFeatureStore
@@ -142,22 +142,20 @@ Example data for homogeneous graph:
 
     edge_id = torch.tensor([0, 1, 2, 3])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    num_nodes = 4
+    num_nodes = 3
 
     # Create a LocalGraphStore from homogeneous data:
     graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
 
-    node_id = torch.tensor([0, 1, 2, 3])
-    x = torch.rand((4, 4))
-    y = torch.tensor([1, 0, 1, 1])
+    node_id = torch.tensor([0, 1, 2])
+    x = torch.rand((3, 4))
+    y = torch.tensor([1, 0, 1])
 
     # Create a LocalFeatureStore from homogeneous data:
     feature_store = LocalFeatureStore.from_data(
         node_id=node_id,
         x=x,
         y=y,
-        edge_id=edge_id,
-        edge_attr=edge_attr
     )
 
 Example data for heterogeneous graph:
@@ -196,8 +194,6 @@ Example data for heterogeneous graph:
         node_id_dict=node_id_dict,
         x_dict=x_dict,
         y_dict=y_dict,
-        edge_id_dict=edge_id_dict,
-        edge_attr_dict=edge_attr_dict
     )
 
 3. Edge indices, edge attributes, edge ids and other relevant information can be added or retrieved using the provided methods.
@@ -291,7 +287,7 @@ In this distributed training implementation two `torch.distributed` communicatio
 
 In this context, we opted for ``torch.distributed.rpc`` over alternatives such as gRPC because PyTorch RPC inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using this method helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
 
-The DDP group is initialzied in a standard way in the main training script. 
+The DDP group is initialzied in a standard way in the main training script.
 
 .. code-block:: python
 
@@ -631,7 +627,7 @@ What makes batch generation slightly different from the single-node case is the 
 .. code-block:: python
 
         channel = torch.multiprocessing.Queue() if async_sampling else None
-        
+
         transform_sampler_output=self.channel_get if channel else None
 
 
