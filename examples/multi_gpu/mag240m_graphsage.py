@@ -92,16 +92,10 @@ class Embedder(torch.nn.Module):
             batch['institution'].n_id)
         return batch
 
+
 class GraphSAGE(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels,
-        hidden_channels,
-        num_layers,
-        out_channels,
-        dropout,
-        metadata
-    ):
+    def __init__(self, in_channels, hidden_channels, num_layers, out_channels,
+                 dropout, metadata):
         super().__init__()
         self.num_layers = num_layers
         self.metadata = metadata
