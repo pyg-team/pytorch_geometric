@@ -6,18 +6,18 @@ In real life applications graphs often consists of billions of nodes that can't 
 
 **Key Advantages:**
 
-#. Balanced graph partitioning with METIS for large graph databases, using :class:`pytorch_geometric.distributed.Partitoner`
-#. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP and the 'gloo' backend specifically tailored for CPU-based sampling, enhances the efficiency and scalability of the training process.
-#. The implementation of a custom :class:`pytorch_geometric.distributed.GraphStore`/:class:`pytorch_geometric.distributed.`FeatureStore` API provides a flexible and tailored interface for large graph structure information and feature storage.
-#. :class:`pytorch_geometric.distributed.`DistNeighborSampler` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure ``Data``/``HeteroData`` at the output
-#. :class:`pytorch_geometric.distributed.`DistLoader`,:class:`pytorch_geometric.distributed.`DistNeighborLoader`, :class:`pytorch_geometric.distributed.`DistLinkLoader` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard  :pyg:`PyG` loaders. This facilitates easier development and harnesses the robustness of the torch dataloader
+#. Balanced graph partitioning with METIS for large graph databases, using :class:`~torch_geometric.distributed.Partitoner`
+#. Utilizing DDP for model training in conjunction with RPC for remote sampling and feature calls, with TCP/IP protocol and `gloo <https://github.com/facebookincubator/gloo>`_ communication library for CPU-based sampling, allows for data parallelism with distinct data partitions at each node.
+#. The implementation of a custom :class:`~torch_geometric.distributed.GraphStore` / :class:`~torch_geometric.distributed.FeatureStore` API provides a flexible and tailored interface for distributing any large graph structure information and feature storage.
+#. :class:`~torch_geometric.distributed.DistNeighborSampler` capable of node neighborhood sampling in both local and remote partitions, through RPC communication channel with other samplers, maintaining a consistent data structure :class:`~torch_geometric.data.Data` / :class:`~torch_geometric.data.HeteroData` at the output.
+#. :class:`~torch_geometric.distributed.DistLoader` , :class:`~torch_geometric.distributed.DistNeighborLoader` , :class:`~torch_geometric.distributed.DistLinkLoader` offers a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard  :pyg:`PyG` loaders. This facilitates easier development and harnesses the robustness of the torch dataloader.
 #. Incorporating Python's ``asyncio`` library for asynchronous processing on top of torch RPC further enhances the system's responsiveness and overall performance. This solution follows originally from the GLT distributed library.
 #. Furthermore we provide homomgenous and heretogenous graph support with code examples, used in both edge and node-level prediction tasks.
 
 The purpose of this manual is to guide you through the most important steps of deploying your distributed training application. For the code examples, please refer to:
 
-* `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ for graph partitioning
-* `distributed_cpu.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/distributed_cpu.py>`_ for end-to-end GNN (GraphSAGE) model training with homogenous or heterogenous data
+* `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ for graph partitioning,
+* `distributed_cpu.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/distributed_cpu.py>`_ for end-to-end GNN(GraphSAGE) model training with homogenous or heterogenous data.
 
 .. figure:: ../_figures/dist_proc.png
   :align: center
@@ -27,43 +27,53 @@ The purpose of this manual is to guide you through the most important steps of d
 
 Graph Partitioning
 ~~~~~~~~~~~~~~~~~~
-The first step for distributed training is to split a graph into multiple smaller partitions, which can then be loaded into nodes of a cluster. This is a pre-processing step that needs to be done only once, as the resulting parition files are saved in ``.pt`` format and can be reused. :class:`pytorch_geometric.distributed.Partitoner` build on top of :class:`pytorch_geometric.loader`ClusterData`, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partition provides accessibility to all neighboring local vertices, enabling samplers to perform local computations without the need for inter-communication. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated to mark the boundaries between partitions. THey're so called "halo nodes".
-Please note that METIS requires undirected, homogenous graph as input, but :class:`pytorch_geometric.distributed.Partitoner` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
+The first step for distributed training is to split a graph into multiple smaller portions, which then can be fitted in the memory of nodes in a cluster. This is a pre-processing step that needs to be done only once, as the resulting parition files are saved in ``.pt`` format and can be reused. :class:`~torch_geometric.distributed.Partitoner` build on top of :class:`~torch_geometric.loader.ClusterData`, uses ``pyg-lib`` implementation of METIS `pyg_lib.partition <https://pyg-lib.readthedocs.io/en/latest/modules/partition.html>`_ algorithm to perform graph partitioning in an efficient way, even on very large graphs. By default METIS always tries to balance the number of nodes of each type in each partition and minimize the amount of edges between the partitions. This guarantees that the partitioning algorithm prioritizes locality of vertices, enabling samplers to perform local computations without need for remote data calls. Through this partitioning approach, every edge receives a distinct assignment, although certain vertices may be replicated to mark the boundaries between partitions (so called "halo nodes").
+Please note that METIS requires undirected, homogenous graph as input, but :class:`~torch_geometric.distributed.Partitoner` performs necessary processing steps to parition heterogenous data objects with correct distribution and indexing.
 
 .. figure:: ../_figures/DGL_metis.png
   :align: center
   :width: 60%
   :alt: Example of graph partitioning with METIS algorithm.
 
-**Figure:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
+**Figure 1:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
 
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``, ``Reddit`` , and heterogenous: ``ogbn-mag``, ``Movielens`` datasets.
-The class:`pytorch_geometric.distributed.Partitoner` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
-** Important note: **
-As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
+The :class:`~torch_geometric.distributed.Partitoner` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
+.. warning::
+    As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
 
 The result of partitioning, for a two-part split of homogenous ``ogbn-products`` is:
 
-#. ogbn-products-labels:
-    * label.pt:   target node/edge labels
-#. ogbn-products-partitions:
-    * edge_map.pt:   mapping (partition book) between edge_id and partition_id
-    * node_map.pt:   mapping (partition book) between node_id and partition_id
-    * META.json:  {"num_parts": 2, "is_hetero": false, "node_types": null, "edge_types": null, "is_sorted": true}
-    * part0:      partition 0
-        * graph.pt:     graph topo
-        * node_feats.pt:   node features
-        * edge_feats.pt:   edge features (if present)
-    * part1:      partition 1
+* ogbn-products-labels:
+    * label.pt - target node/edge labels
+* ogbn-products-partitions:
+    * edge_map.pt - mapping (partition book) between edge_id and partition_id
+    * node_map.pt - mapping (partition book) between node_id and partition_id
+    * META.json - graph metadata, i.e. : {"num_parts": 2, "is_hetero": false, "node_types": null, "edge_types": null, "is_sorted": true}
+    * part0:
+        * graph.pt - graph topology information
+        * node_feats.pt - node features
+        * edge_feats.pt - edge features (if present)
+    * part1:
         * ...
-#. ogbn-products-train-partitions:
-    * partion0.pt:  training node indices for partition0
-    * partion1.pt:  training node indices for partition1
-#. ogbn-products-test-partitions:
-    * partion0.pt:  test node indices for partition0
-    * partion0.pt:  test node indices for partition1
+* ogbn-products-train-partitions:
+    * partion0.pt - training node indices for partition0
+    * partion1.pt - training node indices for partition1
+* ogbn-products-test-partitions:
+    * partion0.pt - test node indices for partition0
+    * partion0.pt - test node indices for partition1
 
+In case of a heterogenous graph partition, in main paritition foler node and edge maps, become a collection of ``.pt`` files separated for each node and edge type, i.e. :
 
+* ogbn-mag-partitions:
+    * edge-map:
+        * author_writes_paper.pt
+        * ...
+    * node-map:
+        * author.pt
+        * paper.pt
+        * ...
+    
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we will need partition the graph dataset into multiple partitions, each of which corresponds to a specific training node.
 
 Distributed data storage
@@ -379,6 +389,7 @@ Initialization of LocalFeatureStore and LocalGraphStore from Partition
 
     partition_data = (feature_store, graph_store)
 
+.. _rpc_section:
 
 Setting up communication using DDP & RPC
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -390,7 +401,7 @@ In this distributed training implementation two `torch.distributed` communicatio
 
 In this context, we opted for ``torch.distributed.rpc`` over alternatives such as gRPC because PyTorch RPC inherently comprehends tensor-type data. Unlike some other RPC methods like gRPC, which require the serialization or digitization of JSON or other user data into tensor types, using this method helps avoid additional serialization/digitization overhead during loss backward for gradient communication.
 
-The DDP group is initialzied in a standard way in the main training script.
+The DDP group is initialzied in a standard way in the main training script. 
 
 .. code-block:: python
 
@@ -399,9 +410,10 @@ The DDP group is initialzied in a standard way in the main training script.
         backend='gloo', rank=current_ctx.rank,
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port))
-**Note:** For CPU-based sampling the recommended backed is `gloo`.
 
-The RPC group initialization is more complicated as it needs to happen in each sampler process. This can be done my modifying ``worker_init_fn`` that is called at initialization of worker processes by torch base class :class:torch.utils.data.`_MultiProcessingDataLoaderIter`. We provide a customized init function:
+**Note:** For CPU-based sampling the recommended backend is `gloo`.
+
+RPC group initialization is more complicated as it needs to happen in each sampler subprocess. This can be done my modifying :func:`~torch_geometric.distributed.DistLoader.worker_init_fn` that is called at the initialization step of worker processes by a PyTorch base class :class:`torch.utils.data.`_MultiProcessingDataLoaderIter`. Here we provide a customized init function:
 
 .. code-block:: python
 
@@ -439,7 +451,7 @@ The RPC group initialization is more complicated as it needs to happen in each s
             raise RuntimeError(f"`{self}.init_fn()` could not initialize the "
                                f"worker loop of the neighbor sampler")
 
-This functions first sets a unique ``DistContext`` for each worker and assigns its group and rank, subsequently it initializes a standard PyG ``NeighborSampler`` that provides basic functionality also for distributed data processing, and finally registers a new RPC worker within worker's sub-process.
+This functions first sets a unique :class:`~torch_geomeric.distribued.DistContext` for each worker and assigns it a group and rank, subsequently it initializes a standard :class:`~torch_geomeric.sampler.NeighborSampler` that provides basic functionality also for distributed data processing, and finally registers a new member in a RPC group `mp_sampling_worker`. This RPC connection remains open as long as the sub-process exists. Additonally, we opt for using ``atexit`` module to register additonal cleanup behaviors that are triggered when the process is terminated.
 
 Distributed Sampling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -716,10 +728,10 @@ Edge Sampling
 Distributed Data Loading
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Distributed loader class :class:`DistLoader` is used to provide a simple API for the sampling engine described above. It wraps up initialization and cleanup of sampler processes with the modified :func:`worker_init_fn`, which is described in detail in :ref:`Setting up communication using DDP & RPC`
-. The distributed class is integrated with standard PyG :class:torch_geometric.loader.`NodeLoader' through inhertance in :class:torch_geometric.loader.`DistNeighborLoader` and PyG :class:torch_geometric.loader.`LinkLoader` through :class:torch_geometric.loader.`DistLinkNeighborLoader`.
+Distributed loader class :class:`~torch_geometric.distributed.DistLoader` is used to provide a simple API for the sampling engine described above. It wraps initialization and cleanup of sampler processes with the modified :func:`~torch_geometric.distributed.DistLoader.worker_init_fn`, which is described in detail in :ref:`rpc_section`.
+The distributed class is integrated with standard :pyg:`PyG` :class:`~torch_geometric.loader.NodeLoader` through inhertance in top-level class :class:`~torch_geometric.distribued.DistNeighborLoader` and :pyg:`PyG` :class:`~torch_geometric.loader.LinkLoader` through :class:`~torch_geometric.loader.DistLinkNeighborLoader`.
 
-What makes batch generation slightly different from the single-node case is the step of local and remote feature fetching that follows node sampling. In a traditional workflow the output of iterator is passed directly to the loader, where ``Data`` object is created using :func:`torch_geometric.NodeLoader.filter_fn`. Normally in this step node/edge attributes are assigned from the input ``Data`` object held in the loader. In distributed case, the output node indices need to pass through sampler's internal :func:`torch_geometric.DistNeighborSampler._collate_fn` that requests all parititions to return attribute values. Due to asynchronous processing of this step between all sampler sub-processes, the samplers may be forced to return output to ``mp.Queue``, rather than directly to the output. Therefore at loader's initializaton we spcify:
+What makes batch generation slightly different from the single-node case is the step of local and remote feature fetching that follows node sampling. In a traditional workflow the output of iterator is passed directly to the loader, where :class:`~torch_geometric.data.Data` object is created using :func:`~torch_geometric.NodeLoader.filter_fn`. Normally in this step node/edge attributes are assigned by performing lookup on input data object held in the loader. In distributed case, the output node indices need to pass through sampler's internal :func:`~torch_geometric.distributed.DistNeighborSampler._collate_fn` that requests all parititions to return attribute values. Due to asynchronous processing of this step between all sampler sub-processes, the samplers may be forced to return output to :class:`torch.multiprocessing.Queue`, rather than directly to the output. Therefore at loader's initializaton we specify:
 
 .. code-block:: python
 
@@ -730,4 +742,4 @@ What makes batch generation slightly different from the single-node case is the 
 
 Running the Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The instructions to generate partition data from ``OGB`` datasets and run end-to-end examples are provided here: `examples/distributed/pyg/README.md<https://github.com/pyg-team/pytorch_geometric/tree/master/examples/distributed/pyg/README.md>`_
+The instructions to generate partition data from ``OGB`` datasets and run end-to-end examples are provided here: `examples/distributed/pyg/README.md <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/distributed/pyg/README.md>`_
