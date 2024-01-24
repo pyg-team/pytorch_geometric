@@ -247,7 +247,8 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
-            node_labels (List[str], optional): Node labels to use with graphviz.
+            node_labels (List[str], optional): Node labels for graphviz.
+                (default: :obj:`None`)
         """
         edge_mask = self.get('edge_mask')
         if edge_mask is None:

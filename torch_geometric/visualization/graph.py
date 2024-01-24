@@ -42,6 +42,8 @@ def visualize_graph(
             If set to :obj:`None`, will use the most appropriate
             visualization backend based on available system packages.
             (default: :obj:`None`)
+        node_labels (List[str], optional): Node labels for graphviz.
+            (default: :obj:`None`)
     """
     if edge_weight is not None:  # Normalize edge weights.
         edge_weight = edge_weight - edge_weight.min()
