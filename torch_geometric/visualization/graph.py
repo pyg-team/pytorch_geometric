@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 import torch
 from torch import Tensor
@@ -26,6 +26,7 @@ def visualize_graph(
     edge_weight: Optional[Tensor] = None,
     path: Optional[str] = None,
     backend: Optional[str] = None,
+    node_labels: Optional[List[str]] = None,
 ) -> Any:
     r"""Visualizes the graph given via :obj:`edge_index` and (optional)
     :obj:`edge_weight`.
@@ -60,7 +61,7 @@ def visualize_graph(
     if backend.lower() == 'networkx':
         return _visualize_graph_via_networkx(edge_index, edge_weight, path)
     elif backend.lower() == 'graphviz':
-        return _visualize_graph_via_graphviz(edge_index, edge_weight, path)
+        return _visualize_graph_via_graphviz(edge_index, edge_weight, path, node_labels)
 
     raise ValueError(f"Expected graph drawing backend to be in "
                      f"{BACKENDS} (got '{backend}')")
@@ -70,6 +71,7 @@ def _visualize_graph_via_graphviz(
     edge_index: Tensor,
     edge_weight: Tensor,
     path: Optional[str] = None,
+    node_labels: Optional[List[str]] = None,
 ) -> Any:
     import graphviz
 
@@ -78,11 +80,14 @@ def _visualize_graph_via_graphviz(
     g.attr('node', shape='circle', fontsize='11pt')
 
     for node in edge_index.view(-1).unique().tolist():
-        g.node(str(node))
+        g.node(node_labels[int(node)] if node_labels else str(node))
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         hex_color = hex(255 - round(255 * w))[2:]
         hex_color = f'{hex_color}0' if len(hex_color) == 1 else hex_color
+        if node_labels:
+            src = node_labels[src]
+            dst = node_labels[dst]
         g.edge(str(src), str(dst), color=f'#{hex_color}{hex_color}{hex_color}')
 
     if path is not None:
