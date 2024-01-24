@@ -30,7 +30,7 @@ def test_visualize_graph_via_graphviz_with_node_labels(tmp_path, backend):
         [1, 0, 2, 1, 3, 2, 4, 3],
     ])
     edge_weight = (torch.rand(edge_index.size(1)) > 0.5).float()
-    node_labels = ["A", "B", "C", "D", "E", "F", "G", "H"]
+    node_labels = ["A", "B", "C", "D", "E"]
 
     path = osp.join(tmp_path, 'graph.pdf')
     visualize_graph(edge_index, edge_weight, path, backend, node_labels)
