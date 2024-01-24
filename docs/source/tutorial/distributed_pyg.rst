@@ -23,7 +23,7 @@ The purpose of this manual is to guide you through the most important steps of d
   :align: center
   :width: 100%
   :alt: Dist PyG schematic breakdown.
-**Figure:** Schematic breakdown of the main components.
+**Figure 1:** Schematic breakdown of the main components.
 
 Graph Partitioning
 ~~~~~~~~~~~~~~~~~~
@@ -35,14 +35,14 @@ Please note that METIS requires undirected, homogenous graph as input, but :clas
   :width: 60%
   :alt: Example of graph partitioning with METIS algorithm.
 
-**Figure 1:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
+**Figure 2:** Generate graph partitions with HALO vertices (the vertices with different colors from majority of the vertices in the partition). Source: `DistDGL paper. <https://arxiv.org/pdf/2010.05337.pdf>`_
 
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``, ``Reddit`` , and heterogenous: ``ogbn-mag``, ``Movielens`` datasets.
 The :class:`~torch_geometric.distributed.Partitoner` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
 .. warning::
     As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
 
-The result of partitioning, for a two-part split of homogenous ``ogbn-products`` is:
+As a reuslt of running `partition_graph.py` with ``num_partitions=2`` for  homogenous ``ogbn-products``, in the folder specified in ``root_dir`` you may find following files:
 
 * ogbn-products-labels:
     * label.pt - target node/edge labels
@@ -119,7 +119,7 @@ Initialization and Usage
 -------------
 Both :class:`~torch_geometric.distributed.LocalFeatureStore` and :class:`~torch_geometric.distributed.LocalGraphStore` support flexible initialization methods:
 
-1. (Preferred method) Objects can be initalized from previously saved paritition files :func:`torch_geometric.distributed.*.from_parition()`
+1. **(Preferred method)** Objects can be initalized from previously saved paritition files :func:`~torch_geometric.distributed.*.from_parition()`
 
 .. code-block:: python
 
@@ -134,7 +134,7 @@ Both :class:`~torch_geometric.distributed.LocalFeatureStore` and :class:`~torch_
     node_labels = torch.load(node_label_file)
     partition_data = (feature_store, graph_store)
 
-2. Objects can be initalized from standard :pyg:`PyG` Data objects using :func:`torch_geometric.distributed.*.from_data()`
+2. Objects can be initalized from standard :pyg:`PyG` Data objects using :func:`~torch_geometric.distributed.*.from_data()`
 
 Example data for homogeneous graph:
 
@@ -379,11 +379,13 @@ Additionally, each of these methods is supported for both homogeneous and hetero
 Distributed Neighbor Sampling Workflow Key Steps:
 -----------------
 
-1) Distributed node sampling: Utilizing the training seeds provided by the loader, the neighbor sampling procedure is executed. These training seeds may originate from either local or remote partitions. For nodes within a local partition, the neighbor sampling occurs on the local machine. Conversely, for nodes associated with a remote partition, the neighbor sampling is conducted on the machine responsible for storing the respective partition.
+Each batch of seed indices is passed to the :class:`~torch_geometric.distributed.DistNeighborSampler` and follows three main steps before its made available for the model's forward pass by the data loader:
 
-2) Distributed feature lookup: Each partition stores the features of its nodes and edges. Consequently, if the output of a sampler on a specific machine includes sampled nodes or edges that do not pertain to its partition, the machine must initiate an RPC request to the machine to which these nodes (or edges) belong in order to retrieve information about their features.
+#. **Distributed node sampling:** Utilizing the training seeds provided by the loader, the neighbor sampling procedure is executed. These training seeds may originate from either local or remote partitions. For nodes within a local partition, the sampling occurs on the local machine. Conversely, for nodes associated with a remote partition, the neighbor sampling is conducted on the machine responsible for storing the respective partition.
 
-3) Form into PyG data format: Based on the sampler output and the acquired node (or edge) features, a Data/HeteroData object is created. This object forms a batch used in subsequent computational operations of the model. Note that this step occurs within the loader.
+#. **Distributed feature lookup:** Each partition stores an array of features of nodes and edges that are within that partition. Consequently, if the output of a sampler on a specific machine includes sampled nodes or edges, that do not pertain in its partition, the machine must initiate an RPC request to a remote server which these nodes (or edges) belong to.
+
+#. **Form :class:`~torch_geometric.sampler.SamplerOutput` into :class:`~torch_geometric.data.Data` format (or its heterogenous counterpart):** Based on the sampler output and the acquired node (or edge) features, a Data/HeteroData object is created. This object forms a batch used in subsequent computational operations of the model. Note that this step occurs within the loader :func:`filter_fn`.
 
 Algorithm Overview:
 -------------------
@@ -393,8 +395,10 @@ This section outlines the Distributed Neighbor Sampling Algorithm. The algorithm
 .. figure:: ../_figures/dist_sampler.png
   :align: center
   :width: 100%
+  :alt: Distributed sampling illustration.
+**Figure 3:** Schematic illustration of the Distributed Neighbor Sampling Algorithm.
 
-While the mechanism is analogous, the distributed sampling process diverges from single-machine sampling. In distributed training, seed nodes can belong to different partitions, leading to simultaneous sampling on multiple machines for a single batch. Consequently, synchronization of sampling results across machines is necessary to obtain seed nodes for the subsequent layer, requiring modifications to the basic algorithm.
+While the underlying priciples of neighborhood aggregation hold for the distributed sampling process, the method diverges from single-machine sampling on CPU, conventionally performed with :func:`torch.ops.pyg.neighbor_sample`. In distributed training, seed nodes can belong to different partitions, leading to simultaneous sampling on multiple machines for a single batch. Consequently, synchronization of sampling results across machines is necessary to obtain seed nodes for the subsequent layer, requiring modifications to the basic algorithm.
 
 The accompanying image illustrates a graph divided into two partitions, each associated with a distinct machine. For nodes `[0, 1, 5, 6]` in the batch, the objective is to sample all neighbors within a single layer. The process unfolds as follows:
 
@@ -411,22 +415,23 @@ The accompanying image illustrates a graph divided into two partitions, each ass
 
 Distributed Neighbor Sampler Code Structure:
 -----------------------
+# MOVE TO A SEPARATE DOCUMENT?
 
-This section provides an overview of the key code structure elements of the Distributed Neighbor Sampler.
+This section provides an overview of the key elements of Distributed Neighbor Sampler code.
 
-* :func:`torch_geomeric.distribued.DistNeighborSampler.node_sample`:
+* :func:`~torch_geomeric.distribued.DistNeighborSampler.node_sample`:
 
-  * :func:`torch_geomeric.distribued.DistNeighborSampler.node_sample`, is responsible for performing layer-by-layer distributed sampling from either a :class:`torch_geomeric.sampler.NodeSamplerInput` or :class:`torch_geomeric.distributed.utils.DistEdgeHeteroSamplerInput` object.
+  * :func:`~torch_geomeric.distribued.DistNeighborSampler.node_sample`, is responsible for performing layer-by-layer distributed sampling from either a :class:`~torch_geomeric.sampler.NodeSamplerInput` or :class:`~torch_geomeric.distributed.utils.DistEdgeHeteroSamplerInput` object.
 
   * It supports both homogeneous and heterogeneous graphs, adapting its behavior accordingly.
 
   * The sampling procedure takes into account temporal aspects.
 
-  * Following the sampling of a single layer, the :func:`torch_geometric.distributed.utils.remove_duplicates` function is utilized to remove duplicates among the sampled nodes in the result.
+  * Following the sampling of a single layer, the :func:`~torch_geometric.distributed.utils.remove_duplicates` function is utilized to remove duplicates among the sampled nodes in the result.
 
   * Upon completion of the sampling process, the :func:`torch.ops.pyg.relabel_neighborhood` (or in the case of hetero graphs: :func:`torch.ops.pyg.hetero_relabel_neighborhood`) function is employed to perform mappings from global to local node indices.
 
-  * The output of the sampling procedure is returned, encapsulated in either a :class:`torch_geomeric.sampler.SamplerOutput` or :class:`torch_geomeric.sampler.HeteroSamplerOutput` object.
+  * The output of the sampling procedure is returned, encapsulated in either a :class:`~torch_geomeric.sampler.SamplerOutput` or :class:`~torch_geomeric.sampler.HeteroSamplerOutput` object.
 
 .. code-block:: python
 
@@ -465,17 +470,17 @@ This section provides an overview of the key code structure elements of the Dist
         )
         return sampler_output
 
-* :func:`torch_geometric.distributed.DistNeighborSampler.sample_one_hop`:
+* :func:`~torch_geometric.distributed.DistNeighborSampler.sample_one_hop`:
 
   * This function is designed to sample one-hop neighbors for a given set of source nodes (:obj:`srcs`).
 
-  * Using the input data, which consists of the indices of the source nodes :obj:`srcs` and their node type :obj:`src_node_type`, the assignment of these nodes to specific partitions is determined by invoking the :func:`torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` function.
+  * Using the input data, which consists of the indices of the source nodes :obj:`srcs` and their node type :obj:`src_node_type`, the assignment of these nodes to specific partitions is determined by invoking the :func:`~torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` function.
 
-  * Based on the :obj:`partition_ids` values produced by :func:`torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` it handles scenarios where the source nodes may be located on either local or remote partitions and executes the sampling accordingly using :func:`torch_geomeric.distributed.DistNeighborSampler._sample_one_hop` function.
+  * Based on the :obj:`partition_ids` values produced by :func:`~torch_geometric.distributed.LocalGraphStore.get_partition_ids_from_nids` it handles scenarios where the source nodes may be located on either local or remote partitions and executes the sampling accordingly using :func:`~torch_geomeric.distributed.DistNeighborSampler._sample_one_hop` function.
 
   * In scenarios where nodes are associated with a local partition, sampling occurs on the local machine. Conversely, if the nodes belong to a remote partition, the local machine, utilizing ``torch.disributed.RPC``, sends a request to the remote machine for conducting sampling. The outcome of this sampling procedure is stored in the `torch.Futures` object.
 
-  * The results from local and remote machines are merged in a :func:`torch_geometric.distributed.DistNeighborSampler.merge_sampler_outputs` to provide a comprehensive output.
+  * The results from local and remote machines are merged in a :func:`~torch_geometric.distributed.DistNeighborSampler.merge_sampler_outputs` to provide a comprehensive output.
 
 .. code-block:: python
 
@@ -519,13 +524,13 @@ This section provides an overview of the key code structure elements of the Dist
         return self.merge_sampler_outputs(partition_ids, partition_orders,
                                           p_outputs, one_hop_num, src_batch)
 
-* :func:`torch_geometric.distributed.DistNeighborSampler._sample_one_hop`
+* :func:`~torch_geometric.distributed.DistNeighborSampler._sample_one_hop`
 
   * The primary objective of this function is to invoke the :pyg:`PyG` native neighbor sampling function :func:`torch.ops.pyg.neighbor_sample`, using a :func:`torch.ops.pyg.dist_neighbor_sample` wrapper specifically tailored for distributed behavior.
 
   * The function is designed to perform one-hop neighbor sampling.
 
-  * The function produces a :class:`torch_geomeric.sampler.SamplerOutput`` as its output, encapsulating three key pieces of information: the identifiers of the sampled nodes (:obj:`node`), the identifiers of the sampled edges (:obj:`edge`), and the cumulative sum of neighbors per node (:obj:`cumsum_neighbors_per_node`). :obj:`cumsum_neighbors_per_node` stores information about the cumulated sum of the sampled neighbors by each sorce node, that is further needed to relabel global nodes indices into local within a subgraph. This argument is specific for distributed training.
+  * The function produces a :class:`~torch_geomeric.sampler.SamplerOutput`` as its output, encapsulating three key pieces of information: the identifiers of the sampled nodes (:obj:`node`), the identifiers of the sampled edges (:obj:`edge`), and the cumulative sum of neighbors per node (:obj:`cumsum_neighbors_per_node`). :obj:`cumsum_neighbors_per_node` stores information about the cumulated sum of the sampled neighbors by each sorce node, that is further needed to relabel global nodes indices into local within a subgraph. This argument is specific for distributed training.
 
 .. code-block:: python
 
@@ -567,9 +572,9 @@ This section provides an overview of the key code structure elements of the Dist
 Edge Sampling
 ------------------
 
-* Edge sampling in the context of distributed training closely mirrors the methodology employed on a single machine. This process is facilitated by invoking the :func:`torch_geometric.distributed.edge_sample` function, a mechanism designed for distributed asynchronous sampling from an edge sampler input. Similarly to the single machine case, the :func:`torch_geometric.distributed.edge_sample` function invokes the :func:`torch_geometric.distributed.node_sample` function (but from the distributed package).
+* Edge sampling in the context of distributed training closely mirrors the methodology employed on a single machine. This process is facilitated by invoking the :func:`~torch_geometric.distributed.edge_sample` function, a mechanism designed for distributed asynchronous sampling from an edge sampler input. Similarly to the single machine case, the :func:`~torch_geometric.distributed.edge_sample` function invokes the :func:`~torch_geometric.distributed.node_sample` function (but from the distributed package).
 
-* The :class:`~torch_geometric.distributed.utils.DistEdgeHeteroSamplerInput` class has been designed to hold the input parameters required for the distributed heterogeneous link sampling process within the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` method. This scenario specifically applies when dealing with edges where the source and target node types are distinct. In other cases, the :class:`torch_geomeric.sampler.NodeSamplerInput` objetc is used as input to the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` function.
+* The :class:`~torch_geometric.distributed.utils.DistEdgeHeteroSamplerInput` class has been designed to hold the input parameters required for the distributed heterogeneous link sampling process within the :func:`~torch_geometric.distributed.DistNeighborSampler.node_sample` method. This scenario specifically applies when dealing with edges where the source and target node types are distinct. In other cases, the :class:`~torch_geomeric.sampler.NodeSamplerInput` objetc is used as input to the :func:`~torch_geometric.distributed.DistNeighborSampler.node_sample` function.
 
 .. code-block:: python
 
