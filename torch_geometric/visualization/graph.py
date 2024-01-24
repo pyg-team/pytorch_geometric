@@ -61,7 +61,8 @@ def visualize_graph(
     if backend.lower() == 'networkx':
         return _visualize_graph_via_networkx(edge_index, edge_weight, path)
     elif backend.lower() == 'graphviz':
-        return _visualize_graph_via_graphviz(edge_index, edge_weight, path, node_labels)
+        return _visualize_graph_via_graphviz(edge_index, edge_weight, path,
+                                             node_labels)
 
     raise ValueError(f"Expected graph drawing backend to be in "
                      f"{BACKENDS} (got '{backend}')")
