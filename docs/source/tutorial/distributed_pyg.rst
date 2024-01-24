@@ -142,7 +142,7 @@ Example data for homogeneous graph:
 
     edge_id = torch.tensor([0, 1, 2, 3])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    num_nodes = 3
+    num_nodes = 4
 
     # Create a LocalGraphStore from homogeneous data:
     graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
