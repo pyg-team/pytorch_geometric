@@ -39,8 +39,9 @@ Please note that METIS requires undirected, homogenous graph as input, but :clas
 
 Provided example script `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ demonstrates the partitioning for homogenous ``ogbn-products``, ``Reddit`` , and heterogenous: ``ogbn-mag``, ``Movielens`` datasets.
 The :class:`~torch_geometric.distributed.Partitoner` can also process temporal attributes of the nodes which is presented in the ``Movielens`` dataset partitioning.
-.. warning::
-    As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
+
+**Important note:**
+As result of METIS is non-deterministic, the resulting partitions differ between iterations. To perform training, make sure that each node has an access to the same data partition. Use a shared drive or remote storage, i.e. a docker volume or manually copy the dataset to each node of the cluster!
 
 As a reuslt of running `partition_graph.py` with ``num_partitions=2`` for  homogenous ``ogbn-products``, in the folder specified in ``root_dir`` you may find following files:
 
@@ -79,7 +80,7 @@ In distributed training, each node in the cluster holds a partition of the graph
 Distributed data storage
 ~~~~~~~~~~~~~~~~~~
 
-To maintain distirbuted data partitions at we propose a modified remote interface of :class:`~torch_geometric.data.GraphStore` \ :class:`~torch_geometric.data.FeatureStore` that together with integrated API for seding and receiving RPC requests provide a powerful tool for interconnected distributed data storage. Both stores can be filled with data in a number of ways, i.e. from Data or HeteroData objects or initialized directly from partition files. 
+To maintain distirbuted data partitions at we propose a modified remote interface of :class:`~torch_geometric.data.GraphStore` \ :class:`~torch_geometric.data.FeatureStore` that together with integrated API for seding and receiving RPC requests provide a powerful tool for interconnected distributed data storage. Both stores can be filled with data in a number of ways, i.e. from:class:`~torch_geometric.data.Data` and :class:`~torch_geometric.data.HeteroData` objects or initialized directly from generated partition files. The distributed storage is a solution that can be used for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 LocalGraphStore
 -------------
@@ -90,13 +91,11 @@ LocalGraphStore
 
 #. **Local partition Edge Index storage:** Stores information about local graph connections within partition.
 
-#. **Remote partitions connectivity:** Connectivity information, as location of remote edges and nodes can be retrieved through node and edge "partition books" - binary parition ID to node/edge ID mappings.
+#. **Remote partitions connectivity:** Connectivity information, as location of remote edges and nodes can be retrieved through node and edge "partition books" - mappings of parition ID to node/edge ID.
 
 #. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
 
 #. **Edge attribute storage:** Stores unique edge identifiers of type :class:`~torch_geomeric.data.EdgeAttr` per each edge type. 
-
-#. **Homogeneous and Heterogeneous graph support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 
 LocalFeatureStore
@@ -111,8 +110,6 @@ LocalFeatureStore
 #. **Remote feature lookup:** Implements mechanisms for looking up features in both local and remote nodes during distributed training through RPC requests and evaluating PyTorch Futures. The class is designed to work seamlessly in distributed training scenarios, allowing for efficient feature handling across partitions.
 
 #. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
-
-#. **Homogeneous and Heterogeneous Graph Support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 
 Initialization and Usage
