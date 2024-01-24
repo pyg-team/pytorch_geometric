@@ -21,7 +21,6 @@ def test_visualize_graph_via_graphviz(tmp_path, backend):
     assert osp.exists(path)
 
 
-
 @onlyGraphviz
 @pytest.mark.parametrize('backend', [None, 'graphviz'])
 def test_visualize_graph_via_graphviz_with_node_labels(tmp_path, backend):
