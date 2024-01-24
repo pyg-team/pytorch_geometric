@@ -413,7 +413,7 @@ The DDP group is initialzied in a standard way in the main training script.
 
 **Note:** For CPU-based sampling the recommended backend is `gloo`.
 
-RPC group initialization is more complicated as it needs to happen in each sampler subprocess. This can be done my modifying :func:`~torch_geometric.distributed.DistLoader.worker_init_fn` that is called at the initialization step of worker processes by a PyTorch base class :class:`torch.utils.data.`_MultiProcessingDataLoaderIter`. Here we provide a customized init function:
+RPC group initialization is more complicated as it needs to happen in each sampler subprocess. This can be done my modifying :func:`~torch_geometric.distributed.DistLoader.worker_init_fn` that is called at the initialization step of worker processes by a PyTorch base class :class:`torch.utils.data._MultiProcessingDataLoaderIter`. Here we provide a customized init function:
 
 .. code-block:: python
 
@@ -451,7 +451,7 @@ RPC group initialization is more complicated as it needs to happen in each sampl
             raise RuntimeError(f"`{self}.init_fn()` could not initialize the "
                                f"worker loop of the neighbor sampler")
 
-This functions first sets a unique :class:`~torch_geomeric.distribued.DistContext` for each worker and assigns it a group and rank, subsequently it initializes a standard :class:`~torch_geomeric.sampler.NeighborSampler` that provides basic functionality also for distributed data processing, and finally registers a new member in a RPC group `mp_sampling_worker`. This RPC connection remains open as long as the sub-process exists. Additonally, we opt for using ``atexit`` module to register additonal cleanup behaviors that are triggered when the process is terminated.
+This functions first sets a unique :class:`~torch_geomeric.distribued.DistContext` for each worker and assigns it a group and rank, subsequently it initializes a standard :class:`~torch_geomeric.sampler.NeighborSampler` that provides basic functionality also for distributed data processing, and finally registers a new member in an RPC group `mp_sampling_worker`. This RPC connection remains open as long as the sub-process exists. Additonally, we opt for using ``atexit`` module to register additonal cleanup behaviors that are triggered when the process is terminated.
 
 Distributed Sampling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
