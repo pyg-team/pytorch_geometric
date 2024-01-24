@@ -79,35 +79,139 @@ In distributed training, each node in the cluster holds a partition of the graph
 Distributed data storage
 ~~~~~~~~~~~~~~~~~~
 
+To maintain distirbuted data partitions at we propose a modified remote interface of :class:`~torch_geometric.data.GraphStore` \ :class:`~torch_geometric.data.FeatureStore` that together with integrated API for seding and receiving RPC requests provide a powerful tool for interconnected distributed data storage. Both stores can be filled with data in a number of ways, i.e. from Data or HeteroData objects or initialized directly from partition files. 
+
 LocalGraphStore
 -------------
 
-:class:`torch_geometric.distributed.LocalGraphStore` is a class designed to act as a local graph store for distributed training. It implements the :class:`torch_geometric.data.GraphStore` interface, providing features for efficient management of partition-related information and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
+:class:`~torch_geometric.distributed.LocalGraphStore` is a class designed to act as a container for graph topology information. It holds the edge indices that define relationships between nodes in a graph. Implemented on top of :class:`~torch_geometric.data.GraphStore` interface, it provides methods for efficient sampling from nodes, according to a sampling algorithm of the developer's choice and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
-Key Features
+**Key Features:**
+
+#. **Local partition Edge Index storage:** Stores information about local graph connections within partition.
+
+#. **Remote partitions connectivity:** Connectivity information, as location of remote edges and nodes can be retrieved through node and edge "partition books" - binary parition ID to node/edge ID mappings.
+
+#. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
+
+#. **Edge attribute storage:** Stores unique edge identifiers of type :class:`~torch_geomeric.data.EdgeAttr` per each edge type. 
+
+#. **Homogeneous and Heterogeneous graph support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
+
+
+LocalFeatureStore
 -------------
 
-1. **Partition Edge Index Storage:** Stores information about local graph connections within partition.
+:class:`~torch_geometric.distributed.LocalFeatureStore` is a class that serves as a node and edge feature storage. It hold node and edge attributes of the graph. Implemented on top of :class:`~torch_geometric.data.FeatureStore` interface it provides efficient `put` and `get` routines for attribute vector retrieval for both local and remote node/edge IDs. The local feature store is responsible for retreving and updating features across different partitions and machines during the training process.
 
-2. **Global Node and Edge Identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
+**Key Features:**
 
-3. **Homogeneous and Heterogeneous Graph Support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
+#. **Node and edge feature storage:** It extends the :class:`~torch_geometric.data.FeatureStore` class and provides functionalities for storing, retrieving, and distributing node and edge features. Within the partition managed by each machine or device, node and edge features are stored locally.
 
-4. **Edge Attribute Storage:** Stores edge attributes and global identifiers.
+#. **Remote feature lookup:** Implements mechanisms for looking up features in both local and remote nodes during distributed training through RPC requests and evaluating PyTorch Futures. The class is designed to work seamlessly in distributed training scenarios, allowing for efficient feature handling across partitions.
 
-5. **Initialization Methods:** Provides convenient methods for initializing the graph store from data or partition.
+#. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
+
+#. **Homogeneous and Heterogeneous Graph Support:** Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
+
 
 Initialization and Usage
 -------------
+Both :class:`~torch_geometric.distributed.LocalFeatureStore` and :class:`~torch_geometric.distributed.LocalGraphStore` support flexible initialization methods:
 
-- Instances of :class:`torch_geometric.distributed.LocalGraphStore` can be created using the provided initialization methods.
+1. (Preferred method) Objects can be initalized from previously saved paritition files :func:`torch_geometric.distributed.*.from_parition()`
 
-- Edge indices, edge attributes, edge ids and other relevant information can be added or retrieved using the provided methods.
+.. code-block:: python
 
-Example Usage
--------------
+    # Load partition into graph:
+    graph_store = LocalGraphStore.from_partition(
+        osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
 
-Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalGraphStore` and using it for distributed training:
+    # Load partition into feature:
+    feature_store = LocalFeatureStore.from_partition(
+        osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
+
+    node_labels = torch.load(node_label_file)
+    partition_data = (feature_store, graph_store)
+
+2. Objects can be initalized from standard :pyg:`PyG` Data objects using :func:`torch_geometric.distributed.*.from_data()`
+
+Example data for homogeneous graph:
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalGraphStore, LocalFeatureStore
+
+    edge_id = torch.tensor([0, 1, 2, 3])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    num_nodes = 3
+
+    # Create a LocalGraphStore from homogeneous data:
+    graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
+
+    node_id = torch.tensor([0, 1, 2])
+    x = torch.rand((3, 4))
+    y = torch.tensor([1, 0, 1])
+    edge_id = torch.tensor([0, 1, 2])
+    edge_attr = torch.rand((3, 5))
+
+    # Create a LocalFeatureStore from homogeneous data:
+    feature_store = LocalFeatureStore.from_data(
+        node_id=node_id,
+        x=x,
+        y=y,
+        edge_id=edge_id,
+        edge_attr=edge_attr
+    )
+
+Example data for heterogeneous graph:
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.distributed import LocalGraphStore, LocalFeatureStore
+
+    edge_id_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2, 3]),
+    }
+    edge_index_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+    }
+    num_nodes_dict = {'v0': 2, 'v1': 2}
+
+    # Create a LocalGraphStore from heterogeneous data:
+    graph_store = LocalGraphStore.from_hetero_data(edge_id_dict, edge_index_dict, num_nodes_dict)
+
+    node_id_dict = {
+        'v0': torch.tensor([0, 1]),
+        'v1': torch.tensor([2, 3, 4]),
+    }
+    x_dict = {
+        'v0': torch.rand((2, 4)),
+        'v1': torch.rand((3, 4)),
+    }
+    y_dict = {
+        'v0': torch.tensor([1, 0]),
+        'v1': torch.tensor([1, 0, 1]),
+    }
+    edge_id_dict = {
+        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2]),
+    }
+    edge_attr_dict = {
+        ('v0', 'e0', 'v1'): torch.rand((3, 5)),
+    }
+    # Create a LocalFeatureStore from heterogeneous data:
+    feature_store = LocalFeatureStore.from_hetero_data(
+        node_id_dict=node_id_dict,
+        x_dict=x_dict,
+        y_dict=y_dict,
+        edge_id_dict=edge_id_dict,
+        edge_attr_dict=edge_attr_dict
+    )
+
+3. Edge indices, edge attributes, edge ids and other relevant information can be added or retrieved using the provided methods.
+Below is an example of creating an instance of :class:`~torch_geometric.distributed.LocalGraphStore` and using it for distributed training:
 
 .. code-block:: python
 
@@ -143,96 +247,15 @@ Below is an example of creating an instance of :class:`torch_geometric.distribut
     retrieved_edge_index = graph_store.get_edge_index(edge_attr)
     retrieved_edge_id = graph_store.get_edge_id(edge_attr)
 
-    # ...
-
     # Remove edge information
     graph_store.remove_edge_index(edge_attr)
     graph_store.remove_edge_id(edge_attr)
 
-    # ...
 
-
-Initialization from Data
+Remote Feature Request Example
 -------------
 
-:class:`torch_geometric.distributed.LocalGraphStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
-
-* :func:`torch_geometric.distributed.LocalGraphStore.from_data`: Creates a local graph store from homogeneous data.
-
-.. code-block:: python
-
-    import torch
-    from torch_geometric.distributed import LocalGraphStore
-
-    # Example data for homogeneous graph:
-    edge_id = torch.tensor([0, 1, 2, 3])
-    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    num_nodes = 3
-
-    # Create a LocalGraphStore from homogeneous data:
-    graph_store = LocalGraphStore.from_data(edge_id, edge_index, num_nodes)
-
-
-* :func:`torch_geometric.distributed.LocalGraphStore.from_hetero_data`: Creates a local graph store from heterogeneous data.
-
-.. code-block:: python
-
-    import torch
-    from torch_geometric.distributed import LocalGraphStore
-
-    # Example data for heterogeneous graph:
-    edge_id_dict = {
-        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2, 3]),
-    }
-    edge_index_dict = {
-        ('v0', 'e0', 'v1'): torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
-    }
-    num_nodes_dict = {'v0': 2, 'v1': 2}
-
-    # Create a LocalGraphStore from heterogeneous data:
-    graph_store = LocalGraphStore.from_hetero_data(edge_id_dict, edge_index_dict, num_nodes_dict)
-
-
-LocalFeatureStore
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-:class:`torch_geometric.distributed.LocalFeatureStore` is a class that implements the :class:`~torch_geometric.data.FeatureStore` interface. It serves as a local feature store for distributed training in Graph Neural Networks (GNNs). The local feature store is responsible for managing and distributing node and edge features across different partitions and machines during the training process.
-
-Key Features
--------------
-
-1. **Node and Edge Feature Storage:**
-
-* It extends the :class:`~torch_geometric.data.FeatureStore` class and provides functionalities for storing, retrieving, and distributing node and edge features. Features are stored locally for the nodes or edges within the partition managed by each machine or device.
-
-2. **Global Node and Edge Identifiers:**
-
-* Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
-
-3. **Homogeneous and Heterogeneous Graph Support:**
-
-* Supports both homogeneous and heterogeneous :pyg:`PyG` graphs.
-
-4. **Remote Feature Lookup:**
-
-* Implements mechanisms for looking up features in both local and remote nodes during distributed training.
-
-5. **Initialization Methods:**
-
-* Provides convenient methods for initializing the graph store from data or partition.
-
-Initialization and Usage
--------------
-
-* Instances of :class:`torch_geometric.distributed.LocalFeatureStore` can be created using the provided initialization methods.
-
-* Features, global identifiers, and other relevant information can be added or retrieved using the provided methods.
-
-* The class is designed to work seamlessly in distributed training scenarios, allowing for efficient feature handling across partitions.
-
-Example Usage
--------------
-
-Below is an example of creating an instance of :class:`torch_geometric.distributed.LocalFeatureStore` and using it for distributed training:
+Below is an example of creating an instance of :class:`~torch_geometric.distributed.LocalFeatureStore` and using it for distributed training:
 
 .. code-block:: python
 
@@ -265,129 +288,6 @@ Below is an example of creating an instance of :class:`torch_geometric.distribut
     # Use the retrieved features in the GNN training process
     # ...
 
-
-Initialization from Data
--------------
-
-:class:`torch_geometric.distributed.LocalFeatureStore` provides class methods for creating instances from homogeneous and heterogeneous graph data:
-
-* :func:`torch_geometric.distributed.LocalFeatureStore.from_data`: Creates a local feature store from homogeneous data.
-
-.. code-block:: python
-
-    import torch
-    from torch_geometric.distributed import LocalFeatureStore
-
-    # Example data for homogeneous graph:
-    node_id = torch.tensor([0, 1, 2])
-    x = torch.rand((3, 4))
-    y = torch.tensor([1, 0, 1])
-    edge_id = torch.tensor([0, 1, 2])
-    edge_attr = torch.rand((3, 5))
-
-    # Create a LocalFeatureStore from homogeneous data:
-    feature_store = LocalFeatureStore.from_data(
-        node_id=node_id,
-        x=x,
-        y=y,
-        edge_id=edge_id,
-        edge_attr=edge_attr
-    )
-
-* :func:`torch_geometric.distributed.LocalFeatureStore.from_hetero_data`: Creates a local feature store from heterogeneous data.
-
-.. code-block:: python
-
-    import torch
-    from torch_geometric.distributed import LocalFeatureStore
-
-    # Example data for heterogeneous graph:
-    node_id_dict = {
-        'v0': torch.tensor([0, 1]),
-        'v1': torch.tensor([2, 3, 4]),
-    }
-
-    x_dict = {
-        'v0': torch.rand((2, 4)),
-        'v1': torch.rand((3, 4)),
-    }
-
-    y_dict = {
-        'v0': torch.tensor([1, 0]),
-        'v1': torch.tensor([1, 0, 1]),
-    }
-
-    edge_id_dict = {
-        ('v0', 'e0', 'v1'): torch.tensor([0, 1, 2]),
-    }
-
-    edge_attr_dict = {
-        ('v0', 'e0', 'v1'): torch.rand((3, 5)),
-    }
-
-    # Create a LocalFeatureStore from heterogeneous data:
-    feature_store = LocalFeatureStore.from_hetero_data(
-        node_id_dict=node_id_dict,
-        x_dict=x_dict,
-        y_dict=y_dict,
-        edge_id_dict=edge_id_dict,
-        edge_attr_dict=edge_attr_dict
-    )
-
-Initialization of LocalFeatureStore and LocalGraphStore from Partition
--------------
-
-:class:`torch_geometric.distributed.LocalFeatureStore` and :class:`torch_geometric.distributed.LocalGraphStore` provide a class methods for creating instances from a specified partition:
-
-* :func:`torch_geometric.distributed.from_partition`: Creates a local feature store / local graph store from a partition.
-
-.. code-block:: python
-
-    # Load partition into graph:
-    graph_store = LocalGraphStore.from_partition(
-        osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
-
-    # Load partition into feature:
-    feature_store = LocalFeatureStore.from_partition(
-        osp.join(root_dir, f'{dataset_name}-partitions'), node_rank)
-
-    # Load partition information:
-     (
-         meta,
-         num_partitions,
-         partition_idx,
-         node_pb,
-         edge_pb,
-     ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
-                             node_rank)
-
-    # Setup the partition information in graph store:
-    graph_store.num_partitions = num_partitions
-    graph_store.partition_idx = partition_idx
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
-
-    # Setup the partition information in feature store:
-    feature_store.num_partitions = num_partitions
-    feature_store.partition_idx = partition_idx
-    feature_store.node_feat_pb = node_pb
-    feature_store.edge_feat_pb = edge_pb
-    feature_store.feature_pb = node_pb
-    feature_store.meta = meta
-
-    # Load the label file and put into graph as labels:
-    if node_label_file is not None:
-        if isinstance(node_label_file, dict):
-            whole_node_labels = {}
-            for ntype, file in node_label_file.items():
-                whole_node_labels[ntype] = torch.load(file)
-        else:
-            whole_node_labels = torch.load(node_label_file)
-    node_labels = whole_node_labels
-    graph_store.labels = node_labels
-
-    partition_data = (feature_store, graph_store)
 
 .. _rpc_section:
 
@@ -456,7 +356,7 @@ This functions first sets a unique :class:`~torch_geomeric.distribued.DistContex
 Distributed Sampling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:class:`torch_geometric.distributed.DistNeighborSampler` is a module designed for efficient distributed training of Graph Neural Networks. It addresses the challenges of sampling neighbors in a distributed environment, where graph data is partitioned across multiple machines or devices. The sampler ensures that GNNs can effectively learn from large-scale graphs, maintaining scalability and performance.
+:class:`~torch_geometric.distributed.DistNeighborSampler` is a module designed for efficient distributed training of Graph Neural Networks. It addresses the challenges of sampling neighbors in a distributed environment, where graph data is partitioned across multiple machines or devices. The sampler ensures that GNNs can effectively learn from large-scale graphs, maintaining scalability and performance.
 
 Asynchronous Neighbor Sampling and Feature Collection:
 ----------------
@@ -669,7 +569,7 @@ Edge Sampling
 
 * Edge sampling in the context of distributed training closely mirrors the methodology employed on a single machine. This process is facilitated by invoking the :func:`torch_geometric.distributed.edge_sample` function, a mechanism designed for distributed asynchronous sampling from an edge sampler input. Similarly to the single machine case, the :func:`torch_geometric.distributed.edge_sample` function invokes the :func:`torch_geometric.distributed.node_sample` function (but from the distributed package).
 
-* The :class:`torch_geometric.distributed.utils.DistEdgeHeteroSamplerInput` class has been designed to hold the input parameters required for the distributed heterogeneous link sampling process within the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` method. This scenario specifically applies when dealing with edges where the source and target node types are distinct. In other cases, the :class:`torch_geomeric.sampler.NodeSamplerInput` objetc is used as input to the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` function.
+* The :class:`~torch_geometric.distributed.utils.DistEdgeHeteroSamplerInput` class has been designed to hold the input parameters required for the distributed heterogeneous link sampling process within the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` method. This scenario specifically applies when dealing with edges where the source and target node types are distinct. In other cases, the :class:`torch_geomeric.sampler.NodeSamplerInput` objetc is used as input to the :func:`torch_geometric.distributed.DistNeighborSampler.node_sample` function.
 
 .. code-block:: python
 
