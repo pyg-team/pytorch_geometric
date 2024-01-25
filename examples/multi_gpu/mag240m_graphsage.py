@@ -146,9 +146,10 @@ def run(
     if rank == 0:
         print("Setting up GNN...")
     acc = Accuracy(task="multiclass", num_classes=data.num_classes)
+    in_channels = data["paper"].x.size(-1)
     embedder = Embedder(in_channels, data)
     model = GraphSAGE(
-        in_channels=data["paper"].x.size(-1),
+        in_channels=in_channels,
         hidden_channels=hidden_channels,
         num_layers=len(sizes),
         out_channels=data.num_classes,
