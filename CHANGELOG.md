@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.5.0\] - 2023-MM-DD
 
 ### Added
-
+- Improvements to multinode papers100m default hyperparams and adding eval on all ranks ([#8823](https://github.com/pyg-team/pytorch_geometric/pull/8823))
 - Added support for graph partitioning for temporal data in `torch_geometric.distributed` ([#8718](https://github.com/pyg-team/pytorch_geometric/pull/8718), [#8815](https://github.com/pyg-team/pytorch_geometric/pull/8815))
 - Added `TreeGraph` and `GridMotif` generators ([#8736](https://github.com/pyg-team/pytorch_geometric/pull/8736))
 - Added an example for edge-level temporal sampling on a heterogenous graph ([#8383](https://github.com/pyg-team/pytorch_geometric/pull/8383))
