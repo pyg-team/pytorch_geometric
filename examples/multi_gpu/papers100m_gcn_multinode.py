@@ -14,10 +14,10 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
+from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GCN
-from torchmetrics import Accuracy
 
 
 def get_num_workers() -> int:
@@ -41,12 +41,12 @@ def run(world_size, data, split_idx, model, acc):
         print(f'Using {nprocs} GPUs...')
 
     split_idx['train'] = split_idx['train'].split(
-            split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
+        split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
     split_idx['valid'] = split_idx['valid'].split(
         split_idx['valid'].size(0) // world_size, dim=0)[rank].clone()
     split_idx['test'] = split_idx['test'].split(
         split_idx['test'].size(0) // world_size, dim=0)[rank].clone()
-    
+
     model = DistributedDataParallel(model.to(device), device_ids=[local_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
@@ -70,7 +70,7 @@ def run(world_size, data, split_idx, model, acc):
     acc = acc.to(rank)
     if rank == 0:
         print("Beginning training...")
-    
+
     for epoch in range(1, 4):
         model.train()
         for i, batch in enumerate(train_loader):
@@ -103,15 +103,16 @@ def run(world_size, data, split_idx, model, acc):
                 with torch.no_grad():
                     out = model(batch.x, batch.edge_index)[:batch.batch_size]
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                   batch.y[:batch_size])
+                               batch.y[:batch_size])
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                    device=rank)
             dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
             num_batches = torch.tensor(float(i), dtype=torch.float32,
-                              device=acc_sum.device)
+                                       device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
 
-            print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+            print(
+                f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
             sec_per_iter = (time.time() - start) / (i - warmup_steps)
             print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
 
@@ -123,12 +124,12 @@ def run(world_size, data, split_idx, model, acc):
             with torch.no_grad():
                 out = model(batch.x, batch.edge_index)[:batch.batch_size]
             acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                   batch.y[:batch_size])
+                           batch.y[:batch_size])
         acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                device=rank)
         dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
         num_batches = torch.tensor(float(i), dtype=torch.float32,
-                          device=acc_sum.device)
+                                   device=acc_sum.device)
         dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
         print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
 
