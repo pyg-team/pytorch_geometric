@@ -1,6 +1,6 @@
 """Multi-node multi-GPU example on ogbn-papers100m.
 
-To run:
+Example way to run using srun:
 srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
 --container-name=cont --container-image=<image_url> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
@@ -16,7 +16,8 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn.models import GCN
+from torchmetrics import Accuracy
 
 
 def get_num_workers() -> int:
@@ -31,21 +32,7 @@ def get_num_workers() -> int:
     return num_workers
 
 
-class GCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
-        super().__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, out_channels)
-
-    def forward(self, x, edge_index):
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv1(x, edge_index).relu()
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index)
-        return x
-
-
-def run(world_size, data, split_idx, model):
+def run(world_size, data, split_idx, model, acc):
     local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
     torch.cuda.set_device(local_id)
@@ -54,18 +41,20 @@ def run(world_size, data, split_idx, model):
         print(f'Using {nprocs} GPUs...')
 
     split_idx['train'] = split_idx['train'].split(
-        split_idx['train'].size(0) // world_size,
-        dim=0,
-    )[rank].clone()
-
+            split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
+    split_idx['valid'] = split_idx['valid'].split(
+        split_idx['valid'].size(0) // world_size, dim=0)[rank].clone()
+    split_idx['test'] = split_idx['test'].split(
+        split_idx['test'].size(0) // world_size, dim=0)[rank].clone()
+    
     model = DistributedDataParallel(model.to(device), device_ids=[local_id])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     kwargs = dict(
         data=data,
-        batch_size=128,
+        batch_size=1024,
         num_workers=get_num_workers(),
-        num_neighbors=[50, 50],
+        num_neighbors=[16, 16],
     )
 
     train_loader = NeighborLoader(
@@ -73,15 +62,15 @@ def run(world_size, data, split_idx, model):
         shuffle=True,
         **kwargs,
     )
-    if rank == 0:
-        val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
-        test_loader = NeighborLoader(input_nodes=split_idx['test'], **kwargs)
+    val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
+    test_loader = NeighborLoader(input_nodes=split_idx['test'], **kwargs)
 
     val_steps = 1000
     warmup_steps = 100
+    acc = acc.to(rank)
     if rank == 0:
         print("Beginning training...")
-
+    
     for epoch in range(1, 4):
         model.train()
         for i, batch in enumerate(train_loader):
@@ -103,7 +92,7 @@ def run(world_size, data, split_idx, model):
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
 
             model.eval()
-            total_correct = total_examples = 0
+            acc_sum = 0.0
             for i, batch in enumerate(val_loader):
                 if i >= val_steps:
                     break
@@ -113,29 +102,35 @@ def run(world_size, data, split_idx, model):
                 batch = batch.to(device)
                 with torch.no_grad():
                     out = model(batch.x, batch.edge_index)[:batch.batch_size]
-                pred = out.argmax(dim=-1)
-                y = batch.y[:batch.batch_size].view(-1).to(torch.long)
+                acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                                   batch.y[:batch_size])
+            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                                   device=rank)
+            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+            num_batches = torch.tensor(float(i), dtype=torch.float32,
+                              device=acc_sum.device)
+            dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
 
-                total_correct += int((pred == y).sum())
-                total_examples += y.size(0)
-
-            print(f"Val Acc: {total_correct / total_examples:.4f}")
+            print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
             sec_per_iter = (time.time() - start) / (i - warmup_steps)
             print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
 
     if rank == 0:
         model.eval()
-        total_correct = total_examples = 0
+        acc_sum = 0.0
         for i, batch in enumerate(test_loader):
             batch = batch.to(device)
             with torch.no_grad():
                 out = model(batch.x, batch.edge_index)[:batch.batch_size]
-            pred = out.argmax(dim=-1)
-            y = batch.y[:batch.batch_size].view(-1).to(torch.long)
-
-            total_correct += int((pred == y).sum())
-            total_examples += y.size(0)
-        print(f"Test Acc: {total_correct / total_examples:.4f}")
+            acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                                   batch.y[:batch_size])
+        acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                               device=rank)
+        dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+        num_batches = torch.tensor(float(i), dtype=torch.float32,
+                          device=acc_sum.device)
+        dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
 
 
 if __name__ == '__main__':
@@ -145,6 +140,6 @@ if __name__ == '__main__':
     assert dist.is_initialized(), "Distributed cluster not initialized"
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
-    model = GCN(dataset.num_features, 64, dataset.num_classes)
-
-    run(nprocs, dataset[0], split_idx, model)
+    model = GCN(dataset.num_features, 128, 2, dataset.num_classes)
+    acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
+    run(nprocs, dataset[0], split_idx, model, acc)
