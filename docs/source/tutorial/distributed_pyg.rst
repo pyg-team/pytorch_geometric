@@ -80,18 +80,18 @@ In distributed training, each node in the cluster holds a partition of the graph
 Distributed data storage
 ~~~~~~~~~~~~~~~~~~
 
-To maintain distributed data partitions at we propose a modified remote interface of :class:`~torch_geometric.data.GraphStore` \ :class:`~torch_geometric.data.FeatureStore` that together with integrated API for seding and receiving RPC requests provide a powerful tool for interconnected distributed data storage. Both stores can be filled with data in a number of ways, i.e. from:class:`~torch_geometric.data.Data` and :class:`~torch_geometric.data.HeteroData` objects or initialized directly from generated partition files. The distributed storage is a solution that can be used for both homogeneous and heterogeneous :pyg:`PyG` graphs.
+To maintain distributed data partitions we propose a modified remote interface of :class:`~torch_geometric.data.GraphStore` and :class:`~torch_geometric.data.FeatureStore` that together with integrated API for sending and receiving RPC requests provide a powerful tool for interconnected distributed data storage. Both stores can be filled with data in a number of ways, i.e. from :class:`~torch_geometric.data.Data` and :class:`~torch_geometric.data.HeteroData` objects or initialized directly from generated partition files. The distributed storage is a solution that can be used for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 LocalGraphStore
 -------------
 
-:class:`~torch_geometric.distributed.LocalGraphStore` is a class designed to act as a container for graph topology information. It holds the edge indices that define relationships between nodes in a graph. Implemented on top of :class:`~torch_geometric.data.GraphStore` interface, it provides methods for efficient sampling from nodes, according to a sampling algorithm of the developer's choice and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
+:class:`~torch_geometric.distributed.LocalGraphStore` is a class designed to act as a container for graph topology information. It holds the edge indices that define relationships between nodes in a graph. Implemented on top of :class:`~torch_geometric.data.GraphStore` interface. It offers methods that provide mapping information for nodes and edges to individual partitions and support for both homogeneous and heterogeneous :pyg:`PyG` graphs.
 
 **Key Features:**
 
 #. **Local partition Edge Index storage:** Stores information about local graph connections within partition.
 
-#. **Remote partitions connectivity:** Connectivity information, as location of remote edges and nodes can be retrieved through node and edge "partition books" - mappings of parition ID to node/edge ID.
+#. **Local and remote partitions connectivity:** The affiliation information of individual nodes and edges to partitions (both local and global) can be retrieved through node and edge "partition books" - mappings of parition ID to node/edge ID.
 
 #. **Global identifiers:** Maintains global identifiers for nodes and edges, allowing for consistent mapping across partitions.
 
@@ -101,7 +101,7 @@ LocalGraphStore
 LocalFeatureStore
 -------------
 
-:class:`~torch_geometric.distributed.LocalFeatureStore` is a class that serves as a node and edge feature storage. It hold node and edge attributes of the graph. Implemented on top of :class:`~torch_geometric.data.FeatureStore` interface it provides efficient `put` and `get` routines for attribute vector retrieval for both local and remote node/edge IDs. The local feature store is responsible for retreving and updating features across different partitions and machines during the training process.
+:class:`~torch_geometric.distributed.LocalFeatureStore` is a class that serves as a node and edge feature storage. It holds node and edge attributes of the graph. Implemented on top of :class:`~torch_geometric.data.FeatureStore` interface it provides efficient `put` and `get` routines for attributes retrieval for both local and remote node/edge IDs. The local feature store is responsible for retrieving and updating features across different partitions and machines during the training process.
 
 **Key Features:**
 
