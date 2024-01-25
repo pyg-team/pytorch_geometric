@@ -92,9 +92,9 @@ class Embedder(torch.nn.Module):
             data['institution'].num_nodes, in_channels)
 
     def forward(self, batch):
-        batch['author'].x = self.author_embed(batch['author'].n_id)
+        batch['author'].x = self.author_embed(batch['author'].n_id).squeeze()
         batch['institution'].x = self.institution_embed(
-            batch['institution'].n_id)
+            batch['institution'].n_id).squeeze()
         return batch
 
 
