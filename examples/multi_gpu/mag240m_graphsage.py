@@ -80,8 +80,8 @@ class SAGEConvLayer(torch.nn.Module):
             for k, v in edge_index_dict.items()
         })
         print("edge_index_dict.dtype=", {
-            k: v.size()
-            for k, v.dtype in edge_index_dict.items()
+            k: v.dtype
+            for k, v in edge_index_dict.items()
         })
         h = self.conv(x_dict, edge_index_dict)
         if not self.output_layer:
@@ -177,6 +177,9 @@ def run(
     data['author'].n_id = torch.arange(data['author'].num_nodes).reshape(-1, 1)
     data['institution'].n_id = torch.arange(
         data['institution'].num_nodes).reshape(-1, 1)
+
+    # loaded in as fp16, train in 32bits
+    data['paper'].x = x.to(torch.float32)
 
     if rank == 0:
         print(f"# GNN Params: \
