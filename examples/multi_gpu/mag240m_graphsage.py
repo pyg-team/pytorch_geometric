@@ -179,7 +179,7 @@ def run(
         data['institution'].num_nodes).reshape(-1, 1)
 
     # loaded in as fp16, train in 32bits
-    data['paper'].x = x.to(torch.float32)
+    data['paper'].x = data['paper'].x.to(torch.float32)
 
     if rank == 0:
         print(f"# GNN Params: \
