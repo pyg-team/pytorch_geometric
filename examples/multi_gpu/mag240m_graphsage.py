@@ -178,6 +178,12 @@ def run(
         eval_idx = eval_idx.split(eval_idx.size(0) // n_devices)[rank]
         test_idx = test_idx.split(test_idx.size(0) // n_devices)[rank]
 
+    # delete unused tensors to not sample
+    del data["paper"].train_mask
+    del data["paper"].val_mask
+    del data["paper"].test_mask
+    del data["paper"].year
+
     kwargs = dict(
         batch_size=batch_size,
         num_workers=16,
