@@ -218,7 +218,8 @@ def run(
         print("Final setup...")
     if n_devices > 0:
         # move GNN to GPU but keep embedder on CPU to save GPU mem
-        model.to(rank)
+        model = model.to(rank)
+        acc = acc.to(rank)
     if rank == 0:
         print("about to make optimizer")
     if n_devices > 1:
