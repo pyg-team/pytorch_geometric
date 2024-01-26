@@ -74,9 +74,14 @@ class SAGEConvLayer(torch.nn.Module):
         print("self.in_feat=", self.in_feat)
         print("self.out_feat=", self.out_feat)
         print("x_dict.size()=", {k: v.size() for k, v in x_dict.items()})
+        print("x_dict.dtype=", {k: v.dtype for k, v in x_dict.items()})
         print("edge_index_dict.size()=", {
             k: v.size()
             for k, v in edge_index_dict.items()
+        })
+        print("edge_index_dict.dtype=", {
+            k: v.size()
+            for k, v.dtype in edge_index_dict.items()
         })
         h = self.conv(x_dict, edge_index_dict)
         if not self.output_layer:
@@ -146,7 +151,6 @@ def run(
     dropout=0.5,
     eval_steps=100,
     num_warmup_iters_for_timing=10,
-    debug=False,
 ):
     seed_everything(12345)
     if n_devices > 1:
@@ -321,7 +325,6 @@ if __name__ == "__main__":
     parser.add_argument("--sizes", type=str, default="25-15")
     parser.add_argument("--n_devices", type=int, default=1,
                         help="0 devices for CPU, or 1-8 to use GPUs")
-    parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
     args.sizes = [int(i) for i in args.sizes.split("-")]
     print(args)
@@ -373,7 +376,6 @@ if __name__ == "__main__":
                     args.dropout,
                     args.eval_steps,
                     args.num_warmup_iters_for_timing,
-                    args.debug,
                 ),
                 nprocs=args.n_devices,
                 join=True,
@@ -400,5 +402,4 @@ if __name__ == "__main__":
             args.dropout,
             args.eval_steps,
             args.num_warmup_iters_for_timing,
-            args.debug,
         )
