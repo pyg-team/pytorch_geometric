@@ -70,19 +70,6 @@ class SAGEConvLayer(torch.nn.Module):
                 self.normalizations[node] = BatchNorm(out_feat)
 
     def forward(self, x_dict, edge_index_dict):
-        print("self=", self)
-        print("self.in_feat=", self.in_feat)
-        print("self.out_feat=", self.out_feat)
-        print("x_dict.size()=", {k: v.size() for k, v in x_dict.items()})
-        print("x_dict.dtype=", {k: v.dtype for k, v in x_dict.items()})
-        print("edge_index_dict.size()=", {
-            k: v.size()
-            for k, v in edge_index_dict.items()
-        })
-        print("edge_index_dict.dtype=", {
-            k: v.dtype
-            for k, v in edge_index_dict.items()
-        })
         h = self.conv(x_dict, edge_index_dict)
         if not self.output_layer:
             for node_type in h.keys():
