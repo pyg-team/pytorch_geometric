@@ -238,9 +238,10 @@ def run(
             optimizer.step()
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                    device=rank)
-            torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.MEAN)
+            torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
             num_batches = torch.tensor(float(i), dtype=torch.float32,
                                        device=acc_sum.device)
+            dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
             if i > num_warmup_iters_for_timing - 1:
                 iter_time = time.time() - since
                 time_sum += iter_time
@@ -267,7 +268,7 @@ def run(
                 acc_sum += validation_step(batch, acc, model)
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                    device=rank)
-            torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.MEAN)
+            torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
             num_batches = torch.tensor(float(i), dtype=torch.float32,
                                        device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
@@ -288,7 +289,7 @@ def run(
             acc_sum += validation_step(batch, acc, model)
         acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                device=rank)
-        torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.MEAN)
+        torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
         num_batches = torch.tensor(float(i), dtype=torch.float32,
                                    device=acc_sum.device)
         dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
