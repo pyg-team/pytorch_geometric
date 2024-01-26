@@ -329,10 +329,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.sizes = [int(i) for i in args.sizes.split("-")]
     print(args)
-    if not args.debug:
-        import warnings
 
-        warnings.simplefilter("ignore")
+    import warnings
+    warnings.simplefilter("ignore")
+
     if not torch.cuda.is_available():
         print("No GPUs available, running with CPU")
         args.n_devices = 0
