@@ -17,7 +17,7 @@ from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GCN
+from torch_geometric.nn.models import GraphSAGE
 
 
 def get_num_workers() -> int:
@@ -144,6 +144,6 @@ if __name__ == '__main__':
     assert dist.is_initialized(), "Distributed cluster not initialized"
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
-    model = GCN(dataset.num_features, 128, 2, dataset.num_classes)
+    model = GraphSAGE(dataset.num_features, 128, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
     run(nprocs, dataset[0], split_idx, model, acc)
