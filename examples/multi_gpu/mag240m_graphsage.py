@@ -178,9 +178,6 @@ def run(
     data['institution'].n_id = torch.arange(
         data['institution'].num_nodes).reshape(-1, 1)
 
-    # loaded in as fp16, train in 32bits
-    data['paper'].x = data['paper'].x.to(torch.float32)
-
     if rank == 0:
         print(f"# GNN Params: \
             {sum([p.numel() for p in model.parameters()])/10**6:.1f}M")
@@ -236,6 +233,8 @@ def run(
                 break
             since = time.time()
             optimizer.zero_grad()
+            # loaded in as fp16, train in 32bits
+            batch['paper'].x = batch['paper'].x.to(torch.float32)
             batch = embedder(batch)
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
