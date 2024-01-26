@@ -142,7 +142,8 @@ if __name__ == '__main__':
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
     assert dist.is_initialized(), "Distributed cluster not initialized"
-    dataset = PygNodePropPredDataset(name='ogbn-papers100M')
+    dataset = PygNodePropPredDataset(name='ogbn-papers100M',
+                                     root='/datasets/ogb_datasets')
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 128, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
