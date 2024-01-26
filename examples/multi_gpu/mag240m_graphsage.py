@@ -239,12 +239,13 @@ def run(
             torch.distributed.all_reduce(acc_sum,
                                          op=torch.distributed.ReduceOp.MEAN)
             num_batches = torch.tensor(float(i), dtype=torch.float32,
-                                           device=acc_sum.device)
+                                       device=acc_sum.device)
             if i > num_warmup_iters_for_timing - 1:
                 iter_time = time.time() - since
                 time_sum += iter_time
                 if rank == 0 and i % log_every_n_steps == 0:
-                    print(f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
+                    print(
+                        f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
                         Train Acc: {acc_sum / (num_batches) * 100.0:.2f}%, \
                         Step Time: {iter_time:.4f}s")
         if n_devices > 1:
@@ -268,9 +269,10 @@ def run(
             torch.distributed.all_reduce(acc_sum,
                                          op=torch.distributed.ReduceOp.MEAN)
             num_batches = torch.tensor(float(i), dtype=torch.float32,
-                                           device=acc_sum.device)
+                                       device=acc_sum.device)
             final_test_acc = acc_sum / (i + 1) * 100.0
-            print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+            print(
+                f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.barrier()
     model.eval()
@@ -284,11 +286,11 @@ def run(
                 batch = batch.to(rank, "x", "y", "edge_index")
             acc_sum += validation_step(batch, acc, model)
         acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                   device=rank)
+                               device=rank)
         torch.distributed.all_reduce(acc_sum,
                                      op=torch.distributed.ReduceOp.MEAN)
         num_batches = torch.tensor(float(i), dtype=torch.float32,
-                                       device=acc_sum.device)
+                                   device=acc_sum.device)
         final_test_acc = acc_sum / (i + 1) * 100.0
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
