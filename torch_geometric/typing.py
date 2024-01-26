@@ -17,6 +17,8 @@ WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
 
+MAX_INT64 = torch.iinfo(torch.int64).max
+
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = torch.sparse_coo
 
