@@ -215,7 +215,7 @@ def run(
 
     for epoch in range(1, num_epochs + 1):
         model.train()
-        time_sum, sum_acc = 0, 0
+        time_sum, acc_sum = 0, 0
         for i, batch in enumerate(train_loader):
             if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
                 break
