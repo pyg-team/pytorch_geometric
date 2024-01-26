@@ -61,7 +61,8 @@ class LocalFeatureStore(FeatureStore):
         self.node_feat_pb: Union[Tensor, Dict[NodeType, Tensor]]
         # Mapping between edge ID and partition ID:
         self.edge_feat_pb: Union[Tensor, Dict[EdgeType, Tensor]]
-        self.labels: Optional[Tensor] = None  # Node labels.
+        # Node labels:
+        self.labels: Optional[Tensor] = None
 
         self.local_only: bool = False
         self.rpc_router: Optional[RPCRouter] = None
@@ -421,11 +422,13 @@ class LocalFeatureStore(FeatureStore):
                                       attr_name='time')
 
         if not meta['is_hetero'] and edge_feats is not None:
-            feat_store.put_global_id(edge_feats['global_id'],
-                                     group_name=(None, None))
-            for key, value in edge_feats['feats'].items():
-                feat_store.put_tensor(value, group_name=(None, None),
-                                      attr_name=key)
+            if 'global_id' in edge_feats:
+                feat_store.put_global_id(edge_feats['global_id'],
+                                         group_name=(None, None))
+            if 'feats' in edge_feats:
+                for key, value in edge_feats['feats'].items():
+                    feat_store.put_tensor(value, group_name=(None, None),
+                                          attr_name=key)
             if 'edge_time' in edge_feats:
                 feat_store.put_tensor(edge_feats['edge_time'],
                                       group_name=(None, None),
@@ -445,11 +448,13 @@ class LocalFeatureStore(FeatureStore):
 
         if meta['is_hetero'] and edge_feats is not None:
             for edge_type, edge_feat in edge_feats.items():
-                feat_store.put_global_id(edge_feat['global_id'],
-                                         group_name=edge_type)
-                for key, value in edge_feat['feats'].items():
-                    feat_store.put_tensor(value, group_name=edge_type,
-                                          attr_name=key)
+                if 'global_id' in edge_feat:
+                    feat_store.put_global_id(edge_feat['global_id'],
+                                             group_name=edge_type)
+                if 'feats' in edge_feat:
+                    for key, value in edge_feat['feats'].items():
+                        feat_store.put_tensor(value, group_name=edge_type,
+                                              attr_name=key)
                 if 'edge_time' in edge_feat:
                     feat_store.put_tensor(edge_feat['edge_time'],
                                           group_name=edge_type,
