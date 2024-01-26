@@ -218,7 +218,8 @@ def run(
     if n_devices > 1:
         model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-
+    if rank == 0:
+        print("Beginning loop...")
     for epoch in range(1, num_epochs + 1):
         model.train()
         time_sum, acc_sum = 0, 0
