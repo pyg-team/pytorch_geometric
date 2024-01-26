@@ -87,41 +87,19 @@ def run(world_size, data, split_idx, model, acc):
 
             if rank == 0 and i % 10 == 0:
                 print(f'Epoch: {epoch:02d}, Iteration: {i}, Loss: {loss:.4f}')
-
+        
+        dist.barrier()
         if rank == 0:
             sec_per_iter = (time.time() - start) / (i - warmup_steps)
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
-
-            model.eval()
-            acc_sum = 0.0
-            for i, batch in enumerate(val_loader):
-                if i >= val_steps:
-                    break
-                if i == warmup_steps:
-                    start = time.time()
-
-                batch = batch.to(device)
-                batch_size = batch.batch_size
-                with torch.no_grad():
-                    out = model(batch.x, batch.edge_index)[:batch_size]
-                acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                               batch.y[:batch_size])
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                   device=rank)
-            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            num_batches = torch.tensor(float(i), dtype=torch.float32,
-                                       device=acc_sum.device)
-            dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-
-            print(
-                f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
-            sec_per_iter = (time.time() - start) / (i - warmup_steps)
-            print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
-
-    if rank == 0:
         model.eval()
         acc_sum = 0.0
-        for i, batch in enumerate(test_loader):
+        for i, batch in enumerate(val_loader):
+            if i >= val_steps:
+                break
+            if i == warmup_steps:
+                start = time.time()
+
             batch = batch.to(device)
             batch_size = batch.batch_size
             with torch.no_grad():
@@ -134,7 +112,30 @@ def run(world_size, data, split_idx, model, acc):
         num_batches = torch.tensor(float(i), dtype=torch.float32,
                                    device=acc_sum.device)
         dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        if rank == 0:
+            print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+            sec_per_iter = (time.time() - start) / (i - warmup_steps)
+            print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
+    dist.barrier()
+
+    model.eval()
+    acc_sum = 0.0
+    for i, batch in enumerate(test_loader):
+        batch = batch.to(device)
+        batch_size = batch.batch_size
+        with torch.no_grad():
+            out = model(batch.x, batch.edge_index)[:batch_size]
+        acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                       batch.y[:batch_size])
+    acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                           device=rank)
+    dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+    num_batches = torch.tensor(float(i), dtype=torch.float32,
+                               device=acc_sum.device)
+    dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+    if rank == 0:
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+    dist.barrier()
 
 
 if __name__ == '__main__':
