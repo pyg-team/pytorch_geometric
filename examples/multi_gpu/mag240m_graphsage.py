@@ -7,19 +7,18 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
-from ogb.lsc import MAG240MDataset, MAG240MEvaluator
+from ogb.lsc import MAG240MDataset
 from torch import Tensor
 from torch.nn import Embedding, Linear
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
-from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import HeteroConv, SAGEConv
 from torch_geometric.nn.norm import BatchNorm
-from torch_geometric.typing import Adj, EdgeType, NodeType
+from torch_geometric.typing import EdgeType, NodeType
 
 
 def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
@@ -78,25 +77,6 @@ class SAGEConvLayer(torch.nn.Module):
         return h
 
 
-class Embedder(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels,
-        data,
-    ):
-        super().__init__()
-        self.author_embed = torch.nn.Embedding(data['author'].num_nodes,
-                                               in_channels)
-        self.institution_embed = torch.nn.Embedding(
-            data['institution'].num_nodes, in_channels)
-
-    def forward(self, batch):
-        batch['author'].x = self.author_embed(batch['author'].n_id).squeeze()
-        batch['institution'].x = self.institution_embed(
-            batch['institution'].n_id).squeeze()
-        return batch
-
-
 class GraphSAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels,
                  dropout, metadata):
@@ -151,7 +131,6 @@ def run(
         print("Setting up GNN...")
     acc = Accuracy(task="multiclass", num_classes=data.num_classes)
     in_channels = data["paper"].x.size(-1)
-    embedder = Embedder(in_channels, data)
     model = GraphSAGE(
         in_channels=in_channels,
         hidden_channels=hidden_channels,
@@ -160,10 +139,6 @@ def run(
         dropout=dropout,
         metadata=data.metadata(),
     )
-    # store node IDs for embeddings
-    data['author'].n_id = torch.arange(data['author'].num_nodes).reshape(-1, 1)
-    data['institution'].n_id = torch.arange(
-        data['institution'].num_nodes).reshape(-1, 1)
 
     if rank == 0:
         print(f"# GNN Params: \
@@ -228,11 +203,11 @@ def run(
                 break
             since = time.time()
             optimizer.zero_grad()
-            # loaded in as fp16, train in 32bits
-            batch['paper'].x = batch['paper'].x.to(torch.float32)
-            batch = embedder(batch)
+            
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
+            # Features loaded in as fp16, train in 32bits
+                batch = batch.to(torch.float32, "x")
             loss, train_acc = training_step(batch, acc, model)
             acc_sum += train_acc
             loss.backward()
