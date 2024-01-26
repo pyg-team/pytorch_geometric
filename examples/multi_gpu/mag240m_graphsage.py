@@ -53,6 +53,7 @@ class SAGEConvLayer(torch.nn.Module):
         out_feat,
         dropout,
         metadata,
+        output_layer=False,
     ):
         super().__init__()
         self.in_feat = in_feat
@@ -60,11 +61,13 @@ class SAGEConvLayer(torch.nn.Module):
         self.conv = HeteroConv(
             {e_type: SAGEConv(in_feat, out_feat)
              for e_type in metadata[1]})
-        self.dropout_conv = torch.nn.Dropout(dropout)
-        self.activation = torch.nn.ReLU()
-        self.normalizations = torch.nn.ModuleDict()
-        for node in metadata[0]:
-            self.normalizations[node] = BatchNorm(out_feat)
+        self.output_layer = output_layer
+        if not self.output_layer:
+            self.dropout_conv = torch.nn.Dropout(dropout)
+            self.activation = torch.nn.ReLU()
+            self.normalizations = torch.nn.ModuleDict()
+            for node in metadata[0]:
+                self.normalizations[node] = BatchNorm(out_feat)
 
     def forward(self, x_dict, edge_index_dict):
         print("self=", self)
@@ -76,9 +79,10 @@ class SAGEConvLayer(torch.nn.Module):
             for k, v in edge_index_dict.items()
         })
         h = self.conv(x_dict, edge_index_dict)
-        for node_type in h.keys():
-            h[node_type] = self.normalizations[node_type](self.activation(
-                self.dropout_conv(h[node_type])))
+        if not self.output_layer:
+            for node_type in h.keys():
+                h[node_type] = self.normalizations[node_type](self.activation(
+                    self.dropout_conv(h[node_type])))
         return h
 
 
@@ -116,7 +120,7 @@ class GraphSAGE(torch.nn.Module):
                     SAGEConvLayer(hidden_channels, hidden_channels, dropout,
                                   self.metadata))
         self.output_conv = SAGEConvLayer(hidden_channels, out_channels,
-                                         dropout, self.metadata)
+                                         dropout, self.metadata, output_layer=True)
 
     def forward(self, batch):
         x_dict = batch.collect('x')
