@@ -203,10 +203,10 @@ def run(
                 break
             since = time.time()
             optimizer.zero_grad()
-            
+
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
-            # Features loaded in as fp16, train in 32bits
+                # Features loaded in as fp16, train in 32bits
                 batch = batch.to(torch.float32, "x")
             loss, train_acc = training_step(batch, acc, model)
             acc_sum += train_acc
