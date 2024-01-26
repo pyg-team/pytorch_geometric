@@ -270,7 +270,7 @@ def run(
             num_batches = torch.tensor(float(i), dtype=torch.float32,
                                            device=acc_sum.device)
             final_test_acc = acc_sum / (i + 1) * 100.0
-             print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+            print(f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.barrier()
     model.eval()
