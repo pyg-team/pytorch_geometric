@@ -77,9 +77,10 @@ def run(world_size, data, split_idx, model, acc):
             if i == warmup_steps:
                 start = time.time()
             batch = batch.to(device)
+            batch_size = batch.batch_size
             optimizer.zero_grad()
-            y = batch.y[:batch.batch_size].view(-1).to(torch.long)
-            out = model(batch.x, batch.edge_index)[:batch.batch_size]
+            y = batch.y[:batch_size].view(-1).to(torch.long)
+            out = model(batch.x, batch.edge_index)[:batch_size]
             loss = F.cross_entropy(out, y)
             loss.backward()
             optimizer.step()
@@ -100,8 +101,9 @@ def run(world_size, data, split_idx, model, acc):
                     start = time.time()
 
                 batch = batch.to(device)
+                batch_size = batch.batch_size
                 with torch.no_grad():
-                    out = model(batch.x, batch.edge_index)[:batch.batch_size]
+                    out = model(batch.x, batch.edge_index)[:batch_size]
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                batch.y[:batch_size])
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
@@ -121,8 +123,9 @@ def run(world_size, data, split_idx, model, acc):
         acc_sum = 0.0
         for i, batch in enumerate(test_loader):
             batch = batch.to(device)
+            batch_size = batch.batch_size
             with torch.no_grad():
-                out = model(batch.x, batch.edge_index)[:batch.batch_size]
+                out = model(batch.x, batch.edge_index)[:batch_size]
             acc_sum += acc(out[:batch_size].softmax(dim=-1),
                            batch.y[:batch_size])
         acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
@@ -131,7 +134,7 @@ def run(world_size, data, split_idx, model, acc):
         num_batches = torch.tensor(float(i), dtype=torch.float32,
                                    device=acc_sum.device)
         dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-        print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+        print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
 
 
 if __name__ == '__main__':
