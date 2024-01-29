@@ -348,8 +348,8 @@ if __name__ == '__main__':
 
     with tempfile.TemporaryDirectory() as tempdir:
         mp.spawn(
-            run_train,
-            args=(data, world_size, model, args.epochs, args.batch_size,
-                  args.fan_out, split_idx, dataset.num_classes,
-                  args.cugraph_data_loader, wall_clock_start, tempdir, args.num_layers),
+            run_train, args=(data, world_size, model, args.epochs,
+                             args.batch_size, args.fan_out, split_idx,
+                             dataset.num_classes, args.cugraph_data_loader,
+                             wall_clock_start, tempdir, args.num_layers),
             nprocs=world_size, join=True)
