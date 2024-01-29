@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import os.path as osp
+from collections import defaultdict
 from typing import List, Optional, Union
 
 import torch
@@ -173,7 +174,7 @@ class Partitioner:
                 node_map[node_id] = pid
 
                 graph = {}
-                efeat = {}
+                efeat = defaultdict(dict)
                 for i, edge_type in enumerate(self.edge_types):
                     # Row vector refers to source nodes.
                     # Column vector refers to destination nodes.
@@ -214,13 +215,18 @@ class Partitioner:
 
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask][perm]
-                        efeat[edge_type] = {
-                            'global_id': offsetted_eid,
-                            'feats': dict(edge_attr=edge_attr),
-                        }
-                        if self.is_edge_level_time:
+                        efeat[edge_type].update({
+                            'global_id':
+                            offsetted_eid,
+                            'feats':
+                            dict(edge_attr=edge_attr),
+                        })
+                    if self.is_edge_level_time:
+                        if 'edge_time' in part_data:
                             edge_time = part_data.edge_time[mask][perm]
-                            efeat[edge_type].update({'edge_time': edge_time})
+                        elif 'time' in part_data:
+                            edge_time = part_data.time[mask][perm]
+                        efeat[edge_type].update({'edge_time': edge_time})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
                 torch.save(graph, osp.join(path, 'graph.pt'))
@@ -312,15 +318,22 @@ class Partitioner:
 
                 torch.save(nfeat, osp.join(path, 'node_feats.pt'))
 
+                efeat = defaultdict()
                 if 'edge_attr' in part_data:
-                    efeat = {
-                        'global_id': edge_id,
-                        'feats': dict(edge_attr=part_data.edge_attr[perm]),
-                    }
-                    if self.is_edge_level_time:
-                        efeat.update({'edge_time': part_data.edge_time[perm]})
+                    efeat.update({
+                        'global_id':
+                        edge_id,
+                        'feats':
+                        dict(edge_attr=part_data.edge_attr[perm]),
+                    })
+                if self.is_edge_level_time:
+                    if 'edge_time' in part_data:
+                        edge_time = part_data.edge_time[perm]
+                    elif 'time' in part_data:
+                        edge_time = part_data.time[perm]
+                    efeat.update({'edge_time': edge_time})
 
-                    torch.save(efeat, osp.join(path, 'edge_feats.pt'))
+                torch.save(efeat, osp.join(path, 'edge_feats.pt'))
 
             logging.info('Saving partition mapping info')
             torch.save(node_map, osp.join(self.root, 'node_map.pt'))
