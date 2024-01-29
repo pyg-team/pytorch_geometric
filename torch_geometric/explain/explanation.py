@@ -233,7 +233,7 @@ class Explanation(Data, ExplanationMixin):
         return _visualize_score(score, feat_labels, path, top_k)
 
     def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None):
+                        backend: Optional[str] = None, **kwargs):
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -246,13 +246,14 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
+            **kwargs: include
         """
         edge_mask = self.get('edge_mask')
         if edge_mask is None:
             raise ValueError(f"The attribute 'edge_mask' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
-        visualize_graph(self.edge_index, edge_mask, path, backend)
+        visualize_graph(self.edge_index, edge_mask, path, backend, **kwargs)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):

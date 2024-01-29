@@ -26,6 +26,7 @@ def visualize_graph(
     edge_weight: Optional[Tensor] = None,
     path: Optional[str] = None,
     backend: Optional[str] = None,
+    **kwargs,
 ) -> Any:
     r"""Visualizes the graph given via :obj:`edge_index` and (optional)
     :obj:`edge_weight`.
@@ -58,7 +59,8 @@ def visualize_graph(
         backend = 'graphviz' if has_graphviz() else 'networkx'
 
     if backend.lower() == 'networkx':
-        return _visualize_graph_via_networkx(edge_index, edge_weight, path)
+        return _visualize_graph_via_networkx(edge_index, edge_weight, path,
+                                             **kwargs)
     elif backend.lower() == 'graphviz':
         return _visualize_graph_via_graphviz(edge_index, edge_weight, path)
 
@@ -98,9 +100,14 @@ def _visualize_graph_via_networkx(
     edge_index: Tensor,
     edge_weight: Tensor,
     path: Optional[str] = None,
+    **kwargs,
 ) -> Any:
     import matplotlib.pyplot as plt
     import networkx as nx
+
+    node_label = kwargs['node_label']
+    color_dict = kwargs['color_dict']
+    target_node = kwargs['target_node']
 
     g = nx.DiGraph()
     node_size = 800
@@ -127,10 +134,26 @@ def _visualize_graph_via_networkx(
             ),
         )
 
+    node_color = ['white'] * len(g.nodes)
+    if node_label != None:
+        assert color_dict != None
+        node_color = []
+        for i, node_id in enumerate(list(g.nodes)):
+            node_color.append(color_dict[int(node_label[node_id])])
+
+    if target_node != None:
+        for i, node_id in enumerate(list(g.nodes)):
+            if node_id == target_node:
+                print("kylin")
+                node_color[i] = 'red'
+                break
+
     nodes = nx.draw_networkx_nodes(g, pos, node_size=node_size,
-                                   node_color='white', margins=0.1)
+                                   node_color=node_color, margins=0.1)
     nodes.set_edgecolor('black')
-    nx.draw_networkx_labels(g, pos, font_size=10)
+
+    if kwargs['draw_node_idx'] == True:
+        nx.draw_networkx_labels(g, pos, font_size=10)
 
     if path is not None:
         plt.savefig(path)

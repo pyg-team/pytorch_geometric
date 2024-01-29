@@ -60,5 +60,6 @@ explanation.visualize_feature_importance(path, top_k=10)
 print(f"Feature importance plot has been saved to '{path}'")
 
 path = 'subgraph.pdf'
-explanation.visualize_graph(path)
+explanation.visualize_graph(path, node_label=None, color_dict=None,
+                            target_node=node_index, draw_node_idx=True)
 print(f"Subgraph visualization plot has been saved to '{path}'")
