@@ -48,13 +48,13 @@ def run(world_size, data, split_idx, model, acc):
         split_idx['test'].size(0) // world_size, dim=0)[rank].clone()
 
     model = DistributedDataParallel(model.to(device), device_ids=[local_id])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
 
     kwargs = dict(
         data=data,
         batch_size=1024,
         num_workers=get_num_workers(),
-        num_neighbors=[16, 16],
+        num_neighbors=[10, 10, 10],
     )
 
     train_loader = NeighborLoader(
@@ -71,7 +71,7 @@ def run(world_size, data, split_idx, model, acc):
     if rank == 0:
         print("Beginning training...")
 
-    for epoch in range(1, 4):
+    for epoch in range(1, 21):
         model.train()
         for i, batch in enumerate(train_loader):
             if i == warmup_steps:
@@ -145,6 +145,6 @@ if __name__ == '__main__':
     dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                      root='/datasets/ogb_datasets')
     split_idx = dataset.get_idx_split()
-    model = GCN(dataset.num_features, 128, 2, dataset.num_classes)
+    model = GCN(dataset.num_features, 256, 3, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
     run(nprocs, dataset[0], split_idx, model, acc)
