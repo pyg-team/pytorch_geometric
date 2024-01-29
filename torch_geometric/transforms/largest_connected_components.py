@@ -47,9 +47,11 @@ class LargestConnectedComponents(BaseTransform):
             return data
 
         _, count = np.unique(component, return_counts=True)
-        subset = np.in1d(component, count.argsort()[-self.num_components:])
+        subset_np = np.in1d(component, count.argsort()[-self.num_components:])
+        subset = torch.from_numpy(subset_np)
+        subset = subset.to(data.edge_index.device, torch.bool)
 
-        return data.subgraph(torch.from_numpy(subset).to(torch.bool))
+        return data.subgraph(subset)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.num_components})'
