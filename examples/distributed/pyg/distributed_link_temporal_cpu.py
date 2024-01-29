@@ -1,5 +1,5 @@
 import argparse
-import logging # noqa
+import logging  # noqa
 import os.path as osp
 import time
 from contextlib import nullcontext
