@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Changed the default inference mode for `use_segment_matmul` based on benchmarking (from a heuristic-based version) ([#8615](https://github.com/pyg-team/pytorch_geometric/pull/8615))
 - Return an empty tensor from `utils.group_argsort` if its input tensor is empty ([#8752](https://github.com/pyg-team/pytorch_geometric/pull/8752))
 - GNN layers are now jittable by default ([#8745](https://github.com/pyg-team/pytorch_geometric/pull/8745))
 - Sparse node features in `NELL` and `AttributedGraphDataset` are now represented as `torch.sparse_csr_tensor` instead of `torch_sparse.SparseTensor` ([#8679](https://github.com/pyg-team/pytorch_geometric/pull/8679))
@@ -59,7 +60,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Update `GraphStore` and `FeatureStore` to support distributed training ([#8083](https://github.com/pyg-team/pytorch_geometric/pull/8083))
 - Disallow the usage of `add_self_loops=True` in `GCNConv(normalize=False)` ([#8210](https://github.com/pyg-team/pytorch_geometric/pull/8210))
 - Disable device asserts during `torch_geometric.compile` ([#8220](https://github.com/pyg-team/pytorch_geometric/pull/8220))
-- Changed `use_segment_matmul` in `HeteroLinear`, and it now benchmarks both with and without the flag and uses a faster one in subsequent calls ([#8615](https://github.com/pyg-team/pytorch_geometric/pull/8615))
 
 ### Deprecated
 
