@@ -1,10 +1,10 @@
-# JIT Examples for Graph Neural Networks
+# JIT Examples
 
-This directory contains examples demonstrating the use of Just-In-Time (JIT) compilation in different Graph Neural Network (GNN) models.
+This directory contains examples demonstrating the use of Just-In-Time (JIT) compilation in different GNN models.
 
-| Example                | Description                                                                              |
-| ---------------------- | ---------------------------------------------------------------------------------------- |
-| [`film.py`](./film.py) | Demonstrates the use of JIT compilation in [GNN-FiLM](https://arxiv.org/abs/1906.12192). |
-| [`gat.py`](./gat.py)   | Demonstrates the use of JIT compilation in GAT.                                          |
-| [`gcn.py`](./gcn.py)   | Demonstrates the use of JIT compilation in GCN.                                          |
-| [`gin.py`](./gin.py)   | Demonstrates the use of JIT compilation in GIN.                                          |
+| Example                | Description                                                       |
+| ---------------------- | ----------------------------------------------------------------- |
+| [`gcn.py`](./gcn.py)   | JIT compilation in `GCN`                                          |
+| [`gat.py`](./gat.py)   | JIT compilation in `GAT`                                          |
+| [`gin.py`](./gin.py)   | JIT compilation in `GIN`                                          |
+| [`film.py`](./film.py) | JIT compilation in [`GNN-FiLM`](https://arxiv.org/abs/1906.12192) |
