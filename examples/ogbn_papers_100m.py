@@ -11,12 +11,12 @@ import torch_geometric
 from torch_geometric.loader import NeighborLoader
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--hidden_channels', type=int, default=128)
-parser.add_argument('--num_layers', type=int, default=2)
+parser.add_argument('--hidden_channels', type=int, default=256)
+parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--epochs', type=int, default=3)
-parser.add_argument('--batch_size', type=int, default=2048)
-parser.add_argument('--fan_out', type=int, default=16)
+parser.add_argument('--batch_size', type=int, default=1024)
+parser.add_argument('--fan_out', type=int, default=10)
 parser.add_argument(
     "--use_gat_conv",
     action='store_true',
@@ -55,7 +55,7 @@ def get_num_workers() -> int:
 
 
 kwargs = dict(
-    num_neighbors=[args.fan_out, args.fan_out],
+    num_neighbors=[args.fan_out] * args.num_layers,
     batch_size=args.batch_size,
 )
 # Set Up Neighbor Loading
