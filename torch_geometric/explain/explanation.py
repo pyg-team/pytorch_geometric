@@ -232,9 +232,12 @@ class Explanation(Data, ExplanationMixin):
 
         return _visualize_score(score, feat_labels, path, top_k)
 
-    def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None,
-                        node_labels: Optional[List[str]] = None):
+    def visualize_graph(
+        self,
+        path: Optional[str] = None,
+        backend: Optional[str] = None,
+        node_labels: Optional[List[str]] = None,
+    ) -> None:
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -247,7 +250,7 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
-            node_labels (List[str], optional): Node labels for graphviz.
+            node_labels (list[str], optional): The labels/IDs of nodes.
                 (default: :obj:`None`)
         """
         edge_mask = self.get('edge_mask')

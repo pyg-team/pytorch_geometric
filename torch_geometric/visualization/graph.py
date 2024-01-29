@@ -42,7 +42,7 @@ def visualize_graph(
             If set to :obj:`None`, will use the most appropriate
             visualization backend based on available system packages.
             (default: :obj:`None`)
-        node_labels (List[str], optional): Node labels for graphviz.
+        node_labels (List[str], optional): The labels/IDs of nodes.
             (default: :obj:`None`)
     """
     if edge_weight is not None:  # Normalize edge weights.
@@ -61,7 +61,8 @@ def visualize_graph(
         backend = 'graphviz' if has_graphviz() else 'networkx'
 
     if backend.lower() == 'networkx':
-        return _visualize_graph_via_networkx(edge_index, edge_weight, path)
+        return _visualize_graph_via_networkx(edge_index, edge_weight, path,
+                                             node_labels)
     elif backend.lower() == 'graphviz':
         return _visualize_graph_via_graphviz(edge_index, edge_weight, path,
                                              node_labels)
@@ -83,12 +84,12 @@ def _visualize_graph_via_graphviz(
     g.attr('node', shape='circle', fontsize='11pt')
 
     for node in edge_index.view(-1).unique().tolist():
-        g.node(node_labels[int(node)] if node_labels else str(node))
+        g.node(str(node) if node_labels is None else node_labels[node])
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         hex_color = hex(255 - round(255 * w))[2:]
         hex_color = f'{hex_color}0' if len(hex_color) == 1 else hex_color
-        if node_labels:
+        if node_labels is not None:
             src = node_labels[src]
             dst = node_labels[dst]
         g.edge(str(src), str(dst), color=f'#{hex_color}{hex_color}{hex_color}')
@@ -106,6 +107,7 @@ def _visualize_graph_via_networkx(
     edge_index: Tensor,
     edge_weight: Tensor,
     path: Optional[str] = None,
+    node_labels: Optional[List[str]] = None,
 ) -> Any:
     import matplotlib.pyplot as plt
     import networkx as nx
@@ -114,9 +116,12 @@ def _visualize_graph_via_networkx(
     node_size = 800
 
     for node in edge_index.view(-1).unique().tolist():
-        g.add_node(node)
+        g.add_node(node if node_labels is None else node_labels[node])
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
+        if node_labels is not None:
+            src = node_labels[src]
+            dst = node_labels[dst]
         g.add_edge(src, dst, alpha=w)
 
     ax = plt.gca()
