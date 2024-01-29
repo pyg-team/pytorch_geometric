@@ -23,7 +23,7 @@ The purpose of this manual is to guide you through the most important steps of d
    :align: center
    :width: 100%
    :alt: Dist PyG schematic breakdown.
-   
+
    Schematic breakdown of the main components.
 
 
