@@ -48,7 +48,8 @@ def run(world_size, data, split_idx, model, acc):
         split_idx['test'].size(0) // world_size, dim=0)[rank].clone()
 
     model = DistributedDataParallel(model.to(device), device_ids=[local_id])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001,
+                                 weight_decay=5e-4)
 
     kwargs = dict(
         data=data,
