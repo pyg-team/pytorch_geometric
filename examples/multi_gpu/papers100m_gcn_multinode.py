@@ -114,6 +114,7 @@ def run(world_size, data, split_idx, model, acc):
         num_batches = torch.tensor(float(i), dtype=torch.float32,
                                    device=acc_sum.device)
         dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        torch.cuda.synchronize()
         if rank == 0:
             print(
                 f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
