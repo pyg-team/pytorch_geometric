@@ -76,6 +76,19 @@ class LinkNeighborLoader(LinkLoader):
         Negative sampling is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+    .. warning::
+        Note that the sampling scheme is independent from the edge we are
+        making a prediction. That is, supervision edges in
+        :obj:`edge_label_index` **will not** get masked out during sampling by
+        default.
+        In case there exists an overlap between message passing edges in
+        :obj:`data.edge_index` and supervision edges in `edge_label_index`, you
+        might end up sampling an edge you are making a prediction for.
+        You can generally avoid this behavior (if desired) by making
+        :obj:`data.edge_index` and :obj:`edge_label_index` two disjoint sets of
+        edges, *e.g.*, via :class:`RandomLinkSplit` and its
+        :obj:`disjoint_train_ratio` argument.
+
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
             :class:`~torch_geometric.data.HeteroData`, or
