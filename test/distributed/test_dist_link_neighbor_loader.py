@@ -65,7 +65,7 @@ def dist_link_neighbor_loader_homo(
     )
 
     edge_label_index = part_data[1].get_edge_index(None, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -89,7 +89,7 @@ def dist_link_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes,)
+        assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
     assert loader.channel.empty()
@@ -116,7 +116,7 @@ def dist_link_neighbor_loader_hetero(
     )
 
     edge_label_index = part_data[1].get_edge_index(edge_type, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -150,9 +150,8 @@ def dist_link_neighbor_loader_hetero(
         for edge_type in batch.edge_types:
             if edge_type[-1] == 'v0':
                 assert batch[edge_type].num_sampled_edges[0] > 0
-                assert batch[edge_type].edge_attr.size(0) == batch[
-                    edge_type
-                ].edge_index.size(1)
+                assert batch[edge_type].edge_attr.size(
+                    0) == batch[edge_type].edge_index.size(1)
             else:
                 batch[edge_type].num_sampled_edges[0] == 0
     assert loader.channel.empty()
