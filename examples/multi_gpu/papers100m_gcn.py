@@ -217,6 +217,9 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                           ", Loss: " + str(loss))
         dist.barrier()
         torch.cuda.synchronize()
+        if rank == 0:
+            print("Average Training Iteration Time:",
+                  (time.time() - start) / (i - warmup_steps), "s/iter")
         if cugraph_data_loader:
             eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
 
@@ -226,8 +229,6 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                            directory=eval_path,
                                            input_files=input_files)
         with Join([model], divide_by_initial_world_size=False):
-            print("Average Training Iteration Time:",
-                  (time.time() - start) / (i - warmup_steps), "s/iter")
             acc_sum = 0.0
             with torch.no_grad():
                 for i, batch in enumerate(eval_loader):
