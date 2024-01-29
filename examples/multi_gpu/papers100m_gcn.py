@@ -216,6 +216,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                           ", Loss: " + str(loss))
         dist.barrier()
+        torch.cuda.synchronize()
         if cugraph_data_loader:
             eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
 
