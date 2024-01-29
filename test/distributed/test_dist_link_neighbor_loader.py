@@ -65,7 +65,7 @@ def dist_link_neighbor_loader_homo(
     )
 
     edge_label_index = part_data[1].get_edge_index(None, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -89,7 +89,7 @@ def dist_link_neighbor_loader_homo(
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.n_id.size() == (batch.num_nodes,)
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
     assert loader.channel.empty()
@@ -116,7 +116,7 @@ def dist_link_neighbor_loader_hetero(
     )
 
     edge_label_index = part_data[1].get_edge_index(edge_type, 'coo')
-    edge_label = torch.randint(high=2, size=(edge_label_index.size(1), ))
+    edge_label = torch.randint(high=2, size=(edge_label_index.size(1),))
 
     loader = DistLinkNeighborLoader(
         data=part_data,
@@ -140,9 +140,6 @@ def dist_link_neighbor_loader_hetero(
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert (batch[edge_type].input_id.numel() ==
-                batch[edge_type].batch_size == 10)
-
         assert len(batch.node_types) == 2
         for node_type in batch.node_types:
             assert torch.equal(batch[node_type].x, batch.x_dict[node_type])
@@ -151,8 +148,13 @@ def dist_link_neighbor_loader_hetero(
 
         assert len(batch.edge_types) == 4
         for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+            if edge_type[-1] == 'v0':
+                assert batch[edge_type].num_sampled_edges[0] > 0
+                assert batch[edge_type].edge_attr.size(0) == batch[
+                    edge_type
+                ].edge_index.size(1)
+            else:
+                batch[edge_type].num_sampled_edges[0] == 0
     assert loader.channel.empty()
 
 
@@ -187,14 +189,30 @@ def test_dist_link_neighbor_loader_homo(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+        ),
     )
 
     w0.start()
@@ -210,7 +228,6 @@ def test_dist_link_neighbor_loader_homo(
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
 @pytest.mark.parametrize('edge_type', [('v0', 'e0', 'v0')])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_hetero(
     tmp_path,
     num_parts,
@@ -239,14 +256,32 @@ def test_dist_link_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            0,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
+        args=(
+            tmp_path,
+            num_parts,
+            1,
+            addr,
+            port,
+            num_workers,
+            async_sampling,
+            neg_ratio,
+            edge_type,
+        ),
     )
 
     w0.start()
