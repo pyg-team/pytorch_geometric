@@ -147,13 +147,13 @@ def dist_link_neighbor_loader_hetero(
             assert batch[node_type].n_id.size(0) == batch[node_type].num_nodes
 
         assert len(batch.edge_types) == 4
-        for edge_type in batch.edge_types:
-            if edge_type[-1] == 'v0':
-                assert batch[edge_type].num_sampled_edges[0] > 0
-                assert batch[edge_type].edge_attr.size(
-                    0) == batch[edge_type].edge_index.size(1)
+        for etype in batch.edge_types:
+            if etype[-1] == 'v0':
+                assert batch[etype].num_sampled_edges[0] > 0
+                assert batch[etype].edge_attr.size(
+                    0) == batch[etype].edge_index.size(1)
             else:
-                batch[edge_type].num_sampled_edges[0] == 0
+                batch[etype].num_sampled_edges[0] == 0
     assert loader.channel.empty()
 
 
