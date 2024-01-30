@@ -251,7 +251,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             nb = torch.tensor(float(i), dtype=torch.float32,
                               device=acc_sum.device)
             dist.all_reduce(nb, op=dist.ReduceOp.SUM)
-            print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+            if rank == 0:
+                print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
         dist.barrier()
 
     with Join([model], divide_by_initial_world_size=False):
@@ -282,7 +283,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             nb = torch.tensor(float(i), dtype=torch.float32,
                               device=acc_sum.device)
             dist.all_reduce(nb, op=dist.ReduceOp.SUM)
-            print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+            if rank == 0:
+                print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
     dist.barrier()
 
     if cugraph_data_loader and rank == 0:
