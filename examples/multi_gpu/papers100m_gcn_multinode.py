@@ -55,7 +55,7 @@ def run(world_size, data, split_idx, model, acc):
         data=data,
         batch_size=1024,
         num_workers=get_num_workers(),
-        num_neighbors=[10, 10, 10],
+        num_neighbors=[30, 30],
     )
 
     train_loader = NeighborLoader(
@@ -148,6 +148,6 @@ if __name__ == '__main__':
     dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                      root='/datasets/ogb_datasets')
     split_idx = dataset.get_idx_split()
-    model = GCN(dataset.num_features, 256, 3, dataset.num_classes)
+    model = GCN(dataset.num_features, 256, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
     run(nprocs, dataset[0], split_idx, model, acc)
