@@ -83,8 +83,9 @@ class GraphSAGE(torch.nn.Module):
         super().__init__()
         self.num_layers = num_layers
         self.metadata = metadata
-        self.input_conv = SAGEConvLayer(in_channels, hidden_channels, dropout,
-                                        [e for e in self.metadata[1] if e[0] == 'author'])
+        self.input_conv = SAGEConvLayer(
+            in_channels, hidden_channels, dropout,
+            [e for e in self.metadata[1] if e[0] == 'author'])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
