@@ -51,7 +51,7 @@ class SAGEConvLayer(torch.nn.Module):
         in_feat,
         out_feat,
         dropout,
-        metadata,
+        edges,
         output_layer=False,
     ):
         super().__init__()
@@ -59,7 +59,7 @@ class SAGEConvLayer(torch.nn.Module):
         self.out_feat = out_feat
         self.conv = HeteroConv(
             {e_type: SAGEConv(in_feat, out_feat)
-             for e_type in metadata[1]})
+             for e_type in edges})
         self.output_layer = output_layer
         if not self.output_layer:
             self.dropout_conv = torch.nn.Dropout(dropout)
@@ -84,15 +84,15 @@ class GraphSAGE(torch.nn.Module):
         self.num_layers = num_layers
         self.metadata = metadata
         self.input_conv = SAGEConvLayer(in_channels, hidden_channels, dropout,
-                                        self.metadata)
+                                        [e for e in self.metadata[1]] if e[0] == 'author')
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
                 self.hidden_convs.append(
                     SAGEConvLayer(hidden_channels, hidden_channels, dropout,
-                                  self.metadata))
+                                  self.metadata[1]))
         self.output_conv = SAGEConvLayer(hidden_channels, out_channels,
-                                         dropout, self.metadata,
+                                         dropout, self.metadata[1],
                                          output_layer=True)
 
     def forward(self, batch):
