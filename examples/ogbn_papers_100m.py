@@ -12,11 +12,11 @@ from torch_geometric.loader import NeighborLoader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)
-parser.add_argument('--num_layers', type=int, default=3)
+parser.add_argument('--num_layers', type=int, default=2)
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--batch_size', type=int, default=1024)
-parser.add_argument('--fan_out', type=int, default=10)
+parser.add_argument('--fan_out', type=int, default=30)
 parser.add_argument(
     "--use_gat_conv",
     action='store_true',
