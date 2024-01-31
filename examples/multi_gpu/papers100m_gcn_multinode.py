@@ -72,7 +72,8 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
     dist.barrier()
     torch.cuda.synchronize()
     if rank == 0:
-        print("Total time before training begins=", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+        print("Total time before training begins=",
+              round(time.perf_counter() - wall_clock_start, 2), "seconds")
         print("Beginning training...")
 
     for epoch in range(1, 21):
@@ -143,7 +144,8 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
     if rank == 0:
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     dist.barrier()
-    print("Total Program Runtime=", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+    print("Total Program Runtime=",
+          round(time.perf_counter() - wall_clock_start, 2), "seconds")
 
 
 if __name__ == '__main__':
