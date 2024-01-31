@@ -32,7 +32,7 @@ def get_num_workers() -> int:
     return num_workers
 
 
-def run(world_size, data, split_idx, model, acc):
+def run(world_size, data, split_idx, model, acc, wall_clock_start):
     local_id = int(os.environ['LOCAL_RANK'])
     rank = torch.distributed.get_rank()
     torch.cuda.set_device(local_id)
@@ -69,7 +69,10 @@ def run(world_size, data, split_idx, model, acc):
     val_steps = 1000
     warmup_steps = 100
     acc = acc.to(rank)
+    dist.barrier()
+    torch.cuda.synchronize()
     if rank == 0:
+        print("Total time before training begins=", round(time.perf_counter() - wall_clock_start, 2), "seconds")
         print("Beginning training...")
 
     for epoch in range(1, 21):
@@ -140,9 +143,11 @@ def run(world_size, data, split_idx, model, acc):
     if rank == 0:
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     dist.barrier()
+    print("Total Program Runtime=", round(time.perf_counter() - wall_clock_start, 2), "seconds")
 
 
 if __name__ == '__main__':
+    wall_clock_start = time.perf_counter()
     # Setup multi-node:
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
@@ -152,4 +157,4 @@ if __name__ == '__main__':
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 256, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
-    run(nprocs, dataset[0], split_idx, model, acc)
+    run(nprocs, dataset[0], split_idx, model, acc, wall_clock_start)
