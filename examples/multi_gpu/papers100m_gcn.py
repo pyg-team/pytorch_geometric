@@ -180,11 +180,14 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
                                      num_workers=num_work, **kwargs)
 
-    dist.barrier()
     eval_steps = 1000
     warmup_steps = 20
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
+    dist.barrier()
+    torch.cuda.synchronize()
     if rank == 0:
+        print("Total time before training begins=",
+              round(time.perf_counter() - wall_clock_start, 2), "seconds")
         print("Beginning training...")
     for epoch in range(epochs):
         if cugraph_data_loader:
