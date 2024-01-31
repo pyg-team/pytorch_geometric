@@ -164,7 +164,9 @@ def test(loader: NeighborLoader, val_steps: Optional[int] = None):
 
     return total_correct / total_examples
 
-
+torch.cuda.synchronize()
+print("Total time before training begins=", round(time.perf_counter() - wall_clock_start, 2), "seconds")
+print("Beginning training...")
 for epoch in range(1, 1 + args.epochs):
     train()
     val_acc = test(val_loader, val_steps=100)
