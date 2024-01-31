@@ -368,7 +368,7 @@ if __name__ == '__main__':
                                  wall_clock_start, tempdir, args.num_layers),
                 nprocs=world_size, join=True)
         else:
-            run_train(data, world_size, model, args.epochs, args.batch_size,
+            run_train(0, data, world_size, model, args.epochs, args.batch_size,
                       args.fan_out, split_idx, dataset.num_classes,
                       args.cugraph_data_loader, wall_clock_start, tempdir,
                       args.num_layers)
