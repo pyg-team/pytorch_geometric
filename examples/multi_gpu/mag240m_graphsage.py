@@ -52,6 +52,7 @@ class SAGEConvLayer(torch.nn.Module):
         out_feat,
         dropout,
         edges,
+        nodes,
         output_layer=False,
     ):
         super().__init__()
@@ -65,7 +66,7 @@ class SAGEConvLayer(torch.nn.Module):
             self.dropout_conv = torch.nn.Dropout(dropout)
             self.activation = torch.nn.ReLU()
             self.normalizations = torch.nn.ModuleDict()
-            for node in metadata[0]:
+            for node in nodes:
                 self.normalizations[node] = BatchNorm(out_feat)
 
     def forward(self, x_dict, edge_index_dict):
@@ -85,15 +86,15 @@ class GraphSAGE(torch.nn.Module):
         self.metadata = metadata
         self.input_conv = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
-            [e for e in self.metadata[1] if e[0] == 'author'])
+            [e for e in self.metadata[1] if e[0] == 'author'], self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
                 self.hidden_convs.append(
                     SAGEConvLayer(hidden_channels, hidden_channels, dropout,
-                                  self.metadata[1]))
+                                  self.metadata[1], self.metadata[0]))
         self.output_conv = SAGEConvLayer(hidden_channels, out_channels,
-                                         dropout, self.metadata[1],
+                                         dropout, self.metadata[1], self.metadata[0],
                                          output_layer=True)
 
     def forward(self, batch):
