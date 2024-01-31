@@ -78,13 +78,16 @@ In sum, GraphGym can greatly facilitate your GNN research.
 Basic Usage
 -----------
 
+.. note::
+   For using GraphGym, :pyg:`PyG` requires additional dependencies.
+   You can install those by running :obj:`pip install torch-geometric[graphgym]`.
+
 To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
 
     git clone https://github.com/pyg-team/pytorch_geometric.git
     cd pytorch_geometric/graphgym
-    python configure.py;pip install -r requirements.txt
 
 #. **Run a single experiment:**
    Run an experiment using GraphGym via :obj:`run_single.sh`.
