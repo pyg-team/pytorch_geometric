@@ -87,8 +87,7 @@ class GraphSAGE(torch.nn.Module):
         # only use edges where 'paper' is the source
         self.input_conv = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
-            [e
-             for e in self.metadata[1] if e[0] == 'paper'], self.metadata[0])
+            [e for e in self.metadata[1] if e[0] == 'paper'], self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
