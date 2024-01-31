@@ -5,6 +5,7 @@ from typing import Optional
 import pytest
 import torch
 
+import torch_geometric.transforms as T
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.distributed import (
@@ -285,7 +286,7 @@ def dist_link_neighbor_sampler_hetero(
         data=dist_data,
         current_ctx=current_ctx,
         rpc_worker_names={},
-        num_neighbors=[-1, -1],
+        num_neighbors=[-1],
         shuffle=False,
         disjoint=disjoint,
     )
@@ -332,7 +333,7 @@ def dist_link_neighbor_sampler_hetero(
 
     sampler = NeighborSampler(
         data=data,
-        num_neighbors=[-1, -1],
+        num_neighbors=[-1],
         disjoint=disjoint,
     )
 
@@ -378,7 +379,7 @@ def dist_link_neighbor_sampler_temporal_hetero(
         data=dist_data,
         current_ctx=current_ctx,
         rpc_worker_names={},
-        num_neighbors=[-1, -1],
+        num_neighbors=[-1],
         shuffle=False,
         disjoint=True,
         temporal_strategy=temporal_strategy,
@@ -428,7 +429,7 @@ def dist_link_neighbor_sampler_temporal_hetero(
 
     sampler = NeighborSampler(
         data=data,
-        num_neighbors=[-1, -1],
+        num_neighbors=[-1],
         disjoint=True,
         temporal_strategy=temporal_strategy,
         time_attr=time_attr,
@@ -554,6 +555,7 @@ def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
         num_edge_types=4,
         edge_dim=2,
     )[0]
+    data = T.ToUndirected()(data)
 
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
@@ -602,6 +604,7 @@ def test_dist_link_neighbor_sampler_temporal_hetero(
         num_edge_types=4,
         edge_dim=2,
     )[0]
+    data = T.ToUndirected()(data)
 
     # Add time information to the data:
     data['v0'].time = torch.ones(data.num_nodes_dict['v0'], dtype=torch.int64)
@@ -654,6 +657,7 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
         num_edge_types=4,
         edge_dim=2,
     )[0]
+    data = T.ToUndirected()(data)
 
     # Add time information to the data:
     for i, edge_type in enumerate(data.edge_types):
@@ -665,7 +669,7 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 0, port, ('v1', 'e0', 'v1'),
+        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
               seed_time, temporal_strategy, 'edge_time'),
     )
 

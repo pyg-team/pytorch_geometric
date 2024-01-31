@@ -1,0 +1,968 @@
+]633;C]633;E;for i in `seq 1 100`;06b58f57-31c3-439c-9b05-caaec14162c8[1m============================= test session starts ==============================[0m
+platform linux -- Python 3.11.5, pytest-7.4.3, pluggy-1.3.0 -- /home/pyg/anaconda3/envs/kgajdamo-dist/bin/python
+cachedir: .pytest_cache
+rootdir: /home/pyg/kgajdamo/graphlearn-dev/pytorch_geometric-kgajdamo
+configfile: pyproject.toml
+[1mcollecting ... [0mcollected 12 items
+
+test/distributed/test_dist_link_neighbor_sampler.py::test_dist_link_neighbor_sampler_hetero[False] tmp_path=/tmp/pytest-of-pyg/pytest-6/test_dist_link_neighbor_sample0
+indptr: tensor([  0,  10,  19,  31,  42,  49,  51,  59,  73,  85,  98, 104, 110, 124,
+        138, 147, 157, 168, 174, 185, 194, 203])
+index: tensor([ 1,  3,  6,  9, 12, 13, 15, 16, 19, 20,  0,  3,  7,  9, 10, 10, 13, 19,
+        20,  3,  6,  7,  8,  9, 11, 12, 14, 15, 18, 19, 20,  0,  1,  2,  4,  7,
+        11, 12, 13, 14, 15, 18,  3,  7,  9, 11, 12, 13, 15,  8, 17,  0,  2,  6,
+         7, 13, 15, 16, 17,  1,  2,  3,  4,  6,  7,  8,  9, 10, 12, 14, 16, 17,
+        19,  2,  5,  7,  8, 10, 13, 14, 14, 16, 16, 18, 20,  0,  1,  2,  4,  7,
+        13, 13, 15, 16, 18, 19, 19, 20,  1,  1,  7,  8, 17, 18,  2,  3,  4, 12,
+        13, 20,  0,  2,  3,  4,  7, 11, 12, 13, 14, 15, 16, 17, 18, 20,  0,  1,
+         3,  4,  6,  8,  9,  9, 11, 12, 13, 14, 16, 18,  2,  3,  7,  8,  8, 12,
+        13, 15, 18,  0,  2,  3,  4,  6,  9, 12, 14, 16, 18,  0,  6,  7,  8,  8,
+         9, 12, 13, 15, 19, 20,  5,  6,  7, 10, 12, 19,  2,  3,  8,  9, 10, 12,
+        13, 14, 15, 19, 20,  0,  1,  2,  7,  9,  9, 16, 17, 18,  0,  1,  2,  8,
+         9, 11, 12, 16, 18])
+after partitioning
+rank=0, self.colptr_dict={'v0__e0__v1': tensor([ 0,  0,  0,  5,  8, 11, 14, 14, 14, 15, 15, 18]), 'v1__e0__v1': tensor([ 0,  0,  3, 12, 18, 22, 26, 26, 26, 33, 33, 37]), 'v1__e0__v0': tensor([ 0,  0,  0,  4,  9, 10, 10, 10, 10, 10, 13]), 'v0__e0__v0': tensor([ 0,  0,  0,  5, 10, 13, 13, 13, 13, 13, 18]), 'v1__rev_e0__v0': tensor([ 0,  0,  0,  3,  4,  7,  7,  7,  7,  7, 12]), 'v0__rev_e0__v1': tensor([ 0,  0,  3,  3,  8, 10, 13, 13, 13, 16, 16, 18])}
+rank=0, self.row_dict={'v0__e0__v1': tensor([7, 2, 3, 4, 0, 6, 9, 4, 7, 8, 2, 0, 9, 4, 2, 1, 0, 9]), 'v1__e0__v1': tensor([ 3,  2, 10,  7,  1,  5,  8, 10,  2,  3,  4,  6,  8,  1,  2,  3,  4,  6,
+         3,  8,  5,  2,  6,  4,  2,  8,  9,  0,  4,  3,  2,  5, 10,  6,  2,  1,
+         8]), 'v1__e0__v0': tensor([10,  5,  1,  9,  8,  5,  1,  3,  4,  1,  8,  3,  9]), 'v0__e0__v0': tensor([9, 8, 7, 6, 3, 1, 7, 0, 4, 2, 3, 9, 7, 2, 4, 0, 7, 1]), 'v1__rev_e0__v0': tensor([ 8,  2,  4,  2,  5,  2,  3, 10,  5,  3,  9,  6]), 'v0__rev_e0__v1': tensor([4, 2, 3, 1, 8, 0, 9, 3, 8, 3, 6, 3, 2, 8, 9, 3, 8, 2])}
+rank=0, global node ids['v0']=tensor([2, 3, 4, 9])
+rank=0, global node ids['v1']=tensor([20, 18, 15, 11, 12, 13, 14])
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  3,  4,  7,  7,  7,  7,  7, 12])
+rank=0, row=tensor([ 8,  2,  4,  2,  5,  2,  3, 10,  5,  3,  9,  6])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+p_srcs=tensor([0]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=0, colptr=tensor([ 0,  0,  0,  5, 10, 13, 13, 13, 13, 13, 18])
+rank=0, row=tensor([9, 8, 7, 6, 3, 1, 7, 0, 4, 2, 3, 9, 7, 2, 4, 0, 7, 1])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  5, 10, 13, 13, 13, 13, 13, 18])
+rank=0, row=tensor([9, 8, 7, 6, 3, 1, 7, 0, 4, 2, 3, 9, 7, 2, 4, 0, 7, 1])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([0]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  4,  9, 10, 10, 10, 10, 10, 13])
+rank=0, row=tensor([10,  5,  1,  9,  8,  5,  1,  3,  4,  1,  8,  3,  9])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  4,  9, 10, 10, 10, 10, 10, 13])
+rank=0, row=tensor([10,  5,  1,  9,  8,  5,  1,  3,  4,  1,  8,  3,  9])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([0]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  3,  4,  7,  7,  7,  7,  7, 12])
+rank=0, row=tensor([ 8,  2,  4,  2,  5,  2,  3, 10,  5,  3,  9,  6])
+rank=0, input_nodes=tensor([2, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  5, 10, 13, 13, 13, 13, 13, 18])
+rank=0, row=tensor([9, 8, 7, 6, 3, 1, 7, 0, 4, 2, 3, 9, 7, 2, 4, 0, 7, 1])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  5,  8, 11, 14, 14, 14, 15, 15, 18])
+rank=0, row=tensor([7, 2, 3, 4, 0, 6, 9, 4, 7, 8, 2, 0, 9, 4, 2, 1, 0, 9])
+rank=0, input_nodes=tensor([10,  5,  2,  8,  4,  3,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([9, 6]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  4,  9, 10, 10, 10, 10, 10, 13])
+rank=0, row=tensor([10,  5,  1,  9,  8,  5,  1,  3,  4,  1,  8,  3,  9])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  3, 12, 18, 22, 26, 26, 26, 33, 33, 37])
+rank=0, row=tensor([ 3,  2, 10,  7,  1,  5,  8, 10,  2,  3,  4,  6,  8,  1,  2,  3,  4,  6,
+         3,  8,  5,  2,  6,  4,  2,  8,  9,  0,  4,  3,  2,  5, 10,  6,  2,  1,
+         8])
+rank=0, input_nodes=tensor([10,  5,  2,  8,  4,  3,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([9, 6]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  3, 12, 18, 22, 26, 26, 26, 33, 33, 37])
+rank=0, row=tensor([ 3,  2, 10,  7,  1,  5,  8, 10,  2,  3,  4,  6,  8,  1,  2,  3,  4,  6,
+         3,  8,  5,  2,  6,  4,  2,  8,  9,  0,  4,  3,  2,  5, 10,  6,  2,  1,
+         8])
+rank=0, input_nodes=tensor([ 3, 10,  5,  1,  8,  2,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  3,  3,  8, 10, 13, 13, 13, 16, 16, 18])
+rank=0, row=tensor([4, 2, 3, 1, 8, 0, 9, 3, 8, 3, 6, 3, 2, 8, 9, 3, 8, 2])
+rank=0, input_nodes=tensor([10,  5,  2,  8,  4,  3,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([9, 6]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'rev_e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  5,  8, 11, 14, 14, 14, 15, 15, 18])
+rank=0, row=tensor([7, 2, 3, 4, 0, 6, 9, 4, 7, 8, 2, 0, 9, 4, 2, 1, 0, 9])
+rank=0, input_nodes=tensor([ 3, 10,  5,  1,  8,  2,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  3,  4,  7,  7,  7,  7,  7, 12])
+rank=0, row=tensor([ 8,  2,  4,  2,  5,  2,  3, 10,  5,  3,  9,  6])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([6, 1, 8, 7]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  5, 10, 13, 13, 13, 13, 13, 18])
+rank=0, row=tensor([9, 8, 7, 6, 3, 1, 7, 0, 4, 2, 3, 9, 7, 2, 4, 0, 7, 1])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([6, 1, 8, 7]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  3,  3,  8, 10, 13, 13, 13, 16, 16, 18])
+rank=0, row=tensor([4, 2, 3, 1, 8, 0, 9, 3, 8, 3, 6, 3, 2, 8, 9, 3, 8, 2])
+rank=0, input_nodes=tensor([ 3, 10,  5,  1,  8,  2,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  4,  9, 10, 10, 10, 10, 10, 13])
+rank=0, row=tensor([10,  5,  1,  9,  8,  5,  1,  3,  4,  1,  8,  3,  9])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([6, 1, 8, 7]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  0,  0,  3,  4,  7,  7,  7,  7,  7, 12])
+rank=0, row=tensor([ 8,  2,  4,  2,  5,  2,  3, 10,  5,  3,  9,  6])
+rank=0, input_nodes=tensor([3, 4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+out_dist.node[k].sort()[0]:
+tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+out.node[k].sort()[0]:
+tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+out_dist.node[k]:
+tensor([0, 2, 9, 6, 1, 3, 8, 7, 4, 5])
+out.node[k]:
+tensor([0, 2, 9, 1, 6, 3, 7, 8, 4, 5])
+out_dist.node[k].sort()[0]:
+tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10])
+out.node[k].sort()[0]:
+tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10])
+out_dist.node[k]:
+tensor([10,  5,  2,  8,  4,  3,  9,  6,  1,  7,  0])
+out.node[k]:
+tensor([ 9,  6,  3,  1, 10,  5,  8,  2,  4,  7,  0])
+rank=1, self.colptr_dict={'v0__e0__v1': tensor([0, 2, 2, 2, 2, 2, 2, 5, 6, 6, 8]), 'v1__e0__v1': tensor([ 0,  2,  2,  2,  2,  2,  2,  7, 10, 10, 13]), 'v1__e0__v0': tensor([ 0,  3,  6,  6,  6,  6,  7,  8, 10, 16]), 'v0__e0__v0': tensor([ 0,  4,  8,  8,  8,  8,  9, 13, 21, 25]), 'v1__rev_e0__v0': tensor([ 0,  3,  5,  5,  5,  5,  5,  8, 12, 14]), 'v0__rev_e0__v1': tensor([ 0,  2,  2,  2,  2,  2,  2,  5,  7,  7, 11])}
+rank=1, self.row_dict={'v0__e0__v1': tensor([7, 1, 9, 8, 6, 6, 9, 7]), 'v1__e0__v1': tensor([ 8,  7, 10,  5,  2,  3,  9,  2,  0,  9,  8,  7,  6]), 'v1__e0__v0': tensor([ 3,  9,  6,  3,  0,  9,  7,  5,  7,  6, 10,  8,  3,  4,  0,  6]), 'v0__e0__v0': tensor([9, 6, 1, 3, 7, 0, 9, 3, 8, 6, 7, 0, 2, 3, 1, 6, 7, 8, 9, 4, 2, 5, 7, 8,
+        2]), 'v1__rev_e0__v0': tensor([10,  5,  2, 10,  0,  3,  7,  6,  2,  4,  0,  9,  4,  6]), 'v0__rev_e0__v1': tensor([8, 1, 0, 8, 7, 7, 5, 2, 9, 0, 1])}
+rank=1, global node ids['v0']=tensor([0, 8, 7, 6, 5, 1])
+rank=1, global node ids['v1']=tensor([10, 19, 17, 16])
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  4,  8,  8,  8,  8,  9, 13, 21, 25])
+rank=1, row=tensor([9, 6, 1, 3, 7, 0, 9, 3, 8, 6, 7, 0, 2, 3, 1, 6, 7, 8, 9, 4, 2, 5, 7, 8,
+        2])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([2, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  5,  5,  5,  5,  5,  8, 12, 14])
+rank=1, row=tensor([10,  5,  2, 10,  0,  3,  7,  6,  2,  4,  0,  9,  4,  6])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  6,  6,  6,  6,  7,  8, 10, 16])
+rank=1, row=tensor([ 3,  9,  6,  3,  0,  9,  7,  5,  7,  6, 10,  8,  3,  4,  0,  6])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([2, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  4,  8,  8,  8,  8,  9, 13, 21, 25])
+rank=1, row=tensor([9, 6, 1, 3, 7, 0, 9, 3, 8, 6, 7, 0, 2, 3, 1, 6, 7, 8, 9, 4, 2, 5, 7, 8,
+        2])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  5,  5,  5,  5,  5,  8, 12, 14])
+rank=1, row=tensor([10,  5,  2, 10,  0,  3,  7,  6,  2,  4,  0,  9,  4,  6])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([2, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  6,  6,  6,  6,  7,  8, 10, 16])
+rank=1, row=tensor([ 3,  9,  6,  3,  0,  9,  7,  5,  7,  6, 10,  8,  3,  4,  0,  6])
+rank=1, input_nodes=tensor([0])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  4,  8,  8,  8,  8,  9, 13, 21, 25])
+rank=1, row=tensor([9, 6, 1, 3, 7, 0, 9, 3, 8, 6, 7, 0, 2, 3, 1, 6, 7, 8, 9, 4, 2, 5, 7, 8,
+        2])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([0, 2, 2, 2, 2, 2, 2, 5, 6, 6, 8])
+rank=1, row=tensor([7, 1, 9, 8, 6, 6, 9, 7])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  6,  6,  6,  6,  7,  8, 10, 16])
+rank=1, row=tensor([ 3,  9,  6,  3,  0,  9,  7,  5,  7,  6, 10,  8,  3,  4,  0,  6])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  2,  2,  2,  2,  2,  2,  7, 10, 10, 13])
+rank=1, row=tensor([ 8,  7, 10,  5,  2,  3,  9,  2,  0,  9,  8,  7,  6])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 3, 10,  5,  1,  8,  2,  4]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v1')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  2,  2,  2,  2,  2,  2,  7, 10, 10, 13])
+rank=1, row=tensor([ 8,  7, 10,  5,  2,  3,  9,  2,  0,  9,  8,  7,  6])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([0, 2, 2, 2, 2, 2, 2, 5, 6, 6, 8])
+rank=1, row=tensor([7, 1, 9, 8, 6, 6, 9, 7])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 3, 10,  5,  1,  8,  2,  4]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v1')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  2,  2,  2,  2,  2,  2,  5,  7,  7, 11])
+rank=1, row=tensor([8, 1, 0, 8, 7, 7, 5, 2, 9, 0, 1])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  5,  5,  5,  5,  5,  8, 12, 14])
+rank=1, row=tensor([10,  5,  2, 10,  0,  3,  7,  6,  2,  4,  0,  9,  4,  6])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  4,  8,  8,  8,  8,  9, 13, 21, 25])
+rank=1, row=tensor([9, 6, 1, 3, 7, 0, 9, 3, 8, 6, 7, 0, 2, 3, 1, 6, 7, 8, 9, 4, 2, 5, 7, 8,
+        2])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, before dist_neighbor_sample
+rank=1, after dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  2,  2,  2,  2,  2,  2,  5,  7,  7, 11])
+rank=1, row=tensor([8, 1, 0, 8, 7, 7, 5, 2, 9, 0, 1])
+rank=1, input_nodes=tensor([9, 6])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 3, 10,  5,  1,  8,  2,  4]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'rev_e0', 'v1')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  6,  6,  6,  6,  7,  8, 10, 16])
+rank=1, row=tensor([ 3,  9,  6,  3,  0,  9,  7,  5,  7,  6, 10,  8,  3,  4,  0,  6])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  3,  5,  5,  5,  5,  5,  8, 12, 14])
+rank=1, row=tensor([10,  5,  2, 10,  0,  3,  7,  6,  2,  4,  0,  9,  4,  6])
+rank=1, input_nodes=tensor([6, 1, 8, 7])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+out_dist.node[k].sort()[0]:
+tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+out.node[k].sort()[0]:
+tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+out_dist.node[k]:
+tensor([0, 2, 9, 6, 1, 3, 8, 7, 4, 5])
+out.node[k]:
+tensor([0, 2, 9, 1, 6, 3, 7, 8, 4, 5])
+out_dist.node[k].sort()[0]:
+tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10])
+out.node[k].sort()[0]:
+tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10])
+out_dist.node[k]:
+tensor([ 3,  9,  6, 10,  5,  1,  8,  2,  4,  0,  7])
+out.node[k]:
+tensor([ 9,  6,  3,  1, 10,  5,  8,  2,  4,  7,  0])
+[32mPASSED[0m
+test/distributed/test_dist_link_neighbor_sampler.py::test_dist_link_neighbor_sampler_hetero[True] tmp_path=/tmp/pytest-of-pyg/pytest-6/test_dist_link_neighbor_sample1
+indptr: tensor([  0,  13,  26,  39,  45,  56,  67,  73,  83,  90, 100, 109, 116, 127,
+        134, 143, 151, 166, 174, 183, 188, 198, 210])
+index: tensor([ 0,  1,  2,  6,  7,  9, 10, 11, 13, 13, 16, 16, 21,  0,  2,  3,  4,  7,
+         8,  9, 12, 14, 15, 17, 21, 21,  0,  1,  3,  5,  6,  7, 12, 15, 16, 17,
+        18, 20, 21,  1,  2,  5,  8, 12, 15,  1,  5,  6,  7,  9, 10, 12, 13, 16,
+        20, 21,  2,  3,  4, 12, 12, 15, 15, 16, 17, 19, 21,  0,  2,  4,  9, 10,
+        19,  0,  1,  2,  4, 10, 11, 12, 16, 16, 20,  1,  3,  9, 14, 16, 16, 18,
+         0,  1,  4,  6,  8, 14, 15, 17, 18, 20,  0,  4,  6,  7, 12, 13, 14, 16,
+        18,  0,  7, 14, 16, 17, 20, 21,  1,  2,  3,  4,  5,  5,  7, 10, 14, 19,
+        20,  0,  0,  4, 10, 16, 18, 20,  1,  8,  9, 10, 11, 12, 18, 19, 20,  1,
+         2,  3,  5,  5,  9, 15, 21,  0,  0,  2,  4,  5,  7,  7,  8,  8, 10, 11,
+        13, 17, 19, 21,  1,  2,  5,  9, 11, 16, 20, 21,  2,  8,  9, 10, 13, 14,
+        18, 20, 21,  5,  6, 12, 14, 16,  2,  4,  7,  9, 11, 12, 13, 14, 17, 18,
+         0,  1,  1,  2,  4,  5, 11, 15, 16, 17, 18, 21])
+after partitioning
+rank=1, self.colptr_dict={'v1__e0__v0': tensor([ 0,  0,  4,  8, 10, 14, 18, 19]), 'v1__e0__v1': tensor([ 0,  0,  0,  4,  4,  4,  6,  6, 10, 10, 13, 13, 19]), 'v0__e0__v0': tensor([ 0,  0,  7, 13, 17, 22, 25, 29]), 'v0__e0__v1': tensor([ 0,  0,  0,  3,  3,  3,  6,  6,  8,  8, 10, 10, 13]), 'v0__rev_e0__v1': tensor([ 0,  0,  0,  4,  4,  4,  7,  7,  9,  9,  9,  9, 12]), 'v1__rev_e0__v0': tensor([ 0,  0,  2,  5,  5,  7, 11, 12])}
+rank=1, self.row_dict={'v1__e0__v0': tensor([ 2,  5,  7, 11,  2,  6,  8, 10,  5,  2, 11,  3,  6, 10,  2,  5,  7,  6,
+         0]), 'v1__e0__v1': tensor([ 9,  4,  0, 10,  5, 11, 10, 11,  1,  6,  2,  4,  6,  8,  5,  7, 11,  1,
+         6]), 'v0__e0__v0': tensor([2, 3, 4, 9, 8, 7, 0, 1, 3, 5, 6, 7, 0, 2, 1, 5, 8, 1, 5, 6, 9, 7, 2, 3,
+        4, 0, 2, 4, 9]), 'v0__e0__v1': tensor([7, 5, 4, 9, 5, 2, 9, 2, 6, 5, 5, 2, 1]), 'v0__rev_e0__v1': tensor([5, 3, 2, 1, 5, 3, 1, 5, 1, 0, 4, 1]), 'v1__rev_e0__v0': tensor([ 4, 11, 11,  7,  5,  0,  2, 11,  9,  5,  2,  9])}
+rank=1, global node ids['v0']=tensor([6, 5, 4, 3, 2, 1])
+rank=1, global node ids['v1']=tensor([21, 19, 17, 15, 12])
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  4,  8, 10, 14, 18, 19])
+rank=1, row=tensor([ 2,  5,  7, 11,  2,  6,  8, 10,  5,  2, 11,  3,  6, 10,  2,  5,  7,  6,
+         0])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  4,  8, 10, 14, 18, 19])
+rank=1, row=tensor([ 2,  5,  7, 11,  2,  6,  8, 10,  5,  2, 11,  3,  6, 10,  2,  5,  7,  6,
+         0])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  2,  5,  5,  7, 11, 12])
+rank=1, row=tensor([ 4, 11, 11,  7,  5,  0,  2, 11,  9,  5,  2,  9])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  7, 13, 17, 22, 25, 29])
+rank=1, row=tensor([2, 3, 4, 9, 8, 7, 0, 1, 3, 5, 6, 7, 0, 2, 1, 5, 8, 1, 5, 6, 9, 7, 2, 3,
+        4, 0, 2, 4, 9])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  7, 13, 17, 22, 25, 29])
+rank=1, row=tensor([2, 3, 4, 9, 8, 7, 0, 1, 3, 5, 6, 7, 0, 2, 1, 5, 8, 1, 5, 6, 9, 7, 2, 3,
+        4, 0, 2, 4, 9])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=1, colptr=tensor([ 0,  0,  2,  5,  5,  7, 11, 12])
+rank=1, row=tensor([ 4, 11, 11,  7,  5,  0,  2, 11,  9,  5,  2,  9])
+rank=1, input_nodes=tensor([2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  4,  8, 10, 14, 18, 19])
+rank=1, row=tensor([ 2,  5,  7, 11,  2,  6,  8, 10,  5,  2, 11,  3,  6, 10,  2,  5,  7,  6,
+         0])
+rank=1, input_nodes=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  4,  8, 10, 14, 18, 19])
+rank=1, row=tensor([ 2,  5,  7, 11,  2,  6,  8, 10,  5,  2, 11,  3,  6, 10,  2,  5,  7,  6,
+         0])
+rank=1, input_nodes=tensor([1, 3, 5, 6, 1, 2, 4, 2, 3, 4, 6, 2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  2,  5,  5,  7, 11, 12])
+rank=1, row=tensor([ 4, 11, 11,  7,  5,  0,  2, 11,  9,  5,  2,  9])
+rank=1, input_nodes=tensor([1, 3, 5, 6, 1, 2, 4, 2, 3, 4, 6, 2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  4,  4,  4,  7,  7,  9,  9,  9,  9, 12])
+rank=1, row=tensor([5, 3, 2, 1, 5, 3, 1, 5, 1, 0, 4, 1])
+rank=1, input_nodes=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  4,  4,  4,  6,  6, 10, 10, 13, 13, 19])
+rank=1, row=tensor([ 9,  4,  0, 10,  5, 11, 10, 11,  1,  6,  2,  4,  6,  8,  5,  7, 11,  1,
+         6])
+rank=1, input_nodes=tensor([ 2,  2,  5,  7, 11, 11, 11,  7,  5,  2])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v1')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  7, 13, 17, 22, 25, 29])
+rank=1, row=tensor([2, 3, 4, 9, 8, 7, 0, 1, 3, 5, 6, 7, 0, 2, 1, 5, 8, 1, 5, 6, 9, 7, 2, 3,
+        4, 0, 2, 4, 9])
+rank=1, input_nodes=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  7, 13, 17, 22, 25, 29])
+rank=1, row=tensor([2, 3, 4, 9, 8, 7, 0, 1, 3, 5, 6, 7, 0, 2, 1, 5, 8, 1, 5, 6, 9, 7, 2, 3,
+        4, 0, 2, 4, 9])
+rank=1, input_nodes=tensor([1, 3, 5, 6, 1, 2, 4, 2, 3, 4, 6, 2, 1])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  3,  3,  3,  6,  6,  8,  8, 10, 10, 13])
+rank=1, row=tensor([7, 5, 4, 9, 5, 2, 9, 2, 6, 5, 5, 2, 1])
+rank=1, input_nodes=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  4,  4,  4,  7,  7,  9,  9,  9,  9, 12])
+rank=1, row=tensor([5, 3, 2, 1, 5, 3, 1, 5, 1, 0, 4, 1])
+rank=1, input_nodes=tensor([ 2,  2,  5,  7, 11, 11, 11,  7,  5,  2])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'rev_e0', 'v1')
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  4,  4,  4,  6,  6, 10, 10, 13, 13, 19])
+rank=1, row=tensor([ 9,  4,  0, 10,  5, 11, 10, 11,  1,  6,  2,  4,  6,  8,  5,  7, 11,  1,
+         6])
+rank=1, input_nodes=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+rank=1, before dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  2,  5,  5,  7, 11, 12])
+rank=1, row=tensor([ 4, 11, 11,  7,  5,  0,  2, 11,  9,  5,  2,  9])
+rank=1, input_nodes=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4])
+rank=1, num_neighbors=-1
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, before dist_neighbor_sample
+rank=1, after dist_neighbor_sample
+rank=1, colptr=tensor([ 0,  0,  0,  3,  3,  3,  6,  6,  8,  8, 10, 10, 13])
+rank=1, row=tensor([7, 5, 4, 9, 5, 2, 9, 2, 6, 5, 5, 2, 1])
+rank=1, input_nodes=tensor([ 2,  2,  5,  7, 11, 11, 11,  7,  5,  2])
+rank=1, num_neighbors=-1rank=0, self.colptr_dict={'v1__e0__v0': tensor([0, 3, 3, 3, 3, 3, 3, 3, 5, 6, 9]), 'v1__e0__v1': tensor([ 0,  5, 10, 10, 14, 20, 20, 26, 26, 32, 32, 38]), 'v0__e0__v0': tensor([ 0,  6,  6,  6,  6,  6,  6,  6, 10, 13, 18]), 'v0__e0__v1': tensor([ 0,  3,  5,  5,  6,  8,  8, 11, 11, 12]), 'v0__rev_e0__v1': tensor([ 0,  1,  1,  1,  3,  4,  4, 10, 10, 12, 12, 16]), 'v1__rev_e0__v0': tensor([ 0,  4,  4,  4,  4,  4,  4,  4,  8, 11, 13])}
+rank=0, self.row_dict={'v1__e0__v0': tensor([ 6,  3, 11, 10,  6,  6, 10,  8,  4]), 'v1__e0__v1': tensor([ 6,  8,  3,  4,  2,  7, 10,  6,  4, 11, 10,  8,  6,  0,  2, 10,  8,  0,
+         1,  9,  9, 11,  3,  1,  0,  7,  0, 10,  8,  3,  4, 11,  2,  7,  4,  3,
+         1,  8]), 'v0__e0__v0': tensor([7, 9, 6, 2, 1, 0, 1, 2, 4, 0, 9, 3, 1, 0, 8, 6, 4, 1]), 'v0__e0__v1': tensor([0, 7, 4, 0, 7, 0, 8, 1, 0, 7, 8, 8]), 'v0__rev_e0__v1': tensor([6, 0, 4, 9, 0, 7, 8, 5, 4, 2, 9, 2, 7, 9, 4, 2]), 'v1__rev_e0__v0': tensor([6, 0, 1, 3, 6, 0, 1, 2, 8, 6, 4, 7, 5])}
+rank=0, global node ids['v0']=tensor([0, 7, 8, 9])
+rank=0, global node ids['v1']=tensor([20, 18, 16, 10, 11, 13, 14])
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([0, 3, 3, 3, 3, 3, 3, 3, 5, 6, 9])
+rank=0, row=tensor([ 6,  3, 11, 10,  6,  6, 10,  8,  4])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([2, 1]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([0, 3, 3, 3, 3, 3, 3, 3, 5, 6, 9])
+rank=0, row=tensor([ 6,  3, 11, 10,  6,  6, 10,  8,  4])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  6,  6,  6,  6,  6,  6,  6, 10, 13, 18])
+rank=0, row=tensor([7, 9, 6, 2, 1, 0, 1, 2, 4, 0, 9, 3, 1, 0, 8, 6, 4, 1])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([2, 1]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  4,  4,  4,  4,  4,  4,  4,  8, 11, 13])
+rank=0, row=tensor([6, 0, 1, 3, 6, 0, 1, 2, 8, 6, 4, 7, 5])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  4,  4,  4,  4,  4,  4,  4,  8, 11, 13])
+rank=0, row=tensor([6, 0, 1, 3, 6, 0, 1, 2, 8, 6, 4, 7, 5])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([2, 1]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  6,  6,  6,  6,  6,  6,  6, 10, 13, 18])
+rank=0, row=tensor([7, 9, 6, 2, 1, 0, 1, 2, 4, 0, 9, 3, 1, 0, 8, 6, 4, 1])
+rank=0, input_nodes=tensor([7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([0, 3, 3, 3, 3, 3, 3, 3, 5, 6, 9])
+rank=0, row=tensor([ 6,  3, 11, 10,  6,  6, 10,  8,  4])
+rank=0, input_nodes=tensor([0, 7, 0, 7, 9, 9, 8, 7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([0, 3, 3, 3, 3, 3, 3, 3, 5, 6, 9])
+rank=0, row=tensor([ 6,  3, 11, 10,  6,  6, 10,  8,  4])
+rank=0, input_nodes=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  1,  1,  1,  3,  4,  4, 10, 10, 12, 12, 16])
+rank=0, row=tensor([6, 0, 4, 9, 0, 7, 8, 5, 4, 2, 9, 2, 7, 9, 4, 2])
+rank=0, input_nodes=tensor([10,  6,  6,  8, 10,  6,  3,  0,  1,  0,  1,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'rev_e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  4,  4,  4,  4,  4,  4,  4,  8, 11, 13])
+rank=0, row=tensor([6, 0, 1, 3, 6, 0, 1, 2, 8, 6, 4, 7, 5])
+rank=0, input_nodes=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  6,  6,  6,  6,  6,  6,  6, 10, 13, 18])
+rank=0, row=tensor([7, 9, 6, 2, 1, 0, 1, 2, 4, 0, 9, 3, 1, 0, 8, 6, 4, 1])
+rank=0, input_nodes=tensor([0, 7, 0, 7, 9, 9, 8, 7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  5, 10, 10, 14, 20, 20, 26, 26, 32, 32, 38])
+rank=0, row=tensor([ 6,  8,  3,  4,  2,  7, 10,  6,  4, 11, 10,  8,  6,  0,  2, 10,  8,  0,
+         1,  9,  9, 11,  3,  1,  0,  7,  0, 10,  8,  3,  4, 11,  2,  7,  4,  3,
+         1,  8])
+rank=0, input_nodes=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  3,  5,  5,  6,  8,  8, 11, 11, 12])
+rank=0, row=tensor([0, 7, 4, 0, 7, 0, 8, 1, 0, 7, 8, 8])
+rank=0, input_nodes=tensor([10,  6,  6,  8, 10,  6,  3,  0,  1,  0,  1,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  6,  6,  6,  6,  6,  6,  6, 10, 13, 18])
+rank=0, row=tensor([7, 9, 6, 2, 1, 0, 1, 2, 4, 0, 9, 3, 1, 0, 8, 6, 4, 1])
+rank=0, input_nodes=tensor([7, 0, 0, 9, 8, 7, 0, 7, 9])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  5, 10, 10, 14, 20, 20, 26, 26, 32, 32, 38])
+rank=0, row=tensor([ 6,  8,  3,  4,  2,  7, 10,  6,  4, 11, 10,  8,  6,  0,  2, 10,  8,  0,
+         1,  9,  9, 11,  3,  1,  0,  7,  0, 10,  8,  3,  4, 11,  2,  7,  4,  3,
+         1,  8])
+rank=0, input_nodes=tensor([10,  6,  6,  8, 10,  6,  3,  0,  1,  0,  1,  4])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([ 2, 11,  2,  5,  7, 11,  2, 11,  7,  5]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'e0', 'v1')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  1,  1,  1,  3,  4,  4, 10, 10, 12, 12, 16])
+rank=0, row=tensor([6, 0, 4, 9, 0, 7, 8, 5, 4, 2, 9, 2, 7, 9, 4, 2])
+rank=0, input_nodes=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  4,  4,  4,  4,  4,  4,  4,  8, 11, 13])
+rank=0, row=tensor([6, 0, 1, 3, 6, 0, 1, 2, 8, 6, 4, 7, 5])
+rank=0, input_nodes=tensor([0, 7, 0, 7, 9, 9, 8, 7, 0])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+p_srcs=tensor([1, 2, 4, 1, 3, 5, 6, 6, 2, 1, 2, 3, 4]), one_hop_num=-1, p_seed_time=None, edge_type=('v1', 'rev_e0', 'v0')
+rank=0, before dist_neighbor_sample
+rank=0, colptr=tensor([ 0,  3,  5,  5,  6,  8,  8, 11, 11, 12])
+rank=0, row=tensor([0, 7, 4, 0, 7, 0, 8, 1, 0, 7, 8, 8])
+rank=0, input_nodes=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1])
+rank=0, num_neighbors=-1
+rank=0, node_time=None
+rank=0, edge_time=None
+rank=0, after dist_neighbor_sample
+out_dist.node[k].sort()[0]:
+tensor([                -48,                 -48,                   0,
+                          0,                   0,                   0,
+                          1,                   1,                   1,
+                          1,                   2,                   2,
+                          2,                   2,                   3,
+                          3,                   3,                   3,
+                          4,                   4,                   4,
+                          4,                   5,                   5,
+                          5,                   5,                   6,
+                          6,                   6,                   6,
+                          7,                   7,                   7,
+                          7,                   8,                   8,
+                          8,                   8,                   9,
+                          9,                   9,                   9,
+                         16,                  16,                  24,
+                         24,                  33,                  33,
+                         49,                  49,                 273,
+                        273,                 977,                 977,
+                       5024,                5024,               22032,
+                      22032,             4966251,             4966251,
+                    5200640,             5200640,             5206816,
+                    5206816,             5445952,             5445952,
+                    5490832,             5490832,             5537968,
+                    5537968,             5614976,             5614976,
+                    5618432,             5618432,             5624240,
+                    5624240,             5691600,             5691600,
+                    5777808,             5777808,             5797744,
+                    5797744,             5799024,             5799024,
+                    6345232,             6345232,             6389680,
+                    6389680,             8785760,             8785760,
+                   63994656,            63994656,           102692552,
+                  102692552,           104606944,           104606944,
+                  105011856,           105011856,           107796336,
+                  107796336,           107947344,           107947344,
+                  107959856,           107959856,           107959936,
+                  107959936,           107963136,           107963136,
+                  108025142,           108025142,           108028415,
+                  108028415,           108028824,           108028824,
+                  108028856,           108028856,           108029144,
+                  108029144,           108029168,           108029168,
+                  108029248,           108029248,           108029320,
+                  108029320,           108031743,           108031743,
+                  108038992,           108038992,           108872432,
+                  108872432,       1099511627776,       1099511627776,
+            111477645534564,     111477645534564,     140556898413046,
+            140556898413046,     140557473505728,     140557473505728,
+            140557476024480,     140557476024480,     140557476100080,
+            140557476100080,     140557476132672,     140557476132672,
+            140557476253488,     140557476253488,     140563046384279,
+            140563046384279,     140563078607936,     140563078607936,
+            140563078612064,     140563078612064,     140563078620800,
+            140563078620800,     140563078621376,     140563078621376,
+            140563358874728,     140563358874728, 8897180613506342041,
+        8897180613506342041])
+out.node[k].sort()[0]:
+tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5,
+        6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9])
+out_dist.node[k]:
+tensor([                  7,                   2,                   0,
+                          1,                   1,                   2,
+                          4,                   0,                   1,
+                          3,                   5,                   6,
+                          7,                   0,                   7,
+                          9,                   6,                   2,
+                          1,                   2,                   3,
+                          4,                   9,                   8,
+                          7,                   0,                   9,
+                          8,                   5,                   8,
+                          4,                   9,                   8,
+                          5,                   4,                   5,
+                          6,                   3,                   3,
+                          6,           102692552,                  49,
+            111477645534564,           108025142,                  33,
+            140563358874728,     140557473505728,                 273,
+            140556898413046, 8897180613506342041,     140563078620800,
+            140563078612064,           108872432,     140563046384279,
+            140563078621376,     140563078607936,           107959936,
+                  105011856,           107959856,           104606944,
+                       5024,           108031743,           108038992,
+                  107796336,           107963136,           108028415,
+              1099511627776,                 977,     140557476100080,
+            140557476253488,             8785760,     140557476024480,
+                         24,             5614976,           108028824,
+                    6389680,           108028856,           108029168,
+                  108029144,             5618432,             6345232,
+                    5537968,             5797744,             5799024,
+                  108029248,               22032,           107947344,
+                    5624240,             5777808,             5691600,
+                         16,             4966251,           108029320,
+                   63994656,     140557476132672,                 -48,
+                    5490832,             5200640,             5445952,
+                    5206816,           102692552,                  49,
+            111477645534564,           108025142,                  33,
+            140563358874728,     140557473505728,                 273,
+            140556898413046, 8897180613506342041,     140563078620800,
+            140563078612064,           108872432,     140563046384279,
+            140563078621376,     140563078607936,           107959936,
+                  105011856,           107959856,           104606944,
+                       5024,           108031743,           108038992,
+                  107796336,           107963136,           108028415,
+              1099511627776,                 977,     140557476100080,
+            140557476253488,             8785760,     140557476024480,
+                         24,             5614976,           108028824,
+                    6389680,           108028856,           108029168,
+                  108029144,             5618432,             6345232,
+                    5537968,             5797744,             5799024,
+                  108029248,               22032,           107947344,
+                    5624240,             5777808,             5691600,
+                         16,             4966251,           108029320,
+                   63994656,     140557476132672,                 -48,
+                    5490832,             5200640,             5445952,
+                    5206816])
+out.node[k]:
+tensor([7, 2, 0, 1, 0, 4, 1, 2, 1, 6, 7, 3, 0, 5, 9, 1, 7, 6, 2, 0, 9, 8, 7, 4,
+        3, 2, 9, 6, 5, 8, 3, 9, 8, 4, 8, 4, 3, 5, 6, 5])
+
+rank=1, node_time=None
+rank=1, edge_time=None
+rank=1, after dist_neighbor_sample
+p_srcs=tensor([ 6,  8, 10, 10,  6,  6,  3,  0,  1,  4,  0,  1]), one_hop_num=-1, p_seed_time=None, edge_type=('v0', 'e0', 'v1')
+out_dist.node[k].sort()[0]:
+tensor([                -48,                 -48,                   0,
+                          0,                   0,                   0,
+                          1,                   1,                   1,
+                          1,                   2,                   2,
+                          2,                   2,                   3,
+                          3,                   3,                   3,
+                          4,                   4,                   4,
+                          4,                   5,                   5,
+                          5,                   5,                   6,
+                          6,                   6,                   6,
+                          7,                   7,                   7,
+                          7,                   8,                   8,
+                          8,                   8,                   9,
+                          9,                   9,                   9,
+                         16,                  16,                  24,
+                         24,                  33,                  33,
+                         49,                  49,                 273,
+                        273,                 977,                 977,
+                       5024,                5024,               22032,
+                      22032,             4966251,             4966251,
+                    5200640,             5200640,             5206816,
+                    5206816,             5445952,             5445952,
+                    5490832,             5490832,             5537968,
+                    5537968,             5614976,             5614976,
+                    5618432,             5618432,             5624240,
+                    5624240,             5691600,             5691600,
+                    5777808,             5777808,             5797744,
+                    5797744,             5799024,             5799024,
+                    6345232,             6345232,             6389680,
+                    6389680,             8785760,             8785760,
+                   63994656,            63994656,           102692552,
+                  102692552,           104606944,           104606944,
+                  105011856,           105011856,           107796336,
+                  107796336,           107947344,           107947344,
+                  107959856,           107959856,           107959936,
+                  107959936,           107963136,           107963136,
+                  108025142,           108025142,           108028415,
+                  108028415,           108028824,           108028824,
+                  108028856,           108028856,           108029144,
+                  108029144,           108029168,           108029168,
+                  108029248,           108029248,           108029320,
+                  108029320,           108031743,           108031743,
+                  108038992,           108038992,           108872432,
+                  108872432,       1099511627776,       1099511627776,
+            111477645534564,     111477645534564,     140556898413046,
+            140556898413046,     140557473505728,     140557473505728,
+            140557476024480,     140557476024480,     140557476100080,
+            140557476100080,     140557476132672,     140557476132672,
+            140557476253488,     140557476253488,     140563046384279,
+            140563046384279,     140563078607936,     140563078607936,
+            140563078612064,     140563078612064,     140563078620800,
+            140563078620800,     140563078621376,     140563078621376,
+            140563358874728,     140563358874728, 8897180613506342041,
+        8897180613506342041])
+out.node[k].sort()[0]:
+tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5,
+        6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9])
+out_dist.node[k]:
+tensor([                  2,                   7,                   1,
+                          0,                   1,                   3,
+                          5,                   6,                   7,
+                          0,                   1,                   2,
+                          4,                   0,                   2,
+                          3,                   4,                   9,
+                          8,                   7,                   0,
+                          7,                   9,                   6,
+                          2,                   1,                   4,
+                          9,                   8,                   3,
+                          9,                   8,                   5,
+                          6,                   5,                   6,
+                          4,                   8,                   3,
+                          5,           102692552,                  49,
+            111477645534564,           108025142,                  33,
+            140563358874728,     140557473505728,                 273,
+            140556898413046, 8897180613506342041,     140563078620800,
+            140563078612064,           108872432,     140563046384279,
+            140563078621376,     140563078607936,           107959936,
+                  105011856,           107959856,           104606944,
+                       5024,           108031743,           108038992,
+                  107796336,           107963136,           108028415,
+              1099511627776,                 977,     140557476100080,
+            140557476253488,             8785760,     140557476024480,
+                         24,             5614976,           108028824,
+                    6389680,           108028856,           108029168,
+                  108029144,             5618432,             6345232,
+                    5537968,             5797744,             5799024,
+                  108029248,               22032,           107947344,
+                    5624240,             5777808,             5691600,
+                         16,             4966251,           108029320,
+                   63994656,     140557476132672,                 -48,
+                    5490832,             5200640,             5445952,
+                    5206816,           102692552,                  49,
+            111477645534564,           108025142,                  33,
+            140563358874728,     140557473505728,                 273,
+            140556898413046, 8897180613506342041,     140563078620800,
+            140563078612064,           108872432,     140563046384279,
+            140563078621376,     140563078607936,           107959936,
+                  105011856,           107959856,           104606944,
+                       5024,           108031743,           108038992,
+                  107796336,           107963136,           108028415,
+              1099511627776,                 977,     140557476100080,
+            140557476253488,             8785760,     140557476024480,
+                         24,             5614976,           108028824,
+                    6389680,           108028856,           108029168,
+                  108029144,             5618432,             6345232,
+                    5537968,             5797744,             5799024,
+                  108029248,               22032,           107947344,
+                    5624240,             5777808,             5691600,
+                         16,             4966251,           108029320,
+                   63994656,     140557476132672,                 -48,
+                    5490832,             5200640,             5445952,
+                    5206816])
+out.node[k]:
+tensor([2, 7, 1, 0, 1, 6, 7, 3, 0, 5, 0, 4, 1, 2, 0, 9, 8, 7, 4, 3, 2, 9, 1, 7,
+        6, 2, 9, 8, 4, 9, 6, 5, 8, 3, 6, 5, 8, 4, 3, 5])
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[1m[31m/home/pyg/anaconda3/envs/kgajdamo-dist/lib/python3.11/multiprocessing/popen_fork.py[0m:27: KeyboardInterrupt
+[33m(to show a full traceback on KeyboardInterrupt use --full-trace)[0m
+[32m============================== [32m[1m1 passed[0m[32m in 9.64s[0m[32m ===============================[0m
