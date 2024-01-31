@@ -37,13 +37,13 @@ class ARGO:
         return result
 
     def mp_engine(self, x, train, args, ep):  # Multi-Process Engine
-        #configurations provided by the auto-tuner
+        # configurations provided by the auto-tuner
         n_proc = x[0]
         n_samp = x[1]
         n_train = x[2]
         n_total = psutil.cpu_count(logical=False)
 
-        if n_proc * (n_samp + n_train) > n_total:  #handling corner cases
+        if n_proc * (n_samp + n_train) > n_total:  # handling corner cases
             n_proc = 2
             n_samp = 2
             n_train = (n_total // n_proc) - n_samp
@@ -70,7 +70,7 @@ class ARGO:
 
     # args = arguments dataset
     def run(self, train, args):
-        #auto-tuning
+        # auto-tuning
         result = self.auto_tuning(train, args)
-        x = result.x  #optimal configuration
+        x = result.x  # optimal configuration
         self.mp_engine(x, train, args, ep=(self.epoch - self.n_search))
