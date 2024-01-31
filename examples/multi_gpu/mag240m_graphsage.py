@@ -84,6 +84,7 @@ class GraphSAGE(torch.nn.Module):
         super().__init__()
         self.num_layers = num_layers
         self.metadata = metadata
+        # only use edges where 'paper' is the source
         self.input_conv = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
             [e
@@ -101,11 +102,14 @@ class GraphSAGE(torch.nn.Module):
     def forward(self, batch):
         x_dict = batch.collect('x')
         edge_index_dict = batch.collect('edge_index')
+        print("input_dict=", x_dict)
         x_dict = self.input_conv(x_dict, edge_index_dict)
+        print("hidden_dict=", x_dict)
         if self.num_layers > 2:
             for i in range(num_layers - 2):
                 x_dict = self.hidden_convs[i](x_dict, edge_index_dict)
         x_dict = self.output_conv(x_dict, edge_index_dict)
+        print("out_dict=", x_dict)
         return x_dict
 
 
