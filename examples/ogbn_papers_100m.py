@@ -125,6 +125,7 @@ def train():
             batch = batch.to_homogeneous()
 
         if i == warmup_steps:
+            torch.cuda.synchronize()
             start_avg_time = time.perf_counter()
         batch = batch.to(device)
         optimizer.zero_grad()
