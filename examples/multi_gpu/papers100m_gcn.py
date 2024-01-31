@@ -199,6 +199,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         with Join([model], divide_by_initial_world_size=False):
             for i, batch in enumerate(train_loader):
                 if i == warmup_steps:
+                    torch.cuda.synchronize()
                     start = time.time()
                 batch = batch.to(rank)
 
