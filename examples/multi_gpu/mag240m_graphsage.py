@@ -87,7 +87,7 @@ class GraphSAGE(torch.nn.Module):
         self.input_conv = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
             [e
-             for e in self.metadata[1] if e[0] == 'author'], self.metadata[0])
+             for e in self.metadata[1] if e[0] == 'paper'], self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
@@ -211,7 +211,7 @@ def run(
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
-                batch['author'].x = batch['author'].x.to(torch.float32)
+                batch['paper'].x = batch['paper'].x.to(torch.float32)
             loss, train_acc = training_step(batch, acc, model)
             acc_sum += train_acc
             loss.backward()
