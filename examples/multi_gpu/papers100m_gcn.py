@@ -326,8 +326,9 @@ if __name__ == '__main__':
             \nNote that this requires more GPU memory or \
             a reduction in batch_size/fan_out/hidden_channels/num_layers",
     )
-    parser.add_argument("--n_devices", type=int, default=-1,
-                        help="1-8 to use that many GPUs. Defaults to all available GPUs")
+    parser.add_argument(
+        "--n_devices", type=int, default=-1,
+        help="1-8 to use that many GPUs. Defaults to all available GPUs")
 
     args = parser.parse_args()
     wall_clock_start = time.perf_counter()
@@ -364,7 +365,7 @@ if __name__ == '__main__':
                                  wall_clock_start, tempdir, args.num_layers),
                 nprocs=world_size, join=True)
     else:
-        run_train(data, world_size, model, args.epochs,
-                        args.batch_size, args.fan_out, split_idx,
-                        dataset.num_classes, args.cugraph_data_loader,
-                        wall_clock_start, tempdir, args.num_layers)
+        run_train(data, world_size, model, args.epochs, args.batch_size,
+                  args.fan_out, split_idx, dataset.num_classes,
+                  args.cugraph_data_loader, wall_clock_start, tempdir,
+                  args.num_layers)
