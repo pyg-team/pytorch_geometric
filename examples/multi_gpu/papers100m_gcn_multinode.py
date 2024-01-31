@@ -76,6 +76,7 @@ def run(world_size, data, split_idx, model, acc):
         model.train()
         for i, batch in enumerate(train_loader):
             if i == warmup_steps:
+                torch.cuda.synchronize()
                 start = time.time()
             batch = batch.to(device)
             batch_size = batch.batch_size
@@ -100,6 +101,7 @@ def run(world_size, data, split_idx, model, acc):
             if i >= val_steps:
                 break
             if i == warmup_steps:
+                torch.cuda.synchronize()
                 start = time.time()
 
             batch = batch.to(device)
