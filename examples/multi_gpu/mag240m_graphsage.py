@@ -200,7 +200,9 @@ def run(
         for i, batch in enumerate(train_loader):
             if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
                 break
-            since = time.time()
+            if i >= num_warmup_iters_for_timing:
+                torch.cuda.synchronize()
+                since = time.time()
             optimizer.zero_grad()
 
             if n_devices > 0:
@@ -218,7 +220,8 @@ def run(
                 num_batches = torch.tensor(float(i), dtype=torch.float32,
                                            device=acc_sum.device)
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-            if i > num_warmup_iters_for_timing - 1:
+            if i >= num_warmup_iters_for_timing:
+                torch.cuda.synchronize()
                 iter_time = time.time() - since
                 time_sum += iter_time
                 if rank == 0 and i % log_every_n_steps == 0:
