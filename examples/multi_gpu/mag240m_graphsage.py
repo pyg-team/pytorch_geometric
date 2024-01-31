@@ -210,7 +210,7 @@ def run(
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
-                batch = batch.to(torch.float32, "x")
+                batch['author'].x = batch['author'].x.to(torch.float32)
             loss, train_acc = training_step(batch, acc, model)
             acc_sum += train_acc
             loss.backward()
