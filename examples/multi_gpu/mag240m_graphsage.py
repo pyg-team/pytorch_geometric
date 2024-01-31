@@ -86,7 +86,8 @@ class GraphSAGE(torch.nn.Module):
         self.metadata = metadata
         self.input_conv = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
-            [e for e in self.metadata[1] if e[0] == 'author'], self.metadata[0])
+            [e
+             for e in self.metadata[1] if e[0] == 'author'], self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
@@ -94,8 +95,8 @@ class GraphSAGE(torch.nn.Module):
                     SAGEConvLayer(hidden_channels, hidden_channels, dropout,
                                   self.metadata[1], self.metadata[0]))
         self.output_conv = SAGEConvLayer(hidden_channels, out_channels,
-                                         dropout, self.metadata[1], self.metadata[0],
-                                         output_layer=True)
+                                         dropout, self.metadata[1],
+                                         self.metadata[0], output_layer=True)
 
     def forward(self, batch):
         x_dict = batch.collect('x')
