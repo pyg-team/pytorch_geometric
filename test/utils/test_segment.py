@@ -3,26 +3,31 @@ from itertools import product
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withoutExtensions
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.sparse import index2ptr
 
 
 @withCUDA
-@withPackage('torch_scatter')
+@withoutExtensions
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
-def test_segment(device, reduce):
+def test_segment(device, without_extensions, reduce):
     src = torch.randn(20, 16, device=device)
     ptr = torch.tensor([0, 0, 5, 10, 15, 20], device=device)
 
-    out = segment(src, ptr, reduce=reduce)
+    if without_extensions and not torch_geometric.typing.WITH_PT20:
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            segment(src, ptr, reduce=reduce)
+    else:
+        out = segment(src, ptr, reduce=reduce)
 
-    expected = getattr(torch, reduce)(src.view(4, 5, -1), dim=1)
-    expected = expected[0] if isinstance(expected, tuple) else expected
+        expected = getattr(torch, reduce)(src.view(4, 5, -1), dim=1)
+        expected = expected[0] if isinstance(expected, tuple) else expected
 
-    assert torch.allclose(out[:1], torch.zeros(1, 16, device=device))
-    assert torch.allclose(out[1:], expected)
+        assert torch.allclose(out[:1], torch.zeros(1, 16, device=device))
+        assert torch.allclose(out[1:], expected)
 
 
 if __name__ == '__main__':
@@ -48,15 +53,13 @@ if __name__ == '__main__':
     num_nodes_list = [4_000, 8_000, 16_000, 32_000, 64_000]
 
     if args.aggr == 'all':
-        aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+        aggrs = ['sum', 'mean', 'min', 'max']
     else:
         aggrs = args.aggr.split(',')
 
     def pytorch_segment(x, ptr, reduce):
         if reduce == 'min' or reduce == 'max':
             reduce = f'a{aggr}'  # `amin` or `amax`
-        elif reduce == 'mul':
-            reduce = 'prod'
         return torch._segment_reduce(x, reduce, offsets=ptr)
 
     def own_segment(x, ptr, reduce):
