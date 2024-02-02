@@ -4,13 +4,12 @@ import pytest
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withCUDA
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.sparse import index2ptr
 
 
 @withCUDA
-@withPackage('torch_scatter')
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_segment(device, reduce):
     src = torch.randn(20, 16, device=device)
@@ -48,15 +47,13 @@ if __name__ == '__main__':
     num_nodes_list = [4_000, 8_000, 16_000, 32_000, 64_000]
 
     if args.aggr == 'all':
-        aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+        aggrs = ['sum', 'mean', 'min', 'max']
     else:
         aggrs = args.aggr.split(',')
 
     def pytorch_segment(x, ptr, reduce):
         if reduce == 'min' or reduce == 'max':
             reduce = f'a{aggr}'  # `amin` or `amax`
-        elif reduce == 'mul':
-            reduce = 'prod'
         return torch._segment_reduce(x, reduce, offsets=ptr)
 
     def own_segment(x, ptr, reduce):

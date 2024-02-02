@@ -1,3 +1,4 @@
+import torch
 from torch import Tensor
 
 import torch_geometric.typing
@@ -18,9 +19,21 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
             refers to the boundaries of segments such that :obj:`ptr[0] = 0`
             and :obj:`ptr[-1] = src.size(0)`.
         reduce (str, optional): The reduce operation (:obj:`"sum"`,
-            :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
+            :obj:`"mean"`, :obj:`"min"` or :obj:`"max"`).
             (default: :obj:`"sum"`)
     """
     if not torch_geometric.typing.WITH_TORCH_SCATTER or is_compiling():
-        raise ImportError("'segment' requires the 'torch-scatter' package")
+        return _torch_segment(src, ptr, reduce)
+
+    if src.is_cuda and reduce == 'mean':
+        return _torch_segment(src, ptr, reduce)
+
+    # TODO Fallback to `scatter` if deterministic algorithms are turned off.
+
     return torch_scatter.segment_csr(src, ptr, reduce=reduce)
+
+
+def _torch_segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
+    if reduce == 'min' or reduce == 'max':
+        reduce = f'a{reduce}'  # `amin` or `amax`
+    return torch._segment_reduce(src, reduce, offsets=ptr, initial=0)
