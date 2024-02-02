@@ -3,6 +3,7 @@ from itertools import product
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withoutExtensions
 from torch_geometric.utils import scatter, segment
@@ -16,13 +17,17 @@ def test_segment(device, without_extensions, reduce):
     src = torch.randn(20, 16, device=device)
     ptr = torch.tensor([0, 0, 5, 10, 15, 20], device=device)
 
-    out = segment(src, ptr, reduce=reduce)
+    if without_extensions and not torch_geometric.typing.WITH_PT20:
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            segment(src, ptr, reduce=reduce)
+    else:
+        out = segment(src, ptr, reduce=reduce)
 
-    expected = getattr(torch, reduce)(src.view(4, 5, -1), dim=1)
-    expected = expected[0] if isinstance(expected, tuple) else expected
+        expected = getattr(torch, reduce)(src.view(4, 5, -1), dim=1)
+        expected = expected[0] if isinstance(expected, tuple) else expected
 
-    assert torch.allclose(out[:1], torch.zeros(1, 16, device=device))
-    assert torch.allclose(out[1:], expected)
+        assert torch.allclose(out[:1], torch.zeros(1, 16, device=device))
+        assert torch.allclose(out[1:], expected)
 
 
 if __name__ == '__main__':

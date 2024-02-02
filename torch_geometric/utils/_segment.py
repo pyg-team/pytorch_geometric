@@ -25,7 +25,7 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     if not torch_geometric.typing.WITH_TORCH_SCATTER or is_compiling():
         return _torch_segment(src, ptr, reduce)
 
-    if src.is_cuda and reduce == 'mean':
+    if torch_geometric.typing.WITH_PT20 and src.is_cuda and reduce == 'mean':
         return _torch_segment(src, ptr, reduce)
 
     # TODO Fallback to `scatter` if deterministic algorithms are turned off.
@@ -34,6 +34,9 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
 
 
 def _torch_segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
+    if not torch_geometric.typing.WITH_PT20:
+        raise ImportError("'segment' requires the 'torch-scatter' package")
+
     if reduce == 'min' or reduce == 'max':
         reduce = f'a{reduce}'  # `amin` or `amax`
     initial = 0 if reduce == 'mean' else None
