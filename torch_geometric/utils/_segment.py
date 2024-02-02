@@ -36,4 +36,8 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
 def _torch_segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     if reduce == 'min' or reduce == 'max':
         reduce = f'a{reduce}'  # `amin` or `amax`
-    return torch._segment_reduce(src, reduce, offsets=ptr, initial=0)
+    initial = 0 if reduce == 'mean' else None
+    out = torch._segment_reduce(src, reduce, offsets=ptr, initial=initial)
+    if reduce == 'amin' or reduce == 'amax':
+        out = torch.where(out.isinf(), 0, out)
+    return out

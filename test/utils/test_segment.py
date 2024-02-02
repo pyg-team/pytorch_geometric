@@ -4,14 +4,15 @@ import pytest
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withoutExtensions
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.sparse import index2ptr
 
 
 @withCUDA
+@withoutExtensions
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
-def test_segment(device, reduce):
+def test_segment(device, without_extensions, reduce):
     src = torch.randn(20, 16, device=device)
     ptr = torch.tensor([0, 0, 5, 10, 15, 20], device=device)
 
