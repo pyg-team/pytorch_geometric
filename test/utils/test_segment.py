@@ -33,7 +33,8 @@ if __name__ == '__main__':
     #
     # Insights on CPU:
     # ================
-    # * "all": Prefer `torch_scatter` implementation
+    # * "all": Prefer `torch_scatter` implementation (but `scatter(...)`
+    #          implementation is far superior due to multi-threading usage.
     import argparse
 
     from torch_geometric.typing import WITH_TORCH_SCATTER, torch_scatter
