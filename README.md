@@ -349,7 +349,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.8 to Python 3.11.
+PyG is available for Python 3.8 to Python 3.12.
 
 ### Anaconda
 
@@ -370,8 +370,6 @@ For this, simply run
 pip install torch_geometric
 ```
 
-PyG 2.3 requires that at least PyTorch 1.11 is installed.
-
 ### Additional Libraries
 
 If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
@@ -387,6 +385,23 @@ For a basic usage of PyG, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
+
+#### PyTorch 2.2
+
+To install the binaries for PyTorch 2.2.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.2.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` depending on your PyTorch installation.
+
+|             | `cpu` | `cu118` | `cu121` |
+| ----------- | ----- | ------- | ------- |
+| **Linux**   | ✅     | ✅       | ✅       |
+| **Windows** | ✅     | ✅       | ✅       |
+| **macOS**   | ✅     |         |         |
+
 
 #### PyTorch 2.1
 
@@ -404,23 +419,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` dependin
 | **Windows** | ✅     | ✅       | ✅       |
 | **macOS**   | ✅     |         |         |
 
-#### PyTorch 2.0
-
-To install the binaries for PyTorch 2.0.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu117`, or `cu118` depending on your PyTorch installation.
-
-|             | `cpu` | `cu117` | `cu118` |
-| ----------- | ----- | ------- | ------- |
-| **Linux**   | ✅     | ✅       | ✅       |
-| **Windows** | ✅     | ✅       | ✅       |
-| **macOS**   | ✅     |         |         |
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1 and PyTorch 1.13.0/1.13.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, and PyTorch 2.0.0 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
