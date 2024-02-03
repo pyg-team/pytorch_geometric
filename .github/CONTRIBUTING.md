@@ -16,7 +16,7 @@ If your PR isn't merged anytime soon (*e.g.,* due to its large size, complexity 
 
 To develop PyG on your machine, here are some tips:
 
-1. Ensure that you are running on one of the two latest PyTorch releases (*e.g.*, `2.0.0`):
+1. Ensure that you are running on one of the two latest PyTorch releases (*e.g.*, `2.2.0`):
 
    ```python
    import torch
@@ -30,7 +30,7 @@ To develop PyG on your machine, here are some tips:
    pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
    ```
 
-   where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `2.0.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu` or `cu118`).
+   where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `2.2.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu`, `cu118` or `cu121`).
 
 1. Uninstall all existing PyG installations.
    It is advised to run this command repeatedly to confirm that installations across all locations are properly removed.
@@ -85,7 +85,7 @@ Run the entire test suite with
 pytest
 ```
 
-or test individual files via, _e.g._, `pytest test/utils/test_convert.py`.
+or test individual files via, *e.g.*, `pytest test/utils/test_convert.py`.
 
 ## Continuous Integration
 
