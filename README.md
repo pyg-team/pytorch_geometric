@@ -402,7 +402,6 @@ where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` dependin
 | **Windows** | ✅     | ✅       | ✅       |
 | **macOS**   | ✅     |         |         |
 
-
 #### PyTorch 2.1
 
 To install the binaries for PyTorch 2.1.0, simply run
