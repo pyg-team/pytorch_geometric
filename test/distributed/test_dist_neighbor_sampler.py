@@ -546,32 +546,14 @@ def test_dist_neighbor_sampler_temporal_hetero(
 
     w0 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,
-        args=(
-            data,
-            tmp_path,
-            world_size,
-            0,
-            port,
-            'v0',
-            seed_time,
-            temporal_strategy,
-            'time',
-        ),
+        args=(data, tmp_path, world_size, 0, port, 'v0', seed_time,
+              temporal_strategy, 'time'),
     )
 
     w1 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,
-        args=(
-            data,
-            tmp_path,
-            world_size,
-            1,
-            port,
-            'v1',
-            seed_time,
-            temporal_strategy,
-            'time',
-        ),
+        args=(data, tmp_path, world_size, 1, port, 'v1', seed_time,
+              temporal_strategy, 'time'),
     )
 
     w0.start()
@@ -615,32 +597,14 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
 
     w0 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,
-        args=(
-            data,
-            tmp_path,
-            world_size,
-            0,
-            port,
-            'v0',
-            seed_time,
-            temporal_strategy,
-            'edge_time',
-        ),
+        args=(data, tmp_path, world_size, 0, port, 'v0', seed_time,
+              temporal_strategy, 'edge_time'),
     )
 
     w1 = mp_context.Process(
         target=dist_neighbor_sampler_temporal_hetero,
-        args=(
-            data,
-            tmp_path,
-            world_size,
-            1,
-            port,
-            'v1',
-            seed_time,
-            temporal_strategy,
-            'edge_time',
-        ),
+        args=(data, tmp_path, world_size, 1, port, 'v1', seed_time,
+              temporal_strategy, 'edge_time'),
     )
 
     w0.start()
