@@ -140,9 +140,6 @@ def dist_link_neighbor_loader_hetero(
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert (batch[edge_type].input_id.numel() ==
-                batch[edge_type].batch_size == 10)
-
         assert len(batch.node_types) == 2
         for node_type in batch.node_types:
             assert torch.equal(batch[node_type].x, batch.x_dict[node_type])
@@ -150,9 +147,12 @@ def dist_link_neighbor_loader_hetero(
             assert batch[node_type].n_id.size(0) == batch[node_type].num_nodes
 
         assert len(batch.edge_types) == 4
-        for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+        for key in batch.edge_types:
+            if key[-1] == 'v0':
+                assert batch[key].num_sampled_edges[0] > 0
+                assert batch[key].edge_attr.size(0) == batch[key].num_edges
+            else:
+                batch[key].num_sampled_edges[0] == 0
     assert loader.channel.empty()
 
 
@@ -208,7 +208,6 @@ def test_dist_link_neighbor_loader_homo(
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
 @pytest.mark.parametrize('edge_type', [('v0', 'e0', 'v0')])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_hetero(
     tmp_path,
     num_parts,
