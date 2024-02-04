@@ -81,8 +81,7 @@ See [#8241](https://github.com/pyg-team/pytorch_geometric/pull/8241).
 
 There exists two methods to run the distributed example with one script in one terminal for multiple nodes:
 
-1. `launch.py`
-
+1. `launch.py`:
    ```bash
    python launch.py
      --workspace {workspace}/pytorch_geometric
@@ -96,11 +95,7 @@ There exists two methods to run the distributed example with one script in one t
     'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
      {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
 ```
-
-1. `run_dist.sh`
-
-   All parameter settings are inside the `run_dist.sh` file and you just need run with:
-
+1. `run_dist.sh`: All parameter settings are inside the `run_dist.sh` file and you just need run with:
    ```bash
    ./run_dist.sh
    ```
