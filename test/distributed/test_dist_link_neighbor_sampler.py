@@ -559,8 +559,8 @@ def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
 
 
 @onlyDistributedTest
-@pytest.mark.parametrize('seed_time', [None])
-@pytest.mark.parametrize('temporal_strategy', ['uniform'])
+@pytest.mark.parametrize('seed_time', [None, [0, 0], [3, 3]])
+@pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_link_neighbor_sampler_temporal_hetero(
     tmp_path,
     seed_time,
