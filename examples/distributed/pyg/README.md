@@ -95,7 +95,7 @@ There exists two methods to run the distributed example with one script in one t
     'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
      {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
    ```
-1. `run_dist.sh`: All parameter settings are inside the `run_dist.sh` file and you just need run with:
+1. `run_dist.sh`: All parameter settings are contained in the `run_dist.sh` script and you just need run with:
    ```bash
    ./run_dist.sh
    ```
