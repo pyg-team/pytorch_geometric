@@ -28,6 +28,23 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
+def is_distributed_test() -> bool:
+    r"""Whether to run the distributed test suite."""
+    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
+            and sys.platform == 'linux' and has_package('pyg_lib'))
+
+
+def onlyDistributedTest(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the distributed
+    test suite.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        not is_distributed_test(),
+        reason="Fast test run",
+    )(func)
+
+
 def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
     Linux systems.

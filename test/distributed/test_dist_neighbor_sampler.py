@@ -19,7 +19,7 @@ from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.testing import onlyDistributedTest
 
 
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
@@ -399,8 +399,7 @@ def dist_neighbor_sampler_temporal_hetero(
         assert out_dist.num_sampled_nodes[k] == out.num_sampled_nodes[k]
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
@@ -426,8 +425,7 @@ def test_dist_neighbor_sampler(disjoint):
     w1.join()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [None, torch.tensor([3, 6])])
 @pytest.mark.parametrize('temporal_strategy', ['uniform'])
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
@@ -454,8 +452,7 @@ def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     w1.join()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [[3, 7]])
 @pytest.mark.parametrize('temporal_strategy', ['last'])
 def test_dist_neighbor_sampler_edge_level_temporal(
@@ -487,7 +484,7 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     w1.join()
 
 
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
@@ -525,7 +522,7 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     w1.join()
 
 
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [None, [0, 0], [2, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_neighbor_sampler_temporal_hetero(
@@ -578,7 +575,7 @@ def test_dist_neighbor_sampler_temporal_hetero(
     w1.join()
 
 
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [[0, 0], [1, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_neighbor_sampler_edge_level_temporal_hetero(
