@@ -169,6 +169,7 @@ class NodeLoader(
                     self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
@@ -206,21 +207,16 @@ class NodeLoader(
                     self.node_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
+
                 # Hack to detect whether we are in a distributed setting.
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
 
                     data = dist.utils.filter_dist_store(
-                        *self.data,
-                        out.node,
-                        out.row,
-                        out.col,
-                        out.edge,
-                        self.custom_cls,
-                        out.metadata,
-                        self.input_data.input_type,
-                    )
+                        *self.data, out.node, out.row, out.col, out.edge,
+                        self.custom_cls, out.metadata,
+                        self.input_data.input_type)
                 else:
                     data = filter_custom_hetero_store(  #
                         *self.data, out.node, out.row, out.col, out.edge,

@@ -307,9 +307,7 @@ class Partitioner:
                         'row': global_row,
                         'col': global_col,
                         'size': (data.num_nodes, data.num_nodes),
-                    },
-                    osp.join(path, 'graph.pt'),
-                )
+                    }, osp.join(path, 'graph.pt'))
 
                 nfeat = {
                     'global_id': node_id,
