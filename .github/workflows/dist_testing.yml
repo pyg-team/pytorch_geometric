@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.2
+name: Testing distributed PyG
 
 on:  # yamllint disable-line rule:truthy
   push:
