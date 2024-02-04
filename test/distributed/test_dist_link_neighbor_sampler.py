@@ -237,7 +237,6 @@ def dist_link_neighbor_sampler_temporal(
 
 
 @onlyDistributedTest
-@withPackage('pyg_lib')
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_link_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
