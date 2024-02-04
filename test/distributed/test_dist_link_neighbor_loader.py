@@ -147,13 +147,12 @@ def dist_link_neighbor_loader_hetero(
             assert batch[node_type].n_id.size(0) == batch[node_type].num_nodes
 
         assert len(batch.edge_types) == 4
-        for etype in batch.edge_types:
-            if etype[-1] == 'v0':
-                assert batch[etype].num_sampled_edges[0] > 0
-                assert batch[etype].edge_attr.size(
-                    0) == batch[etype].edge_index.size(1)
+        for key in batch.edge_types:
+            if key[-1] == 'v0':
+                assert batch[key].num_sampled_edges[0] > 0
+                assert batch[key].edge_attr.size(0) == batch[key].num_edges
             else:
-                batch[etype].num_sampled_edges[0] == 0
+                batch[key].num_sampled_edges[0] == 0
     assert loader.channel.empty()
 
 
@@ -188,30 +187,14 @@ def test_dist_link_neighbor_loader_homo(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(
-            tmp_path,
-            num_parts,
-            0,
-            addr,
-            port,
-            num_workers,
-            async_sampling,
-            neg_ratio,
-        ),
+        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
+              neg_ratio),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_homo,
-        args=(
-            tmp_path,
-            num_parts,
-            1,
-            addr,
-            port,
-            num_workers,
-            async_sampling,
-            neg_ratio,
-        ),
+        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
+              neg_ratio),
     )
 
     w0.start()
@@ -255,32 +238,14 @@ def test_dist_link_neighbor_loader_hetero(
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(
-            tmp_path,
-            num_parts,
-            0,
-            addr,
-            port,
-            num_workers,
-            async_sampling,
-            neg_ratio,
-            edge_type,
-        ),
+        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
+              neg_ratio, edge_type),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_loader_hetero,
-        args=(
-            tmp_path,
-            num_parts,
-            1,
-            addr,
-            port,
-            num_workers,
-            async_sampling,
-            neg_ratio,
-            edge_type,
-        ),
+        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
+              neg_ratio, edge_type),
     )
 
     w0.start()

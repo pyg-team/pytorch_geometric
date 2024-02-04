@@ -5,7 +5,6 @@ from typing import Optional
 import pytest
 import torch
 
-import torch_geometric.transforms as T
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.distributed import (
@@ -505,8 +504,8 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
+        is_undirected=True,
     )[0]
-    data = T.ToUndirected()(data)
 
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
@@ -552,8 +551,8 @@ def test_dist_neighbor_sampler_temporal_hetero(
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
+        is_undirected=True,
     )[0]
-    data = T.ToUndirected()(data)
 
     data['v0'].time = torch.full((data.num_nodes_dict['v0'], ), 1,
                                  dtype=torch.int64)
@@ -605,8 +604,8 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
+        is_undirected=True,
     )[0]
-    data = T.ToUndirected()(data)
 
     for i, edge_type in enumerate(data.edge_types):
         data[edge_type].edge_time = torch.full(

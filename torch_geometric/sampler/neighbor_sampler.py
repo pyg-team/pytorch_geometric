@@ -245,10 +245,6 @@ class NeighborSampler(BaseSampler):
                         attr.group_name: time_tensor
                         for attr, time_tensor in zip(time_attrs, time_tensors)
                     }
-                    if time_attr == 'time':
-                        self.node_time = time
-                    else:
-                        self.edge_time = time
 
                     group_names = [attr.group_name for attr in time_attrs]
                     if all([isinstance(g, str) for g in group_names]):
