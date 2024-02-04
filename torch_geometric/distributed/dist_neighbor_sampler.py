@@ -201,10 +201,10 @@ class DistNeighborSampler:
         inputs: Union[NodeSamplerInput, DistEdgeHeteroSamplerInput],
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Performs layer by layer distributed sampling from a
-        :class:`NodeSamplerInput` and returns the output of the sampling
-        procedure.
+        :class:`NodeSamplerInput` or :class:`DistEdgeHeteroSamplerInput` and
+        returns the output of the sampling procedure.
 
-        Note:
+        .. note::
             In case of distributed training it is required to synchronize the
             results between machines after each layer.
         """
@@ -229,9 +229,8 @@ class DistNeighborSampler:
                         seed_time = self.node_time[input_type][seed]
                 else:
                     raise ValueError("Seed time needs to be specified")
-        else:  # DistEdgeHeteroSamplerInput
-            # Metadata is added in the :obj:`edge_sample` function.
-            metadata = None
+        else:  # `DistEdgeHeteroSamplerInput`:
+            metadata = None  # Metadata is added during `edge_sample`.
 
         # Heterogeneous Neighborhood Sampling #################################
 
@@ -247,7 +246,7 @@ class DistNeighborSampler:
                 if self.temporal:
                     node_dict.seed_time[input_type][0] = seed_time.clone()
 
-            else:  # DistEdgeHeteroSamplerInput
+            else:  # `DistEdgeHeteroSamplerInput`:
                 seed_dict = inputs.node_dict
                 if self.temporal:
                     for k, v in inputs.node_dict.items():
@@ -356,7 +355,6 @@ class DistNeighborSampler:
 
                     if self.temporal and i < self.num_hops - 1:
                         # Assign seed time based on source node subgraph ID:
-
                         if isinstance(inputs, NodeSamplerInput):
                             src_seed_time = [
                                 seed_time[(seed_batch == batch_idx).nonzero()]
@@ -365,7 +363,7 @@ class DistNeighborSampler:
                             src_seed_time = torch.as_tensor(
                                 src_seed_time, dtype=torch.int64)
 
-                        else:  # DistEdgeHeteroSamplerInput
+                        else:  # `DistEdgeHeteroSamplerInput`:
                             src_seed_time = torch.empty(0, dtype=torch.int64)
                             for k, v in batch_dict.src.items():
                                 time = [
@@ -379,9 +377,8 @@ class DistNeighborSampler:
                                     src_seed_time = torch.cat(
                                         [src_seed_time, time])
                                 except Exception:
-                                    # `time` consists of empty tensors, because
-                                    # no nodes of this type belonging to a
-                                    # given subgraphs were sampled.
+                                    # `time`  may be an empty tensors, because
+                                    # no nodes of this type were sampled.
                                     pass
 
                         node_dict.seed_time[dst][i + 1] = torch.cat(
@@ -635,7 +632,7 @@ class DistNeighborSampler:
                         input_id=inputs.input_id,
                         node=seed,
                         time=seed_time,
-                        input_type=input_type[0],  # csc
+                        input_type=input_type[0],
                     ))
 
             # Enhance `out` by label information ##############################
@@ -647,11 +644,11 @@ class DistNeighborSampler:
                 if disjoint:
                     if input_type[0] != input_type[-1]:
                         edge_label_index = torch.arange(num_pos + num_neg)
-                        edge_label_index = edge_label_index.repeat(2).view(
-                            2, -1)
+                        edge_label_index = edge_label_index.repeat(2)
+                        edge_label_index = edge_label_index.view(2, -1)
                     else:
-                        edge_label_index = torch.arange(2 *
-                                                        (num_pos + num_neg))
+                        num_labels = num_pos + num_neg
+                        edge_label_index = torch.arange(2 * (num_labels))
                         edge_label_index = edge_label_index.view(2, -1)
                 else:
                     if input_type[0] != input_type[-1]:
