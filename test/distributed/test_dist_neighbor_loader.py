@@ -14,7 +14,7 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.testing import onlyDistributedTest
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -142,8 +142,7 @@ def dist_neighbor_loader_hetero(
     assert loader.channel.empty()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
@@ -185,8 +184,7 @@ def test_dist_neighbor_loader_homo(
     w1.join()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])

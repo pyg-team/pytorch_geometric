@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.2
+name: Testing distributed PyG
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -23,28 +23,21 @@ jobs:
         uses: tj-actions/changed-files@v41
         with:
           files: |
-            benchmark/**
-            conda/**
-            docker/**
-            docs/**
-            examples/**
-            graphgym/**
-            README.md
-            CHANGELOG.md
+            torch_geometric/distributed/**
+            test/distributed/**
 
       - name: Setup packages
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: ./.github/actions/setup
-        with:
-          full_install: false
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
           pip install -e .[test]
 
       - name: Run tests
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         timeout-minutes: 10
         run: |
-          pytest
+          DIST_TEST=1 pytest test/distributed
+        shell: bash
