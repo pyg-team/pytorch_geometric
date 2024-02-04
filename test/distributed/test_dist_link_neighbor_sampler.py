@@ -16,7 +16,6 @@ from torch_geometric.distributed import (
 )
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.event_loop import ConcurrentEventLoop
-from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import EdgeSamplerInput, NeighborSampler
 from torch_geometric.sampler.neighbor_sampler import edge_sample
@@ -79,18 +78,6 @@ def create_hetero_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     other_graph_store = LocalGraphStore.from_partition(tmp_path, int(not rank))
     feature_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-    graph_store.partition_idx = feature_store.partition_idx = partition_idx
-    graph_store.num_partitions = feature_store.num_partitions = num_partitions
-    graph_store.node_pb = feature_store.node_feat_pb = node_pb
-    graph_store.edge_pb = feature_store.edge_feat_pb = edge_pb
-    graph_store.meta = feature_store.meta = meta
 
     return (feature_store, graph_store), other_graph_store
 

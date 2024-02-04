@@ -14,31 +14,12 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.testing import onlyDistributedTest
 
 
 def create_dist_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feat_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-    graph_store.partition_idx = partition_idx
-    graph_store.num_partitions = num_partitions
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
-
-    feat_store.partition_idx = partition_idx
-    feat_store.num_partitions = num_partitions
-    feat_store.node_feat_pb = node_pb
-    feat_store.edge_feat_pb = edge_pb
-    feat_store.meta = meta
 
     return feat_store, graph_store
 

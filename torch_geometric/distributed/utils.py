@@ -6,7 +6,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
+from torch_geometric.distributed.local_feature_store import LocalFeatureStore
+from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.typing import EdgeType, NodeType
 
@@ -87,7 +88,6 @@ def remove_duplicates(
     batch: Optional[Tensor] = None,
     disjoint: bool = False,
 ) -> Tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor]]:
-
     num_nodes = node.numel()
     node_combined = torch.cat([node, out.node])
 
@@ -152,18 +152,18 @@ def filter_dist_store(
             required_node_attrs.append(attr)
             data[attr.group_name].num_nodes = attr.index.size(0)
 
-    if nfeats is not None:
+    if nfeats:
         for attr in required_node_attrs:
             if nfeats[attr.group_name] is not None:
                 data[attr.group_name][attr.attr_name] = nfeats[attr.group_name]
 
-    if efeats is not None:
+    if efeats:
         for attr in required_edge_attrs:
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
 
-    if nlabels is not None:
-        data[input_type].y = nlabels
+    if nlabels:
+        data[input_type].y = nlabels[input_type]
 
     return data
 
