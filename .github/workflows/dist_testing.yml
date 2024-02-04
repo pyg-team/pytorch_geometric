@@ -39,4 +39,5 @@ jobs:
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         timeout-minutes: 10
         run: |
-          pytest test/distributed
+          DIST_TEST=1 pytest test/distributed
+        shell: bash
