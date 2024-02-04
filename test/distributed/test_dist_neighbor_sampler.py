@@ -504,7 +504,6 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
-        is_undirected=True,
     )[0]
 
     partitioner = Partitioner(data, world_size, tmp_path)
@@ -551,7 +550,6 @@ def test_dist_neighbor_sampler_temporal_hetero(
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
-        is_undirected=True,
     )[0]
 
     data['v0'].time = torch.full((data.num_nodes_dict['v0'], ), 1,
@@ -604,7 +602,6 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
         num_node_types=2,
         num_edge_types=4,
         edge_dim=2,
-        is_undirected=True,
     )[0]
 
     for i, edge_type in enumerate(data.edge_types):
