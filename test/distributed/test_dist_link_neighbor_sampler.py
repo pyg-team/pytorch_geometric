@@ -588,7 +588,7 @@ def test_dist_link_neighbor_sampler_temporal_hetero(
 
     # Add time information to the data:
     data['v0'].time = torch.ones(data['v0'].num_nodes, dtype=torch.int64)
-    data['v1'].time = torch.full((data['v0'].num_nodes, ), 2).long()
+    data['v1'].time = torch.full((data['v1'].num_nodes, ), 2).long()
 
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
