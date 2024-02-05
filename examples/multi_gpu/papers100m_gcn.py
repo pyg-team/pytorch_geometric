@@ -219,7 +219,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 if rank == 0 and i % 10 == 0:
                     print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                           ", Loss: " + str(loss))
-        nb = i + 1
+        nb = i + 1.0
         dist.barrier()
         torch.cuda.synchronize()
         if rank == 0:
@@ -257,7 +257,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                   device=acc_sum.device)
                 dist.all_reduce(nb, op=dist.ReduceOp.SUM)
             else:
-                nb = i + 1
+                nb = i + 1.0
             if rank == 0:
                 print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
         dist.barrier()
@@ -292,7 +292,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                   device=acc_sum.device)
                 dist.all_reduce(nb, op=dist.ReduceOp.SUM)
             else:
-                nb = i + 1
+                nb = i + 1.0
             if rank == 0:
                 print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
     dist.barrier()
