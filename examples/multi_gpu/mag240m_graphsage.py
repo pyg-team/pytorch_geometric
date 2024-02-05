@@ -192,6 +192,7 @@ def run(
         num_workers=16,
         persistent_workers=True,
         num_neighbors=sizes,
+        drop_last=True
     )
     train_loader = NeighborLoader(
         data,
@@ -204,13 +205,11 @@ def run(
         data,
         input_nodes=("paper", eval_idx),
         shuffle=True,
-        drop_last=True,
         **kwargs,
     )
     test_loader = NeighborLoader(
         data,
         input_nodes=("paper", test_idx),
-        drop_last=True,
         **kwargs,
     )
     if rank == 0:
