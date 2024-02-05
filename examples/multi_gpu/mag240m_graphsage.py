@@ -207,6 +207,7 @@ def run(
     eval_loader = NeighborLoader(
         data,
         input_nodes=("paper", eval_idx),
+        shuffle=True,
         **kwargs,
     )
     test_loader = NeighborLoader(
@@ -297,8 +298,6 @@ def run(
     acc_sum = 0
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
-            if eval_steps >= 0 and i >= eval_steps:
-                break
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
@@ -308,10 +307,11 @@ def run(
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                    device=rank)
             torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            num_batches = torch.tensor(float(i), dtype=torch.float32,
+            num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                        device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-        print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+        final_test_acc = acc_sum/(num_batches) * 100.0:.4f
+        print(f"Test Accuracy: {final_test_acc}%", )
     if n_devices > 1:
         dist.destroy_process_group()
     torch.save(model, 'trained_graphsage_for_mag240m.pt')
@@ -327,7 +327,7 @@ if __name__ == "__main__":
     parser.add_argument("--hidden_channels", type=int, default=1024)
     parser.add_argument("--batch_size", type=int, default=1024)
     parser.add_argument("--dropout", type=float, default=0.5)
-    parser.add_argument("--epochs", type=int, default=1)
+    parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--num_steps_per_epoch", type=int, default=-1,
                         help=help_str)
     parser.add_argument("--log_every_n_steps", type=int, default=100)
