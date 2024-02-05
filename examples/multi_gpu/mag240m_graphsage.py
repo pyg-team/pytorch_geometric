@@ -37,7 +37,6 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
-    print("y_hat=", y_hat)
     return acc(y_hat.softmax(dim=-1), y)
 
 
@@ -299,6 +298,7 @@ def run(
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             print("batch=", batch)
             print("batch.y=", batch['paper'].y)
+            print("batch.y.unique()=", batch['paper'].y.unique())
             acc_sum += validation_step(batch, acc, model)
             print("acc_sum=", acc_sum, "for batch", i)
 
