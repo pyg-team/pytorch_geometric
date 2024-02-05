@@ -298,7 +298,7 @@ def run(
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             print("batch=", batch)
-            print("batch.y=", batch.y)
+            print("batch.y=", batch['paper'].y)
             acc_sum += validation_step(batch, acc, model)
             print("acc_sum=", acc_sum, "for batch", i)
 
