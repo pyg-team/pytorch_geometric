@@ -310,7 +310,7 @@ def run(
             num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                        device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-        final_test_acc = acc_sum/(num_batches) * 100.0
+        final_test_acc = acc_sum / (num_batches) * 100.0
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
