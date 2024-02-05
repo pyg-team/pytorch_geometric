@@ -96,7 +96,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
 
         dist.barrier()
         torch.cuda.synchronize()
-        num_batches = i + 1
+        num_batches = i + 1.0
         if rank == 0:
             sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
