@@ -254,7 +254,7 @@ def run(
                                            device=acc_sum.device)
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
             else:
-                num_batches = i + 1
+                num_batches = i + 1.0
             if i >= num_warmup_iters_for_timing:
                 torch.cuda.synchronize()
                 iter_time = time.time() - since
@@ -271,7 +271,7 @@ def run(
             Average Step Time: \
             {time_sum/(num_batches - num_warmup_iters_for_timing):.4f}s")
         model.eval()
-        acc_sum = 0
+        acc_sum = 0.0
         with torch.no_grad():
             for i, batch in enumerate(eval_loader):
                 if eval_steps >= 0 and i >= eval_steps:
@@ -289,13 +289,13 @@ def run(
                                            device=acc_sum.device)
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
             else:
-                num_batches = i + 1
+                num_batches = i + 1.0
             print(
                 f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.barrier()
     model.eval()
-    acc_sum = 0
+    acc_sum = 0.0
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
             if n_devices > 0:
@@ -310,6 +310,8 @@ def run(
             num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                        device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        else:
+            num_batches = i + 1.0
         final_test_acc = acc_sum/(num_batches) * 100.0
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
