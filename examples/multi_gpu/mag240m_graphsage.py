@@ -77,6 +77,7 @@ class SAGEConvLayer(torch.nn.Module):
                     self.dropout_conv(h[node_type])))
         return h
 
+
 # Data = HeteroData(
 #   num_classes=153,
 #   paper={
