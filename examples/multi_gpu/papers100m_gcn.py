@@ -186,8 +186,9 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     dist.barrier()
     torch.cuda.synchronize()
     if rank == 0:
-        print("Total time before training begins=",
-              round(time.perf_counter() - wall_clock_start, 2), "seconds")
+        prep_time = round(time.perf_counter() - wall_clock_start, 2)
+        print("Total time before training begins (prep_time) =",
+              prep_time, "seconds")
         print("Beginning training...")
     for epoch in range(epochs):
         if cugraph_data_loader:
@@ -304,8 +305,11 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         shutdown_dask_client(client)
     dist.barrier()
     if rank == 0:
-        print("Total Program Runtime =",
-              round(time.perf_counter() - wall_clock_start, 2), "seconds")
+        total_time = round(time.perf_counter() - wall_clock_start, 2)
+        print("Total Program Runtime (total_time) =",
+              total_time, "seconds")
+        print("total_time - prep_time =",
+              total_time - prep_time, "seconds")
 
 
 if __name__ == '__main__':
