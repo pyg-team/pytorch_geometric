@@ -219,11 +219,12 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 if rank == 0 and i % 10 == 0:
                     print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                           ", Loss: " + str(loss))
+        nb = i + 1
         dist.barrier()
         torch.cuda.synchronize()
         if rank == 0:
             print("Average Training Iteration Time:",
-                  (time.time() - start) / (i - warmup_steps), "s/iter")
+                  (time.time() - start) / (nb - warmup_steps), "s/iter")
         if cugraph_data_loader:
             eval_path = os.path.join(tempdir, f'samples_eval_{epoch}')
 
@@ -248,13 +249,15 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     out = model.module(batch.x, batch.edge_index)
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
-
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                   device=rank)
-            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            nb = torch.tensor(float(i), dtype=torch.float32,
-                              device=acc_sum.device)
-            dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+            if world_size > 1:
+                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                                       device=rank)
+                dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+                nb = torch.tensor(float(i + 1), dtype=torch.float32,
+                                  device=acc_sum.device)
+                dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+            else:
+                nb = i + 1
             if rank == 0:
                 print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
         dist.barrier()
@@ -281,12 +284,15 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                 acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                batch.y[:batch_size])
 
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                   device=rank)
-            dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            nb = torch.tensor(float(i), dtype=torch.float32,
-                              device=acc_sum.device)
-            dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+            if world_size > 1:
+                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
+                                       device=rank)
+                dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
+                nb = torch.tensor(float(i + 1), dtype=torch.float32,
+                                  device=acc_sum.device)
+                dist.all_reduce(nb, op=dist.ReduceOp.SUM)
+            else:
+                nb = i + 1
             if rank == 0:
                 print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
     dist.barrier()
