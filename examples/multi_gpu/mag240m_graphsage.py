@@ -247,9 +247,11 @@ def run(
                 acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                        device=rank)
                 torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                num_batches = torch.tensor(float(i), dtype=torch.float32,
+                num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                            device=acc_sum.device)
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+            else:
+                num_batches = i + 1
             if i >= num_warmup_iters_for_timing:
                 torch.cuda.synchronize()
                 iter_time = time.time() - since
@@ -279,10 +281,11 @@ def run(
                 acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                        device=rank)
                 torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                num_batches = torch.tensor(float(i), dtype=torch.float32,
+                num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                            device=acc_sum.device)
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-            final_test_acc = acc_sum / (i + 1) * 100.0
+            else:
+                num_batches = i + 1
             print(
                 f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
