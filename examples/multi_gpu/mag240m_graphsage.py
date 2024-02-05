@@ -90,10 +90,11 @@ class GraphSAGE(torch.nn.Module):
             in_channels, in_channels, dropout,
             [e for e in self.metadata[1] if e[0] == 'paper'], self.metadata[0])
         # only use edges where 'institution' is not the source
-        # this is because 
+        # this is because
         self.in_conv2 = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
-            [e for e in self.metadata[1] if e[0] != 'institution'], self.metadata[0])
+            [e for e in self.metadata[1] if e[0] != 'institution'],
+            self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
