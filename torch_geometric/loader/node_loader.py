@@ -212,9 +212,11 @@ class NodeLoader(
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
+
                     data = dist.utils.filter_dist_store(
                         *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls, out.metadata)
+                        self.custom_cls, out.metadata,
+                        self.input_data.input_type)
                 else:
                     data = filter_custom_hetero_store(  #
                         *self.data, out.node, out.row, out.col, out.edge,
@@ -260,9 +262,6 @@ class NodeLoader(
 
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
-
-    def __enter__(self):
-        return self
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

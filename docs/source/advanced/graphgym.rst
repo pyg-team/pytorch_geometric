@@ -78,6 +78,10 @@ In sum, GraphGym can greatly facilitate your GNN research.
 Basic Usage
 -----------
 
+.. note::
+   For using GraphGym, :pyg:`PyG` requires additional dependencies.
+   You can install those by running :obj:`pip install torch-geometric[graphgym]`.
+
 To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
@@ -87,7 +91,7 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
 
 #. **Run a single experiment:**
    Run an experiment using GraphGym via :obj:`run_single.sh`.
-   Configurations are specified in :obj:`configs/example_node.yaml`.
+   Configurations are specified in :obj:`configs/pyg/example_node.yaml`.
    The default experiment is about node classification on the :class:`~torch_geometric.datasets.Planetoid` datasets (using a random 80/20 train/validation split).
 
    .. code-block:: bash
@@ -96,7 +100,7 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
 
 #. **Run a batch of experiments:**
    Run a batch of experiments using GraphGym via :obj:`run_batch.sh`.
-   Configurations are specified in :obj:`configs/example_node.yaml` (controls the basic architecture) and :obj:`grids/example.txt` (controls how to do grid search).
+   Configurations are specified in :obj:`configs/pyg/example_node.yaml` (controls the basic architecture) and :obj:`grids/example.txt` (controls how to do grid search).
    The experiment examines 96 models in the recommended GNN design space, on 2 graph classification datasets.
    Each experiment is repeated 3 times, and we set up that 8 jobs can be concurrently run.
    Depending on your infrastructure, finishing all the experiments may take a long time;
@@ -125,7 +129,7 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
    #. **Specify a configuration file:**
       In GraphGym, an experiment is fully specified by a :obj:`*.yaml` file.
       Unspecified configurations in the :obj:`*.yaml` file will be populated by the default values in :meth:`torch_geometric.graphgym.set_cfg`.
-      For example, in :obj:`configs/example_node.yaml`, there are configurations for the dataset, training procedure, model, etc.
+      For example, in :obj:`configs/pyg/example_node.yaml`, there are configurations for the dataset, training procedure, model, etc.
       Concrete description for each configuration is described in :meth:`~torch_geometric.graphgym.set_cfg`.
 
    #. **Launch an experiment:**
@@ -133,14 +137,14 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
 
       .. code-block:: bash
 
-          python main.py --cfg configs/example_node.yaml --repeat 3
+          python main.py --cfg configs/pyg/example_node.yaml --repeat 3
 
       You can specify the number of different random seeds to repeat via :obj:`--repeat`.
 
    #. **Understand the results:**
       Experimental results will be automatically saved in :obj:`results/${CONFIG_NAME}/`.
-      In the example above, this amounts to :obj:`results/example_node/`.
-      Results for different random seeds will be saved in different subdirectories, *e.g.*, :obj:`results/example_node/2`.
+      In the example above, this amounts to :obj:`results/pyg/example_node/`.
+      Results for different random seeds will be saved in different subdirectories, *e.g.*, :obj:`results/pyg/example_node/2`.
       The aggregated results over all the random seeds are *automatically* generated into :obj:`results/example/agg`, including the mean and standard deviation :obj:`_std` for each metric.
       Train/validation/test results are further saved into subdirectories, such as :obj:`results/example/agg/val`.
       Here, :obj:`stats.json` stores the results after each epoch aggregated across random seeds, and :obj:`best.json` stores the results of *the epoch with the highest validation accuracy*.
@@ -186,8 +190,8 @@ To use GraphGym, you need to clone :pyg:`PyG` from :github:`GitHub`, then change
 
    #. **Understand the results:**
       Experimental results will be automatically saved in directory :obj:`results/${CONFIG_NAME}_grid_${GRID_NAME}/`.
-      In the example above, this amounts to :obj:`results/example_grid_example/`.
-      After running each experiment, GraphGym additionally automatically averages across different models, saved in :obj:`results/example_grid_example/agg`.
+      In the example above, this amounts to :obj:`results/pyg/example_grid_example/`.
+      After running each experiment, GraphGym additionally automatically averages across different models, saved in :obj:`results/pyg/example_grid_example/agg`.
       There, :obj:`val.csv` represents the validation accuracy for each model configuration at the *final* epoch,
       :obj:`val_best.csv` represents the results at the epoch with the highest average validation accuracy, and
       :obj:`val_best_epoch.csv` represents the results at the epoch with the highest validation accuracy averaged over different random seeds.
