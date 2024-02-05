@@ -38,7 +38,7 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
     print("y_hat=", y_hat)
-    return acc(y_hat.softmax(dim=-1), y), 
+    return acc(y_hat.softmax(dim=-1), y),
 
 
 class SAGEConvLayer(torch.nn.Module):
