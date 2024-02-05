@@ -303,7 +303,7 @@ def run(
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             acc_sum += validation_step(batch, acc, model)
-            print("acc_sum=",acc_sum, "for batch", i)
+            print("acc_sum=", acc_sum, "for batch", i)
 
         if n_devices > 1:
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
