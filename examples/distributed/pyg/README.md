@@ -8,9 +8,9 @@ PyG native GPU application is under development and will be released soon.
 The solution is designed to effortlessly distribute the training of large-scale graph neural networks across multiple nodes, thanks to the integration of [Distributed Data Parallelism (DDP)](https://pytorch.org/docs/stable/notes/ddp.html) for model training and [Remote Procedure Call (RPC)](https://pytorch.org/docs/stable/rpc.html) for efficient sampling and fetching of non-local features.
 The design includes a number of custom classes, *i.e.* (1) `DistNeighborSampler` implements CPU sampling algorithms and feature extraction from local and remote data remaining consistent data structure at the output, (2) an integrated `DistLoader` which ensures safe opening & closing of RPC connection between the samplers, and (3) a METIS-based `Partitioner` and many more.
 
-## Example for distributed training on OGB datasets
+## Example for Node-level Distributed Training on OGB Datasets
 
-The example provided in [`distributed_cpu.py`](./distributed_cpu.py) performs distributed training with multiple CPU nodes using [OGB](https://ogb.stanford.edu/) datasets and a [`GraphSAGE`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GraphSAGE.html) model.
+The example provided in [`node_ogb_cpu.py`](./node_ogb_cpu.py) performs distributed training with multiple CPU nodes using [OGB](https://ogb.stanford.edu/) datasets and a [`GraphSAGE`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GraphSAGE.html) model.
 The example can run on both homogeneous (`ogbn-products`) and heterogeneous data (`ogbn-mag`).
 With minor modifications, the example can be extended to train on `ogbn-papers100m` or any other dataset.
 
@@ -79,7 +79,7 @@ The `dataset_root_dir` should point to the head directory where your partition i
 
 ```bash
 # Node 0:
-python distributed_cpu.py \
+python node_ogb_cpu.py \
   --dataset=ogbn-products
   --dataset_root_dir=<partition folder directory> \
   --num_nodes=2 \
@@ -87,7 +87,7 @@ python distributed_cpu.py \
   --master_addr=<master ip>
 
 # Node 1:
-python distributed_cpu.py \
+python node_obg_cpu.py \
   --dataset=ogbn-products
   --dataset_root_dir=<partition folder directory> \
   --num_nodes=2 \
@@ -111,7 +111,7 @@ There exists two methods to run the distributed example with one script in one t
      --part_config {dataset_dir}/mag/2-parts/ogbn-mag-partitions/META.json
      --ip_config {workspace}/pytorch_geometric/ip_config.yaml
     'cd /home/user_xxx; source {conda_envs}/bin/activate; cd {workspace}/pytorch_geometric; {conda_envs}/bin/python
-     {workspace}/pytorch_geometric/examples/pyg/distributed_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
+     {workspace}/pytorch_geometric/examples/pyg/node_ogb_cpu.py --dataset=ogbn-mag --logging --progress_bar --ddp_port=11111'
    ```
 1. [`run_dist.sh`](./run_dist.sh): All parameter settings are contained in the `run_dist.sh` script and you just need run with:
    ```bash
