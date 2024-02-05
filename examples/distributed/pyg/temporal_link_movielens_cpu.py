@@ -254,7 +254,6 @@ def run_proc(
     current_device = torch.device('cpu')
 
     print('--- Initialize DDP training group ...')
-    # Initialize DDP training process group:
     torch.distributed.init_process_group(
         backend='gloo',
         rank=current_ctx.rank,
