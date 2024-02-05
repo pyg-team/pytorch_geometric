@@ -34,9 +34,12 @@ def training_step(batch: Batch, acc, model) -> Tensor:
     train_acc = acc(y_hat.softmax(dim=-1), y)
     return train_loss, train_acc
 
-
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
+    if y.isnan().any():
+        use_indices = torch.argwhere(y.isnan().logical_not())
+        y_hat = y_hat[use_indices]
+        y = y[use_indices]
     return acc(y_hat.softmax(dim=-1), y)
 
 
