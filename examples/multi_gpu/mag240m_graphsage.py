@@ -262,7 +262,7 @@ def run(
                     print(
                         f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
                         Train Acc: {acc_sum / (num_batches) * 100.0:.2f}%, \
-                        Step Time: {iter_time:.4f}s")
+                        Most Recent Step Time: {iter_time:.4f}s")
         if n_devices > 1:
             dist.barrier()
         print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
