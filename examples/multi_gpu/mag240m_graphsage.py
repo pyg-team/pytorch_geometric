@@ -279,6 +279,7 @@ def run(
                     # Features loaded in as fp16, train in 32bits
                     batch['paper'].x = batch['paper'].x.to(torch.float32)
                 acc_sum += validation_step(batch, acc, model)
+
             if n_devices > 1:
                 acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                        device=rank)
@@ -288,6 +289,7 @@ def run(
                 dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
             else:
                 num_batches = i + 1.0
+
             print(
                 f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
@@ -301,6 +303,8 @@ def run(
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             acc_sum += validation_step(batch, acc, model)
+            print("acc_sum=",acc_sum, "for batch", i)
+
         if n_devices > 1:
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
                                    device=rank)
@@ -310,6 +314,7 @@ def run(
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
         else:
             num_batches = i + 1.0
+
         final_test_acc = acc_sum/(num_batches) * 100.0
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
