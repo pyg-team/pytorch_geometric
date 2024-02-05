@@ -38,7 +38,7 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
     if y.isnan().any() or (y == -1).any():
-        if (y.isnan() or (y == -1)).all():
+        if (y.isnan().logical_or((y == -1))).all():
             print("all nans or -1s")
         use_indices = torch.argwhere(torch.logical_not((y==-1).logical_or(y.isnan())))
         print("use_indices=", use_indices)
