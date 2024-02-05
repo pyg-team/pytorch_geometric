@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.utils import sort_edge_index
 
 
@@ -12,6 +13,12 @@ def test_sort_edge_index():
 
     out = sort_edge_index(edge_index)
     assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+
+    if torch_geometric.typing.WITH_PT113:
+        torch_geometric.typing.MAX_INT64 = 1
+        out = sort_edge_index(edge_index)
+        torch_geometric.typing.MAX_INT64 = torch.iinfo(torch.int64).max
+        assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
     out = sort_edge_index((edge_index[0], edge_index[1]))
     assert isinstance(out, tuple)

@@ -109,7 +109,7 @@ class PDNConv(MessagePassing):
         x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_attr)
 
         if self.bias is not None:
             out = out + self.bias
@@ -119,7 +119,7 @@ class PDNConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):

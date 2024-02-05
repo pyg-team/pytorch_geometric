@@ -7,6 +7,7 @@ from torch import Tensor, nn
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
+from torch_geometric.typing import PairTensor  # noqa
 from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils import softmax
 
@@ -147,9 +148,9 @@ class HANConv(MessagePassing):
             x_dst = x_node_dict[dst_type]
             alpha_src = (x_src * lin_src).sum(dim=-1)
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
-            # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
+            # propagate_type: (x: PairTensor, alpha: PairTensor)
             out = self.propagate(edge_index, x=(x_src, x_dst),
-                                 alpha=(alpha_src, alpha_dst), size=None)
+                                 alpha=(alpha_src, alpha_dst))
 
             out = F.relu(out)
             out_dict[dst_type].append(out)

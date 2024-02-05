@@ -41,14 +41,11 @@ def test_sag_pooling():
         assert out3[1].size() == (2, 2)
 
         if torch_geometric.typing.WITH_PT113 and is_full_test():
-            pool1.gnn = pool1.gnn.jittable()
             jit1 = torch.jit.script(pool1)
             assert torch.allclose(jit1(x, edge_index)[0], out1[0])
 
-            pool2.gnn = pool2.gnn.jittable()
             jit2 = torch.jit.script(pool2)
             assert torch.allclose(jit2(x, edge_index)[0], out2[0])
 
-            pool3.gnn = pool3.gnn.jittable()
             jit3 = torch.jit.script(pool3)
             assert torch.allclose(jit3(x, edge_index)[0], out3[0])

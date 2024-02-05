@@ -3,7 +3,6 @@ import random
 import torch
 from torch import Tensor
 
-import torch_geometric
 from torch_geometric.testing import (
     get_random_edge_index,
     onlyFullTest,
@@ -32,7 +31,7 @@ class MySAGEConv(torch.nn.Module):
 @withPackage('torch>2.0.0')
 def test_dynamic_torch_compile(device):
     conv = MySAGEConv(64, 64).to(device)
-    conv = torch_geometric.compile(conv, dynamic=True)
+    conv = torch.compile(conv, dynamic=True)
 
     optimizer = torch.optim.Adam(conv.parameters(), lr=0.01)
 

@@ -14,6 +14,14 @@ def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
     from.
 
+    .. note::
+
+        This function counts the number of message passing layers as an
+        approximation of the total number of hops covered by the model.
+        Its output may not necessarily be correct in case message passing
+        layers perform multi-hop aggregation, *e.g.*, as in
+        :class:`~torch_geometric.nn.conv.ChebConv`.
+
     Example:
         >>> class GNN(torch.nn.Module):
         ...     def __init__(self):
@@ -23,8 +31,8 @@ def get_num_hops(model: torch.nn.Module) -> int:
         ...         self.lin = Linear(16, 2)
         ...
         ...     def forward(self, x, edge_index):
-        ...         x = torch.F.relu(self.conv1(x, edge_index))
-        ...         x = self.conv2(x, edge_index)
+        ...         x = self.conv1(x, edge_index).relu()
+        ...         x = self.conv2(x, edge_index).relu()
         ...         return self.lin(x)
         >>> get_num_hops(GNN())
         2
@@ -274,8 +282,9 @@ def k_hop_subgraph(
         flow (str, optional): The flow direction of :math:`k`-hop aggregation
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
-        directed (bool, optional): If set to :obj:`False`, will include all
-            edges between all sampled nodes. (default: :obj:`True`)
+        directed (bool, optional): If set to :obj:`True`, will only include
+            directed edges to the seed nodes :obj:`node_idx`.
+            (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
              :class:`BoolTensor`)

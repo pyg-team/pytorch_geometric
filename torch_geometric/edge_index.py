@@ -130,7 +130,7 @@ def assert_two_dimensional(tensor: Tensor) -> None:
     if tensor.dim() != 2:
         raise ValueError(f"'EdgeIndex' needs to be two-dimensional "
                          f"(got {tensor.dim()} dimensions)")
-    if tensor.size(0) != 2:
+    if not torch.jit.is_tracing() and tensor.size(0) != 2:
         raise ValueError(f"'EdgeIndex' needs to have a shape of "
                          f"[2, *] (got {list(tensor.size())})")
 
@@ -142,7 +142,8 @@ def assert_contiguous(tensor: Tensor) -> None:
 
 
 def assert_symmetric(size: Tuple[Optional[int], Optional[int]]) -> None:
-    if size[0] is not None and size[1] is not None and size[0] != size[1]:
+    if (not torch.jit.is_tracing() and size[0] is not None
+            and size[1] is not None and size[0] != size[1]):
         raise ValueError(f"'EdgeIndex' is undirected but received a "
                          f"non-symmetric size (got {list(size)})")
 
@@ -333,11 +334,12 @@ class EdgeIndex(Tensor):
                 sparse_size = (sparse_size[1], sparse_size[1])
 
         if torch_geometric.typing.WITH_PT112:
-            out = super().__new__(cls, data)  # type: ignore
+            out = super().__new__(cls, data)
         else:
             out = Tensor._make_subclass(cls, data)
 
         # Attach metadata:
+        assert isinstance(out, EdgeIndex)
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
@@ -1677,7 +1679,8 @@ def matmul(
 
     rowptr: Optional[Tensor] = None
     if out.layout == torch.sparse_csr:
-        rowptr, col = out.crow_indices(), out.col_indices()
+        rowptr = out.crow_indices().to(input.dtype)
+        col = out.col_indices().to(input.dtype)
         edge_index = torch._convert_indices_from_csr_to_coo(
             rowptr, col, out_int32=rowptr.dtype != torch.int64)
 

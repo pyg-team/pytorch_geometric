@@ -131,7 +131,7 @@ class GMMConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None):
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         if not self.separate_gaussians:
@@ -151,7 +151,7 @@ class GMMConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_attr: Tensor):
+    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         EPS = 1e-15
         F, M = self.rel_in_channels, self.out_channels
         (E, D), K = edge_attr.size(), self.kernel_size
