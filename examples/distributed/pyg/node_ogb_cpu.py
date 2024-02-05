@@ -41,6 +41,7 @@ def test(
         y_true = batch['paper'].y[:batch_size]
         return y_pred, y_true
 
+    model.eval()
     total_examples = total_correct = 0
 
     if loader.num_workers > 0:
@@ -55,6 +56,7 @@ def test(
         start_time = batch_time = time.time()
         for i, batch in enumerate(loader):
             batch = batch.to(device)
+
             if isinstance(batch, HeteroData):
                 y_pred, y_true = test_hetero(batch)
             else:
@@ -83,7 +85,7 @@ def test(
     torch.distributed.barrier()
 
 
-def training(
+def train(
     model,
     loader,
     optimizer,
@@ -95,23 +97,20 @@ def training(
     progress_bar=True,
 ):
     def train_homo(batch):
-        batch = batch.to(device)
-        optimizer.zero_grad()
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         loss = F.cross_entropy(out, batch.y[:batch.batch_size])
         return loss, batch.batch_size
 
     def train_hetero(batch):
         batch_size = batch['paper'].batch_size
-        batch = batch.to(device, 'edge_index')
-        optimizer.zero_grad()
         out = model(batch.x_dict, batch.edge_index_dict)
         out = out['paper'][:batch_size]
         target = batch['paper'].y[:batch_size]
         loss = F.cross_entropy(out, target)
         return loss, batch_size
 
-    total_examples = total_loss = 0
+    model.train()
+    total_loss = total_examples = 0
 
     if loader.num_workers > 0:
         context = loader.enable_multithreading(num_loader_threads)
@@ -125,6 +124,8 @@ def training(
         start_time = batch_time = time.time()
         for i, batch in enumerate(loader):
             batch = batch.to(device)
+            optimizer.zero_grad()
+
             if isinstance(batch, HeteroData):
                 loss, batch_size = train_hetero(batch)
             else:
@@ -213,7 +214,7 @@ def run_proc(
         rank=node_rank,
         global_world_size=num_nodes,
         global_rank=node_rank,
-        group_name='distributed-sage-supervised-Node',
+        group_name='distributed-ogb-sage',
     )
     current_device = torch.device('cpu')
 
@@ -225,8 +226,8 @@ def run_proc(
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
-    print('--- Initialize distributed loaders ...')
 
+    print('--- Initialize distributed loaders ...')
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
     # Create distributed neighbor loader for training:
     train_loader = pyg_dist.DistNeighborLoader(
@@ -264,7 +265,6 @@ def run_proc(
     )
 
     print('--- Initialize model ...')
-    # Define model and optimizer.
     model = GraphSAGE(
         in_channels=128 if is_hetero else 100,  # num_features
         hidden_channels=256,
@@ -289,8 +289,7 @@ def run_proc(
     print(f'--- Start training for {num_epochs} epochs ...')
     for epoch in range(1, num_epochs + 1):
         print(f'Train epoch {epoch}/{num_epochs}:')
-        model.train()
-        training(
+        train(
             model,
             train_loader,
             optimizer,
@@ -304,7 +303,6 @@ def run_proc(
 
         if epoch % 5 == 0:
             print(f'Test epoch {epoch}/{num_epochs}:')
-            model.eval()
             test(
                 model,
                 test_loader,
@@ -328,7 +326,7 @@ if __name__ == '__main__':
         type=str,
         default='ogbn-products',
         choices=['ogbn-products', 'ogbn-mag'],
-        help='Name of ogbn dataset: (ogbn-products, ogbn-mag)',
+        help='Name of the dataset: (ogbn-products, ogbn-mag)',
     )
     parser.add_argument(
         '--dataset_root_dir',
@@ -419,7 +417,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print('--- Distributed training example with GraphSAGE ---')
+    print('--- Distributed training example on OGB ---')
     print(f'* total nodes: {args.num_nodes}')
     print(f'* node rank: {args.node_rank}')
     print(f'* dataset: {args.dataset}')

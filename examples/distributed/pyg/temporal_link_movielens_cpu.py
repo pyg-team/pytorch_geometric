@@ -14,11 +14,7 @@ from tqdm import tqdm
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.nn import SAGEConv, to_hetero
-
-# logging.basicConfig(format='%(levelname)s:%(process)d:%(message)s',
-#                     level=logging.DEBUG)
 
 
 class GNNEncoder(torch.nn.Module):
@@ -63,107 +59,121 @@ class Model(torch.nn.Module):
 @torch.no_grad()
 def test(
     model,
-    test_loader,
+    loader,
     dist_context,
     device,
+    epoch,
     logfile=None,
     num_loader_threads=10,
     progress_bar=True,
 ):
-    multithreading = (test_loader.enable_multithreading(num_loader_threads)
-                      if test_loader.num_workers > 0 else nullcontext()
-                      )  # speeds up dataloading on CPU
+    model.eval()
     preds, targets = [], []
 
-    with multithreading:
+    if loader.num_workers > 0:
+        context = loader.enable_multithreading(num_loader_threads)
+    else:
+        context = nullcontext()
+
+    with context:
         if progress_bar:
-            test_loader = tqdm(test_loader,
-                               desc=f'[Node {dist_context.rank}] Test')
-        batch_time = time.time()
-        for i, batch in enumerate(test_loader):
+            loader = tqdm(loader, desc=f'[Node {dist_context.rank}] Test')
+
+        start_time = batch_time = time.time()
+        for i, batch in enumerate(loader):
             batch = batch.to(device)
+
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
                 batch['user', 'movie'].edge_label_index,
             ).clamp(min=0, max=5)
-
             target = batch['user', 'movie'].edge_label.float()
             preds.append(pred)
             targets.append(target)
 
             rmse = (pred - target).pow(2).mean().sqrt()
 
-            result = (f'[Node {dist_context.rank}] Test: '
-                      f'it={i}, RMSE={rmse:.4}, '
-                      f'time={(time.time() - batch_time):.4}')
+            result = (f'[Node {dist_context.rank}] Test: epoch={epoch}, '
+                      f'it={i}, rmse={rmse:.4f}, '
+                      f'time={(time.time() - batch_time):.4f}')
             batch_time = time.time()
+
             if logfile:
                 log = open(logfile, 'a+')
                 log.write(f'{result}\n')
                 log.close()
+
             if not progress_bar:
                 print(result)
-        pred = torch.cat(preds, dim=0)
-        target = torch.cat(targets, dim=0)
-        total_rmse = (pred - target).pow(2).mean().sqrt()
 
+    pred = torch.cat(preds, dim=0)
+    target = torch.cat(targets, dim=0)
+    total_rmse = (pred - target).pow(2).mean().sqrt()
+    print(f'[Node {dist_context.rank}] Test epoch {epoch} END: '
+          f'rmse={total_rmse:.4f}, time={(time.time() - start_time):.2f}')
     torch.distributed.barrier()
-    return float(total_rmse)
 
 
 def train(
     model,
-    train_loader,
+    loader,
     optimizer,
     dist_context,
     device,
+    epoch,
     logfile=None,
     num_loader_threads=10,
     progress_bar=True,
 ):
     model.train()
-
-    multithreading = (train_loader.enable_multithreading(num_loader_threads)
-                      if train_loader.num_workers > 0 else nullcontext())
-
     total_loss = total_examples = 0
 
-    with multithreading:
+    if loader.num_workers > 0:
+        context = loader.enable_multithreading(num_loader_threads)
+    else:
+        context = nullcontext()
+
+    with context:
         if progress_bar:
-            train_loader = tqdm(train_loader,
-                                desc=f'[Node {dist_context.rank}] Train')
-        batch_time = time.time()
-        for i, batch in enumerate(train_loader):
+            loader = tqdm(loader, desc=f'[Node {dist_context.rank}] Train')
+
+        start_time = batch_time = time.time()
+        for i, batch in enumerate(loader):
             batch = batch.to(device)
             optimizer.zero_grad()
+
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
                 batch['user', 'movie'].edge_label_index,
             )
             target = batch['user', 'movie'].edge_label.float()
+
             loss = F.mse_loss(pred, target)
             loss.backward()
             optimizer.step()
 
-            total_loss += float(loss * pred.size(0))
+            total_loss += float(loss) * pred.size(0)
             total_examples += pred.size(0)
 
-            result = (f'[Node {dist_context.rank}] Train: '
-                      f'it={i}, loss={loss:.4}, '
+            result = (f'[Node {dist_context.rank}] Train: epoch={epoch}, '
+                      f'it={i}, loss={loss:.4f}, '
                       f'time={(time.time() - batch_time):.4}')
             batch_time = time.time()
+
             if logfile:
-                # Save result at each iteration
                 log = open(logfile, 'a+')
                 log.write(f'{result}\n')
                 log.close()
+
             if not progress_bar:
                 print(result)
 
     torch.distributed.barrier()
-    return total_loss / total_examples
+    print(f'[Node {dist_context.rank}] Train epoch {epoch} END: '
+          f'loss={total_loss/total_examples:.4f}, '
+          f'time={(time.time() - start_time):.2f}')
 
 
 def run_proc(
@@ -211,73 +221,51 @@ def run_proc(
         test_edge_label_index,
     )
 
-    # load partition information
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(osp.join(root_dir, f'{dataset}-partitions'),
-                            node_rank)
-    print(f'meta={meta}, partition_idx={partition_idx}')
-    # load partition into graph
+    # Load partition into local graph store:
     graph = LocalGraphStore.from_partition(
         osp.join(root_dir, f'{dataset}-partitions'), node_rank)
-    # load partition into feature
+    # Load partition into local feature store:
     feature = LocalFeatureStore.from_partition(
         osp.join(root_dir, f'{dataset}-partitions'), node_rank)
-
-    # setup the partition information in LocalGraphStore and LocalFeatureStore
-    graph.num_partitions = feature.num_partitions = num_partitions
-    graph.partition_idx = feature.partition_idx = partition_idx
-    graph.node_pb = feature.node_feat_pb = node_pb
-    graph.edge_pb = feature.edge_feat_pb = edge_pb
-    graph.meta = feature.meta = meta
     feature.labels = torch.load(edge_label_file)
     partition_data = (feature, graph)
 
-    current_device = torch.device('cpu')
-
-    # Add arbitrary user node features for message passing:
+    # Add identity user node features for message passing:
     x = torch.eye(
         feature._global_id['user'].size(0),
         feature._feat[('movie', 'x')].size(1),
     )
     feature.put_tensor(x, group_name='user', attr_name='x')
 
-    train_edge_label_time = torch.arange(
-        train_edge_label_index[1].size(1)).clone()
-    test_edge_label_time = torch.arange(
-        test_edge_label_index[1].size(1)).clone()
+    train_edge_label_time = torch.arange(train_edge_label_index[1].size(1))
+    test_edge_label_time = torch.arange(test_edge_label_index[1].size(1))
 
     train_edge_label = feature.labels[:train_edge_label_index[1].
                                       size(1)].clone()
     test_edge_label = feature.labels[test_edge_label_index[1].size(1):].clone()
 
-    # Initialize distributed context
+    # Initialize distributed context:
     current_ctx = DistContext(
         world_size=num_nodes,
         rank=node_rank,
         global_world_size=num_nodes,
         global_rank=node_rank,
-        group_name='distributed-classification-Link',
+        group_name='distributed-temporal-link-movielens',
     )
+    current_device = torch.device('cpu')
 
     print('--- Initialize DDP training group ...')
-    # Initialize DDP training process group.
+    # Initialize DDP training process group:
     torch.distributed.init_process_group(
         backend='gloo',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
     )
-    num_neighbors = [int(i) for i in num_neighbors.split(',')]
-    # Keep workers RPC alive outside the iterator loop:
-    persistent_workers = num_workers > 0
 
     print('--- Initialize distributed loaders ...')
-    # Create distributed neighbor loader for training
+    num_neighbors = [int(i) for i in num_neighbors.split(',')]
+    # Create distributed neighbor loader for training:
     train_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
         edge_label_index=train_edge_label_index,
@@ -291,7 +279,7 @@ def run_proc(
         num_neighbors=num_neighbors,
         shuffle=True,
         drop_last=True,
-        persistent_workers=persistent_workers,
+        persistent_workers=num_workers > 0,
         batch_size=batch_size,
         num_workers=num_workers,
         master_addr=master_addr,
@@ -299,7 +287,7 @@ def run_proc(
         concurrency=concurrency,
         async_sampling=async_sampling,
     )
-    # Create distributed neighbor loader for testing.
+    # Create distributed neighbor loader for testing:
     test_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
         edge_label_index=test_edge_label_index,
@@ -313,7 +301,7 @@ def run_proc(
         num_neighbors=num_neighbors,
         shuffle=False,
         drop_last=False,
-        persistent_workers=persistent_workers,
+        persistent_workers=num_workers > 0,
         batch_size=batch_size,
         num_workers=num_workers,
         master_addr=master_addr,
@@ -323,147 +311,139 @@ def run_proc(
     )
 
     print('--- Initialize model ...')
-
-    metadata = [meta['node_types'], [tuple(e) for e in meta['edge_types']]]
+    node_types = graph.meta['node_types']
+    edge_types = [tuple(e) for e in graph.meta['node_types']]
+    metadata = (node_types, edge_types)
     model = Model(hidden_channels=32, metadata=metadata).to(current_device)
 
     @torch.no_grad()
-    def init_params():
-        # Init parameters via forwarding a single batch to the model:
-        print('--- Init parameters of the hetero model ...')
+    def init_params():  # Init parameters via forwarding a single batch:
         with train_loader as iterator:
             batch = next(iter(iterator))
-            batch = batch.to(current_device, 'edge_index')
+            batch = batch.to(current_device)
             model(
                 batch.x_dict,
                 batch.edge_index_dict,
                 batch['user', 'movie'].edge_label_index,
             )
-            del batch
-            torch.distributed.barrier()
 
-    # initialize model parameters
+    print('--- Initialize parameters of the model ...')
     init_params()
     torch.distributed.barrier()
 
-    # Enable DDP
+    # Enable DDP:
     model = DistributedDataParallel(model, find_unused_parameters=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
     torch.distributed.barrier()
 
-    # Train and test
+    # Train and test:
     print(f'--- Start training for {num_epochs} epochs ...')
     for epoch in range(1, num_epochs + 1):
-        start = time.time()
         print(f'Train Epoch {epoch}/{num_epochs}')
-        loss = train(
+        train(
             model,
             train_loader,
             optimizer,
             current_ctx,
             current_device,
+            epoch,
             logfile,
             num_loader_threads,
             progress_bar,
         )
-        print(f'[Node {current_ctx.rank}] Epoch {epoch}: \
-                Train Loss = {loss:.4f}, \
-                Train Time = {(time.time() - start):.2f}')
 
-        # Test accuracy.
         if epoch % 5 == 0:
-            start = time.time()
             print(f'Test Epoch {epoch}/{num_epochs}')
-            model.eval()
-            rmse = test(
+            test(
                 model,
                 test_loader,
                 current_ctx,
                 current_device,
+                epoch,
                 logfile,
                 num_loader_threads,
                 progress_bar,
             )
-            print(f'[Node {current_ctx.rank}] Epoch {epoch}: '
-                  f'Test RMSE = {rmse:.4f}, '
-                  f'Test Time = {(time.time() - start):.2f}')
     print(f'--- [Node {current_ctx.rank}] Closing ---')
     torch.distributed.destroy_process_group()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Arguments for distributed link classification training.')
+        description='Arguments for distributed training')
+
     parser.add_argument(
         '--dataset',
         type=str,
         default='MovieLens',
+        choices=['MovieLens'],
+        help='Name of the dataset: (MovieLens)',
     )
     parser.add_argument(
         '--dataset_root_dir',
         type=str,
         default='../../../data/partitions/MovieLens/2-parts',
-        help='The root directory (relative path) of partitioned dataset.',
+        help='The root directory (relative path) of partitioned dataset',
     )
     parser.add_argument(
         '--num_nodes',
         type=int,
         default=2,
-        help='Number of distributed nodes.',
+        help='Number of distributed nodes',
     )
     parser.add_argument(
         '--num_neighbors',
         type=str,
         default='15,10,5',
-        help='Number of node neighbors sampled at each layer.',
+        help='Number of node neighbors sampled at each layer',
     )
     parser.add_argument(
         '--node_rank',
         type=int,
         default=0,
-        help='The current node rank.',
+        help='The current node rank',
     )
     parser.add_argument(
         '--num_epochs',
         type=int,
         default=100,
-        help='The number of training epochs.',
+        help='The number of training epochs',
     )
     parser.add_argument(
         '--batch_size',
         type=int,
         default=1024,
-        help='Batch size for the training and testing dataloader.',
+        help='Batch size for training and testing',
     )
     parser.add_argument(
         '--num_workers',
         type=int,
         default=4,
-        help='Number of sampler sub-processes.',
+        help='Number of sampler sub-processes',
     )
     parser.add_argument(
         '--num_loader_threads',
         type=int,
         default=10,
-        help='Number of threads used for each sampler sub-process.',
+        help='Number of threads used for each sampler sub-process',
     )
     parser.add_argument(
         '--concurrency',
         type=int,
         default=4,
-        help='Number of max concurrent RPC for each sampler.',
+        help='Number of max concurrent RPC for each sampler',
     )
     parser.add_argument(
         '--async_sampling',
         type=bool,
         default=True,
-        help='If True, samplers process RPC request asynchronously.',
+        help='Whether sampler processes RPC requests asynchronously',
     )
     parser.add_argument(
         '--master_addr',
         type=str,
         default='localhost',
-        help='The master address for RPC initialization.',
+        help='The master address for RPC initialization',
     )
     parser.add_argument(
         '--ddp_port',
@@ -475,21 +455,20 @@ if __name__ == '__main__':
         '--train_loader_port',
         type=int,
         default=11112,
-        help='The port used for RPC comm across train loader samplers.',
+        help='The port used for RPC communication across training samplers',
     )
     parser.add_argument(
         '--test_loader_port',
         type=int,
         default=11113,
-        help='The port used for RPC comm across test loader samplers.',
+        help='The port used for RPC communication across test samplers',
     )
     parser.add_argument('--logging', action='store_true')
     parser.add_argument('--progress_bar', action='store_true')
 
     args = parser.parse_args()
 
-    print('--- Distributed training example with SAGE and OGB dataset ---'
-          )  # change description
+    print('--- Distributed training example on MovieLens ---')
     print(f'* total nodes: {args.num_nodes}')
     print(f'* node rank: {args.node_rank}')
     print(f'* dataset: {args.dataset}')
