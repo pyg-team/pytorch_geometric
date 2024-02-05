@@ -312,7 +312,7 @@ def run(
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
         else:
             num_batches = i + 1.0
-        final_test_acc = acc_sum/(num_batches) * 100.0
+        final_test_acc = acc_sum / (num_batches) * 100.0
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
