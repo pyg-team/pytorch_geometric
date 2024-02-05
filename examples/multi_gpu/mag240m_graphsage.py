@@ -38,7 +38,7 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
     if y.isnan().any() or (y == -1).any():
-        use_indices = torch.argwhere((y==-1 or not y.isnan()))
+        use_indices = torch.argwhere((y == -1 or not y.isnan()))
         y_hat = y_hat[use_indices]
         y = y[use_indices]
     print("y=", y)
