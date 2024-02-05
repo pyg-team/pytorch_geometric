@@ -42,6 +42,10 @@ def validation_step(batch: Batch, acc, model):
             torch.logical_not((y == -1).logical_or(y.isnan())))
         y_hat = y_hat[use_indices, :]
         y = y[use_indices]
+    print("y_hat.size()=", y_hat.size())
+    print("y.size()", y.size())
+    print("y_hat.unique()=", y_hat.unique())
+    print("y.unique()=", y.unique())
     return acc(y_hat.softmax(dim=-1), y)
 
 
