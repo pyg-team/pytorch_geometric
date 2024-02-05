@@ -40,6 +40,8 @@ def validation_step(batch: Batch, acc, model):
         use_indices = torch.argwhere(y.isnan().logical_not())
         y_hat = y_hat[use_indices]
         y = y[use_indices]
+    print("y=",y)
+    print("y_hat=", y_hat)
     return acc(y_hat.softmax(dim=-1), y)
 
 
