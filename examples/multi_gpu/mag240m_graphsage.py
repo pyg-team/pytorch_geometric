@@ -274,9 +274,10 @@ def run(
             for i, batch in enumerate(eval_loader):
                 if eval_steps >= 0 and i >= eval_steps:
                     break
-                batch = embedder(batch)
                 if n_devices > 0:
                     batch = batch.to(rank, "x", "y", "edge_index")
+                    # Features loaded in as fp16, train in 32bits
+                    batch['paper'].x = batch['paper'].x.to(torch.float32)
                 acc_sum += validation_step(batch, acc, model)
             if n_devices > 1:
                 acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
@@ -297,9 +298,10 @@ def run(
         for i, batch in enumerate(test_loader):
             if eval_steps >= 0 and i >= eval_steps:
                 break
-            batch = embedder(batch)
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
+                # Features loaded in as fp16, train in 32bits
+                batch['paper'].x = batch['paper'].x.to(torch.float32)
             acc_sum += validation_step(batch, acc, model)
         if n_devices > 1:
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
@@ -308,7 +310,6 @@ def run(
             num_batches = torch.tensor(float(i), dtype=torch.float32,
                                        device=acc_sum.device)
             dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-        final_test_acc = acc_sum / (i + 1) * 100.0
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
