@@ -187,13 +187,8 @@ def run(
     del data["paper"].test_mask
     del data["paper"].year
 
-    kwargs = dict(
-        batch_size=batch_size,
-        num_workers=16,
-        persistent_workers=True,
-        num_neighbors=sizes,
-        drop_last=True
-    )
+    kwargs = dict(batch_size=batch_size, num_workers=16,
+                  persistent_workers=True, num_neighbors=sizes, drop_last=True)
     train_loader = NeighborLoader(
         data,
         input_nodes=("paper", train_idx),
