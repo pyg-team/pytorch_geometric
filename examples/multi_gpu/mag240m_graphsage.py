@@ -38,15 +38,10 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
     if y.isnan().any() or (y == -1).any():
-        if (y.isnan().logical_or((y == -1))).all():
-            print("all nans or -1s")
         use_indices = torch.argwhere(
             torch.logical_not((y == -1).logical_or(y.isnan())))
-        print("use_indices=", use_indices)
         y_hat = y_hat[use_indices, :]
         y = y[:, use_indices]
-    print("y=", y)
-    print("y_hat=", y_hat)
     return acc(y_hat.softmax(dim=-1), y)
 
 
@@ -302,6 +297,10 @@ def run(
     acc_sum = 0.0
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
+            # skip batches with no useful labels
+            y = batch["paper"].y
+            if (y.isnan().logical_or((y == -1))).all():
+                continue
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
