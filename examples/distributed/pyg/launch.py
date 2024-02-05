@@ -174,8 +174,7 @@ def get_all_remote_pids(hosts, ssh_port, udf_command):
 
 
 def wrap_cmd_w_envvars(cmd: str, env_vars: str) -> str:
-    """Wraps a CLI command with desired environment variables with the
-    following properties:
+    """Wraps a CLI command with desired environment variables.
 
     Example:
         >>> cmd = "ls && pwd"
