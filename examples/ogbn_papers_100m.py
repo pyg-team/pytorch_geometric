@@ -167,8 +167,7 @@ def test(loader: NeighborLoader, val_steps: Optional[int] = None):
 
 torch.cuda.synchronize()
 prep_time = round(time.perf_counter() - wall_clock_start, 2)
-print("Total time before training begins (prep_time)=",
-      prep_time, "seconds")
+print("Total time before training begins (prep_time)=", prep_time, "seconds")
 print("Beginning training...")
 for epoch in range(1, 1 + args.epochs):
     train()
@@ -178,6 +177,5 @@ for epoch in range(1, 1 + args.epochs):
 test_acc = test(test_loader)
 print(f'Test Acc: {test_acc:.4f}')
 total_time = round(time.perf_counter() - wall_clock_start, 2)
-print("Total Program Runtime (total_time) =",
-      total_time, "seconds")
+print("Total Program Runtime (total_time) =", total_time, "seconds")
 print("total_time - prep_time =", total_time - prep_time, "seconds")
