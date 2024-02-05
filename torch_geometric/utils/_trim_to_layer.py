@@ -84,8 +84,8 @@ def trim_to_layer(
         edge_attr (torch.Tensor or Dict[EdgeType, torch.Tensor], optional): The
             homogeneous or heterogeneous (hidden) edge features.
     """
-    if layer <= 0:
-        return x, edge_index, edge_attr
+    # if layer <= 0:
+    #     return x, edge_index, edge_attr
 
     if isinstance(num_sampled_edges_per_hop, dict):
         assert isinstance(num_sampled_nodes_per_hop, dict)
@@ -119,13 +119,15 @@ def trim_to_layer(
             }
             edge_attr = filter_empty_entries(edge_attr)
 
+        print("Returning at point hetero in trim to layer")
         return x, edge_index, edge_attr
 
     assert isinstance(num_sampled_nodes_per_hop, list)
 
     assert isinstance(x, Tensor)
-    x = trim_feat(x, layer, num_sampled_nodes_per_hop)
+    #x = trim_feat(x, layer, num_sampled_nodes_per_hop)
 
+    # print("edge_index type: ", type(edge_index))
     assert isinstance(edge_index, (Tensor, SparseTensor))
     edge_index = trim_adj(
         edge_index,
@@ -143,7 +145,6 @@ def trim_to_layer(
 
 
 class TrimToLayer(torch.nn.Module):
-    @torch.jit.unused
     def forward(
         self,
         layer: int,
@@ -182,7 +183,7 @@ class TrimToLayer(torch.nn.Module):
 def trim_feat(x: Tensor, layer: int, num_samples_per_hop: List[int]) -> Tensor:
     if layer <= 0:
         return x
-
+    
     return x.narrow(
         dim=0,
         start=0,
@@ -198,10 +199,11 @@ def trim_adj(
     num_sampled_edges_per_hop: List[int],
 ) -> Adj:
 
-    if layer <= 0:
-        return edge_index
+    # if layer <= 0:
+    #     return edge_index
 
     if isinstance(edge_index, Tensor):
+        print("COO")
         return edge_index.narrow(
             dim=1,
             start=0,
@@ -209,12 +211,22 @@ def trim_adj(
         )
 
     elif isinstance(edge_index, SparseTensor):
+        # if layer == 0:
+        #     size = (
+        #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
+        #     edge_index.size(1), # but at the first layer edge_index here is still square, so I can write .size(0)
+        # )
+        # else:
+        #     size = (
+        #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
+        #     edge_index.size(0), #rows of previous layer become rows of this layer in adj_t
+        # )
         size = (
-            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-layer],
-            edge_index.size(1) - num_sampled_src_nodes_per_hop[-layer],
-        )
-
-        num_seed_nodes = size[0] - num_sampled_dst_nodes_per_hop[-(layer + 1)]
+            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
+            edge_index.size(0))
+        # compact way to express the change in size for each layer, including layer 0
+        
+        num_seed_nodes = size[0] 
 
         return trim_sparse_tensor(edge_index, size, num_seed_nodes)
 
@@ -239,12 +251,12 @@ def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
     rowptr, col, value = src.csr()
 
     rowptr = torch.narrow(rowptr, 0, 0, size[0] + 1).clone()
-    rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
-
-    col = torch.narrow(col, 0, 0, rowptr[-1])
+    #rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
+    nnz = rowptr[-1]
+    col = torch.narrow(col, 0, 0, nnz)
 
     if value is not None:
-        value = torch.narrow(value, 0, 0, rowptr[-1])
+        value = torch.narrow(value, 0, 0, nnz)
 
     csr2csc = src.storage._csr2csc
     if csr2csc is not None:
