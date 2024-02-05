@@ -298,7 +298,10 @@ def run(
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             print("batch=", batch)
             print("batch.y=", batch['paper'].y)
-            print("batch.y.unique()=", torch.where(not batch['paper'].y.isnan(), batch['paper'].y, 0).unique())
+            print(
+                "batch.y.unique()=",
+                torch.where(not batch['paper'].y.isnan(), batch['paper'].y,
+                            0).unique())
             acc_sum += validation_step(batch, acc, model)
             print("acc_sum=", acc_sum, "for batch", i)
 
