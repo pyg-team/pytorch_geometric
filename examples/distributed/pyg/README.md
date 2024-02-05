@@ -95,9 +95,7 @@ python distributed_cpu.py \
   --master_addr=<master ip>
 ```
 
-#### Option B: Launch script
-
-See [#8241](https://github.com/pyg-team/pytorch_geometric/pull/8241).
+#### Option B: Launch Script
 
 There exists two methods to run the distributed example with one script in one terminal for multiple nodes:
 
