@@ -40,11 +40,6 @@ def validation_step(batch: Batch, acc, model):
     return acc(y_hat.softmax(dim=-1), y)
 
 
-def predict_step(batch: Batch):
-    y_hat, y = common_step(batch, model)
-    return y_hat
-
-
 class SAGEConvLayer(torch.nn.Module):
     def __init__(
         self,
@@ -151,6 +146,7 @@ def run(
     dropout=0.5,
     eval_steps=100,
     num_warmup_iters_for_timing=10,
+    lr=.001,
 ):
     seed_everything(12345)
     if n_devices > 1:
@@ -208,11 +204,13 @@ def run(
         data,
         input_nodes=("paper", eval_idx),
         shuffle=True,
+        drop_last=True,
         **kwargs,
     )
     test_loader = NeighborLoader(
         data,
         input_nodes=("paper", test_idx),
+        drop_last=True,
         **kwargs,
     )
     if rank == 0:
@@ -224,7 +222,7 @@ def run(
         print("about to make optimizer")
     if n_devices > 1:
         model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     if rank == 0:
         print("Beginning loop...")
     for epoch in range(1, num_epochs + 1):
@@ -329,7 +327,8 @@ if __name__ == "__main__":
     parser.add_argument("--hidden_channels", type=int, default=1024)
     parser.add_argument("--batch_size", type=int, default=1024)
     parser.add_argument("--dropout", type=float, default=0.5)
-    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--num_steps_per_epoch", type=int, default=-1,
                         help=help_str)
     parser.add_argument("--log_every_n_steps", type=int, default=100)
@@ -393,6 +392,7 @@ if __name__ == "__main__":
                     args.dropout,
                     args.eval_steps,
                     args.num_warmup_iters_for_timing,
+                    args.lr,
                 ),
                 nprocs=args.n_devices,
                 join=True,
@@ -419,4 +419,5 @@ if __name__ == "__main__":
             args.dropout,
             args.eval_steps,
             args.num_warmup_iters_for_timing,
+            args.lr,
         )
