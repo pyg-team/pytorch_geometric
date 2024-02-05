@@ -40,7 +40,8 @@ def validation_step(batch: Batch, acc, model):
     if y.isnan().any() or (y == -1).any():
         if (y.isnan() or (y == -1)).all():
             print("all nans or -1s")
-        use_indices = torch.argwhere(torch.logical_not((y==-1).logical_or(y.isnan())))
+        use_indices = torch.argwhere(
+            torch.logical_not((y == -1).logical_or(y.isnan())))
         print("use_indices=", use_indices)
         y_hat = y_hat[use_indices, :]
         y = y[:, use_indices]
