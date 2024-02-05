@@ -113,7 +113,8 @@ class GraphSAGE(torch.nn.Module):
         # `institution` still has no features, learn them from `author`/`paper`
         self.in_conv2 = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
-            [e for e in self.metadata[1] if e[0] != 'institution'], self.metadata[0])
+            [e for e in self.metadata[1] if e[0] != 'institution'],
+            self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
             for i in range(num_layers - 2):
