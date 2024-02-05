@@ -77,6 +77,26 @@ class SAGEConvLayer(torch.nn.Module):
                     self.dropout_conv(h[node_type])))
         return h
 
+# Data = HeteroData(
+#   num_classes=153,
+#   paper={
+#     x=[121751666, 768],
+#     y=[121751666],
+#     year=[121751666],
+#     train_mask=[121751666],
+#     val_mask=[121751666],
+#     test_mask=[121751666],
+#   },
+#   author={ num_nodes=122383112 },
+#   institution={ num_nodes=25721 },
+#   (author, affiliated_with, institution)={ edge_index=[2, 44592586] },
+#   (institution, rev_affiliated_with, author)={ edge_index=[2, 44592586] },
+#   (author, writes, paper)={ edge_index=[2, 386022720] },
+#   (paper, rev_writes, author)={ edge_index=[2, 386022720] },
+#   (paper, cites, paper)={ edge_index=[2, 1297748926] },
+#   (paper, rev_cites, paper)={ edge_index=[2, 1297748926] }
+# )
+
 
 class GraphSAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels,
@@ -85,12 +105,12 @@ class GraphSAGE(torch.nn.Module):
         self.num_layers = num_layers
         self.metadata = metadata
         # only use edges where 'paper' is the source
-        # this will propogate info to other node types
+        # this will propogate info from paper to other node types
         self.in_conv = SAGEConvLayer(
             in_channels, in_channels, dropout,
             [e for e in self.metadata[1] if e[0] == 'paper'], self.metadata[0])
         # only use edges where 'institution' is not the source
-        # this is because 
+        # `institution` still has no features, learn them from `author`/`paper`
         self.in_conv2 = SAGEConvLayer(
             in_channels, hidden_channels, dropout,
             [e for e in self.metadata[1] if e[0] != 'institution'], self.metadata[0])
