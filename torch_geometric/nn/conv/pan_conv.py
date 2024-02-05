@@ -94,14 +94,14 @@ class PANConv(MessagePassing):
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.
         M = deg_inv_sqrt.view(1, -1) * adj_t * deg_inv_sqrt.view(-1, 1)
 
-        out = self.propagate(M, x=x, edge_weight=None, size=None)
+        out = self.propagate(M, x=x, edge_weight=None)
         out = self.lin(out)
         return out, M
 
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def panentropy(self, adj_t: SparseTensor,

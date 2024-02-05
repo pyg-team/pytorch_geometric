@@ -8,11 +8,10 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import fs
-from torch_geometric.typing import SparseTensor
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -99,8 +98,6 @@ class AttributedGraphDataset(InMemoryDataset):
           - 2,000
           - 100
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     datasets = {
         'wiki': '1EPhlbziZTQv19OsTrKrAJwsElbVPEbiV',
         'cora': '1FyVnpdsTT-lhkVPotUW8OVeuCi1vi3Ey',
@@ -146,8 +143,8 @@ class AttributedGraphDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self) -> None:
-        url = self.url.format(self.datasets[self.name])
-        path = download_url(url, self.raw_dir)
+        id = self.datasets[self.name]
+        path = download_google_url(id, self.raw_dir, 'data.zip')
         extract_zip(path, self.raw_dir)
         os.unlink(path)
         path = osp.join(self.raw_dir, f'{self.name}.attr')
@@ -160,9 +157,14 @@ class AttributedGraphDataset(InMemoryDataset):
     def process(self) -> None:
         import pandas as pd
 
-        x = sp.load_npz(self.raw_paths[0])
+        x = sp.load_npz(self.raw_paths[0]).tocsr()
         if x.shape[-1] > 10000 or self.name == 'mag':
-            x = SparseTensor.from_scipy(x).to(torch.float)
+            x = torch.sparse_csr_tensor(
+                crow_indices=x.indptr,
+                col_indices=x.indices,
+                values=x.data,
+                size=x.shape,
+            )
         else:
             x = torch.from_numpy(x.todense()).to(torch.float)
 

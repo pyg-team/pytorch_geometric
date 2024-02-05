@@ -52,8 +52,10 @@ class GENConv(MessagePassing):
     r"""The GENeralized Graph Convolution (GENConv) from the `"DeeperGCN: All
     You Need to Train Deeper GCNs" <https://arxiv.org/abs/2006.07739>`_ paper.
 
-    :class:`GENConv` supports both :math:`\textrm{softmax}` and
-    :math:`textrm{powermean}` aggregation.
+    :class:`GENConv` supports both :math:`\textrm{softmax}` (see
+    :class:`~torch_geometric.nn.aggr.SoftmaxAggregation`) and
+    :math:`\textrm{powermean}` (see
+    :class:`~torch_geometric.nn.aggr.PowerMeanAggregation`) aggregation.
     Its message construction is given by:
 
     .. math::
@@ -209,7 +211,7 @@ class GENConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         if hasattr(self, 'lin_src'):
             x = (self.lin_src(x[0]), x[1])

@@ -24,6 +24,7 @@ import torch
 from torch import Tensor
 from typing_extensions import Self
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
 from torch_geometric.typing import (
     EdgeType,
@@ -436,6 +437,11 @@ class NodeStorage(BaseStorage):
                 return value.shape[cat_dim]
             if isinstance(value, TensorFrame) and 'node' in key:
                 return value.num_rows
+        if 'edge_index' in self and isinstance(self.edge_index, EdgeIndex):
+            if self.edge_index.sparse_size(0) is not None:
+                return self.edge_index.sparse_size(0)
+            if self.edge_index.sparse_size(1) is not None:
+                return self.edge_index.sparse_size(1)
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
         if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):

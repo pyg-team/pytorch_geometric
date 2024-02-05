@@ -105,13 +105,13 @@ class PPFConv(MessagePassing):
     ) -> Tensor:
 
         if not isinstance(x, tuple):
-            x: PairOptTensor = (x, None)
+            x = (x, None)
 
         if isinstance(pos, Tensor):
-            pos: PairTensor = (pos, pos)
+            pos = (pos, pos)
 
         if isinstance(normal, Tensor):
-            normal: PairTensor = (normal, normal)
+            normal = (normal, normal)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
@@ -121,9 +121,9 @@ class PPFConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = torch_sparse.set_diag(edge_index)
 
-        # propagate_type: (x: PairOptTensor, pos: PairTensor, normal: PairTensor)  # noqa
-        out = self.propagate(edge_index, x=x, pos=pos, normal=normal,
-                             size=None)
+        # propagate_type: (x: PairOptTensor, pos: PairTensor,
+        #                  normal: PairTensor)
+        out = self.propagate(edge_index, x=x, pos=pos, normal=normal)
 
         if self.global_nn is not None:
             out = self.global_nn(out)

@@ -140,13 +140,18 @@ class GeneralConv(MessagePassing):
         if self.attention and self.attention_type == 'additive':
             glorot(self.att_msg)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: Tensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]
-        # propagate_type: (x: OptPairTensor)
+        # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, size=size, edge_attr=edge_attr)
         out = out.mean(dim=1)  # todo: other approach to aggregate heads
         out = out + self.lin_self(x_self)

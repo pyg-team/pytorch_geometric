@@ -98,7 +98,7 @@ def test_rgat_conv(mod, attention_mechanism, attention_mode, concat, edge_dim):
         assert alpha.size() == (4, 2)
 
 
-def test_rgat_conv_jittable():
+def test_rgat_conv_jit():
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     edge_attr = torch.randn((edge_index.size(1), 8))
@@ -121,7 +121,6 @@ def test_rgat_conv_jittable():
         assert torch.allclose(conv(x, adj2.t(), edge_type), out, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index, edge_type),
                               conv(x, edge_index, edge_type))

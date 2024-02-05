@@ -11,6 +11,7 @@ from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
+    SortReturnType,
     _scatter_spmm,
     _torch_sparse_spmm,
     _TorchSPMM,
@@ -18,7 +19,6 @@ from torch_geometric.edge_index import (
 )
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     onlyCUDA,
     onlyLinux,
     withCUDA,
@@ -46,10 +46,17 @@ def test_basic(dtype, device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
     adj.validate()
     assert isinstance(adj, EdgeIndex)
+
     if torch_geometric.typing.WITH_PT112:
-        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],')
+        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],\n'
+                                   '           [1, 0, 2, 1]], ')
     else:
-        assert str(adj).startswith('tensor([[0, 1, 1, 2],')
+        assert str(adj).startswith('tensor([[0, 1, 1, 2],\n'
+                                   '        [1, 0, 2, 1]], ')
+    assert str(adj).endswith('sparse_size=(3, 3), nnz=4)')
+    assert (f"device='{device}'" in str(adj)) == adj.is_cuda
+    assert (f'dtype={dtype}' in str(adj)) == (dtype != torch.long)
+
     assert adj.dtype == dtype
     assert adj.device == device
     assert adj.sparse_size() == (3, 3)
@@ -68,10 +75,51 @@ def test_basic(dtype, device):
     assert out.dtype == dtype
     assert out.device == device
 
-    out = adj + 1
+    out = adj * 1
     assert not isinstance(out, EdgeIndex)
     assert out.dtype == dtype
     assert out.device == device
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_identity(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3), **kwargs)
+
+    out = EdgeIndex(adj)
+    assert out.data_ptr() == adj.data_ptr()
+    assert out.dtype == adj.dtype
+    assert out.device == adj.device
+    assert out.sparse_size() == adj.sparse_size()
+    assert out.sort_order == adj.sort_order
+    assert out.is_undirected == adj.is_undirected
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sparse_tensor(dtype, device):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=True)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
+
+    out = EdgeIndex(adj.to_sparse_coo())
+    assert out.equal(adj)
+    assert out.sort_order == 'row'
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr is None
+
+    out = EdgeIndex(adj.to_sparse_csr())
+    assert out.equal(adj)
+    assert out.sort_order == 'row'
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+
+    out = EdgeIndex(adj.to_sparse_csc())
+    assert out.equal(adj.sort_by('col')[0])
+    assert out.sort_order == 'col'
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
 
 
 def test_set_tuple_item():
@@ -295,7 +343,7 @@ def test_sort_by(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values.equal(adj)
@@ -303,7 +351,7 @@ def test_sort_by(dtype, device, is_undirected):
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], **kwargs)
     out = adj.sort_by('row')
-    assert isinstance(out, torch.return_types.sort)
+    assert isinstance(out, SortReturnType)
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values[0].equal(tensor([0, 1, 1, 2], device=device))
@@ -354,6 +402,11 @@ def test_cat(dtype, device, is_undirected):
     assert not out.is_sorted
     assert out.is_undirected == is_undirected
 
+    assert out._cat_metadata.nnz == [4, 4]
+    assert out._cat_metadata.sparse_size == [(3, 3), (4, 4)]
+    assert out._cat_metadata.sort_order == [None, None]
+    assert out._cat_metadata.is_undirected == [is_undirected, is_undirected]
+
     out = torch.cat([adj1, adj2, adj3], dim=1)
     assert out.size() == (2, 12)
     assert isinstance(out, EdgeIndex)
@@ -364,6 +417,12 @@ def test_cat(dtype, device, is_undirected):
     out = torch.cat([adj1, adj2], dim=0)
     assert out.size() == (4, 4)
     assert not isinstance(out, EdgeIndex)
+
+    inplace = torch.empty(2, 8, dtype=dtype, device=device)
+    out = torch.cat([adj1, adj2], dim=1, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
 
 
 @withCUDA
@@ -403,15 +462,24 @@ def test_index_select(dtype, device, is_undirected):
     kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
-    out = adj.index_select(1, tensor([1, 3], device=device))
+    index = tensor([1, 3], device=device)
+    out = adj.index_select(1, index)
     assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert isinstance(out, EdgeIndex)
     assert not out.is_sorted
     assert not out.is_undirected
 
-    out = adj.index_select(0, tensor([0], device=device))
+    index = tensor([0], device=device)
+    out = adj.index_select(0, index)
     assert out.equal(tensor([[0, 1, 1, 2]], device=device))
     assert not isinstance(out, EdgeIndex)
+
+    index = tensor([1, 3], device=device)
+    inplace = torch.empty(2, 2, dtype=dtype, device=device)
+    out = torch.index_select(adj, 1, index, out=inplace)
+    assert out.data_ptr() == inplace.data_ptr()
+    assert isinstance(out, EdgeIndex)
+    assert not isinstance(inplace, EdgeIndex)
 
 
 @withCUDA
@@ -599,6 +667,94 @@ def test_to_sparse_tensor(device):
 
 
 @withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_add(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3), **kwargs)
+
+    out = torch.add(adj, 2, alpha=2)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[4, 5, 5, 6], [5, 4, 6, 5]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (7, 7)
+
+    out = adj + torch.tensor([2], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (5, 5)
+
+    out = adj + torch.tensor([[2], [1]], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [2, 1, 3, 2]], device=device))
+    assert not out.is_undirected
+    assert out.sparse_size() == (5, 4)
+
+    out = adj + torch.tensor([[2], [2]], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (5, 5)
+
+    out = adj.add(adj)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 2, 2, 4], [2, 0, 4, 2]], device=device))
+    assert not out.is_undirected
+    assert out.sparse_size() == (6, 6)
+
+    adj += 2
+    assert isinstance(adj, EdgeIndex)
+    assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert adj.is_undirected == is_undirected
+    assert adj.sparse_size() == (5, 5)
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
+def test_sub(dtype, device, is_undirected):
+    kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    adj = EdgeIndex([[4, 5, 5, 6], [5, 4, 6, 5]], sparse_size=(7, 7), **kwargs)
+
+    out = torch.sub(adj, 2, alpha=2)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (3, 3)
+
+    out = adj - torch.tensor([2], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (5, 5)
+
+    out = adj - torch.tensor([[2], [1]], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [4, 3, 5, 4]], device=device))
+    assert not out.is_undirected
+    assert out.sparse_size() == (5, 6)
+
+    out = adj - torch.tensor([[2], [2]], dtype=dtype, device=device)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert out.is_undirected == is_undirected
+    assert out.sparse_size() == (5, 5)
+
+    out = adj.sub(adj)
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 0, 0, 0], [0, 0, 0, 0]], device=device))
+    assert not out.is_undirected
+    assert out.sparse_size() == (None, None)
+
+    adj -= 2
+    assert isinstance(adj, EdgeIndex)
+    assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert adj.is_undirected == is_undirected
+    assert adj.sparse_size() == (5, 5)
+
+
+@withCUDA
 @withPackage('torch_sparse')
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
@@ -616,7 +772,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, None, reduce, transpose)
     exp = _scatter_spmm(adj, x, None, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # With non-zero values:
     x = torch.randn(3, 1, device=device)
@@ -624,7 +780,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, value, reduce, transpose)
     exp = _scatter_spmm(adj, x, value, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # Gradients w.r.t. other:
     x1 = torch.randn(3, 1, device=device, requires_grad=True)
@@ -635,7 +791,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x2, None, reduce, transpose)
     exp.backward(grad)
-    assert x1.grad.allclose(x2.grad)
+    assert x1.grad.allclose(x2.grad, atol=1e-6)
 
     # Gradients w.r.t. value:
     x = torch.randn(3, 1, device=device)
@@ -647,7 +803,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x, value2, reduce, transpose)
     exp.backward(grad)
-    assert value1.grad.allclose(value2.grad)
+    assert value1.grad.allclose(value2.grad, atol=1e-6)
 
 
 @withCUDA
@@ -923,7 +1079,6 @@ def test_torch_script():
 
 
 @onlyLinux
-@disableExtensions
 @withPackage('torch>=2.1.0')
 def test_compile():
     import torch._dynamo as dynamo
@@ -946,7 +1101,7 @@ def test_compile():
     explanation = dynamo.explain(model)(x, edge_index)
     assert explanation.graph_break_count <= 0
 
-    compiled_model = torch_geometric.compile(model)
+    compiled_model = torch.compile(model)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
 

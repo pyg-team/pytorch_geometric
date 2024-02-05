@@ -130,14 +130,24 @@ class TUDataset(InMemoryDataset):
                          force_reload=force_reload)
 
         out = fs.torch_load(self.processed_paths[0])
-        if not isinstance(out, tuple) or len(out) != 3:
+        if not isinstance(out, tuple) or len(out) < 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        data, self.slices, self.sizes = out
-        self.data = Data.from_dict(data) if isinstance(data, dict) else data
+        assert len(out) == 3 or len(out) == 4
+
+        if len(out) == 3:  # Backward compatibility.
+            data, self.slices, self.sizes = out
+            data_cls = Data
+        else:
+            data, self.slices, self.sizes, data_cls = out
+
+        if not isinstance(data, dict):  # Backward compatibility.
+            self.data = data
+        else:
+            self.data = data_cls.from_dict(data)
 
         assert isinstance(self._data, Data)
         if self._data.x is not None and not use_node_attr:
@@ -205,8 +215,10 @@ class TUDataset(InMemoryDataset):
             self._data_list = None  # Reset cache.
 
         assert isinstance(self._data, Data)
-        fs.torch_save((self._data.to_dict(), self.slices, sizes),
-                      self.processed_paths[0])
+        fs.torch_save(
+            (self._data.to_dict(), self.slices, sizes, self._data.__class__),
+            self.processed_paths[0],
+        )
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
