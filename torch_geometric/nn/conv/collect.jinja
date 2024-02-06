@@ -68,7 +68,7 @@ def {{collect_name}}(
             ptr = None
 
     elif isinstance(edge_index, SparseTensor):
-        {%- if 'edge_index' in collect_param_dict %}
+{%- if 'edge_index' in collect_param_dict %}
         raise ValueError("Cannot collect 'edge_indices' for sparse matrices")
 {%- endif %}
         adj_t = edge_index
