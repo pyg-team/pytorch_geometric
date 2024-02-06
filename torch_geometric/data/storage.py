@@ -135,7 +135,8 @@ class BaseStorage(MutableMapping):
     def __copy__(self) -> Self:
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            out.__dict__[key] = value
+            if key != '_cached_attr':
+                out.__dict__[key] = value
         out._mapping = copy.copy(out._mapping)
         return out
 

@@ -177,6 +177,20 @@ def test_data_attr_cache():
     assert 'y' in data._store._cached_attr[AttrType.OTHER]
 
 
+def test_data_attr_cache_not_shared():
+    x = torch.rand((4, 4))
+    edge_index = torch.tensor([[0, 1, 2, 3, 0, 1], [0, 1, 2, 3, 0, 1]],
+                              dtype=torch.long)
+    time = torch.tensor([0., 1., 2., 3., 4., 5.])
+    data = Data(x=x, edge_index=edge_index, time=time)
+
+    assert data.is_node_attr('x')
+
+    out = data.up_to(3.5)
+    assert out.is_node_attr('time')
+    assert not data.is_node_attr('time')
+
+
 def test_to_heterogeneous_empty_edge_index():
     data = Data(
         x=torch.randn(5, 10),
