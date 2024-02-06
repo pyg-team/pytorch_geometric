@@ -37,7 +37,6 @@ def partition_dataset(
     label_dir = osp.join(save_dir, f'{dataset_name}-label')
     os.makedirs(label_dir, exist_ok=True)
 
-    split_dim = 0
     if dataset_name == 'ogbn-mag':
         split_data = data['paper']
         label = split_data.y
@@ -49,36 +48,16 @@ def partition_dataset(
             label = split_data.y
         elif dataset_name == 'MovieLens':
             label = split_data[data.edge_types[0]].edge_label
-            split_dim = 1
 
     torch.save(label, osp.join(label_dir, 'label.pt'))
 
-    train_idx, val_idx, test_idx = get_idx_split(dataset, dataset_name,
-                                                 split_data)
+    split_idx = get_idx_split(dataset, dataset_name, split_data)
 
-    print('-- Partitioning training indices ...')
-    train_idx = train_idx.split(
-        train_idx.size(split_dim) // num_parts, dim=split_dim)
-    train_part_dir = osp.join(save_dir, f'{dataset_name}-train-partitions')
-    os.makedirs(train_part_dir, exist_ok=True)
-    for i in range(num_parts):
-        torch.save(train_idx[i], osp.join(train_part_dir, f'partition{i}.pt'))
-
-    print('-- Partitioning validation indices ...')
-    val_idx = val_idx.split(
-        val_idx.size(split_dim) // num_parts, dim=split_dim)
-    val_part_dir = osp.join(save_dir, f'{dataset_name}-val-partitions')
-    os.makedirs(val_part_dir, exist_ok=True)
-    for i in range(num_parts):
-        torch.save(val_idx[i], osp.join(val_part_dir, f'partition{i}.pt'))
-
-    print('-- Partitioning test indices ...')
-    test_idx = test_idx.split(
-        test_idx.size(split_dim) // num_parts, dim=split_dim)
-    test_part_dir = osp.join(save_dir, f'{dataset_name}-test-partitions')
-    os.makedirs(test_part_dir, exist_ok=True)
-    for i in range(num_parts):
-        torch.save(test_idx[i], osp.join(test_part_dir, f'partition{i}.pt'))
+    if dataset_name == 'MovieLens':
+        save_link_partitions(split_idx, data, dataset_name, num_parts,
+                             save_dir)
+    else:
+        save_partitions(split_idx, dataset_name, num_parts, save_dir)
 
 
 def get_dataset(name, dataset_dir, use_sparse_tensor=False):
@@ -130,20 +109,49 @@ def get_idx_split(dataset, dataset_name, split_data):
         val_idx = split_idx['valid']
 
     elif dataset_name == 'MovieLens':
-        edge_type = ('user', 'rates', 'movie')
-        train_data, val_data, test_data = T.RandomLinkSplit(
-            num_val=0.1,
-            num_test=0.1,
-            neg_sampling_ratio=0.0,
-            edge_types=[edge_type],
-            rev_edge_types=[('movie', 'rev_rates', 'user')],
-        )(dataset[0])
+        # Perform a 80/10/10 temporal link-level split:
+        perm = torch.argsort(dataset[0][('user', 'rates', 'movie')].time)
+        train_idx = perm[:int(0.8 * perm.size(0))]
+        val_idx = perm[int(0.8 * perm.size(0)):int(0.9 * perm.size(0))]
+        test_idx = perm[int(0.9 * perm.size(0)):]
 
-        train_idx = train_data[edge_type].edge_label_index
-        val_idx = val_data[edge_type].edge_label_index
-        test_idx = test_data[edge_type].edge_label_index
+    return {'train': train_idx, 'val': val_idx, 'test': test_idx}
 
-    return train_idx, val_idx, test_idx
+
+def save_partitions(split_idx, dataset_name, num_parts, save_dir):
+    for key, idx in split_idx.items():
+        print(f'-- Partitioning {key} indices ...')
+        idx = idx.split(idx.size(0) // num_parts)
+
+        part_dir = osp.join(save_dir, f'{dataset_name}-{key}-partitions')
+        os.makedirs(part_dir, exist_ok=True)
+        for i in range(num_parts):
+            torch.save(idx[i], osp.join(part_dir, f'partition{i}.pt'))
+
+
+def save_link_partitions(split_idx, data, dataset_name, num_parts, save_dir):
+    edge_type = data.edge_types[0]
+
+    for key, idx in split_idx.items():
+        print(f'-- Partitioning {key} indices ...')
+        edge_index = data[edge_type].edge_index[:, idx]
+        edge_index = edge_index.split(edge_index.size(1) // num_parts, dim=1)
+
+        label = data[edge_type].edge_label[idx]
+        label = label.split(label.size(0) // num_parts)
+
+        edge_time = data[edge_type].time[idx]
+        edge_time = edge_time.split(edge_time.size(0) // num_parts)
+
+        part_dir = osp.join(save_dir, f'{dataset_name}-{key}-partitions')
+        os.makedirs(part_dir, exist_ok=True)
+        for i in range(num_parts):
+            partition = {
+                'edge_label_index': (edge_type, edge_index[i]),
+                'edge_label': label[i],
+                'edge_label_time': edge_time[i],
+            }
+            torch.save(partition, osp.join(part_dir, f'partition{i}.pt'))
 
 
 if __name__ == '__main__':
