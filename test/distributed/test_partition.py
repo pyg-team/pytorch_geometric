@@ -1,6 +1,5 @@
 import os.path as osp
 
-import pytest
 import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
@@ -9,20 +8,11 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
+from torch_geometric.testing import onlyDistributedTest
 from torch_geometric.typing import EdgeTypeStr
 
-try:
-    # TODO Using `pyg-lib` metis partitioning leads to some weird bugs in the
-    # CI. As such, we require `torch-sparse` for these tests for now.
-    rowptr = torch.tensor([0, 1])
-    col = torch.tensor([0])
-    torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
-    WITH_METIS = True
-except (AttributeError, RuntimeError):
-    WITH_METIS = False
 
-
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_data(tmp_path):
     data = FakeDataset()[0]
 
@@ -68,7 +58,7 @@ def test_partition_data(tmp_path):
                        node_feats1['feats']['x'])
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
 
@@ -102,7 +92,7 @@ def test_partition_hetero_data(tmp_path):
         assert osp.exists(edge_feats_path)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_data_temporal(tmp_path):
     data = FakeDataset()[0]
     data.time = torch.arange(data.num_nodes)
@@ -122,7 +112,7 @@ def test_partition_data_temporal(tmp_path):
     assert torch.equal(data.time, node_feats1['time'])
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_data_edge_level_temporal(tmp_path):
     data = FakeDataset(edge_dim=2)[0]
     data.edge_time = torch.arange(data.num_edges)
@@ -144,7 +134,7 @@ def test_partition_data_edge_level_temporal(tmp_path):
                        edge_feats1['edge_time'])
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_hetero_data_temporal(tmp_path):
     data = FakeHeteroDataset()[0]
 
@@ -167,7 +157,7 @@ def test_partition_hetero_data_temporal(tmp_path):
         assert torch.equal(data[key].time, node_feats1[key]['time'])
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_partition_hetero_data_edge_level_temporal(tmp_path):
     data = FakeHeteroDataset(edge_dim=2)[0]
 
@@ -196,7 +186,7 @@ def test_partition_hetero_data_edge_level_temporal(tmp_path):
         )
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_data(tmp_path):
     data = FakeDataset()[0]
 
@@ -230,7 +220,7 @@ def test_from_partition_data(tmp_path):
     assert torch.allclose(data.x[id2], x2)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
 
@@ -257,7 +247,7 @@ def test_from_partition_hetero_data(tmp_path):
     assert node_types == set(data.node_types)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_temporal_data(tmp_path):
     data = FakeDataset()[0]
     data.time = torch.arange(data.num_nodes)
@@ -282,7 +272,7 @@ def test_from_partition_temporal_data(tmp_path):
     assert torch.equal(time2, data.time)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_edge_level_temporal_data(tmp_path):
     data = FakeDataset(edge_dim=2)[0]
     data.edge_time = torch.arange(data.num_edges)
@@ -309,7 +299,7 @@ def test_from_partition_edge_level_temporal_data(tmp_path):
     assert torch.equal(data.edge_time[edge_id2], time2)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_hetero_temporal_data(tmp_path):
     data = FakeHeteroDataset()[0]
 
@@ -341,7 +331,7 @@ def test_from_partition_hetero_temporal_data(tmp_path):
         assert torch.equal(times2[key], data[key].time)
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@onlyDistributedTest
 def test_from_partition_hetero_edge_level_temporal_data(tmp_path):
     data = FakeHeteroDataset(edge_dim=2)[0]
 

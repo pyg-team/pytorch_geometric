@@ -1,5 +1,4 @@
 import copy
-import json
 import os.path as osp
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -9,6 +8,7 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
+from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
     RPCRouter,
@@ -397,11 +397,21 @@ class LocalFeatureStore(FeatureStore):
 
     @classmethod
     def from_partition(cls, root: str, pid: int) -> 'LocalFeatureStore':
-        with open(osp.join(root, 'META.json'), 'r') as f:
-            meta = json.load(f)
-
         part_dir = osp.join(root, f'part_{pid}')
         assert osp.exists(part_dir)
+        feat_store = cls()
+        (
+            meta,
+            num_partitions,
+            partition_idx,
+            node_pb,
+            edge_pb,
+        ) = load_partition_info(root, pid)
+        feat_store.num_partitions = num_partitions
+        feat_store.partition_idx = partition_idx
+        feat_store.node_feat_pb = node_pb
+        feat_store.edge_feat_pb = edge_pb
+        feat_store.meta = meta
 
         node_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'node_feats.pt')):
@@ -410,8 +420,6 @@ class LocalFeatureStore(FeatureStore):
         edge_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'edge_feats.pt')):
             edge_feats = torch.load(osp.join(part_dir, 'edge_feats.pt'))
-
-        feat_store = cls()
 
         if not meta['is_hetero'] and node_feats is not None:
             feat_store.put_global_id(node_feats['global_id'], group_name=None)

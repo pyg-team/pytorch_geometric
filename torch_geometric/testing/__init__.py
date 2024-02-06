@@ -6,6 +6,8 @@ This package provides helper methods and decorators to ease testing.
 from .decorators import (
     is_full_test,
     onlyFullTest,
+    is_distributed_test,
+    onlyDistributedTest,
     onlyLinux,
     noWindows,
     onlyPython,
@@ -32,6 +34,8 @@ from .data import (
 __all__ = [
     'is_full_test',
     'onlyFullTest',
+    'is_distributed_test',
+    'onlyDistributedTest',
     'onlyLinux',
     'noWindows',
     'onlyPython',

@@ -161,6 +161,9 @@ class LightningData(LightningDataModule):
         self.eval_loader_kwargs.pop('sampler', None)
         self.eval_loader_kwargs.pop('batch_sampler', None)
 
+        if 'batch_sampler' in self.loader_kwargs:
+            self.loader_kwargs.pop('batch_size', None)
+
     @property
     def train_shuffle(self) -> bool:
         shuffle = self.loader_kwargs.get('sampler', None) is None
