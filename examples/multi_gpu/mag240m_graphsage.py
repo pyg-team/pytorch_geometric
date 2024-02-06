@@ -1,7 +1,7 @@
 import argparse
 import os
 import time
-from typing import Dict, List, Tuple
+from typing import Tuple
 
 import torch
 import torch.distributed as dist
@@ -9,7 +9,6 @@ import torch.multiprocessing as mp
 import torch.nn.functional as F
 from ogb.lsc import MAG240MDataset
 from torch import Tensor
-from torch.nn import Embedding, Linear
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
@@ -18,7 +17,6 @@ from torch_geometric.data import Batch
 from torch_geometric.loader.neighbor_loader import NeighborLoader
 from torch_geometric.nn import HeteroConv, SAGEConv
 from torch_geometric.nn.norm import BatchNorm
-from torch_geometric.typing import EdgeType, NodeType
 
 
 def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
@@ -113,7 +111,7 @@ class GraphSAGE(torch.nn.Module):
             self.metadata[0])
         self.hidden_convs = []
         if self.num_layers > 2:
-            for i in range(num_layers - 2):
+            for i in range(self.num_layers - 2):
                 self.hidden_convs.append(
                     SAGEConvLayer(hidden_channels, hidden_channels, dropout,
                                   self.metadata[1], self.metadata[0]))
@@ -127,7 +125,7 @@ class GraphSAGE(torch.nn.Module):
         x_dict = self.in_conv(x_dict, edge_index_dict)
         x_dict = self.in_conv2(x_dict, edge_index_dict)
         if self.num_layers > 2:
-            for i in range(num_layers - 2):
+            for i in range(self.num_layers - 2):
                 x_dict = self.hidden_convs[i](x_dict, edge_index_dict)
         x_dict = self.output_conv(x_dict, edge_index_dict)
         return x_dict
