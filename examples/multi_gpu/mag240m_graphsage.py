@@ -37,15 +37,6 @@ def training_step(batch: Batch, acc, model) -> Tensor:
 
 def validation_step(batch: Batch, acc, model):
     y_hat, y = common_step(batch, model)
-    if y.isnan().any() or (y == -1).any():
-        use_indices = torch.argwhere(
-            torch.logical_not((y == -1).logical_or(y.isnan())))
-        y_hat = y_hat[use_indices, :]
-        y = y[use_indices]
-    print("y_hat.size()=", y_hat.size())
-    print("y.size()", y.size())
-    print("y_hat.unique()=", y_hat.unique())
-    print("y.unique()=", y.unique())
     return acc(y_hat.softmax(dim=-1), y)
 
 
@@ -183,12 +174,10 @@ def run(
         print('Setting up NeighborLoaders...')
     train_idx = data["paper"].train_mask.nonzero(as_tuple=False).view(-1)
     eval_idx = data["paper"].val_mask.nonzero(as_tuple=False).view(-1)
-    test_idx = data["paper"].test_mask.nonzero(as_tuple=False).view(-1)
     if n_devices > 1:
         # Split indices into `n_devices` many chunks:
         train_idx = train_idx.split(train_idx.size(0) // n_devices)[rank]
         eval_idx = eval_idx.split(eval_idx.size(0) // n_devices)[rank]
-        test_idx = test_idx.split(test_idx.size(0) // n_devices)[rank]
 
     # delete unused tensors to not sample
     del data["paper"].train_mask
@@ -211,11 +200,16 @@ def run(
         shuffle=True,
         **kwargs,
     )
+
+    # original OGB example also tests on eval_idx
+    # it saves test_idx for the final hidden test
+    # for the OGB competition.
     test_loader = NeighborLoader(
         data,
-        input_nodes=("paper", test_idx),
+        input_nodes=("paper", eval_idx),
         **kwargs,
     )
+
     if rank == 0:
         print("Final setup...")
     if n_devices > 0:
@@ -301,16 +295,11 @@ def run(
     acc_sum = 0.0
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
-            # skip batches with no useful labels
-            y = batch["paper"].y
-            if (y.isnan().logical_or((y == -1))).all():
-                continue
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             acc_sum += validation_step(batch, acc, model)
-            print("acc_sum=", acc_sum, "for batch", i)
 
         if n_devices > 1:
             acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
@@ -344,7 +333,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_steps_per_epoch", type=int, default=-1,
                         help=help_str)
     parser.add_argument("--log_every_n_steps", type=int, default=100)
-    parser.add_argument("--eval_steps", type=int, default=-1, help=help_str)
+    parser.add_argument("--eval_steps", type=int, default=-1, help=50)
     parser.add_argument("--num_warmup_iters_for_timing", type=int, default=100)
     parser.add_argument(
         "--subgraph", type=float, default=1,
