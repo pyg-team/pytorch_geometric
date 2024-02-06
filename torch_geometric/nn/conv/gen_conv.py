@@ -15,14 +15,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import reset
 from torch_geometric.nn.norm import MessageNorm
-from torch_geometric.typing import (
-    Adj,
-    OptPairTensor,
-    OptTensor,
-    Size,
-    SparseTensor,
-)
-from torch_geometric.utils import is_torch_sparse_tensor, to_edge_index
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
 class MLP(Sequential):
