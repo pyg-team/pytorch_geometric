@@ -819,7 +819,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             dummy_values (bool, optional): If set to :obj:`True`, will fill
                 attributes of remaining types with dummy values.
                 Dummy values are :obj:`NaN` for floating point attributes,
-                and :obj:`-1` for integers. (default: :obj:`True`)
+                :obj:`False` for booleans, and :obj:`-1` for integers.
+                (default: :obj:`True`)
         """
         def get_sizes(stores: List[BaseStorage]) -> Dict[str, List[Tuple]]:
             sizes_dict = defaultdict(list)
@@ -855,7 +856,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     if key not in store:
                         ref = list(self.collect(key).values())[0]
                         dim = self.__cat_dim__(key, ref, store)
-                        dummy = float('NaN') if ref.is_floating_point() else -1
+                        if ref.is_floating_point():
+                            dummy = float('NaN')
+                        elif ref.dtype == torch.bool:
+                            dummy = False
+                        else:
+                            dummy = -1
                         if isinstance(store, NodeStorage):
                             dim_size = store.num_nodes
                         else:

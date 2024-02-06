@@ -334,11 +334,12 @@ class EdgeIndex(Tensor):
                 sparse_size = (sparse_size[1], sparse_size[1])
 
         if torch_geometric.typing.WITH_PT112:
-            out = super().__new__(cls, data)  # type: ignore
+            out = super().__new__(cls, data)
         else:
             out = Tensor._make_subclass(cls, data)
 
         # Attach metadata:
+        assert isinstance(out, EdgeIndex)
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected

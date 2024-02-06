@@ -7,8 +7,8 @@ from typing import List, Optional, Union
 
 import torch
 
+import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.distributed.utils import as_str
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
 from torch_geometric.utils import index_sort
@@ -375,13 +375,13 @@ def load_partition_info(
         node_pb_dir = osp.join(root_dir, 'node_map')
         for ntype in meta['node_types']:
             node_pb_dict[ntype] = torch.load(
-                osp.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+                osp.join(node_pb_dir, f'{pyg_dist.utils.as_str(ntype)}.pt'))
 
         edge_pb_dict = {}
         edge_pb_dir = osp.join(root_dir, 'edge_map')
         for etype in meta['edge_types']:
             edge_pb_dict[tuple(etype)] = torch.load(
-                osp.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+                osp.join(edge_pb_dir, f'{pyg_dist.utils.as_str(etype)}.pt'))
 
         return (meta, num_partitions, partition_idx, node_pb_dict,
                 edge_pb_dict)
