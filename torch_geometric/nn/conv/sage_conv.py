@@ -7,7 +7,13 @@ from torch import Tensor
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, Size, SparseTensor, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
 from torch_geometric.utils import spmm
 
 
@@ -128,7 +134,7 @@ class SAGEConv(MessagePassing):
             x = (self.lin(x[0]).relu(), x[1])
 
         # propagate_type: (x: OptPairTensor)
-        out = self.propagate(edge_index, x=x, size=size)             
+        out = self.propagate(edge_index, x=x, size=size)
         out = self.lin_l(out)
 
         x_r = x[1]

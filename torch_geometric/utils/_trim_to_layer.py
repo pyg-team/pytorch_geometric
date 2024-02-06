@@ -182,7 +182,7 @@ class TrimToLayer(torch.nn.Module):
 def trim_feat(x: Tensor, layer: int, num_samples_per_hop: List[int]) -> Tensor:
     if layer <= 0:
         return x
-    
+
     return x.narrow(
         dim=0,
         start=0,
@@ -220,12 +220,12 @@ def trim_adj(
         #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
         #     edge_index.size(0), # rows of previous layer become cols of this layer in adj_t
         # )
-        size = (
-            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-            edge_index.size(0))
+        size = (edge_index.size(0) -
+                num_sampled_dst_nodes_per_hop[-(layer + 1)],
+                edge_index.size(0))
         # compact way to express the change in size for each layer, including layer 0
-        
-        num_seed_nodes = size[0] 
+
+        num_seed_nodes = size[0]
 
         return trim_sparse_tensor(edge_index, size, num_seed_nodes)
 

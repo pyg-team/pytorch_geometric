@@ -284,15 +284,21 @@ class BasicGNN(torch.nn.Module):
             #     x = conv(x, edge_index)
 
             if self.supports_edge_weight and self.supports_edge_attr:
-                x = self.convs[i](x, edge_index, edge_weight=edge_weight) #,
-                                  #edge_attr=edge_attr,node_num=num_sampled_nodes_per_hop[-(i+1)] )
+                x = self.convs[i](x, edge_index, edge_weight=edge_weight)  #,
+                #edge_attr=edge_attr,node_num=num_sampled_nodes_per_hop[-(i+1)] )
             elif self.supports_edge_weight:
-                x = self.convs[i](x, edge_index, edge_weight=edge_weight) #,node_num=num_sampled_nodes_per_hop[-(i+1)])
+                x = self.convs[i](
+                    x, edge_index, edge_weight=edge_weight
+                )  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
             elif self.supports_edge_attr:
-                x = self.convs[i](x, edge_index, edge_attr=edge_attr) #,node_num=num_sampled_nodes_per_hop[-(i+1)])
+                x = self.convs[i](
+                    x, edge_index, edge_attr=edge_attr
+                )  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
             else:
                 # print("\n\n####################### executing conv at layer ", i)
-                x = self.convs[i](x, edge_index ) #,node_num=num_sampled_nodes_per_hop[-(i+1)])
+                x = self.convs[i](
+                    x,
+                    edge_index)  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
                 # print("\n\n layer: ", i)
                 # print("output x from GNNcon is:", x)
                 # print("x size is ", x.size())
