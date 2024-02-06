@@ -119,7 +119,6 @@ class SAGEConv(MessagePassing):
             self.lin_r.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                node_num: OptTensor = None,
                 size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
@@ -149,17 +148,9 @@ class SAGEConv(MessagePassing):
                               x: OptPairTensor) -> Tensor:
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
-        # print("Our adj_t size: ", adj_t.size(0), " ", adj_t.size(1))
-        # print("Our size of x:", x[0].shape, " ", x[1].shape)
-        # print("our adj_t in full:\n", adj_t)
 
         res = spmm(adj_t, x[0], reduce=self.aggr)
-
-        # print("Result of adj_t * x is: ", res)
-        # print("res has size ", res.size())
-
         return res
-        #return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

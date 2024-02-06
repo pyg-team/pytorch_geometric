@@ -127,7 +127,6 @@ def trim_to_layer(
     assert isinstance(x, Tensor)
     #x = trim_feat(x, layer, num_sampled_nodes_per_hop)
 
-    # print("edge_index type: ", type(edge_index))
     assert isinstance(edge_index, (Tensor, SparseTensor))
     edge_index = trim_adj(
         edge_index,
@@ -214,12 +213,12 @@ def trim_adj(
         # if layer == 0:
         #     size = (
         #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-        #     edge_index.size(1), # but at the first layer edge_index here is still square, so I can write .size(0)
+        #     edge_index.size(1), # at the first layer edge_index here is still square, so I can write .size(0)
         # )
         # else:
         #     size = (
         #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-        #     edge_index.size(0), #rows of previous layer become rows of this layer in adj_t
+        #     edge_index.size(0), # rows of previous layer become cols of this layer in adj_t
         # )
         size = (
             edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
@@ -251,7 +250,6 @@ def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
     rowptr, col, value = src.csr()
 
     rowptr = torch.narrow(rowptr, 0, 0, size[0] + 1).clone()
-    #rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
     nnz = rowptr[-1]
     col = torch.narrow(col, 0, 0, nnz)
 
