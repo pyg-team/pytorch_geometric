@@ -1,4 +1,3 @@
-import copy
 import os
 import time
 
@@ -9,7 +8,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
-from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
