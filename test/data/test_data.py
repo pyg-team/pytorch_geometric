@@ -179,14 +179,14 @@ def test_data_attr_cache():
 
 def test_data_attr_cache_not_shared():
     x = torch.rand((4, 4))
-    edge_index = torch.tensor([[0, 1, 2, 3, 0, 1], [0, 1, 2, 3, 0, 1]],
-                              dtype=torch.long)
-    time = torch.tensor([0., 1., 2., 3., 4., 5.])
+    edge_index = torch.tensor([[0, 1, 2, 3, 0, 1], [0, 1, 2, 3, 0, 1]])
+    time = torch.arange(edge_index.size(1))
     data = Data(x=x, edge_index=edge_index, time=time)
-
     assert data.is_node_attr('x')
 
     out = data.up_to(3.5)
+    # This is expected behavior due to the ambiguity of between node-level and
+    # edge-level tensors when they share the same number of nodes/edges.
     assert out.is_node_attr('time')
     assert not data.is_node_attr('time')
 
