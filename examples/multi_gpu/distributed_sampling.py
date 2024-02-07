@@ -1,18 +1,19 @@
 import copy
 import os
 import time
+
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parallel import DistributedDataParallel
+from torchmetrics import Accuracy
 from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
-from torchmetrics import Accuracy
 
 
 class SAGE(torch.nn.Module):
@@ -45,7 +46,8 @@ def eval(loader, model, acc, rank):
                            batch.y[:batch_size])
 
         nb = i + 1.0
-        return acc_sum/(nb) * 100.0
+        return acc_sum / (nb) * 100.0
+
 
 def run(rank, world_size, dataset, start):
     os.environ['MASTER_ADDR'] = 'localhost'
@@ -68,11 +70,11 @@ def run(rank, world_size, dataset, start):
                                   num_neighbors=[25, 10], shuffle=True,
                                   drop_last=True, **kwargs)
     val_loader = NeighborLoader(data, input_nodes=val_idx,
-                                  num_neighbors=[25, 10],
-                                  drop_last=True, **kwargs)
+                                num_neighbors=[25,
+                                               10], drop_last=True, **kwargs)
     test_loader = NeighborLoader(data, input_nodes=test_idx,
-                                      num_neighbors=[25, 10],
-                                      drop_last=True, **kwargs)
+                                 num_neighbors=[25,
+                                                10], drop_last=True, **kwargs)
 
     torch.manual_seed(12345)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes).to(rank)
@@ -85,7 +87,7 @@ def run(rank, world_size, dataset, start):
         for batch in train_loader:
             if start_time:
                 start_time = False
-                since=time.time()
+                since = time.time()
             optimizer.zero_grad()
             out = model(batch.x, batch.edge_index.to(rank))[:batch.batch_size]
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
@@ -103,9 +105,12 @@ def run(rank, world_size, dataset, start):
             acc2 = eval(val_loader, model, acc, rank)
             acc3 = eval(test_loader, model, acc, rank)
             if world_size > 1:
-                acc1 = torch.tensor(float(acc1), dtype=torch.float32, device=rank)
-                acc2 = torch.tensor(float(acc2), dtype=torch.float32, device=rank)
-                acc3 = torch.tensor(float(acc3), dtype=torch.float32, device=rank)
+                acc1 = torch.tensor(float(acc1), dtype=torch.float32,
+                                    device=rank)
+                acc2 = torch.tensor(float(acc2), dtype=torch.float32,
+                                    device=rank)
+                acc3 = torch.tensor(float(acc3), dtype=torch.float32,
+                                    device=rank)
                 dist.all_reduce(acc1, op=dist.ReduceOp.SUM)
                 dist.all_reduce(acc2, op=dist.ReduceOp.SUM)
                 dist.all_reduce(acc3, op=dist.ReduceOp.SUM)
@@ -120,8 +125,11 @@ def run(rank, world_size, dataset, start):
 
     dist.destroy_process_group()
     if rank == 0:
-        print("Time from first minibatch to done training=", round(time.time() - since, 2))
-        print("Total program time (e2e_time) = ", round(time.time()-start, 2))
+        print("Time from first minibatch to done training=",
+              round(time.time() - since, 2))
+        print("Total program time (e2e_time) = ",
+              round(time.time() - start, 2))
+
 
 if __name__ == '__main__':
     start = time.time()
@@ -129,4 +137,5 @@ if __name__ == '__main__':
 
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run, args=(world_size, dataset, start), nprocs=world_size, join=True)
+    mp.spawn(run, args=(world_size, dataset, start), nprocs=world_size,
+             join=True)
