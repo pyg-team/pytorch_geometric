@@ -314,6 +314,8 @@ class HeteroSamplerOutput(CastMixin):
             for key in self.row.keys():
                 out.orig_row[key] = self.row[key]
                 out.orig_col[key] = self.col[key]
+        else:
+            out.num_sampled_nodes = out.num_sampled_edges = None
 
         src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
@@ -368,9 +370,6 @@ class HeteroSamplerOutput(CastMixin):
                     warnings.warn(f"Cannot convert to bidirectional graph "
                                   f"since the edge type {edge_type} does not "
                                   f"seem to have a reverse edge type")
-
-        if not keep_orig_edges:
-            out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
