@@ -19,7 +19,7 @@ jobs:
         continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          sync-labels: false
+          sync-labels: true
 
       - name: Add PR author
         uses: samspills/assign-pr-to-author@v1.0
