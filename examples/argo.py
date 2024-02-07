@@ -8,12 +8,12 @@ from skopt import gp_minimize
 class ARGO:
     def __init__(self, n_search=10, epoch=200, batch_size=4096,
                  space=[(2, 8), (1, 4), (1, 32)], random_state=1):
-        self.n_search = n_search
-        self.epoch = epoch
-        self.batch_size = batch_size
-        self.space = space
-        self.random_state = random_state
-        self.acq_func = 'EI'
+        self.n_search = n_search # number of configuration searches the auto-tuner will conduct
+        self.epoch = epoch # number of epochs of training
+        self.batch_size = batch_size # size of the mini-batch
+        self.space = space # range of the search space, [number of processes, number of samplers, number of trainers]
+        self.random_state = random_state # number of random initializations before searching
+        self.acq_func = 'EI' # acqusition function of the auto-tuner
         self.counter = [0]
 
     def core_binder(self, num_cpu_proc, n_samp, n_train, rank):
