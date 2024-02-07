@@ -201,6 +201,8 @@ class SamplerOutput(CastMixin):
     batch: OptTensor = None
     num_sampled_nodes: Optional[List[int]] = None
     num_sampled_edges: Optional[List[int]] = None
+    orig_row: Tensor = None
+    orig_col: Tensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
