@@ -288,8 +288,8 @@ class HeteroSamplerOutput(CastMixin):
     batch: Optional[Dict[NodeType, Tensor]] = None
     num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
     num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
-    orig_row: Optional[Dict[EdgeType, Tensor]] = None,
-    orig_col: Optional[Dict[EdgeType, Tensor]] = None,
+    orig_row: Optional[Dict[EdgeType, Tensor]] = None
+    orig_col: Optional[Dict[EdgeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
