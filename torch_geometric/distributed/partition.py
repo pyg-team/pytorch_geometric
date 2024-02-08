@@ -298,7 +298,20 @@ class Partitioner:
 
                 # Sort on col to avoid keeping track of permuations in
                 # NeighborSampler when converting to CSC format:
-                global_col, perm = index_sort(global_col, max_value=num_cols)
+                perm = None
+                if not self.is_edge_level_time:
+                    global_col, perm = index_sort(global_col,
+                                                  max_value=num_cols)
+                else:
+                    assert not self.is_node_level_time
+                    if 'edge_time' in part_data:
+                        edge_time = part_data.edge_time
+                    elif 'time' in part_data:
+                        edge_time = part_data.time
+
+                    perm = lexsort([edge_time, global_col])
+                    global_col = global_col[perm]
+
                 global_row = global_row[perm]
                 edge_id = edge_id[perm]
 
@@ -337,11 +350,7 @@ class Partitioner:
                         dict(edge_attr=part_data.edge_attr[perm]),
                     })
                 if self.is_edge_level_time:
-                    if 'edge_time' in part_data:
-                        edge_time = part_data.edge_time[perm]
-                    elif 'time' in part_data:
-                        edge_time = part_data.time[perm]
-                    efeat.update({'edge_time': edge_time})
+                    efeat.update({'edge_time': edge_time[perm]})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
 
