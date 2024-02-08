@@ -6,7 +6,7 @@ from torch import Tensor
 
 class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from the `"Attention Is All You Need"
-    <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
+    <https://arxiv.org/abs/1706.03762>`_ paper.
 
     .. math::
 
