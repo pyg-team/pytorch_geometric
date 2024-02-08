@@ -3,7 +3,12 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
-from torch_geometric.testing import is_full_test, withCUDA, withPackage
+from torch_geometric.testing import (
+    is_full_test,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
@@ -134,3 +139,36 @@ def test_rgcn_conv(cls, conf, device):
                                       atol=1e-3)
                 assert torch.allclose(jit((idx1, idx2), adj.t()), out2,
                                       atol=1e-3)
+
+
+@withCUDA
+@onlyLinux
+@withPackage('torch>=2.1.0')
+@pytest.mark.parametrize('cls', classes)
+@pytest.mark.parametrize('conf', confs)
+def test_compile_rgcn_conv(cls, conf, device):
+    num_bases, num_blocks = conf
+    x1 = torch.randn(4, 4, device=device)
+    x2 = torch.randn(2, 16, device=device)
+    idx1 = torch.arange(4, device=device)
+    idx2 = torch.arange(2, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [0, 0, 1, 0, 1, 1],
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
+    conv = cls(4, 32, 2, num_bases, num_blocks, aggr='sum').to(device)
+    explanation = torch._dynamo.explain(conv)(x1, edge_index, edge_type)
+    assert explanation.graph_break_count == 0
+
+    # Test bipartite message passing:
+    conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum').to(device)
+    explanation = torch._dynamo.explain(conv)((x1, x2), edge_index, edge_type)
+    assert explanation.graph_break_count == 0
+    if num_blocks is None:
+        explanation = torch._dynamo.explain(conv)((None, idx2), edge_index,
+                                                  edge_type)
+        assert explanation.graph_break_count == 0
+        explanation = torch._dynamo.explain(conv)((idx1, idx2), edge_index,
+                                                  edge_type)
+        assert explanation.graph_break_count == 0
