@@ -1,5 +1,7 @@
 from .reshape import Reshape
 from .sequential import Sequential
+from .module_dict import ModuleDict
+from .parameter_dict import ParameterDict
 from .data_parallel import DataParallel
 from .to_hetero_transformer import to_hetero
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
@@ -21,6 +23,8 @@ from .functional import *  # noqa
 __all__ = [
     'Reshape',
     'Sequential',
+    'ModuleDict',
+    'ParameterDict',
     'DataParallel',
     'to_hetero',
     'to_hetero_with_bases',
