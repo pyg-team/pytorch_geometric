@@ -85,7 +85,7 @@ def dense_asymcheegercut_pool(
 
 def _totvar_loss(adj, s):
     l1_norm = torch.sum(torch.abs(s[..., None, :] - s[:, None, ...]), dim=-1)
-    loss = torch.sum(adj * l1_norm)
+    loss = torch.sum(adj * l1_norm, dim=(-1, -2))
 
     # Normalize loss
     n_edges = torch.sum(adj != 0)
