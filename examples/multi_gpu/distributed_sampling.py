@@ -29,32 +29,32 @@ class SAGE(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x = conv(x, edge_index)
             if i < len(self.convs) - 1:
-                x = x.relu_()
+                x = x.relu()
                 x = F.dropout(x, p=0.5, training=self.training)
         return x
 
 
-def eval(loader, model, acc, rank):
-    acc_sum = 0.0
-    with torch.no_grad():
-        for i, batch in enumerate(loader):
-            batch_size = batch.batch_size
-            out = model.module(batch.x, batch.edge_index.to(rank))
-            acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                           batch.y[:batch_size])
+@torch.no_grad()
+def test(loader, model, rank):
+    model.eval()
 
-        nb = i + 1.0
-        return acc_sum / (nb) * 100.0
+    total_correct = total_examples = 0
+    for i, batch in enumerate(loader):
+        out = model(batch.x, batch.edge_index.to(rank))
+        pred = out[:batch.batch_size].argmax(dim=-1)
+        y = batch.y[:batch.batch_size].to(rank)
+        total_correct += int((pred == y).sum())
+        total_examples += batch.batch_size
+    return torch.tensor(total_correct / total_examples, device=rank)
 
 
-def run(rank, world_size, dataset, start):
+def run(rank, world_size, dataset):
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
     data = dataset[0]
-    # Move to device for faster feature fetch.
-    data = data.to(rank, 'x', 'y')
+    data = data.to(rank, 'x', 'y')  # Move to device for faster feature fetch.
 
     # Split indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
@@ -63,29 +63,39 @@ def run(rank, world_size, dataset, start):
     val_idx = val_idx.split(val_idx.size(0) // world_size)[rank]
     test_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
     test_idx = test_idx.split(test_idx.size(0) // world_size)[rank]
-    kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
-    train_loader = NeighborLoader(data, input_nodes=train_idx,
-                                  num_neighbors=[25, 10], shuffle=True,
-                                  drop_last=True, **kwargs)
-    val_loader = NeighborLoader(data, input_nodes=val_idx,
-                                num_neighbors=[25,
-                                               10], drop_last=True, **kwargs)
-    test_loader = NeighborLoader(data, input_nodes=test_idx,
-                                 num_neighbors=[25,
-                                                10], drop_last=True, **kwargs)
+
+    kwargs = dict(
+        data=data,
+        batch_size=1024,
+        num_neighbors=[25, 10],
+        drop_last=True,
+        num_workers=4,
+        persistent_workers=True,
+    )
+    train_loader = NeighborLoader(
+        input_nodes=train_idx,
+        shuffle=True,
+        **kwargs,
+    )
+    val_loader = NeighborLoader(
+        input_nodes=val_idx,
+        shuffle=False,
+        **kwargs,
+    )
+    test_loader = NeighborLoader(
+        input_nodes=test_idx,
+        shuffle=False,
+        **kwargs,
+    )
 
     torch.manual_seed(12345)
-    acc = Accuracy(task="multiclass", num_classes=dataset.num_classes).to(rank)
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    start_time = True
+
     for epoch in range(1, 21):
         model.train()
         for batch in train_loader:
-            if start_time:
-                start_time = False
-                since = time.time()
             optimizer.zero_grad()
             out = model(batch.x, batch.edge_index.to(rank))[:batch.batch_size]
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
@@ -98,42 +108,30 @@ def run(rank, world_size, dataset, start):
             print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
 
         if epoch % 5 == 0:
-            model.eval()
-            acc1 = eval(train_loader, model, acc, rank)
-            acc2 = eval(val_loader, model, acc, rank)
-            acc3 = eval(test_loader, model, acc, rank)
+            train_acc = test(train_loader, model, rank)
+            val_acc = test(val_loader, model, rank)
+            test_acc = test(test_loader, model, rank)
+
             if world_size > 1:
-                acc1 = torch.tensor(float(acc1), dtype=torch.float32,
-                                    device=rank)
-                acc2 = torch.tensor(float(acc2), dtype=torch.float32,
-                                    device=rank)
-                acc3 = torch.tensor(float(acc3), dtype=torch.float32,
-                                    device=rank)
-                dist.all_reduce(acc1, op=dist.ReduceOp.SUM)
-                dist.all_reduce(acc2, op=dist.ReduceOp.SUM)
-                dist.all_reduce(acc3, op=dist.ReduceOp.SUM)
-                acc1 /= world_size
-                acc2 /= world_size
-                acc3 /= world_size
+                dist.all_reduce(train_acc, op=dist.ReduceOp.SUM)
+                dist.all_reduce(train_acc, op=dist.ReduceOp.SUM)
+                dist.all_reduce(train_acc, op=dist.ReduceOp.SUM)
+                train_acc /= world_size
+                val_acc /= world_size
+                test_acc /= world_size
 
             if rank == 0:
-                print(f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
+                print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                      f'Test: {test_acc:.4f}')
 
         dist.barrier()
 
     dist.destroy_process_group()
-    if rank == 0:
-        print("Time from first minibatch to done training=",
-              round(time.time() - since, 2))
-        print("Total program time (e2e_time) = ",
-              round(time.time() - start, 2))
 
 
 if __name__ == '__main__':
-    start = time.time()
     dataset = Reddit('../../data/Reddit')
 
     world_size = torch.cuda.device_count()
-    print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run, args=(world_size, dataset, start), nprocs=world_size,
-             join=True)
+    print("Let's use", world_size, "GPUs!")
+    mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
