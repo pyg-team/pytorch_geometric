@@ -167,6 +167,9 @@ class TGNMemory(torch.nn.Module):
         src = torch.cat(src, dim=0)
         dst = torch.cat(dst, dim=0)
         t = torch.cat(t, dim=0)
+        # Filter out empty tensors to avoid `invalid configuration argument`.
+        # TODO Investigate why this is needed.
+        raw_msg = [m for i, m in enumerate(raw_msg) if m.numel() > 0 or i == 0]
         raw_msg = torch.cat(raw_msg, dim=0)
         t_rel = t - self.last_update[src]
         t_enc = self.time_enc(t_rel.to(raw_msg.dtype))

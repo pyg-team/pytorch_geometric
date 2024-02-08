@@ -8,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import fs, read_txt_array
@@ -39,7 +39,6 @@ class DBP15K(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
     file_id = '1ggYlYf2_kTyi7oF9g07oTNn3VDhjl7so'
 
     def __init__(
@@ -65,7 +64,7 @@ class DBP15K(InMemoryDataset):
         return f'{self.pair}.pt'
 
     def download(self) -> None:
-        path = download_url(self.url.format(self.file_id), self.root)
+        path = download_google_url(self.file_id, self.root, 'data.zip')
         extract_zip(path, self.root)
         os.unlink(path)
         fs.rm(self.raw_dir)
