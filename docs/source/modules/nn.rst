@@ -1,10 +1,20 @@
 torch_geometric.nn
 ==================
 
+Wrapper Layers
+--------------
+
 .. contents:: Contents
     :local:
 
 .. autoclass:: torch_geometric.nn.sequential.Sequential
+
+.. autoclass:: torch_geometric.nn.module_dict.ModuleDict
+
+.. autoclass:: torch_geometric.nn.parameter_dict.ParameterDict
+
+Linear Layers
+-------------
 
 .. currentmodule:: torch_geometric.nn.dense
 
