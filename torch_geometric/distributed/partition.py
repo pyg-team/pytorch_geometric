@@ -6,11 +6,19 @@ from collections import defaultdict
 from typing import List, Optional, Union
 
 import torch
+from torch import Tensor
 
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.cluster import ClusterData
-from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
+from torch_geometric.typing import (
+    Dict,
+    EdgeType,
+    EdgeTypeStr,
+    NodeType,
+    OptTensor,
+    Tuple,
+)
 from torch_geometric.utils import index_sort, lexsort
 
 
@@ -117,6 +125,27 @@ class Partitioner:
     def edge_types(self) -> Optional[List[EdgeType]]:
         return self.data.edge_types if self.is_hetero else None
 
+    def sort_csc(
+        self,
+        row: Tensor,
+        col: Tensor,
+        src_node_time: OptTensor = None,
+        edge_time: OptTensor = None,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+
+        if src_node_time is None and edge_time is None:
+            col, perm = index_sort(col)
+            return row[perm], col, perm
+
+        elif edge_time is not None:
+            assert src_node_time is None
+            perm = lexsort([edge_time, col])
+            return row[perm], col[perm], perm
+
+        else:  # src_node_time is not None
+            perm = lexsort([src_node_time[row], col])
+            return row[perm], col[perm], perm
+
     def generate_partition(self):
         r"""Generates the partition."""
         os.makedirs(self.root, exist_ok=True)
@@ -187,43 +216,43 @@ class Partitioner:
                     global_col = node_id[col]
                     global_row = node_perm[row]
 
-                    # Sort on col to avoid keeping track of permutations in
-                    # NeighborSampler when converting to CSC format:
-                    num_cols = col.size()[0]
+                    edge_time = None
+                    src_node_time = None
 
-                    perm = None
-                    if not self.is_edge_level_time:
-                        global_col, perm = index_sort(global_col,
-                                                      max_value=num_cols)
-                    else:
-                        assert not self.is_node_level_time
-
+                    if self.is_edge_level_time:
                         if 'edge_time' in part_data:
                             edge_time = part_data.edge_time[mask]
                         elif 'time' in part_data:
                             edge_time = part_data.time[mask]
 
-                        perm = lexsort([edge_time, global_col])
-                        global_col = global_col[perm]
+                    elif self.is_node_level_time:
+                        src_node_time = time_data[src]
 
-                    global_row = global_row[perm]
+                    offsetted_row = global_row - node_offset[src]
+                    offsetted_col = global_col - node_offset[dst]
+                    # Sort on col to avoid keeping track of permutations in
+                    # NeighborSampler when converting to CSC format:
+                    offsetted_row, offsetted_col, perm = self.sort_csc(
+                        offsetted_row, offsetted_col, src_node_time, edge_time)
+
                     global_eid = edge_id[mask][perm]
                     assert torch.equal(
                         data.edge_index[:, global_eid],
-                        torch.stack((global_row, global_col), dim=0),
+                        torch.stack((offsetted_row + node_offset[src],
+                                     offsetted_col + node_offset[dst]), dim=0),
                     )
                     offsetted_eid = global_eid - edge_offset[edge_type]
                     assert torch.equal(
                         self.data[edge_type].edge_index[:, offsetted_eid],
                         torch.stack((
-                            global_row - node_offset[src],
-                            global_col - node_offset[dst],
+                            offsetted_row,
+                            offsetted_col,
                         ), dim=0),
                     )
                     graph[edge_type] = {
                         'edge_id': global_eid,
-                        'row': global_row - node_offset[src],
-                        'col': global_col - node_offset[dst],
+                        'row': offsetted_row,
+                        'col': offsetted_col,
                         'size': size,
                     }
 
@@ -291,28 +320,27 @@ class Partitioner:
 
                 row = part_data.edge_index[0]
                 col = part_data.edge_index[1]
-                num_cols = col.size()[0]
 
                 global_col = node_id[col]  # part_ids -> global
                 global_row = node_perm[row]
 
-                # Sort on col to avoid keeping track of permuations in
-                # NeighborSampler when converting to CSC format:
-                perm = None
-                if not self.is_edge_level_time:
-                    global_col, perm = index_sort(global_col,
-                                                  max_value=num_cols)
-                else:
-                    assert not self.is_node_level_time
+                edge_time = None
+                node_time = None
+
+                if self.is_edge_level_time:
                     if 'edge_time' in part_data:
                         edge_time = part_data.edge_time
                     elif 'time' in part_data:
                         edge_time = part_data.time
 
-                    perm = lexsort([edge_time, global_col])
-                    global_col = global_col[perm]
+                elif self.is_node_level_time:
+                    node_time = data.time
 
-                global_row = global_row[perm]
+                # Sort on col to avoid keeping track of permuations in
+                # NeighborSampler when converting to CSC format:
+                global_row, global_col, perm = self.sort_csc(
+                    global_row, global_col, node_time, edge_time)
+
                 edge_id = edge_id[perm]
 
                 assert torch.equal(
