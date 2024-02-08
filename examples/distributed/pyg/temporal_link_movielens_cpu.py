@@ -85,9 +85,9 @@ def test(
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch['user', 'movie'].edge_label_index,
+                batch[('user', 'rates', 'movie')].edge_label_index,
             ).clamp(min=0, max=5)
-            target = batch['user', 'movie'].edge_label.float()
+            target = batch[('user', 'rates', 'movie')].edge_label.float()
             preds.append(pred)
             targets.append(target)
 
@@ -145,9 +145,9 @@ def train(
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch['user', 'movie'].edge_label_index,
+                batch[('user', 'rates', 'movie')].edge_label_index,
             )
-            target = batch['user', 'movie'].edge_label.float()
+            target = batch[('user', 'rates', 'movie')].edge_label.float()
 
             loss = F.mse_loss(pred, target)
             loss.backward()
@@ -258,7 +258,8 @@ def run_proc(
     # Create distributed neighbor loader for training:
     train_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
-        edge_label_index=train_edge_label_index,
+        edge_label_index=((('user', 'rates', 'movie')),
+                          train_edge_label_index),
         edge_label=train_edge_label,
         edge_label_time=train_edge_label_time,
         disjoint=True,
@@ -280,7 +281,7 @@ def run_proc(
     # Create distributed neighbor loader for testing:
     test_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
-        edge_label_index=test_edge_label_index,
+        edge_label_index=((('user', 'rates', 'movie')), test_edge_label_index),
         edge_label=test_edge_label,
         edge_label_time=test_edge_label_time,
         disjoint=True,
@@ -314,7 +315,7 @@ def run_proc(
             model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch['user', 'movie'].edge_label_index,
+                batch[('user', 'rates', 'movie')].edge_label_index,
             )
 
     print('--- Initialize parameters of the model ...')

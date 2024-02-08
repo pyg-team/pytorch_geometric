@@ -11,7 +11,7 @@ import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import index_sort, lexsort
 
 
 class Partitioner:
@@ -187,11 +187,25 @@ class Partitioner:
                     global_col = node_id[col]
                     global_row = node_perm[row]
 
-                    # Sort on col to avoid keeping track of permuations in
+                    # Sort on col to avoid keeping track of permutations in
                     # NeighborSampler when converting to CSC format:
                     num_cols = col.size()[0]
-                    global_col, perm = index_sort(global_col,
-                                                  max_value=num_cols)
+
+                    perm = None
+                    if not self.is_edge_level_time:
+                        global_col, perm = index_sort(global_col,
+                                                      max_value=num_cols)
+                    else:
+                        assert not self.is_node_level_time
+
+                        if 'edge_time' in part_data:
+                            edge_time = part_data.edge_time[mask]
+                        elif 'time' in part_data:
+                            edge_time = part_data.time[mask]
+
+                        perm = lexsort([edge_time, global_col])
+                        global_col = global_col[perm]
+
                     global_row = global_row[perm]
                     global_eid = edge_id[mask][perm]
                     assert torch.equal(
@@ -222,11 +236,7 @@ class Partitioner:
                             dict(edge_attr=edge_attr),
                         })
                     if self.is_edge_level_time:
-                        if 'edge_time' in part_data:
-                            edge_time = part_data.edge_time[mask][perm]
-                        elif 'time' in part_data:
-                            edge_time = part_data.time[mask][perm]
-                        efeat[edge_type].update({'edge_time': edge_time})
+                        efeat[edge_type].update({'edge_time': edge_time[perm]})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
                 torch.save(graph, osp.join(path, 'graph.pt'))

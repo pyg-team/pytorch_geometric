@@ -94,7 +94,7 @@ class ClusterData(torch.utils.data.Dataset):
         if self.sparse_format == 'csr':  # Calculate CSR representation:
             row, index = sort_edge_index(edge_index, num_nodes=num_nodes)
             indptr = index2ptr(row, size=num_nodes)
-        else:  # Calculate CSR representation:
+        else:  # Calculate CSC representation:
             index, col = sort_edge_index(edge_index, num_nodes=num_nodes,
                                          sort_by_row=False)
             indptr = index2ptr(col, size=num_nodes)

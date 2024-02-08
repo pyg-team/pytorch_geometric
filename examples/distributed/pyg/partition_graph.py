@@ -147,7 +147,7 @@ def save_link_partitions(split_idx, data, dataset_name, num_parts, save_dir):
         os.makedirs(part_dir, exist_ok=True)
         for i in range(num_parts):
             partition = {
-                'edge_label_index': (edge_type, edge_index[i]),
+                'edge_label_index': edge_index[i],
                 'edge_label': label[i],
                 'edge_label_time': edge_time[i],
             }

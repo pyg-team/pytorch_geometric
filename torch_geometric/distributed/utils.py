@@ -133,7 +133,7 @@ def filter_dist_store(
     """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
-    nfeats, nlabels, efeats = meta[-3:]
+    nfeats, labels, efeats = meta[-3:]
 
     # Filter edge storage:
     required_edge_attrs = []
@@ -162,8 +162,8 @@ def filter_dist_store(
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
 
-    if nlabels:
-        data[input_type].y = nlabels[input_type]
+    if labels:
+        data[input_type].y = labels[input_type]
 
     return data
 

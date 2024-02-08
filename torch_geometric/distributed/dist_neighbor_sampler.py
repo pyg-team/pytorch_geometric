@@ -993,15 +993,22 @@ class DistNeighborSampler:
         and put them into a sample message.
         """
         if self.is_hetero:
-            nlabels = {}
+            labels = {}
             nfeats = {}
             efeats = {}
             # Collect node labels of input node type.
-            node_labels = self.feature_store.labels
-            if node_labels is not None:
-                nlabels = {
-                    self.input_type: node_labels[output.node[self.input_type]]
-                }
+            labels = self.feature_store.labels
+            if labels is not None:
+                if isinstance(self.input_type, tuple):
+                    # Collect edge labels of input edge type.
+                    labels = {
+                        self.input_type: labels[output.edge[self.input_type]]
+                    }
+                else:  # isinstance(self.input_type, str):
+                    # Collect node labels of input node type.
+                    labels = {
+                        self.input_type: labels[output.node[self.input_type]]
+                    }
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
@@ -1033,8 +1040,8 @@ class DistNeighborSampler:
 
         else:  # Homo
             # Collect node labels.
-            nlabels = (self.feature_store.labels[output.node] if
-                       (self.feature_store.labels is not None) else None)
+            labels = (self.feature_store.labels[output.node] if
+                      (self.feature_store.labels is not None) else None)
             # Collect node features.
             if output.node is not None:
                 fut = self.feature_store.lookup_features(
@@ -1052,7 +1059,7 @@ class DistNeighborSampler:
             else:
                 efeats = None
 
-        output.metadata = (*output.metadata, nfeats, nlabels, efeats)
+        output.metadata = (*output.metadata, nfeats, labels, efeats)
         return output
 
     @property
