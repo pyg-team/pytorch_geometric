@@ -58,6 +58,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         concurrency: int = 1,
+        num_rpc_threads: int = 16,
         filter_per_worker: Optional[bool] = False,
         async_sampling: bool = True,
         device: Optional[torch.device] = None,
@@ -100,6 +101,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             master_port=master_port,
             current_ctx=current_ctx,
             dist_sampler=dist_sampler,
+            num_rpc_threads=num_rpc_threads,
             **kwargs,
         )
         LinkLoader.__init__(
