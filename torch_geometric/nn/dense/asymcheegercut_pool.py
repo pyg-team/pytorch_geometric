@@ -88,7 +88,7 @@ def _totvar_loss(adj, s):
     loss = torch.sum(adj * l1_norm, dim=(-1, -2))
 
     # Normalize loss
-    n_edges = torch.sum(adj != 0)
+    n_edges = torch.count_nonzero(adj, dim=(-1, -2))
     loss *= 1 / (2 * n_edges)
 
     return loss
