@@ -697,7 +697,7 @@ class DistNeighborSampler:
                     src_time,
                 )
 
-        # Homogeneus Neighborhood Sampling ####################################
+        # Homogeneous Neighborhood Sampling ###################################
 
         else:
 
@@ -996,16 +996,13 @@ class DistNeighborSampler:
             labels = {}
             nfeats = {}
             efeats = {}
-            # Collect node labels of input node type.
             labels = self.feature_store.labels
             if labels is not None:
-                if isinstance(self.input_type, tuple):
-                    # Collect edge labels of input edge type.
+                if isinstance(self.input_type, tuple):  # Edge labels.
                     labels = {
                         self.input_type: labels[output.edge[self.input_type]]
                     }
-                else:  # isinstance(self.input_type, str):
-                    # Collect node labels of input node type.
+                else:  # Node labels.
                     labels = {
                         self.input_type: labels[output.node[self.input_type]]
                     }
@@ -1038,10 +1035,12 @@ class DistNeighborSampler:
                     else:
                         efeats[edge_type] = None
 
-        else:  # Homo
+        else:  # Homogeneous:
             # Collect node labels.
-            labels = (self.feature_store.labels[output.node] if
-                      (self.feature_store.labels is not None) else None)
+            if self.feature_store.labels is not None:
+                labels = self.feature_store.labels[output.node]
+            else:
+                labels = None
             # Collect node features.
             if output.node is not None:
                 fut = self.feature_store.lookup_features(

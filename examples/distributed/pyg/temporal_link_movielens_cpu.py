@@ -85,9 +85,9 @@ def test(
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch[('user', 'rates', 'movie')].edge_label_index,
+                batch['user', 'movie'].edge_label_index,
             ).clamp(min=0, max=5)
-            target = batch[('user', 'rates', 'movie')].edge_label.float()
+            target = batch['user', 'movie'].edge_label.float()
             preds.append(pred)
             targets.append(target)
 
@@ -145,9 +145,9 @@ def train(
             pred = model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch[('user', 'rates', 'movie')].edge_label_index,
+                batch['user', 'movie'].edge_label_index,
             )
-            target = batch[('user', 'rates', 'movie')].edge_label.float()
+            target = batch['user', 'movie'].edge_label.float()
 
             loss = F.mse_loss(pred, target)
             loss.backward()
@@ -315,7 +315,7 @@ def run_proc(
             model(
                 batch.x_dict,
                 batch.edge_index_dict,
-                batch[('user', 'rates', 'movie')].edge_label_index,
+                batch['user', 'movie'].edge_label_index,
             )
 
     print('--- Initialize parameters of the model ...')

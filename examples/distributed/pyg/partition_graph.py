@@ -149,7 +149,7 @@ def save_link_partitions(split_idx, data, dataset_name, num_parts, save_dir):
             partition = {
                 'edge_label_index': edge_index[i],
                 'edge_label': label[i],
-                'edge_label_time': edge_time[i],
+                'edge_label_time': edge_time[i] - 1,
             }
             torch.save(partition, osp.join(part_dir, f'partition{i}.pt'))
 
