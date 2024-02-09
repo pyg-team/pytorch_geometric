@@ -697,7 +697,7 @@ class DistNeighborSampler:
                     src_time,
                 )
 
-        # Homogeneus Neighborhood Sampling ####################################
+        # Homogeneous Neighborhood Sampling ###################################
 
         else:
 
@@ -993,15 +993,19 @@ class DistNeighborSampler:
         and put them into a sample message.
         """
         if self.is_hetero:
-            nlabels = {}
+            labels = {}
             nfeats = {}
             efeats = {}
-            # Collect node labels of input node type.
-            node_labels = self.feature_store.labels
-            if node_labels is not None:
-                nlabels = {
-                    self.input_type: node_labels[output.node[self.input_type]]
-                }
+            labels = self.feature_store.labels
+            if labels is not None:
+                if isinstance(self.input_type, tuple):  # Edge labels.
+                    labels = {
+                        self.input_type: labels[output.edge[self.input_type]]
+                    }
+                else:  # Node labels.
+                    labels = {
+                        self.input_type: labels[output.node[self.input_type]]
+                    }
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
@@ -1031,10 +1035,12 @@ class DistNeighborSampler:
                     else:
                         efeats[edge_type] = None
 
-        else:  # Homo
+        else:  # Homogeneous:
             # Collect node labels.
-            nlabels = (self.feature_store.labels[output.node] if
-                       (self.feature_store.labels is not None) else None)
+            if self.feature_store.labels is not None:
+                labels = self.feature_store.labels[output.node]
+            else:
+                labels = None
             # Collect node features.
             if output.node is not None:
                 fut = self.feature_store.lookup_features(
@@ -1052,7 +1058,7 @@ class DistNeighborSampler:
             else:
                 efeats = None
 
-        output.metadata = (*output.metadata, nfeats, nlabels, efeats)
+        output.metadata = (*output.metadata, nfeats, labels, efeats)
         return output
 
     @property

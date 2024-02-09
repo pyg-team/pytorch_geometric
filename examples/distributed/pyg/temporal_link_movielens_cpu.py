@@ -198,27 +198,26 @@ def run_proc(
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
     edge_label_file = osp.join(root_dir, f'{dataset}-label', 'label.pt')
-    train_edge_label_index = torch.load(
+    train_data = torch.load(
         osp.join(
             root_dir,
             f'{dataset}-train-partitions',
             f'partition{node_rank}.pt',
         ))
-    test_edge_label_index = torch.load(
+    test_data = torch.load(
         osp.join(
             root_dir,
             f'{dataset}-test-partitions',
             f'partition{node_rank}.pt',
         ))
 
-    train_edge_label_index = (
-        ('user', 'rates', 'movie'),
-        train_edge_label_index,
-    )
-    test_edge_label_index = (
-        ('user', 'rates', 'movie'),
-        test_edge_label_index,
-    )
+    train_edge_label_index = train_data['edge_label_index']
+    train_edge_label = train_data['edge_label']
+    train_edge_label_time = train_data['edge_label_time']
+
+    test_edge_label_index = test_data['edge_label_index']
+    test_edge_label = test_data['edge_label']
+    test_edge_label_time = test_data['edge_label_time']
 
     # Load partition into local graph store:
     graph = LocalGraphStore.from_partition(
@@ -235,13 +234,6 @@ def run_proc(
         feature._feat[('movie', 'x')].size(1),
     )
     feature.put_tensor(x, group_name='user', attr_name='x')
-
-    train_edge_label_time = torch.arange(train_edge_label_index[1].size(1))
-    test_edge_label_time = torch.arange(test_edge_label_index[1].size(1))
-
-    train_edge_label = feature.labels[:train_edge_label_index[1].
-                                      size(1)].clone()
-    test_edge_label = feature.labels[test_edge_label_index[1].size(1):].clone()
 
     # Initialize distributed context:
     current_ctx = DistContext(
@@ -266,12 +258,13 @@ def run_proc(
     # Create distributed neighbor loader for training:
     train_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
-        edge_label_index=train_edge_label_index,
+        edge_label_index=((('user', 'rates', 'movie')),
+                          train_edge_label_index),
         edge_label=train_edge_label,
         edge_label_time=train_edge_label_time,
         disjoint=True,
         time_attr='edge_time',
-        temporal_strategy='uniform',
+        temporal_strategy='last',
         current_ctx=current_ctx,
         device=current_device,
         num_neighbors=num_neighbors,
@@ -288,12 +281,12 @@ def run_proc(
     # Create distributed neighbor loader for testing:
     test_loader = pyg_dist.DistLinkNeighborLoader(
         data=partition_data,
-        edge_label_index=test_edge_label_index,
+        edge_label_index=((('user', 'rates', 'movie')), test_edge_label_index),
         edge_label=test_edge_label,
         edge_label_time=test_edge_label_time,
         disjoint=True,
         time_attr='edge_time',
-        temporal_strategy='uniform',
+        temporal_strategy='last',
         current_ctx=current_ctx,
         device=current_device,
         num_neighbors=num_neighbors,
@@ -310,7 +303,7 @@ def run_proc(
 
     print('--- Initialize model ...')
     node_types = graph.meta['node_types']
-    edge_types = [tuple(e) for e in graph.meta['node_types']]
+    edge_types = [tuple(e) for e in graph.meta['edge_types']]
     metadata = (node_types, edge_types)
     model = Model(hidden_channels=32, metadata=metadata).to(current_device)
 
@@ -392,7 +385,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_neighbors',
         type=str,
-        default='15,10,5',
+        default='20,10',
         help='Number of node neighbors sampled at each layer',
     )
     parser.add_argument(
@@ -428,7 +421,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--concurrency',
         type=int,
-        default=4,
+        default=1,
         help='Number of max concurrent RPC for each sampler',
     )
     parser.add_argument(
