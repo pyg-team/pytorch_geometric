@@ -157,9 +157,9 @@ class ARGO:
         ----------
         x: list[int]
             Optimal configurations provided by the auto-tuner.
-            x[0]: number of processes to instantiate
-            x[1]: number of sampling cores for each process
-            x[2]: number of training cores for each process
+            - x[0]: number of processes to instantiate
+            - x[1]: number of sampling cores for each process
+            - x[2]: number of training cores for each process
 
         train: Callable
             The GNN training function.
