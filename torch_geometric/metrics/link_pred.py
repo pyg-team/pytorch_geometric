@@ -135,7 +135,7 @@ class LinkPredMetric(BaseMetric, ABC):
 
 
 class LinkPredPrecision(LinkPredMetric):
-    r"""A link prediction metric to compute Precision@:math`k`.
+    r"""A link prediction metric to compute Precision @ :math:`k`.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -147,7 +147,7 @@ class LinkPredPrecision(LinkPredMetric):
 
 
 class LinkPredRecall(LinkPredMetric):
-    r"""A link prediction metric to compute Recall@:math:`k`.
+    r"""A link prediction metric to compute Recall @ :math:`k`.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -159,7 +159,7 @@ class LinkPredRecall(LinkPredMetric):
 
 
 class LinkPredF1(LinkPredMetric):
-    r"""A link prediction metric to compute F1@:math`k`.
+    r"""A link prediction metric to compute F1 @ :math:`k`.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -174,7 +174,8 @@ class LinkPredF1(LinkPredMetric):
 
 
 class LinkPredMAP(LinkPredMetric):
-    r"""A link prediction metric to compute MAP@:math`k`.
+    r"""A link prediction metric to compute MAP @ :math:`k` (Mean Average
+    Precision).
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -189,8 +190,8 @@ class LinkPredMAP(LinkPredMetric):
 
 
 class LinkPredNDCG(LinkPredMetric):
-    r"""A link prediction metric to compute the Normalized Discounted
-    Cumulative Gain (NDCG).
+    r"""A link prediction metric to compute the NDCG @ :math:`k` (Normalized
+    Discounted Cumulative Gain).
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
