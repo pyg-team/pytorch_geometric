@@ -79,7 +79,7 @@ dst_loader = NeighborLoader(
     **kwargs,
 )
 
-# Safe validation/test edges and the edges we want to exclude when evaluating:
+# Save validation/test edges and the edges we want to exclude when evaluating:
 sparse_size = (data['user'].num_nodes, data['movie'].num_nodes)
 
 val_edge_label_index = EdgeIndex(
