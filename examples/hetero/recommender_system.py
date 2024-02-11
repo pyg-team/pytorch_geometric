@@ -10,7 +10,11 @@ from torch_geometric import EdgeIndex
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.nn import MIPSKNNIndex, SAGEConv, to_hetero
-from torch_geometric.nn.metrics import LinkPredPrecision
+from torch_geometric.nn.metrics import (
+    LinkPredMAP,
+    LinkPredPrecision,
+    LinkPredRecall,
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--k', type=int, default=20, help='Number of predictions')
@@ -186,7 +190,9 @@ def test(src_loader, dst_loader, edge_label_index, exclude_links):
     mips = MIPSKNNIndex(dst_emb)
 
     # Initialize metrics:
-    precision = LinkPredPrecision(k=args.k).to(device)
+    map_metric = LinkPredMAP(k=args.k).to(device)
+    precision_metric = LinkPredPrecision(k=args.k).to(device)
+    recall_metric = LinkPredRecall(k=args.k).to(device)
 
     num_processed = 0
     for batch in src_loader:  # Collect source node/user embeddings:
@@ -213,22 +219,29 @@ def test(src_loader, dst_loader, edge_label_index, exclude_links):
         _, pred_index_mat = mips.search(emb, args.k, _exclude_links)
 
         # Update retrieval metrics:
-        # TODO Add more metrics.
-        precision.update(pred_index_mat, _edge_label_index)
+        map_metric.update(pred_index_mat, _edge_label_index)
+        precision_metric.update(pred_index_mat, _edge_label_index)
+        recall_metric.update(pred_index_mat, _edge_label_index)
 
-    return float(precision.compute())
+    return (
+        float(map_metric.compute()),
+        float(precision_metric.compute()),
+        float(recall_metric.compute()),
+    )
 
 
 for epoch in range(1, 21):
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    precision = test(
+    map, precision, recall = test(
         val_src_loader,
         val_dst_loader,
         val_edge_label_index,
         val_exclude_links,
     )
-    print(f'Val Precision@{args.k}: {precision:.4f}')
+    print(f'Val MAP@{args.k}: {map:.4f}, '
+          f'Val Precision@{args.k}: {precision:.4f}, '
+          f'Val Recall@{args.k}: {recall:.4f}')
 
 print('Finished training! Evaluating on test set:')
 precision = test(
@@ -237,4 +250,6 @@ precision = test(
     test_edge_label_index,
     test_exclude_links,
 )
-print(f'Test Precision@{args.k}: {precision:.4f}')
+print(f'Test MAP@{args.k}: {map:.4f}, '
+      f'Test Precision@{args.k}: {precision:.4f}, '
+      f'Test Recall@{args.k}: {recall:.4f}')
