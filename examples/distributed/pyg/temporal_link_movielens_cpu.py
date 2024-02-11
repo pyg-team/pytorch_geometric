@@ -10,9 +10,12 @@ from torch.nn import Linear
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
-import torch_geometric.distributed as pyg_dist
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext
+from torch_geometric.distributed import (
+    DistContext,
+    DistLinkNeighborLoader,
+    LocalFeatureStore,
+    LocalGraphStore,
+)
 from torch_geometric.nn import SAGEConv, to_hetero
 
 
@@ -256,7 +259,7 @@ def run_proc(
     print('--- Initialize distributed loaders ...')
     num_neighbors = [int(i) for i in num_neighbors.split(',')]
     # Create distributed neighbor loader for training:
-    train_loader = pyg_dist.DistLinkNeighborLoader(
+    train_loader = DistLinkNeighborLoader(
         data=partition_data,
         edge_label_index=((('user', 'rates', 'movie')),
                           train_edge_label_index),
@@ -279,7 +282,7 @@ def run_proc(
         async_sampling=async_sampling,
     )
     # Create distributed neighbor loader for testing:
-    test_loader = pyg_dist.DistLinkNeighborLoader(
+    test_loader = DistLinkNeighborLoader(
         data=partition_data,
         edge_label_index=((('user', 'rates', 'movie')), test_edge_label_index),
         edge_label=test_edge_label,

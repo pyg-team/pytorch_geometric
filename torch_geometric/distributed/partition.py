@@ -15,11 +15,11 @@ from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
 
 
 class Partitioner:
-    r"""Partition the graph structure and its features of a
+    r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object.
 
-    Partitioned data output will be structured like this:
+    Partitioned data output will be structured as shown below.
 
     **Homogeneous graphs:**
 
@@ -118,7 +118,7 @@ class Partitioner:
         return self.data.edge_types if self.is_hetero else None
 
     def generate_partition(self):
-        r"""Generates the partition."""
+        r"""Generates the partitions."""
         os.makedirs(self.root, exist_ok=True)
 
         if self.is_hetero and self.is_node_level_time:
