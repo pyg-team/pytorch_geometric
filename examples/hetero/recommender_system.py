@@ -231,25 +231,25 @@ def test(src_loader, dst_loader, edge_label_index, exclude_links):
 
 
 for epoch in range(1, 21):
-    loss = train()
-    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    map, precision, recall = test(
+    train_loss = train()
+    print(f'Epoch: {epoch:02d}, Loss: {train_loss:.4f}')
+    val_map, val_precision, val_recall = test(
         val_src_loader,
         val_dst_loader,
         val_edge_label_index,
         val_exclude_links,
     )
-    print(f'Val MAP@{args.k}: {map:.4f}, '
-          f'Val Precision@{args.k}: {precision:.4f}, '
-          f'Val Recall@{args.k}: {recall:.4f}')
+    print(f'Val MAP@{args.k}: {val_map:.4f}, '
+          f'Val Precision@{args.k}: {val_precision:.4f}, '
+          f'Val Recall@{args.k}: {val_recall:.4f}')
 
 print('Finished training! Evaluating on test set:')
-map, precision, recall = test(
+test_map, test_precision, test_recall = test(
     test_src_loader,
     test_dst_loader,
     test_edge_label_index,
     test_exclude_links,
 )
-print(f'Test MAP@{args.k}: {map:.4f}, '
-      f'Test Precision@{args.k}: {precision:.4f}, '
-      f'Test Recall@{args.k}: {recall:.4f}')
+print(f'Test MAP@{args.k}: {test_map:.4f}, '
+      f'Test Precision@{args.k}: {test_precision:.4f}, '
+      f'Test Recall@{args.k}: {test_recall:.4f}')
