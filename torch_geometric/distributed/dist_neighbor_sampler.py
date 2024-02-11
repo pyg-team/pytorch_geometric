@@ -8,8 +8,11 @@ import torch
 import torch.multiprocessing as mp
 from torch import Tensor
 
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext
+from torch_geometric.distributed import (
+    DistContext,
+    LocalFeatureStore,
+    LocalGraphStore,
+)
 from torch_geometric.distributed.event_loop import (
     ConcurrentEventLoop,
     to_asyncio_future,
@@ -60,7 +63,8 @@ class RPCSamplingCallee(RPCCallBase):
 
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
-    used by :class:`~torch_geometric.distributed.DistNeighborLoader`.
+    used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
+    :class:`~torch_geometric.distributed.DistLinkNeighborLoader`.
     """
     def __init__(
         self,
@@ -200,7 +204,7 @@ class DistNeighborSampler:
         self,
         inputs: Union[NodeSamplerInput, DistEdgeHeteroSamplerInput],
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Performs layer by layer distributed sampling from a
+        r"""Performs layer-by-layer distributed sampling from a
         :class:`NodeSamplerInput` or :class:`DistEdgeHeteroSamplerInput` and
         returns the output of the sampling procedure.
 
@@ -505,11 +509,13 @@ class DistNeighborSampler:
         node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
         neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Performs distributed asynchronous sampling from an edge sampler
-        input, leveraging a sampling function of the same signature as
-        `node_sample`. This function is almost the same as the `edge_sample`
-        in the :class:`NeighborSampler`, but calls the `node_sample` from
-        the distributed package.
+        r"""Performs layer-by-layer distributed sampling from an
+        :class:`EdgeSamplerInput` and returns the output of the sampling
+        procedure.
+
+        .. note::
+            In case of distributed training it is required to synchronize the
+            results between machines after each layer.
         """
         input_id = inputs.input_id
         src = inputs.row
@@ -754,7 +760,7 @@ class DistNeighborSampler:
 
         return out
 
-    def get_sampler_output(
+    def _get_sampler_output(
         self,
         outputs: List[SamplerOutput],
         seed_size: int,
@@ -786,7 +792,7 @@ class DistNeighborSampler:
 
         return outputs[p_id]
 
-    def merge_sampler_outputs(
+    def _merge_sampler_outputs(
         self,
         partition_ids: Tensor,
         partition_orders: Tensor,
@@ -798,7 +804,7 @@ class DistNeighborSampler:
         are sorted according to the sampling order. Removes seed nodes from
         sampled nodes and calculates how many neighbors were sampled by each
         src node based on the :obj:`cumsum_neighbors_per_node`. Leverages the
-        :obj:`pyg-lib` :obj:`merge_sampler_outputs` function.
+        :obj:`pyg-lib` :meth:`merge_sampler_outputs` function.
 
         Args:
             partition_ids (torch.Tensor): Contains information on which
@@ -865,12 +871,11 @@ class DistNeighborSampler:
         src_batch: Optional[Tensor] = None,
         edge_type: Optional[EdgeType] = None,
     ) -> SamplerOutput:
-        r"""Sample one-hop neighbors for a :obj:`srcs`. If src node is located
-        on a local partition, evaluates the :obj:`_sample_one_hop` function on
-        a current machine. If src node is from a remote partition, send a
-        request to a remote machine that contains this partition.
-
-        Returns merged samplers outputs from local / remote machines.
+        r"""Samples one-hop neighbors for a set of seed nodes in :obj:`srcs`.
+        If seed nodes are located on a local partition, evaluates the sampling
+        function on the current machine. If seed nodes are from a remote
+        partition, sends a request to a remote machine that contains this
+        partition.
         """
         src_node_type = None if not self.is_hetero else edge_type[2]
         partition_ids = self.graph_store.get_partition_ids_from_nids(
@@ -926,11 +931,11 @@ class DistNeighborSampler:
 
         # All src nodes are in the same partition
         if single_partition:
-            return self.get_sampler_output(p_outputs, len(srcs),
-                                           partition_ids[0], src_batch)
+            return self._get_sampler_output(p_outputs, len(srcs),
+                                            partition_ids[0], src_batch)
 
-        return self.merge_sampler_outputs(partition_ids, partition_orders,
-                                          p_outputs, one_hop_num, src_batch)
+        return self._merge_sampler_outputs(partition_ids, partition_orders,
+                                           p_outputs, one_hop_num, src_batch)
 
     def _sample_one_hop(
         self,

@@ -3,22 +3,22 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import torch
 
 from torch_geometric.distributed import (
+    DistContext,
     DistLoader,
     DistNeighborSampler,
     LocalFeatureStore,
     LocalGraphStore,
 )
-from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.loader import LinkLoader
 from torch_geometric.sampler.base import NegativeSampling, SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
-    r"""A distributed loader that preform sampling from edges.
+    r"""A distributed loader that performs sampling from edges.
 
     Args:
-        data: A (:class:`~torch_geometric.data.FeatureStore`,
+        data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]):
             The number of neighbors to sample for each node in each iteration.
@@ -35,8 +35,8 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
 
-        All other arguments follow the interface of
-        :class:`torch_geometric.loader.LinkNeighborLoader`.
+    All other arguments follow the interface of
+    :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
     def __init__(
         self,
