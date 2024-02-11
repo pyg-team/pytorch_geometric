@@ -68,24 +68,14 @@ train_loader = LinkNeighborLoader(
 # During validation and testing, we sample node-level subgraphs from both
 # endpoints to retrieve their embeddings.
 # This allows us to do efficient k-NN search on top of embeddings:
-val_src_loader = NeighborLoader(
+src_loader = NeighborLoader(
     input_nodes='user',
     input_time=(time[val_index].min() - 1).repeat(data['user'].num_nodes),
     **kwargs,
 )
-val_dst_loader = NeighborLoader(
+dst_loader = NeighborLoader(
     input_nodes='movie',
     input_time=(time[val_index].min() - 1).repeat(data['movie'].num_nodes),
-    **kwargs,
-)
-test_src_loader = NeighborLoader(
-    input_nodes='user',
-    input_time=(time[test_index].min() - 1).repeat(data['user'].num_nodes),
-    **kwargs,
-)
-test_dst_loader = NeighborLoader(
-    input_nodes='movie',
-    input_time=(time[test_index].min() - 1).repeat(data['movie'].num_nodes),
     **kwargs,
 )
 
@@ -174,7 +164,7 @@ def train():
 
 
 @torch.no_grad()
-def test(src_loader, dst_loader, edge_label_index, exclude_links):
+def test(edge_label_index, exclude_links):
     model.eval()
 
     dst_embs = []
@@ -234,8 +224,6 @@ for epoch in range(1, 21):
     train_loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {train_loss:.4f}')
     val_map, val_precision, val_recall = test(
-        val_src_loader,
-        val_dst_loader,
         val_edge_label_index,
         val_exclude_links,
     )
@@ -245,8 +233,6 @@ for epoch in range(1, 21):
 
 print('Finished training! Evaluating on test set:')
 test_map, test_precision, test_recall = test(
-    test_src_loader,
-    test_dst_loader,
     test_edge_label_index,
     test_exclude_links,
 )
