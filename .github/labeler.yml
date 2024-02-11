@@ -38,6 +38,10 @@ utils:
   - changed-files:
       - any-glob-to-any-file: "torch_geometric/utils/**/*"
 
+distributed:
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/distributed/**/*"
+
 contrib:
   - changed-files:
       - any-glob-to-any-file: "torch_geometric/contrib/**/*"
