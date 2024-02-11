@@ -9,12 +9,12 @@ import torch_geometric.transforms as T
 from torch_geometric import EdgeIndex
 from torch_geometric.datasets import MovieLens
 from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
-from torch_geometric.nn import MIPSKNNIndex, SAGEConv, to_hetero
-from torch_geometric.nn.metrics import (
+from torch_geometric.metrics import (
     LinkPredMAP,
     LinkPredPrecision,
     LinkPredRecall,
 )
+from torch_geometric.nn import MIPSKNNIndex, SAGEConv, to_hetero
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--k', type=int, default=20, help='Number of predictions')
