@@ -13,8 +13,48 @@ import time
 from typing import Callable, Tuple
 
 import dgl.multiprocessing as dmp
+import numpy as np
 import psutil
 from skopt import gp_minimize
+from skopt.space import Normalize
+
+
+def transform(self, X):
+    X = np.asarray(X)
+    if self.is_int:
+        if np.any(np.round(X) > self.high):
+            raise ValueError("All integer values should" "be less than %f" % self.high)
+        if np.any(np.round(X) < self.low):
+            raise ValueError(
+                "All integer values should" "be greater than %f" % self.low
+            )
+    else:
+        if np.any(X > self.high + self._eps):
+            raise ValueError("All values should" "be less than %f" % self.high)
+        if np.any(X < self.low - self._eps):
+            raise ValueError("All values should" "be greater than %f" % self.low)
+    if (self.high - self.low) == 0.0:
+        return X * 0.0
+    if self.is_int:
+        return (np.round(X).astype(int) - self.low) / (self.high - self.low)
+    else:
+        return (X - self.low) / (self.high - self.low)
+
+
+def inverse_transform(self, X):
+    X = np.asarray(X)
+    if np.any(X > 1.0 + self._eps):
+        raise ValueError("All values should be less than 1.0")
+    if np.any(X < 0.0 - self._eps):
+        raise ValueError("All values should be greater than 0.0")
+    X_orig = X * (self.high - self.low) + self.low
+    if self.is_int:
+        return np.round(X_orig).astype(int)
+    return X_orig
+
+
+Normalize.transform = transform
+Normalize.inverse_transform = inverse_transform
 
 
 class ARGO:
@@ -47,11 +87,6 @@ class ARGO:
         random_state: int
             Number of random initializations before searching
 
-        acq_function: str
-            Acquisition function. For details see: https://scikit-optimize.github.io/stable/modules/generated/skopt.gp_minimize.html
-
-        counter: list[int]
-            A counter for internal use
         """
         self.n_search = n_search
         self.epoch = epoch
@@ -130,9 +165,9 @@ class ARGO:
         -------
         result: list[int]
             The optimal configurations (which leads to the shortest epoch time) found by running BO.
-            result[0]: number of processes to instantiate
-            result[1]: number of sampling cores for each process
-            result[2]: number of training cores for each process
+            - result[0]: number of processes to instantiate
+            - result[1]: number of sampling cores for each process
+            - result[2]: number of training cores for each process
 
         """
         ep = 1
@@ -223,6 +258,7 @@ class ARGO:
 
         args:
             The inputs of the GNN training function.
+            
         """
 
         result = self.auto_tuning(train, args)  # Step 1
