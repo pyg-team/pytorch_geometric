@@ -244,7 +244,7 @@ for epoch in range(1, 21):
           f'Val Recall@{args.k}: {recall:.4f}')
 
 print('Finished training! Evaluating on test set:')
-precision = test(
+map, precision, recall = test(
     test_src_loader,
     test_dst_loader,
     test_edge_label_index,
