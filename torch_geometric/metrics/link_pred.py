@@ -12,7 +12,7 @@ try:
     BaseMetric = torchmetrics.Metric
 except Exception:
     WITH_TORCHMETRICS = False
-    BaseMetric = torch.nn.Module
+    BaseMetric = torch.nn.Module  # type: ignore
 
 
 class LinkPredMetric(BaseMetric, ABC):
@@ -25,7 +25,7 @@ class LinkPredMetric(BaseMetric, ABC):
     full_state_update: bool = False
     higher_is_better: Optional[bool] = None
 
-    def __init__(self, k: int):
+    def __init__(self, k: int) -> None:
         super().__init__()
 
         if k <= 0:
@@ -33,6 +33,9 @@ class LinkPredMetric(BaseMetric, ABC):
                              f"'{self.__class__.__name__}' (got {k})")
 
         self.k = k
+
+        self.accum: Tensor
+        self.total: Tensor
 
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
@@ -45,7 +48,7 @@ class LinkPredMetric(BaseMetric, ABC):
         self,
         pred_index_mat: Tensor,
         edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
-    ):
+    ) -> None:
         r"""Updates the state variables based on the current mini-batch
         prediction.
 
@@ -69,7 +72,7 @@ class LinkPredMetric(BaseMetric, ABC):
         # Compute a boolean matrix indicating if the k-th prediction is part of
         # the ground-truth. We do this by flattening both prediction and
         # target indices, and then determining overlaps via `torch.isin`.
-        max_index = max(
+        max_index = max(  # type: ignore
             pred_index_mat.max() if pred_index_mat.numel() > 0 else 0,
             edge_label_index[1].max()
             if edge_label_index[1].numel() > 0 else 0,
@@ -106,15 +109,13 @@ class LinkPredMetric(BaseMetric, ABC):
             return torch.zeros_like(self.accum)
         return self.accum / self.total
 
-    def reset(self) -> 'LinkPredMetric':
+    def reset(self) -> None:
         r"""Reset metric state variables to their default value."""
         if WITH_TORCHMETRICS:
             super().reset()
         else:
             self.accum.zero_()
             self.total.zero_()
-
-        return self
 
     @abstractmethod
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
@@ -204,7 +205,10 @@ class LinkPredNDCG(LinkPredMetric):
         dtype = torch.get_default_dtype()
         multiplier = 1.0 / torch.arange(2, k + 2, dtype=dtype).log2()
 
+        self.multiplier: Tensor
         self.register_buffer('multiplier', multiplier)
+
+        self.idcg: Tensor
         self.register_buffer('idcg', cumsum(multiplier))
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
