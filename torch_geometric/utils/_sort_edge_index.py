@@ -1,10 +1,14 @@
 import typing
 from typing import List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
+import torch_geometric.typing
+from torch_geometric import EdgeIndex
+from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import index_sort, lexsort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 if typing.TYPE_CHECKING:
@@ -102,13 +106,26 @@ def sort_edge_index(  # noqa: F811
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    idx = edge_index[1 - int(sort_by_row)] * num_nodes
-    idx += edge_index[int(sort_by_row)]
-
-    _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
+    if num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
+        if not torch_geometric.typing.WITH_PT113:
+            raise ValueError("'sort_edge_index' will result in an overflow")
+        perm = lexsort(keys=[
+            edge_index[int(sort_by_row)],
+            edge_index[1 - int(sort_by_row)],
+        ])
+    else:
+        idx = edge_index[1 - int(sort_by_row)] * num_nodes
+        idx += edge_index[int(sort_by_row)]
+        _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
     if isinstance(edge_index, Tensor):
+        is_undirected = False
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            is_undirected = edge_index.is_undirected
         edge_index = edge_index[:, perm]
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            edge_index._sort_order = SortOrder('row' if sort_by_row else 'col')
+            edge_index._is_undirected = is_undirected
     elif isinstance(edge_index, tuple):
         edge_index = (edge_index[0][perm], edge_index[1][perm])
     else:

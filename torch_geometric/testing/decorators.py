@@ -28,6 +28,23 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
+def is_distributed_test() -> bool:
+    r"""Whether to run the distributed test suite."""
+    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
+            and sys.platform == 'linux' and has_package('pyg_lib'))
+
+
+def onlyDistributedTest(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the distributed
+    test suite.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        not is_distributed_test(),
+        reason="Fast test run",
+    )(func)
+
+
 def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
     Linux systems.
@@ -159,12 +176,14 @@ def withPackage(*args: str) -> Callable:
     """
     na_packages = set(package for package in args if not has_package(package))
 
+    if len(na_packages) == 1:
+        reason = f"Package {list(na_packages)[0]} not found"
+    else:
+        reason = f"Packages {na_packages} not found"
+
     def decorator(func: Callable) -> Callable:
         import pytest
-        return pytest.mark.skipif(
-            len(na_packages) > 0,
-            reason=f"Package(s) {na_packages} are not installed",
-        )(func)
+        return pytest.mark.skipif(len(na_packages) > 0, reason=reason)(func)
 
     return decorator
 

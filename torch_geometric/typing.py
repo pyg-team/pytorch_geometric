@@ -11,11 +11,14 @@ from torch import Tensor
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT22 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 2
+WITH_PT23 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 3
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
+
+MAX_INT64 = torch.iinfo(torch.int64).max
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = torch.sparse_coo
@@ -126,6 +129,12 @@ except Exception as e:
         ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
+        def value(self) -> Optional[Tensor]:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
+        def rowcount(self) -> Tensor:
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
     class SparseTensor:  # type: ignore
         def __init__(
             self,
@@ -148,6 +157,10 @@ except Exception as e:
             is_sorted: bool = False,
             trust_data: bool = False,
         ) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        @property
+        def storage(self) -> SparseStorage:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod

@@ -15,7 +15,7 @@ from torch_geometric.data import (
 class Wikidata5M(InMemoryDataset):
     r"""The Wikidata-5M dataset from the `"KEPLER: A Unified Model for
     Knowledge Embedding and Pre-trained Language Representation"
-    <https://arxiv.org/pdf/1911.06136.pdf>`_ paper,
+    <https://arxiv.org/abs/1911.06136>`_ paper,
     containing 4,594,485 entities, 822 relations,
     20,614,279 train triples, 5,163 validation triples, and 5,133 test triples.
 

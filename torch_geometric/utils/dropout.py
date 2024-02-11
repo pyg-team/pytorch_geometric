@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import cumsum, degree, sort_edge_index, subgraph
@@ -265,7 +266,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     if not training or p == 0.0:
         return edge_index, edge_mask
 
-    if not torch_geometric.typing.WITH_TORCH_CLUSTER:
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER or is_compiling():
         raise ImportError('`dropout_path` requires `torch-cluster`.')
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)

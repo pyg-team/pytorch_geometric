@@ -1,4 +1,3 @@
-import json
 import os.path as osp
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -6,6 +5,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
+from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 
@@ -169,14 +169,23 @@ class LocalGraphStore(GraphStore):
 
     @classmethod
     def from_partition(cls, root: str, pid: int) -> 'LocalGraphStore':
-        with open(osp.join(root, 'META.json'), 'r') as f:
-            meta = json.load(f)
-
         part_dir = osp.join(root, f'part_{pid}')
         assert osp.exists(part_dir)
+        graph_store = cls()
+        (
+            meta,
+            num_partitions,
+            partition_idx,
+            node_pb,
+            edge_pb,
+        ) = load_partition_info(root, pid)
+        graph_store.num_partitions = num_partitions
+        graph_store.partition_idx = partition_idx
+        graph_store.node_pb = node_pb
+        graph_store.edge_pb = edge_pb
+        graph_store.meta = meta
 
         graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
-        graph_store = cls()
         graph_store.is_sorted = meta['is_sorted']
 
         if not meta['is_hetero']:

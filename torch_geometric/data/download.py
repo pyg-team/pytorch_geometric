@@ -55,3 +55,14 @@ def download_url(
             f.write(chunk)
 
     return path
+
+
+def download_google_url(
+    id: str,
+    folder: str,
+    filename: str,
+    log: bool = True,
+):
+    r"""Downloads the content of a Google Drive ID to a specific folder."""
+    url = f'https://drive.usercontent.google.com/download?id={id}&confirm=t'
+    return download_url(url, folder, log, filename)

@@ -14,31 +14,12 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.distributed.partition import load_partition_info
-from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.testing import onlyDistributedTest
 
 
 def create_dist_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feat_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-    graph_store.partition_idx = partition_idx
-    graph_store.num_partitions = num_partitions
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
-
-    feat_store.partition_idx = partition_idx
-    feat_store.num_partitions = num_partitions
-    feat_store.node_feat_pb = node_pb
-    feat_store.edge_feat_pb = edge_pb
-    feat_store.meta = meta
 
     return feat_store, graph_store
 
@@ -71,7 +52,6 @@ def dist_neighbor_loader_homo(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -81,7 +61,7 @@ def dist_neighbor_loader_homo(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -94,6 +74,7 @@ def dist_neighbor_loader_homo(
             batch.n_id[batch.edge_index],
             edge_index[:, batch.e_id],
         )
+    assert loader.channel.empty()
 
 
 def dist_neighbor_loader_hetero(
@@ -124,7 +105,6 @@ def dist_neighbor_loader_hetero(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -132,7 +112,7 @@ def dist_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
@@ -159,10 +139,10 @@ def dist_neighbor_loader_hetero(
                 ], dim=0)
                 global_edge_index_2 = edge_index[:, batch[edge_type].e_id]
                 assert torch.equal(global_edge_index_1, global_edge_index_2)
+    assert loader.channel.empty()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
@@ -204,8 +184,7 @@ def test_dist_neighbor_loader_homo(
     w1.join()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])

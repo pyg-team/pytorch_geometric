@@ -15,32 +15,12 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.distributed.partition import load_partition_info
-from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.testing import onlyDistributedTest
 
 
 def create_dist_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feat_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-
-    graph_store.partition_idx = partition_idx
-    graph_store.num_partitions = num_partitions
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
-
-    feat_store.partition_idx = partition_idx
-    feat_store.num_partitions = num_partitions
-    feat_store.node_feat_pb = node_pb
-    feat_store.edge_feat_pb = edge_pb
-    feat_store.meta = meta
 
     return feat_store, graph_store
 
@@ -77,7 +57,6 @@ def dist_link_neighbor_loader_homo(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -85,15 +64,15 @@ def dist_link_neighbor_loader_homo(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert not part_data[0].meta['is_hetero']
 
     for batch in loader:
         assert isinstance(batch, Data)
         assert batch.n_id.size() == (batch.num_nodes, )
-        assert batch.input_id.numel() == batch.batch_size == 10
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
+    assert loader.channel.empty()
 
 
 def dist_link_neighbor_loader_hetero(
@@ -129,7 +108,6 @@ def dist_link_neighbor_loader_hetero(
         master_addr=master_addr,
         master_port=master_port,
         current_ctx=current_ctx,
-        rpc_worker_names={},
         concurrency=10,
         drop_last=True,
         async_sampling=async_sampling,
@@ -137,14 +115,11 @@ def dist_link_neighbor_loader_hetero(
 
     assert str(loader).startswith('DistLinkNeighborLoader')
     assert str(mp.current_process().pid) in str(loader)
-    assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
+    assert isinstance(loader.dist_sampler, DistNeighborSampler)
     assert part_data[0].meta['is_hetero']
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert (batch[edge_type].input_id.numel() ==
-                batch[edge_type].batch_size == 10)
-
         assert len(batch.node_types) == 2
         for node_type in batch.node_types:
             assert torch.equal(batch[node_type].x, batch.x_dict[node_type])
@@ -152,18 +127,20 @@ def dist_link_neighbor_loader_hetero(
             assert batch[node_type].n_id.size(0) == batch[node_type].num_nodes
 
         assert len(batch.edge_types) == 4
-        for edge_type in batch.edge_types:
-            assert (batch[edge_type].edge_attr.size(0) ==
-                    batch[edge_type].edge_index.size(1))
+        for key in batch.edge_types:
+            if key[-1] == 'v0':
+                assert batch[key].num_sampled_edges[0] > 0
+                assert batch[key].edge_attr.size(0) == batch[key].num_edges
+            else:
+                batch[key].num_sampled_edges[0] == 0
+    assert loader.channel.empty()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_homo(
     tmp_path,
     num_parts,
@@ -205,14 +182,12 @@ def test_dist_link_neighbor_loader_homo(
     w1.join()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
 @pytest.mark.parametrize('neg_ratio', [None])
 @pytest.mark.parametrize('edge_type', [('v0', 'e0', 'v0')])
-@pytest.mark.skip(reason="'sample_from_edges' not yet implemented")
 def test_dist_link_neighbor_loader_hetero(
     tmp_path,
     num_parts,

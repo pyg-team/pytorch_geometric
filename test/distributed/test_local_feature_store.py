@@ -1,8 +1,10 @@
 import torch
 
 from torch_geometric.distributed import LocalFeatureStore
+from torch_geometric.testing import onlyDistributedTest
 
 
+@onlyDistributedTest
 def test_local_feature_store_global_id():
     store = LocalFeatureStore()
 
@@ -29,6 +31,7 @@ def test_local_feature_store_global_id():
     assert torch.equal(out, feat[torch.tensor([3, 8, 4])])
 
 
+@onlyDistributedTest
 def test_local_feature_store_utils():
     store = LocalFeatureStore()
 
@@ -57,6 +60,7 @@ def test_local_feature_store_utils():
     assert store.get_tensor_size(attr) == (6, 3)
 
 
+@onlyDistributedTest
 def test_homogeneous_feature_store():
     node_id = torch.randperm(6)
     x = torch.randn(6, 32)
@@ -86,6 +90,7 @@ def test_homogeneous_feature_store():
     )
 
 
+@onlyDistributedTest
 def test_heterogeneous_feature_store():
     node_type = 'paper'
     edge_type = ('paper', 'to', 'paper')

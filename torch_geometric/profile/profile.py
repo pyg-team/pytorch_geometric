@@ -133,7 +133,7 @@ def profileit(device: str):  # pragma: no cover
                                   max_active, free_cuda, used_cuda)
                 return out, stats
             else:
-                stats = GPUStats(time, *get_gpu_memory_from_ipex())
+                stats = GPUStats(time, *get_gpu_memory_from_ipex(device_id))
                 return out, stats
 
         return wrapper

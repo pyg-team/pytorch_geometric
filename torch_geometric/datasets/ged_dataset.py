@@ -9,7 +9,7 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_tar,
     extract_zip,
 )
@@ -98,9 +98,6 @@ class GEDDataset(InMemoryDataset):
           - 0
           - 0
     """
-
-    url = 'https://drive.google.com/uc?export=download&id={}'
-
     datasets = {
         'AIDS700nef': {
             'id': '10czBPJDEzEDI2tq7Z7mkBjLhj55F-a2z',
@@ -164,17 +161,18 @@ class GEDDataset(InMemoryDataset):
 
     def download(self) -> None:
         # Downloads the .tar/.zip file of the graphs and extracts them:
-        name = self.datasets[self.name]['id']
-        path = download_url(self.url.format(name), self.raw_dir)
+        id = self.datasets[self.name]['id']
+        assert isinstance(id, str)
+        path = download_google_url(id, self.raw_dir, 'data')
         extract_fn = self.datasets[self.name]['extract']
         assert callable(extract_fn)
         extract_fn(path, self.raw_dir)
         os.unlink(path)
 
         # Downloads the pickle file containing pre-computed GEDs:
-        name = self.datasets[self.name]['pickle']
-        path = download_url(self.url.format(name), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
+        id = self.datasets[self.name]['pickle']
+        assert isinstance(id, str)
+        path = download_google_url(id, self.raw_dir, 'ged.pickle')
 
     def process(self) -> None:
         import networkx as nx
