@@ -55,7 +55,7 @@ class RPCSamplingCallee(RPCCallBase):
         self.sampler = sampler
 
     def rpc_async(self, *args, **kwargs) -> Any:
-        return self.sampler.__sample_one_hop(*args, **kwargs)
+        return self.sampler._sample_one_hop(*args, **kwargs)
 
     def rpc_sync(self, *args, **kwargs) -> Any:
         pass
@@ -310,7 +310,7 @@ class DistNeighborSampler:
                         one_hop_num = self.num_neighbors[edge_type][i]
 
                     # Sample neighbors:
-                    out = await self._sample_one_hop(
+                    out = await self.sample_one_hop(
                         node_dict.src[src][i],
                         one_hop_num,
                         node_dict.seed_time[src][i],
@@ -445,8 +445,8 @@ class DistNeighborSampler:
 
             # Loop over the layers:
             for i, one_hop_num in enumerate(self.num_neighbors):
-                out = await self._sample_one_hop(src, one_hop_num,
-                                                 src_seed_time, src_batch)
+                out = await self.sample_one_hop(src, one_hop_num,
+                                                src_seed_time, src_batch)
                 if out.node.numel() == 0:
                     # No neighbors were sampled:
                     num_zero_layers = self.num_hops - i
@@ -863,7 +863,7 @@ class DistNeighborSampler:
             metadata=(out_sampled_nbrs_per_node, ),
         )
 
-    async def _sample_one_hop(
+    async def sample_one_hop(
         self,
         srcs: Tensor,
         one_hop_num: int,
@@ -872,7 +872,7 @@ class DistNeighborSampler:
         edge_type: Optional[EdgeType] = None,
     ) -> SamplerOutput:
         r"""Samples one-hop neighbors for a :obj:`srcs`. If src node is located
-        on a local partition, evaluates the :obj:`__sample_one_hop` function on
+        on a local partition, evaluates the :obj:`_sample_one_hop` function on
         a current machine. If src node is from a remote partition, send a
         request to a remote machine that contains this partition.
 
@@ -905,8 +905,8 @@ class DistNeighborSampler:
             if p_srcs.shape[0] > 0:
                 if p_id == self.graph_store.partition_idx:
                     # Sample for one hop on a local machine:
-                    p_nbr_out = self.__sample_one_hop(p_srcs, one_hop_num,
-                                                      p_seed_time, edge_type)
+                    p_nbr_out = self._sample_one_hop(p_srcs, one_hop_num,
+                                                     p_seed_time, edge_type)
                     p_outputs.pop(p_id)
                     p_outputs.insert(p_id, p_nbr_out)
 
@@ -938,7 +938,7 @@ class DistNeighborSampler:
         return self._merge_sampler_outputs(partition_ids, partition_orders,
                                            p_outputs, one_hop_num, src_batch)
 
-    def __sample_one_hop(
+    def _sample_one_hop(
         self,
         input_nodes: Tensor,
         num_neighbors: int,
