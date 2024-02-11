@@ -871,12 +871,11 @@ class DistNeighborSampler:
         src_batch: Optional[Tensor] = None,
         edge_type: Optional[EdgeType] = None,
     ) -> SamplerOutput:
-        r"""Samples one-hop neighbors for a :obj:`srcs`. If src node is located
-        on a local partition, evaluates the :obj:`_sample_one_hop` function on
-        a current machine. If src node is from a remote partition, send a
-        request to a remote machine that contains this partition.
-
-        Returns merged samplers outputs from local / remote machines.
+        r"""Samples one-hop neighbors for a set of seed nodes in :obj:`srcs`.
+        If seed nodes are located on a local partition, evaluates the sampling
+        function on the current machine. If seed nodes are from a remote
+        partition, sends a request to a remote machine that contains this
+        partition.
         """
         src_node_type = None if not self.is_hetero else edge_type[2]
         partition_ids = self.graph_store.get_partition_ids_from_nids(
