@@ -990,6 +990,40 @@ def test_matmul(without_extensions, device):
 
 
 @withCUDA
+def test_sparse_narrow(device):
+    adj = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        device=device,
+        sort_order='row',
+    )
+
+    out = adj.sparse_narrow(dim=0, start=1, length=1)
+    assert out.equal(torch.tensor([[0, 0], [0, 2]], device=device))
+    assert out.sparse_size() == (1, None)
+    assert out.sort_order == 'row'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=0, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (0, None)
+    assert out.sort_order == 'row'
+    assert out._indptr is None
+
+    out = adj.sparse_narrow(dim=1, start=1, length=1)
+    assert (out.equal(torch.tensor([[0, 2], [0, 0]], device=device))
+            or out.equal(torch.tensor([[2, 0], [0, 0]], device=device)))
+    assert out.sparse_size() == (3, 1)
+    assert out.sort_order == 'col'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=1, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (3, 0)
+    assert out.sort_order == 'col'
+    assert out._indptr is None
+
+
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_save_and_load(dtype, device, tmp_path):
     kwargs = dict(dtype=dtype, device=device)

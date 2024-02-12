@@ -25,7 +25,7 @@ class RPCCallFeatureLookup(RPCCallBase):
         self.dist_feature = dist_feature
 
     def rpc_async(self, *args, **kwargs):
-        return self.dist_feature.rpc_local_feature_get(*args, **kwargs)
+        return self.dist_feature._rpc_local_feature_get(*args, **kwargs)
 
     def rpc_sync(self, *args, **kwargs):
         raise NotImplementedError
@@ -44,8 +44,8 @@ class LocalTensorAttr(TensorAttr):
 
 
 class LocalFeatureStore(FeatureStore):
-    r"""This class implements the :class:`torch_geometric.data.FeatureStore`
-    interface to act as a local feature store for distributed training.
+    r"""Implements the :class:`~torch_geometric.data.FeatureStore` interface to
+    act as a local feature store for distributed training.
     """
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
@@ -279,7 +279,7 @@ class LocalFeatureStore(FeatureStore):
         collect_fut.add_done_callback(when_finish)
         return res_fut
 
-    def rpc_local_feature_get(
+    def _rpc_local_feature_get(
         self,
         index: Tensor,
         is_node_feat: bool = True,
@@ -363,14 +363,14 @@ class LocalFeatureStore(FeatureStore):
             node_id_dict (Dict[NodeType, torch.Tensor]): The global identifier
                 for every local node of every node type.
             x_dict (Dict[NodeType, torch.Tensor], optional): The node features
-                of node types. (default: :obj:`None`)
+                of every node type. (default: :obj:`None`)
             y_dict (Dict[NodeType, torch.Tensor], optional): The node labels of
-                node types. (default: :obj:`None`)
+                every node type. (default: :obj:`None`)
             edge_id_dict (Dict[EdgeType, torch.Tensor], optional): The global
-                identifier for every local edge of edge types.
+                identifier for every local edge of every edge types.
                 (default: :obj:`None`)
             edge_attr_dict (Dict[EdgeType, torch.Tensor], optional): The edge
-                features of edge types. (default: :obj:`None`)
+                features of every edge type. (default: :obj:`None`)
         """
         feat_store = cls()
 
