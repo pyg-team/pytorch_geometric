@@ -84,18 +84,17 @@ def trim_to_layer(
         edge_attr (torch.Tensor or Dict[EdgeType, torch.Tensor], optional): The
             homogeneous or heterogeneous (hidden) edge features.
     """
-    # if layer <= 0:
-    #     return x, edge_index, edge_attr
 
     if isinstance(num_sampled_edges_per_hop, dict):
         assert isinstance(num_sampled_nodes_per_hop, dict)
 
         assert isinstance(x, dict)
-        x = {
-            k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
-            for k, v in x.items()
-        }
-        x = filter_empty_entries(x)
+        # x trimming should be now implicit in message passing with rect adj mat
+        # x = {
+        #     k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
+        #     for k, v in x.items()
+        # }
+        # x = filter_empty_entries(x)
 
         assert isinstance(edge_index, dict)
         edge_index = {
@@ -119,13 +118,11 @@ def trim_to_layer(
             }
             edge_attr = filter_empty_entries(edge_attr)
 
-        print("Returning at point hetero in trim to layer")
         return x, edge_index, edge_attr
 
     assert isinstance(num_sampled_nodes_per_hop, list)
 
     assert isinstance(x, Tensor)
-    #x = trim_feat(x, layer, num_sampled_nodes_per_hop)
 
     assert isinstance(edge_index, (Tensor, SparseTensor))
     edge_index = trim_adj(
@@ -197,12 +194,11 @@ def trim_adj(
     num_sampled_dst_nodes_per_hop: List[int],
     num_sampled_edges_per_hop: List[int],
 ) -> Adj:
-
-    # if layer <= 0:
-    #     return edge_index
+    
+    # trim_adj must work for hetero case as well, so the assumption that at the first layer
+    # edge_index or adj_t are square cannot hold, and we need to test a condition on the layer
 
     if isinstance(edge_index, Tensor):
-        print("COO")
         return edge_index.narrow(
             dim=1,
             start=0,
@@ -210,20 +206,21 @@ def trim_adj(
         )
 
     elif isinstance(edge_index, SparseTensor):
-        # if layer == 0:
-        #     size = (
-        #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-        #     edge_index.size(1), # at the first layer edge_index here is still square, so I can write .size(0)
-        # )
-        # else:
-        #     size = (
-        #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-        #     edge_index.size(0), # rows of previous layer become cols of this layer in adj_t
-        # )
-        size = (
+        # src and dst are referred to the direction of the edges, relevant for hetero
+        if layer == 0:
+            size = (
             edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-            edge_index.size(0))
-        # compact way to express the change in size for each layer, including layer 0
+            edge_index.size(1), # in homo case the layer 0 edge_index is still square, so it could be size(0), but for hetero case that's not true
+        )
+        else:
+            size = (
+            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
+            edge_index.size(1) - num_sampled_src_nodes_per_hop[-layer], 
+        )
+        # size = (
+        #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
+        #     edge_index.size(0))
+        # compact way to express the change in size for each layer, including layer 0, for homo case
         
         num_seed_nodes = size[0] 
 
