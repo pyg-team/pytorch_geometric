@@ -1,6 +1,7 @@
 from typing import Optional
 
 import torch
+from torch.nn import BatchNorm1d
 import torch.nn.functional as F
 from torch import Tensor
 
