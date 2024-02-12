@@ -15,4 +15,3 @@
 | [`dmgi_unsup.py`](./dmgi_unsup.py)                     | Shows how to learn embeddings on the `IMDB` dataset using the `DMGI` model.                                                            |
 | [`han_imdb.py`](./han_imdb.py)                         | Shows how to train a Heterogenous Graph Attention Network (HAN) for node classification on the `IMDB` dataset.                         |
 | [`recommender_system.py`](./recommender_system.py)     | Shows how to train a Heterogeneous GraphSAGE for a recommender system using temporal sampling on the MovieLens dataset                 |
-
