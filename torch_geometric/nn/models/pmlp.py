@@ -7,7 +7,7 @@ from torch.nn import BatchNorm1d
 
 from torch_geometric.nn import MessagePassing, SimpleConv
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import add_self_loops, degree
+from torch_geometric.utils import add_self_loops
 
 
 class PMLP(torch.nn.Module):
