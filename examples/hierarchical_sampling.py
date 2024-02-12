@@ -4,11 +4,10 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models.basic_gnn import GraphSAGE
-import torch_geometric.transforms as T
-
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -43,7 +42,8 @@ def train(trim=False):
 
         if not trim:
             out = model(batch.x, edge_index)
-            out = out[:batch.batch_size]  # without trim_rect_adj_mat we compute more representations than necessary
+            out = out[:batch.
+                      batch_size]  # without trim_rect_adj_mat we compute more representations than necessary
         else:
             out = model(
                 batch.x,
@@ -60,9 +60,8 @@ def train(trim=False):
         total_examples += batch.batch_size
         total_loss += float(loss) * batch.batch_size
 
-    avg_loss = total_loss / total_examples 
+    avg_loss = total_loss / total_examples
     print("avg_loss is: ", avg_loss)
-
 
 
 print('\nOne epoch training without Hierarchical Graph Sampling:')

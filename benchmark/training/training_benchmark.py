@@ -1,5 +1,6 @@
 import argparse
 import ast
+import logging
 import warnings
 from collections import defaultdict
 from contextlib import nullcontext
@@ -27,12 +28,8 @@ from torch_geometric.profile import (
     xpu_profile,
 )
 
-
-import logging
-
-logging.basicConfig(
-    format='%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG
-)
+logging.basicConfig(format='%(levelname)s:%(process)d:%(message)s',
+                    level=logging.DEBUG)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -97,7 +94,6 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
         target = batch.y[:batch_size]
         # print("target B is:", target)
 
-
         loss = F.cross_entropy(out, target)
 
         t3 = time.time()
@@ -110,17 +106,17 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
         tot_bw_time += t4 - t3
         tot_time_dataloading += tb - ta
         ta = time.time()
-        mc+=1
-    
+        mc += 1
+
     t11 = time.time()
     #print average times
-    avg_fw_time = tot_fw_time/mc
-    avg_losscomp_time  = tot_losscomp_time/mc
-    avg_bw_time = tot_bw_time /mc
-    avg_dataloading_time = tot_time_dataloading/mc
+    avg_fw_time = tot_fw_time / mc
+    avg_losscomp_time = tot_losscomp_time / mc
+    avg_bw_time = tot_bw_time / mc
+    avg_dataloading_time = tot_time_dataloading / mc
 
-    print("avg_fw_time: {}\navg_losscomp_time: {}\navg_bw_time: {}\nmc: {}\n".format(
-            avg_fw_time, avg_losscomp_time, avg_bw_time, mc))
+    print("avg_fw_time: {}\navg_losscomp_time: {}\navg_bw_time: {}\nmc: {}\n".
+          format(avg_fw_time, avg_losscomp_time, avg_bw_time, mc))
     print("avg_dataloading_time: ", avg_dataloading_time)
     print("Total time taken by the training loop: ", t11 - t10)
 
@@ -297,7 +293,9 @@ def run(args: argparse.ArgumentParser):
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
                             args.loader_cores
                         ) if args.cpu_affinity else nullcontext()
-                        multithreading = subgraph_loader.enable_multithreading(args.loader_threads) if args.multithreading else nullcontext()
+                        multithreading = subgraph_loader.enable_multithreading(
+                            args.loader_threads
+                        ) if args.multithreading else nullcontext()
                         with amp, cpu_affinity, multithreading:
                             for _ in range(args.warmup):
                                 train(
@@ -393,7 +391,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
     add = argparser.add_argument
     torch.multiprocessing.set_start_method('spawn')
-    
+
     add('--device', choices=['cpu', 'cuda', 'mps', 'xpu'], default='cpu',
         help='Device to run benchmark on')
     add('--datasets', nargs='+',
@@ -426,8 +424,15 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
-    add('--multithreading', action='store_true', )
-    add('--loader-threads', default=1, type=int,  )
+    add(
+        '--multithreading',
+        action='store_true',
+    )
+    add(
+        '--loader-threads',
+        default=1,
+        type=int,
+    )
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', choices=[None, 'bench', 'prof'], default=None,

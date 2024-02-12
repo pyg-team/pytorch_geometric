@@ -84,7 +84,6 @@ def trim_to_layer(
         edge_attr (torch.Tensor or Dict[EdgeType, torch.Tensor], optional): The
             homogeneous or heterogeneous (hidden) edge features.
     """
-
     if isinstance(num_sampled_edges_per_hop, dict):
         assert isinstance(num_sampled_nodes_per_hop, dict)
 
@@ -179,7 +178,7 @@ class TrimToLayer(torch.nn.Module):
 def trim_feat(x: Tensor, layer: int, num_samples_per_hop: List[int]) -> Tensor:
     if layer <= 0:
         return x
-    
+
     return x.narrow(
         dim=0,
         start=0,
@@ -194,7 +193,7 @@ def trim_adj(
     num_sampled_dst_nodes_per_hop: List[int],
     num_sampled_edges_per_hop: List[int],
 ) -> Adj:
-    
+
     # trim_adj must work for hetero case as well, so the assumption that at the first layer
     # edge_index or adj_t are square cannot hold, and we need to test a condition on the layer
 
@@ -209,20 +208,24 @@ def trim_adj(
         # src and dst are referred to the direction of the edges, relevant for hetero
         if layer == 0:
             size = (
-            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-            edge_index.size(1), # in homo case the layer 0 edge_index is still square, so it could be size(0), but for hetero case that's not true
-        )
+                edge_index.size(0) -
+                num_sampled_dst_nodes_per_hop[-(layer + 1)],
+                edge_index.size(
+                    1
+                ),  # in homo case the layer 0 edge_index is still square, so it could be size(0), but for hetero case that's not true
+            )
         else:
             size = (
-            edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
-            edge_index.size(1) - num_sampled_src_nodes_per_hop[-layer], 
-        )
+                edge_index.size(0) -
+                num_sampled_dst_nodes_per_hop[-(layer + 1)],
+                edge_index.size(1) - num_sampled_src_nodes_per_hop[-layer],
+            )
         # size = (
         #     edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer+1)],
         #     edge_index.size(0))
         # compact way to express the change in size for each layer, including layer 0, for homo case
-        
-        num_seed_nodes = size[0] 
+
+        num_seed_nodes = size[0]
 
         return trim_sparse_tensor(edge_index, size, num_seed_nodes)
 

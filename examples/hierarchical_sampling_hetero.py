@@ -1,10 +1,10 @@
 import argparse
+from time import time
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
-from time import time
-import numpy as np
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
@@ -17,10 +17,10 @@ _trim_to_layer = TrimToLayer()
 parser = argparse.ArgumentParser()
 parser.add_argument('--use-sparse-tensor', action='store_true')
 parser.add_argument('--hgam', action='store_true')
-parser.add_argument('--batch-size', type=int, default=1) #512
+parser.add_argument('--batch-size', type=int, default=1)  #512
 parser.add_argument('--hidden-dim', type=int, default=256)
 parser.add_argument('--num-layers', type=int, default=3)
-parser.add_argument('--num-neighbors', type=int, default=1) #10
+parser.add_argument('--num-neighbors', type=int, default=1)  #10
 parser.add_argument('--num-epochs', type=int, default=5)
 args = parser.parse_args()
 args.use_sparse_tensor = True
@@ -38,6 +38,7 @@ print(data)
 node_types, edge_types = data.metadata()
 print(node_types)
 print(edge_types)
+
 
 class HierarchicalHeteroGraphSage(torch.nn.Module):
     def __init__(self, edge_types, hidden_channels, out_channels, num_layers):
@@ -85,11 +86,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 kwargs = {'batch_size': args.batch_size, 'num_workers': 0}
 train_loader = NeighborLoader(
     data,
-    num_neighbors={key: [1]*args.num_layers for key in data.edge_types}, 
+    num_neighbors={key: [1] * args.num_layers
+                   for key in data.edge_types},
     shuffle=True,
     input_nodes=('paper', data['paper'].train_mask),
     **kwargs,
 )
+
 
 def train():
     model.train()
@@ -97,32 +100,36 @@ def train():
     total_examples = total_loss = 0
     for batch in tqdm(train_loader):
         optimizer.zero_grad()
-                
+
         out = model(
             batch.x_dict,
-            batch.adj_t_dict if args.use_sparse_tensor else batch.edge_index_dict,
-            num_sampled_nodes_dict=batch.num_sampled_nodes_dict if args.hgam else None,
-            num_sampled_edges_dict=batch.num_sampled_edges_dict if args.hgam else None,
+            batch.adj_t_dict
+            if args.use_sparse_tensor else batch.edge_index_dict,
+            num_sampled_nodes_dict=batch.num_sampled_nodes_dict
+            if args.hgam else None,
+            num_sampled_edges_dict=batch.num_sampled_edges_dict
+            if args.hgam else None,
         )
 
         batch_size = batch['paper'].batch_size
         loss = F.cross_entropy(out[:batch_size], batch['paper'].y[:batch_size])
-        
+
         loss.backward()
         optimizer.step()
 
         total_examples += batch_size
         total_loss += float(loss) * batch_size
 
-    avg_loss = total_loss / total_examples 
+    avg_loss = total_loss / total_examples
     print("avg_loss is: ", avg_loss)
     return avg_loss
+
 
 epoch_time = []
 for epoch in range(args.num_epochs):
     epoch_beg = time()
     loss = train()
-    epoch_time.append(time()-epoch_beg)
+    epoch_time.append(time() - epoch_beg)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
 
 print(epoch_time)
