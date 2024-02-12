@@ -1,9 +1,9 @@
 from typing import Optional
 
 import torch
-from torch.nn import BatchNorm1d
 import torch.nn.functional as F
 from torch import Tensor
+from torch.nn import BatchNorm1d
 
 from torch_geometric.nn import MessagePassing, SimpleConv
 from torch_geometric.nn.dense.linear import Linear
