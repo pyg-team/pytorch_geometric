@@ -4,9 +4,8 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from torch_geometric.nn import SimpleConv
+from torch_geometric.nn import MessagePassing, SimpleConv
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import add_self_loops, degree
 
 
@@ -104,8 +103,7 @@ class PMLP(torch.nn.Module):
 
 
 class EdgeConv(MessagePassing):
-    """
-    A message passing layer that uses edge features for convolution.
+    """A message passing layer that uses edge features for convolution.
 
     This layer extends PyTorch Geometric's `MessagePassing` class to perform
     convolutions by incorporating edge attributes into the message passing process.
@@ -126,8 +124,7 @@ class EdgeConv(MessagePassing):
         self.lin = Linear(in_channels + in_channels, out_channels, bias=bias)
 
     def forward(self, x, edge_index, edge_attr):
-        """
-        Forward pass of the EdgeConv layer.
+        """Forward pass of the EdgeConv layer.
 
         Args:
             x (Tensor): Node feature matrix with shape [num_nodes, in_channels].
@@ -141,8 +138,7 @@ class EdgeConv(MessagePassing):
         return self.propagate(edge_index, x=x, edge_attr=edge_attr)
 
     def message(self, x_j, edge_attr):
-        """
-        Constructs messages for each node based on edge attributes.
+        """Constructs messages for each node based on edge attributes.
 
         Args:
             x_j (Tensor): Incoming features for each edge with shape [num_edges, in_channels].
@@ -155,8 +151,7 @@ class EdgeConv(MessagePassing):
         return self.lin(tmp)
 
     def __repr__(self) -> str:
-        """
-        Creates a string representation of this EdgeConv instance, showing the
+        """Creates a string representation of this EdgeConv instance, showing the
         key configurations of the layer.
 
         Returns:
@@ -170,8 +165,7 @@ class EdgeConv(MessagePassing):
 
 
 class PMLP_with_EdgeAttr(torch.nn.Module):
-    """
-    Propagational MLP with Edge Attributes (PMLP_with_EdgeAttr) model.
+    """Propagational MLP with Edge Attributes (PMLP_with_EdgeAttr) model.
 
     This model extends an MLP to incorporate edge attributes in its message passing mechanism,
     using EdgeConv layers for convolution operations.
@@ -216,22 +210,24 @@ class PMLP_with_EdgeAttr(torch.nn.Module):
 
         self.norm = None
         if norm:
-            self.norm = BatchNorm1d(hidden_channels, affine=True, track_running_stats=True)
+            self.norm = BatchNorm1d(hidden_channels, affine=True,
+                                    track_running_stats=True)
 
-        self.conv = EdgeConv(hidden_channels + edge_attr_dim, hidden_channels, bias=bias)
+        self.conv = EdgeConv(hidden_channels + edge_attr_dim, hidden_channels,
+                             bias=bias)
         self.reset_parameters()
 
     def reset_parameters(self):
         """Initializes or resets the model parameters."""
         for lin in self.lins:
-            torch.nn.init.xavier_uniform_(lin.weight, gain=torch.nn.init.calculate_gain('relu'))
+            torch.nn.init.xavier_uniform_(
+                lin.weight, gain=torch.nn.init.calculate_gain('relu'))
             if self.bias:
                 torch.nn.init.zeros_(lin.bias)
         self.conv.reset_parameters()
 
     def forward(self, x, edge_index, edge_attr):
-        """
-        Forward pass of the PMLP_with_EdgeAttr model.
+        """Forward pass of the PMLP_with_EdgeAttr model.
 
         Args:
             x (Tensor): Node feature matrix with shape [num_nodes, in_channels].
@@ -242,7 +238,9 @@ class PMLP_with_EdgeAttr(torch.nn.Module):
             Tensor: Updated node features with shape [num_nodes, out_channels].
         """
         if not self.training and edge_index is None:
-            raise ValueError(f"'edge_index' needs to be present during inference in '{self.__class__.__name__}'")
+            raise ValueError(
+                f"'edge_index' needs to be present during inference in '{self.__class__.__name__}'"
+            )
 
         for i in range(self.num_layers):
             x = x @ self.lins[i].weight.t()
@@ -259,8 +257,7 @@ class PMLP_with_EdgeAttr(torch.nn.Module):
         return x
 
     def __repr__(self) -> str:
-        """
-        Creates a string representation of this PMLP_with_EdgeAttr instance,
+        """Creates a string representation of this PMLP_with_EdgeAttr instance,
         showing the key configurations of the model.
 
         Returns:
@@ -268,12 +265,13 @@ class PMLP_with_EdgeAttr(torch.nn.Module):
                  configurations such as input channels, hidden channels, output
                  channels, and the number of layers.
         """
-        return (f'{self.__class__.__name__}('
-                f'in_channels={self.in_channels}, '
-                f'hidden_channels={self.hidden_channels}, '
-                f'out_channels={self.out_channels}, '
-                f'num_layers={self.num_layers}, '
-                f'edge_attr_dim={self.conv.in_channels - self.hidden_channels}, '
-                f'dropout={self.dropout}, '
-                f'norm={self.norm is not None}, '
-                f'bias={self.bias})')
+        return (
+            f'{self.__class__.__name__}('
+            f'in_channels={self.in_channels}, '
+            f'hidden_channels={self.hidden_channels}, '
+            f'out_channels={self.out_channels}, '
+            f'num_layers={self.num_layers}, '
+            f'edge_attr_dim={self.conv.in_channels - self.hidden_channels}, '
+            f'dropout={self.dropout}, '
+            f'norm={self.norm is not None}, '
+            f'bias={self.bias})')
