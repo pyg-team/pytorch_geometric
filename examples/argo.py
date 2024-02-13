@@ -67,25 +67,23 @@ class ARGO:
         space=[(2, 8), (1, 4), (1, 32)],
         random_state=1,
     ):
-        """
-        Initialization
+        """Initialize ARGO.
 
-        Parameters
-        ----------
-        n_search: int
-            Number of configuration searches the auto-tuner will conduct
+        Args:
+            n_search: int
+                Number of configuration searches the auto-tuner will conduct
 
-        epoch: int
-            Number of epochs of GNN training
+            epoch: int
+                Number of epochs of GNN training
 
-        batch_size: int
-            Size of the mini-batch
+            batch_size: int
+                Size of the mini-batch
 
-        space: list[Tuple(int,int)]
-            Range of the search space; [range of processes, range of samplers for each process, range of trainers for each process]
+            space: list[Tuple(int,int)]
+                Range of the search space; [range of processes, range of samplers for each process, range of trainers for each process]
 
-        random_state: int
-            Number of random initializations before searching
+            random_state: int
+                Number of random initializations before searching
 
         """
         self.n_search = n_search
@@ -99,36 +97,33 @@ class ARGO:
     def core_binder(
         self, num_cpu_proc: int, n_samp: int, n_train: int, rank: int
     ) -> Tuple[list[int], list[int]]:
-        """
-        Core Binder
+        """Produces lists of CPUs for each GNN training process for core binding.
 
         The Core Binder binds CPU cores to perform sampling (i.e., sampling cores) and model propagation (i.e., training cores).
         The actual binding is done using the CPU affinity function in the data_loader.
         The core_binder function here is used to produce the list of CPU IDs for the CPU affinity function.
 
-        Parameters
-        ----------
-        num_cpu_proc: int
-            Number of processes instantiated
+        Args:
+            num_cpu_proc: int
+                Number of processes instantiated
 
-        n_samp: int
-            Number of sampling cores for each process
+            n_samp: int
+                Number of sampling cores for each process
 
-        n_train: int
-            Number of training cores for each process
+            n_train: int
+                Number of training cores for each process
 
-        rank: int
-            The rank of the current process
+            rank: int
+                The rank of the current process
 
         Returns: Tuple[list[int], list[int]]
-        -------
-        load_core: list[int]
-            For a given process rank, the load_core specifies a list of CPU core IDs to be used for sampling, the length of load_core = n_samp.
+            load_core: list[int]
+                For a given process rank, the load_core specifies a list of CPU core IDs to be used for sampling, the length of load_core = n_samp.
 
-        comp_core: list[int]
-            For a given process rank, the comp_core specifies a list of CPU core IDs to be used for training, the length of comp_core = n_comp.
+            comp_core: list[int]
+                For a given process rank, the comp_core specifies a list of CPU core IDs to be used for training, the length of comp_core = n_comp.
 
-        .. note:: each process is assigned with a unique list of sampling cores and training cores, and no CPU core will appear in two lists or more.
+            .. note:: each process is assigned with a unique list of sampling cores and training cores, and no CPU core will appear in two lists or more.
 
         """
         load_core, comp_core = [], []
@@ -145,29 +140,26 @@ class ARGO:
         return load_core, comp_core
 
     def auto_tuning(self, train: Callable, args) -> list[int]:
-        """
-        Auto-tuner
+        """For a given training function, auto-tuner searches for the optimal configuration that leads to the shortest epoch time.
 
         The auto-tuner runs Bayesian Optimization (BO) to search for the optimal configuration (number of processes, samplers, trainers).
         During the search, the auto-tuner explores the design space by collecting the epoch time of various configurations.
         Specifically, the exploration is done by feeding the Multi-Process Engine with various configurations, and record the epoch time.
         After the searching is done, the optimal configuration will be used repeatedly until the end of model training.
 
-        Parameters
-        ----------
-        train: Callable
-            The GNN training function.
+        Args:
+            train: Callable
+                The GNN training function.
 
-        args:
-            The inputs of the GNN training function.
+            args:
+                The inputs of the GNN training function.
 
-        Returns
-        -------
-        result: list[int]
-            The optimal configurations (which leads to the shortest epoch time) found by running BO.
-            - result[0]: number of processes to instantiate
-            - result[1]: number of sampling cores for each process
-            - result[2]: number of training cores for each process
+        Returns:
+            result: list[int]
+                The optimal configurations (which leads to the shortest epoch time) found by running BO.
+                - result[0]: number of processes to instantiate
+                - result[1]: number of sampling cores for each process
+                - result[2]: number of training cores for each process
 
         """
         ep = 1
@@ -181,34 +173,31 @@ class ARGO:
         return result
 
     def mp_engine(self, x: list[int], train: Callable, args, ep: int) -> float:
-        """
-        Multi-Process Engine (MP Engine)
+        """Multi-Process Engine (MP Engine) launches multiple GNN training processes to overlap computation with communication.
 
         The MP Engine launches multiple GNN training processes in parallel to overlap computation with communication.
         Such an approach effectively improves the utilization of the memory bandwidth and the CPU cores.
         The MP Engine also adjust the batch size according to the number of processes instantiated, so that the effective batch size remains the same as the original program without ARGO.
 
-        Parameters
-        ----------
-        x: list[int]
-            Optimal configurations provided by the auto-tuner.
-            - x[0]: number of processes to instantiate
-            - x[1]: number of sampling cores for each process
-            - x[2]: number of training cores for each process
+        Args:
+            x: list[int]
+                Optimal configurations provided by the auto-tuner.
+                - x[0]: number of processes to instantiate
+                - x[1]: number of sampling cores for each process
+                - x[2]: number of training cores for each process
 
-        train: Callable
-            The GNN training function.
+            train: Callable
+                The GNN training function.
 
-        args:
-            The inputs of the GNN training function.
+            args:
+                The inputs of the GNN training function.
 
-        ep: int
-            number of epochs.
+            ep: int
+                number of epochs.
 
-        Returns
-        -------
-        t: float
-            The epoch time using the current configuration `x`.
+        Returns:
+            t: float
+                The epoch time using the current configuration `x`.
         """
 
         n_proc = x[0]
@@ -245,19 +234,19 @@ class ARGO:
         return t
 
     def run(self, train, args):
-        """
-        The "run" function launches ARGO to traing GNN model
-        Step 1: run the auto-tuner to search for the optimal configuration
-        Step 2: record the optimal configuration
-        Step 3: use the optimal configuration repeatedly until the end of the model training
+        """The `run` function launches ARGO to traing GNN model.
+        
+        The `run` function consists of three steps:
+            - Step 1: run the auto-tuner to search for the optimal configuration
+            - Step 2: record the optimal configuration
+            - Step 3: use the optimal configuration repeatedly until the end of the model training
 
-        Parameters
-        ----------
-        train: Callable
-            The GNN training function.
+        Args:
+            train: Callable
+                The GNN training function.
 
-        args:
-            The inputs of the GNN training function.
+            args:
+                The inputs of the GNN training function.
             
         """
 
