@@ -38,13 +38,12 @@ del data['user', 'movie'].edge_label  # Drop rating information from graph.
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
 data = T.ToUndirected()(data)
 
-# Perform a temporal link-level split into training, validation and test edges:
+# Perform a temporal link-level split into training and test edges:
 edge_label_index = data['user', 'movie'].edge_index
 time = data['user', 'movie'].time
 
 perm = time.argsort()
-train_index = perm[:int(0.8 * perm.numel())]
-val_index = perm[int(0.8 * perm.numel()):int(0.9 * perm.numel())]
+train_index = perm[:int(0.9 * perm.numel())]
 test_index = perm[int(0.9 * perm.numel()):]
 
 kwargs = dict(  # Shared data loader arguments:
@@ -65,38 +64,28 @@ train_loader = LinkNeighborLoader(
     **kwargs,
 )
 
-# During validation and testing, we sample node-level subgraphs from both
-# endpoints to retrieve their embeddings.
+# During testing, we sample node-level subgraphs from both endpoints to
+# retrieve their embeddings.
 # This allows us to do efficient k-NN search on top of embeddings:
 src_loader = NeighborLoader(
     input_nodes='user',
-    input_time=(time[val_index].min() - 1).repeat(data['user'].num_nodes),
+    input_time=(time[test_index].min() - 1).repeat(data['user'].num_nodes),
     **kwargs,
 )
 dst_loader = NeighborLoader(
     input_nodes='movie',
-    input_time=(time[val_index].min() - 1).repeat(data['movie'].num_nodes),
+    input_time=(time[test_index].min() - 1).repeat(data['movie'].num_nodes),
     **kwargs,
 )
 
-# Save validation/test edges and the edges we want to exclude when evaluating:
+# Save test edges and the edges we want to exclude when evaluating:
 sparse_size = (data['user'].num_nodes, data['movie'].num_nodes)
-
-val_edge_label_index = EdgeIndex(
-    edge_label_index[:, val_index].to(device),
-    sparse_size=sparse_size,
-).sort_by('row')[0]
-val_exclude_links = EdgeIndex(
-    edge_label_index[:, train_index].to(device),
-    sparse_size=sparse_size,
-).sort_by('row')[0]
-
 test_edge_label_index = EdgeIndex(
     edge_label_index[:, test_index].to(device),
     sparse_size=sparse_size,
 ).sort_by('row')[0]
 test_exclude_links = EdgeIndex(
-    edge_label_index[:, torch.cat([train_index, val_index])].to(device),
+    edge_label_index[:, train_index].to(device),
     sparse_size=sparse_size,
 ).sort_by('row')[0]
 
@@ -224,18 +213,9 @@ for epoch in range(1, 21):
     train_loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {train_loss:.4f}')
     val_map, val_precision, val_recall = test(
-        val_edge_label_index,
-        val_exclude_links,
+        test_edge_label_index,
+        test_exclude_links,
     )
-    print(f'Val MAP@{args.k}: {val_map:.4f}, '
-          f'Val Precision@{args.k}: {val_precision:.4f}, '
-          f'Val Recall@{args.k}: {val_recall:.4f}')
-
-print('Finished training! Evaluating on test set:')
-test_map, test_precision, test_recall = test(
-    test_edge_label_index,
-    test_exclude_links,
-)
-print(f'Test MAP@{args.k}: {test_map:.4f}, '
-      f'Test Precision@{args.k}: {test_precision:.4f}, '
-      f'Test Recall@{args.k}: {test_recall:.4f}')
+    print(f'Test MAP@{args.k}: {val_map:.4f}, '
+          f'Test Precision@{args.k}: {val_precision:.4f}, '
+          f'Test Recall@{args.k}: {val_recall:.4f}')
