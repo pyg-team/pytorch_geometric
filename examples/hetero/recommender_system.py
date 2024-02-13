@@ -43,8 +43,8 @@ edge_label_index = data['user', 'movie'].edge_index
 time = data['user', 'movie'].time
 
 perm = time.argsort()
-train_index = perm[:int(0.9 * perm.numel())]
-test_index = perm[int(0.9 * perm.numel()):]
+train_index = perm[:int(0.8 * perm.numel())]
+test_index = perm[int(0.8 * perm.numel()):]
 
 kwargs = dict(  # Shared data loader arguments:
     data=data,
@@ -209,7 +209,7 @@ def test(edge_label_index, exclude_links):
     )
 
 
-for epoch in range(1, 21):
+for epoch in range(1, 16):
     train_loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {train_loss:.4f}')
     val_map, val_precision, val_recall = test(
