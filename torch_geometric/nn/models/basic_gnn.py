@@ -178,7 +178,7 @@ class BasicGNN(torch.nn.Module):
     def forward( 
         self,
         x: Tensor,
-        edge_index: Adj, 
+        edge_index: Adj,
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
         batch: OptTensor = None,
