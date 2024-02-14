@@ -18,7 +18,7 @@ def log_softmax(
     Given a value tensor :attr:`src`, this function first groups the values
     along the specified dimension based on the indices specified in
     :attr:`index` or sorted inputs in CSR representation given by :attr:`ptr`,
-      and then proceeds to compute the log_softmax individually for each group.
+    and then proceeds to compute the log_softmax individually for each group.
 
     The log_softmax operation is defined as the logarithm of the softmax
     probabilities, which can provide numerical stability improvements over
