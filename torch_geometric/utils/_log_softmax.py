@@ -2,6 +2,8 @@ from typing import Optional
 
 import torch
 
+import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -61,7 +63,8 @@ def log_softmax(
                 [-0.5514, -0.5514, -0.1542, -0.5514],
                 [-0.7520, -0.7520, -0.1542, -0.7520]])
     """
-    if ptr is not None:
+    if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
+            and not is_compiling()):
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
         count = ptr[1:] - ptr[:-1]
@@ -85,6 +88,7 @@ def log_softmax(
         log_out_sum = out_sum.log()
         out = out - log_out_sum
     else:
-        raise NotImplementedError
+        raise NotImplementedError(
+            "'log_softmax' requires 'index' to be specified")
 
     return out
