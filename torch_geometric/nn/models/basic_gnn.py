@@ -175,38 +175,10 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    @torch.jit._overload_method
-    def forward(  # noqa
-        x,
-        edge_index,
-        edge_weight=None,
-        edge_attr=None,
-        batch=None,
-        batch_size=None,
-        num_sampled_nodes_per_hop=None,
-        num_sampled_edges_per_hop=None,
-    ):
-        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
-        pass
-
-    @torch.jit._overload_method
-    def forward(  # noqa
-        x,
-        edge_index,
-        edge_weight=None,
-        edge_attr=None,
-        batch=None,
-        batch_size=None,
-        num_sampled_nodes_per_hop=None,
-        num_sampled_edges_per_hop=None,
-    ):
-        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
-        pass
-
     def forward(  # noqa
         self,
         x: Tensor,
-        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
+        edge_index: Adj, 
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
         batch: OptTensor = None,
@@ -273,36 +245,15 @@ class BasicGNN(torch.nn.Module):
             # Tracing the module is not allowed with *args and **kwargs :(
             # As such, we rely on a static solution to pass optional edge
             # weights and edge attributes to the module.
-            # if self.supports_edge_weight and self.supports_edge_attr:
-            #     x = conv(x, edge_index, edge_weight=edge_weight,
-            #              edge_attr=edge_attr)
-            # elif self.supports_edge_weight:
-            #     x = conv(x, edge_index, edge_weight=edge_weight)
-            # elif self.supports_edge_attr:
-            #     x = conv(x, edge_index, edge_attr=edge_attr)
-            # else:
-            #     x = conv(x, edge_index)
-
             if self.supports_edge_weight and self.supports_edge_attr:
-                x = self.convs[i](x, edge_index, edge_weight=edge_weight)  #,
-                #edge_attr=edge_attr,node_num=num_sampled_nodes_per_hop[-(i+1)] )
+                x = conv(x, edge_index, edge_weight=edge_weight,
+                         edge_attr=edge_attr)
             elif self.supports_edge_weight:
-                x = self.convs[i](
-                    x, edge_index, edge_weight=edge_weight
-                )  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
+                x = conv(x, edge_index, edge_weight=edge_weight)
             elif self.supports_edge_attr:
-                x = self.convs[i](
-                    x, edge_index, edge_attr=edge_attr
-                )  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
+                x = conv(x, edge_index, edge_attr=edge_attr)
             else:
-                # print("\n\n####################### executing conv at layer ", i)
-                x = self.convs[i](
-                    x,
-                    edge_index)  #,node_num=num_sampled_nodes_per_hop[-(i+1)])
-                # print("\n\n layer: ", i)
-                # print("output x from GNNcon is:", x)
-                # print("x size is ", x.size())
-                # print("$$$$$$$$$$$$$$$$$$$$$$$$")
+                x = conv(x, edge_index)
 
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:

@@ -124,7 +124,9 @@ class SAGEConv(MessagePassing):
         if self.root_weight:
             self.lin_r.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+    def forward(self, 
+                x: Union[Tensor, OptPairTensor], 
+                edge_index: Adj,
                 size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
@@ -150,13 +152,10 @@ class SAGEConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor) -> Tensor:
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
-
-        res = spmm(adj_t, x[0], reduce=self.aggr)
-        return res
+        return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
