@@ -82,7 +82,7 @@ __all__ = [
     "cumsum",
     "degree",
     "softmax",
-    "log_softmax"
+    "log_softmax",
     "lexsort",
     "sort_edge_index",
     "coalesce",
