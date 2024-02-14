@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 
 from torch_geometric.utils import scatter, segment
@@ -6,17 +8,17 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 def log_softmax(
     src: torch.Tensor,
-    index: torch.Optional[torch.Tensor] = None,
-    ptr: torch.Optional[torch.Tensor] = None,
-    num_nodes: torch.Optional[int] = None,
+    index: Optional[torch.Tensor] = None,
+    ptr: Optional[torch.Tensor] = None,
+    num_nodes: Optional[int] = None,
     dim: int = 0,
 ) -> torch.Tensor:
     r"""Computes a sparsely evaluated log_softmax.
 
     Given a value tensor :attr:`src`, this function first groups the values
-    along the specified dimension based on the indices specified in :attr:`index`
-    or sorted inputs in CSR representation given by :attr:`ptr`, and then proceeds
-    to compute the log_softmax individually for each group.
+    along the specified dimension based on the indices specified in
+    :attr:`index` or sorted inputs in CSR representation given by :attr:`ptr`,
+      and then proceeds to compute the log_softmax individually for each group.
 
     The log_softmax operation is defined as the logarithm of the softmax
     probabilities, which can provide numerical stability improvements over
@@ -30,13 +32,14 @@ def log_softmax(
         ptr (LongTensor, optional): If given, computes the log_softmax based on
             sorted inputs in CSR representation. This allows for efficient
             computation over contiguous ranges of nodes. (default: :obj:`None`)
-        num_nodes (int, optional): The number of nodes, *i.e.*, the maximum value
-            + 1 of :attr:`index`. This is required when `index` is specified to
-            determine the dimension size for scattering operations.
+        num_nodes (int, optional): The number of nodes, *i.e.*, the maximum
+            value + 1 of :attr:`index`. This is required when `index` is
+            specified to determine the dimension for scattering operations.
             (default: :obj:`None`)
         dim (int, optional): The dimension in which to normalize. For most use
             cases, this should be set to 0, as log_softmax is typically applied
-            along the node dimension in graph neural networks. (default: :obj:`0`)
+            along the node dimension in graph neural networks.
+            (default: :obj:`0`)
 
     :rtype: :class:`Tensor`
 
