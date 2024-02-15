@@ -86,11 +86,12 @@ def negative_sampling(
         # invalid samples.
         mask = idx.new_ones(population, dtype=torch.bool)
         mask[idx] = False
-        for _ in range(3):  # Number of tries to sample negative indices.
+        for _ in range(100):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, idx.device)
             rnd = rnd[mask[rnd]]  # Filter true negatives.
             neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
             if neg_idx.numel() >= num_neg_samples:
+                print("BREAK")
                 neg_idx = neg_idx[:num_neg_samples]
                 break
             mask[neg_idx] = False
@@ -197,10 +198,14 @@ def batched_negative_sampling(
     neg_edge_indices = []
     for i, edge_index in enumerate(edge_indices):
         edge_index = edge_index - ptr[i]
+        print(i, edge_index.shape, num_nodes[i])
+        print(num_neg_samples)
         neg_edge_index = negative_sampling(edge_index, num_nodes[i],
                                            num_neg_samples, method,
                                            force_undirected)
         neg_edge_index += ptr[i]
+        print(neg_edge_index)
+        print('out', neg_edge_index.shape)
         neg_edge_indices.append(neg_edge_index)
 
     return torch.cat(neg_edge_indices, dim=1)
