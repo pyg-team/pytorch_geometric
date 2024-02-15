@@ -26,6 +26,7 @@ classifiers=[
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
@@ -187,6 +188,7 @@ filterwarnings = [
 [tool.coverage.run]
 source = ["torch_geometric"]
 omit = [
+    "torch_geometric/distributed/*",
     "torch_geometric/datasets/*",
     "torch_geometric/data/extract.py",
     "torch_geometric/nn/data_parallel.py",

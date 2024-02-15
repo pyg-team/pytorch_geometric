@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class PDNConv(MessagePassing):
     r"""The pathfinder discovery network convolutional operator from the
     `"Pathfinder Discovery Networks for Neural Message Passing"
-    <https://arxiv.org/pdf/2010.12878.pdf>`_ paper.
+    <https://arxiv.org/abs/2010.12878>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup

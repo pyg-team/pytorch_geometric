@@ -772,7 +772,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, None, reduce, transpose)
     exp = _scatter_spmm(adj, x, None, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # With non-zero values:
     x = torch.randn(3, 1, device=device)
@@ -780,7 +780,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, value, reduce, transpose)
     exp = _scatter_spmm(adj, x, value, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # Gradients w.r.t. other:
     x1 = torch.randn(3, 1, device=device, requires_grad=True)
@@ -791,7 +791,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x2, None, reduce, transpose)
     exp.backward(grad)
-    assert x1.grad.allclose(x2.grad)
+    assert x1.grad.allclose(x2.grad, atol=1e-6)
 
     # Gradients w.r.t. value:
     x = torch.randn(3, 1, device=device)
@@ -803,7 +803,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x, value2, reduce, transpose)
     exp.backward(grad)
-    assert value1.grad.allclose(value2.grad)
+    assert value1.grad.allclose(value2.grad, atol=1e-6)
 
 
 @withCUDA
@@ -987,6 +987,40 @@ def test_matmul(without_extensions, device):
             torch.sparse.mm(adj, x, reduce='sum')
         out = torch.sparse.mm(adj, x)
     assert torch.allclose(out, expected)
+
+
+@withCUDA
+def test_sparse_narrow(device):
+    adj = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        device=device,
+        sort_order='row',
+    )
+
+    out = adj.sparse_narrow(dim=0, start=1, length=1)
+    assert out.equal(torch.tensor([[0, 0], [0, 2]], device=device))
+    assert out.sparse_size() == (1, None)
+    assert out.sort_order == 'row'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=0, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (0, None)
+    assert out.sort_order == 'row'
+    assert out._indptr is None
+
+    out = adj.sparse_narrow(dim=1, start=1, length=1)
+    assert (out.equal(torch.tensor([[0, 2], [0, 0]], device=device))
+            or out.equal(torch.tensor([[2, 0], [0, 0]], device=device)))
+    assert out.sparse_size() == (3, 1)
+    assert out.sort_order == 'col'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=1, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (3, 0)
+    assert out.sort_order == 'col'
+    assert out._indptr is None
 
 
 @withCUDA

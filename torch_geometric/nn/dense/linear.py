@@ -1,6 +1,8 @@
 import copy
 import math
-from typing import Any, Dict, Optional, Union
+import sys
+import time
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -12,7 +14,7 @@ import torch_geometric.typing
 from torch_geometric import is_compiling
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
-from torch_geometric.utils import index_sort, scatter
+from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -236,8 +238,6 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._use_segment_matmul_heuristic_output: Optional[bool] = None
-
         if self.in_channels == -1:
             self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
@@ -251,6 +251,9 @@ class HeteroLinear(torch.nn.Module):
             self.register_parameter('bias', None)
         self.reset_parameters()
 
+        # Timing cache for benchmarking naive vs. segment matmul usage:
+        self._timing_cache: Dict[int, Tuple[float, float]] = {}
+
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         reset_weight_(self.weight, self.in_channels,
@@ -258,64 +261,87 @@ class HeteroLinear(torch.nn.Module):
         reset_bias_(self.bias, self.in_channels,
                     self.kwargs.get('bias_initializer', None))
 
+    def forward_naive(self, x: Tensor, type_ptr: Tensor) -> Tensor:
+        out = x.new_empty(x.size(0), self.out_channels)
+        for i, (start, end) in enumerate(zip(type_ptr[:-1], type_ptr[1:])):
+            out[start:end] = x[start:end] @ self.weight[i]
+        return out
+
+    def forward_segmm(self, x: Tensor, type_ptr: Tensor) -> Tensor:
+        return pyg_lib.ops.segment_matmul(x, type_ptr, self.weight)
+
+    @torch.no_grad()
+    def _update_timing_cache(
+        self,
+        x: Tensor,
+        type_ptr: Tensor,
+        key: int,
+    ) -> None:
+
+        MEASURE_ITER = 1 if 'pytest' in sys.modules else 3
+
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t = time.perf_counter()
+        for _ in range(MEASURE_ITER):
+            _ = self.forward_segmm(x, type_ptr)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        time_segmm = time.perf_counter() - t
+
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t = time.perf_counter()
+        for _ in range(MEASURE_ITER):
+            _ = self.forward_naive(x, type_ptr)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        time_naive = time.perf_counter() - t
+
+        self._timing_cache[key] = (time_segmm, time_naive)
+
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        r"""Forward pass.
+        r"""The forward pass.
 
         Args:
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        use_segment_matmul = torch_geometric.backend.use_segment_matmul
-        # If `use_segment_matmul` is not specified, use a simple heuristic to
-        # determine whether `segment_matmul` can speed up computation given the
-        # observed input sizes:
-        if use_segment_matmul is None:
-            if self._use_segment_matmul_heuristic_output is None:
-                segment_count = scatter(torch.ones_like(type_vec), type_vec,
-                                        dim_size=self.num_types, reduce='sum')
+        perm: Optional[Tensor] = None
+        if not self.is_sorted and (type_vec[1:] < type_vec[:-1]).any():
+            type_vec, perm = index_sort(type_vec, self.num_types)
+            x = x[perm]
 
-                self._use_segment_matmul_heuristic_output = (
-                    torch_geometric.backend.use_segment_matmul_heuristic(
-                        num_segments=self.num_types,
-                        max_segment_size=int(segment_count.max()),
-                        in_channels=self.weight.size(1),
-                        out_channels=self.weight.size(2),
-                    ))
+        type_ptr = index2ptr(type_vec, self.num_types)
 
-            assert self._use_segment_matmul_heuristic_output is not None
-            use_segment_matmul = self._use_segment_matmul_heuristic_output
+        if torch_geometric.backend.use_segment_matmul is None:
+            use_segment_matmul = False
+            if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
+                    and not torch.jit.is_scripting()):
 
-        if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
-                and not is_compiling()):
-            assert self.weight is not None
-
-            perm: Optional[Tensor] = None
-            if not self.is_sorted:
-                if (type_vec[1:] < type_vec[:-1]).any():
-                    type_vec, perm = index_sort(type_vec, self.num_types)
-                    x = x[perm]
-
-            type_vec_ptr = index2ptr(type_vec, self.num_types)
-            out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
-            if self.bias is not None:
-                out += self.bias[type_vec]
-
-            if perm is not None:  # Restore original order (if necessary).
-                out_unsorted = torch.empty_like(out)
-                out_unsorted[perm] = out
-                out = out_unsorted
+                # Use "magnitude" of number of rows as timing key:
+                key = math.floor(math.log10(x.size(0)))
+                if key not in self._timing_cache:
+                    self._update_timing_cache(x, type_ptr, key)
+                time_segmm, time_naive = self._timing_cache[key]
+                use_segment_matmul = time_segmm < time_naive
         else:
-            out = x.new_empty(x.size(0), self.out_channels)
-            for i in range(self.num_types):
-                mask = type_vec == i
-                if mask.numel() == 0:
-                    continue
-                subset_out = F.linear(x[mask], self.weight[i].T)
-                # The data type may have changed with mixed precision:
-                out[mask] = subset_out.to(out.dtype)
+            use_segment_matmul = torch_geometric.backend.use_segment_matmul
 
-            if self.bias is not None:
-                out += self.bias[type_vec]
+        if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
+                and use_segment_matmul):
+            out = self.forward_segmm(x, type_ptr)
+        else:
+            out = self.forward_naive(x, type_ptr)
+
+        if self.bias is not None:
+            out += self.bias[type_vec]
+
+        if perm is not None:  # Restore original order (if necessary).
+            out_unsorted = torch.empty_like(out)
+            out_unsorted[perm] = out
+            out = out_unsorted
+
         return out
 
     @torch.no_grad()
