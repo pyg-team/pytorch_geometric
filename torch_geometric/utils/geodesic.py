@@ -72,7 +72,8 @@ def geodesic_distance(  # noqa: D417
     max_distance = float('inf') if max_distance is None else max_distance
 
     if norm:
-        area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]], dim=1)
+        area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]],
+                                                   dim=1)
         scale = float((area.norm(p=2, dim=1) / 2).sum().sqrt())
     else:
         scale = 1.0
