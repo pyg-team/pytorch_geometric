@@ -1,4 +1,5 @@
 import copy
+import os.path as osp
 from typing import Tuple, Union
 
 import pytest
@@ -182,6 +183,15 @@ def test_my_conv_jit():
         assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
         assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
         jit.fuse = True
+
+
+def test_my_conv_jit_save(tmp_path):
+    path = osp.join(tmp_path, 'model.pt')
+
+    conv = MyConv(8, 32)
+    conv = torch.jit.script(conv)
+    torch.jit.save(conv, path)
+    conv = torch.jit.load(path)
 
 
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])

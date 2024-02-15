@@ -41,4 +41,12 @@ External Resources
 
 * Kùzu: **Remote Backend for** :pyg:`null` **PyTorch Geometric** [:colab:`null` `Colab <https://colab.research.google.com/drive/12fOSqPm1HQTz_m9caRW7E_92vaeD9xq6>`__]
 
-* Aniket Saxena: **Graph Neural Networks-based Node and Graph Classification, and Explanation App using** :pyg:`null` **PyTorch Geometric** [`Website <https://graph-explainability.streamlit.app/>`__, :github:`null` `GitHub <https://github.com/fork123aniket/End-to-End-Node-and-Graph-Classification-and-Explanation-App>`__]
+* Aniket Saxena: **Graph Neural Networks-based Explanation App using** :pyg:`null` **PyTorch Geometric** [`Website <https://graph-explainability.streamlit.app/>`__, :github:`null` `GitHub <https://github.com/fork123aniket/End-to-End-Node-and-Graph-Classification-and-Explanation-App>`__]
+
+* Mashaan Alshammari: **Graph Attention in** :pyg:`null` **PyTorch Geometric** [:youtube:`null` `Youtube <https://youtu.be/AWkPjrZshug>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2024_02_05_GAT.ipynb>`__]
+
+* Mashaan Alshammari: **Graph Convolutional Networks (GCNs) in** :pytorch:`null` **PyTorch** [:youtube:`null` `Youtube <https://youtu.be/G6c6zk0RhRM>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2023_12_04_GCN_introduction.ipynb>`__]
+
+* Mashaan Alshammari: **GCN and SGC in** :pytorch:`null` **PyTorch** [:youtube:`null` `Youtube <https://youtu.be/PQT2QblNegY>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2023_12_13_GCN_and_SGC.ipynb>`__],
+
+* Mashaan Alshammari: **GCN Variants SGC and ASGC in** :pytorch:`null` **PyTorch** [:youtube:`null` `Youtube <https://youtu.be/ZNMV5i84fmM>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2024_01_31_SGC_and_ASGC.ipynb>`__]

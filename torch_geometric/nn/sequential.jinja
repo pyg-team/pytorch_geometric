@@ -1,33 +1,35 @@
+import typing
 from typing import *
-from torch_geometric.typing import *
 
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
+from torch_geometric.typing import *
 
-class {{cls_name}}(torch.nn.Module):
-    def reset_parameters(self):
-        for name in self._names:
-            module = getattr(self, name)
-            if hasattr(module, 'reset_parameters'):
-                module.reset_parameters()
 
-    def forward(self, {{ input_args|join(', ') }}):
-        """"""{% for name, module, in_desc, out_desc in calls %}
-        {% for output in out_desc %}{{output}}{{ ", " if not loop.last }}{% endfor %} = self.{{name}}({% for input in in_desc %}{{input}}{{ ", " if not loop.last }}{% endfor %}){% endfor %}
-        return {% for output in calls[-1][-1] %}{{output}}{{ ", " if not loop.last }}{% endfor %}
+class Sequential(torch.nn.Module):
+    def reset_parameters(self) -> None:
+{%- for child in children %}
+        if hasattr(self.{{child.name}}, 'reset_parameters'):
+            self.{{child.name}}.reset_parameters()
+{%- endfor %}
+
+    def forward(self, {{ input_types|join(', ') }}) -> {{return_type}}:
+{%- for child in children %}
+        {{child.return_names|join(', ')}} = self.{{child.name}}({{child.param_names|join(', ')}})
+{%- endfor %}
+        return {{children[-1].return_names|join(', ')}}
 
     def __getitem__(self, idx: int) -> torch.nn.Module:
-        return getattr(self, self._names[idx])
+        return getattr(self, self._module_names[idx])
 
     def __len__(self) -> int:
-        return {{calls|length}}
+        return {{children|length}}
 
     def __repr__(self) -> str:
         module_reprs = [
-            (f"  ({i}) - {self[i]}: {', '.join(self.module_headers[i].args)} "
-             f"-> {', '.join(self.module_headers[i].output)}")
+            f'  ({i}) - {self[i]}: {self._module_descs[i]}'
             for i in range(len(self))
         ]
-
         return 'Sequential(\n{}\n)'.format('\n'.join(module_reprs))

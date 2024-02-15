@@ -334,11 +334,12 @@ class EdgeIndex(Tensor):
                 sparse_size = (sparse_size[1], sparse_size[1])
 
         if torch_geometric.typing.WITH_PT112:
-            out = super().__new__(cls, data)  # type: ignore
+            out = super().__new__(cls, data)
         else:
             out = Tensor._make_subclass(cls, data)
 
         # Attach metadata:
+        assert isinstance(out, EdgeIndex)
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
@@ -945,6 +946,93 @@ class EdgeIndex(Tensor):
                 (default: :obj:`False`)
         """
         return matmul(self, other, input_value, other_value, reduce, transpose)
+
+    def sparse_narrow(
+        self,
+        dim: int,
+        start: Union[int, Tensor],
+        length: int,
+    ) -> 'EdgeIndex':
+        r"""Returns a new :class:`EdgeIndex` that is a narrowed version of
+        itself. Narrowing is performed by interpreting :class:`EdgeIndex` as a
+        sparse matrix of shape :obj:`(num_rows, num_cols)`.
+
+        In contrast to :meth:`torch.narrow`, the returned tensor does not share
+        the same underlying storage anymore.
+
+        Args:
+            dim (int): The dimension along which to narrow.
+            start (int or torch.Tensor): Index of the element to start the
+                narrowed dimension from.
+            length (int): Length of the narrowed dimension.
+        """
+        dim = dim + 2 if dim < 0 else dim
+        if dim != 0 and dim != 1:
+            raise ValueError(f"Expected dimension to be 0 or 1 (got {dim})")
+
+        if start < 0:
+            raise ValueError(f"Expected 'start' value to be positive "
+                             f"(got {start})")
+
+        if dim == 0:
+            (rowptr, col), _ = self.get_csr()
+            rowptr = rowptr.narrow(0, start, length + 1)
+
+            if rowptr.numel() < 2:
+                row, col = self[0, :0], self[1, :0]
+                rowptr = None
+                num_rows = 0
+            else:
+                col = col[rowptr[0]:rowptr[-1]]
+                rowptr = rowptr - rowptr[0]
+                num_rows = rowptr.numel() - 1
+
+                row = torch.arange(
+                    num_rows,
+                    dtype=col.dtype,
+                    device=col.device,
+                ).repeat_interleave(
+                    rowptr.diff(),
+                    output_size=col.numel(),
+                )
+
+            edge_index = EdgeIndex(
+                torch.stack([row, col], dim=0),
+                sparse_size=(num_rows, self.sparse_size(1)),
+                sort_order='row',
+            )
+            edge_index._indptr = rowptr
+            return edge_index
+
+        else:  # dim == 0:
+            (colptr, row), _ = self.get_csc()
+            colptr = colptr.narrow(0, start, length + 1)
+
+            if colptr.numel() < 2:
+                row, col = self[0, :0], self[1, :0]
+                colptr = None
+                num_cols = 0
+            else:
+                row = row[colptr[0]:colptr[-1]]
+                colptr = colptr - colptr[0]
+                num_cols = colptr.numel() - 1
+
+                col = torch.arange(
+                    num_cols,
+                    dtype=row.dtype,
+                    device=row.device,
+                ).repeat_interleave(
+                    colptr.diff(),
+                    output_size=row.numel(),
+                )
+
+            edge_index = EdgeIndex(
+                torch.stack([row, col], dim=0),
+                sparse_size=(self.sparse_size(0), num_cols),
+                sort_order='col',
+            )
+            edge_index._indptr = colptr
+            return edge_index
 
     @classmethod
     def __torch_function__(

@@ -3,7 +3,7 @@ from typing import List
 import pytest
 import torch
 
-from torch_geometric.nn.metrics import (
+from torch_geometric.metrics import (
     LinkPredF1,
     LinkPredMAP,
     LinkPredNDCG,
