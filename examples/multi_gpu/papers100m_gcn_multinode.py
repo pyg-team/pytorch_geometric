@@ -68,7 +68,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
 
     val_steps = 1000
     warmup_steps = 100
-    acc = acc.to(rank)
+    acc = acc.to(device)
     dist.barrier()
     torch.cuda.synchronize()
     if rank == 0:
