@@ -1,6 +1,9 @@
 Distributed Training in PyG
 ===========================
 
+.. figure:: ../_figures/intel_kumo.png
+   :width: 400px
+
 .. note::
     We are thrilled to announce the first **in-house distributed training solution** for :pyg:`PyG` via :class:`torch_geometric.distributed`, available from version 2.5 onwards.
     Developers and researchers can now take full advantage of distributed training on large-scale datasets which cannot be fully loaded in memory of one machine at the same time.
@@ -15,11 +18,11 @@ Key Advantages
 --------------
 
 #. **Balanced graph partitioning** via METIS ensures minimal communication overhead when sampling subgraphs across compute nodes.
-#. Utilizing **DDP for model training in conjunction with RPC for remote sampling and feature fetching routines** (with TCP/IP protocol and `gloo <https://github.com/facebookincubator/gloo>`_ communication backend) allows for data parallelism with distinct data partitions at each node.
+#. Utilizing **DDP for model training** in conjunction with **RPC for remote sampling and feature fetching routines** (with TCP/IP protocol and `gloo <https://github.com/facebookincubator/gloo>`_ communication backend) allows for data parallelism with distinct data partitions at each node.
 #. The implementation via custom :class:`~torch_geometric.data.GraphStore` and :class:`~torch_geometric.data.FeatureStore` APIs provides a flexible and tailored interface for distributing large graph structure information and feature storage.
-#. Distributed neighbor sampling is capable of sampling in both local and remote partitions through RPC communication channels.
-   All advanced functionality of single-node sampling are also applicable for distributed training, *e.g.*, heterogeneous sampling, link-level sampling, temporal sampling, *etc*..
-#. Distributed data loaders offer a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard :pyg:`PyG`  data loaders..
+#. **Distributed neighbor sampling** is capable of sampling in both local and remote partitions through RPC communication channels.
+   All advanced functionality of single-node sampling are also applicable for distributed training, *e.g.*, heterogeneous sampling, link-level sampling, temporal sampling, *etc*.
+#. **Distributed data loaders** offer a high-level abstraction for managing sampler processes, ensuring simplicity and seamless integration with standard :pyg:`PyG`  data loaders.
 #. Incorporating the Python `asyncio <https://docs.python.org/3/library/asyncio.html>`_ library for asynchronous processing on top of :pytorch:`PyTorch`-based RPCs further enhances the system's responsiveness and overall performance.
 
 Architecture Components
@@ -56,6 +59,12 @@ By default, METIS tries to balance the number of nodes of each type in each part
 This ensures that the resulting partitions provide maximal local access of neighbors, enabling samplers to perform local computations without the need for communication between different compute nodes.
 Through this partitioning approach, every edge receives a distinct assignment, while "halo nodes" (1-hop neighbors that fall into a different partition) are replicated.
 Halo nodes ensure that neighbor sampling for a single node in a single layer stays purely local.
+
+.. figure:: ../_figures/dist_part.png
+   :align: center
+   :width: 100%
+
+   Graph partitioning with halo nodes.
 
 In our distributed training example, we prepared the `partition_graph.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py>`_ script to demonstrate how to apply partitioning on a selected subset of both homogeneous and heterogeneous graphs.
 The :class:`~torch_geometric.distributed.Partitioner` can also preserve node features, edge features, and any temporal attributes at the level of nodes and edges.
@@ -173,6 +182,12 @@ A batch of seed nodes follows three main steps before it is made available for t
    Consequently, if the output of a sampler on a specific machine includes sampled nodes or edges which do not pertain in its partition, the machine initiates an RPC request to a remote server which these nodes (or edges) belong to.
 #. **Data conversion:** Based on the sampler output and the acquired node (or edge) features, a :pyg:`PyG` :class:`~torch_geometric.data.Data` or :class:`~torch_geometric.data.HeteroData` object is created.
    This object forms a batch used in subsequent computational operations of the model.
+
+.. figure:: ../_figures/dist_sampling.png
+   :align: center
+   :width: 450px
+
+   Local and remote neighbor sampling.
 
 Distributed Data Loading
 ~~~~~~~~~~~~~~~~~~~~~~~~
