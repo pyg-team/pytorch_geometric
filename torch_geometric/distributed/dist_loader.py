@@ -3,6 +3,7 @@ import logging
 import os
 from typing import Any, Optional, Union
 
+import torch.distributed
 import torch.multiprocessing as mp
 
 from torch_geometric.distributed import DistNeighborSampler
@@ -101,6 +102,9 @@ class DistLoader:
         logging.debug(f'{self} Resetting msg channel')
         while not self.channel.empty():
             self.channel.get_nowait()
+
+        torch.distributed.barrier()
+
         self.channel = channel or mp.Queue()
         self.dist_sampler.channel = self.channel
 
@@ -142,10 +146,17 @@ class DistLoader:
         return f'{self.__class__.__name__}(pid={self.pid})'
 
     def __enter__(self) -> DataLoaderIterator:
+        # fetch a single batch for init
+        self._prefetch_old = self.prefetch_factor
+        self.prefetch_factor = 1
         self._iterator = self._get_iterator()
         return self._iterator
 
     def __exit__(self, *args) -> None:
-        del self._iterator
         if self.channel:
             self.reset_channel()
+        if self._iterator:
+            del self._iterator
+            torch.distributed.barrier()
+            self._iterator = None
+            self.prefetch_factor = self._prefetch_old

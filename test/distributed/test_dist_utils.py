@@ -2,8 +2,10 @@ import torch
 
 from torch_geometric.distributed.utils import remove_duplicates
 from torch_geometric.sampler import SamplerOutput
+from torch_geometric.testing import onlyDistributedTest
 
 
+@onlyDistributedTest
 def test_remove_duplicates():
     node = torch.tensor([0, 1, 2, 3])
     out_node = torch.tensor([0, 4, 1, 5, 1, 6, 2, 7, 3, 8])
@@ -16,6 +18,7 @@ def test_remove_duplicates():
     assert node.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 
+@onlyDistributedTest
 def test_remove_duplicates_disjoint():
     node = torch.tensor([0, 1, 2, 3])
     batch = torch.tensor([0, 1, 2, 3])

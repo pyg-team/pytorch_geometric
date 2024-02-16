@@ -196,6 +196,12 @@ class NodeLoader(
             data.num_sampled_nodes = out.num_sampled_nodes
             data.num_sampled_edges = out.num_sampled_edges
 
+            if out.orig_row is not None and out.orig_col is not None:
+                data._orig_edge_index = torch.stack([
+                    out.orig_row,
+                    out.orig_col,
+                ], dim=0)
+
             data.input_id = out.metadata[0]
             data.seed_time = out.metadata[1]
             data.batch_size = out.metadata[0].size(0)
@@ -212,9 +218,11 @@ class NodeLoader(
                 if (self.node_sampler.__class__.__name__ ==
                         'DistNeighborSampler'):
                     import torch_geometric.distributed as dist
+
                     data = dist.utils.filter_dist_store(
                         *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls, out.metadata)
+                        self.custom_cls, out.metadata,
+                        self.input_data.input_type)
                 else:
                     data = filter_custom_hetero_store(  #
                         *self.data, out.node, out.row, out.col, out.edge,
@@ -235,6 +243,13 @@ class NodeLoader(
             data.set_value_dict('batch', out.batch)
             data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)
             data.set_value_dict('num_sampled_edges', out.num_sampled_edges)
+
+            if out.orig_row is not None and out.orig_col is not None:
+                for key in out.orig_row.keys():
+                    data[key]._orig_edge_index = torch.stack([
+                        out.orig_row[key],
+                        out.orig_col[key],
+                    ], dim=0)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
@@ -260,9 +275,6 @@ class NodeLoader(
 
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
-
-    def __enter__(self):
-        return self
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

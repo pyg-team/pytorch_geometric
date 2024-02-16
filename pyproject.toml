@@ -4,7 +4,7 @@ build-backend="flit_core.buildapi"
 
 [project]
 name="torch_geometric"
-version="2.4.0"
+version="2.5.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
@@ -26,6 +26,7 @@ classifiers=[
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
@@ -187,6 +188,7 @@ filterwarnings = [
 [tool.coverage.run]
 source = ["torch_geometric"]
 omit = [
+    "torch_geometric/distributed/*",
     "torch_geometric/datasets/*",
     "torch_geometric/data/extract.py",
     "torch_geometric/nn/data_parallel.py",
