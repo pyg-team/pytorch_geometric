@@ -37,8 +37,10 @@ class SamplePoints(BaseTransform):
         pos_max = pos.abs().max()
         pos = pos / pos_max
 
-        area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]],
-                                                   dim=1)
+        area = (pos[face[1]] - pos[face[0]]).cross(
+            pos[face[2]] - pos[face[0]],
+            dim=1,
+        )
         area = area.norm(p=2, dim=1).abs() / 2
 
         prob = area / area.sum()
