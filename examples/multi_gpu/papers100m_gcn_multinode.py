@@ -117,7 +117,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             acc_sum += acc(out[:batch_size].softmax(dim=-1),
                            batch.y[:batch_size])
         acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                               device=rank)
+                               device=device)
         dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
         num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                    device=acc_sum.device)
@@ -138,7 +138,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
         with torch.no_grad():
             out = model(batch.x, batch.edge_index)[:batch_size]
         acc_sum += acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
-    acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=rank)
+    acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=device)
     dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
     num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
                                device=acc_sum.device)
