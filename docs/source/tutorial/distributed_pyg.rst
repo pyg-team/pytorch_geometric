@@ -57,7 +57,7 @@ Note that METIS requires undirected, homogeneous graphs as input.
 
 By default, METIS tries to balance the number of nodes of each type in each partition while minimizing the number of edges between partitions.
 This ensures that the resulting partitions provide maximal local access of neighbors, enabling samplers to perform local computations without the need for communication between different compute nodes.
-Through this partitioning approach, every edge receives a distinct assignment, while "halo nodes" (1-hop neighbors that fall into a different partition) are replicated.
+Through this partitioning approach, every node receives a distinct assignment, while "halo nodes" (1-hop neighbors that fall into a different partition) are replicated.
 Halo nodes ensure that neighbor sampling for a single node in a single layer stays purely local.
 
 .. figure:: ../_figures/dist_part.png
