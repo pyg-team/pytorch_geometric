@@ -162,4 +162,6 @@ if __name__ == '__main__':
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 256, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
-    run(nprocs, dataset[0], split_idx, model, acc, wall_clock_start)
+    data = dataset[0]
+    data.y = data.y.reshape(-1)
+    run(nprocs, data, split_idx, model, acc, wall_clock_start)
