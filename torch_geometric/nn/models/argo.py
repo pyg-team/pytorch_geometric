@@ -1,3 +1,16 @@
+<<<<<<< HEAD:torch_geometric/nn/models/argo.py
+=======
+"""ARGO: An Auto-Tuning Runtime System for Scalable GNN Training on Multi-Core Processor
+--------------------------------------------
+Graph Neural Network (GNN) training suffers from low scalability on multi-core CPUs.
+Specificially, the performance often caps at 16 cores, and no improvement is observed when applying more than 16 cores.
+ARGO is a runtime system that offers scalable performance by overlapping the computation and communication during GNN training.
+With ARGO enabled, we are able to scale over 64 cores, allowing ARGO to speedup GNN training (in terms of epoch time) by up to 5.06x and 4.54x on a Xeon 8380H and a Xeon 6430L, respectively.
+--------------------------------------------
+Paper Link: https://arxiv.org/abs/2402.03671
+"""
+
+>>>>>>> ceaf73a1422ff0951dca84b16e57ef62b75d30dc:examples/argo.py
 import time
 from typing import Callable, List, Optional, Tuple
 
@@ -49,6 +62,7 @@ Normalize.inverse_transform = inverse_transform
 
 
 class ARGO:
+<<<<<<< HEAD:torch_geometric/nn/models/argo.py
     r"""Initializes ARGO from the `"ARGO: An Auto-Tuning Runtime System for
     Scalable GNN Training on Multi-Core Processor"
     <https://arxiv.org/abs/2402.03671>`_ paper.
@@ -76,6 +90,8 @@ class ARGO:
         manual_seed (int, optional): Sets manual seed for reproducible results.
             (default: :obj:`None`)
     """
+=======
+>>>>>>> ceaf73a1422ff0951dca84b16e57ef62b75d30dc:examples/argo.py
     def __init__(
         self,
         num_experiments: int,
@@ -97,6 +113,7 @@ class ARGO:
         self.acq_func = "EI"
         self.counter = [0]
 
+<<<<<<< HEAD:torch_geometric/nn/models/argo.py
     def core_binder(
         self,
         num_cpu_proc: int,
@@ -104,6 +121,10 @@ class ARGO:
         n_train: int,
         rank: int,
     ) -> Tuple[List[int], List[int]]:
+=======
+    def core_binder(self, num_cpu_proc: int, n_samp: int, n_train: int,
+                    rank: int) -> Tuple[list[int], list[int]]:
+>>>>>>> ceaf73a1422ff0951dca84b16e57ef62b75d30dc:examples/argo.py
         """Produces lists of CPUs for each GNN training process for core binding.
 
         The Core Binder binds CPU cores to perform sampling (i.e., sampling cores) and model propagation (i.e., training cores).
@@ -158,7 +179,7 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
 
         Returns:
@@ -196,7 +217,7 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
 
             ep: int
@@ -206,7 +227,6 @@ class ARGO:
             t: float
                 The epoch time using the current configuration `x`.
         """
-
         n_proc = x[0]
         n_samp = x[1]
         n_train = x[2]
@@ -241,7 +261,7 @@ class ARGO:
 
     def run(self, train, args):
         """The `run` function launches ARGO to traing GNN model.
-        
+
         The `run` function consists of three steps:
             - Step 1: run the auto-tuner to search for the optimal configuration
             - Step 2: record the optimal configuration
@@ -251,11 +271,10 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
-            
-        """
 
+        """
         result = self.auto_tuning(train, args)  # Step 1
         x = result.x  # Step 2
         self.mp_engine(x, train, args,
