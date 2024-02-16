@@ -27,7 +27,7 @@ class NeuroGraphDataset(InMemoryDataset):
     +--------------------+---------+----------------------+
     | Dataset            | #Graphs | Task                 |
     +====================+=========+======================+
-    | :obj:`HCPActivity` | 7,443   | Graph Classification |
+    | :obj:`HCPTask`     | 7,443   | Graph Classification |
     +--------------------+---------+----------------------+
     | :obj:`HCPGender`   | 1,078   | Graph Classification |
     +--------------------+---------+----------------------+
@@ -41,7 +41,7 @@ class NeuroGraphDataset(InMemoryDataset):
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"HCPGender"`,
-            :obj:`"HCPActivity"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`,
+            :obj:`"HCPTask"`, :obj:`"HCPAge"`, :obj:`"HCPFI"`,
             :obj:`"HCPWM"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -61,7 +61,7 @@ class NeuroGraphDataset(InMemoryDataset):
     url = 'https://vanderbilt.box.com/shared/static'
     filenames = {
         'HCPGender': 'r6hlz2arm7yiy6v6981cv2nzq3b0meax.zip',
-        'HCPActivity': 'b4g59ibn8itegr0rpcd16m9ajb2qyddf.zip',
+        'HCPTask': '8wzz4y17wpxg2stip7iybtmymnybwvma.zip',
         'HCPAge': 'lzzks4472czy9f9vc8aikp7pdbknmtfe.zip',
         'HCPWM': 'xtmpa6712fidi94x6kevpsddf9skuoxy.zip',
         'HCPFI': 'g2md9h9snh7jh6eeay02k1kr9m4ido9f.zip',
