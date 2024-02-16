@@ -1,7 +1,6 @@
-"""
-ARGO: An Auto-Tuning Runtime System for Scalable GNN Training on Multi-Core Processor
+"""ARGO: An Auto-Tuning Runtime System for Scalable GNN Training on Multi-Core Processor
 --------------------------------------------
-Graph Neural Network (GNN) training suffers from low scalability on multi-core CPUs. 
+Graph Neural Network (GNN) training suffers from low scalability on multi-core CPUs.
 Specificially, the performance often caps at 16 cores, and no improvement is observed when applying more than 16 cores.
 ARGO is a runtime system that offers scalable performance by overlapping the computation and communication during GNN training.
 With ARGO enabled, we are able to scale over 64 cores, allowing ARGO to speedup GNN training (in terms of epoch time) by up to 5.06x and 4.54x on a Xeon 8380H and a Xeon 6430L, respectively.
@@ -23,16 +22,18 @@ def transform(self, X):
     X = np.asarray(X)
     if self.is_int:
         if np.any(np.round(X) > self.high):
-            raise ValueError("All integer values should" "be less than %f" % self.high)
+            raise ValueError("All integer values should"
+                             "be less than %f" % self.high)
         if np.any(np.round(X) < self.low):
-            raise ValueError(
-                "All integer values should" "be greater than %f" % self.low
-            )
+            raise ValueError("All integer values should"
+                             "be greater than %f" % self.low)
     else:
         if np.any(X > self.high + self._eps):
-            raise ValueError("All values should" "be less than %f" % self.high)
+            raise ValueError("All values should"
+                             "be less than %f" % self.high)
         if np.any(X < self.low - self._eps):
-            raise ValueError("All values should" "be greater than %f" % self.low)
+            raise ValueError("All values should"
+                             "be greater than %f" % self.low)
     if (self.high - self.low) == 0.0:
         return X * 0.0
     if self.is_int:
@@ -58,7 +59,6 @@ Normalize.inverse_transform = inverse_transform
 
 
 class ARGO:
-
     def __init__(
         self,
         n_search=10,
@@ -94,9 +94,8 @@ class ARGO:
         self.acq_func = "EI"
         self.counter = [0]
 
-    def core_binder(
-        self, num_cpu_proc: int, n_samp: int, n_train: int, rank: int
-    ) -> Tuple[list[int], list[int]]:
+    def core_binder(self, num_cpu_proc: int, n_samp: int, n_train: int,
+                    rank: int) -> Tuple[list[int], list[int]]:
         """Produces lists of CPUs for each GNN training process for core binding.
 
         The Core Binder binds CPU cores to perform sampling (i.e., sampling cores) and model propagation (i.e., training cores).
@@ -130,13 +129,13 @@ class ARGO:
         n = psutil.cpu_count(logical=False)
         size = num_cpu_proc
         num_of_samplers = n_samp
-        load_core = list(range(n // size * rank, n // size * rank + num_of_samplers))
+        load_core = list(
+            range(n // size * rank, n // size * rank + num_of_samplers))
         comp_core = list(
             range(
                 n // size * rank + num_of_samplers,
                 n // size * rank + num_of_samplers + n_train,
-            )
-        )
+            ))
         return load_core, comp_core
 
     def auto_tuning(self, train: Callable, args) -> list[int]:
@@ -151,7 +150,7 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
 
         Returns:
@@ -189,7 +188,7 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
 
             ep: int
@@ -199,7 +198,6 @@ class ARGO:
             t: float
                 The epoch time using the current configuration `x`.
         """
-
         n_proc = x[0]
         n_samp = x[1]
         n_train = x[2]
@@ -212,9 +210,8 @@ class ARGO:
 
         processes = []
         cnt = self.counter
-        b_size = (
-            self.batch_size // n_proc
-        )  # adjust batch size based on number of processes
+        b_size = (self.batch_size // n_proc
+                  )  # adjust batch size based on number of processes
 
         tik = time.time()
         for i in range(n_proc):
@@ -235,7 +232,7 @@ class ARGO:
 
     def run(self, train, args):
         """The `run` function launches ARGO to traing GNN model.
-        
+
         The `run` function consists of three steps:
             - Step 1: run the auto-tuner to search for the optimal configuration
             - Step 2: record the optimal configuration
@@ -245,11 +242,11 @@ class ARGO:
             train: Callable
                 The GNN training function.
 
-            args:
+        Args:
                 The inputs of the GNN training function.
-            
-        """
 
+        """
         result = self.auto_tuning(train, args)  # Step 1
         x = result.x  # Step 2
-        self.mp_engine(x, train, args, ep=(self.epoch - self.n_search))  # Step 3
+        self.mp_engine(x, train, args,
+                       ep=(self.epoch - self.n_search))  # Step 3
