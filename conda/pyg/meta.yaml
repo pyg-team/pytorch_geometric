@@ -1,6 +1,6 @@
 package:
   name: pyg
-  version: 2.4.0
+  version: 2.5.0
 
 source:
   url: https://files.pythonhosted.org/packages/e6/6e/a596e2ddecc3b13a0d576495369a30309fb54c74fadf0bbca645bfbcaa2f/torch_geometric-2.4.0.tar.gz
