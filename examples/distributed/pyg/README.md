@@ -101,16 +101,18 @@ In this case, the interface used for multi-node communication needs to be specif
 Assuming that `$MASTER_ADDR` is set the the IP of `node#0`.
 
 On the `node#0`:
+
 ```bash
 export TP_SOCKET_IFNAME=$(ip addr | grep "$MASTER_ADDR" | awk '{print $NF}')
 export GLOO_SOCKET_IFNAME=$TP_SOCKET_IFNAME
 ```
+
 On the other nodes:
+
 ```bash
 export TP_SOCKET_IFNAME=$(ip route get $MASTER_ADDR | grep -oP '(?<=dev )[^ ]+')
 export GLOO_SOCKET_IFNAME=$TP_SOCKET_IFNAME
 ```
-
 
 #### Option B: Launch Script
 
