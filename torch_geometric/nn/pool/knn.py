@@ -111,10 +111,15 @@ class KNNIndex:
 
         query_k = min(query_k, self.numel)
 
-        if query_k > 2048:  # `faiss` supports up-to `k=2048`:
+        if k > 2048:  # `faiss` supports up-to `k=2048`:
             warnings.warn(f"Capping 'k' to faiss' upper limit of 2048 "
                           f"(got {k}). This may cause some relevant items to "
                           f"not be retrieved.")
+        elif query_k > 2048:
+            warnings.warn(f"Capping 'k' to faiss' upper limit of 2048 "
+                          f"(got {k} which got extended to {query_k} due to "
+                          f"the exclusion of existing links). This may cause "
+                          f"some relevant items to not be retrieved.")
             query_k = 2048
 
         score, index = self.index.search(emb.detach(), query_k)

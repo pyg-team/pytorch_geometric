@@ -3,7 +3,21 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## \[2.5.0\] - 2023-MM-DD
+## \[2.6.0\] - 2024-MM-DD
+
+### Added
+
+### Changed
+
+- Added the `dim` arg to `torch.cross` calls ([#8918](https://github.com/pyg-team/pytorch_geometric/pull/8918))
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+## \[2.5.0\] - 2024-02-16
 
 ### Added
 
