@@ -174,9 +174,10 @@ def cp(
     if use_cache and clear_cache and cache_dir is not None:
         try:
             rm(cache_dir)
-        except PermissionError:  # FIXME
+        except Exception:  # FIXME
             # Windows test yield "PermissionError: The process cannot access
-            # the file because it is being used by another process"
+            # the file because it is being used by another process".
+            # Users may also observe "OSError  Directory not empty".
             # This is a quick workaround until we figure out the deeper issue.
             pass
 
