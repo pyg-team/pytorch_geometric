@@ -177,7 +177,7 @@ def cp(
         except Exception:  # FIXME
             # Windows test yield "PermissionError: The process cannot access
             # the file because it is being used by another process".
-            # Users may also observe "OSError  Directory not empty".
+            # Users may also observe "OSError: Directory not empty".
             # This is a quick workaround until we figure out the deeper issue.
             pass
 
