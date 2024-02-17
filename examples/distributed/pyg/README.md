@@ -98,7 +98,7 @@ python node_obg_cpu.py \
 In some configurations, the network interface used for multi-node communication may be different than the default one.
 In this case, the interface used for multi-node communication needs to be specified to Gloo.
 
-Assuming that `$MASTER_ADDR` is set the the IP of `node#0`.
+Assuming that `$MASTER_ADDR` is set to the IP of `node#0`.
 
 On the `node#0`:
 
