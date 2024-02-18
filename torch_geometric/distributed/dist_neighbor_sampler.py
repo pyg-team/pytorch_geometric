@@ -77,6 +77,7 @@ class DistNeighborSampler:
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        weight_attr: Optional[str] = None,
         concurrency: int = 1,
         device: Optional[torch.device] = None,
         **kwargs,
@@ -98,6 +99,7 @@ class DistNeighborSampler:
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
         self.time_attr = time_attr
+        self.weight_attr = weight_attr
         self.temporal = time_attr is not None
         self.with_edge_attr = self.feature_store.has_edge_attr()
         self.csc = True
@@ -111,6 +113,7 @@ class DistNeighborSampler:
             disjoint=self.disjoint,
             temporal_strategy=self.temporal_strategy,
             time_attr=self.time_attr,
+            weight_attr=self.weight_attr,
         )
 
         self.num_hops = self._sampler.num_neighbors.num_hops
@@ -118,6 +121,7 @@ class DistNeighborSampler:
         self.edge_types = self._sampler.edge_types
         self.node_time = self._sampler.node_time
         self.edge_time = self._sampler.edge_time
+        self.edge_weight = self._sampler.edge_weight
 
     def register_sampler_rpc(self) -> None:
         partition2workers = rpc_partition_to_workers(
@@ -952,6 +956,7 @@ class DistNeighborSampler:
             row = self._sampler.row
             node_time = self.node_time
             edge_time = self.edge_time
+            edge_weight = self.edge_weight
         else:
             # Given edge type, get input data and evaluate sample function:
             rel_type = '__'.join(edge_type)
@@ -960,7 +965,7 @@ class DistNeighborSampler:
             # `node_time` is a destination node time:
             node_time = (self.node_time or {}).get(edge_type[0], None)
             edge_time = (self.edge_time or {}).get(edge_type, None)
-
+            edge_weight = (self.edge_weight or {}).get(edge_type, None)
         out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
             row,
@@ -969,7 +974,7 @@ class DistNeighborSampler:
             node_time,
             edge_time,
             seed_time,
-            None,  # TODO: edge_weight
+            edge_weight,
             True,  # csc
             self.replace,
             self.subgraph_type != SubgraphType.induced,

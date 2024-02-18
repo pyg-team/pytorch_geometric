@@ -110,6 +110,14 @@ class Partitioner:
         return self.data.is_edge_attr('time')
 
     @property
+    def is_edge_level_weight(self) -> bool:
+        if 'edge_weight' in self.data:
+            return True
+
+        if self.is_hetero:
+            return any(['edge_weight' in store for store in self.data.edge_stores])
+
+    @property
     def node_types(self) -> Optional[List[NodeType]]:
         return self.data.node_types if self.is_hetero else None
 
@@ -197,6 +205,11 @@ class Partitioner:
                     elif self.is_node_level_time:
                         src_node_time = time_data[src]
 
+                    edge_weight = None
+                    if self.is_edge_level_weight:
+                        if 'edge_weight' in part_data:
+                            edge_weight = part_data.edge_weight[mask]
+
                     offsetted_row = global_row - node_offset[src]
                     offsetted_col = global_col - node_offset[dst]
                     # Sort by column to avoid keeping track of permutations in
@@ -235,6 +248,8 @@ class Partitioner:
                         })
                     if self.is_edge_level_time:
                         efeat[edge_type].update({'edge_time': edge_time[perm]})
+                    if self.is_edge_level_weight:
+                        efeat[edge_type].update({'edge_weight': edge_weight[perm]})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
                 torch.save(graph, osp.join(path, 'graph.pt'))
@@ -303,6 +318,11 @@ class Partitioner:
                 elif self.is_node_level_time:
                     node_time = data.time
 
+                edge_weight = None
+                if self.is_edge_level_weight:
+                    if 'edge_weight' in part_data:
+                        edge_weight = part_data.edge_weight
+
                 # Sort by column to avoid keeping track of permuations in
                 # `NeighborSampler` when converting to CSC format:
                 global_row, global_col, perm = sort_csc(
@@ -346,6 +366,8 @@ class Partitioner:
                     })
                 if self.is_edge_level_time:
                     efeat.update({'edge_time': edge_time[perm]})
+                if self.is_edge_level_weight:
+                    efeat.update({'edge_weight': edge_weight[perm]})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
 
