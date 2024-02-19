@@ -4,10 +4,10 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric import EdgeIndex
 
 try:
     if LEGACY_MODE:
@@ -94,8 +94,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        graph = self.get_typed_cugraph(edge_index, edge_type, self.num_relations,
-                                       max_num_neighbors)
+        graph = self.get_typed_cugraph(edge_index, edge_type,
+                                       self.num_relations, max_num_neighbors)
 
         out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,
                           norm_by_out_degree=bool(self.aggr == 'mean'))

@@ -4,9 +4,9 @@ from typing import Any, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
-from torch_geometric import EdgeIndex
 
 try:  # pragma: no cover
     LEGACY_MODE = False
@@ -63,9 +63,10 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
                 leading to slightly worse performance. (default: :obj:`None`)
         """
         if not isinstance(edge_index, EdgeIndex):
-            warnings.warn(f"edge_index type should be EdgeIndex."
-                          f"Implicitely converting, but the inferred sparse size might be wrong."
-                          f"Please provide an EdgeIndex.")
+            warnings.warn(
+                f"edge_index type should be EdgeIndex."
+                f"Implicitely converting, but the inferred sparse size might be wrong."
+                f"Please provide an EdgeIndex.")
             edge_index = EdgeIndex(edge_index)
 
         edge_index = edge_index.sort_by('col')[0]
@@ -119,9 +120,10 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             num_edge_types = int(edge_type.max()) + 1
 
         if not isinstance(edge_index, EdgeIndex):
-            warnings.warn(f"edge_index type should be EdgeIndex."
-                          f"Implicitely converting, but the inferred sparse size might be wrong."
-                          f"Please provide an EdgeIndex.")
+            warnings.warn(
+                f"edge_index type should be EdgeIndex."
+                f"Implicitely converting, but the inferred sparse size might be wrong."
+                f"Please provide an EdgeIndex.")
             edge_index = EdgeIndex(edge_index)
 
         edge_index, perm = edge_index.sort_by('col')

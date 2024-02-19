@@ -4,10 +4,10 @@ import torch
 from torch import Tensor
 from torch.nn import Linear, Parameter
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import zeros
-from torch_geometric import EdgeIndex
 
 try:
     if LEGACY_MODE:
