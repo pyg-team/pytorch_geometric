@@ -7,6 +7,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric import EdgeIndex
 
 try:
     if LEGACY_MODE:
@@ -76,7 +77,7 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
     def forward(
         self,
         x: Tensor,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         edge_type: Tensor,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
@@ -84,10 +85,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
         Args:
             x (torch.Tensor): The node features.
-            csc ((torch.Tensor, torch.Tensor)): A tuple containing the CSC
-                representation of a graph, given as a tuple of
-                :obj:`(row, colptr)`. Use the :meth:`to_csc` method to convert
-                an :obj:`edge_index` representation to the desired format.
+            edge_index (EdgeIndex): An EdgeIndex containing the CSC
+                representation of a graph.
             edge_type (torch.Tensor): The edge type.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
@@ -95,7 +94,7 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        graph = self.get_typed_cugraph(csc, edge_type, self.num_relations,
+        graph = self.get_typed_cugraph(edge_index, edge_type, self.num_relations,
                                        max_num_neighbors)
 
         out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,

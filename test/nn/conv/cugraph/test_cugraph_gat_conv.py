@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import CuGraphGATConv, GATConv
 from torch_geometric.testing import onlyCUDA, withPackage
 
@@ -37,8 +38,7 @@ def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
     else:
         out1 = conv1(x, edge_index)
 
-    csc = CuGraphGATConv.to_csc(edge_index, size)
-    out2 = conv2(x, csc, max_num_neighbors=max_num_neighbors)
+    out2 = conv2(x, EdgeIndex(edge_index, sparse_size=size), max_num_neighbors=max_num_neighbors)
     assert torch.allclose(out1, out2, atol=1e-3)
 
     grad_output = torch.rand_like(out1)
