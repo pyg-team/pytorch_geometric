@@ -148,7 +148,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     def forward(
         self,
         x: Tensor,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
         r"""Runs the forward pass of the module.
