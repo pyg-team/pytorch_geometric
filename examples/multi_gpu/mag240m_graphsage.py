@@ -71,27 +71,6 @@ class SAGEConvLayer(torch.nn.Module):
         return h
 
 
-# Data = HeteroData(
-#   num_classes=153,
-#   paper={
-#     x=[121751666, 768],
-#     y=[121751666],
-#     year=[121751666],
-#     train_mask=[121751666],
-#     val_mask=[121751666],
-#     test_mask=[121751666],
-#   },
-#   author={ num_nodes=122383112 },
-#   institution={ num_nodes=25721 },
-#   (author, affiliated_with, institution)={ edge_index=[2, 44592586] },
-#   (institution, rev_affiliated_with, author)={ edge_index=[2, 44592586] },
-#   (author, writes, paper)={ edge_index=[2, 386022720] },
-#   (paper, rev_writes, author)={ edge_index=[2, 386022720] },
-#   (paper, cites, paper)={ edge_index=[2, 1297748926] },
-#   (paper, rev_cites, paper)={ edge_index=[2, 1297748926] }
-# )
-
-
 class GraphSAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels,
                  dropout, metadata):
