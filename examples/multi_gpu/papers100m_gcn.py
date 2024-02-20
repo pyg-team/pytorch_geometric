@@ -247,7 +247,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
-                    acc_i = acc(out[:batch_size].softmax(dim=-1),
+                    acc_i = acc(out[:batch_size].softmax(dim=-1), # noqa
                                 batch.y[:batch_size])
             acc_sum = acc.compute()
             if rank == 0:
@@ -272,7 +272,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
                 batch.y = batch.y.to(torch.long)
                 out = model.module(batch.x, batch.edge_index)
-                acc_i = acc(out[:batch_size].softmax(dim=-1),
+                acc_i = acc(out[:batch_size].softmax(dim=-1), # noqa
                             batch.y[:batch_size])
             acc_sum = acc.compute()
             if rank == 0:
