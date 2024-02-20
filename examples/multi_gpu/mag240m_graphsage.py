@@ -26,7 +26,7 @@ def common_step(batch: Batch, model) -> Tuple[Tensor, Tensor]:
     return y_hat, y
 
 
-def training_step(batch: Batch, acc, model) -> Tensor:
+def training_step(batch: Batch, acc, model) -> Tuple[Tensor, Tensor]:
     y_hat, y = common_step(batch, model)
     train_loss = F.cross_entropy(y_hat, y)
     train_acc = acc(y_hat.softmax(dim=-1), y)
