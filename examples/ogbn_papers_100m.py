@@ -28,13 +28,6 @@ parser.add_argument(
     default=4,
     help="If using GATConv, number of attention heads to use",
 )
-parser.add_argument(
-    "--cugraph_data_loader",
-    action='store_true',
-    help="Wether or not to use CuGraph for Neighbor Loading. \
-        \nNote that this requires more GPU memory or \
-        a reduction in batch_size/fan_out/hidden_channels/num_layers",
-)
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -42,11 +35,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                  root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
-if args.cugraph_data_loader:
-    from cugraph.testing.mg_utils import enable_spilling
-    enable_spilling()
-
-
 def get_num_workers() -> int:
     try:
         return len(os.sched_getaffinity(0)) // 2
@@ -60,47 +48,14 @@ kwargs = dict(
 )
 # Set Up Neighbor Loading
 data = dataset[0]
-if args.cugraph_data_loader:
-    import cupy
-    import rmm
-
-    rmm.reinitialize(devices=[0], pool_allocator=True, initial_pool_size=78e9,
-                     managed_memory=True)
-
-    from rmm.allocators.torch import rmm_torch_allocator
-    torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
-
-    from rmm.allocators.cupy import rmm_cupy_allocator
-    cupy.cuda.set_allocator(rmm_cupy_allocator)
-
-    import cugraph
-    from cugraph_pyg.data import CuGraphStore
-    from cugraph_pyg.loader import CuGraphNeighborLoader
-    G = {("N", "E", "N"): data.edge_index}
-    N = {"N": data.num_nodes}
-    fs = cugraph.gnn.FeatureStore(backend="torch")
-    fs.add_data(data.x, "N", "x")
-    fs.add_data(data.y, "N", "y")
-    cugraph_store = CuGraphStore(fs, G, N)
-    train_loader = CuGraphNeighborLoader(cugraph_store,
-                                         input_nodes=split_idx['train'],
-                                         shuffle=True, drop_last=True,
-                                         **kwargs)
-    val_loader = CuGraphNeighborLoader(cugraph_store,
-                                       input_nodes=split_idx['valid'],
-                                       **kwargs)
-    test_loader = CuGraphNeighborLoader(cugraph_store,
-                                        input_nodes=split_idx['test'],
-                                        **kwargs)
-else:
-    num_work = get_num_workers()
-    train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
-                                  num_workers=num_work, drop_last=True,
-                                  shuffle=False, **kwargs)
-    val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
-                                num_workers=num_work, **kwargs)
-    test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
-                                 num_workers=num_work, **kwargs)
+num_work = get_num_workers()
+train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
+                              num_workers=num_work, drop_last=True,
+                              shuffle=False, **kwargs)
+val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
+                            num_workers=num_work, **kwargs)
+test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
+                             num_workers=num_work, **kwargs)
 
 if args.use_gat_conv:
     model = torch_geometric.nn.models.GAT(
