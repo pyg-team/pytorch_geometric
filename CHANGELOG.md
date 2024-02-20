@@ -3,16 +3,34 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## \[2.5.0\] - 2023-MM-DD
+## \[2.6.0\] - 2024-MM-DD
 
 ### Added
 
 - Added support for cuGraph data loading and `GAT` in single node Papers100m examples ([#8173](https://github.com/pyg-team/pytorch_geometric/pull/8173))
+=======
+### Changed
+
+- Breaking Change: Added support for `EdgeIndex` in `cugraph` GNN layers ([#8938](https://github.com/pyg-team/pytorch_geometric/pull/8937))
+- Added the `dim` arg to `torch.cross` calls ([#8918](https://github.com/pyg-team/pytorch_geometric/pull/8918))
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+## \[2.5.0\] - 2024-02-16
+
+### Added
+
+- Added an example for recommender systems, including k-NN search and retrieval metrics ([#8546](https://github.com/pyg-team/pytorch_geometric/pull/8546))
+- Added multi-GPU evaluation in distributed sampling example ([#8880](https://github.com/pyg-team/pytorch_geometric/pull/8880))
 - Added end-to-end example for distributed CPU training ([#8713](https://github.com/pyg-team/pytorch_geometric/pull/8713))
 - Added PyTorch 2.2 support ([#8857](https://github.com/pyg-team/pyg-lib/pull/8857))
 - Added fallback code path for `segment` in case `torch-scatter` is not installed ([#8852](https://github.com/pyg-team/pytorch_geometric/pull/8852))
 - Added support for custom node labels in `visualize_graph()` ([#8816](https://github.com/pyg-team/pytorch_geometric/pull/8816))
-- Added support for graph partitioning for temporal data in `torch_geometric.distributed` ([#8718](https://github.com/pyg-team/pytorch_geometric/pull/8718), [#8815](https://github.com/pyg-team/pytorch_geometric/pull/8815))
+- Added support for graph partitioning for temporal data in `torch_geometric.distributed` ([#8718](https://github.com/pyg-team/pytorch_geometric/pull/8718), [#8815](https://github.com/pyg-team/pytorch_geometric/pull/8815), [#8874](https://github.com/pyg-team/pytorch_geometric/pull/8874))
 - Added `TreeGraph` and `GridMotif` generators ([#8736](https://github.com/pyg-team/pytorch_geometric/pull/8736))
 - Added two examples for edge-level temporal sampling on a heterogenous graph, with and without distributed training ([#8383](https://github.com/pyg-team/pytorch_geometric/pull/8383), [#8820](https://github.com/pyg-team/pytorch_geometric/pull/8820))
 - Added the `num_graphs` option to the `StochasticBlockModelDataset` ([#8648](https://github.com/pyg-team/pytorch_geometric/pull/8648))
