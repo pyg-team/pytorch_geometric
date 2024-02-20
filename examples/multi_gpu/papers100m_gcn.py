@@ -235,7 +235,6 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                            directory=eval_path,
                                            input_files=input_files)
         with Join([model], divide_by_initial_world_size=False):
-            acc_sum = 0.0
             with torch.no_grad():
                 for i, batch in enumerate(eval_loader):
                     if i >= eval_steps:
@@ -248,19 +247,11 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
-                    acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                    acc_i = acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
-            if world_size > 1:
-                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                       device=rank)
-                dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                nb = torch.tensor(float(i + 1), dtype=torch.float32,
-                                  device=acc_sum.device)
-                dist.all_reduce(nb, op=dist.ReduceOp.SUM)
-            else:
-                nb = i + 1.0
+            acc_sum = acc.compute()
             if rank == 0:
-                print(f"Validation Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+                print(f"Validation Accuracy: {acc_sum * 100.0:.4f}%", )
         dist.barrier()
 
     with Join([model], divide_by_initial_world_size=False):
@@ -272,7 +263,6 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             test_loader = BulkSampleLoader(cugraph_store, cugraph_store,
                                            directory=test_path,
                                            input_files=input_files)
-        acc_sum = 0.0
         with torch.no_grad():
             for i, batch in enumerate(test_loader):
                 batch = batch.to(rank)
@@ -282,20 +272,11 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
                 batch.y = batch.y.to(torch.long)
                 out = model.module(batch.x, batch.edge_index)
-                acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                acc_i = acc(out[:batch_size].softmax(dim=-1),
                                batch.y[:batch_size])
-
-            if world_size > 1:
-                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                       device=rank)
-                dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                nb = torch.tensor(float(i + 1), dtype=torch.float32,
-                                  device=acc_sum.device)
-                dist.all_reduce(nb, op=dist.ReduceOp.SUM)
-            else:
-                nb = i + 1.0
+            acc_sum = acc.compute()
             if rank == 0:
-                print(f"Test Accuracy: {acc_sum/(nb) * 100.0:.4f}%", )
+                print(f"Test Accuracy: {acc_sum * 100.0:.4f}%", )
     dist.barrier()
 
     if cugraph_data_loader and rank == 0:
