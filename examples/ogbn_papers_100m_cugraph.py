@@ -3,19 +3,19 @@ import os
 import time
 from typing import Optional
 
+import cugraph
+import cupy
+import rmm
 import torch
 import torch.nn.functional as F
+from cugraph_pyg.data import CuGraphStore
+from cugraph_pyg.loader import CuGraphNeighborLoader
 from ogb.nodeproppred import PygNodePropPredDataset
+from rmm.allocators.cupy import rmm_cupy_allocator
+from rmm.allocators.torch import rmm_torch_allocator
 
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
-import cupy
-import rmm
-import cugraph
-from cugraph_pyg.data import CuGraphStore
-from cugraph_pyg.loader import CuGraphNeighborLoader
-from rmm.allocators.torch import rmm_torch_allocator
-from rmm.allocators.cupy import rmm_cupy_allocator
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)
@@ -43,6 +43,7 @@ dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                  root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
 from cugraph.testing.mg_utils import enable_spilling
+
 enable_spilling()
 
 
@@ -71,14 +72,11 @@ fs.add_data(data.y, "N", "y")
 cugraph_store = CuGraphStore(fs, G, N)
 train_loader = CuGraphNeighborLoader(cugraph_store,
                                      input_nodes=split_idx['train'],
-                                     shuffle=True, drop_last=True,
-                                     **kwargs)
+                                     shuffle=True, drop_last=True, **kwargs)
 val_loader = CuGraphNeighborLoader(cugraph_store,
-                                   input_nodes=split_idx['valid'],
-                                   **kwargs)
+                                   input_nodes=split_idx['valid'], **kwargs)
 test_loader = CuGraphNeighborLoader(cugraph_store,
-                                    input_nodes=split_idx['test'],
-                                    **kwargs)
+                                    input_nodes=split_idx['test'], **kwargs)
 
 if args.use_gat_conv:
     model = torch_geometric.nn.models.GAT(
