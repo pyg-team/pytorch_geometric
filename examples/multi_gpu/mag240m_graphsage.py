@@ -201,7 +201,7 @@ def run(
         print("Beginning loop...")
     for epoch in range(1, num_epochs + 1):
         model.train()
-        time_sum, acc_sum = 0, 0
+        time_sum = 0
         for i, batch in enumerate(train_loader):
             if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
                 break
@@ -215,35 +215,29 @@ def run(
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
             loss, train_acc = training_step(batch, acc, model)
-            acc_sum += train_acc
             loss.backward()
             optimizer.step()
-            if n_devices > 1:
-                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                       device=rank)
-                torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
-                                           device=acc_sum.device)
-                dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-            else:
-                num_batches = i + 1.0
             if i >= num_warmup_iters_for_timing:
                 torch.cuda.synchronize()
                 iter_time = time.time() - since
                 time_sum += iter_time
                 if rank == 0 and i % log_every_n_steps == 0:
+                    acc_sum = acc.compute()
                     print(
                         f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
-                        Train Acc: {acc_sum / (num_batches) * 100.0:.2f}%, \
+                        Train Acc: {acc_sum * 100.0:.2f}%, \
                         Most Recent Step Time: {iter_time:.4f}s")
         if n_devices > 1:
             dist.barrier()
-        print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
-            Train Acc:{acc_sum / num_batches * 100.0:.2f}%, \
-            Average Step Time: \
-            {time_sum/(num_batches - num_warmup_iters_for_timing):.4f}s")
+        acc_sum = acc.compute()
+        if rank == 0:
+            print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
+                Train Acc:{acc_sum * 100.0:.2f}%, \
+                Average Step Time: \
+                {time_sum/(num_batches - num_warmup_iters_for_timing):.4f}s")
+
+        # Eval
         model.eval()
-        acc_sum = 0.0
         with torch.no_grad():
             for i, batch in enumerate(eval_loader):
                 if eval_steps >= 0 and i >= eval_steps:
@@ -252,43 +246,23 @@ def run(
                     batch = batch.to(rank, "x", "y", "edge_index")
                     # Features loaded in as fp16, train in 32bits
                     batch['paper'].x = batch['paper'].x.to(torch.float32)
-                acc_sum += validation_step(batch, acc, model)
-
-            if n_devices > 1:
-                acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                       device=rank)
-                torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-                num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
-                                           device=acc_sum.device)
-                dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-            else:
-                num_batches = i + 1.0
-
-            print(
-                f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+                val_acc = validation_step(batch, acc, model)
+            acc_sum = acc.compute()
+            if rank == 0:
+                print(f"Validation Accuracy: {acc_sum * 100.0:.4f}%", )
     if n_devices > 1:
         dist.barrier()
     model.eval()
-    acc_sum = 0.0
+
+    # Test
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
             if n_devices > 0:
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
-            acc_sum += validation_step(batch, acc, model)
-
-        if n_devices > 1:
-            acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                                   device=rank)
-            torch.distributed.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-            num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
-                                       device=acc_sum.device)
-            dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
-        else:
-            num_batches = i + 1.0
-
-        final_test_acc = acc_sum / (num_batches) * 100.0
+            test_acc = validation_step(batch, acc, model)
+        final_test_acc = acc.compute()
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
         dist.destroy_process_group()
