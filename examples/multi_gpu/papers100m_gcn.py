@@ -11,9 +11,9 @@ import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
-from torch_geometric.loader import NeighborLoader
 
 import torch_geometric
+from torch_geometric.loader import NeighborLoader
 
 
 def pyg_num_work(world_size):
@@ -35,8 +35,8 @@ def init_pytorch_worker(rank, world_size):
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
-              split_idx, num_classes, wall_clock_start,
-              tempdir=None, num_layers=3):
+              split_idx, num_classes, wall_clock_start, tempdir=None,
+              num_layers=3):
 
     init_pytorch_worker(
         rank,
@@ -192,13 +192,12 @@ if __name__ == '__main__':
     with tempfile.TemporaryDirectory() as tempdir:
         if world_size > 1:
             mp.spawn(
-                run_train, args=(data, world_size, model, args.epochs,
-                                 args.batch_size, args.fan_out, split_idx,
-                                 dataset.num_classes,
-                                 wall_clock_start, tempdir, args.num_layers),
+                run_train,
+                args=(data, world_size, model, args.epochs, args.batch_size,
+                      args.fan_out, split_idx, dataset.num_classes,
+                      wall_clock_start, tempdir, args.num_layers),
                 nprocs=world_size, join=True)
         else:
             run_train(0, data, world_size, model, args.epochs, args.batch_size,
                       args.fan_out, split_idx, dataset.num_classes,
-                      wall_clock_start, tempdir,
-                      args.num_layers)
+                      wall_clock_start, tempdir, args.num_layers)
