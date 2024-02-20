@@ -225,13 +225,15 @@ def run(
                     acc_sum = acc.compute()
                     if rank == 0:
                         print(
-                            f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
+                            f"Epoch: {epoch:02d}, Step: {i:d}, \
+                            Loss: {loss:.4f}, \
                             Train Acc: {acc_sum * 100.0:.2f}%, \
                             Most Recent Step Time: {iter_time:.4f}s")
         if n_devices > 1:
             dist.barrier()
         acc_sum = acc.compute()
         if rank == 0:
+            num_batches = i + 1
             print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, \
                 Train Acc:{acc_sum * 100.0:.2f}%, \
                 Average Step Time: \
@@ -247,7 +249,7 @@ def run(
                     batch = batch.to(rank, "x", "y", "edge_index")
                     # Features loaded in as fp16, train in 32bits
                     batch['paper'].x = batch['paper'].x.to(torch.float32)
-                val_acc = validation_step(batch, acc, model)
+                val_acc = validation_step(batch, acc, model) # noqa
             acc_sum = acc.compute()
             if rank == 0:
                 print(f"Validation Accuracy: {acc_sum * 100.0:.4f}%", )
@@ -262,7 +264,7 @@ def run(
                 batch = batch.to(rank, "x", "y", "edge_index")
                 # Features loaded in as fp16, train in 32bits
                 batch['paper'].x = batch['paper'].x.to(torch.float32)
-            test_acc = validation_step(batch, acc, model)
+            test_acc = validation_step(batch, acc, model) # noqa
         final_test_acc = acc.compute()
         print(f"Test Accuracy: {final_test_acc:.4f}%", )
     if n_devices > 1:
