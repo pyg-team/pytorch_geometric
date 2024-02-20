@@ -221,12 +221,13 @@ def run(
                 torch.cuda.synchronize()
                 iter_time = time.time() - since
                 time_sum += iter_time
-                if rank == 0 and i % log_every_n_steps == 0:
+                if i % log_every_n_steps == 0:
                     acc_sum = acc.compute()
-                    print(
-                        f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
-                        Train Acc: {acc_sum * 100.0:.2f}%, \
-                        Most Recent Step Time: {iter_time:.4f}s")
+                    if rank == 0:
+                        print(
+                            f"Epoch: {epoch:02d}, Step: {i:d}, Loss: {loss:.4f}, \
+                            Train Acc: {acc_sum * 100.0:.2f}%, \
+                            Most Recent Step Time: {iter_time:.4f}s")
         if n_devices > 1:
             dist.barrier()
         acc_sum = acc.compute()
