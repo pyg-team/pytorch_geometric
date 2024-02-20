@@ -248,8 +248,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     batch.y = batch.y.to(torch.long)
                     out = model.module(batch.x, batch.edge_index)
                     acc_i = acc(  # noqa
-                        out[:batch_size].softmax(dim=-1), 
-                        batch.y[:batch_size])
+                        out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
             acc_sum = acc.compute()
             if rank == 0:
                 print(f"Validation Accuracy: {acc_sum * 100.0:.4f}%", )
@@ -273,9 +272,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
 
                 batch.y = batch.y.to(torch.long)
                 out = model.module(batch.x, batch.edge_index)
-                acc_i = acc( # noqa
-                    out[:batch_size].softmax(dim=-1),
-                    batch.y[:batch_size])
+                acc_i = acc(  # noqa
+                    out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
             acc_sum = acc.compute()
             if rank == 0:
                 print(f"Test Accuracy: {acc_sum * 100.0:.4f}%", )
