@@ -85,8 +85,7 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
         Args:
             x (torch.Tensor): The node features.
-            edge_index (EdgeIndex): An EdgeIndex containing the CSC
-                representation of a graph.
+            edge_index (EdgeIndex): The edge indices.
             edge_type (torch.Tensor): The edge type.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a

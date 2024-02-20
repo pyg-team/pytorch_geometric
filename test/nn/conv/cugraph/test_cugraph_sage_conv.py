@@ -43,8 +43,11 @@ def test_sage_conv_equality(aggr, bias, bipartite, max_num_neighbors,
     else:
         out1 = conv1(x, edge_index)
 
-    out2 = conv2(x, EdgeIndex(edge_index, sparse_size=size),
-                 max_num_neighbors=max_num_neighbors)
+    out2 = conv2(
+        x,
+        EdgeIndex(edge_index, sparse_size=size),
+        max_num_neighbors=max_num_neighbors,
+    )
     assert torch.allclose(out1, out2, atol=1e-6)
 
     grad_out = torch.rand_like(out1)

@@ -1,12 +1,10 @@
 import warnings
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Optional, Tuple
 
 import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex
-from torch_geometric.utils import index_sort
-from torch_geometric.utils.sparse import index2ptr
 
 try:  # pragma: no cover
     LEGACY_MODE = False
@@ -55,22 +53,18 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         Supports both bipartite and non-bipartite graphs.
 
         Args:
-            edge_index (EdgeIndex): An EdgeIndex containing the CSC
-                representation of a graph.
+            edge_index (EdgeIndex): The edge indices.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
                 bipartite graph. When not given, will be computed on-the-fly,
                 leading to slightly worse performance. (default: :obj:`None`)
         """
         if not isinstance(edge_index, EdgeIndex):
-            warnings.warn(
-                f"edge_index type should be EdgeIndex."
-                f"Implicitely converting, but the inferred sparse size might be wrong."
-                f"Please provide an EdgeIndex.")
-            edge_index = EdgeIndex(edge_index)
+            raise ValueError(f"'edge_index' needs to be of type 'EdgeIndex' "
+                             f"(got {type(edge_index)})")
 
         edge_index = edge_index.sort_by('col')[0]
-        num_src_nodes, _ = edge_index.get_sparse_size()
+        num_src_nodes = edge_index.get_sparse_size(0)
         (colptr, row), _ = edge_index.get_csc()
 
         if not row.is_cuda:
@@ -105,8 +99,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         Supports both bipartite and non-bipartite graphs.
 
         Args:
-            edge_index (EdgeIndex): An EdgeIndex containing the CSC
-                representation of a graph.
+            edge_index (EdgeIndex): The edge indices.
             edge_type (torch.Tensor): The edge type.
             num_edge_types (int, optional): The maximum number of edge types.
                 When not given, will be computed on-the-fly, leading to
@@ -120,15 +113,12 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             num_edge_types = int(edge_type.max()) + 1
 
         if not isinstance(edge_index, EdgeIndex):
-            warnings.warn(
-                f"edge_index type should be EdgeIndex."
-                f"Implicitely converting, but the inferred sparse size might be wrong."
-                f"Please provide an EdgeIndex.")
-            edge_index = EdgeIndex(edge_index)
+            raise ValueError(f"'edge_index' needs to be of type 'EdgeIndex' "
+                             f"(got {type(edge_index)})")
 
         edge_index, perm = edge_index.sort_by('col')
         edge_type = edge_type[perm]
-        num_src_nodes, _ = edge_index.get_sparse_size()
+        num_src_nodes = edge_index.get_sparse_size(0)
         (colptr, row), _ = edge_index.get_csc()
 
         edge_type = edge_type.int()
@@ -166,8 +156,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
         Args:
             x (torch.Tensor): The node features.
-            edge_index (EdgeIndex): An EdgeIndex containing the CSC
-                representation of a graph.
+            edge_index (EdgeIndex): The edge indices.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
                 bipartite graph. When not given, the value will be computed
