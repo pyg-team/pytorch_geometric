@@ -548,12 +548,12 @@ def test_dist_link_neighbor_sampler_biased():
     world_size = 2
     w0 = mp_context.Process(
         target=dist_link_neighbor_sampler,
-        args=(world_size, 0, port, True, 'edge_weight'),
+        args=(world_size, 0, port, False, 'edge_weight'),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_sampler,
-        args=(world_size, 1, port, True, 'edge_weight'),
+        args=(world_size, 1, port, False, 'edge_weight'),
     )
 
     w0.start()
@@ -731,7 +731,7 @@ def test_dist_link_neighbor_sampler_biased_hetero(tmp_path):
     )[0]
     data = T.ToUndirected()(data)
 
-    # Add time information to the data:
+    # Add weight information to the data:
     for i, edge_type in enumerate(data.edge_types):
         data[edge_type].edge_weight = torch.full(  #
             (data[edge_type].num_edges, ), i, dtype=torch.int64)
@@ -742,13 +742,13 @@ def test_dist_link_neighbor_sampler_biased_hetero(tmp_path):
     w0 = mp_context.Process(
         target=dist_link_neighbor_sampler_hetero,
         args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
-              True, 'edge_weight'),
+              False, 'edge_weight'),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_sampler_hetero,
         args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'),
-              True, 'edge_weight'),
+              False, 'edge_weight'),
     )
 
     w0.start()
