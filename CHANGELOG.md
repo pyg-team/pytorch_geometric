@@ -11,7 +11,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Breaking Change: Added support for `EdgeIndex` in `cugraph` GNN layers ([#8938](https://github.com/pyg-team/pytorch_geometric/pull/8937))
 - Added the `dim` arg to `torch.cross` calls ([#8918](https://github.com/pyg-team/pytorch_geometric/pull/8918))
-- Fixed typo in `neighbor_loader` tutorial document ([#8943](https://github.com/pyg-team/pytorch_geometric/issues/8943))
 
 ### Deprecated
 
