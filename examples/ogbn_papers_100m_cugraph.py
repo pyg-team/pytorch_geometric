@@ -13,6 +13,7 @@ from cugraph_pyg.loader import CuGraphNeighborLoader
 from ogb.nodeproppred import PygNodePropPredDataset
 from rmm.allocators.cupy import rmm_cupy_allocator
 from rmm.allocators.torch import rmm_torch_allocator
+from cugraph.testing.mg_utils import enable_spilling
 
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
@@ -42,7 +43,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                  root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
-from cugraph.testing.mg_utils import enable_spilling
 
 enable_spilling()
 
