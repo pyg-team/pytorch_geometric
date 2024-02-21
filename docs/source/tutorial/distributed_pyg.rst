@@ -13,6 +13,8 @@ In real life applications, graphs often consists of billions of nodes that canno
 This is when distributed training of Graph Neural Networks comes in handy.
 By allocating a number of partitions of the large graph into a cluster of CPUs, one can deploy synchronized model training on the whole dataset at once by making use of :pytorch:`PyTorch's` `Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ capabilities.
 This architecture seamlessly distributes training of Graph Neural Networks across multiple nodes via `Remote Procedure Calls (RPCs) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features with traditional DDP for model training.
+This new technique in :pyg:`PyG` was produced by engineers from `Intel <https://intel.com>`_ and `Kumo AI <https://kumo.ai/>`_.
+
 
 Key Advantages
 --------------
