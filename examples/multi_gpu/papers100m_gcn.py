@@ -3,7 +3,6 @@ import os
 import tempfile
 import time
 
-import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
