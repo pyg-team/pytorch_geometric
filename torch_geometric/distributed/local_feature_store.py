@@ -1,5 +1,4 @@
 import copy
-import json
 import os.path as osp
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -9,6 +8,7 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
+from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
     RPCRouter,
@@ -25,7 +25,7 @@ class RPCCallFeatureLookup(RPCCallBase):
         self.dist_feature = dist_feature
 
     def rpc_async(self, *args, **kwargs):
-        return self.dist_feature.rpc_local_feature_get(*args, **kwargs)
+        return self.dist_feature._rpc_local_feature_get(*args, **kwargs)
 
     def rpc_sync(self, *args, **kwargs):
         raise NotImplementedError
@@ -44,24 +44,27 @@ class LocalTensorAttr(TensorAttr):
 
 
 class LocalFeatureStore(FeatureStore):
-    r"""This class implements the :class:`torch_geometric.data.FeatureStore`
-    interface to act as a local feature store for distributed training."""
+    r"""Implements the :class:`~torch_geometric.data.FeatureStore` interface to
+    act as a local feature store for distributed training.
+    """
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
-
         self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
-
         # Save the global node/edge IDs:
         self._global_id: Dict[Union[NodeType, EdgeType], Tensor] = {}
-
         # Save the mapping from global node/edge IDs to indices in `_feat`:
         self._global_id_to_index: Dict[Union[NodeType, EdgeType], Tensor] = {}
+        # For partition/RPC info related to distributed features:
+        self.num_partitions: int = 1
+        self.partition_idx: int = 0
+        # Mapping between node ID and partition ID:
+        self.node_feat_pb: Union[Tensor, Dict[NodeType, Tensor]]
+        # Mapping between edge ID and partition ID:
+        self.edge_feat_pb: Union[Tensor, Dict[EdgeType, Tensor]]
+        # Node labels:
+        self.labels: Optional[Tensor] = None
 
-        # For partition/rpc information related to distribute features:
-        self.num_partitions = 1
-        self.partition_idx = 0
-        self.feature_pb: Union[Tensor, Dict[NodeOrEdgeType, Tensor]]
-        self.local_only = False
+        self.local_only: bool = False
         self.rpc_router: Optional[RPCRouter] = None
         self.meta: Optional[Dict] = None
         self.rpc_call_id: Optional[int] = None
@@ -146,6 +149,16 @@ class LocalFeatureStore(FeatureStore):
         else:
             self.rpc_call_id = None
 
+    def has_edge_attr(self) -> bool:
+        has_edge_attr = False
+        for k in [key for key in self._feat.keys() if 'edge_attr' in key]:
+            try:
+                self.get_tensor(k[0], 'edge_attr')
+                has_edge_attr = True
+            except KeyError:
+                pass
+        return has_edge_attr
+
     def lookup_features(
         self,
         index: Tensor,
@@ -163,8 +176,11 @@ class LocalFeatureStore(FeatureStore):
             try:
                 remote_feature_list = remote_fut.wait()
                 # combine the feature from remote and local
-                result = torch.zeros(index.size(0), local_feature[0].size(1),
-                                     dtype=local_feature[0].dtype)
+                result = torch.zeros(
+                    index.size(0),
+                    local_feature[0].size(1),
+                    dtype=local_feature[0].dtype,
+                )
                 result[local_feature[1]] = local_feature[0]
                 for remote in remote_feature_list:
                     result[remote[1]] = remote[0]
@@ -182,38 +198,36 @@ class LocalFeatureStore(FeatureStore):
         is_node_feat: bool = True,
         input_type: Optional[Union[NodeType, EdgeType]] = None,
     ) -> Tuple[Tensor, Tensor]:
-        r""" lookup the features in local nodes based on node/edge ids """
-        if self.meta['is_hetero']:
-            feat = self
-            pb = self.feature_pb[input_type]
-        else:
-            feat = self
-            pb = self.feature_pb
+        r"""Lookup the features in local nodes based on node/edge IDs."""
+        pb = self.node_feat_pb if is_node_feat else self.edge_feat_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
-        partition_ids = pb[index]
+        if self.meta['is_hetero']:
+            partition_ids = pb[input_type][index]
+        else:
+            partition_ids = pb[index]
 
         local_mask = partition_ids == self.partition_idx
         local_ids = torch.masked_select(index, local_mask)
         local_index = torch.masked_select(input_order, local_mask)
 
-        if self.meta["is_hetero"]:
+        if self.meta['is_hetero']:
             if is_node_feat:
                 kwargs = dict(group_name=input_type, attr_name='x')
-                ret_feat = feat.get_tensor_from_global_id(
+                ret_feat = self.get_tensor_from_global_id(
                     index=local_ids, **kwargs)
             else:
                 kwargs = dict(group_name=input_type, attr_name='edge_attr')
-                ret_feat = feat.get_tensor_from_global_id(
+                ret_feat = self.get_tensor_from_global_id(
                     index=local_ids, **kwargs)
         else:
             if is_node_feat:
                 kwargs = dict(group_name=None, attr_name='x')
-                ret_feat = feat.get_tensor_from_global_id(
+                ret_feat = self.get_tensor_from_global_id(
                     index=local_ids, **kwargs)
             else:
                 kwargs = dict(group_name=(None, None), attr_name='edge_attr')
-                ret_feat = feat.get_tensor_from_global_id(
+                ret_feat = self.get_tensor_from_global_id(
                     index=local_ids, **kwargs)
 
         return ret_feat, local_index
@@ -224,20 +238,20 @@ class LocalFeatureStore(FeatureStore):
         is_node_feat: bool = True,
         input_type: Optional[Union[NodeType, EdgeType]] = None,
     ) -> torch.futures.Future:
-        r"""Fetch the remote features with the remote node/edge ids"""
-
-        if self.meta["is_hetero"]:
-            pb = self.feature_pb[input_type]
-        else:
-            pb = self.feature_pb
+        r"""Fetch the remote features with the remote node/edge IDs."""
+        pb = self.node_feat_pb if is_node_feat else self.edge_feat_pb
 
         input_order = torch.arange(index.size(0), dtype=torch.long)
-        partition_ids = pb[index]
+        if self.meta['is_hetero']:
+            partition_ids = pb[input_type][index]
+        else:
+            partition_ids = pb[index]
+
         futs, indexes = [], []
         for pidx in range(0, self.num_partitions):
             if pidx == self.partition_idx:
                 continue
-            remote_mask = (partition_ids == pidx)
+            remote_mask = partition_ids == pidx
             remote_ids = index[remote_mask]
             if remote_ids.shape[0] > 0:
                 to_worker = self.rpc_router.get_to_worker(pidx)
@@ -265,7 +279,7 @@ class LocalFeatureStore(FeatureStore):
         collect_fut.add_done_callback(when_finish)
         return res_fut
 
-    def rpc_local_feature_get(
+    def _rpc_local_feature_get(
         self,
         index: Tensor,
         is_node_feat: bool = True,
@@ -349,14 +363,14 @@ class LocalFeatureStore(FeatureStore):
             node_id_dict (Dict[NodeType, torch.Tensor]): The global identifier
                 for every local node of every node type.
             x_dict (Dict[NodeType, torch.Tensor], optional): The node features
-                of node types. (default: :obj:`None`)
+                of every node type. (default: :obj:`None`)
             y_dict (Dict[NodeType, torch.Tensor], optional): The node labels of
-                node types. (default: :obj:`None`)
+                every node type. (default: :obj:`None`)
             edge_id_dict (Dict[EdgeType, torch.Tensor], optional): The global
-                identifier for every local edge of edge types.
+                identifier for every local edge of every edge types.
                 (default: :obj:`None`)
             edge_attr_dict (Dict[EdgeType, torch.Tensor], optional): The edge
-                features of edge types. (default: :obj:`None`)
+                features of every edge type. (default: :obj:`None`)
         """
         feat_store = cls()
 
@@ -383,11 +397,21 @@ class LocalFeatureStore(FeatureStore):
 
     @classmethod
     def from_partition(cls, root: str, pid: int) -> 'LocalFeatureStore':
-        with open(osp.join(root, 'META.json'), 'r') as f:
-            meta = json.load(f)
-
         part_dir = osp.join(root, f'part_{pid}')
         assert osp.exists(part_dir)
+        feat_store = cls()
+        (
+            meta,
+            num_partitions,
+            partition_idx,
+            node_pb,
+            edge_pb,
+        ) = load_partition_info(root, pid)
+        feat_store.num_partitions = num_partitions
+        feat_store.partition_idx = partition_idx
+        feat_store.node_feat_pb = node_pb
+        feat_store.edge_feat_pb = edge_pb
+        feat_store.meta = meta
 
         node_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'node_feats.pt')):
@@ -397,19 +421,26 @@ class LocalFeatureStore(FeatureStore):
         if osp.exists(osp.join(part_dir, 'edge_feats.pt')):
             edge_feats = torch.load(osp.join(part_dir, 'edge_feats.pt'))
 
-        feat_store = cls()
-
         if not meta['is_hetero'] and node_feats is not None:
             feat_store.put_global_id(node_feats['global_id'], group_name=None)
             for key, value in node_feats['feats'].items():
                 feat_store.put_tensor(value, group_name=None, attr_name=key)
+            if 'time' in node_feats:
+                feat_store.put_tensor(node_feats['time'], group_name=None,
+                                      attr_name='time')
 
         if not meta['is_hetero'] and edge_feats is not None:
-            feat_store.put_global_id(edge_feats['global_id'],
-                                     group_name=(None, None))
-            for key, value in edge_feats['feats'].items():
-                feat_store.put_tensor(value, group_name=(None, None),
-                                      attr_name=key)
+            if 'global_id' in edge_feats:
+                feat_store.put_global_id(edge_feats['global_id'],
+                                         group_name=(None, None))
+            if 'feats' in edge_feats:
+                for key, value in edge_feats['feats'].items():
+                    feat_store.put_tensor(value, group_name=(None, None),
+                                          attr_name=key)
+            if 'edge_time' in edge_feats:
+                feat_store.put_tensor(edge_feats['edge_time'],
+                                      group_name=(None, None),
+                                      attr_name='edge_time')
 
         if meta['is_hetero'] and node_feats is not None:
             for node_type, node_feat in node_feats.items():
@@ -418,13 +449,23 @@ class LocalFeatureStore(FeatureStore):
                 for key, value in node_feat['feats'].items():
                     feat_store.put_tensor(value, group_name=node_type,
                                           attr_name=key)
+                if 'time' in node_feat:
+                    feat_store.put_tensor(node_feat['time'],
+                                          group_name=node_type,
+                                          attr_name='time')
 
         if meta['is_hetero'] and edge_feats is not None:
             for edge_type, edge_feat in edge_feats.items():
-                feat_store.put_global_id(edge_feat['global_id'],
-                                         group_name=edge_type)
-                for key, value in edge_feat['feats'].items():
-                    feat_store.put_tensor(value, group_name=edge_type,
-                                          attr_name=key)
+                if 'global_id' in edge_feat:
+                    feat_store.put_global_id(edge_feat['global_id'],
+                                             group_name=edge_type)
+                if 'feats' in edge_feat:
+                    for key, value in edge_feat['feats'].items():
+                        feat_store.put_tensor(value, group_name=edge_type,
+                                              attr_name=key)
+                if 'edge_time' in edge_feat:
+                    feat_store.put_tensor(edge_feat['edge_time'],
+                                          group_name=edge_type,
+                                          attr_name='edge_time')
 
         return feat_store

@@ -76,6 +76,21 @@ class LinkNeighborLoader(LinkLoader):
         Negative sampling is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+    .. warning::
+        Note that the sampling scheme is independent from the edge we are
+        making a prediction for.
+        That is, by default supervision edges in :obj:`edge_label_index`
+        **will not** get masked out during sampling.
+        In case there exists an overlap between message passing edges in
+        :obj:`data.edge_index` and supervision edges in
+        :obj:`edge_label_index`, you might end up sampling an edge you are
+        making a prediction for.
+        You can generally avoid this behavior (if desired) by making
+        :obj:`data.edge_index` and :obj:`edge_label_index` two disjoint sets of
+        edges, *e.g.*, via the
+        :class:`~torch_geometric.transforms.RandomLinkSplit` transformation and
+        its :obj:`disjoint_train_ratio` argument.
+
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
             :class:`~torch_geometric.data.HeteroData`, or
@@ -160,7 +175,7 @@ class LinkNeighborLoader(LinkLoader):
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph.
+            timestamps for either the nodes or edges in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.

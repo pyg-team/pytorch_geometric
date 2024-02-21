@@ -15,7 +15,7 @@ from torch_geometric.utils import spmm
 class GCN2Conv(MessagePassing):
     r"""The graph convolutional operator with initial residual connections and
     identity mapping (GCNII) from the `"Simple and Deep Graph Convolutional
-    Networks" <https://arxiv.org/abs/2007.02133>`_ paper
+    Networks" <https://arxiv.org/abs/2007.02133>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( (1 - \alpha) \mathbf{\hat{P}}\mathbf{X} +
@@ -135,7 +135,7 @@ class GCN2Conv(MessagePassing):
                     edge_index = cache
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
+        x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
         x.mul_(1 - self.alpha)
         x_0 = self.alpha * x_0[:x.size(0)]
@@ -155,7 +155,7 @@ class GCN2Conv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

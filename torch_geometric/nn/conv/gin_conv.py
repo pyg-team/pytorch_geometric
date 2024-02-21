@@ -18,7 +18,7 @@ from torch_geometric.utils import spmm
 
 class GINConv(MessagePassing):
     r"""The graph isomorphism operator from the `"How Powerful are
-    Graph Neural Networks?" <https://arxiv.org/abs/1810.00826>`_ paper
+    Graph Neural Networks?" <https://arxiv.org/abs/1810.00826>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
@@ -70,11 +70,15 @@ class GINConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
@@ -88,8 +92,7 @@ class GINConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)
@@ -101,7 +104,7 @@ class GINConv(MessagePassing):
 class GINEConv(MessagePassing):
     r"""The modified :class:`GINConv` operator from the `"Strategies for
     Pre-training Graph Neural Networks" <https://arxiv.org/abs/1905.12265>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
@@ -169,11 +172,16 @@ class GINEConv(MessagePassing):
         if self.lin is not None:
             self.lin.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)

@@ -30,6 +30,8 @@ class MixHopSyntheticDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://raw.githubusercontent.com/samihaija/mixhop/master/data'
@@ -41,12 +43,14 @@ class MixHopSyntheticDataset(InMemoryDataset):
         homophily: float,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.homophily = homophily
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
 
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -65,11 +69,11 @@ class MixHopSyntheticDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         x = torch.from_numpy(np.load(self.raw_paths[0]))
         y = torch.from_numpy(np.load(self.raw_paths[1])).argmax(dim=-1)
 
@@ -95,7 +99,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(homophily={self.homophily:.1f})'

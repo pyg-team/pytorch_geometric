@@ -1,5 +1,4 @@
-"""
-Distributed GAT training, targeting XPU devices.
+"""Distributed GAT training, targeting XPU devices.
 PVC has 2 tiles, each reports itself as a separate
 device. DDP approach allows us to employ both tiles.
 
@@ -17,7 +16,7 @@ Run with:
 import copy
 import os
 import os.path as osp
-from typing import Tuple, Union
+from typing import Any, Tuple, Union
 
 import intel_extension_for_pytorch  # noqa
 import oneccl_bindings_for_pytorch  # noqa
@@ -32,6 +31,7 @@ from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GATConv
+from torch_geometric.profile import get_stats_summary, profileit
 
 
 class GAT(torch.nn.Module):
@@ -104,6 +104,17 @@ class GAT(torch.nn.Module):
         return x_all
 
 
+@profileit('xpu')
+def train_step(model: Any, optimizer: Any, x: Tensor, edge_index: Tensor,
+               y: Tensor, bs: int) -> float:
+    optimizer.zero_grad()
+    out = model(x, edge_index)[:bs]
+    loss = F.cross_entropy(out, y[:bs].squeeze())
+    loss.backward()
+    optimizer.step()
+    return float(loss)
+
+
 def run(rank: int, world_size: int, dataset: PygNodePropPredDataset):
     device = f"xpu:{rank}"
 
@@ -128,19 +139,22 @@ def run(rank: int, world_size: int, dataset: PygNodePropPredDataset):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1, 21):
+        epoch_stats = []
         model.train()
         for batch in train_loader:
-            optimizer.zero_grad()
-            out = model(batch.x,
-                        batch.edge_index.to(device))[:batch.batch_size]
-            loss = F.cross_entropy(out, batch.y[:batch.batch_size].squeeze())
-            loss.backward()
-            optimizer.step()
+            batch = batch.to(device)
+            loss, stats = train_step(model, optimizer, batch.x,
+                                     batch.edge_index, batch.y,
+                                     batch.batch_size)
+            epoch_stats.append(stats)
 
         dist.barrier()
 
         if rank == 0:
             print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}")
+
+        print(f"Epoch: {epoch:02d}, Rank: {rank}, "
+              f"Stats: {get_stats_summary(epoch_stats)}")
 
         if rank == 0 and epoch % 5 == 0:  # Evaluation on a single GPU
             model.eval()

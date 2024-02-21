@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -11,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 MOVIE_HEADERS = ["movieId", "title", "genres"]
 USER_HEADERS = ["userId", "gender", "age", "occupation", "zipCode"]
@@ -37,6 +37,8 @@ class MovieLens1M(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -68,8 +70,10 @@ class MovieLens1M(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -80,15 +84,15 @@ class MovieLens1M(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.remove(path)
         folder = osp.join(self.root, 'ml-1m')
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         data = HeteroData()

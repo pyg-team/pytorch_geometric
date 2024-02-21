@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.1
+name: Testing minimal PyTorch 2.2
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -20,7 +20,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v34
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             benchmark/**
@@ -45,5 +45,6 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
           pytest

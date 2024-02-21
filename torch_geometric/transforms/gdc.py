@@ -80,10 +80,12 @@ class GDC(BaseTransform):
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
         diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
-        sparsification_kwargs: Dict[str, Any] = dict(method='threshold',
-                                                     avg_degree=64),
+        sparsification_kwargs: Dict[str, Any] = dict(
+            method='threshold',
+            avg_degree=64,
+        ),
         exact: bool = True,
-    ):
+    ) -> None:
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -96,8 +98,11 @@ class GDC(BaseTransform):
 
     @torch.no_grad()
     def forward(self, data: Data) -> Data:
-        N = data.num_nodes
+        assert data.edge_index is not None
         edge_index = data.edge_index
+        N = data.num_nodes
+        assert N is not None
+
         if data.edge_attr is None:
             edge_weight = torch.ones(edge_index.size(1),
                                      device=edge_index.device)
@@ -189,13 +194,13 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def diffusion_matrix_exact(
+    def diffusion_matrix_exact(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
         num_nodes: int,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tensor:
         r"""Calculate the (dense) diffusion on a given sparse graph.
         Note that these exact variants are not scalable. They densify the
@@ -262,14 +267,14 @@ class GDC(BaseTransform):
 
         return diff_matrix
 
-    def diffusion_matrix_approx(
+    def diffusion_matrix_approx(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
         num_nodes: int,
         normalization: str,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Calculate the approximate, sparse diffusion on a given sparse
         graph.
@@ -342,11 +347,11 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_dense(
+    def sparsify_dense(  # noqa: D417
         self,
         matrix: Tensor,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies the given dense matrix.
 
@@ -411,19 +416,19 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_sparse(
+    def sparsify_sparse(  # noqa: D417
         self,
         edge_index: Tensor,
         edge_weight: Tensor,
         num_nodes: int,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies a given sparse graph further.
 
         Args:
-            edge_index (LongTensor): The edge indices.
-            edge_weight (Tensor): One-dimensional edge weights.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification:
 
@@ -441,8 +446,11 @@ class GDC(BaseTransform):
         """
         if method == 'threshold':
             if 'eps' not in kwargs.keys():
-                kwargs['eps'] = self.__calculate_eps__(edge_weight, num_nodes,
-                                                       kwargs['avg_degree'])
+                kwargs['eps'] = self.__calculate_eps__(
+                    edge_weight,
+                    num_nodes,
+                    kwargs['avg_degree'],
+                )
 
             remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
                 as_tuple=False).flatten()
@@ -494,4 +502,4 @@ class GDC(BaseTransform):
 
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
-        return (left + right) / 2.0
+        return float(left + right) / 2.0

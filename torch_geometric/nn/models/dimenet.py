@@ -11,7 +11,6 @@ from torch import Tensor
 from torch.nn import Embedding, Linear
 
 from torch_geometric.data import Dataset, download_url
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
@@ -574,7 +573,8 @@ class DimeNet(torch.nn.Module):
     ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -583,7 +583,7 @@ class DimeNet(torch.nn.Module):
         root = osp.expanduser(osp.normpath(root))
         path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
 
-        makedirs(path)
+        os.makedirs(path, exist_ok=True)
         url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):
@@ -675,7 +675,8 @@ class DimeNet(torch.nn.Module):
         pos: Tensor,
         batch: OptTensor = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
@@ -698,11 +699,11 @@ class DimeNet(torch.nn.Module):
         if isinstance(self, DimeNetPlusPlus):
             pos_jk, pos_ij = pos[idx_j] - pos[idx_k], pos[idx_i] - pos[idx_j]
             a = (pos_ij * pos_jk).sum(dim=-1)
-            b = torch.cross(pos_ij, pos_jk).norm(dim=-1)
+            b = torch.cross(pos_ij, pos_jk, dim=1).norm(dim=-1)
         elif isinstance(self, DimeNet):
             pos_ji, pos_ki = pos[idx_j] - pos[idx_i], pos[idx_k] - pos[idx_i]
             a = (pos_ji * pos_ki).sum(dim=-1)
-            b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+            b = torch.cross(pos_ji, pos_ki, dim=1).norm(dim=-1)
         angle = torch.atan2(b, a)
 
         rbf = self.rbf(dist)
@@ -844,7 +845,8 @@ class DimeNetPlusPlus(DimeNet):
                Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
-        specified target :obj:`target`."""
+        specified target :obj:`target`.
+        """
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -853,7 +855,7 @@ class DimeNetPlusPlus(DimeNet):
         root = osp.expanduser(osp.normpath(root))
         path = osp.join(root, 'pretrained_dimenet_pp', qm9_target_dict[target])
 
-        makedirs(path)
+        os.makedirs(path, exist_ok=True)
         url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):

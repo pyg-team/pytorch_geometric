@@ -15,7 +15,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops
 class FeaStConv(MessagePassing):
     r"""The (translation-invariant) feature-steered convolutional operator from
     the `"FeaStNet: Feature-Steered Graph Convolutions for 3D Shape Analysis"
-    <https://arxiv.org/abs/1706.05206>`_ paper
+    <https://arxiv.org/abs/1706.05206>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
@@ -80,8 +80,9 @@ class FeaStConv(MessagePassing):
         normal(self.bias, mean=0, std=0.1)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
@@ -92,7 +93,7 @@ class FeaStConv(MessagePassing):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=x, size=None)
+        out = self.propagate(edge_index, x=x)
 
         if self.bias is not None:
             out = out + self.bias

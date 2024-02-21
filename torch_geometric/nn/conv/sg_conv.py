@@ -11,7 +11,7 @@ from torch_geometric.utils import spmm
 
 class SGConv(MessagePassing):
     r"""The simple graph convolutional operator from the `"Simplifying Graph
-    Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper
+    Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = {\left(\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
@@ -92,8 +92,7 @@ class SGConv(MessagePassing):
 
             for k in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)
-                x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                                   size=None)
+                x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
                 if self.cached:
                     self._cached_x = x
         else:
@@ -104,7 +103,7 @@ class SGConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

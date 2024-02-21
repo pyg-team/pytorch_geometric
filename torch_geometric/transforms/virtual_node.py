@@ -25,8 +25,11 @@ class VirtualNode(BaseTransform):
     out-going information to and from the virtual node.
     """
     def forward(self, data: Data) -> Data:
-        num_nodes, (row, col) = data.num_nodes, data.edge_index
+        assert data.edge_index is not None
+        row, col = data.edge_index
         edge_type = data.get('edge_type', torch.zeros_like(row))
+        num_nodes = data.num_nodes
+        assert num_nodes is not None
 
         arange = torch.arange(num_nodes, device=row.device)
         full = row.new_full((num_nodes, ), num_nodes)
@@ -68,6 +71,6 @@ class VirtualNode(BaseTransform):
         data.edge_type = edge_type
 
         if 'num_nodes' in data:
-            data.num_nodes = old_data.num_nodes + 1
+            data.num_nodes = num_nodes + 1
 
         return data

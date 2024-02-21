@@ -8,6 +8,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
+from typing_extensions import Self
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
@@ -28,6 +29,7 @@ from torch_geometric.typing import (
 from torch_geometric.utils import (
     bipartite_subgraph,
     contains_isolated_nodes,
+    is_sparse,
     is_undirected,
     mask_select,
 )
@@ -128,9 +130,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 setattr(self, key, value)
 
     @classmethod
-    def from_dict(cls, mapping: Dict[str, Any]) -> 'HeteroData':
+    def from_dict(cls, mapping: Dict[str, Any]) -> Self:
         r"""Creates a :class:`~torch_geometric.data.HeteroData` object from a
-        dictionary."""
+        dictionary.
+        """
         out = cls()
         for key, value in mapping.items():
             if key == '_global_store':
@@ -235,7 +238,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         info = f'\n{info}\n' if len(info) > 0 else info
         return f'{self.__class__.__name__}({info})'
 
-    def stores_as(self, data: 'HeteroData'):
+    def stores_as(self, data: Self):
         for node_type in data.node_types:
             self.get_node_store(node_type)
         for edge_type in data.edge_types:
@@ -302,7 +305,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         self,
         key: str,
         value_dict: Dict[str, Any],
-    ) -> 'HeteroData':
+    ) -> Self:
         r"""Sets the values in the dictionary :obj:`value_dict` to the
         attribute with name :obj:`key` to all node/edge types present in the
         dictionary.
@@ -322,7 +325,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             self[k][key] = v
         return self
 
-    def update(self, data: 'HeteroData') -> 'HeteroData':
+    def update(self, data: Self) -> Self:
         for store in data.stores:
             for key, value in store.items():
                 self[store._key][key] = value
@@ -331,7 +334,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
+        if is_sparse(value) and 'adj' in key:
             return (0, 1)
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
@@ -340,7 +343,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __inc__(self, key: str, value: Any,
                 store: Optional[NodeOrEdgeStorage] = None, *args,
                 **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)
@@ -363,7 +366,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     @property
     def num_features(self) -> Dict[NodeType, int]:
         r"""Returns the number of features per node type in the graph.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -603,7 +607,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             self._edge_store_dict[key] = out
         return out
 
-    def rename(self, name: NodeType, new_name: NodeType) -> 'HeteroData':
+    def rename(self, name: NodeType, new_name: NodeType) -> Self:
         r"""Renames the node type :obj:`name` to :obj:`new_name` in-place."""
         node_store = self._node_store_dict.pop(name)
         node_store._key = new_name
@@ -621,7 +625,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return self
 
-    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
+    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> Self:
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
 
@@ -715,7 +719,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def edge_subgraph(
         self,
         subset_dict: Dict[EdgeType, Tensor],
-    ) -> 'HeteroData':
+    ) -> Self:
         r"""Returns the induced subgraph given by the edge indices in
         :obj:`subset_dict` for certain edge types.
         Will currently preserve all the nodes in the graph, even if they are
@@ -739,11 +743,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return data
 
-    def node_type_subgraph(self, node_types: List[NodeType]) -> 'HeteroData':
+    def node_type_subgraph(self, node_types: List[NodeType]) -> Self:
         r"""Returns the subgraph induced by the given :obj:`node_types`, *i.e.*
         the returned :class:`HeteroData` object only contains the node types
         which are included in :obj:`node_types`, and only contains the edge
-        types where both end points are included in :obj:`node_types`."""
+        types where both end points are included in :obj:`node_types`.
+        """
         data = copy.copy(self)
         for edge_type in self.edge_types:
             src, _, dst = edge_type
@@ -754,11 +759,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 del data[node_type]
         return data
 
-    def edge_type_subgraph(self, edge_types: List[EdgeType]) -> 'HeteroData':
+    def edge_type_subgraph(self, edge_types: List[EdgeType]) -> Self:
         r"""Returns the subgraph induced by the given :obj:`edge_types`, *i.e.*
         the returned :class:`HeteroData` object only contains the edge types
         which are included in :obj:`edge_types`, and only contains the node
-        types of the end points which are included in :obj:`node_types`."""
+        types of the end points which are included in :obj:`node_types`.
+        """
         edge_types = [self._to_canonical(e) for e in edge_types]
 
         data = copy.copy(self)
@@ -813,7 +819,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             dummy_values (bool, optional): If set to :obj:`True`, will fill
                 attributes of remaining types with dummy values.
                 Dummy values are :obj:`NaN` for floating point attributes,
-                and :obj:`-1` for integers. (default: :obj:`True`)
+                :obj:`False` for booleans, and :obj:`-1` for integers.
+                (default: :obj:`True`)
         """
         def get_sizes(stores: List[BaseStorage]) -> Dict[str, List[Tuple]]:
             sizes_dict = defaultdict(list)
@@ -849,7 +856,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     if key not in store:
                         ref = list(self.collect(key).values())[0]
                         dim = self.__cat_dim__(key, ref, store)
-                        dummy = float('NaN') if ref.is_floating_point() else -1
+                        if ref.is_floating_point():
+                            dummy = float('NaN')
+                        elif ref.dtype == torch.bool:
+                            dummy = False
+                        else:
+                            dummy = -1
                         if isinstance(store, NodeStorage):
                             dim_size = store.num_nodes
                         else:
@@ -916,7 +928,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             if isinstance(values[0], TensorFrame):
-                value = torch_frame.cat(values, along='row')
+                value = torch_frame.cat(values, dim=0)
             else:
                 dim = self.__cat_dim__(key, values[0], self.node_stores[0])
                 dim = values[0].dim() + dim if dim < 0 else dim
@@ -1131,7 +1143,8 @@ def offset_edge_index(
     edge_index: Tensor,
 ) -> Tensor:
     r"""Increases the edge indices by the offsets of source and destination
-    node types."""
+    node types.
+    """
     src, _, dst = edge_type
     offset = [[node_slices[src][0]], [node_slices[dst][0]]]
     offset = torch.tensor(offset, device=edge_index.device)

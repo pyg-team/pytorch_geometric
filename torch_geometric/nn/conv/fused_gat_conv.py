@@ -4,7 +4,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import GATConv
-from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import sort_edge_index
+from torch_geometric.utils.sparse import index2ptr
 
 
 class FusedGATConv(GATConv):  # pragma: no cover
@@ -52,22 +53,30 @@ class FusedGATConv(GATConv):  # pragma: no cover
 
         Args:
             edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
+            size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
-        value = torch.arange(edge_index.size(1), dtype=torch.int,
-                             device=edge_index.device)
+        edge_index = edge_index.to(torch.int)
 
-        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=size)
-        adj.set_value_(value, layout='csr')
+        edge_index = sort_edge_index(edge_index, sort_by_row=True)
+        rowptr = index2ptr(edge_index[0], size=size[0] if size else None)
+        col = edge_index[1]
 
-        rowptr, col, _ = adj.csr()
-        colptr, row, perm = adj.csc()
+        device = edge_index.device
+        perm = torch.arange(edge_index.size(1), dtype=torch.int, device=device)
+        edge_index, perm = sort_edge_index(edge_index, perm, sort_by_row=False)
+        row = edge_index[0]
+        colptr = index2ptr(edge_index[1], size=size[1] if size else None)
 
-        return (rowptr.int(), col.int()), (row.int(), colptr.int()), perm
+        return (rowptr, col), (row, colptr), perm
 
-    def forward(self, x: Tensor, csr: Tuple[Tensor, Tensor],
-                csc: Tuple[Tensor, Tensor], perm: Tensor) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        csr: Tuple[Tensor, Tensor],
+        csc: Tuple[Tensor, Tensor],
+        perm: Tensor,
+    ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:

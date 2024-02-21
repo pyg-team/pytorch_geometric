@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class TAGConv(MessagePassing):
     r"""The topology adaptive graph convolutional networks operator from the
     `"Topology Adaptive Graph Convolutional Networks"
-    <https://arxiv.org/abs/1710.10370>`_ paper
+    <https://arxiv.org/abs/1710.10370>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=0}^K \left( \mathbf{D}^{-1/2} \mathbf{A}
@@ -87,8 +87,7 @@ class TAGConv(MessagePassing):
         out = self.lins[0](x)
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                               size=None)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
             out = out + lin.forward(x)
 
         if self.bias is not None:
@@ -99,7 +98,7 @@ class TAGConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

@@ -1,18 +1,24 @@
-import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from torch.distributed import rpc
 
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 
+try:
+    from torch._C._distributed_rpc import _is_current_rpc_agent_set
+except Exception:
+
+    def _is_current_rpc_agent_set() -> bool:
+        return False
+
+
 _rpc_init_lock = threading.RLock()
 
 
 def rpc_is_initialized() -> bool:
-    from torch._C._distributed_rpc import _is_current_rpc_agent_set
     return _is_current_rpc_agent_set()
 
 
@@ -23,7 +29,7 @@ def rpc_require_initialized(func: Callable) -> Callable:
 
 
 @rpc_require_initialized
-def global_all_gather(obj, timeout: Optional[int] = None):
+def global_all_gather(obj, timeout: Optional[int] = None) -> Any:
     r"""Gathers objects from all groups in a list."""
     if timeout is None:
         return rpc.api._all_gather(obj)
@@ -31,21 +37,21 @@ def global_all_gather(obj, timeout: Optional[int] = None):
 
 
 @rpc_require_initialized
-def global_barrier(timeout: Optional[int] = None):
-    r""" Block until all local and remote RPC processes."""
+def global_barrier(timeout: Optional[int] = None) -> None:
+    r"""Block until all local and remote RPC processes."""
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
-        logging.error("Failed to respond to global barrier")
+        logging.error('Failed to respond to global barrier')
 
 
 def init_rpc(
     current_ctx: DistContext,
-    rpc_worker_names: Dict[DistRole, List[str]],
     master_addr: str,
     master_port: int,
     num_rpc_threads: int = 16,
-    rpc_timeout: int = 240,
+    rpc_timeout: float = 240.0,
+    rpc_worker_names: Optional[Dict[DistRole, List[str]]] = None,
 ):
     with _rpc_init_lock:
         if rpc_is_initialized():
@@ -69,32 +75,18 @@ def init_rpc(
             rpc_backend_options=options,
         )
 
-        gathered_results = global_all_gather(
-            obj=(current_ctx.role, current_ctx.world_size, current_ctx.rank),
-            timeout=rpc_timeout,
-        )
-
-        for worker_name, (role, world_size, rank) in gathered_results.items():
-            worker_list = rpc_worker_names.get(role, None)
-            if worker_list is None:
-                worker_list = [None for _ in range(world_size)]
-            else:
-                if len(worker_list) != world_size:
-                    raise RuntimeError(f"Inconsistent world size found in "
-                                       f"'init_rpc' (got {len(worker_list)})")
-
-            worker_list[rank] = worker_name
-            rpc_worker_names[role] = worker_list
-
         global_barrier(timeout=rpc_timeout)
 
 
-def shutdown_rpc(graceful: bool = True):
-    if rpc_is_initialized():
-        rpc.shutdown(graceful)
-
-
-atexit.register(shutdown_rpc, False)
+def shutdown_rpc(id: str = None, graceful: bool = True,
+                 timeout: float = 240.0):
+    with _rpc_init_lock:
+        if rpc_is_initialized():
+            logging.info(f"Shutdown RPC in {id}"
+                         f"{' gracefully' if graceful else ''}")
+            rpc.shutdown(graceful, timeout)
+        else:
+            logging.info(f'RPC in {id} not initialized.')
 
 
 class RPCRouter:
@@ -102,7 +94,7 @@ class RPCRouter:
     def __init__(self, partition_to_workers: List[List[str]]):
         for pid, rpc_worker_list in enumerate(partition_to_workers):
             if len(rpc_worker_list) == 0:
-                raise ValueError("No RPC worker is in worker list")
+                raise ValueError('No RPC worker is in worker list')
         self.partition_to_workers = partition_to_workers
         self.rpc_worker_indices = [0 for _ in range(len(partition_to_workers))]
 
@@ -122,7 +114,8 @@ def rpc_partition_to_workers(
     current_partition_idx: int,
 ):
     r"""Performs an :obj:`all_gather` to get the mapping between partition and
-    workers."""
+    workers.
+    """
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
@@ -164,7 +157,7 @@ def rpc_register(call: RPCCallBase) -> int:
 
 
 def _rpc_async_call(call_id: int, *args, **kwargs):
-    r""" Entry point for RPC requests."""
+    r"""Entry point for RPC requests."""
     return _rpc_call_pool.get(call_id).rpc_async(*args, **kwargs)
 
 

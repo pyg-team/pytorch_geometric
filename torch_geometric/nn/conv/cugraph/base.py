@@ -1,11 +1,9 @@
-import warnings
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Optional
 
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import index_sort
-from torch_geometric.utils.sparse import index2ptr
+from torch_geometric import EdgeIndex
 
 try:  # pragma: no cover
     LEGACY_MODE = False
@@ -31,7 +29,8 @@ except ImportError:
 
 
 class CuGraphModule(torch.nn.Module):  # pragma: no cover
-    r"""An abstract base class for implementing cugraph message passing layers.
+    r"""An abstract base class for implementing :obj:`cugraph`-based message
+    passing layers.
     """
     def __init__(self):
         super().__init__()
@@ -44,63 +43,28 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         r"""Resets all learnable parameters of the module."""
         pass
 
-    @staticmethod
-    def to_csc(
-        edge_index: Tensor,
-        size: Optional[Tuple[int, int]] = None,
-        edge_attr: Optional[Tensor] = None,
-    ) -> Union[Tuple[Tensor, Tensor, int], Tuple[Tuple[Tensor, Tensor, int],
-                                                 Tensor]]:
-        r"""Returns a CSC representation of an :obj:`edge_index` tensor to be
-        used as input to a :class:`CuGraphModule`.
-
-        Args:
-            edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
-                dimension. (default: :obj:`None`)
-            edge_attr (torch.Tensor, optional): The edge features.
-                (default: :obj:`None`)
-        """
-        if size is None:
-            warnings.warn(f"Inferring the graph size from 'edge_index' causes "
-                          f"a decline in performance and does not work for "
-                          f"bipartite graphs. To suppress this warning, pass "
-                          f"the 'size' explicitly in '{__name__}.to_csc()'.")
-            num_src_nodes = num_dst_nodes = int(edge_index.max()) + 1
-        else:
-            num_src_nodes, num_dst_nodes = size
-
-        row, col = edge_index
-        col, perm = index_sort(col, max_value=num_dst_nodes)
-        row = row[perm]
-
-        colptr = index2ptr(col, num_dst_nodes)
-
-        if edge_attr is not None:
-            return (row, colptr, num_src_nodes), edge_attr[perm]
-
-        return row, colptr, num_src_nodes
-
     def get_cugraph(
         self,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         max_num_neighbors: Optional[int] = None,
     ) -> Any:
         r"""Constructs a :obj:`cugraph` graph object from CSC representation.
         Supports both bipartite and non-bipartite graphs.
 
         Args:
-            csc ((torch.Tensor, torch.Tensor, int)): A tuple containing the CSC
-                representation of a graph, given as a tuple of
-                :obj:`(row, colptr, num_src_nodes)`. Use the
-                :meth:`CuGraphModule.to_csc` method to convert an
-                :obj:`edge_index` representation to the desired format.
+            edge_index (EdgeIndex): The edge indices.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
                 bipartite graph. When not given, will be computed on-the-fly,
                 leading to slightly worse performance. (default: :obj:`None`)
         """
-        row, colptr, num_src_nodes = csc
+        if not isinstance(edge_index, EdgeIndex):
+            raise ValueError(f"'edge_index' needs to be of type 'EdgeIndex' "
+                             f"(got {type(edge_index)})")
+
+        edge_index = edge_index.sort_by('col')[0]
+        num_src_nodes = edge_index.get_sparse_size(0)
+        (colptr, row), _ = edge_index.get_csc()
 
         if not row.is_cuda:
             raise RuntimeError(f"'{self.__class__.__name__}' requires GPU-"
@@ -124,7 +88,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
     def get_typed_cugraph(
         self,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         edge_type: Tensor,
         num_edge_types: Optional[int] = None,
         max_num_neighbors: Optional[int] = None,
@@ -134,11 +98,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         Supports both bipartite and non-bipartite graphs.
 
         Args:
-            csc ((torch.Tensor, torch.Tensor, int)): A tuple containing the CSC
-                representation of a graph, given as a tuple of
-                :obj:`(row, colptr, num_src_nodes)`. Use the
-                :meth:`CuGraphModule.to_csc` method to convert an
-                :obj:`edge_index` representation to the desired format.
+            edge_index (EdgeIndex): The edge indices.
             edge_type (torch.Tensor): The edge type.
             num_edge_types (int, optional): The maximum number of edge types.
                 When not given, will be computed on-the-fly, leading to
@@ -151,7 +111,15 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         if num_edge_types is None:
             num_edge_types = int(edge_type.max()) + 1
 
-        row, colptr, num_src_nodes = csc
+        if not isinstance(edge_index, EdgeIndex):
+            raise ValueError(f"'edge_index' needs to be of type 'EdgeIndex' "
+                             f"(got {type(edge_index)})")
+
+        edge_index, perm = edge_index.sort_by('col')
+        edge_type = edge_type[perm]
+        num_src_nodes = edge_index.get_sparse_size(0)
+        (colptr, row), _ = edge_index.get_csc()
+
         edge_type = edge_type.int()
 
         if num_src_nodes != colptr.numel() - 1:  # Bipartite graph:
@@ -180,18 +148,14 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     def forward(
         self,
         x: Tensor,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
         r"""Runs the forward pass of the module.
 
         Args:
             x (torch.Tensor): The node features.
-            csc ((torch.Tensor, torch.Tensor, int)): A tuple containing the CSC
-                representation of a graph, given as a tuple of
-                :obj:`(row, colptr, num_src_nodes)`. Use the
-                :meth:`CuGraphModule.to_csc` method to convert an
-                :obj:`edge_index` representation to the desired format.
+            edge_index (EdgeIndex): The edge indices.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
                 bipartite graph. When not given, the value will be computed
