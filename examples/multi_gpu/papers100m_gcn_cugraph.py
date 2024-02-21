@@ -232,14 +232,13 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         dist.barrier()
 
     with Join([model], divide_by_initial_world_size=False):
-        if cugraph_data_loader:
-            test_path = os.path.join(tempdir, 'samples_test')
+        test_path = os.path.join(tempdir, 'samples_test')
 
-            input_files = np.array(os.listdir(test_path))
+        input_files = np.array(os.listdir(test_path))
 
-            test_loader = BulkSampleLoader(cugraph_store, cugraph_store,
-                                           directory=test_path,
-                                           input_files=input_files)
+        test_loader = BulkSampleLoader(cugraph_store, cugraph_store,
+                                       directory=test_path,
+                                       input_files=input_files)
         with torch.no_grad():
             for i, batch in enumerate(test_loader):
                 batch = batch.to(rank)
