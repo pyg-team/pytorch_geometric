@@ -8,12 +8,12 @@ import cupy
 import rmm
 import torch
 import torch.nn.functional as F
+from cugraph.testing.mg_utils import enable_spilling
 from cugraph_pyg.data import CuGraphStore
 from cugraph_pyg.loader import CuGraphNeighborLoader
 from ogb.nodeproppred import PygNodePropPredDataset
 from rmm.allocators.cupy import rmm_cupy_allocator
 from rmm.allocators.torch import rmm_torch_allocator
-from cugraph.testing.mg_utils import enable_spilling
 
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
