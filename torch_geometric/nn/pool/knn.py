@@ -232,8 +232,9 @@ class ApproxMIPSKNNIndex(KNNIndex):
 
     def _create_index(self, channels: int):
         import faiss
+
         # number of clusters
-        if 
+        if
         nlist = min(self.num_rhs_nodes // 1000, 1000)
         # Bits per sub-vector; this is a crucial parameter for the size of the code and the accuracy.
         m = 8
