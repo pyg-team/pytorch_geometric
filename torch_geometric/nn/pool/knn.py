@@ -265,7 +265,7 @@ class ApproxL2KNNIndex(ApproxKNNIndex):
             (default: :obj:`None`)
     """
     def __init__(self, emb: Optional[Tensor] = None):
-        super().__init__(emb=emb, "L2")
+        super().__init__(emb=emb, metric_type="L2")
 
 
 class ApproxMIPSKNNIndex(ApproxKNNIndex):
@@ -277,4 +277,4 @@ class ApproxMIPSKNNIndex(ApproxKNNIndex):
             (default: :obj:`None`)
     """
     def __init__(self, emb: Optional[Tensor] = None):
-        super().__init__(emb=emb, "MIPS")
+        super().__init__(emb=emb, metric_type="MIPS")
