@@ -217,6 +217,7 @@ class MIPSKNNIndex(KNNIndex):
         import faiss
         return faiss.IndexFlatIP(channels)
 
+
 class ApproxKNNIndex(KNNIndex):
     r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
     the maximum inner product via the :obj:`faiss` library.
@@ -231,7 +232,7 @@ class ApproxKNNIndex(KNNIndex):
         self.metric_type = metric_type
         if emb is not None:
             self.num_rhs_nodes = emb.size(0)
-        
+
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
@@ -250,8 +251,10 @@ class ApproxKNNIndex(KNNIndex):
             metric_to_use = faiss.METRIC_L2
         else:
             metric_to_use = faiss.METRIC_INNER_PRODUCT
-        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, m, n, metric)
+        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, m, n,
+                                 metric)
         return index
+
 
 class ApproxL2KNNIndex(ApproxKNNIndex):
     r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
@@ -263,6 +266,7 @@ class ApproxL2KNNIndex(ApproxKNNIndex):
     """
     def __init__(self, emb: Optional[Tensor] = None):
         super().__init__(emb=emb, "L2")
+
 
 class ApproxMIPSKNNIndex(ApproxKNNIndex):
     r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
