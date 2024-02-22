@@ -36,15 +36,23 @@ dist.init_process_group(
 device = torch.device(f'xpu:{mpi_rank}')
 my_rank = dist.get_rank()
 my_size = dist.get_world_size()
-logging.info(f"{device}: ddp connected \n my rank = {my_rank}  my size = {my_size})")
+logging.info(f"{device}: ddp connected my rank = {my_rank}  my size = {my_size})")
 dist.barrier()
 
 
-test_tensor = torch.tensor(rank).to(device)
-logging.info(test_tensor)
-x = dist.all_reduce(test_tensor)
-dist.barrier()
+# test_tensor = torch.tensor(rank).to(device)
+# logging.info(test_tensor)
+# x = dist.all_reduce(test_tensor)
+# dist.barrier()
+# logging.info(f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> RESULT received: {x}, (expected: {sum(range(world_size))})")
 
-logging.info(f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> RESULT received: {x}, (expected: {sum(range(world_size))})")
+x = torch.ones([2, 2])
+y = torch.ones([4, 4])
+with torch.autograd.profiler.profile(record_shapes=True) as prof:
+    for _ in range(10):
+        dist.all_reduce(x)
+        dist.all_reduce(y)
+dist.barrier()
+print(prof.key_averages(group_by_input_shape=True).table(sort_by="self_cpu_time_total"))
 
 dist.destroy_process_group()
