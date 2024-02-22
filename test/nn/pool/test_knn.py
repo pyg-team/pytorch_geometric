@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.nn import L2KNNIndex, MIPSKNNIndex
+from torch_geometric.nn import L2KNNIndex, MIPSKNNIndex, ApproxMIPSKNNIndex
 from torch_geometric.testing import withCUDA, withPackage
 
 
@@ -52,6 +52,28 @@ def test_MIPS_knn(device, k):
     assert torch.allclose(out.score, score[:, :k])
     assert torch.equal(out.index, index[:, :k])
 
+@withCUDA
+@withPackage('faiss')
+@pytest.mark.parametrize('k', [2])
+def test_Approx_MIPS_knn(device, k):
+    lhs = torch.randn(10, 16, device=device)
+    rhs = torch.randn(100, 16, device=device)
+
+    index = ApproxMIPSKNNIndex(rhs)
+    assert index.get_emb().device == device
+    assert torch.equal(index.get_emb(), rhs)
+
+    out = index.search(lhs, k)
+    assert out.score.device == device
+    assert out.index.device == device
+    assert out.score.size() == (10, k)
+    assert out.index.size() == (10, k)
+
+    mat = lhs @ rhs.t()
+    score, index = mat.sort(dim=-1, descending=True)
+
+    assert torch.allclose(out.score, score[:, :k])
+    assert torch.equal(out.index, index[:, :k])
 
 @withCUDA
 @withPackage('faiss')
