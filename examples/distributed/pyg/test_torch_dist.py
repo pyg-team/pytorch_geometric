@@ -18,7 +18,7 @@ mpi_rank = int(os.environ.get("PMI_RANK", -1))
 mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
 rank = node_rank * mpi_world_size + mpi_rank
 world_size = num_nodes * mpi_world_size
-# os.environ["RANK"] = str(rank)
+os.environ["RANK"] = str(rank)
 os.environ["WORLD_SIZE"] = str(world_size)
 
 logging.info(
@@ -28,12 +28,17 @@ logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_
 
 dist.init_process_group(
     backend="ccl",
-    rank=rank,
-    world_size=world_size,
-    init_method=f"tcp://{master_addr}:{master_port}",
+    # rank=rank,
+    # world_size=world_size,
+    # init_method=f"tcp://{master_addr}:{master_port}",
 )
+
 device = torch.device(f'xpu:{mpi_rank}')
-logging.info(f"{device}: ddp connected")
+my_rank = dist.get_rank()
+my_size = dist.get_world_size()
+logging.info(f"{device}: ddp connected \n my rank = %d  my size = %d" % (my_rank, my_size))")
+dist.barrier()
+
 
 test_tensor = torch.tensor(rank).to(device)
 logging.info(test_tensor)
