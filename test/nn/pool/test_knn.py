@@ -55,7 +55,7 @@ def test_MIPS_knn(device, k):
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_L2_knn(device, k):
+def test_Approx_L2_knn(device, k):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 
