@@ -241,7 +241,7 @@ class ApproxKNNIndex(KNNIndex):
         # number of clusters
         nlist = min(self.num_rhs_nodes // 1000, 1000)
         # Bits per sub-vector,
-        # this is a crucial parameter for the size of the code and the accuracy.
+        # this is a crucial parameter for the size of the code & the accuracy.
         m = 8
         # The number of bits allocated for encoding each sub-vector
         # in the product quantization step
@@ -252,7 +252,7 @@ class ApproxKNNIndex(KNNIndex):
         else:
             metric_to_use = faiss.METRIC_INNER_PRODUCT
         index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, m, n,
-                                 metric)
+                                 metric_to_use)
         return index
 
 
