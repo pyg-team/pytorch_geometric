@@ -35,12 +35,9 @@ dist.init_process_group(
 device = torch.device(f'xpu:{mpi_rank}')
 logging.info(f"{device}: ddp connected")
 torch.xpu.synchronize()
-dist.barrier()
-test_tensor = torch.tensor(rank).to(device)
-# x = dist.all_reduce(test_tensor, op=dist.ReduceOp.SUM)
-# torch.xpu.synchronize()
 
-# print(x)
-logging.info(f"Test value: {test_tensor.item()}, expected: {sum(range(world_size))}")
-dist.barrier()
+test_tensor = torch.tensor(rank).to(device)
+x = dist.all_reduce(test_tensor, op=dist.ReduceOp.SUM)
+logging.info(f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> RESULT received: {x}, (expected: {sum(range(world_size))})")
+
 dist.destroy_process_group()
