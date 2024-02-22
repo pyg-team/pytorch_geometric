@@ -4,10 +4,12 @@ import argparse
 import intel_extension_for_pytorch as ipex
 import oneccl_bindings_for_pytorch  # noqa
 import torch.distributed as dist
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 num_nodes = 2
 master_addr = "10.211.176.210" #DUT1005
-master_port = "11111"# '11111'
+master_port = "11111" # '11111'
 os.environ["MASTER_ADDR"] = master_addr
 os.environ["MASTER_PORT"] = master_port
 
@@ -19,10 +21,10 @@ world_size = num_nodes * mpi_world_size
 # os.environ["RANK"] = str(rank)
 os.environ["WORLD_SIZE"] = str(world_size)
 
-print(
+logging.info(
     f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> rank={rank}"
 )
-print(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
+logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
 
 dist.init_process_group(
     backend="ccl",
@@ -31,7 +33,7 @@ dist.init_process_group(
     init_method=f"tcp://{master_addr}:{master_port}",
 )
 device = torch.device(f'xpu:{mpi_rank}')
-print(f"{device}: ddp connected")
+logging.info(f"{device}: ddp connected")
 torch.xpu.synchronize()
 dist.barrier()
 
@@ -41,6 +43,6 @@ x = dist.all_reduce(test_tensor, op=dist.ReduceOp.SUM)
 torch.xpu.synchronize()
 
 # print(x)
-print(f"Test value: {test_tensor.item()}, expected: {sum(range(world_size))}")
+logging.DEBUG(f"Test value: {test_tensor.item()}, expected: {sum(range(world_size))}")
 # dist.barrier()
 # dist.destroy_process_group()
