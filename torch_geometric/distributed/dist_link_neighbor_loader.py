@@ -3,22 +3,22 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import torch
 
 from torch_geometric.distributed import (
+    DistContext,
     DistLoader,
     DistNeighborSampler,
     LocalFeatureStore,
     LocalGraphStore,
 )
-from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.loader import LinkLoader
 from torch_geometric.sampler.base import NegativeSampling, SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
-    r"""A distributed loader that preform sampling from edges.
+    r"""A distributed loader that performs sampling from edges.
 
     Args:
-        data: A (:class:`~torch_geometric.data.FeatureStore`,
+        data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]):
             The number of neighbors to sample for each node in each iteration.
@@ -35,8 +35,8 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             maximum size of the asynchronous processing queue.
             (default: :obj:`1`)
 
-        All other arguments follow the interface of
-        :class:`torch_geometric.loader.LinkNeighborLoader`.
+    All other arguments follow the interface of
+    :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
     def __init__(
         self,
@@ -58,7 +58,8 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         concurrency: int = 1,
-        filter_per_worker: Optional[bool] = None,
+        num_rpc_threads: int = 16,
+        filter_per_worker: Optional[bool] = False,
         async_sampling: bool = True,
         device: Optional[torch.device] = None,
         **kwargs,
@@ -100,6 +101,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             master_port=master_port,
             current_ctx=current_ctx,
             dist_sampler=dist_sampler,
+            num_rpc_threads=num_rpc_threads,
             **kwargs,
         )
         LinkLoader.__init__(
@@ -108,12 +110,13 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             link_sampler=dist_sampler,
             edge_label_index=edge_label_index,
             edge_label=edge_label,
+            edge_label_time=edge_label_time,
             neg_sampling=neg_sampling,
             neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
             filter_per_worker=filter_per_worker,
             worker_init_fn=self.worker_init_fn,
-            transform_sampler_output=self.channel_get,
+            transform_sampler_output=self.channel_get if channel else None,
             **kwargs,
         )
 

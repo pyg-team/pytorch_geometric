@@ -1,0 +1,43 @@
+name: Testing distributed PyG
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  dist_pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 40
+
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            torch_geometric/distributed/**
+            test/distributed/**
+
+      - name: Setup packages
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        uses: ./.github/actions/setup
+
+      - name: Install main package
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        run: |
+          pip install -e .[test]
+
+      - name: Run tests
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        timeout-minutes: 10
+        run: |
+          DIST_TEST=1 pytest test/distributed
+        shell: bash

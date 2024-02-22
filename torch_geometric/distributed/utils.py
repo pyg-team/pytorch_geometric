@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -5,9 +6,32 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
+from torch_geometric.distributed.local_feature_store import LocalFeatureStore
+from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.typing import EdgeType, NodeType
+
+
+@dataclass
+class DistEdgeHeteroSamplerInput:
+    r"""The sampling input of
+    :meth:`~torch_geometric.dstributed.DistNeighborSampler.node_sample` used
+    during distributed heterogeneous link sampling when source and target node
+    types of an input edge are different.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        node_dict (Dict[NodeType, torch.Tensor]): The indices of seed nodes of
+            a given node types to start sampling from.
+        time_dict (Dict[NodeType, torch.Tensor], optional): The timestamp for
+            the seed nodes of a given node types. (default: :obj:`None`)
+        input_type (str, optional): The input node type. (default: :obj:`None`)
+    """
+    input_id: Optional[Tensor]
+    node_dict: Dict[NodeType, Tensor]
+    time_dict: Optional[Dict[NodeType, Tensor]] = None
+    input_type: Optional[EdgeType] = None
 
 
 class NodeDict:
@@ -109,7 +133,7 @@ def filter_dist_store(
     """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
-    nfeats, nlabels, efeats = meta[-3:]
+    nfeats, labels, efeats = meta[-3:]
 
     # Filter edge storage:
     required_edge_attrs = []
@@ -138,8 +162,8 @@ def filter_dist_store(
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
 
-    if nlabels:
-        data[input_type].y = nlabels[input_type]
+    if labels:
+        data[input_type].y = labels[input_type]
 
     return data
 

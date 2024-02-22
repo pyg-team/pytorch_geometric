@@ -8,6 +8,14 @@ from torch.distributed import rpc
 
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 
+try:
+    from torch._C._distributed_rpc import _is_current_rpc_agent_set
+except Exception:
+
+    def _is_current_rpc_agent_set() -> bool:
+        return False
+
+
 _rpc_init_lock = threading.RLock()
 
 
@@ -75,7 +83,8 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
                  timeout: float = 240.0):
     with _rpc_init_lock:
         if rpc_is_initialized():
-            logging.info(f"Shutdown rpc {id} (graceful={graceful})")
+            logging.info(f"Shutdown RPC in {id}"
+                         f"{' gracefully' if graceful else ''}")
             rpc.shutdown(graceful, timeout)
         else:
             logging.info(f'RPC in {id} not initialized.')
