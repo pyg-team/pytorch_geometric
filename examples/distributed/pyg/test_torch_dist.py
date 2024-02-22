@@ -36,7 +36,7 @@ dist.init_process_group(
 device = torch.device(f'xpu:{mpi_rank}')
 my_rank = dist.get_rank()
 my_size = dist.get_world_size()
-logging.info(f"{device}: ddp connected \n my rank = %d  my size = %d" % (my_rank, my_size))")
+logging.info(f"{device}: ddp connected \n my rank = {my_rank}  my size = {my_size})")
 dist.barrier()
 
 
