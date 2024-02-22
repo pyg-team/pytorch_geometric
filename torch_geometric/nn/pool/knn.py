@@ -216,3 +216,30 @@ class MIPSKNNIndex(KNNIndex):
     def _create_index(self, channels: int):
         import faiss
         return faiss.IndexFlatIP(channels)
+
+class ApproxMIPSKNNIndex(KNNIndex):
+    r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
+    the maximum inner product via the :obj:`faiss` library.
+
+    Args:
+        emb (torch.Tensor, optional): The data points to add.
+            (default: :obj:`None`)
+    """
+    def __init__(self, emb: Optional[Tensor] = None):
+        if emb is not None:
+            self.num_rhs_nodes = emb.size(0)
+        super().__init__(index_factory=None, emb=emb)
+
+    def _create_index(self, channels: int):
+        import faiss
+        # number of clusters
+        if 
+        nlist = min(self.num_rhs_nodes // 1000, 1000)
+        # Bits per sub-vector; this is a crucial parameter for the size of the code and the accuracy.
+        m = 8
+        # The number of bits allocated for encoding each sub-vector in the product quantization step
+        n = 8
+        quantizer = faiss.IndexFlatIP(channels)
+        metric = faiss.METRIC_INNER_PRODUCT
+        index = faiss.IndexIVFPQ(quantizer, args.channels, nlist, m, n, metric)
+        return index
