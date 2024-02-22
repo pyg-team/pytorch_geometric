@@ -6,7 +6,7 @@ import oneccl_bindings_for_pytorch  # noqa
 import torch.distributed as dist
 
 num_nodes = 2
-master_addr = "10.211.176.217" #'10.211.176.217'
+master_addr = "10.211.176.210" #DUT1005
 master_port = "11111"# '11111'
 os.environ["MASTER_ADDR"] = master_addr
 os.environ["MASTER_PORT"] = master_port
