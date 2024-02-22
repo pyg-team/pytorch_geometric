@@ -217,6 +217,7 @@ class MIPSKNNIndex(KNNIndex):
         import faiss
         return faiss.IndexFlatIP(channels)
 
+
 class ApproxMIPSKNNIndex(KNNIndex):
     r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
     the maximum inner product via the :obj:`faiss` library.
