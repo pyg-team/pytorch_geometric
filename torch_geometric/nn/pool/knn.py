@@ -227,8 +227,18 @@ class ApproxKNNIndex(KNNIndex):
             (default: :obj:`None`)
         metric_type (str, optional): "L2" or "MIPS"
             (default: :obj:`"L2"`)
+        m (int, optional): Bits per sub-vector.
+        This is a crucial parameter for the size
+        of the code & the accuracy. 
+            (default: :obj:`8`)
+        n (int, optional): The number of bits allocated
+        for encoding each sub-vector in the product
+        quantization step
+            (default: :obj:`8`)
     """
-    def __init__(self, emb: Optional[Tensor] = None, metric_type="L2"):
+    def __init__(self, emb: Optional[Tensor] = None, metric_type="L2", m=8, n=8):
+        self.m = m
+        self.n = n
         self.metric_type = metric_type
         if emb is not None:
             self.num_rhs_nodes = emb.size(0)
@@ -240,18 +250,12 @@ class ApproxKNNIndex(KNNIndex):
 
         # number of clusters
         nlist = min(self.num_rhs_nodes // 1000, 1000)
-        # Bits per sub-vector,
-        # this is a crucial parameter for the size of the code & the accuracy.
-        m = 8
-        # The number of bits allocated for encoding each sub-vector
-        # in the product quantization step
-        n = 8
         index_2_quantize = faiss.IndexFlatIP(channels)
         if self.metric_type.lower() == "l2":
             metric_to_use = faiss.METRIC_L2
         else:
             metric_to_use = faiss.METRIC_INNER_PRODUCT
-        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, m, n,
+        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, self.m, self.n,
                                  metric_to_use)
         return index
 
