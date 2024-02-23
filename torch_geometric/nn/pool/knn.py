@@ -229,14 +229,15 @@ class ApproxKNNIndex(KNNIndex):
             (default: :obj:`"L2"`)
         m (int, optional): Bits per sub-vector.
         This is a crucial parameter for the size
-        of the code & the accuracy. 
+        of the code & the accuracy.
             (default: :obj:`8`)
         n (int, optional): The number of bits allocated
         for encoding each sub-vector in the product
         quantization step
             (default: :obj:`8`)
     """
-    def __init__(self, emb: Optional[Tensor] = None, metric_type="L2", m=8, n=8):
+    def __init__(self, emb: Optional[Tensor] = None, metric_type="L2", m=8,
+                 n=8):
         self.m = m
         self.n = n
         self.metric_type = metric_type
@@ -255,8 +256,8 @@ class ApproxKNNIndex(KNNIndex):
             metric_to_use = faiss.METRIC_L2
         else:
             metric_to_use = faiss.METRIC_INNER_PRODUCT
-        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, self.m, self.n,
-                                 metric_to_use)
+        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, self.m,
+                                 self.n, metric_to_use)
         return index
 
 
