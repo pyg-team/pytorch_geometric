@@ -93,3 +93,12 @@ def test_graph_conv():
             assert torch.allclose(jit((x1, None), adj3.t()), out2, atol=1e-6)
             assert torch.allclose(jit((x1, x2), adj4.t()), out3, atol=1e-6)
             assert torch.allclose(jit((x1, None), adj4.t()), out4, atol=1e-6)
+
+
+class EdgeGraphConv(GraphConv):
+    def message(self, x_j, edge_weight):
+        return x_j if edge_weight is None else edge_weight * x_j
+
+
+def test_inheritance():
+    conv = EdgeGraphConv(16, 16)
