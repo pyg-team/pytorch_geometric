@@ -39,7 +39,6 @@ jobs:
           torch-version: nightly
 
       - name: Install mpmath
-        if: ${{ matrix.torch-version == 'nightly' }}
         run: |
           pip install mpmath==1.3.0
 
