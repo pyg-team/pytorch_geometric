@@ -79,9 +79,6 @@ def test_approx_l2(device, k):
     assert out.index.size() == (10, k)
     assert out.index.min() >= 0 and out.index.max() < 10_000
 
-    mat = torch.linalg.norm(lhs.unsqueeze(1) - rhs.unsqueeze(0), dim=-1).pow(2)
-    score, index = mat.sort(dim=-1)
-
 
 @withCUDA
 @withPackage('faiss')
