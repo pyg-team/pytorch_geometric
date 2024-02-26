@@ -7,6 +7,7 @@ from torch.nn import Parameter as Param
 
 import torch_geometric.backend
 import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
@@ -20,19 +21,7 @@ from torch_geometric.utils import index_sort, one_hot, scatter, spmm
 from torch_geometric.utils.sparse import index2ptr
 
 
-@torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
-    # type: (Tensor, Tensor) -> Tensor
-    pass
-
-
-@torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
-    # type: (SparseTensor, Tensor) -> SparseTensor
-    pass
-
-
-def masked_edge_index(edge_index, edge_mask):
+def masked_edge_index(edge_index: Adj, edge_mask: Tensor) -> Adj:
     if isinstance(edge_index, Tensor):
         return edge_index[:, edge_mask]
     return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout='coo')
@@ -41,7 +30,7 @@ def masked_edge_index(edge_index, edge_mask):
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
     Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper
+    <https://arxiv.org/abs/1703.06103>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot
@@ -252,7 +241,8 @@ class RGCNConv(MessagePassing):
                 use_segment_matmul = self._use_segment_matmul_heuristic_output
 
             if (use_segment_matmul and torch_geometric.typing.WITH_SEGMM
-                    and self.num_bases is None and x_l.is_floating_point()
+                    and not is_compiling() and self.num_bases is None
+                    and x_l.is_floating_point()
                     and isinstance(edge_index, Tensor)):
 
                 if not self.is_sorted:
@@ -292,14 +282,16 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if torch_geometric.typing.WITH_SEGMM and edge_type_ptr is not None:
+        if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
+                and edge_type_ptr is not None):
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        adj_t = adj_t.set_value(None)
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None)
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

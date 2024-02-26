@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.utils import scatter, segment, to_dense_batch
 
@@ -68,7 +70,8 @@ class Aggregation(torch.nn.Module):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             index (torch.Tensor, optional): The indices of elements for
@@ -168,11 +171,14 @@ class Aggregation(torch.nn.Module):
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
-        if ptr is not None:
+        if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
+                and not is_compiling()):
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment(x, ptr, reduce=reduce)
 
-        assert index is not None
+        if index is None:
+            raise NotImplementedError(
+                "Aggregation requires 'index' to be specified")
         return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(

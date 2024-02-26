@@ -1,12 +1,9 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import InMemoryDataset, download_url, extract_tar
-from torch_geometric.io import read_planetoid_data
+from torch_geometric.io import fs, read_planetoid_data
 
 
 class NELL(InMemoryDataset):
@@ -20,9 +17,7 @@ class NELL(InMemoryDataset):
     .. note::
 
         Entity nodes are described by sparse feature vectors of type
-        :class:`torch_sparse.SparseTensor`, which can be either used directly,
-        or can be converted via :obj:`data.x.to_dense()`,
-        :obj:`data.x.to_scipy()` or :obj:`data.x.to_torch_sparse_csr_tensor()`.
+        :class:`torch.sparse_csr_tensor`.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -34,6 +29,8 @@ class NELL(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -58,9 +55,11 @@ class NELL(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -71,14 +70,14 @@ class NELL(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_tar(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'nell_data'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, 'nell.0.001')
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

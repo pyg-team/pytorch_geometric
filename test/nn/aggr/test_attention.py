@@ -15,6 +15,7 @@ def test_attentional_aggregation():
     gate_nn = MLP([channels, 1], act='relu')
     nn = MLP([channels, channels], act='relu')
     aggr = AttentionalAggregation(gate_nn, nn)
+    aggr.reset_parameters()
     assert str(aggr) == (f'AttentionalAggregation(gate_nn=MLP({channels}, 1), '
                          f'nn=MLP({channels}, {channels}))')
 
@@ -22,7 +23,7 @@ def test_attentional_aggregation():
     assert out.size() == (3, channels)
 
     if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(ImportError, match="'segment' requires"):
+        with pytest.raises(NotImplementedError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))

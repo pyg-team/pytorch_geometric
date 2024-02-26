@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import scipy.sparse as sp
@@ -9,10 +8,10 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
-from torch_geometric.typing import SparseTensor
+from torch_geometric.io import fs
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -34,6 +33,8 @@ class AttributedGraphDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -97,8 +98,6 @@ class AttributedGraphDataset(InMemoryDataset):
           - 2,000
           - 100
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     datasets = {
         'wiki': '1EPhlbziZTQv19OsTrKrAJwsElbVPEbiV',
         'cora': '1FyVnpdsTT-lhkVPotUW8OVeuCi1vi3Ey',
@@ -113,13 +112,19 @@ class AttributedGraphDataset(InMemoryDataset):
         'mag': '1ggraUMrQgdUyA3DjSRzzqMv0jFkU65V5',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -137,9 +142,9 @@ class AttributedGraphDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        url = self.url.format(self.datasets[self.name])
-        path = download_url(url, self.raw_dir)
+    def download(self) -> None:
+        id = self.datasets[self.name]
+        path = download_google_url(id, self.raw_dir, 'data.zip')
         extract_zip(path, self.raw_dir)
         os.unlink(path)
         path = osp.join(self.raw_dir, f'{self.name}.attr')
@@ -147,14 +152,19 @@ class AttributedGraphDataset(InMemoryDataset):
             path = osp.join(self.raw_dir, self.name)
         for name in self.raw_file_names:
             os.rename(osp.join(path, name), osp.join(self.raw_dir, name))
-        shutil.rmtree(path)
+        fs.rm(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
-        x = sp.load_npz(self.raw_paths[0])
+        x = sp.load_npz(self.raw_paths[0]).tocsr()
         if x.shape[-1] > 10000 or self.name == 'mag':
-            x = SparseTensor.from_scipy(x).to(torch.float)
+            x = torch.sparse_csr_tensor(
+                crow_indices=x.indptr,
+                col_indices=x.indices,
+                values=x.data,
+                size=x.shape,
+            )
         else:
             x = torch.from_numpy(x.todense()).to(torch.float)
 
@@ -163,8 +173,8 @@ class AttributedGraphDataset(InMemoryDataset):
         edge_index = torch.from_numpy(df.values).t().contiguous()
 
         with open(self.raw_paths[2], 'r') as f:
-            ys = f.read().split('\n')[:-1]
-            ys = [[int(y) - 1 for y in row.split()[1:]] for row in ys]
+            rows = f.read().split('\n')[:-1]
+            ys = [[int(y) - 1 for y in row.split()[1:]] for row in rows]
             multilabel = max([len(y) for y in ys]) > 1
 
         if not multilabel:
@@ -178,7 +188,7 @@ class AttributedGraphDataset(InMemoryDataset):
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}()'

@@ -28,7 +28,6 @@ def shuffle_node(
     :rtype: (:class:`FloatTensor`, :class:`LongTensor`)
 
     Example:
-
         >>> # Standard case
         >>> x = torch.tensor([[0, 1, 2],
         ...                   [3, 4, 5],
@@ -102,7 +101,6 @@ def mask_feature(
     :rtype: (:class:`FloatTensor`, :class:`BoolTensor`)
 
     Examples:
-
         >>> # Masked features are column-wise sampled
         >>> x = torch.tensor([[1, 2, 3],
         ...                   [4, 5, 6],
@@ -156,7 +154,7 @@ def mask_feature(
 
 
 def add_random_edge(
-    edge_index,
+    edge_index: Tensor,
     p: float = 0.5,
     force_undirected: bool = False,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
@@ -184,7 +182,6 @@ def add_random_edge(
     :rtype: (:class:`LongTensor`, :class:`LongTensor`)
 
     Examples:
-
         >>> # Standard case
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])

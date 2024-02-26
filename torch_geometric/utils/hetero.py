@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -9,16 +9,26 @@ from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
-def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
+def group_hetero_graph(
+    edge_index_dict: Dict[EdgeType, Tensor],
+    num_nodes_dict: Optional[Dict[NodeType, int]] = None,
+) -> Tuple[
+        Tensor,
+        Tensor,
+        Tensor,
+        Tensor,
+        Dict[Union[str, int], Tensor],
+        Dict[Union[NodeType, EdgeType], int],
+]:
     num_nodes_dict = maybe_num_nodes_dict(edge_index_dict, num_nodes_dict)
 
     tmp = list(edge_index_dict.values())[0]
 
-    key2int = {}
+    key2int: Dict[Union[NodeType, EdgeType], int] = {}
 
     cumsum, offset = 0, {}  # Helper data.
     node_types, local_node_indices = [], []
-    local2global = {}
+    local2global: Dict[Union[str, int], Tensor] = {}
     for i, (key, N) in enumerate(num_nodes_dict.items()):
         key2int[key] = i
         node_types.append(tmp.new_full((N, ), i))
@@ -41,8 +51,14 @@ def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
     edge_index = torch.cat(edge_indices, dim=-1)
     edge_type = torch.cat(edge_types, dim=0)
 
-    return (edge_index, edge_type, node_type, local_node_idx, local2global,
-            key2int)
+    return (
+        edge_index,
+        edge_type,
+        node_type,
+        local_node_idx,
+        local2global,
+        key2int,
+    )
 
 
 def get_unused_node_types(node_types: List[NodeType],
@@ -51,7 +67,10 @@ def get_unused_node_types(node_types: List[NodeType],
     return set(node_types) - set(dst_node_types)
 
 
-def check_add_self_loops(module: torch.nn.Module, edge_types: List[EdgeType]):
+def check_add_self_loops(
+    module: torch.nn.Module,
+    edge_types: List[EdgeType],
+) -> None:
     is_bipartite = any([key[0] != key[-1] for key in edge_types])
     if is_bipartite and getattr(module, 'add_self_loops', False):
         raise ValueError(
@@ -65,6 +84,7 @@ def construct_bipartite_edge_index(
     src_offset_dict: Dict[EdgeType, int],
     dst_offset_dict: Dict[NodeType, int],
     edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    num_nodes: Optional[int] = None,
 ) -> Tuple[Adj, Optional[Tensor]]:
     """Constructs a tensor of edge indices by concatenating edge indices
     for each edge type. The edge indices are increased by the offset of the
@@ -83,6 +103,8 @@ def construct_bipartite_edge_index(
         edge_attr_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
             dictionary holding edge features for each individual edge type.
             (default: :obj:`None`)
+        num_nodes (int, optional): The final number of nodes in the bipartite
+            adjacency matrix. (default: :obj:`None`)
     """
     is_sparse_tensor = False
     edge_indices: List[Tensor] = []
@@ -105,12 +127,12 @@ def construct_bipartite_edge_index(
 
         if edge_attr_dict is not None:
             if isinstance(edge_attr_dict, ParameterDict):
-                edge_attr = edge_attr_dict['__'.join(edge_type)]
+                value = edge_attr_dict['__'.join(edge_type)]
             else:
-                edge_attr = edge_attr_dict[edge_type]
-            if edge_attr.size(0) != edge_index.size(1):
-                edge_attr = edge_attr.expand(edge_index.size(1), -1)
-            edge_attrs.append(edge_attr)
+                value = edge_attr_dict[edge_type]
+            if value.size(0) != edge_index.size(1):
+                value = value.expand(edge_index.size(1), -1)
+            edge_attrs.append(value)
 
     edge_index = torch.cat(edge_indices, dim=1)
 
@@ -119,11 +141,11 @@ def construct_bipartite_edge_index(
         edge_attr = torch.cat(edge_attrs, dim=0)
 
     if is_sparse_tensor:
-        # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
             row=edge_index[1],
             col=edge_index[0],
             value=edge_attr,
+            sparse_sizes=(num_nodes, num_nodes),
         )
 
     return edge_index, edge_attr

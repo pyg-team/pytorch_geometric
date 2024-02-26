@@ -1,4 +1,3 @@
-import copy
 from typing import Callable, Optional, Tuple, Union
 
 import torch
@@ -89,7 +88,8 @@ class ASAPooling(torch.nn.Module):
         edge_weight: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node feature matrix.
             edge_index (torch.Tensor): The edge indices.
@@ -162,14 +162,6 @@ class ASAPooling(torch.nn.Module):
                 edge_index, edge_weight)
 
         return x, edge_index, edge_weight, batch, perm
-
-    @torch.jit.unused
-    def jittable(self) -> 'ASAPooling':
-        out = copy.deepcopy(self)
-        out.gnn_score = out.gnn_score.jittable()
-        if out.gnn_intra_cluster is not None:
-            out.gnn_intra_cluster = out.gnn_intra_cluster.jittable()
-        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

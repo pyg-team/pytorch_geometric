@@ -20,7 +20,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v34
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             benchmark/**
@@ -38,12 +38,17 @@ jobs:
         with:
           torch-version: nightly
 
+      - name: Install mpmath
+        run: |
+          pip install mpmath==1.3.0
+
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[full,test]
+          pip install -e .[test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
           pytest

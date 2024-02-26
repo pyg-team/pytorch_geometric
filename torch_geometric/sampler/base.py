@@ -183,6 +183,14 @@ class SamplerOutput(CastMixin):
             per hop. (default: :obj:`None`)
         num_sampled_edges (List[int], optional): The number of sampled edges
             per hop. (default: :obj:`None`)
+        orig_row (torch.Tensor, optional): The original source node indices
+            returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
+        orig_col (torch.Tensor, optional): The original destination node
+            indices indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -193,14 +201,30 @@ class SamplerOutput(CastMixin):
     batch: OptTensor = None
     num_sampled_nodes: Optional[List[int]] = None
     num_sampled_edges: Optional[List[int]] = None
+    orig_row: Tensor = None
+    orig_col: Tensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(
+        self,
+        keep_orig_edges: bool = False,
+    ) -> 'SamplerOutput':
         r"""Converts the sampled subgraph into a bidirectional variant, in
-        which all sampled edges are guaranteed to be bidirectional."""
+        which all sampled edges are guaranteed to be bidirectional.
+
+        Args:
+            keep_orig_edges (bool, optional): If specified, directional edges
+                are still maintained. (default: :obj:`False`)
+        """
         out = copy.copy(self)
+
+        if keep_orig_edges:
+            out.orig_row = self.row
+            out.orig_col = self.col
+        else:
+            out.num_sampled_nodes = out.num_sampled_edges = None
 
         out.row, out.col, out.edge = to_bidirectional(
             row=self.row,
@@ -210,7 +234,6 @@ class SamplerOutput(CastMixin):
             edge_id=self.edge,
             rev_edge_id=self.edge,
         )
-        out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
@@ -247,6 +270,14 @@ class HeteroSamplerOutput(CastMixin):
         num_sampled_edges (Dict[EdgeType, List[int]], optional): The number of
             sampled edges for each edge type and each layer.
             (default: :obj:`None`)
+        orig_row (Dict[EdgeType, torch.Tensor], optional): The original source
+            node indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
+        orig_col (Dict[EdgeType, torch.Tensor], optional): The original
+            destination node indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -257,17 +288,36 @@ class HeteroSamplerOutput(CastMixin):
     batch: Optional[Dict[NodeType, Tensor]] = None
     num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
     num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
+    orig_row: Optional[Dict[EdgeType, Tensor]] = None
+    orig_col: Optional[Dict[EdgeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(
+        self,
+        keep_orig_edges: bool = False,
+    ) -> 'SamplerOutput':
         r"""Converts the sampled subgraph into a bidirectional variant, in
-        which all sampled edges are guaranteed to be bidirectional."""
+        which all sampled edges are guaranteed to be bidirectional.
+
+        Args:
+            keep_orig_edges (bool, optional): If specified, directional edges
+                are still maintained. (default: :obj:`False`)
+        """
         out = copy.copy(self)
         out.row = copy.copy(self.row)
         out.col = copy.copy(self.col)
         out.edge = copy.copy(self.edge)
+
+        if keep_orig_edges:
+            out.orig_row = {}
+            out.orig_col = {}
+            for key in self.row.keys():
+                out.orig_row[key] = self.row[key]
+                out.orig_col[key] = self.col[key]
+        else:
+            out.num_sampled_nodes = out.num_sampled_edges = None
 
         src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
@@ -322,8 +372,6 @@ class HeteroSamplerOutput(CastMixin):
                     warnings.warn(f"Cannot convert to bidirectional graph "
                                   f"since the edge type {edge_type} does not "
                                   f"seem to have a reverse edge type")
-
-        out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
@@ -569,6 +617,7 @@ class BaseSampler(ABC):
 
         Args:
             index (NodeSamplerInput): The node sampler input object.
+            **kwargs (optional): Additional keyword arguments.
         """
         raise NotImplementedError
 
@@ -602,5 +651,6 @@ class BaseSampler(ABC):
         tensor that defines the permutation from the edges in the original
         graph and the edges used in the sampler. If no such permutation was
         applied, :obj:`None` is returned. For heterogeneous graphs, the
-        expected return type is a permutation tensor for each edge type."""
+        expected return type is a permutation tensor for each edge type.
+        """
         return None

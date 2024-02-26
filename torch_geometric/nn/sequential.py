@@ -1,16 +1,19 @@
-import os
 import os.path as osp
-from typing import Callable, List, NamedTuple, Tuple, Union
-from uuid import uuid1
+import random
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
-from torch_geometric.nn.conv.utils.jit import class_from_module_repr
+from torch_geometric.inspector import split, type_repr
+from torch_geometric.template import module_from_template
 
 
-class HeaderDesc(NamedTuple):
-    args: List[str]
-    output: List[str]
+class Child(NamedTuple):
+    name: str
+    module: Callable
+    param_names: List[str]
+    return_names: List[str]
 
 
 def Sequential(
@@ -19,9 +22,10 @@ def Sequential(
 ) -> torch.nn.Module:
     r"""An extension of the :class:`torch.nn.Sequential` container in order to
     define a sequential GNN model.
+
     Since GNN operators take in multiple input arguments,
-    :class:`torch_geometric.nn.Sequential` expects both global input
-    arguments, and function header definitions of individual operators.
+    :class:`torch_geometric.nn.Sequential` additionally expects both global
+    input arguments, and function header definitions of individual operators.
     If omitted, an intermediate module will operate on the *output* of its
     preceding module:
 
@@ -38,9 +42,9 @@ def Sequential(
             Linear(64, out_channels),
         ])
 
-    where :obj:`'x, edge_index'` defines the input arguments of :obj:`model`,
+    Here, :obj:`'x, edge_index'` defines the input arguments of :obj:`model`,
     and :obj:`'x, edge_index -> x'` defines the function header, *i.e.* input
-    arguments *and* return types, of :class:`~torch_geometric.nn.conv.GCNConv`.
+    arguments *and* return types of :class:`~torch_geometric.nn.conv.GCNConv`.
 
     In particular, this also allows to create more sophisticated models,
     such as utilizing :class:`~torch_geometric.nn.models.JumpingKnowledge`:
@@ -70,62 +74,74 @@ def Sequential(
             :obj:`OrderedDict` of modules (and function header definitions) can
             be passed.
     """
-    try:
-        from jinja2 import Template
-    except ImportError:
-        raise ModuleNotFoundError(
-            "No module named 'jinja2' found on this machine. "
-            "Run 'pip install jinja2' to install the library.")
+    signature = input_args.split('->')
+    if len(signature) == 1:
+        input_args = signature[0]
+        return_type = type_repr(Tensor, globals())
+    elif len(signature) == 2:
+        input_args, return_type = signature[0], signature[1].strip()
+    else:
+        raise ValueError(f"Failed to parse arguments (got '{input_args}')")
 
-    input_args = [x.strip() for x in input_args.split(',')]
+    input_types = split(input_args, sep=',')
+    if len(input_types) == 0:
+        raise ValueError(f"Failed to parse arguments (got '{input_args}')")
 
     if not isinstance(modules, dict):
         modules = {f'module_{i}': module for i, module in enumerate(modules)}
+    if len(modules) == 0:
+        raise ValueError("'Sequential' expected a non-empty list of modules")
 
-    # We require the first entry of the input list to define arguments:
-    assert len(modules) > 0
-    first_module = list(modules.values())[0]
-    assert isinstance(first_module, (tuple, list))
+    children: List[Child] = []
+    for i, (name, module) in enumerate(modules.items()):
+        desc: Optional[str] = None
+        if isinstance(module, (tuple, list)):
+            if len(module) == 1:
+                module = module[0]
+            elif len(module) == 2:
+                module, desc = module
+            else:
+                raise ValueError(f"Expected tuple of length 2 (got {module})")
 
-    # A list holding the callable function and the input and output names:
-    calls: List[Tuple[str, Callable, List[str], List[str]]] = []
+        if i == 0 and desc is None:
+            raise ValueError("Requires signature for first module")
+        if not callable(module):
+            raise ValueError(f"Expected callable module (got {module})")
+        if desc is not None and not isinstance(desc, str):
+            raise ValueError(f"Expected type hint representation (got {desc})")
 
-    for name, module in modules.items():
-        if isinstance(module, (tuple, list)) and len(module) >= 2:
-            module, desc = module[:2]
-            in_desc, out_desc = parse_desc(desc)
-        elif isinstance(module, (tuple, list)):
-            module = module[0]
-            in_desc = out_desc = calls[-1][-1]
+        if desc is not None:
+            signature = desc.split('->')
+            if len(signature) != 2:
+                raise ValueError(f"Failed to parse arguments (got '{desc}')")
+            param_names = [v.strip() for v in signature[0].split(',')]
+            return_names = [v.strip() for v in signature[1].split(',')]
+            child = Child(name, module, param_names, return_names)
         else:
-            in_desc = out_desc = calls[-1][-1]
+            param_names = children[-1].return_names
+            child = Child(name, module, param_names, param_names)
 
-        calls.append((name, module, in_desc, out_desc))
+        children.append(child)
 
-    root = os.path.dirname(osp.realpath(__file__))
-    with open(osp.join(root, 'sequential.jinja'), 'r') as f:
-        template = Template(f.read())
-
-    cls_name = f'Sequential_{uuid1().hex[:6]}'
-    module_repr = template.render(
-        cls_name=cls_name,
-        input_args=input_args,
-        calls=calls,
+    uid = '%06x' % random.randrange(16**6)
+    root_dir = osp.dirname(osp.realpath(__file__))
+    module = module_from_template(
+        module_name=f'torch_geometric.nn.sequential_{uid}',
+        template_path=osp.join(root_dir, 'sequential.jinja'),
+        tmp_dirname='sequential',
+        # Keyword arguments:
+        input_types=input_types,
+        return_type=return_type,
+        children=children,
     )
 
-    # Instantiate a class from the rendered module representation.
-    module = class_from_module_repr(cls_name, module_repr)()
-    module.module_headers = [
-        HeaderDesc(in_desc, out_desc) for _, _, in_desc, out_desc in calls
+    model = module.Sequential()
+    model._module_names = [child.name for child in children]
+    model._module_descs = [
+        f"{', '.join(child.param_names)} -> {', '.join(child.return_names)}"
+        for child in children
     ]
-    module._names = list(modules.keys())
-    for name, submodule, _, _ in calls:
-        setattr(module, name, submodule)
-    return module
+    for child in children:
+        setattr(model, child.name, child.module)
 
-
-def parse_desc(desc: str) -> Tuple[List[str], List[str]]:
-    in_desc, out_desc = desc.split('->')
-    in_desc = [x.strip() for x in in_desc.split(',')]
-    out_desc = [x.strip() for x in out_desc.split(',')]
-    return in_desc, out_desc
+    return model

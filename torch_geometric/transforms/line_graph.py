@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -9,7 +10,7 @@ from torch_geometric.utils import coalesce, cumsum, remove_self_loops, scatter
 @functional_transform('line_graph')
 class LineGraph(BaseTransform):
     r"""Converts a graph to its corresponding line-graph
-    (functional name: :obj:`line_graph`):
+    (functional name: :obj:`line_graph`).
 
     .. math::
         L(\mathcal{G}) &= (\mathcal{V}^{\prime}, \mathcal{E}^{\prime})
@@ -31,12 +32,14 @@ class LineGraph(BaseTransform):
         force_directed (bool, optional): If set to :obj:`True`, the graph will
             be always treated as a directed graph. (default: :obj:`False`)
     """
-    def __init__(self, force_directed: bool = False):
+    def __init__(self, force_directed: bool = False) -> None:
         self.force_directed = force_directed
 
     def forward(self, data: Data) -> Data:
-        N = data.num_nodes
+        assert data.edge_index is not None
         edge_index, edge_attr = data.edge_index, data.edge_attr
+        N = data.num_nodes
+
         edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=N)
         row, col = edge_index
 
@@ -74,23 +77,24 @@ class LineGraph(BaseTransform):
             # Compute new edge indices according to `i`.
             count = scatter(torch.ones_like(row), row, dim=0,
                             dim_size=data.num_nodes, reduce='sum')
-            joints = torch.split(i, count.tolist())
+            joints = list(torch.split(i, count.tolist()))
 
-            def generate_grid(x):
+            def generate_grid(x: Tensor) -> Tensor:
                 row = x.view(-1, 1).repeat(1, x.numel()).view(-1)
                 col = x.repeat(x.numel())
                 return torch.stack([row, col], dim=0)
 
             joints = [generate_grid(joint) for joint in joints]
-            joints = torch.cat(joints, dim=1)
-            joints, _ = remove_self_loops(joints)
+            joint = torch.cat(joints, dim=1)
+            joint, _ = remove_self_loops(joint)
             N = row.size(0) // 2
-            joints = coalesce(joints, num_nodes=N)
+            joint = coalesce(joint, num_nodes=N)
 
             if edge_attr is not None:
                 data.x = scatter(edge_attr, i, dim=0, dim_size=N, reduce='sum')
-            data.edge_index = joints
+            data.edge_index = joint
             data.num_nodes = edge_index.size(1) // 2
 
         data.edge_attr = None
+
         return data

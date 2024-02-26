@@ -1,4 +1,5 @@
 import math
+import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -7,14 +8,25 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
+from torch_geometric.typing import (
+    Adj,
+    NoneType,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+)
 from torch_geometric.utils import softmax
+
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
 
 
 class TransformerConv(MessagePassing):
     r"""The graph transformer operator from the `"Masked Label Prediction:
     Unified Message Passing Model for Semi-Supervised Classification"
-    <https://arxiv.org/abs/2009.03509>`_ paper
+    <https://arxiv.org/abs/2009.03509>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +
@@ -149,33 +161,73 @@ class TransformerConv(MessagePassing):
         if self.beta:
             self.lin_beta.reset_parameters()
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, return_attention_weights=None):
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+    @overload
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: NoneType = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: SparseTensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, SparseTensor]:
+        pass
+
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         r"""Runs the forward pass of the module.
 
         Args:
+            x (torch.Tensor or (torch.Tensor, torch.Tensor)): The input node
+                features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-
         H, C = self.heads, self.out_channels
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         query = self.lin_query(x[1]).view(-1, H, C)
         key = self.lin_key(x[0]).view(-1, H, C)
         value = self.lin_value(x[0]).view(-1, H, C)
 
-        # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor) # noqa
+        # propagate_type: (query: Tensor, key:Tensor, value: Tensor,
+        #                  edge_attr: OptTensor)
         out = self.propagate(edge_index, query=query, key=key, value=value,
-                             edge_attr=edge_attr, size=None)
+                             edge_attr=edge_attr)
 
         alpha = self._alpha
         self._alpha = None

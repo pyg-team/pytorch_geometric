@@ -14,8 +14,9 @@ from torch_geometric.utils import softmax
 class HEATConv(MessagePassing):
     r"""The heterogeneous edge-enhanced graph attentional operator from the
     `"Heterogeneous Edge-Enhanced Graph Attention Network For Multi-Agent
-    Trajectory Prediction" <https://arxiv.org/abs/2106.07161>`_ paper, which
-    enhances :class:`~torch_geometric.nn.conv.GATConv` by:
+    Trajectory Prediction" <https://arxiv.org/abs/2106.07161>`_ paper.
+
+    :class:`HEATConv` enhances :class:`~torch_geometric.nn.conv.GATConv` by:
 
     1. type-specific transformations of nodes of different types
     2. edge type and edge feature incorporation, in which edges are assumed to
@@ -106,9 +107,10 @@ class HEATConv(MessagePassing):
         edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),
                                      self.negative_slope)
 
-        # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
+        # propagate_type: (x: Tensor, edge_type_emb: Tensor,
+        #                  edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
-                             edge_attr=edge_attr, size=None)
+                             edge_attr=edge_attr)
 
         if self.concat:
             if self.root_weight:

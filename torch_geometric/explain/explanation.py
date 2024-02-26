@@ -111,7 +111,8 @@ class ExplanationMixin:
         method.
 
         Args:
-            threshold_config (ThresholdConfig): The threshold configuration.
+            *args: Arguments passed to :class:`ThresholdConfig`.
+            **kwargs: Keyword arguments passed to :class:`ThresholdConfig`.
         """
         threshold_config = ThresholdConfig.cast(*args, **kwargs)
 
@@ -155,7 +156,8 @@ class Explanation(Data, ExplanationMixin):
 
     def get_explanation_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
-        zero attribution are masked out."""
+        zero attribution are masked out.
+        """
         node_mask = self.get('node_mask')
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) > 0
@@ -166,7 +168,8 @@ class Explanation(Data, ExplanationMixin):
 
     def get_complement_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
-        attribution are masked out."""
+        attribution are masked out.
+        """
         node_mask = self.get('node_mask')
         if node_mask is not None:
             node_mask = node_mask.sum(dim=-1) == 0
@@ -229,8 +232,12 @@ class Explanation(Data, ExplanationMixin):
 
         return _visualize_score(score, feat_labels, path, top_k)
 
-    def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None):
+    def visualize_graph(
+        self,
+        path: Optional[str] = None,
+        backend: Optional[str] = None,
+        node_labels: Optional[List[str]] = None,
+    ) -> None:
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -243,13 +250,15 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
+            node_labels (list[str], optional): The labels/IDs of nodes.
+                (default: :obj:`None`)
         """
         edge_mask = self.get('edge_mask')
         if edge_mask is None:
             raise ValueError(f"The attribute 'edge_mask' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
-        visualize_graph(self.edge_index, edge_mask, path, backend)
+        visualize_graph(self.edge_index, edge_mask, path, backend, node_labels)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
@@ -267,7 +276,8 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
     def get_explanation_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
-        zero attribution are masked out."""
+        zero attribution are masked out.
+        """
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) > 0
@@ -281,7 +291,8 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
     def get_complement_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
-        attribution are masked out."""
+        attribution are masked out.
+        """
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) == 0

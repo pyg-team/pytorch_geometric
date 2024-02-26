@@ -13,7 +13,7 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 class GMMConv(MessagePassing):
     r"""The gaussian mixture model convolutional operator from the `"Geometric
     Deep Learning on Graphs and Manifolds using Mixture Model CNNs"
-    <https://arxiv.org/abs/1611.08402>`_ paper
+    <https://arxiv.org/abs/1611.08402>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
@@ -131,7 +131,7 @@ class GMMConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None):
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         if not self.separate_gaussians:
@@ -151,7 +151,7 @@ class GMMConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_attr: Tensor):
+    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         EPS = 1e-15
         F, M = self.rel_in_channels, self.out_channels
         (E, D), K = edge_attr.size(), self.kernel_size

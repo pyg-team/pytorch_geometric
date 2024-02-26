@@ -1,10 +1,10 @@
-from typing import Any
+from typing import Any, Dict, List
 
 import torch
 
 import torch_geometric
 
-x_map = {
+x_map: Dict[str, List[Any]] = {
     'atomic_num':
     list(range(0, 119)),
     'chirality': [
@@ -40,7 +40,7 @@ x_map = {
     'is_in_ring': [False, True],
 }
 
-e_map = {
+e_map: Dict[str, List[Any]] = {
     'bond_type': [
         'UNSPECIFIED',
         'SINGLE',
@@ -104,20 +104,20 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     if kekulize:
         Chem.Kekulize(mol)
 
-    xs = []
+    xs: List[List[int]] = []
     for atom in mol.GetAtoms():
-        x = []
-        x.append(x_map['atomic_num'].index(atom.GetAtomicNum()))
-        x.append(x_map['chirality'].index(str(atom.GetChiralTag())))
-        x.append(x_map['degree'].index(atom.GetTotalDegree()))
-        x.append(x_map['formal_charge'].index(atom.GetFormalCharge()))
-        x.append(x_map['num_hs'].index(atom.GetTotalNumHs()))
-        x.append(x_map['num_radical_electrons'].index(
+        row: List[int] = []
+        row.append(x_map['atomic_num'].index(atom.GetAtomicNum()))
+        row.append(x_map['chirality'].index(str(atom.GetChiralTag())))
+        row.append(x_map['degree'].index(atom.GetTotalDegree()))
+        row.append(x_map['formal_charge'].index(atom.GetFormalCharge()))
+        row.append(x_map['num_hs'].index(atom.GetTotalNumHs()))
+        row.append(x_map['num_radical_electrons'].index(
             atom.GetNumRadicalElectrons()))
-        x.append(x_map['hybridization'].index(str(atom.GetHybridization())))
-        x.append(x_map['is_aromatic'].index(atom.GetIsAromatic()))
-        x.append(x_map['is_in_ring'].index(atom.IsInRing()))
-        xs.append(x)
+        row.append(x_map['hybridization'].index(str(atom.GetHybridization())))
+        row.append(x_map['is_aromatic'].index(atom.GetIsAromatic()))
+        row.append(x_map['is_in_ring'].index(atom.IsInRing()))
+        xs.append(row)
 
     x = torch.tensor(xs, dtype=torch.long).view(-1, 9)
 
@@ -159,16 +159,20 @@ def to_smiles(data: 'torch_geometric.data.Data',
 
     mol = Chem.RWMol()
 
+    assert data.x is not None
+    assert data.num_nodes is not None
+    assert data.edge_index is not None
+    assert data.edge_attr is not None
     for i in range(data.num_nodes):
-        atom = Chem.Atom(data.x[i, 0].item())
-        atom.SetChiralTag(Chem.rdchem.ChiralType.values[data.x[i, 1].item()])
-        atom.SetFormalCharge(x_map['formal_charge'][data.x[i, 3].item()])
-        atom.SetNumExplicitHs(x_map['num_hs'][data.x[i, 4].item()])
-        atom.SetNumRadicalElectrons(
-            x_map['num_radical_electrons'][data.x[i, 5].item()])
-        atom.SetHybridization(
-            Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
-        atom.SetIsAromatic(data.x[i, 7].item())
+        atom = Chem.Atom(int(data.x[i, 0]))
+        atom.SetChiralTag(Chem.rdchem.ChiralType.values[int(data.x[i, 1])])
+        atom.SetFormalCharge(x_map['formal_charge'][int(data.x[i, 3])])
+        atom.SetNumExplicitHs(x_map['num_hs'][int(data.x[i, 4])])
+        atom.SetNumRadicalElectrons(x_map['num_radical_electrons'][int(
+            data.x[i, 5])])
+        atom.SetHybridization(Chem.rdchem.HybridizationType.values[int(
+            data.x[i, 6])])
+        atom.SetIsAromatic(int(data.x[i, 7]))
         mol.AddAtom(atom)
 
     edges = [tuple(i) for i in data.edge_index.t().tolist()]
@@ -179,18 +183,18 @@ def to_smiles(data: 'torch_geometric.data.Data',
         if tuple(sorted(edges[i])) in visited:
             continue
 
-        bond_type = Chem.BondType.values[data.edge_attr[i, 0].item()]
+        bond_type = Chem.BondType.values[int(data.edge_attr[i, 0])]
         mol.AddBond(src, dst, bond_type)
 
         # Set stereochemistry:
-        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[i, 1].item()]
+        stereo = Chem.rdchem.BondStereo.values[int(data.edge_attr[i, 1])]
         if stereo != Chem.rdchem.BondStereo.STEREONONE:
             db = mol.GetBondBetweenAtoms(src, dst)
             db.SetStereoAtoms(dst, src)
             db.SetStereo(stereo)
 
         # Set conjugation:
-        is_conjugated = bool(data.edge_attr[i, 2].item())
+        is_conjugated = bool(data.edge_attr[i, 2])
         mol.GetBondBetweenAtoms(src, dst).SetIsConjugated(is_conjugated)
 
         visited.add(tuple(sorted(edges[i])))

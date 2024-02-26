@@ -14,6 +14,7 @@ class NNConv(MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
     `"Neural Message Passing for Quantum Chemistry"
     <https://arxiv.org/abs/1704.01212>`_ paper.
+
     This convolution is also known as the edge-conditioned convolution from the
     `"Dynamic Edge-Conditioned Filters in Convolutional Neural Networks on
     Graphs" <https://arxiv.org/abs/1704.02901>`_ paper (see
@@ -92,11 +93,16 @@ class NNConv(MessagePassing):
             self.lin.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+    def forward(
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+    ) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)

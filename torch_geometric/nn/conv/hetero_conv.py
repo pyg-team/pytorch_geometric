@@ -1,5 +1,4 @@
 import warnings
-from collections import defaultdict
 from typing import Dict, List, Optional
 
 import torch
@@ -114,9 +113,9 @@ class HeteroConv(torch.nn.Module):
                 :meth:`~torch_geometric.nn.conv.HeteroConv.forward` via
                 :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
-        out_dict = defaultdict(list)
+        out_dict: Dict[str, List[Tensor]] = {}
 
-        for edge_type in self.convs.keys():
+        for edge_type, conv in self.convs.items():
             src, rel, dst = edge_type
 
             has_edge_level_arg = False
@@ -156,8 +155,12 @@ class HeteroConv(torch.nn.Module):
             if not has_edge_level_arg:
                 continue
 
-            out = self.convs[edge_type](*args, **kwargs)
-            out_dict[dst].append(out)
+            out = conv(*args, **kwargs)
+
+            if dst not in out_dict:
+                out_dict[dst] = [out]
+            else:
+                out_dict[dst].append(out)
 
         for key, value in out_dict.items():
             out_dict[key] = group(value, self.aggr)
