@@ -27,14 +27,18 @@ class KNNIndex:
     depending on whether to plan to use GPU-processing for :math:`k`-NN search.
 
     Args:
-        index_factory (str): The name of the index factory to use, *e.g.*,
-            :obj:`"IndexFlatL2"` or :obj:`"IndexFlatIP"`. See `here
+        index_factory (str, optional): The name of the index factory to use,
+            *e.g.*, :obj:`"IndexFlatL2"` or :obj:`"IndexFlatIP"`. See `here
             <https://github.com/facebookresearch/faiss/wiki/
             The-index-factory>`_ for more information.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
-    def __init__(self, index_factory: str, emb: Optional[Tensor] = None):
+    def __init__(
+        self,
+        index_factory: Optional[str] = None,
+        emb: Optional[Tensor] = None,
+    ):
         warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
         import faiss
@@ -72,6 +76,8 @@ class KNNIndex:
                     emb.device.index,
                     self.index,
                 )
+
+            self.index.train(emb)
 
         self.numel += emb.size(0)
         self.index.add(emb.detach())
@@ -218,68 +224,81 @@ class MIPSKNNIndex(KNNIndex):
         return faiss.IndexFlatIP(channels)
 
 
-class ApproxKNNIndex(KNNIndex):
-    r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
-    the maximum inner product via the :obj:`faiss` library.
+class ApproxL2KNNIndex(KNNIndex):
+    r"""Performs fast approximate :math:`k`-nearest neighbor search
+    (:math:`k`-NN) based on the the :math:`L_2` metric via the :obj:`faiss`
+    library.
+    Hyperparameters needs to be tuned for speed-accuracy trade-off.
 
     Args:
+        num_cells (int): The number of cells.
+        num_cells_to_visit (int): The number of cells that are visited to
+            perform to search.
+        bits_per_vector (int): The number of bits per sub-vector.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
-        metric_type (str, optional): "L2" or "MIPS"
-            (default: :obj:`"L2"`)
-        m (int, optional): Bits per sub-vector.
-        This is a crucial parameter for the size
-        of the code & the accuracy.
-            (default: :obj:`8`)
-        n (int, optional): The number of bits allocated
-        for encoding each sub-vector in the product
-        quantization step
-            (default: :obj:`8`)
     """
-    def __init__(self, emb: Optional[Tensor] = None, metric_type="L2", m=8,
-                 n=8):
-        self.m = m
-        self.n = n
-        self.metric_type = metric_type
-        if emb is not None:
-            self.num_rhs_nodes = emb.size(0)
-
+    def __init__(
+        self,
+        num_cells: int,
+        num_cells_to_visit: int,
+        bits_per_vector: int,
+        emb: Optional[Tensor] = None,
+    ):
+        self.num_cells = num_cells
+        self.num_cells_to_visit = num_cells_to_visit
+        self.bits_per_vector = bits_per_vector
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
         import faiss
-
-        # number of clusters
-        nlist = min(self.num_rhs_nodes // 1000, 1000)
-        index_2_quantize = faiss.IndexFlatIP(channels)
-        if self.metric_type.lower() == "l2":
-            metric_to_use = faiss.METRIC_L2
-        else:
-            metric_to_use = faiss.METRIC_INNER_PRODUCT
-        index = faiss.IndexIVFPQ(index_2_quantize, channels, nlist, self.m,
-                                 self.n, metric_to_use)
+        index = faiss.IndexIVFPQ(
+            faiss.IndexFlatL2(channels),
+            channels,
+            self.num_cells,
+            self.bits_per_vector,
+            8,
+            faiss.METRIC_L2,
+        )
+        index.nprobe = self.num_cells_to_visit
         return index
 
 
-class ApproxL2KNNIndex(ApproxKNNIndex):
-    r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
-    the maximum inner product via the :obj:`faiss` library.
+class ApproxMIPSKNNIndex(KNNIndex):
+    r"""Performs fast approximate :math:`k`-nearest neighbor search
+    (:math:`k`-NN) based on the maximum inner product via the :obj:`faiss`
+    library.
+    Hyperparameters needs to be tuned for speed-accuracy trade-off.
 
     Args:
+        num_cells (int): The number of cells.
+        num_cells_to_visit (int): The number of cells that are visited to
+            perform to search.
+        bits_per_vector (int): The number of bits per sub-vector.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
-    def __init__(self, emb: Optional[Tensor] = None):
-        super().__init__(emb=emb, metric_type="L2")
+    def __init__(
+        self,
+        num_cells: int,
+        num_cells_to_visit: int,
+        bits_per_vector: int,
+        emb: Optional[Tensor] = None,
+    ):
+        self.num_cells = num_cells
+        self.num_cells_to_visit = num_cells_to_visit
+        self.bits_per_vector = bits_per_vector
+        super().__init__(index_factory=None, emb=emb)
 
-
-class ApproxMIPSKNNIndex(ApproxKNNIndex):
-    r"""Performs fast :math:`k`-nearest neighbor search (:math:`k`-NN) based on
-    the maximum inner product via the :obj:`faiss` library.
-
-    Args:
-        emb (torch.Tensor, optional): The data points to add.
-            (default: :obj:`None`)
-    """
-    def __init__(self, emb: Optional[Tensor] = None):
-        super().__init__(emb=emb, metric_type="MIPS")
+    def _create_index(self, channels: int):
+        import faiss
+        index = faiss.IndexIVFPQ(
+            faiss.IndexFlatIP(channels),
+            channels,
+            self.num_cells,
+            self.bits_per_vector,
+            8,
+            faiss.METRIC_INNER_PRODUCT,
+        )
+        index.nprobe = self.num_cells_to_visit
+        return index
