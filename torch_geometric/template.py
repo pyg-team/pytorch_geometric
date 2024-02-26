@@ -22,7 +22,6 @@ def module_from_template(
     env = Environment(loader=FileSystemLoader(osp.dirname(template_path)))
     template = env.get_template(osp.basename(template_path))
     module_repr = template.render(**kwargs)
-    print(module_repr)
 
     instance_dir = osp.join(get_home_dir(), tmp_dirname)
     os.makedirs(instance_dir, exist_ok=True)
