@@ -155,7 +155,8 @@ class OnDiskDataset(Dataset):
         index = len(self)
         self.db.insert(
             index,
-            self.serialize(data, node_labels, edge_labels),
+            self.serialize(data, node_labels=node_labels,
+                           edge_labels=edge_labels),
         )
         self._numel += 1
 
@@ -170,8 +171,8 @@ class OnDiskDataset(Dataset):
         start = len(self)
         end = start + len(data_list)
         data_list = [
-            self.serialize(data, node_labels, edge_labels)
-            for data in data_list
+            self.serialize(data, node_labels=node_labels,
+                           edge_labels=edge_labels) for data in data_list
         ]
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
@@ -184,8 +185,9 @@ class OnDiskDataset(Dataset):
             indices.extend(node_labels)
         if edge_labels:
             indices.extend([str(edge) for edge in edge_labels])
-        return self.deserialize(self.db.get(idx, indices), node_labels,
-                                edge_labels)
+        return self.deserialize(self.db.get(idx,
+                                            indices), node_labels=node_labels,
+                                edge_labels=edge_labels)
 
     def multi_get(
             self, indices: Union[Iterable[int], Tensor, slice,
@@ -206,8 +208,8 @@ class OnDiskDataset(Dataset):
             data_list = self.db.multi_get(indices, batch_size, db_indices)
 
         return [
-            self.deserialize(data, node_labels, edge_labels)
-            for data in data_list
+            self.deserialize(data, node_labels=node_labels,
+                             edge_labels=edge_labels) for data in data_list
         ]
 
     def len(self) -> int:
