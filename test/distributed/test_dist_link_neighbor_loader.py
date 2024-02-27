@@ -15,7 +15,7 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest, withMETIS
+from torch_geometric.testing import onlyDistributedTest, assert_run_mproc, withMETIS
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -26,8 +26,8 @@ def create_dist_data(tmp_path: str, rank: int):
 
 
 def dist_link_neighbor_loader_homo(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -76,8 +76,8 @@ def dist_link_neighbor_loader_homo(
 
 
 def dist_link_neighbor_loader_hetero(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -163,25 +163,18 @@ def test_dist_link_neighbor_loader_homo(
         avg_degree=3,
         edge_dim=2,
     )[0]
-    partitioner = Partitioner(data, num_parts, tmp_path)
+
+    procs = [
+        mp_context.Process(target=dist_link_neighbor_loader_homo,
+                           args=(tmp_path, part, addr, port, num_workers,
+                                 async_sampling,neg_ratio))
+        for part in range(num_parts)]
+
+    world_size = len(procs)
+    partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @withMETIS
@@ -215,22 +208,15 @@ def test_dist_link_neighbor_loader_hetero(
         num_edge_types=4,
         edge_dim=2,
     )[0]
-    partitioner = Partitioner(data, num_parts, tmp_path)
+
+    procs = [
+        mp_context.Process(target=dist_link_neighbor_loader_hetero,
+                           args=(tmp_path, part, addr, port, num_workers,
+                                 async_sampling, neg_ratio, edge_type))
+        for part in range(num_parts)]
+
+    world_size = len(procs)
+    partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)

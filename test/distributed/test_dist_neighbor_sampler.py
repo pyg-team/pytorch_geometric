@@ -18,7 +18,7 @@ from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import onlyDistributedTest, withMETIS
+from torch_geometric.testing import onlyDistributedTest, assert_run_mproc, withMETIS
 
 
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
@@ -225,9 +225,9 @@ def dist_neighbor_sampler_temporal(
 
 
 def dist_neighbor_sampler_hetero(
+    world_size: int,
     data: FakeHeteroDataset,
     tmp_path: str,
-    world_size: int,
     rank: int,
     master_port: int,
     input_type: str,
@@ -304,9 +304,9 @@ def dist_neighbor_sampler_hetero(
 
 
 def dist_neighbor_sampler_temporal_hetero(
+    world_size: int,
     data: FakeHeteroDataset,
     tmp_path: str,
-    world_size: int,
     rank: int,
     master_port: int,
     input_type: str,
@@ -396,21 +396,14 @@ def test_dist_neighbor_sampler(disjoint):
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler,
-        args=(world_size, 0, port, disjoint),
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler, args=(0, port, disjoint)),
+        mp_context.Process(
+            target=dist_neighbor_sampler, args=(1, port, disjoint))
     )
 
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler,
-        args=(world_size, 1, port, disjoint),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @onlyDistributedTest
@@ -424,21 +417,16 @@ def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal,
-        args=(world_size, 0, port, seed_time, temporal_strategy, 'time'),
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal,
+            args=(0, port, seed_time, temporal_strategy, 'time')),
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal,
+            args=(1, port, seed_time, temporal_strategy, 'time'))
     )
 
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal,
-        args=(world_size, 1, port, seed_time, temporal_strategy, 'time'),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @onlyDistributedTest
@@ -457,21 +445,16 @@ def test_dist_neighbor_sampler_edge_level_temporal(
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal,
-        args=(world_size, 0, port, seed_time, temporal_strategy, 'edge_time'),
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal,
+            args=(0, port, seed_time, temporal_strategy, 'edge_time')),
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal,
+            args=(1, port, seed_time, temporal_strategy, 'edge_time'))
     )
 
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal,
-        args=(world_size, 1, port, seed_time, temporal_strategy, 'edge_time'),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @withMETIS
@@ -485,7 +468,6 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
     data = FakeHeteroDataset(
         num_graphs=1,
         avg_num_nodes=100,
@@ -495,23 +477,20 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
         edge_dim=2,
     )[0]
 
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler_hetero,
+            args=(data, tmp_path, 0, port, 'v0', disjoint)),
+        mp_context.Process(
+            target=dist_neighbor_sampler_hetero,
+            args=(data, tmp_path, 1, port, 'v1', disjoint))
+    )
+
+    world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 0, port, 'v0', disjoint),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 1, port, 'v1', disjoint),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @withMETIS
@@ -533,7 +512,6 @@ def test_dist_neighbor_sampler_temporal_hetero(
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
     data = FakeHeteroDataset(
         num_graphs=1,
         avg_num_nodes=100,
@@ -548,25 +526,22 @@ def test_dist_neighbor_sampler_temporal_hetero(
     data['v1'].time = torch.full((data.num_nodes_dict['v1'], ), 2,
                                  dtype=torch.int64)
 
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, 0, port, 'v0', seed_time,
+                  temporal_strategy, 'time')),
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, 1, port, 'v1', seed_time,
+                  temporal_strategy, 'time'))
+    )
+
+    world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 0, port, 'v0', seed_time,
-              temporal_strategy, 'time'),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 1, port, 'v1', seed_time,
-              temporal_strategy, 'time'),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
 
 
 @withMETIS
@@ -587,7 +562,6 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
     data = FakeHeteroDataset(
         num_graphs=1,
         avg_num_nodes=100,
@@ -601,22 +575,19 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
         data[edge_type].edge_time = torch.full(
             (data[edge_type].edge_index.size(1), ), i, dtype=torch.int64)
 
+    procs = (
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, 0, port, 'v0', seed_time,
+                  temporal_strategy,'edge_time')),
+        mp_context.Process(
+            target=dist_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, 1, port, 'v1', seed_time,
+                  temporal_strategy, 'edge_time'))
+    )
+
+    world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 0, port, 'v0', seed_time,
-              temporal_strategy, 'edge_time'),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 1, port, 'v1', seed_time,
-              temporal_strategy, 'edge_time'),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    assert_run_mproc(procs)
