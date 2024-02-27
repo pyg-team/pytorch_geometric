@@ -8,8 +8,9 @@ import torch_geometric.typing
 from torch_geometric import is_compiling
 from torch_geometric.utils import is_sparse
 from torch_geometric.typing import Size, SparseTensor
-
+{% for module in modules %}
 from {{module}} import *
+{%- endfor %}
 
 
 {% include "collect.jinja" %}
