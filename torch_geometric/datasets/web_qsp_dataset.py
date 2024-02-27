@@ -1,5 +1,4 @@
 import os.path as osp
-import numpy as np
 import torch
 
 from torch_geometric.data import InMemoryDataset
@@ -66,6 +65,7 @@ class WebQSPDataset(InMemoryDataset):
     that originally comes from WebQuestions [Berant et al., 2013]."
     Processing based on "G-Retriever: Retrieval-Augmented Generation
     for Textual Graph Understanding and Question Answering".
+    Requires datasets and transformers from HuggingFace.
     Args:
         root (str): Root directory where the dataset should be saved.
         force_reload (bool, optional): Whether to re-process the dataset.
