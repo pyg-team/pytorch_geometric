@@ -548,14 +548,14 @@ def test_data_time_handling(num_nodes, num_edges):
     assert not data.is_node_attr('time')
     assert data.is_sorted_by_time()
 
-    out = data.up_to(5)
+    out = data.up_to(6)
     assert out.num_edges == 6
     assert torch.allclose(out.x, data.x)
     assert torch.equal(out.edge_index, data.edge_index[:, :6])
     assert torch.allclose(out.edge_attr, data.edge_attr[:6])
     assert torch.equal(out.time, data.time[:6])
 
-    out = data.snapshot(2, 5)
+    out = data.snapshot(2, 6)
     assert out.num_edges == 4
     assert torch.allclose(out.x, data.x)
     assert torch.equal(out.edge_index, data.edge_index[:, 2:6])
