@@ -2,6 +2,7 @@ import socket
 
 import torch
 
+from contextlib import closing
 import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.distributed.dist_context import DistContext
@@ -105,17 +106,16 @@ def test_dist_feature_lookup():
     feature1.put_tensor(cpu_tensor1, group_name=None, attr_name='x')
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
 
-    w0 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 0, feature0, partition_book, port))
-    w1 = mp_context.Process(target=run_rpc_feature_test,
-                            args=(2, 1, feature1, partition_book, port))
+        w0 = mp_context.Process(target=run_rpc_feature_test,
+                                args=(2, 0, feature0, partition_book, port))
+        w1 = mp_context.Process(target=run_rpc_feature_test,
+                                args=(2, 1, feature1, partition_book, port))
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()

@@ -1,6 +1,7 @@
 import atexit
 import socket
 from typing import Optional
+from contextlib import closing
 
 import pytest
 import torch
@@ -439,25 +440,25 @@ def dist_link_neighbor_sampler_temporal_hetero(
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_link_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler,
-        args=(world_size, 0, port, disjoint),
-    )
+        world_size = 2
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler,
+            args=(world_size, 0, port, disjoint),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler,
-        args=(world_size, 1, port, disjoint),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler,
+            args=(world_size, 1, port, disjoint),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
@@ -465,25 +466,25 @@ def test_dist_link_neighbor_sampler(disjoint):
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
 def test_dist_link_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 0, port, seed_time, temporal_strategy, 'time'),
-    )
+        world_size = 2
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal,
+            args=(world_size, 0, port, seed_time, temporal_strategy, 'time'),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 1, port, seed_time, temporal_strategy, 'time'),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal,
+            args=(world_size, 1, port, seed_time, temporal_strategy, 'time'),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
@@ -496,66 +497,66 @@ def test_dist_link_neighbor_sampler_edge_level_temporal(
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 0, port, seed_time, temporal_strategy, 'edge_time'),
-    )
+        world_size = 2
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal,
+            args=(world_size, 0, port, seed_time, temporal_strategy, 'edge_time'),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal,
-        args=(world_size, 1, port, seed_time, temporal_strategy, 'edge_time'),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal,
+            args=(world_size, 1, port, seed_time, temporal_strategy, 'edge_time'),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(1)
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    data = FakeHeteroDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        num_node_types=2,
-        num_edge_types=4,
-        edge_dim=2,
-    )[0]
-    data = T.ToUndirected()(data)
+        world_size = 2
+        data = FakeHeteroDataset(
+            num_graphs=1,
+            avg_num_nodes=100,
+            avg_degree=3,
+            num_node_types=2,
+            num_edge_types=4,
+            edge_dim=2,
+        )[0]
+        data = T.ToUndirected()(data)
 
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
+        partitioner = Partitioner(data, world_size, tmp_path)
+        partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
-              disjoint),
-    )
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler_hetero,
+            args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
+                disjoint),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 1, port, ('v1', 'e0', 'v0'),
-              disjoint),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler_hetero,
+            args=(data, tmp_path, world_size, 1, port, ('v1', 'e0', 'v0'),
+                disjoint),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
@@ -570,45 +571,45 @@ def test_dist_link_neighbor_sampler_temporal_hetero(
         seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(1)
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    data = FakeHeteroDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        num_node_types=2,
-        num_edge_types=4,
-        edge_dim=2,
-    )[0]
-    data = T.ToUndirected()(data)
+        world_size = 2
+        data = FakeHeteroDataset(
+            num_graphs=1,
+            avg_num_nodes=100,
+            avg_degree=3,
+            num_node_types=2,
+            num_edge_types=4,
+            edge_dim=2,
+        )[0]
+        data = T.ToUndirected()(data)
 
-    # Add time information to the data:
-    data['v0'].time = torch.ones(data['v0'].num_nodes, dtype=torch.int64)
-    data['v1'].time = torch.full((data['v1'].num_nodes, ), 2).long()
+        # Add time information to the data:
+        data['v0'].time = torch.ones(data['v0'].num_nodes, dtype=torch.int64)
+        data['v1'].time = torch.full((data['v1'].num_nodes, ), 2).long()
 
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
+        partitioner = Partitioner(data, world_size, tmp_path)
+        partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
-              seed_time, temporal_strategy, 'time'),
-    )
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
+                seed_time, temporal_strategy, 'time'),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 1, port, ('v1', 'e0', 'v0'),
-              seed_time, temporal_strategy, 'time'),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, world_size, 1, port, ('v1', 'e0', 'v0'),
+                seed_time, temporal_strategy, 'time'),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
@@ -622,43 +623,43 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
     seed_time = torch.tensor(seed_time)
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.settimeout(1)
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_DGRAM)) as s:
+        s.
         s.bind(('127.0.0.1', 0))
         port = s.getsockname()[1]
 
-    world_size = 2
-    data = FakeHeteroDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        num_node_types=2,
-        num_edge_types=4,
-        edge_dim=2,
-    )[0]
-    data = T.ToUndirected()(data)
+        world_size = 2
+        data = FakeHeteroDataset(
+            num_graphs=1,
+            avg_num_nodes=100,
+            avg_degree=3,
+            num_node_types=2,
+            num_edge_types=4,
+            edge_dim=2,
+        )[0]
+        data = T.ToUndirected()(data)
 
-    # Add time information to the data:
-    for i, edge_type in enumerate(data.edge_types):
-        data[edge_type].edge_time = torch.full(  #
-            (data[edge_type].num_edges, ), i, dtype=torch.int64)
+        # Add time information to the data:
+        for i, edge_type in enumerate(data.edge_types):
+            data[edge_type].edge_time = torch.full(  #
+                (data[edge_type].num_edges, ), i, dtype=torch.int64)
 
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
+        partitioner = Partitioner(data, world_size, tmp_path)
+        partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
-              seed_time, temporal_strategy, 'edge_time'),
-    )
+        w0 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
+                seed_time, temporal_strategy, 'edge_time'),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_sampler_temporal_hetero,
-        args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'),
-              seed_time, temporal_strategy, 'edge_time'),
-    )
+        w1 = mp_context.Process(
+            target=dist_link_neighbor_sampler_temporal_hetero,
+            args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'),
+                seed_time, temporal_strategy, 'edge_time'),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()

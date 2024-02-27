@@ -4,6 +4,7 @@ import pytest
 import torch
 import torch.multiprocessing as mp
 
+from contextlib import closing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.distributed import (
@@ -154,34 +155,34 @@ def test_dist_neighbor_loader_homo(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.
         sock.bind((addr, 0))
         port = sock.getsockname()[1]
 
-    data = FakeDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        edge_dim=2,
-    )[0]
-    partitioner = Partitioner(data, num_parts, tmp_path)
-    partitioner.generate_partition()
+        data = FakeDataset(
+            num_graphs=1,
+            avg_num_nodes=100,
+            avg_degree=3,
+            edge_dim=2,
+        )[0]
+        partitioner = Partitioner(data, num_parts, tmp_path)
+        partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
-    )
+        w0 = mp_context.Process(
+            target=dist_neighbor_loader_homo,
+            args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
-    )
+        w1 = mp_context.Process(
+            target=dist_neighbor_loader_homo,
+            args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
 
 
 @onlyDistributedTest
@@ -197,32 +198,32 @@ def test_dist_neighbor_loader_hetero(
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
+        sock.
         sock.bind((addr, 0))
         port = sock.getsockname()[1]
 
-    data = FakeHeteroDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        num_node_types=2,
-        num_edge_types=4,
-        edge_dim=2,
-    )[0]
-    partitioner = Partitioner(data, num_parts, tmp_path)
-    partitioner.generate_partition()
+        data = FakeHeteroDataset(
+            num_graphs=1,
+            avg_num_nodes=100,
+            avg_degree=3,
+            num_node_types=2,
+            num_edge_types=4,
+            edge_dim=2,
+        )[0]
+        partitioner = Partitioner(data, num_parts, tmp_path)
+        partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
-    )
+        w0 = mp_context.Process(
+            target=dist_neighbor_loader_hetero,
+            args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
+        )
 
-    w1 = mp_context.Process(
-        target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
-    )
+        w1 = mp_context.Process(
+            target=dist_neighbor_loader_hetero,
+            args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
+        )
 
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+        w0.start()
+        w1.start()
+        w0.join()
+        w1.join()
