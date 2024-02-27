@@ -35,9 +35,7 @@ dependencies=[
     "scipy",
     "fsspec",
     "jinja2",
-    "aiohttp",
     "requests",
-    "pyparsing",
     "scikit-learn",
     "psutil>=5.8.0",
 ]
@@ -46,14 +44,12 @@ dependencies=[
 graphgym=[
     "yacs",
     "hydra-core",
-    "protobuf<4.21",
     "pytorch-lightning",
 ]
 modelhub=[
     "huggingface_hub"
 ]
 benchmark=[
-    "protobuf<4.21",
     "wandb",
     "pandas",
     "networkx",
@@ -61,7 +57,6 @@ benchmark=[
 ]
 test=[
     "pytest",
-    "pytest-cov",
     "onnx",
     "onnxruntime",
 ]
@@ -88,8 +83,6 @@ full = [
     "scikit-image",
     "pytorch-memlab",
     "pgmpy",
-    "opt_einsum",
-    "statsmodels",
     "rdkit",
 ]
 
