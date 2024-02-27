@@ -57,6 +57,7 @@ benchmark=[
 ]
 test=[
     "pytest",
+    "pytest-cov",
     "onnx",
     "onnxruntime",
 ]
