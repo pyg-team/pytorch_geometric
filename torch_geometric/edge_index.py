@@ -516,6 +516,12 @@ class EdgeIndex(Tensor):
 
         return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
 
+    def resize(self, sparse_size:  Tuple[Optional[int], Optional[int]]):
+        r"""Assign or reassign the size of the underlying sparse matrix.
+        """
+        assert len(sparse_size) == 2, "sparse_size needs to be a tuple of int of len 2"
+        self._sparse_size = sparse_size
+
     def get_num_rows(self) -> int:
         r"""The number of rows of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.
