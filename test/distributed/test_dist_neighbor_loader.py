@@ -1,10 +1,10 @@
 import socket
+from contextlib import closing
 
 import pytest
 import torch
 import torch.multiprocessing as mp
 
-from contextlib import closing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.distributed import (

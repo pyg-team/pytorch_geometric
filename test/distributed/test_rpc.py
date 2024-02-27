@@ -1,8 +1,8 @@
 import socket
+from contextlib import closing
 
 import torch
 
-from contextlib import closing
 import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.distributed.dist_context import DistContext

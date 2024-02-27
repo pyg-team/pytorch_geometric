@@ -1,11 +1,11 @@
 import atexit
 import socket
+from contextlib import closing
 from typing import Optional
 
 import pytest
 import torch
 
-from contextlib import closing
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.distributed import (

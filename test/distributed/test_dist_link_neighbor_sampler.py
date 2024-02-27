@@ -1,7 +1,7 @@
 import atexit
 import socket
-from typing import Optional
 from contextlib import closing
+from typing import Optional
 
 import pytest
 import torch
