@@ -172,7 +172,7 @@ class MessagePassing(torch.nn.Module):
                     template_path=osp.join(root_dir, 'propagate.jinja'),
                     tmp_dirname='message_passing',
                     # Keyword arguments:
-                    module=self.__module__,
+                    modules=self.inspector._modules,
                     collect_name='collect',
                     signature=self._get_propagate_signature(),
                     collect_param_dict=self.inspector.get_flat_param_dict(
@@ -204,7 +204,7 @@ class MessagePassing(torch.nn.Module):
                 template_path=osp.join(root_dir, 'edge_updater.jinja'),
                 tmp_dirname='message_passing',
                 # Keyword arguments:
-                module=self.__module__,
+                modules=self.inspector._modules,
                 collect_name='edge_collect',
                 signature=self._get_edge_updater_signature(),
                 collect_param_dict=self.inspector.get_param_dict(
