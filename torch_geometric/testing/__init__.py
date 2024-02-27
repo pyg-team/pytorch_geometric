@@ -31,10 +31,7 @@ from .data import (
     get_random_tensor_frame,
     FakeHeteroDataset,
 )
-from .dist_utils import (
-    ps_std_capture,
-    assert_run_mproc
-)
+from .dist_utils import assert_run_mproc
 
 __all__ = [
     'is_full_test',

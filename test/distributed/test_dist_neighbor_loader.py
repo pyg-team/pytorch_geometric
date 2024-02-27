@@ -1,4 +1,3 @@
-import atexit
 import socket
 
 import pytest

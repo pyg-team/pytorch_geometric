@@ -1,7 +1,8 @@
 import pytest
 import traceback
 
-from typing import Iterable
+from typing import Collection, Callable, Any
+from typing_extensions import Self
 
 from torch.multiprocessing import (Queue, Process, Manager)
 
@@ -10,7 +11,7 @@ import sys
 
 
 class MPCaptOutput:
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._out_value = ''
         self._err_value = ''
 
@@ -22,21 +23,28 @@ class MPCaptOutput:
 
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._out_value = sys.stdout.getvalue()
         sys.stdout = self._stdout
 
         self._err_value = sys.stderr.getvalue()
         sys.stderr = self._stderr
 
-    def get_stdout(self):
+    @property
+    def stdout(self) -> str:
         return self._out_value
 
-    def get_stderr(self):
+    @property
+    def stderr(self) -> str:
         return self._err_value
 
 
-def ps_std_capture(func, queue: Queue, *args, **kwargs):
+def ps_std_capture(
+        func: Callable,
+        queue: Queue,
+        *args: Any,
+        **kwargs: Any
+) -> None:
     try:
         with MPCaptOutput() as capt:
             try:
@@ -45,18 +53,17 @@ def ps_std_capture(func, queue: Queue, *args, **kwargs):
                 traceback.print_exc(file=sys.stderr)
                 raise e
     finally:
-        queue.put((capt.get_stdout(), capt.get_stderr()))
+        queue.put((capt.stdout, capt.stderr))
 
 
 def assert_run_mproc(
-        procs: Iterable[Process],
-        full_trace=False,
-        timeout=5,
-):
+        procs: Collection[Process],
+        full_trace: bool = False,
+        timeout: int = 5,
+) -> None:
     manager = Manager()
     world_size = len(procs)
     queues = [manager.Queue() for _ in procs]
-
     results = []
 
     for p, q in zip(procs, queues):
