@@ -73,7 +73,7 @@ def assert_run_mproc(
     for p, stdout, stderr in results:
         if stdout:
             print(stdout)
-        if stderr:  # can be warning as well => exitcode == 0
+        if stderr:  # can be a warning as well => exitcode == 0
             print(stderr)
         if p.exitcode != 0:
             pytest.fail(pytrace=full_trace, reason=stderr.splitlines()[-1])
