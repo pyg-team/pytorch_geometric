@@ -107,7 +107,7 @@ class WebQSPDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        root: str,
+        root: str = '',
         force_reload: bool = False,
     ) -> None:
 
