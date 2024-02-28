@@ -14,7 +14,7 @@ import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.data import DataLoader
-from torch_scatter import scatter
+from torch_geometric.utils import scatter
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
