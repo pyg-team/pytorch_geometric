@@ -1,12 +1,13 @@
 import datasets
+import pandas as pd
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
 import tqdm
-import pandas as pd
+from torch.utils.data import DataLoader
 from transformers import AutoModel, AutoTokenizer
 
 from torch_geometric.data import InMemoryDataset, Data
+
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids=None, attention_mask=None):
