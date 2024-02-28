@@ -82,6 +82,7 @@ def test_from_pretrained(model, tmp_path):
 
     model = model.from_pretrained(save_directory)
     assert isinstance(model, DummyModel)
+    assert model.config == CONFIG
 
 
 @withPackage('huggingface_hub')
