@@ -1,7 +1,10 @@
 # This example implements G-retriever
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
-# by 54% compared to the [LLM] baseline“
+# by 54% compared to the [LLM] baseline“.
+# Original work uses LLAMA2 from Meta for LLM.
+# This example uses GEMMA from google for the LLM
+# as this is the current open source SOTA LLM.
 
 import contextlib
 import gc
