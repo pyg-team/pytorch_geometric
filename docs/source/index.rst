@@ -12,10 +12,10 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 
 .. image:: https://pbs.twimg.com/media/GHbKAITWwAA83mw?format=jpg&name=large
   :align: center
-  :height: 400px
+  :width: 100%
   :target: https://www.eventbrite.com/e/webinar-pyg-25-distributed-training-of-gnns-tickets-850624951127
 
-Register for free `here <https://www.eventbrite.com/e/webinar-pyg-25-distributed-training-of-gnns-tickets-850624951127>`_.
+**Register for free** `here <https://www.eventbrite.com/e/webinar-pyg-25-distributed-training-of-gnns-tickets-850624951127>`_.
 
 .. toctree::
    :maxdepth: 1
