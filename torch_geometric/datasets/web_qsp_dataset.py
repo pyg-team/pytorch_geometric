@@ -1,9 +1,10 @@
-import torch
 import datasets
-from transformers import AutoModel, AutoTokenizer
+import torch
 import torch.nn.functional as F
-from torch_geometric.data import InMemoryDataset
 from torch.utils.data import DataLoader
+from transformers import AutoModel, AutoTokenizer
+
+from torch_geometric.data import InMemoryDataset
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -79,7 +80,7 @@ def sbert_text2embedding(model, tokenizer, device, text):
 
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings, dim=0).cpu()
-    except: # noqa
+    except:  # noqa
         print("SBERT text embedding failed, returning 0s...")
         return torch.zeros((0, 1024))
 
