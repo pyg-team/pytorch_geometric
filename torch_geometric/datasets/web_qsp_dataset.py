@@ -4,7 +4,8 @@ from transformers import AutoModel, AutoTokenizer
 import torch.nn.functional as F
 from torch_geometric.data import InMemoryDataset
 from torch.utils.data import DataLoader
-
+import tqdm
+import pandas as pd
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids=None, attention_mask=None):
@@ -123,16 +124,17 @@ class WebQSPDataset(InMemoryDataset):
             [dataset['train'], dataset['validation'], dataset['test']])
         self.split_idxs = {
             'train':
-            np.arange(len(dataset['train'])),
+            torch.arange(len(dataset['train'])),
             'val':
-            np.arange(len(dataset['validation'])) + len(dataset['train']),
+            torch.arange(len(dataset['validation'])) + len(dataset['train']),
             'test':
-            np.arange(len(dataset['test'])) + len(dataset['train']) +
+            torch.arange(len(dataset['test'])) + len(dataset['train']) +
             len(dataset['validation'])
         }
 
     def process(self) -> None:
         self.questions = [i['question'] for i in self.raw_dataset]
+        pretrained_repo = 'sentence-transformers/all-roberta-large-v1'
         self.model = Sentence_Transformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
@@ -143,7 +145,7 @@ class WebQSPDataset(InMemoryDataset):
         self.q_embs = self.text2embedding(self.model, self.tokenizer,
                                           self.device, self.questions)
         print('Encoding graphs...')
-        self.list_of_graphs = []
+        list_of_graphs = []
         for index in tqdm(range(len(self.raw_dataset))):
             raw_nodes = {}
             raw_edges = []
@@ -151,11 +153,11 @@ class WebQSPDataset(InMemoryDataset):
                 h, r, t = tri
                 h = h.lower()
                 t = t.lower()
-                if h not in nodes:
+                if h not in raw_nodes:
                     raw_nodes[h] = len(raw_nodes)
-                if t not in nodes:
+                if t not in raw_nodes:
                     raw_nodes[t] = len(raw_nodes)
-                edges.append({
+                raw_edges.append({
                     'src': raw_nodes[h],
                     'edge_attr': r,
                     'dst': raw_nodes[t]
