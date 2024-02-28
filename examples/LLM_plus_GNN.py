@@ -2,31 +2,26 @@
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
 # by 54% compared to the [LLAMA] baseline“
-import os
-import gc
-from tqdm import tqdm
-import torch
-from torch.utils.data import DataLoader
-from torch.nn.utils import clip_grad_norm_
-
-from src.model import load_model
-from torch_geometric.datasets import WebQSPDataset
-import pandas as pd
-from torch_geometric import seed_everything
-from src.utils.lr_schedule import adjust_learning_rate
-
 import contextlib
-import torch.nn as nn
-from torch.cuda.amp import autocast as autocast
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from torch_scatter import scatter
-from src.model.gnn import load_gnn_model
-from peft import (
-    LoraConfig,
-    get_peft_model,
-    prepare_model_for_int8_training,
-)
+import gc
+import os
 
+import pandas as pd
+import torch
+import torch.nn as nn
+from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
+from src.model import load_model
+from src.model.gnn import load_gnn_model
+from src.utils.lr_schedule import adjust_learning_rate
+from torch.cuda.amp import autocast as autocast
+from torch.nn.utils import clip_grad_norm_
+from torch.utils.data import DataLoader
+from torch_scatter import scatter
+from tqdm import tqdm
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from torch_geometric import seed_everything
+from torch_geometric.datasets import WebQSPDataset
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -58,8 +53,8 @@ def compute_accuracy(eval_output):
 
             label = label.split('|')
             matches = set(pred).intersection(set(label))
-            precision = len(matches)/len(set(label))
-            recall = len(matches)/len(set(pred))
+            precision = len(matches) / len(set(label))
+            recall = len(matches) / len(set(pred))
             if recall + precision == 0:
                 f1 = 0
             else:
@@ -73,10 +68,10 @@ def compute_accuracy(eval_output):
             print(f'Label: {label}')
             print(f'Pred: {pred}')
             print('------------------')
-    hit = sum(all_hit)/len(all_hit)
-    precision = sum(all_precision)/len(all_precision)
-    recall = sum(all_recall)/len(all_recall)
-    f1 = sum(all_f1)/len(all_f1)
+    hit = sum(all_hit) / len(all_hit)
+    precision = sum(all_precision) / len(all_precision)
+    recall = sum(all_recall) / len(all_recall)
+    f1 = sum(all_f1) / len(all_f1)
 
     print(f'Hit: {hit:.4f}')
     print(f'Precision: {precision:.4f}')
@@ -85,33 +80,34 @@ def compute_accuracy(eval_output):
 
     return hit
 
-class GAT_LLAMA(nn.Module):
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+class GAT_LLAMA(nn.Module):
+    def __init__(self, **kwargs):
         super().__init__()
         self.max_txt_len = args.max_txt_len
         self.max_new_tokens = args.max_new_tokens
 
         print('Loading LLAMA')
         kwargs = {
-            "max_memory": {0: '20GiB', 1: '20GiB', 2: '20GiB', 3: '20GiB'},
+            "max_memory": {
+                0: '20GiB',
+                1: '20GiB',
+                2: '20GiB',
+                3: '20GiB'
+            },
             "device_map": "auto",
             "revision": "main",
         }
         llm_model_path = kwargs["path"]
-        self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path, use_fast=False)
+        self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
+                                                       use_fast=False)
         self.tokenizer.pad_token_id = 0
         self.tokenizer.padding_side = 'left'
 
-        model = AutoModelForCausalLM.from_pretrained(
-            llm_model_path,
-            torch_dtype=torch.float16,
-            low_cpu_mem_usage=True,
-            **kwargs
-        )
+        model = AutoModelForCausalLM.from_pretrained(llm_model_path,
+                                                     torch_dtype=torch.float16,
+                                                     low_cpu_mem_usage=True,
+                                                     **kwargs)
 
         print("Training LLAMA with LORA!")
         model = prepare_model_for_int8_training(model)
@@ -164,7 +160,8 @@ class GAT_LLAMA(nn.Module):
     def encode_graphs(self, samples):
         graphs = samples['graph']
         graphs = graphs.to(self.model.device)
-        n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(), graphs.edge_attr)
+        n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(),
+                                         graphs.edge_attr)
 
         # mean pooling
         g_embeds = scatter(n_embeds, graphs.batch, dim=0, reduce='mean')
@@ -173,15 +170,20 @@ class GAT_LLAMA(nn.Module):
 
     def forward(self, samples):
         # encode description, questions and labels
-        questions = self.tokenizer(samples["question"], add_special_tokens=False)
-        descriptions = self.tokenizer(samples["desc"], add_special_tokens=False)
+        questions = self.tokenizer(samples["question"],
+                                   add_special_tokens=False)
+        descriptions = self.tokenizer(samples["desc"],
+                                      add_special_tokens=False)
         labels = self.tokenizer(samples["label"], add_special_tokens=False)
 
         # encode special tokens
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(
+            self.tokenizer(BOS, add_special_tokens=False,
+                           return_tensors='pt').input_ids[0])
+        pad_embeds = self.word_embedding(
+            torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -193,27 +195,41 @@ class GAT_LLAMA(nn.Module):
         batch_label_input_ids = []
         for i in range(batch_size):
             # Add bos & eos token
-            label_input_ids = labels.input_ids[i][:self.max_new_tokens] + eos_tokens.input_ids
-            input_ids = descriptions.input_ids[i][:self.max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
-            inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
-            inputs_embeds = torch.cat([bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds], dim=0)
+            label_input_ids = labels.input_ids[
+                i][:self.max_new_tokens] + eos_tokens.input_ids
+            input_ids = descriptions.input_ids[
+                i][:self.max_txt_len] + questions.input_ids[
+                    i] + eos_user_tokens.input_ids + label_input_ids
+            inputs_embeds = self.word_embedding(
+                torch.tensor(input_ids).to(self.model.device))
+            inputs_embeds = torch.cat(
+                [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
+                dim=0)
 
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
-            label_input_ids = [IGNORE_INDEX] * (inputs_embeds.shape[0]-len(label_input_ids))+label_input_ids
+            label_input_ids = [IGNORE_INDEX
+                               ] * (inputs_embeds.shape[0] -
+                                    len(label_input_ids)) + label_input_ids
             batch_label_input_ids.append(label_input_ids)
 
         # pad inputs_embeds
         max_length = max([x.shape[0] for x in batch_inputs_embeds])
         for i in range(batch_size):
-            pad_length = max_length-batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat([pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0]*pad_length+batch_attention_mask[i]
-            batch_label_input_ids[i] = [IGNORE_INDEX] * pad_length+batch_label_input_ids[i]
+            pad_length = max_length - batch_inputs_embeds[i].shape[0]
+            batch_inputs_embeds[i] = torch.cat(
+                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
+            batch_attention_mask[i] = [0
+                                       ] * pad_length + batch_attention_mask[i]
+            batch_label_input_ids[
+                i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
 
-        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0).to(self.model.device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.model.device)
-        label_input_ids = torch.tensor(batch_label_input_ids).to(self.model.device)
+        inputs_embeds = torch.stack(batch_inputs_embeds,
+                                    dim=0).to(self.model.device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.model.device)
+        label_input_ids = torch.tensor(batch_label_input_ids).to(
+            self.model.device)
 
         with self.maybe_autocast():
             outputs = self.model(
@@ -227,13 +243,18 @@ class GAT_LLAMA(nn.Module):
 
     def inference(self, samples):
         # encode description and questions
-        questions = self.tokenizer(samples["question"], add_special_tokens=False)
-        descriptions = self.tokenizer(samples["desc"], add_special_tokens=False)
+        questions = self.tokenizer(samples["question"],
+                                   add_special_tokens=False)
+        descriptions = self.tokenizer(samples["desc"],
+                                      add_special_tokens=False)
 
         # encode special tokens
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(
+            self.tokenizer(BOS, add_special_tokens=False,
+                           return_tensors='pt').input_ids[0])
+        pad_embeds = self.word_embedding(
+            torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -244,21 +265,30 @@ class GAT_LLAMA(nn.Module):
         batch_attention_mask = []
         for i in range(batch_size):
             # Add bos & eos token
-            input_ids = descriptions.input_ids[i][:self.max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids
-            inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
-            inputs_embeds = torch.cat([bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds], dim=0)
+            input_ids = descriptions.input_ids[
+                i][:self.max_txt_len] + questions.input_ids[
+                    i] + eos_user_tokens.input_ids
+            inputs_embeds = self.word_embedding(
+                torch.tensor(input_ids).to(self.model.device))
+            inputs_embeds = torch.cat(
+                [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
+                dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
         # pad inputs_embeds
         max_length = max([x.shape[0] for x in batch_inputs_embeds])
         for i in range(batch_size):
-            pad_length = max_length-batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat([pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0]*pad_length+batch_attention_mask[i]
+            pad_length = max_length - batch_inputs_embeds[i].shape[0]
+            batch_inputs_embeds[i] = torch.cat(
+                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
+            batch_attention_mask[i] = [0
+                                       ] * pad_length + batch_attention_mask[i]
 
-        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0).to(self.model.device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.model.device)
+        inputs_embeds = torch.stack(batch_inputs_embeds,
+                                    dim=0).to(self.model.device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.model.device)
 
         with self.maybe_autocast():
             outputs = self.model.generate(
@@ -270,11 +300,13 @@ class GAT_LLAMA(nn.Module):
             )
         pred = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        return {'id': samples['id'],
-                'pred': pred,
-                'label': samples['label'],
-                'question': samples['question'],
-                'desc': samples['desc'], }
+        return {
+            'id': samples['id'],
+            'pred': pred,
+            'label': samples['label'],
+            'question': samples['question'],
+            'desc': samples['desc'],
+        }
 
     def print_trainable_params(self):
         trainable_params = 0
@@ -300,22 +332,34 @@ def main():
     val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
 
-    train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True, pin_memory=True, shuffle=True, collate_fn=collate_fn)
-    val_loader = DataLoader(val_dataset, batch_size=4, drop_last=False, pin_memory=True, shuffle=False, collate_fn=collate_fn)
-    test_loader = DataLoader(test_dataset, batch_size=4, drop_last=False, pin_memory=True, shuffle=False, collate_fn=collate_fn)
+    train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
+                              pin_memory=True, shuffle=True,
+                              collate_fn=collate_fn)
+    val_loader = DataLoader(val_dataset, batch_size=4, drop_last=False,
+                            pin_memory=True, shuffle=False,
+                            collate_fn=collate_fn)
+    test_loader = DataLoader(test_dataset, batch_size=4, drop_last=False,
+                             pin_memory=True, shuffle=False,
+                             collate_fn=collate_fn)
 
     # Step 3: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
-    model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path, init_prompt=dataset.prompt, device=dataset.device)
+    model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path,
+                      init_prompt=dataset.prompt, device=dataset.device)
 
     # Step 4 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
-    optimizer = torch.optim.AdamW(
-        [{'params': params, 'lr': args.lr, 'weight_decay': args.wd}, ],
-        betas=(0.9, 0.95)
-    )
+    optimizer = torch.optim.AdamW([
+        {
+            'params': params,
+            'lr': args.lr,
+            'weight_decay': args.wd
+        },
+    ], betas=(0.9, 0.95))
     trainable_params, all_param = model.print_trainable_params()
-    print(f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}")
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
 
     # Step 5. Training
     num_training_steps = args.num_epochs * len(train_loader)
@@ -336,10 +380,12 @@ def main():
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
 
             if (step + 1) % args.grad_steps == 0:
-                adjust_learning_rate(optimizer.param_groups[0], args.lr, step / len(train_loader) + epoch, args)
+                adjust_learning_rate(optimizer.param_groups[0], args.lr,
+                                     step / len(train_loader) + epoch, args)
 
             optimizer.step()
-            epoch_loss, accum_loss = epoch_loss + loss.item(), accum_loss + loss.item()
+            epoch_loss, accum_loss = epoch_loss + loss.item(
+            ), accum_loss + loss.item()
 
             if (step + 1) % args.grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
@@ -349,7 +395,9 @@ def main():
 
             progress_bar.update(1)
 
-        print(f"Epoch: {epoch}|{args.num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
+        print(
+            f"Epoch: {epoch}|{args.num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
+        )
         wandb.log({'Train Loss (Epoch Mean)': epoch_loss / len(train_loader)})
 
         val_loss = 0.
@@ -359,7 +407,7 @@ def main():
             for step, batch in enumerate(val_loader):
                 loss = model(batch)
                 val_loss += loss.item()
-            val_loss = val_loss/len(val_loader)
+            val_loss = val_loss / len(val_loader)
             print(f"Epoch: {epoch}|{args.num_epochs}: Val Loss: {val_loss}")
             wandb.log({'Val Loss': val_loss})
 
@@ -368,7 +416,9 @@ def main():
             _save_checkpoint(model, optimizer, epoch, args, is_best=True)
             best_epoch = epoch
 
-        print(f'Epoch {epoch} Val Loss {val_loss} Best Val Loss {best_val_loss} Best Epoch {best_epoch}')
+        print(
+            f'Epoch {epoch} Val Loss {val_loss} Best Val Loss {best_val_loss} Best Epoch {best_epoch}'
+        )
 
         if epoch - best_epoch >= args.patience:
             print(f'Early stop at epoch {epoch}')
