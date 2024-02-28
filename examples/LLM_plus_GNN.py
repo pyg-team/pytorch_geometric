@@ -6,9 +6,13 @@
 import contextlib
 import gc
 import math
+<<<<<<< HEAD
+=======
+import os
+import re
+>>>>>>> 046a91e2cd94b79ad036efbd71d609c5b940e2ad
 
 import pandas as pd
-import re
 import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
@@ -17,11 +21,11 @@ from torch.utils.data import DataLoader
 from torch_scatter import scatter
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from torch_geometric.data import Batch
 
-from torch_geometric import seed_everything
-from torch_geometric.datasets import WebQSPDataset
 import torch_geometric
+from torch_geometric import seed_everything
+from torch_geometric.data import Batch
+from torch_geometric.datasets import WebQSPDataset
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -79,7 +83,7 @@ def compute_accuracy(eval_output):
             all_recall.append(recall)
             all_f1.append(f1)
 
-        except: # noqa
+        except:  # noqa
             print(f'Label: {label}')
             print(f'Pred: {pred}')
             print('------------------')
@@ -374,11 +378,9 @@ def main():
     ], betas=(0.9, 0.95))
     grad_steps = 2
     trainable_params, all_param = model.print_trainable_params()
-    print(
-        f"trainable params: {trainable_params} || \
+    print(f"trainable params: {trainable_params} || \
         all params: {all_param} || \
-        trainable%: {100 * trainable_params / all_param}"
-    )
+        trainable%: {100 * trainable_params / all_param}")
 
     # Step 5. Training
     num_training_steps = num_epochs * len(train_loader)
@@ -402,18 +404,15 @@ def main():
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss = epoch_loss + loss.item(
-            )
+            epoch_loss = epoch_loss + loss.item()
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
 
             progress_bar.update(1)
 
-        print(
-            f"Epoch: {epoch}|{num_epochs}, \
-            Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
-        )
+        print(f"Epoch: {epoch}|{num_epochs}, \
+            Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
 
         val_loss = 0.
         eval_output = []
