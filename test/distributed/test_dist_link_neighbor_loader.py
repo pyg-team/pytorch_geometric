@@ -150,10 +150,11 @@ def test_dist_link_neighbor_loader_homo(
 ):
     addr = '127.0.0.1'
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -198,10 +199,11 @@ def test_dist_link_neighbor_loader_hetero(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
