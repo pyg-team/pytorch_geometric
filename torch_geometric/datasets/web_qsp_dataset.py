@@ -1,10 +1,30 @@
-import os.path as osp
-
 import torch
-from datasets import concatenate_datasets, load_dataset
+import datasets
 from transformers import AutoModel, AutoTokenizer
-
+import torch.nn.functional as F
 from torch_geometric.data import InMemoryDataset
+from torch.utils.data import DataLoader
+
+
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, input_ids=None, attention_mask=None):
+        super().__init__()
+        self.data = {
+            "input_ids": input_ids,
+            "att_mask": attention_mask,
+        }
+
+    def __len__(self):
+        return self.data["input_ids"].size(0)
+
+    def __getitem__(self, index):
+        if isinstance(index, torch.Tensor):
+            index = index.item()
+        batch_data = dict()
+        for key in self.data.keys():
+            if self.data[key] is not None:
+                batch_data[key] = self.data[key][index]
+        return batch_data
 
 
 class Sentence_Transformer(torch.nn.Module):
@@ -38,7 +58,7 @@ def sbert_text2embedding(model, tokenizer, device, text):
                           attention_mask=encoding.attention_mask)
 
         # DataLoader
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+        dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
 
         # Placeholder for storing the embeddings
         all_embeddings = []
@@ -59,7 +79,8 @@ def sbert_text2embedding(model, tokenizer, device, text):
 
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings, dim=0).cpu()
-    except:
+    except: # noqa
+        print("SBERT text embedding failed, returning 0s...")
         return torch.zeros((0, 1024))
 
     return all_embeddings
@@ -81,8 +102,6 @@ class WebQSPDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    path = 'dataset/webqsp'
-
     def __init__(
         self,
         root: str,

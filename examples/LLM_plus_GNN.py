@@ -9,6 +9,7 @@ import math
 import os
 
 import pandas as pd
+import re
 import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
@@ -18,9 +19,11 @@ from torch.utils.data import DataLoader
 from torch_scatter import scatter
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from torch_geometric.data import Batch
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
+import torch_geometric
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -78,7 +81,7 @@ def compute_accuracy(eval_output):
             all_recall.append(recall)
             all_f1.append(f1)
 
-        except:
+        except: # noqa
             print(f'Label: {label}')
             print(f'Pred: {pred}')
             print('------------------')
@@ -163,7 +166,8 @@ class GAT_LLAMA(nn.Module):
 
     def maybe_autocast(self, dtype=torch.bfloat16):
         # if on cpu, don't use autocast
-        # if on gpu, use autocast with dtype if provided, otherwise use torch.float16
+        # if on gpu, use autocast with dtype if provided,
+        # otherwise use torch.float16
         enable_autocast = self.device != torch.device("cpu")
         if enable_autocast:
             return torch.cuda.amp.autocast(dtype=dtype)
@@ -373,18 +377,19 @@ def main():
     grad_steps = 2
     trainable_params, all_param = model.print_trainable_params()
     print(
-        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+        f"trainable params: {trainable_params} || \
+        all params: {all_param} || \
+        trainable%: {100 * trainable_params / all_param}"
     )
 
     # Step 5. Training
     num_training_steps = num_epochs * len(train_loader)
     progress_bar = tqdm(range(num_training_steps))
-    best_val_loss = float('inf')
 
     for epoch in range(num_epochs):
 
         model.train()
-        epoch_loss, accum_loss = 0., 0.
+        epoch_loss = 0.
 
         for step, batch in enumerate(train_loader):
 
@@ -399,19 +404,17 @@ def main():
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss, accum_loss = epoch_loss + loss.item(
-            ), accum_loss + loss.item()
+            epoch_loss = epoch_loss + loss.item(
+            )
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
-                wandb.log({'Lr': lr})
-                wandb.log({'Accum Loss': accum_loss / grad_steps})
-                accum_loss = 0.
 
             progress_bar.update(1)
 
         print(
-            f"Epoch: {epoch}|{num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
+            f"Epoch: {epoch}|{num_epochs}, \
+            Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
         )
 
         val_loss = 0.
@@ -423,7 +426,6 @@ def main():
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(f"Epoch: {epoch}|{num_epochs}: Val Loss: {val_loss}")
-            wandb.log({'Val Loss': val_loss})
 
         print(f'Epoch {epoch} Val Loss {val_loss}')
 
