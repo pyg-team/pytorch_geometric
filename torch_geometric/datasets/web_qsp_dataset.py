@@ -6,7 +6,7 @@ import tqdm
 from torch.utils.data import DataLoader
 from transformers import AutoModel, AutoTokenizer
 
-from torch_geometric.data import InMemoryDataset, Data
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -168,7 +168,8 @@ class WebQSPDataset(InMemoryDataset):
                 'node_id': v,
                 'node_attr': k
             } for k, v in raw_nodes.items()], columns=['node_id', 'node_attr'])
-            edges = pd.DataFrame(raw_edges, columns=['src', 'edge_attr', 'dst'])
+            edges = pd.DataFrame(raw_edges,
+                                 columns=['src', 'edge_attr', 'dst'])
             # encode nodes
             nodes.node_attr.fillna("", inplace=True)
             x = self.text2embedding(self.model, self.tokenizer, self.device,
