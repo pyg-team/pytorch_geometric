@@ -13,6 +13,8 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 - [`ogbn_proteins_deepgcn.py`](./ogbn_proteins_deepgcn.py) is an example to showcase how to train deep GNNs on the `ogbn-proteins` dataset.
 - [`ogbn_papers_100m.py`](./ogbn_papers_100m.py) is an example for training a GNN on the large-scale `ogbn-papers100m` dataset, containing approximately ~1.6B edges.
 
+For an example on co-training a GNN with an LLM, see [`examples/LLM_plus_GNN.py`](./LLM_plus_GNN.py).
+
 For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
 For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
