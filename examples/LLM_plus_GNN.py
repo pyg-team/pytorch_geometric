@@ -2,6 +2,7 @@
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
 # by 54% compared to the [LLAMA] baseline“
+
 import contextlib
 import gc
 import os
@@ -10,9 +11,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
-from src.model import load_model
-from src.model.gnn import load_gnn_model
-from src.utils.lr_schedule import adjust_learning_rate
+import math
 from torch.cuda.amp import autocast as autocast
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.data import DataLoader
@@ -27,7 +26,18 @@ BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
+num_epochs = 10
 
+def adjust_learning_rate(param_group, LR, epoch):
+    """Decay the learning rate with half-cycle cosine after warmup"""
+    min_lr = 5e-6
+    warmup_epochs = 1
+    if epoch < warmup_epochs:
+        lr = LR
+    else:
+        lr = min_lr + (LR - min_lr) * 0.5 * (1.0 + math.cos(math.pi * (epoch - warmup_epochs) / (num_epochs - warmup_epochs)))
+    param_group["lr"] = lr
+    return lr
 
 def collate_fn(original_batch):
     batch = {}
@@ -84,8 +94,8 @@ def compute_accuracy(eval_output):
 class GAT_LLAMA(nn.Module):
     def __init__(self, **kwargs):
         super().__init__()
-        self.max_txt_len = args.max_txt_len
-        self.max_new_tokens = args.max_new_tokens
+        self.max_txt_len = 512
+        self.max_new_tokens = 32
 
         print('Loading LLAMA')
         kwargs = {
@@ -132,16 +142,15 @@ class GAT_LLAMA(nn.Module):
         print('Finish loading LLAMA!')
 
         self.graph_encoder = torch_geometric.nn.models.GAT(
-            in_channels=args.gnn_in_dim,
-            out_channels=args.gnn_hidden_dim,
-            hidden_channels=args.gnn_hidden_dim,
-            num_layers=args.gnn_num_layers,
-            dropout=args.gnn_dropout,
-            num_heads=args.gnn_num_heads,
+            in_channels=1024,
+            out_channels=1024,
+            hidden_channels=1024,
+            num_layers=4,
+            num_heads=4,
         ).to(self.model.device)
 
         self.projector = nn.Sequential(
-            nn.Linear(args.gnn_hidden_dim, 2048),
+            nn.Linear(1024, 2048),
             nn.Sigmoid(),
             nn.Linear(2048, 4096),
         ).to(self.model.device)
@@ -349,24 +358,26 @@ def main():
 
     # Step 4 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
+    lr = 1e-5
     optimizer = torch.optim.AdamW([
         {
             'params': params,
-            'lr': args.lr,
-            'weight_decay': args.wd
+            'lr': lr,
+            'weight_decay': .05
         },
     ], betas=(0.9, 0.95))
+    grad_steps = 2
     trainable_params, all_param = model.print_trainable_params()
     print(
         f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
     )
 
     # Step 5. Training
-    num_training_steps = args.num_epochs * len(train_loader)
+    num_training_steps = num_epochs * len(train_loader)
     progress_bar = tqdm(range(num_training_steps))
     best_val_loss = float('inf')
 
-    for epoch in range(args.num_epochs):
+    for epoch in range(num_epochs):
 
         model.train()
         epoch_loss, accum_loss = 0., 0.
@@ -379,26 +390,25 @@ def main():
 
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
 
-            if (step + 1) % args.grad_steps == 0:
-                adjust_learning_rate(optimizer.param_groups[0], args.lr,
-                                     step / len(train_loader) + epoch, args)
+            if (step + 1) % grad_steps == 0:
+                adjust_learning_rate(optimizer.param_groups[0], lr,
+                                     step / len(train_loader) + epoch)
 
             optimizer.step()
             epoch_loss, accum_loss = epoch_loss + loss.item(
             ), accum_loss + loss.item()
 
-            if (step + 1) % args.grad_steps == 0:
+            if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
                 wandb.log({'Lr': lr})
-                wandb.log({'Accum Loss': accum_loss / args.grad_steps})
+                wandb.log({'Accum Loss': accum_loss / grad_steps})
                 accum_loss = 0.
 
             progress_bar.update(1)
 
         print(
-            f"Epoch: {epoch}|{args.num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
+            f"Epoch: {epoch}|{num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}"
         )
-        wandb.log({'Train Loss (Epoch Mean)': epoch_loss / len(train_loader)})
 
         val_loss = 0.
         eval_output = []
@@ -408,26 +418,18 @@ def main():
                 loss = model(batch)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
-            print(f"Epoch: {epoch}|{args.num_epochs}: Val Loss: {val_loss}")
+            print(f"Epoch: {epoch}|{num_epochs}: Val Loss: {val_loss}")
             wandb.log({'Val Loss': val_loss})
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            _save_checkpoint(model, optimizer, epoch, args, is_best=True)
-            best_epoch = epoch
-
         print(
-            f'Epoch {epoch} Val Loss {val_loss} Best Val Loss {best_val_loss} Best Epoch {best_epoch}'
+            f'Epoch {epoch} Val Loss {val_loss}'
         )
-
-        if epoch - best_epoch >= args.patience:
-            print(f'Early stop at epoch {epoch}')
-            break
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5. Evaluating
+    print("Final Evaluation...")
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
