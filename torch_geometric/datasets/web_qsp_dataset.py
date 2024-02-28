@@ -6,7 +6,7 @@ import tqdm
 import pandas as pd
 from transformers import AutoModel, AutoTokenizer
 
-from torch_geometric.data import InMemoryDataset
+from torch_geometric.data import InMemoryDataset, Data
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids=None, attention_mask=None):
@@ -150,7 +150,7 @@ class WebQSPDataset(InMemoryDataset):
         for index in tqdm(range(len(self.raw_dataset))):
             raw_nodes = {}
             raw_edges = []
-            for tri in self.raw_dataset[i]['graph']:
+            for tri in self.raw_dataset[index]['graph']:
                 h, r, t = tri
                 h = h.lower()
                 t = t.lower()
@@ -166,8 +166,8 @@ class WebQSPDataset(InMemoryDataset):
             nodes = pd.DataFrame([{
                 'node_id': v,
                 'node_attr': k
-            } for k, v in nodes.items()], columns=['node_id', 'node_attr'])
-            edges = pd.DataFrame(edges, columns=['src', 'edge_attr', 'dst'])
+            } for k, v in raw_nodes.items()], columns=['node_id', 'node_attr'])
+            edges = pd.DataFrame(raw_edges, columns=['src', 'edge_attr', 'dst'])
             # encode nodes
             nodes.node_attr.fillna("", inplace=True)
             x = self.text2embedding(self.model, self.tokenizer, self.device,
@@ -180,5 +180,5 @@ class WebQSPDataset(InMemoryDataset):
                 [edges.src.tolist(), edges.dst.tolist()])
             list_of_graphs.append(
                 Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                     num_nodes=len(nodes), q_emb=self.q_embs[i]))
+                     num_nodes=len(nodes), q_emb=self.q_embs[index]))
         self.save(list_of_graphs, self.processed_paths[0])
