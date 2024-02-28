@@ -1,7 +1,7 @@
 # This example implements G-retriever
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
-# by 54% compared to the [LLM] baseline“
+# by 54% compared to the [LLAMA] baseline“
 import os
 import gc
 from tqdm import tqdm
