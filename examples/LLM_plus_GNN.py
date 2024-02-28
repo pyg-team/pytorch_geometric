@@ -11,9 +11,21 @@ from torch.nn.utils import clip_grad_norm_
 
 from src.model import load_model
 from torch_geometric.datasets import WebQSPDataset
-from src.utils.evaluate import eval_funcs
+import pandas as pd
 from torch_geometric import seed_everything
 from src.utils.lr_schedule import adjust_learning_rate
+
+import contextlib
+import torch.nn as nn
+from torch.cuda.amp import autocast as autocast
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from torch_scatter import scatter
+from src.model.gnn import load_gnn_model
+from peft import (
+    LoraConfig,
+    get_peft_model,
+    prepare_model_for_int8_training,
+)
 
 
 BOS = '<s>[INST]'
@@ -31,25 +43,52 @@ def collate_fn(original_batch):
     return batch
 
 
-import contextlib
-import torch
-import torch.nn as nn
-from torch.cuda.amp import autocast as autocast
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from torch_scatter import scatter
-from src.model.gnn import load_gnn_model
-from peft import (
-    LoraConfig,
-    get_peft_model,
-    prepare_model_for_int8_training,
-)
+def compute_accuracy(eval_output):
+    df = pd.concat([pd.DataFrame(d) for d in eval_output])
+    all_hit = []
+    all_precision = []
+    all_recall = []
+    all_f1 = []
 
+    for pred, label in zip(df.pred.tolist(), df.label.tolist()):
+        try:
+            pred = pred.split('[/s]')[0].strip().split('|')
+            hit = re.findall(pred[0], label)
+            all_hit.append(len(hit) > 0)
 
-class GraphLLM(torch.nn.Module):
+            label = label.split('|')
+            matches = set(pred).intersection(set(label))
+            precision = len(matches)/len(set(label))
+            recall = len(matches)/len(set(pred))
+            if recall + precision == 0:
+                f1 = 0
+            else:
+                f1 = 2 * precision * recall / (precision + recall)
+
+            all_precision.append(precision)
+            all_recall.append(recall)
+            all_f1.append(f1)
+
+        except:
+            print(f'Label: {label}')
+            print(f'Pred: {pred}')
+            print('------------------')
+    hit = sum(all_hit)/len(all_hit)
+    precision = sum(all_precision)/len(all_precision)
+    recall = sum(all_recall)/len(all_recall)
+    f1 = sum(all_f1)/len(all_f1)
+
+    print(f'Hit: {hit:.4f}')
+    print(f'Precision: {precision:.4f}')
+    print(f'Recall: {recall:.4f}')
+    print(f'F1: {f1:.4f}')
+
+    return hit
+
+class GAT_LLAMA(nn.Module):
 
     def __init__(
         self,
-        args,
         **kwargs
     ):
         super().__init__()
@@ -62,46 +101,41 @@ class GraphLLM(torch.nn.Module):
             "device_map": "auto",
             "revision": "main",
         }
-
-        self.tokenizer = AutoTokenizer.from_pretrained(args.llm_model_path, use_fast=False, revision=kwargs["revision"])
+        llm_model_path = kwargs["path"]
+        self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path, use_fast=False)
         self.tokenizer.pad_token_id = 0
         self.tokenizer.padding_side = 'left'
 
         model = AutoModelForCausalLM.from_pretrained(
-            args.llm_model_path,
+            llm_model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
             **kwargs
         )
 
-        if args.llm_frozen == 'True':
-            print("Freezing LLAMA!")
-            for name, param in model.named_parameters():
-                param.requires_grad = False
-        else:
-            print("Training LLAMA with LORA!")
-            model = prepare_model_for_int8_training(model)
-            lora_r: int = 8
-            lora_alpha: int = 16
-            lora_dropout: float = 0.05
-            lora_target_modules = [
-                "q_proj",
-                "v_proj",
-            ]
-            config = LoraConfig(
-                r=lora_r,
-                lora_alpha=lora_alpha,
-                target_modules=lora_target_modules,
-                lora_dropout=lora_dropout,
-                bias="none",
-                task_type="CAUSAL_LM",
-            )
-            model = get_peft_model(model, config)
-
-        self.model = model
+        print("Training LLAMA with LORA!")
+        model = prepare_model_for_int8_training(model)
+        lora_r: int = 8
+        lora_alpha: int = 16
+        lora_dropout: float = 0.05
+        lora_target_modules = [
+            "q_proj",
+            "v_proj",
+        ]
+        config = LoraConfig(
+            r=lora_r,
+            lora_alpha=lora_alpha,
+            target_modules=lora_target_modules,
+            lora_dropout=lora_dropout,
+            bias="none",
+            task_type="CAUSAL_LM",
+        )
+        model = get_peft_model(model, config)
+        self.device = kwargs['device']
+        self.model = model.to(self.device)
         print('Finish loading LLAMA!')
 
-        self.graph_encoder = load_gnn_model[args.gnn_model_name](
+        self.graph_encoder = torch_geometric.nn.models.GAT(
             in_channels=args.gnn_in_dim,
             out_channels=args.gnn_hidden_dim,
             hidden_channels=args.gnn_hidden_dim,
@@ -118,15 +152,10 @@ class GraphLLM(torch.nn.Module):
 
         self.word_embedding = self.model.model.get_input_embeddings()
 
-    @property
-    def device(self):
-        return list(self.parameters())[0].device
-
     def maybe_autocast(self, dtype=torch.bfloat16):
         # if on cpu, don't use autocast
         # if on gpu, use autocast with dtype if provided, otherwise use torch.float16
         enable_autocast = self.device != torch.device("cpu")
-
         if enable_autocast:
             return torch.cuda.amp.autocast(dtype=dtype)
         else:
@@ -143,7 +172,6 @@ class GraphLLM(torch.nn.Module):
         return g_embeds
 
     def forward(self, samples):
-
         # encode description, questions and labels
         questions = self.tokenizer(samples["question"], add_special_tokens=False)
         descriptions = self.tokenizer(samples["desc"], add_special_tokens=False)
@@ -198,7 +226,6 @@ class GraphLLM(torch.nn.Module):
         return outputs.loss
 
     def inference(self, samples):
-
         # encode description and questions
         questions = self.tokenizer(samples["question"], add_special_tokens=False)
         descriptions = self.tokenizer(samples["desc"], add_special_tokens=False)
@@ -252,7 +279,6 @@ class GraphLLM(torch.nn.Module):
     def print_trainable_params(self):
         trainable_params = 0
         all_param = 0
-
         for _, param in self.named_parameters():
             num_params = param.numel()
 
@@ -280,7 +306,7 @@ def main():
 
     # Step 3: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
-    model = load_model[args.model_name](graph_type=dataset.graph_type, args=args, init_prompt=dataset.prompt)
+    model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path, init_prompt=dataset.prompt, device=dataset.device)
 
     # Step 4 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -352,7 +378,6 @@ def main():
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5. Evaluating
-    model = _reload_best_model(model, args)
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
@@ -364,9 +389,7 @@ def main():
         progress_bar_test.update(1)
 
     # Step 6. Post-processing & compute metrics
-    os.makedirs(f'{args.output_dir}/{args.dataset}', exist_ok=True)
-    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
-    acc = eval_funcs[args.dataset](eval_output, path)
+    acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
 
 
