@@ -5,13 +5,13 @@
 
 import contextlib
 import gc
+import math
 import os
 
 import pandas as pd
 import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
-import math
 from torch.cuda.amp import autocast as autocast
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.data import DataLoader
@@ -28,6 +28,7 @@ EOS = '[/s]'
 IGNORE_INDEX = -100
 num_epochs = 10
 
+
 def adjust_learning_rate(param_group, LR, epoch):
     """Decay the learning rate with half-cycle cosine after warmup"""
     min_lr = 5e-6
@@ -35,9 +36,12 @@ def adjust_learning_rate(param_group, LR, epoch):
     if epoch < warmup_epochs:
         lr = LR
     else:
-        lr = min_lr + (LR - min_lr) * 0.5 * (1.0 + math.cos(math.pi * (epoch - warmup_epochs) / (num_epochs - warmup_epochs)))
+        lr = min_lr + (LR - min_lr) * 0.5 * (
+            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                           (num_epochs - warmup_epochs)))
     param_group["lr"] = lr
     return lr
+
 
 def collate_fn(original_batch):
     batch = {}
@@ -421,9 +425,7 @@ def main():
             print(f"Epoch: {epoch}|{num_epochs}: Val Loss: {val_loss}")
             wandb.log({'Val Loss': val_loss})
 
-        print(
-            f'Epoch {epoch} Val Loss {val_loss}'
-        )
+        print(f'Epoch {epoch} Val Loss {val_loss}')
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
