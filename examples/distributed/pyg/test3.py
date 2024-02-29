@@ -33,14 +33,15 @@ if __name__ == "__main__":
     mpi_rank = int(os.environ.get("PMI_RANK", -1))
     node_rank = int(os.environ.get("RANK", -1))
     num_nodes = 2
-    logging.info(
-    f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> rank={rank}"
-    )
-    logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
-
+    
     world_rank = node_rank * mpi_world_size + mpi_rank
     world_size = num_nodes * mpi_world_size
     
+    logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
+    logging.info(
+    f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> world_rank={world_rank}"
+    )
+
     master_addr = "10.211.176.210" #DUT1005
     master_port = "29500" # '11111'
     os.environ["MASTER_ADDR"] = master_addr
