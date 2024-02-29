@@ -43,13 +43,13 @@ class HeteroSAGEConv(torch.nn.Module):
             for edge_type in edge_types
         })
         if not is_output_layer:
+            self.dropout = torch.nn.Dropout(dropout)
             self.norm_dict = torch.nn.ModuleDict({
                 node_type:
                 BatchNorm(out_channels)
                 for node_type in node_types
             })
 
-        self.dropout = torch.nn.Dropout(dropout)
         self.is_output_layer = is_output_layer
 
     def forward(self, x_dict, edge_index_dict):
