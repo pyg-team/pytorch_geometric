@@ -115,18 +115,19 @@ class HeteroConv(torch.nn.Module):
         """
         out_dict: Dict[str, List[Tensor]] = {}
 
-        for edge_type, conv in self.convs.items(): # at each layer, potentially I could define a different kind of convolution for each type of edge
+        for edge_type, conv in self.convs.items(
+        ):  # at each layer, potentially I could define a different kind of convolution for each type of edge
             src, rel, dst = edge_type
 
             has_edge_level_arg = False
 
             ii = 0
             args = []
-            for value_dict in args_dict: #args_dict is a tuple, of dictionaries typically - currently x_dict, (xr_dict), edge_index_dict,
-                if edge_type in value_dict: # edge_type could be present in edge_index only
+            for value_dict in args_dict:  #args_dict is a tuple, of dictionaries typically - currently x_dict, (xr_dict), edge_index_dict,
+                if edge_type in value_dict:  # edge_type could be present in edge_index only
                     has_edge_level_arg = True
-                    args.append(value_dict[edge_type]) 
-                elif src == dst and src in value_dict: #
+                    args.append(value_dict[edge_type])
+                elif src == dst and src in value_dict:  #
                     args.append(value_dict[src])
                     # print("elif src == dst and src in value_dict: ii has value: ", ii)
                     # ii+=1

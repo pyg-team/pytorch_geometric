@@ -68,7 +68,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                     edge_index=edge_index_dict,
                 )
 
-            x_dict = conv(x_dict, edge_index_dict) # xr_dict
+            x_dict = conv(x_dict, edge_index_dict)  # xr_dict
             x_dict = {key: x.relu() for key, x in x_dict.items()}
 
         return self.lin(x_dict['paper'])

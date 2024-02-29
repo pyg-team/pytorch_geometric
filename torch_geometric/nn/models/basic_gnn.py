@@ -241,7 +241,7 @@ class BasicGNN(torch.nn.Module):
                     edge_weight = value
                 else:
                     edge_attr = value
-                x=(x_src, x_dst)
+                x = (x_src, x_dst)
                 #x = x_src
 
             # Tracing the module is not allowed with *args and **kwargs :(
