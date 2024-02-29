@@ -25,7 +25,8 @@ def run(rank, mpi_rank, size, hostname):
     else:
         # Send tensor to process 0
         dist.send(tensor=msg, dst=0)
-
+        
+    dist.barrier()
     print('END')
 
 if __name__ == "__main__":
