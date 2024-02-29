@@ -516,7 +516,10 @@ class EdgeIndex(Tensor):
 
         return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
 
-    def resize_(self, sparse_size: Tuple[int, int]) -> 'EdgeIndex':
+    def sparse_resize_(  # type: ignore
+            self,
+            sparse_size: Tuple[int, int],
+    ) -> 'EdgeIndex':
         r"""Assigns or re-assigns the size of the underlying sparse matrix.
 
         Args:
@@ -538,8 +541,11 @@ class EdgeIndex(Tensor):
             if ptr.numel() - 1 > size:
                 return None
 
-            val = ptr.new_full((size - ptr.numel() + 1, ), fill_value=ptr[-1])
-            return torch.cat([ptr, val], dim=0)
+            fill_value = ptr.new_full(
+                (size - ptr.numel() + 1, ),
+                fill_value=ptr[-1],  # type: ignore
+            )
+            return torch.cat([ptr, fill_value], dim=0)
 
         if self.is_sorted_by_row:
             self._indptr = _modify_ptr(self._indptr, num_rows)
