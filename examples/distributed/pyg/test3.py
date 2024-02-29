@@ -13,15 +13,19 @@ def run(rank, mpi_rank, size, hostname):
 
     print(f"I am {rank} of {size} in {hostname} running on {device}")
     
-    tensor = torch.tensor(rank).to(device)
+    msg = torch.tensor(rank).to(device)
     dist.barrier()
     if rank == 0:
-        tensor += 1
-        # Send the tensor to process 1
-        dist.send(tensor=tensor, dst=1)
+        for i in range(1, size):
+            # Receive tensors from all other processes
+            dist.recv(tensor=msg, src=i)
+            print('Rank ', rank, ' has data ', msg)
+
     else:
-        # Receive tensor from process 0
-        dist.recv(tensor=tensor, src=0)
+        # Send tensor to process 0
+        dist.send(tensor=msg, dst=0)
+
+    print('END')
 
 if __name__ == "__main__":
     mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
@@ -44,3 +48,4 @@ if __name__ == "__main__":
         init_method=f"tcp://{master_addr}:{master_port}",
     )
     run(world_rank, mpi_rank, world_size, hostname)
+    dist.destroy_process_group()

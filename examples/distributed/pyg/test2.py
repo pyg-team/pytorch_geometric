@@ -15,14 +15,15 @@ def run(rank, size, hostname):
     msg = torch.tensor(rank).to(device)
     dist.barrier()
     if rank == 0:
-        # Send the tensor to process 1
+        # Send the tensor to process 1 & receive tensor from process 1
         dist.send(tensor=msg, dst=1)
         dist.recv(tensor=msg, src=1)
     else:
-        # Receive tensor from process 0
+        # Send the tensor to process 0 & receive tensor from process 0
         dist.send(tensor=msg, dst=0)
         dist.recv(tensor=msg, src=0)
     print('Rank ', rank, ' has data ', msg)
+    print('END')
 
 if __name__ == "__main__":
     size = int(os.environ.get("PMI_SIZE", -1))
@@ -39,3 +40,4 @@ if __name__ == "__main__":
         init_method=f"tcp://{master_addr}:{master_port}",
     )
     run(rank, size, hostname)
+    dist.destroy_process_group()
