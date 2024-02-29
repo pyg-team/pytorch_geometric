@@ -18,8 +18,7 @@ mpi_rank = int(os.environ.get("PMI_RANK", -1))
 mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
 rank = node_rank * mpi_world_size + mpi_rank
 world_size = num_nodes * mpi_world_size
-os.environ["RANK"] = str(rank)
-os.environ["WORLD_SIZE"] = str(world_size)
+
 
 logging.info(
     f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> rank={rank}"
