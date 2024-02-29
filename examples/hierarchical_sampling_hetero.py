@@ -24,7 +24,7 @@ parser.add_argument('--num-neighbors', type=int, default=1)  #10
 parser.add_argument('--num-epochs', type=int, default=5)
 args = parser.parse_args()
 args.use_sparse_tensor = True
-args.hgam = True
+args.hgam = False
 print(args)
 
 transforms = [T.ToUndirected(merge=True)]
@@ -60,7 +60,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
 
         for i, conv in enumerate(self.convs):
             if args.hgam:
-                x_dict, edge_index_dict, _ = _trim_to_layer(
+                x_dict, xr_dict, edge_index_dict, _ = _trim_to_layer(
                     layer=i,
                     num_sampled_nodes_per_hop=num_sampled_nodes_dict,
                     num_sampled_edges_per_hop=num_sampled_edges_dict,
@@ -68,7 +68,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                     edge_index=edge_index_dict,
                 )
 
-            x_dict = conv(x_dict, edge_index_dict)
+            x_dict = conv(x_dict, edge_index_dict) # xr_dict
             x_dict = {key: x.relu() for key, x in x_dict.items()}
 
         return self.lin(x_dict['paper'])

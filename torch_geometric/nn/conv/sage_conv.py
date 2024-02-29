@@ -139,7 +139,6 @@ class SAGEConv(MessagePassing):
 
         x_r = x[1]
         if self.root_weight:
-            x_r = torch.narrow(x_r, 0, 0, out.shape[0])
             out = out + self.lin_r(x_r)
 
         if self.normalize:

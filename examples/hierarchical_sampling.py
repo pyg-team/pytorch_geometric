@@ -64,8 +64,8 @@ def train(trim=False):
     print("avg_loss is: ", avg_loss)
 
 
-print('\nOne epoch training without Hierarchical Graph Sampling:')
-train(trim=False)
+# print('\nOne epoch training without Hierarchical Graph Sampling:')
+# train(trim=False)
 
 print('\nOne epoch training with Hierarchical Graph Sampling:')
 train(trim=True)
