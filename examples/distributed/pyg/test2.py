@@ -12,16 +12,17 @@ def run(rank, size, hostname):
     print(f"I am {rank} of {size} in {hostname}")
     mpi_rank = int(os.environ.get("PMI_RANK", -1))
     device = torch.device(f'xpu:{mpi_rank}')
-    tensor = torch.zeros(1).to(device)
+    msg = torch.tensor(rank).to(device)
     dist.barrier()
     if rank == 0:
-        tensor += 1
         # Send the tensor to process 1
-        dist.send(tensor=tensor, dst=1)
+        dist.send(tensor=msg, dst=1)
+        dist.recv(tensor=msg, src=1)
     else:
         # Receive tensor from process 0
-        dist.recv(tensor=tensor, src=0)
-    print('Rank ', rank, ' has data ', tensor[0])
+        dist.send(tensor=msg, dst=0)
+        dist.recv(tensor=msg, src=0)
+    print('Rank ', rank, ' has data ', msg)
 
 if __name__ == "__main__":
     size = int(os.environ.get("PMI_SIZE", -1))

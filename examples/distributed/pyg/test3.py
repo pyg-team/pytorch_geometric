@@ -22,7 +22,6 @@ def run(rank, mpi_rank, size, hostname):
     else:
         # Receive tensor from process 0
         dist.recv(tensor=tensor, src=0)
-    print('Rank ', rank, ' has data ', tensor[0])
 
 if __name__ == "__main__":
     mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
