@@ -1024,18 +1024,18 @@ def test_sparse_narrow(device):
 
 
 @withCUDA
-def test_resize(device):
+def test_sparse_resize(device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
     out = adj.sort_by('row')[0].fill_cache_()
     assert out.sparse_size() == (3, 3)
     assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
     assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
-    out = out.resize_((4, 5))
+    out = out.sparse_resize_((4, 5))
     assert out.sparse_size() == (4, 5)
     assert out._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
     assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4, 4], device=device))
-    out = out.resize_((3, 3))
+    out = out.sparse_resize_((3, 3))
     assert out.sparse_size() == (3, 3)
     assert out._indptr is None
     assert out._T_indptr is None
@@ -1044,11 +1044,11 @@ def test_resize(device):
     assert out.sparse_size() == (3, 3)
     assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
     assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
-    out = out.resize_((4, 5))
+    out = out.sparse_resize_((4, 5))
     assert out.sparse_size() == (4, 5)
     assert out._indptr.equal(tensor([0, 1, 3, 4, 4, 4], device=device))
     assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
-    out = out.resize_((3, 3))
+    out = out.sparse_resize_((3, 3))
     assert out.sparse_size() == (3, 3)
     assert out._indptr is None
     assert out._T_indptr is None
