@@ -175,7 +175,7 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    def forward( 
+    def forward(
         self,
         x: Tensor,
         edge_index: Adj,
