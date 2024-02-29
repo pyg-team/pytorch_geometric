@@ -22,6 +22,7 @@ def run(rank, size, hostname):
         # Send the tensor to process 0 & receive tensor from process 0
         dist.send(tensor=msg, dst=0)
         dist.recv(tensor=msg, src=0)
+    dist.barrier()
     print('Rank ', rank, ' has data ', msg)
     print('END')
 

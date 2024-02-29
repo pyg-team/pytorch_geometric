@@ -54,4 +54,5 @@ if __name__ == "__main__":
         init_method=f"tcp://{master_addr}:{master_port}",
     )
     run(world_rank, mpi_rank, world_size, hostname)
+    logging.info('finished run')
     dist.destroy_process_group()
