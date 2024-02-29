@@ -1,4 +1,4 @@
-
+import logging
 import os
 import socket
 from torch.multiprocessing import Process
@@ -6,6 +6,7 @@ import intel_extension_for_pytorch as ipex
 import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def run(rank, mpi_rank, size, hostname):
     
@@ -31,8 +32,12 @@ if __name__ == "__main__":
     mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
     mpi_rank = int(os.environ.get("PMI_RANK", -1))
     node_rank = int(os.environ.get("RANK", -1))
-    num_nodes = 1
-    
+    num_nodes = 2
+    logging.info(
+    f"node_rank: {node_rank}, mpi_rank: {mpi_rank} -> rank={rank}"
+    )
+    logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
+
     world_rank = node_rank * mpi_world_size + mpi_rank
     world_size = num_nodes * mpi_world_size
     
