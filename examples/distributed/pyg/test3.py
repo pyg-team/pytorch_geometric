@@ -28,7 +28,7 @@ if __name__ == "__main__":
     mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
     mpi_rank = int(os.environ.get("PMI_RANK", -1))
     node_rank = int(os.environ.get("RANK", -1))
-    num_nodes = 2
+    num_nodes = 1
     
     world_rank = node_rank * mpi_world_size + mpi_rank
     world_size = num_nodes * mpi_world_size
