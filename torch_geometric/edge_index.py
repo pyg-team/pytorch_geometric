@@ -629,7 +629,7 @@ class EdgeIndex(Tensor):
         else:
             rowptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
                 row,
-                self.get_num_rows(),
+                max(self.get_num_rows(), self.get_num_cols()),
                 out_int32=self.dtype != torch.int64,
             )
 
