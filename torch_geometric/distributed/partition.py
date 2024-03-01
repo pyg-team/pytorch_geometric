@@ -115,7 +115,8 @@ class Partitioner:
             return True
 
         if self.is_hetero:
-            return any(['edge_weight' in store for store in self.data.edge_stores])
+            return any(
+                ['edge_weight' in store for store in self.data.edge_stores])
 
     @property
     def node_types(self) -> Optional[List[NodeType]]:
@@ -249,7 +250,8 @@ class Partitioner:
                     if self.is_edge_level_time:
                         efeat[edge_type].update({'edge_time': edge_time[perm]})
                     if self.is_edge_level_weight:
-                        efeat[edge_type].update({'edge_weight': edge_weight[perm]})
+                        efeat[edge_type].update(
+                            {'edge_weight': edge_weight[perm]})
 
                 torch.save(efeat, osp.join(path, 'edge_feats.pt'))
                 torch.save(graph, osp.join(path, 'graph.pt'))

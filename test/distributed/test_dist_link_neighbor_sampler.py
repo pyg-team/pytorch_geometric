@@ -58,7 +58,8 @@ def create_data(rank, world_size, attr_name: Optional[str] = None):
 
     if attr_name == 'time':  # Create node-level time data:
         data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
-        feature_store.put_tensor(data.time, group_name=None, attr_name=attr_name)
+        feature_store.put_tensor(data.time, group_name=None,
+                                 attr_name=attr_name)
 
     elif attr_name == 'edge_time':  # Create edge-level time data:
         data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
@@ -280,15 +281,10 @@ def dist_link_neighbor_sampler_hetero(
         group_name='dist-sampler-test',
     )
 
-    dist_sampler = DistNeighborSampler(
-        data=dist_data,
-        current_ctx=current_ctx,
-        rpc_worker_names={},
-        num_neighbors=[-1],
-        shuffle=False,
-        disjoint=disjoint,
-        weight_attr=weight_attr
-    )
+    dist_sampler = DistNeighborSampler(data=dist_data, current_ctx=current_ctx,
+                                       rpc_worker_names={}, num_neighbors=[-1],
+                                       shuffle=False, disjoint=disjoint,
+                                       weight_attr=weight_attr)
 
     # close RPC & worker group at exit:
     atexit.register(shutdown_rpc)
@@ -328,12 +324,8 @@ def dist_link_neighbor_sampler_hetero(
     out_dist = dist_sampler.event_loop.run_task(coro=dist_sampler.edge_sample(
         inputs, dist_sampler.node_sample, data.num_nodes, disjoint=disjoint))
 
-    sampler = NeighborSampler(
-        data=data,
-        num_neighbors=[-1],
-        disjoint=disjoint,
-        weight_attr=weight_attr
-    )
+    sampler = NeighborSampler(data=data, num_neighbors=[-1], disjoint=disjoint,
+                              weight_attr=weight_attr)
 
     # Evaluate edge sample function:
     out = edge_sample(
@@ -741,14 +733,14 @@ def test_dist_link_neighbor_sampler_biased_hetero(tmp_path):
 
     w0 = mp_context.Process(
         target=dist_link_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'),
-              False, 'edge_weight'),
+        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'), False,
+              'edge_weight'),
     )
 
     w1 = mp_context.Process(
         target=dist_link_neighbor_sampler_hetero,
-        args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'),
-              False, 'edge_weight'),
+        args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'), False,
+              'edge_weight'),
     )
 
     w0.start()
