@@ -80,7 +80,7 @@ The `dataset_root_dir` should point to the head directory where your partition i
 ```bash
 # Node 0:
 python node_ogb_cpu.py \
-  --dataset=ogbn-products
+  --dataset=ogbn-products \
   --dataset_root_dir=<partition folder directory> \
   --num_nodes=2 \
   --node_rank=0 \
@@ -88,11 +88,30 @@ python node_ogb_cpu.py \
 
 # Node 1:
 python node_obg_cpu.py \
-  --dataset=ogbn-products
+  --dataset=ogbn-products \
   --dataset_root_dir=<partition folder directory> \
   --num_nodes=2 \
   --node_rank=1 \
   --master_addr=<master ip>
+```
+
+In some configurations, the network interface used for multi-node communication may be different than the default one.
+In this case, the interface used for multi-node communication needs to be specified to Gloo.
+
+Assuming that `$MASTER_ADDR` is set to the IP of `node#0`.
+
+On the `node#0`:
+
+```bash
+export TP_SOCKET_IFNAME=$(ip addr | grep "$MASTER_ADDR" | awk '{print $NF}')
+export GLOO_SOCKET_IFNAME=$TP_SOCKET_IFNAME
+```
+
+On the other nodes:
+
+```bash
+export TP_SOCKET_IFNAME=$(ip route get $MASTER_ADDR | grep -oP '(?<=dev )[^ ]+')
+export GLOO_SOCKET_IFNAME=$TP_SOCKET_IFNAME
 ```
 
 #### Option B: Launch Script

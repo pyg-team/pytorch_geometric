@@ -93,3 +93,17 @@ def test_graph_conv():
             assert torch.allclose(jit((x1, None), adj3.t()), out2, atol=1e-6)
             assert torch.allclose(jit((x1, x2), adj4.t()), out3, atol=1e-6)
             assert torch.allclose(jit((x1, None), adj4.t()), out4, atol=1e-6)
+
+
+class EdgeGraphConv(GraphConv):
+    def message(self, x_j, edge_weight):
+        return edge_weight.view(-1, 1) * x_j
+
+
+def test_inheritance():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_weight = torch.rand(4)
+
+    conv = EdgeGraphConv(8, 16)
+    assert conv(x, edge_index, edge_weight).size() == (4, 16)
