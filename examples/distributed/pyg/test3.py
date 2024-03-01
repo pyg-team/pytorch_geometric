@@ -13,9 +13,7 @@ def run(rank, mpi_rank, size, hostname):
     device = torch.device(f'xpu:{mpi_rank}')
 
     print(f"I am {rank} of {size} in {hostname} running on {device}")
-    
     msg = torch.tensor(rank).to(device)
-    # dist.barrier()
     if rank == 0:
         for i in range(1, size):
             # Receive tensors from all other processes
@@ -35,7 +33,7 @@ if __name__ == "__main__":
     mpi_world_size = int(os.environ.get("PMI_SIZE", -1))
     mpi_rank = int(os.environ.get("PMI_RANK", -1))
     node_rank = int(os.environ.get("RANK", -1))
-    num_nodes = 2
+    num_nodes = 1
     
     world_rank = node_rank * mpi_world_size + mpi_rank
     world_size = num_nodes * mpi_world_size
@@ -58,4 +56,5 @@ if __name__ == "__main__":
     )
     run(world_rank, mpi_rank, world_size, hostname)
     logging.info('finished run')
+    dist.barrier()
     dist.destroy_process_group()
