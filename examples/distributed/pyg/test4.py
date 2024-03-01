@@ -18,9 +18,6 @@ def run(rank, mpi_rank, size, hostname):
     handle = dist.all_reduce(msg, async_op=False)
     handle.wait()
     dist.barrier()
-    dist.destroy_process_group()      
-        
-    
     print('END')
     return 0
 
@@ -51,3 +48,4 @@ if __name__ == "__main__":
     )
     run(world_rank, mpi_rank, world_size, hostname)
     logging.info('finished run')
+    dist.destroy_process_group()   
