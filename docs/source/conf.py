@@ -61,6 +61,8 @@ nbsphinx_thumbnails = {
     '_static/thumbnails/explain.png',
     'tutorial/shallow_node_embeddings':
     '_static/thumbnails/shallow_node_embeddings.png',
+    'tutorial/distributed_pyg':
+    '_static/thumbnails/distributed_pyg.png',
     'tutorial/multi_gpu_vanilla':
     '_static/thumbnails/multi_gpu_vanilla.png',
     'tutorial/multi_node_multi_gpu_vanilla':

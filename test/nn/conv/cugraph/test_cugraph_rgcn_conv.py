@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import CuGraphRGCNConv
 from torch_geometric.nn import FastRGCNConv as RGCNConv
 from torch_geometric.testing import onlyCUDA, withPackage
@@ -41,8 +42,12 @@ def test_rgcn_conv_equality(aggr, bias, bipartite, max_num_neighbors,
     else:
         out1 = conv1(x, edge_index, edge_type)
 
-    csc, edge_type = CuGraphRGCNConv.to_csc(edge_index, size, edge_type)
-    out2 = conv2(x, csc, edge_type, max_num_neighbors=max_num_neighbors)
+    out2 = conv2(
+        x,
+        EdgeIndex(edge_index, sparse_size=size),
+        edge_type,
+        max_num_neighbors=max_num_neighbors,
+    )
     assert torch.allclose(out1, out2, atol=1e-3)
 
     grad_out = torch.rand_like(out1)

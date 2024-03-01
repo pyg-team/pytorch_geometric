@@ -3,7 +3,28 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## \[2.5.0\] - 2023-MM-DD
+## \[2.6.0\] - 2024-MM-DD
+
+### Added
+
+- Added a `ogbn-mag240m` example ([#8249](https://github.com/pyg-team/pytorch_geometric/pull/8249/))
+- Added `EdgeIndex.sparse_resize_` functionality ([#8983](https://github.com/pyg-team/pytorch_geometric/pull/8983))
+- Added approximate `faiss`-based KNN-search ([#8952](https://github.com/pyg-team/pytorch_geometric/pull/8952))
+
+### Changed
+
+- Breaking Change: Added support for `EdgeIndex` in `cugraph` GNN layers ([#8938](https://github.com/pyg-team/pytorch_geometric/pull/8937))
+- Added the `dim` arg to `torch.cross` calls ([#8918](https://github.com/pyg-team/pytorch_geometric/pull/8918))
+
+### Deprecated
+
+### Fixed
+
+- Fixed import errors on `MessagePassing` modules with nested inheritance ([#8973](https://github.com/pyg-team/pytorch_geometric/pull/8973))
+
+### Removed
+
+## \[2.5.0\] - 2024-02-16
 
 ### Added
 

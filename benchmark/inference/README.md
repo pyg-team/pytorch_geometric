@@ -7,6 +7,10 @@
    ```bash
    pip install ogb
    ```
+1. Install `autoconf` required for `jemalloc` setup
+   ```bash
+   sudo apt-get install autoconf
+   ```
 1. Install `jemalloc` for performance benchmark:
    ```bash
    cd ${workspace}
