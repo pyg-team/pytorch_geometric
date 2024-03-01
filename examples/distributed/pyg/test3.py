@@ -7,12 +7,18 @@ import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-
+'''
+export RANK=0
+export IPEX_TILE_AS_DEVICE=1
+mpirun -np 2 python /home/gta/PYG_2.0/pytorch_geometric/examples/distributed/pyg/test3.py
+'''
 def run(rank, mpi_rank, size, hostname):
     
     device = torch.device(f'xpu:{mpi_rank}')
 
     print(f"I am {rank} of {size} in {hostname} running on {device}")
+    dist.barrier() # collective call is needed to init comm
+
     msg = torch.tensor(rank).to(device)
     if rank == 0:
         for i in range(1, size):
@@ -25,7 +31,7 @@ def run(rank, mpi_rank, size, hostname):
         # Send tensor to process 0
         dist.send(tensor=msg, dst=0)
         
-    # dist.barrier()
+    dist.barrier()
     print('END')
     return 0
 

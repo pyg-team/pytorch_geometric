@@ -6,7 +6,11 @@ import intel_extension_for_pytorch as ipex
 import oneccl_bindings_for_pytorch  # noqa
 import torch
 import torch.distributed as dist
-
+'''
+export RANK=0
+export IPEX_TILE_AS_DEVICE=1
+mpirun -np 2 python /home/gta/PYG_2.0/pytorch_geometric/examples/distributed/pyg/test2.py
+'''
 def run(rank, size, hostname):
 
     print(f"I am {rank} of {size} in {hostname}")
