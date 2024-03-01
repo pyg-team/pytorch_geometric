@@ -15,8 +15,11 @@ def run(rank, mpi_rank, size, hostname):
     print(f"I am {rank} of {size} in {hostname} running on {device}")
     
     msg = torch.tensor(rank).to(device)
-    handle = dist.all_reduce(msg, async_op=True)
+    handle = dist.all_reduce(msg, async_op=False)
     handle.wait()
+    dist.barrier()
+    dist.destroy_process_group()      
+        
     
     print('END')
     return 0
@@ -48,4 +51,3 @@ if __name__ == "__main__":
     )
     run(world_rank, mpi_rank, world_size, hostname)
     logging.info('finished run')
-    dist.destroy_process_group()
