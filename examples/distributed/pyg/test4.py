@@ -15,19 +15,9 @@ def run(rank, mpi_rank, size, hostname):
     print(f"I am {rank} of {size} in {hostname} running on {device}")
     
     msg = torch.tensor(rank).to(device)
-    # dist.barrier()
-    if rank == 0:
-        for i in range(1, size):
-            # Receive tensors from all other processes
-            dist.recv(tensor=msg, src=i)
-            print('Rank ', rank, ' has data ', msg)
-
-    else:
-        # pass
-        # Send tensor to process 0
-        dist.send(tensor=msg, dst=0)
-        
-    # dist.barrier()
+    handle = dist.all_reduce(msg, async_op=True)
+    handle.wait()
+    
     print('END')
     return 0
 
