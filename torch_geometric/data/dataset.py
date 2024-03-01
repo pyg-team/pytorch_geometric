@@ -3,7 +3,6 @@ import os.path as osp
 import re
 import sys
 import warnings
-from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from typing import (
     Any,
@@ -27,7 +26,7 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 MISSING = '???'
 
 
-class Dataset(torch.utils.data.Dataset, ABC):
+class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
@@ -79,12 +78,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    @abstractmethod
     def len(self) -> int:
         r"""Returns the number of data objects stored in the dataset."""
         raise NotImplementedError
 
-    @abstractmethod
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
