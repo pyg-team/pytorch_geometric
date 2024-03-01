@@ -4,6 +4,7 @@ from typing import Tuple, Union
 
 import pytest
 import torch
+import torch.multiprocessing as mp
 from torch import Tensor
 from torch.nn import Linear
 
@@ -659,3 +660,26 @@ def test_traceable_my_conv_with_self_loops(num_nodes):
 
     assert torch.allclose(out, traced_out)
     assert torch.allclose(out, scripted_out)
+
+
+class MyParallelConv(MessagePassing):
+    def __init__(self, rank):
+        self.rank = rank
+        super().__init__(aggr='sum')
+
+    def forward(self, x, edge_index):
+        return self.propagate(edge_index, x=x)
+
+    def message(self, x_j):
+        return x_j
+
+
+def init_parallel_conv(rank):
+    print("======= begin", rank)
+    MyParallelConv(rank)
+    print("======= end", rank)
+
+
+def test_parallel_init():
+    # mp.spawn(init_parallel_conv, args=(), nprocs=4, join=True)
+    MyParallelConv(0)
