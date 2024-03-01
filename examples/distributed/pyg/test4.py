@@ -28,7 +28,7 @@ if __name__ == "__main__":
     num_nodes = 2
     
     world_rank = node_rank * mpi_world_size + mpi_rank
-    world_size = mpi_world_size
+    world_size = num_nodes * mpi_world_size
     
     logging.info(f"num_nodes: {num_nodes}, mpi_world_size:{mpi_world_size} -> world_size={world_size}")
     logging.info(
