@@ -968,7 +968,7 @@ def test_neighbor_loader_input_id():
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_num_nodes_size(FeatureStore, GraphStore):
+def test_neighborloader_featurestore(FeatureStore, GraphStore):
     feature_store = FeatureStore()
     graph_store = GraphStore()
 
