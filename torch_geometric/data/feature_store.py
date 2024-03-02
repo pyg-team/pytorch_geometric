@@ -21,7 +21,7 @@ Major TODOs for future implementation:
 * Async `put` and `get` functionality
 """
 import copy
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
@@ -262,7 +262,7 @@ class AttrView(CastMixin):
 # libraries use customized logic during mini-batch for `Mapping` base classes.
 
 
-class FeatureStore:
+class FeatureStore(ABC):
     r"""An abstract base class to access features from a remote feature store.
 
     Args:
