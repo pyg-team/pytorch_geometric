@@ -964,3 +964,30 @@ def test_neighbor_loader_input_id():
             expected = [(2 * i) + 1]
 
         assert batch['a'].input_id.tolist() == expected
+
+
+@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
+@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
+def test_num_nodes_size(FeatureStore, GraphStore):
+    feature_store = FeatureStore()
+    graph_store = GraphStore()
+
+    # Infer num nodes from features:
+    x = torch.arange(100)
+    feature_store.put_tensor(x, group_name='x', attr_name='x', index=None)
+
+    # Infer num nodes and size from edges:
+    xy = get_random_edge_index(90, 50, 20)
+    graph_store.put_edge_index(xy, edge_type=('x', 'to', 'y'), layout='coo',
+                               size=(90, 50))
+
+    loader = NeighborLoader(
+        (feature_store, graph_store),
+        num_neighbors={
+            ('x', 'to', 'y'): [-1],
+        },
+        input_nodes='x',
+        batch_size=1,
+    )
+    assert len(loader) == 100
+>>>>>>> 705aa693
