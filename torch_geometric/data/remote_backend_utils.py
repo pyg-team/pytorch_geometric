@@ -52,19 +52,25 @@ def _internal_num_nodes(
     # instead of requiring iteration to identify a particular attribute.
     # Implementing this should reduce the iteration below.
 
+    num_node_query_nodes = None
     # 1. Check the edges in the GraphStore, for each node type in each edge:
-    if not node_query:
-        num_rows = num_cols = None
-        for edge_attr in graph_store.get_all_edge_attrs():
-            if edge_attr.size is None:
-                continue
-            if _matches_node_type(query, edge_attr.edge_type[0]):
-                num_rows = num_rows or edge_attr.size[0]
-            if _matches_node_type(query, edge_attr.edge_type[-1]):
-                num_cols = num_cols or edge_attr.size[-1]
+    num_rows = num_cols = None
+    for edge_attr in graph_store.get_all_edge_attrs():
+        if edge_attr.size is None:
+            continue
+        if _matches_node_type(query, edge_attr.edge_type[0]):
+            num_rows = num_rows or edge_attr.size[0]
+        if _matches_node_type(query, edge_attr.edge_type[-1]):
+            num_cols = num_cols or edge_attr.size[-1]
 
-            if num_rows is not None and num_cols is not None:
-                return num_rows, num_cols
+        if node_query and num_rows is not None:
+            num_node_query_nodes = num_rows
+            break
+        if node_query and num_cols is not None:
+            num_node_query_nodes = num_cols
+            break
+        if not node_query and num_rows is not None and num_cols is not None:
+            return num_rows, num_cols
 
     # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
@@ -76,7 +82,11 @@ def _internal_num_nodes(
         if len(matching_attrs) > 0:
             size = feature_store.get_tensor_size(matching_attrs[0])
             if size is not None:
+                if num_node_query_nodes is not None:
+                    return max(size[0], num_node_query_nodes)
                 return size[0]
+        if num_node_query_nodes is not None:
+            return num_node_query_nodes
     else:
         matching_src_attrs = [
             attr for attr in matching_attrs if attr.group_name == query[0]
