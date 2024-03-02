@@ -965,6 +965,7 @@ def test_neighbor_loader_input_id():
 
         assert batch['a'].input_id.tolist() == expected
 
+
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
 def test_num_nodes_size(FeatureStore, GraphStore):
