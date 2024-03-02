@@ -228,7 +228,7 @@ class NeighborSampler(BaseSampler):
                 ]
                 self.node_types = list(set(node_types))
                 self.num_nodes = {
-                    node_type: remote_backend_utils.size(*data, node_type)
+                    node_type: remote_backend_utils.num_nodes(*data, node_type)
                     for node_type in self.node_types
                 }
                 self.edge_weight: Optional[Dict[EdgeType, Tensor]] = None

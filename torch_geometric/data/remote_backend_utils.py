@@ -53,21 +53,18 @@ def _internal_num_nodes(
     # Implementing this should reduce the iteration below.
 
     # 1. Check the edges in the GraphStore, for each node type in each edge:
-    num_rows = num_cols = None
-    for edge_attr in graph_store.get_all_edge_attrs():
-        if edge_attr.size is None:
-            continue
-        if _matches_node_type(query, edge_attr.edge_type[0]):
-            num_rows = num_rows or edge_attr.size[0]
-        if _matches_node_type(query, edge_attr.edge_type[-1]):
-            num_cols = num_cols or edge_attr.size[-1]
+    if not node_query:
+        num_rows = num_cols = None
+        for edge_attr in graph_store.get_all_edge_attrs():
+            if edge_attr.size is None:
+                continue
+            if _matches_node_type(query, edge_attr.edge_type[0]):
+                num_rows = num_rows or edge_attr.size[0]
+            if _matches_node_type(query, edge_attr.edge_type[-1]):
+                num_cols = num_cols or edge_attr.size[-1]
 
-        if node_query and num_rows is not None:
-            return num_rows
-        if node_query and num_cols is not None:
-            return num_cols
-        if not node_query and num_rows is not None and num_cols is not None:
-            return num_rows, num_cols
+            if num_rows is not None and num_cols is not None:
+                return num_rows, num_cols
 
     # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
