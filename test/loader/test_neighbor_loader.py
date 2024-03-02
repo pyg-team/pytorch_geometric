@@ -990,4 +990,3 @@ def test_num_nodes_size(FeatureStore, GraphStore):
         batch_size=1,
     )
     assert len(loader) == 100
->>>>>>> 705aa693
