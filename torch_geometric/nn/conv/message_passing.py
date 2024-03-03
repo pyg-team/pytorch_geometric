@@ -18,7 +18,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric import is_compiling
+from torch_geometric import EdgeIndex, is_compiling
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
@@ -251,6 +251,9 @@ class MessagePassing(torch.nn.Module):
         size: Optional[Tuple[int, int]],
     ) -> List[Optional[int]]:
 
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            return [edge_index.num_rows, edge_index.num_cols]
+
         if is_sparse(edge_index):
             if self.flow == 'target_to_source':
                 raise ValueError(
@@ -421,7 +424,13 @@ class MessagePassing(torch.nn.Module):
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
             out['edge_index_j'] = edge_index[j]
+
             out['ptr'] = None
+            if isinstance(edge_index, EdgeIndex):
+                if i == 0 and edge_index.is_sorted_by_row:
+                    (out['ptr'], _), _ = edge_index.get_csr()
+                elif i == 1 and edge_index.is_sorted_by_col:
+                    (out['ptr'], _), _ = edge_index.get_csc()
 
         elif isinstance(edge_index, SparseTensor):
             row, col, value = edge_index.coo()
