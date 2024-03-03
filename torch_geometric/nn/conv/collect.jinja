@@ -3,7 +3,7 @@ from typing import List, NamedTuple, Optional, Union
 import torch
 from torch import Tensor
 
-from torch_geometric import EdgeIndex
+from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import ptr2index
 from torch_geometric.typing import SparseTensor
 
@@ -31,7 +31,7 @@ def {{collect_name}}(
 
     # Collect special arguments:
     if isinstance(edge_index, Tensor):
-        if edge_index.is_sparse:
+        if is_torch_sparse_tensor(edge_index):
 {%- if 'edge_index' in collect_param_dict %}
             raise ValueError("Cannot collect 'edge_indices' for sparse matrices")
 {%- endif %}
