@@ -209,13 +209,12 @@ def trim_adj(
             length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
         )
         if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-            if edge_index.num_rows is not None:
-                num_rows = edge_index.num_rows
+            num_rows, num_cols = edge_index.sparse_size()
+            if num_rows is not None:
                 num_rows -= num_sampled_src_nodes_per_hop[-layer]
-            if edge_index.num_cols is not None:
-                num_cols = edge_index.num_cols
+            if num_cols is not None:
                 num_cols -= num_sampled_dst_nodes_per_hop[-layer]
-            edge_index._sparse_size = (num_rows, num_cols)
+            edge_index.sparse_resize_(num_rows, num_cols)
         return edge_index
 
     elif isinstance(edge_index, SparseTensor):
