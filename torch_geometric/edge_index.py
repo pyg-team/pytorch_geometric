@@ -541,7 +541,7 @@ class EdgeIndex(Tensor):
             if num_rows is not None and num_rows != num_cols:
                 raise ValueError(f"'EdgeIndex' is undirected but received a "
                                  f"non-symmetric size "
-                                 f"(got [{num_rows, num_cols}])")
+                                 f"(got [{num_rows}, {num_cols}])")
 
         def _modify_ptr(
             ptr: Optional[Tensor],
