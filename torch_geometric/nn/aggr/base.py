@@ -3,8 +3,6 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-import torch_geometric.typing
-from torch_geometric import is_compiling
 from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.utils import scatter, segment, to_dense_batch
 
