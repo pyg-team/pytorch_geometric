@@ -1,6 +1,6 @@
 import copy
 import os.path as osp
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import pytest
 import torch
@@ -8,6 +8,7 @@ from torch import Tensor
 from torch.nn import Linear
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import (
     Adj,
@@ -57,8 +58,8 @@ class MyConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: Optional[Tensor]) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
@@ -127,6 +128,17 @@ def test_my_conv_basic():
         out = conv((x1, x2), torch_adj_t)
         out.sum().backward()
         assert torch_adj_t.grad is not None
+
+
+def test_my_conv_edge_index():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_index = EdgeIndex(edge_index, sparse_size=(4, 4), sort_order='col')
+
+    conv = MyConv(8, 32)
+
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
 
 
 def test_my_conv_out_of_bounds():

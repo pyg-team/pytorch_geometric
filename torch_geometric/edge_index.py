@@ -1083,7 +1083,7 @@ class EdgeIndex(Tensor):
             return edge_index
 
     def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
-        if not torch_geometric.typing.WITH_PT22:
+        if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
         assert self._data is not None
@@ -1096,7 +1096,7 @@ class EdgeIndex(Tensor):
         inner_tensors: Tuple[Any],
         ctx: Tuple[Any, ...],
     ) -> 'EdgeIndex':
-        if not torch_geometric.typing.WITH_PT22:
+        if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
         raise NotImplementedError
