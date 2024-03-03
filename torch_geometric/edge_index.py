@@ -1083,7 +1083,8 @@ class EdgeIndex(Tensor):
 
     def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
         assert self._data is not None
-        attrs = ['_data', '_indptr', '_T_perm', '_T_index', '_T_indptr']
+        # TODO Add `_T_index`.
+        attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
         return attrs, ()
 
     @staticmethod
