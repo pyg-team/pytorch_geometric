@@ -343,7 +343,7 @@ class EdgeIndex(Tensor):
 
         # Attach metadata:
         assert isinstance(out, EdgeIndex)
-        if torch_geometric.WITH_PT22:
+        if torch_geometric.typing.WITH_PT22:
             out._data = data
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
@@ -1083,7 +1083,7 @@ class EdgeIndex(Tensor):
             return edge_index
 
     def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
-        if not torch_geometric.WITH_PT22:
+        if not torch_geometric.typing.WITH_PT22:
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
         assert self._data is not None
@@ -1096,7 +1096,7 @@ class EdgeIndex(Tensor):
         inner_tensors: Tuple[Any],
         ctx: Tuple[Any, ...],
     ) -> 'EdgeIndex':
-        if not torch_geometric.WITH_PT22:
+        if not torch_geometric.typing.WITH_PT22:
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
         raise NotImplementedError
