@@ -28,8 +28,6 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     if torch_geometric.typing.WITH_PT20 and src.is_cuda and reduce == 'mean':
         return _torch_segment(src, ptr, reduce)
 
-    # TODO Fallback to `scatter` if deterministic algorithms are turned off.
-
     return torch_scatter.segment_csr(src, ptr, reduce=reduce)
 
 

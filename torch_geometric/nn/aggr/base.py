@@ -171,14 +171,18 @@ class Aggregation(torch.nn.Module):
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
-        if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
-                and not is_compiling()):
-            ptr = expand_left(ptr, dim, dims=x.dim())
-            return segment(x, ptr, reduce=reduce)
+        print(index, ptr)
+
+        if ptr is not None:
+            if index is None or torch.are_deterministic_algorithms_enabled():
+                ptr = expand_left(ptr, dim, dims=x.dim())
+                return segment(x, ptr, reduce=reduce)
 
         if index is None:
-            raise NotImplementedError(
-                "Aggregation requires 'index' to be specified")
+            raise RuntimeError("Aggregation requires 'index' to be specified")
+
+        print("DRIN")
+
         return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(
