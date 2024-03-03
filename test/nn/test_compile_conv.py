@@ -2,6 +2,7 @@ import pytest
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
@@ -28,14 +29,47 @@ class MySAGEConv(torch.nn.Module):
 @withCUDA
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):
+    import torch._dynamo as dynamo
+
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
 
-    conv = Conv(16, 32).to(device)
+    if Conv == GCNConv:
+        conv = Conv(16, 32, add_self_loops=False).to(device)
+    else:
+        conv = Conv(16, 32).to(device)
+
+    explanation = dynamo.explain(conv)(x, edge_index)
+    assert explanation.graph_break_count == 0
+
     out = torch.compile(conv)(x, edge_index)
+    assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
+
+
+@withCUDA
+@onlyLinux
+@onlyFullTest
+@withPackage('torch>=2.2.0')
+@pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
+def test_compile_conv_edge_index(device, Conv):
+    import torch._dynamo as dynamo
+
+    x = torch.randn(10, 16, device=device)
+    edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
+    edge_index = EdgeIndex(edge_index, sparse_size=(10, 10))
+
+    if Conv == GCNConv:
+        conv = Conv(16, 32, normalize=False).to(device)
+    else:
+        conv = Conv(16, 32).to(device)
+
+    explanation = dynamo.explain(conv)(x, edge_index)
+    assert explanation.graph_break_count == 0
+
+    out = torch.compile(conv, fullgraph=True)(x, edge_index)
     assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
 
 

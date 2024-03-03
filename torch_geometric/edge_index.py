@@ -228,6 +228,9 @@ class EdgeIndex(Tensor):
     # See "https://pytorch.org/docs/stable/notes/extending.html"
     # for a basic tutorial on how to subclass `torch.Tensor`.
 
+    # The underlying tensor representation:
+    _data: Optional[Tensor] = None
+
     # The size of the underlying sparse matrix:
     _sparse_size: Tuple[Optional[int], Optional[int]] = (None, None)
 
@@ -340,6 +343,8 @@ class EdgeIndex(Tensor):
 
         # Attach metadata:
         assert isinstance(out, EdgeIndex)
+        if torch_geometric.typing.WITH_PT22:
+            out._data = data
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
@@ -1076,6 +1081,25 @@ class EdgeIndex(Tensor):
             )
             edge_index._indptr = colptr
             return edge_index
+
+    def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
+        if not torch_geometric.typing.WITH_PT22:
+            raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
+                               "supported from PyTorch 2.2 onwards")
+        assert self._data is not None
+        # TODO Add `_T_index`.
+        attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
+        return attrs, ()
+
+    @staticmethod
+    def __tensor_unflatten__(
+        inner_tensors: Tuple[Any],
+        ctx: Tuple[Any, ...],
+    ) -> 'EdgeIndex':
+        if not torch_geometric.typing.WITH_PT22:
+            raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
+                               "supported from PyTorch 2.2 onwards")
+        raise NotImplementedError
 
     @classmethod
     def __torch_function__(
