@@ -171,8 +171,6 @@ class Aggregation(torch.nn.Module):
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
-        print(index, ptr)
-
         if ptr is not None:
             if index is None or torch.are_deterministic_algorithms_enabled():
                 ptr = expand_left(ptr, dim, dims=x.dim())
@@ -180,8 +178,6 @@ class Aggregation(torch.nn.Module):
 
         if index is None:
             raise RuntimeError("Aggregation requires 'index' to be specified")
-
-        print("DRIN")
 
         return scatter(x, index, dim, dim_size, reduce)
 
