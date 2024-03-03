@@ -1144,29 +1144,32 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.1.0')
+@withPackage('torch>=2.2.0')
 def test_compile():
     import torch._dynamo as dynamo
 
     class Model(torch.nn.Module):
         def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
-            row, col = edge_index[0], edge_index[1]
-            x_j = x[row]
-            out = scatter(x_j, col, dim_size=edge_index.num_cols)
+            x_j = x[edge_index[0]]
+            out = scatter(x_j, edge_index[1], dim_size=edge_index.num_cols)
             return out
 
     x = torch.randn(3, 8)
     # Test that `num_cols` gets picked up by making last node isolated.
-    edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 0, 1]], sparse_size=(3, 3))
+    edge_index = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 0, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+    ).fill_cache_()
 
     model = Model()
     expected = model(x, edge_index)
     assert expected.size() == (3, 8)
 
     explanation = dynamo.explain(model)(x, edge_index)
-    assert explanation.graph_break_count <= 0
+    assert explanation.graph_break_count == 0
 
-    compiled_model = torch.compile(model)
+    compiled_model = torch.compile(model, fullgraph=True)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
 
