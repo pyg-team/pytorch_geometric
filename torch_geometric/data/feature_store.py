@@ -529,9 +529,5 @@ class FeatureStore(ABC):
     def __eq__(self, obj: object) -> bool:
         return id(self) == id(obj)
 
-    @abstractmethod
-    def __len__(self):
-        pass
-
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
