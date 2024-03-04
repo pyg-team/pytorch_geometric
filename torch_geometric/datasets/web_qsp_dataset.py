@@ -2,7 +2,7 @@ import datasets
 import pandas as pd
 import torch
 import torch.nn.functional as F
-import tqdm
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 from transformers import AutoModel, AutoTokenizer
 from typing import List
