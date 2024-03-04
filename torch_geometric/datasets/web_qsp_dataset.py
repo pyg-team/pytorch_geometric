@@ -113,13 +113,14 @@ class WebQSPDataset(InMemoryDataset):
     ) -> None:
 
         super().__init__(root, None, None, force_reload=force_reload)
-        self.load(self.processed_paths[0])
         self.prompt = 'Please answer the given question.'
         self.graph = None
         self.graph_type = 'Knowledge Graph'
         self.model_name = 'sbert'
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu')
+        self.load(self.processed_paths[0])
+
 
     @property
     def raw_file_names(self) -> List[str]:
