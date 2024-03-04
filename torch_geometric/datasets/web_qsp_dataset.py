@@ -84,7 +84,7 @@ def sbert_text2embedding(model, tokenizer, device, text):
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings, dim=0).cpu()
     except:  # noqa
-        print("SBERT text embedding failed, returning 0s...")
+        print("SBERT text embedding failed, returning torch.zeros((0, 1024))...")
         return torch.zeros((0, 1024))
 
     return all_embeddings
