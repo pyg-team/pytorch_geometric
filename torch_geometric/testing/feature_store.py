@@ -66,6 +66,3 @@ class MyFeatureStore(FeatureStore):
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         return [self._tensor_attr_cls.cast(*key) for key in self.store.keys()]
-
-    def __len__(self) -> int:
-        raise NotImplementedError

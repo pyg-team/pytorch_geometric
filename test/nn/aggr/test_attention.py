@@ -1,7 +1,5 @@
-import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import AttentionalAggregation
 
@@ -21,9 +19,4 @@ def test_attentional_aggregation():
 
     out = aggr(x, index)
     assert out.size() == (3, channels)
-
-    if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
-            aggr(x, ptr=ptr)
-    else:
-        assert torch.allclose(out, aggr(x, ptr=ptr))
+    assert torch.allclose(out, aggr(x, ptr=ptr))

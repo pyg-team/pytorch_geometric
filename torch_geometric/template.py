@@ -1,12 +1,10 @@
 import importlib
-import os
 import os.path as osp
 import sys
+import tempfile
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
-
-from torch_geometric import get_home_dir
 
 
 def module_from_template(
@@ -23,13 +21,15 @@ def module_from_template(
     template = env.get_template(osp.basename(template_path))
     module_repr = template.render(**kwargs)
 
-    instance_dir = osp.join(get_home_dir(), tmp_dirname)
-    os.makedirs(instance_dir, exist_ok=True)
-    instance_path = osp.join(instance_dir, f'{module_name}.py')
-    with open(instance_path, 'w') as f:
-        f.write(module_repr)
+    with tempfile.NamedTemporaryFile(
+            mode='w',
+            prefix=f'{module_name}_',
+            suffix='.py',
+            delete=False,
+    ) as tmp:
+        tmp.write(module_repr)
 
-    spec = importlib.util.spec_from_file_location(module_name, instance_path)
+    spec = importlib.util.spec_from_file_location(module_name, tmp.name)
     assert spec is not None
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module

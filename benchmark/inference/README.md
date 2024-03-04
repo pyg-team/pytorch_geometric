@@ -7,7 +7,7 @@
    ```bash
    pip install ogb
    ```
-1. Install `autoconf` required for `jemalloc` setup
+1. Install `autoconf` required for `jemalloc` setup:
    ```bash
    sudo apt-get install autoconf
    ```

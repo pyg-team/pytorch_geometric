@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, overload
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import (
     Adj,
     EdgeType,
@@ -202,11 +203,19 @@ def trim_adj(
         return edge_index
 
     if isinstance(edge_index, Tensor):
-        return edge_index.narrow(
+        edge_index = edge_index.narrow(
             dim=1,
             start=0,
             length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
         )
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            num_rows, num_cols = edge_index.sparse_size()
+            if num_rows is not None:
+                num_rows -= num_sampled_src_nodes_per_hop[-layer]
+            if num_cols is not None:
+                num_cols -= num_sampled_dst_nodes_per_hop[-layer]
+            edge_index.sparse_resize_(num_rows, num_cols)
+        return edge_index
 
     elif isinstance(edge_index, SparseTensor):
         size = (
