@@ -6,7 +6,7 @@ import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.rpc import RPCRouter
-from torch_geometric.testing import onlyLinux
+from torch_geometric.testing import onlyDistributedTest
 
 
 def run_rpc_feature_test(
@@ -80,7 +80,7 @@ def run_rpc_feature_test(
     assert rpc.rpc_is_initialized() is False
 
 
-@onlyLinux
+@onlyDistributedTest
 def test_dist_feature_lookup():
     cpu_tensor0 = torch.cat([torch.ones(128, 1024), torch.ones(128, 1024) * 2])
     cpu_tensor1 = torch.cat([torch.zeros(128, 1024), torch.zeros(128, 1024)])
@@ -105,10 +105,11 @@ def test_dist_feature_lookup():
     feature1.put_tensor(cpu_tensor1, group_name=None, attr_name='x')
 
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind(('127.0.0.1', 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
 
     w0 = mp_context.Process(target=run_rpc_feature_test,
                             args=(2, 0, feature0, partition_book, port))

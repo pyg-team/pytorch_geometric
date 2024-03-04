@@ -164,10 +164,13 @@ class TGNMemory(torch.nn.Module):
                      msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
         src, dst, t, raw_msg = list(zip(*data))
-        src = torch.cat(src, dim=0)
-        dst = torch.cat(dst, dim=0)
-        t = torch.cat(t, dim=0)
-        raw_msg = torch.cat(raw_msg, dim=0)
+        src = torch.cat(src, dim=0).to(self.device)
+        dst = torch.cat(dst, dim=0).to(self.device)
+        t = torch.cat(t, dim=0).to(self.device)
+        # Filter out empty tensors to avoid `invalid configuration argument`.
+        # TODO Investigate why this is needed.
+        raw_msg = [m for i, m in enumerate(raw_msg) if m.numel() > 0 or i == 0]
+        raw_msg = torch.cat(raw_msg, dim=0).to(self.device)
         t_rel = t - self.last_update[src]
         t_enc = self.time_enc(t_rel.to(raw_msg.dtype))
 

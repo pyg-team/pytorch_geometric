@@ -10,6 +10,13 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 
 .. slack_button::
 
+.. image:: https://pbs.twimg.com/media/GHbKAITWwAA83mw?format=jpg&name=large
+  :align: center
+  :width: 100%
+  :target: https://www.eventbrite.com/e/webinar-pyg-25-distributed-training-of-gnns-tickets-850624951127
+
+**Register for free** `here <https://www.eventbrite.com/e/webinar-pyg-25-distributed-training-of-gnns-tickets-850624951127>`_.
+
 .. toctree::
    :maxdepth: 1
    :caption: Install PyG
@@ -30,7 +37,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/gnn_design
    tutorial/dataset
    tutorial/application
-   tutorial/multi_gpu
+   tutorial/distributed
 
 .. toctree::
    :maxdepth: 1
@@ -58,6 +65,8 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/transforms
    modules/utils
    modules/explain
+   modules/metrics
+   modules/distributed
    modules/contrib
    modules/graphgym
    modules/profile

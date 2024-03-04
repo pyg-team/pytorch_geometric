@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
@@ -53,10 +52,7 @@ def test_basic_aggregation(Aggregation):
     assert out.size() == (3, x.size(1))
 
     if isinstance(aggr, MulAggregation):
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
-            aggr(x, ptr=ptr)
-    elif not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(ImportError, match="'segment' requires"):
+        with pytest.raises(RuntimeError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
@@ -100,12 +96,7 @@ def test_learnable_aggregation(Aggregation, learn):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-
-    if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(ImportError, match="'segment' requires"):
-            aggr(x, ptr=ptr)
-    else:
-        assert torch.allclose(out, aggr(x, ptr=ptr))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
 
     if learn:
         out.mean().backward()
@@ -127,12 +118,7 @@ def test_learnable_channels_aggregation(Aggregation):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-
-    if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(ImportError, match="'segment' requires"):
-            aggr(x, ptr=ptr)
-    else:
-        assert torch.allclose(out, aggr(x, ptr=ptr))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
 
     out.mean().backward()
     for param in aggr.parameters():

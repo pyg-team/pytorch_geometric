@@ -107,9 +107,10 @@ class HEATConv(MessagePassing):
         edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),
                                      self.negative_slope)
 
-        # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
+        # propagate_type: (x: Tensor, edge_type_emb: Tensor,
+        #                  edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
-                             edge_attr=edge_attr, size=None)
+                             edge_attr=edge_attr)
 
         if self.concat:
             if self.root_weight:

@@ -340,7 +340,7 @@ class Distance(torch.nn.Module):
 class NeighborEmbedding(MessagePassing):
     r"""The :class:`NeighborEmbedding` module from the `"Enhancing Geometric
     Representations for Molecules with Equivariant Vector-Scalar Interactive
-    Message Passing" <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    Message Passing" <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         hidden_channels (int): The number of hidden channels in the node
@@ -404,7 +404,7 @@ class NeighborEmbedding(MessagePassing):
         W = self.distance_proj(edge_attr) * C.view(-1, 1)
 
         x_neighbors = self.embedding(z)
-        x_neighbors = self.propagate(edge_index, x=x_neighbors, W=W, size=None)
+        x_neighbors = self.propagate(edge_index, x=x_neighbors, W=W)
         x_neighbors = self.combine(torch.cat([x, x_neighbors], dim=1))
         return x_neighbors
 
@@ -415,7 +415,7 @@ class NeighborEmbedding(MessagePassing):
 class EdgeEmbedding(torch.nn.Module):
     r"""The :class:`EdgeEmbedding` module from the `"Enhancing Geometric
     Representations for Molecules with Equivariant Vector-Scalar Interactive
-    Message Passing" <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    Message Passing" <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         num_rbf (int): The number of radial basis functions.
@@ -458,7 +458,7 @@ class ViS_MP(MessagePassing):
     equivariant vector-scalar interactive graph neural network (ViSNet)
     from the `"Enhancing Geometric Representations for Molecules with
     Equivariant Vector-Scalar Interactive Message Passing"
-    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         num_heads (int): The number of attention heads.
@@ -604,7 +604,7 @@ class ViS_MP(MessagePassing):
         vec_dot = (vec1 * vec2).sum(dim=1)
 
         x, vec_out = self.propagate(edge_index, q=q, k=k, v=v, dk=dk, dv=dv,
-                                    vec=vec, r_ij=r_ij, d_ij=d_ij, size=None)
+                                    vec=vec, r_ij=r_ij, d_ij=d_ij)
 
         o1, o2, o3 = torch.split(self.o_proj(x), self.hidden_channels, dim=1)
         dx = vec_dot * o2 + o3
@@ -659,7 +659,7 @@ class ViS_MP_Vertex(ViS_MP):
     equivariant vector-scalar interactive graph neural network (ViSNet)
     from the `"Enhancing Geometric Representations for Molecules with
     Equivariant Vector-Scalar Interactive Message Passing"
-    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         num_heads (int): The number of attention heads.
@@ -723,7 +723,7 @@ class ViSNetBlock(torch.nn.Module):
     r"""The representation module of the equivariant vector-scalar
     interactive graph neural network (ViSNet) from the `"Enhancing Geometric
     Representations for Molecules with Equivariant Vector-Scalar Interactive
-    Message Passing" <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    Message Passing" <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         lmax (int, optional): The maximum degree of the spherical harmonics.
@@ -875,7 +875,7 @@ class GatedEquivariantBlock(torch.nn.Module):
     r"""Applies a gated equivariant operation to scalar features and vector
     features from the `"Enhancing Geometric Representations for Molecules with
     Equivariant Vector-Scalar Interactive Message Passing"
-    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         hidden_channels (int): The number of hidden channels in the node
@@ -1039,7 +1039,7 @@ class ViSNet(torch.nn.Module):
     vector-scalar interactive graph neural network (ViSNet) from the
     `"Enhancing Geometric Representations for Molecules with Equivariant
     Vector-Scalar Interactive Message Passing"
-    <https://arxiv.org/pdf/2210.16518.pdf>`_ paper.
+    <https://arxiv.org/abs/2210.16518>`_ paper.
 
     Args:
         lmax (int, optional): The maximum degree of the spherical harmonics.

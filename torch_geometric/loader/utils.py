@@ -8,6 +8,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.data import (
     Data,
     FeatureStore,
@@ -104,8 +105,13 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
         if key == 'edge_index':
-            edge_index = torch.stack([row, col], dim=0)
-            out_store.edge_index = edge_index.to(value.device)
+            # TODO Integrate `EdgeIndex` into `custom_store`.
+            out_store.edge_index = EdgeIndex(
+                torch.stack([row, col], dim=0).to(value.device),
+                sparse_size=out_store.size(),
+                sort_order='col',
+                # TODO Support `is_undirected`.
+            )
 
         elif key == 'adj_t':
             # NOTE: We expect `(row, col)` to be sorted by `col` (CSC layout).

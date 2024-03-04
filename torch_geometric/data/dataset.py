@@ -3,9 +3,17 @@ import os.path as osp
 import re
 import sys
 import warnings
-from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch.utils.data
@@ -18,7 +26,7 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 MISSING = '???'
 
 
-class Dataset(torch.utils.data.Dataset, ABC):
+class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
@@ -70,12 +78,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    @abstractmethod
     def len(self) -> int:
         r"""Returns the number of data objects stored in the dataset."""
         raise NotImplementedError
 
-    @abstractmethod
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
@@ -286,6 +292,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         else:
             return self.index_select(idx)
+
+    def __iter__(self) -> Iterator[BaseData]:
+        for i in range(len(self)):
+            yield self[i]
 
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.

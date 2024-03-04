@@ -1,4 +1,3 @@
-import typing
 from copy import copy
 from typing import Dict, Optional, Tuple, Union
 
@@ -6,44 +5,18 @@ import torch
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload as overload
 
-
-@overload
 def maybe_num_nodes(
-    edge_index: Tensor,
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-@overload
-def maybe_num_nodes(  # noqa: F811
-    edge_index: Tuple[Tensor, Tensor],
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-@overload
-def maybe_num_nodes(  # noqa: F811
-    edge_index: SparseTensor,
-    num_nodes: Optional[int] = None,
-) -> int:
-    pass
-
-
-def maybe_num_nodes(  # noqa: F811
     edge_index: Union[Tensor, Tuple[Tensor, Tensor], SparseTensor],
     num_nodes: Optional[int] = None,
 ) -> int:
     if num_nodes is not None:
         return num_nodes
+    elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        return max(edge_index.get_sparse_size())
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))

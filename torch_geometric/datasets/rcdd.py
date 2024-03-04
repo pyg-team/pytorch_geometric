@@ -16,7 +16,7 @@ from torch_geometric.utils import index_to_mask
 class RCDD(InMemoryDataset):
     r"""The risk commodity detection dataset (RCDD) from the
     `"Datasets and Interfaces for Benchmarking Heterogeneous Graph
-    Neural Networks" <http://shichuan.org/doc/156.pdf>`_ paper.
+    Neural Networks" <https://dl.acm.org/doi/10.1145/3583780.3615117>`_ paper.
     RCDD is an industrial-scale heterogeneous graph dataset based on a
     real risk detection scenario from Alibaba's e-commerce platform.
     It consists of 13,806,619 nodes and 157,814,864 edges across 7 node types
