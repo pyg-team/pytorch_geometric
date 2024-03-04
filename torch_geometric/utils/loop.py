@@ -461,7 +461,7 @@ def add_self_loops(  # noqa: F811
 
     device = edge_index.device
     if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-        loop_index = EdgeIndex(
+        loop_index: Tensor = EdgeIndex(
             torch.arange(0, N, device=device).view(1, -1).repeat(2, 1),
             sparse_size=(N, N),
             is_undirected=True,
@@ -625,7 +625,7 @@ def add_remaining_self_loops(  # noqa: F811
 
     device = edge_index.device
     if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-        loop_index = EdgeIndex(
+        loop_index: Tensor = EdgeIndex(
             torch.arange(0, N, device=device).view(1, -1).repeat(2, 1),
             sparse_size=(N, N),
             is_undirected=True,
