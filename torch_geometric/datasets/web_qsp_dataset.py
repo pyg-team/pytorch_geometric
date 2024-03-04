@@ -253,8 +253,7 @@ class WebQSPDataset(InMemoryDataset):
         q_embs = self.text2embedding(self.model, self.tokenizer,
                                           self.device, self.questions)
         print("Encoding graphs...")
-        # (TODO) put TQDM back and remove prints once working
-        for index, data_i in enumerate(self.raw_dataset):
+        for index, data_i in tqdm(enumerate(self.raw_dataset)):
             raw_nodes = {}
             raw_edges = []
             for tri in data_i['graph']:
@@ -294,7 +293,4 @@ class WebQSPDataset(InMemoryDataset):
             psct_subgraph["label"] = label
             psct_subgraph["desc"] = desc
             list_of_graphs.append(psct_subgraph.to("cpu"))
-            print("raw_graph[" + str(index) + "] =", raw_graph)
-            print("pcst_subgraph[" + str(index) + "] =", psct_subgraph)
-            print("-*" * 10)
         self.save(list_of_graphs, self.processed_paths[0])
