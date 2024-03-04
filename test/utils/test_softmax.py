@@ -1,7 +1,12 @@
+import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.utils import softmax
+
+CALCULATION_VIA_PTR_AVAILABLE = (torch_geometric.typing.WITH_SOFTMAX
+                                 or torch_geometric.typing.WITH_TORCH_SCATTER)
 
 
 def test_softmax():
@@ -53,11 +58,19 @@ def test_softmax_dim():
 
     src = torch.randn(4, 4)
     assert torch.allclose(softmax(src, index, dim=-1), src.softmax(dim=-1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(-1))
+    if CALCULATION_VIA_PTR_AVAILABLE:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(-1))
+    else:
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            softmax(src, ptr=ptr, dim=-1)
 
     src = torch.randn(4, 4, 16)
     assert torch.allclose(softmax(src, index, dim=1), src.softmax(dim=1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
+    if CALCULATION_VIA_PTR_AVAILABLE:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
+    else:
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            softmax(src, ptr=ptr, dim=1)
 
 
 if __name__ == '__main__':
