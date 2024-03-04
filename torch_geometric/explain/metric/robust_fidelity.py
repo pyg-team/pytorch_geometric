@@ -1,18 +1,27 @@
 from typing import Tuple
 
 import numpy as np
+
 import torch
-from scipy.sparse import coo_matrix
 
 from torch_geometric.explain import Explainer, Explanation
 from torch_geometric.explain.config import ModelMode
+
 from torch_geometric.utils import k_hop_subgraph
+from scipy.sparse import coo_matrix
 
 
 def robust_fidelity(
-        explainer: Explainer, explanation: Explanation, alpha1=0.1, alpha2=0.9,
-        sample_num=50, top_k=-1, k_hop=3, undirect=True,
-        use_gt_label=True) -> Tuple[float, float, float, float, float, float]:
+        explainer: Explainer,
+        explanation: Explanation,
+        alpha1=0.1,
+        alpha2=0.9,
+        sample_num=50,
+        top_k=-1,
+        k_hop=3,
+        undirect=True,
+        use_gt_label=True
+) -> Tuple[float, float, float, float, float, float]:
     r"""Calculate the robust fidelity  metric, given an
     :class:`~torch_geometric.explain.Explainer`  and
     :class:`~torch_geometric.explain.Explanation`, as described in the
@@ -71,6 +80,10 @@ def robust_fidelity(
                 time in fid+ calculation
         alpha2: the ratio of maintain non-explanation subgraph
                 each time in fid- calculation
+        sample_num: how many samples will be used to estimate
+                the fidelity
+        top_k: the robust fidelity requires binary mask, this
+                parameter will select top_k as explanation
         k_hop: the number of hop for node classification
         undirect: if the graph is undirected graph (default:
                 graph task is true, node task is false)
@@ -108,7 +121,8 @@ def robust_fidelity(
     matrix_0 = graphs[0].cpu().numpy()
     matrix_1 = graphs[1].cpu().numpy()
     exp_graph_matrix = coo_matrix(
-        (edge_mask_np, (matrix_0, matrix_1)),
+        (edge_mask_np,
+         (matrix_0, matrix_1)),
         shape=(features.shape[0], features.shape[0])).tocsr()
 
     if task_type == 'node':
@@ -272,8 +286,7 @@ def robust_fidelity(
                         edge_index,
                         node_mask,
                         list_explain[i].to(features.device),
-                        **kwargs,
-                    )
+                        **kwargs, )
                     mask_pred_minus_label = \
                         explainer.get_target(mask_pred_minus)
 
@@ -291,8 +304,7 @@ def robust_fidelity(
                         graphs,
                         node_mask,
                         list_explain[i].to(features.device),
-                        **kwargs,
-                    )
+                        **kwargs, )
                     mask_pred_minus_label = \
                         explainer.get_target(mask_pred_minus)
                     mask_label_minus = mask_pred_minus_label
@@ -314,7 +326,7 @@ def robust_fidelity(
 
     fid_plus_mean, fid_plus_label_mean = cal_fid_embedding_plus()
     fid_minus_mean, fid_minus_label_mean = cal_fid_embedding_minus()
-    fid_delta = fid_plus_mean - fid_minus_mean
+    fid_delta = fid_plus_mean-fid_minus_mean
     fid_delta_label = fid_plus_label_mean - fid_minus_label_mean
 
     return \
