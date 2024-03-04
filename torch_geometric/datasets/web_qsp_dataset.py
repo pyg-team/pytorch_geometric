@@ -112,13 +112,13 @@ class WebQSPDataset(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
 
-        super().__init__(root, None, None, force_reload=force_reload)
         self.prompt = 'Please answer the given question.'
         self.graph = None
         self.graph_type = 'Knowledge Graph'
         self.model_name = 'sbert'
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu')
+        super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
 
