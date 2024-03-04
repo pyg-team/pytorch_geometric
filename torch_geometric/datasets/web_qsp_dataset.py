@@ -253,7 +253,7 @@ class WebQSPDataset(InMemoryDataset):
         q_embs = self.text2embedding(self.model, self.tokenizer,
                                           self.device, self.questions)
         print("Encoding graphs...")
-        for index in tqdm(len(self.raw_dataset)):
+        for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[i]
             raw_nodes = {}
             raw_edges = []
