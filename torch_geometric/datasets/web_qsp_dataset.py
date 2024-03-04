@@ -246,7 +246,7 @@ class WebQSPDataset(InMemoryDataset):
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         self.text2embedding = sbert_text2embedding
-        questions = [i['question'] for i in dataset]
+        questions = [i['question'] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
         print('Encoding questions...')
