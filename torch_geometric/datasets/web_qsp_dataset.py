@@ -145,17 +145,13 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.questions = [i['question'] for i in self.raw_dataset]
+        self.labels = 
         pretrained_repo = 'sentence-transformers/all-roberta-large-v1'
         self.model = Sentence_Transformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         self.text2embedding = sbert_text2embedding
-        # encode questions
-        print('Encoding questions...')
-        self.q_embs = self.text2embedding(self.model, self.tokenizer,
-                                          self.device, self.questions)
         print('Encoding graphs...')
         list_of_graphs = []
         #for index in tqdm(range(len(self.questions))):
@@ -193,6 +189,9 @@ class WebQSPDataset(InMemoryDataset):
                 [edges.src.tolist(), edges.dst.tolist()])
             list_of_graphs.append(
                 Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                     num_nodes=len(nodes), q_emb=self.q_embs[index]))
-            print("data[" + str(i) + "] =", data)
+                     num_nodes=len(nodes),
+                     question=raw_dataset[index]["question"],
+                     label=raw_dataset[index]["label"],
+                     desc=raw_dataset[index]["desc"])
+            print("data[" + str(index) + "] =", data)
         self.save(list_of_graphs, self.processed_paths[0])
