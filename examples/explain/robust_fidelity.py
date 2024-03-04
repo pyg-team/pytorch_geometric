@@ -2,17 +2,14 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from tools.fidelity_pyg import robust_fidelity
+from torch.nn import Linear, ReLU
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.datasets.ba2motif_dataset import BA2MotifDataset
 from torch_geometric.explain import Explainer, GNNExplainer
-from torch_geometric.nn import GCNConv
-
 from torch_geometric.explain.metric import fidelity
-from tools.fidelity_pyg import robust_fidelity
-from torch.nn import ReLU, Linear
-from torch_geometric.nn import (GCNConv,
-                                global_max_pool, global_mean_pool)
+from torch_geometric.nn import GCNConv, global_max_pool, global_mean_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ba2')
 dataset = BA2MotifDataset(path)

@@ -1,11 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.explain import (
-    DummyExplainer,
-    Explainer,
-    robust_fidelity,
-)
+from torch_geometric.explain import DummyExplainer, Explainer, robust_fidelity
 
 
 class DummyNodeModel(torch.nn.Module):
@@ -39,10 +35,9 @@ def test_robust_fidelity(explanation_type):
         ),
     )
 
-    target = torch.randint(0, x.size(1), (x.size(0),))
+    target = torch.randint(0, x.size(1), (x.size(0), ))
 
-    explanation = explainer(x, edge_index, index=0,
-                            target=target)
+    explanation = explainer(x, edge_index, index=0, target=target)
 
     pos_fid, neg_fid, del_fid, pos_fid_l, neg_fid_l, del_fid_l = \
         robust_fidelity(explainer, explanation, undirect=False)
@@ -66,7 +61,7 @@ def test_robust_fidelity(explanation_type):
         ),
     )
 
-    target = torch.randint(0, x.size(1), (1,))
+    target = torch.randint(0, x.size(1), (1, ))
 
     explanation = explainer(x, edge_index, target=target)
 
