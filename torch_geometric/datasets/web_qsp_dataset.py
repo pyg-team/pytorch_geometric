@@ -255,7 +255,6 @@ class WebQSPDataset(InMemoryDataset):
         print("Encoding graphs...")
         # (TODO) put TQDM back and remove prints once working
         for index, data_i in enumerate(self.raw_dataset):
-            print("data[" + str(index) + "] =", data_i)
             raw_nodes = {}
             raw_edges = []
             for tri in data_i['graph']:
@@ -290,7 +289,7 @@ class WebQSPDataset(InMemoryDataset):
             question=f'Question: {data_i["question"]}\nAnswer: '
             label=('|').join(data_i['answer']).lower()
             raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(nodes))
-            psct_subgraph, desc = retrieval_via_pcst(raw_graph, self.q_embs[i], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
+            psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[i], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
             pcst_subgraph["question"] = question
             pcst_subgraph["label"] = label
             list_of_graphs.append(pcst_subgraph)
