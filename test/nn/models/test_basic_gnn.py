@@ -207,7 +207,7 @@ def test_basic_gnn_inference(get_dataset, jk):
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>=2.0.0')
-def test_compile(device):
+def test_compile_basic(device):
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
