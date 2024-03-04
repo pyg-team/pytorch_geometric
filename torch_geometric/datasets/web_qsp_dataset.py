@@ -120,6 +120,10 @@ class WebQSPDataset(InMemoryDataset):
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu')
 
+    @property
+    def raw_file_names(self) -> List[str]:
+        return []
+
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self.raw_dataset = datasets.concatenate_datasets(
