@@ -145,14 +145,12 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.labels = 
         pretrained_repo = 'sentence-transformers/all-roberta-large-v1'
         self.model = Sentence_Transformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         self.text2embedding = sbert_text2embedding
-        print('Encoding graphs...')
         list_of_graphs = []
         #for index in tqdm(range(len(self.questions))):
         for index in range(len(self.questions)):

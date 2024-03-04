@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
 from torch.nn.utils import clip_grad_norm_
-from torch.utils.data import DataLoader
+from torch_geometric.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -187,6 +187,7 @@ class GAT_LLAMA(nn.Module):
         return g_embeds
 
     def forward(self, samples):
+        print("samples=", samples)
         # encode description, questions and labels
         questions = self.tokenizer(samples["question"],
                                    add_special_tokens=False)
