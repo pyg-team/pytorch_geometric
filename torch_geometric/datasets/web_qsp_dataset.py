@@ -292,6 +292,7 @@ class WebQSPDataset(InMemoryDataset):
             psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
             psct_subgraph["question"] = question
             psct_subgraph["label"] = label
+            psct_subgraph["desc"] = desc
             list_of_graphs.append(psct_subgraph.to("cpu"))
             print("raw_graph[" + str(index) + "] =", raw_graph)
             print("pcst_subgraph[" + str(index) + "] =", psct_subgraph)
