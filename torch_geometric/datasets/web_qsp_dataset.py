@@ -125,6 +125,10 @@ class WebQSPDataset(InMemoryDataset):
     def raw_file_names(self) -> List[str]:
         return []
 
+    @property
+    def processed_file_names(self) -> List[str]:
+        return []
+
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self.raw_dataset = datasets.concatenate_datasets(
