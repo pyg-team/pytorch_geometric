@@ -294,7 +294,4 @@ class WebQSPDataset(InMemoryDataset):
             psct_subgraph["label"] = label
             psct_subgraph["desc"] = desc
             list_of_graphs.append(psct_subgraph.to("cpu"))
-            if index>100:
-                # just for initial setup, remove once bugfree
-                break
         self.save(list_of_graphs, self.processed_paths[0])
