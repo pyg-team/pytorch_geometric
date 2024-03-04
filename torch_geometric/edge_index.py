@@ -516,6 +516,49 @@ class EdgeIndex(Tensor):
 
         return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
 
+    def sparse_resize_(  # type: ignore
+            self,
+            sparse_size: Tuple[int, int],
+    ) -> 'EdgeIndex':
+        r"""Assigns or re-assigns the size of the underlying sparse matrix.
+
+        Args:
+            sparse_size (tuple[int, int]): The size of the sparse matrix.
+        """
+        num_rows, num_cols = sparse_size
+
+        if self.is_undirected and num_rows != num_cols:
+            raise ValueError(f"'EdgeIndex' is undirected but received a "
+                             f"non-symmetric size (got {list(sparse_size)})")
+
+        def _modify_ptr(ptr: Optional[Tensor], size: int) -> Optional[Tensor]:
+            if ptr is None:
+                return None
+
+            if ptr.numel() - 1 == size:
+                return ptr
+
+            if ptr.numel() - 1 > size:
+                return None
+
+            fill_value = ptr.new_full(
+                (size - ptr.numel() + 1, ),
+                fill_value=ptr[-1],  # type: ignore
+            )
+            return torch.cat([ptr, fill_value], dim=0)
+
+        if self.is_sorted_by_row:
+            self._indptr = _modify_ptr(self._indptr, num_rows)
+            self._T_indptr = _modify_ptr(self._T_indptr, num_cols)
+
+        if self.is_sorted_by_col:
+            self._indptr = _modify_ptr(self._indptr, num_cols)
+            self._T_indptr = _modify_ptr(self._T_indptr, num_rows)
+
+        self._sparse_size = sparse_size
+
+        return self
+
     def get_num_rows(self) -> int:
         r"""The number of rows of the underlying sparse matrix.
         Automatically computed and cached when not explicitly set.

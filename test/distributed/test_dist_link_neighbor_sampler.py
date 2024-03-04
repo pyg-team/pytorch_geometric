@@ -440,7 +440,9 @@ def dist_link_neighbor_sampler_temporal_hetero(
 def test_dist_link_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('127.0.0.1', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -466,7 +468,9 @@ def test_dist_link_neighbor_sampler(disjoint):
 def test_dist_link_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('127.0.0.1', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -497,7 +501,9 @@ def test_dist_link_neighbor_sampler_edge_level_temporal(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('127.0.0.1', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -522,8 +528,9 @@ def test_dist_link_neighbor_sampler_edge_level_temporal(
 def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -571,8 +578,9 @@ def test_dist_link_neighbor_sampler_temporal_hetero(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -623,8 +631,9 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
