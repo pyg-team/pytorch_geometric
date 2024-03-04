@@ -44,7 +44,7 @@ def test_robust_fidelity(explanation_type):
     explanation = explainer(x, edge_index, index=0,
                             target=target)
 
-    pos_fidelity, neg_fidelity, pos_fidelity_label, neg_fidelity_label = \
+    pos_fid, neg_fid, del_fid, pos_fid_l, neg_fid_l, del_fid_l = \
         robust_fidelity(explainer, explanation, undirect=False)
 
     x = torch.randn(8, 4)
@@ -70,5 +70,5 @@ def test_robust_fidelity(explanation_type):
 
     explanation = explainer(x, edge_index, target=target)
 
-    pos_fidelity, neg_fidelity, pos_fidelity_label, neg_fidelity_label = \
+    pos_fid, neg_fid, del_fid, pos_fid_l, neg_fid_l, del_fid_l = \
         robust_fidelity(explainer, explanation, undirect=True)

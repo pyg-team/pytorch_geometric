@@ -21,9 +21,9 @@ def robust_fidelity(
         k_hop=3,
         undirect=True,
         use_gt_label=True
-) -> Tuple[float, float, float, float]:
-    r"""Evaluates the fidelity of an
-    :class:`~torch_geometric.explain.Explainer` given an
+) -> Tuple[float, float, float, float, float, float]:
+    r"""Calculate the robust fidelity  metric, given an
+    :class:`~torch_geometric.explain.Explainer`  and
     :class:`~torch_geometric.explain.Explanation`, as described in the
     `"Towards Robust Fidelity for Evaluating Explainability of Graph
     Neural Networks" <https://arxiv.org/abs/2310.01820>`_ paper.
@@ -37,33 +37,37 @@ def robust_fidelity(
     scores  by giving only the subgraph to the model (fidelity-) or
     by removing it from the entire graph (fidelity+).
 
-    the robust fidelity scores are given by:
+    the probability-based robust fidelity scores are given by:
 
-    probability based fidelity
     .. math::
-    Fid_{\alpha_1,+} & \triangleq f(\overline{G})_y -
+                Fid_{\alpha_1,+} &= f(\overline{G})_y -
                 \mathbb{E}f(\overline{G}-
-                E_{\alpha_1}(\overline{G}^{(exp)}))_y,\\
-    Fid_{\alpha_2,-} & \triangleq  f(\overline{G})_y -
-                \mathbb{E}f(\overline{G}^{(exp)}+
-                E_{\alpha_2}(\overline{G}-\overline{G}^{(exp)}))_y, \\
-    Fid_{\alpha_1,\alpha_2,\Delta} & \triangleq
-                Fid_{\alpha_1,+} - Fid_{\alpha_2,-},
+                E_{\alpha_1}(\overline{G}^{(exp)}))_y
 
-    accuracy based fidelity
+                Fid_{\alpha_2,-} &=  f(\overline{G})_y -
+                \mathbb{E}f(\overline{G}^{(exp)}+
+                E_{\alpha_2}(\overline{G}-\overline{G}^{(exp)}))_y
+
+                Fid_{\alpha_1,\alpha_2,\Delta} &=
+                Fid_{\alpha_1,+} - Fid_{\alpha_2,-}
+
+    the accuracy-based robust fidelity scores are given by:
+
     .. math::
-    Fid_{\alpha_1,+} & \triangleq (\mathds{1}(
+                Fid_{\alpha_1,+} &= \mathbb{1}(
                 \widehat{y}_{\overline{G}} == y ) -
-                \mathbb{E}( \mathds{1}( \widehat{y}_
+                \mathbb{E}( \mathbb{1}( \widehat{y}_
                 {\overline{G}-E_{\alpha_1}
-                (\overline{G}^{(exp)})} )_y == y)) ,\\
-    Fid_{\alpha_2,-} & \triangleq  (\mathds{1}(
+                (\overline{G}^{(exp)})} == y))
+
+                Fid_{\alpha_2,-} &=  \mathbb{1}(
                 \widehat{y}_{\overline{G}} == y ) -
-                \mathbb{E}( \mathds{1}( \mathds{1}
-                ( \overline{G}^{(exp)}+E_{\alpha_2}(
-                \overline{G}-\overline{G}^{(exp)}))_y==y)), \\
-    Fid_{\alpha_1,\alpha_2,\Delta} & \triangleq
-                Fid_{\alpha_1,+} - Fid_{\alpha_2,-},
+                \mathbb{E}( \mathbb{1}( \widehat{y}_
+                {\overline{G}^{(exp)}+E_{\alpha_2}(
+                \overline{G}-\overline{G}^{(exp)})}==y))
+
+                Fid_{\alpha_1,\alpha_2,\Delta} &=
+                Fid_{\alpha_1,+} - Fid_{\alpha_2,-}
 
     this method is designed for edge-based explanation subgraphs,
     node-based explanation subgraphs should convert into
@@ -81,11 +85,6 @@ def robust_fidelity(
                 graph task is true, node task is false)
         use_gt_label: use gt_label to calculate the fid
 
-    return:
-        prob_fid+,
-        prob_fid-,
-        acc_fid+,
-        acc_fid-
     """
     max_length = sample_num
     alpha2 = 1 - alpha2
@@ -323,7 +322,9 @@ def robust_fidelity(
 
     fid_plus_mean, fid_plus_label_mean = cal_fid_embedding_plus()
     fid_minus_mean, fid_minus_label_mean = cal_fid_embedding_minus()
+    fid_delta = fid_plus_mean-fid_minus_mean
+    fid_delta_label = fid_plus_label_mean - fid_minus_label_mean
 
     return \
-        fid_plus_mean, fid_minus_mean, \
-        fid_plus_label_mean, fid_minus_label_mean
+        fid_plus_mean, fid_minus_mean, fid_delta, \
+        fid_plus_label_mean, fid_minus_label_mean, fid_delta_label
