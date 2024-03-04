@@ -153,10 +153,10 @@ class WebQSPDataset(InMemoryDataset):
         self.text2embedding = sbert_text2embedding
         list_of_graphs = []
         #for index in tqdm(range(len(self.questions))):
-        for index in range(len(self.questions)):
+        for index, data_i in enumerate(self.raw_dataset):
             raw_nodes = {}
             raw_edges = []
-            for tri in self.raw_dataset[index]['graph']:
+            for tri in data_i['graph']:
                 h, r, t = tri
                 h = h.lower()
                 t = t.lower()
@@ -188,8 +188,8 @@ class WebQSPDataset(InMemoryDataset):
             list_of_graphs.append(
                 Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                      num_nodes=len(nodes),
-                     question=raw_dataset[index]["question"],
-                     label=raw_dataset[index]["label"],
-                     desc=raw_dataset[index]["desc"]))
+                     question=data_i["question"],
+                     label=data_i["label"],
+                     desc=data_i["desc"]))
             print("data[" + str(index) + "] =", data)
         self.save(list_of_graphs, self.processed_paths[0])
