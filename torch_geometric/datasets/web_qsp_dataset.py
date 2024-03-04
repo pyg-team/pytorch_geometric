@@ -128,7 +128,7 @@ class WebQSPDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return []
+        return ['list_of_graphs.pt']
 
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
