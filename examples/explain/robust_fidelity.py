@@ -13,9 +13,10 @@ from tools.fidelity_pyg import robust_fidelity
 from torch.nn import ReLU, Linear
 from torch_geometric.nn import GCNConv, global_max_pool, global_mean_pool
 
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ba2')
 dataset = BA2MotifDataset(path)
+
+
 class GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -28,7 +29,7 @@ class GCN(torch.nn.Module):
         self.lin = Linear(20 * 2, 2)
 
     def forward(self, x, edge_index, batch=None, edge_weights=None):
-        if batch is None: # No batch given
+        if batch is None:  # No batch given
             batch = torch.zeros(x.size(0), dtype=torch.long).to(x.device)
         embed = self.embedding(x, edge_index, edge_weights)
 
@@ -89,33 +90,22 @@ explainer = Explainer(
     ),
 )
 
-
 explanation = explainer(dataset[0].x, dataset[0].edge_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
-# path = 'feature_importance.png'
-# explanation.visualize_feature_importance(path, top_k=10)
-# print(f"Feature importance plot has been saved to '{path}'")
-
-# path = 'subgraph.pdf'
-# explanation.visualize_graph(path)
-# print(f"Subgraph visualization plot has been saved to '{path}'")
-
-f_plus,f_minus = fidelity(explainer,explanation)
+f_plus, f_minus = fidelity(explainer, explanation)
 
 print("finished")
 
-f_plus,f_minus,f_d, f_plus_label,f_minus_label,f_d_label = robust_fidelity(explainer,explanation,undirect=True,top_k=5)
+f_plus, f_minus, f_d, f_plus_label, f_minus_label, f_d_label \
+    = robust_fidelity(explainer, explanation, undirect=True, top_k=5)
 
 print("node robust fidelity finished")
-
-# exit(0)
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, dataset)
 data = dataset[0]
-
 
 class GCN(torch.nn.Module):
     def __init__(self):
@@ -159,19 +149,11 @@ node_index = 10
 explanation = explainer(data.x, data.edge_index, index=node_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
-# path = 'feature_importance.png'
-# explanation.visualize_feature_importance(path, top_k=10)
-# print(f"Feature importance plot has been saved to '{path}'")
-
-# path = 'subgraph.pdf'
-# explanation.visualize_graph(path)
-# print(f"Subgraph visualization plot has been saved to '{path}'")
-
-f_plus,f_minus = fidelity(explainer,explanation)
+f_plus, f_minus = fidelity(explainer, explanation)
 
 print("finished")
 
-f_plus,f_minus,f_d, f_plus_label,f_minus_label,f_d_label = robust_fidelity(explainer,explanation,undirect=False,top_k=5)
+f_plus, f_minus, f_d, f_plus_label, f_minus_label, f_d_label = (
+    robust_fidelity(explainer, explanation, undirect=False, top_k=5))
 
 print("node robust fidelity finished")
-
