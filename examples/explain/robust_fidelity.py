@@ -11,7 +11,8 @@ from torch_geometric.nn import GCNConv
 from torch_geometric.explain.metric import fidelity
 from tools.fidelity_pyg import robust_fidelity
 from torch.nn import ReLU, Linear
-from torch_geometric.nn import GCNConv, global_max_pool, global_mean_pool
+from torch_geometric.nn import (GCNConv,
+                                global_max_pool, global_mean_pool)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ba2')
 dataset = BA2MotifDataset(path)
@@ -106,6 +107,7 @@ dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, dataset)
 data = dataset[0]
+
 
 class GCN(torch.nn.Module):
     def __init__(self):
