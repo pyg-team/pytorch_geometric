@@ -190,6 +190,6 @@ class WebQSPDataset(InMemoryDataset):
                      num_nodes=len(nodes),
                      question=raw_dataset[index]["question"],
                      label=raw_dataset[index]["label"],
-                     desc=raw_dataset[index]["desc"])
+                     desc=raw_dataset[index]["desc"]))
             print("data[" + str(index) + "] =", data)
         self.save(list_of_graphs, self.processed_paths[0])
