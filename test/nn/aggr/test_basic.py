@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
