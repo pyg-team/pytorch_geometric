@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import tqdm
 from torch.utils.data import DataLoader
 from transformers import AutoModel, AutoTokenizer
+from typing import List
 
 from torch_geometric.data import Data, InMemoryDataset
 
