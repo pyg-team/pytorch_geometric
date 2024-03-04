@@ -1,5 +1,6 @@
 import argparse
 import ast
+import logging
 import warnings
 from collections import defaultdict
 from contextlib import nullcontext
@@ -27,6 +28,9 @@ from torch_geometric.profile import (
     xpu_profile,
 )
 
+logging.basicConfig(format='%(levelname)s:%(process)d:%(message)s',
+                    level=logging.DEBUG)
+
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
     'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
@@ -47,13 +51,27 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
                trim=False):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
+    mc = 0
+    tot_fw_time = 0
+    tot_selecting_output = 0
+    tot_losscomp_time = 0
+    tot_bw_time = 0
+    tot_time_dataloading = 0
+
+    import time
+    t10 = time.time()
+    ta = time.time()
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
+        tb = time.time()
+
         if 'adj_t' in batch:
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
+
+        t1 = time.time()
         if not trim:
             out = model(batch.x, edge_index)
         else:
@@ -63,12 +81,44 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
                 num_sampled_nodes_per_hop=batch.num_sampled_nodes,
                 num_sampled_edges_per_hop=batch.num_sampled_edges,
             )
+
         batch_size = batch.batch_size
+
+        t2 = time.time()
+
+        # print("=======================================training_benchmark")
+        # print("out A is: ", out)
         out = out[:batch_size]
+        # print("out B is: ", out)
+        # print("target A is:", batch.y)
         target = batch.y[:batch_size]
+        # print("target B is:", target)
+
         loss = F.cross_entropy(out, target)
+
+        t3 = time.time()
         loss.backward()
         optimizer.step()
+        t4 = time.time()
+
+        tot_fw_time += t2 - t1
+        tot_losscomp_time += t3 - t2
+        tot_bw_time += t4 - t3
+        tot_time_dataloading += tb - ta
+        ta = time.time()
+        mc += 1
+
+    t11 = time.time()
+    #print average times
+    avg_fw_time = tot_fw_time / mc
+    avg_losscomp_time = tot_losscomp_time / mc
+    avg_bw_time = tot_bw_time / mc
+    avg_dataloading_time = tot_time_dataloading / mc
+
+    print("avg_fw_time: {}\navg_losscomp_time: {}\navg_bw_time: {}\nmc: {}\n".
+          format(avg_fw_time, avg_losscomp_time, avg_bw_time, mc))
+    print("avg_dataloading_time: ", avg_dataloading_time)
+    print("Total time taken by the training loop: ", t11 - t10)
 
 
 def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
@@ -243,8 +293,10 @@ def run(args: argparse.ArgumentParser):
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
                             args.loader_cores
                         ) if args.cpu_affinity else nullcontext()
-
-                        with amp, cpu_affinity:
+                        multithreading = subgraph_loader.enable_multithreading(
+                            args.loader_threads
+                        ) if args.multithreading else nullcontext()
+                        with amp, cpu_affinity, multithreading:
                             for _ in range(args.warmup):
                                 train(
                                     model,
@@ -338,6 +390,7 @@ def run(args: argparse.ArgumentParser):
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
     add = argparser.add_argument
+    torch.multiprocessing.set_start_method('spawn')
 
     add('--device', choices=['cpu', 'cuda', 'mps', 'xpu'], default='cpu',
         help='Device to run benchmark on')
@@ -371,6 +424,15 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add(
+        '--multithreading',
+        action='store_true',
+    )
+    add(
+        '--loader-threads',
+        default=1,
+        type=int,
+    )
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', choices=[None, 'bench', 'prof'], default=None,

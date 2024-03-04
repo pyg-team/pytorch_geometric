@@ -25,7 +25,7 @@ from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils._trim_to_layer import TrimToLayer
 
 
@@ -185,7 +185,7 @@ class BasicGNN(torch.nn.Module):
         batch_size: Optional[int] = None,
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
-    ) -> Tensor:
+    ):
         r"""Forward pass.
 
         Args:
@@ -227,9 +227,9 @@ class BasicGNN(torch.nn.Module):
         xs: List[Tensor] = []
         assert len(self.convs) == len(self.norms)
         for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
-            if (not torch.jit.is_scripting()
-                    and num_sampled_nodes_per_hop is not None):
-                x, edge_index, value = self._trim(
+            if (num_sampled_nodes_per_hop is not None
+                    and not torch.jit.is_scripting()):
+                x_src, x_dst, edge_index, value = self._trim(
                     i,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
@@ -241,6 +241,8 @@ class BasicGNN(torch.nn.Module):
                     edge_weight = value
                 else:
                     edge_attr = value
+                x = (x_src, x_dst)
+                #x = x_src
 
             # Tracing the module is not allowed with *args and **kwargs :(
             # As such, we rely on a static solution to pass optional edge
@@ -253,7 +255,7 @@ class BasicGNN(torch.nn.Module):
             elif self.supports_edge_attr:
                 x = conv(x, edge_index, edge_attr=edge_attr)
             else:
-                x = conv(x, edge_index)
+                x = conv(x, edge_index=edge_index)
 
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:

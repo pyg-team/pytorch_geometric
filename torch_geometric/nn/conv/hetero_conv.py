@@ -115,23 +115,29 @@ class HeteroConv(torch.nn.Module):
         """
         out_dict: Dict[str, List[Tensor]] = {}
 
-        for edge_type, conv in self.convs.items():
+        for edge_type, conv in self.convs.items(
+        ):  # at each layer, potentially I could define a different kind of convolution for each type of edge
             src, rel, dst = edge_type
 
             has_edge_level_arg = False
 
+            ii = 0
             args = []
-            for value_dict in args_dict:
-                if edge_type in value_dict:
+            for value_dict in args_dict:  #args_dict is a tuple, of dictionaries typically - currently x_dict, (xr_dict), edge_index_dict,
+                if edge_type in value_dict:  # edge_type could be present in edge_index only
                     has_edge_level_arg = True
                     args.append(value_dict[edge_type])
-                elif src == dst and src in value_dict:
+                elif src == dst and src in value_dict:  #
                     args.append(value_dict[src])
+                    # print("elif src == dst and src in value_dict: ii has value: ", ii)
+                    # ii+=1
                 elif src in value_dict or dst in value_dict:
                     args.append((
                         value_dict.get(src, None),
                         value_dict.get(dst, None),
                     ))
+                    # print("elif src in value_dict or dst in value_dict: ii has value: ", ii)
+                    # ii+=1
 
             kwargs = {}
             for arg, value_dict in kwargs_dict.items():
@@ -140,7 +146,7 @@ class HeteroConv(torch.nn.Module):
                         f"Keyword arguments in '{self.__class__.__name__}' "
                         f"need to end with '_dict' (got '{arg}')")
 
-                arg = arg[:-5]  # `{*}_dict`
+                arg = arg[:-5]  # `{*}_dict`  ??? why limited to 5???
                 if edge_type in value_dict:
                     has_edge_level_arg = True
                     kwargs[arg] = value_dict[edge_type]
