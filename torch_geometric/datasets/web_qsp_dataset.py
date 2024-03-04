@@ -290,10 +290,10 @@ class WebQSPDataset(InMemoryDataset):
             label=('|').join(data_i['answer']).lower()
             raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(nodes))
             psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
-            pcst_subgraph["question"] = question
-            pcst_subgraph["label"] = label
-            list_of_graphs.append(pcst_subgraph)
+            psct_subgraph["question"] = question
+            psct_subgraph["label"] = label
+            list_of_graphs.append(psct_subgraph)
             print("raw_graph[" + str(index) + "] =", raw_graph)
-            print("pcst_subgraph[" + str(index) + "] =", pcst_subgraph)
+            print("pcst_subgraph[" + str(index) + "] =", psct_subgraph)
             print("-*" * 10)
         self.save(list_of_graphs, self.processed_paths[0])
