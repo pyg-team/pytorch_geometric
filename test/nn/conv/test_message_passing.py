@@ -24,6 +24,8 @@ from torch_geometric.utils import (
     to_torch_csc_tensor,
 )
 
+torch.use_deterministic_algorithms(True)
+
 
 class MyConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],

@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Final, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -59,6 +59,13 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+    def __init__(self) -> None:
+        super().__init__()
+
+        self._deterministic: Final[bool] = (
+            torch.are_deterministic_algorithms_enabled()
+            or torch.is_deterministic_algorithms_warn_only_enabled())
+
     def forward(
         self,
         x: Tensor,
@@ -170,7 +177,7 @@ class Aggregation(torch.nn.Module):
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
         if ptr is not None:
-            if index is None or torch.are_deterministic_algorithms_enabled():
+            if index is None or self._deterministic:
                 ptr = expand_left(ptr, dim, dims=x.dim())
                 return segment(x, ptr, reduce=reduce)
 
