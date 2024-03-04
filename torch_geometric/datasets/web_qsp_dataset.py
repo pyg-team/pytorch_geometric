@@ -246,11 +246,11 @@ class WebQSPDataset(InMemoryDataset):
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         self.text2embedding = sbert_text2embedding
-        questions = [i['question'] for i in self.raw_dataset]
+        self.questions = [i['question'] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
         print('Encoding questions...')
-        self.q_embs = self.text2embedding(self.model, self.tokenizer,
+        q_embs = self.text2embedding(self.model, self.tokenizer,
                                           self.device, self.questions)
         print("Encoding graphs...")
         # (TODO) put TQDM back and remove prints once working
