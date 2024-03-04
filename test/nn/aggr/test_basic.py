@@ -53,10 +53,7 @@ def test_basic_aggregation(Aggregation):
     assert out.size() == (3, x.size(1))
 
     if isinstance(aggr, MulAggregation):
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
-            aggr(x, ptr=ptr)
-    elif not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
+        with pytest.raises(RuntimeError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
@@ -100,12 +97,7 @@ def test_learnable_aggregation(Aggregation, learn):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-
-    if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
-            aggr(x, ptr=ptr)
-    else:
-        assert torch.allclose(out, aggr(x, ptr=ptr))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
 
     if learn:
         out.mean().backward()
