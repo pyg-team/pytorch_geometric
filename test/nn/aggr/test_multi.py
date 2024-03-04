@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import MultiAggregation
 
 
@@ -38,12 +37,7 @@ def test_multi_aggr(multi_aggr_tuple):
 
     out = aggr(x, index)
     assert out.size() == (4, expand * x.size(1))
-
-    if not torch_geometric.typing.WITH_TORCH_SCATTER:
-        with pytest.raises(NotImplementedError, match="requires 'index'"):
-            aggr(x, ptr=ptr)
-    else:
-        assert torch.allclose(out, aggr(x, ptr=ptr))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
 
     jit = torch.jit.script(aggr)
     assert torch.allclose(out, jit(x, index))
