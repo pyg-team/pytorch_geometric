@@ -254,7 +254,7 @@ class WebQSPDataset(InMemoryDataset):
                                           self.device, self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
-            data_i = self.raw_dataset[i]
+            data_i = self.raw_dataset[index]
             raw_nodes = {}
             raw_edges = []
             for tri in data_i['graph']:
