@@ -1,10 +1,8 @@
-from typing import Optional, Tuple
+from typing import Final, Optional, Tuple
 
 import torch
 from torch import Tensor
 
-import torch_geometric.typing
-from torch_geometric import is_compiling
 from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.utils import scatter, segment, to_dense_batch
 
@@ -61,6 +59,13 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+    def __init__(self) -> None:
+        super().__init__()
+
+        self._deterministic: Final[bool] = (
+            torch.are_deterministic_algorithms_enabled()
+            or torch.is_deterministic_algorithms_warn_only_enabled())
+
     def forward(
         self,
         x: Tensor,
@@ -171,14 +176,14 @@ class Aggregation(torch.nn.Module):
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
-        if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
-                and not is_compiling()):
-            ptr = expand_left(ptr, dim, dims=x.dim())
-            return segment(x, ptr, reduce=reduce)
+        if ptr is not None:
+            if index is None or self._deterministic:
+                ptr = expand_left(ptr, dim, dims=x.dim())
+                return segment(x, ptr, reduce=reduce)
 
         if index is None:
-            raise NotImplementedError(
-                "Aggregation requires 'index' to be specified")
+            raise RuntimeError("Aggregation requires 'index' to be specified")
+
         return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(
