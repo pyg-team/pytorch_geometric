@@ -14,13 +14,13 @@ def retrieval_via_pcst(graph, q_emb, textual_nodes, textual_edges, topk=3, topk_
     # from G-Retriever repo
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
-        desc = textual_nodes.to_csv(index=False) + '\n' + textual_edges.to_csv(index=False, columns=['src', 'edge_attr', 'dst'])
+        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"])
         graph = Data(x=graph.x, edge_index=graph.edge_index, edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
         return graph, desc
 
     root = -1  # unrooted
     num_clusters = 1
-    pruning = 'gw'
+    pruning = "gw"
     verbosity_level = 0
     if topk > 0:
         n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
@@ -91,7 +91,7 @@ def retrieval_via_pcst(graph, q_emb, textual_nodes, textual_edges, topk=3, topk_
 
     n = textual_nodes.iloc[selected_nodes]
     e = textual_edges.iloc[selected_edges]
-    desc = n.to_csv(index=False)+'\n'+e.to_csv(index=False, columns=['src', 'edge_attr', 'dst'])
+    desc = n.to_csv(index=False)+"\n"+e.to_csv(index=False, columns=["src", "edge_attr", "dst"])
 
     mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
 
@@ -152,7 +152,7 @@ class Sentence_Transformer(torch.nn.Module):
 def sbert_text2embedding(model, tokenizer, device, text):
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
-                             return_tensors='pt')
+                             return_tensors="pt")
         dataset = Dataset(input_ids=encoding.input_ids,
                           attention_mask=encoding.attention_mask)
 
@@ -203,16 +203,16 @@ class WebQSPDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        root: str = '',
+        root: str = "",
         force_reload: bool = False,
     ) -> None:
 
-        self.prompt = 'Please answer the given question.'
+        self.prompt = "Please answer the given question."
         self.graph = None
-        self.graph_type = 'Knowledge Graph'
-        self.model_name = 'sbert'
+        self.graph_type = "Knowledge Graph"
+        self.model_name = "sbert"
         self.device = torch.device(
-            'cuda' if torch.cuda.is_available() else 'cpu')
+            "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
@@ -223,33 +223,33 @@ class WebQSPDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['list_of_graphs.pt']
+        return ["list_of_graphs.pt", "pre_filter.pt",  "pre_transform.pt"]
 
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self.raw_dataset = datasets.concatenate_datasets(
-            [dataset['train'], dataset['validation'], dataset['test']])
+            [dataset["train"], dataset["validation"], dataset["test"]])
         self.split_idxs = {
-            'train':
-            torch.arange(len(dataset['train'])),
-            'val':
-            torch.arange(len(dataset['validation'])) + len(dataset['train']),
-            'test':
-            torch.arange(len(dataset['test'])) + len(dataset['train']) +
-            len(dataset['validation'])
+            "train":
+            torch.arange(len(dataset["train"])),
+            "val":
+            torch.arange(len(dataset["validation"])) + len(dataset["train"]),
+            "test":
+            torch.arange(len(dataset["test"])) + len(dataset["train"]) +
+            len(dataset["validation"])
         }
 
     def process(self) -> None:
-        pretrained_repo = 'sentence-transformers/all-roberta-large-v1'
+        pretrained_repo = "sentence-transformers/all-roberta-large-v1"
         self.model = Sentence_Transformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         self.text2embedding = sbert_text2embedding
-        self.questions = [i['question'] for i in self.raw_dataset]
+        self.questions = [i["question"] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
-        print('Encoding questions...')
+        print("Encoding questions...")
         q_embs = self.text2embedding(self.model, self.tokenizer,
                                           self.device, self.questions)
         print("Encoding graphs...")
@@ -257,7 +257,7 @@ class WebQSPDataset(InMemoryDataset):
             data_i = self.raw_dataset[index]
             raw_nodes = {}
             raw_edges = []
-            for tri in data_i['graph']:
+            for tri in data_i["graph"]:
                 h, r, t = tri
                 h = h.lower()
                 t = t.lower()
@@ -266,16 +266,16 @@ class WebQSPDataset(InMemoryDataset):
                 if t not in raw_nodes:
                     raw_nodes[t] = len(raw_nodes)
                 raw_edges.append({
-                    'src': raw_nodes[h],
-                    'edge_attr': r,
-                    'dst': raw_nodes[t]
+                    "src": raw_nodes[h],
+                    "edge_attr": r,
+                    "dst": raw_nodes[t]
                 })
             nodes = pd.DataFrame([{
-                'node_id': v,
-                'node_attr': k
-            } for k, v in raw_nodes.items()], columns=['node_id', 'node_attr'])
+                "node_id": v,
+                "node_attr": k
+            } for k, v in raw_nodes.items()], columns=["node_id", "node_attr"])
             edges = pd.DataFrame(raw_edges,
-                                 columns=['src', 'edge_attr', 'dst'])
+                                 columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr.fillna("", inplace=True)
             x = self.text2embedding(self.model, self.tokenizer, self.device,
@@ -286,8 +286,8 @@ class WebQSPDataset(InMemoryDataset):
                                             edges.edge_attr.tolist())
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
-            question=f'Question: {data_i["question"]}\nAnswer: '
-            label=('|').join(data_i['answer']).lower()
+            question=f"Question: {data_i["question"]}\nAnswer: "
+            label=("|").join(data_i["answer"]).lower()
             raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(nodes)).to("cpu")
             psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
             psct_subgraph["question"] = question
