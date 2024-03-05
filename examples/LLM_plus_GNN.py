@@ -100,7 +100,7 @@ def compute_accuracy(eval_output):
 
 
 class GAT_LLAMA(nn.Module):
-    def __init__(self, **kwargs):
+    def __init__(self, graph_type, path, init_prompt, device):
         super().__init__()
         self.max_txt_len = 512
         self.max_new_tokens = 32
@@ -116,7 +116,7 @@ class GAT_LLAMA(nn.Module):
             "device_map": "auto",
             "revision": "main",
         }
-        llm_model_path = kwargs["path"]
+        llm_model_path = path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = 0
@@ -145,7 +145,7 @@ class GAT_LLAMA(nn.Module):
             task_type="CAUSAL_LM",
         )
         model = get_peft_model(model, config)
-        self.device = kwargs['device']
+        self.device = device
         self.model = model.to(self.device)
         print('Finish loading LLAMA!')
 
