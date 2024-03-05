@@ -249,7 +249,7 @@ def submit_all_jobs(args, udf_command, dry_run=False):
                if len(args.extra_envs) > 0 else cmd)
 
         cmd = cmd[:-1]
-        cmd += f" --logging"
+        cmd += " --logging"
         cmd += f" --dataset_root_dir={args.dataset_root_dir}"
         cmd += f" --dataset={args.dataset}"
         cmd += f" --num_nodes={args.num_nodes}"
