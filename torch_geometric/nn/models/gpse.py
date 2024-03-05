@@ -1207,7 +1207,13 @@ def cosim_col_sep(pred: torch.Tensor, true: torch.Tensor,
 
     Returns:
         torch.Tensor: Average cosine similarity per graph in batch.
+
+    Raises:
+        ValueError: If batch_index is not specified.
     """
+    if batch_idx is None:
+        raise ValueError("mae_cosim_col_sep requires batch index as "
+                         "input to distinguish different graphs.")
     batch_idx = batch_idx + 1 if batch_idx.min() == -1 else batch_idx
     pred_dense = to_dense_batch(pred, batch_idx)[0]
     true_dense = to_dense_batch(true, batch_idx)[0]
