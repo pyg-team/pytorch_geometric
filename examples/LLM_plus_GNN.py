@@ -145,8 +145,6 @@ class GAT_LLAMA(nn.Module):
             task_type="CAUSAL_LM",
         )
         model = get_peft_model(model, config)
-        self.device = device
-        self.model = model.to(self.device)
         print('Finish loading LLAMA!')
 
         self.graph_encoder = torch_geometric.nn.models.GAT(
@@ -364,7 +362,7 @@ def main():
     # Step 3: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
     model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path,
-                      init_prompt=dataset.prompt, device=dataset.device)
+                      init_prompt=dataset.prompt)
 
     # Step 4 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
