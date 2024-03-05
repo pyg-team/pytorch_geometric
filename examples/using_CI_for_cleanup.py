@@ -8,22 +8,23 @@ import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
-
 from inferred_stypes import dataset2inferred_stypes
 from model import Model
-from text_embedder import GloveTextEmbedding
-from torch.nn import BCEWithLogitsLoss, L1Loss
-from torch_frame.config.text_embedder import TextEmbedderConfig
-from torch_geometric.data import HeteroData
-from torch_geometric.loader import NeighborLoader
-from torch_geometric.seed import seed_everything
-from tqdm import tqdm
-
-
 from relbench.data import NodeTask, RelBenchDataset
 from relbench.data.task_base import TaskType
 from relbench.datasets import get_dataset
-from relbench.external.graph import get_node_train_table_input, make_pkey_fkey_graph
+from relbench.external.graph import (
+    get_node_train_table_input,
+    make_pkey_fkey_graph,
+)
+from text_embedder import GloveTextEmbedding
+from torch.nn import BCEWithLogitsLoss, L1Loss
+from torch_frame.config.text_embedder import TextEmbedderConfig
+from tqdm import tqdm
+
+from torch_geometric.data import HeteroData
+from torch_geometric.loader import NeighborLoader
+from torch_geometric.seed import seed_everything
 
 
 def init_pytorch_worker(rank, world_size):
