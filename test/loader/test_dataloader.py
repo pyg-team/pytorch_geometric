@@ -9,9 +9,9 @@ from torch_geometric import EdgeIndex
 from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import (
-    onlyLinux,
     get_random_edge_index,
     get_random_tensor_frame,
+    onlyLinux,
     withCUDA,
     withPackage,
 )
@@ -23,7 +23,6 @@ if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
 
 
-@onlyLinux
 @withCUDA
 @pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader(num_workers, device):
@@ -74,6 +73,7 @@ def test_dataloader(num_workers, device):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
+@onlyLinux
 @pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader_on_disk_dataset(tmp_path, num_workers):
     dataset = OnDiskDataset(tmp_path)
