@@ -108,6 +108,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     import cugraph
     from cugraph_pyg.data import CuGraphStore
     from cugraph_pyg.loader import BulkSampleLoader
+
     # define the edges of the Graph
     G = {("N", "E", "N"): data.edge_index}
     # define the number of nodes in Graph
