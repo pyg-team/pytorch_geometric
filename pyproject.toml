@@ -30,10 +30,13 @@ classifiers=[
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
+    "aiohttp",
     "fsspec",
     "jinja2",
     "numpy",
     "psutil>=5.8.0",
+    "pyparsing",
+    "requests",
     "scikit-learn",
     "scipy",
     "tqdm",
@@ -42,6 +45,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "hydra-core",
+    "protobuf<4.21",
     "pytorch-lightning",
     "yacs",
 ]
@@ -52,14 +56,18 @@ benchmark=[
     "matplotlib",
     "networkx",
     "pandas",
+    "protobuf<4.21",
     "wandb",
 ]
 test=[
     "onnx",
     "onnxruntime",
     "pytest",
+    "pytest-cov",
 ]
 dev=[
+    "ipython",
+    "matplotlib-inline",
     "pre-commit",
     "torch_geometric[test]",
 ]
@@ -71,6 +79,7 @@ full = [
     "matplotlib",
     "networkx",
     "numba",
+    "opt_einsum",
     "pandas",
     "pgmpy",
     "pynndescent",
@@ -78,6 +87,7 @@ full = [
     "rdflib",
     "rdkit",
     "scikit-image",
+    "statsmodels",
     "sympy",
     "tabulate",
     "torch_geometric[graphgym, modelhub]",
