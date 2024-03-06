@@ -185,8 +185,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                     start = time.time()
                 batch = batch.to(rank)
 
-                if isinstance(batch, torch_geometric.data.HeteroData):
-                    batch = batch.to_homogeneous()
+                batch = batch.to_homogeneous()
                 batch_size = batch.num_sampled_nodes[0]
 
                 batch.y = batch.y.to(torch.long)
@@ -218,8 +217,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                         break
 
                     batch = batch.to(rank)
-                    if isinstance(batch, torch_geometric.data.HeteroData):
-                        batch = batch.to_homogeneous()
+                    batch = batch.to_homogeneous()
                     batch_size = batch.num_sampled_nodes[0]
 
                     batch.y = batch.y.to(torch.long)
@@ -242,8 +240,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         with torch.no_grad():
             for i, batch in enumerate(test_loader):
                 batch = batch.to(rank)
-                if isinstance(batch, torch_geometric.data.HeteroData):
-                    batch = batch.to_homogeneous()
+                batch = batch.to_homogeneous()
                 batch_size = batch.num_sampled_nodes[0]
 
                 batch.y = batch.y.to(torch.long)
