@@ -80,9 +80,6 @@ warmup_steps = 20
 def train():
     model.train()
     for i, batch in enumerate(train_loader):
-        if isinstance(batch, torch_geometric.data.HeteroData):
-            batch = batch.to_homogeneous()
-
         if i == warmup_steps:
             torch.cuda.synchronize()
             start_avg_time = time.perf_counter()
@@ -110,8 +107,6 @@ def test(loader: NeighborLoader, val_steps: Optional[int] = None):
     for i, batch in enumerate(loader):
         if val_steps is not None and i >= val_steps:
             break
-        if isinstance(batch, torch_geometric.data.HeteroData):
-            batch = batch.to_homogeneous()
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
