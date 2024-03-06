@@ -30,40 +30,40 @@ classifiers=[
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
-    "tqdm",
-    "numpy",
-    "scipy",
+    "aiohttp",
     "fsspec",
     "jinja2",
-    "aiohttp",
-    "requests",
-    "pyparsing",
-    "scikit-learn",
+    "numpy",
     "psutil>=5.8.0",
+    "pyparsing",
+    "requests",
+    "scikit-learn",
+    "scipy",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
 graphgym=[
-    "yacs",
     "hydra-core",
     "protobuf<4.21",
     "pytorch-lightning",
+    "yacs",
 ]
 modelhub=[
     "huggingface_hub"
 ]
 benchmark=[
+    "matplotlib",
+    "networkx",
+    "pandas",
     "protobuf<4.21",
     "wandb",
-    "pandas",
-    "networkx",
-    "matplotlib",
 ]
 test=[
-    "pytest",
-    "pytest-cov",
     "onnx",
     "onnxruntime",
+    "pytest",
+    "pytest-cov",
 ]
 dev=[
     "ipython",
@@ -72,27 +72,27 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
-    "torch_geometric[graphgym, modelhub]",
     "ase",
-    "h5py",
-    "numba",
-    "sympy",
-    "pandas",
     "captum<0.7.0",
-    "rdflib",
-    "trimesh",
-    "networkx",
     "graphviz",
-    "tabulate",
+    "h5py",
     "matplotlib",
-    "pynndescent",
-    "torchmetrics",
-    "scikit-image",
-    "pytorch-memlab",
-    "pgmpy",
+    "networkx",
+    "numba",
     "opt_einsum",
-    "statsmodels",
+    "pandas",
+    "pgmpy",
+    "pynndescent",
+    "pytorch-memlab",
+    "rdflib",
     "rdkit",
+    "scikit-image",
+    "statsmodels",
+    "sympy",
+    "tabulate",
+    "torch_geometric[graphgym, modelhub]",
+    "torchmetrics",
+    "trimesh",
 ]
 
 [project.urls]
