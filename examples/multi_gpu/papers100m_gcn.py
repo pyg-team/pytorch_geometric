@@ -28,19 +28,18 @@ def get_num_workers(world_size):
 
 
 def init_pytorch_worker(rank, world_size):
-    os.environ['MASTER_ADDR'] = 'localhost'
-    os.environ['MASTER_PORT'] = '12355'
-    dist.init_process_group('nccl', rank=rank, world_size=world_size)
+    
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes, wall_clock_start, tempdir=None,
               num_layers=3):
 
-    init_pytorch_worker(
-        rank,
-        world_size,
-    )
+    # init pytorch worker
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
+    dist.init_process_group('nccl', rank=rank, world_size=world_size)
+
     if world_size > 1:
         split_idx['train'] = split_idx['train'].split(
             split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
