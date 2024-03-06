@@ -128,7 +128,7 @@ class GAT_LLAMA(nn.Module):
                                                      **kwargs)
 
         print("Training LLAMA with LORA!")
-        model = prepare_model_for_int8_training(model)
+        self.model = prepare_model_for_int8_training(model)
         lora_r: int = 8
         lora_alpha: int = 16
         lora_dropout: float = 0.05
