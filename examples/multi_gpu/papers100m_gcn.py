@@ -62,7 +62,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                   num_workers=num_work, shuffle=True,
                                   drop_last=True, **kwargs)
     val_loader = NeighborLoader(data, input_nodes=split_idx['valid'],
-                                 num_workers=num_work, **kwargs)
+                                num_workers=num_work, **kwargs)
     test_loader = NeighborLoader(data, input_nodes=split_idx['test'],
                                  num_workers=num_work, **kwargs)
 
