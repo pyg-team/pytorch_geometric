@@ -99,7 +99,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             print("Average Training Iteration Time:",
                   (time.time() - start) / (nb - warmup_steps), "s/iter")
         with torch.no_grad():
-            for i, batch in enumerate(eval_loader):
+            for i, batch in enumerate(val_loader):
                 if i >= eval_steps:
                     break
 
