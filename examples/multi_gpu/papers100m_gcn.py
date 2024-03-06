@@ -114,6 +114,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
             if rank == 0:
                 print(f"Validation Accuracy: {acc_sum * 100.0:.4f}%", )
         dist.barrier()
+        acc.reset()
 
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
