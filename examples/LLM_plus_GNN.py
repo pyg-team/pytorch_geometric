@@ -152,7 +152,7 @@ class GAT_LLAMA(nn.Module):
             out_channels=1024,
             hidden_channels=1024,
             num_layers=4,
-            num_heads=4,
+            heads=4,
         ).to(self.model.device)
 
         self.projector = nn.Sequential(
