@@ -100,7 +100,7 @@ def compute_accuracy(eval_output):
 
 
 class GAT_LLAMA(nn.Module):
-    def __init__(self, graph_type, path, init_prompt, device):
+    def __init__(self, graph_type, path, init_prompt):
         super().__init__()
         self.max_txt_len = 512
         self.max_new_tokens = 32
