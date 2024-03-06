@@ -66,8 +66,10 @@ test=[
     "onnxruntime",
 ]
 dev=[
-    "torch_geometric[test]",
+    "ipython",
+    "matplotlib-inline",
     "pre-commit",
+    "torch_geometric[test]",
 ]
 full = [
     "torch_geometric[graphgym, modelhub]",
