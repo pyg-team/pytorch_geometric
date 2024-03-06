@@ -129,6 +129,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         if rank == 0:
             print(f"Test Accuracy: {acc_sum * 100.0:.4f}%", )
     dist.barrier()
+    acc.reset()
     if rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)
         print("Total Program Runtime (total_time) =", total_time, "seconds")
@@ -177,7 +178,7 @@ if __name__ == '__main__':
         model = torch_geometric.nn.models.GCN(dataset.num_features,
                                               args.hidden_channels,
                                               args.num_layers,
-                                              dataset.num_classes)
+                                              dataset.num_classes, )
 
     print("Data =", data)
     if args.n_devices == -1:
