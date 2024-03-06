@@ -15,7 +15,7 @@ import torch_geometric
 from torch_geometric.loader import NeighborLoader
 
 
-def pyg_num_work(world_size):
+def get_num_workers(world_size):
     num_work = None
     if hasattr(os, "sched_getaffinity"):
         try:
@@ -57,7 +57,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         num_neighbors=[fan_out] * num_layers,
         batch_size=batch_size,
     )
-    num_work = pyg_num_work(world_size)
+    num_work = get_num_workers(world_size)
     train_loader = NeighborLoader(data, input_nodes=split_idx['train'],
                                   num_workers=num_work, shuffle=True,
                                   drop_last=True, **kwargs)
