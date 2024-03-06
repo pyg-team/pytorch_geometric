@@ -24,11 +24,7 @@ def get_num_workers(world_size):
             pass
     if num_work is None:
         num_work = os.cpu_count() / (2 * world_size)
-    return int(num_work)
-
-
-def init_pytorch_worker(rank, world_size):
-    
+    return int(num_work)    
 
 
 def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
