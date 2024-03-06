@@ -67,7 +67,7 @@ else:
     model = torch_geometric.nn.models.GCN(dataset.num_features,
                                           args.hidden_channels,
                                           args.num_layers,
-                                          dataset.num_classes).to(device)
+                                          dataset.num_classes, ).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                              weight_decay=0.0005)
