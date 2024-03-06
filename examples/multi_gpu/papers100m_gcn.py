@@ -175,10 +175,12 @@ if __name__ == '__main__':
                                               dataset.num_classes,
                                               heads=args.n_gat_conv_heads)
     else:
-        model = torch_geometric.nn.models.GCN(dataset.num_features,
-                                              args.hidden_channels,
-                                              args.num_layers,
-                                              dataset.num_classes, )
+        model = torch_geometric.nn.models.GCN(
+            dataset.num_features,
+            args.hidden_channels,
+            args.num_layers,
+            dataset.num_classes,
+        )
 
     print("Data =", data)
     if args.n_devices == -1:
