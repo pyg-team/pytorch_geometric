@@ -108,10 +108,15 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     import cugraph
     from cugraph_pyg.data import CuGraphStore
     from cugraph_pyg.loader import BulkSampleLoader
+    # define the edges of the Graph
     G = {("N", "E", "N"): data.edge_index}
+    # define the number of nodes in Graph
     N = {"N": data.num_nodes}
+    # initialize feature store
     fs = cugraph.gnn.FeatureStore(backend="torch")
+    # store node features as x
     fs.add_data(data.x, "N", "x")
+    # store node labels as y
     fs.add_data(data.y, "N", "y")
     dist.barrier()
 
