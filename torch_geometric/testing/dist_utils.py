@@ -4,7 +4,7 @@ import traceback
 from typing import Collection, Callable, Any
 from typing_extensions import Self
 
-from torch.multiprocessing import (Queue, Process, Manager)
+from torch.multiprocessing import (Queue, Manager)
 
 from io import StringIO
 import sys
@@ -12,31 +12,27 @@ import sys
 
 class MPCaptOutput:
     def __enter__(self) -> Self:
-        self._out_value = ''
-        self._err_value = ''
+        self.stdout = StringIO()
+        self.stderr = StringIO()
+        self.old_stdout = sys.stdout
+        self.old_stderr = sys.stderr
 
-        self._stdout = sys.stdout
-        sys.stdout = StringIO()
-
-        self._stderr = sys.stderr
-        sys.stderr = StringIO()
+        sys.stdout = self.stdout
+        sys.stderr = self.stderr
 
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._out_value = sys.stdout.getvalue()
-        sys.stdout = self._stdout
-
-        self._err_value = sys.stderr.getvalue()
-        sys.stderr = self._stderr
+        sys.stdout = self.old_stdout
+        sys.stderr = self.old_stderr
 
     @property
-    def stdout(self) -> str:
-        return self._out_value
+    def stdout_str(self) -> str:
+        return self.stdout.getvalue()
 
     @property
-    def stderr(self) -> str:
-        return self._err_value
+    def stderr_str(self) -> str:
+        return self.stderr.getvalue()
 
 
 def ps_std_capture(
@@ -45,19 +41,18 @@ def ps_std_capture(
         *args: Any,
         **kwargs: Any
 ) -> None:
-    try:
-        with MPCaptOutput() as capt:
-            try:
-                func(*args, **kwargs)
-            except Exception as e:
-                traceback.print_exc(file=sys.stderr)
-                raise e
-    finally:
-        queue.put((capt.stdout, capt.stderr))
+    with MPCaptOutput() as capt:
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            traceback.print_exc(file=sys.stderr)
+            raise e
+        finally:
+            queue.put((capt.stdout_str, capt.stderr_str))
 
 
 def assert_run_mproc(
-        procs: Collection[Process],
+        procs: Collection[Any],
         full_trace: bool = False,
         timeout: int = 5,
 ) -> None:
@@ -69,7 +64,11 @@ def assert_run_mproc(
     for p, q in zip(procs, queues):
         target = p._target
         p._target = ps_std_capture
-        p._args = [target, q, world_size] + list(p._args)
+        new_args = [target, q, world_size] + list(p._args)
+        p._args = new_args
+        assert p._target == ps_std_capture
+        assert p._args == new_args
+
         p.start()
 
     for p, q in zip(procs, queues):
@@ -83,4 +82,6 @@ def assert_run_mproc(
         if stderr:  # can be a warning as well => exitcode == 0
             print(stderr)
         if p.exitcode != 0:
-            pytest.fail(pytrace=full_trace, reason=stderr.splitlines()[-1])
+            pytest.fail(
+                pytrace=full_trace,
+                reason=stderr.splitlines()[-1] if stderr else f"exitcode {p.exitcode}")
