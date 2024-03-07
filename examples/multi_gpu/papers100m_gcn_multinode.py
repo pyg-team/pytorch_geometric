@@ -61,6 +61,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
     train_loader = NeighborLoader(
         input_nodes=split_idx['train'],
         shuffle=True,
+        drop_last=True,
         **kwargs,
     )
     val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
@@ -101,41 +102,37 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
         if rank == 0:
             sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
-        model.eval()
-        acc_sum = 0.0
-        for i, batch in enumerate(val_loader):
-            if i >= val_steps:
-                break
-            if i == warmup_steps:
-                torch.cuda.synchronize()
-                start = time.time()
+        def eval(loader: NeighborLoader, val_steps: Optional[int] = None):
+            model.eval()
+            for i, batch in enumerate(loader):
+                if val_steps is not None and i >= val_steps:
+                    break
+                if i == warmup_steps:
+                    torch.cuda.synchronize()
+                    start = time.time()
+    
+                batch = batch.to(device)
+                batch_size = batch.batch_size
+                with torch.no_grad():
+                    out = model(batch.x, batch.edge_index)[:batch_size]
+                acc_i = acc(out[:batch_size].softmax(dim=-1),
+                               batch.y[:batch_size])
+            acc_sum = acc.compute()
+            torch.cuda.synchronize()
+            return acc_sum, start, i + 1
 
-            batch = batch.to(device)
-            batch_size = batch.batch_size
-            with torch.no_grad():
-                out = model(batch.x, batch.edge_index)[:batch_size]
-            acc_i = acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
-        acc.compute()
-        torch.cuda.synchronize()
+        eval_acc, eval_start_time, num_batches = eval(val_loader, val_steps)
         if rank == 0:
             print(
-                f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
-            sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
+                f"Validation Accuracy: {eval_acc * 100.0:.4f}%", )
+            sec_per_iter = (time.time() - eval_start_time) / (num_batches - warmup_steps)
             print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
     acc.reset()
     dist.barrier()
 
-    model.eval()
-    acc_sum = 0.0
-    for i, batch in enumerate(test_loader):
-        batch = batch.to(device)
-        batch_size = batch.batch_size
-        with torch.no_grad():
-            out = model(batch.x, batch.edge_index)[:batch_size]
-        acc_i = acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
-    acc.compute()
+    test_acc, _, _ = eval(test_loader)
     if rank == 0:
-        print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
+        print(f"Test Accuracy: {test_acc * 100.0:.4f}%", )
     dist.barrier()
     acc.reset()
     if rank == 0:
