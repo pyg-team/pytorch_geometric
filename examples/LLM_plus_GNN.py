@@ -174,10 +174,11 @@ class GAT_LLAMA(nn.Module):
             return contextlib.nullcontext()
 
     def encode_graphs(self, samples):
-        graphs = samples['graph']
-        graphs = graphs.to(self.model.device)
-        n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(),
-                                         graphs.edge_attr)
+        x = samples.x.to(self.model.device)
+        edge_index = samples.edge_index.long().to(self.model.device)
+        edge_attr = samples.edge_attr.to(self.model.device)
+        n_embeds, _ = self.graph_encoder(x, edge_index.long(),
+                                         edge_attr)
 
         # mean pooling
         g_embeds = scatter(n_embeds, graphs.batch, dim=0, reduce='mean')
