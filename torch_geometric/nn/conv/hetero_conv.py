@@ -95,9 +95,9 @@ class HeteroConv(torch.nn.Module):
 
     def forward(
         self, 
-        #xr_dict=None,
         *args_dict,
-        **kwargs_dict) -> Dict[NodeType, Tensor]:
+        xra_dict=None, #**kwargs_dict
+        ) -> Dict[NodeType, Tensor]:
         r"""Runs the forward pass of the module.
 
         Args:
@@ -120,7 +120,7 @@ class HeteroConv(torch.nn.Module):
                 :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
         print("\n\nhetero_conv: -----------------------Inizio hetero_conv Forward")
-        xr_dict=None
+        # xra_dict=None
 
 
         out_dict: Dict[str, List[Tensor]] = {}
@@ -136,14 +136,17 @@ class HeteroConv(torch.nn.Module):
                 if edge_type in value_dict: # edge_type could be present in edge_index only
                     has_edge_level_arg = True
                     args.append(value_dict[edge_type]) 
-                elif src == dst and src in value_dict: #
-                    args.append(value_dict[src]) #if xr_dict is None else xr_dict.get(src, None))
+                elif src == dst and src in value_dict: 
+                    args.append((
+                        value_dict.get(src, None),
+                        value_dict.get(dst, None) if xra_dict is None else xra_dict.get(dst, None),
+                    ))
                     print("hetero_conv: src==dst - value_dict[src].size():",value_dict[src].size())
                     print("hetero_conv: src==dst - value_dict[dst].size():",value_dict[dst].size())
                 elif src in value_dict or dst in value_dict:
                     args.append((
                         value_dict.get(src, None),
-                        value_dict.get(dst, None) if xr_dict is None else xr_dict.get(dst, None),
+                        value_dict.get(dst, None) if xra_dict is None else xra_dict.get(dst, None),
                     ))
                     print("hetero_conv: src or dst in value_dict - value_dict[src].size():",value_dict[src].size())
                     print("hetero_conv: src or dst in value_dict - value_dict[dst].size():",value_dict[dst].size())
@@ -152,23 +155,23 @@ class HeteroConv(torch.nn.Module):
                     # print(xr_dict[dst].shape())
 
             kwargs = {}
-            for arg, value_dict in kwargs_dict.items():
-                if not arg.endswith('_dict'):
-                    raise ValueError(
-                        f"Keyword arguments in '{self.__class__.__name__}' "
-                        f"need to end with '_dict' (got '{arg}')")
+            # for arg, value_dict in kwargs_dict.items():
+            #     if not arg.endswith('_dict'):
+            #         raise ValueError(
+            #             f"Keyword arguments in '{self.__class__.__name__}' "
+            #             f"need to end with '_dict' (got '{arg}')")
 
-                arg = arg[:-5]  # `{*}_dict`  ??? why limited to 5???
-                if edge_type in value_dict:
-                    has_edge_level_arg = True
-                    kwargs[arg] = value_dict[edge_type]
-                elif src == dst and src in value_dict:
-                    kwargs[arg] = value_dict[src]
-                elif src in value_dict or dst in value_dict:
-                    kwargs[arg] = (
-                        value_dict.get(src, None),
-                        value_dict.get(dst, None),
-                    )
+            #     arg = arg[:-5]  # `{*}_dict`  ??? why limited to 5???
+            #     if edge_type in value_dict:
+            #         has_edge_level_arg = True
+            #         kwargs[arg] = value_dict[edge_type]
+            #     elif src == dst and src in value_dict:
+            #         kwargs[arg] = value_dict[src]
+            #     elif src in value_dict or dst in value_dict:
+            #         kwargs[arg] = (
+            #             value_dict.get(src, None),
+            #             value_dict.get(dst, None),
+            #         )
 
             if not has_edge_level_arg:
                 continue

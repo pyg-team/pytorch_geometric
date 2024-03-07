@@ -60,7 +60,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
 
         for i, conv in enumerate(self.convs):
             if args.hgam:
-                x_dict, xr_dict, edge_index_dict, _ = _trim_to_layer(
+                x_dict, xrr_dict, edge_index_dict, _ = _trim_to_layer(
                     layer=i,
                     num_sampled_nodes_per_hop=num_sampled_nodes_dict,
                     num_sampled_edges_per_hop=num_sampled_edges_dict,
@@ -69,7 +69,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                 )
 
             if args.hgam:
-                x_dict = conv(xr_dict, x_dict, edge_index_dict) # xr_dict
+                x_dict = conv(x_dict, edge_index_dict, xra_dict=xrr_dict) # xr_dict
             else:
                 x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
