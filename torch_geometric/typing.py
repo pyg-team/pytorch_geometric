@@ -21,6 +21,12 @@ print(torch.__config__.show())
 WITH_MKL = 'USE_MKL=OFF' not in torch.__config__.show()
 print('WITH_MKL', WITH_MKL)
 
+try:
+    a = torch.empty(0)
+    print(a.to_mkldnn().layout)
+except Exception as e:
+    print(e)
+
 MAX_INT64 = torch.iinfo(torch.int64).max
 
 if not hasattr(torch, 'sparse_csc'):
