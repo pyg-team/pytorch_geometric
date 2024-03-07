@@ -18,8 +18,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--use-sparse-tensor', action='store_true')
 parser.add_argument('--hgam', action='store_true')
 parser.add_argument('--batch-size', type=int, default=1)  #512
-parser.add_argument('--hidden-dim', type=int, default=256)
-parser.add_argument('--num-layers', type=int, default=3)
+parser.add_argument('--hidden-dim', type=int, default=64) #256)
+parser.add_argument('--num-layers', type=int, default=1)
 parser.add_argument('--num-neighbors', type=int, default=1)  #10
 parser.add_argument('--num-epochs', type=int, default=5)
 args = parser.parse_args()
@@ -68,7 +68,10 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                     edge_index=edge_index_dict,
                 )
 
-            x_dict = conv(x_dict, edge_index_dict) # xr_dict
+            if args.hgam:
+                x_dict = conv(xr_dict, x_dict, edge_index_dict) # xr_dict
+            else:
+                x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
 
         return self.lin(x_dict['paper'])
@@ -92,6 +95,7 @@ train_loader = NeighborLoader(
     input_nodes=('paper', data['paper'].train_mask),
     **kwargs,
 )
+print("train_loader is: ", train_loader)
 
 
 def train():
@@ -112,7 +116,15 @@ def train():
         )
 
         batch_size = batch['paper'].batch_size
+        # print(out[:batch_size])
+        # print("================ out ", out)
+        print("hierarchical_sampling:================ out.shape ", out.shape)
+        print("hierarchical_sampling:================ batch['paper'].y.shape ", batch['paper'].y.shape) # [:batch_size]
+
+        print(batch['paper'].y[:batch_size], type(batch['paper'].y[:batch_size]))
+
         loss = F.cross_entropy(out[:batch_size], batch['paper'].y[:batch_size])
+        print("hierarchical_sampling:-----LOSS:", loss)
 
         loss.backward()
         optimizer.step()
@@ -121,7 +133,7 @@ def train():
         total_loss += float(loss) * batch_size
 
     avg_loss = total_loss / total_examples
-    print("avg_loss is: ", avg_loss)
+    print("hierarchical_sampling: avg_loss is: ", avg_loss)
     return avg_loss
 
 

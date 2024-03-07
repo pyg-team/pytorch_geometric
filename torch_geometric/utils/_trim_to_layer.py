@@ -101,8 +101,8 @@ def trim_to_layer(
             trim_adj(
                 v,
                 layer,
-                num_sampled_nodes_per_hop[k[0]],
-                num_sampled_nodes_per_hop[k[-1]],
+                num_sampled_nodes_per_hop[k[0]], # k is edge_type = a tuple of 3 strings
+                num_sampled_nodes_per_hop[k[-1]], # k[0] is source, k[-1] or k[2] is destination
                 num_sampled_edges_per_hop[k],
             )
             for k, v in edge_index.items()
@@ -117,7 +117,6 @@ def trim_to_layer(
             }
             edge_attr = filter_empty_entries(edge_attr)
 
-        #xr = trimmed_x_feat_view(x, layer, num_sampled_nodes_per_hop[k[-1]]) <== TODO: review this - for the hetero maybe necessary iterate??
         xr = { 
             k:
             trimmed_x_feat_view(v, layer, num_sampled_nodes_per_hop[k]
@@ -217,7 +216,7 @@ def trim_edge_feat(trim_edge_feat: Tensor, layer: int, num_sampled_edges_per_hop
     return trim_edge_feat.narrow(
         dim=0,
         start=0,
-        length=trim_edge_feat.size(0) - num_sampled_edges_per_hop[-layer],
+        length=trim_edge_feat.size(0) - num_sampled_edges_per_hop[-layer], # TODO: check this works in all cases
     )
 
 def trimmed_x_feat_view(x: Tensor, layer: int, num_sampled_nodes_per_hop: List[int]) -> Tensor: 
@@ -226,23 +225,6 @@ def trimmed_x_feat_view(x: Tensor, layer: int, num_sampled_nodes_per_hop: List[i
         start=0,
         length=x.size(0) - num_sampled_nodes_per_hop[-(layer+1)],# TODO: check this works in all cases
     )
-
-'''
-narrow returns a view on the object:
->>> import torch
->>> T = torch.Tensor([1,2,3,4,5])
->>> T.narrow(dim=0, start=0, length=3)
-tensor([1., 2., 3.])
->>> T
-tensor([1., 2., 3., 4., 5.])
->>> R = T.narrow(dim=0, start=0, length=3)
->>> R.storage().data_ptr()
-94374028103872
->>> T.storage().data_ptr()
-94374028103872
->>> 
-'''
-
 
 def trim_adj(
     edge_index: Adj,
