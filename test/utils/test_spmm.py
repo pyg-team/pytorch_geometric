@@ -118,9 +118,15 @@ def test_spmm_edge_index(device, reduce):
         is_undirected=False,
         device='cpu',
     )
-    other = torch.ones(3, 4, device=device)
+    other = torch.rand(3, 4, device=device)
     out = spmm(src, other, reduce=reduce)
     assert out.size() == (4, 4)
+
+    # Compare to sparse tensor
+    src2 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    src2 = to_torch_coo_tensor(src2, size=(4, 3))
+    out2 = spmm(src2, other, reduce=reduce)
+    assert torch.allclose(out, out2)
 
 
 if __name__ == '__main__':
