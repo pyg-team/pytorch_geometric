@@ -17,10 +17,10 @@ _trim_to_layer = TrimToLayer()
 parser = argparse.ArgumentParser()
 parser.add_argument('--use-sparse-tensor', action='store_true')
 parser.add_argument('--hgam', action='store_true')
-parser.add_argument('--batch-size', type=int, default=1)  #512
-parser.add_argument('--hidden-dim', type=int, default=32)
+parser.add_argument('--batch-size', type=int, default=512)  #512
+parser.add_argument('--hidden-dim', type=int, default=256)
 parser.add_argument('--num-layers', type=int, default=3)
-parser.add_argument('--num-neighbors', type=int, default=4)  #10
+parser.add_argument('--num-neighbors', type=int, default=10)  
 parser.add_argument('--num-epochs', type=int, default=5)
 args = parser.parse_args()
 args.use_sparse_tensor = True

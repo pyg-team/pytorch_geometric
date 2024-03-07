@@ -19,7 +19,7 @@ data = dataset[0].to(device, 'x', 'y')
 
 use_sparse_tensor = True
 
-kwargs = {'batch_size': 1, 'num_workers': 6, 'persistent_workers': True} #1024
+kwargs = {'batch_size': 1024, 'num_workers': 6, 'persistent_workers': True} #1024
 loader = NeighborLoader(data, input_nodes=data.train_mask,
                         num_neighbors=[10, 5, 5], shuffle=True, **kwargs)
 

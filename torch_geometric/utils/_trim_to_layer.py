@@ -112,7 +112,7 @@ def trim_to_layer(
         if edge_attr is not None:
             assert isinstance(edge_attr, dict)
             edge_attr = {
-                k: trim_edge_feat(v, layer, num_sampled_edges_per_hop[k]) 
+                k: trim_edge_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
             edge_attr = filter_empty_entries(edge_attr)
@@ -140,36 +140,37 @@ def trim_to_layer(
 
     if edge_attr is not None:
         assert isinstance(edge_attr, Tensor)
-        edge_attr = trim_edge_feat(edge_attr, layer, num_sampled_edges_per_hop) 
+        edge_attr = trim_edge_feat(edge_attr, layer, num_sampled_edges_per_hop)
 
     xr = trimmed_x_feat_view(x, layer, num_sampled_nodes_per_hop)
     return x, xr, edge_index, edge_attr
 
+
 '''
-So I assume that you mean the conv((x_src, x_dst), edge_index) is meant to replace the 
-conv calls (e.g. x = conv(x, edge_index)) 
+So I assume that you mean the conv((x_src, x_dst), edge_index) is meant to replace the
+conv calls (e.g. x = conv(x, edge_index))
 in the forward method of the BasicGNN class.
 
-If I understand the point here, and assuming the src/dst naming is based on the inbound/outbound 
+If I understand the point here, and assuming the src/dst naming is based on the inbound/outbound
 direction of edges when building neighborhood at each layer:
 
-x_dst is a matrix num_target_nodes_for_that_layer X num_node_features, which contains the current 
+x_dst is a matrix num_target_nodes_for_that_layer X num_node_features, which contains the current
 node representations for the target nodes only.
 
-x_src is a matrix that might include x_dst (in the homo case for example) whose dimensions are 
-num_nodes_in_input_at_that_layer X num_node_features, and contains the representations of all 
+x_src is a matrix that might include x_dst (in the homo case for example) whose dimensions are
+num_nodes_in_input_at_that_layer X num_node_features, and contains the representations of all
 the nodes needed as input for the current layer.
 
-With each conv working with a pair of tensors as input, we will require the trimming part to 
-return -besides the rectangular adj_matrix correctly sized at each layer- the trimmed and 
+With each conv working with a pair of tensors as input, we will require the trimming part to
+return -besides the rectangular adj_matrix correctly sized at each layer- the trimmed and
 non-trimmed node features matrices, in contrast to returning only the non-trimmed as it does now.
 
 Looking at the sage_conv class implementation, the node representation tuple as input should contain:
 x[0] = non-trimmed node features matrix (used as input for message passing) ==> x_src
-x[1] = trimmed node features matrix (used as input for linear projection whose result will be 
+x[1] = trimmed node features matrix (used as input for linear projection whose result will be
 added to the message passing output) ==> x_dst
 
-So with my definitions above, I guess the conv call should look like: conv((x_src, x_dst), edge_index), 
+So with my definitions above, I guess the conv call should look like: conv((x_src, x_dst), edge_index),
 which matches your suggestion.
 '''
 
@@ -209,7 +210,9 @@ class TrimToLayer(torch.nn.Module):
 
 # Helper functions ############################################################
 
-def trim_edge_feat(trim_edge_feat: Tensor, layer: int, num_sampled_edges_per_hop: List[int]) -> Tensor: 
+
+def trim_edge_feat(trim_edge_feat: Tensor, layer: int,
+                   num_sampled_edges_per_hop: List[int]) -> Tensor:
     if layer <= 0:
         return trim_edge_feat
 
@@ -219,11 +222,15 @@ def trim_edge_feat(trim_edge_feat: Tensor, layer: int, num_sampled_edges_per_hop
         length=trim_edge_feat.size(0) - num_sampled_edges_per_hop[-layer], # TODO: check this works in all cases
     )
 
-def trimmed_x_feat_view(x: Tensor, layer: int, num_sampled_nodes_per_hop: List[int]) -> Tensor: 
+
+def trimmed_x_feat_view(x: Tensor, layer: int,
+                        num_sampled_nodes_per_hop: List[int]) -> Tensor:
     return x.narrow(
         dim=0,
         start=0,
-        length=x.size(0) - num_sampled_nodes_per_hop[-(layer+1)],# TODO: check this works in all cases
+        length=x.size(0) -
+        num_sampled_nodes_per_hop[-(layer +
+                                    1)],  # TODO: check this works in all cases
     )
 
 def trim_adj(
@@ -248,12 +255,16 @@ def trim_adj(
         # src and dst are referred to the direction of the edges, relevant for hetero
         if layer == 0:
             size = (
-                edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer + 1)],
-                edge_index.size(1),  # in homo case the layer 0 edge_index is still square, so it could be size(0), but for hetero case that's not true
+                edge_index.size(0) -
+                num_sampled_dst_nodes_per_hop[-(layer + 1)],
+                edge_index.size(
+                    1
+                ),  # in homo case the layer 0 edge_index is still square, so it could be size(0), but for hetero case that's not true
             )
         else:
             size = (
-                edge_index.size(0) - num_sampled_dst_nodes_per_hop[-(layer + 1)],
+                edge_index.size(0) -
+                num_sampled_dst_nodes_per_hop[-(layer + 1)],
                 edge_index.size(1) - num_sampled_src_nodes_per_hop[-layer],
             )
         # size = (
