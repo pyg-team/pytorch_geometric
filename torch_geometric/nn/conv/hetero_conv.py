@@ -22,13 +22,9 @@ def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
     elif aggr == "cat":
         return torch.cat(xs, dim=-1)
     else:
-        #out = torch.cat(xs, dim=0) #
-        for xt in xs:
-            print("hetero_conv - group: xt.size() is ", xt.size())
         out = torch.stack(xs, dim=0)
         out = getattr(torch, aggr)(out, dim=0)
         out = out[0] if isinstance(out, tuple) else out
-        print("hetero_conv: after stacking out has shape ", out.shape)
         return out
 
 
@@ -119,21 +115,16 @@ class HeteroConv(torch.nn.Module):
                 :meth:`~torch_geometric.nn.conv.HeteroConv.forward` via
                 :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
-        print("\n\nhetero_conv: -----------------------Inizio hetero_conv Forward")
-        # xra_dict=None
-
-
         out_dict: Dict[str, List[Tensor]] = {}
 
-        for edge_type, conv in self.convs.items(): # at each layer, potentially I could define a different kind of convolution for each type of edge
+        for edge_type, conv in self.convs.items():
             src, rel, dst = edge_type
-            print("\n\n**************************** hetero_conv: for loop: with edge_type ", edge_type)
             has_edge_level_arg = False
 
             args = []
         
-            for value_dict in args_dict: #args_dict is a tuple, of dictionaries typically - currently x_dict, (xr_dict), edge_index_dict,
-                if edge_type in value_dict: # edge_type could be present in edge_index only
+            for value_dict in args_dict: 
+                if edge_type in value_dict:
                     has_edge_level_arg = True
                     args.append(value_dict[edge_type]) 
                 elif src == dst and src in value_dict: 
@@ -141,18 +132,11 @@ class HeteroConv(torch.nn.Module):
                         value_dict.get(src, None),
                         value_dict.get(dst, None) if xra_dict is None else xra_dict.get(dst, None),
                     ))
-                    print("hetero_conv: src==dst - value_dict[src].size():",value_dict[src].size())
-                    print("hetero_conv: src==dst - value_dict[dst].size():",value_dict[dst].size())
                 elif src in value_dict or dst in value_dict:
                     args.append((
                         value_dict.get(src, None),
                         value_dict.get(dst, None) if xra_dict is None else xra_dict.get(dst, None),
                     ))
-                    print("hetero_conv: src or dst in value_dict - value_dict[src].size():",value_dict[src].size())
-                    print("hetero_conv: src or dst in value_dict - value_dict[dst].size():",value_dict[dst].size())
-
-                    # print(xr_dict[src].shape())
-                    # print(xr_dict[dst].shape())
 
             kwargs = {}
             # for arg, value_dict in kwargs_dict.items():
@@ -176,25 +160,15 @@ class HeteroConv(torch.nn.Module):
             if not has_edge_level_arg:
                 continue
             
-            print("hetero_conv: before conv call len(args) is: ", len(args))
             out = conv(*args, **kwargs)
-            print("hetero_conv: out from conv has len: ", len(out), type(out), out.shape)
-            for i,t in enumerate(out):
-                print ("hetero_conv: out[{}] has size {}".format(i,t.size()))
 
             if dst not in out_dict:
                 toadd = [out]
                 out_dict[dst] = toadd
-                print("hetero_conv: if dst not in out_dict: [out] being added to out_dict, and len([out]) is ",len(toadd), type(toadd))
             else:
                 out_dict[dst].append(out)
-                print("hetero_conv: ---------------------Adding in if:", out.size())
 
         for key, value in out_dict.items():
-            print("hetero_conv: len(value) before stack:", len(value))
-            for v in value:
-                print(v.size())
-            print("hetero_conv: ------------") 
             out_dict[key] = group(value, self.aggr)
 
         return out_dict

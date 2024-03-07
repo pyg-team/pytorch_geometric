@@ -18,13 +18,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--use-sparse-tensor', action='store_true')
 parser.add_argument('--hgam', action='store_true')
 parser.add_argument('--batch-size', type=int, default=1)  #512
-parser.add_argument('--hidden-dim', type=int, default=64) #256)
-parser.add_argument('--num-layers', type=int, default=1)
-parser.add_argument('--num-neighbors', type=int, default=1)  #10
+parser.add_argument('--hidden-dim', type=int, default=32)
+parser.add_argument('--num-layers', type=int, default=3)
+parser.add_argument('--num-neighbors', type=int, default=4)  #10
 parser.add_argument('--num-epochs', type=int, default=5)
 args = parser.parse_args()
 args.use_sparse_tensor = True
-args.hgam = False
+args.hgam = True
 print(args)
 
 transforms = [T.ToUndirected(merge=True)]
@@ -69,7 +69,7 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                 )
 
             if args.hgam:
-                x_dict = conv(x_dict, edge_index_dict, xra_dict=xrr_dict) # xr_dict
+                x_dict = conv(x_dict, edge_index_dict, xra_dict=xrr_dict)
             else:
                 x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
@@ -116,15 +116,7 @@ def train():
         )
 
         batch_size = batch['paper'].batch_size
-        # print(out[:batch_size])
-        # print("================ out ", out)
-        print("hierarchical_sampling:================ out.shape ", out.shape)
-        print("hierarchical_sampling:================ batch['paper'].y.shape ", batch['paper'].y.shape) # [:batch_size]
-
-        print(batch['paper'].y[:batch_size], type(batch['paper'].y[:batch_size]))
-
         loss = F.cross_entropy(out[:batch_size], batch['paper'].y[:batch_size])
-        print("hierarchical_sampling:-----LOSS:", loss)
 
         loss.backward()
         optimizer.step()

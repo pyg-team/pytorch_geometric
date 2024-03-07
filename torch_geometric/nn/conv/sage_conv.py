@@ -136,14 +136,14 @@ class SAGEConv(MessagePassing):
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
         out = self.lin_l(out)
-        print("sage_conv: out after propagate has shape ", out.shape)
+        # print("sage_conv: out after propagate has shape ", out.shape)
 
         x_r = x[1]
         #print ("sage_conv: out.size(), x_r.size() are: ", out.size(), x_r.size())
         if self.root_weight:
             #x_r = x_r.narrow(0, 0, out.shape[0]) #with this line hetero works, ignoring x_r_dict in hetero_conv.py
             out = out + self.lin_r(x_r)
-        print("sage_conv: out after adding projectons of original features, has shape ", out.shape)
+        # print("sage_conv: out after adding projectons of original features, has shape ", out.shape)
 
 
         if self.normalize:
