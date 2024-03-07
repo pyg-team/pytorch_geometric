@@ -15,7 +15,7 @@ import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
-
+from typing import Optional
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GCN
 
@@ -116,7 +116,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                 batch_size = batch.batch_size
                 with torch.no_grad():
                     out = model(batch.x, batch.edge_index)[:batch_size]
-                acc_i = acc(out[:batch_size].softmax(dim=-1),
+                acc_i = acc(out[:batch_size].softmax(dim=-1), # noqa
                             batch.y[:batch_size])
             acc_sum = acc.compute()
             torch.cuda.synchronize()
