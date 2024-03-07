@@ -114,20 +114,16 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             batch_size = batch.batch_size
             with torch.no_grad():
                 out = model(batch.x, batch.edge_index)[:batch_size]
-            acc_sum += acc(out[:batch_size].softmax(dim=-1),
+            acc_i = acc(out[:batch_size].softmax(dim=-1),
                            batch.y[:batch_size])
-        acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32,
-                               device=device)
-        dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-        num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
-                                   device=acc_sum.device)
-        dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        acc.compute()
         torch.cuda.synchronize()
         if rank == 0:
             print(
                 f"Validation Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
             sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
             print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
+    acc.reset()
     dist.barrier()
 
     model.eval()
@@ -137,15 +133,12 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
         batch_size = batch.batch_size
         with torch.no_grad():
             out = model(batch.x, batch.edge_index)[:batch_size]
-        acc_sum += acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
-    acc_sum = torch.tensor(float(acc_sum), dtype=torch.float32, device=device)
-    dist.all_reduce(acc_sum, op=dist.ReduceOp.SUM)
-    num_batches = torch.tensor(float(i + 1), dtype=torch.float32,
-                               device=acc_sum.device)
-    dist.all_reduce(num_batches, op=dist.ReduceOp.SUM)
+        acc_i = acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
+    acc.compute()
     if rank == 0:
         print(f"Test Accuracy: {acc_sum/(num_batches) * 100.0:.4f}%", )
     dist.barrier()
+    acc.reset()
     if rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)
         print("Total Program Runtime (total_time) =", total_time, "seconds")
