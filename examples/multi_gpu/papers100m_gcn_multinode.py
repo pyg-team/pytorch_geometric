@@ -117,8 +117,8 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                 batch_size = batch.batch_size
                 with torch.no_grad():
                     out = model(batch.x, batch.edge_index)[:batch_size]
-                acc_i = acc(
-                    out[:batch_size].softmax(dim=-1),  # noqa
+                acc_i = acc( # noqa
+                    out[:batch_size].softmax(dim=-1),  
                     batch.y[:batch_size])
             acc_sum = acc.compute()
             torch.cuda.synchronize()
