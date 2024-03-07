@@ -113,13 +113,14 @@ def test_spmm_jit(reduce):
 def test_spmm_edge_index(device, reduce):
     src = EdgeIndex(
         [[0, 1, 1, 2], [1, 0, 2, 1]],
-        sparse_size=(3, 3),
+        sparse_size=(4, 3),
         sort_order='row',
-        is_undirected=True,
+        is_undirected=False,
         device='cpu',
     )
-    other = torch.randn(3, 4, device=device)
-    print(spmm(src, other, reduce=reduce))
+    other = torch.ones(3, 4, device=device)
+    out = spmm(src, other, reduce=reduce)
+    assert out.size() == (4, 4)
 
 
 if __name__ == '__main__':
