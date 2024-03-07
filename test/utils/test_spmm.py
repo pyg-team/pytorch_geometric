@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
@@ -104,6 +105,21 @@ def test_spmm_jit(reduce):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         out3 = jit_torch_sparse(SparseTensor.from_dense(src), other, reduce)
         assert torch.allclose(out2, out3, atol=1e-6)
+
+
+@withCUDA
+@withPackage('torch>=2.0.0')
+@pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
+def test_spmm_edge_index(device, reduce):
+    src = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+        is_undirected=True,
+        device='cpu',
+    )
+    other = torch.randn(3, 4, device=device)
+    print(spmm(src, other, reduce=reduce))
 
 
 if __name__ == '__main__':

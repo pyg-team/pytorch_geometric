@@ -1,24 +1,28 @@
 import warnings
+from typing import Union
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
 
 def spmm(
-    src: Adj,
+    src: Union[Adj, EdgeIndex],
     other: Tensor,
     reduce: str = 'sum',
 ) -> Tensor:
     r"""Matrix product of sparse matrix with dense matrix.
 
     Args:
-        src (torch.Tensor or torch_sparse.SparseTensor): The input sparse
-            matrix, either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
-            :pytorch:`PyTorch` :class:`torch.sparse.Tensor`.
+        src (torch.Tensor or torch_sparse.SparseTensor or EdgeIndex):
+            The input sparse matrix which can be a
+            :pyg:`PyG` :class:`torch_sparse.SparseTensor`,
+            a :pytorch:`PyTorch` :class:`torch.sparse.Tensor` or
+            a :pyg:`PyG` :class:`EdgeIndex`.
         other (torch.Tensor): The input dense matrix.
         reduce (str, optional): The reduce operation to use
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`).
@@ -30,6 +34,9 @@ def spmm(
 
     if reduce not in ['sum', 'mean', 'min', 'max']:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
+
+    if isinstance(src, EdgeIndex):
+        return src.matmul(other=other, reduce=reduce)
 
     if isinstance(src, SparseTensor):
         if src.nnz() == 0:
