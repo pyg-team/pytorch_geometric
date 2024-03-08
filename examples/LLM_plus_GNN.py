@@ -206,9 +206,9 @@ class GAT_LLAMA(nn.Module):
                     i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.model.device))
-                inputs_embeds = torch.cat(
-                    [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
-                    dim=0)
+            inputs_embeds = torch.cat(
+                [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
+                dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
             label_input_ids = [IGNORE_INDEX
