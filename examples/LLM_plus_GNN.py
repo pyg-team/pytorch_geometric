@@ -169,7 +169,7 @@ class GAT_LLAMA(nn.Module):
                                          edge_attr)
 
         # mean pooling
-        g_embeds = scatter(n_embeds, graphs.batch, dim=0, reduce='mean')
+        g_embeds = scatter(n_embeds, samples.batch, dim=0, reduce='mean')
 
         return g_embeds
 
