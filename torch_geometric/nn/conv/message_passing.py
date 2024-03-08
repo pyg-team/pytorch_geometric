@@ -166,7 +166,7 @@ class MessagePassing(torch.nn.Module):
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
         if not self.propagate.__module__.startswith(jinja_prefix):
-            if self.inspector.can_read_source:
+            try:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
                     template_path=osp.join(root_dir, 'propagate.jinja'),
@@ -190,15 +190,14 @@ class MessagePassing(torch.nn.Module):
 
                 self.__class__.propagate = module.propagate
                 self.__class__.collect = module.collect
-            else:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
         if (self.inspector.implements('edge_update')
                 and not self.edge_updater.__module__.startswith(jinja_prefix)):
-            if self.inspector.can_read_source:
-
+            try:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_edge_updater',
                     template_path=osp.join(root_dir, 'edge_updater.jinja'),
@@ -216,7 +215,7 @@ class MessagePassing(torch.nn.Module):
 
                 self.__class__.edge_updater = module.edge_updater
                 self.__class__.edge_collect = module.edge_collect
-            else:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_edge_updater = self.__class__.edge_updater
                 self.__class__._jinja_edge_updater = (
                     self.__class__.edge_updater)
