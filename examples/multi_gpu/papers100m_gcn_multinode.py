@@ -110,11 +110,6 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             for j, batch in enumerate(loader):
                 if val_steps is not None and j >= val_steps:
                     break
-
-                if j == warmup_steps:
-                    torch.cuda.synchronize()
-                    start = time.time()
-
                 batch = batch.to(device)
                 batch_size = batch.batch_size
                 with torch.no_grad():
@@ -122,23 +117,20 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                 acc_i = acc(  # noqa
                     out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
             acc_sum = acc.compute()
-            torch.cuda.synchronize()
-            return acc_sum, start, i + 1
+            return acc_sum
 
-        eval_acc, eval_start_time, num_batches = eval(val_loader, val_steps)
+        eval_acc = eval(val_loader, val_steps)
         if rank == 0:
             print(f"Validation Accuracy: {eval_acc * 100.0:.4f}%", )
-            sec_per_iter = (time.time() - eval_start_time) / (num_batches -
-                                                              warmup_steps)
-            print(f"Avg Inference Iteration Time: {sec_per_iter:.6f} s/iter")
     acc.reset()
     dist.barrier()
 
-    test_acc, _, _ = eval(test_loader)
+    test_acc = eval(test_loader)
     if rank == 0:
         print(f"Test Accuracy: {test_acc * 100.0:.4f}%", )
     dist.barrier()
     acc.reset()
+    torch.cuda.synchronize()
     if rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)
         print("Total Program Runtime (total_time) =", total_time, "seconds")
