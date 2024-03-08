@@ -15,7 +15,7 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -136,6 +136,7 @@ def dist_link_neighbor_loader_hetero(
     assert loader.channel.empty()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
@@ -183,6 +184,7 @@ def test_dist_link_neighbor_loader_homo(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])

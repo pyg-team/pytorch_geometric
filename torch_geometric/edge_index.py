@@ -1823,7 +1823,7 @@ def matmul(
 
     transpose &= not input.is_undirected or input_value is not None
 
-    if not torch_geometric.typing.WITH_MKL:  # pragma: no cover
+    if torch_geometric.typing.NO_MKL:  # pragma: no cover
         sparse_input = input.to_sparse_coo(input_value)
     elif input.is_sorted_by_col:
         sparse_input = input.to_sparse_csc(input_value)
@@ -1833,7 +1833,7 @@ def matmul(
     if transpose:
         sparse_input = sparse_input.t()
 
-    if not torch_geometric.typing.WITH_MKL:  # pragma: no cover
+    if torch_geometric.typing.NO_MKL:  # pragma: no cover
         other = other.to_sparse_coo(other_value)
     elif other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)
