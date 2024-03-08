@@ -177,6 +177,7 @@ class GAT_LLAMA(nn.Module):
     def forward(self, samples):
         print("samples=", samples)
         # encode description, questions and labels
+        batch_size = len(samples["question"])
         questions = self.tokenizer(samples["question"],
                                    add_special_tokens=False)
         descriptions = self.tokenizer(samples["desc"],
@@ -196,7 +197,6 @@ class GAT_LLAMA(nn.Module):
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
 
-        batch_size = len(samples['id'])
         batch_inputs_embeds = []
         batch_attention_mask = []
         batch_label_input_ids = []
@@ -250,6 +250,7 @@ class GAT_LLAMA(nn.Module):
 
     def inference(self, samples):
         # encode description and questions
+        batch_size = len(samples['question'])
         questions = self.tokenizer(samples["question"],
                                    add_special_tokens=False)
         descriptions = self.tokenizer(samples["desc"],
@@ -267,7 +268,7 @@ class GAT_LLAMA(nn.Module):
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
 
-        batch_size = len(samples['id'])
+        
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
@@ -308,7 +309,6 @@ class GAT_LLAMA(nn.Module):
         pred = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
         return {
-            'id': samples['id'],
             'pred': pred,
             'label': samples['label'],
             'question': samples['question'],
@@ -333,14 +333,8 @@ def main():
 
     dataset = WebQSPDataset()
     idx_split = dataset.split_idxs
-    # Step 1: add IDs for each data point
-    for i in range(len(dataset)):
-        data_pt = dataset[i]
-        data_pt.id = i
-        dataset[i] = data_pt
-        print("dataset[i].id=", dataset[i].id)
 
-    # Step 2: Build Node Classification Dataset
+    # Step 1: Build Node Classification Dataset
     train_dataset = [dataset[i] for i in idx_split['train']]
     val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
@@ -352,12 +346,12 @@ def main():
     test_loader = DataLoader(test_dataset, batch_size=4, drop_last=False,
                              pin_memory=True, shuffle=False)
 
-    # Step 3: Build Model
+    # Step 2: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
     model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path,
                       init_prompt=dataset.prompt)
 
-    # Step 4 Set Optimizer
+    # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     lr = 1e-5
     optimizer = torch.optim.AdamW([
@@ -373,7 +367,7 @@ def main():
         all params: {all_param} || \
         trainable%: {100 * trainable_params / all_param}")
 
-    # Step 5. Training
+    # Step 4 Training
     num_training_steps = num_epochs * len(train_loader)
     progress_bar = tqdm(range(num_training_steps))
 
@@ -420,7 +414,7 @@ def main():
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
-    # Step 5. Evaluating
+    # Step 5 Evaluating
     print("Final Evaluation...")
     model.eval()
     eval_output = []
@@ -432,7 +426,7 @@ def main():
 
         progress_bar_test.update(1)
 
-    # Step 6. Post-processing & compute metrics
+    # Step 6 Post-processing & compute metrics
     acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
 
