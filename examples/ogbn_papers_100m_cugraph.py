@@ -3,27 +3,24 @@ import os
 import time
 from typing import Optional
 
-import torch
 import cupy
 import rmm
-
+import torch
 from rmm.allocators.cupy import rmm_cupy_allocator
 from rmm.allocators.torch import rmm_torch_allocator
 
 # Must change allocators immediately upon import
 # or else other imports will cause memory to be
 # allocated and prevent changing the allocator
-rmm.reinitialize(devices=[0], pool_allocator=True,
-                 managed_memory=True)
+rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
 import cugraph
+import torch.nn.functional as F
 from cugraph.testing.mg_utils import enable_spilling
 from cugraph_pyg.data import CuGraphStore
 from cugraph_pyg.loader import CuGraphNeighborLoader
-
-import torch.nn.functional as F
 
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
@@ -49,6 +46,7 @@ parser.add_argument(
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
 
+
 def get_num_workers() -> int:
     try:
         return len(os.sched_getaffinity(0)) // 2
@@ -66,6 +64,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 enable_spilling()
 
 from ogb.nodeproppred import PygNodePropPredDataset
+
 dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                  root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
