@@ -20,10 +20,11 @@ from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import EdgeSamplerInput, NeighborSampler
 from torch_geometric.sampler.neighbor_sampler import edge_sample
 from torch_geometric.testing import (
-    onlyDistributedTest,
-    assert_run_mproc,
     ProcArgs,
-    withMETIS)
+    assert_run_mproc,
+    onlyDistributedTest,
+    withMETIS,
+)
 from torch_geometric.typing import EdgeType
 
 
@@ -448,10 +449,10 @@ def test_dist_link_neighbor_sampler(disjoint):
         s.settimeout(1)
         s.bind(('', 0))
         port = s.getsockname()[1]
-    procs= (
-        ProcArgs(target=dist_link_neighbor_sampler, args=(0, port, disjoint)),
-        ProcArgs(target=dist_link_neighbor_sampler, args=(1, port, disjoint))
-    )
+    procs = (ProcArgs(target=dist_link_neighbor_sampler,
+                      args=(0, port, disjoint)),
+             ProcArgs(target=dist_link_neighbor_sampler,
+                      args=(1, port, disjoint)))
 
     assert_run_mproc(mp_context, procs)
 
@@ -467,14 +468,10 @@ def test_dist_link_neighbor_sampler_temporal(seed_time, temporal_strategy):
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    procs = (
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal,
-            args=(0, port, seed_time, temporal_strategy, 'time')),
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal,
-            args=(1, port, seed_time, temporal_strategy, 'time'))
-    )
+    procs = (ProcArgs(target=dist_link_neighbor_sampler_temporal,
+                      args=(0, port, seed_time, temporal_strategy, 'time')),
+             ProcArgs(target=dist_link_neighbor_sampler_temporal,
+                      args=(1, port, seed_time, temporal_strategy, 'time')))
     assert_run_mproc(mp_context, procs)
 
 
@@ -494,14 +491,12 @@ def test_dist_link_neighbor_sampler_edge_level_temporal(
         s.bind(('', 0))
         port = s.getsockname()[1]
 
-    procs = (
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal,
-            args=(0, port, seed_time, temporal_strategy, 'edge_time')),
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal,
-            args=(1, port, seed_time, temporal_strategy, 'edge_time'))
-    )
+    procs = (ProcArgs(
+        target=dist_link_neighbor_sampler_temporal,
+        args=(0, port, seed_time, temporal_strategy, 'edge_time')),
+             ProcArgs(
+                 target=dist_link_neighbor_sampler_temporal,
+                 args=(1, port, seed_time, temporal_strategy, 'edge_time')))
     assert_run_mproc(mp_context, procs)
 
 
@@ -526,14 +521,12 @@ def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
     )[0]
     data = T.ToUndirected()(data)
 
-    procs = (
-        ProcArgs(
-            target=dist_link_neighbor_sampler_hetero,
-            args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), disjoint)),
-        ProcArgs(
-            target=dist_link_neighbor_sampler_hetero,
-            args=(data, tmp_path, 1, port, ('v1', 'e0', 'v0'), disjoint))
-    )
+    procs = (ProcArgs(
+        target=dist_link_neighbor_sampler_hetero,
+        args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), disjoint)),
+             ProcArgs(
+                 target=dist_link_neighbor_sampler_hetero,
+                 args=(data, tmp_path, 1, port, ('v1', 'e0', 'v0'), disjoint)))
     world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
@@ -574,16 +567,14 @@ def test_dist_link_neighbor_sampler_temporal_hetero(
     data['v0'].time = torch.ones(data['v0'].num_nodes, dtype=torch.int64)
     data['v1'].time = torch.full((data['v1'].num_nodes, ), 2).long()
 
-    procs = (
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal_hetero,
-            args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), seed_time,
-                  temporal_strategy, 'time')),
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal_hetero,
-            args=(data, tmp_path, 1, port, ('v1', 'e0', 'v0'), seed_time,
-                  temporal_strategy, 'time'))
-    )
+    procs = (ProcArgs(
+        target=dist_link_neighbor_sampler_temporal_hetero,
+        args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), seed_time,
+              temporal_strategy, 'time')),
+             ProcArgs(
+                 target=dist_link_neighbor_sampler_temporal_hetero,
+                 args=(data, tmp_path, 1, port, ('v1', 'e0', 'v0'), seed_time,
+                       temporal_strategy, 'time')))
     world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
@@ -623,16 +614,14 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
     for i, edge_type in enumerate(data.edge_types):
         data[edge_type].edge_time = torch.full(  #
             (data[edge_type].num_edges, ), i, dtype=torch.int64)
-    procs = (
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal_hetero,
-            args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), seed_time,
-                  temporal_strategy, 'edge_time')),
-        ProcArgs(
-            target=dist_link_neighbor_sampler_temporal_hetero,
-            args=(data, tmp_path, 1, port, ('v0', 'e0', 'v1'), seed_time,
-                  temporal_strategy, 'edge_time'))
-    )
+    procs = (ProcArgs(
+        target=dist_link_neighbor_sampler_temporal_hetero,
+        args=(data, tmp_path, 0, port, ('v0', 'e0', 'v0'), seed_time,
+              temporal_strategy, 'edge_time')),
+             ProcArgs(
+                 target=dist_link_neighbor_sampler_temporal_hetero,
+                 args=(data, tmp_path, 1, port, ('v0', 'e0', 'v1'), seed_time,
+                       temporal_strategy, 'edge_time')))
     world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()

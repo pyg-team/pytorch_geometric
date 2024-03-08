@@ -15,10 +15,10 @@ from torch_geometric.distributed import (
     Partitioner,
 )
 from torch_geometric.testing import (
-    onlyDistributedTest,
-    assert_run_mproc,
     ProcArgs,
-    withMETIS
+    assert_run_mproc,
+    onlyDistributedTest,
+    withMETIS,
 )
 
 
@@ -176,8 +176,9 @@ def test_dist_neighbor_loader_homo(
     procs = [
         ProcArgs(
             target=dist_neighbor_loader_homo,
-            args=(tmp_path, part, addr, port, num_workers,async_sampling))
-        for part in range(num_parts)]
+            args=(tmp_path, part, addr, port, num_workers, async_sampling))
+        for part in range(num_parts)
+    ]
 
     world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)
@@ -217,9 +218,9 @@ def test_dist_neighbor_loader_hetero(
     procs = [
         ProcArgs(
             target=dist_neighbor_loader_hetero,
-            args=(tmp_path, part, addr, port, num_workers,async_sampling)
-        )
-        for part in range(num_parts)]
+            args=(tmp_path, part, addr, port, num_workers, async_sampling))
+        for part in range(num_parts)
+    ]
 
     world_size = len(procs)
     partitioner = Partitioner(data, world_size, tmp_path)

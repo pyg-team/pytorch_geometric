@@ -1,17 +1,17 @@
-import pytest
+import sys
 import traceback
+from io import StringIO
+from typing import Any, Callable, Collection, TypedDict
 
-from typing import Collection, Callable, Any, TypedDict
+import pytest
+from torch.multiprocessing import Manager, Queue
 from typing_extensions import Self
 
-from torch.multiprocessing import (Queue, Manager)
-
-from io import StringIO
-import sys
 
 class ProcArgs(TypedDict):
     target: Callable
     args: Collection[Any]
+
 
 class MPCaptOutput:
     def __enter__(self) -> Self:
@@ -38,12 +38,8 @@ class MPCaptOutput:
         return self.stderr.getvalue()
 
 
-def ps_std_capture(
-        func: Callable,
-        queue: Queue,
-        *args: Any,
-        **kwargs: Any
-) -> None:
+def ps_std_capture(func: Callable, queue: Queue, *args: Any,
+                   **kwargs: Any) -> None:
     with MPCaptOutput() as capt:
         try:
             func(*args, **kwargs)
@@ -55,19 +51,19 @@ def ps_std_capture(
 
 
 def assert_run_mproc(
-        mp_context: Any,
-        pargs: Collection[ProcArgs],
-        full_trace: bool = False,
-        timeout: int = 5,
+    mp_context: Any,
+    pargs: Collection[ProcArgs],
+    full_trace: bool = False,
+    timeout: int = 5,
 ) -> None:
     manager = Manager()
     world_size = len(pargs)
     queues = [manager.Queue() for _ in pargs]
     procs = [
-        mp_context.Process(
-            target=ps_std_capture,
-            args=[p['target'], q, world_size]+ list(p['args']))
-                for p, q in zip(pargs, queues)]
+        mp_context.Process(target=ps_std_capture,
+                           args=[p['target'], q, world_size] + list(p['args']))
+        for p, q in zip(pargs, queues)
+    ]
     results = []
 
     for p, q in zip(procs, queues):
@@ -85,5 +81,5 @@ def assert_run_mproc(
             print(stderr)
         if p.exitcode != 0:
             pytest.fail(
-                pytrace=full_trace,
-                reason=stderr.splitlines()[-1] if stderr else f"exitcode {p.exitcode}")
+                pytrace=full_trace, reason=stderr.splitlines()[-1]
+                if stderr else f"exitcode {p.exitcode}")
