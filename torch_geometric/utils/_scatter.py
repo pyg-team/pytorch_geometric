@@ -1,12 +1,13 @@
 from typing import Optional
 
 import torch
-from torch import Tensor
+from torch import Tensor, LongTensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
+from typing import Union, Tuple, List
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -283,3 +284,49 @@ def group_argsort(
     ptr = cumsum(count)
 
     return out - ptr[index]
+
+
+def scatter_concat(
+    tensors: Union[Tuple[Tensor],List[Tensor]],
+    index: Union[Tuple[LongTensor],List[LongTensor]],
+    dim: Optional[int] = 0,
+    return_index: Optional[bool] = False
+) -> Union[Tensor,Tuple[Tensor,Tensor]]:
+    r"""Concatenates the given sequence of tensors :obj:`tensors` in the given 
+    dimension :obj:`dim`.
+    Differ from :meth:`torch.cat`, values along the concatenating dimension
+    are grouped according to the indicies defined in the :obj:`index` tensors.
+    All tensors must either have the same shape (except in the concatenating 
+    dimension) or be empty and all index tensors must in the same sequence as
+    in :obj:`tensors`.
+
+    Args:
+        tensors (Union[Tuple[Tensor],List[Tensor]]): sequence of tensors.
+        index (Union[Tuple[LongTensor],List[LongTensor]]): sequence of index tensors.
+        dim (int, optional): The dimension along which the tensors are concatenated.
+            (default: :obj:`0`)
+        return_index (bool, optional): If set to :obj:`True`, will return the
+            new index tensor. (default: :obj:`False`)
+
+    Example:
+        >>> x1 = torch.tensor([[0.2716, 0.4233, 0.2658, 0.8284],
+        ...                    [0.3166, 0.0142, 0.1700, 0.2944],
+        ...                    [0.2371, 0.3839, 0.7193, 0.2954],
+        ...                    [0.4100, 0.0012, 0.5114, 0.3353]])
+        >>> x2 = torch.tensor([[0.3752, 0.5782, 0.7105, 0.4002],
+        ...                    [0.7757, 0.5999, 0.7898, 0.0753]])
+        >>> x1_index = torch.LongTensor([0,0,1,2])
+        >>> x2_index = torch.LongTensor([0,2])
+        >>> scatter_concat([x1,x2], [x1_index,x2_index], 0)
+        tensor([[0.2716, 0.4233, 0.2658, 0.8284],
+                [0.3166, 0.0142, 0.1700, 0.2944],
+                [0.3752, 0.5782, 0.7105, 0.4002],
+                [0.2371, 0.3839, 0.7193, 0.2954],
+                [0.4100, 0.0012, 0.5114, 0.3353],
+                [0.7757, 0.5999, 0.7898, 0.0753]])
+    """
+    assert len(tensors) == len(index)
+    val, loc = torch.sort(torch.concatenate(index), stable=True)
+    if return_index:
+        return torch.concat(tensors, dim=dim).index_select(dim,loc), val
+    return torch.concat(tensors, dim=dim).index_select(dim,loc)

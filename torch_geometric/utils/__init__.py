@@ -2,7 +2,7 @@ r"""Utility package."""
 
 import copy
 
-from ._scatter import scatter, group_argsort
+from ._scatter import scatter, group_argsort, scatter_concat
 from ._segment import segment
 from ._index_sort import index_sort
 from .functions import cumsum
@@ -60,6 +60,7 @@ from ._train_test_split_edges import train_test_split_edges
 __all__ = [
     'scatter',
     'group_argsort',
+    'scatter_concat',
     'segment',
     'index_sort',
     'cumsum',
