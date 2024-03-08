@@ -174,12 +174,12 @@ class GAT_LLAMA(nn.Module):
 
     def forward(self, samples):
         # encode description, questions and labels
-        batch_size = len(samples["question"])
-        questions = self.tokenizer(samples["question"],
+        batch_size = len(samples.question)
+        questions = self.tokenizer(samples.question,
                                    add_special_tokens=False)
-        descriptions = self.tokenizer(samples["desc"],
+        descriptions = self.tokenizer(samples.desc,
                                       add_special_tokens=False)
-        labels = self.tokenizer(samples["label"], add_special_tokens=False)
+        labels = self.tokenizer(samples.label, add_special_tokens=False)
 
         # encode special tokens
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
@@ -212,7 +212,7 @@ class GAT_LLAMA(nn.Module):
             except:
                 print("samples =", samples)
                 print("len(graph_embeds) =", len(graph_embeds))
-                print("ptr =", ptr)
+                print("samples.ptr =", samples.ptr)
                 quit()
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -377,7 +377,8 @@ def main():
         epoch_loss = 0.
 
         for step, batch in enumerate(train_loader):
-
+            if step > 20:
+                break
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
