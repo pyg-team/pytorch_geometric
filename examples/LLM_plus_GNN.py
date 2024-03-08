@@ -374,8 +374,6 @@ def main():
         epoch_loss = 0.
 
         for step, batch in enumerate(train_loader):
-            if step > 20:
-                break
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
