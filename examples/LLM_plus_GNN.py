@@ -167,11 +167,10 @@ class GAT_LLAMA(nn.Module):
         edge_attr = samples.edge_attr.to(self.model.device)
         n_embeds = self.graph_encoder(x, edge_index.long(),
                                          edge_attr)
-
+        print("len(n_embeds) =", len(n_embeds))
         batch = samples.batch.to(self.model.device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
-
         return g_embeds
 
     def forward(self, samples):
@@ -207,16 +206,9 @@ class GAT_LLAMA(nn.Module):
                     i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.model.device))
-            try:
                 inputs_embeds = torch.cat(
                     [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
                     dim=0)
-            except:
-                print("samples =", samples)
-                print("graph_embeds =", graph_embeds)
-                print("len(graph_embeds) =", len(graph_embeds))
-                quit()
-
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
             label_input_ids = [IGNORE_INDEX
