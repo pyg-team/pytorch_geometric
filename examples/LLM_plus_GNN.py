@@ -214,6 +214,7 @@ class GAT_LLAMA(nn.Module):
             except:
                 print("samples =", samples)
                 print("graph_embeds =", graph_embeds)
+                print("len(graph_embeds) =", len(graph_embeds))
                 quit()
 
             batch_inputs_embeds.append(inputs_embeds)
