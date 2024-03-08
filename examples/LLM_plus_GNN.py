@@ -175,7 +175,6 @@ class GAT_LLAMA(nn.Module):
         return g_embeds
 
     def forward(self, samples):
-        print("samples=", samples)
         # encode description, questions and labels
         batch_size = len(samples["question"])
         questions = self.tokenizer(samples["question"],
