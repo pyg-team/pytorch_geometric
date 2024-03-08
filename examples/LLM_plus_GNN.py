@@ -2,9 +2,6 @@
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
 # by 54% compared to the [LLM] baseline“.
-# Original work uses LLAMA2 from Meta for LLM.
-# This example uses GEMMA from google for the LLM
-# as this is the current open source SOTA LLM.
 
 import contextlib
 import gc
@@ -45,15 +42,6 @@ def adjust_learning_rate(param_group, LR, epoch):
                            (num_epochs - warmup_epochs)))
     param_group["lr"] = lr
     return lr
-
-
-def collate_fn(original_batch):
-    batch = {}
-    for k in original_batch[0].keys():
-        batch[k] = [d[k] for d in original_batch]
-    if 'graph' in batch:
-        batch['graph'] = Batch.from_data_list(batch['graph'])
-    return batch
 
 
 def compute_accuracy(eval_output):
@@ -351,14 +339,11 @@ def main():
     test_dataset = [dataset[i] for i in idx_split['test']]
 
     train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
-                              pin_memory=True, shuffle=True,
-                              collate_fn=collate_fn)
+                              pin_memory=True, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=4, drop_last=False,
-                            pin_memory=True, shuffle=False,
-                            collate_fn=collate_fn)
+                            pin_memory=True, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=4, drop_last=False,
-                             pin_memory=True, shuffle=False,
-                             collate_fn=collate_fn)
+                             pin_memory=True, shuffle=False)
 
     # Step 3: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
