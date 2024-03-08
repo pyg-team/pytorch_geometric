@@ -153,10 +153,10 @@ class AddRandomWalkPE(BaseTransform):
             adj = torch.zeros((N, N), device=row.device)
             adj[row, col] = value
             loop_index = torch.arange(N, device=row.device)
-        elif torch_geometric.typing.WITH_MKL:
-            adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
-        else:
+        elif torch_geometric.typing.NO_MKL:  # pragma: no cover
             adj = to_torch_coo_tensor(data.edge_index, value, size=data.size())
+        else:
+            adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
         def get_pe(out: Tensor) -> Tensor:
             if is_torch_sparse_tensor(out):
