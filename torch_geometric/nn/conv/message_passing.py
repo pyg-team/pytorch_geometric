@@ -190,7 +190,7 @@ class MessagePassing(torch.nn.Module):
 
                 self.__class__.propagate = module.propagate
                 self.__class__.collect = module.collect
-            except Exception:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = self.__class__.propagate
 
@@ -215,7 +215,7 @@ class MessagePassing(torch.nn.Module):
 
                 self.__class__.edge_updater = module.edge_updater
                 self.__class__.edge_collect = module.edge_collect
-            except Exception:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_edge_updater = self.__class__.edge_updater
                 self.__class__._jinja_edge_updater = (
                     self.__class__.edge_updater)
