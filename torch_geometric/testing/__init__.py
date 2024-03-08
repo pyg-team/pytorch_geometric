@@ -19,6 +19,7 @@ from .decorators import (
     has_package,
     withPackage,
     withCUDA,
+    withMETIS,
     disableExtensions,
     withoutExtensions,
 )
@@ -47,6 +48,7 @@ __all__ = [
     'has_package',
     'withPackage',
     'withCUDA',
+    'withMETIS',
     'disableExtensions',
     'withoutExtensions',
     'assert_module',
