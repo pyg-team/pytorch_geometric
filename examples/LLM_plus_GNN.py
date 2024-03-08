@@ -195,7 +195,6 @@ class GAT_LLAMA(nn.Module):
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
-
         batch_inputs_embeds = []
         batch_attention_mask = []
         batch_label_input_ids = []
@@ -267,7 +266,6 @@ class GAT_LLAMA(nn.Module):
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
 
-        
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
@@ -277,9 +275,13 @@ class GAT_LLAMA(nn.Module):
                     i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.model.device))
-            inputs_embeds = torch.cat(
-                [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
-                dim=0)
+            try:
+                inputs_embeds = torch.cat(
+                    [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
+                    dim=0)
+            except:
+                print("samples =", samples)
+                print("graph_embeds =", graph_embeds)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
