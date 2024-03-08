@@ -16,14 +16,14 @@ rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
-import cugraph
-import torch.nn.functional as F
-from cugraph.testing.mg_utils import enable_spilling
-from cugraph_pyg.data import CuGraphStore
-from cugraph_pyg.loader import CuGraphNeighborLoader
+import cugraph # noqa
+import torch.nn.functional as F # noqa
+from cugraph.testing.mg_utils import enable_spilling # noqa
+from cugraph_pyg.data import CuGraphStore # noqa
+from cugraph_pyg.loader import CuGraphNeighborLoader # noqa
 
-import torch_geometric
-from torch_geometric.loader import NeighborLoader
+import torch_geometric # noqa
+from torch_geometric.loader import NeighborLoader # noqa
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)
