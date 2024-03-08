@@ -335,7 +335,9 @@ def main():
     idx_split = dataset.split_idxs
     # Step 1: add IDs for each data point
     for i in range(len(dataset)):
-        dataset[i].id = i
+        data_pt = dataset[i]
+        data_pt.id = i
+        dataset[i] = data_pt
         print("dataset[i].id=", dataset[i].id)
 
     # Step 2: Build Node Classification Dataset
