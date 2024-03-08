@@ -331,7 +331,7 @@ def main():
 
     # Step 1: Build Node Classification Dataset
     train_dataset = [dataset[i] for i in idx_split['train']]
-    val_dataset = [dataset[i] for i in idx_split['val']]
+    val_dataset = [dataset[i] for i in idx_split['val'] if dataset[i].x.numel() > 0]
     test_dataset = [dataset[i] for i in idx_split['test']]
 
     train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
