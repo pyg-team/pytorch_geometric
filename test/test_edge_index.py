@@ -952,7 +952,7 @@ def test_spspmm(device, reduce, transpose, is_undirected):
         assert isinstance(out, EdgeIndex)
         assert out.is_sorted_by_row
         assert out._sparse_size == (3, 3)
-        if not torch_geometric.typing.WITH_WINDOWS:
+        if not torch_geometric.typing.NO_MKL:
             assert out._indptr is not None
         assert torch.allclose(out.to_dense(value), adj1_dense @ adj2_dense)
     else:
