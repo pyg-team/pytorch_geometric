@@ -336,6 +336,7 @@ def main():
     # Step 1: add IDs for each data point
     for i in range(len(dataset)):
         dataset[i]["id"] = i
+        print("dataset[i]=", dataset[i])
     # Step 2: Build Node Classification Dataset
     train_dataset = [dataset[i] for i in idx_split['train']]
     val_dataset = [dataset[i] for i in idx_split['val']]
