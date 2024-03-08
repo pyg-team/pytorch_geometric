@@ -106,7 +106,6 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
 
         def eval(loader: NeighborLoader, val_steps: Optional[int] = None):
             model.eval()
-            start = None
             for j, batch in enumerate(loader):
                 if val_steps is not None and j >= val_steps:
                     break
