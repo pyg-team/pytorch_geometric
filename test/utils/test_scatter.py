@@ -113,23 +113,24 @@ def test_scatter_argmax(device):
 
 @withCUDA
 def test_scatter_concat(device):
-    x1 = torch.tensor([[0.2716, 0.4233, 0.2658, 0.8284],
-                       [0.3166, 0.0142, 0.1700, 0.2944],
-                       [0.2371, 0.3839, 0.7193, 0.2954],
-                       [0.4100, 0.0012, 0.5114, 0.3353]],device=device)
-    x2 = torch.tensor([[0.3752, 0.5782, 0.7105, 0.4002],
-                       [0.7757, 0.5999, 0.7898, 0.0753]],device=device)
-    x1_index = torch.LongTensor([0,0,1,2],device=device)
-    x2_index = torch.LongTensor([0,2],device=device)
-    expected = torch.tensor([[0.2716, 0.4233, 0.2658, 0.8284],
-                             [0.3166, 0.0142, 0.1700, 0.2944],
-                             [0.3752, 0.5782, 0.7105, 0.4002],
-                             [0.2371, 0.3839, 0.7193, 0.2954],
-                             [0.4100, 0.0012, 0.5114, 0.3353],
-                             [0.7757, 0.5999, 0.7898, 0.0753]],device=device)
-    out, index_out = scatter_concat((x1,x2), (x1_index,x2_index), 0, return_index=True)
+    x1 = torch.tensor(
+        [[0.2716, 0.4233, 0.2658, 0.8284], [0.3166, 0.0142, 0.1700, 0.2944],
+         [0.2371, 0.3839, 0.7193, 0.2954], [0.4100, 0.0012, 0.5114, 0.3353]],
+        device=device)
+    x2 = torch.tensor(
+        [[0.3752, 0.5782, 0.7105, 0.4002], [0.7757, 0.5999, 0.7898, 0.0753]],
+        device=device)
+    x1_index = torch.LongTensor([0, 0, 1, 2], device=device)
+    x2_index = torch.LongTensor([0, 2], device=device)
+    expected = torch.tensor(
+        [[0.2716, 0.4233, 0.2658, 0.8284], [0.3166, 0.0142, 0.1700, 0.2944],
+         [0.3752, 0.5782, 0.7105, 0.4002], [0.2371, 0.3839, 0.7193, 0.2954],
+         [0.4100, 0.0012, 0.5114, 0.3353], [0.7757, 0.5999, 0.7898, 0.0753]],
+        device=device)
+    out, index_out = scatter_concat((x1, x2), (x1_index, x2_index), 0,
+                                    return_index=True)
     assert torch.equal(out, expected)
-    assert torch.equal(index_out, torch.LongTensor([0,0,0,1,2,2]))
+    assert torch.equal(index_out, torch.LongTensor([0, 0, 0, 1, 2, 2]))
 
 
 if __name__ == '__main__':

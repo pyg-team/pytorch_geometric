@@ -1,13 +1,12 @@
-from typing import Optional
+from typing import List, Optional, Tuple, Union
 
 import torch
-from torch import Tensor, LongTensor
+from torch import LongTensor, Tensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
-from typing import Union, Tuple, List
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -287,16 +286,16 @@ def group_argsort(
 
 
 def scatter_concat(
-    tensors: Union[Tuple[Tensor],List[Tensor]],
-    index: Union[Tuple[LongTensor],List[LongTensor]],
-    dim: Optional[int] = 0,
-    return_index: Optional[bool] = False
-) -> Union[Tensor,Tuple[Tensor,Tensor]]:
-    r"""Concatenates the given sequence of tensors :obj:`tensors` in the given 
+    tensors: Union[Tuple[Tensor],
+                   List[Tensor]], index: Union[Tuple[LongTensor],
+                                               List[LongTensor]],
+    dim: Optional[int] = 0, return_index: Optional[bool] = False
+) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    r"""Concatenates the given sequence of tensors :obj:`tensors` in the given
     dimension :obj:`dim`.
     Differ from :meth:`torch.cat`, values along the concatenating dimension
     are grouped according to the indicies defined in the :obj:`index` tensors.
-    All tensors must either have the same shape (except in the concatenating 
+    All tensors must either have the same shape (except in the concatenating
     dimension) or be empty and all index tensors must in the same sequence as
     in :obj:`tensors`.
 
@@ -328,5 +327,5 @@ def scatter_concat(
     assert len(tensors) == len(index)
     val, loc = torch.sort(torch.concatenate(index), stable=True)
     if return_index:
-        return torch.concat(tensors, dim=dim).index_select(dim,loc), val
-    return torch.concat(tensors, dim=dim).index_select(dim,loc)
+        return torch.concat(tensors, dim=dim).index_select(dim, loc), val
+    return torch.concat(tensors, dim=dim).index_select(dim, loc)
