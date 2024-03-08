@@ -14,7 +14,12 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest, assert_run_mproc, withMETIS
+from torch_geometric.testing import (
+    onlyDistributedTest,
+    assert_run_mproc,
+    ProcArgs,
+    withMETIS
+)
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -169,7 +174,7 @@ def test_dist_neighbor_loader_homo(
     )[0]
 
     procs = [
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_loader_homo,
             args=(tmp_path, part, addr, port, num_workers,async_sampling))
         for part in range(num_parts)]
@@ -178,7 +183,7 @@ def test_dist_neighbor_loader_homo(
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @withMETIS
@@ -210,7 +215,7 @@ def test_dist_neighbor_loader_hetero(
     )[0]
 
     procs = [
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_loader_hetero,
             args=(tmp_path, part, addr, port, num_workers,async_sampling)
         )
@@ -220,4 +225,4 @@ def test_dist_neighbor_loader_hetero(
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)

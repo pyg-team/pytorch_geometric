@@ -18,7 +18,12 @@ from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import onlyDistributedTest, assert_run_mproc, withMETIS
+from torch_geometric.testing import (
+    onlyDistributedTest,
+    assert_run_mproc,
+    ProcArgs,
+    withMETIS
+)
 
 
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
@@ -397,13 +402,13 @@ def test_dist_neighbor_sampler(disjoint):
         port = s.getsockname()[1]
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler, args=(0, port, disjoint)),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler, args=(1, port, disjoint))
     )
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @onlyDistributedTest
@@ -418,15 +423,15 @@ def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
         port = s.getsockname()[1]
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal,
             args=(0, port, seed_time, temporal_strategy, 'time')),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal,
             args=(1, port, seed_time, temporal_strategy, 'time'))
     )
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @onlyDistributedTest
@@ -446,15 +451,15 @@ def test_dist_neighbor_sampler_edge_level_temporal(
         port = s.getsockname()[1]
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal,
             args=(0, port, seed_time, temporal_strategy, 'edge_time')),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal,
             args=(1, port, seed_time, temporal_strategy, 'edge_time'))
     )
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @withMETIS
@@ -478,10 +483,10 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     )[0]
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_hetero,
             args=(data, tmp_path, 0, port, 'v0', disjoint)),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_hetero,
             args=(data, tmp_path, 1, port, 'v1', disjoint))
     )
@@ -490,7 +495,7 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @withMETIS
@@ -527,11 +532,11 @@ def test_dist_neighbor_sampler_temporal_hetero(
                                  dtype=torch.int64)
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal_hetero,
             args=(data, tmp_path, 0, port, 'v0', seed_time,
                   temporal_strategy, 'time')),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal_hetero,
             args=(data, tmp_path, 1, port, 'v1', seed_time,
                   temporal_strategy, 'time'))
@@ -541,7 +546,7 @@ def test_dist_neighbor_sampler_temporal_hetero(
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)
 
 
 @withMETIS
@@ -576,11 +581,11 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
             (data[edge_type].edge_index.size(1), ), i, dtype=torch.int64)
 
     procs = (
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal_hetero,
             args=(data, tmp_path, 0, port, 'v0', seed_time,
                   temporal_strategy,'edge_time')),
-        mp_context.Process(
+        ProcArgs(
             target=dist_neighbor_sampler_temporal_hetero,
             args=(data, tmp_path, 1, port, 'v1', seed_time,
                   temporal_strategy, 'edge_time'))
@@ -590,4 +595,4 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
     partitioner = Partitioner(data, world_size, tmp_path)
     partitioner.generate_partition()
 
-    assert_run_mproc(procs)
+    assert_run_mproc(mp_context, procs)

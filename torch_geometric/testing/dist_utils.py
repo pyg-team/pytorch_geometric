@@ -1,7 +1,7 @@
 import pytest
 import traceback
 
-from typing import Collection, Callable, Any
+from typing import Collection, Callable, Any, TypedDict
 from typing_extensions import Self
 
 from torch.multiprocessing import (Queue, Manager)
@@ -9,6 +9,9 @@ from torch.multiprocessing import (Queue, Manager)
 from io import StringIO
 import sys
 
+class ProcArgs(TypedDict):
+    target: Callable
+    args: Collection[Any]
 
 class MPCaptOutput:
     def __enter__(self) -> Self:
@@ -52,23 +55,22 @@ def ps_std_capture(
 
 
 def assert_run_mproc(
-        procs: Collection[Any],
+        mp_context: Any,
+        pargs: Collection[ProcArgs],
         full_trace: bool = False,
         timeout: int = 5,
 ) -> None:
     manager = Manager()
-    world_size = len(procs)
-    queues = [manager.Queue() for _ in procs]
+    world_size = len(pargs)
+    queues = [manager.Queue() for _ in pargs]
+    procs = [
+        mp_context.Process(
+            target=ps_std_capture,
+            args=[p['target'], q, world_size]+ list(p['args']))
+                for p, q in zip(pargs, queues)]
     results = []
 
     for p, q in zip(procs, queues):
-        target = p._target
-        p._target = ps_std_capture
-        new_args = [target, q, world_size] + list(p._args)
-        p._args = new_args
-        assert p._target == ps_std_capture
-        assert p._args == new_args
-
         p.start()
 
     for p, q in zip(procs, queues):
