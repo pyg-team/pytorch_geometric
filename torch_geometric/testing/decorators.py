@@ -217,11 +217,11 @@ def withMETIS(func: Callable) -> Callable:
     with_metis = WITH_METIS
 
     if with_metis:
-        try:
+        try:  # Test that METIS can succesfully execute:
             import pyg_lib
-            rowptr = torch.tensor([0, 1])
-            col = torch.tensor([0])
-            pyg_lib.partition.metis(rowptr, col, num_partitions=1)
+            rowptr = torch.tensor([0, 2, 4, 6])
+            col = torch.tensor([1, 2, 0, 2, 1, 0])
+            pyg_lib.partition.metis(rowptr, col, num_partitions=2)
         except Exception:
             with_metis = False
 
