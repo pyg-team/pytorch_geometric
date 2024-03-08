@@ -165,7 +165,7 @@ class GAT_LLAMA(nn.Module):
         x = samples.x.to(self.model.device)
         edge_index = samples.edge_index.long().to(self.model.device)
         edge_attr = samples.edge_attr.to(self.model.device)
-        n_embeds, _ = self.graph_encoder(x, edge_index.long(),
+        n_embeds = self.graph_encoder(x, edge_index.long(),
                                          edge_attr)
 
         # mean pooling
@@ -174,7 +174,6 @@ class GAT_LLAMA(nn.Module):
         return g_embeds
 
     def forward(self, samples):
-        print("samples=", samples)
         # encode description, questions and labels
         questions = self.tokenizer(samples["question"],
                                    add_special_tokens=False)
