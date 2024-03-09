@@ -392,7 +392,7 @@ def main():
 
             progress_bar.update(1)
 
-        print(f"Epoch: {epoch}|{num_epochs}, \
+        print(f"Epoch: {epoch + 1}|{num_epochs}, \
             Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
 
         val_loss = 0.
@@ -403,9 +403,9 @@ def main():
                 loss = model(batch)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
-            print(f"Epoch: {epoch}|{num_epochs}: Val Loss: {val_loss}")
+            print(f"Epoch: {epoch + 1}|{num_epochs}: Val Loss: {val_loss}")
 
-        print(f'Epoch {epoch} Val Loss {val_loss}')
+        print(f'Epoch {epoch + 1} Val Loss {val_loss}')
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
