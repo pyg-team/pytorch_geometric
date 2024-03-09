@@ -18,7 +18,7 @@ from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
 
 
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
@@ -474,6 +474,7 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
@@ -513,6 +514,7 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [None, [0, 0], [2, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
@@ -567,6 +569,7 @@ def test_dist_neighbor_sampler_temporal_hetero(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [[0, 0], [1, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
