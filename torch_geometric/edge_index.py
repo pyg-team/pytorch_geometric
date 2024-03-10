@@ -1106,6 +1106,8 @@ class EdgeIndex(Tensor):
     def __tensor_unflatten__(
         inner_tensors: Tuple[Any],
         ctx: Tuple[Any, ...],
+        *args: Any,
+        **kwargs: Any,
     ) -> 'EdgeIndex':
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
