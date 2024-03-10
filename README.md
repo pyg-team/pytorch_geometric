@@ -21,7 +21,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 **[Click here to join our Slack community!][slack-url]**
 
 <p align="center">
-  <a href="https://medium.com/stanford-cs224w"><img style="max-width=: 941px" src="https://data.pyg.org/img/cs224w_tutorials.png" /></a>
+  <a href="https://medium.com/stanford-cs224w"><img style="max-width: 941px" src="https://data.pyg.org/img/cs224w_tutorials.png" /></a>
 </p>
 
 ______________________________________________________________________

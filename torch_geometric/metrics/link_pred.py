@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from typing import Optional, Tuple, Union
 
 import torch
@@ -15,7 +14,7 @@ except Exception:
     BaseMetric = torch.nn.Module  # type: ignore
 
 
-class LinkPredMetric(BaseMetric, ABC):
+class LinkPredMetric(BaseMetric):
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
@@ -117,7 +116,6 @@ class LinkPredMetric(BaseMetric, ABC):
             self.accum.zero_()
             self.total.zero_()
 
-    @abstractmethod
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
         r"""Compute the specific metric.
         To be implemented separately for each metric class.

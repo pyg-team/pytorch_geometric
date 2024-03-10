@@ -18,7 +18,7 @@ from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc
 from torch_geometric.sampler import NeighborSampler, NodeSamplerInput
 from torch_geometric.sampler.neighbor_sampler import node_sample
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
 
 
 def create_data(rank: int, world_size: int, time_attr: Optional[str] = None):
@@ -391,8 +391,9 @@ def dist_neighbor_sampler_temporal_hetero(
 def test_dist_neighbor_sampler(disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -418,8 +419,9 @@ def test_dist_neighbor_sampler(disjoint):
 def test_dist_neighbor_sampler_temporal(seed_time, temporal_strategy):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -450,8 +452,9 @@ def test_dist_neighbor_sampler_edge_level_temporal(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -471,13 +474,15 @@ def test_dist_neighbor_sampler_edge_level_temporal(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -509,6 +514,7 @@ def test_dist_neighbor_sampler_hetero(tmp_path, disjoint):
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [None, [0, 0], [2, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
@@ -522,8 +528,9 @@ def test_dist_neighbor_sampler_temporal_hetero(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2
@@ -562,6 +569,7 @@ def test_dist_neighbor_sampler_temporal_hetero(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('seed_time', [[0, 0], [1, 2]])
 @pytest.mark.parametrize('temporal_strategy', ['uniform', 'last'])
@@ -574,8 +582,9 @@ def test_dist_neighbor_sampler_edge_level_temporal_hetero(
 
     mp_context = torch.multiprocessing.get_context('spawn')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind(('127.0.0.1', 0))
+        s.bind(('', 0))
         port = s.getsockname()[1]
 
     world_size = 2

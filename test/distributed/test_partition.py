@@ -8,10 +8,11 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
 from torch_geometric.typing import EdgeTypeStr
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_data(tmp_path):
     data = FakeDataset()[0]
@@ -58,6 +59,7 @@ def test_partition_data(tmp_path):
                        node_feats1['feats']['x'])
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
@@ -92,6 +94,7 @@ def test_partition_hetero_data(tmp_path):
         assert osp.exists(edge_feats_path)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_data_temporal(tmp_path):
     data = FakeDataset()[0]
@@ -112,6 +115,7 @@ def test_partition_data_temporal(tmp_path):
     assert torch.equal(data.time, node_feats1['time'])
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_data_edge_level_temporal(tmp_path):
     data = FakeDataset(edge_dim=2)[0]
@@ -134,6 +138,7 @@ def test_partition_data_edge_level_temporal(tmp_path):
                        edge_feats1['edge_time'])
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_hetero_data_temporal(tmp_path):
     data = FakeHeteroDataset()[0]
@@ -157,6 +162,7 @@ def test_partition_hetero_data_temporal(tmp_path):
         assert torch.equal(data[key].time, node_feats1[key]['time'])
 
 
+@withMETIS
 @onlyDistributedTest
 def test_partition_hetero_data_edge_level_temporal(tmp_path):
     data = FakeHeteroDataset(edge_dim=2)[0]
@@ -186,6 +192,7 @@ def test_partition_hetero_data_edge_level_temporal(tmp_path):
         )
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_data(tmp_path):
     data = FakeDataset()[0]
@@ -220,6 +227,7 @@ def test_from_partition_data(tmp_path):
     assert torch.allclose(data.x[id2], x2)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
@@ -247,6 +255,7 @@ def test_from_partition_hetero_data(tmp_path):
     assert node_types == set(data.node_types)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_temporal_data(tmp_path):
     data = FakeDataset()[0]
@@ -272,6 +281,7 @@ def test_from_partition_temporal_data(tmp_path):
     assert torch.equal(time2, data.time)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_edge_level_temporal_data(tmp_path):
     data = FakeDataset(edge_dim=2)[0]
@@ -299,6 +309,7 @@ def test_from_partition_edge_level_temporal_data(tmp_path):
     assert torch.equal(data.edge_time[edge_id2], time2)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_hetero_temporal_data(tmp_path):
     data = FakeHeteroDataset()[0]
@@ -331,6 +342,7 @@ def test_from_partition_hetero_temporal_data(tmp_path):
         assert torch.equal(times2[key], data[key].time)
 
 
+@withMETIS
 @onlyDistributedTest
 def test_from_partition_hetero_edge_level_temporal_data(tmp_path):
     data = FakeHeteroDataset(edge_dim=2)[0]

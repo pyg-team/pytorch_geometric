@@ -18,7 +18,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric import is_compiling
+from torch_geometric import EdgeIndex, is_compiling
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
@@ -166,13 +166,13 @@ class MessagePassing(torch.nn.Module):
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
         if not self.propagate.__module__.startswith(jinja_prefix):
-            if self.inspector.can_read_source:
+            try:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
                     template_path=osp.join(root_dir, 'propagate.jinja'),
                     tmp_dirname='message_passing',
                     # Keyword arguments:
-                    module=self.__module__,
+                    modules=self.inspector._modules,
                     collect_name='collect',
                     signature=self._get_propagate_signature(),
                     collect_param_dict=self.inspector.get_flat_param_dict(
@@ -185,34 +185,40 @@ class MessagePassing(torch.nn.Module):
                     fuse=self.fuse,
                 )
 
-                # Cache to potentially disable later on:
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = module.propagate
 
                 self.__class__.propagate = module.propagate
                 self.__class__.collect = module.collect
-            else:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
         if (self.inspector.implements('edge_update')
-                and not self.edge_updater.__module__.startswith(jinja_prefix)
-                and self.inspector.can_read_source):
-            module = module_from_template(
-                module_name=f'{jinja_prefix}_edge_updater',
-                template_path=osp.join(root_dir, 'edge_updater.jinja'),
-                tmp_dirname='message_passing',
-                # Keyword arguments:
-                module=self.__module__,
-                collect_name='edge_collect',
-                signature=self._get_edge_updater_signature(),
-                collect_param_dict=self.inspector.get_param_dict(
-                    'edge_update'),
-            )
+                and not self.edge_updater.__module__.startswith(jinja_prefix)):
+            try:
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_edge_updater',
+                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='edge_collect',
+                    signature=self._get_edge_updater_signature(),
+                    collect_param_dict=self.inspector.get_param_dict(
+                        'edge_update'),
+                )
 
-            self.__class__.edge_updater = module.edge_updater
-            self.__class__.edge_collect = module.edge_collect
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = module.edge_updater
+
+                self.__class__.edge_updater = module.edge_updater
+                self.__class__.edge_collect = module.edge_collect
+            except Exception:  # pragma: no cover
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = (
+                    self.__class__.edge_updater)
 
         # Explainability:
         self._explain: Optional[bool] = None
@@ -243,6 +249,9 @@ class MessagePassing(torch.nn.Module):
         edge_index: Union[Tensor, SparseTensor],
         size: Optional[Tuple[int, int]],
     ) -> List[Optional[int]]:
+
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            return [edge_index.num_rows, edge_index.num_cols]
 
         if is_sparse(edge_index):
             if self.flow == 'target_to_source':
@@ -414,7 +423,13 @@ class MessagePassing(torch.nn.Module):
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
             out['edge_index_j'] = edge_index[j]
+
             out['ptr'] = None
+            if isinstance(edge_index, EdgeIndex):
+                if i == 0 and edge_index.is_sorted_by_row:
+                    (out['ptr'], _), _ = edge_index.get_csr()
+                elif i == 1 and edge_index.is_sorted_by_col:
+                    (out['ptr'], _), _ = edge_index.get_csc()
 
         elif isinstance(edge_index, SparseTensor):
             row, col, value = edge_index.coo()

@@ -3,6 +3,7 @@ from typing import List, NamedTuple, Optional, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import ptr2index
 from torch_geometric.typing import SparseTensor
@@ -65,7 +66,13 @@ def {{collect_name}}(
 {%- endif %}
             edge_index_i = edge_index[i]
             edge_index_j = edge_index[j]
+
             ptr = None
+            if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+                if i == 0 and edge_index.is_sorted_by_row:
+                  (ptr, _), _ = edge_index.get_csr()
+                elif i == 1 and edge_index.is_sorted_by_col:
+                  (ptr, _), _ = edge_index.get_csc()
 
     elif isinstance(edge_index, SparseTensor):
 {%- if 'edge_index' in collect_param_dict %}

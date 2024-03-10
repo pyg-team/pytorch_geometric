@@ -38,6 +38,10 @@ jobs:
         with:
           torch-version: nightly
 
+      - name: Install mpmath
+        run: |
+          pip install mpmath==1.3.0
+
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |

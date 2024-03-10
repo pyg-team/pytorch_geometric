@@ -4,6 +4,7 @@ import sys
 import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, Union
 
+import torch
 from torch import Tensor
 
 
@@ -32,9 +33,27 @@ class Inspector:
         self._signature_dict: Dict[str, Signature] = {}
         self._source_dict: Dict[str, str] = {}
 
+    def _get_modules(self, cls: Type) -> List[str]:
+        from torch_geometric.nn import MessagePassing
+
+        modules: List[str] = []
+        for base_cls in cls.__bases__:
+            if base_cls not in {object, torch.nn.Module, MessagePassing}:
+                modules.extend(self._get_modules(base_cls))
+
+        modules.append(cls.__module__)
+        return modules
+
+    @property
+    def _modules(self) -> List[str]:
+        return self._get_modules(self._cls)
+
     @property
     def _globals(self) -> Dict[str, Any]:
-        return sys.modules[self._cls.__module__].__dict__
+        out: Dict[str, Any] = {}
+        for module in self._modules:
+            out.update(sys.modules[module].__dict__)
+        return out
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._cls.__name__})'
@@ -300,17 +319,6 @@ class Inspector:
         return out_dict
 
     # Inspecting Method Bodies ################################################
-
-    @property
-    def can_read_source(self) -> bool:
-        r"""Returns :obj:`True` if able to read the source file of the
-        inspected class.
-        """
-        try:
-            inspect.getfile(self._cls)
-            return True
-        except Exception:
-            return False
 
     def get_source(self, cls: Optional[Type] = None) -> str:
         r"""Returns the source code of :obj:`cls`."""

@@ -14,7 +14,7 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -142,6 +142,7 @@ def dist_neighbor_loader_hetero(
     assert loader.channel.empty()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
@@ -154,10 +155,11 @@ def test_dist_neighbor_loader_homo(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -184,6 +186,7 @@ def test_dist_neighbor_loader_homo(
     w1.join()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
@@ -196,10 +199,11 @@ def test_dist_neighbor_loader_hetero(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
