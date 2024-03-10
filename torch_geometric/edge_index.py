@@ -1097,6 +1097,7 @@ class EdgeIndex(Tensor):
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
+        assert self._data is not None
         # TODO Add `_T_index`.
         attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
         return attrs, ()
