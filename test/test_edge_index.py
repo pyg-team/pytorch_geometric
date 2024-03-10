@@ -11,7 +11,6 @@ from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import (
     SUPPORTED_DTYPES,
     ReduceType,
-    SortOrder,
     SortReturnType,
     _scatter_spmm,
     _torch_sparse_spmm,
