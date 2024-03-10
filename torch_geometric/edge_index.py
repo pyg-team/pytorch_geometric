@@ -337,9 +337,13 @@ class EdgeIndex(Tensor):
                 sparse_size = (sparse_size[1], sparse_size[1])
 
         if torch_geometric.typing.WITH_PT112:
+            print("-------------")
             out = super().__new__(cls, data)
+            print("-------------")
         else:
+            print("=============")
             out = Tensor._make_subclass(cls, data)
+            print("=============")
 
         # Attach metadata:
         assert isinstance(out, EdgeIndex)
@@ -1094,10 +1098,14 @@ class EdgeIndex(Tensor):
             return edge_index
 
     def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
+        self._data = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        print(self)
+        print(self.__dict__)
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
-        assert self._data is not None
+        # return [], ()
+        # assert self._data is not None
         # TODO Add `_T_index`.
         attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
         return attrs, ()
@@ -1106,6 +1114,8 @@ class EdgeIndex(Tensor):
     def __tensor_unflatten__(
         inner_tensors: Tuple[Any],
         ctx: Tuple[Any, ...],
+        *args,
+        **kwargs,
     ) -> 'EdgeIndex':
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
