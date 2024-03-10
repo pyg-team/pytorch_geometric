@@ -1,4 +1,4 @@
-# This example implements G-retriever in PyG
+# This example implements G-retriever using PyG
 # https://github.com/XiaoxinHe/G-Retriever
 # “G-Retriever significantly reduces hallucinations
 # by 54% compared to the [LLM] baseline“.
