@@ -16,6 +16,7 @@ except ImportError as e:  # noqa
     WITH_PCST = False
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+
 try:
     from transformers import AutoModel, AutoTokenizer
     WITH_TRANSFORMERS = True
