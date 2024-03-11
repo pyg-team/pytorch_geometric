@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-import datasets
 import numpy as np
 import pandas as pd
 import torch
@@ -13,7 +12,16 @@ except ImportError as e: # noqa
     WITH_PCST = False
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import AutoModel, AutoTokenizer
+try:
+    from transformers import AutoModel, AutoTokenizer
+    WITH_TRANSFORMERS = True
+except:
+    WITH_TRANSFORMERS = False
+try:
+    import datasets
+    WITH_DATASETS = True
+except:
+    WITH_DATASETS = False
 
 from torch_geometric.data import Data, InMemoryDataset
 
@@ -231,7 +239,21 @@ class WebQSPDataset(InMemoryDataset):
         root: str = "",
         force_reload: bool = False,
     ) -> None:
-        assert WITH_PCST, "Please `pip install pcst_fast` to use this dataset."
+        missing_imports = False
+        missing_str = []
+        if not WITH_PCST:
+            missing_str.append('pcst_fast')
+            missing_imports = True
+        if not WITH_TRANSFORMERS:
+            missing_str.append('transformers')
+            missing_imports = True
+        if not WITH_DATASETS:
+            missing_str.append('datasets')
+            missing_imports = True
+        if missing_imports:
+            missing_str = missing_str.join(' ')
+            error_out = f"`pip install {missing_str}` to use this dataset."
+            raise ImportError(error_out)
         self.prompt = "Please answer the given question."
         self.graph = None
         self.graph_type = "Knowledge Graph"
