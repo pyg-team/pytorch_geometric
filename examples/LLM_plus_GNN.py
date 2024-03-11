@@ -135,6 +135,8 @@ class GAT_LLAMA(nn.Module):
                                                      torch_dtype=torch.float16,
                                                      low_cpu_mem_usage=True,
                                                      **kwargs)
+        if gpus_2_use_4_llm == 1:
+            model = model.to('cuda:0')
 
         print("Training LLAMA with LORA!")
         self.model = prepare_model_for_int8_training(model)
