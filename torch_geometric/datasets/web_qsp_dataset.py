@@ -5,7 +5,11 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-from pcst_fast import pcst_fast
+try:
+    from pcst_fast import pcst_fast
+    WITH_PCST = True
+except ImportError as e:
+    WITH_PCST = False
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
@@ -226,7 +230,7 @@ class WebQSPDataset(InMemoryDataset):
         root: str = "",
         force_reload: bool = False,
     ) -> None:
-
+        assert WITH_PCST, "Please `pip install pcst_fast` to use this dataset."
         self.prompt = "Please answer the given question."
         self.graph = None
         self.graph_type = "Knowledge Graph"
