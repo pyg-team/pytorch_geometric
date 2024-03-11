@@ -17,13 +17,12 @@ import torch
 import torch.nn as nn
 from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
 from torch.nn.utils import clip_grad_norm_
-from torch_geometric.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import torch_geometric
 from torch_geometric import seed_everything
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, DataLoader
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.utils import scatter
 
@@ -100,13 +99,15 @@ class GAT_LLAMA(nn.Module):
         print('Loading LLAMA')
         assert torch.cuda.is_available(), "GPU needed!"
         avail_gpus = torch.cuda.device_count()
-        kwargs = {"revision": "main",}
+        kwargs = {
+            "revision": "main",
+        }
         max_mem_dict = {}
         avail_mem_dict = {}
         mem_total = 0
         gpus_2_use_4_llm = 0
         for i in range(avail_gpus):
-            available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
+            available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024**3)
             mem_total += available_mem
             avail_mem_dict[i] = available_mem
             gpus_2_use_4_llm += 1
@@ -185,8 +186,7 @@ class GAT_LLAMA(nn.Module):
         x = samples.x.to(self.model.device)
         edge_index = samples.edge_index.long().to(self.model.device)
         edge_attr = samples.edge_attr.to(self.model.device)
-        n_embeds = self.graph_encoder(x, edge_index.long(),
-                                         edge_attr)
+        n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
         batch = samples.batch.to(self.model.device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
@@ -195,10 +195,8 @@ class GAT_LLAMA(nn.Module):
     def forward(self, samples):
         # encode description, questions and labels
         batch_size = len(samples.question)
-        questions = self.tokenizer(samples.question,
-                                   add_special_tokens=False)
-        descriptions = self.tokenizer(samples.desc,
-                                      add_special_tokens=False)
+        questions = self.tokenizer(samples.question, add_special_tokens=False)
+        descriptions = self.tokenizer(samples.desc, add_special_tokens=False)
         labels = self.tokenizer(samples.label, add_special_tokens=False)
 
         # encode special tokens
@@ -206,9 +204,11 @@ class GAT_LLAMA(nn.Module):
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
         bos_embeds = self.word_embedding(
             self.tokenizer(BOS, add_special_tokens=False,
-                           return_tensors='pt').input_ids[0].to(self.model.device))
+                           return_tensors='pt').input_ids[0].to(
+                               self.model.device))
         pad_embeds = self.word_embedding(
-            torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
+            torch.tensor(self.tokenizer.pad_token_id).to(
+                self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -278,9 +278,11 @@ class GAT_LLAMA(nn.Module):
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
         bos_embeds = self.word_embedding(
             self.tokenizer(BOS, add_special_tokens=False,
-                           return_tensors='pt').input_ids[0].to(self.model.device))
+                           return_tensors='pt').input_ids[0].to(
+                               self.model.device))
         pad_embeds = self.word_embedding(
-            torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
+            torch.tensor(self.tokenizer.pad_token_id).to(
+                self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -353,7 +355,8 @@ def main(since):
 
     # Step 1: Build Node Classification Dataset
     train_dataset = [dataset[i] for i in idx_split['train']]
-    val_dataset = [dataset[i] for i in idx_split['val']] #  if dataset[i].x.numel() > 0
+    val_dataset = [dataset[i]
+                   for i in idx_split['val']]  #  if dataset[i].x.numel() > 0
     test_dataset = [dataset[i] for i in idx_split['test']]
 
     train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
@@ -444,6 +447,7 @@ def main(since):
     acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
     return prep_time
+
 
 if __name__ == "__main__":
     since = time.time()
