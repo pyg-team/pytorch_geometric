@@ -146,35 +146,6 @@ def trim_to_layer(
     return x, xr, edge_index, edge_attr
 
 
-'''
-So I assume that you mean the conv((x_src, x_dst), edge_index) is meant to replace the
-conv calls (e.g. x = conv(x, edge_index))
-in the forward method of the BasicGNN class.
-
-If I understand the point here, and assuming the src/dst naming is based on the inbound/outbound
-direction of edges when building neighborhood at each layer:
-
-x_dst is a matrix num_target_nodes_for_that_layer X num_node_features, which contains the current
-node representations for the target nodes only.
-
-x_src is a matrix that might include x_dst (in the homo case for example) whose dimensions are
-num_nodes_in_input_at_that_layer X num_node_features, and contains the representations of all
-the nodes needed as input for the current layer.
-
-With each conv working with a pair of tensors as input, we will require the trimming part to
-return -besides the rectangular adj_matrix correctly sized at each layer- the trimmed and
-non-trimmed node features matrices, in contrast to returning only the non-trimmed as it does now.
-
-Looking at the sage_conv class implementation, the node representation tuple as input should contain:
-x[0] = non-trimmed node features matrix (used as input for message passing) ==> x_src
-x[1] = trimmed node features matrix (used as input for linear projection whose result will be
-added to the message passing output) ==> x_dst
-
-So with my definitions above, I guess the conv call should look like: conv((x_src, x_dst), edge_index),
-which matches your suggestion.
-'''
-
-
 class TrimToLayer(torch.nn.Module):
     def forward(
         self,

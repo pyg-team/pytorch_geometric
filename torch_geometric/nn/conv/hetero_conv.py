@@ -12,7 +12,6 @@ from torch_geometric.utils.hetero import check_add_self_loops
 
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
 
-    #print("****************xs is /n: ",xs)
     if len(xs) == 0:
         return None
     elif aggr is None:
