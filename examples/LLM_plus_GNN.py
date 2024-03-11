@@ -105,7 +105,7 @@ class GAT_LLAMA(nn.Module):
         mem_total = 0
         for i in range(gpus_2_use_4_llm):
             available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
-            mem_total += avilable_mem
+            mem_total += available_mem
             max_mem_dict[i] = available_mem
         assert mem_total >= 80, \
             "Need ~80GB of GPU RAM across all GPUs on device, only " \
