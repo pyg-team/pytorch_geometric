@@ -134,8 +134,7 @@ class GAT_LLAMA(nn.Module):
             task_type="CAUSAL_LM",
         )
         self.model = get_peft_model(self.model, config)
-        model.device = "cuda:0"
-        model.to(model.device)
+        self.model.to("cuda:0")
         print('Finish loading LLAMA!')
 
         self.graph_encoder = torch_geometric.nn.models.GAT(
