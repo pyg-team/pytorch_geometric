@@ -13,10 +13,7 @@ from torch_geometric.testing import withCUDA, withPackage
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_l2(
-    device,
-    k,
-):
+def test_l2(device, k):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 
