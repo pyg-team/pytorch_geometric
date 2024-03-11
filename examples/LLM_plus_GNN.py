@@ -4,7 +4,7 @@ Original Paper: https://arxiv.org/abs/2402.07630
 by 54% compared to the [LLM] baseline“.
 
 requirements on top of basic PyG:
-pip install peft datasets transformers pcst_fast sentencepiece
+pip install peft datasets transformers pcst_fast sentencepiece tqdm pandas
 '''
 import contextlib
 import gc
