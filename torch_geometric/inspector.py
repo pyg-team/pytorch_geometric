@@ -396,6 +396,7 @@ class Inspector:
         # (3) Parse the function call:
         for cls in self._cls.__mro__:
             source = self.get_source(cls)
+            source = remove_comments(source)
             match = find_parenthesis_content(source, f'self.{func_name}')
             if match is not None:
                 for i, kwarg in enumerate(split(match, sep=',')):
@@ -523,3 +524,12 @@ def split(content: str, sep: str) -> List[str]:
     if start != len(content):  # Respect dangling `sep`:
         outs.append(content[start:].strip())
     return outs
+
+
+def remove_comments(content: str) -> str:
+    content = re.sub(r'\s*#.*', '', content)
+    content = re.sub(re.compile(r'r"""(.*?)"""', re.DOTALL), '', content)
+    content = re.sub(re.compile(r'"""(.*?)"""', re.DOTALL), '', content)
+    content = re.sub(re.compile(r"r'''(.*?)'''", re.DOTALL), '', content)
+    content = re.sub(re.compile(r"'''(.*?)'''", re.DOTALL), '', content)
+    return content
