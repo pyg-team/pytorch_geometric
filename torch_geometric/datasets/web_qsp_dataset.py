@@ -132,7 +132,6 @@ class Dataset(torch.utils.data.Dataset):
         return self.data["input_ids"].size(0)
 
     def __getitem__(self, index: int):
-        print("type(index)=", index)
         if isinstance(index, torch.Tensor):
             index = index.item()
         batch_data = dict()
