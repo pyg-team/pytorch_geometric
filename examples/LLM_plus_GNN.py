@@ -389,12 +389,12 @@ def main(since):
     for epoch in range(num_epochs):
         model.train()
         epoch_loss = 0.
+        if epoch == 0:
+            prep_time = round(time.time() - since, 2)
+            print("Total Prep Time (prep_time) =", prep_time)
+            print("Training beginning...")
         loader = tqdm(enumerate(train_loader), desc="Epoch " + str(epoch))
         for step, batch in loader:
-            if epoch == 0 and step == 0:
-                print("Training beginning...")
-                prep_time = round(time.time() - since, 2)
-                print("Total Prep Time (prep_time) =", prep_time)
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
