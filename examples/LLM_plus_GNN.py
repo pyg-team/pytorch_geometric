@@ -105,11 +105,8 @@ class GAT_LLAMA(nn.Module):
         avail_mem_dict = {}
         mem_total = 0
         gpus_2_use_4_llm = 0
-        print("avail_gpus =", avail_gpus)
         for i in range(avail_gpus):
-            print("i =", i)
             available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
-            print("avilable_mem_i =", available_mem)
             mem_total += available_mem
             avail_mem_dict[i] = available_mem
             gpus_2_use_4_llm += 1
@@ -123,7 +120,6 @@ class GAT_LLAMA(nn.Module):
             + str(mem_total) + "GB available across " + str(avail_gpus) \
             + " GPUs"
 
-        print("gpus_2_use_4_llm=",gpus_2_use_4_llm)
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
@@ -283,9 +279,9 @@ class GAT_LLAMA(nn.Module):
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
         bos_embeds = self.word_embedding(
             self.tokenizer(BOS, add_special_tokens=False,
-                           return_tensors='pt').input_ids[0])
+                           return_tensors='pt').input_ids[0].to(self.model.device))
         pad_embeds = self.word_embedding(
-            torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+            torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -390,15 +386,12 @@ def main(since):
         trainable%: {100 * trainable_params / all_param}")
 
     # Step 4 Training
-    num_training_steps = num_epochs * len(train_loader)
-    progress_bar = tqdm(range(num_training_steps))
-
     for epoch in range(num_epochs):
-
         model.train()
         epoch_loss = 0.
-
-        for step, batch in enumerate(train_loader):
+        loader = tqdm(enumerate(train_loader), 
+            description="Epoch " + str(epoch))
+        for step, batch in loader:
             if epoch == 0 and step == 0:
                 print("Training beginning...")
                 prep_time = round(time.time() - since, 2)
@@ -418,8 +411,6 @@ def main(since):
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
-
-            progress_bar.update(1)
 
         print(f"Epoch: {epoch + 1}|{num_epochs}, \
             Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
