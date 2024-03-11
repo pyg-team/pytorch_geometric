@@ -109,17 +109,17 @@ class GAT_LLAMA(nn.Module):
             available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
             mem_total += available_mem
             avail_mem_dict[i] = available_mem
-            gpus_2_use_4_llm += 1
-            # We want to use the minimum number of GPUs that LLM can fit on
-            # this is to minimize the need for interGPU communications
-            if mem_total >= 80:
-                break
+        #     gpus_2_use_4_llm += 1
+        #     # We want to use the minimum number of GPUs that LLM can fit on
+        #     # this is to minimize the need for interGPU communications
+        #     if mem_total >= 80:
+        #         break
 
-        assert mem_total >= 80, \
-            "Need ~80GB of GPU RAM across all GPUs on device, only " \
-            + str(mem_total) + "GB available across " + str(avail_gpus) \
-            + " GPUs"
-
+        # assert mem_total >= 80, \
+        #     "Need ~80GB of GPU RAM across all GPUs on device, only " \
+        #     + str(mem_total) + "GB available across " + str(avail_gpus) \
+        #     + " GPUs"
+        gpus_2_use_4_llm = 4
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
