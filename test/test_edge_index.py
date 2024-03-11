@@ -1144,7 +1144,7 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')
+@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
 def test_compile():
     import torch._dynamo as dynamo
 
@@ -1172,6 +1172,28 @@ def test_compile():
     compiled_model = torch.compile(model, fullgraph=True)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
+
+
+@onlyLinux
+@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
+def test_compile_create_edge_index():
+    import torch._dynamo as dynamo
+
+    class Model(torch.nn.Module):
+        def forward(self) -> None:
+            # TODO Add more tests once closed:
+            # https://github.com/pytorch/pytorch/issues/117806
+            out = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+            out.as_subclass(EdgeIndex)
+            return
+
+    model = Model()
+
+    explanation = dynamo.explain(model)()
+    assert explanation.graph_break_count == 0
+
+    compiled_model = torch.compile(model, fullgraph=True)
+    assert compiled_model() is None
 
 
 if __name__ == '__main__':
