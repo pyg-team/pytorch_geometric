@@ -174,8 +174,9 @@ class WebQSPDataset(InMemoryDataset):
         # from original G-Retriever work
         c = 0.01
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
-            desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-                index=False, columns=["src", "edge_attr", "dst"])
+            desc = textual_nodes.to_csv(
+                index=False) + "\n" + textual_edges.to_csv(
+                    index=False, columns=["src", "edge_attr", "dst"])
             graph = Data(x=graph.x, edge_index=graph.edge_index,
                          edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
             return graph, desc
@@ -195,10 +196,12 @@ class WebQSPDataset(InMemoryDataset):
             n_prizes = torch.zeros(graph.num_nodes)
 
         if topk_e > 0:
-            e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.edge_attr)
+            e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb,
+                                                         graph.edge_attr)
             topk_e = min(topk_e, e_prizes.unique().size(0))
 
-            topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e, largest=True)
+            topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e,
+                                          largest=True)
             e_prizes[e_prizes < topk_e_values[-1]] = 0.0
             last_topk_e_value = topk_e
             for k in range(topk_e):
@@ -252,7 +255,8 @@ class WebQSPDataset(InMemoryDataset):
         edge_index = graph.edge_index[:, selected_edges]
         selected_nodes = np.unique(
             np.concatenate(
-                [selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
+                [selected_nodes, edge_index[0].numpy(),
+                 edge_index[1].numpy()]))
 
         n = textual_nodes.iloc[selected_nodes]
         e = textual_edges.iloc[selected_edges]
@@ -270,7 +274,7 @@ class WebQSPDataset(InMemoryDataset):
                     num_nodes=len(selected_nodes))
 
         return data, desc
-    
+
     @property
     def raw_file_names(self) -> List[str]:
         return []
