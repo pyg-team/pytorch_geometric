@@ -119,7 +119,7 @@ class GAT_LLAMA(nn.Module):
         #     "Need ~80GB of GPU RAM across all GPUs on device, only " \
         #     + str(mem_total) + "GB available across " + str(avail_gpus) \
         #     + " GPUs"
-        gpus_2_use_4_llm = 4
+        gpus_2_use_4_llm = 2
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
