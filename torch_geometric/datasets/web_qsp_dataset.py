@@ -106,7 +106,7 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids=None, attention_mask=None):
+    def __init__(self, input_ids: torch.Tensor=None, attention_mask: torch.Tensor=None):
         print("type(input_ids)=", type(input_ids))
         print("type(attention_mask)=", type(attention_mask))
         super().__init__()
@@ -118,7 +118,7 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self):
         return self.data["input_ids"].size(0)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         print("type(index)=", index)
         if isinstance(index, torch.Tensor):
             index = index.item()
