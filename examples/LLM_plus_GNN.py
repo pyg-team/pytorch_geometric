@@ -100,18 +100,27 @@ class GAT_LLAMA(nn.Module):
         print('Loading LLAMA')
         assert torch.cuda.is_available(), "GPU needed!"
         avail_gpus = torch.cuda.device_count()
-        gpus_2_use_4_llm = min(avail_gpus, 4)
         kwargs = {"revision": "main",}
         max_mem_dict = {}
+        avail_mem_dict = {}
         mem_total = 0
-        for i in range(gpus_2_use_4_llm):
+        gpus_2_use_4_llm = 0
+        for i in range(avail_gpus):
             available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
             mem_total += available_mem
-            max_mem_dict[i] = str(available_mem) + "GiB"
+            avail_mem_dict[i] = available_mem
+            gpus_2_use_4_llm += 1
+            # We want to use the minimum number of GPUs that LLM can fit on
+            if mem_total >= 80:
+                break
+
         assert mem_total >= 80, \
             "Need ~80GB of GPU RAM across all GPUs on device, only " \
             + str(mem_total) + "GB available across " + str(avail_gpus) \
-            + " GPUs" 
+            + " GPUs"
+
+        for i in range(gpus_2_use_4_llm):
+            max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
         if gpus_2_use_4_llm > 1:
             kwargs["device_map"] = "auto"
