@@ -96,12 +96,12 @@ class GAT_LLAMA(nn.Module):
 
         print('Loading LLAMA')
         kwargs = {
-            "max_memory": {
-                0: '20GiB',
-                1: '20GiB',
-                2: '20GiB',
-                3: '20GiB'
-            },
+            # "max_memory": {
+            #     0: '20GiB',
+            #     1: '20GiB',
+            #     2: '20GiB',
+            #     3: '20GiB'
+            # },
             "device_map": "auto",
             "revision": "main",
         }
