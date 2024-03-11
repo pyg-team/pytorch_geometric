@@ -111,6 +111,7 @@ class GAT_LLAMA(nn.Module):
             avail_mem_dict[i] = available_mem
             gpus_2_use_4_llm += 1
             # We want to use the minimum number of GPUs that LLM can fit on
+            # this is to minimize the need for interGPU communications
             if mem_total >= 80:
                 break
 
