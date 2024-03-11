@@ -228,6 +228,9 @@ class EdgeIndex(Tensor):
     # See "https://pytorch.org/docs/stable/notes/extending.html"
     # for a basic tutorial on how to subclass `torch.Tensor`.
 
+    # The underlying tensor representation:
+    _data: Optional[Tensor] = None
+
     # The size of the underlying sparse matrix:
     _sparse_size: Tuple[Optional[int], Optional[int]] = (None, None)
 
@@ -340,6 +343,8 @@ class EdgeIndex(Tensor):
 
         # Attach metadata:
         assert isinstance(out, EdgeIndex)
+        if torch_geometric.typing.WITH_PT22:
+            out._data = data
         out._sparse_size = sparse_size
         out._sort_order = None if sort_order is None else SortOrder(sort_order)
         out._is_undirected = is_undirected
@@ -517,22 +522,33 @@ class EdgeIndex(Tensor):
         return torch.Size((self.get_sparse_size(0), self.get_sparse_size(1)))
 
     def sparse_resize_(  # type: ignore
-            self,
-            sparse_size: Tuple[int, int],
+        self,
+        num_rows: Optional[int],
+        num_cols: Optional[int],
     ) -> 'EdgeIndex':
         r"""Assigns or re-assigns the size of the underlying sparse matrix.
 
         Args:
-            sparse_size (tuple[int, int]): The size of the sparse matrix.
+            num_rows (int, optional): The number of rows.
+            num_cols (int, optional): The number of columns.
         """
-        num_rows, num_cols = sparse_size
+        if self.is_undirected:
+            if num_rows is not None and num_cols is None:
+                num_cols = num_rows
+            elif num_cols is not None and num_rows is None:
+                num_rows = num_cols
 
-        if self.is_undirected and num_rows != num_cols:
-            raise ValueError(f"'EdgeIndex' is undirected but received a "
-                             f"non-symmetric size (got {list(sparse_size)})")
+            if num_rows is not None and num_rows != num_cols:
+                raise ValueError(f"'EdgeIndex' is undirected but received a "
+                                 f"non-symmetric size "
+                                 f"(got [{num_rows}, {num_cols}])")
 
-        def _modify_ptr(ptr: Optional[Tensor], size: int) -> Optional[Tensor]:
-            if ptr is None:
+        def _modify_ptr(
+            ptr: Optional[Tensor],
+            size: Optional[int],
+        ) -> Optional[Tensor]:
+
+            if ptr is None or size is None:
                 return None
 
             if ptr.numel() - 1 == size:
@@ -555,7 +571,7 @@ class EdgeIndex(Tensor):
             self._indptr = _modify_ptr(self._indptr, num_cols)
             self._T_indptr = _modify_ptr(self._T_indptr, num_rows)
 
-        self._sparse_size = sparse_size
+        self._sparse_size = (num_rows, num_cols)
 
         return self
 
@@ -1076,6 +1092,27 @@ class EdgeIndex(Tensor):
             )
             edge_index._indptr = colptr
             return edge_index
+
+    def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
+        if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
+            raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
+                               "supported from PyTorch 2.2 onwards")
+        assert self._data is not None
+        # TODO Add `_T_index`.
+        attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
+        return attrs, ()
+
+    @staticmethod
+    def __tensor_unflatten__(
+        inner_tensors: Tuple[Any],
+        ctx: Tuple[Any, ...],
+        *args: Any,
+        **kwargs: Any,
+    ) -> 'EdgeIndex':
+        if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
+            raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
+                               "supported from PyTorch 2.2 onwards")
+        raise NotImplementedError
 
     @classmethod
     def __torch_function__(
@@ -1788,7 +1825,7 @@ def matmul(
 
     transpose &= not input.is_undirected or input_value is not None
 
-    if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
+    if torch_geometric.typing.NO_MKL:  # pragma: no cover
         sparse_input = input.to_sparse_coo(input_value)
     elif input.is_sorted_by_col:
         sparse_input = input.to_sparse_csc(input_value)
@@ -1798,7 +1835,7 @@ def matmul(
     if transpose:
         sparse_input = sparse_input.t()
 
-    if torch_geometric.typing.WITH_WINDOWS:  # pragma: no cover
+    if torch_geometric.typing.NO_MKL:  # pragma: no cover
         other = other.to_sparse_coo(other_value)
     elif other.is_sorted_by_col:
         other = other.to_sparse_csc(other_value)

@@ -8,7 +8,7 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
-from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
+from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
@@ -208,6 +208,27 @@ def withCUDA(func: Callable) -> Callable:
             devices.append(pytest.param(torch.device(device), id=device))
 
     return pytest.mark.parametrize('device', devices)(func)
+
+
+def withMETIS(func: Callable) -> Callable:
+    r"""A decorator to only test in case a valid METIS method is available."""
+    import pytest
+
+    with_metis = WITH_METIS
+
+    if with_metis:
+        try:  # Test that METIS can succesfully execute:
+            import pyg_lib
+            rowptr = torch.tensor([0, 2, 4, 6])
+            col = torch.tensor([1, 2, 0, 2, 1, 0])
+            pyg_lib.partition.metis(rowptr, col, num_partitions=2)
+        except Exception:
+            with_metis = False
+
+    return pytest.mark.skipif(
+        not with_metis,
+        reason="METIS not enabled",
+    )(func)
 
 
 def disableExtensions(func: Callable) -> Callable:

@@ -57,8 +57,10 @@ def softmax(
             and not is_compiling()):  # pragma: no cover
         return pyg_lib.ops.softmax_csr(src, ptr, dim)
 
-    if (ptr is not None and torch_geometric.typing.WITH_TORCH_SCATTER
-            and not is_compiling()):
+    if (ptr is not None and
+        (ptr.dim() == 1 or (ptr.dim() > 1 and index is None) or
+         (torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling()))):
+
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
         count = ptr[1:] - ptr[:-1]
