@@ -122,8 +122,7 @@ class GAT_LLAMA(nn.Module):
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
-        if gpus_2_use_4_llm > 1:
-            kwargs["device_map"] = "auto"
+        kwargs["device_map"] = "auto"
         print("Setting up LLAMA w/ kwargs =", kwargs)
         llm_model_path = path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
@@ -135,8 +134,6 @@ class GAT_LLAMA(nn.Module):
                                                      torch_dtype=torch.float16,
                                                      low_cpu_mem_usage=True,
                                                      **kwargs)
-        if gpus_2_use_4_llm == 1:
-            model = model.to('cuda:0')
 
         print("Training LLAMA with LORA!")
         self.model = prepare_model_for_int8_training(model)
@@ -173,8 +170,6 @@ class GAT_LLAMA(nn.Module):
         ).to(self.model.device)
 
         self.word_embedding = self.model.model.get_input_embeddings()
-        if gpus_2_use_4_llm == 1:
-            self.word_embedding = self.word_embedding.to(self.model.device)
 
     def maybe_autocast(self, dtype=torch.bfloat16):
         # if on cpu, don't use autocast
