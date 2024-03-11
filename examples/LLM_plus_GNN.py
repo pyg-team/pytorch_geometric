@@ -132,7 +132,7 @@ class GAT_LLAMA(nn.Module):
 
         model = AutoModelForCausalLM.from_pretrained(llm_model_path,
                                                      torch_dtype=torch.float16,
-                                                     low_cpu_mem_usage=bool(gpus_2_use_4_llm > 1),
+                                                     low_cpu_mem_usage=True,
                                                      **kwargs)
 
         print("Training LLAMA with LORA!")
@@ -206,9 +206,9 @@ class GAT_LLAMA(nn.Module):
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
         bos_embeds = self.word_embedding(
             self.tokenizer(BOS, add_special_tokens=False,
-                           return_tensors='pt').input_ids[0])
+                           return_tensors='pt').input_ids[0].to(self.model.device))
         pad_embeds = self.word_embedding(
-            torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+            torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
