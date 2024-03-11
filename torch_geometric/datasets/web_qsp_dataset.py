@@ -12,9 +12,6 @@ from torch_geometric.data import Data, InMemoryDataset
 
 def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataFrame, textual_edges: pd.DataFrame, topk: int=3, topk_e: int=3, cost_e: float=0.5) -> Tuple[Data, str]:
     # from G-Retriever repo
-    print("type(textual_nodes) =", type(textual_nodes))
-    print("type(textual_edges) =", type(textual_edges))
-
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
         desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"])
@@ -110,6 +107,8 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids=None, attention_mask=None):
+        print("type(input_ids)=", type(input_ids))
+        print("type(attention_mask)=", type(attention_mask))
         super().__init__()
         self.data = {
             "input_ids": input_ids,
@@ -120,6 +119,7 @@ class Dataset(torch.utils.data.Dataset):
         return self.data["input_ids"].size(0)
 
     def __getitem__(self, index):
+        print("type(index)=", index)
         if isinstance(index, torch.Tensor):
             index = index.item()
         batch_data = dict()
