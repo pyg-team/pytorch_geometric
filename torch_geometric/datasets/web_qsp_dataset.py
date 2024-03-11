@@ -10,7 +10,7 @@ import numpy as np
 from pcst_fast import pcst_fast
 from torch_geometric.data import Data, InMemoryDataset
 
-def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes, textual_edges, topk=3, topk_e=3, cost_e=0.5) -> Tuple[Data, str]:
+def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataFrame, textual_edges: pd.DataFrame, topk: int=3, topk_e: int=3, cost_e: float=0.5) -> Tuple[Data, str]:
     # from G-Retriever repo
     print("type(textual_nodes) =", type(textual_nodes))
     print("type(textual_edges) =", type(textual_edges))
@@ -135,34 +135,24 @@ class Sentence_Transformer(torch.nn.Module):
         print(f"inherit model weights from {pretrained_repo}")
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
 
-    def mean_pooling(self, model_output, attention_mask):
-        print("type(model_output)=", type(model_output))
-        print("type(attention_mask)=", type(attention_mask))
-        # First element of model_output contains all token embeddings
-        token_embeddings = model_output[0]
-        print("type(token_embeddings)=", type(token_embeddings))
+    def mean_pooling(self, token_embeddings: torch.Tensor, attention_mask: torch.Tensor):
         data_type = token_embeddings.dtype
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(
             token_embeddings.size()).to(data_type)
         return torch.sum(token_embeddings * input_mask_expanded,
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-    def forward(self, input_ids, att_mask):
-        print("type(input_ids)=", type(input_ids))
-        print("type(att_mask)=", type(att_mask))
+    def forward(self, input_ids: torch.Tensor, att_mask: torch.Tensor):
+        bert_out = self.bert_model(input_ids=input_ids, attention_mask=att_mask)
 
-        bert_out = self.bert_model(input_ids=input_ids,
-                                   attention_mask=att_mask)
-        sentence_embeddings = self.mean_pooling(bert_out, att_mask)
+        # First element of model_output contains all token embeddings
+        token_embeddings = bert_out[0]
+        sentence_embeddings = self.mean_pooling(token_embeddings, att_mask)
         sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
         return sentence_embeddings
 
 
-def sbert_text2embedding(model, tokenizer, device, text):
-    print("type(model)=", type(model))
-    print("type(tokenizer)=", type(tokenizer))
-    print("type(device)=", type(device))
-    print("type(text)=", type(text))
+def sbert_text2embedding(model: Sentence_Transformer, tokenizer: torch.nn.Module, device: torch.device, text: List[str]) -> List[torch.Tensor]:
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
                              return_tensors="pt")
@@ -267,6 +257,8 @@ class WebQSPDataset(InMemoryDataset):
                                           self.device, self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
+            if index == 1:
+                quit()
             data_i = self.raw_dataset[index]
             raw_nodes = {}
             raw_edges = []
