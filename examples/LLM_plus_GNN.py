@@ -392,7 +392,7 @@ def main(since):
             prep_time = round(time.time() - since, 2)
             print("Total Prep Time (prep_time) =", prep_time)
             print("Training beginning...")
-        loader = tqdm(train_loader, desc="Epoch " + str(epoch))
+        loader = tqdm(train_loader, desc="Epoch " + str(epoch + 1))
         for step, batch in enumerate(loader):
             optimizer.zero_grad()
             loss = model(batch)
