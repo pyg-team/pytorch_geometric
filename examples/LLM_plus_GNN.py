@@ -414,7 +414,9 @@ def main(since):
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
         train_loss = epoch_loss / len(train_loader)
-        print(f"Epoch: {epoch + 1}|{num_epochs}, Train Loss (Epoch Mean): {train_loss}")
+        print(
+            f"Epoch: {epoch + 1}|{num_epochs}, Train Loss (Epoch Mean): {train_loss}"
+        )
 
         val_loss = 0.
         eval_output = []
