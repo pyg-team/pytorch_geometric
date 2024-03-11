@@ -426,8 +426,6 @@ def main(since):
             val_loss = val_loss / len(val_loader)
             print(f"Epoch: {epoch + 1}|{num_epochs}: Val Loss: {val_loss}")
 
-        print(f'Epoch {epoch + 1} Val Loss {val_loss}')
-
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
