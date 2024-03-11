@@ -73,9 +73,10 @@ def compute_accuracy(eval_output):
             all_recall.append(recall)
             all_f1.append(f1)
 
-        except:  # noqa
+        except Exception as e:  # noqa
             print(f'Label: {label}')
             print(f'Pred: {pred}')
+            print("Exception:" e)
             print('------------------')
     hit = sum(all_hit) / len(all_hit)
     precision = sum(all_precision) / len(all_precision)
@@ -412,9 +413,8 @@ def main(since):
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
-
-        print(f"Epoch: {epoch + 1}|{num_epochs}, \
-            Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
+        train_loss = epoch_loss / len(train_loader)
+        print(f"Epoch: {epoch + 1}|{num_epochs}, Train Loss (Epoch Mean): {train_loss}")
 
         val_loss = 0.
         eval_output = []
@@ -424,7 +424,7 @@ def main(since):
                 loss = model(batch)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
-            print(f"Epoch: {epoch + 1}|{num_epochs}: Val Loss: {val_loss}")
+            print(f"Epoch: {epoch + 1}|{num_epochs}, Val Loss: {val_loss}")
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
