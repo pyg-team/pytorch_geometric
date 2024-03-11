@@ -73,10 +73,10 @@ def compute_accuracy(eval_output):
             all_recall.append(recall)
             all_f1.append(f1)
 
-        except Exception as e:  # noqa
+        except Exception as e:
             print(f'Label: {label}')
             print(f'Pred: {pred}')
-            print("Exception:", e)
+            print(f'Exception: {e}')
             print('------------------')
     hit = sum(all_hit) / len(all_hit)
     precision = sum(all_precision) / len(all_precision)
