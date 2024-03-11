@@ -102,7 +102,7 @@ class GAT_LLAMA(nn.Module):
                 # 2: '20GiB',
                 # 3: '20GiB'
             },
-            "device_map": "auto",
+            # "device_map": "auto",
             "revision": "main",
         }
         llm_model_path = path
