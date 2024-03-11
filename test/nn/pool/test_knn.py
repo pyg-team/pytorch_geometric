@@ -13,7 +13,10 @@ from torch_geometric.testing import withCUDA, withPackage
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_l2(device, k):
+def test_l2(
+    device,
+    k,
+):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 
@@ -61,7 +64,8 @@ def test_mips(device, k):
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_approx_l2(device, k):
+@pytest.mark.parametrize('reserve', [None, 100])
+def test_approx_l2(device, k, reserve):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(10_000, 16, device=device)
 
@@ -70,6 +74,7 @@ def test_approx_l2(device, k):
         num_cells_to_visit=10,
         bits_per_vector=8,
         emb=rhs,
+        reserve=reserve,
     )
 
     out = index.search(lhs, k)
@@ -83,7 +88,8 @@ def test_approx_l2(device, k):
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_approx_mips(device, k):
+@pytest.mark.parametrize('reserve', [None, 100])
+def test_approx_mips(device, k, reserve):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(10_000, 16, device=device)
 
@@ -92,6 +98,7 @@ def test_approx_mips(device, k):
         num_cells_to_visit=10,
         bits_per_vector=8,
         emb=rhs,
+        reserve=reserve,
     )
 
     out = index.search(lhs, k)
