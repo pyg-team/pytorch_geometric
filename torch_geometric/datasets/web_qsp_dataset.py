@@ -1,7 +1,11 @@
 from typing import List, Tuple
 
 import numpy as np
-import pandas as pd
+try:
+    import pandas as pd
+    WITH_PANDAS = True
+except:
+    WITH_PANDAS = False
 import torch
 import torch.nn.functional as F
 
@@ -249,6 +253,9 @@ class WebQSPDataset(InMemoryDataset):
             missing_imports = True
         if not WITH_DATASETS:
             missing_str.append('datasets')
+            missing_imports = True
+        if not WITH_PANDAS:
+            missing_str.append('pandas')
             missing_imports = True
         if missing_imports:
             missing_str = missing_str.join(' ')
