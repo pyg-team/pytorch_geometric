@@ -1,11 +1,12 @@
-'''This example implements G-retriever using PyG.
+"""This example implements G-retriever using PyG.
 Original Paper: https://arxiv.org/abs/2402.07630
 “G-Retriever significantly reduces hallucinations
 by 54% compared to the [LLM] baseline“.
 
 requirements on top of basic PyG:
 pip install peft datasets transformers pcst_fast sentencepiece tqdm pandas
-'''
+"""
+
 import contextlib
 import gc
 import math
@@ -92,7 +93,7 @@ def compute_accuracy(eval_output):
 
 
 class GAT_LLAMA(nn.Module):
-    def __init__(self, graph_type, path, init_prompt):
+    def __init__(self, llm_model_path: str):
         super().__init__()
         self.max_txt_len = 512
         self.max_new_tokens = 32
@@ -127,14 +128,14 @@ class GAT_LLAMA(nn.Module):
         kwargs["max_memory"] = max_mem_dict
         kwargs["device_map"] = "auto"
         print("Setting up LLAMA w/ kwargs =", kwargs)
-        llm_model_path = path
+        llm_model_path = llm_model_path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = 0
         self.tokenizer.padding_side = 'left'
 
         model = AutoModelForCausalLM.from_pretrained(llm_model_path,
-                                                     torch_dtype=torch.float16,
+                                                     torch_dtype=torch.bfloat16,
                                                      low_cpu_mem_usage=True,
                                                      **kwargs)
 
@@ -173,17 +174,7 @@ class GAT_LLAMA(nn.Module):
 
         self.word_embedding = self.model.model.get_input_embeddings()
 
-    def maybe_autocast(self, dtype=torch.bfloat16):
-        # if on cpu, don't use autocast
-        # if on gpu, use autocast with dtype if provided,
-        # otherwise use torch.float16
-        enable_autocast = self.model.device != torch.device("cpu")
-        if enable_autocast:
-            return torch.cuda.amp.autocast(dtype=dtype)
-        else:
-            return contextlib.nullcontext()
-
-    def encode_graphs(self, samples):
+    def encode_graphs(self, samples: Batch):
         x = samples.x.to(self.model.device)
         edge_index = samples.edge_index.long().to(self.model.device)
         edge_attr = samples.edge_attr.to(self.model.device)
@@ -193,7 +184,7 @@ class GAT_LLAMA(nn.Module):
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, samples):
+    def forward(self, samples: Batch):
         # encode description, questions and labels
         batch_size = len(samples.question)
         questions = self.tokenizer(samples.question, add_special_tokens=False)
@@ -257,7 +248,7 @@ class GAT_LLAMA(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.model.device)
 
-        with self.maybe_autocast():
+        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
             outputs = self.model(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
@@ -267,7 +258,7 @@ class GAT_LLAMA(nn.Module):
 
         return outputs.loss
 
-    def inference(self, samples):
+    def inference(self, samples: Batch):
         # encode description and questions
         batch_size = len(samples['question'])
         questions = self.tokenizer(samples["question"],
@@ -318,7 +309,7 @@ class GAT_LLAMA(nn.Module):
         attention_mask = torch.tensor(batch_attention_mask).to(
             self.model.device)
 
-        with self.maybe_autocast():
+        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
             outputs = self.model.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=self.max_new_tokens,
@@ -348,7 +339,7 @@ class GAT_LLAMA(nn.Module):
         return trainable_params, all_param
 
 
-def main(since):
+def main(since: float):
     seed_everything(42)
 
     dataset = WebQSPDataset()
@@ -356,8 +347,7 @@ def main(since):
 
     # Step 1: Build Node Classification Dataset
     train_dataset = [dataset[i] for i in idx_split['train']]
-    val_dataset = [dataset[i]
-                   for i in idx_split['val']]  #  if dataset[i].x.numel() > 0
+    val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
 
     train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
@@ -369,8 +359,7 @@ def main(since):
 
     # Step 2: Build Model
     llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
-    model = GAT_LLAMA(graph_type=dataset.graph_type, path=llm_model_path,
-                      init_prompt=dataset.prompt)
+    model = GAT_LLAMA(path=llm_model_path)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
