@@ -167,8 +167,8 @@ class WebQSPDataset(InMemoryDataset):
         self.load(self.processed_paths[0])
 
     def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor,
-                           textual_nodes: pd.DataFrame,
-                           textual_edges: pd.DataFrame, topk: int = 3,
+                           textual_nodes,
+                           textual_edges, topk: int = 3,
                            topk_e: int = 3,
                            cost_e: float = 0.5) -> Tuple[Data, str]:
         # from original G-Retriever work
