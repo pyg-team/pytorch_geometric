@@ -357,8 +357,7 @@ def main(since: float):
                              pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    llm_model_path = "meta-llama/Llama-2-7b-chat-hf"
-    model = GAT_LLAMA(path=llm_model_path)
+    model = GAT_LLAMA("meta-llama/Llama-2-7b-chat-hf")
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
