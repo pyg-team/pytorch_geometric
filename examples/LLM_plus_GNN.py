@@ -76,7 +76,7 @@ def compute_accuracy(eval_output):
         except Exception as e:  # noqa
             print(f'Label: {label}')
             print(f'Pred: {pred}')
-            print("Exception:" e)
+            print("Exception:", e)
             print('------------------')
     hit = sum(all_hit) / len(all_hit)
     precision = sum(all_precision) / len(all_precision)
