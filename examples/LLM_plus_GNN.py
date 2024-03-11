@@ -389,8 +389,7 @@ def main(since):
     for epoch in range(num_epochs):
         model.train()
         epoch_loss = 0.
-        loader = tqdm(enumerate(train_loader), 
-            description="Epoch " + str(epoch))
+        loader = tqdm(enumerate(train_loader), desc="Epoch " + str(epoch))
         for step, batch in loader:
             if epoch == 0 and step == 0:
                 print("Training beginning...")
