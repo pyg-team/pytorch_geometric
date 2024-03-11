@@ -97,7 +97,7 @@ class GAT_LLAMA(nn.Module):
         print('Loading LLAMA')
         kwargs = {
             "max_memory": {
-                0: '40GiB',
+                0: '100GiB',
                 # 1: '20GiB',
                 # 2: '20GiB',
                 # 3: '20GiB'
