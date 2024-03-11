@@ -132,7 +132,7 @@ class GAT_LLAMA(nn.Module):
 
         model = AutoModelForCausalLM.from_pretrained(llm_model_path,
                                                      torch_dtype=torch.float16,
-                                                     low_cpu_mem_usage=True,
+                                                     low_cpu_mem_usage=bool(gpus_2_use_4_llm > 1),
                                                      **kwargs)
 
         print("Training LLAMA with LORA!")
