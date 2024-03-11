@@ -396,7 +396,8 @@ def main(since):
             prep_time = round(time.time() - since, 2)
             print("Total Prep Time (prep_time) =", prep_time)
             print("Training beginning...")
-        loader = tqdm(train_loader, desc="Epoch " + str(epoch + 1))
+        epoch_str = f"Epoch: {epoch + 1}|{num_epochs}"
+        loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
             optimizer.zero_grad()
             loss = model(batch)
@@ -414,7 +415,7 @@ def main(since):
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
         train_loss = epoch_loss / len(train_loader)
-        print(f"Epoch: {epoch + 1}|{num_epochs}, Train Loss (Epoch Mean): {train_loss}")
+        print(epoch_str +  f",Train Loss (Epoch Mean): {train_loss}")
 
         val_loss = 0.
         eval_output = []
@@ -424,7 +425,7 @@ def main(since):
                 loss = model(batch)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
-            print(f"Epoch: {epoch + 1}|{num_epochs}, Val Loss: {val_loss}")
+            print(epoch_str + f", Val Loss: {val_loss}")
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
