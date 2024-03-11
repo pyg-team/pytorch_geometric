@@ -433,7 +433,7 @@ def main(since):
 
 if __name__ == "__main__":
     since = time.time()
-    main(since)
+    prep_time = main(since)
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()
