@@ -7,6 +7,7 @@ import contextlib
 import gc
 import math
 import re
+import time
 
 import pandas as pd
 import torch
@@ -325,7 +326,7 @@ class GAT_LLAMA(nn.Module):
         return trainable_params, all_param
 
 
-def main():
+def main(since):
     seed_everything(42)
 
     dataset = WebQSPDataset()
@@ -374,6 +375,9 @@ def main():
         epoch_loss = 0.
 
         for step, batch in enumerate(train_loader):
+            if epoch == 0 and step == 0:
+                print("Training beginning...")
+                print("Total Prep Time (prep_time) =", prep_time)
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
@@ -425,10 +429,14 @@ def main():
     # Step 6 Post-processing & compute metrics
     acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
-
+    return prep_time
 
 if __name__ == "__main__":
-    main()
+    since = time.time()
+    main(since)
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()
+    e2e_time = round(time.time() - since, 2)
+    print("E2E time (e2e_time) =", e2e_time)
+    print("E2E time minus Prep Time =", e2e_time - prep_time)
