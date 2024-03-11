@@ -154,7 +154,7 @@ class GAT_LLAMA(nn.Module):
             num_layers=4,
             heads=4,
         ).to(self.model.device)
-
+        print("self.model.device =", self.model.device)
         self.projector = nn.Sequential(
             nn.Linear(1024, 2048),
             nn.Sigmoid(),
