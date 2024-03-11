@@ -96,13 +96,13 @@ class GAT_LLAMA(nn.Module):
 
         print('Loading LLAMA')
         kwargs = {
-            # "max_memory": {
-            #     0: '20GiB',
-            #     1: '20GiB',
-            #     2: '20GiB',
-            #     3: '20GiB'
-            # },
-            # "device_map": "auto",
+            "max_memory": {
+                0: '20GiB',
+                1: '20GiB',
+                2: '20GiB',
+                3: '20GiB'
+            },
+            "device_map": "auto",
             "revision": "main",
         }
         llm_model_path = path
@@ -134,7 +134,6 @@ class GAT_LLAMA(nn.Module):
             task_type="CAUSAL_LM",
         )
         self.model = get_peft_model(self.model, config)
-        self.model.to("cuda:0")
         print('Finish loading LLAMA!')
 
         self.graph_encoder = torch_geometric.nn.models.GAT(
