@@ -217,10 +217,7 @@ class L2KNNIndex(KNNIndex):
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
-    def __init__(
-        self,
-        emb: Optional[Tensor] = None,
-    ):
+    def __init__(self, emb: Optional[Tensor] = None):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
@@ -236,10 +233,7 @@ class MIPSKNNIndex(KNNIndex):
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
     """
-    def __init__(
-        self,
-        emb: Optional[Tensor] = None,
-    ):
+    def __init__(self, emb: Optional[Tensor] = None):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
