@@ -150,6 +150,10 @@ class Sentence_Transformer(torch.nn.Module):
 
 
 def sbert_text2embedding(model, tokenizer, device, text):
+    # print("type(model)=", type(model))
+    # print("type(tokenizer)=", type(tokenizer))
+    # print("type(device)=", type(device))
+    # print("type(text)=", type(text))
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
                              return_tensors="pt")

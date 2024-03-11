@@ -104,7 +104,7 @@ class GAT_LLAMA(nn.Module):
         max_mem_dict = {}
         mem_total = 0
         for i in range(gpus_2_use_4_llm):
-            available_mem = torch.cuda.mem_get_info(0)[0] // 1024 ** 3
+            available_mem = int(torch.cuda.mem_get_info(0)[0] // 1024 ** 3)
             mem_total += avilable_mem
             max_mem_dict[i] = available_mem
         assert mem_total >= 80, \
@@ -114,6 +114,7 @@ class GAT_LLAMA(nn.Module):
         kwargs["max_memory"] = max_mem_dict
         if gpus_2_use_4_llm == 4:
             kwargs["device_map"] = "auto"
+        print("Setting up LLAMA w/ kwargs =", kwargs)
         llm_model_path = path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
                                                        use_fast=False)
