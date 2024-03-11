@@ -5,13 +5,16 @@ import torch.nn.functional as F
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from transformers import AutoModel, AutoTokenizer
-from typing import List
+from typing import List, Tuple
 import numpy as np
 from pcst_fast import pcst_fast
 from torch_geometric.data import Data, InMemoryDataset
 
-def retrieval_via_pcst(graph, q_emb, textual_nodes, textual_edges, topk=3, topk_e=3, cost_e=0.5):
+def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes, textual_edges, topk=3, topk_e=3, cost_e=0.5) -> Tuple[Data, str]:
     # from G-Retriever repo
+    print("type(textual_nodes) =", type(textual_nodes))
+    print("type(textual_edges) =", type(textual_edges))
+
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
         desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"])
@@ -133,8 +136,11 @@ class Sentence_Transformer(torch.nn.Module):
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
 
     def mean_pooling(self, model_output, attention_mask):
+        print("type(model_output)=", type(model_output))
+        print("type(attention_mask)=", type(attention_mask))
         # First element of model_output contains all token embeddings
         token_embeddings = model_output[0]
+        print("type(token_embeddings)=", type(token_embeddings))
         data_type = token_embeddings.dtype
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(
             token_embeddings.size()).to(data_type)
@@ -142,6 +148,8 @@ class Sentence_Transformer(torch.nn.Module):
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     def forward(self, input_ids, att_mask):
+        print("type(input_ids)=", type(input_ids))
+        print("type(att_mask)=", type(att_mask))
 
         bert_out = self.bert_model(input_ids=input_ids,
                                    attention_mask=att_mask)
