@@ -1,21 +1,30 @@
+from typing import List, Tuple
+
 import datasets
+import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-from tqdm import tqdm
-from torch.utils.data import DataLoader
-from transformers import AutoModel, AutoTokenizer
-from typing import List, Tuple
-import numpy as np
 from pcst_fast import pcst_fast
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+from transformers import AutoModel, AutoTokenizer
+
 from torch_geometric.data import Data, InMemoryDataset
 
-def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataFrame, textual_edges: pd.DataFrame, topk: int=3, topk_e: int=3, cost_e: float=0.5) -> Tuple[Data, str]:
+
+def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor,
+                       textual_nodes: pd.DataFrame,
+                       textual_edges: pd.DataFrame, topk: int = 3,
+                       topk_e: int = 3,
+                       cost_e: float = 0.5) -> Tuple[Data, str]:
     # from G-Retriever repo
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
-        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"])
-        graph = Data(x=graph.x, edge_index=graph.edge_index, edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
+        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
+            index=False, columns=["src", "edge_attr", "dst"])
+        graph = Data(x=graph.x, edge_index=graph.edge_index,
+                     edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
         return graph, desc
 
     root = -1  # unrooted
@@ -41,7 +50,7 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
         last_topk_e_value = topk_e
         for k in range(topk_e):
             indices = e_prizes == topk_e_values[k]
-            value = min((topk_e-k)/sum(indices), last_topk_e_value-c)
+            value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
             e_prizes[indices] = value
             last_topk_e_value = value
         # cost_e = max(min(cost_e, e_prizes.max().item()-c), 0)
@@ -73,10 +82,11 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
     prizes = np.concatenate([n_prizes, np.array(vritual_n_prizes)])
     num_edges = len(edges)
     if len(virtual_costs) > 0:
-        costs = np.array(costs+virtual_costs)
-        edges = np.array(edges+virtual_edges)
+        costs = np.array(costs + virtual_costs)
+        edges = np.array(edges + virtual_edges)
 
-    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters, pruning, verbosity_level)
+    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
+                                pruning, verbosity_level)
 
     selected_nodes = vertices[vertices < graph.num_nodes]
     selected_edges = [mapping_e[e] for e in edges if e < num_edges]
@@ -84,14 +94,17 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
     if len(virtual_vertices) > 0:
         virtual_vertices = vertices[vertices >= graph.num_nodes]
         virtual_edges = [mapping_n[i] for i in virtual_vertices]
-        selected_edges = np.array(selected_edges+virtual_edges)
+        selected_edges = np.array(selected_edges + virtual_edges)
 
     edge_index = graph.edge_index[:, selected_edges]
-    selected_nodes = np.unique(np.concatenate([selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
+    selected_nodes = np.unique(
+        np.concatenate(
+            [selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
 
     n = textual_nodes.iloc[selected_nodes]
     e = textual_edges.iloc[selected_edges]
-    desc = n.to_csv(index=False)+"\n"+e.to_csv(index=False, columns=["src", "edge_attr", "dst"])
+    desc = n.to_csv(index=False) + "\n" + e.to_csv(
+        index=False, columns=["src", "edge_attr", "dst"])
 
     mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
 
@@ -100,13 +113,15 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataF
     src = [mapping[i] for i in edge_index[0].tolist()]
     dst = [mapping[i] for i in edge_index[1].tolist()]
     edge_index = torch.LongTensor([src, dst])
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(selected_nodes))
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                num_nodes=len(selected_nodes))
 
     return data, desc
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids: torch.Tensor=None, attention_mask: torch.Tensor=None):
+    def __init__(self, input_ids: torch.Tensor = None,
+                 attention_mask: torch.Tensor = None):
         super().__init__()
         self.data = {
             "input_ids": input_ids,
@@ -133,7 +148,8 @@ class Sentence_Transformer(torch.nn.Module):
         print(f"inherit model weights from {pretrained_repo}")
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
 
-    def mean_pooling(self, token_embeddings: torch.Tensor, attention_mask: torch.Tensor):
+    def mean_pooling(self, token_embeddings: torch.Tensor,
+                     attention_mask: torch.Tensor):
         data_type = token_embeddings.dtype
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(
             token_embeddings.size()).to(data_type)
@@ -141,7 +157,8 @@ class Sentence_Transformer(torch.nn.Module):
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     def forward(self, input_ids: torch.Tensor, att_mask: torch.Tensor):
-        bert_out = self.bert_model(input_ids=input_ids, attention_mask=att_mask)
+        bert_out = self.bert_model(input_ids=input_ids,
+                                   attention_mask=att_mask)
 
         # First element of model_output contains all token embeddings
         token_embeddings = bert_out[0]
@@ -150,7 +167,9 @@ class Sentence_Transformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def sbert_text2embedding(model: Sentence_Transformer, tokenizer: torch.nn.Module, device: torch.device, text: List[str]) -> List[torch.Tensor]:
+def sbert_text2embedding(model: Sentence_Transformer,
+                         tokenizer: torch.nn.Module, device: torch.device,
+                         text: List[str]) -> List[torch.Tensor]:
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
                              return_tensors="pt")
@@ -180,7 +199,8 @@ def sbert_text2embedding(model: Sentence_Transformer, tokenizer: torch.nn.Module
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings, dim=0).cpu()
     except:  # noqa
-        print("SBERT text embedding failed, returning torch.zeros((0, 1024))...")
+        print(
+            "SBERT text embedding failed, returning torch.zeros((0, 1024))...")
         return torch.zeros((0, 1024))
 
     return all_embeddings
@@ -217,14 +237,13 @@ class WebQSPDataset(InMemoryDataset):
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
-
     @property
     def raw_file_names(self) -> List[str]:
         return []
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["list_of_graphs.pt", "pre_filter.pt",  "pre_transform.pt"]
+        return ["list_of_graphs.pt", "pre_filter.pt", "pre_transform.pt"]
 
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
@@ -251,8 +270,8 @@ class WebQSPDataset(InMemoryDataset):
         list_of_graphs = []
         # encode questions
         print("Encoding questions...")
-        q_embs = self.text2embedding(self.model, self.tokenizer,
-                                          self.device, self.questions)
+        q_embs = self.text2embedding(self.model, self.tokenizer, self.device,
+                                     self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
             if index == 1:
@@ -289,10 +308,13 @@ class WebQSPDataset(InMemoryDataset):
                                             edges.edge_attr.tolist())
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
-            question=f"Question: {data_i['question']}\nAnswer: "
-            label=("|").join(data_i["answer"]).lower()
-            raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(nodes)).to("cpu")
-            psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5, cost_e=0.5)
+            question = f"Question: {data_i['question']}\nAnswer: "
+            label = ("|").join(data_i["answer"]).lower()
+            raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                             num_nodes=len(nodes)).to("cpu")
+            psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index],
+                                                     nodes, edges, topk=3,
+                                                     topk_e=5, cost_e=0.5)
             psct_subgraph["question"] = question
             psct_subgraph["label"] = label
             psct_subgraph["desc"] = desc
