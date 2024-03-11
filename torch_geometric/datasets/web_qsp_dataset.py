@@ -8,7 +8,7 @@ import torch.nn.functional as F
 try:
     from pcst_fast import pcst_fast
     WITH_PCST = True
-except ImportError as e: # noqa
+except ImportError as e:  # noqa
     WITH_PCST = False
 from torch.utils.data import DataLoader
 from tqdm import tqdm
