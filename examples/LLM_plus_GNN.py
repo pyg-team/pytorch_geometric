@@ -134,10 +134,9 @@ class GAT_LLAMA(nn.Module):
         self.tokenizer.pad_token_id = 0
         self.tokenizer.padding_side = 'left'
 
-        model = AutoModelForCausalLM.from_pretrained(llm_model_path,
-                                                     torch_dtype=torch.bfloat16,
-                                                     low_cpu_mem_usage=True,
-                                                     **kwargs)
+        model = AutoModelForCausalLM.from_pretrained(
+            llm_model_path, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True,
+            **kwargs)
 
         print("Training LLAMA with LORA!")
         self.model = prepare_model_for_int8_training(model)
@@ -404,7 +403,7 @@ def main(since: float):
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]["lr"]
         train_loss = epoch_loss / len(train_loader)
-        print(epoch_str +  f",Train Loss (Epoch Mean): {train_loss}")
+        print(epoch_str + f",Train Loss (Epoch Mean): {train_loss}")
 
         val_loss = 0.
         eval_output = []
