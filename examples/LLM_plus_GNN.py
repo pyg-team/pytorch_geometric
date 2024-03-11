@@ -1,8 +1,11 @@
-# This example implements G-retriever using PyG
-# https://github.com/XiaoxinHe/G-Retriever
-# “G-Retriever significantly reduces hallucinations
-# by 54% compared to the [LLM] baseline“.
+'''This example implements G-retriever using PyG.
+Original Paper: https://arxiv.org/abs/2402.07630
+“G-Retriever significantly reduces hallucinations
+by 54% compared to the [LLM] baseline“.
 
+requirements on top of basic PyG:
+pip install peft datasets transformers pcst_fast sentencepiece
+'''
 import contextlib
 import gc
 import math
@@ -95,16 +98,22 @@ class GAT_LLAMA(nn.Module):
         self.max_new_tokens = 32
 
         print('Loading LLAMA')
-        kwargs = {
-            "max_memory": {
-                0: '100GiB',
-                # 1: '20GiB',
-                # 2: '20GiB',
-                # 3: '20GiB'
-            },
-            # "device_map": "auto",
-            "revision": "main",
-        }
+        avail_gpus = torch.cuda.is_available()
+        gpus_2_use_4_llm = min(avail_gpus, 4)
+        kwargs = {"revision": "main",}
+        max_mem_dict = {}
+        mem_total = 0
+        for i in range(gpus_2_use_4_llm):
+            available_mem = torch.cuda.mem_get_info(0)[0] // 1024 ** 3
+            mem_total += avilable_mem
+            max_mem_dict[i] = available_mem
+        assert mem_total >= 80, \
+            "Need ~80GB of GPU RAM across all GPUs on device, only " \
+            + str(mem_total) + "GB available across " + str(avail_gpus) \
+            + " GPUs" 
+        kwargs["max_memory"] = max_mem_dict
+        if gpus_2_use_4_llm == 4:
+            kwargs["device_map"] = "auto"
         llm_model_path = path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
                                                        use_fast=False)
