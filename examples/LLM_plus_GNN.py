@@ -377,6 +377,7 @@ def main(since):
         for step, batch in enumerate(train_loader):
             if epoch == 0 and step == 0:
                 print("Training beginning...")
+                prep_time = round(time.time() - since, 2)
                 print("Total Prep Time (prep_time) =", prep_time)
             optimizer.zero_grad()
             loss = model(batch)
