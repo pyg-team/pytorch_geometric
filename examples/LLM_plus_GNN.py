@@ -113,8 +113,8 @@ class GAT_LLAMA(nn.Module):
             + str(mem_total) + "GB available across " + str(avail_gpus) \
             + " GPUs" 
         kwargs["max_memory"] = max_mem_dict
-        if gpus_2_use_4_llm == 4:
-            kwargs["device_map"] = "auto"
+        #if gpus_2_use_4_llm == 4:
+        kwargs["device_map"] = "auto"
         print("Setting up LLAMA w/ kwargs =", kwargs)
         llm_model_path = path
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model_path,
