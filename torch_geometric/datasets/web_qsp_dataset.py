@@ -127,7 +127,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class Sentence_Transformer(torch.nn.Module):
-    def __init__(self, pretrained_repo):
+    def __init__(self, pretrained_repo: str) -> None:
         super(Sentence_Transformer, self).__init__()
         print(f"inherit model weights from {pretrained_repo}")
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
@@ -142,6 +142,7 @@ class Sentence_Transformer(torch.nn.Module):
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     def forward(self, input_ids, att_mask):
+
         bert_out = self.bert_model(input_ids=input_ids,
                                    attention_mask=att_mask)
         sentence_embeddings = self.mean_pooling(bert_out, att_mask)
@@ -150,10 +151,10 @@ class Sentence_Transformer(torch.nn.Module):
 
 
 def sbert_text2embedding(model, tokenizer, device, text):
-    # print("type(model)=", type(model))
-    # print("type(tokenizer)=", type(tokenizer))
-    # print("type(device)=", type(device))
-    # print("type(text)=", type(text))
+    print("type(model)=", type(model))
+    print("type(tokenizer)=", type(tokenizer))
+    print("type(device)=", type(device))
+    print("type(text)=", type(text))
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
                              return_tensors="pt")
