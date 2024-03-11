@@ -372,7 +372,7 @@ class BaseStorage(MutableMapping):
         end_time: Union[float, int],
     ) -> Self:
         if 'time' in self:
-            mask = (self.time >= start_time) & (self.time <= end_time)
+            mask = (self.time >= start_time) & (self.time < end_time)
 
             if self.is_node_attr('time'):
                 keys = self.node_attrs()

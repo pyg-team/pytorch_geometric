@@ -11,6 +11,7 @@ from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .node_property_split import NodePropertySplit
+from .chronological_split import ChronologicalSplit
 from .mask import IndexToMask, MaskToIndex
 from .pad import Pad
 
@@ -75,6 +76,7 @@ general_transforms = [
     'RandomNodeSplit',
     'RandomLinkSplit',
     'NodePropertySplit',
+    'ChronologicalSplit',
     'IndexToMask',
     'MaskToIndex',
     'Pad',
