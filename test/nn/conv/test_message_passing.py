@@ -68,7 +68,7 @@ class MyConvWithSelfLoops(MessagePassing):
     def __init__(self, aggr: str = 'add'):
         super().__init__(aggr=aggr)
 
-    def forward(self, x: Tensor, edge_index: torch.Tensor) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         edge_index, _ = add_self_loops(edge_index)
 
         # propagate_type: (x: Tensor)
@@ -142,6 +142,25 @@ def test_my_conv_out_of_bounds():
     with pytest.raises(IndexError, match="valid indices"):
         edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
         conv(x, edge_index, value)
+
+
+class MyCommentedConv(MessagePassing):
+    r"""This layer calls `self.propagate()` internally."""
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        # `self.propagate()` is used here to propagate messages.
+        return self.propagate(edge_index, x=x)
+
+
+def test_my_commented_conv():
+    # Check that `self.propagate` occurences in comments are correctly ignored.
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = MyCommentedConv()
+    conv(x, edge_index)
+
+    jit = torch.jit.script(conv)
+    jit(x, edge_index)
 
 
 def test_my_conv_jit():

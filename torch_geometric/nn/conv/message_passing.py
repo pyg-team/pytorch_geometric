@@ -166,13 +166,13 @@ class MessagePassing(torch.nn.Module):
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
         if not self.propagate.__module__.startswith(jinja_prefix):
-            if self.inspector.can_read_source:
+            try:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
                     template_path=osp.join(root_dir, 'propagate.jinja'),
                     tmp_dirname='message_passing',
                     # Keyword arguments:
-                    module=self.__module__,
+                    module=self.inspector._modules,
                     collect_name='collect',
                     signature=self._get_propagate_signature(),
                     collect_param_dict=self.inspector.get_flat_param_dict(
@@ -185,34 +185,40 @@ class MessagePassing(torch.nn.Module):
                     fuse=self.fuse,
                 )
 
-                # Cache to potentially disable later on:
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = module.propagate
 
                 self.__class__.propagate = module.propagate
                 self.__class__.collect = module.collect
-            else:
+            except Exception:  # pragma: no cover
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
         if (self.inspector.implements('edge_update')
-                and not self.edge_updater.__module__.startswith(jinja_prefix)
-                and self.inspector.can_read_source):
-            module = module_from_template(
-                module_name=f'{jinja_prefix}_edge_updater',
-                template_path=osp.join(root_dir, 'edge_updater.jinja'),
-                tmp_dirname='message_passing',
-                # Keyword arguments:
-                module=self.__module__,
-                collect_name='edge_collect',
-                signature=self._get_edge_updater_signature(),
-                collect_param_dict=self.inspector.get_param_dict(
-                    'edge_update'),
-            )
+                and not self.edge_updater.__module__.startswith(jinja_prefix)):
+            try:
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_edge_updater',
+                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='edge_collect',
+                    signature=self._get_edge_updater_signature(),
+                    collect_param_dict=self.inspector.get_param_dict(
+                        'edge_update'),
+                )
 
-            self.__class__.edge_updater = module.edge_updater
-            self.__class__.edge_collect = module.edge_collect
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = module.edge_updater
+
+                self.__class__.edge_updater = module.edge_updater
+                self.__class__.edge_collect = module.edge_collect
+            except Exception:  # pragma: no cover
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = (
+                    self.__class__.edge_updater)
 
         # Explainability:
         self._explain: Optional[bool] = None
