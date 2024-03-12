@@ -31,7 +31,6 @@ from .data import (
     get_random_tensor_frame,
     FakeHeteroDataset,
 )
-from .dist_utils import assert_run_mproc, ProcArgs
 
 __all__ = [
     'is_full_test',
@@ -58,6 +57,4 @@ __all__ = [
     'get_random_edge_index',
     'get_random_tensor_frame',
     'FakeHeteroDataset',
-    'assert_run_mproc',
-    'ProcArgs',
 ]
