@@ -14,7 +14,7 @@ class GRUAggregation(Aggregation):
 
     .. note::
 
-        :class:`MLPAggregation` requires sorted indices :obj:`index` as input.
+        :class:`GRUAggregation` requires sorted indices :obj:`index` as input.
         Specifically, if you use this aggregation as part of
         :class:`~torch_geometric.nn.conv.MessagePassing`, ensure that
         :obj:`edge_index` is sorted by destination nodes, either by manually
