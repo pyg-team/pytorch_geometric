@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import numpy as np
 
@@ -33,8 +33,8 @@ from torch_geometric.data import Data, InMemoryDataset
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids: torch.Tensor = None,
-                 attention_mask: torch.Tensor = None):
+    def __init__(self, input_ids: Optional[torch.Tensor] = None,
+                 attention_mask: Optional[torch.Tensor] = None) -> None:
         super().__init__()
         self.data = {
             "input_ids": input_ids,
@@ -81,7 +81,7 @@ class Sentence_Transformer(torch.nn.Module):
 
 def sbert_text2embedding(model: Sentence_Transformer,
                          tokenizer: torch.nn.Module, device: torch.device,
-                         text: List[str]) -> List[torch.Tensor]:
+                         text: List[str]) -> torch.Tensor:
     try:
         encoding = tokenizer(text, padding=True, truncation=True,
                              return_tensors="pt")
@@ -92,7 +92,7 @@ def sbert_text2embedding(model: Sentence_Transformer,
         dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
 
         # Placeholder for storing the embeddings
-        all_embeddings = []
+        all_embeddings_list = []
 
         # Iterate through batches
         with torch.no_grad():
@@ -106,10 +106,10 @@ def sbert_text2embedding(model: Sentence_Transformer,
                                    att_mask=batch["att_mask"])
 
                 # Append the embeddings to the list
-                all_embeddings.append(embeddings)
+                all_embeddings_list.append(embeddings)
 
         # Concatenate the embeddings from all batches
-        all_embeddings = torch.cat(all_embeddings, dim=0).cpu()
+        all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
         print(
             "SBERT text embedding failed, returning torch.zeros((0, 1024))...")
@@ -166,10 +166,11 @@ class WebQSPDataset(InMemoryDataset):
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
-    def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes,
-                           textual_edges, topk: int = 3, topk_e: int = 3,
+    def retrieval_via_pcst(self, graph: Data, q_emb: torch.Tensor, textual_nodes: pd.DataFrame,
+                           textual_edges: pd.DataFrame, topk: int = 3, topk_e: int = 3,
                            cost_e: float = 0.5) -> Tuple[Data, str]:
         # from original G-Retriever work
+        # https://arxiv.org/abs/2402.07630
         c = 0.01
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
@@ -348,7 +349,7 @@ class WebQSPDataset(InMemoryDataset):
             label = ("|").join(data_i["answer"]).lower()
             raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                              num_nodes=len(nodes)).to("cpu")
-            psct_subgraph, desc = WebQSPDataset.retrieval_via_pcst(
+            psct_subgraph, desc = self.retrieval_via_pcst(
                 raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5,
                 cost_e=0.5)
             psct_subgraph["question"] = question
