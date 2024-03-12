@@ -1,5 +1,4 @@
 import warnings
-from typing import Union
 
 import torch
 from torch import Tensor
@@ -11,7 +10,7 @@ from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
 
 def spmm(
-    src: Union[Adj, EdgeIndex],
+    src: Adj,
     other: Tensor,
     reduce: str = 'sum',
 ) -> Tensor:
