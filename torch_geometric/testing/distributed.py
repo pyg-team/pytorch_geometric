@@ -1,16 +1,18 @@
 import sys
 import traceback
+from dataclasses import dataclass
 from io import StringIO
-from typing import Any, Callable, Collection, TypedDict
+from typing import Any, Callable, List, Tuple
 
 import pytest
 from torch.multiprocessing import Manager, Queue
 from typing_extensions import Self
 
 
-class ProcArgs(TypedDict):
+@dataclass
+class ProcArgs:
     target: Callable
-    args: Collection[Any]
+    args: Tuple[Any, ...]
 
 
 class MPCaptOutput:
@@ -38,8 +40,12 @@ class MPCaptOutput:
         return self.stderr.getvalue()
 
 
-def ps_std_capture(func: Callable, queue: Queue, *args: Any,
-                   **kwargs: Any) -> None:
+def ps_std_capture(
+    func: Callable,
+    queue: Queue,
+    *args: Any,
+    **kwargs: Any,
+) -> None:
     with MPCaptOutput() as capt:
         try:
             func(*args, **kwargs)
@@ -52,7 +58,7 @@ def ps_std_capture(func: Callable, queue: Queue, *args: Any,
 
 def assert_run_mproc(
     mp_context: Any,
-    pargs: Collection[ProcArgs],
+    pargs: List[ProcArgs],
     full_trace: bool = False,
     timeout: int = 5,
 ) -> None:
@@ -60,9 +66,10 @@ def assert_run_mproc(
     world_size = len(pargs)
     queues = [manager.Queue() for _ in pargs]
     procs = [
-        mp_context.Process(target=ps_std_capture,
-                           args=[p['target'], q, world_size] + list(p['args']))
-        for p, q in zip(pargs, queues)
+        mp_context.Process(
+            target=ps_std_capture,
+            args=[p.target, q, world_size] + list(p.args),
+        ) for p, q in zip(pargs, queues)
     ]
     results = []
 
