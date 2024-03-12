@@ -23,7 +23,7 @@ from torch_geometric.testing import onlyDistributedTest, withMETIS
 from torch_geometric.typing import EdgeType
 
 
-def create_data(rank, world_size, time_attr: Optional[str] = None):
+def create_data(rank, world_size, attr_name: Optional[str] = None):
     if rank == 0:  # Partition 0:
         node_id = torch.tensor([0, 1, 2, 3, 4, 5, 9])
         edge_index = torch.tensor([  # Sorted by destination.
@@ -56,11 +56,12 @@ def create_data(rank, world_size, time_attr: Optional[str] = None):
     ])
     data = Data(x=None, y=None, edge_index=edge_index, num_nodes=10)
 
-    if time_attr == 'time':  # Create node-level time data:
+    if attr_name == 'time':  # Create node-level time data:
         data.time = torch.tensor([5, 0, 1, 3, 3, 4, 4, 4, 4, 4])
-        feature_store.put_tensor(data.time, group_name=None, attr_name='time')
+        feature_store.put_tensor(data.time, group_name=None,
+                                 attr_name=attr_name)
 
-    elif time_attr == 'edge_time':  # Create edge-level time data:
+    elif attr_name == 'edge_time':  # Create edge-level time data:
         data.edge_time = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
 
         if rank == 0:
@@ -69,7 +70,17 @@ def create_data(rank, world_size, time_attr: Optional[str] = None):
             edge_time = torch.tensor([4, 7, 7, 7, 7, 7, 11])
 
         feature_store.put_tensor(edge_time, group_name=None,
-                                 attr_name=time_attr)
+                                 attr_name=attr_name)
+    elif attr_name == 'edge_weight':  # Create edge-level weight data:
+        data.edge_weight = torch.tensor([0, 1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 11])
+
+        if rank == 0:
+            edge_weight = torch.tensor([0, 1, 2, 3, 4, 5, 11])
+        if rank == 1:
+            edge_weight = torch.tensor([4, 7, 7, 7, 7, 7, 11])
+
+        feature_store.put_tensor(edge_weight, group_name=None,
+                                 attr_name=attr_name)
 
     return (feature_store, graph_store), data
 
@@ -87,8 +98,9 @@ def dist_link_neighbor_sampler(
     rank: int,
     master_port: int,
     disjoint: bool = False,
+    weight_attr: str = None,
 ):
-    dist_data, data = create_data(rank, world_size)
+    dist_data, data = create_data(rank, world_size, weight_attr)
 
     current_ctx = DistContext(
         rank=rank,
@@ -104,6 +116,7 @@ def dist_link_neighbor_sampler(
         num_neighbors=[-1, -1],
         shuffle=False,
         disjoint=disjoint,
+        weight_attr=weight_attr,
     )
 
     # Close RPC & worker group at exit:
@@ -135,7 +148,7 @@ def dist_link_neighbor_sampler(
 
     # evaluate distributed edge sample function
     out_dist = dist_sampler.event_loop.run_task(coro=dist_sampler.edge_sample(
-        inputs, dist_sampler.node_sample, data.num_nodes, disjoint))
+        inputs, dist_sampler.node_sample, data.num_nodes, disjoint=disjoint))
 
     sampler = NeighborSampler(data=data, num_neighbors=[-1, -1],
                               disjoint=disjoint)
@@ -256,6 +269,7 @@ def dist_link_neighbor_sampler_hetero(
     master_port: int,
     input_type: EdgeType,
     disjoint: bool = False,
+    weight_attr: str = None,
 ):
     dist_data, other_graph_store = create_hetero_data(tmp_path, rank)
 
@@ -267,14 +281,10 @@ def dist_link_neighbor_sampler_hetero(
         group_name='dist-sampler-test',
     )
 
-    dist_sampler = DistNeighborSampler(
-        data=dist_data,
-        current_ctx=current_ctx,
-        rpc_worker_names={},
-        num_neighbors=[-1],
-        shuffle=False,
-        disjoint=disjoint,
-    )
+    dist_sampler = DistNeighborSampler(data=dist_data, current_ctx=current_ctx,
+                                       rpc_worker_names={}, num_neighbors=[-1],
+                                       shuffle=False, disjoint=disjoint,
+                                       weight_attr=weight_attr)
 
     # close RPC & worker group at exit:
     atexit.register(shutdown_rpc)
@@ -300,8 +310,8 @@ def dist_link_neighbor_sampler_hetero(
     col_1 = edge_label_index2[1][0]
 
     # Seed edges:
-    input_row = torch.tensor([row_0, row_1])
-    input_col = torch.tensor([col_0, col_1])
+    input_row = torch.tensor([row_0, row_1], dtype=torch.int64)
+    input_col = torch.tensor([col_0, col_1], dtype=torch.int64)
 
     inputs = EdgeSamplerInput(
         input_id=None,
@@ -312,20 +322,17 @@ def dist_link_neighbor_sampler_hetero(
 
     # Evaluate distributed `node_sample` function:
     out_dist = dist_sampler.event_loop.run_task(coro=dist_sampler.edge_sample(
-        inputs, dist_sampler.node_sample, data.num_nodes, disjoint))
+        inputs, dist_sampler.node_sample, data.num_nodes, disjoint=disjoint))
 
-    sampler = NeighborSampler(
-        data=data,
-        num_neighbors=[-1],
-        disjoint=disjoint,
-    )
+    sampler = NeighborSampler(data=data, num_neighbors=[-1], disjoint=disjoint,
+                              weight_attr=weight_attr)
 
     # Evaluate edge sample function:
     out = edge_sample(
         inputs,
         sampler._sample,
         data.num_nodes,
-        disjoint,
+        disjoint=disjoint,
     )
 
     # Compare distributed output with single machine output:
@@ -525,6 +532,30 @@ def test_dist_link_neighbor_sampler_edge_level_temporal(
 
 @withMETIS
 @onlyDistributedTest
+def test_dist_link_neighbor_sampler_biased():
+    mp_context = torch.multiprocessing.get_context('spawn')
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
+
+    world_size = 2
+    w0 = mp_context.Process(
+        target=dist_link_neighbor_sampler,
+        args=(world_size, 0, port, False, 'edge_weight'),
+    )
+
+    w1 = mp_context.Process(
+        target=dist_link_neighbor_sampler,
+        args=(world_size, 1, port, False, 'edge_weight'),
+    )
+
+    w0.start()
+    w1.start()
+    w0.join()
+    w1.join()
+
+
+@onlyDistributedTest
 @pytest.mark.parametrize('disjoint', [False, True])
 def test_dist_link_neighbor_sampler_hetero(tmp_path, disjoint):
     mp_context = torch.multiprocessing.get_context('spawn')
@@ -668,6 +699,51 @@ def test_dist_link_neighbor_sampler_edge_level_temporal_hetero(
         target=dist_link_neighbor_sampler_temporal_hetero,
         args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'),
               seed_time, temporal_strategy, 'edge_time'),
+    )
+
+    w0.start()
+    w1.start()
+    w0.join()
+    w1.join()
+
+
+@onlyDistributedTest
+def test_dist_link_neighbor_sampler_biased_hetero(tmp_path):
+    mp_context = torch.multiprocessing.get_context('spawn')
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.settimeout(1)
+        s.bind(('127.0.0.1', 0))
+        port = s.getsockname()[1]
+
+    world_size = 2
+    data = FakeHeteroDataset(
+        num_graphs=1,
+        avg_num_nodes=100,
+        avg_degree=3,
+        num_node_types=2,
+        num_edge_types=4,
+        edge_dim=2,
+    )[0]
+    data = T.ToUndirected()(data)
+
+    # Add weight information to the data:
+    for i, edge_type in enumerate(data.edge_types):
+        data[edge_type].edge_weight = torch.full(  #
+            (data[edge_type].num_edges, ), i, dtype=torch.int64)
+
+    partitioner = Partitioner(data, world_size, tmp_path)
+    partitioner.generate_partition()
+
+    w0 = mp_context.Process(
+        target=dist_link_neighbor_sampler_hetero,
+        args=(data, tmp_path, world_size, 0, port, ('v0', 'e0', 'v0'), False,
+              'edge_weight'),
+    )
+
+    w1 = mp_context.Process(
+        target=dist_link_neighbor_sampler_hetero,
+        args=(data, tmp_path, world_size, 1, port, ('v0', 'e0', 'v1'), False,
+              'edge_weight'),
     )
 
     w0.start()

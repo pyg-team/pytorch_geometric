@@ -170,12 +170,6 @@ class NeighborSampler(BaseSampler):
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
 
-            if weight_attr is not None:
-                raise NotImplementedError(
-                    f"'weight_attr' argument not yet supported within "
-                    f"'{self.__class__.__name__}' for "
-                    f"'(FeatureStore, GraphStore)' inputs")
-
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -196,6 +190,12 @@ class NeighborSampler(BaseSampler):
                 time_attrs = [
                     copy.copy(attr) for attr in attrs
                     if attr.attr_name == time_attr
+                ]
+
+            if weight_attr is not None:
+                weight_attrs = [
+                    copy.copy(attr) for attr in attrs
+                    if attr.attr_name == weight_attr
                 ]
 
             if not self.is_hetero:
@@ -219,6 +219,12 @@ class NeighborSampler(BaseSampler):
                     else:
                         self.edge_time = time_tensor
 
+                if weight_attr is not None:
+                    if len(weight_attrs) != 1:
+                        raise ValueError("Biased sampling specified but did "
+                                         "not find any weight data")
+                    weight_tensor = feature_store.get_tensor(weight_attrs[0])
+                    self.edge_weight = weight_tensor
                 self.row, self.colptr, self.perm = graph_store.csc()
 
             else:

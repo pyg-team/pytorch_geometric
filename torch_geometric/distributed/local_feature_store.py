@@ -441,6 +441,10 @@ class LocalFeatureStore(FeatureStore):
                 feat_store.put_tensor(edge_feats['edge_time'],
                                       group_name=(None, None),
                                       attr_name='edge_time')
+            if 'edge_weight' in edge_feats:
+                feat_store.put_tensor(edge_feats['edge_weight'],
+                                      group_name=(None, None),
+                                      attr_name='edge_weight')
 
         if meta['is_hetero'] and node_feats is not None:
             for node_type, node_feat in node_feats.items():
@@ -467,5 +471,9 @@ class LocalFeatureStore(FeatureStore):
                     feat_store.put_tensor(edge_feat['edge_time'],
                                           group_name=edge_type,
                                           attr_name='edge_time')
+                if 'edge_weight' in edge_feat:
+                    feat_store.put_tensor(edge_feat['edge_weight'],
+                                          group_name=edge_type,
+                                          attr_name='edge_weight')
 
         return feat_store
