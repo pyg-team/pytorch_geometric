@@ -114,7 +114,7 @@ class GAT_LLAMA(nn.Module):
             gpus_2_use_4_llm += 1
             # We want to use the minimum number of GPUs that LLM can fit on
             # this is to minimize the need for interGPU communications
-            # 75 GB VRAM in total is recommended
+            # >= 75 GB VRAM in total is recommended
             if mem_total >= 75:
                 break
 
