@@ -119,9 +119,8 @@ class GAT_LLAMA(nn.Module):
 
         if mem_total < 75:
             print("~75GB of GPU RAM recommended across all GPUs on device, \
-            only " + str(mem_total) + "GB available across " + str(avail_gpus) \
+            only "                   + str(mem_total) + "GB available across " + str(avail_gpus) \
             + " GPUs")
-            
 
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
