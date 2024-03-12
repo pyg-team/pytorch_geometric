@@ -114,10 +114,10 @@ class GAT_LLAMA(nn.Module):
             gpus_2_use_4_llm += 1
             # We want to use the minimum number of GPUs that LLM can fit on
             # this is to minimize the need for interGPU communications
-            if mem_total >= 80:
+            if mem_total >= 75:
                 break
 
-        assert mem_total >= 80, \
+        assert mem_total >= 75, \
             "Need ~80GB of GPU RAM across all GPUs on device, only " \
             + str(mem_total) + "GB available across " + str(avail_gpus) \
             + " GPUs"
