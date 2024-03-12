@@ -108,6 +108,7 @@ def test_spmm_jit(reduce):
 
 
 @withCUDA
+@withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_spmm_edge_index(device, reduce):
     src = EdgeIndex(
