@@ -6,7 +6,7 @@ import torch
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
-from torch_geometric.utils import group_argsort, scatter
+from torch_geometric.utils import group_argsort, group_cat, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
 
@@ -109,6 +109,25 @@ def test_scatter_argmax(device):
     argmax = scatter_argmax(src, index, dim_size=6)
     torch_geometric.typing.WITH_TORCH_SCATTER = old_state
     assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
+
+
+@withCUDA
+def test_group_cat(device):
+    x1 = torch.randn(4, 4, device=device)
+    x2 = torch.randn(2, 4, device=device)
+    index1 = torch.tensor([0, 0, 1, 2], device=device)
+    index2 = torch.tensor([0, 2], device=device)
+
+    expected = torch.cat([x1[:2], x2[:1], x1[2:4], x2[1:]], dim=0)
+
+    out, index = group_cat(
+        [x1, x2],
+        [index1, index2],
+        dim=0,
+        return_index=True,
+    )
+    assert torch.equal(out, expected)
+    assert index.tolist() == [0, 0, 0, 1, 2, 2]
 
 
 if __name__ == '__main__':
