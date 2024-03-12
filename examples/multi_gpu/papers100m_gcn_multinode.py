@@ -18,7 +18,7 @@ from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GCN
+from torch_geometric.nn import GCN
 
 
 def get_num_workers() -> int:
@@ -104,6 +104,7 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
 
+        @torch.no_grad()
         def eval(loader: NeighborLoader, val_steps: Optional[int] = None):
             model.eval()
             for j, batch in enumerate(loader):
@@ -111,22 +112,21 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                     break
                 batch = batch.to(device)
                 batch_size = batch.batch_size
-                with torch.no_grad():
-                    out = model(batch.x, batch.edge_index)[:batch_size]
-                acc_i = acc(  # noqa
-                    out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
+                out = model(batch.x, batch.edge_index)
+                acc(out[:batch_size], batch.y[:batch_size])
             acc_sum = acc.compute()
             return acc_sum
 
         eval_acc = eval(val_loader, val_steps)
         if rank == 0:
-            print(f"Validation Accuracy: {eval_acc * 100.0:.4f}%", )
-    acc.reset()
-    dist.barrier()
+            print(f"Val Accuracy: {eval_acc:.4f}%", )
+
+        acc.reset()
+        dist.barrier()
 
     test_acc = eval(test_loader)
     if rank == 0:
-        print(f"Test Accuracy: {test_acc * 100.0:.4f}%", )
+        print(f"Test Accuracy: {test_acc:.4f}%", )
     dist.barrier()
     acc.reset()
     torch.cuda.synchronize()
