@@ -211,7 +211,6 @@ class WebQSPDataset(InMemoryDataset):
                 value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
                 e_prizes[indices] = value
                 last_topk_e_value = value
-            # cost_e = max(min(cost_e, e_prizes.max().item()-c), 0)
         else:
             e_prizes = torch.zeros(graph.num_edges)
 
