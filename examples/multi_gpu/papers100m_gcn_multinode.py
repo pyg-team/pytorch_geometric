@@ -103,10 +103,10 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
 
         @torch.no_grad()
-        def eval(loader: NeighborLoader, val_steps: Optional[int] = None):
+        def test(loader: NeighborLoader, num_steps: Optional[int] = None):
             model.eval()
             for j, batch in enumerate(loader):
-                if val_steps is not None and j >= val_steps:
+                if num_steps is not None and j >= num_steps:
                     break
                 batch = batch.to(device)
                 out = model(batch.x, batch.edge_index)[:batch.batch_size]
@@ -115,14 +115,14 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
             acc_sum = acc.compute()
             return acc_sum
 
-        eval_acc = eval(val_loader, val_steps)
+        eval_acc = test(val_loader, num_steps=val_steps)
         if rank == 0:
             print(f"Val Accuracy: {eval_acc:.4f}%", )
 
         acc.reset()
         dist.barrier()
 
-    test_acc = eval(test_loader)
+    test_acc = test(test_loader)
     if rank == 0:
         print(f"Test Accuracy: {test_acc:.4f}%", )
 
