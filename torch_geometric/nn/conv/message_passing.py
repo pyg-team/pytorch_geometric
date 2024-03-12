@@ -172,7 +172,7 @@ class MessagePassing(torch.nn.Module):
                     template_path=osp.join(root_dir, 'propagate.jinja'),
                     tmp_dirname='message_passing',
                     # Keyword arguments:
-                    module=self.inspector._modules,
+                    modules=self.inspector._modules,
                     collect_name='collect',
                     signature=self._get_propagate_signature(),
                     collect_param_dict=self.inspector.get_flat_param_dict(
