@@ -86,10 +86,9 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                 torch.cuda.synchronize()
                 start = time.time()
             batch = batch.to(device)
-            batch_size = batch.batch_size
             optimizer.zero_grad()
-            y = batch.y[:batch_size].view(-1).to(torch.long)
-            out = model(batch.x, batch.edge_index)[:batch_size]
+            y = batch.y[:batch.batch_size].view(-1).to(torch.long)
+            out = model(batch.x, batch.edge_index)[:batch.batch_size]
             loss = F.cross_entropy(out, y)
             loss.backward()
             optimizer.step()
@@ -99,9 +98,8 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
 
         dist.barrier()
         torch.cuda.synchronize()
-        num_batches = i + 1.0
         if rank == 0:
-            sec_per_iter = (time.time() - start) / (num_batches - warmup_steps)
+            sec_per_iter = (time.time() - start) / (i + 1 - warmup_steps)
             print(f"Avg Training Iteration Time: {sec_per_iter:.6f} s/iter")
 
         @torch.no_grad()
@@ -111,9 +109,9 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
                 if val_steps is not None and j >= val_steps:
                     break
                 batch = batch.to(device)
-                batch_size = batch.batch_size
-                out = model(batch.x, batch.edge_index)
-                acc(out[:batch_size], batch.y[:batch_size])
+                out = model(batch.x, batch.edge_index)[:batch.batch_size]
+                y = batch.y[:batch.batch_size].view(-1).to(torch.long)
+                acc(out, y)
             acc_sum = acc.compute()
             return acc_sum
 
@@ -127,9 +125,11 @@ def run(world_size, data, split_idx, model, acc, wall_clock_start):
     test_acc = eval(test_loader)
     if rank == 0:
         print(f"Test Accuracy: {test_acc:.4f}%", )
+
     dist.barrier()
     acc.reset()
     torch.cuda.synchronize()
+
     if rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)
         print("Total Program Runtime (total_time) =", total_time, "seconds")
@@ -142,8 +142,7 @@ if __name__ == '__main__':
     torch.distributed.init_process_group("nccl")
     nprocs = dist.get_world_size()
     assert dist.is_initialized(), "Distributed cluster not initialized"
-    dataset = PygNodePropPredDataset(name='ogbn-papers100M',
-                                     root='/datasets/ogb_datasets')
+    dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
     model = GCN(dataset.num_features, 256, 2, dataset.num_classes)
     acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
