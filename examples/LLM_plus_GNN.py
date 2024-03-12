@@ -117,7 +117,6 @@ class GAT_LLAMA(nn.Module):
             # 75 GB VRAM in total is recommended
             if mem_total >= 75:
                 break
-            
 
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
