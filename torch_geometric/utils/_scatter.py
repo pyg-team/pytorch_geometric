@@ -1,7 +1,7 @@
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union
 
 import torch
-from torch import LongTensor, Tensor
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling, warnings
@@ -287,7 +287,7 @@ def group_argsort(
 
 def group_cat(
     tensors: Sequence[Tensor],
-    index: Sequence[LongTensor],
+    index: Sequence[Tensor],
     dim: int = 0,
     return_index: bool = False,
 ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
