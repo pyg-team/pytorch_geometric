@@ -114,13 +114,9 @@ class GAT_LLAMA(nn.Module):
             gpus_2_use_4_llm += 1
             # We want to use the minimum number of GPUs that LLM can fit on
             # this is to minimize the need for interGPU communications
+            # 75 GB VRAM in total is recommended
             if mem_total >= 75:
                 break
-
-        if mem_total < 75:
-            print("~75GB of GPU RAM recommended across all GPUs on device, \
-            only " + str(mem_total) + "GB available across " + str(avail_gpus) \
-            + " GPUs")
             
 
         for i in range(gpus_2_use_4_llm):
