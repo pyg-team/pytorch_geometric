@@ -33,22 +33,32 @@ class KNNIndex:
             The-index-factory>`_ for more information.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
+        reserve (int, optional): The number of elements to reserve memory for
+            before re-allocating (GPU-only). (default: :obj:`None`)
     """
     def __init__(
         self,
         index_factory: Optional[str] = None,
         emb: Optional[Tensor] = None,
+        reserve: Optional[int] = None,
     ):
         warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
         import faiss
 
-        self.numel = 0
         self.index_factory = index_factory
         self.index: Optional[faiss.Index] = None
+        self.reserve = reserve
 
         if emb is not None:
             self.add(emb)
+
+    @property
+    def numel(self) -> int:
+        r"""The number of data points to search in."""
+        if self.index is None:
+            return 0
+        return self.index.ntotal
 
     def _create_index(self, channels: int):
         import faiss
@@ -77,9 +87,16 @@ class KNNIndex:
                     self.index,
                 )
 
+                if self.reserve is not None:
+                    if hasattr(self.index, 'reserveMemory'):
+                        self.index.reserveMemory(self.reserve)
+                    else:
+                        warnings.warn(f"'{self.index.__class__.__name__}' "
+                                      f"does not support pre-allocation of "
+                                      f"memory")
+
             self.index.train(emb)
 
-        self.numel += emb.size(0)
         self.index.add(emb.detach())
 
     def search(
@@ -237,6 +254,8 @@ class ApproxL2KNNIndex(KNNIndex):
         bits_per_vector (int): The number of bits per sub-vector.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
+        reserve (int, optional): The number of elements to reserve memory for
+            before re-allocating (GPU only). (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -244,11 +263,12 @@ class ApproxL2KNNIndex(KNNIndex):
         num_cells_to_visit: int,
         bits_per_vector: int,
         emb: Optional[Tensor] = None,
+        reserve: Optional[int] = None,
     ):
         self.num_cells = num_cells
         self.num_cells_to_visit = num_cells_to_visit
         self.bits_per_vector = bits_per_vector
-        super().__init__(index_factory=None, emb=emb)
+        super().__init__(index_factory=None, emb=emb, reserve=reserve)
 
     def _create_index(self, channels: int):
         import faiss
@@ -277,6 +297,8 @@ class ApproxMIPSKNNIndex(KNNIndex):
         bits_per_vector (int): The number of bits per sub-vector.
         emb (torch.Tensor, optional): The data points to add.
             (default: :obj:`None`)
+        reserve (int, optional): The number of elements to reserve memory for
+            before re-allocating (GPU only). (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -284,11 +306,12 @@ class ApproxMIPSKNNIndex(KNNIndex):
         num_cells_to_visit: int,
         bits_per_vector: int,
         emb: Optional[Tensor] = None,
+        reserve: Optional[int] = None,
     ):
         self.num_cells = num_cells
         self.num_cells_to_visit = num_cells_to_visit
         self.bits_per_vector = bits_per_vector
-        super().__init__(index_factory=None, emb=emb)
+        super().__init__(index_factory=None, emb=emb, reserve=reserve)
 
     def _create_index(self, channels: int):
         import faiss
