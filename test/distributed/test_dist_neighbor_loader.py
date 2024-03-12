@@ -14,12 +14,8 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import (
-    ProcArgs,
-    assert_run_mproc,
-    onlyDistributedTest,
-    withMETIS,
-)
+from torch_geometric.testing import onlyDistributedTest, withMETIS
+from torch_geometric.testing.distributed import ProcArgs, assert_run_mproc
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -172,18 +168,15 @@ def test_dist_neighbor_loader_homo(
         avg_degree=3,
         edge_dim=2,
     )[0]
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
 
     procs = [
         ProcArgs(
             target=dist_neighbor_loader_homo,
-            args=(tmp_path, part, addr, port, num_workers, async_sampling))
-        for part in range(num_parts)
+            args=(tmp_path, part, addr, port, num_workers, async_sampling),
+        ) for part in range(num_parts)
     ]
-
-    world_size = len(procs)
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
-
     assert_run_mproc(mp_context, procs)
 
 
@@ -214,16 +207,13 @@ def test_dist_neighbor_loader_hetero(
         num_edge_types=4,
         edge_dim=2,
     )[0]
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
 
     procs = [
         ProcArgs(
             target=dist_neighbor_loader_hetero,
-            args=(tmp_path, part, addr, port, num_workers, async_sampling))
-        for part in range(num_parts)
+            args=(tmp_path, part, addr, port, num_workers, async_sampling),
+        ) for part in range(num_parts)
     ]
-
-    world_size = len(procs)
-    partitioner = Partitioner(data, world_size, tmp_path)
-    partitioner.generate_partition()
-
     assert_run_mproc(mp_context, procs)
