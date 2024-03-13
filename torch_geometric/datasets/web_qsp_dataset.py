@@ -186,8 +186,8 @@ class WebQSPDataset(InMemoryDataset):
             desc = textual_nodes.to_csv(
                 index=False) + "\n" + textual_edges.to_csv(
                     index=False, columns=["src", "edge_attr", "dst"])
-            new_graph = Data(x=node_feat, edge_index=e_idx,
-                         edge_attr=e_attr, num_nodes=num_nodes)
+            new_graph = Data(x=node_feat, edge_index=e_idx, edge_attr=e_attr,
+                             num_nodes=num_nodes)
             return new_graph, desc
 
         root = -1  # unrooted
@@ -205,8 +205,7 @@ class WebQSPDataset(InMemoryDataset):
             n_prizes = torch.zeros(num_nodes)
 
         if topk_e > 0:
-            e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb,
-                                                         e_attr)
+            e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, e_attr)
             topk_e = min(topk_e, e_prizes.unique().size(0))
 
             topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e,
