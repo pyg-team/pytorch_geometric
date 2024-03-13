@@ -4,7 +4,7 @@ build-backend="flit_core.buildapi"
 
 [project]
 name="torch_geometric"
-version="2.5.0"
+version="2.6.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
@@ -44,7 +44,6 @@ dependencies=[
 
 [project.optional-dependencies]
 graphgym=[
-    "hydra-core",
     "protobuf<4.21",
     "pytorch-lightning",
     "yacs",
