@@ -259,7 +259,7 @@ class WebQSPDataset(InMemoryDataset):
             virtual_edges = [mapping_n[i] for i in virtual_vertices]
             selected_edges = np.array(selected_edges + virtual_edges)
 
-        edge_index = graph.edge_index[:, selected_edges]
+        edge_index = e_idx[:, selected_edges]
         selected_nodes = np.unique(
             np.concatenate(
                 [selected_nodes, edge_index[0].numpy(),
@@ -272,8 +272,8 @@ class WebQSPDataset(InMemoryDataset):
 
         mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
 
-        x = graph.x[selected_nodes]
-        edge_attr = graph.edge_attr[selected_edges]
+        x = node_feat[selected_nodes]
+        edge_attr = e_attr[selected_edges]
         src = [mapping[i] for i in edge_index[0].tolist()]
         dst = [mapping[i] for i in edge_index[1].tolist()]
         edge_index = torch.LongTensor([src, dst])
