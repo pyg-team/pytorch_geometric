@@ -221,7 +221,7 @@ class WebQSPDataset(InMemoryDataset):
             e_prizes = torch.zeros(num_edges)
 
         cost_list = []
-        edge_list: List[np.array] = []
+        edge_list = []
         virtual_n_prizes = []
         virtual_edges = []
         virtual_costs = []
@@ -257,23 +257,23 @@ class WebQSPDataset(InMemoryDataset):
         if len(virtual_vertices) > 0:
             virtual_vertices = vertices[vertices >= num_nodes]
             new_virtual_edges = [mapping_n[i] for i in virtual_vertices]
-            selected_edges = np.array(selected_edges + new_virtual_edges)
+            new_selected_edges = np.array(selected_edges + new_virtual_edges)
 
-        edge_index = e_idx[:, selected_edges]
-        selected_nodes = np.unique(
+        edge_index = e_idx[:, new_selected_edges]
+        new_selected_nodes = np.unique(
             np.concatenate(
                 [selected_nodes, edge_index[0].numpy(),
                  edge_index[1].numpy()]))
 
-        n = textual_nodes.iloc[selected_nodes]
-        e = textual_edges.iloc[selected_edges]
+        n = textual_nodes.iloc[new_selected_nodes]
+        e = textual_edges.iloc[new_selected_edges]
         desc = n.to_csv(index=False) + "\n" + e.to_csv(
             index=False, columns=["src", "edge_attr", "dst"])
 
-        mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
+        mapping = {n: i for i, n in enumerate(new_selected_nodes.tolist())}
 
-        x = node_feat[selected_nodes]
-        edge_attr = e_attr[selected_edges]
+        x = node_feat[new_selected_nodes]
+        edge_attr = e_attr[new_selected_edges]
         src = [mapping[i] for i in edge_index[0].tolist()]
         dst = [mapping[i] for i in edge_index[1].tolist()]
         edge_index = torch.LongTensor([src, dst])
