@@ -43,7 +43,7 @@ class Dataset(torch.utils.data.Dataset):
             "att_mask": attention_mask,
         }
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.data["input_ids"].size(0)
 
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
@@ -221,9 +221,9 @@ class WebQSPDataset(InMemoryDataset):
         else:
             e_prizes = torch.zeros(num_edges)
 
-        costs = []
-        edges = []
-        vritual_n_prizes = []
+        cost_list = []
+        edge_list = []
+        virtual_n_prizes = []
         virtual_edges = []
         virtual_costs = []
         mapping_n = {}
@@ -231,11 +231,11 @@ class WebQSPDataset(InMemoryDataset):
         for i, (src, dst) in enumerate(e_idx.T.numpy()):
             prize_e = e_prizes[i]
             if prize_e <= cost_e:
-                mapping_e[len(edges)] = i
-                edges.append((src, dst))
-                costs.append(cost_e - prize_e)
+                mapping_e[len(edge_list)] = i
+                edge_list.append((src, dst))
+                cost_list.append(cost_e - prize_e)
             else:
-                virtual_node_id = num_nodes + len(vritual_n_prizes)
+                virtual_node_id = num_nodes + len(virtual_n_prizes)
                 mapping_n[virtual_node_id] = i
                 virtual_edges.append((src, virtual_node_id))
                 virtual_edges.append((virtual_node_id, dst))
@@ -243,11 +243,11 @@ class WebQSPDataset(InMemoryDataset):
                 virtual_costs.append(0)
                 vritual_n_prizes.append(prize_e - cost_e)
 
-        prizes = np.concatenate([n_prizes, np.array(vritual_n_prizes)])
+        prizes = np.concatenate([n_prizes, np.array(virtual_n_prizes)])
         num_edges = len(edges)
         if len(virtual_costs) > 0:
-            costs = np.array(costs + virtual_costs)
-            edges = np.array(edges + virtual_edges)
+            costs = np.array(cost_list + virtual_costs)
+            edges = np.array(edge_list + virtual_edges)
 
         vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
                                     pruning, verbosity_level)
