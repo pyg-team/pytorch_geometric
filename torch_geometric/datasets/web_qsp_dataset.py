@@ -176,11 +176,12 @@ class WebQSPDataset(InMemoryDataset):
         # from original G-Retriever work
         # https://arxiv.org/abs/2402.07630
         c = 0.01
-        num_nodes = (int) graph.num_nodes
-        num_edges = (int) graph.num_edges
-        e_idx = (torch.Tensor) graph.edge_index
-        e_attr = (torch.Tensor) graph.edge_attr
-        node_feat = (torch.Tensor) graph.x
+        # explicit casting for linting
+        num_nodes = int(graph.num_nodes)
+        num_edges = int(graph.num_edges)
+        e_idx = torch.Tensor(graph.edge_index)
+        e_attr = torch.Tensor(graph.edge_attr)
+        node_feat = torch.Tensor(graph.x)
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
                 index=False) + "\n" + textual_edges.to_csv(
