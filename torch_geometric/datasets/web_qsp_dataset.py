@@ -156,7 +156,7 @@ class WebQSPDataset(InMemoryDataset):
             missing_str.append('pandas')
             missing_imports = True
         if missing_imports:
-            missing_str = missing_str.join(' ')
+            missing_str = ' '.join(missing_str)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
         self.prompt = "Please answer the given question."
