@@ -176,6 +176,7 @@ class WebQSPDataset(InMemoryDataset):
         # from original G-Retriever work
         # https://arxiv.org/abs/2402.07630
         c = 0.01
+        num_nodes = graph.num_nodes
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
                 index=False) + "\n" + textual_edges.to_csv(
@@ -190,13 +191,13 @@ class WebQSPDataset(InMemoryDataset):
         verbosity_level = 0
         if topk > 0:
             n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
-            topk = min(topk, graph.num_nodes)
+            topk = min(topk, num_nodes) # noqa
             _, topk_n_indices = torch.topk(n_prizes, topk, largest=True)
 
             n_prizes = torch.zeros_like(n_prizes)
             n_prizes[topk_n_indices] = torch.arange(topk, 0, -1).float()
         else:
-            n_prizes = torch.zeros(graph.num_nodes)
+            n_prizes = torch.zeros(num_nodes)
 
         if topk_e > 0:
             e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb,
@@ -229,7 +230,7 @@ class WebQSPDataset(InMemoryDataset):
                 edges.append((src, dst))
                 costs.append(cost_e - prize_e)
             else:
-                virtual_node_id = graph.num_nodes + len(vritual_n_prizes)
+                virtual_node_id = num_nodes + len(vritual_n_prizes)
                 mapping_n[virtual_node_id] = i
                 virtual_edges.append((src, virtual_node_id))
                 virtual_edges.append((virtual_node_id, dst))
@@ -246,11 +247,11 @@ class WebQSPDataset(InMemoryDataset):
         vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
                                     pruning, verbosity_level)
 
-        selected_nodes = vertices[vertices < graph.num_nodes]
+        selected_nodes = vertices[vertices < num_nodes]
         selected_edges = [mapping_e[e] for e in edges if e < num_edges]
-        virtual_vertices = vertices[vertices >= graph.num_nodes]
+        virtual_vertices = vertices[vertices >= num_nodes]
         if len(virtual_vertices) > 0:
-            virtual_vertices = vertices[vertices >= graph.num_nodes]
+            virtual_vertices = vertices[vertices >= num_nodes]
             virtual_edges = [mapping_n[i] for i in virtual_vertices]
             selected_edges = np.array(selected_edges + virtual_edges)
 
