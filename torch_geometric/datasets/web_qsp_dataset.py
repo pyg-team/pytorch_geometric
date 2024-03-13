@@ -143,21 +143,21 @@ class WebQSPDataset(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
         missing_imports = False
-        missing_str = []
+        missing_str_list = []
         if not WITH_PCST:
-            missing_str.append('pcst_fast')
+            missing_str_list.append('pcst_fast')
             missing_imports = True
         if not WITH_TRANSFORMERS:
-            missing_str.append('transformers')
+            missing_str_list.append('transformers')
             missing_imports = True
         if not WITH_DATASETS:
-            missing_str.append('datasets')
+            missing_str_list.append('datasets')
             missing_imports = True
         if not WITH_PANDAS:
-            missing_str.append('pandas')
+            missing_str_list.append('pandas')
             missing_imports = True
         if missing_imports:
-            missing_str = ' '.join(missing_str)
+            missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
         self.prompt = "Please answer the given question."
@@ -176,22 +176,26 @@ class WebQSPDataset(InMemoryDataset):
         # from original G-Retriever work
         # https://arxiv.org/abs/2402.07630
         c = 0.01
-        num_nodes = graph.num_nodes
+        num_nodes = (int) graph.num_nodes
+        num_edges = (int) graph.num_edges
+        e_idx = (torch.Tensor) graph.edge_index
+        e_attr = (torch.Tensor) graph.edge_attr
+        node_feat = (torch.Tensor) graph.x
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
                 index=False) + "\n" + textual_edges.to_csv(
                     index=False, columns=["src", "edge_attr", "dst"])
-            graph = Data(x=graph.x, edge_index=graph.edge_index,
-                         edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
-            return graph, desc
+            new_graph = Data(x=node_feat, edge_index=e_idx,
+                         edge_attr=e_attr, num_nodes=num_nodes)
+            return new_graph, desc
 
         root = -1  # unrooted
         num_clusters = 1
         pruning = "gw"
         verbosity_level = 0
         if topk > 0:
-            n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
-            topk = min(topk, num_nodes) # noqa
+            n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, node_feat)
+            topk = min(topk, num_nodes)
             _, topk_n_indices = torch.topk(n_prizes, topk, largest=True)
 
             n_prizes = torch.zeros_like(n_prizes)
@@ -201,7 +205,7 @@ class WebQSPDataset(InMemoryDataset):
 
         if topk_e > 0:
             e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb,
-                                                         graph.edge_attr)
+                                                         e_attr)
             topk_e = min(topk_e, e_prizes.unique().size(0))
 
             topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e,
@@ -214,7 +218,7 @@ class WebQSPDataset(InMemoryDataset):
                 e_prizes[indices] = value
                 last_topk_e_value = value
         else:
-            e_prizes = torch.zeros(graph.num_edges)
+            e_prizes = torch.zeros(num_edges)
 
         costs = []
         edges = []
@@ -223,7 +227,7 @@ class WebQSPDataset(InMemoryDataset):
         virtual_costs = []
         mapping_n = {}
         mapping_e = {}
-        for i, (src, dst) in enumerate(graph.edge_index.T.numpy()):
+        for i, (src, dst) in enumerate(e_idx.T.numpy()):
             prize_e = e_prizes[i]
             if prize_e <= cost_e:
                 mapping_e[len(edges)] = i
