@@ -35,8 +35,7 @@ from torch_geometric.data import Data, InMemoryDataset
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids: Optional[torch.Tensor] = None,
-                 attention_mask: Optional[torch.Tensor] = None) -> None:
+    def __init__(self, input_ids: torch.Tensor, torch.Tensor) -> None:
         super().__init__()
         self.data = {
             "input_ids": input_ids,
@@ -177,10 +176,10 @@ class WebQSPDataset(InMemoryDataset):
         # https://arxiv.org/abs/2402.07630
         c = 0.01
         # explicit casting for linting
-        num_nodes = int(graph.num_nodes)
-        num_edges = int(graph.num_edges)
-        e_idx = torch.Tensor(graph.edge_index)
-        e_attr = torch.Tensor(graph.edge_attr)
+        num_nodes: int = graph.num_nodes
+        num_edges: int = graph.num_edges
+        e_idx: torch.Tensor = graph.edge_index
+        e_attr: torch.Tensor = graph.edge_attr
         node_feat = torch.Tensor(graph.x)
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
