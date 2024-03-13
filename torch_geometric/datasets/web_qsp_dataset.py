@@ -221,7 +221,7 @@ class WebQSPDataset(InMemoryDataset):
             e_prizes = torch.zeros(num_edges)
 
         cost_list = []
-        edge_list = []
+        edge_list: List[np.array] = []
         virtual_n_prizes = []
         virtual_edges = []
         virtual_costs = []
@@ -256,8 +256,8 @@ class WebQSPDataset(InMemoryDataset):
         virtual_vertices = vertices[vertices >= num_nodes]
         if len(virtual_vertices) > 0:
             virtual_vertices = vertices[vertices >= num_nodes]
-            virtual_edges = [mapping_n[i] for i in virtual_vertices]
-            selected_edges = np.array(selected_edges + virtual_edges)
+            new_virtual_edges = [mapping_n[i] for i in virtual_vertices]
+            selected_edges = np.array(selected_edges + new_virtual_edges)
 
         edge_index = e_idx[:, selected_edges]
         selected_nodes = np.unique(
@@ -322,7 +322,7 @@ class WebQSPDataset(InMemoryDataset):
             if index == 1:
                 quit()
             data_i = self.raw_dataset[index]
-            raw_nodes = {}
+            raw_nodes: Dict[str, int] = {}
             raw_edges = []
             for tri in data_i["graph"]:
                 h, r, t = tri
