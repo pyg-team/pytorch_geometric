@@ -36,7 +36,7 @@ from torch_geometric.data import Data, InMemoryDataset
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids: torch.Tensor,
-            attention_mask: torch.Tensor) -> None:
+                 attention_mask: torch.Tensor) -> None:
         super().__init__()
         self.data = {
             "input_ids": input_ids,
