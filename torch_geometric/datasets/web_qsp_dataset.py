@@ -177,10 +177,10 @@ class WebQSPDataset(InMemoryDataset):
         # https://arxiv.org/abs/2402.07630
         c = 0.01
         # explicit casting for linting
-        num_nodes: int = graph.num_nodes # type: ignore
-        num_edges: int = graph.num_edges # type: ignore
-        e_idx: torch.Tensor = graph.edge_index # type: ignore
-        e_attr: torch.Tensor = graph.edge_attr # type: ignore
+        num_nodes: int = graph.num_nodes  # type: ignore
+        num_edges: int = graph.num_edges  # type: ignore
+        e_idx: torch.Tensor = graph.edge_index  # type: ignore
+        e_attr: torch.Tensor = graph.edge_attr  # type: ignore
         node_feat = torch.Tensor(graph.x)
         if len(textual_nodes) == 0 or len(textual_edges) == 0:
             desc = textual_nodes.to_csv(
@@ -221,8 +221,8 @@ class WebQSPDataset(InMemoryDataset):
             e_prizes = torch.zeros(num_edges)
 
         cost_list = []
-        edge_list = [] # type: ignore
-        virtual_n_prizes = [] # type: ignore
+        edge_list = []  # type: ignore
+        virtual_n_prizes = []  # type: ignore
         virtual_edges = []
         virtual_costs = []
         mapping_n = {}
