@@ -178,7 +178,7 @@ class WebQSPDataset(InMemoryDataset):
         c = 0.01
         # explicit casting for linting
         num_nodes: int = graph.num_nodes  # type: ignore
-        num_edges: int = graph.num_edges  # type: ignore
+        num_edges: int = graph.num_edges
         e_idx: torch.Tensor = graph.edge_index  # type: ignore
         e_attr: torch.Tensor = graph.edge_attr  # type: ignore
         node_feat = torch.Tensor(graph.x)
