@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 
 import numpy as np
 
@@ -46,7 +46,7 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self):
         return self.data["input_ids"].size(0)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
         if isinstance(index, torch.Tensor):
             index = index.item()
         batch_data = dict()
@@ -63,14 +63,14 @@ class Sentence_Transformer(torch.nn.Module):
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
-                     attention_mask: torch.Tensor):
+                     attention_mask: torch.Tensor) -> torch.Tensor:
         data_type = token_embeddings.dtype
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(
             token_embeddings.size()).to(data_type)
         return torch.sum(token_embeddings * input_mask_expanded,
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-    def forward(self, input_ids: torch.Tensor, att_mask: torch.Tensor):
+    def forward(self, input_ids: torch.Tensor, att_mask: torch.Tensor) -> torch.Tensor:
         bert_out = self.bert_model(input_ids=input_ids,
                                    attention_mask=att_mask)
 
