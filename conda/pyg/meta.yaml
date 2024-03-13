@@ -1,9 +1,9 @@
 package:
   name: pyg
-  version: 2.5.0
+  version: 2.5.1
 
 source:
-  url: https://files.pythonhosted.org/packages/01/8f/82abc47a9b37d3a1611a3d0532f096de550a037fb92f659e4eae4ac9cd31/torch_geometric-2.5.0.tar.gz
+  url: https://files.pythonhosted.org/packages/3c/57/af9c8766f8412246c3dbf2a11e2391c71d15825cb964d0a7ccc540521b6d/torch_geometric-2.5.1.tar.gz
 
 requirements:
   host:
