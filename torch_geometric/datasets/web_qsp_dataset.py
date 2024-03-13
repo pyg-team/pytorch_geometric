@@ -191,7 +191,7 @@ class WebQSPDataset(InMemoryDataset):
         verbosity_level = 0
         if topk > 0:
             n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
-            topk = min(topk, num_nodes) # noqa
+            topk = min(topk, num_nodes)  # noqa
             _, topk_n_indices = torch.topk(n_prizes, topk, largest=True)
 
             n_prizes = torch.zeros_like(n_prizes)
