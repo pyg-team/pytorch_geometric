@@ -44,7 +44,6 @@ dependencies=[
 
 [project.optional-dependencies]
 graphgym=[
-    "hydra-core",
     "protobuf<4.21",
     "pytorch-lightning",
     "yacs",
