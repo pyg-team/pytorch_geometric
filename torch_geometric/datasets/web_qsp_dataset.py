@@ -240,10 +240,10 @@ class WebQSPDataset(InMemoryDataset):
                 virtual_edges.append((virtual_node_id, dst))
                 virtual_costs.append(0)
                 virtual_costs.append(0)
-                vritual_n_prizes.append(prize_e - cost_e)
+                virtual_n_prizes.append(prize_e - cost_e)
 
         prizes = np.concatenate([n_prizes, np.array(virtual_n_prizes)])
-        num_edges = len(edges)
+        num_edges = len(edge_list)
         if len(virtual_costs) > 0:
             costs = np.array(cost_list + virtual_costs)
             edges = np.array(edge_list + virtual_edges)
