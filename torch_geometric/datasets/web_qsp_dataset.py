@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Dict
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -70,7 +70,8 @@ class Sentence_Transformer(torch.nn.Module):
         return torch.sum(token_embeddings * input_mask_expanded,
                          1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-    def forward(self, input_ids: torch.Tensor, att_mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, input_ids: torch.Tensor,
+                att_mask: torch.Tensor) -> torch.Tensor:
         bert_out = self.bert_model(input_ids=input_ids,
                                    attention_mask=att_mask)
 
