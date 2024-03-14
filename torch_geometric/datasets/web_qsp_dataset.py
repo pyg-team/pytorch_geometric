@@ -261,6 +261,8 @@ class WebQSPDataset(InMemoryDataset):
             virtual_vertices = vertices[vertices >= num_nodes]
             new_virtual_edges = [mapping_n[i] for i in virtual_vertices]
             new_selected_edges = np.array(selected_edges + new_virtual_edges)
+        else:
+            new_selected_edges = selected_edges
 
         edge_index = e_idx[:, new_selected_edges]
         new_selected_nodes = np.unique(
