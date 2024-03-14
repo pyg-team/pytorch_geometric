@@ -85,7 +85,6 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
         lr_decay_factor, lr_decay_step_size, weight_decay, inference,
         profiling, bf16, use_compile):
     if not inference:
-        print(torch)
         run_train(train_dataset, test_dataset, model, epochs, batch_size,
                   use_compile, lr, lr_decay_factor, lr_decay_step_size,
                   weight_decay)
