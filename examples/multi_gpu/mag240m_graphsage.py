@@ -5,7 +5,7 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
-from ogb.lsc import MAG240MDataset
+# from ogb.lsc import MAG240MDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 from tqdm import tqdm
@@ -15,6 +15,7 @@ from torch_geometric.nn import BatchNorm, HeteroConv, SAGEConv
 
 
 def common_step(batch, model):
+    print(batch)
     batch_size = batch['paper'].batch_size
     x_dict = model(batch.x_dict, batch.edge_index_dict)
     y_hat = x_dict['paper'][:batch_size]
@@ -55,8 +56,9 @@ class HeteroSAGEConv(torch.nn.Module):
     def forward(self, x_dict, edge_index_dict):
         x_dict = self.conv(x_dict, edge_index_dict)
         if not self.is_output_layer:
-            for node_type, norm in self.norm_dict.items():
-                x = norm(self.dropout(x_dict[node_type]).relu())
+            for node_type, x in x_dict.items():
+                x = self.dropout(x.relu())
+                x = self.norm_dict[node_type](x)
                 x_dict[node_type] = x
         return x_dict
 
@@ -66,21 +68,45 @@ class HeteroGraphSAGE(torch.nn.Module):
                  dropout, node_types, edge_types):
         super().__init__()
 
+        print(num_layers)
+
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers):
+            # Since authors and institution do not come with features, we learn
+            # them via the GNN. However, this also means we need to exclude
+            # them as source types in the first two iterations:
+            if i == 0:
+                edge_types_of_layer = [
+                    edge_type for edge_type in edge_types
+                    if edge_type[0] == 'paper'
+                ]
+            elif i == 1:
+                edge_types_of_layer = [
+                    edge_type for edge_type in edge_types
+                    if edge_type[0] != 'institution'
+                ]
+            else:
+                edge_types_of_layer = edge_types
+
             conv = HeteroSAGEConv(
                 in_channels if i == 0 else hidden_channels,
                 out_channels if i == num_layers - 1 else hidden_channels,
                 dropout=dropout,
                 node_types=node_types,
-                edge_types=edge_types,
+                edge_types=edge_types_of_layer,
                 is_output_layer=i == num_layers - 1,
             )
             self.convs.append(conv)
 
     def forward(self, x_dict, edge_index_dict):
+        for key, x in x_dict.items():
+            print(key, x.shape)
+        print("==========")
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
+            for key, x in x_dict.items():
+                print(key, x.shape)
+            print("==========")
         return x_dict
 
 
@@ -91,7 +117,7 @@ def run(
     num_epochs=1,
     num_steps_per_epoch=-1,
     log_every_n_steps=1,
-    batch_size=1024,
+    batch_size=5,
     num_neighbors=[25, 15],
     hidden_channels=1024,
     dropout=0.5,
@@ -152,6 +178,8 @@ def run(
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     for epoch in range(1, num_epochs + 1):
+        print("DRIN", epoch)
+        print(len(train_loader))
         model.train()
         for i, batch in enumerate(tqdm(train_loader)):
             if num_steps_per_epoch >= 0 and i >= num_steps_per_epoch:
@@ -209,7 +237,7 @@ def run(
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--hidden_channels", type=int, default=1024)
-    parser.add_argument("--batch_size", type=int, default=1024)
+    parser.add_argument("--batch_size", type=int, default=5)
     parser.add_argument("--dropout", type=float, default=0.5)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--num_epochs", type=int, default=20)
@@ -230,8 +258,24 @@ if __name__ == '__main__':
     elif args.num_devices > torch.cuda.device_count():
         args.num_devices = torch.cuda.device_count()
 
-    dataset = MAG240MDataset()
-    data = dataset.to_pyg_hetero_data()
+    # dataset = MAG240MDataset()
+    # data = dataset.to_pyg_hetero_data()
+
+    from torch_geometric.data import HeteroData
+    data = HeteroData()
+    data['paper'].x = torch.randn(10, 32)
+    data['paper'].y = torch.randint(0, 3, (10, ))
+    data['author'].num_nodes = 10
+    data['institution'].num_nodes = 10
+    data.num_classes = 3
+    data['paper'].train_mask = torch.ones(10, dtype=torch.bool)
+    data['paper'].val_mask = torch.ones(10, dtype=torch.bool)
+    data['paper'].test_mask = torch.ones(10, dtype=torch.bool)
+    data['paper', 'paper'].edge_index = torch.randint(0, 10, (2, 20))
+    data['paper', 'author'].edge_index = torch.randint(0, 10, (2, 20))
+    data['author', 'paper'].edge_index = torch.randint(0, 10, (2, 20))
+    data['author', 'institution'].edge_index = torch.randint(0, 10, (2, 20))
+    data['institution', 'author'].edge_index = torch.randint(0, 10, (2, 20))
 
     if args.num_devices > 1:
         print("Let's use", args.num_devices, "GPUs!")
@@ -252,7 +296,7 @@ if __name__ == '__main__':
                     args.num_val_steps,
                     args.lr,
                 ),
-                nprocs=args.n_devices,
+                nprocs=args.num_devices,
                 join=True,
             )
         except ProcessExitedException as e:
