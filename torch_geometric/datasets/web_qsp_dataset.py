@@ -319,8 +319,6 @@ class WebQSPDataset(InMemoryDataset):
                                      self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
-            if index == 1:
-                quit()
             data_i = self.raw_dataset[index]
             raw_nodes: Dict[str, int] = {}
             raw_edges = []
