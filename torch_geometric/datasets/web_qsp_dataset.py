@@ -248,8 +248,8 @@ class WebQSPDataset(InMemoryDataset):
             costs = np.array(cost_list + virtual_costs)
             edges = np.array(edge_list + virtual_edges)
         else:
-            costs = cost_list
-            edges = edge_list
+            costs = cost_list # type: ignore
+            edges = edge_list # type: ignore
 
         vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
                                     pruning, verbosity_level)
@@ -262,7 +262,7 @@ class WebQSPDataset(InMemoryDataset):
             new_virtual_edges = [mapping_n[i] for i in virtual_vertices]
             new_selected_edges = np.array(selected_edges + new_virtual_edges)
         else:
-            new_selected_edges = selected_edges
+            new_selected_edges = selected_edges # type: ignore
 
         edge_index = e_idx[:, new_selected_edges]
         new_selected_nodes = np.unique(
