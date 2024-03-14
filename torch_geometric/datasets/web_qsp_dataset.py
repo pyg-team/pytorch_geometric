@@ -247,6 +247,9 @@ class WebQSPDataset(InMemoryDataset):
         if len(virtual_costs) > 0:
             costs = np.array(cost_list + virtual_costs)
             edges = np.array(edge_list + virtual_edges)
+        else:
+            costs = cost_list
+            edges = edge_list
 
         vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
                                     pruning, verbosity_level)
