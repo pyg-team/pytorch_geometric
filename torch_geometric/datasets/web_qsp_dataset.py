@@ -34,10 +34,8 @@ except ImportError as e:  # noqa
 from torch_geometric.data import Data, InMemoryDataset
 
 
-def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor,
-                       textual_nodes: df,
-                       textual_edges: df, topk: int = 3,
-                       topk_e: int = 3,
+def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
+                       textual_edges: df, topk: int = 3, topk_e: int = 3,
                        cost_e: float = 0.5) -> Tuple[Data, str]:
     # from original G-Retriever work
     # https://arxiv.org/abs/2402.07630
@@ -349,9 +347,9 @@ class WebQSPDataset(InMemoryDataset):
             label = ("|").join(data_i["answer"]).lower()
             raw_graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                              num_nodes=len(nodes)).to("cpu")
-            psct_subgraph, desc = retrieval_via_pcst(
-                raw_graph, q_embs[index], nodes, edges, topk=3, topk_e=5,
-                cost_e=0.5)
+            psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index],
+                                                     nodes, edges, topk=3,
+                                                     topk_e=5, cost_e=0.5)
             psct_subgraph["question"] = question
             psct_subgraph["label"] = label
             psct_subgraph["desc"] = desc
