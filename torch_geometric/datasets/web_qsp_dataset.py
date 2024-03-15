@@ -40,7 +40,7 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor,
                        topk_e: int = 3,
                        cost_e: float = 0.5) -> Tuple[Data, str]:
     # from original G-Retriever work
-    w# https://arxiv.org/abs/2402.07630
+    # https://arxiv.org/abs/2402.07630
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
         desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
