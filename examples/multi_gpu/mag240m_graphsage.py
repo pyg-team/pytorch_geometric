@@ -55,8 +55,9 @@ class HeteroSAGEConv(torch.nn.Module):
     def forward(self, x_dict, edge_index_dict):
         x_dict = self.conv(x_dict, edge_index_dict)
         if not self.is_output_layer:
-            for node_type, norm in self.norm_dict.items():
-                x = norm(self.dropout(x_dict[node_type]).relu())
+            for node_type, x in x_dict.items():
+                x = self.dropout(x.relu())
+                x = self.norm_dict[node_type](x)
                 x_dict[node_type] = x
         return x_dict
 
@@ -68,12 +69,28 @@ class HeteroGraphSAGE(torch.nn.Module):
 
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers):
+            # Since authors and institution do not come with features, we learn
+            # them via the GNN. However, this also means we need to exclude
+            # them as source types in the first two iterations:
+            if i == 0:
+                edge_types_of_layer = [
+                    edge_type for edge_type in edge_types
+                    if edge_type[0] == 'paper'
+                ]
+            elif i == 1:
+                edge_types_of_layer = [
+                    edge_type for edge_type in edge_types
+                    if edge_type[0] != 'institution'
+                ]
+            else:
+                edge_types_of_layer = edge_types
+
             conv = HeteroSAGEConv(
                 in_channels if i == 0 else hidden_channels,
                 out_channels if i == num_layers - 1 else hidden_channels,
                 dropout=dropout,
                 node_types=node_types,
-                edge_types=edge_types,
+                edge_types=edge_types_of_layer,
                 is_output_layer=i == num_layers - 1,
             )
             self.convs.append(conv)
@@ -252,7 +269,7 @@ if __name__ == '__main__':
                     args.num_val_steps,
                     args.lr,
                 ),
-                nprocs=args.n_devices,
+                nprocs=args.num_devices,
                 join=True,
             )
         except ProcessExitedException as e:
