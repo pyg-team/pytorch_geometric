@@ -36,7 +36,7 @@ from torch_geometric.data import Data, InMemoryDataset
 
 def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
                        textual_edges: df, topk: int = 3, topk_e: int = 3,
-                       cost_e: float = 0.5) -> Tuple[Data, str]:
+                       cost_e: float = 0.5) -> Tuple[Data, str]: # type: ignore
     # from original G-Retriever work
     # https://arxiv.org/abs/2402.07630
     c = 0.01
@@ -79,7 +79,7 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
 
     costs = []
     edges = []
-    vritual_n_prizes = []
+    virtual_n_prizes = []
     virtual_edges = []
     virtual_costs = []
     mapping_n = {}
@@ -91,15 +91,15 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
             edges.append((src, dst))
             costs.append(cost_e - prize_e)
         else:
-            virtual_node_id = graph.num_nodes + len(vritual_n_prizes)
+            virtual_node_id = graph.num_nodes + len(virtual_n_prizes)
             mapping_n[virtual_node_id] = i
             virtual_edges.append((src, virtual_node_id))
             virtual_edges.append((virtual_node_id, dst))
             virtual_costs.append(0)
             virtual_costs.append(0)
-            vritual_n_prizes.append(prize_e - cost_e)
+            virtual_n_prizes.append(prize_e - cost_e)
 
-    prizes = np.concatenate([n_prizes, np.array(vritual_n_prizes)])
+    prizes = np.concatenate([n_prizes, np.array(virtual_n_prizes)])
     num_edges = len(edges)
     if len(virtual_costs) > 0:
         costs = np.array(costs + virtual_costs)
