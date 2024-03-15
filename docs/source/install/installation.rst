@@ -27,6 +27,12 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 .. warning::
    Conda packages are currently not available for Windows and M1/M2/M3 macs.
 
+If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:`PyG`, you can enforce it as follows:
+
+.. code-block:: none
+
+   conda install pyg=*=*cu* -c pyg
+
 Installation via PyPi
 ---------------------
 
