@@ -60,7 +60,6 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
             try:
-                import torch.mps
                 torch.mps.synchronize()
             except ImportError:
                 pass
@@ -98,7 +97,6 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
             try:
-                import torch.mps
                 torch.mps.synchronize()
             except ImportError:
                 pass
