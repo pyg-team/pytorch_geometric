@@ -325,10 +325,7 @@ class Inspector:
         cls = cls or self._cls
         if cls.__name__ in self._source_dict:
             return self._source_dict[cls.__name__]
-        try:
-            source = inspect.getsource(cls)
-        except Exception:
-            source = ''
+        source = inspect.getsource(cls)
         self._source_dict[cls.__name__] = source
         return source
 
