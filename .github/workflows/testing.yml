@@ -59,22 +59,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 10
         run: |
-          # pytest --cov --cov-report=xml --durations 10
-          pytest test/data
-          pytest test/datasets
-          pytest test/contrib
-          pytest test/explain
-          pytest test/graphgym
-          pytest test/io
-          pytest test/loader
-          pytest test/metrics
-          pytest test/profile
-          pytest test/sampler
-          pytest test/testing
-          pytest test/transforms
-          pytest test/utils
-          pytest test/visualization
-          pytest test/nn
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: steps.changed-files-specific.outputs.only_changed != 'true'

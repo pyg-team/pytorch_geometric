@@ -28,9 +28,9 @@ jobs:
             torchvision-version: 0.17.0
           - torch-version: nightly
             torchvision-version: nightly
-          exclude:
-            - os: macos-14
-              python-version: '3.8'
+        exclude:
+          - os: macos-14
+            python-version: '3.8'
 
     steps:
       - name: Checkout repository
