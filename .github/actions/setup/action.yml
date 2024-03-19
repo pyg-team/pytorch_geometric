@@ -56,7 +56,7 @@ runs:
       shell: bash
 
     - name: Install faiss-cpu
-      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
       run: |
         pip install faiss-cpu
       shell: bash
