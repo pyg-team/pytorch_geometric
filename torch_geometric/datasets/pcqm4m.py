@@ -36,6 +36,9 @@ class PCQM4Mv2(OnDiskDataset):
             (default: :obj:`None`)
         backend (str): The :class:`Database` backend to use.
             (default: :obj:`"sqlite"`)
+        from_smiles_func (callable): a function that takes a SMILE string and outputs
+    a :obj:`torch_geometric.data.Data` object
+
     """
     url = ('https://dgl-data.s3-accelerate.amazonaws.com/dataset/OGB-LSC/'
            'pcqm4m-v2.zip')
@@ -53,6 +56,7 @@ class PCQM4Mv2(OnDiskDataset):
         split: str = 'train',
         transform: Optional[Callable] = None,
         backend: str = 'sqlite',
+        from_smiles_func: Callable = from_smiles,
     ) -> None:
         assert split in ['train', 'val', 'test', 'holdout']
 
@@ -63,6 +67,8 @@ class PCQM4Mv2(OnDiskDataset):
             'smiles': str,
             'y': float,
         }
+
+        self.from_smiles_func = from_smiles_func
 
         super().__init__(root, transform, backend=backend, schema=schema)
 
@@ -89,7 +95,7 @@ class PCQM4Mv2(OnDiskDataset):
         data_list: List[Data] = []
         iterator = enumerate(zip(df['smiles'], df['homolumogap']))
         for i, (smiles, y) in tqdm(iterator, total=len(df)):
-            data = from_smiles(smiles)
+            data = self.from_smiles_func(smiles)
             data.y = y
 
             data_list.append(data)
