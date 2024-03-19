@@ -165,7 +165,7 @@ def test_graphgym_module(tmp_path):
 
 @onlyOnline
 @withPackage('yacs', 'pytorch_lightning')
-def test_train(tmp_path):
+def test_train(tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 
     import pytorch_lightning as pl
@@ -192,6 +192,6 @@ def test_train(tmp_path):
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
 
-    # out, err = capfd.readouterr()
-    # assert 'Sanity Checking' in out
-    # assert 'Epoch 0:' in out
+    out, err = capfd.readouterr()
+    assert 'Sanity Checking' in out
+    assert 'Epoch 0:' in out
