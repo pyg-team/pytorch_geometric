@@ -1,27 +1,31 @@
-import torch
-from torch_geometric.loader import DataLoader
-from torch_geometric import seed_everything
-import torch.optim as optim
-import torch.nn.functional as F
-from torch.utils.tensorboard import SummaryWriter
-from torch.optim.lr_scheduler import StepLR
-import torch.multiprocessing as mp
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel
-from torch_geometric.nn import MessagePassing
-from torch_geometric.nn import global_mean_pool, global_add_pool
-from ogb.graphproppred.mol_encoder import AtomEncoder,BondEncoder
-from torch_geometric.utils import degree
-import math
-
-import os
-from tqdm.auto import tqdm
 import argparse
+import math
+import os
 import time
+
+import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch.nn.functional as F
+import torch.optim as optim
+from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
+from torch.nn.parallel import DistributedDataParallel
+from torch.optim.lr_scheduler import StepLR
+from torch.utils.tensorboard import SummaryWriter
+from tqdm.auto import tqdm
+
+from torch_geometric import seed_everything
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (
+    MessagePassing,
+    global_add_pool,
+    global_mean_pool,
+)
+from torch_geometric.utils import degree
 
 ### importing OGB-LSC
 try:
-    from ogb.lsc import PygPCQM4Mv2Dataset, PCQM4Mv2Evaluator
+    from ogb.lsc import PCQM4Mv2Evaluator, PygPCQM4Mv2Dataset
 except ImportError as error:
     print("`PygPCQM4Mv2Dataset` requires rdkit (`pip install rdkit`)")
     raise error
@@ -32,20 +36,23 @@ from torch_geometric.datasets import PCQM4Mv2
 ### GIN convolution along the graph structure
 class GINConv(MessagePassing):
     def __init__(self, emb_dim):
+        '''emb_dim (int): node embedding dimensionality
         '''
-            emb_dim (int): node embedding dimensionality
-        '''
+        super(GINConv, self).__init__(aggr="add")
 
-        super(GINConv, self).__init__(aggr = "add")
-
-        self.mlp = torch.nn.Sequential(torch.nn.Linear(emb_dim, emb_dim), torch.nn.BatchNorm1d(emb_dim), torch.nn.ReLU(), torch.nn.Linear(emb_dim, emb_dim))
+        self.mlp = torch.nn.Sequential(torch.nn.Linear(emb_dim, emb_dim),
+                                       torch.nn.BatchNorm1d(emb_dim),
+                                       torch.nn.ReLU(),
+                                       torch.nn.Linear(emb_dim, emb_dim))
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
-        self.bond_encoder = BondEncoder(emb_dim = emb_dim)
+        self.bond_encoder = BondEncoder(emb_dim=emb_dim)
 
     def forward(self, x, edge_index, edge_attr):
         edge_embedding = self.bond_encoder(edge_attr)
-        out = self.mlp((1 + self.eps) *x + self.propagate(edge_index, x=x, edge_attr=edge_embedding))
+        out = self.mlp(
+            (1 + self.eps) * x +
+            self.propagate(edge_index, x=x, edge_attr=edge_embedding))
 
         return out
 
@@ -55,6 +62,7 @@ class GINConv(MessagePassing):
     def update(self, aggr_out):
         return aggr_out
 
+
 ### GCN convolution along the graph structure
 class GCNConv(MessagePassing):
     def __init__(self, emb_dim):
@@ -62,7 +70,7 @@ class GCNConv(MessagePassing):
 
         self.linear = torch.nn.Linear(emb_dim, emb_dim)
         self.root_emb = torch.nn.Embedding(1, emb_dim)
-        self.bond_encoder = BondEncoder(emb_dim = emb_dim)
+        self.bond_encoder = BondEncoder(emb_dim=emb_dim)
 
     def forward(self, x, edge_index, edge_attr):
         x = self.linear(x)
@@ -71,13 +79,15 @@ class GCNConv(MessagePassing):
         row, col = edge_index
 
         #edge_weight = torch.ones((edge_index.size(1), ), device=edge_index.device)
-        deg = degree(row, x.size(0), dtype = x.dtype) + 1
+        deg = degree(row, x.size(0), dtype=x.dtype) + 1
         deg_inv_sqrt = deg.pow(-0.5)
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
 
         norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
-        return self.propagate(edge_index, x=x, edge_attr = edge_embedding, norm=norm) + F.relu(x + self.root_emb.weight) * 1./deg.view(-1,1)
+        return self.propagate(
+            edge_index, x=x, edge_attr=edge_embedding, norm=norm
+        ) + F.relu(x + self.root_emb.weight) * 1. / deg.view(-1, 1)
 
     def message(self, x_j, edge_attr, norm):
         return norm.view(-1, 1) * F.relu(x_j + edge_attr)
@@ -88,16 +98,14 @@ class GCNConv(MessagePassing):
 
 ### GNN to generate node embedding
 class GNN_node(torch.nn.Module):
+    """Output:
+    node representations
     """
-    Output:
-        node representations
-    """
-    def __init__(self, num_layers, emb_dim, drop_ratio = 0.5, JK = "last", residual = False, gnn_type = 'gin'):
+    def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
+                 residual=False, gnn_type='gin'):
+        '''emb_dim (int): node embedding dimensionality
+        num_layers (int): number of GNN message passing layers
         '''
-            emb_dim (int): node embedding dimensionality
-            num_layers (int): number of GNN message passing layers
-        '''
-
         super(GNN_node, self).__init__()
         self.num_layers = num_layers
         self.drop_ratio = drop_ratio
@@ -137,9 +145,10 @@ class GNN_node(torch.nn.Module):
 
             if layer == self.num_layers - 1:
                 #remove relu for the last layer
-                h = F.dropout(h, self.drop_ratio, training = self.training)
+                h = F.dropout(h, self.drop_ratio, training=self.training)
             else:
-                h = F.dropout(F.relu(h), self.drop_ratio, training = self.training)
+                h = F.dropout(F.relu(h), self.drop_ratio,
+                              training=self.training)
 
             if self.residual:
                 h += h_list[layer]
@@ -159,15 +168,13 @@ class GNN_node(torch.nn.Module):
 
 ### Virtual GNN to generate node embedding
 class GNN_node_Virtualnode(torch.nn.Module):
+    """Output:
+    node representations
     """
-    Output:
-        node representations
-    """
-    def __init__(self, num_layers, emb_dim, drop_ratio = 0.5, JK = "last", residual = False, gnn_type = 'gin'):
+    def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
+                 residual=False, gnn_type='gin'):
+        '''emb_dim (int): node embedding dimensionality
         '''
-            emb_dim (int): node embedding dimensionality
-        '''
-
         super(GNN_node_Virtualnode, self).__init__()
         self.num_layers = num_layers
         self.drop_ratio = drop_ratio
@@ -206,13 +213,14 @@ class GNN_node_Virtualnode(torch.nn.Module):
             self.mlp_virtualnode_list.append(torch.nn.Sequential(torch.nn.Linear(emb_dim, emb_dim), torch.nn.BatchNorm1d(emb_dim), torch.nn.ReLU(), \
                                                     torch.nn.Linear(emb_dim, emb_dim), torch.nn.BatchNorm1d(emb_dim), torch.nn.ReLU()))
 
-
     def forward(self, batched_data):
 
         x, edge_index, edge_attr, batch = batched_data.x, batched_data.edge_index, batched_data.edge_attr, batched_data.batch
 
         ### virtual node embeddings for graphs
-        virtualnode_embedding = self.virtualnode_embedding(torch.zeros(batch[-1].item() + 1).to(edge_index.dtype).to(edge_index.device))
+        virtualnode_embedding = self.virtualnode_embedding(
+            torch.zeros(batch[-1].item() + 1).to(edge_index.dtype).to(
+                edge_index.device))
 
         h_list = [self.atom_encoder(x)]
         for layer in range(self.num_layers):
@@ -225,9 +233,10 @@ class GNN_node_Virtualnode(torch.nn.Module):
             h = self.batch_norms[layer](h)
             if layer == self.num_layers - 1:
                 #remove relu for the last layer
-                h = F.dropout(h, self.drop_ratio, training = self.training)
+                h = F.dropout(h, self.drop_ratio, training=self.training)
             else:
-                h = F.dropout(F.relu(h), self.drop_ratio, training = self.training)
+                h = F.dropout(F.relu(h), self.drop_ratio,
+                              training=self.training)
 
             if self.residual:
                 h = h + h_list[layer]
@@ -237,13 +246,20 @@ class GNN_node_Virtualnode(torch.nn.Module):
             ### update the virtual nodes
             if layer < self.num_layers - 1:
                 ### add message from graph nodes to virtual nodes
-                virtualnode_embedding_temp = global_add_pool(h_list[layer], batch) + virtualnode_embedding
+                virtualnode_embedding_temp = global_add_pool(
+                    h_list[layer], batch) + virtualnode_embedding
                 ### transform virtual nodes using MLP
 
                 if self.residual:
-                    virtualnode_embedding = virtualnode_embedding + F.dropout(self.mlp_virtualnode_list[layer](virtualnode_embedding_temp), self.drop_ratio, training = self.training)
+                    virtualnode_embedding = virtualnode_embedding + F.dropout(
+                        self.mlp_virtualnode_list[layer]
+                        (virtualnode_embedding_temp), self.drop_ratio,
+                        training=self.training)
                 else:
-                    virtualnode_embedding = F.dropout(self.mlp_virtualnode_list[layer](virtualnode_embedding_temp), self.drop_ratio, training = self.training)
+                    virtualnode_embedding = F.dropout(
+                        self.mlp_virtualnode_list[layer](
+                            virtualnode_embedding_temp), self.drop_ratio,
+                        training=self.training)
 
         ### Different implementations of Jk-concat
         if self.JK == "last":
@@ -257,12 +273,11 @@ class GNN_node_Virtualnode(torch.nn.Module):
 
 
 class GNN(torch.nn.Module):
-
-    def __init__(self, num_tasks = 1, num_layers = 5, emb_dim = 300,
-                    gnn_type = 'gin', virtual_node = True, residual = False, drop_ratio = 0, JK = "last", graph_pooling = "sum"):
-        '''
-            num_tasks (int): number of labels to be predicted
-            virtual_node (bool): whether to add virtual node or not
+    def __init__(self, num_tasks=1, num_layers=5, emb_dim=300, gnn_type='gin',
+                 virtual_node=True, residual=False, drop_ratio=0, JK="last",
+                 graph_pooling="sum"):
+        '''num_tasks (int): number of labels to be predicted
+        virtual_node (bool): whether to add virtual node or not
         '''
         super(GNN, self).__init__()
 
@@ -278,10 +293,14 @@ class GNN(torch.nn.Module):
 
         ### GNN to generate node embeddings
         if virtual_node:
-            self.gnn_node = GNN_node_Virtualnode(num_layers, emb_dim, JK = JK, drop_ratio = drop_ratio, residual = residual, gnn_type = gnn_type)
+            self.gnn_node = GNN_node_Virtualnode(num_layers, emb_dim, JK=JK,
+                                                 drop_ratio=drop_ratio,
+                                                 residual=residual,
+                                                 gnn_type=gnn_type)
         else:
-            self.gnn_node = GNN_node(num_layers, emb_dim, JK = JK, drop_ratio = drop_ratio, residual = residual, gnn_type = gnn_type)
-
+            self.gnn_node = GNN_node(num_layers, emb_dim, JK=JK,
+                                     drop_ratio=drop_ratio, residual=residual,
+                                     gnn_type=gnn_type)
 
         ### Pooling function to generate whole-graph embeddings
         if self.graph_pooling == "sum":
@@ -291,16 +310,20 @@ class GNN(torch.nn.Module):
         elif self.graph_pooling == "max":
             self.pool = global_max_pool
         elif self.graph_pooling == "attention":
-            self.pool = GlobalAttention(gate_nn = torch.nn.Sequential(torch.nn.Linear(emb_dim, emb_dim), torch.nn.BatchNorm1d(emb_dim), torch.nn.ReLU(), torch.nn.Linear(emb_dim, 1)))
+            self.pool = GlobalAttention(gate_nn=torch.nn.Sequential(
+                torch.nn.Linear(emb_dim, emb_dim), torch.nn.BatchNorm1d(
+                    emb_dim), torch.nn.ReLU(), torch.nn.Linear(emb_dim, 1)))
         elif self.graph_pooling == "set2set":
-            self.pool = Set2Set(emb_dim, processing_steps = 2)
+            self.pool = Set2Set(emb_dim, processing_steps=2)
         else:
             raise ValueError("Invalid graph pooling type.")
 
         if graph_pooling == "set2set":
-            self.graph_pred_linear = torch.nn.Linear(2*self.emb_dim, self.num_tasks)
+            self.graph_pred_linear = torch.nn.Linear(2 * self.emb_dim,
+                                                     self.num_tasks)
         else:
-            self.graph_pred_linear = torch.nn.Linear(self.emb_dim, self.num_tasks)
+            self.graph_pred_linear = torch.nn.Linear(self.emb_dim,
+                                                     self.num_tasks)
 
     def forward(self, batched_data):
         h_node = self.gnn_node(batched_data)
@@ -314,7 +337,9 @@ class GNN(torch.nn.Module):
             # At inference time, we clamp the value between 0 and 20
             return torch.clamp(output, min=0, max=20)
 
+
 reg_criterion = torch.nn.L1Loss()
+
 
 def train(model, rank, device, loader, optimizer):
     model.train()
@@ -330,7 +355,7 @@ def train(model, rank, device, loader, optimizer):
     for step, batch in enumerate(iter_bar):
         batch = batch.to(device)
 
-        pred = model(batch).view(-1,)
+        pred = model(batch).view(-1, )
         optimizer.zero_grad()
         loss = reg_criterion(pred, batch.y)
         loss.backward()
@@ -342,11 +367,13 @@ def train(model, rank, device, loader, optimizer):
             now = time.time()
             if last_time is not None:
                 total_time += now - last_time
-                iter_bar.set_description(f"Avg time per sample: {round(total_time/((step + 1 - warmup - timer_frequency)) * 1000, 2)} ms")
+                iter_bar.set_description(
+                    f"Avg time per sample: {round(total_time/((step + 1 - warmup - timer_frequency)) * 1000, 2)} ms"
+                )
             last_time = now
 
-
     return loss_accum / (step + 1)
+
 
 def eval(model, device, loader, evaluator):
     model.eval()
@@ -357,17 +384,18 @@ def eval(model, device, loader, evaluator):
         batch = batch.to(device)
 
         with torch.no_grad():
-            pred = model(batch).view(-1,)
+            pred = model(batch).view(-1, )
 
         y_true.append(batch.y.view(pred.shape).detach().cpu())
         y_pred.append(pred.detach().cpu())
 
-    y_true = torch.cat(y_true, dim = 0)
-    y_pred = torch.cat(y_pred, dim = 0)
+    y_true = torch.cat(y_true, dim=0)
+    y_pred = torch.cat(y_pred, dim=0)
 
     input_dict = {"y_true": y_true, "y_pred": y_pred}
 
     return evaluator.eval(input_dict)["mae"]
+
 
 def test(model, device, loader):
     model.eval()
@@ -377,17 +405,19 @@ def test(model, device, loader):
         batch = batch.to(device)
 
         with torch.no_grad():
-            pred = model(batch).view(-1,)
+            pred = model(batch).view(-1, )
 
         y_pred.append(pred.detach().cpu())
 
-    y_pred = torch.cat(y_pred, dim = 0)
+    y_pred = torch.cat(y_pred, dim=0)
 
     return y_pred
 
+
 def run(rank, dataset, args):
     num_devices = args.num_devices
-    device = torch.device("cuda:" + str(rank)) if num_devices > 0 else torch.device("cpu")
+    device = torch.device(
+        "cuda:" + str(rank)) if num_devices > 0 else torch.device("cpu")
 
     if num_devices > 1:
         os.environ["MASTER_ADDR"] = "localhost"
@@ -400,7 +430,6 @@ def run(rank, dataset, args):
         split_idx = dataset.get_idx_split()
         train_idx = split_idx["train"]
 
-
     if num_devices > 1:
         train_idx = train_idx.split(train_idx.size(0) // num_devices)[rank]
 
@@ -408,30 +437,40 @@ def run(rank, dataset, args):
         train_idx = train_idx.split(train_idx.size(0) // num_devices)[rank]
     if args.train_subset:
         subset_ratio = 0.1
-        subset_idx = torch.randperm(len(train_idx))[:int(subset_ratio*len(train_idx))]
+        subset_idx = torch.randperm(len(train_idx))[:int(subset_ratio *
+                                                         len(train_idx))]
         train_dataset = dataset[train_idx[subset_idx]]
     else:
         train_dataset = dataset[train_idx]
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers = args.num_workers)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                              shuffle=True, num_workers=args.num_workers)
 
     if rank == 0:
         if args.on_disk_dataset:
-            valid_dataset = PCQM4Mv2(root = 'on_disk_dataset/', split="val")
-            test_dev_dataset = PCQM4Mv2(root = 'on_disk_dataset/', split="test")
-            test_challenge_dataset = PCQM4Mv2(root = 'on_disk_dataset/', split="holdout")
+            valid_dataset = PCQM4Mv2(root='on_disk_dataset/', split="val")
+            test_dev_dataset = PCQM4Mv2(root='on_disk_dataset/', split="test")
+            test_challenge_dataset = PCQM4Mv2(root='on_disk_dataset/',
+                                              split="holdout")
         else:
             valid_dataset = dataset[split_idx["valid"]]
             test_dev_dataset = dataset[split_idx["test-dev"]]
             test_challenge_dataset = dataset[split_idx["test-challenge"]]
 
-        valid_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers = args.num_workers)
+        valid_loader = DataLoader(valid_dataset, batch_size=args.batch_size,
+                                  shuffle=False, num_workers=args.num_workers)
         if args.save_test_dir != '':
-            testdev_loader = DataLoader(test_dev_dataset, batch_size=args.batch_size, shuffle=False, num_workers = args.num_workers)
-            testchallenge_loader = DataLoader(test_challenge_dataset, batch_size=args.batch_size, shuffle=False, num_workers = args.num_workers)
+            testdev_loader = DataLoader(test_dev_dataset,
+                                        batch_size=args.batch_size,
+                                        shuffle=False,
+                                        num_workers=args.num_workers)
+            testchallenge_loader = DataLoader(test_challenge_dataset,
+                                              batch_size=args.batch_size,
+                                              shuffle=False,
+                                              num_workers=args.num_workers)
 
         if args.checkpoint_dir != '':
-            os.makedirs(args.checkpoint_dir, exist_ok = True)
+            os.makedirs(args.checkpoint_dir, exist_ok=True)
         ### automatic evaluator. takes dataset name as input
         evaluator = PCQM4Mv2Evaluator()
 
@@ -443,13 +482,13 @@ def run(rank, dataset, args):
     }
 
     if args.gnn == 'gin':
-        model = GNN(gnn_type = 'gin', virtual_node = False, **shared_params)
+        model = GNN(gnn_type='gin', virtual_node=False, **shared_params)
     elif args.gnn == 'gin-virtual':
-        model = GNN(gnn_type = 'gin', virtual_node = True, **shared_params)
+        model = GNN(gnn_type='gin', virtual_node=True, **shared_params)
     elif args.gnn == 'gcn':
-        model = GNN(gnn_type = 'gcn', virtual_node = False, **shared_params)
+        model = GNN(gnn_type='gcn', virtual_node=False, **shared_params)
     elif args.gnn == 'gcn-virtual':
-        model = GNN(gnn_type = 'gcn', virtual_node = True, **shared_params)
+        model = GNN(gnn_type='gcn', virtual_node=True, **shared_params)
     else:
         raise ValueError('Invalid GNN type')
     if num_devices > 0:
@@ -499,12 +538,12 @@ def run(rank, dataset, args):
             dist.barrier()
 
         if rank == 0:
-            print(f"Training time for epoch {epoch}: {time.time()-start_time}s")
+            print(
+                f"Training time for epoch {epoch}: {time.time()-start_time}s")
             print('Evaluating...')
-            valid_mae = eval(model.module if isinstance(model, DistributedDataParallel) else model,
-                             device,
-                             valid_loader,
-                             evaluator)
+            valid_mae = eval(
+                model.module if isinstance(model, DistributedDataParallel) else
+                model, device, valid_loader, evaluator)
 
             print({'Train': train_mae, 'Validation': valid_mae})
 
@@ -516,26 +555,35 @@ def run(rank, dataset, args):
                 best_valid_mae = valid_mae
                 if args.checkpoint_dir != '':
                     print('Saving checkpoint...')
-                    checkpoint = {'epoch': epoch,
-                                  'model_state_dict': model.state_dict(),
-                                  'optimizer_state_dict': optimizer.state_dict(),
-                                  'scheduler_state_dict': scheduler.state_dict(),
-                                  'best_val_mae': best_valid_mae,
-                                  'num_params': num_params}
+                    checkpoint = {
+                        'epoch': epoch,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'scheduler_state_dict': scheduler.state_dict(),
+                        'best_val_mae': best_valid_mae,
+                        'num_params': num_params
+                    }
                     torch.save(checkpoint, checkpoint_path)
 
                 if args.save_test_dir != '':
-                    testdev_pred = test(model.module if isinstance(model, DistributedDataParallel) else model,
-                                        device,
-                                        testdev_loader)
+                    testdev_pred = test(
+                        model.module if isinstance(
+                            model, DistributedDataParallel) else model, device,
+                        testdev_loader)
                     testdev_pred = testdev_pred.cpu().detach().numpy()
 
-                    testchallenge_pred = test(model, device, testchallenge_loader)
-                    testchallenge_pred = testchallenge_pred.cpu().detach().numpy()
+                    testchallenge_pred = test(model, device,
+                                              testchallenge_loader)
+                    testchallenge_pred = testchallenge_pred.cpu().detach(
+                    ).numpy()
 
                     print('Saving test submission file...')
-                    evaluator.save_test_submission({'y_pred': testdev_pred}, args.save_test_dir, mode = 'test-dev')
-                    evaluator.save_test_submission({'y_pred': testchallenge_pred}, args.save_test_dir, mode = 'test-challenge')
+                    evaluator.save_test_submission({'y_pred': testdev_pred},
+                                                   args.save_test_dir,
+                                                   mode='test-dev')
+                    evaluator.save_test_submission(
+                        {'y_pred': testchallenge_pred}, args.save_test_dir,
+                        mode='test-challenge')
 
             print(f'Best validation MAE so far: {best_valid_mae}')
         if num_devices > 1:
@@ -543,24 +591,28 @@ def run(rank, dataset, args):
 
         scheduler.step()
 
-
     if rank == 0 and args.log_dir != '':
         writer.close()
 
 
 if __name__ == "__main__":
     # Training settings
-    parser = argparse.ArgumentParser(description='GNN baselines on pcqm4m with Pytorch Geometrics')
-    parser.add_argument('--gnn', type=str, default='gin-virtual',
-                        help='GNN gin, gin-virtual, or gcn, or gcn-virtual (default: gin-virtual)')
-    parser.add_argument('--graph_pooling', type=str, default='sum',
-                        help='graph pooling strategy mean or sum (default: sum)')
+    parser = argparse.ArgumentParser(
+        description='GNN baselines on pcqm4m with Pytorch Geometrics')
+    parser.add_argument(
+        '--gnn', type=str, default='gin-virtual', help=
+        'GNN gin, gin-virtual, or gcn, or gcn-virtual (default: gin-virtual)')
+    parser.add_argument(
+        '--graph_pooling', type=str, default='sum',
+        help='graph pooling strategy mean or sum (default: sum)')
     parser.add_argument('--drop_ratio', type=float, default=0,
                         help='dropout ratio (default: 0)')
-    parser.add_argument('--num_layers', type=int, default=5,
-                        help='number of GNN message passing layers (default: 5)')
-    parser.add_argument('--emb_dim', type=int, default=600,
-                        help='dimensionality of hidden units in GNNs (default: 600)')
+    parser.add_argument(
+        '--num_layers', type=int, default=5,
+        help='number of GNN message passing layers (default: 5)')
+    parser.add_argument(
+        '--emb_dim', type=int, default=600,
+        help='dimensionality of hidden units in GNNs (default: 600)')
     parser.add_argument('--train_subset', action='store_true')
     parser.add_argument('--batch_size', type=int, default=256,
                         help='input batch size for training (default: 256)')
@@ -570,9 +622,12 @@ if __name__ == "__main__":
                         help='number of workers (default: 0)')
     parser.add_argument('--log_dir', type=str, default="",
                         help='tensorboard log directory')
-    parser.add_argument('--checkpoint_dir', type=str, default = '', help='directory to save checkpoint')
-    parser.add_argument('--save_test_dir', type=str, default = '', help='directory to save test submission file')
-    parser.add_argument('--num_devices', type=int, default='0', help="Number of GPUs, if 0 runs on the CPU")
+    parser.add_argument('--checkpoint_dir', type=str, default='',
+                        help='directory to save checkpoint')
+    parser.add_argument('--save_test_dir', type=str, default='',
+                        help='directory to save test submission file')
+    parser.add_argument('--num_devices', type=int, default='0',
+                        help="Number of GPUs, if 0 runs on the CPU")
     parser.add_argument('--on_disk_dataset', action='store_true')
     args = parser.parse_args()
 
@@ -580,18 +635,20 @@ if __name__ == "__main__":
 
     seed_everything(42)
 
-    available_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 0
+    available_gpus = torch.cuda.device_count() if torch.cuda.is_available(
+    ) else 0
     assert args.num_devices <= available_gpus, f"Cannot train with {args.num_devices} GPUs: available GPUs count {available_gpus}"
 
     ### automatic dataloading and splitting
     if args.on_disk_dataset:
-        dataset = PCQM4Mv2(root = 'on_disk_dataset/', split='train')
+        dataset = PCQM4Mv2(root='on_disk_dataset/', split='train')
     else:
-        dataset = PygPCQM4Mv2Dataset(root = 'dataset/')
+        dataset = PygPCQM4Mv2Dataset(root='dataset/')
 
     if args.num_devices > 1:
-        print(f'Starting multi-GPU training with DDP with {args.num_devices} GPUs')
+        print(
+            f'Starting multi-GPU training with DDP with {args.num_devices} GPUs'
+        )
         mp.spawn(run, args=(dataset, args), nprocs=args.num_devices, join=True)
     else:
         run(0, dataset, args)
-
