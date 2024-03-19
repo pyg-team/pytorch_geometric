@@ -7,7 +7,7 @@ from torch_geometric.nn import (
     L2KNNIndex,
     MIPSKNNIndex,
 )
-from torch_geometric.testing import onlyLinux, withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withPackage
 
 
 @withCUDA
@@ -83,7 +83,6 @@ def test_approx_l2(device, k, reserve):
 
 
 @withCUDA
-@onlyLinux
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
 @pytest.mark.parametrize('reserve', [None, 100])
