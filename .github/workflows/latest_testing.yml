@@ -9,7 +9,12 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   latest_pytest:
-    runs-on: [ubuntu-latest, macsos-14]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14]
 
     steps:
       - name: Checkout repository
