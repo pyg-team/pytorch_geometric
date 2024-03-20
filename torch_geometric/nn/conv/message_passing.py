@@ -165,7 +165,8 @@ class MessagePassing(torch.nn.Module):
         root_dir = osp.dirname(osp.realpath(__file__))
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
-        if not self.propagate.__module__.startswith(jinja_prefix):
+        if ('propagate' not in self.__class__.__dict__
+                and not self.propagate.__module__.startswith(jinja_prefix)):
             try:
                 module = module_from_template(
                     module_name=f'{jinja_prefix}_propagate',
@@ -193,9 +194,13 @@ class MessagePassing(torch.nn.Module):
             except Exception:  # pragma: no cover
                 self.__class__._orig_propagate = self.__class__.propagate
                 self.__class__._jinja_propagate = self.__class__.propagate
+        else:
+            self.__class__._orig_propagate = self.__class__.propagate
+            self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
         if (self.inspector.implements('edge_update')
+                and 'edge_updater' not in self.__class__.__dict__
                 and not self.edge_updater.__module__.startswith(jinja_prefix)):
             try:
                 module = module_from_template(
@@ -219,6 +224,9 @@ class MessagePassing(torch.nn.Module):
                 self.__class__._orig_edge_updater = self.__class__.edge_updater
                 self.__class__._jinja_edge_updater = (
                     self.__class__.edge_updater)
+        else:
+            self.__class__._orig_edge_updater = self.__class__.edge_updater
+            self.__class__._jinja_edge_updater = self.__class__.edge_updater
 
         # Explainability:
         self._explain: Optional[bool] = None
