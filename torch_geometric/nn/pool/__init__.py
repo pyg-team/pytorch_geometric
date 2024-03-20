@@ -220,11 +220,12 @@ def radius(
     :rtype: :class:`torch.Tensor`
     """
     if str(x.device) == "cpu" and max_num_neighbors is not None:
-        warnings.warn("CPU implementation of radius with max_num_neighbors "
-                      "is different from the GPU implementation. Consider setting"
-                      "max_num_neighbors=None or move x to GPU before calling"
-                      "radius. See "
-                      "https://github.com/pyg-team/pytorch_geometric/issues/9036")
+        warnings.warn(
+            "CPU implementation of radius with max_num_neighbors "
+            "is different from the GPU implementation. Consider setting"
+            "max_num_neighbors=None or move x to GPU before calling"
+            "radius. See "
+            "https://github.com/pyg-team/pytorch_geometric/issues/9036")
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius(x, y, r, batch_x, batch_y,
@@ -282,11 +283,12 @@ def radius_graph(
         batch = batch.to(x.device)
 
     if str(x.device) == "cpu" and max_num_neighbors is not None:
-        warnings.warn("CPU implementation of radius_graph with max_num_neighbors "
-                      "is different from the GPU implementation. Consider setting"
-                      "max_num_neighbors=None or move x to GPU before calling"
-                      "radius_graph. See "
-                      "https://github.com/pyg-team/pytorch_geometric/issues/9036")
+        warnings.warn(
+            "CPU implementation of radius_graph with max_num_neighbors "
+            "is different from the GPU implementation. Consider setting"
+            "max_num_neighbors=None or move x to GPU before calling"
+            "radius_graph. See "
+            "https://github.com/pyg-team/pytorch_geometric/issues/9036")
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
