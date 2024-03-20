@@ -8,7 +8,7 @@ from torch_geometric.nn.aggr import Aggregation
 
 class VariancePreservingAggregation(Aggregation):
     r"""Performs the Variance Preserving Aggregation (VPA) for graph
-    neural networks, as described in https://arxiv.org/pdf/2403.04747.pdf
+    neural networks, as described in https://arxiv.org/pdf/2403.04747.pdf.
 
     .. math::
         \mathrm{vpa}(\mathcal{X}) = \frac{1}{\sqrt{|\mathcal{X}|}}
