@@ -30,12 +30,13 @@ except ImportError as error:
     print("`PygPCQM4Mv2Dataset` requires rdkit (`pip install rdkit`)")
     raise error
 
-from torch_geometric.datasets import PCQM4Mv2
-from torch_geometric.data import Data
-
 from ogb.utils import smiles2graph
 
-# we need this wrapper as ogb `smiles2graph` returns a dict of np arrays instead of a torch_geometric Data 
+from torch_geometric.data import Data
+from torch_geometric.datasets import PCQM4Mv2
+
+
+# we need this wrapper as ogb `smiles2graph` returns a dict of np arrays instead of a torch_geometric Data
 def ogb_from_smiles_wrapper(smiles, *args, **kwargs):
     ret_dict = smiles2graph(smiles, *args, **kwargs)
     return Data(x=torch.from_numpy(ret_dict['node_feat']),
@@ -459,10 +460,14 @@ def run(rank, dataset, args):
 
     if rank == 0:
         if args.on_disk_dataset:
-            valid_dataset = PCQM4Mv2(root='on_disk_dataset/', split="val", from_smiles_func=ogb_from_smiles_wrapper)
-            test_dev_dataset = PCQM4Mv2(root='on_disk_dataset/', split="test", from_smiles_func=ogb_from_smiles_wrapper)
-            test_challenge_dataset = PCQM4Mv2(root='on_disk_dataset/',
-                                              split="holdout", from_smiles_func=ogb_from_smiles_wrapper)
+            valid_dataset = PCQM4Mv2(root='on_disk_dataset/', split="val",
+                                     from_smiles_func=ogb_from_smiles_wrapper)
+            test_dev_dataset = PCQM4Mv2(
+                root='on_disk_dataset/', split="test",
+                from_smiles_func=ogb_from_smiles_wrapper)
+            test_challenge_dataset = PCQM4Mv2(
+                root='on_disk_dataset/', split="holdout",
+                from_smiles_func=ogb_from_smiles_wrapper)
         else:
             valid_dataset = dataset[split_idx["valid"]]
             test_dev_dataset = dataset[split_idx["test-dev"]]
@@ -652,7 +657,8 @@ if __name__ == "__main__":
 
     ### automatic dataloading and splitting
     if args.on_disk_dataset:
-        dataset = PCQM4Mv2(root='on_disk_dataset/', split='train', from_smiles_func=ogb_from_smiles_wrapper)
+        dataset = PCQM4Mv2(root='on_disk_dataset/', split='train',
+                           from_smiles_func=ogb_from_smiles_wrapper)
     else:
         dataset = PygPCQM4Mv2Dataset(root='dataset/')
 
