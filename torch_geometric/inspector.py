@@ -322,13 +322,15 @@ class Inspector:
 
     def get_source(self, cls: Optional[Type] = None) -> str:
         r"""Returns the source code of :obj:`cls`."""
+        from torch_geometric.nn import MessagePassing
+
         cls = cls or self._cls
         if cls.__name__ in self._source_dict:
             return self._source_dict[cls.__name__]
-        try:
-            source = inspect.getsource(cls)
-        except Exception:
-            source = ''
+        if cls in {object, torch.nn.Module, MessagePassing}:
+            return ''
+        source = inspect.getsource(cls)
+
         self._source_dict[cls.__name__] = source
         return source
 
