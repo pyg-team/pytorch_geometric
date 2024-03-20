@@ -218,10 +218,11 @@ def withMETIS(func: Callable) -> Callable:
 
     if with_metis:
         try:  # Test that METIS can succesfully execute:
-            import pyg_lib
+            # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
+            # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])
             col = torch.tensor([1, 2, 0, 2, 1, 0])
-            pyg_lib.partition.metis(rowptr, col, num_partitions=2)
+            torch.ops.torch_sparse.partition(rowptr, col, None, 2, True)
         except Exception:
             with_metis = False
 

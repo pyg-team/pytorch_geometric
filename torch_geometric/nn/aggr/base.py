@@ -47,7 +47,7 @@ class Aggregation(torch.nn.Module):
        # Define the boundary indices for three sets:
        ptr = torch.tensor([0, 4, 7, 10])
 
-       output = aggr(x, ptr=ptr)  #  Output shape: [4, 64]
+       output = aggr(x, ptr=ptr)  #  Output shape: [3, 64]
 
     Note that at least one of :obj:`index` or :obj:`ptr` must be defined.
 
