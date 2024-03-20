@@ -56,7 +56,7 @@ runs:
       shell: bash
 
     - name: Install faiss-cpu
-      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
       run: |
         pip install faiss-cpu
       shell: bash
@@ -67,10 +67,15 @@ runs:
         pip install faiss-gpu
       shell: bash
 
-    - name: Install extension packages
+    - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+      shell: bash
+
+    - name: Install extension packages
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && runner.os != 'macOS' }}
+      run: |
         pip install scipy
         pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
