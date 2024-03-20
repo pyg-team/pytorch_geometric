@@ -48,8 +48,8 @@ runs:
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
-    - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
-      if: ${{ inputs.torch-version != 'nightly' && runner.os == 'Linux' }}
+    - name: Install pyg-lib  # pyg-lib is currently not available on Windows.
+      if: ${{ inputs.torch-version != 'nightly' && runner.os != 'Windows' }}
       run: |
         pip uninstall -y pyg-lib
         pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
