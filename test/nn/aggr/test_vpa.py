@@ -1,6 +1,11 @@
 import pytest
 import torch
-from torch_geometric.nn import VariancePreservingAggregation, MeanAggregation, SumAggregation
+
+from torch_geometric.nn import (
+    MeanAggregation,
+    SumAggregation,
+    VariancePreservingAggregation,
+)
 
 
 def test_vpa():
@@ -22,5 +27,3 @@ def test_vpa():
     assert out_vpa.size() == (3, x.size(1))
     assert torch.allclose(out_vpa, out_vpa2)
     assert torch.allclose(out_vpa, vpa_aggr(x, ptr=ptr))
-
-
