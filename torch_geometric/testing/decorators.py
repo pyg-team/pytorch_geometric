@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 from importlib import import_module
 from importlib.util import find_spec
 from typing import Callable
@@ -194,6 +195,27 @@ def withCUDA(func: Callable) -> Callable:
     devices = [pytest.param(torch.device('cpu'), id='cpu')]
     if torch.cuda.is_available():
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
+
+    return pytest.mark.parametrize('device', devices)(func)
+
+
+def withDevice(func: Callable) -> Callable:
+    r"""A decorator to test both on CPU and Device, with the option of
+    setting a backend.
+    """
+    import pytest
+
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+    # Additional devices can be registered through environment variables:
+    device = os.getenv('TORCH_DEVICE')
+    if device:
+        backend = os.getenv('TORCH_BACKEND')
+        if backend is None:
+            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
+                          f"order to test against '{device}'")
+        else:
+            import_module(backend)
+            devices.append(pytest.param(torch.device(device), id=device))
 
     return pytest.mark.parametrize('device', devices)(func)
 
