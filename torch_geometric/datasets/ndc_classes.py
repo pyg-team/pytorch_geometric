@@ -1,7 +1,6 @@
 import os.path as osp
 from typing import Callable, List, Optional
 
-import pandas as pd
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url
@@ -97,6 +96,8 @@ class NDCClasses25(InMemoryDataset):
         download_url(osp.join(self.url, self.raw_file_names[2]), self.raw_dir)
 
     def process(self) -> None:
+        import pandas as pd
+
         for split in ["train", "val", "test"]:
             # Read CSV and create dataframe
             df = pd.read_csv(f"{self.raw_dir}/{split}_df.csv")
@@ -111,14 +112,15 @@ class NDCClasses25(InMemoryDataset):
                 node_features = [[timestamp]]
 
                 # Add edges to edge_index
-                edge_index = [[], []]
+                edge_index_container: List[List[int]] = [[], []]
                 for node in nodes:
-                    edge_index[0].append(node)
-                    edge_index[1].append(index)  # Use index as hyperedge index
+                    edge_index_container[0].append(node)
+                    edge_index_container[1].append(
+                        index)  # Use index as hyperedge index
 
                 # Convert node_features and edge_index lists to tensors
                 x = torch.tensor(node_features, dtype=torch.float)
-                edge_index = torch.tensor(edge_index)
+                edge_index = torch.tensor(edge_index_container)
 
                 data = HyperGraphData(x=x, edge_index=edge_index)
 

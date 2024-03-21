@@ -1,7 +1,8 @@
-from torch_geometric.testing import onlyOnline
+from torch_geometric.testing import onlyOnline, withPackage
 
 
 @onlyOnline
+@withPackage("pandas")
 def test_ndc_classes_dataset(get_dataset) -> None:
     train_dataset = get_dataset(name="NDCClasses25", split="train")
     val_dataset = get_dataset(name="NDCClasses25", split="val")
