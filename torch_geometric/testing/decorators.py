@@ -194,9 +194,9 @@ def withDevice(func: Callable) -> Callable:
     import pytest
 
     has_unified_memory = torch.backends.mps.is_available()
+    processors = [pytest.param(torch.device('cpu'), id='cpu')]
 
     if not has_unified_memory:
-        processors = [pytest.param(torch.device('cpu'), id='cpu')]
         if torch.cuda.is_available():
             processors.append(pytest.param(torch.device('cuda:0'),
                                            id='cuda:0'))
@@ -213,7 +213,7 @@ def withDevice(func: Callable) -> Callable:
                 processors.append(
                     pytest.param(torch.device(processor), id=processor))
     if has_unified_memory:
-        return None
+        pass 
 
     return pytest.mark.parametrize('device', processors)(func)
 
