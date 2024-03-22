@@ -8,7 +8,7 @@ from torch_geometric.explain.config import (
     ModelTaskLevel,
 )
 from torch_geometric.nn import GCNConv, global_add_pool
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withDevice
 
 
 class GCN(torch.nn.Module):
@@ -32,7 +32,7 @@ class GCN(torch.nn.Module):
         return x
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('mode', [
     ModelMode.binary_classification,
     ModelMode.multiclass_classification,
@@ -79,7 +79,7 @@ def test_pg_explainer_node(device, check_explanation, mode):
     check_explanation(explanation, None, explainer.edge_mask_type)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('mode', [
     ModelMode.binary_classification,
     ModelMode.multiclass_classification,

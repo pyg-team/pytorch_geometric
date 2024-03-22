@@ -8,7 +8,7 @@ from torch_geometric.testing import (
     MyGraphStore,
     get_random_edge_index,
     onlyNeighborSampler,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -17,7 +17,7 @@ def unique_edge_pairs(edge_index):
     return set(map(tuple, edge_index.t().tolist()))
 
 
-@withCUDA
+@withDevice
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])

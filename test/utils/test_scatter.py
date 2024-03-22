@@ -5,7 +5,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 from torch_geometric.utils import group_argsort, group_cat, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
@@ -25,7 +25,7 @@ def test_scatter_validate():
         scatter(src, index, reduce='std')
 
 
-@withCUDA
+@withDevice
 @withPackage('torch_scatter')
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_scatter(reduce, device):
@@ -50,7 +50,7 @@ def test_scatter(reduce, device):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_scatter_backward(reduce, device):
     src = torch.randn(8, 100, 16, device=device, requires_grad=True)
@@ -63,7 +63,7 @@ def test_scatter_backward(reduce, device):
     assert src.grad is not None
 
 
-@withCUDA
+@withDevice
 def test_scatter_any(device):
     src = torch.randn(6, 4, device=device)
     index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
@@ -75,7 +75,7 @@ def test_scatter_any(device):
             assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('num_groups', [4])
 @pytest.mark.parametrize('descending', [False, True])
 def test_group_argsort(num_groups, descending, device):
@@ -99,7 +99,7 @@ def test_group_argsort(num_groups, descending, device):
     assert out.numel() == 0
 
 
-@withCUDA
+@withDevice
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
     index = torch.tensor([2, 2, 0, 0, 3], device=device)
@@ -111,7 +111,7 @@ def test_scatter_argmax(device):
     assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
 
 
-@withCUDA
+@withDevice
 def test_group_cat(device):
     x1 = torch.randn(4, 4, device=device)
     x2 = torch.randn(2, 4, device=device)

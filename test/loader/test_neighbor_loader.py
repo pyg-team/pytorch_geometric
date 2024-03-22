@@ -18,7 +18,7 @@ from torch_geometric.testing import (
     onlyLinux,
     onlyNeighborSampler,
     onlyOnline,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.typing import (
@@ -61,7 +61,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
-@withCUDA
+@withDevice
 @onlyNeighborSampler
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
@@ -907,7 +907,7 @@ def test_edge_level_temporal_hetero_neighbor_loader():
             assert batch['A', 'A'].edge_time.max() <= 4
 
 
-@withCUDA
+@withDevice
 @onlyNeighborSampler
 @withPackage('torch_frame')
 def test_neighbor_loader_with_tensor_frame(device):

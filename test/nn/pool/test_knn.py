@@ -7,10 +7,10 @@ from torch_geometric.nn import (
     L2KNNIndex,
     MIPSKNNIndex,
 )
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 
 
-@withCUDA
+@withDevice
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
 def test_l2(device, k):
@@ -34,7 +34,7 @@ def test_l2(device, k):
     assert torch.equal(out.index, index[:, :k])
 
 
-@withCUDA
+@withDevice
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
 def test_mips(device, k):
@@ -58,7 +58,7 @@ def test_mips(device, k):
     assert torch.equal(out.index, index[:, :k])
 
 
-@withCUDA
+@withDevice
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
 @pytest.mark.parametrize('reserve', [None, 100])
@@ -82,7 +82,7 @@ def test_approx_l2(device, k, reserve):
     assert out.index.min() >= 0 and out.index.max() < 10_000
 
 
-@withCUDA
+@withDevice
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
 @pytest.mark.parametrize('reserve', [None, 100])
@@ -106,7 +106,7 @@ def test_approx_mips(device, k, reserve):
     assert out.index.min() >= 0 and out.index.max() < 10_000
 
 
-@withCUDA
+@withDevice
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [50])
 def test_mips_exclude(device, k):

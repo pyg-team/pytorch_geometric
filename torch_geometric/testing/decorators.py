@@ -188,36 +188,34 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
-def withCUDA(func: Callable) -> Callable:
-    r"""A decorator to test both on CPU and CUDA (if available)."""
-    import pytest
-
-    devices = [pytest.param(torch.device('cpu'), id='cpu')]
-    if torch.cuda.is_available():
-        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
-
-    return pytest.mark.parametrize('device', devices)(func)
-
-
 def withDevice(func: Callable) -> Callable:
-    r"""A decorator to test both on CPU and Device, with the option of
-    setting a backend.
-    """
+    r"""A decorator to test on tensor processing devices and specialized
+    backend, if available."""
     import pytest
 
-    devices = [pytest.param(torch.device('cpu'), id='cpu')]
-    # Additional devices can be registered through environment variables:
-    device = os.getenv('TORCH_DEVICE')
-    if device:
-        backend = os.getenv('TORCH_BACKEND')
-        if backend is None:
-            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
-                          f"order to test against '{device}'")
-        else:
-            import_module(backend)
-            devices.append(pytest.param(torch.device(device), id=device))
+    has_unified_memory = torch.backends.mps.is_available()
 
-    return pytest.mark.parametrize('device', devices)(func)
+    if not has_unified_memory:
+        processors = [pytest.param(torch.device('cpu'), id='cpu')]
+        if torch.cuda.is_available():
+            processors.append(pytest.param(torch.device('cuda:0'),
+                                           id='cuda:0'))
+    # One additional device can be registered through environment variables:
+        processor = os.getenv('TORCH_DEVICE')
+        if processor:
+            backend = os.getenv('TORCH_BACKEND')
+            if backend is None:
+                warnings.warn(
+                    f"Please specify the backend via 'TORCH_BACKEND' in"
+                    f"order to test against '{processor}'")
+            else:
+                import_module(backend)
+                processors.append(
+                    pytest.param(torch.device(processor), id=processor))
+    if has_unified_memory:
+        return None
+
+    return pytest.mark.parametrize('device', processors)(func)
 
 
 def withMETIS(func: Callable) -> Callable:
