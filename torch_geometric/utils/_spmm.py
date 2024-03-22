@@ -1,48 +1,27 @@
-import typing
 import warnings
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload as overload
 
-
-@overload
 def spmm(
-    src: Tensor,
+    src: Adj,
     other: Tensor,
     reduce: str = 'sum',
-) -> Tensor:
-    pass
-
-
-@overload
-def spmm(  # noqa: F811
-    src: SparseTensor,
-    other: Tensor,
-    reduce: str = 'sum',
-) -> Tensor:
-    pass
-
-
-def spmm(  # noqa: F811
-        src: Adj,
-        other: Tensor,
-        reduce: str = 'sum',
 ) -> Tensor:
     r"""Matrix product of sparse matrix with dense matrix.
 
     Args:
-        src (torch.Tensor or torch_sparse.SparseTensor): The input sparse
-            matrix, either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
-            :pytorch:`PyTorch` :class:`torch.sparse.Tensor`.
+        src (torch.Tensor or torch_sparse.SparseTensor or EdgeIndex):
+            The input sparse matrix which can be a
+            :pyg:`PyG` :class:`torch_sparse.SparseTensor`,
+            a :pytorch:`PyTorch` :class:`torch.sparse.Tensor` or
+            a :pyg:`PyG` :class:`EdgeIndex`.
         other (torch.Tensor): The input dense matrix.
         reduce (str, optional): The reduce operation to use
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`).
@@ -54,6 +33,9 @@ def spmm(  # noqa: F811
 
     if reduce not in ['sum', 'mean', 'min', 'max']:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
+
+    if not torch.jit.is_scripting() and isinstance(src, EdgeIndex):
+        return src.matmul(other=other, reduce=reduce)  # type: ignore
 
     if isinstance(src, SparseTensor):
         if src.nnz() == 0:
@@ -67,8 +49,8 @@ def spmm(  # noqa: F811
         return torch_sparse.matmul(src, other, reduce)
 
     if not is_torch_sparse_tensor(src):
-        raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
-                         f"or a `torch.sparse.Tensor` (got {type(src)}).")
+        raise ValueError("'src' must be a 'torch_sparse.SparseTensor' or a "
+                         "'torch.sparse.Tensor'")
 
     # `torch.sparse.mm` only supports reductions on CPU for PyTorch>=2.0.
     # This will currently throw on error for CUDA tensors.
@@ -136,14 +118,15 @@ def spmm(  # noqa: F811
         elif (torch_geometric.typing.WITH_PT112
               and src.layout == torch.sparse_csc):
             assert src.layout == torch.sparse_csc
-            deg = scatter(torch.ones_like(src.values()), src.row_indices(),
-                          dim=0, dim_size=src.size(0), reduce='sum')
+            ones = torch.ones_like(src.values())
+            index = src.row_indices()
+            deg = scatter(ones, index, 0, dim_size=src.size(0), reduce='sum')
         else:
             assert src.layout == torch.sparse_coo
             src = src.coalesce()
-            deg = scatter(torch.ones_like(src.values()),
-                          src.indices()[0], dim=0, dim_size=src.size(0),
-                          reduce='sum')
+            ones = torch.ones_like(src.values())
+            index = src.indices()[0]
+            deg = scatter(ones, index, 0, dim_size=src.size(0), reduce='sum')
 
         return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 

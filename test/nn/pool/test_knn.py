@@ -1,14 +1,19 @@
 import pytest
 import torch
 
-from torch_geometric.nn import L2KNNIndex, MIPSKNNIndex
+from torch_geometric.nn import (
+    ApproxL2KNNIndex,
+    ApproxMIPSKNNIndex,
+    L2KNNIndex,
+    MIPSKNNIndex,
+)
 from torch_geometric.testing import withCUDA, withPackage
 
 
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_L2_knn(device, k):
+def test_l2(device, k):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 
@@ -32,7 +37,7 @@ def test_L2_knn(device, k):
 @withCUDA
 @withPackage('faiss')
 @pytest.mark.parametrize('k', [2])
-def test_MIPS_knn(device, k):
+def test_mips(device, k):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 
@@ -55,8 +60,56 @@ def test_MIPS_knn(device, k):
 
 @withCUDA
 @withPackage('faiss')
+@pytest.mark.parametrize('k', [2])
+@pytest.mark.parametrize('reserve', [None, 100])
+def test_approx_l2(device, k, reserve):
+    lhs = torch.randn(10, 16, device=device)
+    rhs = torch.randn(10_000, 16, device=device)
+
+    index = ApproxL2KNNIndex(
+        num_cells=10,
+        num_cells_to_visit=10,
+        bits_per_vector=8,
+        emb=rhs,
+        reserve=reserve,
+    )
+
+    out = index.search(lhs, k)
+    assert out.score.device == device
+    assert out.index.device == device
+    assert out.score.size() == (10, k)
+    assert out.index.size() == (10, k)
+    assert out.index.min() >= 0 and out.index.max() < 10_000
+
+
+@withCUDA
+@withPackage('faiss')
+@pytest.mark.parametrize('k', [2])
+@pytest.mark.parametrize('reserve', [None, 100])
+def test_approx_mips(device, k, reserve):
+    lhs = torch.randn(10, 16, device=device)
+    rhs = torch.randn(10_000, 16, device=device)
+
+    index = ApproxMIPSKNNIndex(
+        num_cells=10,
+        num_cells_to_visit=10,
+        bits_per_vector=8,
+        emb=rhs,
+        reserve=reserve,
+    )
+
+    out = index.search(lhs, k)
+    assert out.score.device == device
+    assert out.index.device == device
+    assert out.score.size() == (10, k)
+    assert out.index.size() == (10, k)
+    assert out.index.min() >= 0 and out.index.max() < 10_000
+
+
+@withCUDA
+@withPackage('faiss')
 @pytest.mark.parametrize('k', [50])
-def test_MIPS_exclude(device, k):
+def test_mips_exclude(device, k):
     lhs = torch.randn(10, 16, device=device)
     rhs = torch.randn(100, 16, device=device)
 

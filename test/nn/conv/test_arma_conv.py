@@ -25,7 +25,7 @@ def test_arma_conv():
         assert torch.allclose(conv(x, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -46,7 +46,7 @@ def test_lazy_arma_conv():
         assert torch.allclose(conv(x, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:

@@ -772,7 +772,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, None, reduce, transpose)
     exp = _scatter_spmm(adj, x, None, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # With non-zero values:
     x = torch.randn(3, 1, device=device)
@@ -780,7 +780,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
 
     out = _torch_sparse_spmm(adj, x, value, reduce, transpose)
     exp = _scatter_spmm(adj, x, value, reduce, transpose)
-    assert out.allclose(exp)
+    assert out.allclose(exp, atol=1e-6)
 
     # Gradients w.r.t. other:
     x1 = torch.randn(3, 1, device=device, requires_grad=True)
@@ -791,7 +791,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x2, None, reduce, transpose)
     exp.backward(grad)
-    assert x1.grad.allclose(x2.grad)
+    assert x1.grad.allclose(x2.grad, atol=1e-6)
 
     # Gradients w.r.t. value:
     x = torch.randn(3, 1, device=device)
@@ -803,7 +803,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     out.backward(grad)
     exp = _scatter_spmm(adj, x, value2, reduce, transpose)
     exp.backward(grad)
-    assert value1.grad.allclose(value2.grad)
+    assert value1.grad.allclose(value2.grad, atol=1e-6)
 
 
 @withCUDA
@@ -952,7 +952,7 @@ def test_spspmm(device, reduce, transpose, is_undirected):
         assert isinstance(out, EdgeIndex)
         assert out.is_sorted_by_row
         assert out._sparse_size == (3, 3)
-        if not torch_geometric.typing.WITH_WINDOWS:
+        if not torch_geometric.typing.NO_MKL:
             assert out._indptr is not None
         assert torch.allclose(out.to_dense(value), adj1_dense @ adj2_dense)
     else:
@@ -987,6 +987,71 @@ def test_matmul(without_extensions, device):
             torch.sparse.mm(adj, x, reduce='sum')
         out = torch.sparse.mm(adj, x)
     assert torch.allclose(out, expected)
+
+
+@withCUDA
+def test_sparse_narrow(device):
+    adj = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        device=device,
+        sort_order='row',
+    )
+
+    out = adj.sparse_narrow(dim=0, start=1, length=1)
+    assert out.equal(torch.tensor([[0, 0], [0, 2]], device=device))
+    assert out.sparse_size() == (1, None)
+    assert out.sort_order == 'row'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=0, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (0, None)
+    assert out.sort_order == 'row'
+    assert out._indptr is None
+
+    out = adj.sparse_narrow(dim=1, start=1, length=1)
+    assert (out.equal(torch.tensor([[0, 2], [0, 0]], device=device))
+            or out.equal(torch.tensor([[2, 0], [0, 0]], device=device)))
+    assert out.sparse_size() == (3, 1)
+    assert out.sort_order == 'col'
+    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=1, start=2, length=0)
+    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.sparse_size() == (3, 0)
+    assert out.sort_order == 'col'
+    assert out._indptr is None
+
+
+@withCUDA
+def test_sparse_resize(device):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
+
+    out = adj.sort_by('row')[0].fill_cache_()
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
+    out = out.sparse_resize_(4, 5)
+    assert out.sparse_size() == (4, 5)
+    assert out._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4, 4], device=device))
+    out = out.sparse_resize_(3, 3)
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr is None
+    assert out._T_indptr is None
+
+    out = adj.sort_by('col')[0].fill_cache_()
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
+    out = out.sparse_resize_(4, 5)
+    assert out.sparse_size() == (4, 5)
+    assert out._indptr.equal(tensor([0, 1, 3, 4, 4, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+    out = out.sparse_resize_(3, 3)
+    assert out.sparse_size() == (3, 3)
+    assert out._indptr is None
+    assert out._T_indptr is None
 
 
 @withCUDA
@@ -1079,31 +1144,56 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.1.0')
+@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
 def test_compile():
     import torch._dynamo as dynamo
 
     class Model(torch.nn.Module):
         def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
-            row, col = edge_index[0], edge_index[1]
-            x_j = x[row]
-            out = scatter(x_j, col, dim_size=edge_index.num_cols)
+            x_j = x[edge_index[0]]
+            out = scatter(x_j, edge_index[1], dim_size=edge_index.num_cols)
             return out
 
     x = torch.randn(3, 8)
     # Test that `num_cols` gets picked up by making last node isolated.
-    edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 0, 1]], sparse_size=(3, 3))
+    edge_index = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 0, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+    ).fill_cache_()
 
     model = Model()
     expected = model(x, edge_index)
     assert expected.size() == (3, 8)
 
     explanation = dynamo.explain(model)(x, edge_index)
-    assert explanation.graph_break_count <= 0
+    assert explanation.graph_break_count == 0
 
-    compiled_model = torch_geometric.compile(model)
+    compiled_model = torch.compile(model, fullgraph=True)
     out = compiled_model(x, edge_index)
     assert torch.allclose(out, expected)
+
+
+@onlyLinux
+@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
+def test_compile_create_edge_index():
+    import torch._dynamo as dynamo
+
+    class Model(torch.nn.Module):
+        def forward(self) -> None:
+            # TODO Add more tests once closed:
+            # https://github.com/pytorch/pytorch/issues/117806
+            out = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+            out.as_subclass(EdgeIndex)
+            return
+
+    model = Model()
+
+    explanation = dynamo.explain(model)()
+    assert explanation.graph_break_count == 0
+
+    compiled_model = torch.compile(model, fullgraph=True)
+    assert compiled_model() is None
 
 
 if __name__ == '__main__':

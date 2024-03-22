@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class PDNConv(MessagePassing):
     r"""The pathfinder discovery network convolutional operator from the
     `"Pathfinder Discovery Networks for Neural Message Passing"
-    <https://arxiv.org/pdf/2010.12878.pdf>`_ paper.
+    <https://arxiv.org/abs/2010.12878>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup
@@ -119,7 +119,7 @@ class PDNConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):

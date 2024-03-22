@@ -14,38 +14,20 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.distributed.partition import load_partition_info
-from torch_geometric.testing import onlyLinux, withPackage
+from torch_geometric.testing import onlyDistributedTest, withMETIS
+from torch_geometric.testing.distributed import ProcArgs, assert_run_mproc
 
 
 def create_dist_data(tmp_path: str, rank: int):
     graph_store = LocalGraphStore.from_partition(tmp_path, pid=rank)
     feat_store = LocalFeatureStore.from_partition(tmp_path, pid=rank)
-    (
-        meta,
-        num_partitions,
-        partition_idx,
-        node_pb,
-        edge_pb,
-    ) = load_partition_info(tmp_path, rank)
-    graph_store.partition_idx = partition_idx
-    graph_store.num_partitions = num_partitions
-    graph_store.node_pb = node_pb
-    graph_store.edge_pb = edge_pb
-    graph_store.meta = meta
-
-    feat_store.partition_idx = partition_idx
-    feat_store.num_partitions = num_partitions
-    feat_store.node_feat_pb = node_pb
-    feat_store.edge_feat_pb = edge_pb
-    feat_store.meta = meta
 
     return feat_store, graph_store
 
 
 def dist_neighbor_loader_homo(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -97,8 +79,8 @@ def dist_neighbor_loader_homo(
 
 
 def dist_neighbor_loader_hetero(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -161,8 +143,8 @@ def dist_neighbor_loader_hetero(
     assert loader.channel.empty()
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@withMETIS
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
@@ -174,10 +156,11 @@ def test_dist_neighbor_loader_homo(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -188,24 +171,17 @@ def test_dist_neighbor_loader_homo(
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    procs = [
+        ProcArgs(
+            target=dist_neighbor_loader_homo,
+            args=(tmp_path, part, addr, port, num_workers, async_sampling),
+        ) for part in range(num_parts)
+    ]
+    assert_run_mproc(mp_context, procs)
 
 
-@onlyLinux
-@withPackage('pyg_lib')
+@withMETIS
+@onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
 @pytest.mark.parametrize('async_sampling', [True])
@@ -217,10 +193,11 @@ def test_dist_neighbor_loader_hetero(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
@@ -233,17 +210,10 @@ def test_dist_neighbor_loader_hetero(
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    procs = [
+        ProcArgs(
+            target=dist_neighbor_loader_hetero,
+            args=(tmp_path, part, addr, port, num_workers, async_sampling),
+        ) for part in range(num_parts)
+    ]
+    assert_run_mproc(mp_context, procs)

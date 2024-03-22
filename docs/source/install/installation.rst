@@ -1,7 +1,7 @@
 Installation
 ============
 
-:pyg:`PyG` is available for :python:`Python 3.8` to :python:`Python 3.11`.
+:pyg:`PyG` is available for :python:`Python 3.8` to :python:`Python 3.12`.
 
 .. note::
    We do not recommend installation as a root user on your system :python:`Python`.
@@ -27,6 +27,12 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 .. warning::
    Conda packages are currently not available for Windows and M1/M2/M3 macs.
 
+If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:`PyG`, you can enforce it as follows:
+
+.. code-block:: none
+
+   conda install pyg=*=*cu* -c pyg
+
 Installation via PyPi
 ---------------------
 
@@ -36,8 +42,6 @@ For this, simply run:
 .. code-block:: none
 
    pip install torch_geometric
-
-PyG 2.3 requires that at least PyTorch 1.11 is installed.
 
 Additional Libraries
 --------------------
@@ -68,14 +72,14 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 2.1.0
+      >>> 2.2.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.version.cuda)"
-      >>> 11.8
+      >>> 12.1
 
 #. Install the relevant packages:
 
@@ -85,23 +89,24 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.2: :obj:`${TORCH}=2.2.0` and :obj:`${CUDA}=cpu|cu118|cu121`
    * :pytorch:`PyTorch` 2.1: :obj:`${TORCH}=2.1.0` and :obj:`${CUDA}=cpu|cu118|cu121`
    * :pytorch:`PyTorch` 2.0: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.1.* and CUDA 12.1, type:
+   For example, for :pytorch:`PyTorch` 2.2.* and CUDA 12.1, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu121.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.2.0+cu121.html
 
-   For example, for :pytorch:`PyTorch` 2.0.* and CUDA 11.8, type:
+   For example, for :pytorch:`PyTorch` 2.1.* and CUDA 11.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
 
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1 and 1.13.0/1.13.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, and 2.0.0 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 

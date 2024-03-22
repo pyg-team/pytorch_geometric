@@ -1,9 +1,9 @@
-import copy
-from typing import Any, Dict, List, Optional, Tuple, Union, overload
+from typing import Dict, List, Optional, Tuple, Union, overload
 
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import (
     Adj,
     EdgeType,
@@ -14,18 +14,6 @@ from torch_geometric.typing import (
     SparseStorage,
     SparseTensor,
 )
-
-
-def filter_empty_entries(
-        input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
-    r"""Removes empty tensors from a dictionary. This avoids unnecessary
-    computation when some node/edge types are non-reachable after trimming.
-    """
-    out_dict = copy.copy(input_dict)
-    for key, value in input_dict.items():
-        if value.numel() == 0:
-            del out_dict[key]
-    return out_dict
 
 
 @overload
@@ -95,7 +83,6 @@ def trim_to_layer(
             k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
             for k, v in x.items()
         }
-        x = filter_empty_entries(x)
 
         assert isinstance(edge_index, dict)
         edge_index = {
@@ -109,7 +96,6 @@ def trim_to_layer(
             )
             for k, v in edge_index.items()
         }
-        edge_index = filter_empty_entries(edge_index)
 
         if edge_attr is not None:
             assert isinstance(edge_attr, dict)
@@ -117,7 +103,6 @@ def trim_to_layer(
                 k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
-            edge_attr = filter_empty_entries(edge_attr)
 
         return x, edge_index, edge_attr
 
@@ -143,6 +128,7 @@ def trim_to_layer(
 
 
 class TrimToLayer(torch.nn.Module):
+    @torch.jit.unused
     def forward(
         self,
         layer: int,
@@ -201,11 +187,19 @@ def trim_adj(
         return edge_index
 
     if isinstance(edge_index, Tensor):
-        return edge_index.narrow(
+        edge_index = edge_index.narrow(
             dim=1,
             start=0,
             length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
         )
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            num_rows, num_cols = edge_index.sparse_size()
+            if num_rows is not None:
+                num_rows -= num_sampled_src_nodes_per_hop[-layer]
+            if num_cols is not None:
+                num_cols -= num_sampled_dst_nodes_per_hop[-layer]
+            edge_index.sparse_resize_(num_rows, num_cols)
+        return edge_index
 
     elif isinstance(edge_index, SparseTensor):
         size = (

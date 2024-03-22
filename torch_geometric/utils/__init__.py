@@ -2,14 +2,14 @@ r"""Utility package."""
 
 import copy
 
-from ._scatter import scatter, group_argsort
+from ._scatter import scatter, group_argsort, group_cat
 from ._segment import segment
 from ._index_sort import index_sort
 from .functions import cumsum
 from ._degree import degree
 from ._softmax import softmax
-from ._sort_edge_index import sort_edge_index
 from ._lexsort import lexsort
+from ._sort_edge_index import sort_edge_index
 from ._coalesce import coalesce
 from .undirected import is_undirected, to_undirected
 from .loop import (contains_self_loops, remove_self_loops,
@@ -60,13 +60,14 @@ from ._train_test_split_edges import train_test_split_edges
 __all__ = [
     'scatter',
     'group_argsort',
+    'group_cat',
     'segment',
     'index_sort',
     'cumsum',
     'degree',
     'softmax',
-    'sort_edge_index',
     'lexsort',
+    'sort_edge_index',
     'coalesce',
     'is_undirected',
     'to_undirected',

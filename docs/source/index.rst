@@ -30,7 +30,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/gnn_design
    tutorial/dataset
    tutorial/application
-   tutorial/multi_gpu
+   tutorial/distributed
 
 .. toctree::
    :maxdepth: 1
@@ -58,6 +58,8 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/transforms
    modules/utils
    modules/explain
+   modules/metrics
+   modules/distributed
    modules/contrib
    modules/graphgym
    modules/profile

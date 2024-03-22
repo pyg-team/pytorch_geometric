@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
 
-import torch_geometric
 from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
@@ -45,7 +44,7 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
               profiling, use_compile, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
     if use_compile:
-        model = torch_geometric.compile(model)
+        model = torch.compile(model)
 
     for run in range(runs):
         data = dataset[0]
@@ -61,7 +60,6 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
             try:
-                import torch.mps
                 torch.mps.synchronize()
             except ImportError:
                 pass
@@ -99,7 +97,6 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
             try:
-                import torch.mps
                 torch.mps.synchronize()
             except ImportError:
                 pass
@@ -130,7 +127,7 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
 
     model.to(device).reset_parameters()
     if use_compile:
-        model = torch_geometric.compile(model)
+        model = torch.compile(model)
 
     if torch.cuda.is_available():
         amp = torch.cuda.amp.autocast(enabled=False)

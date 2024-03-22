@@ -1,7 +1,6 @@
 import copy
 import os.path as osp
 import warnings
-from abc import ABC
 from typing import (
     Any,
     Callable,
@@ -30,7 +29,7 @@ from torch_geometric.data.separate import separate
 from torch_geometric.io import fs
 
 
-class InMemoryDataset(Dataset, ABC):
+class InMemoryDataset(Dataset):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/

@@ -6,13 +6,13 @@ inputs:
     default: '3.8'
   torch-version:
     required: false
-    default: '2.1.0'
+    default: '2.2.0'
   cuda-version:
     required: false
     default: cpu
   torchvision-version:
     required: false
-    default: '0.16.0'
+    default: '0.17.0'
   full_install:
     required: false
     default: true
@@ -48,29 +48,34 @@ runs:
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
-    - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
-      if: ${{ inputs.torch-version != 'nightly' && runner.os == 'Linux' }}
+    - name: Install pyg-lib  # pyg-lib is currently not available on Windows.
+      if: ${{ inputs.torch-version != 'nightly' && runner.os != 'Windows' }}
       run: |
         pip uninstall -y pyg-lib
         pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
     - name: Install faiss-cpu
-      if: ${{ inputs.cuda-version == 'cpu' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
       run: |
         pip install faiss-cpu
       shell: bash
 
     - name: Install faiss-gpu
-      if: ${{ inputs.cuda-version != 'cpu' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' }}
       run: |
         pip install faiss-gpu
       shell: bash
 
-    - name: Install extension packages
+    - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+      shell: bash
+
+    - name: Install extension packages
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && runner.os != 'macOS' }}
+      run: |
         pip install scipy
         pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash

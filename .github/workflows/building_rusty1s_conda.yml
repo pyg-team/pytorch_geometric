@@ -10,12 +10,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-        torch-version: [1.12.0, 1.13.0, 2.0.0, 2.1.0]
+        os: [ubuntu-latest, macos-14, windows-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        torch-version: [1.12.0, 1.13.0, 2.0.0, 2.1.0, 2.2.0]
         cuda-version: ['cpu', 'cu113', 'cu116', 'cu117', 'cu118', 'cu121']
         exclude:
           - torch-version: 1.12.0
+            python-version: '3.12'
+          - torch-version: 1.13.0
+            python-version: '3.12'
+          - torch-version: 2.0.0
+            python-version: '3.12'
+          - torch-version: 2.1.0
+            python-version: '3.12'
+          - torch-version: 1.12.0
             python-version: '3.11'
           - torch-version: 1.12.0
             cuda-version: 'cu117'
@@ -43,16 +51,26 @@ jobs:
             cuda-version: 'cu116'
           - torch-version: 2.1.0
             cuda-version: 'cu117'
-          - os: macos-latest
+          - torch-version: 2.2.0
             cuda-version: 'cu113'
-          - os: macos-latest
+          - torch-version: 2.2.0
             cuda-version: 'cu116'
-          - os: macos-latest
+          - torch-version: 2.2.0
             cuda-version: 'cu117'
-          - os: macos-latest
+          - os: macos-14
+            cuda-version: 'cu113'
+          - os: macos-14
+            cuda-version: 'cu116'
+          - os: macos-14
+            cuda-version: 'cu117'
+          - os: macos-14
             cuda-version: 'cu118'
-          - os: macos-latest
+          - os: macos-14
             cuda-version: 'cu121'
+          - os: macos-14
+            python-version: '3.8'
+          - os: macos-14
+            python-version: '3.9'
 
     steps:
       - name: Checkout repository
