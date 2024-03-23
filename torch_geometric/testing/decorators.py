@@ -204,7 +204,7 @@ def withDevice(func: Callable) -> Callable:
         processor = os.getenv('TORCH_DEVICE')
         if processor:
             backend = os.getenv('TORCH_BACKEND')
-            if backend is None:
+            if not backend:
                 warnings.warn(
                     f"Please specify the backend via 'TORCH_BACKEND' in"
                     f"order to test against '{processor}'")
@@ -213,7 +213,7 @@ def withDevice(func: Callable) -> Callable:
                 processors.append(
                     pytest.param(torch.device(processor), id=processor))
     if has_unified_memory:
-        pass
+        pass  # todo: add mps device
 
     return pytest.mark.parametrize('device', processors)(func)
 

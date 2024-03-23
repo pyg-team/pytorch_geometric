@@ -1,3 +1,4 @@
+from enum import Enum
 import pytest
 import torch
 import torch_geometric.typing
@@ -34,8 +35,14 @@ def test_disable_extensions():
 
 backends = [
     'cpu', 'cuda', 'cudnn', 'mha', 'mps', 'mkl', 'mkldnn', 'nnpack', 'openmp',
-    'opt_einsum', 'xeon', None
+    'opt_einsum', 'xeon', ''
 ]
+
+
+class Processor(Enum):
+    CPU = ['cpu']
+    GPU = ['cuda:0']
+    UNIFIED_MEMORY = ['mps']
 
 
 @withDevice
@@ -43,17 +50,21 @@ def test_dummy(device):
     assert isinstance(device, torch.device)
 
 
+processors = [value for processor in Processor for value in processor.value]
+
+
 @pytest.mark.parametrize('backend', backends)
-def test_withDevice(monkeypatch, backend):
+@pytest.mark.parametrize('processor', processors)
+def test_withDevice(monkeypatch, backend, processor):
     monkeypatch.setenv('TORCH_BACKEND', backend)
-    if backend == 'cuda':
+    monkeypatch.setenv('TORCH_DEVICE', processor)
+    if processor == Processor.GPU.value[0]:
         monkeypatch.setattr(torch.cuda, 'is_available', lambda: True)
-    elif backend == 'mps':
+    elif processor == Processor.UNIFIED_MEMORY.value[0]:
         monkeypatch.setattr(torch.backends.mps, 'is_available', lambda: True)
     else:
         monkeypatch.setattr(torch.backends.mps, 'is_available', lambda: False)
 
-    # Check if the test_dummy function has been correctly parameterized
     assert hasattr(test_dummy, 'pytestmark')
     assert len(test_dummy.pytestmark) == 1
     assert test_dummy.pytestmark[0].name == 'parametrize'
