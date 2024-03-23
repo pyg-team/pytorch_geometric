@@ -34,7 +34,7 @@ def test_disable_extensions():
 
 backends = [
     'cpu', 'cuda', 'cudnn', 'mha', 'mps', 'mkl', 'mkldnn', 'nnpack', 'openmp',
-    'opt_einsum', 'xeon'
+    'opt_einsum', 'xeon', None
 ]
 
 
