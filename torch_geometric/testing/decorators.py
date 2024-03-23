@@ -213,7 +213,7 @@ def withDevice(func: Callable) -> Callable:
                 processors.append(
                     pytest.param(torch.device(processor), id=processor))
     if has_unified_memory:
-        pass 
+        pass
 
     return pytest.mark.parametrize('device', processors)(func)
 
