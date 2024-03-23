@@ -190,7 +190,8 @@ def withPackage(*args: str) -> Callable:
 
 def withDevice(func: Callable) -> Callable:
     r"""A decorator to test on tensor processing devices and specialized
-    backend, if available."""
+    backend, if available.
+    """
     import pytest
 
     has_unified_memory = torch.backends.mps.is_available()

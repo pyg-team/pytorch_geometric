@@ -1,6 +1,8 @@
 from enum import Enum
+
 import pytest
 import torch
+
 import torch_geometric.typing
 from torch_geometric.testing import disableExtensions
 from torch_geometric.testing.decorators import withDevice
