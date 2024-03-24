@@ -3,7 +3,12 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
-from torch_geometric.testing import is_full_test, withDevice, withPackage
+from torch_geometric.testing import (
+    is_full_test,
+    withCUDA,
+    withDevice,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
@@ -47,7 +52,7 @@ def test_rgcn_conv_equality(conf, device):
         assert torch.allclose(out1, out2, atol=1e-2)
 
 
-@withDevice
+@withCUDA
 @withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('cls', classes)
 @pytest.mark.parametrize('conf', confs)

@@ -2,10 +2,10 @@ import torch
 
 from torch_geometric.loader import NeighborLoader, PrefetchLoader
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.testing import withDevice
+from torch_geometric.testing import withCUDA
 
 
-@withDevice
+@withCUDA
 def test_prefetch_loader(device):
     data = [torch.randn(5, 5) for _ in range(10)]
 

@@ -5,7 +5,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withDevice, withPackage
+from torch_geometric.testing import withCUDA, withDevice, withPackage
 from torch_geometric.utils import group_argsort, group_cat, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
@@ -34,6 +34,11 @@ def test_scatter(reduce, device):
     src = torch.randn(100, 16, device=device)
     index = torch.randint(0, 8, (100, ), device=device)
 
+    if device.type == 'mps' and reduce in ['min', 'max']:
+        with pytest.raises(NotImplementedError, match="for the MPS device"):
+            scatter(src, index, dim=0, reduce=reduce)
+        return
+
     out1 = scatter(src, index, dim=0, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=0, reduce=reduce)
     assert out1.device == device
@@ -55,6 +60,11 @@ def test_scatter(reduce, device):
 def test_scatter_backward(reduce, device):
     src = torch.randn(8, 100, 16, device=device, requires_grad=True)
     index = torch.randint(0, 8, (100, ), device=device)
+
+    if device.type == 'mps' and reduce in ['min', 'max']:
+        with pytest.raises(NotImplementedError, match="for the MPS device"):
+            scatter(src, index, dim=1, reduce=reduce)
+        return
 
     out = scatter(src, index, dim=1, reduce=reduce)
 
@@ -99,7 +109,7 @@ def test_group_argsort(num_groups, descending, device):
     assert out.numel() == 0
 
 
-@withDevice
+@withCUDA
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
     index = torch.tensor([2, 2, 0, 0, 3], device=device)

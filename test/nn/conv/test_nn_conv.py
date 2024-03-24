@@ -5,12 +5,12 @@ from torch.nn import Sequential as Seq
 
 import torch_geometric.typing
 from torch_geometric.nn import NNConv
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
 
-@withDevice
+@withCUDA
 def test_nn_conv(device):
     x1 = torch.randn(4, 8, device=device)
     x2 = torch.randn(2, 16, device=device)

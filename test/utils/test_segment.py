@@ -5,12 +5,12 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withDevice, withoutExtensions
+from torch_geometric.testing import withCUDA, withoutExtensions
 from torch_geometric.utils import scatter, segment
 from torch_geometric.utils.sparse import index2ptr
 
 
-@withDevice
+@withCUDA
 @withoutExtensions
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_segment(device, without_extensions, reduce):

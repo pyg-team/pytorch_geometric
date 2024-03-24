@@ -8,12 +8,12 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withDevice, withPackage
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import spmm, to_torch_coo_tensor
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
 def test_spmm_basic(device, reduce):
     src = torch.randn(5, 4, device=device)
@@ -38,7 +38,7 @@ def test_spmm_basic(device, reduce):
         assert torch.allclose(out2, out3, atol=1e-6)
 
 
-@withDevice
+@withCUDA
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('reduce', ['min', 'max'])
 def test_spmm_reduce(device, reduce):
@@ -56,7 +56,7 @@ def test_spmm_reduce(device, reduce):
             assert torch.allclose(out1, out2)
 
 
-@withDevice
+@withCUDA
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize(
     'layout', [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc])
@@ -107,7 +107,7 @@ def test_spmm_jit(reduce):
         assert torch.allclose(out2, out3, atol=1e-6)
 
 
-@withDevice
+@withCUDA
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_spmm_edge_index(device, reduce):

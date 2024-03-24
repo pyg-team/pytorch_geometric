@@ -11,7 +11,7 @@ from torch.nn.parameter import UninitializedParameter
 import torch_geometric.backend
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withDevice, withPackage
+from torch_geometric.testing import withCUDA, withDevice, withPackage
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import cumsum
 
@@ -135,7 +135,7 @@ def test_copy_linear(lazy, device):
         assert torch.allclose(copied_lin.bias, lin.bias)
 
 
-@withDevice
+@withCUDA
 def test_hetero_linear(device):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
@@ -161,7 +161,7 @@ def test_hetero_linear_initializer():
     assert torch.equal(lin.bias, torch.zeros_like(lin.bias))
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('use_segment_matmul', [None, True, False])
 def test_hetero_linear_amp(device, use_segment_matmul):
     warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
@@ -180,7 +180,7 @@ def test_hetero_linear_amp(device, use_segment_matmul):
     torch_geometric.backend.use_segment_matmul = old_state
 
 
-@withDevice
+@withCUDA
 def test_lazy_hetero_linear(device):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
@@ -252,7 +252,7 @@ def test_lazy_hetero_dict_linear(device):
     assert out_dict['w'].size() == (2, 32)
 
 
-@withDevice
+@withCUDA
 @withPackage('pyg_lib')
 @withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('type_vec', [

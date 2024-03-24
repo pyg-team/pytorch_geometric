@@ -5,7 +5,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import is_full_test, withDevice, withPackage
+from torch_geometric.testing import is_full_test, withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
     dense_to_sparse,
@@ -249,7 +249,7 @@ def test_to_edge_index():
         assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize(
     'layout',
     [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc],

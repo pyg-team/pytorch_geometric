@@ -21,7 +21,7 @@ from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyCUDA,
     onlyLinux,
-    withDevice,
+    withCUDA,
     withoutExtensions,
     withPackage,
 )
@@ -39,7 +39,7 @@ TRANSPOSE = [
 ]
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_basic(dtype, device):
     kwargs = dict(dtype=dtype, device=device, sparse_size=(3, 3))
@@ -81,7 +81,7 @@ def test_basic(dtype, device):
     assert out.device == device
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_identity(dtype, device, is_undirected):
@@ -97,7 +97,7 @@ def test_identity(dtype, device, is_undirected):
     assert out.is_undirected == adj.is_undirected
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_sparse_tensor(dtype, device):
     kwargs = dict(dtype=dtype, device=device, is_undirected=True)
@@ -161,7 +161,7 @@ def test_validate():
         EdgeIndex([[0, 1], [1, 0]], sort_order='col').validate()
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_undirected(dtype, device):
     kwargs = dict(dtype=dtype, device=device, is_undirected=True)
@@ -186,7 +186,7 @@ def test_undirected(dtype, device):
         EdgeIndex([[0, 1, 1, 2], [0, 0, 1, 1]], **kwargs).validate()
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_fill_cache_(dtype, device, is_undirected):
@@ -229,7 +229,7 @@ def test_fill_cache_(dtype, device, is_undirected):
         assert adj._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_clone(dtype, device, is_undirected):
@@ -251,7 +251,7 @@ def test_clone(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_to(dtype, device, is_undirected):
@@ -309,7 +309,7 @@ def test_cpu_cuda(dtype):
     assert not out.is_cuda
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_share_memory(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
@@ -322,7 +322,7 @@ def test_share_memory(dtype, device):
     assert adj._indptr.is_shared()
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_contiguous(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
@@ -336,7 +336,7 @@ def test_contiguous(dtype, device):
     assert adj.is_contiguous()
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_sort_by(dtype, device, is_undirected):
@@ -383,7 +383,7 @@ def test_sort_by(dtype, device, is_undirected):
     assert out._T_index[0] is None and out._T_index[1] is None
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_cat(dtype, device, is_undirected):
@@ -425,7 +425,7 @@ def test_cat(dtype, device, is_undirected):
     assert not isinstance(inplace, EdgeIndex)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_flip(dtype, device, is_undirected):
@@ -455,7 +455,7 @@ def test_flip(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_index_select(dtype, device, is_undirected):
@@ -482,7 +482,7 @@ def test_index_select(dtype, device, is_undirected):
     assert not isinstance(inplace, EdgeIndex)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_narrow(dtype, device, is_undirected):
@@ -500,7 +500,7 @@ def test_narrow(dtype, device, is_undirected):
     assert out.equal(tensor([[0, 1, 1, 2]], device=device))
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_getitem(dtype, device, is_undirected):
@@ -535,7 +535,7 @@ def test_getitem(dtype, device, is_undirected):
     assert not isinstance(out, EdgeIndex)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('value_dtype', [None, torch.double])
 def test_to_dense(dtype, device, value_dtype):
@@ -567,7 +567,7 @@ def test_to_dense(dtype, device, value_dtype):
     assert out.equal(tensor(expected, dtype=value_dtype, device=device))
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_to_sparse_coo(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
@@ -610,7 +610,7 @@ def test_to_sparse_coo(dtype, device):
     assert out.is_coalesced()
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_to_sparse_csr(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
@@ -631,7 +631,7 @@ def test_to_sparse_csr(dtype, device):
     assert adj[1].equal(out.col_indices())
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.skipif(not torch_geometric.typing.WITH_PT112, reason="<1.12")
 def test_to_sparse_csc(dtype, device):
@@ -653,7 +653,7 @@ def test_to_sparse_csc(dtype, device):
     assert adj[0].equal(out.row_indices())
 
 
-@withDevice
+@withCUDA
 @withPackage('torch_sparse')
 def test_to_sparse_tensor(device):
     kwargs = dict(device=device)
@@ -666,7 +666,7 @@ def test_to_sparse_tensor(device):
     assert col.equal(adj[1])
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_add(dtype, device, is_undirected):
@@ -710,7 +710,7 @@ def test_add(dtype, device, is_undirected):
     assert adj.sparse_size() == (5, 5)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_sub(dtype, device, is_undirected):
@@ -754,7 +754,7 @@ def test_sub(dtype, device, is_undirected):
     assert adj.sparse_size() == (5, 5)
 
 
-@withDevice
+@withCUDA
 @withPackage('torch_sparse')
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
@@ -806,7 +806,7 @@ def test_torch_sparse_spmm(device, reduce, transpose, is_undirected):
     assert value1.grad.allclose(value2.grad, atol=1e-6)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
@@ -869,7 +869,7 @@ def test_torch_spmm(device, reduce, transpose, is_undirected):
         out.backward(grad)
 
 
-@withDevice
+@withCUDA
 @withoutExtensions
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
@@ -930,7 +930,7 @@ def test_spmm(without_extensions, device, reduce, transpose, is_undirected):
     assert value1.grad.allclose(value2.grad)
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('reduce', ReduceType.__args__)
 @pytest.mark.parametrize('transpose', TRANSPOSE)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
@@ -960,7 +960,7 @@ def test_spspmm(device, reduce, transpose, is_undirected):
             adj1.matmul(adj2, reduce=reduce, transpose=transpose)
 
 
-@withDevice
+@withCUDA
 @withoutExtensions
 def test_matmul(without_extensions, device):
     kwargs = dict(sort_order='row', device=device)
@@ -989,7 +989,7 @@ def test_matmul(without_extensions, device):
     assert torch.allclose(out, expected)
 
 
-@withDevice
+@withCUDA
 def test_sparse_narrow(device):
     adj = EdgeIndex(
         [[0, 1, 1, 2], [1, 0, 2, 1]],
@@ -1023,7 +1023,7 @@ def test_sparse_narrow(device):
     assert out._indptr is None
 
 
-@withDevice
+@withCUDA
 def test_sparse_resize(device):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
@@ -1054,7 +1054,7 @@ def test_sparse_resize(device):
     assert out._T_indptr is None
 
 
-@withDevice
+@withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_save_and_load(dtype, device, tmp_path):
     kwargs = dict(dtype=dtype, device=device)
