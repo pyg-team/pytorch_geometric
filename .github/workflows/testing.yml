@@ -59,7 +59,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 10
         run: |
-          pytest --cov --cov-report=xml --durations 10
+          PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: steps.changed-files-specific.outputs.only_changed != 'true'
