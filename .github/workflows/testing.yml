@@ -55,6 +55,10 @@ jobs:
         run: |
           pip install -e .[full,test]
 
+      - name: Test MPS
+        run: |
+          python -c "import torch; print(torch.randn(5, 5, device='mps'))"
+
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 10
