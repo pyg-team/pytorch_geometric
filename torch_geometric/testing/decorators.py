@@ -188,35 +188,41 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
-def withDevice(func: Callable) -> Callable:
-    r"""A decorator to test on tensor processing devices and specialized
-    backend, if available.
-    """
+def withCUDA(func: Callable) -> Callable:
+    r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
 
-    has_unified_memory = torch.backends.mps.is_available()
-    processors = [pytest.param(torch.device('cpu'), id='cpu')]
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+    if torch.cuda.is_available():
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
-    if not has_unified_memory:
-        if torch.cuda.is_available():
-            processors.append(pytest.param(torch.device('cuda:0'),
-                                           id='cuda:0'))
-    # One additional device can be registered through environment variables:
-        processor = os.getenv('TORCH_DEVICE')
-        if processor:
-            backend = os.getenv('TORCH_BACKEND')
-            if not backend:
-                warnings.warn(
-                    f"Please specify the backend via 'TORCH_BACKEND' in"
-                    f"order to test against '{processor}'")
-            else:
-                import_module(backend)
-                processors.append(
-                    pytest.param(torch.device(processor), id=processor))
-    if has_unified_memory:
-        pass  # todo: add mps device
+    return pytest.mark.parametrize('device', devices)(func)
 
-    return pytest.mark.parametrize('device', processors)(func)
+
+def withDevice(func: Callable) -> Callable:
+    r"""A decorator to test on all available tensor processing devices."""
+    import pytest
+
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+
+    if torch.cuda.is_available():
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
+
+    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+
+    # Additional devices can be registered through environment variables:
+    device = os.getenv('TORCH_DEVICE')
+    if device:
+        backend = os.getenv('TORCH_BACKEND')
+        if backend is None:
+            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
+                          f"order to test against '{device}'")
+        else:
+            import_module(backend)
+            devices.append(pytest.param(torch.device(device), id=device))
+
+    return pytest.mark.parametrize('device', devices)(func)
 
 
 def withMETIS(func: Callable) -> Callable:
