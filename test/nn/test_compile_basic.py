@@ -4,7 +4,7 @@ from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.utils import scatter
@@ -42,7 +42,7 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
     return torch.cat(outs, dim=-1)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>=2.0.0')

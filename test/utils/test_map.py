@@ -2,11 +2,11 @@ import pytest
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 from torch_geometric.utils.map import map_index
 
 
-@withCUDA
+@withDevice
 @withPackage('pandas')
 @pytest.mark.parametrize('max_index', [3, 100_000_000])
 def test_map_index(device, max_index):
@@ -19,7 +19,7 @@ def test_map_index(device, max_index):
     assert out.tolist() == [1, 2, 3, 2, 0]
 
 
-@withCUDA
+@withDevice
 @withPackage('pandas')
 @pytest.mark.parametrize('max_index', [3, 100_000_000])
 def test_map_index_na(device, max_index):

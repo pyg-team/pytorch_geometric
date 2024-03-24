@@ -11,7 +11,7 @@ from torch.nn.parameter import UninitializedParameter
 import torch_geometric.backend
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withDevice, withPackage
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import cumsum
 
@@ -19,7 +19,7 @@ weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
 def test_linear(weight, bias, device):
@@ -30,7 +30,7 @@ def test_linear(weight, bias, device):
     assert lin(x).size() == (3, 4, 32)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
 def test_lazy_linear(weight, bias, device):
@@ -50,7 +50,7 @@ def test_lazy_linear(weight, bias, device):
     assert copied_lin(x).size() == (3, 4, 32)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
 @pytest.mark.parametrize('bias', [True, False])
@@ -110,7 +110,7 @@ def test_copy_unintialized_parameter():
             copy.deepcopy(weight)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('lazy', [True, False])
 def test_copy_linear(lazy, device):
     lin = Linear(-1 if lazy else 16, 32).to(device)
@@ -192,7 +192,7 @@ def test_lazy_hetero_linear(device):
     assert out.size() == (3, 32)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('bias', [True, False])
 def test_hetero_dict_linear(bias, device):
     x_dict = {
@@ -236,7 +236,7 @@ def test_hetero_dict_linear_jit():
     assert len(jit(x_dict)) == 2
 
 
-@withCUDA
+@withDevice
 def test_lazy_hetero_dict_linear(device):
     x_dict = {
         'v': torch.randn(3, 16, device=device),
