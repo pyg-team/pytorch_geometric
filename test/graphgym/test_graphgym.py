@@ -26,7 +26,7 @@ from torch_geometric.graphgym.utils import (
     auto_select_device,
     params_count,
 )
-from torch_geometric.testing import onlyOnline, withPackage
+from torch_geometric.testing import onlyLinux, onlyOnline, withPackage
 
 num_trivial_metric_calls = 0
 
@@ -164,6 +164,7 @@ def test_graphgym_module(tmp_path):
 
 
 @onlyOnline
+@onlyLinux
 @withPackage('yacs', 'pytorch_lightning')
 def test_train(tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")

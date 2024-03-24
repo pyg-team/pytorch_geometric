@@ -12,7 +12,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     get_random_tensor_frame,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -23,7 +23,7 @@ if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader(num_workers, device):
     if num_workers > 0 and device != torch.device('cpu'):
