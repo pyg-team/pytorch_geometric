@@ -209,7 +209,11 @@ def withDevice(func: Callable) -> Callable:
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
     if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+        try:  # Github CI may not have access to MPS hardware. Confirm:
+            torch.empty(1, device='mps')
+            devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+        except RuntimeError:
+            pass
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
