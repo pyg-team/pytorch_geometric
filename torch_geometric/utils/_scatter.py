@@ -175,6 +175,7 @@ else:  # pragma: no cover
 
 
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
+    dim = ref.dim() + dim if dim < 0 else dim
     size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
 
