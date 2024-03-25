@@ -17,7 +17,8 @@ def test_segment(device, without_extensions, reduce):
     src = torch.randn(20, 16, device=device)
     ptr = torch.tensor([0, 0, 5, 10, 15, 20], device=device)
 
-    if without_extensions and not torch_geometric.typing.WITH_PT20:
+    if (not torch_geometric.typing.WITH_TORCH_SCATTER
+            and not torch_geometric.typing.WITH_PT20):
         with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
             segment(src, ptr, reduce=reduce)
     else:
