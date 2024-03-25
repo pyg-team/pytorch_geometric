@@ -240,6 +240,19 @@ def test_dataloader_tensor_frame():
         assert batch.edge_index.max() >= 10
 
 
+def test_dataloader_sparse():
+    adj_t = torch.sparse_coo_tensor(
+        indices=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+        values=torch.randn(4),
+        size=(3, 3),
+    )
+    data = Data(adj_t=adj_t)
+
+    loader = DataLoader([data, data], batch_size=2)
+    for batch in loader:
+        assert batch.adj_t.size() == (6, 6)
+
+
 if __name__ == '__main__':
     import argparse
     import time
