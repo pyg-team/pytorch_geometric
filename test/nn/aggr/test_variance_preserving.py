@@ -7,10 +7,10 @@ from torch_geometric.nn import (
 )
 
 
-def test_vpa():
+def test_variance_preserving():
     x = torch.randn(6, 16)
-    index = torch.tensor([0, 0, 1, 1, 1, 2])
-    ptr = torch.tensor([0, 2, 5, 6])
+    index = torch.tensor([0, 0, 1, 1, 1, 3])
+    ptr = torch.tensor([0, 2, 5, 5, 6])
 
     vpa_aggr = VariancePreservingAggregation()
     mean_aggr = MeanAggregation()
@@ -20,9 +20,9 @@ def test_vpa():
     out_mean = mean_aggr(x, index)
     out_sum = sum_aggr(x, index)
 
-    # equivalent formulation
-    out_vpa2 = torch.sqrt(out_mean.abs() * out_sum.abs()) * torch.sign(out_sum)
+    # Equivalent formulation:
+    expected = torch.sqrt(out_mean.abs() * out_sum.abs()) * out_sum.sign()
 
-    assert out_vpa.size() == (3, x.size(1))
-    assert torch.allclose(out_vpa, out_vpa2)
+    assert out_vpa.size() == (4, 16)
+    assert torch.allclose(out_vpa, expected)
     assert torch.allclose(out_vpa, vpa_aggr(x, ptr=ptr))

@@ -24,7 +24,7 @@ from .mlp import MLPAggregation
 from .deep_sets import DeepSetsAggregation
 from .set_transformer import SetTransformerAggregation
 from .lcm import LCMAggregation
-from .vpa import VariancePreservingAggregation
+from .variance_preserving import VariancePreservingAggregation
 
 __all__ = classes = [
     'Aggregation',
