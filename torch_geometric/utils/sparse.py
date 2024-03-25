@@ -499,7 +499,6 @@ def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
 def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     assert dim in {0, 1, (0, 1)}
     assert tensors[0].layout == torch.sparse_coo
-    print("DRIN")
 
     indices, values = [], []
     num_rows = num_cols = 0
