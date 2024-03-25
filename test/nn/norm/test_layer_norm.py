@@ -2,10 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.nn import HeteroLayerNorm, LayerNorm
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import is_full_test, withDevice
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('affine', [True, False])
 @pytest.mark.parametrize('mode', ['graph', 'node'])
 def test_layer_norm(device, affine, mode):
@@ -27,7 +27,7 @@ def test_layer_norm(device, affine, mode):
     assert torch.allclose(out1, out2[100:], atol=1e-6)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('affine', [False, True])
 def test_hetero_layer_norm(device, affine):
     x = torch.randn((100, 16), device=device)

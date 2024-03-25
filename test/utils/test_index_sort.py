@@ -1,10 +1,10 @@
 import torch
 
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withDevice
 from torch_geometric.utils import index_sort
 
 
-@withCUDA
+@withDevice
 def test_index_sort_stable(device):
     for _ in range(100):
         inputs = torch.randint(0, 4, size=(10, ), device=device)
