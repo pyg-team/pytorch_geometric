@@ -499,6 +499,7 @@ def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
 def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     assert dim in {0, 1, (0, 1)}
     assert tensors[0].layout == torch.sparse_coo
+    print("DRIN")
 
     indices, values = [], []
     num_rows = num_cols = 0
@@ -506,34 +507,34 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     if dim == 0:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[num_rows], [0]], device=tensor.device)
-                indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+                indices.append(tensor._indices() + offset)
+            values.append(tensor._values())
             num_rows += tensor.size(0)
             num_cols = max(num_cols, tensor.size(1))
 
     elif dim == 1:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[0], [num_cols]], device=tensor.device)
                 indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+            values.append(tensor._values())
             num_rows = max(num_rows, tensor.size(0))
             num_cols += tensor.size(1)
 
     else:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[num_rows], [num_cols]],
                                       device=tensor.device)
-                indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+                indices.append(tensor._indices() + offset)
+            values.append(tensor._values())
             num_rows += tensor.size(0)
             num_cols += tensor.size(1)
 
