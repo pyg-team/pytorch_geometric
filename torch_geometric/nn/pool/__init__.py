@@ -218,6 +218,13 @@ def radius(
             Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
+
+    .. warning::
+
+        The CPU implementation of :meth:`radius` with :obj:`max_num_neighbors`
+        is biased towards certain quadrants.
+        Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
+        inputs to GPU before proceeding.
     """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius(x, y, r, batch_x, batch_y,
@@ -268,6 +275,13 @@ def radius_graph(
             Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
+
+    .. warning::
+
+        The CPU implementation of :meth:`radius_graph` with
+        :obj:`max_num_neighbors` is biased towards certain quadrants.
+        Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
+        inputs to GPU before proceeding.
     """
     if batch is not None and x.device != batch.device:
         warnings.warn("Input tensor 'x' and 'batch' are on different devices "
