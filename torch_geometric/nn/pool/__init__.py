@@ -218,15 +218,14 @@ def radius(
             Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
-    """
-    if str(x.device) == "cpu" and max_num_neighbors is not None:
-        warnings.warn(
-            "CPU implementation of radius with max_num_neighbors "
-            "is different from the GPU implementation. Consider setting"
-            "max_num_neighbors=None or move x to GPU before calling"
-            "radius. See "
-            "https://github.com/pyg-team/pytorch_geometric/issues/9036")
 
+    .. warning::
+
+        The CPU implementation of :meth:`radius` with :obj:`max_num_neighbors`
+        is biased towards certain quadrants.
+        Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
+        inputs to GPU before proceeding.
+    """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius(x, y, r, batch_x, batch_y,
                                     max_num_neighbors, num_workers)
@@ -276,19 +275,18 @@ def radius_graph(
             Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
+
+    .. warning::
+
+        The CPU implementation of :meth:`radius_graph` with
+        :obj:`max_num_neighbors` is biased towards certain quadrants.
+        Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
+        inputs to GPU before proceeding.
     """
     if batch is not None and x.device != batch.device:
         warnings.warn("Input tensor 'x' and 'batch' are on different devices "
                       "in 'radius_graph'. Performing blocking device transfer")
         batch = batch.to(x.device)
-
-    if str(x.device) == "cpu" and max_num_neighbors is not None:
-        warnings.warn(
-            "CPU implementation of radius_graph with max_num_neighbors "
-            "is different from the GPU implementation. Consider setting"
-            "max_num_neighbors=None or move x to GPU before calling"
-            "radius_graph. See "
-            "https://github.com/pyg-team/pytorch_geometric/issues/9036")
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
