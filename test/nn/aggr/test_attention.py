@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 import torch_geometric.typing
