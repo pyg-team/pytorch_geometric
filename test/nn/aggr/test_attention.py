@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import AttentionalAggregation
 
