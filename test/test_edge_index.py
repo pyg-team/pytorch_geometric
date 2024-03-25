@@ -875,8 +875,7 @@ def test_torch_spmm(device, reduce, transpose, is_undirected):
 @pytest.mark.parametrize('transpose', TRANSPOSE)
 @pytest.mark.parametrize('is_undirected', IS_UNDIRECTED)
 def test_spmm(without_extensions, device, reduce, transpose, is_undirected):
-    if without_extensions:
-        warnings.filterwarnings('ignore', '.*can be accelerated via.*')
+    warnings.filterwarnings('ignore', '.*can be accelerated via.*')
 
     if is_undirected:
         kwargs = dict(is_undirected=True)
