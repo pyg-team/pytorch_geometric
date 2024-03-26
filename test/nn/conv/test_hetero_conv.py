@@ -18,7 +18,7 @@ from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     get_random_edge_index,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -178,7 +178,7 @@ def test_hetero_conv_with_dot_syntax_node_types():
     assert out_dict['author'].size() == (30, 64)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @withPackage('torch>=2.1.0')
 def test_compile_hetero_conv_graph_breaks(device):

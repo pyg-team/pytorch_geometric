@@ -33,6 +33,7 @@ except ImportError as e:  # noqa
 
 from torch_geometric.data import Data, InMemoryDataset
 
+
 @no_type_check
 def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
                        textual_edges: df, topk: int = 3, topk_e: int = 3,
