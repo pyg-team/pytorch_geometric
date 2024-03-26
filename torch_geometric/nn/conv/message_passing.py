@@ -735,8 +735,7 @@ class MessagePassing(torch.nn.Module):
                 self.propagate = self.__class__._orig_propagate.__get__(
                     self, MessagePassing)
 
-        elif ((self.explain is None or self.explain is False)
-              and not self.propagate.__module__.endswith('_propagate')):
+        elif self.explain is None or self.explain is False:
             if hasattr(self.__class__, '_jinja_propagate'):
                 self.propagate = self.__class__._jinja_propagate.__get__(
                     self, MessagePassing)
