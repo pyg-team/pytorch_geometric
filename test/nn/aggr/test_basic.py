@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
@@ -51,7 +52,11 @@ def test_basic_aggregation(Aggregation):
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
 
-    if isinstance(aggr, MulAggregation):
+    if (not torch_geometric.typing.WITH_TORCH_SCATTER
+            and not torch_geometric.typing.WITH_PT20):
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            aggr(x, ptr=ptr)
+    elif isinstance(aggr, MulAggregation):
         with pytest.raises(RuntimeError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
@@ -96,7 +101,13 @@ def test_learnable_aggregation(Aggregation, learn):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-    assert torch.allclose(out, aggr(x, ptr=ptr))
+
+    if (not torch_geometric.typing.WITH_TORCH_SCATTER
+            and not torch_geometric.typing.WITH_PT20):
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            aggr(x, ptr=ptr)
+    else:
+        assert torch.allclose(out, aggr(x, ptr=ptr))
 
     if learn:
         out.mean().backward()
@@ -118,7 +129,13 @@ def test_learnable_channels_aggregation(Aggregation):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-    assert torch.allclose(out, aggr(x, ptr=ptr))
+
+    if (not torch_geometric.typing.WITH_TORCH_SCATTER
+            and not torch_geometric.typing.WITH_PT20):
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            aggr(x, ptr=ptr)
+    else:
+        assert torch.allclose(out, aggr(x, ptr=ptr))
 
     out.mean().backward()
     for param in aggr.parameters():

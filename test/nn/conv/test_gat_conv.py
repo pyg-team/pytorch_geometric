@@ -6,7 +6,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.nn import GATConv
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import is_full_test, withDevice
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -192,7 +192,7 @@ def test_gat_conv_with_edge_attr():
             assert torch.allclose(conv(x, adj2.t()), out)
 
 
-@withCUDA
+@withDevice
 def test_gat_conv_empty_edge_index(device):
     x = torch.randn(0, 8, device=device)
     edge_index = torch.empty(2, 0, dtype=torch.long, device=device)

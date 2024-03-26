@@ -12,7 +12,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     get_random_tensor_frame,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -23,7 +23,7 @@ if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader(num_workers, device):
     if num_workers > 0 and device != torch.device('cpu'):
@@ -238,6 +238,19 @@ def test_dataloader_tensor_frame():
         assert batch.num_nodes == 20
         assert batch.tf.num_rows == 20
         assert batch.edge_index.max() >= 10
+
+
+def test_dataloader_sparse():
+    adj_t = torch.sparse_coo_tensor(
+        indices=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+        values=torch.randn(4),
+        size=(3, 3),
+    )
+    data = Data(adj_t=adj_t)
+
+    loader = DataLoader([data, data], batch_size=2)
+    for batch in loader:
+        assert batch.adj_t.size() == (6, 6)
 
 
 if __name__ == '__main__':

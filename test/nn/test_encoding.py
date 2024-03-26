@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import PositionalEncoding, TemporalEncoding
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withDevice
 
 
-@withCUDA
+@withDevice
 def test_positional_encoding(device):
     encoder = PositionalEncoding(64).to(device)
     assert str(encoder) == 'PositionalEncoding(64)'
@@ -13,7 +13,7 @@ def test_positional_encoding(device):
     assert encoder(x).size() == (3, 64)
 
 
-@withCUDA
+@withDevice
 def test_temporal_encoding(device):
     encoder = TemporalEncoding(64).to(device)
     assert str(encoder) == 'TemporalEncoding(64)'

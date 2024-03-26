@@ -7,7 +7,7 @@ from torch_geometric.testing import (
     assert_module,
     is_full_test,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.typing import SparseTensor
@@ -124,7 +124,7 @@ def test_multi_aggr_sage_conv(aggr_kwargs):
     assert_module(conv, x, edge_index, expected_size=(4, 32))
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @withPackage('torch>=2.1.0')
 def test_compile_multi_aggr_sage_conv(device):

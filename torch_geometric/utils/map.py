@@ -1,6 +1,7 @@
 import warnings
 from typing import Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
@@ -110,7 +111,12 @@ def map_index(
         result = pd.merge(left_ser, right_ser, how='left', left_on='left_ser',
                           right_index=True)
 
-        out = torch.from_numpy(result['right_ser'].values).to(index.device)
+        out_numpy = result['right_ser'].values
+        if (index.device.type == 'mps'  # MPS does not support `float64`
+                and issubclass(out_numpy.dtype.type, np.floating)):
+            out_numpy = out_numpy.astype(np.float32)
+
+        out = torch.from_numpy(out_numpy).to(index.device)
 
         if out.is_floating_point() and inclusive:
             raise ValueError("Found invalid entries in 'src' that do not have "

@@ -502,47 +502,58 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
 
     indices, values = [], []
     num_rows = num_cols = 0
+    is_coalesced = True
 
     if dim == 0:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[num_rows], [0]], device=tensor.device)
-                indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+                indices.append(tensor._indices() + offset)
+            values.append(tensor._values())
             num_rows += tensor.size(0)
             num_cols = max(num_cols, tensor.size(1))
+            if not tensor.is_coalesced():
+                is_coalesced = False
 
     elif dim == 1:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[0], [num_cols]], device=tensor.device)
                 indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+            values.append(tensor._values())
             num_rows = max(num_rows, tensor.size(0))
             num_cols += tensor.size(1)
+            is_coalesced = False
 
     else:
         for i, tensor in enumerate(tensors):
             if i == 0:
-                indices.append(tensor.indices())
+                indices.append(tensor._indices())
             else:
                 offset = torch.tensor([[num_rows], [num_cols]],
                                       device=tensor.device)
-                indices.append(tensor.indices() + offset)
-            values.append(tensor.values())
+                indices.append(tensor._indices() + offset)
+            values.append(tensor._values())
             num_rows += tensor.size(0)
             num_cols += tensor.size(1)
+            if not tensor.is_coalesced():
+                is_coalesced = False
 
-    return torch.sparse_coo_tensor(
+    out = torch.sparse_coo_tensor(
         indices=torch.cat(indices, dim=-1),
         values=torch.cat(values),
         size=(num_rows, num_cols) + values[-1].size()[1:],
         device=tensor.device,
     )
+
+    if is_coalesced:
+        out = out._coalesced_(True)
+
+    return out
 
 
 def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
