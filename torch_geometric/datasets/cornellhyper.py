@@ -7,25 +7,20 @@ from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.data.hypergraph_data import HyperGraphData
 
 
-class NDCClasses25(InMemoryDataset):
-    r"""This is a temporal higher-order network dataset from the
-    `"Simplicial Closure and higher-order link prediction"
-    <https://arxiv.org/abs/1802.06916>`_ paper, which here means
-    a sequence of timestamped simplices where each simplex is a set of nodes.
-    Under the Drug Listing Act of 1972, the U.S. Food and Drug Administration
-    releases information on all commercial drugs going through the regulation
-    of the agency, forming the National Drug Code (NDC) Directory.
+class CornellTemporalHyperGraphDatasets(InMemoryDataset):
+    r"""This is a collection of temporal higher-order network datasets
+    from the `"Simplicial Closure and higher-order link prediction"
+    <https://arxiv.org/abs/1802.06916>`_ paper. Each of these datasets
+    is a timestamped sequence of simplices, where a simplex is a set of
+    k nodes from some vertex set.
 
-    See the original `dataset page
-    <https://www.cs.cornell.edu/~arb/data/NDC-classes>`_ for more details.
-
-    In this dataset, each simplex corresponds to a drug and the nodes are
-    class labels applied to the drugs. Timestamps are in days and
-    represent when the drug was first marketed. This dataset is restricted
-    to simplices that consist of at most 25 nodes.
+    See the original `datasets page
+    <https://www.cs.cornell.edu/~arb/data/>`_ for more details about
+    individual datasets.
 
     Args:
         root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset.
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -49,12 +44,28 @@ class NDCClasses25(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    url = ("https://huggingface.co/datasets/SauravMaheshkar/NDC-classes-25/"
-           "raw/main/processed")
+    names = [
+        "email-Eu",
+        "email-Enron",
+        "NDC-classes",
+        "tags-math-sx",
+        "email-Eu-25",
+        "NDC-substances",
+        "congress-bills",
+        "tags-ask-ubuntu",
+        "email-Enron-25",
+        "NDC-classes-25",
+        "threads-ask-ubuntu",
+        "contact-high-school",
+        "NDC-substances-25",
+        "congress-bills-25",
+        "contact-primary-school",
+    ]
     settings = ["transductive", "inductive"]
 
     def __init__(
         self,
+        name: str,
         root: Optional[str] = None,
         split: Optional[str] = "train",
         setting: Optional[str] = "transductive",
@@ -70,7 +81,13 @@ class NDCClasses25(InMemoryDataset):
             raise ValueError(
                 f"Invalid 'setting' argument must be one of {self.settings}")
 
+        if name not in self.names:
+            raise ValueError(
+                f"Invalid 'name' argument must be one of {self.names}")
+
         self.setting = setting
+        self.url = (f"https://huggingface.co/datasets/SauravMaheshkar/{name}"
+                    "/raw/main/processed")
         self.url = osp.join(self.url, self.setting)
 
         super().__init__(root, transform, pre_transform, pre_filter, log,
