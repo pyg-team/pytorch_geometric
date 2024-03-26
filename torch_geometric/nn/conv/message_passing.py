@@ -731,13 +731,15 @@ class MessagePassing(torch.nn.Module):
         self._decomposed_layers = decomposed_layers
 
         if decomposed_layers != 1:
-            self.propagate = self.__class__._orig_propagate.__get__(
-                self, MessagePassing)
+            if hasattr(self.__class__._orig_propagate):
+                self.propagate = self.__class__._orig_propagate.__get__(
+                    self, MessagePassing)
 
         elif ((self.explain is None or self.explain is False)
               and not self.propagate.__module__.endswith('_propagate')):
-            self.propagate = self.__class__._jinja_propagate.__get__(
-                self, MessagePassing)
+            if hasattr(self.__class__._jinja_propagate):
+                self.propagate = self.__class__._jinja_propagate.__get__(
+                    self, MessagePassing)
 
     # Explainability ##########################################################
 
@@ -761,16 +763,18 @@ class MessagePassing(torch.nn.Module):
                 funcs=['message', 'explain_message', 'aggregate', 'update'],
                 exclude=self.special_args,
             )
-            self.propagate = self.__class__._orig_propagate.__get__(
-                self, MessagePassing)
+            if hasattr(self.__class__._orig_propagate):
+                self.propagate = self.__class__._orig_propagate.__get__(
+                    self, MessagePassing)
         else:
             self._user_args = self.inspector.get_flat_param_names(
                 funcs=['message', 'aggregate', 'update'],
                 exclude=self.special_args,
             )
             if self.decomposed_layers == 1:
-                self.propagate = self.__class__._jinja_propagate.__get__(
-                    self, MessagePassing)
+                if hasattr(self.__class__._jinja_propagate):
+                    self.propagate = self.__class__._jinja_propagate.__get__(
+                        self, MessagePassing)
 
     def explain_message(
         self,
