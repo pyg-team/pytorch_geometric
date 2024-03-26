@@ -1,5 +1,7 @@
+import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import (
     MeanAggregation,
     SumAggregation,
@@ -25,4 +27,10 @@ def test_variance_preserving():
 
     assert out_vpa.size() == (4, 16)
     assert torch.allclose(out_vpa, expected)
-    assert torch.allclose(out_vpa, vpa_aggr(x, ptr=ptr))
+
+    if (not torch_geometric.typing.WITH_TORCH_SCATTER
+            and not torch_geometric.typing.WITH_PT20):
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
+            vpa_aggr(x, ptr=ptr)
+    else:
+        assert torch.allclose(out_vpa, vpa_aggr(x, ptr=ptr))
