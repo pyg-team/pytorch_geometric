@@ -130,6 +130,22 @@ def test_my_conv_basic():
         assert torch_adj_t.grad is not None
 
 
+def test_my_conv_save(tmp_path):
+    conv = MyConv(8, 32)
+    assert conv._jinja_propagate is not None
+    assert conv.__class__._jinja_propagate is not None
+    assert conv._orig_propagate is not None
+    assert conv.__class__._orig_propagate is not None
+
+    path = osp.join(tmp_path, 'model.pt')
+    torch.save(conv, path)
+    conv = torch.load(path)
+    assert conv._jinja_propagate is not None
+    assert conv.__class__._jinja_propagate is not None
+    assert conv._orig_propagate is not None
+    assert conv.__class__._orig_propagate is not None
+
+
 def test_my_conv_edge_index():
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
