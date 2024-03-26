@@ -28,6 +28,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
@@ -329,8 +330,6 @@ class FeatureStore(ABC):
         Raises:
             ValueError: If the input :class:`TensorAttr` is not fully
                 specified.
-            KeyError: If the tensor corresponding to the input
-                :class:`TensorAttr` was not found.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
@@ -339,9 +338,9 @@ class FeatureStore(ABC):
                              f"specifying all 'UNSET' fields.")
 
         tensor = self._get_tensor(attr)
-        if tensor is None:
-            raise KeyError(f"A tensor corresponding to '{attr}' was not found")
-        return self._to_type(attr, tensor) if convert_type else tensor
+        if convert_type:
+            tensor = self._to_type(attr, tensor)
+        return tensor
 
     def _multi_get_tensor(
         self,
@@ -375,8 +374,6 @@ class FeatureStore(ABC):
         Raises:
             ValueError: If any input :class:`TensorAttr` is not fully
                 specified.
-            KeyError: If any of the tensors corresponding to the input
-                :class:`TensorAttr` was not found.
         """
         attrs = [self._tensor_attr_cls.cast(attr) for attr in attrs]
         bad_attrs = [attr for attr in attrs if not attr.is_fully_specified()]
@@ -387,15 +384,12 @@ class FeatureStore(ABC):
                 f"'UNSET' fields")
 
         tensors = self._multi_get_tensor(attrs)
-        if any(v is None for v in tensors):
-            bad_attrs = [attrs[i] for i, v in enumerate(tensors) if v is None]
-            raise KeyError(f"Tensors corresponding to attributes "
-                           f"'{bad_attrs}' were not found")
-
-        return [
-            self._to_type(attr, tensor) if convert_type else tensor
-            for attr, tensor in zip(attrs, tensors)
-        ]
+        if convert_type:
+            tensors = [
+                self._to_type(attr, tensor)
+                for attr, tensor in zip(attrs, tensors)
+            ]
+        return tensors
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
@@ -476,11 +470,9 @@ class FeatureStore(ABC):
         attr: TensorAttr,
         tensor: FeatureTensorType,
     ) -> FeatureTensorType:
-        if (isinstance(attr.index, torch.Tensor)
-                and isinstance(tensor, np.ndarray)):
+        if isinstance(attr.index, Tensor) and isinstance(tensor, np.ndarray):
             return torch.from_numpy(tensor)
-        if (isinstance(attr.index, np.ndarray)
-                and isinstance(tensor, torch.Tensor)):
+        if isinstance(attr.index, np.ndarray) and isinstance(tensor, Tensor):
             return tensor.detach().cpu().numpy()
         return tensor
 
