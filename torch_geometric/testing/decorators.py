@@ -196,6 +196,25 @@ def withCUDA(func: Callable) -> Callable:
     if torch.cuda.is_available():
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
+    return pytest.mark.parametrize('device', devices)(func)
+
+
+def withDevice(func: Callable) -> Callable:
+    r"""A decorator to test on all available tensor processing devices."""
+    import pytest
+
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+
+    if torch.cuda.is_available():
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
+
+    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        try:  # Github CI may not have access to MPS hardware. Confirm:
+            torch.empty(1, device='mps')
+            devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+        except RuntimeError:
+            pass
+
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
     if device:

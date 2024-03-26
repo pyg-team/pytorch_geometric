@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, OnDiskDataset, download_url, extract_zip
 from torch_geometric.data.data import BaseData
-from torch_geometric.utils import from_smiles
+from torch_geometric.utils import from_smiles as _from_smiles
 
 
 class PCQM4Mv2(OnDiskDataset):
@@ -36,6 +36,10 @@ class PCQM4Mv2(OnDiskDataset):
             (default: :obj:`None`)
         backend (str): The :class:`Database` backend to use.
             (default: :obj:`"sqlite"`)
+        from_smiles (callable, optional): A custom function that takes a SMILES
+            string and outputs a :obj:`~torch_geometric.data.Data` object.
+            If not set, defaults to :meth:`~torch_geometric.utils.from_smiles`.
+            (default: :obj:`None`)
     """
     url = ('https://dgl-data.s3-accelerate.amazonaws.com/dataset/OGB-LSC/'
            'pcqm4m-v2.zip')
@@ -53,6 +57,7 @@ class PCQM4Mv2(OnDiskDataset):
         split: str = 'train',
         transform: Optional[Callable] = None,
         backend: str = 'sqlite',
+        from_smiles: Optional[Callable] = None,
     ) -> None:
         assert split in ['train', 'val', 'test', 'holdout']
 
@@ -64,6 +69,7 @@ class PCQM4Mv2(OnDiskDataset):
             'y': float,
         }
 
+        self.from_smiles = from_smiles or _from_smiles
         super().__init__(root, transform, backend=backend, schema=schema)
 
         split_idx = torch.load(self.raw_paths[1])
@@ -89,7 +95,7 @@ class PCQM4Mv2(OnDiskDataset):
         data_list: List[Data] = []
         iterator = enumerate(zip(df['smiles'], df['homolumogap']))
         for i, (smiles, y) in tqdm(iterator, total=len(df)):
-            data = from_smiles(smiles)
+            data = self.from_smiles(smiles)
             data.y = y
 
             data_list.append(data)

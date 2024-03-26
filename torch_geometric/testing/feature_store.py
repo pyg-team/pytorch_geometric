@@ -36,7 +36,7 @@ class MyFeatureStore(FeatureStore):
         index, tensor = self.store.get(self.key(attr), (None, None))
 
         if tensor is None:
-            return None
+            raise KeyError(f"Could not find tensor for '{attr}'")
 
         assert isinstance(tensor, Tensor)
 
