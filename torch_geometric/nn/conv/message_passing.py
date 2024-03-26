@@ -731,13 +731,13 @@ class MessagePassing(torch.nn.Module):
         self._decomposed_layers = decomposed_layers
 
         if decomposed_layers != 1:
-            if hasattr(self.__class__._orig_propagate):
+            if hasattr(self.__class__, '_orig_propagate'):
                 self.propagate = self.__class__._orig_propagate.__get__(
                     self, MessagePassing)
 
         elif ((self.explain is None or self.explain is False)
               and not self.propagate.__module__.endswith('_propagate')):
-            if hasattr(self.__class__._jinja_propagate):
+            if hasattr(self.__class__, '_jinja_propagate'):
                 self.propagate = self.__class__._jinja_propagate.__get__(
                     self, MessagePassing)
 
@@ -763,7 +763,7 @@ class MessagePassing(torch.nn.Module):
                 funcs=['message', 'explain_message', 'aggregate', 'update'],
                 exclude=self.special_args,
             )
-            if hasattr(self.__class__._orig_propagate):
+            if hasattr(self.__class__, '_orig_propagate'):
                 self.propagate = self.__class__._orig_propagate.__get__(
                     self, MessagePassing)
         else:
@@ -772,7 +772,7 @@ class MessagePassing(torch.nn.Module):
                 exclude=self.special_args,
             )
             if self.decomposed_layers == 1:
-                if hasattr(self.__class__._jinja_propagate):
+                if hasattr(self.__class__, '_jinja_propagate'):
                     self.propagate = self.__class__._jinja_propagate.__get__(
                         self, MessagePassing)
 
