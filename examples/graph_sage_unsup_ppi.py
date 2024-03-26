@@ -79,7 +79,7 @@ def test():
     # Train classifier on training set:
     x, y = encode(train_loader)
 
-    clf = MultiOutputClassifier(SGDClassifier(loss='log', penalty='l2'))
+    clf = MultiOutputClassifier(SGDClassifier(loss='log_loss', penalty='l2'))
     clf.fit(x, y)
 
     train_f1 = f1_score(y, clf.predict(x), average='micro')
