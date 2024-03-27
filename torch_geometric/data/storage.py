@@ -31,6 +31,7 @@ from torch_geometric.typing import (
     NodeType,
     SparseTensor,
     TensorFrame,
+    TimeType,
 )
 from torch_geometric.utils import (
     coalesce,
@@ -368,8 +369,8 @@ class BaseStorage(MutableMapping):
 
     def snapshot(
         self,
-        start_time: Union[float, int],
-        end_time: Union[float, int],
+        start_time: TimeType,
+        end_time: TimeType,
     ) -> Self:
         if 'time' in self:
             mask = (self.time >= start_time) & (self.time <= end_time)
@@ -386,7 +387,7 @@ class BaseStorage(MutableMapping):
 
         return self
 
-    def up_to(self, time: Union[float, int]) -> Self:
+    def up_to(self, time: TimeType) -> Self:
         if 'time' in self:
             return self.snapshot(self.time.min().item(), time)
         return self

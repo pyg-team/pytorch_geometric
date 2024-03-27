@@ -39,6 +39,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
     TensorFrame,
+    TimeType,
 )
 from torch_geometric.utils import is_sparse, select, subgraph
 
@@ -288,8 +289,8 @@ class BaseData:
 
     def snapshot(
         self,
-        start_time: Union[float, int],
-        end_time: Union[float, int],
+        start_time: TimeType,
+        end_time: TimeType,
     ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
@@ -299,7 +300,7 @@ class BaseData:
             store.snapshot(start_time, end_time)
         return out
 
-    def up_to(self, end_time: Union[float, int]) -> Self:
+    def up_to(self, end_time: TimeType) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         up to :obj:`end_time` (inclusive of :obj:`edge_time`).
         """

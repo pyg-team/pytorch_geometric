@@ -276,6 +276,8 @@ class MockTorchCSCTensor:
 
 # Types for accessing data ####################################################
 
+TimeType = Union[float, int]
+
 # Node-types are denoted by a single string, e.g.: `data['paper']`:
 NodeType = str
 
