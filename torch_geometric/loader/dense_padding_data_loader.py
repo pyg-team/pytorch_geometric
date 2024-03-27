@@ -3,11 +3,9 @@ from collections.abc import Mapping
 
 import numpy as np
 import torch.utils.data
-import torch_sparse
+import torch_geometric
 from beartype.typing import Any, List, Optional, Sequence, Tuple, Union
 from torch.utils.data.dataloader import default_collate
-
-import torch_geometric
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.datapipes import DatasetAdapter
@@ -42,8 +40,9 @@ def _dense_pad_tensor(
     cat_dim = None
     elem = values[0]
     dtype = elem.dtype
-    padding_value = (float_padding_value if torch.is_floating_point(elem) else
-                     non_float_padding_value)
+    padding_value = (
+        float_padding_value if torch.is_floating_point(elem) else non_float_padding_value
+    )
     if elem.dim() == 0:
         values = [value.unsqueeze(0) for value in values]
     else:
@@ -66,12 +65,12 @@ def _dense_pad_tensor(
                 values = [
                     value.unsqueeze(0)
                     for value in torch.nn.utils.rnn.pad_sequence(
-                        values, batch_first=True, padding_value=padding_value)
+                        values, batch_first=True, padding_value=padding_value
+                    )
                 ]
             if dtype in [torch.uint8, torch.bool]:
                 # NOTE: We cannot use `torch.nn.utils.rnn.pad_sequence` directly with unsigned integer/boolean tensors.
-                mask = torch.cat([(value != padding_value)
-                                  for value in values], dim=cat_dim or 0)
+                mask = torch.cat([(value != padding_value) for value in values], dim=cat_dim or 0)
                 for value in values:
                     value[value == padding_value] = 0
                 values = [value.to(dtype) for value in values]
@@ -79,7 +78,8 @@ def _dense_pad_tensor(
             values = [
                 value.unsqueeze(0)
                 for value in torch.nn.utils.rnn.pad_sequence(
-                    values, batch_first=True, padding_value=padding_value)
+                    values, batch_first=True, padding_value=padding_value
+                )
             ]
 
     return values, mask
@@ -111,8 +111,9 @@ def _dense_padded_collate(
 
     if isinstance(elem, torch.Tensor) and not is_sparse(elem):
         # Concatenate a list of `torch.Tensor` along a new `batch_dim=0`.
-        padding_value = (float_padding_value if torch.is_floating_point(elem)
-                         else non_float_padding_value)
+        padding_value = (
+            float_padding_value if torch.is_floating_point(elem) else non_float_padding_value
+        )
         values, mask = _dense_pad_tensor(
             key,
             values,
@@ -128,8 +129,7 @@ def _dense_padded_collate(
             for nested_tensor in values:
                 tensors.extend(nested_tensor.unbind())
             value = torch.nested.nested_tensor(tensors)
-            mask = torch.nested.map(lambda tensor: (tensor != padding_value),
-                                    value)
+            mask = torch.nested.map(lambda tensor: (tensor != padding_value), value)
 
             return value, mask
 
@@ -139,13 +139,15 @@ def _dense_padded_collate(
             numel = sum(value.numel() for value in values)
             if torch_geometric.typing.WITH_PT20:
                 storage = elem.untyped_storage()._new_shared(
-                    numel * elem.element_size(), device=elem.device)
+                    numel * elem.element_size(), device=elem.device
+                )
             elif torch_geometric.typing.WITH_PT112:
                 storage = elem.storage()._new_shared(numel, device=elem.device)
             else:
                 storage = elem.storage()._new_shared(numel)
-            shape = [len(data_list)] + list(values[np.argmax(
-                [value.numel() for value in values])].shape[1:])
+            shape = [len(data_list)] + list(
+                values[np.argmax([value.numel() for value in values])].shape[1:]
+            )
             out = elem.new(storage).resize_(shape)
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
@@ -158,7 +160,8 @@ def _dense_padded_collate(
             "Dense padding collation for TensorFrames is not supported (tested) yet."
         )
         values, mask = _dense_pad_tensor(
-            key, values, non_float_padding_value=non_float_padding_value)
+            key, values, non_float_padding_value=non_float_padding_value
+        )
         value = torch_frame.cat(values, along="row")
         return value, mask
 
@@ -167,8 +170,11 @@ def _dense_padded_collate(
         raise NotImplementedError(
             "Dense padding collation for SparseTensors is not supported (tested) yet."
         )
+        import torch_sparse
+
         values, mask = _dense_pad_tensor(
-            key, values, non_float_padding_value=non_float_padding_value)
+            key, values, non_float_padding_value=non_float_padding_value
+        )
         if is_torch_sparse_tensor(elem):
             value = cat(values, dim=cat_dim)
         else:
@@ -185,17 +191,20 @@ def _dense_padded_collate(
         value_dict, mask_dict = {}, {}
         for key in elem.keys():
             value_dict[key], mask_dict[key] = _dense_padded_collate(
-                key, [v[key] for v in values], data_list, stores)
+                key, [v[key] for v in values], data_list, stores
+            )
         return value_dict, mask_dict
 
-    elif (isinstance(elem, Sequence) and not isinstance(elem, str)
-          and len(elem) > 0 and isinstance(elem[0],
-                                           (torch.Tensor, SparseTensor))):
+    elif (
+        isinstance(elem, Sequence)
+        and not isinstance(elem, str)
+        and len(elem) > 0
+        and isinstance(elem[0], (torch.Tensor, SparseTensor))
+    ):
         # Recursively collate elements of lists.
         value_list, mask_list = [], []
         for i in range(len(elem)):
-            value, mask = _dense_padded_collate(key, [v[i] for v in values],
-                                                data_list, stores)
+            value, mask = _dense_padded_collate(key, [v[i] for v in values], data_list, stores)
             value_list.append(value)
             mask_list.append(mask)
         return value_list, mask_list
@@ -278,8 +287,7 @@ def dense_padded_collate(
                 continue
 
             # Collate attributes into a unified representation:
-            value, mask = _dense_padded_collate(attr, values, data_list,
-                                                stores)
+            value, mask = _dense_padded_collate(attr, values, data_list, stores)
 
             out_store[attr] = value
             if mask is not None:
@@ -332,6 +340,7 @@ class DensePaddingCollater:
     either of type `~torch_geometric.data.Data` or
     `~torch_geometric.data.HeteroData`.
     """
+
     def __init__(
         self,
         dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
@@ -411,6 +420,7 @@ class DensePaddingDataLoader(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             `torch.utils.data.DataLoader`.
     """
+
     def __init__(
         self,
         dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
@@ -427,8 +437,7 @@ class DensePaddingDataLoader(torch.utils.data.DataLoader):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-        self.collator = DensePaddingCollater(dataset, follow_batch,
-                                             exclude_keys)
+        self.collator = DensePaddingCollater(dataset, follow_batch, exclude_keys)
 
         if isinstance(dataset, OnDiskDataset):
             dataset = range(len(dataset))
