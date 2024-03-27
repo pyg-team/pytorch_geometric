@@ -42,6 +42,10 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     if name.lower() in ['hetero']:
         from torch_geometric.testing import FakeHeteroDataset
         return FakeHeteroDataset(*args, **kwargs)
+    if name in ['NDC-classes-25']:
+        from torch_geometric.datasets import CornellTemporalHyperGraphDatasets
+        path = osp.join(root, 'CornellTemporalHyperGraphDatasets')
+        return CornellTemporalHyperGraphDatasets(name, *args, **kwargs)
 
     raise ValueError(f"Cannot load dataset with name '{name}'")
 
