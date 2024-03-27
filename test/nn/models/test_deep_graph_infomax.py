@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import GCN, DeepGraphInfomax
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import is_full_test, withDevice
 
 
-@withCUDA
+@withDevice
 def test_infomax(device):
     def corruption(z):
         return z + 1
@@ -42,7 +42,7 @@ def test_infomax(device):
     assert 0 <= acc <= 1
 
 
-@withCUDA
+@withDevice
 def test_infomax_predefined_model(device):
     def corruption(x, edge_index, edge_weight):
         return (

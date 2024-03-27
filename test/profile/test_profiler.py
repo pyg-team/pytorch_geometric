@@ -2,10 +2,10 @@ import torch
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile.profiler import Profiler
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 
 
-@withCUDA
+@withDevice
 @withPackage('torch>=1.13.0')  # TODO Investigate test errors
 def test_profiler(capfd, get_dataset, device):
     x = torch.randn(10, 16, device=device)

@@ -3,10 +3,10 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import CachedLoader, NeighborLoader
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 
 
-@withCUDA
+@withDevice
 @withPackage('pyg_lib')
 def test_cached_loader(device):
     x = torch.randn(14, 16)
@@ -41,7 +41,7 @@ def test_cached_loader(device):
     assert len(cached_loader._cache) == 0
 
 
-@withCUDA
+@withDevice
 @withPackage('pyg_lib')
 def test_cached_loader_transform(device):
     x = torch.randn(14, 16)
