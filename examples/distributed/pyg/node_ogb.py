@@ -31,12 +31,14 @@ def test(
     progress_bar=True,
 ):
     def test_homo(batch):
+        batch = batch.to(device)
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y_pred = out.argmax(dim=-1)
         y_true = batch.y[:batch.batch_size]
         return y_pred, y_true
 
     def test_hetero(batch):
+        batch = batch.to(device)
         batch_size = batch['paper'].batch_size
         out = model(batch.x_dict, batch.edge_index_dict)
         out = out['paper'][:batch_size]
@@ -100,11 +102,13 @@ def train(
     progress_bar=True,
 ):
     def train_homo(batch):
+        batch = batch.to(device)
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         loss = F.cross_entropy(out, batch.y[:batch.batch_size])
         return loss, batch.batch_size
 
     def train_hetero(batch):
+        batch = batch.to(device)
         batch_size = batch['paper'].batch_size
         out = model(batch.x_dict, batch.edge_index_dict)
         out = out['paper'][:batch_size]
@@ -219,11 +223,11 @@ def run_proc(
         global_rank=node_rank,
         group_name='distributed-ogb-sage',
     )
-    current_device = torch.device('cpu')
+    current_device = torch.device('cuda')
 
     print('--- Initialize DDP training group ...')
     torch.distributed.init_process_group(
-        backend='gloo',
+        backend='nccl',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
         init_method='tcp://{}:{}'.format(master_addr, ddp_port),
