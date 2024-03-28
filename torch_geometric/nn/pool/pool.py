@@ -5,8 +5,12 @@ import torch
 from torch_geometric.utils import coalesce, remove_self_loops, scatter
 
 
-def pool_edge(cluster, edge_index, edge_attr: Optional[torch.Tensor] = None,
-              reduce: Optional[str] = 'sum', ):
+def pool_edge(
+    cluster,
+    edge_index,
+    edge_attr: Optional[torch.Tensor] = None,
+    reduce: Optional[str] = 'sum',
+):
     num_nodes = cluster.size(0)
     edge_index = cluster[edge_index.view(-1)].view(2, -1)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
