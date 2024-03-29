@@ -7,9 +7,9 @@ from torch_geometric.datasets.graph_generator import BAGraph
 from torch_geometric.datasets.motif_generator import HouseMotif
 
 
-@pytest.mark.parametrize(
-    'graph_generator',
-    [pytest.param(BAGraph(num_nodes=80, num_edges=5), id='BAGraph')])
+@pytest.mark.parametrize('graph_generator', [
+    pytest.param(BAGraph(num_nodes=80, num_edges=5), id='BAGraph'),
+])
 @pytest.mark.parametrize('motif_generator', [
     pytest.param(HouseMotif(), id='HouseMotif'),
     'house',

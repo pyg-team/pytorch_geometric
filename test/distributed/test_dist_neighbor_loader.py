@@ -145,7 +145,7 @@ def dist_neighbor_loader_hetero(
                 if e_id.numel() > 0 and e_id.max() >= edge_index.size(1):
                     warnings.warn("Known test flake")
                 else:
-                    global_edge_index2 = edge_index[:, batch[edge_type].e_id]
+                    global_edge_index2 = edge_index[:, e_id]
                     if not torch.equal(global_edge_index1, global_edge_index2):
                         warnings.warn("Known test flake")
 
