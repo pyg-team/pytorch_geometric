@@ -165,38 +165,40 @@ class MessagePassing(torch.nn.Module):
         root_dir = osp.dirname(osp.realpath(__file__))
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
+        print(self.propagate.__module__)
         if not self.propagate.__module__.startswith(jinja_prefix):
-            try:
-                if 'propagate' in self.__class__.__dict__:
-                    raise ValueError("Cannot compile custom 'propagate' "
-                                     "method")
+            print("COMPILE")
+            # try:
+            if 'propagate' in self.__class__.__dict__:
+                raise ValueError("Cannot compile custom 'propagate' "
+                                 "method")
 
-                module = module_from_template(
-                    module_name=f'{jinja_prefix}_propagate',
-                    template_path=osp.join(root_dir, 'propagate.jinja'),
-                    tmp_dirname='message_passing',
-                    # Keyword arguments:
-                    modules=self.inspector._modules,
-                    collect_name='collect',
-                    signature=self._get_propagate_signature(),
-                    collect_param_dict=self.inspector.get_flat_param_dict(
-                        ['message', 'aggregate', 'update']),
-                    message_args=self.inspector.get_param_names('message'),
-                    aggregate_args=self.inspector.get_param_names('aggregate'),
-                    message_and_aggregate_args=self.inspector.get_param_names(
-                        'message_and_aggregate'),
-                    update_args=self.inspector.get_param_names('update'),
-                    fuse=self.fuse,
-                )
+            module = module_from_template(
+                module_name=f'{jinja_prefix}_propagate',
+                template_path=osp.join(root_dir, 'propagate.jinja'),
+                tmp_dirname='message_passing',
+                # Keyword arguments:
+                modules=self.inspector._modules,
+                collect_name='collect',
+                signature=self._get_propagate_signature(),
+                collect_param_dict=self.inspector.get_flat_param_dict(
+                    ['message', 'aggregate', 'update']),
+                message_args=self.inspector.get_param_names('message'),
+                aggregate_args=self.inspector.get_param_names('aggregate'),
+                message_and_aggregate_args=self.inspector.get_param_names(
+                    'message_and_aggregate'),
+                update_args=self.inspector.get_param_names('update'),
+                fuse=self.fuse,
+            )
 
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = module.propagate
+            self.__class__._orig_propagate = self.__class__.propagate
+            self.__class__._jinja_propagate = module.propagate
 
-                self.__class__.propagate = module.propagate
-                self.__class__.collect = module.collect
-            except Exception:  # pragma: no cover
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = self.__class__.propagate
+            self.__class__.propagate = module.propagate
+            self.__class__.collect = module.collect
+            # except Exception:  # pragma: no cover
+            #     self.__class__._orig_propagate = self.__class__.propagate
+            #     self.__class__._jinja_propagate = self.__class__.propagate
 
         # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
         if (self.inspector.implements('edge_update')
