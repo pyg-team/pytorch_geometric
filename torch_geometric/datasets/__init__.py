@@ -103,6 +103,7 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
+from .KGBen_banchmark_dataset import KGBen_banchmark_dataset
 
 import torch_geometric.datasets.utils
 
@@ -204,6 +205,7 @@ hetero_datasets = [
     'HM',
     'OSE_GVCS',
     'RCDD',
+    'KGBen_banchmark_dataset'
 ]
 synthetic_datasets = [
     'FakeDataset',
