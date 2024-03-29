@@ -54,10 +54,10 @@ def test_basic_aggregation(Aggregation):
 
     if isinstance(aggr, MulAggregation):
         with pytest.raises(RuntimeError, match="requires 'index'"):
-    elif (not torch_geometric.typing.WITH_TORCH_SCATTER
-            and not torch_geometric.typing.WITH_PT20):
-        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
             aggr(x, ptr=ptr)
+    elif (not torch_geometric.typing.WITH_TORCH_SCATTER
+          and not torch_geometric.typing.WITH_PT20):
+        with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
