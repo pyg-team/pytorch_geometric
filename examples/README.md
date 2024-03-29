@@ -19,3 +19,5 @@ For examples on using `torch.compile`, see the examples under [`examples/compile
 For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
 
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
+
+For examples on working with large heterogeneous KG datasets , see the examples under [`examples/kgtosa`](./kgtosa).
