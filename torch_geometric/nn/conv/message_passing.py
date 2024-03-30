@@ -509,7 +509,8 @@ class MessagePassing(torch.nn.Module):
         mutable_size = self._check_input(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
-        if is_sparse(edge_index) and self.fuse and not self.explain:
+        if ((is_sparse(edge_index) or isinstance(edge_index, EdgeIndex))
+            and self.fuse and not self.explain):
             coll_dict = self._collect(self._fused_user_args, edge_index,
                                       mutable_size, kwargs)
 

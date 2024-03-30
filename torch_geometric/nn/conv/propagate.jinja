@@ -42,7 +42,8 @@ def propagate(
     # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
-    fuse = is_sparse(edge_index) and self.fuse
+    fuse = ((is_sparse(edge_index) or isinstance(edge_index, EdgeIndex))
+            and self.fuse)
 
     if fuse:
 
