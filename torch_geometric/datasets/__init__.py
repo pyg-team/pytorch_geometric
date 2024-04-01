@@ -189,23 +189,9 @@ homo_datasets = [
 ]
 
 hetero_datasets = [
-    'DBP15K',
-    'AMiner',
-    'OGB_MAG',
-    'DBLP',
-    'MovieLens',
-    'MovieLens100K',
-    'MovieLens1M',
-    'IMDB',
-    'LastFM',
-    'HGBDataset',
-    'Taobao',
-    'IGMCDataset',
-    'AmazonBook',
-    'HM',
-    'OSE_GVCS',
-    'RCDD',
-    'KGBen_banchmark_dataset'
+    'DBP15K', 'AMiner', 'OGB_MAG', 'DBLP', 'MovieLens', 'MovieLens100K',
+    'MovieLens1M', 'IMDB', 'LastFM', 'HGBDataset', 'Taobao', 'IGMCDataset',
+    'AmazonBook', 'HM', 'OSE_GVCS', 'RCDD', 'KGBen_banchmark_dataset'
 ]
 synthetic_datasets = [
     'FakeDataset',

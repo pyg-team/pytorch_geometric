@@ -2,13 +2,16 @@
 
 This folder contains the <a href="https://arxiv.org/abs/2403.05752">KGTOSA</a> examples covering different HGNN use-cases on KG datasets.
 This readme highlights some key examples.
-- Biased Randowm walk sampler using  [`graphsaint+brw`](kgtosa_brw.py) 
+
+- Biased Randowm walk sampler using  [`graphsaint+brw`](kgtosa_brw.py)
 
 ### KGBen banchmark Datasets
+
 These datasets are extracted from the knowledge graph using SPARQL Queries and transformed into OGB format.
-The d1h1 datasets are extracted using the KGTOSA Algo.3 (<a href="https://arxiv.org/abs/2403.05752">here</a>). 
+The d1h1 datasets are extracted using the KGTOSA Algo.3 (<a href="https://arxiv.org/abs/2403.05752">here</a>).
 
 <b>Download KGBen node classification datasets</b>
+
 <li>
 <a href="http://206.12.102.56/CodsData/KGNET/KGBen/MAG/MAG42M_PV_FG.zip">MAG_42M_PV_FG</a>
 </li><li>
@@ -26,6 +29,7 @@ The d1h1 datasets are extracted using the KGTOSA Algo.3 (<a href="https://arxiv.
 </li>
 
 <b>Download KGBen relation prediction datasets</b>
+
 <li>
 <a href="http://206.12.102.56/CodsData/KGNET/KGBen/YAGO3-10/KGTOSA_YAGO3-10.zip">YAGO3-10_FG_d2h1</a>
 </li>
