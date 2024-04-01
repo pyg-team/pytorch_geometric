@@ -19,6 +19,7 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, DataLoader
@@ -76,7 +77,8 @@ def compute_accuracy(eval_output):
 
 
 class GAT_LLAMA(nn.Module):
-    def __init__(self, llm_model_path: str, hidden_channels:int, num_gnn_layers: int):
+    def __init__(self, llm_model_path: str, hidden_channels: int,
+                 num_gnn_layers: int):
         super().__init__()
         self.max_txt_len = 512
         self.max_new_tokens = 32
@@ -317,7 +319,8 @@ class GAT_LLAMA(nn.Module):
         return trainable_params, all_param
 
 
-def main(since: float, num_epochs: int, hidden_channels: int, num_gnn_layers: int, batch_size: int, lr: float):
+def main(since: float, num_epochs: int, hidden_channels: int,
+         num_gnn_layers: int, batch_size: int, lr: float):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -341,15 +344,16 @@ def main(since: float, num_epochs: int, hidden_channels: int, num_gnn_layers: in
     val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=True,
-                              pin_memory=True, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False,
-                            pin_memory=True, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, drop_last=False,
-                             pin_memory=True, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size,
+                              drop_last=True, pin_memory=True, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size,
+                            drop_last=False, pin_memory=True, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size,
+                             drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    model = GAT_LLAMA("meta-llama/Llama-2-7b-chat-hf", hidden_channels, num_gnn_layers)
+    model = GAT_LLAMA("meta-llama/Llama-2-7b-chat-hf", hidden_channels,
+                      num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -434,7 +438,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=4)
     since = time.time()
-    prep_time = main(since, args.epochs, args.hidden_channels, args.num_gnn_layers, args.batch_size, args.lr)
+    prep_time = main(since, args.epochs, args.hidden_channels,
+                     args.num_gnn_layers, args.batch_size, args.lr)
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()
