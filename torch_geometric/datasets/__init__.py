@@ -103,6 +103,7 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
+from .KGBen_banchmark_dataset import KGBen_banchmark_dataset
 
 import torch_geometric.datasets.utils
 
@@ -188,22 +189,9 @@ homo_datasets = [
 ]
 
 hetero_datasets = [
-    'DBP15K',
-    'AMiner',
-    'OGB_MAG',
-    'DBLP',
-    'MovieLens',
-    'MovieLens100K',
-    'MovieLens1M',
-    'IMDB',
-    'LastFM',
-    'HGBDataset',
-    'Taobao',
-    'IGMCDataset',
-    'AmazonBook',
-    'HM',
-    'OSE_GVCS',
-    'RCDD',
+    'DBP15K', 'AMiner', 'OGB_MAG', 'DBLP', 'MovieLens', 'MovieLens100K',
+    'MovieLens1M', 'IMDB', 'LastFM', 'HGBDataset', 'Taobao', 'IGMCDataset',
+    'AmazonBook', 'HM', 'OSE_GVCS', 'RCDD', 'KGBen_banchmark_dataset'
 ]
 synthetic_datasets = [
     'FakeDataset',
