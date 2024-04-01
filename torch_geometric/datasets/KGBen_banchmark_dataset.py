@@ -1,39 +1,53 @@
-from torch_geometric.data import InMemoryDataset
-from tqdm import tqdm
-# import zipfile
-import shutil, os
-import os.path as osp
-import torch
-import numpy as np
-from torch_geometric.data import Data
-import urllib.request as ur
 import errno
+import os
+import os.path as osp
+# import zipfile
+import shutil
+import urllib.request as ur
 import zipfile
+
+import numpy as np
+import torch
+from tqdm import tqdm
+
+from torch_geometric.data import Data, InMemoryDataset
+
 # from ogb.utils.url import decide_download, download_url,extract_zip
 # from ogb.io.read_graph_pyg import read_graph_pyg, read_heterograph_pyg
 # from ogb.io.read_graph_raw import read_node_label_hetero, read_nodesplitidx_split_hetero
 ''' list of KGBen benchmark datasets '''
-KGBen_datasets_dic={
-    "MAG42M_PV_FG":"http://206.12.102.56/CodsData/KGNET/KGBen/MAG/MAG42M_PV_FG.zip",
-    "MAG42M_PV_d1h1":"http://206.12.102.56/CodsData/KGNET/KGBen/MAG/MAG42M_PV_d1h1.zip",
-    "DBLP15M_PV_FG":"http://206.12.102.56/CodsData/KGNET/KGBen/DBLP/DBLP15M_PV_FG.zip",
-    "DBLP15M_PV_d1h1":"http://206.12.102.56/CodsData/KGNET/KGBen/DBLP/DBLP15M_PV_d1h1.zip",
-    "YAGO_FM200":"http://206.12.102.56/CodsData/KGNET/KGBen/YAGO/YAGO_FM200.zip",
-    "YAGO_Star200":"http://206.12.102.56/CodsData/KGNET/YAGO/DBLP/YAGO_Star200.zip",
+KGBen_datasets_dic = {
+    "MAG42M_PV_FG":
+    "http://206.12.102.56/CodsData/KGNET/KGBen/MAG/MAG42M_PV_FG.zip",
+    "MAG42M_PV_d1h1":
+    "http://206.12.102.56/CodsData/KGNET/KGBen/MAG/MAG42M_PV_d1h1.zip",
+    "DBLP15M_PV_FG":
+    "http://206.12.102.56/CodsData/KGNET/KGBen/DBLP/DBLP15M_PV_FG.zip",
+    "DBLP15M_PV_d1h1":
+    "http://206.12.102.56/CodsData/KGNET/KGBen/DBLP/DBLP15M_PV_d1h1.zip",
+    "YAGO_FM200":
+    "http://206.12.102.56/CodsData/KGNET/KGBen/YAGO/YAGO_FM200.zip",
+    "YAGO_Star200":
+    "http://206.12.102.56/CodsData/KGNET/YAGO/DBLP/YAGO_Star200.zip",
 }
 GBFACTOR = float(1 << 30)
 ''' helper function copied from the ogb library to read and load heterogeneous OGB format dataset in a zipped file format'''
+
+
 class ogb_helper_functions:
     @staticmethod
     def decide_download(url):
         d = ur.urlopen(url)
-        size = int(d.info()["Content-Length"])/GBFACTOR
+        size = int(d.info()["Content-Length"]) / GBFACTOR
 
         ### confirm if larger than 1GB
         if size > 1:
-            return input("This will download %.2fGB. Will you proceed? (y/N)\n" % (size)).lower() == "y"
+            return input(
+                "This will download %.2fGB. Will you proceed? (y/N)\n" %
+                (size)).lower() == "y"
         else:
             return True
+
     @staticmethod
     def makedirs(path):
         try:
@@ -41,16 +55,17 @@ class ogb_helper_functions:
         except OSError as e:
             if e.errno != errno.EEXIST and osp.isdir(path):
                 raise e
+
     @staticmethod
     def download_url(url, folder, log=True):
         r"""Downloads the content of an URL to a specific folder.
+
         Args:
             url (string): The url.
             folder (string): The folder.
             log (bool, optional): If :obj:`False`, will not print anything to the
                 console. (default: :obj:`True`)
         """
-
         filename = url.rpartition('/')[2]
         path = osp.join(folder, filename)
 
@@ -67,8 +82,8 @@ class ogb_helper_functions:
 
         size = int(data.info()["Content-Length"])
 
-        chunk_size = 1024*1024
-        num_iter = int(size/chunk_size) + 2
+        chunk_size = 1024 * 1024
+        num_iter = int(size / chunk_size) + 2
 
         downloaded_size = 0
 
@@ -78,22 +93,25 @@ class ogb_helper_functions:
                 for i in pbar:
                     chunk = data.read(chunk_size)
                     downloaded_size += len(chunk)
-                    pbar.set_description("Downloaded {:.2f} GB".format(float(downloaded_size)/GBFACTOR))
+                    pbar.set_description("Downloaded {:.2f} GB".format(
+                        float(downloaded_size) / GBFACTOR))
                     f.write(chunk)
         except:
             if os.path.exists(path):
-                 os.remove(path)
+                os.remove(path)
             raise RuntimeError('Stopped downloading due to interruption.')
 
-
         return path
+
     @staticmethod
     def maybe_log(path, log=True):
         if log:
             print('Extracting', path)
+
     @staticmethod
     def extract_zip(path, folder, log=True):
         r"""Extracts a zip archive to a specific folder.
+
         Args:
             path (string): The path to the tar archive.
             folder (string): The folder.
@@ -103,6 +121,7 @@ class ogb_helper_functions:
         ogb_helper_functions.maybe_log(path, log)
         with zipfile.ZipFile(path, 'r') as f:
             f.extractall(folder)
+
     @staticmethod
     def read_npz_dict(path):
         tmp = np.load(path)
@@ -111,6 +130,7 @@ class ogb_helper_functions:
             dict[key] = tmp[key]
         del tmp
         return dict
+
     @staticmethod
     def read_node_label_hetero(raw_dir):
         import pandas as pd
@@ -119,12 +139,16 @@ class ogb_helper_functions:
         for nodetype in df.keys():
             has_label = df[nodetype].values[0]
             if has_label:
-                label_dict[nodetype] = pd.read_csv(osp.join(raw_dir, 'node-label', nodetype, 'node-label.csv.gz'), compression='gzip', header = None).values
+                label_dict[nodetype] = pd.read_csv(
+                    osp.join(raw_dir, 'node-label', nodetype,
+                             'node-label.csv.gz'), compression='gzip',
+                    header=None).values
 
         if len(label_dict) == 0:
             raise RuntimeError('No node label file found.')
 
         return label_dict
+
     @staticmethod
     def read_nodesplitidx_split_hetero(split_dir):
         import pandas as pd
@@ -135,18 +159,24 @@ class ogb_helper_functions:
         for nodetype in df.keys():
             has_label = df[nodetype].values[0]
             if has_label:
-                train_dict[nodetype] = pd.read_csv(osp.join(split_dir, nodetype, 'train.csv.gz'), compression='gzip', header = None).values.T[0]
-                valid_dict[nodetype] = pd.read_csv(osp.join(split_dir, nodetype, 'valid.csv.gz'), compression='gzip', header = None).values.T[0]
-                test_dict[nodetype] = pd.read_csv(osp.join(split_dir, nodetype, 'test.csv.gz'), compression='gzip', header = None).values.T[0]
+                train_dict[nodetype] = pd.read_csv(
+                    osp.join(split_dir, nodetype, 'train.csv.gz'),
+                    compression='gzip', header=None).values.T[0]
+                valid_dict[nodetype] = pd.read_csv(
+                    osp.join(split_dir, nodetype, 'valid.csv.gz'),
+                    compression='gzip', header=None).values.T[0]
+                test_dict[nodetype] = pd.read_csv(
+                    osp.join(split_dir, nodetype, 'test.csv.gz'),
+                    compression='gzip', header=None).values.T[0]
 
         if len(train_dict) == 0:
             raise RuntimeError('No split file found.')
 
         return train_dict, valid_dict, test_dict
+
     @staticmethod
     def read_binary_heterograph_raw(raw_dir, add_inverse_edge=False):
-        '''
-        raw_dir: path to the raw directory
+        '''raw_dir: path to the raw directory
         add_inverse_edge (bool): whether to add inverse edge or not
 
         return: graph_list, which is a list of heterogeneous graphs.
@@ -170,21 +200,30 @@ class ogb_helper_functions:
         - node_**
 
         '''
-
         if add_inverse_edge:
-            raise RuntimeError('add_inverse_edge is depreciated in read_binary')
+            raise RuntimeError(
+                'add_inverse_edge is depreciated in read_binary')
 
         print('Loading necessary files...')
         print('This might take a while.')
 
         # loading necessary files
         try:
-            num_nodes_dict = ogb_helper_functions.read_npz_dict(osp.join(raw_dir, 'num_nodes_dict.npz'))
-            tmp = ogb_helper_functions.read_npz_dict(osp.join(raw_dir, 'num_edges_dict.npz'))
-            num_edges_dict = {tuple(key.split('___')): tmp[key] for key in tmp.keys()}
+            num_nodes_dict = ogb_helper_functions.read_npz_dict(
+                osp.join(raw_dir, 'num_nodes_dict.npz'))
+            tmp = ogb_helper_functions.read_npz_dict(
+                osp.join(raw_dir, 'num_edges_dict.npz'))
+            num_edges_dict = {
+                tuple(key.split('___')): tmp[key]
+                for key in tmp.keys()
+            }
             del tmp
-            tmp = ogb_helper_functions.read_npz_dict(osp.join(raw_dir, 'edge_index_dict.npz'))
-            edge_index_dict = {tuple(key.split('___')): tmp[key] for key in tmp.keys()}
+            tmp = ogb_helper_functions.read_npz_dict(
+                osp.join(raw_dir, 'edge_index_dict.npz'))
+            edge_index_dict = {
+                tuple(key.split('___')): tmp[key]
+                for key in tmp.keys()
+            }
             del tmp
 
             ent_type_list = sorted(list(num_nodes_dict.keys()))
@@ -203,7 +242,10 @@ class ogb_helper_functions:
         for filename in os.listdir(raw_dir):
             if '.npz' not in filename:
                 continue
-            if filename in ['num_nodes_dict.npz', 'num_edges_dict.npz', 'edge_index_dict.npz']:
+            if filename in [
+                    'num_nodes_dict.npz', 'num_edges_dict.npz',
+                    'edge_index_dict.npz'
+            ]:
                 continue
 
             # do not read target label information here
@@ -213,16 +255,22 @@ class ogb_helper_functions:
             feat_name = filename.split('.')[0]
 
             if 'node_' in feat_name:
-                feat_dict = ogb_helper_functions.read_npz_dict(osp.join(raw_dir, filename))
+                feat_dict = ogb_helper_functions.read_npz_dict(
+                    osp.join(raw_dir, filename))
                 node_feat_dict_dict[feat_name] = feat_dict
             elif 'edge_' in feat_name:
-                tmp = ogb_helper_functions.read_npz_dict(osp.join(raw_dir, filename))
-                feat_dict = {tuple(key.split('___')): tmp[key] for key in tmp.keys()}
+                tmp = ogb_helper_functions.read_npz_dict(
+                    osp.join(raw_dir, filename))
+                feat_dict = {
+                    tuple(key.split('___')): tmp[key]
+                    for key in tmp.keys()
+                }
                 del tmp
                 edge_feat_dict_dict[feat_name] = feat_dict
             else:
                 raise RuntimeError(
-                    f"Keys in graph object should start from either \'node_\' or \'edge_\', but found \'{feat_name}\'.")
+                    f"Keys in graph object should start from either \'node_\' or \'edge_\', but found \'{feat_name}\'."
+                )
 
         graph_list = []
         num_nodes_accum_dict = {ent_type: 0 for ent_type in ent_type_list}
@@ -256,13 +304,16 @@ class ogb_helper_functions:
                 num_edges_accum = num_edges_accum_dict[triplet]
 
                 ### add edge_index
-                graph['edge_index_dict'][triplet] = edge_index[:, num_edges_accum:num_edges_accum + num_edges]
+                graph['edge_index_dict'][
+                    triplet] = edge_index[:, num_edges_accum:num_edges_accum +
+                                          num_edges]
 
                 ### add edge feature
                 for feat_name in edge_feat_dict_dict.keys():
                     if triplet in edge_feat_dict_dict[feat_name]:
                         feat = edge_feat_dict_dict[feat_name][triplet]
-                        graph[feat_name][triplet] = feat[num_edges_accum: num_edges_accum + num_edges]
+                        graph[feat_name][triplet] = feat[
+                            num_edges_accum:num_edges_accum + num_edges]
 
                 num_edges_accum_dict[triplet] += num_edges
 
@@ -275,7 +326,8 @@ class ogb_helper_functions:
                 for feat_name in node_feat_dict_dict.keys():
                     if ent_type in node_feat_dict_dict[feat_name]:
                         feat = node_feat_dict_dict[feat_name][ent_type]
-                        graph[feat_name][ent_type] = feat[num_nodes_accum: num_nodes_accum + num_nodes]
+                        graph[feat_name][ent_type] = feat[
+                            num_nodes_accum:num_nodes_accum + num_nodes]
 
                 graph['num_nodes_dict'][ent_type] = num_nodes
                 num_nodes_accum_dict[ent_type] += num_nodes
@@ -283,12 +335,14 @@ class ogb_helper_functions:
             graph_list.append(graph)
 
         return graph_list
+
     ### reading raw files from a directory.
     ### for heterogeneous graph
     @staticmethod
-    def read_csv_heterograph_raw(raw_dir, add_inverse_edge=False, additional_node_files=[], additional_edge_files=[]):
-        '''
-        raw_dir: path to the raw directory
+    def read_csv_heterograph_raw(raw_dir, add_inverse_edge=False,
+                                 additional_node_files=[],
+                                 additional_edge_files=[]):
+        '''raw_dir: path to the raw directory
         add_inverse_edge (bool): whether to add inverse edge or not
 
         return: graph_list, which is a list of heterogeneous graphs.
@@ -321,14 +375,23 @@ class ogb_helper_functions:
 
         # loading necessary files
         try:
-            num_node_df = pd.read_csv(osp.join(raw_dir, 'num-node-dict.csv.gz'), compression='gzip')
-            num_node_dict = {nodetype: num_node_df[nodetype].astype(np.int64).tolist() for nodetype in num_node_df.keys()}
+            num_node_df = pd.read_csv(
+                osp.join(raw_dir, 'num-node-dict.csv.gz'), compression='gzip')
+            num_node_dict = {
+                nodetype: num_node_df[nodetype].astype(np.int64).tolist()
+                for nodetype in num_node_df.keys()
+            }
             nodetype_list = sorted(list(num_node_dict.keys()))
 
             ## read edge_dict, num_edge_dict
-            triplet_df = pd.read_csv(osp.join(raw_dir, 'triplet-type-list.csv.gz'), compression='gzip', header=None)
-            triplet_list = sorted([(head, relation, tail) for head, relation, tail in
-                                   zip(triplet_df[0].tolist(), triplet_df[1].tolist(), triplet_df[2].tolist())])
+            triplet_df = pd.read_csv(
+                osp.join(raw_dir, 'triplet-type-list.csv.gz'),
+                compression='gzip', header=None)
+            triplet_list = sorted([
+                (head, relation, tail)
+                for head, relation, tail in zip(triplet_df[0].tolist(
+                ), triplet_df[1].tolist(), triplet_df[2].tolist())
+            ])
 
             edge_dict = {}
             num_edge_dict = {}
@@ -336,14 +399,16 @@ class ogb_helper_functions:
             for triplet in triplet_list:
                 subdir = osp.join(raw_dir, 'relations', '___'.join(triplet))
 
-                edge_dict[triplet] = pd.read_csv(osp.join(subdir, 'edge.csv.gz'), compression='gzip',
-                                                 header=None).values.T.astype(np.int64)
+                edge_dict[triplet] = pd.read_csv(
+                    osp.join(subdir, 'edge.csv.gz'), compression='gzip',
+                    header=None).values.T.astype(np.int64)
                 num_edge_dict[triplet] = \
                 pd.read_csv(osp.join(subdir, 'num-edge-list.csv.gz'), compression='gzip', header=None).astype(np.int64)[
                     0].tolist()
 
             # check the number of graphs coincide
-            assert (len(num_node_dict[nodetype_list[0]]) == len(num_edge_dict[triplet_list[0]]))
+            assert (len(num_node_dict[nodetype_list[0]]) == len(
+                num_edge_dict[triplet_list[0]]))
 
             num_graphs = len(num_node_dict[nodetype_list[0]])
 
@@ -355,7 +420,8 @@ class ogb_helper_functions:
             subdir = osp.join(raw_dir, 'node-feat', nodetype)
 
             try:
-                node_feat = pd.read_csv(osp.join(subdir, 'node-feat.csv.gz'), compression='gzip', header=None).values
+                node_feat = pd.read_csv(osp.join(subdir, 'node-feat.csv.gz'),
+                                        compression='gzip', header=None).values
                 if 'int' in str(node_feat.dtype):
                     node_feat = node_feat.astype(np.int64)
                 else:
@@ -371,7 +437,8 @@ class ogb_helper_functions:
             subdir = osp.join(raw_dir, 'relations', '___'.join(triplet))
 
             try:
-                edge_feat = pd.read_csv(osp.join(subdir, 'edge-feat.csv.gz'), compression='gzip', header=None).values
+                edge_feat = pd.read_csv(osp.join(subdir, 'edge-feat.csv.gz'),
+                                        compression='gzip', header=None).values
                 if 'int' in str(edge_feat.dtype):
                     edge_feat = edge_feat.astype(np.int64)
                 else:
@@ -393,8 +460,9 @@ class ogb_helper_functions:
                 subdir = osp.join(raw_dir, 'node-feat', nodetype)
 
                 try:
-                    node_feat = pd.read_csv(osp.join(subdir, additional_file + '.csv.gz'), compression='gzip',
-                                            header=None).values
+                    node_feat = pd.read_csv(
+                        osp.join(subdir, additional_file + '.csv.gz'),
+                        compression='gzip', header=None).values
                     if 'int' in str(node_feat.dtype):
                         node_feat = node_feat.astype(np.int64)
                     else:
@@ -419,8 +487,9 @@ class ogb_helper_functions:
                 subdir = osp.join(raw_dir, 'relations', '___'.join(triplet))
 
                 try:
-                    edge_feat = pd.read_csv(osp.join(subdir, additional_file + '.csv.gz'), compression='gzip',
-                                            header=None).values
+                    edge_feat = pd.read_csv(
+                        osp.join(subdir, additional_file + '.csv.gz'),
+                        compression='gzip', header=None).values
                     if 'int' in str(edge_feat.dtype):
                         edge_feat = edge_feat.astype(np.int64)
                     else:
@@ -467,7 +536,9 @@ class ogb_helper_functions:
                 if add_inverse_edge:
                     ### add edge_index
                     # duplicate edge
-                    duplicated_edge = np.repeat(edge[:, num_edge_accum:num_edge_accum + num_edge], 2, axis=1)
+                    duplicated_edge = np.repeat(
+                        edge[:, num_edge_accum:num_edge_accum + num_edge], 2,
+                        axis=1)
                     duplicated_edge[0, 1::2] = duplicated_edge[1, 0::2]
                     duplicated_edge[1, 1::2] = duplicated_edge[0, 0::2]
                     graph['edge_index_dict'][triplet] = duplicated_edge
@@ -477,7 +548,8 @@ class ogb_helper_functions:
                         # if edge_feat exists for some triplet
                         if triplet in edge_feat_dict:
                             graph['edge_feat_dict'][triplet] = np.repeat(
-                                edge_feat_dict[triplet][num_edge:num_edge + num_edge], 2, axis=0)
+                                edge_feat_dict[triplet][num_edge:num_edge +
+                                                        num_edge], 2, axis=0)
 
                     else:
                         # if edge_feat is not given for any triplet
@@ -486,18 +558,22 @@ class ogb_helper_functions:
                     ### add additional edge feature
                     for key, value in additional_edge_info.items():
                         if triplet in value:
-                            graph[key][triplet] = np.repeat(value[triplet][num_edge_accum: num_edge_accum + num_edge], 2,
-                                                            axis=0)
+                            graph[key][triplet] = np.repeat(
+                                value[triplet][num_edge_accum:num_edge_accum +
+                                               num_edge], 2, axis=0)
 
                 else:
                     ### add edge_index
-                    graph['edge_index_dict'][triplet] = edge[:, num_edge_accum:num_edge_accum + num_edge]
+                    graph['edge_index_dict'][
+                        triplet] = edge[:, num_edge_accum:num_edge_accum +
+                                        num_edge]
 
                     ### add default edge feature
                     if len(edge_feat_dict) > 0:
                         # if edge_feat exists for some triplet
                         if triplet in edge_feat_dict:
-                            graph['edge_feat_dict'][triplet] = edge_feat_dict[triplet][num_edge:num_edge + num_edge]
+                            graph['edge_feat_dict'][triplet] = edge_feat_dict[
+                                triplet][num_edge:num_edge + num_edge]
 
                     else:
                         # if edge_feat is not given for any triplet
@@ -506,7 +582,8 @@ class ogb_helper_functions:
                     ### add additional edge feature
                     for key, value in additional_edge_info.items():
                         if triplet in value:
-                            graph[key][triplet] = value[triplet][num_edge_accum: num_edge_accum + num_edge]
+                            graph[key][triplet] = value[triplet][
+                                num_edge_accum:num_edge_accum + num_edge]
 
                 num_edge_accum_dict[triplet] += num_edge
 
@@ -519,8 +596,8 @@ class ogb_helper_functions:
                 if len(node_feat_dict) > 0:
                     # if node_feat exists for some node type
                     if nodetype in node_feat_dict:
-                        graph['node_feat_dict'][nodetype] = node_feat_dict[nodetype][
-                                                            num_node_accum:num_node_accum + num_node]
+                        graph['node_feat_dict'][nodetype] = node_feat_dict[
+                            nodetype][num_node_accum:num_node_accum + num_node]
 
                 else:
                     graph['node_feat_dict'] = None
@@ -528,7 +605,8 @@ class ogb_helper_functions:
                     ### add additional node feature
                 for key, value in additional_node_info.items():
                     if nodetype in value:
-                        graph[key][nodetype] = value[nodetype][num_node_accum: num_node_accum + num_node]
+                        graph[key][nodetype] = value[nodetype][
+                            num_node_accum:num_node_accum + num_node]
 
                 graph['num_nodes_dict'][nodetype] = num_node
                 num_node_accum_dict[nodetype] += num_node
@@ -536,13 +614,13 @@ class ogb_helper_functions:
             graph_list.append(graph)
 
         return graph_list
+
     ### reading raw files from a directory.
     ### npz ver
     ### for homogeneous graph
     @staticmethod
-    def read_binary_graph_raw(raw_dir, add_inverse_edge = False):
-        '''
-        raw_dir: path to the raw directory
+    def read_binary_graph_raw(raw_dir, add_inverse_edge=False):
+        '''raw_dir: path to the raw directory
         add_inverse_edge (bool): whether to add inverse edge or not
 
         return: graph_list, which is a list of graphs.
@@ -556,9 +634,9 @@ class ogb_helper_functions:
         - node_** (optional, node_feat is the default node features)
         - edge_** (optional, edge_feat is the default edge features)
         '''
-
         if add_inverse_edge:
-            raise RuntimeError('add_inverse_edge is depreciated in read_binary')
+            raise RuntimeError(
+                'add_inverse_edge is depreciated in read_binary')
 
         print('Loading necessary files...')
         print('This might take a while.')
@@ -581,27 +659,32 @@ class ogb_helper_functions:
             elif key[:5] == 'edge_':
                 edge_dict[key] = data_dict[key]
             else:
-                raise RuntimeError(f"Keys in graph object should start from either \'node_\' or \'edge_\', but found \'{key}\'.")
+                raise RuntimeError(
+                    f"Keys in graph object should start from either \'node_\' or \'edge_\', but found \'{key}\'."
+                )
 
         graph_list = []
         num_nodes_accum = 0
         num_edges_accum = 0
 
         print('Processing graphs...')
-        for num_nodes, num_edges in tqdm(zip(num_nodes_list, num_edges_list), total=len(num_nodes_list)):
+        for num_nodes, num_edges in tqdm(zip(num_nodes_list, num_edges_list),
+                                         total=len(num_nodes_list)):
 
             graph = dict()
 
-            graph['edge_index'] = edge_index[:, num_edges_accum:num_edges_accum+num_edges]
+            graph['edge_index'] = edge_index[:,
+                                             num_edges_accum:num_edges_accum +
+                                             num_edges]
 
             for key, feat in edge_dict.items():
-                graph[key] = feat[num_edges_accum:num_edges_accum+num_edges]
+                graph[key] = feat[num_edges_accum:num_edges_accum + num_edges]
 
             if 'edge_feat' not in graph:
-                graph['edge_feat'] =  None
+                graph['edge_feat'] = None
 
             for key, feat in node_dict.items():
-                graph[key] = feat[num_nodes_accum:num_nodes_accum+num_nodes]
+                graph[key] = feat[num_nodes_accum:num_nodes_accum + num_nodes]
 
             if 'node_feat' not in graph:
                 graph['node_feat'] = None
@@ -614,12 +697,13 @@ class ogb_helper_functions:
             graph_list.append(graph)
 
         return graph_list
+
     ### reading raw files from a directory.
     ### for homogeneous graph
     @staticmethod
-    def read_csv_graph_raw(raw_dir, add_inverse_edge=False, additional_node_files=[], additional_edge_files=[]):
-        '''
-        raw_dir: path to the raw directory
+    def read_csv_graph_raw(raw_dir, add_inverse_edge=False,
+                           additional_node_files=[], additional_edge_files=[]):
+        '''raw_dir: path to the raw directory
         add_inverse_edge (bool): whether to add inverse edge or not
 
         return: graph_list, which is a list of graphs.
@@ -640,8 +724,10 @@ class ogb_helper_functions:
         print('This might take a while.')
         # loading necessary files
         try:
-            edge = pd.read_csv(osp.join(raw_dir, 'edge.csv.gz'), compression='gzip', header=None).values.T.astype(
-                np.int64)  # (2, num_edge) numpy array
+            edge = pd.read_csv(osp.join(raw_dir,
+                                        'edge.csv.gz'), compression='gzip',
+                               header=None).values.T.astype(
+                                   np.int64)  # (2, num_edge) numpy array
             num_node_list = \
             pd.read_csv(osp.join(raw_dir, 'num-node-list.csv.gz'), compression='gzip', header=None).astype(np.int64)[
                 0].tolist()  # (num_graph, ) python list
@@ -653,7 +739,8 @@ class ogb_helper_functions:
             raise RuntimeError('No necessary file')
 
         try:
-            node_feat = pd.read_csv(osp.join(raw_dir, 'node-feat.csv.gz'), compression='gzip', header=None).values
+            node_feat = pd.read_csv(osp.join(raw_dir, 'node-feat.csv.gz'),
+                                    compression='gzip', header=None).values
             if 'int' in str(node_feat.dtype):
                 node_feat = node_feat.astype(np.int64)
             else:
@@ -663,7 +750,8 @@ class ogb_helper_functions:
             node_feat = None
 
         try:
-            edge_feat = pd.read_csv(osp.join(raw_dir, 'edge-feat.csv.gz'), compression='gzip', header=None).values
+            edge_feat = pd.read_csv(osp.join(raw_dir, 'edge-feat.csv.gz'),
+                                    compression='gzip', header=None).values
             if 'int' in str(edge_feat.dtype):
                 edge_feat = edge_feat.astype(np.int64)
             else:
@@ -678,10 +766,13 @@ class ogb_helper_functions:
             assert (additional_file[:5] == 'node_')
 
             # hack for ogbn-proteins
-            if additional_file == 'node_species' and osp.exists(osp.join(raw_dir, 'species.csv.gz')):
-                os.rename(osp.join(raw_dir, 'species.csv.gz'), osp.join(raw_dir, 'node_species.csv.gz'))
+            if additional_file == 'node_species' and osp.exists(
+                    osp.join(raw_dir, 'species.csv.gz')):
+                os.rename(osp.join(raw_dir, 'species.csv.gz'),
+                          osp.join(raw_dir, 'node_species.csv.gz'))
 
-            temp = pd.read_csv(osp.join(raw_dir, additional_file + '.csv.gz'), compression='gzip', header=None).values
+            temp = pd.read_csv(osp.join(raw_dir, additional_file + '.csv.gz'),
+                               compression='gzip', header=None).values
 
             if 'int' in str(temp.dtype):
                 additional_node_info[additional_file] = temp.astype(np.int64)
@@ -692,7 +783,8 @@ class ogb_helper_functions:
         additional_edge_info = {}
         for additional_file in additional_edge_files:
             assert (additional_file[:5] == 'edge_')
-            temp = pd.read_csv(osp.join(raw_dir, additional_file + '.csv.gz'), compression='gzip', header=None).values
+            temp = pd.read_csv(osp.join(raw_dir, additional_file + '.csv.gz'),
+                               compression='gzip', header=None).values
 
             if 'int' in str(temp.dtype):
                 additional_edge_info[additional_file] = temp.astype(np.int64)
@@ -705,43 +797,54 @@ class ogb_helper_functions:
         num_edge_accum = 0
 
         print('Processing graphs...')
-        for num_node, num_edge in tqdm(zip(num_node_list, num_edge_list), total=len(num_node_list)):
+        for num_node, num_edge in tqdm(zip(num_node_list, num_edge_list),
+                                       total=len(num_node_list)):
 
             graph = dict()
 
             ### handling edge
             if add_inverse_edge:
                 ### duplicate edge
-                duplicated_edge = np.repeat(edge[:, num_edge_accum:num_edge_accum + num_edge], 2, axis=1)
+                duplicated_edge = np.repeat(
+                    edge[:, num_edge_accum:num_edge_accum + num_edge], 2,
+                    axis=1)
                 duplicated_edge[0, 1::2] = duplicated_edge[1, 0::2]
                 duplicated_edge[1, 1::2] = duplicated_edge[0, 0::2]
 
                 graph['edge_index'] = duplicated_edge
 
                 if edge_feat is not None:
-                    graph['edge_feat'] = np.repeat(edge_feat[num_edge_accum:num_edge_accum + num_edge], 2, axis=0)
+                    graph['edge_feat'] = np.repeat(
+                        edge_feat[num_edge_accum:num_edge_accum + num_edge], 2,
+                        axis=0)
                 else:
                     graph['edge_feat'] = None
 
                 for key, value in additional_edge_info.items():
-                    graph[key] = np.repeat(value[num_edge_accum:num_edge_accum + num_edge], 2, axis=0)
+                    graph[key] = np.repeat(
+                        value[num_edge_accum:num_edge_accum + num_edge], 2,
+                        axis=0)
 
             else:
-                graph['edge_index'] = edge[:, num_edge_accum:num_edge_accum + num_edge]
+                graph['edge_index'] = edge[:, num_edge_accum:num_edge_accum +
+                                           num_edge]
 
                 if edge_feat is not None:
-                    graph['edge_feat'] = edge_feat[num_edge_accum:num_edge_accum + num_edge]
+                    graph['edge_feat'] = edge_feat[
+                        num_edge_accum:num_edge_accum + num_edge]
                 else:
                     graph['edge_feat'] = None
 
                 for key, value in additional_edge_info.items():
-                    graph[key] = value[num_edge_accum:num_edge_accum + num_edge]
+                    graph[key] = value[num_edge_accum:num_edge_accum +
+                                       num_edge]
 
             num_edge_accum += num_edge
 
             ### handling node
             if node_feat is not None:
-                graph['node_feat'] = node_feat[num_node_accum:num_node_accum + num_node]
+                graph['node_feat'] = node_feat[num_node_accum:num_node_accum +
+                                               num_node]
             else:
                 graph['node_feat'] = None
 
@@ -753,15 +856,21 @@ class ogb_helper_functions:
 
             graph_list.append(graph)
         return graph_list
+
     @staticmethod
-    def read_graph_pyg(raw_dir, add_inverse_edge=False, additional_node_files=[], additional_edge_files=[], binary=False):
+    def read_graph_pyg(raw_dir, add_inverse_edge=False,
+                       additional_node_files=[], additional_edge_files=[],
+                       binary=False):
         if binary:
             # npz
-            graph_list = ogb_helper_functions.read_binary_graph_raw(raw_dir, add_inverse_edge)
+            graph_list = ogb_helper_functions.read_binary_graph_raw(
+                raw_dir, add_inverse_edge)
         else:
             # csv
-            graph_list = ogb_helper_functions.read_csv_graph_raw(raw_dir, add_inverse_edge, additional_node_files=additional_node_files,
-                                            additional_edge_files=additional_edge_files)
+            graph_list = ogb_helper_functions.read_csv_graph_raw(
+                raw_dir, add_inverse_edge,
+                additional_node_files=additional_node_files,
+                additional_edge_files=additional_edge_files)
         pyg_graph_list = []
         print('Converting graphs into PyG objects...')
         for graph in tqdm(graph_list):
@@ -793,15 +902,19 @@ class ogb_helper_functions:
         return pyg_graph_list
 
     @staticmethod
-    def read_heterograph_pyg(raw_dir, add_inverse_edge=False, additional_node_files=[], additional_edge_files=[],
-                             binary=False):
+    def read_heterograph_pyg(raw_dir, add_inverse_edge=False,
+                             additional_node_files=[],
+                             additional_edge_files=[], binary=False):
         if binary:
             # npz
-            graph_list = ogb_helper_functions.read_binary_heterograph_raw(raw_dir, add_inverse_edge)
+            graph_list = ogb_helper_functions.read_binary_heterograph_raw(
+                raw_dir, add_inverse_edge)
         else:
             # csv
-            graph_list = ogb_helper_functions.read_csv_heterograph_raw(raw_dir, add_inverse_edge, additional_node_files=additional_node_files,
-                                                  additional_edge_files=additional_edge_files)
+            graph_list = ogb_helper_functions.read_csv_heterograph_raw(
+                raw_dir, add_inverse_edge,
+                additional_node_files=additional_node_files,
+                additional_edge_files=additional_edge_files)
 
         pyg_graph_list = []
 
@@ -823,14 +936,16 @@ class ogb_helper_functions:
             if graph['edge_feat_dict'] is not None:
                 g.edge_attr_dict = {}
                 for triplet in graph['edge_feat_dict'].keys():
-                    g.edge_attr_dict[triplet] = torch.from_numpy(graph['edge_feat_dict'][triplet])
+                    g.edge_attr_dict[triplet] = torch.from_numpy(
+                        graph['edge_feat_dict'][triplet])
 
                 del graph['edge_feat_dict']
 
             if graph['node_feat_dict'] is not None:
                 g.x_dict = {}
                 for nodetype in graph['node_feat_dict'].keys():
-                    g.x_dict[nodetype] = torch.from_numpy(graph['node_feat_dict'][nodetype])
+                    g.x_dict[nodetype] = torch.from_numpy(
+                        graph['node_feat_dict'][nodetype])
 
                 del graph['node_feat_dict']
 
@@ -851,33 +966,38 @@ class ogb_helper_functions:
             pyg_graph_list.append(g)
 
         return pyg_graph_list
+
+
 ################################################################################
 ''' KGBen benchmark dataset's in-memory loader'''
-class KGBen_banchmark_dataset(InMemoryDataset):
-    def __init__(self, name, root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/")) ,numofClasses=349, transform=None, pre_transform=None, meta_dict = None):
-        '''
-            - name (str): name of the dataset
-            - root (str): root directory to store the dataset folder
-            - transform, pre_transform (optional): transform/pre-transform graph objects
 
-            - meta_dict: dictionary that stores all the meta-information about data. Default is None, 
-                    but when something is passed, it uses its information. Useful for debugging for external contributers.
-        ''' 
-        self.datasets_path=root
-        self.name = name ## original name, e.g., ogbn-proteins
+
+class KGBen_banchmark_dataset(InMemoryDataset):
+    def __init__(self, name, root=os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../data/")), numofClasses=349,
+                 transform=None, pre_transform=None, meta_dict=None):
+        '''- name (str): name of the dataset
+        - root (str): root directory to store the dataset folder
+        - transform, pre_transform (optional): transform/pre-transform graph objects
+
+        - meta_dict: dictionary that stores all the meta-information about data. Default is None,
+                but when something is passed, it uses its information. Useful for debugging for external contributers.
+        '''
+        self.datasets_path = root
+        self.name = name  ## original name, e.g., ogbn-proteins
 
         if meta_dict is None:
             # self.dir_name = self.datasets_path+'_'.join(name.split('-'))
-            self.dir_name = osp.join(self.datasets_path , name)
-            
+            self.dir_name = osp.join(self.datasets_path, name)
+
             # check if previously-downloaded folder exists.
             # If so, use that one.
             if osp.exists(osp.join(root, self.dir_name + '_pyg')):
                 self.dir_name = self.dir_name + '_pyg'
 
-            self.original_root = self.datasets_path #root
+            self.original_root = self.datasets_path  #root
             self.root = osp.join(root, self.dir_name)
-            
+
             # master = pd.read_csv(os.path.join(os.path.dirname(__file__), 'master.csv'), index_col = 0)
             # if not self.name in master:
             #     error_mssg = 'Invalid dataset name {}.\n'.format(self.name)
@@ -885,7 +1005,7 @@ class KGBen_banchmark_dataset(InMemoryDataset):
             #     error_mssg += '\n'.join(master.keys())
             #     raise ValueError(error_mssg)
             # self.meta_info = master[self.name]
-            
+
         else:
             self.dir_name = meta_dict['dir_path']
             self.original_root = ''
@@ -908,29 +1028,30 @@ class KGBen_banchmark_dataset(InMemoryDataset):
         self.meta_info = {'url': KGBen_datasets_dic[self.name]}
         self.meta_info['download_name'] = {'url': self.dir_name + ".zip"}
         # f = zipfile.ZipFile(self.dir_name + ".zip", 'r')
-        self.download_name = self.dir_name   ## name of downloaded file, e.g., tox21
-        self.meta_info['add_inverse_edge']=True
+        self.download_name = self.dir_name  ## name of downloaded file, e.g., tox21
+        self.meta_info['add_inverse_edge'] = True
         self.meta_info['has_node_attr'] = True
         self.meta_info['has_edge_attr'] = False
         self.meta_info['split'] = 'time'
-        self.meta_info['additional node files']='node_year'
+        self.meta_info['additional node files'] = 'node_year'
         self.meta_info['additional edge files'] = 'edge_reltype'
         self.meta_info['is hetero'] = 'True'
         self.meta_info['binary'] = 'False'
-        self.meta_info['eval metric']='acc'
-        self.meta_info['num classes']=numofClasses
-        self.meta_info['num tasks']='1'
-        self.meta_info['task type']='multiclass classification'
+        self.meta_info['eval metric'] = 'acc'
+        self.meta_info['num classes'] = numofClasses
+        self.meta_info['num tasks'] = '1'
+        self.meta_info['task type'] = 'multiclass classification'
         self.num_tasks = int(self.meta_info['num tasks'])
         self.task_type = self.meta_info['task type']
         self.eval_metric = self.meta_info['eval metric']
         self.__num_classes__ = int(self.meta_info['num classes'])
         self.is_hetero = self.meta_info['is hetero'] == 'True'
         self.binary = self.meta_info['binary'] == 'True'
-        super(KGBen_banchmark_dataset, self).__init__(self.root, transform, pre_transform)
+        super(KGBen_banchmark_dataset, self).__init__(self.root, transform,
+                                                      pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
-    def get_idx_split(self, split_type = None):
+    def get_idx_split(self, split_type=None):
         import pandas as pd
         if split_type is None:
             split_type = self.meta_info['split']
@@ -942,18 +1063,32 @@ class KGBen_banchmark_dataset(InMemoryDataset):
             return torch.load(os.path.join(path, 'split_dict.pt'))
 
         if self.is_hetero:
-            train_idx_dict, valid_idx_dict, test_idx_dict = ogb_helper_functions.read_nodesplitidx_split_hetero(path)
+            train_idx_dict, valid_idx_dict, test_idx_dict = ogb_helper_functions.read_nodesplitidx_split_hetero(
+                path)
             for nodetype in train_idx_dict.keys():
-                train_idx_dict[nodetype] = torch.from_numpy(train_idx_dict[nodetype]).to(torch.long)
-                valid_idx_dict[nodetype] = torch.from_numpy(valid_idx_dict[nodetype]).to(torch.long)
-                test_idx_dict[nodetype] = torch.from_numpy(test_idx_dict[nodetype]).to(torch.long)
+                train_idx_dict[nodetype] = torch.from_numpy(
+                    train_idx_dict[nodetype]).to(torch.long)
+                valid_idx_dict[nodetype] = torch.from_numpy(
+                    valid_idx_dict[nodetype]).to(torch.long)
+                test_idx_dict[nodetype] = torch.from_numpy(
+                    test_idx_dict[nodetype]).to(torch.long)
 
-                return {'train': train_idx_dict, 'valid': valid_idx_dict, 'test': test_idx_dict}
+                return {
+                    'train': train_idx_dict,
+                    'valid': valid_idx_dict,
+                    'test': test_idx_dict
+                }
 
         else:
-            train_idx = torch.from_numpy(pd.read_csv(osp.join(path, 'train.csv.gz'), compression='gzip', header = None).values.T[0]).to(torch.long)
-            valid_idx = torch.from_numpy(pd.read_csv(osp.join(path, 'valid.csv.gz'), compression='gzip', header = None).values.T[0]).to(torch.long)
-            test_idx = torch.from_numpy(pd.read_csv(osp.join(path, 'test.csv.gz'), compression='gzip', header = None).values.T[0]).to(torch.long)
+            train_idx = torch.from_numpy(
+                pd.read_csv(osp.join(path, 'train.csv.gz'), compression='gzip',
+                            header=None).values.T[0]).to(torch.long)
+            valid_idx = torch.from_numpy(
+                pd.read_csv(osp.join(path, 'valid.csv.gz'), compression='gzip',
+                            header=None).values.T[0]).to(torch.long)
+            test_idx = torch.from_numpy(
+                pd.read_csv(osp.join(path, 'test.csv.gz'), compression='gzip',
+                            header=None).values.T[0]).to(torch.long)
 
             return {'train': train_idx, 'valid': valid_idx, 'test': test_idx}
 
@@ -984,20 +1119,22 @@ class KGBen_banchmark_dataset(InMemoryDataset):
         return osp.join('geometric_data_processed.pt')
 
     def download(self):
-        url =  self.meta_info['url']
-        if str(url).startswith("http")==False:
-            path =url
+        url = self.meta_info['url']
+        if str(url).startswith("http") == False:
+            path = url
             ogb_helper_functions.extract_zip(path, self.original_root)
             # os.unlink(path) # delete  file
-            if self.download_name.split("/")[-1]!=self.root.split("/")[-1]:
+            if self.download_name.split("/")[-1] != self.root.split("/")[-1]:
                 shutil.rmtree(self.root)
-            shutil.move(osp.join(self.original_root, self.download_name), self.root)
+            shutil.move(osp.join(self.original_root, self.download_name),
+                        self.root)
         elif ogb_helper_functions.decide_download(url):
             path = ogb_helper_functions.download_url(url, self.original_root)
             ogb_helper_functions.extract_zip(path, self.original_root)
             os.unlink(path)
             # shutil.rmtree(self.root)
-            shutil.move(osp.join(self.original_root, self.download_name), self.root)
+            shutil.move(osp.join(self.original_root, self.download_name),
+                        self.root)
         else:
             print('Stop downloading.')
             shutil.rmtree(self.root)
@@ -1010,15 +1147,21 @@ class KGBen_banchmark_dataset(InMemoryDataset):
         if self.meta_info['additional node files'] == 'None':
             additional_node_files = []
         else:
-            additional_node_files = self.meta_info['additional node files'].split(',')
+            additional_node_files = self.meta_info[
+                'additional node files'].split(',')
 
         if self.meta_info['additional edge files'] == 'None':
             additional_edge_files = []
         else:
-            additional_edge_files = self.meta_info['additional edge files'].split(',')
+            additional_edge_files = self.meta_info[
+                'additional edge files'].split(',')
 
         if self.is_hetero:
-            data = ogb_helper_functions.read_heterograph_pyg(self.raw_dir, add_inverse_edge = add_inverse_edge, additional_node_files = additional_node_files, additional_edge_files = additional_edge_files, binary=self.binary)[0]
+            data = ogb_helper_functions.read_heterograph_pyg(
+                self.raw_dir, add_inverse_edge=add_inverse_edge,
+                additional_node_files=additional_node_files,
+                additional_edge_files=additional_edge_files,
+                binary=self.binary)[0]
             if self.binary:
                 tmp = np.load(osp.join(self.raw_dir, 'node-label.npz'))
                 node_label_dict = {}
@@ -1026,28 +1169,39 @@ class KGBen_banchmark_dataset(InMemoryDataset):
                     node_label_dict[key] = tmp[key]
                 del tmp
             else:
-                node_label_dict = ogb_helper_functions.read_node_label_hetero(self.raw_dir)
+                node_label_dict = ogb_helper_functions.read_node_label_hetero(
+                    self.raw_dir)
 
             data.y_dict = {}
             if 'classification' in self.task_type:
                 for nodetype, node_label in node_label_dict.items():
                     # detect if there is any nan
                     if np.isnan(node_label).any():
-                        data.y_dict[nodetype] = torch.from_numpy(node_label).to(torch.float32)
+                        data.y_dict[nodetype] = torch.from_numpy(
+                            node_label).to(torch.float32)
                     else:
-                        data.y_dict[nodetype] = torch.from_numpy(node_label).to(torch.long)
+                        data.y_dict[nodetype] = torch.from_numpy(
+                            node_label).to(torch.long)
             else:
                 for nodetype, node_label in node_label_dict.items():
-                    data.y_dict[nodetype] = torch.from_numpy(node_label).to(torch.float32)
+                    data.y_dict[nodetype] = torch.from_numpy(node_label).to(
+                        torch.float32)
 
         else:
-            data = ogb_helper_functions.read_graph_pyg(self.raw_dir, add_inverse_edge = add_inverse_edge, additional_node_files = additional_node_files, additional_edge_files = additional_edge_files, binary=self.binary)[0]
+            data = ogb_helper_functions.read_graph_pyg(
+                self.raw_dir, add_inverse_edge=add_inverse_edge,
+                additional_node_files=additional_node_files,
+                additional_edge_files=additional_edge_files,
+                binary=self.binary)[0]
 
             ### adding prediction target
             if self.binary:
-                node_label = np.load(osp.join(self.raw_dir, 'node-label.npz'))['node_label']
+                node_label = np.load(osp.join(self.raw_dir,
+                                              'node-label.npz'))['node_label']
             else:
-                node_label = pd.read_csv(osp.join(self.raw_dir, 'node-label.csv.gz'), compression='gzip', header = None).values
+                node_label = pd.read_csv(
+                    osp.join(self.raw_dir, 'node-label.csv.gz'),
+                    compression='gzip', header=None).values
 
             if 'classification' in self.task_type:
                 # detect if there is any nan
@@ -1067,9 +1221,9 @@ class KGBen_banchmark_dataset(InMemoryDataset):
     def __repr__(self):
         return '{}()'.format(self.__class__.__name__)
 
+
 if __name__ == '__main__':
-    pyg_dataset = KGBen_banchmark_dataset(name = 'MAG42M_PV_FG')
+    pyg_dataset = KGBen_banchmark_dataset(name='MAG42M_PV_FG')
     print(pyg_dataset[0])
     split_index = pyg_dataset.get_idx_split()
     # print(split_index)
-    
