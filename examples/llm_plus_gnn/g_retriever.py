@@ -6,7 +6,7 @@ by 54% compared to the [LLM] baseline“.
 requirements on top of basic PyG:
 pip install peft datasets transformers pcst_fast sentencepiece tqdm pandas
 """
-
+import argparse
 import gc
 import math
 import re
@@ -19,7 +19,6 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
 import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, DataLoader
@@ -30,21 +29,6 @@ BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
-num_epochs = 10
-
-
-def adjust_learning_rate(param_group, LR, epoch):
-    # Decay the learning rate with half-cycle cosine after warmup
-    min_lr = 5e-6
-    warmup_epochs = 1
-    if epoch < warmup_epochs:
-        lr = LR
-    else:
-        lr = min_lr + (LR - min_lr) * 0.5 * (
-            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
-                           (num_epochs - warmup_epochs)))
-    param_group["lr"] = lr
-    return lr
 
 
 def compute_accuracy(eval_output):
@@ -92,7 +76,7 @@ def compute_accuracy(eval_output):
 
 
 class GAT_LLAMA(nn.Module):
-    def __init__(self, llm_model_path: str):
+    def __init__(self, llm_model_path: str, hidden_channels:int, num_gnn_layers: int):
         super().__init__()
         self.max_txt_len = 512
         self.max_new_tokens = 32
@@ -156,8 +140,8 @@ class GAT_LLAMA(nn.Module):
         self.graph_encoder = torch_geometric.nn.models.GAT(
             in_channels=1024,
             out_channels=1024,
-            hidden_channels=1024,
-            num_layers=4,
+            hidden_channels=hidden_channels,
+            num_layers=num_gnn_layers,
             heads=4,
         ).to(self.model.device)
         self.projector = nn.Sequential(
@@ -333,7 +317,20 @@ class GAT_LLAMA(nn.Module):
         return trainable_params, all_param
 
 
-def main(since: float):
+def main(since: float, num_epochs: int, hidden_channels: int, num_gnn_layers: int, batch_size: int, lr: float):
+    def adjust_learning_rate(param_group, LR, epoch):
+        # Decay the learning rate with half-cycle cosine after warmup
+        min_lr = 5e-6
+        warmup_epochs = 1
+        if epoch < warmup_epochs:
+            lr = LR
+        else:
+            lr = min_lr + (LR - min_lr) * 0.5 * (
+                1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                               (num_epochs - warmup_epochs)))
+        param_group["lr"] = lr
+        return lr
+
     seed_everything(42)
 
     dataset = WebQSPDataset()
@@ -344,19 +341,18 @@ def main(since: float):
     val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
 
-    train_loader = DataLoader(train_dataset, batch_size=4, drop_last=True,
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=True,
                               pin_memory=True, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=4, drop_last=False,
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False,
                             pin_memory=True, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=4, drop_last=False,
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, drop_last=False,
                              pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    model = GAT_LLAMA("meta-llama/Llama-2-7b-chat-hf")
+    model = GAT_LLAMA("meta-llama/Llama-2-7b-chat-hf", hidden_channels, num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
-    lr = 1e-5
     optimizer = torch.optim.AdamW([
         {
             'params': params,
@@ -431,8 +427,14 @@ def main(since: float):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hidden_channels', type=int, default=1024)
+    parser.add_argument('--num_gnn_layers', type=int, default=4)
+    parser.add_argument('--lr', type=float, default=1e-5)
+    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--batch_size', type=int, default=4)
     since = time.time()
-    prep_time = main(since)
+    prep_time = main(since, args.epochs, args.hidden_channels, args.num_gnn_layers, args.batch_size, args.lr)
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()
