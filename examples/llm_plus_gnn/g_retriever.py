@@ -437,6 +437,7 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=4)
+    args = parser.parse_args()
     since = time.time()
     prep_time = main(since, args.epochs, args.hidden_channels,
                      args.num_gnn_layers, args.batch_size, args.lr)
