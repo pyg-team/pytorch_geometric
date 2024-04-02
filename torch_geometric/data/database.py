@@ -371,14 +371,13 @@ class SQLiteDatabase(Database):
             indices = indices.tolist()
 
         # We create a temporary ID table to then perform an INNER JOIN.
-        # This avoids having a long IN clause and guarantees sorted outputs:
+        # This avoids having a long IN clause and guarantees sorted outputs.
+        # Note that temporary tables do not lock the database.
         join_table_name = f'{self.name}__join'
-        # temp tables do not lock the database
         query = (f'CREATE TEMP TABLE {join_table_name} (\n'
                  f'  id INTEGER,\n'
                  f'  row_id INTEGER\n'
                  f')')
-        print('QUERY', query)
         self.cursor.execute(query)
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
