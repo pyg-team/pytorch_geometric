@@ -378,7 +378,6 @@ class SQLiteDatabase(Database):
                  f'  id INTEGER,\n'
                  f'  row_id INTEGER\n'
                  f')')
-        print('QUERY', query)
         self.cursor.execute(query)
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
