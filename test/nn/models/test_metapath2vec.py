@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import MetaPath2Vec
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withDevice
 
 
-@withCUDA
+@withDevice
 def test_metapath2vec(device):
     edge_index_dict = {
         ('author', 'writes', 'paper'):

@@ -17,7 +17,7 @@ index in a KV store. More complicated implementations may choose to partition
 the graph in interesting manners based on the provided metadata.
 """
 import copy
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
@@ -98,7 +98,7 @@ class EdgeAttr(CastMixin):
         self.size = size
 
 
-class GraphStore:
+class GraphStore(ABC):
     r"""An abstract base class to access edges from a remote graph store.
 
     Args:

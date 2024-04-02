@@ -5,8 +5,8 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
-from torch_geometric.utils import group_argsort, scatter
+from torch_geometric.testing import withCUDA, withDevice, withPackage
+from torch_geometric.utils import group_argsort, group_cat, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
 
@@ -25,7 +25,7 @@ def test_scatter_validate():
         scatter(src, index, reduce='std')
 
 
-@withCUDA
+@withDevice
 @withPackage('torch_scatter')
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_scatter(reduce, device):
@@ -33,6 +33,11 @@ def test_scatter(reduce, device):
 
     src = torch.randn(100, 16, device=device)
     index = torch.randint(0, 8, (100, ), device=device)
+
+    if device.type == 'mps' and reduce in ['min', 'max']:
+        with pytest.raises(NotImplementedError, match="for the MPS device"):
+            scatter(src, index, dim=0, reduce=reduce)
+        return
 
     out1 = scatter(src, index, dim=0, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=0, reduce=reduce)
@@ -50,11 +55,16 @@ def test_scatter(reduce, device):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_scatter_backward(reduce, device):
     src = torch.randn(8, 100, 16, device=device, requires_grad=True)
     index = torch.randint(0, 8, (100, ), device=device)
+
+    if device.type == 'mps' and reduce in ['min', 'max']:
+        with pytest.raises(NotImplementedError, match="for the MPS device"):
+            scatter(src, index, dim=1, reduce=reduce)
+        return
 
     out = scatter(src, index, dim=1, reduce=reduce)
 
@@ -63,7 +73,7 @@ def test_scatter_backward(reduce, device):
     assert src.grad is not None
 
 
-@withCUDA
+@withDevice
 def test_scatter_any(device):
     src = torch.randn(6, 4, device=device)
     index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
@@ -75,7 +85,7 @@ def test_scatter_any(device):
             assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('num_groups', [4])
 @pytest.mark.parametrize('descending', [False, True])
 def test_group_argsort(num_groups, descending, device):
@@ -109,6 +119,25 @@ def test_scatter_argmax(device):
     argmax = scatter_argmax(src, index, dim_size=6)
     torch_geometric.typing.WITH_TORCH_SCATTER = old_state
     assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
+
+
+@withDevice
+def test_group_cat(device):
+    x1 = torch.randn(4, 4, device=device)
+    x2 = torch.randn(2, 4, device=device)
+    index1 = torch.tensor([0, 0, 1, 2], device=device)
+    index2 = torch.tensor([0, 2], device=device)
+
+    expected = torch.cat([x1[:2], x2[:1], x1[2:4], x2[1:]], dim=0)
+
+    out, index = group_cat(
+        [x1, x2],
+        [index1, index2],
+        dim=0,
+        return_index=True,
+    )
+    assert torch.equal(out, expected)
+    assert index.tolist() == [0, 0, 0, 1, 2, 2]
 
 
 if __name__ == '__main__':

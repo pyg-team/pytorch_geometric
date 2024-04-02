@@ -19,7 +19,7 @@ from torch_geometric.testing import (
     onlyLinux,
     onlyNeighborSampler,
     onlyOnline,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -203,11 +203,11 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>=2.0.0')
-def test_compile(device):
+def test_compile_basic(device):
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
@@ -330,7 +330,7 @@ def test_trim_to_layer():
     assert torch.allclose(out1, out2)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])

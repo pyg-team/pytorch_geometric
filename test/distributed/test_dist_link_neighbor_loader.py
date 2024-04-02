@@ -15,7 +15,8 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import onlyDistributedTest
+from torch_geometric.testing import onlyDistributedTest, withMETIS
+from torch_geometric.testing.distributed import ProcArgs, assert_run_mproc
 
 
 def create_dist_data(tmp_path: str, rank: int):
@@ -26,8 +27,8 @@ def create_dist_data(tmp_path: str, rank: int):
 
 
 def dist_link_neighbor_loader_homo(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -76,8 +77,8 @@ def dist_link_neighbor_loader_homo(
 
 
 def dist_link_neighbor_loader_hetero(
-    tmp_path: str,
     world_size: int,
+    tmp_path: str,
     rank: int,
     master_addr: str,
     master_port: int,
@@ -136,6 +137,7 @@ def dist_link_neighbor_loader_hetero(
     assert loader.channel.empty()
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
@@ -150,10 +152,11 @@ def test_dist_link_neighbor_loader_homo(
 ):
     addr = '127.0.0.1'
     mp_context = torch.multiprocessing.get_context('spawn')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeDataset(
         num_graphs=1,
@@ -164,24 +167,17 @@ def test_dist_link_neighbor_loader_homo(
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_loader_homo,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    procs = [
+        ProcArgs(
+            target=dist_link_neighbor_loader_homo,
+            args=(tmp_path, part, addr, port, num_workers, async_sampling,
+                  neg_ratio),
+        ) for part in range(num_parts)
+    ]
+    assert_run_mproc(mp_context, procs)
 
 
+@withMETIS
 @onlyDistributedTest
 @pytest.mark.parametrize('num_parts', [2])
 @pytest.mark.parametrize('num_workers', [0])
@@ -198,10 +194,11 @@ def test_dist_link_neighbor_loader_hetero(
 ):
     mp_context = torch.multiprocessing.get_context('spawn')
     addr = '127.0.0.1'
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
-        sock.bind((addr, 0))
-        port = sock.getsockname()[1]
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
+        s.bind(('', 0))
+        port = s.getsockname()[1]
 
     data = FakeHeteroDataset(
         num_graphs=1,
@@ -214,19 +211,11 @@ def test_dist_link_neighbor_loader_hetero(
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(
-        target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 0, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
-    )
-
-    w1 = mp_context.Process(
-        target=dist_link_neighbor_loader_hetero,
-        args=(tmp_path, num_parts, 1, addr, port, num_workers, async_sampling,
-              neg_ratio, edge_type),
-    )
-
-    w0.start()
-    w1.start()
-    w0.join()
-    w1.join()
+    procs = [
+        ProcArgs(
+            target=dist_link_neighbor_loader_hetero,
+            args=(tmp_path, part, addr, port, num_workers, async_sampling,
+                  neg_ratio, edge_type),
+        ) for part in range(num_parts)
+    ]
+    assert_run_mproc(mp_context, procs)

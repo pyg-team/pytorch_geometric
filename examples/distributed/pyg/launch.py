@@ -249,6 +249,7 @@ def submit_all_jobs(args, udf_command, dry_run=False):
                if len(args.extra_envs) > 0 else cmd)
 
         cmd = cmd[:-1]
+        cmd += " --logging"
         cmd += f" --dataset_root_dir={args.dataset_root_dir}"
         cmd += f" --dataset={args.dataset}"
         cmd += f" --num_nodes={args.num_nodes}"
@@ -259,7 +260,7 @@ def submit_all_jobs(args, udf_command, dry_run=False):
         cmd += f" --batch_size={args.batch_size}"
         cmd += f" --num_workers={args.num_workers}"
         cmd += f" --concurrency={args.concurrency}"
-        cmd += f" --logging --progress_bar --ddp_port={args.ddp_port})"
+        cmd += f" --ddp_port={args.ddp_port})"
         servers_cmd.append(cmd)
 
         if not dry_run:
@@ -398,12 +399,6 @@ def main():
         type=int,
         default=11111,
         help="Port used for PyTorch's DDP communication",
-    )
-    parser.add_argument(
-        "--part_config",
-        type=str,
-        required=True,
-        help="File (in workspace) of the partition configuration",
     )
     parser.add_argument(
         "--ip_config",
