@@ -227,10 +227,12 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             # Add a small offset to the bounding because some keypoints lay
             # outside the bounding box intervals.
-            box = (min(float(pos[:, 0].min().floor()), box[0]) - 16,
-                   min(float(pos[:, 1].min().floor()), box[1]) - 16,
-                   max(float(pos[:, 0].max().ceil()), box[2]) + 16,
-                   max(float(pos[:, 1].max().ceil()), box[3]) + 16)
+            box = (
+                min(int(pos[:, 0].min().floor()), box[0]) - 16,
+                min(int(pos[:, 1].min().floor()), box[1]) - 16,
+                max(int(pos[:, 0].max().ceil()), box[2]) + 16,
+                max(int(pos[:, 1].max().ceil()), box[3]) + 16,
+            )
 
             # Rescale keypoints.
             pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
@@ -239,7 +241,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             path = osp.join(image_path, f'{filename}.jpg')
             with open(path, 'rb') as f:
                 img = Image.open(f).convert('RGB').crop(box)
-                img = img.resize((256, 256), resample=Image.BICUBIC)
+                img = img.resize((256, 256), resample=Image.Resampling.BICUBIC)
 
             img = transform(img)
 
