@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
-from uuid import uuid4
 
 import torch
 from torch import Tensor
@@ -373,11 +372,13 @@ class SQLiteDatabase(Database):
 
         # We create a temporary ID table to then perform an INNER JOIN.
         # This avoids having a long IN clause and guarantees sorted outputs:
-        join_table_name = f'{self.name}__join__{uuid4().hex}'
-        query = (f'CREATE TABLE {join_table_name} (\n'
+        join_table_name = f'{self.name}__join'
+        # temp tables do not lock the database
+        query = (f'CREATE TEMP TABLE {join_table_name} (\n'
                  f'  id INTEGER,\n'
                  f'  row_id INTEGER\n'
                  f')')
+        print('QUERY', query)
         self.cursor.execute(query)
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
