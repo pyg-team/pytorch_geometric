@@ -192,19 +192,19 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             child = obj.getElementsByTagName('xmin')[0].firstChild
             assert child is not None
-            xmin: float = float(child.data)  # type: ignore
+            xmin = int(child.data)  # type: ignore
 
             child = obj.getElementsByTagName('xmax')[0].firstChild
             assert child is not None
-            xmax = float(child.data)  # type: ignore
+            xmax = int(child.data)  # type: ignore
 
             child = obj.getElementsByTagName('ymin')[0].firstChild
             assert child is not None
-            ymin = float(child.data)  # type: ignore
+            ymin = int(child.data)  # type: ignore
 
             child = obj.getElementsByTagName('ymax')[0].firstChild
             assert child is not None
-            ymax = float(child.data)  # type: ignore
+            ymax = int(child.data)  # type: ignore
 
             box = (xmin, ymin, xmax, ymax)
 
