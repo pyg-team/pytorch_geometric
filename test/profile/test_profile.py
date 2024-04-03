@@ -19,12 +19,12 @@ from torch_geometric.testing import (
     onlyLinux,
     onlyOnline,
     onlyXPU,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 def test_timeit(device):
     x = torch.randn(100, 16, device=device)
@@ -129,7 +129,7 @@ def test_profileit_xpu(get_dataset):
     assert not hasattr(stats_summary, 'max_nvidia_smi_used_cuda')
 
 
-@withCUDA
+@withDevice
 @onlyOnline
 def test_torch_profile(capfd, get_dataset, device):
     dataset = get_dataset(name='Cora')

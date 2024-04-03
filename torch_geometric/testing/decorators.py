@@ -196,6 +196,25 @@ def withCUDA(func: Callable) -> Callable:
     if torch.cuda.is_available():
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
+    return pytest.mark.parametrize('device', devices)(func)
+
+
+def withDevice(func: Callable) -> Callable:
+    r"""A decorator to test on all available tensor processing devices."""
+    import pytest
+
+    devices = [pytest.param(torch.device('cpu'), id='cpu')]
+
+    if torch.cuda.is_available():
+        devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
+
+    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        try:  # Github CI may not have access to MPS hardware. Confirm:
+            torch.empty(1, device='mps')
+            devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+        except RuntimeError:
+            pass
+
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
     if device:
@@ -218,10 +237,11 @@ def withMETIS(func: Callable) -> Callable:
 
     if with_metis:
         try:  # Test that METIS can succesfully execute:
-            import pyg_lib
+            # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
+            # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])
             col = torch.tensor([1, 2, 0, 2, 1, 0])
-            pyg_lib.partition.metis(rowptr, col, num_partitions=2)
+            torch.ops.torch_sparse.partition(rowptr, col, None, 2, True)
         except Exception:
             with_metis = False
 
