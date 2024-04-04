@@ -37,7 +37,7 @@ def to_scipy_sparse_matrix(
     row, col = edge_index.cpu()
 
     if edge_attr is None:
-        edge_attr = torch.ones(row.size(0))
+        edge_attr = torch.ones(row.size(0), device="cpu")
     else:
         edge_attr = edge_attr.view(-1).cpu()
         assert edge_attr.size(0) == row.size(0)
