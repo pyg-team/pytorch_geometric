@@ -12,6 +12,7 @@ import math
 import re
 import time
 from os import path
+
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -36,13 +37,14 @@ max_new_tokens = 32
 pad_token_id = 0
 padding_side = 'left'
 
+
 def detect_hallucinate(pred, label):
     try:
         pred = pred.split('[/s]')[0].strip().split('|')
         correct_hit = len(re.findall(pred[0], label)) > 0
         hallucination = not correct_hit
         return hallucination
-    except: # noqa
+    except:  # noqa
         return "skip"
 
 
@@ -130,11 +132,10 @@ class LLAMA2(nn.Module):
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
-            llama2_str_name, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True,
-            **kwargs)
+            llama2_str_name, torch_dtype=torch.bfloat16,
+            low_cpu_mem_usage=True, **kwargs)
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
-
 
     def encode_inputs(self, samples: Batch):
         batch_size = len(samples['question'])
@@ -155,7 +156,8 @@ class LLAMA2(nn.Module):
         return batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds
 
     def inference(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(
+            samples)
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
@@ -165,9 +167,7 @@ class LLAMA2(nn.Module):
                     i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
-            inputs_embeds = torch.cat(
-                [bos_embeds, inputs_embeds],
-                dim=0)
+            inputs_embeds = torch.cat([bos_embeds, inputs_embeds], dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
@@ -182,8 +182,7 @@ class LLAMA2(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
         with torch.cuda.amp.autocast(dtype=torch.bfloat16):
             outputs = self.llm.generate(
@@ -206,7 +205,6 @@ class LLAMA2(nn.Module):
 class GAT_LLAMA(nn.Module):
     def __init__(self, hidden_channels: int, num_gnn_layers: int):
         super().__init__()
-        
 
         self.llama2 = LLAMA2()
 
@@ -231,7 +229,7 @@ class GAT_LLAMA(nn.Module):
             task_type="CAUSAL_LM",
         )
         self.llm = get_peft_model(self.llm, config)
-        
+
         print('Finish loading LLAMA!')
 
         self.graph_encoder = torch_geometric.nn.models.GAT(
@@ -260,7 +258,8 @@ class GAT_LLAMA(nn.Module):
         return g_embeds
 
     def forward(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(
+            samples)
         # encode labels
         labels = self.tokenizer(samples.label, add_special_tokens=False)
         # encode training specific special token
@@ -307,8 +306,7 @@ class GAT_LLAMA(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
@@ -322,7 +320,8 @@ class GAT_LLAMA(nn.Module):
         return outputs.loss
 
     def inference(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(
+            samples)
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
@@ -353,8 +352,7 @@ class GAT_LLAMA(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
         with torch.cuda.amp.autocast(dtype=torch.bfloat16):
             outputs = self.llm.generate(
@@ -497,13 +495,14 @@ def main(since: float, num_epochs: int, hidden_channels: int,
     torch.save(model, "gat_llama.pt")
     return prep_time, dataset, model
 
+
 def minimal_demo(model, dataset):
     # Step 1: Define a single batch size test loader
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
     # batch size 1 loader for simplicity
     loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
-                             pin_memory=True, shuffle=False)
+                        pin_memory=True, shuffle=False)
     # define the pure pretrained LLM
     pure_llm = LLAMA2()
 
@@ -520,7 +519,8 @@ def minimal_demo(model, dataset):
         gnn_llm_pred = gnn_llm_out['pred'][0]
         pure_llm_pred = pure_llm_out['pred'][0]
         gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
-        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred, correct_answer)
+        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
+                                                   correct_answer)
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
             # skipping since hard to evaluate if the answer's are hallucinations
             continue
@@ -532,14 +532,16 @@ def minimal_demo(model, dataset):
             final_prnt_str += "Correct Answer: " + correct_answer + "\n"
             final_prnt_str += "Pure LLM Prediction: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Prediction:" + gnn_llm_pred + "\n"
-            final_prnt_str += "#"*20 + "\n"
+            final_prnt_str += "#" * 20 + "\n"
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
-    percent = 100.0 * round(1 - (gnn_llm_hallucin_sum / pure_llm_hallucin_sum) , 2)
+    percent = 100.0 * round(1 -
+                            (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
     print(f"GNN reduces hallucinations by: ~{percent}%")
     print("Note: hallucinations detected by regex hence the ~")
     print("Instances where GNN solves the hallucinations of Pure LLMs:")
     print(final_prnt_str)
+
 
 if __name__ == "__main__":
     # check if saved model
@@ -560,8 +562,10 @@ if __name__ == "__main__":
         parser.add_argument('--batch_size', type=int, default=4)
         args = parser.parse_args()
         since = time.time()
-        prep_time, dataset, model = main(since, args.epochs, args.hidden_channels,
-                     args.num_gnn_layers, args.batch_size, args.lr)
+        prep_time, dataset, model = main(since, args.epochs,
+                                         args.hidden_channels,
+                                         args.num_gnn_layers, args.batch_size,
+                                         args.lr)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -571,7 +575,9 @@ if __name__ == "__main__":
     else:
         model = torch.load("gat_llama.pt")
         dataset = WebQSPDataset()
-    print("Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?")
+    print(
+        "Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?"
+    )
     user_input = str(input("(y/n):")).lower()
     if user_input == "y":
         minimal_demo(model, dataset)
