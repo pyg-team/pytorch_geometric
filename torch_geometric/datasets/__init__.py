@@ -94,6 +94,8 @@ from .hm import HM
 from .ose_gvcs import OSE_GVCS
 from .rcdd import RCDD
 
+from .cornell import CornellTemporalHyperGraphDataset
+
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
@@ -103,8 +105,6 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
-
-from .cornellhyper import CornellTemporalHyperGraphDatasets
 
 import torch_geometric.datasets.utils
 
@@ -206,6 +206,9 @@ hetero_datasets = [
     'HM',
     'OSE_GVCS',
     'RCDD',
+]
+hyper_datasets = [
+    'CornellTemporalHyperGraphDataset',
 ]
 synthetic_datasets = [
     'FakeDataset',
