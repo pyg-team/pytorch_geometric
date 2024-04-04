@@ -8,12 +8,12 @@ from torch_geometric.transforms import BaseTransform
 SEED = 20240403
 
 
-class SampleNegatives(BaseTransform):
+class AddNegativeSamples(BaseTransform):
     r"""Handles negative edge sampling for inductive graph learning.
 
     Args:
-        edges = all positive edge pairs as a list of tuples [(u1, v1),...]
-        datasplit = how the data was partitioned.
+        edges: all positive edge pairs as a list of tuples [(u1, v1),...]
+        datasplit: how the data was partitioned.
             - type: Literal(['source', 'target', 'pair'])
             - if 'source': source nodes are split into train/valid/test, and
             all edges containing those nodes are subsequently partitioned into
@@ -22,8 +22,7 @@ class SampleNegatives(BaseTransform):
             - if 'pair': no longer inductive learning since no nodes are
             intentionally left out of training. The option is included such
             that the transform is generalizable.
-        ratio = the ratio of negative sampled edges to positive edges
-
+        ratio: the ratio of negative sampled edges to positive edges
     """
     def __init__(self, edges, datasplit, ratio=1):
         self.edges = edges
@@ -65,8 +64,8 @@ class SampleNegatives(BaseTransform):
         # 3 chances to sample negative edges
         rng = np.random.default_rng(SEED)
         for _ in range(3):
-            rnd_srcs = rng.choice(global_src, size=(num_pos * 2))
-            rnd_tgts = rng.choice(global_tgt, size=(num_pos * 2))
+            rnd_srcs = rng.choice(global_src, size=num_pos * 2)
+            rnd_tgts = rng.choice(global_tgt, size=num_pos * 2)
 
             rnd_pairs = np.stack((rnd_srcs, rnd_tgts))
             rnd_pairs = np.unique(rnd_pairs, axis=1)
