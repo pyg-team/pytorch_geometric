@@ -7,7 +7,8 @@ import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.utils import scatter
-from torch_geometric.nn.models import GAT
+from torch_geometric.nn.models import GAT, BasicGNN
+
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -104,12 +105,27 @@ class LLM(nn.Module):
 
 
 class GNN_LLM(nn.Module):
+    """This GNN+LLM implementation is based on the design from 
+    G-retriever. Original Paper: https://arxiv.org/abs/2402.07630
+    Args:
+        llm_to_use (str): A string representing the huggingface model you
+        want to use. This module has been tested for 'llama2' and 'gemma2'.
+        Other huggingface transformer models should work if you pass the
+        correct name, see huggingface.co for details. If any issues occur
+        please file an issue on https://github.com/pyg-team/pytorch_geometric
+        and tag puririshi98. (default: :obj:'llama2')
+        gnn_to_use (BasicGNN): Please pass a valid model that extends
+        torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
+    """
     def __init__(self, llm_to_use='llama2', gnn_to_use=GAT, hidden_channels: int, num_gnn_layers: int):
         super().__init__()
         
-
-        self.llama2 = LLAMA2()
-
+        if 'llama' in llm_to_use.lower():
+            self.llm_to_use = LLM('llama2')
+        elif 'gemma' in llm_to_use.lower():
+            self.llm_to_use = LLM('gemma2')
+        else:
+            self.llm_to_use = LLM(llm_to_use)
         print("Training LLAMA with LORA!")
         self.llm = self.llama2.llm
         self.llm_device = self.llama2.llm_device
