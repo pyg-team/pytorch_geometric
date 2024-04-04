@@ -48,8 +48,8 @@ def ogb_from_smiles_wrapper(smiles, *args, **kwargs):
 ### GIN convolution along the graph structure
 class GINConv(MessagePassing):
     def __init__(self, emb_dim):
-        '''emb_dim (int): node embedding dimensionality
-        '''
+        """emb_dim (int): node embedding dimensionality
+        """
         super(GINConv, self).__init__(aggr="add")
 
         self.mlp = torch.nn.Sequential(torch.nn.Linear(emb_dim, emb_dim),
@@ -115,9 +115,9 @@ class GNN_node(torch.nn.Module):
     """
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        '''emb_dim (int): node embedding dimensionality
+        """emb_dim (int): node embedding dimensionality
         num_layers (int): number of GNN message passing layers
-        '''
+        """
         super(GNN_node, self).__init__()
         self.num_layers = num_layers
         self.drop_ratio = drop_ratio
@@ -185,8 +185,8 @@ class GNN_node_Virtualnode(torch.nn.Module):
     """
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        '''emb_dim (int): node embedding dimensionality
-        '''
+        """emb_dim (int): node embedding dimensionality
+        """
         super(GNN_node_Virtualnode, self).__init__()
         self.num_layers = num_layers
         self.drop_ratio = drop_ratio
@@ -288,9 +288,9 @@ class GNN(torch.nn.Module):
     def __init__(self, num_tasks=1, num_layers=5, emb_dim=300, gnn_type='gin',
                  virtual_node=True, residual=False, drop_ratio=0, JK="last",
                  graph_pooling="sum"):
-        '''num_tasks (int): number of labels to be predicted
+        """num_tasks (int): number of labels to be predicted
         virtual_node (bool): whether to add virtual node or not
-        '''
+        """
         super(GNN, self).__init__()
 
         self.num_layers = num_layers
