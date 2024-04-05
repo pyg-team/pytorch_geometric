@@ -7,7 +7,8 @@ import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.utils import scatter
-from torch_geometric.nn.models import GAT, BasicGNN
+from torch_geometric.nn.models import GAT
+from torch_geometric.nn.models.basic_gnn import BasicGNN
 
 
 BOS = '<s>[INST]'
@@ -164,7 +165,7 @@ class GNN_LLM(nn.Module):
             automatically allocate the number of gpus needed, given the
             available GPU memory of your GPUs (default :obj:`7`)
         gnn_to_use (BasicGNN): Please pass a valid model that extends
-            torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
+            torch_geometric.nn.models.basic_gnn.BasicGNN. (default: :obj:`GAT`)
         gnn_in_channels (int): (default: 1024)
         gnn_hidden_channels (int): (default: 1024)
         gnn_out_channels (int): (default: 1024)
