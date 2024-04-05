@@ -173,7 +173,7 @@ class GNN_LLM(nn.Module):
         num_gnn_heads (int): Number of heads to use for BasicGNNs with the
         `heads` kwarg. (default: 4)
         mlp_hidden_dim (int): (default: 2048)
-        mlp_hidden_dim (int): (default: 4096)
+        mlp_out_dim (int): (default: 4096)
     """
     def __init__(self, llm_to_use='gemma', llm_use_lora: bool = True,
         llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
