@@ -117,7 +117,7 @@ class GNN_LLM(nn.Module):
         gnn_to_use (BasicGNN): Please pass a valid model that extends
         torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
     """
-    def __init__(self, llm_to_use='llama2', gnn_to_use=GAT, hidden_channels: int, num_gnn_layers: int):
+    def __init__(self, llm_to_use='llama2', gnn_to_use=GAT, in_channels: int, hidden_channels: int, out_channels: int, num_gnn_layers: int, num_gnn_heads: int = 4):
         super().__init__()
         
         if 'llama' in llm_to_use.lower():
@@ -151,11 +151,11 @@ class GNN_LLM(nn.Module):
         print('Finish loading LLAMA!')
 
         self.graph_encoder = gnn_to_use(
-            in_channels=1024,
-            out_channels=1024,
+            in_channels=in_channels,
+            out_channels=out_channels,
             hidden_channels=hidden_channels,
             num_layers=num_gnn_layers,
-            heads=4,
+            heads=num_gnn_heads,
         ).to(self.llm_device)
         self.projector = nn.Sequential(
             nn.Linear(1024, 2048),
