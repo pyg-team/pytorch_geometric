@@ -199,7 +199,7 @@ def main(since: float, num_epochs: int, hidden_channels: int,
     acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
     # save model
-    torch.save(model, "gat_llama.pt")
+    torch.save(model, "gnn_llm.pt")
     return prep_time, dataset, model
 
 def minimal_demo(model, dataset):
@@ -274,7 +274,7 @@ if __name__ == "__main__":
         print("E2E time (e2e_time) =", e2e_time)
         print("E2E time minus Prep Time =", e2e_time - prep_time)
     else:
-        model = torch.load("gat_llama.pt")
+        model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
     print("Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?")
     user_input = str(input("(y/n):")).lower()

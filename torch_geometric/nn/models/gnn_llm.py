@@ -180,7 +180,7 @@ class GNN_LLM(nn.Module):
         gnn_to_use=GAT, gnn_in_channels: int = 1024,
         gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
         num_gnn_layers: int = 4, num_gnn_heads: int = 4,
-        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 4096,):
+        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 3072,):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
