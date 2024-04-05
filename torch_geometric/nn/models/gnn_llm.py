@@ -22,7 +22,7 @@ pad_token_id = 0
 padding_side = 'left'
 
 def get_llm_kwargs(mem_needed):
-    assert torch.cuda.is_available(), "GPU needed!"
+    assert torch.cuda.is_available(), "GPU needed to run LLMs efficiently!"
     avail_gpus = torch.cuda.device_count()
     kwargs = {
         "revision": "main",
@@ -153,13 +153,34 @@ class GNN_LLM(nn.Module):
         and tag puririshi98. (default: :obj:'llama2')
         gnn_to_use (BasicGNN): Please pass a valid model that extends
         torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
-        ...
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
+        hidden_channels (int): Size of each hidden sample.
+        out_channels (int, optional): If not set to :obj:`None`, will apply a
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
+        num_gnn_layers (int): Number of message passing layers.
+        num_gnn_heads (int): Number of heads to use for BasicGNNs with the
+        `heads` kwarg. (default: 4)
         num_llm_params (int): An integer representing how many params your
-        huggingface transformer model has, in billions. (default :obj:`7`)
+        huggingface transformer model has, in billions. This is used to 
+        automatically allocate the number of gpus needed, given the available
+        GPU memory of your GPUs (default :obj:`7`)
+        use_lora (bool): use LORA from peft for training the LLM. see 
+        https://huggingface.co/docs/peft/en/index for details.
+        autocast_llm (bool): Wether to to use `torch.cuda.amp.autocast`
+        on the LLM or not. See https://pytorch.org/docs/stable/amp.html for
+        details. (default :obj:`True`)
+        llm_autocast_dtype (torch.dtype): The lower precision dtype to autocast
+        to. (default :obj: `torch.bloat16`)
     """
     def __init__(self, llm_to_use='llama2', gnn_to_use=GAT,
         in_channels: int, hidden_channels: int, out_channels: int,
-        num_gnn_layers: int, num_gnn_heads: int = 4, num_llm_params: int = 7):
+        num_gnn_layers: int, num_gnn_heads: int = 4, num_llm_params: int = 7,
+        use_lora: bool = True, autocast_llm=True,
+        llm_autocast_dtype=torch.bfloat16):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2')
@@ -167,29 +188,29 @@ class GNN_LLM(nn.Module):
             self.llm_to_use = LLM('gemma')
         else:
             self.llm_to_use = LLM(llm_to_use)
-        print("Training LLAMA with LORA!")
         self.llm = self.llm_to_use.llm
+        if use_lora:
+            print("Training our LLM with LORA!")
+            self.llm = prepare_model_for_kbit_training(self.llm)
+            lora_r: int = 8
+            lora_alpha: int = 16
+            lora_dropout: float = 0.05
+            lora_target_modules = [
+                "q_proj",
+                "v_proj",
+            ]
+            config = LoraConfig(
+                r=lora_r,
+                lora_alpha=lora_alpha,
+                target_modules=lora_target_modules,
+                lora_dropout=lora_dropout,
+                bias="none",
+                task_type="CAUSAL_LM",
+            )
+            self.llm = get_peft_model(self.llm, config)
         self.llm_device = self.llm_to_use.llm_device
-        self.llm = prepare_model_for_kbit_training(self.llm)
         self.tokenizer = self.llm_to_use.tokenizer
-        lora_r: int = 8
-        lora_alpha: int = 16
-        lora_dropout: float = 0.05
-        lora_target_modules = [
-            "q_proj",
-            "v_proj",
-        ]
-        config = LoraConfig(
-            r=lora_r,
-            lora_alpha=lora_alpha,
-            target_modules=lora_target_modules,
-            lora_dropout=lora_dropout,
-            bias="none",
-            task_type="CAUSAL_LM",
-        )
-        self.llm = get_peft_model(self.llm, config)
-        
-        print('Finish loading LLAMA!')
+        print('Finished loading LLAMA!')
 
         self.graph_encoder = gnn_to_use(
             in_channels=in_channels,
