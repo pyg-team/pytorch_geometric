@@ -15,6 +15,7 @@ EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
 llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
+gemma2_str_name = #
 max_txt_len = 512
 max_new_tokens = 32
 pad_token_id = 0
@@ -117,9 +118,10 @@ class GNN_LLM(nn.Module):
         gnn_to_use (BasicGNN): Please pass a valid model that extends
         torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
     """
-    def __init__(self, llm_to_use='llama2', gnn_to_use=GAT, in_channels: int, hidden_channels: int, out_channels: int, num_gnn_layers: int, num_gnn_heads: int = 4):
+    def __init__(self, llm_to_use='llama2', gnn_to_use=GAT,
+        in_channels: int, hidden_channels: int, out_channels: int,
+        num_gnn_layers: int, num_gnn_heads: int = 4):
         super().__init__()
-        
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2')
         elif 'gemma' in llm_to_use.lower():
@@ -127,10 +129,10 @@ class GNN_LLM(nn.Module):
         else:
             self.llm_to_use = LLM(llm_to_use)
         print("Training LLAMA with LORA!")
-        self.llm = self.llama2.llm
-        self.llm_device = self.llama2.llm_device
+        self.llm = self.llm_to_use.llm
+        self.llm_device = self.llm_to_use.llm_device
         self.llm = prepare_model_for_kbit_training(self.llm)
-        self.tokenizer = self.llama2.tokenizer
+        self.tokenizer = self.llm_to_use.tokenizer
         lora_r: int = 8
         lora_alpha: int = 16
         lora_dropout: float = 0.05
@@ -163,7 +165,7 @@ class GNN_LLM(nn.Module):
             nn.Linear(2048, 4096),
         ).to(self.llm_device)
 
-        self.word_embedding = self.llama2.word_embedding
+        self.word_embedding = self.llm_to_use.word_embedding
 
     def encode_graphs(self, samples: Batch):
         x = samples.x.to(self.llm_device)
@@ -176,7 +178,7 @@ class GNN_LLM(nn.Module):
         return g_embeds
 
     def forward(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
         # encode labels
         labels = self.tokenizer(samples.label, add_special_tokens=False)
         # encode training specific special token
@@ -238,7 +240,7 @@ class GNN_LLM(nn.Module):
         return outputs.loss
 
     def inference(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llama2.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
