@@ -15,18 +15,54 @@ EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
 llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
-gemma2_str_name = #
+gemma_str_name = "google/gemma-7b"
 max_txt_len = 512
 max_new_tokens = 32
 pad_token_id = 0
 padding_side = 'left'
 
+def get_llm_kwargs(mem_needed):
+    assert torch.cuda.is_available(), "GPU needed!"
+    avail_gpus = torch.cuda.device_count()
+    kwargs = {
+        "revision": "main",
+    }
+    max_mem_dict = {}
+    avail_mem_dict = {}
+    mem_total = 0
+    gpus_2_use_4_llm = 0
+    for i in range(avail_gpus):
+        available_mem = int(torch.cuda.mem_get_info(i)[0] // 1024**3)
+        mem_total += available_mem
+        avail_mem_dict[i] = available_mem
+        gpus_2_use_4_llm += 1
+        # We want to use the minimum number of GPUs that LLM can fit on
+        # this is to minimize the need for interGPU communications
+        if mem_total >= mem_needed:
+            break
+
+    for i in range(gpus_2_use_4_llm):
+        max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
+    kwargs["max_memory"] = max_mem_dict
+    kwargs["device_map"] = "auto"
+    return kwargs
+
 class LLM(nn.Module):
-    def __init__(self):
+    def __init__(self, llm_name: str, num_params: int = 7):
         super().__init__()
-        print('Loading LLAMA')
-        kwargs = get_llm_kwargs()
-        print("Setting up LLAMA w/ kwargs =", kwargs)
+        if llm_name == "llama2":
+            self.printable_llm_name = "LLAMA2"
+            self.huggingface_str = llama2_str_name
+        elif llm_name == "gemma":
+            self.printable_llm_name = "GEMMA"
+            self.huggingface_str = gemma_str_name
+        else:
+            self.printable_llm_name = llm_name
+            self.huggingface_str = llm_name
+        self.mem_needed = 75 * num_params / 7
+        print('Loading ' + str(self.printable_llm_name))
+        kwargs = get_llm_kwargs(self.mem_needed)
+        print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
         self.tokenizer = AutoTokenizer.from_pretrained(llama2_str_name,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = pad_token_id
@@ -110,22 +146,25 @@ class GNN_LLM(nn.Module):
     G-retriever. Original Paper: https://arxiv.org/abs/2402.07630
     Args:
         llm_to_use (str): A string representing the huggingface model you
-        want to use. This module has been tested for 'llama2' and 'gemma2'.
+        want to use. This module has been tested for 'llama2' and 'gemma'.
         Other huggingface transformer models should work if you pass the
         correct name, see huggingface.co for details. If any issues occur
         please file an issue on https://github.com/pyg-team/pytorch_geometric
         and tag puririshi98. (default: :obj:'llama2')
         gnn_to_use (BasicGNN): Please pass a valid model that extends
         torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
+        ...
+        num_llm_params (int): An integer representing how many params your
+        huggingface transformer model has, in billions. (default :obj:`7`)
     """
     def __init__(self, llm_to_use='llama2', gnn_to_use=GAT,
         in_channels: int, hidden_channels: int, out_channels: int,
-        num_gnn_layers: int, num_gnn_heads: int = 4):
+        num_gnn_layers: int, num_gnn_heads: int = 4, num_llm_params: int = 7):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2')
         elif 'gemma' in llm_to_use.lower():
-            self.llm_to_use = LLM('gemma2')
+            self.llm_to_use = LLM('gemma')
         else:
             self.llm_to_use = LLM(llm_to_use)
         print("Training LLAMA with LORA!")

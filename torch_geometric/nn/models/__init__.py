@@ -74,4 +74,5 @@ __all__ = classes = [
     'PMLP',
     'NeuralFingerprint',
     'ViSNet',
+    'GNN_LLM'
 ]
