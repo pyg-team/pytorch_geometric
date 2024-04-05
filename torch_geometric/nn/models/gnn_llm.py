@@ -146,7 +146,7 @@ class LLM(nn.Module):
 class GNN_LLM(nn.Module):
     """This GNN+LLM implementation is based on the design from 
     G-retriever. See `examples/llm_plus_gnn/g_retriever.py`
-    for an example. Original Paper: https://arxiv.org/abs/2402.07630
+    for example usage. Original Paper: https://arxiv.org/abs/2402.07630
     Args:
         llm_to_use (str): A string representing the huggingface model you
             want to use. This module has been tested for 'llama2' and 'gemma'.
