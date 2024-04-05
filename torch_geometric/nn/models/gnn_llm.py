@@ -211,9 +211,9 @@ class GNN_LLM(nn.Module):
         print('Finished loading LLAMA!')
 
         self.graph_encoder = gnn_to_use(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            hidden_channels=hidden_channels,
+            in_channels=gnn_in_channels,
+            out_channels=gnn_out_channels,
+            hidden_channels=gnn_hidden_channels,
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
         ).to(self.llm_device)
