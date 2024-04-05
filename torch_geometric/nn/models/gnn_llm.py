@@ -172,12 +172,15 @@ class GNN_LLM(nn.Module):
         num_gnn_layers (int): (default: 4)
         num_gnn_heads (int): Number of heads to use for BasicGNNs with the
         `heads` kwarg. (default: 4)
+        mlp_hidden_dim (int): (default: 2048)
+        mlp_hidden_dim (int): (default: 4096)
     """
     def __init__(self, llm_to_use='llama2', llm_use_lora: bool = True,
         llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
         gnn_to_use=GAT, gnn_in_channels: int = 1024,
         gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
-        num_gnn_layers: int = 4, num_gnn_heads: int = 4,):
+        num_gnn_layers: int = 4, num_gnn_heads: int = 4,
+        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 4096,):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
@@ -217,10 +220,12 @@ class GNN_LLM(nn.Module):
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
         ).to(self.llm_device)
+        # For the MLP Projection
+        mlp_hidden_dim = gnn_out_channels 
         self.projector = nn.Sequential(
-            nn.Linear(1024, 2048),
+            nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
-            nn.Linear(2048, 4096),
+            nn.Linear(mlp_hidden_dim, mlp_out_dim),
         ).to(self.llm_device)
 
         self.word_embedding = self.llm_to_use.word_embedding
