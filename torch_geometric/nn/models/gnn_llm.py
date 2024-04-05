@@ -156,7 +156,7 @@ class GNN_LLM(nn.Module):
             please file an issue on
             https://github.com/pyg-team/pytorch_geometric
             and assign to puririshi98. (default: :obj:'llama2')
-        use_lora (bool): use LORA from peft for training the LLM. see 
+        llm_use_lora (bool): use LORA from peft for training the LLM. see 
             https://huggingface.co/docs/peft/en/index for details.
             llm_dtype (torch.dtype): The lower precision dtype to use for the
             LLM. (default :obj: `torch.bloat16`)
@@ -173,7 +173,7 @@ class GNN_LLM(nn.Module):
         num_gnn_heads (int): Number of heads to use for BasicGNNs with the
         `heads` kwarg. (default: 4)
     """
-    def __init__(self, llm_to_use='llama2', use_lora_for_llm: bool = True,
+    def __init__(self, llm_to_use='llama2', llm_use_lora: bool = True,
         llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
         gnn_to_use=GAT, gnn_in_channels: int = 1024,
         gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
@@ -187,7 +187,7 @@ class GNN_LLM(nn.Module):
             self.llm_to_use = LLM(llm_to_use, llm_dtype)
         self.llm = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
-        if use_lora:
+        if llm_use_lora:
             print("Training our LLM with LORA!")
             self.llm = prepare_model_for_kbit_training(self.llm)
             lora_r: int = 8
