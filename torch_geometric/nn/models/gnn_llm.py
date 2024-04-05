@@ -48,7 +48,7 @@ def get_llm_kwargs(mem_needed):
     return kwargs
 
 class LLM(nn.Module):
-    def __init__(self, llm_name: str, num_params: int = 7):
+    def __init__(self, llm_name: str, num_params: int = 7, llm_dtype=torch.bfloat16):
         super().__init__()
         if llm_name == "llama2":
             self.printable_llm_name = "LLAMA2"
@@ -60,15 +60,16 @@ class LLM(nn.Module):
             self.printable_llm_name = llm_name
             self.huggingface_str = llm_name
         self.mem_needed = 75 * num_params / 7
+        self.llm_dtype = llm_dtype
         print('Loading ' + str(self.printable_llm_name))
         kwargs = get_llm_kwargs(self.mem_needed)
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
-        self.tokenizer = AutoTokenizer.from_pretrained(llama2_str_name,
+        self.tokenizer = AutoTokenizer.from_pretrained(self.huggingface_str,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
-            llama2_str_name, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True,
+            self.huggingface_str, torch_dtype=self.llm_dtype, low_cpu_mem_usage=True,
             **kwargs)
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
@@ -93,6 +94,7 @@ class LLM(nn.Module):
         return batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds
 
     def inference(self, samples: Batch):
+        # this function is for comparing a pretrained LLM to a trained GNN_LLM
         batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(samples)
         batch_inputs_embeds = []
         batch_attention_mask = []
@@ -123,7 +125,7 @@ class LLM(nn.Module):
         attention_mask = torch.tensor(batch_attention_mask).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_new_tokens,
@@ -143,52 +145,47 @@ class LLM(nn.Module):
 
 class GNN_LLM(nn.Module):
     """This GNN+LLM implementation is based on the design from 
-    G-retriever. Original Paper: https://arxiv.org/abs/2402.07630
+    G-retriever. See `examples/llm_plus_gnn/g_retriever.py`
+    for an example. Original Paper: https://arxiv.org/abs/2402.07630
     Args:
         llm_to_use (str): A string representing the huggingface model you
-        want to use. This module has been tested for 'llama2' and 'gemma'.
-        Other huggingface transformer models should work if you pass the
-        correct name, see huggingface.co for details. If any issues occur
-        please file an issue on https://github.com/pyg-team/pytorch_geometric
-        and tag puririshi98. (default: :obj:'llama2')
+            want to use. This module has been tested for 'llama2' and 'gemma'.
+            Other huggingface transformer models should work if you pass the
+            correct name, see huggingface.co for details. If any issues occur
+            please file an issue on
+            https://github.com/pyg-team/pytorch_geometric
+            and assign to puririshi98. (default: :obj:'llama2')
+        use_lora (bool): use LORA from peft for training the LLM. see 
+            https://huggingface.co/docs/peft/en/index for details.
+            llm_dtype (torch.dtype): The lower precision dtype to use for the
+            LLM. (default :obj: `torch.bloat16`)
+        num_llm_params (int): An integer representing how many params your
+            huggingface transformer model has, in billions. This is used to
+            automatically allocate the number of gpus needed, given the
+            available GPU memory of your GPUs (default :obj:`7`)
         gnn_to_use (BasicGNN): Please pass a valid model that extends
-        torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
-        hidden_channels (int): Size of each hidden sample.
-        out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert hidden node embeddings to
-            output size :obj:`out_channels`. (default: :obj:`None`)
-        num_gnn_layers (int): Number of message passing layers.
+            torch_geometric.nn.models.BasicGNN. (default: :obj:`GAT`)
+        gnn_in_channels (int): (default: 1024)
+        gnn_hidden_channels (int): (default: 1024)
+        gnn_out_channels (int): (default: 1024)
+        num_gnn_layers (int): (default: 4)
         num_gnn_heads (int): Number of heads to use for BasicGNNs with the
         `heads` kwarg. (default: 4)
-        num_llm_params (int): An integer representing how many params your
-        huggingface transformer model has, in billions. This is used to 
-        automatically allocate the number of gpus needed, given the available
-        GPU memory of your GPUs (default :obj:`7`)
-        use_lora (bool): use LORA from peft for training the LLM. see 
-        https://huggingface.co/docs/peft/en/index for details.
-        autocast_llm (bool): Wether to to use `torch.cuda.amp.autocast`
-        on the LLM or not. See https://pytorch.org/docs/stable/amp.html for
-        details. (default :obj:`True`)
-        llm_autocast_dtype (torch.dtype): The lower precision dtype to autocast
-        to. (default :obj: `torch.bloat16`)
     """
-    def __init__(self, llm_to_use='llama2', gnn_to_use=GAT,
-        in_channels: int, hidden_channels: int, out_channels: int,
-        num_gnn_layers: int, num_gnn_heads: int = 4, num_llm_params: int = 7,
-        use_lora: bool = True, autocast_llm=True,
-        llm_autocast_dtype=torch.bfloat16):
+    def __init__(self, llm_to_use='llama2', use_lora_for_llm: bool = True,
+        llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
+        gnn_to_use=GAT, gnn_in_channels: int = 1024,
+        gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
+        num_gnn_layers: int = 4, num_gnn_heads: int = 4,):
         super().__init__()
         if 'llama' in llm_to_use.lower():
-            self.llm_to_use = LLM('llama2')
+            self.llm_to_use = LLM('llama2', llm_dtype)
         elif 'gemma' in llm_to_use.lower():
-            self.llm_to_use = LLM('gemma')
+            self.llm_to_use = LLM('gemma', llm_dtype)
         else:
-            self.llm_to_use = LLM(llm_to_use)
+            self.llm_to_use = LLM(llm_to_use, llm_dtype)
         self.llm = self.llm_to_use.llm
+        self.llm_dtype = self.llm_dtype
         if use_lora:
             print("Training our LLM with LORA!")
             self.llm = prepare_model_for_kbit_training(self.llm)
@@ -290,7 +287,7 @@ class GNN_LLM(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
@@ -334,7 +331,7 @@ class GNN_LLM(nn.Module):
         attention_mask = torch.tensor(batch_attention_mask).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_new_tokens,
