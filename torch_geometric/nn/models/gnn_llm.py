@@ -49,7 +49,7 @@ def get_llm_kwargs(mem_needed):
     return kwargs
 
 class LLM(nn.Module):
-    def __init__(self, llm_name: str, llm_dtype=torch.bfloat16, num_params: int = 7):
+    def __init__(self, llm_name: str = "llama2", llm_dtype=torch.bfloat16, num_params: int = 7):
         super().__init__()
         if llm_name == "llama2":
             self.printable_llm_name = "LLAMA2"
