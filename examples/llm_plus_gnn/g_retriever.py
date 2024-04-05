@@ -124,7 +124,7 @@ def main(since: float, num_epochs: int, hidden_channels: int,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    model = GNN_LLM(hidden_channels=hidden_channels, num_gnn_layers=num_gnn_layers)
+    model = GNN_LLM(gnn_hidden_channels=hidden_channels, num_gnn_layers=num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
