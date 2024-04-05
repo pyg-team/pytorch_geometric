@@ -186,7 +186,7 @@ class GNN_LLM(nn.Module):
         else:
             self.llm_to_use = LLM(llm_to_use, llm_dtype)
         self.llm = self.llm_to_use.llm
-        self.llm_dtype = self.llm_dtype
+        self.llm_dtype = llm_dtype
         if use_lora:
             print("Training our LLM with LORA!")
             self.llm = prepare_model_for_kbit_training(self.llm)
