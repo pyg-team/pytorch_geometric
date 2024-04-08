@@ -8,7 +8,7 @@ try:
         prepare_model_for_kbit_training,
     )
     WITH_PEFT = True
-except ImportError as e:
+except ImportError as e: # noqa
     WITH_PEFT = False
 
 try:
