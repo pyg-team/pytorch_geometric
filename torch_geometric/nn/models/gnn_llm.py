@@ -17,7 +17,6 @@ try:
 except ImportError as e:  # noqa
     WITH_TRANSFORMERS = False
 
-import torch_geometric
 from torch_geometric.data import Batch
 from torch_geometric.nn.models import GAT
 from torch_geometric.utils import scatter
