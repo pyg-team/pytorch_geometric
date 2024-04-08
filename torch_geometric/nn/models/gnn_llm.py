@@ -5,7 +5,12 @@ try:
     WITH_PEFT = True
 except:
     WITH_PEFT = False
-from transformers import AutoModelForCausalLM, AutoTokenizer
+
+try:
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    WITH_TRANSFORMERS = True
+except ImportError as e:  # noqa
+    WITH_TRANSFORMERS = False
 
 import torch_geometric
 from torch_geometric import seed_everything
@@ -194,6 +199,8 @@ class GNN_LLM(nn.Module):
         mlp_out_dim: int = 4096,
     ):
         super().__init__()
+        if not WITH_TRANSFORMERS:
+            raise ImportError("To use GNN_LLM, please `pip install transformers`.")
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
         elif 'gemma' in llm_to_use.lower():
