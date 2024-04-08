@@ -16,17 +16,14 @@ from os import path
 import pandas as pd
 import torch
 import torch.nn as nn
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import torch_geometric
 from torch_geometric import seed_everything
-from torch_geometric.data import Batch, DataLoader
+from torch_geometric.data import DataLoader
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models.gnn_llm import GNN_LLM, LLM
-from torch_geometric.utils import scatter
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -232,7 +229,7 @@ def minimal_demo(model, dataset):
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
-            # skipping since hard to evaluate if the answer's are hallucinations
+            # skipping since hard to evaluate if the answer is a hallucination
             continue
         gnn_llm_hallucin_sum += bool(gnn_llm_hallucinates)
         pure_llm_hallucin_sum += bool(pure_llm_hallucinates)
