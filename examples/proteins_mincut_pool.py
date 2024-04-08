@@ -13,7 +13,7 @@ from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
-average_nodes = int(dataset.data.x.size(0) / len(dataset))
+average_nodes = int(dataset._data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
