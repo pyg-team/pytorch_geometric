@@ -518,9 +518,9 @@ class MessagePassing(torch.nn.Module):
             fuse = False
             if is_sparse(edge_index):
                 fuse = True
-            elif (self.SUPPORTS_FUSED_EDGE_INDEX
-                  and not torch.jit.is_scripting()
-                  and isinstance(edge_index, EdgeIndex)):
+            elif (not torch.jit.is_scripting()
+                  and isinstance(edge_index, EdgeIndex)
+                  and self.SUPPORTS_FUSED_EDGE_INDEX):
                 if edge_index.is_sorted_by_col:
                     fuse = True
         else:
