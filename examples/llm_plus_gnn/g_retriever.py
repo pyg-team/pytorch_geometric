@@ -15,11 +15,9 @@ from os import path
 
 import pandas as pd
 import torch
-import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
-import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import WebQSPDataset

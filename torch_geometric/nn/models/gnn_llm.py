@@ -18,10 +18,8 @@ except ImportError as e:  # noqa
     WITH_TRANSFORMERS = False
 
 import torch_geometric
-from torch_geometric import seed_everything
 from torch_geometric.data import Batch
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.models.basic_gnn import BasicGNN
 from torch_geometric.utils import scatter
 
 BOS = '<s>[INST]'
@@ -107,12 +105,13 @@ class LLM(nn.Module):
         pad_embeds = self.word_embedding(
             torch.tensor(self.tokenizer.pad_token_id).to(
                 self.llm_device)).unsqueeze(0)
-        return batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds
+        return (batch_size, questions, descriptions, eos_user_tokens,
+            bos_embeds, pad_embeds)
 
     def inference(self, samples: Batch):
         # this function is for comparing a pretrained LLM to a trained GNN_LLM
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(
-            samples)
+        batch_size, questions, descriptions, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.encode_inputs(samples)
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
