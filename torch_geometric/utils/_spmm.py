@@ -35,8 +35,6 @@ def spmm(
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
     if not torch.jit.is_scripting() and isinstance(src, EdgeIndex):
-        # EdgeIndex.matmul requires src to be sorted by row
-        src, _ = src.sort_by('row')
         return src.matmul(other=other, reduce=reduce)  # type: ignore
 
     if isinstance(src, SparseTensor):
