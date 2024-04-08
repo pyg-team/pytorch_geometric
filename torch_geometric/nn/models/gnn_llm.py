@@ -205,7 +205,8 @@ class GNN_LLM(nn.Module):
     ):
         super().__init__()
         if not WITH_TRANSFORMERS:
-            raise ImportError("To use GNN_LLM, please `pip install transformers`.")
+            raise ImportError(
+                "To use GNN_LLM, please `pip install transformers`.")
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
         elif 'gemma' in llm_to_use.lower():
