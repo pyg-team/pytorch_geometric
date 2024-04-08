@@ -140,6 +140,12 @@ include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
 [tool.ruff]  # https://docs.astral.sh/ruff/rules
+src = ["torch_geometric"]
+line-length = 80
+indent-width = 4
+target-version = "py38"
+
+[tool.ruff.lint]
 select = [
     "D",  # pydocstyle
 ]
@@ -153,10 +159,9 @@ ignore = [
     "D107",  # Ignore "Missing docstring in __init__"
     "D205",  # Ignore "blank line required between summary line and description"
 ]
-src = ["torch_geometric"]
-line-length = 80
-indent-width = 4
-target-version = "py38"
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
