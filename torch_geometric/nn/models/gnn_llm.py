@@ -175,12 +175,12 @@ class GNN_LLM(nn.Module):
         mlp_hidden_dim (int): (default: 2048)
         mlp_out_dim (int): (default: 4096)
     """
-    def __init__(self, llm_to_use='gemma', llm_use_lora: bool = True,
+    def __init__(self, llm_to_use='llama2', llm_use_lora: bool = True,
         llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
         gnn_to_use=GAT, gnn_in_channels: int = 1024,
         gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
         num_gnn_layers: int = 4, num_gnn_heads: int = 4,
-        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 3072,):
+        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 4096,):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
