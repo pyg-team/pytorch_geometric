@@ -514,8 +514,8 @@ class MessagePassing(torch.nn.Module):
         mutable_size = self._check_input(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
+        fuse = False
         if self.fuse and not self.explain:
-            fuse = False
             if is_sparse(edge_index):
                 fuse = True
             elif (not torch.jit.is_scripting()
@@ -523,8 +523,6 @@ class MessagePassing(torch.nn.Module):
                   and self.SUPPORTS_FUSED_EDGE_INDEX):
                 if edge_index.is_sorted_by_col:
                     fuse = True
-        else:
-            fuse = False
 
         if fuse:
             coll_dict = self._collect(self._fused_user_args, edge_index,
