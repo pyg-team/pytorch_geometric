@@ -1,7 +1,12 @@
 import torch
 import torch.nn as nn
+
 try:
-    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+    from peft import (
+        LoraConfig,
+        get_peft_model,
+        prepare_model_for_kbit_training,
+    )
     WITH_PEFT = True
 except:
     WITH_PEFT = False
