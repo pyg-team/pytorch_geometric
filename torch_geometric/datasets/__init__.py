@@ -95,6 +95,8 @@ from .hm import HM
 from .ose_gvcs import OSE_GVCS
 from .rcdd import RCDD
 
+from .cornell import CornellTemporalHyperGraphDataset
+
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
@@ -207,6 +209,9 @@ hetero_datasets = [
     'OSE_GVCS',
     'RCDD',
 ]
+hyper_datasets = [
+    'CornellTemporalHyperGraphDataset',
+]
 synthetic_datasets = [
     'FakeDataset',
     'FakeHeteroDataset',
@@ -220,4 +225,4 @@ synthetic_datasets = [
     'BAShapes',
 ]
 
-__all__ = homo_datasets + hetero_datasets + synthetic_datasets
+__all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets

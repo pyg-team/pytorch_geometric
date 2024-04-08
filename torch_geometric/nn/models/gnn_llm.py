@@ -10,10 +10,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch
-from torch_geometric.utils import scatter
 from torch_geometric.nn.models import GAT
 from torch_geometric.nn.models.basic_gnn import BasicGNN
-
+from torch_geometric.utils import scatter
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -25,6 +24,7 @@ max_txt_len = 512
 max_new_tokens = 32
 pad_token_id = 0
 padding_side = 'left'
+
 
 def get_llm_kwargs(mem_needed):
     assert torch.cuda.is_available(), "GPU needed to run LLMs efficiently!"
@@ -52,8 +52,10 @@ def get_llm_kwargs(mem_needed):
     kwargs["device_map"] = "auto"
     return kwargs
 
+
 class LLM(nn.Module):
-    def __init__(self, llm_name: str = "llama2", llm_dtype=torch.bfloat16, num_params: int = 7):
+    def __init__(self, llm_name: str = "llama2", llm_dtype=torch.bfloat16,
+                 num_params: int = 7):
         super().__init__()
         if llm_name == "llama2":
             self.printable_llm_name = "LLAMA2"
@@ -74,11 +76,10 @@ class LLM(nn.Module):
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
-            self.huggingface_str, torch_dtype=self.llm_dtype, low_cpu_mem_usage=True,
-            **kwargs)
+            self.huggingface_str, torch_dtype=self.llm_dtype,
+            low_cpu_mem_usage=True, **kwargs)
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
-
 
     def encode_inputs(self, samples: Batch):
         batch_size = len(samples['question'])
@@ -100,7 +101,8 @@ class LLM(nn.Module):
 
     def inference(self, samples: Batch):
         # this function is for comparing a pretrained LLM to a trained GNN_LLM
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.encode_inputs(
+            samples)
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
@@ -110,9 +112,7 @@ class LLM(nn.Module):
                     i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
-            inputs_embeds = torch.cat(
-                [bos_embeds, inputs_embeds],
-                dim=0)
+            inputs_embeds = torch.cat([bos_embeds, inputs_embeds], dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
@@ -127,8 +127,7 @@ class LLM(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
         with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm.generate(
@@ -149,7 +148,7 @@ class LLM(nn.Module):
 
 
 class GNN_LLM(nn.Module):
-    """This GNN+LLM implementation is based on the design from 
+    """This GNN+LLM implementation is based on the design from
     G-retriever. See `examples/llm_plus_gnn/g_retriever.py`
     for example usage. Original Paper: https://arxiv.org/abs/2402.07630
     Args:
@@ -160,7 +159,7 @@ class GNN_LLM(nn.Module):
             please file an issue on
             https://github.com/pyg-team/pytorch_geometric
             and assign to puririshi98. (default: :obj:'llama2')
-        llm_use_lora (bool): use LORA from peft for training the LLM. see 
+        llm_use_lora (bool): use LORA from peft for training the LLM. see
             https://huggingface.co/docs/peft/en/index for details.
             llm_dtype (torch.dtype): The lower precision dtype to use for the
             LLM. (default :obj: `torch.bloat16`)
@@ -179,12 +178,21 @@ class GNN_LLM(nn.Module):
         mlp_hidden_dim (int): (default: 2048)
         mlp_out_dim (int): (default: 4096)
     """
-    def __init__(self, llm_to_use='llama2', llm_use_lora: bool = True,
-        llm_dtype=torch.bfloat16, num_llm_params: int = 7, 
-        gnn_to_use=GAT, gnn_in_channels: int = 1024,
-        gnn_hidden_channels: int = 1024, gnn_out_channels: int = 1024,
-        num_gnn_layers: int = 4, num_gnn_heads: int = 4,
-        mlp_hidden_dim: int = 2048, mlp_out_dim: int = 4096,):
+    def __init__(
+        self,
+        llm_to_use='llama2',
+        llm_use_lora: bool = True,
+        llm_dtype=torch.bfloat16,
+        num_llm_params: int = 7,
+        gnn_to_use=GAT,
+        gnn_in_channels: int = 1024,
+        gnn_hidden_channels: int = 1024,
+        gnn_out_channels: int = 1024,
+        num_gnn_layers: int = 4,
+        num_gnn_heads: int = 4,
+        mlp_hidden_dim: int = 2048,
+        mlp_out_dim: int = 4096,
+    ):
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
@@ -227,7 +235,7 @@ class GNN_LLM(nn.Module):
             heads=num_gnn_heads,
         ).to(self.llm_device)
         # For the MLP Projection
-        mlp_hidden_dim = gnn_out_channels 
+        mlp_hidden_dim = gnn_out_channels
         self.projector = nn.Sequential(
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
@@ -247,7 +255,8 @@ class GNN_LLM(nn.Module):
         return g_embeds
 
     def forward(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(
+            samples)
         # encode labels
         labels = self.tokenizer(samples.label, add_special_tokens=False)
         # encode training specific special token
@@ -294,8 +303,7 @@ class GNN_LLM(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
@@ -309,7 +317,8 @@ class GNN_LLM(nn.Module):
         return outputs.loss
 
     def inference(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(
+            samples)
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
@@ -340,8 +349,7 @@ class GNN_LLM(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
         with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm.generate(

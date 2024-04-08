@@ -12,6 +12,7 @@ import math
 import re
 import time
 from os import path
+
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -24,9 +25,8 @@ import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, DataLoader
 from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.nn.models.gnn_llm import GNN_LLM, LLM
 from torch_geometric.utils import scatter
-from torch_geometric.nn.models.gnn_llm import LLM, GNN_LLM
-
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -38,13 +38,14 @@ max_new_tokens = 32
 pad_token_id = 0
 padding_side = 'left'
 
+
 def detect_hallucinate(pred, label):
     try:
         pred = pred.split('[/s]')[0].strip().split('|')
         correct_hit = len(re.findall(pred[0], label)) > 0
         hallucination = not correct_hit
         return hallucination
-    except: # noqa
+    except:  # noqa
         return "skip"
 
 
@@ -91,6 +92,7 @@ def compute_accuracy(eval_output):
 
     return hit
 
+
 def main(since: float, num_epochs: int, hidden_channels: int,
          num_gnn_layers: int, batch_size: int, lr: float):
     def adjust_learning_rate(param_group, LR, epoch):
@@ -124,7 +126,8 @@ def main(since: float, num_epochs: int, hidden_channels: int,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    model = GNN_LLM(gnn_hidden_channels=hidden_channels, num_gnn_layers=num_gnn_layers)
+    model = GNN_LLM(gnn_hidden_channels=hidden_channels,
+                    num_gnn_layers=num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -202,13 +205,14 @@ def main(since: float, num_epochs: int, hidden_channels: int,
     torch.save(model, "gnn_llm.pt")
     return prep_time, dataset, model
 
+
 def minimal_demo(model, dataset):
     # Step 1: Define a single batch size test loader
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
     # batch size 1 loader for simplicity
     loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
-                             pin_memory=True, shuffle=False)
+                        pin_memory=True, shuffle=False)
     # define the pure pretrained LLM
     pure_llm = LLM()
 
@@ -225,7 +229,8 @@ def minimal_demo(model, dataset):
         gnn_llm_pred = gnn_llm_out['pred'][0]
         pure_llm_pred = pure_llm_out['pred'][0]
         gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
-        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred, correct_answer)
+        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
+                                                   correct_answer)
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
             # skipping since hard to evaluate if the answer's are hallucinations
             continue
@@ -237,14 +242,16 @@ def minimal_demo(model, dataset):
             final_prnt_str += "Correct Answer: " + correct_answer + "\n"
             final_prnt_str += "Pure LLM Prediction: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Prediction:" + gnn_llm_pred + "\n"
-            final_prnt_str += "#"*20 + "\n"
+            final_prnt_str += "#" * 20 + "\n"
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
-    percent = 100.0 * round(1 - (gnn_llm_hallucin_sum / pure_llm_hallucin_sum) , 2)
+    percent = 100.0 * round(1 -
+                            (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
     print(f"GNN reduces hallucinations by: ~{percent}%")
     print("Note: hallucinations detected by regex hence the ~")
     print("Instances where GNN solves the hallucinations of Pure LLMs:")
     print(final_prnt_str)
+
 
 if __name__ == "__main__":
     # check if saved model
@@ -265,8 +272,10 @@ if __name__ == "__main__":
         parser.add_argument('--batch_size', type=int, default=4)
         args = parser.parse_args()
         since = time.time()
-        prep_time, dataset, model = main(since, args.epochs, args.hidden_channels,
-                     args.num_gnn_layers, args.batch_size, args.lr)
+        prep_time, dataset, model = main(since, args.epochs,
+                                         args.hidden_channels,
+                                         args.num_gnn_layers, args.batch_size,
+                                         args.lr)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -276,7 +285,9 @@ if __name__ == "__main__":
     else:
         model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
-    print("Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?")
+    print(
+        "Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?"
+    )
     user_input = str(input("(y/n):")).lower()
     if user_input == "y":
         minimal_demo(model, dataset)
