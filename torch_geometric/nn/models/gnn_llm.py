@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+try:
+    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+    WITH_PEFT = True
+except:
+    WITH_PEFT = False
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import torch_geometric
@@ -191,6 +195,8 @@ class GNN_LLM(nn.Module):
         self.llm = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
         if llm_use_lora:
+            if not WITH_PEFT:
+                raise ImportError("To use LORA, please `pip install peft`.")
             print("Training our LLM with LORA!")
             self.llm = prepare_model_for_kbit_training(self.llm)
             lora_r: int = 8
