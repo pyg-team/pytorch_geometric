@@ -281,7 +281,8 @@ if __name__ == "__main__":
         model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
     print(
-        "Would you like a minimal demo showcasing how GNN+LLM can solve LLM hallucinations?"
+        "Would you like a minimal demo showcasing how \
+        GNN+LLM can solve LLM hallucinations?"
     )
     user_input = str(input("(y/n):")).lower()
     if user_input == "y":

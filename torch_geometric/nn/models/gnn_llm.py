@@ -8,7 +8,7 @@ try:
         prepare_model_for_kbit_training,
     )
     WITH_PEFT = True
-except:
+except ImportError as e:
     WITH_PEFT = False
 
 try:
@@ -267,8 +267,8 @@ class GNN_LLM(nn.Module):
         return g_embeds
 
     def forward(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(
-            samples)
+        batch_size, questions, descriptions, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
         # encode labels
         labels = self.tokenizer(samples.label, add_special_tokens=False)
         # encode training specific special token
@@ -329,8 +329,8 @@ class GNN_LLM(nn.Module):
         return outputs.loss
 
     def inference(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(
-            samples)
+        batch_size, questions, descriptions, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
