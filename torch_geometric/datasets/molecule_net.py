@@ -6,7 +6,7 @@ from typing import Callable, Dict, Optional, Tuple, Union
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_gz
-from torch_geometric.utils import from_smiles
+from torch_geometric.utils import from_smiles as _from_smiles
 
 
 class MoleculeNet(InMemoryDataset):
@@ -38,6 +38,10 @@ class MoleculeNet(InMemoryDataset):
             final dataset. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        from_smiles (callable, optional): A custom function that takes a SMILES
+            string and outputs a :obj:`~torch_geometric.data.Data` object.
+            If not set, defaults to :meth:`~torch_geometric.utils.from_smiles`.
+            (default: :obj:`None`)
 
     **STATS:**
 
@@ -152,9 +156,11 @@ class MoleculeNet(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
+        from_smiles: Optional[Callable] = None,
     ) -> None:
         self.name = name.lower()
         assert self.name in self.names.keys()
+        self.from_smiles = from_smiles or _from_smiles
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -199,7 +205,7 @@ class MoleculeNet(InMemoryDataset):
             ys = [float(y) if len(y) > 0 else float('NaN') for y in labels]
             y = torch.tensor(ys, dtype=torch.float).view(1, -1)
 
-            data = from_smiles(smiles)
+            data = self.from_smiles(smiles)
             data.y = y
 
             if self.pre_filter is not None and not self.pre_filter(data):

@@ -3,10 +3,10 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import Node2Vec
-from torch_geometric.testing import is_full_test, withCUDA, withPackage
+from torch_geometric.testing import is_full_test, withDevice, withPackage
 
 
-@withCUDA
+@withDevice
 @withPackage('pyg_lib|torch_cluster')
 @pytest.mark.parametrize('p', [1.0])
 @pytest.mark.parametrize('q', [1.0, 0.5])

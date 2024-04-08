@@ -7,7 +7,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     onlyFullTest,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.utils import scatter
@@ -25,7 +25,7 @@ class MySAGEConv(torch.nn.Module):
         return self.lin_src(out) + self.lin_dst(x)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>2.0.0')
