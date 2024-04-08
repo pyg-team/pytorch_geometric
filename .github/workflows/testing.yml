@@ -9,7 +9,19 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14]
+        include:
+          - os: ubuntu-latest
+            python-version: '3.8'
+          - os: windows-latest
+            python-version: '3.8'
+          - os: macos-14
+            python-version: '3.10'
 
     steps:
       - name: Checkout repository
@@ -35,6 +47,8 @@ jobs:
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'

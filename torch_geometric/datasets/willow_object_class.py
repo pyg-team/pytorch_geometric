@@ -142,7 +142,7 @@ class WILLOWObjectClass(InMemoryDataset):
             pos[:, 0] = pos[:, 0] * 256.0 / (img.size[0])
             pos[:, 1] = pos[:, 1] * 256.0 / (img.size[1])
 
-            img = img.resize((256, 256), resample=Image.BICUBIC)
+            img = img.resize((256, 256), resample=Image.Resampling.BICUBIC)
             img = transform(img)
 
             data = Data(img=img, pos=pos, name=name)

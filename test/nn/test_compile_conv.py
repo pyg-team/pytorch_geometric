@@ -8,7 +8,7 @@ from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.utils import scatter
@@ -26,7 +26,7 @@ class MySAGEConv(torch.nn.Module):
         return self.lin_src(out) + self.lin_dst(x)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>=2.1.0')
@@ -49,7 +49,7 @@ def test_compile_conv(device, Conv):
     assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
 @withPackage('torch>=2.2.0')
