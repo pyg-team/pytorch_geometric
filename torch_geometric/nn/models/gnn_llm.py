@@ -106,7 +106,7 @@ class LLM(nn.Module):
             torch.tensor(self.tokenizer.pad_token_id).to(
                 self.llm_device)).unsqueeze(0)
         return (batch_size, questions, descriptions, eos_user_tokens,
-            bos_embeds, pad_embeds)
+                bos_embeds, pad_embeds)
 
     def inference(self, samples: Batch):
         # this function is for comparing a pretrained LLM to a trained GNN_LLM
