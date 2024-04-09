@@ -277,8 +277,8 @@ if __name__ == "__main__":
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
         e2e_time = round(time.time() - since, 2)
-        print("E2E time (e2e_time) =", e2e_time)
-        print("E2E time minus Prep Time =", e2e_time - prep_time)
+        print("E2E time (e2e_time) =", e2e_time, "seconds")
+        print("E2E time minus Prep Time =", e2e_time - prep_time, "seconds")
     else:
         model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
