@@ -235,7 +235,7 @@ def minimal_demo(model, dataset):
         pure_llm_hallucin_sum += bool(pure_llm_hallucinates)
         # showcase LLM hallucinations solved by GNN
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
-            final_prnt_str += "Question: " + question + "\n"
+            final_prnt_str += "Prompt: " + question + "\n"
             final_prnt_str += "Correct Answer: " + correct_answer + "\n"
             final_prnt_str += "Pure LLM Prediction: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Prediction:" + gnn_llm_pred + "\n"
