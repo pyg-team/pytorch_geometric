@@ -7,10 +7,7 @@ from torch_geometric import EdgeIndex
 
 try:  # pragma: no cover
     LEGACY_MODE = False
-    from pylibcugraphops.pytorch import (
-        CSC,
-        HeteroCSC,
-    )
+    from pylibcugraphops.pytorch import CSC, HeteroCSC
     HAS_PYLIBCUGRAPHOPS = True
 except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
