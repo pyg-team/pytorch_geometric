@@ -197,7 +197,9 @@ def main(since: float, num_epochs: int, hidden_channels: int,
     acc = compute_accuracy(eval_output)
     print(f'Test Acc {acc}')
     # save model
+    print("Saving Model...")
     torch.save(model, "gnn_llm.pt")
+    print("Done!")
     return prep_time, dataset, model
 
 
