@@ -38,6 +38,7 @@ def detect_hallucinate(pred, label):
     try:
         pred = pred.split('[/s]')[0].strip().split('|')
         correct_hit = len(re.findall(pred[0], label)) > 0
+        correct_hit = correct_hit or any([label_i in pred.lower() for label_i in label.split('|')])
         hallucination = not correct_hit
         return hallucination
     except:  # noqa
@@ -246,7 +247,7 @@ def minimal_demo(model, dataset):
                             (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
     print(f"GNN reduces hallucinations by: ~{percent}%")
     print("Note: hallucinations detected by regex hence the ~")
-    print("Instances where GNN solves the hallucinations of Pure LLMs:")
+    print("Potential instances where GNN solves the hallucinations of LLM:")
     print(final_prnt_str)
 
 
