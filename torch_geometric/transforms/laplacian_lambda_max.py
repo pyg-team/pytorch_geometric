@@ -1,7 +1,6 @@
 from typing import Optional
+
 import numpy
-
-
 from scipy.sparse.linalg import eigs, eigsh
 
 from torch_geometric.data import Data
