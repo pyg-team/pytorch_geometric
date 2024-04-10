@@ -254,7 +254,7 @@ def minimal_demo(model, dataset):
 
 if __name__ == "__main__":
     # check if saved model
-    if path.exists("gat_llama.pt"):
+    if path.exists("gnn_llm.pt"):
         print("Existing trained model found.")
         # ask if want to retrain or skip to demo
         print("Would you like to retrain?")
