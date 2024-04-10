@@ -36,8 +36,8 @@ padding_side = 'left'
 
 def detect_hallucinate(pred, label):
     try:
-        pred = pred.split('[/s]')[0].strip().split('|')
-        correct_hit = len(re.findall(pred[0], label)) > 0
+        split_pred = pred.split('[/s]')[0].strip().split('|')
+        correct_hit = len(re.findall(split_pred[0], label)) > 0
         correct_hit = correct_hit or any(
             [label_i in pred.lower() for label_i in label.split('|')])
         hallucination = not correct_hit
