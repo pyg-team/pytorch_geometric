@@ -238,7 +238,7 @@ def minimal_demo(model, dataset):
         # showcase LLM hallucinations solved by GNN
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
             final_prnt_str += "Prompt: " + question + "\n"
-            final_prnt_str += "Correct Answer: " + correct_answer + "\n"
+            final_prnt_str += "Label: " + correct_answer + "\n"
             final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
