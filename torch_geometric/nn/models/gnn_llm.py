@@ -107,7 +107,7 @@ class LLM(nn.Module):
         return (batch_size, questions, descriptions, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
-    def inference(self, samples: Batch):
+    def inference(self, samples: Batch, max_out_tokens=256):
         # this function is for comparing a pretrained LLM to a trained GNN_LLM
         batch_size, questions, descriptions, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(samples)
@@ -140,7 +140,7 @@ class LLM(nn.Module):
         with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
-                max_new_tokens=max_new_tokens,
+                max_new_tokens=max_out_tokens,
                 attention_mask=attention_mask,
                 # do_sample=True,
                 use_cache=True  # IMPORTANT!
