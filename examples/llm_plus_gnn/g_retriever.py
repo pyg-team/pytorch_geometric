@@ -23,6 +23,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models.gnn_llm import GNN_LLM, LLM
 
+
 def detect_hallucinate(pred, label):
     try:
         split_pred = pred.split('[/s]')[0].strip().split('|')
