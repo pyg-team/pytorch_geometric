@@ -23,17 +23,6 @@ from torch_geometric.data import DataLoader
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models.gnn_llm import GNN_LLM, LLM
 
-BOS = '<s>[INST]'
-EOS_USER = '[/INST]'
-EOS = '[/s]'
-IGNORE_INDEX = -100
-llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
-max_txt_len = 512
-max_new_tokens = 32
-pad_token_id = 0
-padding_side = 'left'
-
-
 def detect_hallucinate(pred, label):
     try:
         split_pred = pred.split('[/s]')[0].strip().split('|')
