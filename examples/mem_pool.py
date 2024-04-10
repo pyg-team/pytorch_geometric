@@ -11,7 +11,7 @@ from torch_geometric.nn import DeepGCNLayer, GATConv, MemPooling
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TUD')
 dataset = TUDataset(path, name="PROTEINS_full", use_node_attr=True)
-dataset.data.x = dataset.data.x[:, :-3]  # only use non-binary features.
+dataset._data.x = dataset._data.x[:, :-3]  # only use non-binary features.
 dataset = dataset.shuffle()
 
 n = (len(dataset)) // 10
