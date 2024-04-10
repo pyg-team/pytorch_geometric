@@ -239,8 +239,8 @@ def minimal_demo(model, dataset):
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
             final_prnt_str += "Prompt: " + question + "\n"
             final_prnt_str += "Correct Answer: " + correct_answer + "\n"
-            final_prnt_str += "Pure LLM Prediction: " + pure_llm_pred + "\n"
-            final_prnt_str += "GNN+LLM Prediction:" + gnn_llm_pred + "\n"
+            final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
+            final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
