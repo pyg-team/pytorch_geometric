@@ -300,6 +300,7 @@ class GNN_LLM(nn.Module):
             hidden_channels=gnn_hidden_channels,
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
+            norm='batch_norm',
         ).to(self.llm_device)
         # For the MLP Projection
         mlp_hidden_dim = gnn_out_channels
