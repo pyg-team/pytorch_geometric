@@ -79,8 +79,9 @@ def compute_accuracy(eval_output):
 
     return hit
 
-def train(since, num_epochs, hidden_channels,
-         num_gnn_layers, batch_size, lr, model=None, dataset=None):
+
+def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
+          model=None, dataset=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -114,7 +115,7 @@ def train(since, num_epochs, hidden_channels,
     # Step 2: Build Model
     if model is not None:
         model = GNN_LLM(gnn_hidden_channels=hidden_channels,
-                                num_gnn_layers=num_gnn_layers)
+                        num_gnn_layers=num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -259,8 +260,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
-        _, _, pure_llm = train(since, epochs, None,
-         None, batch_size, lr, model=pure_llm, dataset=dataset)
+        _, _, pure_llm = train(since, epochs, None, None, batch_size, lr,
+                               model=pure_llm, dataset=dataset)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm = torch.save("llm.pt")
@@ -273,8 +274,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
             continue
         pure_llm_pred = pure_llm.inference(batch)['pred'][0]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
-                                               correct_answer)
-        if  pure_llm_hallucinates == "skip":
+                                                   correct_answer)
+        if pure_llm_hallucinates == "skip":
             continue
         trained_llm_hallucin_sum += bool(pure_llm_hallucinates)
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
@@ -290,11 +291,6 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     print("Note: hallucinations detected by regex hence the ~")
     print("Potential instances where GNN solves the hallucinations of LLM")
     print(final_prnt_str)
-
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -315,7 +311,7 @@ if __name__ == "__main__":
         retrain = True
     if retrain:
         since = time.time()
-        prep_time, dataset, model = trainM(since, args.epochs,
+        prep_time, dataset, model = train(since, args.epochs,
                                          args.hidden_channels,
                                          args.num_gnn_layers, args.batch_size,
                                          args.lr)
@@ -331,4 +327,5 @@ if __name__ == "__main__":
     print("Here is a minimal demo showcasing how \
      GNN+LLM can solve LLM hallucinations?")
     print("First comparing against a pretrained LLAMA2 model")
-    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size, args.yes)
+    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size,
+                 args.yes)
