@@ -233,8 +233,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
             # skipping since hard to evaluate if the answer is a hallucination
             continue
-        gnn_llm_hallucin_sum += bool(gnn_llm_hallucinates)
-        pure_llm_hallucin_sum += bool(pure_llm_hallucinates)
+        gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
+        pure_llm_hallucin_sum += int(pure_llm_hallucinates)
         # showcase LLM hallucinations solved by GNN
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
             final_prnt_str += "Prompt: " + question + "\n"
@@ -282,7 +282,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
                                                    correct_answer)
         if pure_llm_hallucinates == "skip":
             continue
-        trained_llm_hallucin_sum += bool(pure_llm_hallucinates)
+        trained_llm_hallucin_sum += int(pure_llm_hallucinates)
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
             final_prnt_str += "Prompt: " + question + "\n"
             final_prnt_str += "Label: " + correct_answer + "\n"
