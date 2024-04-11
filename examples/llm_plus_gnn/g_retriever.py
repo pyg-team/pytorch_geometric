@@ -315,7 +315,7 @@ if __name__ == "__main__":
         retrain = True
     if retrain:
         since = time.time()
-        prep_time, dataset, model = train_LLM(since, args.epochs,
+        prep_time, dataset, model = trainM(since, args.epochs,
                                          args.hidden_channels,
                                          args.num_gnn_layers, args.batch_size,
                                          args.lr)
