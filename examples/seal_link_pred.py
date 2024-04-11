@@ -20,7 +20,7 @@ from torch_geometric.utils import k_hop_subgraph, to_scipy_sparse_matrix
 
 class SEALDataset(InMemoryDataset):
     def __init__(self, dataset, num_hops, split='train'):
-        self._data = dataset[0]
+        self.data = dataset[0]
         self.num_hops = num_hops
         super().__init__(dataset.root)
         index = ['train', 'val', 'test'].index(split)
@@ -33,7 +33,7 @@ class SEALDataset(InMemoryDataset):
     def process(self):
         transform = RandomLinkSplit(num_val=0.05, num_test=0.1,
                                     is_undirected=True, split_labels=True)
-        train_data, val_data, test_data = transform(self._data)
+        train_data, val_data, test_data = transform(self.data)
 
         self._max_z = 0
 
@@ -83,7 +83,7 @@ class SEALDataset(InMemoryDataset):
             z = self.drnl_node_labeling(sub_edge_index, src, dst,
                                         num_nodes=sub_nodes.size(0))
 
-            data = Data(x=self._data.x[sub_nodes], z=z,
+            data = Data(x=self.data.x[sub_nodes], z=z,
                         edge_index=sub_edge_index, y=y)
             data_list.append(data)
 

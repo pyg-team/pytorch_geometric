@@ -13,7 +13,7 @@ from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
-average_nodes = int(dataset._data.x.size(0) / len(dataset))
+avg_num_nodes = int(dataset._data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -28,7 +28,7 @@ class Net(torch.nn.Module):
         super().__init__()
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
-        num_nodes = ceil(0.5 * average_nodes)
+        num_nodes = ceil(0.5 * avg_num_nodes)
         self.pool1 = Linear(hidden_channels, num_nodes)
 
         self.conv2 = DenseGraphConv(hidden_channels, hidden_channels)
