@@ -263,7 +263,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
          None, batch_size, lr, model=pure_llm, dataset=dataset)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
-
+        pure_llm = torch.save("llm.pt")
     print("Evaluating it...")
     for batch in tqdm(enumerate(loader)):
         question = batch.question[0]
