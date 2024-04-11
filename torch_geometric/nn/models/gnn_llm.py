@@ -118,7 +118,6 @@ class LLM(nn.Module):
         batch_inputs_embeds = []
         batch_attention_mask = []
         batch_label_input_ids = []
-        num_nodes_per_graph = samples.ptr[1:] - samples.ptr[:-1]
         for i in range(batch_size):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
@@ -129,8 +128,6 @@ class LLM(nn.Module):
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
-            if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0)
             batch_inputs_embeds.append(inputs_embeds)
