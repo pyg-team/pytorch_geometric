@@ -312,9 +312,9 @@ if __name__ == "__main__":
     if retrain:
         since = time.time()
         prep_time, dataset, model = train(since, args.epochs,
-                                         args.hidden_channels,
-                                         args.num_gnn_layers, args.batch_size,
-                                         args.lr)
+                                          args.hidden_channels,
+                                          args.num_gnn_layers, args.batch_size,
+                                          args.lr)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
