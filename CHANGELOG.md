@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed empty graph and isolated node handling in `to_dgl` ([#9188](https://github.com/pyg-team/pytorch_geometric/pull/9188))
 - Fixed bug in `to_scipy_sparse_matrix` when cuda is set as default torch device ([#9146](https://github.com/pyg-team/pytorch_geometric/pull/9146))
 - Fixed `MetaPath2Vec` in case the last node is isolated ([#9145](https://github.com/pyg-team/pytorch_geometric/pull/9145))
 - Ensure backward compatibility in `MessagePassing` via `torch.load` ([#9105](https://github.com/pyg-team/pytorch_geometric/pull/9105))

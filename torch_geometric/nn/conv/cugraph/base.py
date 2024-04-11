@@ -7,12 +7,7 @@ from torch_geometric import EdgeIndex
 
 try:  # pragma: no cover
     LEGACY_MODE = False
-    from pylibcugraphops.pytorch import (
-        SampledCSC,
-        SampledHeteroCSC,
-        StaticCSC,
-        StaticHeteroCSC,
-    )
+    from pylibcugraphops.pytorch import CSC, HeteroCSC
     HAS_PYLIBCUGRAPHOPS = True
 except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
@@ -79,12 +74,13 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
                 return make_mfg_csr(dst_nodes, colptr, row, max_num_neighbors,
                                     num_src_nodes)
 
-            return SampledCSC(colptr, row, max_num_neighbors, num_src_nodes)
+            return CSC(colptr, row, num_src_nodes,
+                       dst_max_in_degree=max_num_neighbors)
 
         if LEGACY_MODE:
             return make_fg_csr(colptr, row)
 
-        return StaticCSC(colptr, row)
+        return CSC(colptr, row, num_src_nodes=num_src_nodes)
 
     def get_typed_cugraph(
         self,
@@ -135,15 +131,16 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
                                        out_node_types=None, in_node_types=None,
                                        edge_types=edge_type)
 
-            return SampledHeteroCSC(colptr, row, edge_type, max_num_neighbors,
-                                    num_src_nodes, num_edge_types)
+            return HeteroCSC(colptr, row, edge_type, num_src_nodes,
+                             num_edge_types,
+                             dst_max_in_degree=max_num_neighbors)
 
         if LEGACY_MODE:
             return make_fg_csr_hg(colptr, row, n_node_types=0,
                                   n_edge_types=num_edge_types, node_types=None,
                                   edge_types=edge_type)
 
-        return StaticHeteroCSC(colptr, row, edge_type, num_edge_types)
+        return HeteroCSC(colptr, row, edge_type, num_src_nodes, num_edge_types)
 
     def forward(
         self,
