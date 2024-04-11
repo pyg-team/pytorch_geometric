@@ -80,7 +80,7 @@ def compute_accuracy(eval_output):
     return hit
 
 def train(since, num_epochs, hidden_channels,
-         num_gnn_layers, batch_size, lr, model=None):
+         num_gnn_layers, batch_size, lr, model=None, dataset=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -95,8 +95,8 @@ def train(since, num_epochs, hidden_channels,
         return lr
 
     seed_everything(42)
-
-    dataset = WebQSPDataset()
+    if dataset is not None:
+        dataset = WebQSPDataset()
     idx_split = dataset.split_idxs
 
     # Step 1: Build Node Classification Dataset
@@ -112,7 +112,7 @@ def train(since, num_epochs, hidden_channels,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    if num_gnn_layers is not None:
+    if model is not None:
         model = GNN_LLM(gnn_hidden_channels=hidden_channels,
                                 num_gnn_layers=num_gnn_layers)
 
@@ -259,9 +259,11 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
-            _, dataset, pure_llm = train(since, epochs, None,
-             None, batch_size, lr, model=pure_llm)
-            print("E2E time (e2e_time) =", e2e_time, "seconds")
+        _, _, pure_llm = train(since, epochs, None,
+         None, batch_size, lr, model=pure_llm, dataset=dataset)
+        print("E2E time (e2e_time) =", e2e_time, "seconds")
+    else:
+
     print("Evaluating it...")
     for batch in tqdm(enumerate(loader)):
         question = batch.question[0]
