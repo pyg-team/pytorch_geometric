@@ -96,7 +96,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
         return lr
 
     seed_everything(42)
-    if dataset is not None:
+    if dataset is None:
         dataset = WebQSPDataset()
     idx_split = dataset.split_idxs
 
@@ -113,7 +113,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    if model is not None:
+    if model is None:
         model = GNN_LLM(gnn_hidden_channels=hidden_channels,
                         num_gnn_layers=num_gnn_layers)
 
