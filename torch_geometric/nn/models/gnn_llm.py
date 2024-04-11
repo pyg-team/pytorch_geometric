@@ -109,7 +109,7 @@ class LLM(nn.Module):
 
     def forward(self, samples: Batch):
         batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+            bos_embeds, pad_embeds = self.encode_inputs(samples)
         # encode labels
         labels = self.tokenizer(samples.label, add_special_tokens=False)
         # encode training specific special token
