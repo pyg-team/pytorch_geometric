@@ -216,6 +216,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     final_prnt_str = ""
     print("Checking LLM vs GNN+LLM for hallucinations...")
     gnn_save_list = []
+    untuned_llm_save_list = []
     for batch in tqdm(loader):
         question = batch.question[0]
         correct_answer = batch.label[0]
@@ -228,6 +229,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         gnn_save_list += [gnn_llm_pred, gnn_llm_hallucinates]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
+        untuned_llm_save_list += [pure_llm_pred, pure_llm_hallucinates]
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
             # skipping since hard to evaluate if the answer is a hallucination
             continue
@@ -251,6 +253,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     print("Now we see how the LLM compares when finetuned?")
     since = time.time()
     trained_hallucin_sum = 0
+    untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
     if path.exists("llm.pt"):
         print("Existing finetuned LLAMA2 found.")
@@ -271,9 +274,9 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         question = batch.question[0]
         correct_answer = batch.label[0]
         gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
-        if gnn_llm_hallucinates == "skip":
+        untuned_llm_pred, untuned_llm_hallucinates = untuned_llm_save_list[i]
+        if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":
             continue
-        # 32 to match GNN
         pure_llm_pred = pure_llm.inference(batch)['pred'][0]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
@@ -283,13 +286,18 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         if pure_llm_hallucinates and not gnn_llm_hallucinates:
             final_prnt_str += "Prompt: " + question + "\n"
             final_prnt_str += "Label: " + correct_answer + "\n"
-            final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
+            final_prnt_str += "Untuned LLM Output: " + untuned_llm_pred + "\n"
+            final_prnt_str += "Tuned LLM Output: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
     print("After finetuning the LLM...")
-    print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
+    print("Total Tuned LLM Hallucinations:", untuned_llm_hallucin_sum)
+    print("Total Tuned LLM Hallucinations:", trained_llm_hallucin_sum)
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
-    print(f"GNN reduces hallucinations by: ~{percent}%")
+    print(f"GNN reduces untuned LLM hallucinations by: ~{percent}%")
+    tuned_percent = 100.0 * round(1 -
+                            (gnn_llm_hallucin_sum / trained_llm_hallucin_sum), 2)
+    print(f"GNN reduces tuned LLM hallucinations by: ~{tuned_percent}%")
     print("Note: hallucinations detected by regex hence the ~")
     print("Potential instances where GNN solves the hallucinations of LLM")
     print(final_prnt_str)
