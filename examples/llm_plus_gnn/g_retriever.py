@@ -214,7 +214,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     gnn_llm_hallucin_sum = 0
     pure_llm_hallucin_sum = 0
     final_prnt_str = ""
-    print("Checking LLM vs GNN+LLM for hallucinations...")
+    print("Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
     gnn_save_list = []
     untuned_llm_save_list = []
     for batch in tqdm(loader):
