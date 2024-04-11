@@ -94,7 +94,8 @@ def test(data):
 
     # Cluster embedded values using k-means.
     kmeans_input = z.cpu().numpy()
-    kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
+    kmeans = KMeans(n_clusters=7, random_state=0,
+                    n_init='auto').fit(kmeans_input)
     pred = kmeans.predict(kmeans_input)
 
     labels = data.y.cpu().numpy()

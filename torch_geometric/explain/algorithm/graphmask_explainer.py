@@ -1,7 +1,6 @@
 import math
 from typing import List, Optional, Tuple, Union
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -162,7 +161,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
             penalty = torch.sigmoid(input_element -
-                                    beta * np.math.log(-gamma / zeta))
+                                    beta * math.log(-gamma / zeta))
         else:
             s = torch.sigmoid(input_element)
             penalty = torch.zeros_like(input_element)

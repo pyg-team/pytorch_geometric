@@ -527,10 +527,14 @@ def to_dgl(
     if isinstance(data, Data):
         if data.edge_index is not None:
             row, col = data.edge_index
-        else:
+        elif 'adj' in data:
+            row, col, _ = data.adj.coo()
+        elif 'adj_t' in data:
             row, col, _ = data.adj_t.t().coo()
+        else:
+            row, col = [], []
 
-        g = dgl.graph((row, col))
+        g = dgl.graph((row, col), num_nodes=data.num_nodes)
 
         for attr in data.node_attrs():
             g.ndata[attr] = data[attr]
