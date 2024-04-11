@@ -264,7 +264,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
-        _, _, pure_llm = train(since, epochs, None, None, batch_size, lr,
+        _, _, pure_llm = train(since, 1, None, None, batch_size, lr,
                                model=pure_llm, dataset=dataset)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
