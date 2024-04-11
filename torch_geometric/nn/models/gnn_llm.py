@@ -166,7 +166,7 @@ class LLM(nn.Module):
             )
         return outputs.loss
 
-    def inference(self, samples: Batch, max_out_tokens=256):
+    def inference(self, samples: Batch, max_out_tokens=max_new_tokens):
         batch_size, questions, descriptions, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(samples)
         batch_inputs_embeds = []

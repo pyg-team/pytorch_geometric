@@ -219,7 +219,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         question = batch.question[0]
         correct_answer = batch.label[0]
         gnn_llm_out = model.inference(batch)
-        pure_llm_out = pure_llm.inference(batch)
+        # GNN+LLM only using 32 tokens to answer, give untrained LLM more
+        pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
         gnn_llm_pred = gnn_llm_out['pred'][0]
         pure_llm_pred = pure_llm_out['pred'][0]
         gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
@@ -272,6 +273,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
         if gnn_llm_hallucinates == "skip":
             continue
+        # 32 to match GNN
         pure_llm_pred = pure_llm.inference(batch)['pred'][0]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
