@@ -127,10 +127,11 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
         },
     ], betas=(0.9, 0.95))
     grad_steps = 2
-    trainable_params, all_param = model.print_trainable_params()
-    print(f"trainable params: {trainable_params} || \
-        all params: {all_param} || \
-        trainable%: {100 * trainable_params / all_param}")
+    if model is None:
+        trainable_params, all_param = model.print_trainable_params()
+        print(f"trainable params: {trainable_params} || \
+            all params: {all_param} || \
+            trainable%: {100 * trainable_params / all_param}")
 
     # Step 4 Training
     for epoch in range(num_epochs):
