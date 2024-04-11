@@ -79,9 +79,8 @@ def compute_accuracy(eval_output):
 
     return hit
 
-
-def main(since: float, num_epochs: int, hidden_channels: int,
-         num_gnn_layers: int, batch_size: int, lr: float):
+def train(since, num_epochs, hidden_channels,
+         num_gnn_layers, batch_size, lr, model=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -113,8 +112,9 @@ def main(since: float, num_epochs: int, hidden_channels: int,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
-    model = GNN_LLM(gnn_hidden_channels=hidden_channels,
-                    num_gnn_layers=num_gnn_layers)
+    if num_gnn_layers is not None:
+        model = GNN_LLM(gnn_hidden_channels=hidden_channels,
+                                num_gnn_layers=num_gnn_layers)
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -190,12 +190,15 @@ def main(since: float, num_epochs: int, hidden_channels: int,
     print(f'Test Acc {acc}')
     # save model
     print("Saving Model...")
-    torch.save(model, "gnn_llm.pt")
+    if num_gnn_layers is not None:
+        torch.save(model, "gnn_llm.pt")
+    else:
+        torch.save(model, "llm.pt")
     print("Done!")
     return prep_time, dataset, model
 
 
-def minimal_demo(model, dataset):
+def minimal_demo(model, dataset, lr, epochs, batch_size):
     # Step 1: Define a single batch size test loader
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
@@ -210,6 +213,7 @@ def minimal_demo(model, dataset):
     pure_llm_hallucin_sum = 0
     final_prnt_str = ""
     print("Checking LLM vs GNN+LLM for hallucinations...")
+    gnn_save_list = []
     for batch in tqdm(loader):
         question = batch.question[0]
         correct_answer = batch.label[0]
@@ -218,6 +222,7 @@ def minimal_demo(model, dataset):
         gnn_llm_pred = gnn_llm_out['pred'][0]
         pure_llm_pred = pure_llm_out['pred'][0]
         gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
+        gnn_save_list += [gnn_llm_pred, gnn_llm_hallucinates]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
         if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
@@ -232,36 +237,83 @@ def minimal_demo(model, dataset):
             final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
-    print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
+    print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     percent = 100.0 * round(1 -
                             (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
     print(f"GNN reduces hallucinations by: ~{percent}%")
     print("Note: hallucinations detected by regex hence the ~")
-    print("Potential instances where GNN solves the hallucinations of LLM:")
+    print("Potential instances where GNN solves the hallucinations of LLM")
     print(final_prnt_str)
-
-
-if __name__ == "__main__":
-    # check if saved model
-    if path.exists("gnn_llm.pt"):
-        print("Existing trained model found.")
-        # ask if want to retrain or skip to demo
+    print("Now we see how the LLM compares when finetuned?")
+    user_input = str(input("(y/n):")).lower()
+    since = time.time()
+    trained_hallucin_sum = 0
+    final_prnt_str = ""
+    if path.exists("llm.pt"):
+        print("Existing finetuned LLAMA2 found.")
         print("Would you like to retrain?")
         user_input = str(input("(y/n):")).lower()
         retrain = user_input == "y"
     else:
         retrain = True
     if retrain:
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--hidden_channels', type=int, default=1024)
-        parser.add_argument('--num_gnn_layers', type=int, default=4)
-        parser.add_argument('--lr', type=float, default=1e-5)
-        parser.add_argument('--epochs', type=int, default=10)
-        parser.add_argument('--batch_size', type=int, default=4)
-        args = parser.parse_args()
+        print("Finetuning LLAMA2...")
+            _, dataset, pure_llm = train(since, epochs, None,
+             None, batch_size, lr, model=pure_llm)
+            print("E2E time (e2e_time) =", e2e_time, "seconds")
+    print("Evaluating it...")
+    for batch in tqdm(enumerate(loader)):
+        question = batch.question[0]
+        correct_answer = batch.label[0]
+        gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
+        if gnn_llm_hallucinates == "skip":
+            continue
+        pure_llm_pred = pure_llm.inference(batch)['pred'][0]
+        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
+                                               correct_answer)
+        if  pure_llm_hallucinates == "skip":
+            continue
+        trained_llm_hallucin_sum += bool(pure_llm_hallucinates)
+        if pure_llm_hallucinates and not gnn_llm_hallucinates:
+            final_prnt_str += "Prompt: " + question + "\n"
+            final_prnt_str += "Label: " + correct_answer + "\n"
+            final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
+            final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
+            final_prnt_str += "#" * 20 + "\n"
+    print("After finetuning the LLM...")
+    print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
+    print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
+    print(f"GNN reduces hallucinations by: ~{percent}%")
+    print("Note: hallucinations detected by regex hence the ~")
+    print("Potential instances where GNN solves the hallucinations of LLM")
+    print(final_prnt_str)
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hidden_channels', type=int, default=1024)
+    parser.add_argument('--num_gnn_layers', type=int, default=4)
+    parser.add_argument('--lr', type=float, default=1e-5)
+    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--batch_size', type=int, default=4)
+    args = parser.parse_args()
+    # check if saved model
+    if path.exists("gnn_llm.pt"):
+        print("Existing trained model found.")
+        print("Would you like to retrain?")
+        user_input = str(input("(y/n):")).lower()
+        retrain = user_input == "y"
+    else:
+        retrain = True
+    if retrain:
         since = time.time()
-        prep_time, dataset, model = main(since, args.epochs,
+        prep_time, dataset, model = train_LLM(since, args.epochs,
                                          args.hidden_channels,
                                          args.num_gnn_layers, args.batch_size,
                                          args.lr)
@@ -274,8 +326,7 @@ if __name__ == "__main__":
     else:
         model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
-    print("Would you like a minimal demo showcasing how \
+    print("Here is a minimal demo showcasing how \
      GNN+LLM can solve LLM hallucinations?")
-    user_input = str(input("(y/n):")).lower()
-    if user_input == "y":
-        minimal_demo(model, dataset)
+    print("First comparing against a pretrained LLAMA2 model")
+    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size, args.yes)

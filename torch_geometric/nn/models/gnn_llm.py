@@ -107,8 +107,66 @@ class LLM(nn.Module):
         return (batch_size, questions, descriptions, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
+    def forward(self, samples: Batch):
+        batch_size, questions, descriptions, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+        # encode labels
+        labels = self.tokenizer(samples.label, add_special_tokens=False)
+        # encode training specific special token
+        eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
+
+        batch_inputs_embeds = []
+        batch_attention_mask = []
+        batch_label_input_ids = []
+        num_nodes_per_graph = samples.ptr[1:] - samples.ptr[:-1]
+        for i in range(batch_size):
+            # Add bos & eos token
+            label_input_ids = labels.input_ids[
+                i][:max_new_tokens] + eos_tokens.input_ids
+            input_ids = descriptions.input_ids[
+                i][:max_txt_len] + questions.input_ids[
+                    i] + eos_user_tokens.input_ids + label_input_ids
+            inputs_embeds = self.word_embedding(
+                torch.tensor(input_ids).to(self.llm_device))
+            to_cat = [bos_embeds]
+            if num_nodes_per_graph[i] != 0:
+                to_cat.append(graph_embeds[i].unsqueeze(0))
+            to_cat.append(inputs_embeds)
+            inputs_embeds = torch.cat(to_cat, dim=0)
+            batch_inputs_embeds.append(inputs_embeds)
+            batch_attention_mask.append([1] * inputs_embeds.shape[0])
+            label_input_ids = [IGNORE_INDEX
+                               ] * (inputs_embeds.shape[0] -
+                                    len(label_input_ids)) + label_input_ids
+            batch_label_input_ids.append(label_input_ids)
+
+        # pad inputs_embeds
+        max_length = max([x.shape[0] for x in batch_inputs_embeds])
+        for i in range(batch_size):
+            pad_length = max_length - batch_inputs_embeds[i].shape[0]
+            batch_inputs_embeds[i] = torch.cat(
+                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
+            batch_attention_mask[i] = [0
+                                       ] * pad_length + batch_attention_mask[i]
+            batch_label_input_ids[
+                i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
+
+        inputs_embeds = torch.stack(batch_inputs_embeds,
+                                    dim=0).to(self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+        label_input_ids = torch.tensor(batch_label_input_ids).to(
+            self.llm_device)
+
+        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+            outputs = self.llm(
+                inputs_embeds=inputs_embeds,
+                attention_mask=attention_mask,
+                return_dict=True,
+                labels=label_input_ids,
+            )
+        return outputs.loss
+
     def inference(self, samples: Batch, max_out_tokens=256):
-        # this function is for comparing a pretrained LLM to a trained GNN_LLM
         batch_size, questions, descriptions, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(samples)
         batch_inputs_embeds = []
