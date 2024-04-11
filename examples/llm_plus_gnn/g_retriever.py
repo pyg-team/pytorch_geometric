@@ -248,7 +248,6 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     print("Potential instances where GNN solves the hallucinations of LLM")
     print(final_prnt_str)
     print("Now we see how the LLM compares when finetuned?")
-    user_input = str(input("(y/n):")).lower()
     since = time.time()
     trained_hallucin_sum = 0
     final_prnt_str = ""
