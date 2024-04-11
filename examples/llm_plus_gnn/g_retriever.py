@@ -329,5 +329,4 @@ if __name__ == "__main__":
     print("Here is a minimal demo showcasing how \
      GNN+LLM can solve LLM hallucinations?")
     print("First comparing against a pretrained LLAMA2 model")
-    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size,
-                 args.yes)
+    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size)
