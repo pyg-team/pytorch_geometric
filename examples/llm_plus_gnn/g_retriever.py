@@ -250,7 +250,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
     print("Note: hallucinations detected by regex hence the ~")
     print("Potential instances where GNN solves the hallucinations of LLM")
     print(final_prnt_str)
-    print("Now we see how the LLM compares when finetuned?")
+    print("Now we see how the LLM compares when finetuned...")
     since = time.time()
     trained_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
@@ -269,7 +269,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm = torch.save("llm.pt")
-    print("Evaluating it...")
+    print("Evaluating Tuned LLM...")
     for batch in tqdm(enumerate(loader)):
         question = batch.question[0]
         correct_answer = batch.label[0]
