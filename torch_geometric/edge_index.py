@@ -847,6 +847,7 @@ class EdgeIndex(Tensor):
             size=self.get_sparse_size(),
             device=self.device,
             requires_grad=value.requires_grad,
+            check_invariants=False,
         )
 
     def to_sparse_csc(  # type: ignore
@@ -875,6 +876,7 @@ class EdgeIndex(Tensor):
             size=self.get_sparse_size(),
             device=self.device,
             requires_grad=value.requires_grad,
+            check_invariants=False,
         )
 
     def to_sparse(  # type: ignore
@@ -1709,6 +1711,7 @@ class _TorchSPMM(torch.autograd.Function):
                         values=value,
                         size=input.get_sparse_size()[::-1],
                         device=input.device,
+                        check_invariants=False,
                     )
             else:
                 if value is None and input.is_undirected:
@@ -1725,6 +1728,7 @@ class _TorchSPMM(torch.autograd.Function):
                         values=value,
                         size=input.get_sparse_size()[::-1],
                         device=input.device,
+                        check_invariants=False,
                     )
 
             other_grad = adj @ grad_out
