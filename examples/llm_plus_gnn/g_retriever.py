@@ -177,6 +177,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss}")
         if val_loss < best_val_loss:
+            print("Checkpointing best val loss model...")
             best_val_loss = val_loss
             torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
 
