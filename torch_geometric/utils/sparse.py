@@ -271,7 +271,6 @@ def to_torch_csr_tensor(
         values=edge_attr,
         size=tuple(size) + edge_attr.size()[1:],
         device=edge_index.device,
-        check_invariants=False,
     )
 
     return adj
@@ -347,7 +346,6 @@ def to_torch_csc_tensor(
         values=edge_attr,
         size=tuple(size) + edge_attr.size()[1:],
         device=edge_index.device,
-        check_invariants=False,
     )
 
     return adj
@@ -471,7 +469,6 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             values=value,
             size=size,
             device=value.device,
-            check_invariants=False,
         )
 
     if torch_geometric.typing.WITH_PT112 and adj.layout == torch.sparse_csc:
@@ -481,7 +478,6 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             values=value,
             size=size,
             device=value.device,
-            check_invariants=False,
         )
 
     raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
@@ -585,7 +581,6 @@ def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-            check_invariants=False,
         )
 
     elif dim == 1:
@@ -625,7 +620,6 @@ def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-            check_invariants=False,
         )
 
 
@@ -672,7 +666,6 @@ def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-            check_invariants=False,
         )
 
     else:
@@ -694,7 +687,6 @@ def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-            check_invariants=False,
         )
 
 
