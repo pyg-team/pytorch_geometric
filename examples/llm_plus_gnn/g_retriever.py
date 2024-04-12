@@ -247,21 +247,12 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             continue
         gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
         pure_llm_hallucin_sum += int(pure_llm_hallucinates)
-        # showcase LLM hallucinations solved by GNN
-        if pure_llm_hallucinates and not gnn_llm_hallucinates:
-            final_prnt_str += "Prompt: " + question + "\n"
-            final_prnt_str += "Label: " + correct_answer + "\n"
-            final_prnt_str += "Pure LLM Output: " + pure_llm_pred + "\n"
-            final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
-            final_prnt_str += "#" * 20 + "\n"
     print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     percent = 100.0 * round(1 -
                             (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
     print(f"GNN reduces hallucinations by: ~{percent}%")
     print("Note: hallucinations detected by regex hence the ~")
-    print("Potential instances where GNN solves the hallucinations of LLM")
-    print(final_prnt_str)
     print("Now we see how the LLM compares when finetuned...")
     since = time.time()
     trained_hallucin_sum = 0
@@ -304,8 +295,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             final_prnt_str += "GNN+LLM Output:" + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
     print("After finetuning the LLM...")
-    print("Total Tuned LLM Hallucinations:", untuned_llm_hallucin_sum)
-    print("Total Tuned LLM Hallucinations:", trained_llm_hallucin_sum)
+    print("Total untuned LLM Hallucinations:", untuned_llm_hallucin_sum)
+    print("Total tuned LLM Hallucinations:", trained_llm_hallucin_sum)
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     print(f"GNN reduces untuned LLM hallucinations by: ~{percent}%")
     tuned_percent = 100.0 * round(
