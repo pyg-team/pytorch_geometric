@@ -21,9 +21,6 @@ NO_MKL = 'USE_MKL=OFF' in torch.__config__.show() or WITH_WINDOWS
 
 MAX_INT64 = torch.iinfo(torch.int64).max
 
-print("CHECK_SPARSE_TENSOR_INVARIANTS")
-print(torch.sparse.check_sparse_tensor_invariants.is_enabled())
-
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = torch.sparse_coo
 
