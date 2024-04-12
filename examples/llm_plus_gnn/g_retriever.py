@@ -312,13 +312,14 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=4)
     args = parser.parse_args()
     # check if saved model
-    if path.exists("gnn_llm.pt"):
-        print("Existing trained model found.")
-        print("Would you like to retrain?")
-        user_input = str(input("(y/n):")).lower()
-        retrain = user_input == "y"
-    else:
-        retrain = True
+    retrain = True
+    # if path.exists("gnn_llm.pt"):
+    #     print("Existing trained model found.")
+    #     print("Would you like to retrain?")
+    #     user_input = str(input("(y/n):")).lower()
+    #     retrain = user_input == "y"
+    # else:
+    #     retrain = True
     if retrain:
         since = time.time()
         prep_time, dataset, model = train(since, args.epochs,
@@ -330,7 +331,7 @@ if __name__ == "__main__":
         gc.collect()
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
-        print("E2E time minus Prep Time =", e2e_time - prep_time, "seconds")
+        print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
     else:
         model = torch.load("gnn_llm.pt")
         dataset = WebQSPDataset()
