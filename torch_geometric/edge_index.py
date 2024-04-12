@@ -1786,17 +1786,17 @@ def _spmm(
             return _torch_sparse_spmm(input, other, value, reduce, transpose)
         return _scatter_spmm(input, other, value, reduce, transpose)
 
-    if reduce == 'sum' or reduce == 'add':
-        return _TorchSPMM.apply(input, other, value, 'sum', transpose)
+    if torch_geometric.typing.WITH_PT20:
+        if reduce == 'sum' or reduce == 'add':
+            return _TorchSPMM.apply(input, other, value, 'sum', transpose)
 
-    if reduce == 'mean':
-        out = _TorchSPMM.apply(input, other, value, 'sum', transpose)
-        count = input.get_indptr().diff()
-        return out / count.clamp_(min=1).to(out.dtype).view(-1, 1)
+        if reduce == 'mean':
+            out = _TorchSPMM.apply(input, other, value, 'sum', transpose)
+            count = input.get_indptr().diff()
+            return out / count.clamp_(min=1).to(out.dtype).view(-1, 1)
 
-    if (torch_geometric.typing.WITH_PT20 and not other.is_cuda
-            and not other.requires_grad):
-        return _TorchSPMM.apply(input, other, value, reduce, transpose)
+        if not other.is_cuda and not other.requires_grad:
+            return _TorchSPMM.apply(input, other, value, reduce, transpose)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling():
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
