@@ -324,7 +324,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
-    parser.add_argument("--checkpointing", action="store_true",
+    parser.add_argument(
+        "--checkpointing", action="store_true",
         help="Use this flag to checkpoint each time a \
         new best val loss is achieved")
 
