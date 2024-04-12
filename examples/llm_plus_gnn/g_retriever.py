@@ -80,7 +80,7 @@ def compute_accuracy(eval_output):
     return hit
 
 
-def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
+def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, eval_batch_size, lr,
           model=None, dataset=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
@@ -107,9 +107,9 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=2 * batch_size,
+    val_loader = DataLoader(val_dataset, batch_size=eval_batch_size,
                             drop_last=False, pin_memory=True, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=2 * batch_size,
+    test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
@@ -207,7 +207,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
     return prep_time, dataset, model
 
 
-def minimal_demo(model, dataset, lr, epochs, batch_size):
+def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
     # Step 1: Define a single batch size test loader
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
@@ -271,7 +271,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
-        _, _, pure_llm = train(since, 1, None, None, batch_size, lr,
+        _, _, pure_llm = train(since, 1, None, None, batch_size, eval_batch_size, lr,
                                model=pure_llm, dataset=dataset)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
@@ -316,7 +316,9 @@ if __name__ == "__main__":
     parser.add_argument('--num_gnn_layers', type=int, default=4)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--epochs', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--train_batch_size', type=int, default=8)
+    parser.add_argument('--eval_batch_size', type=int, default=16)
+
     args = parser.parse_args()
     # check if saved model
     retrain = True
@@ -332,7 +334,7 @@ if __name__ == "__main__":
         prep_time, dataset, model = train(since, args.epochs,
                                           args.hidden_channels,
                                           args.num_gnn_layers, args.batch_size,
-                                          args.lr)
+                                          args.eval_batch_size, args.lr)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -345,4 +347,4 @@ if __name__ == "__main__":
     # print("Here is a minimal demo showcasing how \
     #  GNN+LLM can solve LLM hallucinations?")
     # print("First comparing against a pretrained LLAMA2 model")
-    # minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size)
+    # minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size, args.eval_batch_size)
