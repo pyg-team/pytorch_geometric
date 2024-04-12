@@ -81,7 +81,7 @@ def compute_accuracy(eval_output):
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, model=None, dataset=None):
+          eval_batch_size, lr, model=None, dataset=None, checkpointing=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -177,7 +177,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                     val_loss += loss.item()
                 val_loss = val_loss / len(val_loader)
                 print(epoch_str + f", Val Loss: {val_loss}")
-            if val_loss < best_val_loss:
+            if checkpointing and val_loss < best_val_loss:
                 print("Checkpointing best val loss model...")
                 best_val_loss = val_loss
                 torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
@@ -190,7 +190,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     # Step 5 Evaluating
     print("Final Evaluation...")
-    model = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
+    if checkpointing:
+        model = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
@@ -317,12 +318,15 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hidden_channels', type=int, default=1024)
+    parser.add_argument('--gnn_hidden_channels', type=int, default=1024)
     parser.add_argument('--num_gnn_layers', type=int, default=4)
     parser.add_argument('--lr', type=float, default=1e-5)
-    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--epochs', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
+    parser.add_argument("--checkpointing", type=bool, action="store_true",
+        help="Use this flag to checkpoint each time a \
+        new best val loss is achieved")
 
     args = parser.parse_args()
     # check if saved model
@@ -337,9 +341,9 @@ if __name__ == "__main__":
     if retrain:
         since = time.time()
         prep_time, dataset, model = train(since, args.epochs,
-                                          args.hidden_channels,
+                                          args.gnn_hidden_channels,
                                           args.num_gnn_layers, args.batch_size,
-                                          args.eval_batch_size, args.lr)
+                                          args.eval_batch_size, args.lr, args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
