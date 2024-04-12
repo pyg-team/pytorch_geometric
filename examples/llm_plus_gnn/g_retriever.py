@@ -343,7 +343,8 @@ if __name__ == "__main__":
         prep_time, dataset, model = train(since, args.epochs,
                                           args.gnn_hidden_channels,
                                           args.num_gnn_layers, args.batch_size,
-                                          args.eval_batch_size, args.lr, args.checkpointing)
+                                          args.eval_batch_size, args.lr,
+                                          args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -356,4 +357,5 @@ if __name__ == "__main__":
     print("Here is a minimal demo showcasing how \
      GNN+LLM can solve LLM hallucinations?")
     print("First comparing against a pretrained LLAMA2 model")
-    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size, args.eval_batch_size)
+    minimal_demo(model, dataset, args.lr, args.epochs, args.batch_size,
+                 args.eval_batch_size)
