@@ -245,7 +245,7 @@ class GNN_LLM(nn.Module):
     def __init__(
         self,
         llm_to_use='llama2',
-        llm_use_lora: bool = True,
+        llm_use_lora: bool = False,
         llm_dtype=torch.bfloat16,
         num_llm_params: int = 7,
         gnn_to_use=GAT,

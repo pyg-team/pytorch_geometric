@@ -316,7 +316,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_gnn_layers', type=int, default=4)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--epochs', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=4)
+    parser.add_argument('--batch_size', type=int, default=8)
     args = parser.parse_args()
     # check if saved model
     retrain = True
