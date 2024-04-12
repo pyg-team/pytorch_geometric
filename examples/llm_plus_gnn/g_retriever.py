@@ -324,7 +324,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
-    parser.add_argument("--checkpointing", type=bool, action="store_true",
+    parser.add_argument(
+        "--checkpointing", type=bool, action="store_true",
         help="Use this flag to checkpoint each time a \
         new best val loss is achieved")
 
@@ -343,7 +344,8 @@ if __name__ == "__main__":
         prep_time, dataset, model = train(since, args.epochs,
                                           args.gnn_hidden_channels,
                                           args.num_gnn_layers, args.batch_size,
-                                          args.eval_batch_size, args.lr, args.checkpointing)
+                                          args.eval_batch_size, args.lr,
+                                          args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
