@@ -22,6 +22,7 @@ class EgoData(Data):
 
 def read_ego(files: List[str], name: str) -> List[EgoData]:
     import pandas as pd
+    import tqdm
 
     files = sorted(files)
 
@@ -40,7 +41,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
     all_featnames_dict = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
-    for i in range(0, len(files), 5):
+    for i in tqdm.tqdm(range(0, len(files), 5)):
         circles_file = files[i]
         edges_file = files[i + 1]
         egofeat_file = files[i + 2]
@@ -66,6 +67,9 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             indices = [all_featnames_dict[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
+
+            if x.size(1) > 100_000:
+                x = x.to_sparse_csr()
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
                           usecols=[0]).squeeze()
@@ -245,12 +249,17 @@ class SNAPDataset(InMemoryDataset):
             raise NotImplementedError
 
         if len(data_list) > 1 and self.pre_filter is not None:
+            print('filter')
             data_list = [data for data in data_list if self.pre_filter(data)]
 
         if self.pre_transform is not None:
+            print('pre transform')
             data_list = [self.pre_transform(data) for data in data_list]
 
+        print("SAVE")
+        print(data_list[0])
         self.save(data_list, self.processed_paths[0])
+        print("DONE")
 
     def __repr__(self) -> str:
         return f'SNAP-{self.name}({len(self)})'
