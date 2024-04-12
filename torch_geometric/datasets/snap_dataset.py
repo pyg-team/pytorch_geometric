@@ -249,17 +249,12 @@ class SNAPDataset(InMemoryDataset):
             raise NotImplementedError
 
         if len(data_list) > 1 and self.pre_filter is not None:
-            print('filter')
             data_list = [data for data in data_list if self.pre_filter(data)]
 
         if self.pre_transform is not None:
-            print('pre transform')
             data_list = [self.pre_transform(data) for data in data_list]
 
-        print("SAVE")
-        print(data_list[0])
         self.save(data_list, self.processed_paths[0])
-        print("DONE")
 
     def __repr__(self) -> str:
         return f'SNAP-{self.name}({len(self)})'
