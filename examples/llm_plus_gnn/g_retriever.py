@@ -344,7 +344,7 @@ if __name__ == "__main__":
                                           args.gnn_hidden_channels,
                                           args.num_gnn_layers, args.batch_size,
                                           args.eval_batch_size, args.lr,
-                                          args.checkpointing)
+                                          checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
