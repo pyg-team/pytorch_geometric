@@ -181,7 +181,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                 print("Checkpointing best val loss model...")
                 best_val_loss = val_loss
                 torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
-    except: # noqa
+    except:  # noqa
         # allows to ctrl-C in training and still eval with the best checkpoint
         pass
 
