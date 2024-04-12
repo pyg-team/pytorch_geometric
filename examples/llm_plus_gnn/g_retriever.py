@@ -306,10 +306,10 @@ def minimal_demo(model, dataset, lr, epochs, batch_size):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_channels', type=int, default=1024)
-    parser.add_argument('--num_gnn_layers', type=int, default=4)
+    parser.add_argument('--num_gnn_layers', type=int, default=3)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--epochs', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=4)
     args = parser.parse_args()
     # check if saved model
     if path.exists("gnn_llm.pt"):
