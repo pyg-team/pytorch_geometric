@@ -6,6 +6,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Final,
     List,
     Optional,
     OrderedDict,
@@ -101,6 +102,10 @@ class MessagePassing(torch.nn.Module):
         'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size',
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
+
+    # Supports `message_and_aggregate` via `EdgeIndex`.
+    # TODO Remove once migration is finished.
+    SUPPORTS_FUSED_EDGE_INDEX: Final[bool] = False
 
     def __init__(
         self,
@@ -517,7 +522,17 @@ class MessagePassing(torch.nn.Module):
         mutable_size = self._check_input(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
-        if is_sparse(edge_index) and self.fuse and not self.explain:
+        fuse = False
+        if self.fuse and not self.explain:
+            if is_sparse(edge_index):
+                fuse = True
+            elif (not torch.jit.is_scripting()
+                  and isinstance(edge_index, EdgeIndex)):
+                if (self.SUPPORTS_FUSED_EDGE_INDEX
+                        and edge_index.is_sorted_by_col):
+                    fuse = True
+
+        if fuse:
             coll_dict = self._collect(self._fused_user_args, edge_index,
                                       mutable_size, kwargs)
 
@@ -636,7 +651,7 @@ class MessagePassing(torch.nn.Module):
                                 dim=self.node_dim)
 
     @abstractmethod
-    def message_and_aggregate(self, adj_t: Adj) -> Tensor:
+    def message_and_aggregate(self, edge_index: Adj) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
