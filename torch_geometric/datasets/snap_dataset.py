@@ -23,6 +23,8 @@ class EgoData(Data):
 def read_ego(files: List[str], name: str) -> List[EgoData]:
     import pandas as pd
 
+    files = sorted(files)
+
     all_featnames = []
     files = [
         x for x in files if x.split('.')[-1] in
