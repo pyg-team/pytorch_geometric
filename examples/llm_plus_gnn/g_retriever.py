@@ -201,7 +201,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
     print(f'Test Acc {acc}')
     # save model
     print("Saving Model...")
-    torch.save(model_save_name + ".pt")
+    torch.save(model, model_save_name + ".pt")
     print("Done!")
     return prep_time, dataset, model
 
