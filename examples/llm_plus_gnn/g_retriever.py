@@ -80,8 +80,8 @@ def compute_accuracy(eval_output):
     return hit
 
 
-def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, eval_batch_size, lr,
-          model=None, dataset=None):
+def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
+          eval_batch_size, lr, model=None, dataset=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -275,8 +275,9 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
-        _, _, pure_llm = train(since, 1, None, None, batch_size, eval_batch_size, lr,
-                               model=pure_llm, dataset=dataset)
+        _, _, pure_llm = train(since, 1, None, None, batch_size,
+                               eval_batch_size, lr, model=pure_llm,
+                               dataset=dataset)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm = torch.save("llm.pt")
