@@ -585,7 +585,7 @@ def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-        check_invariants=False,
+            check_invariants=False,
         )
 
     elif dim == 1:
@@ -625,7 +625,7 @@ def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-        check_invariants=False,
+            check_invariants=False,
         )
 
 
@@ -672,7 +672,7 @@ def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-        check_invariants=False,
+            check_invariants=False,
         )
 
     else:
@@ -694,7 +694,7 @@ def cat_csc(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-        check_invariants=False,
+            check_invariants=False,
         )
 
 
