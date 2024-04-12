@@ -116,6 +116,10 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
     if model is None:
         model = GNN_LLM(gnn_hidden_channels=hidden_channels,
                         num_gnn_layers=num_gnn_layers)
+    if num_gnn_layers is not None:
+        model_save_name = "gnn_llm"
+    else:
+        model_save_name = "llm"
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -133,6 +137,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
             all params: {all_param} || \
             trainable%: {100 * trainable_params / all_param}")
 
+    best_val_loss = float('inf')
     # Step 4 Training
     for epoch in range(num_epochs):
         model.train()
@@ -171,12 +176,16 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss}")
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model_save_name + "_best_val_loss_ckpt.pt")
 
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5 Evaluating
     print("Final Evaluation...")
+    model = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
@@ -192,10 +201,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
     print(f'Test Acc {acc}')
     # save model
     print("Saving Model...")
-    if num_gnn_layers is not None:
-        torch.save(model, "gnn_llm.pt")
-    else:
-        torch.save(model, "llm.pt")
+    torch.save(model_save_name + ".pt")
     print("Done!")
     return prep_time, dataset, model
 
