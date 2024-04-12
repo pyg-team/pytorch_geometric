@@ -107,9 +107,9 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size, lr,
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size,
+    val_loader = DataLoader(val_dataset, batch_size=2 * batch_size,
                             drop_last=False, pin_memory=True, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size,
+    test_loader = DataLoader(test_dataset, batch_size=2 * batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Step 2: Build Model
