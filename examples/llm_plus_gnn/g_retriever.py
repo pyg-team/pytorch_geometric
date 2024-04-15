@@ -216,7 +216,13 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
                         pin_memory=True, shuffle=False)
     # define the pure pretrained LLM
     pure_llm = LLM()
-
+    if path.exists("gnn_llm_demo_outs.txt") and path.exists("untuned_llm_demo_outs.txt"):
+        print("Demo outputs for LLM and GNN+LLM found.")
+        print("Woudl you like to reuse them?")
+        user_input = str(input("(y/n):")).lower()
+        redemo = user_input == "y"
+    else:
+        redemo = True
     # Step loop through the loader and run both models
     gnn_llm_hallucin_sum = 0
     pure_llm_hallucin_sum = 0
@@ -224,32 +230,38 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
     print("Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
     gnn_save_list = []
     untuned_llm_save_list = []
-    for batch in tqdm(loader):
-        question = batch.question[0]
-        correct_answer = batch.label[0]
-        gnn_llm_out = model.inference(batch)
-        # GNN+LLM only using 32 tokens to answer, give untrained LLM more
-        pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
-        gnn_llm_pred = gnn_llm_out['pred'][0]
-        pure_llm_pred = pure_llm_out['pred'][0]
-        gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
-        gnn_save_list += [gnn_llm_pred, gnn_llm_hallucinates]
-        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
-                                                   correct_answer)
-        untuned_llm_save_list += [pure_llm_pred, pure_llm_hallucinates]
-        if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
-            # skipping since hard to evaluate if the answer is a hallucination
-            continue
-        gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
-        pure_llm_hallucin_sum += int(pure_llm_hallucinates)
-    print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
-    print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
-    percent = 100.0 * round(1 -
-                            (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
-    print(f"GNN reduces hallucinations by: ~{percent}%")
-    print("Note: hallucinations detected by regex hence the ~")
-    print("Now we see how the LLM compares when finetuned...")
-    since = time.time()
+    if redemo:
+        for batch in tqdm(loader):
+            question = batch.question[0]
+            correct_answer = batch.label[0]
+            gnn_llm_out = model.inference(batch)
+            # GNN+LLM only using 32 tokens to answer, give untrained LLM more
+            pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
+            gnn_llm_pred = gnn_llm_out['pred'][0]
+            pure_llm_pred = pure_llm_out['pred'][0]
+            gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
+            gnn_save_list += [gnn_llm_pred, gnn_llm_hallucinates]
+            pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
+                                                       correct_answer)
+            untuned_llm_save_list += [pure_llm_pred, pure_llm_hallucinates]
+            if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
+                # skipping since hard to evaluate if the answer is a hallucination
+                continue
+            gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
+            pure_llm_hallucin_sum += int(pure_llm_hallucinates)
+        print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
+        print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
+        percent = 100.0 * round(1 -
+                                (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
+        print(f"GNN reduces hallucinations by: ~{percent}%")
+        print("Note: hallucinations detected by regex hence the ~")
+        print("Now we see how the LLM compares when finetuned...")
+        print("Saving outputs of GNN+LLM and Pretrained LLM...")
+        torch.save(gnn_save_list, "gnn_llm_demo_outs.txt")
+        torch.save(untuned_llm_save_list, "untuned_llm_demo_outs.txt")
+    else:
+        gnn_save_list = torch.load("gnn_llm_demo_outs.txt")
+        untuned_llm_save_list = torch.load("untuned_llm_demo_outs.txt")
     trained_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
@@ -263,9 +275,11 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         retrain = True
     if retrain:
         print("Finetuning LLAMA2...")
+        since = time.time()
         _, _, pure_llm = train(since, 1, None, None, batch_size,
                                eval_batch_size, lr, model=pure_llm,
                                dataset=dataset)
+        e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm = torch.save("llm.pt")
