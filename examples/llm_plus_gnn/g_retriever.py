@@ -217,8 +217,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
     # define the pure pretrained LLM
     pure_llm = LLM()
     if path.exists("gnn_llm_demo_outs.txt") and path.exists("untuned_llm_demo_outs.txt"):
-        print("Demo outputs for LLM and GNN+LLM found.")
-        print("Woudl you like to reuse them?")
+        print("Saved demo outputs for LLM and GNN+LLM found.")
+        print("Would you like to reuse them?")
         user_input = str(input("(y/n):")).lower()
         redemo = user_input == "y"
     else:
@@ -257,11 +257,20 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         print("Note: hallucinations detected by regex hence the ~")
         print("Now we see how the LLM compares when finetuned...")
         print("Saving outputs of GNN+LLM and Pretrained LLM...")
-        torch.save(gnn_save_list, "gnn_llm_demo_outs.txt")
-        torch.save(untuned_llm_save_list, "untuned_llm_demo_outs.txt")
+        save_dict = {
+            "gnn_save_list": gnn_save_list,
+            "untuned_llm_save_list": untuned_llm_save_list,
+            "gnn_hallucin_sum":gnn_hallucin_sum,
+            "pure_llm_hallucin_sum":pure_llm_hallucin_sum
+        }
+        torch.save(save_dict, "demo_save_dict.pt")
     else:
-        gnn_save_list = torch.load("gnn_llm_demo_outs.txt")
-        untuned_llm_save_list = torch.load("untuned_llm_demo_outs.txt")
+        save_dict = torch.load("demo_save_dict.pt")
+        gnn_save_list = save_dict["gnn_save_list"]
+        untuned_llm_save_list = save_dict["untuned_llm_save_list"]
+        gnn_hallucin_sum = save_dict["gnn_hallucin_sum"]
+        pure_llm_hallucin_sum = save_dict["pure_llm_hallucin_sum"]
+
     trained_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
