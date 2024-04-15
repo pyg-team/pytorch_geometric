@@ -216,28 +216,20 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
                         pin_memory=True, shuffle=False)
     # define the pure pretrained LLM
     pure_llm = LLM()
-<<<<<<< HEAD
-    if path.exists("gnn_llm_demo_outs.txt") and path.exists("untuned_llm_demo_outs.txt"):
+    if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
         print("Would you like to reuse them?")
-=======
-    if path.exists("gnn_llm_demo_outs.txt") and path.exists(
-            "untuned_llm_demo_outs.txt"):
-        print("Demo outputs for LLM and GNN+LLM found.")
-        print("Woudl you like to reuse them?")
->>>>>>> 898931df43021eb470c3107fee2a860bea3eb9fb
         user_input = str(input("(y/n):")).lower()
         redemo = user_input == "y"
     else:
         redemo = True
-    # Step loop through the loader and run both models
-    gnn_llm_hallucin_sum = 0
-    pure_llm_hallucin_sum = 0
-    final_prnt_str = ""
-    print("Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
-    gnn_save_list = []
-    untuned_llm_save_list = []
     if redemo:
+        # Step loop through the loader and run both models
+        print("Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
+        gnn_llm_hallucin_sum = 0
+        pure_llm_hallucin_sum = 0
+        gnn_save_list = []
+        untuned_llm_save_list = []
         for batch in tqdm(loader):
             question = batch.question[0]
             correct_answer = batch.label[0]
