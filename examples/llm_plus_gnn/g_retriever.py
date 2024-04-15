@@ -225,7 +225,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         redemo = True
     if redemo:
         # Step loop through the loader and run both models
-        print("Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
+        print(
+            "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
         gnn_llm_hallucin_sum = 0
         pure_llm_hallucin_sum = 0
         gnn_save_list = []
