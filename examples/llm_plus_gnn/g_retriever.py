@@ -253,7 +253,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
     trained_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
-    del pure_llm, model
+    del model
     if path.exists("llm.pt"):
         print("Existing finetuned LLAMA2 found.")
         print("Would you like to retrain?")
