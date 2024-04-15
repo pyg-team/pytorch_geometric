@@ -216,9 +216,16 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
                         pin_memory=True, shuffle=False)
     # define the pure pretrained LLM
     pure_llm = LLM()
+<<<<<<< HEAD
     if path.exists("gnn_llm_demo_outs.txt") and path.exists("untuned_llm_demo_outs.txt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
         print("Would you like to reuse them?")
+=======
+    if path.exists("gnn_llm_demo_outs.txt") and path.exists(
+            "untuned_llm_demo_outs.txt"):
+        print("Demo outputs for LLM and GNN+LLM found.")
+        print("Woudl you like to reuse them?")
+>>>>>>> 898931df43021eb470c3107fee2a860bea3eb9fb
         user_input = str(input("(y/n):")).lower()
         redemo = user_input == "y"
     else:
@@ -239,7 +246,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
             gnn_llm_pred = gnn_llm_out['pred'][0]
             pure_llm_pred = pure_llm_out['pred'][0]
-            gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred, correct_answer)
+            gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
+                                                      correct_answer)
             gnn_save_list += [gnn_llm_pred, gnn_llm_hallucinates]
             pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                        correct_answer)
@@ -251,8 +259,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             pure_llm_hallucin_sum += int(pure_llm_hallucinates)
         print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
         print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
-        percent = 100.0 * round(1 -
-                                (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
+        percent = 100.0 * round(
+            1 - (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
         print(f"GNN reduces hallucinations by: ~{percent}%")
         print("Note: hallucinations detected by regex hence the ~")
         print("Now we see how the LLM compares when finetuned...")
