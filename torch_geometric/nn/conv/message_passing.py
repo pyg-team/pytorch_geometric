@@ -740,12 +740,12 @@ class MessagePassing(torch.nn.Module):
 
     @decomposed_layers.setter
     def decomposed_layers(self, decomposed_layers: int) -> None:
-        if decomposed_layers == self._decomposed_layers:
-            return  # Abort early if nothing to do.
-
         if torch.jit.is_scripting():
             raise ValueError("Inference decomposition of message passing "
                              "modules is only supported on the Python module")
+
+        if decomposed_layers == self._decomposed_layers:
+            return  # Abort early if nothing to do.
 
         self._decomposed_layers = decomposed_layers
 
@@ -767,12 +767,12 @@ class MessagePassing(torch.nn.Module):
 
     @explain.setter
     def explain(self, explain: Optional[bool]) -> None:
-        if explain == self._explain:
-            return  # Abort early if nothing to do.
-
         if torch.jit.is_scripting():
             raise ValueError("Explainability of message passing modules "
                              "is only supported on the Python module")
+
+        if explain == self._explain:
+            return  # Abort early if nothing to do.
 
         self._explain = explain
 
