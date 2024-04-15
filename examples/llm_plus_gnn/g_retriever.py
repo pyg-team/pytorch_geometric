@@ -244,8 +244,9 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                        correct_answer)
             untuned_llm_save_list += [pure_llm_pred, pure_llm_hallucinates]
-            if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":
-                # skipping since hard to evaluate if the answer is a hallucination
+            if gnn_llm_hallucinates == "skip" or \
+              pure_llm_hallucinates == "skip":
+                # skipping when hallucination is hard to eval
                 continue
             gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
             pure_llm_hallucin_sum += int(pure_llm_hallucinates)
@@ -260,7 +261,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         save_dict = {
             "gnn_save_list": gnn_save_list,
             "untuned_llm_save_list": untuned_llm_save_list,
-            "gnn_hallucin_sum":gnn_hallucin_sum,
+            "gnn_llm_hallucin_sum":gnn_llm_hallucin_sum,
             "pure_llm_hallucin_sum":pure_llm_hallucin_sum
         }
         torch.save(save_dict, "demo_save_dict.pt")
@@ -268,10 +269,10 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         save_dict = torch.load("demo_save_dict.pt")
         gnn_save_list = save_dict["gnn_save_list"]
         untuned_llm_save_list = save_dict["untuned_llm_save_list"]
-        gnn_hallucin_sum = save_dict["gnn_hallucin_sum"]
+        gnn_llm_hallucin_sum = save_dict["gnn_llm_hallucin_sum"]
         pure_llm_hallucin_sum = save_dict["pure_llm_hallucin_sum"]
 
-    trained_hallucin_sum = 0
+    trained_llm_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
     del model
@@ -293,12 +294,13 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
     else:
         pure_llm = torch.save("llm.pt")
     print("Evaluating Tuned LLM...")
-    for batch in tqdm(enumerate(loader)):
+    for i, batch in tqdm(enumerate(loader)):
         question = batch.question[0]
         correct_answer = batch.label[0]
         gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
         untuned_llm_pred, untuned_llm_hallucinates = untuned_llm_save_list[i]
-        if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":
+        if gnn_llm_hallucinates == "skip" or \
+          untuned_llm_hallucinates == "skip":
             continue
         pure_llm_pred = pure_llm.inference(batch)['pred'][0]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
