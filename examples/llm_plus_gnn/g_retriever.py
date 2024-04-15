@@ -139,52 +139,47 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     best_val_loss = float('inf')
     # Step 4 Training
-    try:
-        for epoch in range(num_epochs):
-            model.train()
-            epoch_loss = 0.
-            if epoch == 0:
-                prep_time = round(time.time() - since, 2)
-                print("Total Prep Time (prep_time) =", prep_time)
-                print("Training beginning...")
-            epoch_str = f"Epoch: {epoch + 1}|{num_epochs}"
-            loader = tqdm(train_loader, desc=epoch_str)
-            for step, batch in enumerate(loader):
-                optimizer.zero_grad()
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.
+        if epoch == 0:
+            prep_time = round(time.time() - since, 2)
+            print("Total Prep Time (prep_time) =", prep_time)
+            print("Training beginning...")
+        epoch_str = f"Epoch: {epoch + 1}|{num_epochs}"
+        loader = tqdm(train_loader, desc=epoch_str)
+        for step, batch in enumerate(loader):
+            optimizer.zero_grad()
+            loss = model(batch)
+            loss.backward()
+
+            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+
+            if (step + 1) % grad_steps == 0:
+                adjust_learning_rate(optimizer.param_groups[0], lr,
+                                     step / len(train_loader) + epoch)
+
+            optimizer.step()
+            epoch_loss = epoch_loss + loss.item()
+
+            if (step + 1) % grad_steps == 0:
+                lr = optimizer.param_groups[0]["lr"]
+        train_loss = epoch_loss / len(train_loader)
+        print(epoch_str + f",Train Loss (Epoch Mean): {train_loss}")
+
+        val_loss = 0.
+        eval_output = []
+        model.eval()
+        with torch.no_grad():
+            for step, batch in enumerate(val_loader):
                 loss = model(batch)
-                loss.backward()
-
-                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-
-                if (step + 1) % grad_steps == 0:
-                    adjust_learning_rate(optimizer.param_groups[0], lr,
-                                         step / len(train_loader) + epoch)
-
-                optimizer.step()
-                epoch_loss = epoch_loss + loss.item()
-
-                if (step + 1) % grad_steps == 0:
-                    lr = optimizer.param_groups[0]["lr"]
-            train_loss = epoch_loss / len(train_loader)
-            print(epoch_str + f",Train Loss (Epoch Mean): {train_loss}")
-
-            val_loss = 0.
-            eval_output = []
-            model.eval()
-            with torch.no_grad():
-                for step, batch in enumerate(val_loader):
-                    loss = model(batch)
-                    val_loss += loss.item()
-                val_loss = val_loss / len(val_loader)
-                print(epoch_str + f", Val Loss: {val_loss}")
-            if checkpointing and val_loss < best_val_loss:
-                print("Checkpointing best val loss model...")
-                best_val_loss = val_loss
-                torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
-    except:  # noqa
-        # allows to ctrl-C in training and still eval with the best checkpoint
-        pass
-
+                val_loss += loss.item()
+            val_loss = val_loss / len(val_loader)
+            print(epoch_str + f", Val Loss: {val_loss}")
+        if checkpointing and val_loss < best_val_loss:
+            print("Checkpointing best val loss model...")
+            best_val_loss = val_loss
+            torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
