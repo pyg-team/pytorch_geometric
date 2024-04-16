@@ -208,7 +208,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     return prep_time, dataset, eval_output
 
 
-def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size, eval_batch_size):
+def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
+                 eval_batch_size):
     pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
@@ -290,8 +291,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size, eval_batch_
         print("Finetuning LLAMA2...")
         since = time.time()
         _, _, pure_llm_eval_outputs = train(since, 1, None, None, batch_size,
-                               eval_batch_size, lr, model=pure_llm,
-                               dataset=dataset)
+                                            eval_batch_size, lr,
+                                            model=pure_llm, dataset=dataset)
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
@@ -358,11 +359,10 @@ if __name__ == "__main__":
         retrain = True
     if retrain:
         since = time.time()
-        prep_time, dataset, gnn_llm_eval_outs = train(since, args.epochs,
-                                          args.gnn_hidden_channels,
-                                          args.num_gnn_layers, args.batch_size,
-                                          args.eval_batch_size, args.lr,
-                                          checkpointing=args.checkpointing)
+        prep_time, dataset, gnn_llm_eval_outs = train(
+            since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
+            args.batch_size, args.eval_batch_size, args.lr,
+            checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -374,5 +374,5 @@ if __name__ == "__main__":
         dataset = WebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     print("First comparing against a pretrained LLAMA2 model")
-    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, args.batch_size,
-                 args.eval_batch_size)
+    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
+                 args.batch_size, args.eval_batch_size)
