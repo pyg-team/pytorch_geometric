@@ -237,7 +237,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             gnn_llm_preds += out['pred']
         print(
             "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
-        for i, batch in tqdm(enumerate(loader)):
+        for i, batch in enumerate(tqdm(loader)):
             question = batch.question[0]
             correct_answer = batch.label[0]
             # GNN+LLM only using 32 tokens to answer, give untrained LLM more
@@ -303,7 +303,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     for out in tqdm(pure_llm_eval_outs):
         pure_llm_preds += out['pred']
     print("Final comparison between all models...")
-    for i, batch in tqdm(enumerate(loader)):
+    for i, batch in enumerate(tqdm(loader)):
         question = batch.question[0]
         correct_answer = batch.label[0]
         gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
