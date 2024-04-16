@@ -225,20 +225,22 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size, eval_batch_
         # batch size 1 loader for simplicity
         loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
                             pin_memory=True, shuffle=False)
-        # Step loop through the loader and run both models
-        print(
-            "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
         gnn_llm_hallucin_sum = 0
         pure_llm_hallucin_sum = 0
         gnn_save_list = []
         untuned_llm_save_list = []
+        print("Extracting necesarry info from saved GNN+LLM outputs")
+        gnn_llm_preds = []
+        for out in tqdm(gnn_llm_eval_outs):
+            gnn_llm_preds += out['pred']
+        print(
+            "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
         for i, batch in tqdm(loader):
             question = batch.question[0]
             correct_answer = batch.label[0]
-            gnn_llm_out = gnn_llm_eval_outs[i]
             # GNN+LLM only using 32 tokens to answer, give untrained LLM more
             pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
-            gnn_llm_pred = gnn_llm_out['pred'][0]
+            gnn_llm_pred = gnn_llm_preds[i]
             pure_llm_pred = pure_llm_out['pred'][0]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
                                                       correct_answer)
@@ -294,7 +296,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size, eval_batch_
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm_eval_outputs = torch.load("llm_eval_outs.pt")
-    print("Evaluating Tuned LLM...")
+    print("Extracting necesarry info from finetuned LLM outputs...")
+    pure_llm_preds = []
+    for out in tqdm(pure_llm_eval_outs):
+        pure_llm_preds += out['pred']
     for i, batch in tqdm(enumerate(loader)):
         question = batch.question[0]
         correct_answer = batch.label[0]
@@ -302,7 +307,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size, eval_batch_
         untuned_llm_pred, untuned_llm_hallucinates = untuned_llm_save_list[i]
         if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":  # noqa
             continue
-        pure_llm_pred = pure_llm_eval_outputs[i]
+        pure_llm_pred = pure_llm_preds[i]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
         if pure_llm_hallucinates == "skip":
