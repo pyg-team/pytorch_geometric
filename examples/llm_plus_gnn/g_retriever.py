@@ -82,8 +82,11 @@ def compute_accuracy(eval_output):
 
 def save_params_dict(model, save_path):
     state_dict = model.state_dict()
+    param_grad_dict = {
+        k: v.requires_grad for (k, v) in model.named_parameters()
+    }
     for k in list(state_dict.keys()):
-        if k in param_grad_dic.keys() and not param_grad_dic[k]:
+        if k in param_grad_dict.keys() and not param_grad_dict[k]:
             # delete parameters that do not require gradient
             del state_dict[k]
     torch.save(state_dict, save_path)
