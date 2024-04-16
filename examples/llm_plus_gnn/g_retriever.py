@@ -179,7 +179,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         if checkpointing and val_loss < best_val_loss:
             print("Checkpointing best val loss model...")
             best_val_loss = val_loss
-            torch.save(model.state_dict(), model_save_name + "_best_val_loss_ckpt.pt")
+            torch.save(model.state_dict(),
+                       model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
