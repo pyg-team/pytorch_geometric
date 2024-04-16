@@ -261,8 +261,8 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         save_dict = {
             "gnn_save_list": gnn_save_list,
             "untuned_llm_save_list": untuned_llm_save_list,
-            "gnn_llm_hallucin_sum":gnn_llm_hallucin_sum,
-            "pure_llm_hallucin_sum":pure_llm_hallucin_sum
+            "gnn_llm_hallucin_sum": gnn_llm_hallucin_sum,
+            "pure_llm_hallucin_sum": pure_llm_hallucin_sum
         }
         torch.save(save_dict, "demo_save_dict.pt")
     else:
