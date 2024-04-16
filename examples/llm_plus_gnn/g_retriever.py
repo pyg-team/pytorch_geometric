@@ -220,10 +220,10 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         print("Saved demo outputs for LLM and GNN+LLM found.")
         print("Would you like to reuse them?")
         user_input = str(input("(y/n):")).lower()
-        redemo = user_input == "y"
+        skip_step_one = user_input == "y"
     else:
-        redemo = True
-    if redemo:
+        skip_step_one = False
+    if not skip_step_one:
         # Step loop through the loader and run both models
         print(
             "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
