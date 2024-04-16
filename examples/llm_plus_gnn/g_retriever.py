@@ -19,8 +19,8 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models.gnn_llm import GNN_LLM, LLM
 
 
