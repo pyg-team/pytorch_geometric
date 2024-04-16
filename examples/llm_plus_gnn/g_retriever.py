@@ -187,13 +187,14 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5 Evaluating
-    print("Final Evaluation...")
     if checkpointing and best_epoch != num_epochs - 1:
+        print("Loading best checkpoint...")
         state_dict = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
         model = model.load_state_dict(state_dict)
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
+    print("Final Evaluation...")
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
             output = model.inference(batch)
