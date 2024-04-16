@@ -314,7 +314,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         if pure_llm_hallucinates == "skip":
             continue
         trained_llm_hallucin_sum += int(pure_llm_hallucinates)
-        if untuned_llm_hallucinates and pure_llm_hallucinates and not gnn_llm_hallucinates: # noqa
+        if untuned_llm_hallucinates and pure_llm_hallucinates and not gnn_llm_hallucinates:  # noqa
             final_prnt_str += "Prompt: '" + question + "'\n"
             final_prnt_str += "Label: '" + correct_answer + "'\n"
             final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred + "'\n" # noqa
