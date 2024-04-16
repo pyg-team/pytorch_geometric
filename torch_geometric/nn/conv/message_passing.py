@@ -240,6 +240,7 @@ class MessagePassing(torch.nn.Module):
         self._apply_sigmoid: bool = True
 
         # Inference Decomposition:
+        self._decomposed_layers = 1
         self.decomposed_layers = decomposed_layers
 
     def reset_parameters(self) -> None:
@@ -743,6 +744,9 @@ class MessagePassing(torch.nn.Module):
             raise ValueError("Inference decomposition of message passing "
                              "modules is only supported on the Python module")
 
+        if decomposed_layers == self._decomposed_layers:
+            return  # Abort early if nothing to do.
+
         self._decomposed_layers = decomposed_layers
 
         if decomposed_layers != 1:
@@ -766,6 +770,9 @@ class MessagePassing(torch.nn.Module):
         if torch.jit.is_scripting():
             raise ValueError("Explainability of message passing modules "
                              "is only supported on the Python module")
+
+        if explain == self._explain:
+            return  # Abort early if nothing to do.
 
         self._explain = explain
 
