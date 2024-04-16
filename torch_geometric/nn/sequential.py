@@ -69,7 +69,7 @@ def Sequential(
 
     Args:
         input_args (str): The input arguments of the model.
-        modules ([(str, Callable) or Callable]): A list of modules (with
+        modules ([(Callable, str) or Callable]): A list of modules (with
             optional function header definitions). Alternatively, an
             :obj:`OrderedDict` of modules (and function header definitions) can
             be passed.
