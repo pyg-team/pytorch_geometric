@@ -196,8 +196,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
             print("Checkpointing best val loss model...")
             best_val_loss = val_loss
             best_epoch = epoch
-            save_params_dict(model,
-                       model_save_name + "_best_val_loss_ckpt.pt")
+            save_params_dict(model, model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
@@ -205,7 +204,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     if checkpointing and best_epoch != num_epochs - 1:
         print("Loading best checkpoint...")
         model = load_params_dict(model,
-                            model_save_name + "_best_val_loss_ckpt.pt")
+                                 model_save_name + "_best_val_loss_ckpt.pt")
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
