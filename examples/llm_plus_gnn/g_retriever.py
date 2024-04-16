@@ -317,7 +317,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         if untuned_llm_hallucinates and pure_llm_hallucinates and not gnn_llm_hallucinates: # noqa
             final_prnt_str += "Prompt: '" + question + "'\n"
             final_prnt_str += "Label: '" + correct_answer + "'\n"
-            final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred + "'\n"
+            final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred + "'\n" # noqa
             final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred + "'\n"
             final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred + "'\n"
             final_prnt_str += "\n" + "#" * 20 + "\n\n"
