@@ -325,7 +325,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     print("Total tuned LLM Hallucinations:", trained_llm_hallucin_sum)
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
     percent = 100.0 * round(
-            1 - (gnn_llm_hallucin_sum / untuned_llm_hallucin_sum), 2)
+        1 - (gnn_llm_hallucin_sum / untuned_llm_hallucin_sum), 2)
     print(f"GNN reduces untuned LLM hallucinations by: ~{percent}%")
     tuned_percent = 100.0 * round(
         1 - (gnn_llm_hallucin_sum / trained_llm_hallucin_sum), 2)
