@@ -73,7 +73,7 @@ class LLM(nn.Module):
         else:
             self.printable_llm_name = llm_name
             self.huggingface_str = llm_name
-        self.mem_needed = 75 * num_params / 7
+        self.mem_needed = 85 * num_params / 7
         self.llm_dtype = llm_dtype
         print('Loading ' + str(self.printable_llm_name))
         kwargs = get_llm_kwargs(self.mem_needed)
