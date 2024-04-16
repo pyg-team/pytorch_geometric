@@ -245,8 +245,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
             pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                        correct_answer)
             untuned_llm_save_list += [pure_llm_pred, pure_llm_hallucinates]
-            if gnn_llm_hallucinates == "skip" or \
-              pure_llm_hallucinates == "skip":
+            if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip": # noqa
                 # skipping when hallucination is hard to eval
                 continue
             gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
@@ -300,8 +299,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         correct_answer = batch.label[0]
         gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
         untuned_llm_pred, untuned_llm_hallucinates = untuned_llm_save_list[i]
-        if gnn_llm_hallucinates == "skip" or \
-          untuned_llm_hallucinates == "skip":
+        if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip": # noqa
             continue
         pure_llm_pred = pure_llm.inference(batch)['pred'][0]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
