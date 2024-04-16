@@ -292,7 +292,7 @@ def minimal_demo(model, dataset, lr, epochs, batch_size, eval_batch_size):
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
-        pure_llm = torch.save("llm.pt")
+        pure_llm = torch.load("llm.pt")
     print("Evaluating Tuned LLM...")
     for i, batch in tqdm(enumerate(loader)):
         question = batch.question[0]
