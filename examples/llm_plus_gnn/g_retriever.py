@@ -80,6 +80,21 @@ def compute_accuracy(eval_output):
     return hit
 
 
+def save_params_dict(model, save_path):
+    state_dict = model.state_dict()
+    for k in list(state_dict.keys()):
+        if k in param_grad_dic.keys() and not param_grad_dic[k]:
+            # delete parameters that do not require gradient
+            del state_dict[k]
+    torch.save(state_dict, save_path)
+
+
+def load_params_dict(model, savepath):
+    state_dict = torch.load(save_path)
+    model.load_state_dict(state_dict)
+    return model
+
+
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, model=None, dataset=None, checkpointing=False):
     def adjust_learning_rate(param_group, LR, epoch):
@@ -181,7 +196,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
             print("Checkpointing best val loss model...")
             best_val_loss = val_loss
             best_epoch = epoch
-            torch.save(model.state_dict(),
+            save_params_dict(model,
                        model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
@@ -189,8 +204,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     # Step 5 Evaluating
     if checkpointing and best_epoch != num_epochs - 1:
         print("Loading best checkpoint...")
-        state_dict = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
-        model = model.load_state_dict(state_dict)
+        model = load_params_dict(model,
+                            model_save_name + "_best_val_loss_ckpt.pt")
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
@@ -206,7 +221,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print(f'Test Acc {acc}')
     # save model
     print("Saving Model...")
-    torch.save(model.state_dict(), model_save_name + ".pt")
+    save_params_dict(model, model_save_name + ".pt")
     print("Saving eval output for downstream demo...")
     torch.save(eval_output, model_save_name + "_eval_outs.pt")
     print("Done!")
