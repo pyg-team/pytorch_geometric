@@ -139,6 +139,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     best_val_loss = float('inf')
     # Step 4 Training
+    best_epoch = 0
     for epoch in range(num_epochs):
         model.train()
         epoch_loss = 0.
@@ -179,13 +180,14 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         if checkpointing and val_loss < best_val_loss:
             print("Checkpointing best val loss model...")
             best_val_loss = val_loss
+            best_epoch = epoch
             torch.save(model.state_dict(), model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5 Evaluating
     print("Final Evaluation...")
-    if checkpointing:
+    if checkpointing and best_epoch != num_epochs - 1:
         state_dict = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
         model = model.load_state_dict(state_dict)
     model.eval()
