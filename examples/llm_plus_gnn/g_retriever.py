@@ -237,7 +237,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             gnn_llm_preds += out['pred']
         print(
             "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
-        for i, batch in tqdm(loader):
+        for i, batch in tqdm(enumerate(loader)):
             question = batch.question[0]
             correct_answer = batch.label[0]
             # GNN+LLM only using 32 tokens to answer, give untrained LLM more
@@ -281,7 +281,6 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     trained_llm_hallucin_sum = 0
     untuned_llm_hallucin_sum = pure_llm_hallucin_sum
     final_prnt_str = ""
-    del model
     if path.exists("llm.pt") and path.exists("llm_eval_outs.pt"):
         print("Existing finetuned LLAMA2 found.")
         print("Would you like to retrain?")
