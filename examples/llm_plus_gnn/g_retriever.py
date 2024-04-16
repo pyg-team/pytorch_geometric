@@ -319,7 +319,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             final_prnt_str += "Label: '" + correct_answer + "'\n"
             final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred + "'\n"
             final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred + "'\n"
-            final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred + "\n'"
+            final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred + "'\n"
             final_prnt_str += "\n" + "#" * 20 + "\n\n"
     print("Total untuned LLM Hallucinations:", untuned_llm_hallucin_sum)
     print("Total tuned LLM Hallucinations:", trained_llm_hallucin_sum)
