@@ -231,9 +231,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         pure_llm_hallucin_sum = 0
         gnn_save_list = []
         untuned_llm_save_list = []
-        print("Extracting necesarry info from saved GNN+LLM outputs...")
         gnn_llm_preds = []
-        for out in tqdm(gnn_llm_eval_outs):
+        for out in gnn_llm_eval_outs:
             gnn_llm_preds += out['pred']
         print(
             "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
@@ -298,9 +297,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
         pure_llm_eval_outputs = torch.load("llm_eval_outs.pt")
-    print("Extracting necesarry info from finetuned LLM outputs...")
     pure_llm_preds = []
-    for out in tqdm(pure_llm_eval_outs):
+    for out in pure_llm_eval_outs:
         pure_llm_preds += out['pred']
     print("Final comparison between all models...")
     for i, batch in enumerate(tqdm(loader)):
