@@ -179,14 +179,15 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         if checkpointing and val_loss < best_val_loss:
             print("Checkpointing best val loss model...")
             best_val_loss = val_loss
-            torch.save(model, model_save_name + "_best_val_loss_ckpt.pt")
+            torch.save(model.state_dict(), model_save_name + "_best_val_loss_ckpt.pt")
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5 Evaluating
     print("Final Evaluation...")
     if checkpointing:
-        model = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
+        state_dict = torch.load(model_save_name + "_best_val_loss_ckpt.pt")
+        model = model.load_state_dict(state_dict)
     model.eval()
     eval_output = []
     progress_bar_test = tqdm(range(len(test_loader)))
@@ -201,7 +202,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print(f'Test Acc {acc}')
     # save model
     print("Saving Model...")
-    torch.save(model, model_save_name + ".pt")
+    torch.save(model.state_dict(), model_save_name + ".pt")
     print("Saving eval output for downstream demo...")
     torch.save(eval_output, model_save_name + "_eval_outs.pt")
     print("Done!")
