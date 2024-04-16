@@ -83,7 +83,8 @@ def compute_accuracy(eval_output):
 def save_params_dict(model, save_path):
     state_dict = model.state_dict()
     param_grad_dict = {
-        k: v.requires_grad for (k, v) in model.named_parameters()
+        k: v.requires_grad
+        for (k, v) in model.named_parameters()
     }
     for k in list(state_dict.keys()):
         if k in param_grad_dict.keys() and not param_grad_dict[k]:
