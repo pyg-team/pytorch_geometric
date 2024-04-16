@@ -211,6 +211,12 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                  eval_batch_size):
     print("First comparing against a pretrained LLAMA2 model...")
+    # Step 1: Define a single batch size test loader
+    idx_split = dataset.split_idxs
+    test_dataset = [dataset[i] for i in idx_split['test']]
+    # batch size 1 loader for simplicity
+    loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
+                        pin_memory=True, shuffle=False)
     pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
@@ -221,12 +227,6 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         skip_step_one = False
 
     if not skip_step_one:
-        # Step 1: Define a single batch size test loader
-        idx_split = dataset.split_idxs
-        test_dataset = [dataset[i] for i in idx_split['test']]
-        # batch size 1 loader for simplicity
-        loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
-                            pin_memory=True, shuffle=False)
         gnn_llm_hallucin_sum = 0
         pure_llm_hallucin_sum = 0
         gnn_save_list = []
