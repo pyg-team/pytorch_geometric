@@ -210,6 +210,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                  eval_batch_size):
+    print("First comparing against a pretrained LLAMA2 model...")
     pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
@@ -258,10 +259,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
         percent = 100.0 * round(
             1 - (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
-        print(f"GNN reduces hallucinations by: ~{percent}%")
+        print(f"GNN reduces pretrained LLM hallucinations by: ~{percent}%")
         print("Note: hallucinations detected by regex hence the ~")
         print("Now we see how the LLM compares when finetuned...")
-        print("Saving outputs of GNN+LLM and Pretrained LLM...")
+        print("Saving outputs of GNN+LLM and pretrained LLM...")
         save_dict = {
             "gnn_save_list": gnn_save_list,
             "untuned_llm_save_list": untuned_llm_save_list,
@@ -269,6 +270,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             "pure_llm_hallucin_sum": pure_llm_hallucin_sum
         }
         torch.save(save_dict, "demo_save_dict.pt")
+        print("Done!")
     else:
         save_dict = torch.load("demo_save_dict.pt")
         gnn_save_list = save_dict["gnn_save_list"]
@@ -301,6 +303,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     pure_llm_preds = []
     for out in tqdm(pure_llm_eval_outs):
         pure_llm_preds += out['pred']
+    print("Final comparison between all models...")
     for i, batch in tqdm(enumerate(loader)):
         question = batch.question[0]
         correct_answer = batch.label[0]
@@ -321,7 +324,6 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             final_prnt_str += "Tuned LLM Output: " + pure_llm_pred + "\n"
             final_prnt_str += "GNN+LLM Output: " + gnn_llm_pred + "\n"
             final_prnt_str += "#" * 20 + "\n"
-    print("After finetuning the LLM...")
     print("Total untuned LLM Hallucinations:", untuned_llm_hallucin_sum)
     print("Total tuned LLM Hallucinations:", trained_llm_hallucin_sum)
     print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
@@ -373,6 +375,5 @@ if __name__ == "__main__":
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
         dataset = WebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
-    print("First comparing against a pretrained LLAMA2 model")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size)
