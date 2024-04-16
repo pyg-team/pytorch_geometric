@@ -92,7 +92,7 @@ def save_params_dict(model, save_path):
     torch.save(state_dict, save_path)
 
 
-def load_params_dict(model, savepath):
+def load_params_dict(model, save_path):
     state_dict = torch.load(save_path)
     model.load_state_dict(state_dict)
     return model
