@@ -36,6 +36,7 @@ from torch_geometric.data import Data, InMemoryDataset
 # Alot of code in this file is based on the original G-Retriever paper
 # url: https://arxiv.org/abs/2402.07630
 
+
 @no_type_check
 def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
                        textual_edges: df, topk: int = 3, topk_e: int = 3,
