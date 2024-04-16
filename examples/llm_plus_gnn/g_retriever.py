@@ -298,7 +298,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     else:
         pure_llm_eval_outputs = torch.load("llm_eval_outs.pt")
     pure_llm_preds = []
-    for out in pure_llm_eval_outs:
+    for out in pure_llm_eval_outputs:
         pure_llm_preds += out['pred']
     print("Final comparison between all models...")
     for i, batch in enumerate(tqdm(loader)):
