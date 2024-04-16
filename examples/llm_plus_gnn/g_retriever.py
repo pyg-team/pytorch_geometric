@@ -231,7 +231,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         pure_llm_hallucin_sum = 0
         gnn_save_list = []
         untuned_llm_save_list = []
-        print("Extracting necesarry info from saved GNN+LLM outputs")
+        print("Extracting necesarry info from saved GNN+LLM outputs...")
         gnn_llm_preds = []
         for out in tqdm(gnn_llm_eval_outs):
             gnn_llm_preds += out['pred']
