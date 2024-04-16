@@ -33,13 +33,13 @@ except ImportError as e:  # noqa
 
 from torch_geometric.data import Data, InMemoryDataset
 
+# Alot of code in this file is based on the original G-Retriever paper
+# url: https://arxiv.org/abs/2402.07630
 
 @no_type_check
 def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
                        textual_edges: df, topk: int = 3, topk_e: int = 3,
                        cost_e: float = 0.5) -> Tuple[Data, str]:
-    # from original G-Retriever work
-    # https://arxiv.org/abs/2402.07630
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
         desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
