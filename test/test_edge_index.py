@@ -1143,7 +1143,7 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
+@withPackage('torch>=2.2.0')  # TODO Make it work on nightly.
 def test_compile():
     import torch._dynamo as dynamo
 
@@ -1174,7 +1174,7 @@ def test_compile():
 
 
 @onlyLinux
-@withPackage('torch==2.2.0')  # TODO Make it work on nightly.
+@withPackage('torch>=2.2.0')  # TODO Make it work on nightly.
 def test_compile_create_edge_index():
     import torch._dynamo as dynamo
 
