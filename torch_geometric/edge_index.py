@@ -1107,13 +1107,14 @@ class EdgeIndex(Tensor):
         # TODO Add `_T_index`.
         if self._T_indptr is not None:
             attrs.append('_T_indptr')
-        print(attrs)
+
         ctx = (
             self._sparse_size,
             self._sort_order,
             self._is_undirected,
             self._cat_metadata,
         )
+
         return attrs, ctx
 
     @staticmethod
@@ -1126,15 +1127,17 @@ class EdgeIndex(Tensor):
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
-        print(inner_tensors, ctx, outer_size, outer_stride)
+
         edge_index = EdgeIndex(inner_tensors['_data'])
         edge_index._indptr = inner_tensors.get('_indptr', None)
         edge_index._T_perm = inner_tensors.get('_T_perm', None)
         edge_index._T_indptr = inner_tensors.get('_T_indptr', None)
+
         edge_index._sparse_size = ctx[0]
         edge_index._sort_order = ctx[1]
         edge_index._is_undirected = ctx[2]
         edge_index._cat_metadata = ctx[3]
+
         return edge_index
 
     @classmethod
