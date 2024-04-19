@@ -1764,6 +1764,10 @@ def _spmm(
     transpose: bool = False,
 ) -> Tensor:
 
+    print("SPMM")
+    print('input', input)
+    print('other', other)
+
     if reduce not in get_args(ReduceType):
         raise ValueError(f"`reduce='{reduce}'` is not a valid reduction")
 
@@ -1779,14 +1783,17 @@ def _spmm(
 
     if (torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling()
             and other.is_cuda):  # pragma: no cover
+        print("1")
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
     if value is not None and value.requires_grad:
+        print("2")
         if torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling():
             return _torch_sparse_spmm(input, other, value, reduce, transpose)
         return _scatter_spmm(input, other, value, reduce, transpose)
 
     if torch_geometric.typing.WITH_PT20:
+        print("3")
         if reduce == 'sum' or reduce == 'add':
             return _TorchSPMM.apply(input, other, value, 'sum', transpose)
 
@@ -1799,8 +1806,10 @@ def _spmm(
             return _TorchSPMM.apply(input, other, value, reduce, transpose)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling():
+        print("4")
         return _torch_sparse_spmm(input, other, value, reduce, transpose)
 
+    print("5")
     return _scatter_spmm(input, other, value, reduce, transpose)
 
 
