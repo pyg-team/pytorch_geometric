@@ -102,9 +102,6 @@ class GraphConv(MessagePassing):
     ) -> Tensor:
 
         if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-            print("============")
-            print(edge_index)
-            print(x[0].size())
             return edge_index.matmul(
                 other=x[0],
                 input_value=edge_weight,
