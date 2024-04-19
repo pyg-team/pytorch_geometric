@@ -336,10 +336,10 @@ class EdgeIndex(Tensor):
             elif sparse_size[0] is None and sparse_size[1] is not None:
                 sparse_size = (sparse_size[1], sparse_size[1])
 
-        if torch_geometric.typing.WITH_PT112:
-            out = super().__new__(cls, data)
-        else:
-            out = Tensor._make_subclass(cls, data)
+        # if torch_geometric.typing.WITH_PT112:
+        #     out = super().__new__(cls, data)
+        # else:
+        out = Tensor._make_subclass(cls, data)
 
         # Attach metadata:
         assert isinstance(out, EdgeIndex)
@@ -925,7 +925,7 @@ class EdgeIndex(Tensor):
             trust_data=True,
         )
 
-    # TODO investigate how to avoid overlapping return types here.
+    # TODO Investigate how to avoid overlapping return types here.
     @overload
     def matmul(  # type: ignore
         self,
@@ -1098,21 +1098,44 @@ class EdgeIndex(Tensor):
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
         assert self._data is not None
+
+        attrs = ['_data']
+        if self._indptr is not None:
+            attrs.append('_indptr')
+        if self._T_perm is not None:
+            attrs.append('_T_perm')
         # TODO Add `_T_index`.
-        attrs = ['_data', '_indptr', '_T_perm', '_T_indptr']
-        return attrs, ()
+        if self._T_indptr is not None:
+            attrs.append('_T_indptr')
+        print(attrs)
+        ctx = (
+            self._sparse_size,
+            self._sort_order,
+            self._is_undirected,
+            self._cat_metadata,
+        )
+        return attrs, ctx
 
     @staticmethod
     def __tensor_unflatten__(
-        inner_tensors: Tuple[Any],
+        inner_tensors: Dict[str, Any],
         ctx: Tuple[Any, ...],
-        *args: Any,
-        **kwargs: Any,
+        outer_size: Tuple[int, ...],
+        outer_stride: Tuple[int, ...],
     ) -> 'EdgeIndex':
         if not torch_geometric.typing.WITH_PT22:  # pragma: no cover
             raise RuntimeError("'torch.compile' with 'EdgeIndex' only "
                                "supported from PyTorch 2.2 onwards")
-        raise NotImplementedError
+        print(inner_tensors, ctx, outer_size, outer_stride)
+        edge_index = EdgeIndex(inner_tensors['_data'])
+        edge_index._indptr = inner_tensors.get('_indptr', None)
+        edge_index._T_perm = inner_tensors.get('_T_perm', None)
+        edge_index._T_indptr = inner_tensors.get('_T_indptr', None)
+        edge_index._sparse_size = ctx[0]
+        edge_index._sort_order = ctx[1]
+        edge_index._is_undirected = ctx[2]
+        edge_index._cat_metadata = ctx[3]
+        return edge_index
 
     @classmethod
     def __torch_function__(
