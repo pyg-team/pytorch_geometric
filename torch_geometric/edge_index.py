@@ -1748,12 +1748,14 @@ def _scatter_spmm(
     if not transpose:
         other_j = other[input[1]]
         index = input[0]
+        dim_size = input.get_sparse_size(0)
     else:
         other_j = other[input[0]]
         index = input[1]
+        dim_size = input.get_sparse_size(1)
 
     other_j = other_j * value.view(-1, 1) if value is not None else other_j
-    return scatter(other_j, index, 0, dim_size=other.size(0), reduce=reduce)
+    return scatter(other_j, index, 0, dim_size=dim_size, reduce=reduce)
 
 
 def _spmm(
