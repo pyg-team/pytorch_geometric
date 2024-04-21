@@ -1,6 +1,6 @@
 import itertools
 import os.path as osp
-from typing import List, Union, Literal
+from typing import List, Literal, Union
 
 import torch
 from rdkit import Chem
@@ -52,6 +52,7 @@ class FeaturesGenerator:
         Args:
             value: The value for which the encoding should be one.
             choices: A list of possible values.
+
         Returns:
             A one-hot encoding of the value in a list of length
             len(choices) + 1. If value is not in the list of
@@ -64,9 +65,7 @@ class FeaturesGenerator:
         return encoding
 
     def generate_atom_features(
-        self,
-        atom: Chem.rdchem.Atom,
-        functional_groups: List[int] = None
+            self, atom: Chem.rdchem.Atom, functional_groups: List[int] = None
     ) -> List[Union[bool, int, float]]:
         """Builds a feature vector for an atom.
 
@@ -74,6 +73,7 @@ class FeaturesGenerator:
             atom: An RDKit atom.
             functional_groups: A k-hot vector indicating the functional
                 groups the atom belongs to.
+
         Returns:
             A list containing the atom features.
         """
@@ -100,13 +100,12 @@ class FeaturesGenerator:
         return features
 
     def generate_bond_features(
-        self,
-        bond: Chem.rdchem.Bond
-    ) -> List[Union[bool, int, float]]:
+            self, bond: Chem.rdchem.Bond) -> List[Union[bool, int, float]]:
         """Builds a feature vector for a bond.
 
         Args:
             bond: A RDKit bond.
+
         Returns:
             A list containing the bond features.
         """

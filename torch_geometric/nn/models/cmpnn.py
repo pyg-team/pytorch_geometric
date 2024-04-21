@@ -1,10 +1,11 @@
 import math
-from typing import Literal, Tuple, List
+from typing import List, Literal, Tuple
 
 import torch
-from torch import Tensor
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
+
 from torch_geometric.nn import MessagePassing
 from torch_geometric.nn.aggr import MaxAggregation, SumAggregation
 
@@ -89,7 +90,6 @@ class CMPNN(nn.Module):
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific graph.
         """
-
         init_atom_embed = self.atom_proj(x)
         atom_embed = init_atom_embed.clone()
         init_bond_embed = self.bond_proj(edge_attr)
@@ -182,9 +182,8 @@ class GCNEConv(MessagePassing):
         return edge_attr
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({self.in_channels}, '
-            f"{self.out_channels}, communicator='{self.communicator}')")
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f"{self.out_channels}, communicator='{self.communicator}')")
 
     @staticmethod
     def get_reverse_edge_index(num_edges: int) -> List[int]:
@@ -238,9 +237,8 @@ class GCNConv(MessagePassing):
         return self.communicator(message, x)
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({self.in_channels}, '
-            f"{self.out_channels}, communicator='{self.communicator}')")
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f"{self.out_channels}, communicator='{self.communicator}')")
 
 
 class NodeEdgeMessageCommunicator(nn.Module):
