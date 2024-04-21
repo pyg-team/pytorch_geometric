@@ -7,6 +7,7 @@ from torch_geometric.nn import MultiAggregation
 
 @pytest.mark.parametrize('multi_aggr_tuple', [
     (dict(mode='cat'), 3),
+    (dict(mode='message_booster'), 1),
     (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1),
     (dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
                                         num_heads=4)), 1),
