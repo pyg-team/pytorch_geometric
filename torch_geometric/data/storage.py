@@ -443,9 +443,9 @@ class NodeStorage(BaseStorage):
                 return self.edge_index.sparse_size(0)
             if self.edge_index.sparse_size(1) is not None:
                 return self.edge_index.sparse_size(1)
-        if 'adj' in self and isinstance(self.adj, SparseTensor):
+        if 'adj' in self and isinstance(self.adj, (Tensor, SparseTensor)):
             return self.adj.size(0)
-        if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
+        if 'adj_t' in self and isinstance(self.adj_t, (Tensor, SparseTensor)):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "

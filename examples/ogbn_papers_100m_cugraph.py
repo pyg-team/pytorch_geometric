@@ -3,12 +3,27 @@ import os
 import time
 from typing import Optional
 
+import cupy
+import rmm
 import torch
-import torch.nn.functional as F
-from ogb.nodeproppred import PygNodePropPredDataset
+from rmm.allocators.cupy import rmm_cupy_allocator
+from rmm.allocators.torch import rmm_torch_allocator
 
-import torch_geometric
-from torch_geometric.loader import NeighborLoader
+# Must change allocators immediately upon import
+# or else other imports will cause memory to be
+# allocated and prevent changing the allocator
+rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
+cupy.cuda.set_allocator(rmm_cupy_allocator)
+torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
+
+import cugraph  # noqa
+import torch.nn.functional as F  # noqa
+from cugraph.testing.mg_utils import enable_spilling  # noqa
+from cugraph_pyg.data import CuGraphStore  # noqa
+from cugraph_pyg.loader import CuGraphNeighborLoader  # noqa
+
+import torch_geometric  # noqa
+from torch_geometric.loader import NeighborLoader  # noqa
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)
@@ -30,11 +45,6 @@ parser.add_argument(
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-dataset = PygNodePropPredDataset(name='ogbn-papers100M',
-                                 root='/datasets/ogb_datasets')
-split_idx = dataset.get_idx_split()
 
 
 def get_num_workers() -> int:
@@ -49,15 +59,30 @@ kwargs = dict(
     batch_size=args.batch_size,
 )
 # Set Up Neighbor Loading
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+enable_spilling()
+
+from ogb.nodeproppred import PygNodePropPredDataset  # noqa
+
+dataset = PygNodePropPredDataset(name='ogbn-papers100M',
+                                 root='/datasets/ogb_datasets')
+split_idx = dataset.get_idx_split()
 data = dataset[0]
-num_work = get_num_workers()
-train_loader = NeighborLoader(data=data, input_nodes=split_idx['train'],
-                              num_workers=num_work, drop_last=True,
-                              shuffle=False, **kwargs)
-val_loader = NeighborLoader(data=data, input_nodes=split_idx['valid'],
-                            num_workers=num_work, **kwargs)
-test_loader = NeighborLoader(data=data, input_nodes=split_idx['test'],
-                             num_workers=num_work, **kwargs)
+
+G = {("N", "E", "N"): data.edge_index}
+N = {"N": data.num_nodes}
+fs = cugraph.gnn.FeatureStore(backend="torch")
+fs.add_data(data.x, "N", "x")
+fs.add_data(data.y, "N", "y")
+cugraph_store = CuGraphStore(fs, G, N)
+train_loader = CuGraphNeighborLoader(cugraph_store,
+                                     input_nodes=split_idx['train'],
+                                     shuffle=True, drop_last=True, **kwargs)
+val_loader = CuGraphNeighborLoader(cugraph_store,
+                                   input_nodes=split_idx['valid'], **kwargs)
+test_loader = CuGraphNeighborLoader(cugraph_store,
+                                    input_nodes=split_idx['test'], **kwargs)
 
 if args.use_gat_conv:
     model = torch_geometric.nn.models.GAT(
@@ -80,6 +105,8 @@ warmup_steps = 20
 def train():
     model.train()
     for i, batch in enumerate(train_loader):
+        batch = batch.to_homogeneous()
+
         if i == warmup_steps:
             torch.cuda.synchronize()
             start_avg_time = time.perf_counter()
@@ -107,6 +134,7 @@ def test(loader: NeighborLoader, val_steps: Optional[int] = None):
     for i, batch in enumerate(loader):
         if val_steps is not None and i >= val_steps:
             break
+        batch = batch.to_homogeneous()
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
