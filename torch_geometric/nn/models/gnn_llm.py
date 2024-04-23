@@ -25,7 +25,9 @@ BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
-llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
+#llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
+# trying llama3
+llama2_str_name = "meta-llama/Meta-Llama-3-8B"
 gemma_str_name = "google/gemma-7b"
 max_txt_len = 512
 max_new_tokens = 32
