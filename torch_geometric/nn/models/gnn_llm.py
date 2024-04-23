@@ -249,7 +249,7 @@ class GNN_LLM(nn.Module):
         llm_to_use='llama2',
         llm_use_lora: bool = False,
         llm_dtype=torch.bfloat16,
-        num_llm_params: int = 7,
+        num_llm_params: int = 8,
         gnn_to_use=GAT,
         gnn_in_channels: int = 1024,
         gnn_hidden_channels: int = 1024,
