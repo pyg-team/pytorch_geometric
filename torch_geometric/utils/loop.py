@@ -44,28 +44,26 @@ def contains_self_loops(edge_index: Tensor) -> bool:
     return mask.sum().item() > 0
 
 
-@overload
-def remove_self_loops(
-    edge_index: Tensor,
-    edge_attr: None = None,
-) -> Tuple[Tensor, None]:
-    pass
+# @overload
+# def remove_self_loops(
+#     edge_index: Tensor,
+#     edge_attr: None = None,
+# ) -> Tuple[Tensor, None]:
+#     pass
 
+# @overload
+# def remove_self_loops(  # noqa: F811
+#     edge_index: Tensor,
+#     edge_attr: Tensor,
+# ) -> Tuple[Tensor, Tensor]:
+#     pass
 
-@overload
-def remove_self_loops(  # noqa: F811
-    edge_index: Tensor,
-    edge_attr: Tensor,
-) -> Tuple[Tensor, Tensor]:
-    pass
-
-
-@overload
-def remove_self_loops(  # noqa: F811
-    edge_index: Tensor,
-    edge_attr: Optional[Tensor],
-) -> Tuple[Tensor, Optional[Tensor]]:
-    pass
+# @overload
+# def remove_self_loops(  # noqa: F811
+#     edge_index: Tensor,
+#     edge_attr: Optional[Tensor],
+# ) -> Tuple[Tensor, Optional[Tensor]]:
+#     pass
 
 
 def remove_self_loops(  # noqa: F811
@@ -93,42 +91,44 @@ def remove_self_loops(  # noqa: F811
         tensor([[1, 2],
                 [3, 4]]))
     """
-    size: Optional[Tuple[int, int]] = None
-    if not typing.TYPE_CHECKING and torch.jit.is_scripting():
-        layout: Optional[int] = None
-    else:
-        layout: Optional[torch.layout] = None
+    return edge_index, edge_attr
 
-    value: Optional[Tensor] = None
-    if is_torch_sparse_tensor(edge_index):
-        layout = edge_index.layout
-        size = (edge_index.size(0), edge_index.size(1))
-        edge_index, value = to_edge_index(edge_index)
+    # size: Optional[Tuple[int, int]] = None
+    # if not typing.TYPE_CHECKING and torch.jit.is_scripting():
+    #     layout: Optional[int] = None
+    # else:
+    #     layout: Optional[torch.layout] = None
 
-    is_undirected = False
-    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-        is_undirected = edge_index.is_undirected
+    # value: Optional[Tensor] = None
+    # if is_torch_sparse_tensor(edge_index):
+    #     layout = edge_index.layout
+    #     size = (edge_index.size(0), edge_index.size(1))
+    #     edge_index, value = to_edge_index(edge_index)
 
-    mask = edge_index[0] != edge_index[1]
-    edge_index = edge_index[:, mask]
+    # is_undirected = False
+    # if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+    #     is_undirected = edge_index.is_undirected
 
-    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-        edge_index._is_undirected = is_undirected
+    # mask = edge_index[0] != edge_index[1]
+    # edge_index = edge_index[:, mask]
 
-    if layout is not None:
-        assert edge_attr is None
-        assert value is not None
-        value = value[mask]
-        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
-            return to_torch_coo_tensor(edge_index, value, size, True), None
-        elif str(layout) == 'torch.sparse_csr':
-            return to_torch_csr_tensor(edge_index, value, size, True), None
-        raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
+    # if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+    #     edge_index._is_undirected = is_undirected
 
-    if edge_attr is None:
-        return edge_index, None
-    else:
-        return edge_index, edge_attr[mask]
+    # if layout is not None:
+    #     assert edge_attr is None
+    #     assert value is not None
+    #     value = value[mask]
+    #     if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
+    #         return to_torch_coo_tensor(edge_index, value, size, True), None
+    #     elif str(layout) == 'torch.sparse_csr':
+    #         return to_torch_csr_tensor(edge_index, value, size, True), None
+    #     raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
+
+    # if edge_attr is None:
+    #     return edge_index, None
+    # else:
+    #     return edge_index, edge_attr[mask]
 
 
 @overload

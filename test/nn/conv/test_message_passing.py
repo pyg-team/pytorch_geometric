@@ -9,7 +9,7 @@ from torch.nn import Linear
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
-from torch_geometric.nn import MessagePassing, aggr
+from torch_geometric.nn import GATConv, GCNConv, MessagePassing, aggr
 from torch_geometric.typing import (
     Adj,
     OptPairTensor,
@@ -706,3 +706,28 @@ def test_traceable_my_conv_with_self_loops(num_nodes):
 
     assert torch.allclose(out, traced_out)
     assert torch.allclose(out, scripted_out)
+
+
+@pytest.mark.parametrize('Conv', [GATConv])
+def test_jit_load(tmp_path, Conv):
+    def modify_tensor(x: Tensor) -> Tensor:
+        return x[x > 0]
+
+    class Module(torch.nn.Module):
+        def forward(
+            self,
+            edge_index: Union[Tensor, SparseTensor],
+        ) -> Union[Tensor, SparseTensor]:
+            if isinstance(x, Tensor):
+                x = modify_tensor(x)
+            else:
+                x = 2
+                size = 3
+            return x
+
+    path = osp.join(tmp_path, 'conv.pt')
+    # conv = Conv(16, 16)
+    conv = Module()
+    scripted_conv = torch.jit.script(conv)
+    torch.jit.save(scripted_conv, path)
+    torch.jit.load(path)

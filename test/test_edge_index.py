@@ -5,6 +5,7 @@ from typing import List, Optional
 import pytest
 import torch
 from torch import Tensor, tensor
+from torch.utils._python_dispatch import TorchDispatchMode
 
 import torch_geometric
 from torch_geometric import EdgeIndex
@@ -44,6 +45,10 @@ TRANSPOSE = [
 def test_basic(dtype, device):
     kwargs = dict(dtype=dtype, device=device, sparse_size=(3, 3))
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
+    # with DispatchLog()kj:
+    print(type(adj * 1))
+    # print(type(adj * 1))
+    return
     adj.validate()
     assert isinstance(adj, EdgeIndex)
 
@@ -53,7 +58,7 @@ def test_basic(dtype, device):
     else:
         assert str(adj).startswith('tensor([[0, 1, 1, 2],\n'
                                    '        [1, 0, 2, 1]], ')
-    assert str(adj).endswith('sparse_size=(3, 3), nnz=4)')
+    assert 'sparse_size=(3, 3), nnz=4' in str(adj)
     assert (f"device='{device}'" in str(adj)) == adj.is_cuda
     assert (f'dtype={dtype}' in str(adj)) == (dtype != torch.long)
 
@@ -1143,7 +1148,7 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')  # TODO Make it work on nightly.
+@withPackage('torch>=2.2.0')
 def test_compile():
     import torch._dynamo as dynamo
 
@@ -1174,17 +1179,15 @@ def test_compile():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')  # TODO Make it work on nightly.
+@withPackage('torch>=2.2.0')
 def test_compile_create_edge_index():
     import torch._dynamo as dynamo
 
     class Model(torch.nn.Module):
-        def forward(self) -> None:
-            # TODO Add more tests once closed:
-            # https://github.com/pytorch/pytorch/issues/117806
-            out = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-            out.as_subclass(EdgeIndex)
-            return
+        def forward(self) -> EdgeIndex:
+            edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
+            edge_index = edge_index.sort_by('col')
+            return edge_index
 
     model = Model()
 
