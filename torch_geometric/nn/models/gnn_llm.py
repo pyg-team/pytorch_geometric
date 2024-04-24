@@ -73,6 +73,13 @@ class LLM(nn.Module):
         else:
             self.printable_llm_name = llm_name
             self.huggingface_str = llm_name
+
+        """
+        This is a rough hueristic:
+        We found that LLAMA2 (7B) + GAT hits OOM
+        on a single 80GB GPU, but can fit on a single
+        GPU that is slightly larger GPU.
+        """
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = llm_dtype
         print('Loading ' + str(self.printable_llm_name))
