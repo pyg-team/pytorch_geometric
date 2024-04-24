@@ -241,8 +241,8 @@ class WebQSPDataset(InMemoryDataset):
     ) -> None:
         missing_imports = False
         missing_str_list = []
-        from transformers import AutoModel, AutoTokenizer
         import datasets
+        from transformers import AutoModel, AutoTokenizer
         if not WITH_PCST:
             missing_str_list.append('pcst_fast')
             missing_imports = True
