@@ -73,7 +73,6 @@ class LLM(nn.Module):
         else:
             self.printable_llm_name = llm_name
             self.huggingface_str = llm_name
-
         """
         This is a rough hueristic:
         We found that LLAMA2 (7B) + GAT hits OOM
