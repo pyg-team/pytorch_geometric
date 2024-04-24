@@ -26,6 +26,8 @@ import torch_geometric.typing
 from torch_geometric import is_compiling
 from torch_geometric.typing import SparseTensor
 
+aten = torch.ops.aten
+
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
 if torch_geometric.typing.WITH_PT20:
@@ -137,7 +139,7 @@ def assert_two_dimensional(tensor: Tensor) -> None:
 
 
 def assert_contiguous(tensor: Tensor) -> None:
-    if not tensor.is_contiguous():
+    if not tensor[0].is_contiguous() or not tensor[1].is_contiguous():
         raise ValueError("'EdgeIndex' needs to be contiguous. Please call "
                          "`edge_index.contiguous()` before proceeding.")
 
@@ -384,13 +386,13 @@ class EdgeIndex(Tensor):
         * the sort order is correctly set.
         * indices are bidirectional in case it is specified as undirected.
         """
-        assert_valid_dtype(self)
-        assert_two_dimensional(self)
-        assert_contiguous(self)
+        assert_valid_dtype(self._data)
+        assert_two_dimensional(self._data)
+        assert_contiguous(self._data)
         if self.is_undirected:
             assert_symmetric(self.sparse_size())
 
-        if self.numel() > 0 and self.min() < 0:
+        if self.numel() > 0 and self._data.min() < 0:
             raise ValueError(f"'{self.__class__.__name__}' contains negative "
                              f"indices (got {int(self.min())})")
 
@@ -625,7 +627,7 @@ class EdgeIndex(Tensor):
             max_index = self.get_sparse_size(dim)
             index, perm = index_sort(self._data[dim], max_index)
             self._T_index = set_tuple_item(self._T_index, dim, index)
-            self._T_perm = perm
+            self._T_perm = perm.to(self.dtype)
 
         if self._T_index[1 - dim] is None:
             self._T_index = set_tuple_item(  #
@@ -1144,6 +1146,9 @@ class EdgeIndex(Tensor):
 
         return edge_index
 
+    # Prevent auto-wrapping outputs back into the proper subclass type:
+    __torch_function__ = torch._C._disabled_torch_function_impl
+
     @classmethod
     def __torch_dispatch__(
         cls: Type,
@@ -1171,9 +1176,7 @@ class EdgeIndex(Tensor):
         args = pytree.tree_map_only(EdgeIndex, lambda x: x._data, args)
         if kwargs is not None:
             kwargs = pytree.tree_map_only(EdgeIndex, lambda x: x._data, kwargs)
-        out = func(*args, **(kwargs or {}))
-        print(type(out))
-        return out
+        return func(*args, **(kwargs or {}))
 
     def __repr__(self) -> str:
         prefix = f'{self.__class__.__name__}('
@@ -1201,6 +1204,22 @@ class EdgeIndex(Tensor):
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
 
+    def data_ptr(self) -> int:
+        return self._data.data_ptr()
+
+    def shallow_copy(self) -> 'EdgeIndex':
+        out = EdgeIndex(self._data)
+        out._sparse_size = self._sparse_size
+        out._sort_order = self._sort_order
+        out._is_undirected = self._is_undirected
+        out._indptr = self._indptr
+        out._T_perm = self._T_perm
+        out._T_index = self._T_index
+        out._T_indptr = self._T_indptr
+        out._value = self._value
+        out._cat_metadata = self._cat_metadata
+        return out
+
 
 class SortReturnType(NamedTuple):
     values: EdgeIndex
@@ -1212,15 +1231,24 @@ def apply_(
     fn: Callable,
     *args: Any,
     **kwargs: Any,
-) -> EdgeIndex:
+) -> Union[EdgeIndex, Tensor]:
 
-    out = Tensor.__torch_function__(fn, (Tensor, ), (tensor, ) + args, kwargs)
-    out = out.as_subclass(EdgeIndex)
+    data = fn(tensor._data, *args, **kwargs)
+
+    if data.dtype not in SUPPORTED_DTYPES:
+        return data
+
+    if tensor._data.data_ptr() != data.data_ptr():
+        out = EdgeIndex(data)
+    else:  # In-place:
+        tensor._data = data
+        out = tensor
 
     # Copy metadata:
-    out._sparse_size = tensor.sparse_size()
+    out._sparse_size = tensor._sparse_size
     out._sort_order = tensor._sort_order
     out._is_undirected = tensor._is_undirected
+    out._cat_metadata = tensor._cat_metadata
 
     # Convert cache (but do not consider `_value`):
     if tensor._indptr is not None:
@@ -1242,77 +1270,54 @@ def apply_(
     return out
 
 
-@implements(torch.clone)
-@implements(Tensor.clone)
-def clone(tensor: EdgeIndex) -> EdgeIndex:
-    return apply_(tensor, Tensor.clone)
-
-
-@implements(Tensor.to)
-def to(
+@implements(aten.clone.default)
+def clone(
     tensor: EdgeIndex,
-    *args: Any,
-    **kwargs: Any,
-) -> Union[EdgeIndex, Tensor]:
-    out = apply_(tensor, Tensor.to, *args, **kwargs)
-    return out if out.dtype in SUPPORTED_DTYPES else out._data
-
-
-@implements(Tensor.int)
-def _int(tensor: EdgeIndex) -> EdgeIndex:
-    return to(tensor, torch.int32)
-
-
-@implements(Tensor.long)
-def long(tensor: EdgeIndex, *args: Any, **kwargs: Any) -> EdgeIndex:
-    return to(tensor, torch.int64)
-
-
-@implements(Tensor.cpu)
-def cpu(tensor: EdgeIndex, *args: Any, **kwargs: Any) -> EdgeIndex:
-    return apply_(tensor, Tensor.cpu, *args, **kwargs)
-
-
-@implements(Tensor.cuda)
-def cuda(  # pragma: no cover
-    tensor: EdgeIndex,
-    *args: Any,
-    **kwargs: Any,
+    *,
+    memory_format: torch.memory_format = torch.preserve_format,
 ) -> EdgeIndex:
-    return apply_(tensor, Tensor.cuda, *args, **kwargs)
+    return apply_(tensor, aten.clone.default, memory_format=memory_format)
 
 
-@implements(Tensor.share_memory_)
-def share_memory_(tensor: EdgeIndex) -> EdgeIndex:
-    return apply_(tensor, Tensor.share_memory_)
+@implements(aten._to_copy.default)
+def _to_copy(
+    tensor: EdgeIndex,
+    *,
+    dtype: Optional[torch.dtype] = None,
+    layout: Optional[torch.layout] = None,
+    device: Optional[torch.device] = None,
+    pin_memory: bool = False,
+    non_blocking: bool = False,
+    memory_format: Optional[torch.memory_format] = None,
+) -> Union[EdgeIndex, Tensor]:
+    return apply_(
+        tensor,
+        aten._to_copy.default,
+        dtype=dtype,
+        layout=layout,
+        device=device,
+        pin_memory=pin_memory,
+        non_blocking=non_blocking,
+        memory_format=memory_format,
+    )
 
 
-@implements(Tensor.contiguous)
-def contiguous(tensor: EdgeIndex) -> EdgeIndex:
-    return apply_(tensor, Tensor.contiguous)
-
-
-@implements(torch.cat)
+@implements(aten.cat.default)
 def cat(
     tensors: List[Union[EdgeIndex, Tensor]],
     dim: int = 0,
-    *,
-    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    if len(tensors) == 1:
-        return tensors[0]
-
-    output = Tensor.__torch_function__(torch.cat, (Tensor, ), (tensors, dim),
-                                       dict(out=out))
+    data_list = pytree.tree_map_only(EdgeIndex, lambda x: x._data, tensors)
+    data = aten.cat.default(data_list, dim=dim)
 
     if dim != 1 and dim != -1:  # No valid `EdgeIndex` anymore.
-        return output
+        return data
 
     if any([not isinstance(tensor, EdgeIndex) for tensor in tensors]):
-        return output
+        return data
 
-    output = output.as_subclass(EdgeIndex)
+    out = EdgeIndex(data)
 
     nnz_list = [t.size(1) for t in tensors]
     sparse_size_list = [t.sparse_size() for t in tensors]  # type: ignore
@@ -1336,34 +1341,29 @@ def cat(
         assert isinstance(total_num_cols, int)
         num_cols = max(num_cols, total_num_cols)
 
-    output._sparse_size = (num_rows, num_cols)
+    out._sparse_size = (num_rows, num_cols)
 
     # Post-process `is_undirected`:
-    output._is_undirected = all(is_undirected_list)
+    out._is_undirected = all(is_undirected_list)
 
-    output._cat_metadata = CatMetadata(
+    out._cat_metadata = CatMetadata(
         nnz=nnz_list,
         sparse_size=sparse_size_list,
         sort_order=sort_order_list,
         is_undirected=is_undirected_list,
     )
 
-    return output
+    return out
 
 
-@implements(torch.flip)
-@implements(Tensor.flip)
+@implements(aten.flip.default)
 def flip(
     input: EdgeIndex,
-    dims: Union[int, List[int], Tuple[int, ...]],
-) -> Union[EdgeIndex, Tensor]:
+    dims: Union[List[int], Tuple[int, ...]],
+) -> EdgeIndex:
 
-    if isinstance(dims, int):
-        dims = [dims]
-    assert isinstance(dims, (tuple, list))
-
-    out = Tensor.__torch_function__(torch.flip, (Tensor, ), (input, dims))
-    out = out.as_subclass(EdgeIndex)
+    data = aten.flip.default(input._data, dims)
+    out = EdgeIndex(data)
 
     out._value = input._value
     out._is_undirected = input.is_undirected
@@ -1386,87 +1386,80 @@ def flip(
     return out
 
 
-@implements(torch.index_select)
-@implements(Tensor.index_select)
+@implements(aten.index_select.default)
 def index_select(
     input: EdgeIndex,
     dim: int,
     index: Tensor,
-    *,
-    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    output = Tensor.__torch_function__(  #
-        torch.index_select, (Tensor, ), (input, dim, index), dict(out=out))
+    out = aten.index_select.default(input._data, dim, index)
 
     if dim == 1 or dim == -1:
-        output = output.as_subclass(EdgeIndex)
-        output._sparse_size = input.sparse_size()
-
-    return output
-
-
-@implements(torch.narrow)
-@implements(Tensor.narrow)
-def narrow(
-    input: EdgeIndex,
-    dim: int,
-    start: Union[int, Tensor],
-    length: int,
-) -> Union[EdgeIndex, Tensor]:
-
-    out = Tensor.__torch_function__(  #
-        torch.narrow, (Tensor, ), (input, dim, start, length))
-
-    if dim == 1 or dim == -1:
-        out = out.as_subclass(EdgeIndex)
+        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
-        # NOTE We could potentially maintain `rowptr`/`colptr` attributes here,
-        # but it is not really clear if this is worth it. The most important
-        # information, the sort order, needs to be maintained though:
-        out._sort_order = input._sort_order
 
     return out
 
 
-@implements(Tensor.__getitem__)
-def getitem(input: EdgeIndex, index: Any) -> Union[EdgeIndex, Tensor]:
-    out = Tensor.__torch_function__(  #
-        Tensor.__getitem__, (Tensor, ), (input, index))
+@implements(aten.slice.Tensor)
+def slice(
+    input: EdgeIndex,
+    dim: int,
+    start: Optional[int] = None,
+    end: Optional[int] = None,
+    step: int = 1,
+) -> Union[EdgeIndex, Tensor]:
 
-    # There exists 3 possible index types that map back to a valid `EdgeIndex`,
-    # and all include selecting/filtering in the last dimension only:
-    def is_last_dim_select(i: Any) -> bool:
-        # Maps to true for `__getitem__` requests of the form
-        # `tensor[..., index]` or `tensor[:, index]`.
-        if not isinstance(i, tuple) or len(i) != 2:
-            return False
-        if i[0] == Ellipsis:
-            return True
-        if not isinstance(i[0], slice):
-            return False
-        return i[0].start is None and i[0].stop is None and i[0].step is None
+    if ((start is None or start <= 0)
+            and (end is None or end > input.size(dim)) and step == 1):
+        return input.shallow_copy()  # No-op.
 
-    is_valid = is_last_dim_select(index)
+    out = aten.slice.Tensor(input._data, dim, start, end, step)
+
+    if dim == 1 or dim == -1:
+        if step != 1:
+            out = out.contiguous()
+
+        out = EdgeIndex(out)
+        out._sparse_size = input.sparse_size()
+        # NOTE We could potentially maintain `rowptr`/`colptr` attributes here,
+        # but it is not really clear if this is worth it. The most important
+        # information, the sort order, needs to be maintained though:
+        if step >= 0:
+            out._sort_order = input._sort_order
+        else:
+            if input._sort_order == SortOrder.ROW:
+                out._sort_order = SortOrder.COL
+            elif input._sort_order == SortOrder.COL:
+                out._sort_order = SortOrder.ROW
+
+    return out
+
+
+@implements(aten.index.Tensor)
+def index(
+    input: EdgeIndex,
+    indices: List[Optional[Tensor]],
+) -> Union[EdgeIndex, Tensor]:
+
+    out = aten.index.Tensor(input._data, indices)
+
+    if len(indices) != 2 or indices[0] is not None:
+        return out
+
+    index = indices[1]
+    assert isinstance(index, Tensor)
 
     # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
-    if (is_valid and isinstance(index[1], Tensor)
-            and index[1].dtype in (torch.bool, torch.uint8)):
-        out = out.as_subclass(EdgeIndex)
+    if index.dtype in (torch.bool, torch.uint8):
+        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
         out._sort_order = input._sort_order
 
-    # 2. `edge_index[:, index]` or `edge_index[..., index]`.
-    elif is_valid and isinstance(index[1], Tensor):
-        out = out.as_subclass(EdgeIndex)
+    else:  # 2. `edge_index[:, index]` or `edge_index[..., index]`.
+        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
-
-    # 3. `edge_index[:, slice]` or `edge_index[..., slice]`.
-    elif is_valid and isinstance(index[1], slice):
-        out = out.as_subclass(EdgeIndex)
-        out._sparse_size = input.sparse_size()
-        if index[1].step is None or index[1].step > 0:
-            out._sort_order = input._sort_order
 
     return out
 
@@ -1483,7 +1476,7 @@ def postprocess_add_(
     if out.dim() != 2 or out.size(0) != 2:
         return out
 
-    output: EdgeIndex = out.as_subclass(EdgeIndex)
+    output: EdgeIndex = EdgeIndex(out)
 
     if isinstance(other, int):
         size = maybe_add(input._sparse_size, other, alpha)
@@ -1518,34 +1511,40 @@ def postprocess_add_(
     return output
 
 
-@implements(torch.add)
-@implements(Tensor.add)
+@implements(aten.add.Tensor)
 def add(
     input: EdgeIndex,
-    other: Union[int, Tensor],
+    other: Union[int, Tensor, EdgeIndex],
     *,
     alpha: int = 1,
-    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    output = Tensor.__torch_function__(  #
-        torch.add, (Tensor, ), (input, other), dict(alpha=alpha, out=out))
+    out = aten.add.Tensor(
+        input._data,
+        other._data if isinstance(other, EdgeIndex) else other,
+        alpha=alpha,
+    )
+    return postprocess_add_(input, other, out, alpha)
 
-    return postprocess_add_(input, other, output, alpha)
 
-
-@implements(Tensor.add_)
+@implements(aten.add_.Tensor)
 def add_(
     input: EdgeIndex,
-    other: Union[int, Tensor],
+    other: Union[int, Tensor, EdgeIndex],
     *,
     alpha: int = 1,
 ) -> Union[EdgeIndex, Tensor]:
 
-    output = Tensor.__torch_function__(  #
-        Tensor.add_, (Tensor, ), (input, other), dict(alpha=alpha))
+    # output = Tensor.__torch_function__(  #
+    #     Tensor.add_, (Tensor, ), (input, other), dict(alpha=alpha))
+    out = aten.add_.Tensor(
+        input._data,
+        other._data if isinstance(other, EdgeIndex) else other,
+        alpha=alpha,
+    )
+    return out
 
-    return postprocess_add_(input, other, output, alpha)
+    # return postprocess_add_(input, other, output, alpha)
 
 
 def postprocess_sub_(
