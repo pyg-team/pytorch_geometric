@@ -61,13 +61,13 @@ def get_llm_kwargs(mem_needed):
 
 
 class LLM(nn.Module):
-    def __init__(self, llm_name: str = "llama2", llm_dtype=torch.bfloat16,
+    def __init__(self, model_name: str = "llama2", dtype=torch.bfloat16,
                  num_params: int = 7):
         super().__init__()
-        if llm_name == "llama2":
+        if model_name == "llama2":
             self.printable_llm_name = "LLAMA2"
             self.huggingface_str = llama2_str_name
-        elif llm_name == "gemma":
+        elif model_name == "gemma":
             self.printable_llm_name = "GEMMA"
             self.huggingface_str = gemma_str_name
         else:
@@ -80,7 +80,7 @@ class LLM(nn.Module):
         GPU that is slightly larger GPU.
         """
         self.mem_needed = 85 * num_params / 7
-        self.llm_dtype = llm_dtype
+        self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
         kwargs = get_llm_kwargs(self.mem_needed)
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
