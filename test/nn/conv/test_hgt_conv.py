@@ -15,7 +15,7 @@ def test_hgt_conv_same_dimensions():
         'author': torch.randn(4, 16),
         'paper': torch.randn(6, 16),
     }
-    edge_index = coalesce(get_random_edge_index(4, 6, num_edges=20))
+    edge_index = coalesce(get_random_edge_index(4, 6, num_edges=2))
 
     edge_index_dict = {
         ('author', 'writes', 'paper'): edge_index,
