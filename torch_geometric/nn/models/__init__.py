@@ -42,5 +42,5 @@ __all__ = classes = [
     'MetaPath2Vec', 'DeepGCNLayer', 'TGNMemory', 'LabelPropagation',
     'CorrectAndSmooth', 'AttentiveFP', 'RECT_L', 'LINKX', 'LightGCN',
     'MaskLabel', 'GroupAddRev', 'GNNFF', 'PMLP', 'NeuralFingerprint', 'ViSNet',
-    'GNN_LLM'
+    'GNN_LLM', 
 ]
