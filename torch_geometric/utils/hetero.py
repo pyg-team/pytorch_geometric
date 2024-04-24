@@ -96,9 +96,9 @@ def construct_bipartite_edge_index(
 
         # TODO Add support for SparseTensor w/o converting.
         is_sparse_tensor = isinstance(edge_index, SparseTensor)
-        if is_sparse(edge_index):
-            edge_index, edge_attr = to_edge_index(edge_index)
-            edge_index = edge_index.flip([0])
+        if is_sparse(edge_index): # transposed edge_index (dst, src)
+            edge_index, edge_attr = to_edge_index(edge_index) 
+            edge_index = edge_index.flip([0]) # edge_index (src, dst)
         if not is_sparse_tensor:
             edge_index = edge_index.clone()
 

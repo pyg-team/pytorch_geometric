@@ -230,7 +230,8 @@ class MessagePassing(torch.nn.Module):
         raise ValueError(
             ('`MessagePassing.propagate` only supports integer tensors of '
              'shape `[2, num_messages]`, `torch_sparse.SparseTensor` or '
-             '`torch.sparse.Tensor` for argument `edge_index`.'))
+             '`torch.sparse.Tensor` for argument `edge_index`.'
+             f'{edge_index.shape}'))
 
     def _set_size(self, size: List[Optional[int]], dim: int, src: Tensor):
         the_size = size[dim]
