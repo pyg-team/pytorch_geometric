@@ -61,6 +61,24 @@ def get_llm_kwargs(mem_needed):
 
 
 class LLM(nn.Module):
+    """
+    This module wraps a HuggingFace Transformer based model in such
+    a way that makes it easy to use with PyG GNNs.
+    model_name (str): A string representing the huggingface model you
+        want to use. This module has been tested for 'llama2' and 'gemma'.
+        Other huggingface transformer models should work if you pass the
+        correct name, see huggingface.co for details. If any issues occur
+        please file an issue on
+        https://github.com/pyg-team/pytorch_geometric
+        and assign to puririshi98. (default: :obj:'llama2')
+    dtype (torch.dtype): The dtype to use for the LLM.
+            (default :obj: `torch.bloat16`)
+    num_params (int): An integer representing how many params your
+        huggingface transformer model has, in billions. This is used to
+        automatically allocate the number of gpus needed, given the
+        available GPU memory of your GPUs (default :obj:`7`)
+
+    """
     def __init__(self, model_name: str = "llama2", dtype=torch.bfloat16,
                  num_params: int = 7):
         super().__init__()
@@ -231,8 +249,8 @@ class GRetriever(nn.Module):
             and assign to puririshi98. (default: :obj:'llama2')
         llm_use_lora (bool): use LORA from peft for training the LLM. see
             https://huggingface.co/docs/peft/en/index for details.
-            llm_dtype (torch.dtype): The lower precision dtype to use for the
-            LLM. (default :obj: `torch.bloat16`)
+        llm_dtype (torch.dtype): The dtype to use for the LLM.
+            (default :obj: `torch.bloat16`)
         num_llm_params (int): An integer representing how many params your
             huggingface transformer model has, in billions. This is used to
             automatically allocate the number of gpus needed, given the
