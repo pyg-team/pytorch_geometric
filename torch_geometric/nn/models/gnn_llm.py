@@ -216,7 +216,7 @@ class LLM(nn.Module):
         }
 
 
-class GNN_LLM(nn.Module):
+class GRetriever(nn.Module):
     r"""This GNN+LLM implementation is based on G-retriever.
     Original Paper: <https://arxiv.org/abs/2402.07630>`_.
     See `examples/llm_plus_gnn/g_retriever.py` for example usage.
@@ -266,7 +266,7 @@ class GNN_LLM(nn.Module):
         super().__init__()
         if not WITH_TRANSFORMERS:
             raise ImportError(
-                "To use GNN_LLM, please `pip install transformers`.")
+                "To use GRetriever, please `pip install transformers`.")
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
         elif 'gemma' in llm_to_use.lower():
