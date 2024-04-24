@@ -61,8 +61,7 @@ def get_llm_kwargs(mem_needed):
 
 
 class LLM(nn.Module):
-    """
-    This module wraps a HuggingFace Transformer based model in such
+    """This module wraps a HuggingFace Transformer based model in such
     a way that makes it easy to use with PyG GNNs.
     model_name (str): A string representing the huggingface model you
         want to use. This module has been tested for 'llama2' and 'gemma'.
