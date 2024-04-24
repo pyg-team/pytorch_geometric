@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, no_type_check
+from typing import Dict, List, Tuple, no_type_check, Union
 
 import numpy as np
 
@@ -153,7 +153,7 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self) -> int:
         return self.data["input_ids"].size(0)
 
-    def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
+    def __getitem__(self, index: Union[int, torch.Tensor]) -> Dict[str, torch.Tensor]:
         if isinstance(index, torch.Tensor):
             index = index.item()
         batch_data = dict()
