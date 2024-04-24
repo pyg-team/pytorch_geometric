@@ -163,7 +163,7 @@ class Dataset(torch.utils.data.Dataset):
         return batch_data
 
 
-class Sentence_Transformer(torch.nn.Module):
+class SentenceTransformer(torch.nn.Module):
     def __init__(self, pretrained_repo: str) -> None:
         super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
@@ -189,7 +189,7 @@ class Sentence_Transformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def sbert_text2embedding(model: Sentence_Transformer,
+def sbert_text2embedding(model: SentenceTransformer,
                          tokenizer: torch.nn.Module, device: torch.device,
                          text: List[str]) -> torch.Tensor:
     try:
@@ -300,7 +300,7 @@ class WebQSPDataset(InMemoryDataset):
 
     def process(self) -> None:
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
-        self.model = Sentence_Transformer(pretrained_repo)
+        self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
