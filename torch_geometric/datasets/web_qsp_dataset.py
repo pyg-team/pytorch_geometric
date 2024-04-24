@@ -20,6 +20,17 @@ except ImportError as e:  # noqa
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+try:
+    from transformers import AutoModel, AutoTokenizer
+    WITH_TRANSFORMERS = True
+except ImportError as e:  # noqa
+    WITH_TRANSFORMERS = False
+try:
+    import datasets
+    WITH_DATASETS = True
+except ImportError as e:  # noqa
+    WITH_DATASETS = False
+
 from torch_geometric.data import Data, InMemoryDataset
 
 # Alot of code in this file is based on the original G-Retriever paper
@@ -241,10 +252,14 @@ class WebQSPDataset(InMemoryDataset):
     ) -> None:
         missing_imports = False
         missing_str_list = []
-        from transformers import AutoModel, AutoTokenizer
-        import datasets
         if not WITH_PCST:
             missing_str_list.append('pcst_fast')
+            missing_imports = True
+        if not WITH_TRANSFORMERS:
+            missing_str_list.append('transformers')
+            missing_imports = True
+        if not WITH_DATASETS:
+            missing_str_list.append('datasets')
             missing_imports = True
         if not WITH_PANDAS:
             missing_str_list.append('pandas')
