@@ -134,7 +134,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     # Step 2: Build Model
     if model is None:
         model = GRetriever(gnn_hidden_channels=hidden_channels,
-                        num_gnn_layers=num_gnn_layers)
+                           num_gnn_layers=num_gnn_layers)
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
     else:
