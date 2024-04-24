@@ -165,7 +165,7 @@ class Dataset(torch.utils.data.Dataset):
 
 class Sentence_Transformer(torch.nn.Module):
     def __init__(self, pretrained_repo: str) -> None:
-        super(Sentence_Transformer, self).__init__()
+        super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
         self.bert_model = AutoModel.from_pretrained(pretrained_repo)
 
