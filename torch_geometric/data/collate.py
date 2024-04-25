@@ -184,7 +184,8 @@ def _collate(
             return value, slices, incs
 
         out = None
-        if torch.utils.data.get_worker_info() is not None:
+        if (torch.utils.data.get_worker_info() is not None
+                and not isinstance(elem, EdgeIndex)):
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
             if torch_geometric.typing.WITH_PT20:
