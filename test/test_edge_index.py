@@ -1209,6 +1209,7 @@ def test_compile_create_edge_index():
 
     class Model(torch.nn.Module):
         def forward(self) -> EdgeIndex:
+            # Wait for: https://github.com/pytorch/pytorch/issues/117806
             edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
             return edge_index
 
