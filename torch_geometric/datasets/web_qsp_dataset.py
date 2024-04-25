@@ -201,7 +201,7 @@ def sbert_text2embedding(model: SentenceTransformer,
 
         # DataLoader
         dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
-        
+
         # Placeholder for storing the embeddings
         all_embeddings_list = []
 
@@ -300,7 +300,7 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        import pandas
+        import pandas as pd
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
         self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
