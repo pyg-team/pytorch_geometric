@@ -1168,7 +1168,6 @@ class EdgeIndex(Tensor):
 
         # To account for this, we hold a number of `HANDLED_FUNCTIONS` that
         # implement specific functions for valid `EdgeIndex` routines.
-        print(func.__name__)
         if func in HANDLED_FUNCTIONS:
             return HANDLED_FUNCTIONS[func](*args, **(kwargs or {}))
 
@@ -1203,9 +1202,6 @@ class EdgeIndex(Tensor):
 
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
-
-    # def data_ptr(self) -> int:
-    #     return self._data.data_ptr()
 
     def shallow_copy(self) -> 'EdgeIndex':
         out = EdgeIndex(self._data)
@@ -1885,11 +1881,13 @@ def _mm(
     return matmul(input, other)
 
 
-@implements(aten._sparse_mm_reduce_impl.default)
-def _mm_reduce(
-    mat1: EdgeIndex,
-    mat2: Tensor,
-    reduce: ReduceType = 'sum',
-) -> Tuple[Tensor, Tensor]:
-    out = matmul(mat1, mat2, reduce=reduce)
-    return out, out  # We return a dummy tensor for `argout` for now.
+if hasattr(aten, '_sparse_mm_reduce_impl'):
+
+    @implements(aten._sparse_mm_reduce_impl.default)
+    def _mm_reduce(
+        mat1: EdgeIndex,
+        mat2: Tensor,
+        reduce: ReduceType = 'sum',
+    ) -> Tuple[Tensor, Tensor]:
+        out = matmul(mat1, mat2, reduce=reduce)
+        return out, out  # We return a dummy tensor for `argout` for now.
