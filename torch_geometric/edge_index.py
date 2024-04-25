@@ -1204,8 +1204,8 @@ class EdgeIndex(Tensor):
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
 
-    def data_ptr(self) -> int:
-        return self._data.data_ptr()
+    # def data_ptr(self) -> int:
+    #     return self._data.data_ptr()
 
     def shallow_copy(self) -> 'EdgeIndex':
         out = EdgeIndex(self._data)
@@ -1219,6 +1219,25 @@ class EdgeIndex(Tensor):
         out._value = self._value
         out._cat_metadata = self._cat_metadata
         return out
+
+    def share_memory_(self) -> 'EdgeIndex':
+        self._data.share_memory_()
+        if self._indptr is not None:
+            self._indptr.share_memory_()
+        if self._T_perm is not None:
+            self._T_perm.share_memory_()
+        if self._T_index[0] is not None:
+            self._T_index[0].share_memory_()
+        if self._T_index[1] is not None:
+            self._T_index[1].share_memory_()
+        if self._T_indptr is not None:
+            self._T_indptr.share_memory_()
+        if self._value is not None:
+            self._value.share_memory_()
+        return self
+
+    def is_shared(self) -> bool:
+        return self._data.is_shared()
 
 
 class SortReturnType(NamedTuple):
@@ -1271,7 +1290,7 @@ def apply_(
 
 
 @implements(aten.clone.default)
-def clone(
+def _clone(
     tensor: EdgeIndex,
     *,
     memory_format: torch.memory_format = torch.preserve_format,
@@ -1303,7 +1322,7 @@ def _to_copy(
 
 
 @implements(aten.cat.default)
-def cat(
+def _cat(
     tensors: List[Union[EdgeIndex, Tensor]],
     dim: int = 0,
 ) -> Union[EdgeIndex, Tensor]:
@@ -1357,7 +1376,7 @@ def cat(
 
 
 @implements(aten.flip.default)
-def flip(
+def _flip(
     input: EdgeIndex,
     dims: Union[List[int], Tuple[int, ...]],
 ) -> EdgeIndex:
@@ -1387,7 +1406,7 @@ def flip(
 
 
 @implements(aten.index_select.default)
-def index_select(
+def _index_select(
     input: EdgeIndex,
     dim: int,
     index: Tensor,
@@ -1403,7 +1422,7 @@ def index_select(
 
 
 @implements(aten.slice.Tensor)
-def slice(
+def _slice(
     input: EdgeIndex,
     dim: int,
     start: Optional[int] = None,
@@ -1438,7 +1457,7 @@ def slice(
 
 
 @implements(aten.index.Tensor)
-def index(
+def _index(
     input: EdgeIndex,
     indices: List[Optional[Tensor]],
 ) -> Union[EdgeIndex, Tensor]:
@@ -1464,55 +1483,8 @@ def index(
     return out
 
 
-def postprocess_add_(
-    input: EdgeIndex,
-    other: Union[int, Tensor],
-    out: Tensor,
-    alpha: int = 1,
-) -> Union[EdgeIndex, Tensor]:
-
-    if out.dtype not in SUPPORTED_DTYPES:
-        return out
-    if out.dim() != 2 or out.size(0) != 2:
-        return out
-
-    output: EdgeIndex = EdgeIndex(out)
-
-    if isinstance(other, int):
-        size = maybe_add(input._sparse_size, other, alpha)
-        assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._is_undirected = input.is_undirected
-        output._T_perm = input._T_perm
-
-    elif isinstance(other, Tensor) and other.numel() <= 1:
-        size = maybe_add(input._sparse_size, int(other), alpha)
-        assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._is_undirected = input.is_undirected
-        output._T_perm = input._T_perm
-
-    elif isinstance(other, Tensor) and other.size() == (2, 1):
-        size = maybe_add(input._sparse_size, other.view(-1).tolist(), alpha)
-        assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._T_perm = input._T_perm
-        if torch.equal(other[0], other[1]):
-            output._is_undirected = input.is_undirected
-
-    elif isinstance(other, EdgeIndex):
-        size = maybe_add(input._sparse_size, other._sparse_size, alpha)
-        assert len(size) == 2
-        output._sparse_size = size
-
-    return output
-
-
 @implements(aten.add.Tensor)
-def add(
+def _add(
     input: EdgeIndex,
     other: Union[int, Tensor, EdgeIndex],
     *,
@@ -1524,100 +1496,115 @@ def add(
         other._data if isinstance(other, EdgeIndex) else other,
         alpha=alpha,
     )
-    return postprocess_add_(input, other, out, alpha)
-
-
-@implements(aten.add_.Tensor)
-def add_(
-    input: EdgeIndex,
-    other: Union[int, Tensor, EdgeIndex],
-    *,
-    alpha: int = 1,
-) -> Union[EdgeIndex, Tensor]:
-
-    # output = Tensor.__torch_function__(  #
-    #     Tensor.add_, (Tensor, ), (input, other), dict(alpha=alpha))
-    out = aten.add_.Tensor(
-        input._data,
-        other._data if isinstance(other, EdgeIndex) else other,
-        alpha=alpha,
-    )
-    return out
-
-    # return postprocess_add_(input, other, output, alpha)
-
-
-def postprocess_sub_(
-    input: EdgeIndex,
-    other: Union[int, Tensor],
-    out: Tensor,
-    alpha: int = 1,
-) -> Union[EdgeIndex, Tensor]:
 
     if out.dtype not in SUPPORTED_DTYPES:
         return out
     if out.dim() != 2 or out.size(0) != 2:
         return out
 
-    output: EdgeIndex = out.as_subclass(EdgeIndex)
+    out = EdgeIndex(out)
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
 
     if isinstance(other, int):
-        size = maybe_sub(input._sparse_size, other, alpha)
+        size = maybe_add(input._sparse_size, other, alpha)
         assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._is_undirected = input.is_undirected
-        output._T_perm = input._T_perm
-
-    elif isinstance(other, Tensor) and other.numel() <= 1:
-        size = maybe_sub(input._sparse_size, int(other), alpha)
-        assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._is_undirected = input.is_undirected
-        output._T_perm = input._T_perm
+        out._sparse_size = size
+        out._sort_order = input._sort_order
+        out._is_undirected = input.is_undirected
+        out._T_perm = input._T_perm
 
     elif isinstance(other, Tensor) and other.size() == (2, 1):
-        size = maybe_sub(input._sparse_size, other.view(-1).tolist(), alpha)
+        size = maybe_add(input._sparse_size, other.view(-1).tolist(), alpha)
         assert len(size) == 2
-        output._sparse_size = size
-        output._sort_order = input._sort_order
-        output._T_perm = input._T_perm
+        out._sparse_size = size
+        out._sort_order = input._sort_order
         if torch.equal(other[0], other[1]):
-            output._is_undirected = input.is_undirected
+            out._is_undirected = input.is_undirected
+        out._T_perm = input._T_perm
 
-    return output
+    elif isinstance(other, EdgeIndex):
+        size = maybe_add(input._sparse_size, other._sparse_size, alpha)
+        assert len(size) == 2
+        out._sparse_size = size
+
+    return out
 
 
-@implements(torch.sub)
-@implements(Tensor.sub)
-def sub(
+# @implements(aten.add_.Tensor)
+# def add_(
+#     input: EdgeIndex,
+#     other: Union[int, Tensor, EdgeIndex],
+#     *,
+#     alpha: int = 1,
+# ) -> Tensor:
+#     aten.add_.Tensor(
+#         input._data,
+#         other._data if isinstance(other, EdgeIndex) else other,
+#         alpha=alpha,
+#     )
+#     return input
+
+
+@implements(aten.sub.Tensor)
+def _sub(
     input: EdgeIndex,
-    other: Union[int, Tensor],
+    other: Union[int, Tensor, EdgeIndex],
     *,
     alpha: int = 1,
     out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
-    output = Tensor.__torch_function__(  #
-        torch.sub, (Tensor, ), (input, other), dict(alpha=alpha, out=out))
+    out = aten.sub.Tensor(
+        input._data,
+        other._data if isinstance(other, EdgeIndex) else other,
+        alpha=alpha,
+    )
 
-    return postprocess_sub_(input, other, output, alpha)
+    if out.dtype not in SUPPORTED_DTYPES:
+        return out
+    if out.dim() != 2 or out.size(0) != 2:
+        return out
+
+    out: EdgeIndex = EdgeIndex(out)
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
+
+    if isinstance(other, int):
+        size = maybe_sub(input._sparse_size, other, alpha)
+        assert len(size) == 2
+        out._sparse_size = size
+        out._sort_order = input._sort_order
+        out._is_undirected = input.is_undirected
+        out._T_perm = input._T_perm
+
+    elif isinstance(other, Tensor) and other.size() == (2, 1):
+        size = maybe_sub(input._sparse_size, other.view(-1).tolist(), alpha)
+        assert len(size) == 2
+        out._sparse_size = size
+        out._sort_order = input._sort_order
+        if torch.equal(other[0], other[1]):
+            out._is_undirected = input.is_undirected
+        out._T_perm = input._T_perm
+
+    return out
 
 
-@implements(Tensor.sub_)
-def sub_(
-    input: EdgeIndex,
-    other: Union[int, Tensor],
-    *,
-    alpha: int = 1,
-) -> Union[EdgeIndex, Tensor]:
-
-    output = Tensor.__torch_function__(  #
-        Tensor.sub_, (Tensor, ), (input, other), dict(alpha=alpha))
-
-    return postprocess_sub_(input, other, output, alpha)
-
+# @implements(aten.sub_.Tensor)
+# def sub_(
+#     input: EdgeIndex,
+#     other: Union[int, Tensor, EdgeIndex],
+#     *,
+#     alpha: int = 1,
+# ) -> EdgeIndex:
+#     aten.sub_.Tensor(
+#         input._data,
+#         other._data if isinstance(other, EdgeIndex) else other,
+#         alpha=alpha,
+#     )
+#     return input
 
 # Sparse-Dense Matrix Multiplication ##########################################
 
@@ -1767,12 +1754,12 @@ def _scatter_spmm(
     from torch_geometric.utils import scatter
 
     if not transpose:
-        other_j = other[input[1]]
-        index = input[0]
+        other_j = other[input._data[1]]
+        index = input._data[0]
         dim_size = input.get_sparse_size(0)
     else:
-        other_j = other[input[0]]
-        index = input[1]
+        other_j = other[input._data[0]]
+        index = input._data[1]
         dim_size = input.get_sparse_size(1)
 
     other_j = other_j * value.view(-1, 1) if value is not None else other_j
@@ -1881,7 +1868,7 @@ def matmul(
     else:
         raise NotImplementedError
 
-    edge_index = edge_index.as_subclass(EdgeIndex)
+    edge_index = EdgeIndex(edge_index)
     edge_index._sort_order = SortOrder.ROW
     edge_index._sparse_size = (out.size(0), out.size(1))
     edge_index._indptr = rowptr
@@ -1889,20 +1876,20 @@ def matmul(
     return edge_index, out.values()
 
 
-@implements(torch.mm)
-@implements(torch.matmul)
+@implements(aten.mm.default)
 @implements(Tensor.matmul)
-def _matmul1(
+def _mm(
     input: EdgeIndex,
     other: Union[Tensor, EdgeIndex],
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
     return matmul(input, other)
 
 
-@implements(torch.sparse.mm)
-def _matmul2(
+@implements(aten._sparse_mm_reduce_impl.default)
+def _mm_reduce(
     mat1: EdgeIndex,
-    mat2: Union[Tensor, EdgeIndex],
+    mat2: Tensor,
     reduce: ReduceType = 'sum',
-) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
-    return matmul(mat1, mat2, reduce=reduce)
+) -> Tuple[Tensor, Tensor]:
+    out = matmul(mat1, mat2, reduce=reduce)
+    return out, out  # We return a dummy tensor for `argout` for now.
