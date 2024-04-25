@@ -200,7 +200,7 @@ class LLM(nn.Module):
         f"""Inference.
 
         Args:
-            question (List[str]): The questions/prompts given to the LLM.
+            question (List[str]): The questions/prompts.
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
             max_out_tokens (int, optional): How many tokens for the LLM to
@@ -368,6 +368,14 @@ class GRetriever(nn.Module):
 
     def forward(self, question, node_feat, edge_index,
                 edge_attr, batch, ptr, label, additional_text_context=None):
+        r"""Forward pass.
+
+        Args:
+            question (List[str]): The questions/prompts.
+            label (List[str]): The answers/labels.
+            additional_context (List[str], optional): Additional context to
+                give to the LLM, such as textified knowledge graphs.
+        """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
         # encode labels
@@ -434,6 +442,15 @@ class GRetriever(nn.Module):
     @torch.no_grad()
     def inference(self, question, node_feat, edge_index,
                   edge_attr, batch, ptr, additional_text_context=None, max_out_tokens=max_new_tokens):
+        f"""Inference.
+
+        Args:
+            question (List[str]): The questions/prompts.
+            additional_context (List[str], optional): Additional context to
+                give to the LLM, such as textified knowledge graphs.
+            max_out_tokens (int, optional): How many tokens for the LLM to
+                generate. (default: {max_new_tokens})
+        """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
         # encode graphs
