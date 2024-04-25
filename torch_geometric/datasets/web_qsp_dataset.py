@@ -140,29 +140,6 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
     return data, desc
 
 
-class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids: torch.Tensor,
-                 attention_mask: torch.Tensor) -> None:
-        super().__init__()
-        self.data = {
-            "input_ids": input_ids,
-            "att_mask": attention_mask,
-        }
-
-    def __len__(self) -> int:
-        return self.data["input_ids"].size(0)
-
-    def __getitem__(
-            self, index: Union[int, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        if isinstance(index, torch.Tensor):
-            index = index.item()
-        batch_data = dict()
-        for key in self.data.keys():
-            if self.data[key] is not None:
-                batch_data[key] = self.data[key][index]
-        return batch_data
-
-
 class SentenceTransformer(torch.nn.Module):
     def __init__(self, pretrained_repo: str) -> None:
         super().__init__()
@@ -189,6 +166,29 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
+
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, input_ids: torch.Tensor,
+                 attention_mask: torch.Tensor) -> None:
+        super().__init__()
+        self.data = {
+            "input_ids": input_ids,
+            "att_mask": attention_mask,
+        }
+
+    def __len__(self) -> int:
+        return self.data["input_ids"].size(0)
+
+    def __getitem__(
+            self, index: Union[int, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        if isinstance(index, torch.Tensor):
+            index = index.item()
+        batch_data = dict()
+        for key in self.data.keys():
+            if self.data[key] is not None:
+                batch_data[key] = self.data[key][index]
+        return batch_data
+
 def sbert_text2embedding(model: SentenceTransformer,
                          tokenizer: torch.nn.Module, device: torch.device,
                          text: List[str]) -> torch.Tensor:
@@ -198,9 +198,10 @@ def sbert_text2embedding(model: SentenceTransformer,
         dataset = Dataset(input_ids=encoding.input_ids,
                           attention_mask=encoding.attention_mask)
 
+
         # DataLoader
         dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
-
+        
         # Placeholder for storing the embeddings
         all_embeddings_list = []
 
