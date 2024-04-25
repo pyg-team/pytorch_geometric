@@ -1247,7 +1247,7 @@ class EdgeIndex(Tensor):
     def _clear_metadata(self) -> 'EdgeIndex':
         self._sparse_size = (None, None)
         self._sort_order = None
-        self._is_undirected = None
+        self._is_undirected = False
         self._indptr = None
         self._T_perm = None
         self._T_index = (None, None)
@@ -1451,7 +1451,7 @@ def _slice(
 
     if ((start is None or start <= 0)
             and (end is None or end > input.size(dim)) and step == 1):
-        return input.shallow_copy()  # No-op.
+        return input._shallow_copy()  # No-op.
 
     out = aten.slice.Tensor(input._data, dim, start, end, step)
 
@@ -1564,8 +1564,8 @@ def add_(
 ) -> EdgeIndex:
 
     sparse_size = input._sparse_size
-    sort_order = input.sort_order
-    is_undirected = input.is_undirected
+    sort_order = input._sort_order
+    is_undirected = input._is_undirected
     T_perm = input._T_perm
     input._clear_metadata()
 
@@ -1656,8 +1656,8 @@ def sub_(
 ) -> EdgeIndex:
 
     sparse_size = input._sparse_size
-    sort_order = input.sort_order
-    is_undirected = input.is_undirected
+    sort_order = input._sort_order
+    is_undirected = input._is_undirected
     T_perm = input._T_perm
     input._clear_metadata()
 
