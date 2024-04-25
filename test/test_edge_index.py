@@ -96,6 +96,10 @@ def test_identity(dtype, device, is_undirected):
     assert out.sort_order == adj.sort_order
     assert out.is_undirected == adj.is_undirected
 
+    out = EdgeIndex(adj, sparse_size=(4, 4), sort_order='row')
+    assert out.sparse_size() == (4, 4)
+    assert out.sort_order == 'row'
+
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
