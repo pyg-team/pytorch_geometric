@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple, Union, no_type_check
 import numpy as np
 
 try:
+    import pandas as pd
     from pandas import DataFrame as df
     WITH_PANDAS = True
 except ImportError as e:  # noqa
@@ -300,7 +301,6 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        import pandas as pd
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
         self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
