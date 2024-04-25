@@ -61,7 +61,7 @@ def get_llm_kwargs(mem_needed):
 
 
 class LLM(nn.Module):
-    """This module wraps a HuggingFace Transformer based model in such
+    r"""This module wraps a HuggingFace Transformer based model in such
     a way that makes it easy to use with PyG GNNs.
     model_name (str): A string representing the huggingface model you
         want to use. This module has been tested for 'llama2' and 'gemma'.
@@ -128,7 +128,15 @@ class LLM(nn.Module):
         return (batch_size, questions, context, eos_user_tokens, bos_embeds,
                 pad_embeds)
 
-    def forward(self, question, additional_context, label):
+    def forward(self, prompt, label, additional_context):
+        r"""Forward pass.
+
+        Args:
+            question (List[str]): The questions/prompts given to the LLM.
+            label (List[str]): The answers/labels given to the LLM.
+            additional_context (List[str], optional): Additional context to
+                give to the LLM, such as textified knowledge graphs.
+        """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
         # encode labels
@@ -184,8 +192,18 @@ class LLM(nn.Module):
             )
         return outputs.loss
 
+    @torch.no_grad()
     def inference(self, question, additional_context,
                   max_out_tokens=max_new_tokens):
+        f"""Inference.
+
+        Args:
+            question (List[str]): The questions/prompts given to the LLM.
+            additional_context (List[str], optional): Additional context to
+                give to the LLM, such as textified knowledge graphs.
+            max_out_tokens (int, optional): How many tokens for the LLM to
+                generate. (default: {max_new_tokens})
+        """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
         batch_inputs_embeds = []
@@ -407,6 +425,7 @@ class GRetriever(nn.Module):
             )
         return outputs.loss
 
+    @torch.no_grad()
     def inference(self, question, kg_description, node_feat, edge_index,
                   edge_attr, batch, ptr, max_out_tokens=max_new_tokens):
         batch_size, questions, descriptions, eos_user_tokens, \
