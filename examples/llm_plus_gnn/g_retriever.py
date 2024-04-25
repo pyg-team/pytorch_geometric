@@ -21,7 +21,7 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models.gnn_llm import GRetriever, LLM
+from torch_geometric.nn.models.gnn_llm import LLM, GRetriever
 
 
 def detect_hallucinate(pred, label):
@@ -98,17 +98,23 @@ def load_params_dict(model, save_path):
     model.load_state_dict(state_dict)
     return model
 
+
 def get_loss(model, batch, model_save_name):
     if model_save_name == "llm":
         return model(batch.question, batch.desc, batch.label)
     else:
-        return model(batch.question, batch.desc, batch.x, batch.edge_index, batch.edge_attr, batch.batch, batch.ptr, batch.label)
+        return model(batch.question, batch.desc, batch.x, batch.edge_index,
+                     batch.edge_attr, batch.batch, batch.ptr, batch.label)
+
 
 def inference_step(model, batch, model_save_name):
     if model_save_name == "llm":
         return model.inference(batch.question, batch.desc)
     else:
-        return model.inference(batch.question, batch.desc, batch.x, batch.edge_index, batch.edge_attr, batch.batch, batch.ptr)
+        return model.inference(batch.question, batch.desc, batch.x,
+                               batch.edge_index, batch.edge_attr, batch.batch,
+                               batch.ptr)
+
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, model=None, dataset=None, checkpointing=False):
@@ -274,7 +280,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             question = batch.question[0]
             correct_answer = batch.label[0]
             # GNN+LLM only using 32 tokens to answer, give untrained LLM more
-            pure_llm_out = pure_llm.inference(batch.question, batch.desc, max_out_tokens=256)
+            pure_llm_out = pure_llm.inference(batch.question, batch.desc,
+                                              max_out_tokens=256)
             gnn_llm_pred = gnn_llm_preds[i]
             pure_llm_pred = pure_llm_out['pred'][0]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,

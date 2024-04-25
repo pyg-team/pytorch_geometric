@@ -167,7 +167,6 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, input_ids: torch.Tensor,
                  attention_mask: torch.Tensor) -> None:
@@ -190,6 +189,7 @@ class Dataset(torch.utils.data.Dataset):
                 batch_data[key] = self.data[key][index]
         return batch_data
 
+
 def sbert_text2embedding(model: SentenceTransformer,
                          tokenizer: torch.nn.Module, device: torch.device,
                          text: List[str]) -> torch.Tensor:
@@ -198,7 +198,6 @@ def sbert_text2embedding(model: SentenceTransformer,
                              return_tensors="pt")
         dataset = Dataset(input_ids=encoding.input_ids,
                           attention_mask=encoding.attention_mask)
-
 
         # DataLoader
         dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
