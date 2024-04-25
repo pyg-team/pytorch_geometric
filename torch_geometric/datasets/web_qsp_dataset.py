@@ -268,7 +268,6 @@ class WebQSPDataset(InMemoryDataset):
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
-        self.prompt = "Please answer the given question."
         self.graph = None
         self.graph_type = "Knowledge Graph"
         self.model_name = "sbert"
