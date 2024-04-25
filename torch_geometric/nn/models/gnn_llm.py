@@ -111,10 +111,11 @@ class LLM(nn.Module):
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
 
-    def encode_inputs(self, question, additional_context):
+    def encode_inputs(self, question, additional_context=None):
         batch_size = len(question)
         questions = self.tokenizer(question, add_special_tokens=False)
-        context = self.tokenizer(additional_context, add_special_tokens=False)
+        if additional_context is not None:
+            additional_context = self.tokenizer(additional_context, add_special_tokens=False)
 
         # encode special tokens
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
@@ -125,15 +126,15 @@ class LLM(nn.Module):
         pad_embeds = self.word_embedding(
             torch.tensor(self.tokenizer.pad_token_id).to(
                 self.llm_device)).unsqueeze(0)
-        return (batch_size, questions, context, eos_user_tokens, bos_embeds,
+        return (batch_size, questions, additional_context, eos_user_tokens, bos_embeds,
                 pad_embeds)
 
-    def forward(self, prompt, label, additional_context):
+    def forward(self, question, label, additional_context=None):
         r"""Forward pass.
 
         Args:
-            question (List[str]): The questions/prompts given to the LLM.
-            label (List[str]): The answers/labels given to the LLM.
+            question (List[str]): The questions/prompts.
+            label (List[str]): The answers/labels.
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
         """
@@ -151,9 +152,10 @@ class LLM(nn.Module):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
                 i][:max_new_tokens] + eos_tokens.input_ids
-            input_ids = context.input_ids[
-                i][:max_txt_len] + questions.input_ids[
-                    i] + eos_user_tokens.input_ids + label_input_ids
+            if context is not None:
+                input_ids = context.input_ids[i][:max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
+            else:
+                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
@@ -193,7 +195,7 @@ class LLM(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question, additional_context,
+    def inference(self, question, additional_context=None,
                   max_out_tokens=max_new_tokens):
         f"""Inference.
 
@@ -210,8 +212,11 @@ class LLM(nn.Module):
         batch_attention_mask = []
         for i in range(batch_size):
             # Add bos & eos token
-            input_ids = contex.input_ids[i][:max_txt_len] + questions.input_ids[
-                i] + eos_user_tokens.input_ids
+            if context is not None:
+                input_ids = context.input_ids[i][:max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids
+            else:
+                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
+            
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             inputs_embeds = torch.cat([bos_embeds, inputs_embeds], dim=0)
@@ -361,10 +366,10 @@ class GRetriever(nn.Module):
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, question, kg_description, node_feat, edge_index,
-                edge_attr, batch, ptr, label):
-        batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, kg_description)
+    def forward(self, question, node_feat, edge_index,
+                edge_attr, batch, ptr, label, additional_text_context=None):
+        batch_size, questions, context, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
         # encode labels
         labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
@@ -382,9 +387,10 @@ class GRetriever(nn.Module):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
                 i][:max_new_tokens] + eos_tokens.input_ids
-            input_ids = descriptions.input_ids[
-                i][:max_txt_len] + questions.input_ids[
-                    i] + eos_user_tokens.input_ids + label_input_ids
+            if additional_text_context is not None:
+                input_ids = additional_text_context.input_ids[i][:max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
+            else:
+                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
@@ -426,10 +432,10 @@ class GRetriever(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question, kg_description, node_feat, edge_index,
-                  edge_attr, batch, ptr, max_out_tokens=max_new_tokens):
-        batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, kg_description)
+    def inference(self, question, node_feat, edge_index,
+                  edge_attr, batch, ptr, additional_text_context=None, max_out_tokens=max_new_tokens):
+        batch_size, questions, context, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
         # encode graphs
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
@@ -440,9 +446,10 @@ class GRetriever(nn.Module):
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         for i in range(batch_size):
             # Add bos & eos token
-            input_ids = descriptions.input_ids[
-                i][:max_txt_len] + questions.input_ids[
-                    i] + eos_user_tokens.input_ids
+            if additional_text_context is not None:
+                input_ids = context.input_ids[i][:max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids
+            else:
+                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             inputs_embeds = torch.cat(
