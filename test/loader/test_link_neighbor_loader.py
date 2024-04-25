@@ -589,7 +589,6 @@ def test_link_neighbor_loader_mapping():
     )
 
     for batch in loader:
-        print(batch.edge_index)
         assert torch.equal(
             batch.n_id[batch.edge_index],
             data.edge_index[:, batch.e_id],

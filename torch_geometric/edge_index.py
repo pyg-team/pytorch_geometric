@@ -5,6 +5,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Iterable,
     List,
     Literal,
     NamedTuple,
@@ -340,7 +341,7 @@ class EdgeIndex(Tensor):
             elif sparse_size[0] is None and sparse_size[1] is not None:
                 sparse_size = (sparse_size[1], sparse_size[1])
 
-        out = Tensor._make_wrapper_subclass(
+        out = Tensor._make_wrapper_subclass(  # type: ignore
             cls,
             size=data.size(),
             strides=data.stride(),
@@ -1152,10 +1153,10 @@ class EdgeIndex(Tensor):
     @classmethod
     def __torch_dispatch__(
         cls: Type,
-        func: Callable,
-        types: Tuple[Type, ...],
-        args: Tuple[Any, ...] = (),
-        kwargs: Optional[Dict[str, Any]] = None,
+        func: Callable[..., Any],
+        types: Iterable[Type[Any]],
+        args: Iterable[Tuple[Any, ...]] = (),
+        kwargs: Optional[Dict[Any, Any]] = None,
     ) -> Any:
         # `EdgeIndex` should be treated as a regular PyTorch tensor for all
         # standard PyTorch functionalities. However,
@@ -1177,7 +1178,7 @@ class EdgeIndex(Tensor):
             kwargs = pytree.tree_map_only(EdgeIndex, lambda x: x._data, kwargs)
         return func(*args, **(kwargs or {}))
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # type: ignore
         prefix = f'{self.__class__.__name__}('
         indent = len(prefix)
         tensor_str = torch._tensor_str._tensor_str(self._data, indent)
@@ -1291,7 +1292,9 @@ def _clone(
     *,
     memory_format: torch.memory_format = torch.preserve_format,
 ) -> EdgeIndex:
-    return apply_(tensor, aten.clone.default, memory_format=memory_format)
+    out = apply_(tensor, aten.clone.default, memory_format=memory_format)
+    assert isinstance(out, EdgeIndex)
+    return out
 
 
 @implements(aten._to_copy.default)
@@ -1553,7 +1556,6 @@ def _sub(
     other: Union[int, Tensor, EdgeIndex],
     *,
     alpha: int = 1,
-    out: Optional[Tensor] = None,
 ) -> Union[EdgeIndex, Tensor]:
 
     out = aten.sub.Tensor(
@@ -1567,7 +1569,7 @@ def _sub(
     if out.dim() != 2 or out.size(0) != 2:
         return out
 
-    out: EdgeIndex = EdgeIndex(out)
+    out = EdgeIndex(out)
 
     if isinstance(other, Tensor) and other.numel() <= 1:
         other = int(other)
@@ -1894,4 +1896,5 @@ if hasattr(aten, '_sparse_mm_reduce_impl'):
         reduce: ReduceType = 'sum',
     ) -> Tuple[Tensor, Tensor]:
         out = matmul(mat1, mat2, reduce=reduce)
+        assert isinstance(out, Tensor)
         return out, out  # We return a dummy tensor for `argout` for now.
