@@ -704,12 +704,14 @@ def test_add(dtype, device, is_undirected):
     assert not out.is_undirected
     assert out.sparse_size() == (6, 6)
 
-    # TODO Bring back.
-    # adj += 2
-    # assert isinstance(adj, EdgeIndex)
-    # assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
-    # assert adj.is_undirected == is_undirected
-    # assert adj.sparse_size() == (5, 5)
+    adj += 2
+    assert isinstance(adj, EdgeIndex)
+    assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert adj.is_undirected == is_undirected
+    assert adj.sparse_size() == (5, 5)
+
+    with pytest.raises(RuntimeError, match="can't be cast"):
+        adj += 2.5
 
 
 @withCUDA
@@ -749,12 +751,14 @@ def test_sub(dtype, device, is_undirected):
     assert not out.is_undirected
     assert out.sparse_size() == (None, None)
 
-    # TODO Bring back.
-    # adj -= 2
-    # assert isinstance(adj, EdgeIndex)
-    # assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
-    # assert adj.is_undirected == is_undirected
-    # assert adj.sparse_size() == (5, 5)
+    adj -= 2
+    assert isinstance(adj, EdgeIndex)
+    assert adj.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
+    assert adj.is_undirected == is_undirected
+    assert adj.sparse_size() == (5, 5)
+
+    with pytest.raises(RuntimeError, match="can't be cast"):
+        adj -= 2.5
 
 
 @withCUDA
