@@ -1454,9 +1454,13 @@ def _slice(
 
 @implements(aten.index.Tensor)
 def _index(
-    input: EdgeIndex,
-    indices: List[Optional[Tensor]],
+    input: Union[EdgeIndex, Tensor],
+    indices: List[Optional[Union[Tensor, EdgeIndex]]],
 ) -> Union[EdgeIndex, Tensor]:
+
+    if not isinstance(input, EdgeIndex):
+        indices = pytree.tree_map_only(EdgeIndex, lambda x: x._data, indices)
+        return aten.index.Tensor(input, indices)
 
     out = aten.index.Tensor(input._data, indices)
 

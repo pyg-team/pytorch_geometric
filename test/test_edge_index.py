@@ -1056,6 +1056,30 @@ def test_sparse_resize(device):
     assert out._T_indptr is None
 
 
+def test_to_list():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
+    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
+        adj.tolist()
+
+
+def test_numpy():
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
+    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
+        adj.numpy()
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_global_mapping(device, dtype):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, dtype=dtype)
+    n_id = torch.tensor([10, 20, 30], device=device, dtype=dtype)
+
+    expected = tensor([[10, 20, 20, 30], [20, 10, 30, 20]], device=device)
+    out = n_id[adj]
+    assert not isinstance(out, EdgeIndex)
+    assert out.equal(expected)
+
+
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_save_and_load(dtype, device, tmp_path):
