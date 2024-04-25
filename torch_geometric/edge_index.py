@@ -640,12 +640,12 @@ class EdgeIndex(Tensor):
         return (row, col), self._T_perm
 
     @assert_sorted
-    def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+    def get_csr(self) -> Tuple[Tuple[Tensor, Tensor], Optional[Tensor]]:
         r"""Returns the compressed CSR representation
         :obj:`(rowptr, col), perm` in case :class:`EdgeIndex` is sorted.
         """
         if self.is_sorted_by_row:
-            return (self.get_indptr(), self._data[1]), slice(None, None, None)
+            return (self.get_indptr(), self._data[1]), None
 
         assert self.is_sorted_by_col
         (row, col), perm = self._sort_by_transpose()
@@ -664,12 +664,12 @@ class EdgeIndex(Tensor):
         return (rowptr, col), perm
 
     @assert_sorted
-    def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Union[Tensor, slice]]:
+    def get_csc(self) -> Tuple[Tuple[Tensor, Tensor], Optional[Tensor]]:
         r"""Returns the compressed CSC representation
         :obj:`(colptr, row), perm` in case :class:`EdgeIndex` is sorted.
         """
         if self.is_sorted_by_col:
-            return (self.get_indptr(), self._data[0]), slice(None, None, None)
+            return (self.get_indptr(), self._data[0]), None
 
         assert self.is_sorted_by_row
         (row, col), perm = self._sort_by_transpose()
@@ -747,7 +747,7 @@ class EdgeIndex(Tensor):
         sort_order = SortOrder(sort_order)
 
         if self._sort_order == sort_order:  # Nothing to do.
-            return SortReturnType(self, slice(None, None, None))
+            return SortReturnType(self, None)
 
         if self.is_sorted:
             (row, col), perm = self._sort_by_transpose()
@@ -850,7 +850,10 @@ class EdgeIndex(Tensor):
                 :obj:`1.0`. (default: :obj:`None`)
         """
         (rowptr, col), perm = self.get_csr()
-        value = self._get_value() if value is None else value[perm]
+        if value is not None and perm is not None:
+            value = value[perm]
+        elif value is None:
+            value = self._get_value()
 
         return torch.sparse_csr_tensor(
             crow_indices=rowptr,
@@ -878,7 +881,10 @@ class EdgeIndex(Tensor):
                 "'to_sparse_csc' not supported for PyTorch < 1.12")
 
         (colptr, row), perm = self.get_csc()
-        value = self._get_value() if value is None else value[perm]
+        if value is not None and perm is not None:
+            value = value[perm]
+        elif value is None:
+            value = self._get_value()
 
         return torch.sparse_csc_tensor(
             ccol_indices=colptr,
@@ -1111,8 +1117,7 @@ class EdgeIndex(Tensor):
             attrs.append('_indptr')
         if self._T_perm is not None:
             attrs.append('_T_perm')
-        if self._T_index is not None:
-            attrs.append('_T_index')
+        # TODO We cannot save `_T_index` for now since it is stored as tuple.
         if self._T_indptr is not None:
             attrs.append('_T_indptr')
 
@@ -1141,7 +1146,6 @@ class EdgeIndex(Tensor):
 
         edge_index._indptr = inner_tensors.get('_indptr', None)
         edge_index._T_perm = inner_tensors.get('_T_perm', None)
-        edge_index._T_index = inner_tensors.get('_T_index', None)
         edge_index._T_indptr = inner_tensors.get('_T_indptr', None)
         edge_index._cat_metadata = ctx[3]
 
@@ -1239,7 +1243,7 @@ class EdgeIndex(Tensor):
 
 class SortReturnType(NamedTuple):
     values: EdgeIndex
-    indices: Union[Tensor, slice]
+    indices: Optional[Tensor]
 
 
 def apply_(
@@ -1709,7 +1713,7 @@ class _TorchSPMM(torch.autograd.Function):
                     adj = input.to_sparse_csr(value)
                 else:
                     (colptr, row), perm = input.get_csc()
-                    if value is not None:
+                    if value is not None and perm is not None:
                         value = value[perm]
                     else:
                         value = input._get_value()
@@ -1725,7 +1729,7 @@ class _TorchSPMM(torch.autograd.Function):
                     adj = input.to_sparse_csc(value).t()
                 else:
                     (rowptr, col), perm = input.get_csr()
-                    if value is not None:
+                    if value is not None and perm is not None:
                         value = value[perm]
                     else:
                         value = input._get_value()
@@ -1879,12 +1883,25 @@ def matmul(
 
 
 @implements(aten.mm.default)
-@implements(Tensor.matmul)
 def _mm(
     input: EdgeIndex,
     other: Union[Tensor, EdgeIndex],
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
     return matmul(input, other)
+
+
+@implements(aten._sparse_addmm.default)
+def _addmm(
+    input: Tensor,
+    mat1: EdgeIndex,
+    mat2: Tensor,
+    beta: float = 1.0,
+    alpha: float = 1.0,
+) -> Tensor:
+    assert input.abs().sum() == 0.0
+    out = matmul(mat1, mat2)
+    assert isinstance(out, Tensor)
+    return alpha * out if alpha != 1.0 else out
 
 
 if hasattr(aten, '_sparse_mm_reduce_impl'):

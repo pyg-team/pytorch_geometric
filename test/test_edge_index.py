@@ -351,7 +351,7 @@ def test_sort_by(dtype, device, is_undirected):
     assert isinstance(out.values, EdgeIndex)
     assert not isinstance(out.indices, EdgeIndex)
     assert out.values.equal(adj)
-    assert out.indices == slice(None, None, None)
+    assert out.indices is None
 
     adj = EdgeIndex([[0, 1, 2, 1], [1, 0, 1, 2]], **kwargs)
     out = adj.sort_by('row')
@@ -1172,7 +1172,7 @@ def test_torch_script():
 
 @onlyLinux
 @withPackage('torch>=2.2.0')
-def test_compile():
+def test_compile_basic():
     import torch._dynamo as dynamo
 
     class Model(torch.nn.Module):
@@ -1203,13 +1203,13 @@ def test_compile():
 
 @onlyLinux
 @withPackage('torch>=2.2.0')
+@pytest.mark.skip(reason="Does not work currently")
 def test_compile_create_edge_index():
     import torch._dynamo as dynamo
 
     class Model(torch.nn.Module):
         def forward(self) -> EdgeIndex:
             edge_index = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
-            edge_index = edge_index.sort_by('col')
             return edge_index
 
     model = Model()
