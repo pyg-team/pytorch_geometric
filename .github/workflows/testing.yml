@@ -1,4 +1,4 @@
-name: Testing PyTorch 2.2
+name: Testing PyTorch 2.3
 
 on:  # yamllint disable-line rule:truthy
   push:
