@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile.profiler import Profiler
-from torch_geometric.testing import withDevice, withPackage
+from torch_geometric.testing import withDevice
 
 
 @withDevice
