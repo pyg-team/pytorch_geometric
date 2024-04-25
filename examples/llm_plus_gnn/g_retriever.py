@@ -104,16 +104,17 @@ def get_loss(model, batch, model_save_name):
         return model(batch.question, batch.label, batch.desc)
     else:
         return model(batch.question, batch.x, batch.edge_index,
-                     batch.edge_attr, batch.batch, batch.ptr, batch.label, batch.desc)
+                     batch.edge_attr, batch.batch, batch.ptr, batch.label,
+                     batch.desc)
 
 
 def inference_step(model, batch, model_save_name):
     if model_save_name == "llm":
         return model.inference(batch.question, batch.desc)
     else:
-        return model.inference(batch.question, batch.x,
-                               batch.edge_index, batch.edge_attr, batch.batch,
-                               batch.ptr, batch.desc)
+        return model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.edge_attr, batch.batch, batch.ptr,
+                               batch.desc)
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
