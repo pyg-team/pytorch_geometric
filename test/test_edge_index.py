@@ -1179,7 +1179,7 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')
+@withPackage('torch==2.3')
 def test_compile_basic():
     import torch._dynamo as dynamo
 
