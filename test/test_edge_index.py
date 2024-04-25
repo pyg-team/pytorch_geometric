@@ -5,7 +5,6 @@ from typing import List, Optional
 import pytest
 import torch
 from torch import Tensor, tensor
-from torch.utils._python_dispatch import TorchDispatchMode
 
 import torch_geometric
 from torch_geometric import EdgeIndex

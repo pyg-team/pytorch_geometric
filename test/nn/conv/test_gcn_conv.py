@@ -1,5 +1,3 @@
-import os.path as osp
-
 import pytest
 import torch
 
@@ -131,7 +129,3 @@ def test_gcn_norm_gradient(requires_grad, layout):
         assert not gcn_norm(adj)[0].requires_grad
     else:
         assert adj.requires_grad == gcn_norm(adj)[0].requires_grad
-
-
-if __name__ == "__main__":
-    main()
