@@ -1171,7 +1171,7 @@ def test_torch_script():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')
+@withPackage('torch>=2.3.0')
 def test_compile_basic():
     import torch._dynamo as dynamo
 
@@ -1202,7 +1202,7 @@ def test_compile_basic():
 
 
 @onlyLinux
-@withPackage('torch>=2.2.0')
+@withPackage('torch>=2.3.0')
 @pytest.mark.skip(reason="Does not work currently")
 def test_compile_create_edge_index():
     import torch._dynamo as dynamo

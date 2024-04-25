@@ -52,7 +52,7 @@ def test_compile_conv(device, Conv):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>=2.2.0')
+@withPackage('torch>=2.3.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv_edge_index(device, Conv):
     import torch._dynamo as dynamo
