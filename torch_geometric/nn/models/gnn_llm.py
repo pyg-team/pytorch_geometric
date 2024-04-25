@@ -201,14 +201,14 @@ class LLM(nn.Module):
     @torch.no_grad()
     def inference(self, question, additional_context=None,
                   max_out_tokens=max_new_tokens):
-        f"""Inference.
+        r"""Inference.
 
         Args:
             question (List[str]): The questions/prompts.
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
             max_out_tokens (int, optional): How many tokens for the LLM to
-                generate. (default: {max_new_tokens})
+                generate. (default: {32})
         """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
@@ -378,6 +378,17 @@ class GRetriever(nn.Module):
 
         Args:
             question (List[str]): The questions/prompts.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights (if
+                supported by the underlying GNN layer). (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the underlying GNN layer). (default: :obj:`None`)
+            batch (torch.Tensor): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+            ptr (torch.Tensor): The pointer vector, denoting the
+                boundaries between examples in the batch.
             label (List[str]): The answers/labels.
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
@@ -451,14 +462,25 @@ class GRetriever(nn.Module):
     @torch.no_grad()
     def inference(self, question, node_feat, edge_index, edge_attr, batch, ptr,
                   additional_text_context=None, max_out_tokens=max_new_tokens):
-        f"""Inference.
+        r"""Inference.
 
         Args:
             question (List[str]): The questions/prompts.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights (if
+                supported by the underlying GNN layer). (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the underlying GNN layer). (default: :obj:`None`)
+            batch (torch.Tensor): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+            ptr (torch.Tensor): The pointer vector, denoting the
+                boundaries between examples in the batch.
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
             max_out_tokens (int, optional): How many tokens for the LLM to
-                generate. (default: {max_new_tokens})
+                generate. (default: {32})
         """
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
