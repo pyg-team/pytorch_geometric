@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        torch-version: [1.13.0, 2.0.0, 2.1.0]
+        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0]
         include:
           - torch-version: 1.13.0
             torchvision-version: 0.14.0
