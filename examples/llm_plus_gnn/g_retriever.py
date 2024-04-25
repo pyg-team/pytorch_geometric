@@ -98,6 +98,17 @@ def load_params_dict(model, save_path):
     model.load_state_dict(state_dict)
     return model
 
+def get_loss(model, batch, model_save_name):
+    if model_save_name == "llm":
+        return model(batch.question, batch.desc, batch.label)
+    else:
+        return model(batch.question, batch.desc, batch.x, batch.edge_index, batch.edge_attr, batch.batch, batch.ptr, batch.label)
+
+def inference_step(model, batch, model_save_name):
+    if model_save_name == "llm":
+        return model.inference(batch.question, batch.desc)
+    else:
+        return model.inference(batch.question, batch.desc, batch.x, batch.edge_index, batch.edge_attr, batch.batch, batch.ptr)
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, model=None, dataset=None, checkpointing=False):
@@ -170,7 +181,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
             optimizer.zero_grad()
-            loss = model(batch)
+            loss = get_loss(model, batch, model_save_name)
             loss.backward()
 
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
@@ -192,7 +203,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
-                loss = model(batch)
+                loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss}")
@@ -215,7 +226,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print("Final Evaluation...")
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            output = model.inference(batch)
+            output = inference_step(model, batch, model_save_name)
             eval_output.append(output)
         progress_bar_test.update(1)
 
@@ -263,7 +274,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             question = batch.question[0]
             correct_answer = batch.label[0]
             # GNN+LLM only using 32 tokens to answer, give untrained LLM more
-            pure_llm_out = pure_llm.inference(batch, max_out_tokens=256)
+            pure_llm_out = pure_llm.inference(batch.question, batch.desc, max_out_tokens=256)
             gnn_llm_pred = gnn_llm_preds[i]
             pure_llm_pred = pure_llm_out['pred'][0]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,

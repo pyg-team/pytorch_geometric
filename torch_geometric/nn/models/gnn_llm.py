@@ -112,11 +112,11 @@ class LLM(nn.Module):
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
 
-    def encode_inputs(self, samples: Batch):
-        batch_size = len(samples['question'])
-        questions = self.tokenizer(samples["question"],
+    def encode_inputs(self, question, additional_context):
+        batch_size = len(question)
+        questions = self.tokenizer(question,
                                    add_special_tokens=False)
-        descriptions = self.tokenizer(samples["desc"],
+        context = self.tokenizer(additional_context,
                                       add_special_tokens=False)
 
         # encode special tokens
@@ -128,14 +128,14 @@ class LLM(nn.Module):
         pad_embeds = self.word_embedding(
             torch.tensor(self.tokenizer.pad_token_id).to(
                 self.llm_device)).unsqueeze(0)
-        return (batch_size, questions, descriptions, eos_user_tokens,
+        return (batch_size, questions, context, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
-    def forward(self, samples: Batch):
-        batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(samples)
+    def forward(self, question, additional_context, label):
+        batch_size, questions, context, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
         # encode labels
-        labels = self.tokenizer(samples.label, add_special_tokens=False)
+        labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
 
@@ -146,7 +146,7 @@ class LLM(nn.Module):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
                 i][:max_new_tokens] + eos_tokens.input_ids
-            input_ids = descriptions.input_ids[
+            input_ids = context.input_ids[
                 i][:max_txt_len] + questions.input_ids[
                     i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
@@ -187,14 +187,14 @@ class LLM(nn.Module):
             )
         return outputs.loss
 
-    def inference(self, samples: Batch, max_out_tokens=max_new_tokens):
-        batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(samples)
+    def inference(self, question, additional_context, max_out_tokens=max_new_tokens):
+        batch_size, questions, context, eos_user_tokens, \
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
             # Add bos & eos token
-            input_ids = descriptions.input_ids[
+            input_ids = contex.input_ids[
                 i][:max_txt_len] + questions.input_ids[
                     i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
@@ -336,31 +336,31 @@ class GRetriever(nn.Module):
 
         self.word_embedding = self.llm_to_use.word_embedding
 
-    def encode_graphs(self, samples: Batch):
-        x = samples.x.to(self.llm_device)
-        edge_index = samples.edge_index.long().to(self.llm_device)
-        edge_attr = samples.edge_attr.to(self.llm_device)
+    def encode_graphs(self, node_feat, edge_index, edge_attr, batch):
+        x = node_feat.to(self.llm_device)
+        edge_index = edge_index.long().to(self.llm_device)
+        edge_attr = edge_attr.to(self.llm_device)
         n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
-        batch = samples.batch.to(self.llm_device)
+        batch = batch.to(self.llm_device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, samples: Batch):
+    def forward(self, question, kg_description, node_feat, edge_index, edge_attr, batch, ptr, label):
         batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, kg_description)
         # encode labels
-        labels = self.tokenizer(samples.label, add_special_tokens=False)
+        labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
 
         # encode graphs
-        graph_embeds = self.encode_graphs(samples)
+        graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr, batch)
         graph_embeds = self.projector(graph_embeds)
         batch_inputs_embeds = []
         batch_attention_mask = []
         batch_label_input_ids = []
-        num_nodes_per_graph = samples.ptr[1:] - samples.ptr[:-1]
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         for i in range(batch_size):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
@@ -408,15 +408,16 @@ class GRetriever(nn.Module):
             )
         return outputs.loss
 
-    def inference(self, samples: Batch):
+    def inference(self, question, kg_description, node_feat, edge_index, edge_attr, batch, ptr, max_out_tokens=max_new_tokens):
         batch_size, questions, descriptions, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(samples)
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, kg_description)
         # encode graphs
-        graph_embeds = self.encode_graphs(samples)
+        graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr, batch)
         graph_embeds = self.projector(graph_embeds)
 
         batch_inputs_embeds = []
         batch_attention_mask = []
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         for i in range(batch_size):
             # Add bos & eos token
             input_ids = descriptions.input_ids[
