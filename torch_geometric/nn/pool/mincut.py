@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.dense.mincut_pool import _rank3_trace
+
 
 def mincut_pool(
     x: Tensor,
@@ -99,8 +101,8 @@ def mincut_pool(
     return out, out_adj, mincut_loss, ortho_loss
 
 
-def _bmm(t2: Tensor, t3: Tensor):
-    """Batched matrix multiplication.
+def _bmm(t2: Tensor, t3: Tensor) -> Tensor:
+    r"""Batched matrix multiplication.
     Multiply a 2D dense tensor with a 3D sparse coo tensor.
     """
     dim1 = t3.shape[0]
@@ -110,15 +112,15 @@ def _bmm(t2: Tensor, t3: Tensor):
     )
 
 
-def _rank3_trace(x: Tensor) -> Tensor:
-    return torch.einsum("ijj->i", x)
-
-
-def _sparse_diag_2d(diag):
+def _sparse_diag_2d(diag: Tensor) -> Tensor:
+    r"""Create a 2D sparse tensor given its diagonal values as input."""
     n = diag.shape[0]
     return torch.sparse_coo_tensor([list(range(n)), list(range(n))], diag)
 
 
-def _sparse_rank3_diag(d_flat):
+def _sparse_rank3_diag(d_flat: Tensor) -> Tensor:
+    r"""Construct batched 2D diagonal tensor,
+    where the inner 2 dimensions corresponds to a sparse diagonal matrix.
+    """
     return torch.stack([_sparse_diag_2d(diag.to_dense()) for diag in d_flat],
                        dim=0)
