@@ -14,6 +14,7 @@ max_new_tokens = 32
 pad_token_id = 0
 padding_side = 'left'
 
+
 def get_llm_kwargs(mem_needed):
     assert torch.cuda.is_available(), "GPU needed to run LLMs efficiently!"
     avail_gpus = torch.cuda.device_count()
@@ -112,7 +113,8 @@ class LLM(nn.Module):
         return (batch_size, questions, additional_context, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
-    def forward(self, question: List[str], label: List[str], additional_context: Optional[List[str]] = None):
+    def forward(self, question: List[str], label: List[str],
+                additional_context: Optional[List[str]] = None):
         r"""Forward pass.
 
         Args:
@@ -181,7 +183,8 @@ class LLM(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question: List[str], additional_context: Optional[List[str]] = None,
+    def inference(self, question: List[str],
+                  additional_context: Optional[List[str]] = None,
                   max_out_tokens: Optional[int] = max_new_tokens):
         r"""Inference.
 
