@@ -104,8 +104,8 @@ def get_loss(model, batch, model_save_name):
         return model(batch.question, batch.label, batch.desc)
     else:
         return model(batch.question, batch.x, batch.edge_index,
-                     batch.edge_attr, batch.batch, batch.ptr, batch.label,
-                     batch.desc)
+                     batch.batch, batch.ptr, batch.label,
+                     batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, model_save_name):
@@ -113,7 +113,7 @@ def inference_step(model, batch, model_save_name):
         return model.inference(batch.question, batch.desc)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.edge_attr, batch.batch, batch.ptr,
+                               batch.batch, batch.ptr, batch.edge_attr
                                batch.desc)
 
 

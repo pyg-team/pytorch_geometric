@@ -1,3 +1,4 @@
+from typing import List, Optional
 import torch
 import torch.nn as nn
 
@@ -130,7 +131,7 @@ class LLM(nn.Module):
         return (batch_size, questions, additional_context, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
-    def forward(self, question, label, additional_context=None):
+    def forward(self, question: List[str], label: List[str], additional_context: Optional[List[str]] = None):
         r"""Forward pass.
 
         Args:
@@ -199,8 +200,8 @@ class LLM(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question, additional_context=None,
-                  max_out_tokens=max_new_tokens):
+    def inference(self, question: List[str], additional_context: Optional[List[str]] = None,
+                  max_out_tokens: Optional[int] = max_new_tokens):
         r"""Inference.
 
         Args:
@@ -371,24 +372,22 @@ class GRetriever(nn.Module):
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, question, node_feat, edge_index, edge_attr, batch, ptr,
-                label, additional_text_context=None):
+    def forward(self, question: List[str], node_feat: torch.Tensor, edge_index: torch.Tensor, batch: torch.Tensor, ptr: torch.Tensor,
+                label: List[str], edge_attr: Optional[torch.Tensor] = None, additional_text_context: Optional[List[str]] = None):
         r"""Forward pass.
 
         Args:
             question (List[str]): The questions/prompts.
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
-            edge_weight (torch.Tensor, optional): The edge weights (if
-                supported by the underlying GNN layer). (default: :obj:`None`)
-            edge_attr (torch.Tensor, optional): The edge features (if supported
-                by the underlying GNN layer). (default: :obj:`None`)
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example.
             ptr (torch.Tensor): The pointer vector, denoting the
                 boundaries between examples in the batch.
             label (List[str]): The answers/labels.
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the GNN being used). (default: :obj:`None`)
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
         """
@@ -459,8 +458,8 @@ class GRetriever(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question, node_feat, edge_index, edge_attr, batch, ptr,
-                  additional_text_context=None, max_out_tokens=max_new_tokens):
+    def inference(self, question: List[str], node_feat: torch.Tensor, edge_index: torch.Tensor, batch: torch.Tensor, ptr: torch.Tensor,
+                edge_attr: Optional[torch.Tensor] = None, additional_text_context: Optional[List[str]] = None, max_out_tokens: Optional[int] =max_new_tokens):
         r"""Inference.
 
         Args:
@@ -469,13 +468,13 @@ class GRetriever(nn.Module):
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_weight (torch.Tensor, optional): The edge weights (if
                 supported by the underlying GNN layer). (default: :obj:`None`)
-            edge_attr (torch.Tensor, optional): The edge features (if supported
-                by the underlying GNN layer). (default: :obj:`None`)
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example.
             ptr (torch.Tensor): The pointer vector, denoting the
                 boundaries between examples in the batch.
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the GNN being used). (default: :obj:`None`)
             additional_context (List[str], optional): Additional context to
                 give to the LLM, such as textified knowledge graphs.
             max_out_tokens (int, optional): How many tokens for the LLM to
