@@ -11,7 +11,9 @@ def mincut_pool(
     mask: Optional[Tensor] = None,
     temp: float = 1.0,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-    r"""MinCut pooling for sparse adjacency matrices, which mirros its dense counter-part `dense_mincut_pool`
+    r"""MinCut pooling for sparse adjacency matrices.
+
+    This class mirros its dense counter-part `dense_mincut_pool`
 
     Args:
         x (torch.Tensor): Node feature tensor
@@ -47,7 +49,12 @@ def mincut_pool(
         x, s = x * mask, s * mask
 
     out = torch.matmul(s.transpose(1, 2), x)
+
+    # we resort to a different way of doing matrix multiplication
+    # on batches of 2D matrices
+    # since using the following
     # out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
+    # gives RuntimeError: expand is unsupported for Sparse tensors
     n_batches = s.shape[0]
     out_adj = torch.matmul(
         torch.stack(
@@ -63,7 +70,7 @@ def mincut_pool(
     mincut_num = _rank3_trace(out_adj)
     d_flat = torch.einsum("ijk->ij", adj)
     d = _sparse_rank3_diag(d_flat)
-    # mincut_den = _rank3_trace(torch.matmul(torch.matmul(s.transpose(1, 2), d), s))
+
     mincut_den = _rank3_trace(
         torch.matmul(
             torch.stack(
