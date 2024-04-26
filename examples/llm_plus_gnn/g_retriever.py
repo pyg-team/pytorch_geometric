@@ -114,7 +114,7 @@ def inference_step(model, batch, model_save_name):
         return model.inference(batch.question, batch.desc)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.ptr, batch.edge_attr
+                               batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
 
 
