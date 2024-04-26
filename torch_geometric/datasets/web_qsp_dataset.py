@@ -212,7 +212,7 @@ class WebQSPDataset(InMemoryDataset):
         list_of_graphs = []
         # encode questions
         print("Encoding questions...")
-        q_embs = self.text2embedding(self.model, self.device, self.questions)
+        q_embs = text2embedding(self.model, self.device, self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
