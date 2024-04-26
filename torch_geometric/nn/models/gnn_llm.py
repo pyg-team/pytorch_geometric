@@ -255,7 +255,7 @@ class LLM(nn.Module):
         return {
             'pred': pred,
             'question': question,
-            'desc': additional_text_context,
+            'desc': additional_context,
         }
 
 
