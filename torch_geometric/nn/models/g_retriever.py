@@ -11,6 +11,7 @@ from torch_geometric.nn.text.llm import (
     max_txt_len,
 )
 from torch_geometric.utils import scatter
+from torch_geometric.nn.text import LLM
 
 
 class GRetriever(nn.Module):
