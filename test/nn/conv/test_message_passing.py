@@ -176,6 +176,22 @@ def test_my_commented_conv():
     jit(x, edge_index)
 
 
+class MyKwargsConv(MessagePassing):
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        return self.propagate(x=x, edge_index=edge_index)
+
+
+def test_my_kwargs_conv():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = MyKwargsConv()
+    conv(x, edge_index)
+
+    jit = torch.jit.script(conv)
+    jit(x, edge_index)
+
+
 def test_my_conv_out_of_bounds():
     x = torch.randn(3, 8)
     value = torch.randn(4)
