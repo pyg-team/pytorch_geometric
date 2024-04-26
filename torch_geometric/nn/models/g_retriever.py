@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 import torch
 import torch.nn as nn
 from torch_geometric.nn.models import GAT
@@ -119,8 +120,11 @@ class GRetriever(nn.Module):
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, question: List[str], node_feat: torch.Tensor, edge_index: torch.Tensor, batch: torch.Tensor, ptr: torch.Tensor,
-                label: List[str], edge_attr: Optional[torch.Tensor] = None, additional_text_context: Optional[List[str]] = None):
+    def forward(self, question: List[str], node_feat: torch.Tensor,
+                edge_index: torch.Tensor, batch: torch.Tensor,
+                ptr: torch.Tensor, label: List[str],
+                edge_attr: Optional[torch.Tensor] = None,
+                additional_text_context: Optional[List[str]] = None):
         r"""Forward pass.
 
         Args:
@@ -205,8 +209,11 @@ class GRetriever(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question: List[str], node_feat: torch.Tensor, edge_index: torch.Tensor, batch: torch.Tensor, ptr: torch.Tensor,
-                edge_attr: Optional[torch.Tensor] = None, additional_text_context: Optional[List[str]] = None, max_out_tokens: Optional[int] =max_new_tokens):
+    def inference(self, question: List[str], node_feat: torch.Tensor,
+                  edge_index: torch.Tensor, batch: torch.Tensor,
+                  ptr: torch.Tensor, edge_attr: Optional[torch.Tensor] = None,
+                  additional_text_context: Optional[List[str]] = None,
+                  max_out_tokens: Optional[int] = max_new_tokens):
         r"""Inference.
 
         Args:
