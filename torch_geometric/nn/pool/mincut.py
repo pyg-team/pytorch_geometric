@@ -11,8 +11,7 @@ def mincut_pool(
     mask: Optional[Tensor] = None,
     temp: float = 1.0,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-    r"""
-    Args:
+    r"""Args:
         x (torch.Tensor): Node feature tensor
             :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
             batch-size :math:`B`, (maximum) number of nodes :math:`N` for
@@ -50,7 +49,10 @@ def mincut_pool(
     n_batches = s.shape[0]
     out_adj = torch.matmul(
         torch.stack(
-            [torch.matmul(s.transpose(1, 2)[b], adj[b]) for b in range(n_batches)],
+            [
+                torch.matmul(s.transpose(1, 2)[b], adj[b])
+                for b in range(n_batches)
+            ],
             dim=0,
         ),
         s,
@@ -63,12 +65,14 @@ def mincut_pool(
     mincut_den = _rank3_trace(
         torch.matmul(
             torch.stack(
-                [torch.matmul(s.transpose(1, 2)[b], d[b]) for b in range(n_batches)],
+                [
+                    torch.matmul(s.transpose(1, 2)[b], d[b])
+                    for b in range(n_batches)
+                ],
                 dim=0,
             ),
             s,
-        )
-    )
+        ))
 
     mincut_loss = -(mincut_num / mincut_den)
     mincut_loss = torch.mean(mincut_loss)
@@ -77,7 +81,8 @@ def mincut_pool(
     ss = torch.matmul(s.transpose(1, 2), s)
     i_s = torch.eye(k).type_as(ss)
     ortho_loss = torch.norm(
-        ss / torch.norm(ss, dim=(-1, -2), keepdim=True) - i_s / torch.norm(i_s),
+        ss / torch.norm(ss, dim=(-1, -2), keepdim=True) -
+        i_s / torch.norm(i_s),
         dim=(-1, -2),
     )
     ortho_loss = torch.mean(ortho_loss)
@@ -104,4 +109,5 @@ def _sparse_diag_2d(diag):
 
 
 def _sparse_rank3_diag(d_flat):
-    return torch.stack([_sparse_diag_2d(diag.to_dense()) for diag in d_flat], dim=0)
+    return torch.stack([_sparse_diag_2d(diag.to_dense()) for diag in d_flat],
+                       dim=0)

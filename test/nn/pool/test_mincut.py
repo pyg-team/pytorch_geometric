@@ -1,14 +1,14 @@
 import math
-import numpy as np
 
+import numpy as np
 import torch
 
-from torch_geometric.nn.pool.mincut import (
-    mincut_pool,
-    _sparse_rank3_diag,
-    _sparse_diag_2d,
-)
 from torch_geometric.nn import dense_mincut_pool
+from torch_geometric.nn.pool.mincut import (
+    _sparse_diag_2d,
+    _sparse_rank3_diag,
+    mincut_pool,
+)
 from torch_geometric.testing import is_full_test
 
 
@@ -36,23 +36,21 @@ class TestMinCut:
         x = torch.randn((self.batch_size, self.num_nodes, self.channels))
         adj = (
             # a matrix with expected sparsity = 0.2
-            (
-                torch.rand((self.batch_size, self.num_nodes, self.num_nodes))
-                <= self.sparsity
-            )
-            .type(torch.float)
-            .to_sparse()
-        )
+            (torch.rand((self.batch_size, self.num_nodes, self.num_nodes))
+             <= self.sparsity).type(torch.float).to_sparse())
         s = torch.randn((self.batch_size, self.num_nodes, self.num_clusters))
-        mask = torch.randint(0, 2, (self.batch_size, self.num_nodes), dtype=torch.bool)
+        mask = torch.randint(0, 2, (self.batch_size, self.num_nodes),
+                             dtype=torch.bool)
 
         return x, adj, s, mask
 
     def test_output_shape_and_range(self):
         x, adj, s, mask = self.create_input()
         x_out, adj_out, mincut_loss, ortho_loss = mincut_pool(x, adj, s, mask)
-        assert x_out.size() == (self.batch_size, self.num_clusters, self.channels)
-        assert adj_out.size() == (self.batch_size, self.num_clusters, self.num_clusters)
+        assert x_out.size() == (self.batch_size, self.num_clusters,
+                                self.channels)
+        assert adj_out.size() == (self.batch_size, self.num_clusters,
+                                  self.num_clusters)
         assert -1 <= mincut_loss <= 0
         assert 0 <= ortho_loss <= 2
 
@@ -60,7 +58,8 @@ class TestMinCut:
             jit = torch.jit.script(mincut_pool)
 
             x_jit, adj_jit, mincut_loss, ortho_loss = jit(x, adj, s, mask)
-            assert x_jit.size() == (self.batch_size, self.num_clusters, self.channels)
+            assert x_jit.size() == (self.batch_size, self.num_clusters,
+                                    self.channels)
             assert adj_jit.size() == (
                 self.batch_size,
                 self.num_clusters,
@@ -80,14 +79,13 @@ class TestMinCut:
         ) = dense_mincut_pool(x, adj.to_dense(), s, mask)
 
         actual_x_out, actual_adj_out, actual_mincut_loss, actual_ortho_loss = (
-            mincut_pool(x, adj, s, mask)
-        )
+            mincut_pool(x, adj, s, mask))
 
-        np.testing.assert_allclose(expected_x_out, actual_x_out, rtol=self.RTOL)
-        np.testing.assert_allclose(expected_adj_out, actual_adj_out, rtol=self.RTOL)
-        np.testing.assert_allclose(
-            expected_mincut_loss, actual_mincut_loss, rtol=self.RTOL
-        )
-        np.testing.assert_allclose(
-            expected_ortho_loss, actual_ortho_loss, rtol=self.RTOL
-        )
+        np.testing.assert_allclose(expected_x_out, actual_x_out,
+                                   rtol=self.RTOL)
+        np.testing.assert_allclose(expected_adj_out, actual_adj_out,
+                                   rtol=self.RTOL)
+        np.testing.assert_allclose(expected_mincut_loss, actual_mincut_loss,
+                                   rtol=self.RTOL)
+        np.testing.assert_allclose(expected_ortho_loss, actual_ortho_loss,
+                                   rtol=self.RTOL)
