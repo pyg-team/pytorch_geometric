@@ -58,8 +58,8 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
         # final batch if len not divisible by batch_size
         if data_len % batch_size != 0:
             embeddings = model(
-                input_ids=encoding.input_ids[left_ptr:-1].to(device),
-                att_mask=encoding.attention_mask[left_ptr:-1].to(device))
+                input_ids=encoding.input_ids[left_ptr:].to(device),
+                att_mask=encoding.attention_mask[left_ptr:].to(device))
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
