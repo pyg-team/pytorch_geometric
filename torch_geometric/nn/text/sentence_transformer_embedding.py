@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-
+from typing import Optional, List
 
 class SentenceTransformer(torch.nn.Module):
     def __init__(self, pretrained_repo: str) -> None:
