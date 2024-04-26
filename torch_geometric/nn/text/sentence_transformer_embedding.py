@@ -1,5 +1,6 @@
-import torch.nn.functional as F
 import torch
+import torch.nn.functional as F
+
 
 class SentenceTransformer(torch.nn.Module):
     def __init__(self, pretrained_repo: str) -> None:
@@ -29,13 +30,12 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def text2embedding(model: SentenceTransformer,
-                   device: torch.device,
+def text2embedding(model: SentenceTransformer, device: torch.device,
                    text: List[str],
                    batch_size: Optional[int] = 256) -> torch.Tensor:
     try:
         encoding = model.tokenizer(text, padding=True, truncation=True,
-                             return_tensors="pt")
+                                   return_tensors="pt")
         data_len = encoding.input_ids.size(0)
         num_full_batches = data_len // batch_size
         all_embeddings_list = []
@@ -45,15 +45,19 @@ def text2embedding(model: SentenceTransformer,
             left_ptr = 0
             for i in range(num_full_batches):
                 # Forward pass
-                embeddings = model(input_ids=encoding.input_ids[left_ptr:left_ptr+batch_size].to(device),
-                                   att_mask=encoding.attention_mask[left_ptr:left_ptr+batch_size].to(device))
+                embeddings = model(
+                    input_ids=encoding.input_ids[left_ptr:left_ptr +
+                                                 batch_size].to(device),
+                    att_mask=encoding.attention_mask[left_ptr:left_ptr +
+                                                     batch_size].to(device))
                 left_ptr += batch_size
                 # Append the embeddings to the list
                 all_embeddings_list.append(embeddings)
         # final batch if len not divisible by batch_size
         if data_len % batch_size != 0:
-            embeddings = model(input_ids=encoding.input_ids[left_ptr:-1].to(device),
-                               att_mask=encoding.attention_mask[left_ptr:-1].to(device))
+            embeddings = model(
+                input_ids=encoding.input_ids[left_ptr:-1].to(device),
+                att_mask=encoding.attention_mask[left_ptr:-1].to(device))
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
