@@ -208,7 +208,6 @@ class WebQSPDataset(InMemoryDataset):
         self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
-        self.text2embedding = sbert_text2embedding
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
@@ -240,10 +239,10 @@ class WebQSPDataset(InMemoryDataset):
                                  columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr.fillna("", inplace=True)
-            x = self.text2embedding(self.model, self.device,
+            x = text2embedding(self.model, self.device,
                                     nodes.node_attr.tolist())
             # encode edges
-            edge_attr = self.text2embedding(self.model, self.device,
+            edge_attr = text2embedding(self.model, self.device,
                                             edges.edge_attr.tolist())
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
