@@ -60,6 +60,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
             embeddings = model(
                 input_ids=encoding.input_ids[left_ptr:].to(device),
                 att_mask=encoding.attention_mask[left_ptr:].to(device))
+            all_embeddings_list.append(embeddings)
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
