@@ -55,15 +55,9 @@ def mincut_pool(
     # since using the following
     # out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
     # gives RuntimeError: expand is unsupported for Sparse tensors
-    n_batches = s.shape[0]
+    # TODO: consider faster approaches
     out_adj = torch.matmul(
-        torch.stack(
-            [
-                torch.matmul(s.transpose(1, 2)[b], adj[b])
-                for b in range(n_batches)
-            ],
-            dim=0,
-        ),
+        _bmm(s, adj),
         s,
     )
     # MinCut regularization.
@@ -75,17 +69,10 @@ def mincut_pool(
     d_flat = torch.einsum("ijk->ij", adj)
     d = _sparse_rank3_diag(d_flat)
 
-    mincut_den = _rank3_trace(
-        torch.matmul(
-            torch.stack(
-                [
-                    torch.matmul(s.transpose(1, 2)[b], d[b])
-                    for b in range(n_batches)
-                ],
-                dim=0,
-            ),
-            s,
-        ))
+    mincut_den = _rank3_trace(torch.matmul(
+        _bmm(s, d),
+        s,
+    ))
 
     mincut_loss = -(mincut_num / mincut_den)
     mincut_loss = torch.mean(mincut_loss)
@@ -110,6 +97,17 @@ def mincut_pool(
     out_adj = (out_adj / d) / d.transpose(1, 2)
 
     return out, out_adj, mincut_loss, ortho_loss
+
+
+def _bmm(t2: Tensor, t3: Tensor):
+    """Batched matrix multiplication.
+    Multiply a 2D dense tensor with a 3D sparse coo tensor.
+    """
+    dim1 = t3.shape[0]
+    return torch.stack(
+        [torch.matmul(t2.transpose(1, 2)[i], t3[i]) for i in range(dim1)],
+        dim=0,
+    )
 
 
 def _rank3_trace(x: Tensor) -> Tensor:
