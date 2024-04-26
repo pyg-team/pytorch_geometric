@@ -68,6 +68,10 @@ def mincut_pool(
     )
     # MinCut regularization.
     mincut_num = _rank3_trace(out_adj)
+
+    # TODO: einsum on coo_matrix is slower than
+    #       on csr_matrix (after some tweaks)
+    #       consider using csr_matrix
     d_flat = torch.einsum("ijk->ij", adj)
     d = _sparse_rank3_diag(d_flat)
 
