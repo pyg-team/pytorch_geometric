@@ -254,9 +254,8 @@ class LLM(nn.Module):
 
         return {
             'pred': pred,
-            'label': samples['label'],
-            'question': samples['question'],
-            'desc': samples['desc'],
+            'question': question,
+            'desc': additional_text_context,
         }
 
 
@@ -533,9 +532,8 @@ class GRetriever(nn.Module):
 
         return {
             'pred': pred,
-            'label': samples['label'],
-            'question': samples['question'],
-            'desc': samples['desc'],
+            'question': question,
+            'desc': additional_text_context,
         }
 
     def print_trainable_params(self):
