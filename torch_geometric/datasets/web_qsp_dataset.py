@@ -19,7 +19,7 @@ except ImportError as e:  # noqa
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from torch_geometric.nn.text import text2embedding, SentenceTransformer
+from torch_geometric.nn.text import SentenceTransformer, text2embedding
 
 try:
     import datasets
