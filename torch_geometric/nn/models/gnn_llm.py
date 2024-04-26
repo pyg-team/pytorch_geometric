@@ -412,7 +412,7 @@ class GRetriever(nn.Module):
             label_input_ids = labels.input_ids[
                 i][:max_new_tokens] + eos_tokens.input_ids
             if additional_text_context is not None:
-                input_ids = additional_text_context.input_ids[
+                input_ids = context.input_ids[
                     i][:max_txt_len] + questions.input_ids[
                         i] + eos_user_tokens.input_ids + label_input_ids
             else:
