@@ -104,9 +104,8 @@ def get_loss(model, batch, model_save_name):
     if model_save_name == "llm":
         return model(batch.question, batch.label, batch.desc)
     else:
-        return model(batch.question, batch.x, batch.edge_index,
-                     batch.batch, batch.ptr, batch.label,
-                     batch.edge_attr, batch.desc)
+        return model(batch.question, batch.x, batch.edge_index, batch.batch,
+                     batch.ptr, batch.label, batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, model_save_name):
