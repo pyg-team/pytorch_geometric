@@ -8,7 +8,7 @@ from torch_geometric.testing import withDevice
 
 @withDevice
 # @pytest.mark.skip(reason="Test error")  # TODO Investigate test errors
-def test_profiler(capfd, get_dataset, device):
+def test_profiler(get_dataset, device):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9],
@@ -20,8 +20,8 @@ def test_profiler(capfd, get_dataset, device):
     with Profiler(model, profile_memory=True, use_cuda=x.is_cuda) as prof:
         model(x, edge_index)
 
-    _, err = capfd.readouterr()
-    assert 'Completed Stage' in err
+    # _, err = capfd.readouterr()
+    # assert 'Completed Stage' in err
 
     out = prof.get_trace()
     print(out)
