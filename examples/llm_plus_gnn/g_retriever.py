@@ -234,6 +234,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
             output = inference_step(model, batch, model_save_name)
+            output["label"] = batch.label
             eval_output.append(output)
         progress_bar_test.update(1)
 
