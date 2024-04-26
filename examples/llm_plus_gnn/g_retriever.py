@@ -21,7 +21,8 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models.gnn_llm import LLM, GRetriever
+from torch_geometric.nn.models import GRetriever
+from torch_geometric.nn.text import LLM
 
 
 def detect_hallucinate(pred, label):
