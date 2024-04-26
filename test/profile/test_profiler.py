@@ -7,7 +7,7 @@ from torch_geometric.testing import withDevice
 
 
 @withDevice
-@pytest.mark.skip(reason="Test error")  # TODO Investigate test errors
+# @pytest.mark.skip(reason="Test error")  # TODO Investigate test errors
 def test_profiler(capfd, get_dataset, device):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.tensor([
@@ -22,6 +22,11 @@ def test_profiler(capfd, get_dataset, device):
 
     _, err = capfd.readouterr()
     assert 'Completed Stage' in err
+
+    out = prof.get_trace()
+    print(out)
+    print(out.__class__)
+    print(len(out))
 
     _, heading_list, raw_results, layer_names, layer_stats = prof.get_trace()
     assert 'Self CPU total' in heading_list
