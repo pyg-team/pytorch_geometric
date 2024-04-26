@@ -69,7 +69,7 @@ class TestMinCut:
             assert 0 <= ortho_loss <= math.sqrt(2)
 
     def test_output_vs_dense_mincut(self):
-        """check the output matches that of the dense_mincut_pool"""
+        """Check the output matches that of the dense_mincut_pool"""
         x, adj, s, mask = self.create_input()
 
         (
