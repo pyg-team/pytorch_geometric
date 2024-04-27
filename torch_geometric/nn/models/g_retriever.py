@@ -62,7 +62,6 @@ class GRetriever(nn.Module):
         mlp_out_dim: int = 4096,
     ):
         super().__init__()
-        from transformers import AutoModelForCausalLM, AutoTokenizer
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
         elif 'gemma' in llm_to_use.lower():
@@ -146,11 +145,11 @@ class GRetriever(nn.Module):
             label (List[str]): The answers/labels.
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the GNN being used). (default: :obj:`None`)
-            additional_context (List[str], optional): Additional context to
-                give to the LLM, such as textified knowledge graphs.
+            additional_text_context (List[str], optional): Additional context
+                to give to the LLM, such as textified knowledge graphs.
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
         # encode labels
         labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
@@ -236,13 +235,13 @@ class GRetriever(nn.Module):
                 boundaries between examples in the batch.
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the GNN being used). (default: :obj:`None`)
-            additional_context (List[str], optional): Additional context to
-                give to the LLM, such as textified knowledge graphs.
+            additional_text_context (List[str], optional): Additional context
+                to give to the LLM, such as textified knowledge graphs.
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: {32})
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context)
+            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
         # encode graphs
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
@@ -261,9 +260,11 @@ class GRetriever(nn.Module):
                 input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
-            inputs_embeds = torch.cat(
-                [bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds],
-                dim=0)
+            to_cat = [bos_embeds]
+            if num_nodes_per_graph[i] != 0:
+                to_cat.append(graph_embeds[i].unsqueeze(0))
+            to_cat.append(inputs_embeds)
+            inputs_embeds = torch.cat(to_cat, dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 

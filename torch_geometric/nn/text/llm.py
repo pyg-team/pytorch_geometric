@@ -43,8 +43,7 @@ def get_llm_kwargs(mem_needed):
 
 
 class LLM(nn.Module):
-    r"""This module wraps a HuggingFace Transformer based model in such
-    a way that makes it easy to use with PyG GNNs.
+    r"""This module wraps a HuggingFace Transformer based model.
     model_name (str): A string representing the huggingface model you
         want to use. This module has been tested for 'llama2' and 'gemma'.
         Other huggingface transformer models should work if you pass the
@@ -71,8 +70,8 @@ class LLM(nn.Module):
             self.printable_llm_name = "GEMMA"
             self.huggingface_str = gemma_str_name
         else:
-            self.printable_llm_name = llm_name
-            self.huggingface_str = llm_name
+            self.printable_llm_name = model_name
+            self.huggingface_str = model_name
         """
         This is a rough hueristic:
         We found that LLAMA2 (7B) + GAT hits OOM
@@ -124,7 +123,7 @@ class LLM(nn.Module):
                 give to the LLM, such as textified knowledge graphs.
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
         # encode labels
         labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
@@ -196,7 +195,7 @@ class LLM(nn.Module):
                 generate. (default: {32})
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context)
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
