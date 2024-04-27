@@ -1,29 +1,25 @@
-from typing import Dict, List, Tuple, Union, no_type_check
+from typing import Dict, List, Tuple, no_type_check
 
 import numpy as np
 
 try:
+    import pandas as pd
     from pandas import DataFrame as df
     WITH_PANDAS = True
 except ImportError as e:  # noqa
     df = None
     WITH_PANDAS = False
 import torch
-import torch.nn.functional as F
 
 try:
     from pcst_fast import pcst_fast
     WITH_PCST = True
 except ImportError as e:  # noqa
     WITH_PCST = False
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-try:
-    from transformers import AutoModel, AutoTokenizer
-    WITH_TRANSFORMERS = True
-except ImportError as e:  # noqa
-    WITH_TRANSFORMERS = False
+from torch_geometric.nn.text import SentenceTransformer, text2embedding
+
 try:
     import datasets
     WITH_DATASETS = True
@@ -140,94 +136,6 @@ def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
     return data, desc
 
 
-class Dataset(torch.utils.data.Dataset):
-    def __init__(self, input_ids: torch.Tensor,
-                 attention_mask: torch.Tensor) -> None:
-        super().__init__()
-        self.data = {
-            "input_ids": input_ids,
-            "att_mask": attention_mask,
-        }
-
-    def __len__(self) -> int:
-        return self.data["input_ids"].size(0)
-
-    def __getitem__(
-            self, index: Union[int, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        if isinstance(index, torch.Tensor):
-            index = index.item()
-        batch_data = dict()
-        for key in self.data.keys():
-            if self.data[key] is not None:
-                batch_data[key] = self.data[key][index]
-        return batch_data
-
-
-class SentenceTransformer(torch.nn.Module):
-    def __init__(self, pretrained_repo: str) -> None:
-        super().__init__()
-        print(f"inherit model weights from {pretrained_repo}")
-        self.bert_model = AutoModel.from_pretrained(pretrained_repo)
-
-    def mean_pooling(self, token_embeddings: torch.Tensor,
-                     attention_mask: torch.Tensor) -> torch.Tensor:
-        data_type = token_embeddings.dtype
-        input_mask_expanded = attention_mask.unsqueeze(-1).expand(
-            token_embeddings.size()).to(data_type)
-        return torch.sum(token_embeddings * input_mask_expanded,
-                         1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-
-    def forward(self, input_ids: torch.Tensor,
-                att_mask: torch.Tensor) -> torch.Tensor:
-        bert_out = self.bert_model(input_ids=input_ids,
-                                   attention_mask=att_mask)
-
-        # First element of model_output contains all token embeddings
-        token_embeddings = bert_out[0]
-        sentence_embeddings = self.mean_pooling(token_embeddings, att_mask)
-        sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
-        return sentence_embeddings
-
-
-def sbert_text2embedding(model: SentenceTransformer,
-                         tokenizer: torch.nn.Module, device: torch.device,
-                         text: List[str]) -> torch.Tensor:
-    try:
-        encoding = tokenizer(text, padding=True, truncation=True,
-                             return_tensors="pt")
-        dataset = Dataset(input_ids=encoding.input_ids,
-                          attention_mask=encoding.attention_mask)
-
-        # DataLoader
-        dataloader = DataLoader(dataset, batch_size=256, shuffle=False)
-
-        # Placeholder for storing the embeddings
-        all_embeddings_list = []
-
-        # Iterate through batches
-        with torch.no_grad():
-
-            for batch in dataloader:
-                # Move batch to the appropriate device
-                batch = {key: value.to(device) for key, value in batch.items()}
-
-                # Forward pass
-                embeddings = model(input_ids=batch["input_ids"],
-                                   att_mask=batch["att_mask"])
-
-                # Append the embeddings to the list
-                all_embeddings_list.append(embeddings)
-
-        # Concatenate the embeddings from all batches
-        all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
-    except:  # noqa
-        print(
-            "SBERT text embedding failed, returning torch.zeros((0, 1024))...")
-        return torch.zeros((0, 1024))
-
-    return all_embeddings
-
-
 class WebQSPDataset(InMemoryDataset):
     r"""The WebQuestionsSP dataset was released as part of
     “The Value of Semantic Parse Labeling for Knowledge
@@ -254,9 +162,6 @@ class WebQSPDataset(InMemoryDataset):
         if not WITH_PCST:
             missing_str_list.append('pcst_fast')
             missing_imports = True
-        if not WITH_TRANSFORMERS:
-            missing_str_list.append('transformers')
-            missing_imports = True
         if not WITH_DATASETS:
             missing_str_list.append('datasets')
             missing_imports = True
@@ -267,7 +172,6 @@ class WebQSPDataset(InMemoryDataset):
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
-        self.prompt = "Please answer the given question."
         self.graph = None
         self.graph_type = "Knowledge Graph"
         self.model_name = "sbert"
@@ -299,19 +203,15 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        import pandas
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
         self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
-        self.text2embedding = sbert_text2embedding
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
         print("Encoding questions...")
-        q_embs = self.text2embedding(self.model, self.tokenizer, self.device,
-                                     self.questions)
+        q_embs = text2embedding(self.model, self.device, self.questions)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
@@ -338,12 +238,11 @@ class WebQSPDataset(InMemoryDataset):
                                  columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr.fillna("", inplace=True)
-            x = self.text2embedding(self.model, self.tokenizer, self.device,
-                                    nodes.node_attr.tolist())
+            x = text2embedding(self.model, self.device,
+                               nodes.node_attr.tolist())
             # encode edges
-            edge_attr = self.text2embedding(self.model, self.tokenizer,
-                                            self.device,
-                                            edges.edge_attr.tolist())
+            edge_attr = text2embedding(self.model, self.device,
+                                       edges.edge_attr.tolist())
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
             question = f"Question: {data_i['question']}\nAnswer: "
