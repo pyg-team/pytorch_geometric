@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.nn.models import GAT
+from torch_geometric.nn.text import LLM
 from torch_geometric.nn.text.llm import (
     EOS,
     IGNORE_INDEX,
@@ -11,7 +12,6 @@ from torch_geometric.nn.text.llm import (
     max_txt_len,
 )
 from torch_geometric.utils import scatter
-from torch_geometric.nn.text import LLM
 
 
 class GRetriever(nn.Module):
