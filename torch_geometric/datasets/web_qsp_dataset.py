@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Union, no_type_check
+from typing import Dict, List, Tuple, no_type_check
 
 import numpy as np
 
@@ -16,7 +16,6 @@ try:
     WITH_PCST = True
 except ImportError as e:  # noqa
     WITH_PCST = False
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from torch_geometric.nn.text import SentenceTransformer, text2embedding
