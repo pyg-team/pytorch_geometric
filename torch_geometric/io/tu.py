@@ -37,7 +37,7 @@ def read_tu_data(
         if node_label.dim() == 1:
             node_label = node_label.unsqueeze(-1)
         node_label = node_label - node_label.min(dim=0)[0]
-        node_labels = node_label.unbind(dim=-1)
+        node_labels = list(node_label.unbind(dim=-1))
         node_labels = [one_hot(x) for x in node_labels]
         if len(node_labels) == 1:
             node_label = node_labels[0]
@@ -56,7 +56,7 @@ def read_tu_data(
         if edge_label.dim() == 1:
             edge_label = edge_label.unsqueeze(-1)
         edge_label = edge_label - edge_label.min(dim=0)[0]
-        edge_labels = edge_label.unbind(dim=-1)
+        edge_labels = list(edge_label.unbind(dim=-1))
         edge_labels = [one_hot(e) for e in edge_labels]
         if len(edge_labels) == 1:
             edge_label = edge_labels[0]

@@ -19,6 +19,9 @@ data = dataset[0].to('cuda:0')
 class GCN(torch.nn.Module):
     def __init__(self, in_channels, out_channels, device1, device2):
         super().__init__()
+        self.device1 = device1
+        self.device2 = device2
+
         self.conv1 = GCNConv(in_channels, 16).to(device1)
         self.conv2 = GCNConv(16, out_channels).to(device2)
 
@@ -54,7 +57,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    out = model(data.x, data.edge_index, data.edge_attr)
+    out = model(data.x, data.edge_index)
     pred = out.argmax(dim=-1).to('cuda:0')
 
     accs = []

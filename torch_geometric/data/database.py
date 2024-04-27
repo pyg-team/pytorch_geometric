@@ -466,7 +466,8 @@ class SQLiteDatabase(Database):
                     col.is_undirected,
                 ], dtype=torch.long)
 
-                out.append(meta.numpy().tobytes() + col.numpy().tobytes())
+                out.append(meta.numpy().tobytes() +
+                           col.as_tensor().numpy().tobytes())
 
             elif isinstance(schema, TensorInfo):
                 assert isinstance(col, Tensor)

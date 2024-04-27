@@ -401,7 +401,8 @@ class Inspector:
             match = find_parenthesis_content(source, f'self.{func_name}')
             if match is not None:
                 for i, kwarg in enumerate(split(match, sep=',')):
-                    if exclude is not None and i in exclude:
+                    if ('=' not in kwarg and exclude is not None
+                            and i in exclude):
                         continue
 
                     name_and_content = re.split(r'\s*=\s*', kwarg)
