@@ -59,7 +59,7 @@ def mincut_pool(
     # gives RuntimeError: expand is unsupported for Sparse tensors
     # TODO: consider faster approaches
     out_adj = torch.matmul(
-        _bmm(s, adj),
+        _bmm(s.transpose(1, 2), adj),
         s,
     )
     # MinCut regularization.
@@ -72,7 +72,7 @@ def mincut_pool(
     d = _sparse_rank3_diag(d_flat)
 
     mincut_den = _rank3_trace(torch.matmul(
-        _bmm(s, d),
+        _bmm(s.transpose(1, 2), d),
         s,
     ))
 
@@ -101,13 +101,16 @@ def mincut_pool(
     return out, out_adj, mincut_loss, ortho_loss
 
 
-def _bmm(t2: Tensor, t3: Tensor) -> Tensor:
-    r"""Batched matrix multiplication.
-    Multiply a 2D dense tensor with a 3D sparse coo tensor.
+def _bmm(a: Tensor, b: Tensor) -> Tensor:
+    r"""Batched multiplication over 3D dense&sparse tensors.
+
+    Args:
+        a (torch.Tensor): a 3D dense tensor.
+        b (torch.Tensor): a 3D sparse tensor.
     """
-    dim1 = t3.shape[0]
+    dim1 = b.shape[0]
     return torch.stack(
-        [torch.matmul(t2.transpose(1, 2)[i], t3[i]) for i in range(dim1)],
+        [torch.matmul(a[i], b[i]) for i in range(dim1)],
         dim=0,
     )
 
