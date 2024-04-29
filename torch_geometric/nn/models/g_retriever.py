@@ -135,7 +135,7 @@ class GRetriever(nn.Module):
 
         Args:
             question (List[str]): The questions/prompts.
-            x (torch.Tensor): The input node features.
+            node_feat (torch.Tensor): The input node features.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
@@ -224,7 +224,7 @@ class GRetriever(nn.Module):
 
         Args:
             question (List[str]): The questions/prompts.
-            x (torch.Tensor): The input node features.
+            node_feat (torch.Tensor): The input node features.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_weight (torch.Tensor, optional): The edge weights (if
                 supported by the underlying GNN layer). (default: :obj:`None`)
