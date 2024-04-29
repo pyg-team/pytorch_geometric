@@ -44,7 +44,7 @@ def get_llm_kwargs(mem_needed):
 
 class LLM(nn.Module):
     r"""This module wraps a HuggingFace Transformer based model.
-    
+
     model_name (str): A string representing the huggingface model you
         want to use. This module has been tested for 'llama2' and 'gemma'.
         Other huggingface transformer models should work if you pass the
