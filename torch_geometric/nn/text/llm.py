@@ -44,6 +44,7 @@ def get_llm_kwargs(mem_needed):
 
 class LLM(nn.Module):
     r"""This module wraps a HuggingFace Transformer based model.
+    
     model_name (str): A string representing the huggingface model you
         want to use. This module has been tested for 'llama2' and 'gemma'.
         Other huggingface transformer models should work if you pass the
@@ -57,7 +58,6 @@ class LLM(nn.Module):
         huggingface transformer model has, in billions. This is used to
         automatically allocate the number of gpus needed, given the
         available GPU memory of your GPUs (default :obj:`7`)
-
     """
     def __init__(self, model_name: str = "llama2", dtype=torch.bfloat16,
                  num_params: int = 7):
