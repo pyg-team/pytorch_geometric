@@ -109,6 +109,7 @@ def _bmm(a: Tensor, b: Tensor) -> Tensor:
         b (torch.Tensor): a 3D sparse tensor.
     """
     dim1 = b.shape[0]
+    # TODO: check if a is dense and b is sparse and their dimensions
     return torch.stack(
         [torch.matmul(a[i], b[i]) for i in range(dim1)],
         dim=0,
