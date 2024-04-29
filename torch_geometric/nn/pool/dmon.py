@@ -119,7 +119,6 @@ class SparseDMoNPooling(torch.nn.Module):
 
         (batch_size, num_nodes, _), C = x.size(), s.size(-1)
 
-        print("C: {}".format(C))
         if mask is None:
             mask = torch.ones(batch_size, num_nodes, dtype=torch.bool,
                               device=x.device)
@@ -129,10 +128,10 @@ class SparseDMoNPooling(torch.nn.Module):
 
         out = F.selu(torch.matmul(s.transpose(1, 2), x))
         # out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
-        out_adj = _bmm(s, adj)
+        out_adj = torch.matmul(_bmm(s, adj), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ij', adj)  # B X N
+        degrees = torch.einsum('ijk->ij', adj).to_dense()  # B X N
         degrees = degrees.unsqueeze(-1) * mask  # B x N x 1
         degrees_t = degrees.transpose(1, 2)  # B x 1 x N
 
