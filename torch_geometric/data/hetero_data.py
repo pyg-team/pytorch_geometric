@@ -562,7 +562,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return mapping
 
     def _check_type_name(self, name: str):
-        return
         if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
                           f"('__') which may lead to unexpected behavior. "
