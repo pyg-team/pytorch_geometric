@@ -93,7 +93,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
 
     from torch_geometric.data import Data
 
-    RDLogger.DisableLog('rdApp.*')
+    RDLogger.DisableLog('rdApp.*')  # type: ignore
 
     mol = Chem.MolFromSmiles(smiles)
 
@@ -105,7 +105,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         Chem.Kekulize(mol)
 
     xs: List[List[int]] = []
-    for atom in mol.GetAtoms():
+    for atom in mol.GetAtoms():  # type: ignore
         row: List[int] = []
         row.append(x_map['atomic_num'].index(atom.GetAtomicNum()))
         row.append(x_map['chirality'].index(str(atom.GetChiralTag())))
@@ -122,7 +122,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     x = torch.tensor(xs, dtype=torch.long).view(-1, 9)
 
     edge_indices, edge_attrs = [], []
-    for bond in mol.GetBonds():
+    for bond in mol.GetBonds():  # type: ignore
         i = bond.GetBeginAtomIdx()
         j = bond.GetEndAtomIdx()
 
@@ -172,7 +172,7 @@ def to_smiles(data: 'torch_geometric.data.Data',
             data.x[i, 5])])
         atom.SetHybridization(Chem.rdchem.HybridizationType.values[int(
             data.x[i, 6])])
-        atom.SetIsAromatic(int(data.x[i, 7]))
+        atom.SetIsAromatic(bool(data.x[i, 7]))
         mol.AddAtom(atom)
 
     edges = [tuple(i) for i in data.edge_index.t().tolist()]
