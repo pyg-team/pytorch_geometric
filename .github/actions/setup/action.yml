@@ -48,8 +48,8 @@ runs:
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
-    - name: Install pyg-lib  # pyg-lib is currently not available on Windows.
-      if: ${{ inputs.torch-version != 'nightly' && inputs.torch-version != '2.3.0' && runner.os != 'Windows' }}
+    - name: Install pyg-lib
+      if: ${{ inputs.torch-version != 'nightly' }}
       run: |
         pip uninstall -y pyg-lib
         pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
@@ -74,7 +74,7 @@ runs:
       shell: bash
 
     - name: Install extension packages
-      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && inputs.torch-version != '2.3.0' && runner.os != 'macOS' }}
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         pip install scipy
         pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
