@@ -198,16 +198,16 @@ class QM9(InMemoryDataset):
 
     def process(self) -> None:
         try:
-            import rdkit
             from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
             from rdkit.Chem.rdchem import HybridizationType
-            RDLogger.DisableLog('rdApp.*')
+            RDLogger.DisableLog('rdApp.*')  # type: ignore
+            WITH_RDKIT = True
 
         except ImportError:
-            rdkit = None
+            WITH_RDKIT = False
 
-        if rdkit is None:
+        if not WITH_RDKIT:
             print(("Using a pre-processed version of the dataset. Please "
                    "install 'rdkit' to alternatively process the raw data."),
                   file=sys.stderr)
