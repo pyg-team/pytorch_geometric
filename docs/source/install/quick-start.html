@@ -116,6 +116,10 @@
       $("#command pre").text('conda install pyg -c pyg');
     }
 
+    else if ((os == "windows" || os == "mac") && (torch == "torch-2.1.0" || torch == "torch-2.2.0")) {
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+    }
+
     else {
       $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
