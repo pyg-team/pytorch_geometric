@@ -15,20 +15,24 @@ class TestDmoNPooling:
 
     def create_input(self):
         x = torch.randn((self.batch_size, self.num_nodes, self.channels))
-        adj = (
+        batched_adj = (
             # a matrix with expected sparsity = 0.2
             (torch.rand((self.batch_size, self.num_nodes, self.num_nodes))
              <= self.sparsity).type(torch.float).to_sparse())
+        adj_list = [
+            batched_adj[b].to_sparse_csr() for b in range(self.batch_size)
+        ]
         mask = torch.randint(0, 2, (self.batch_size, self.num_nodes),
                              dtype=torch.bool)
 
-        return x, adj, mask
+        return x, batched_adj, adj_list, mask
 
     def test_output_shape_and_range(self):
-        x, adj, mask = self.create_input()
+        x, batched_adj, adj_list, mask = self.create_input()
         pool = SparseDMoNPooling([self.channels, self.channels],
                                  self.num_clusters)
-        s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(x, adj, mask)
+        s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(
+            x, adj_list, batched_adj, mask)
         assert s.size() == (self.batch_size, self.num_nodes, self.num_clusters)
         assert x.size() == (self.batch_size, self.num_clusters, self.channels)
         assert adj.size() == (2, self.num_clusters, self.num_clusters)

@@ -9,13 +9,15 @@ from torch_geometric.nn.dense.mincut_pool import _rank3_trace
 EPS = 1e-15
 
 
-def _bmm(t2: Tensor, t3: Tensor) -> Tensor:
+def _bmm(a: Tensor, b: List[Tensor]) -> Tensor:
     r"""Batched matrix multiplication.
-    Multiply a 2D dense tensor with a 3D sparse coo tensor.
+    Multiply a 3D dense tensor with a list of 2D sparse tensor.
     """
-    dim1 = t3.shape[0]
+    dim1 = a.shape[0]
+    print("b[0].layout: {}".format(b[0].layout))
     return torch.stack(
-        [torch.matmul(t2.transpose(1, 2)[i], t3[i]) for i in range(dim1)],
+        [torch.matmul(b[i], a[i]) for i in range(dim1)],
+        # [torch.sparse.mm(b[i], a[i]) for i in range(dim1)],
         dim=0,
     )
 
@@ -75,6 +77,7 @@ class SparseDMoNPooling(torch.nn.Module):
             channels = [channels]
 
         from torch_geometric.nn.models.mlp import MLP
+
         self.mlp = MLP(channels + [k], act=None, norm=None)
 
         self.dropout = dropout
@@ -88,7 +91,8 @@ class SparseDMoNPooling(torch.nn.Module):
     def forward(
         self,
         x: Tensor,
-        adj: Tensor,
+        adj_csr_list: List[Tensor],
+        adj_csc_list: List[Tensor],
         mask: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         r"""Forward pass.
@@ -101,7 +105,11 @@ class SparseDMoNPooling(torch.nn.Module):
                 Note that the cluster assignment matrix
                 :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
                 being created within this method.
-            adj (torch.Tensor): Adjacency tensor
+            adj_csr_list (torch.Tensor): A list of adjacency tensors
+                stored as csr sparse matrices.
+                :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
+            adj_csc_list (torch.Tensor): A list of adjacency tensors
+                stored as csc sparse matrices.
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
             mask (torch.Tensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
@@ -111,8 +119,6 @@ class SparseDMoNPooling(torch.nn.Module):
             :class:`torch.Tensor`, :class:`torch.Tensor`,
             :class:`torch.Tensor`, :class:`torch.Tensor`)
         """
-        x = x.unsqueeze(0) if x.dim() == 2 else x
-        adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         s = self.mlp(x)
         s = F.dropout(s, self.dropout, training=self.training)
         s = torch.softmax(s, dim=-1)
@@ -128,14 +134,30 @@ class SparseDMoNPooling(torch.nn.Module):
 
         out = F.selu(torch.matmul(s.transpose(1, 2), x))
         # out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
-        out_adj = torch.matmul(_bmm(s, adj), s)
+        # s: B x N x C
+        # adj: B x N x N
+        # adj_t = adj.transpose(1, 2)
+        adj_t_list = [
+            adj.transpose(0, 1)  # transposed to csr
+            for adj in adj_csc_list
+        ]
+        out_adj = torch.matmul(_bmm(s, adj_t_list).transpose(1, 2), s)
+        # out_adj = torch.matmul(_bmm(s.transpose(1, 2), adj_list), s)
 
         # Spectral loss:
-        degrees = torch.einsum('ijk->ij', adj).to_dense()  # B X N
+        # degrees = torch.einsum("ijk->ij", batched_adj).to_dense()  # B X N
+        degrees = torch.stack(
+            [
+                adj.sum(axis=1, keepdim=True).to_dense().squeeze()
+                for adj in adj_csr_list
+            ],
+            axis=0,
+        )
+
         degrees = degrees.unsqueeze(-1) * mask  # B x N x 1
         degrees_t = degrees.transpose(1, 2)  # B x 1 x N
 
-        m = torch.einsum('ijk->i', degrees) / 2  # B
+        m = torch.einsum("ijk->i", degrees) / 2  # B
         m_expand = m.view(-1, 1, 1).expand(-1, C, C)  # B x C x C
 
         ca = torch.matmul(s.transpose(1, 2), degrees)  # B x C x 1
@@ -151,11 +173,13 @@ class SparseDMoNPooling(torch.nn.Module):
         i_s = torch.eye(C).type_as(ss)
         ortho_loss = torch.norm(
             ss / torch.norm(ss, dim=(-1, -2), keepdim=True) -
-            i_s / torch.norm(i_s), dim=(-1, -2))
+            i_s / torch.norm(i_s),
+            dim=(-1, -2),
+        )
         ortho_loss = ortho_loss.mean()
 
         # Cluster loss:
-        cluster_size = torch.einsum('ijk->ik', s)  # B x C
+        cluster_size = torch.einsum("ijk->ik", s)  # B x C
         cluster_loss = torch.norm(input=cluster_size, dim=1)
         cluster_loss = cluster_loss / mask.sum(dim=1) * torch.norm(i_s) - 1
         cluster_loss = cluster_loss.mean()
@@ -163,12 +187,12 @@ class SparseDMoNPooling(torch.nn.Module):
         # Fix and normalize coarsened adjacency matrix:
         ind = torch.arange(C, device=out_adj.device)
         out_adj[:, ind, ind] = 0
-        d = torch.einsum('ijk->ij', out_adj)
+        d = torch.einsum("ijk->ij", out_adj)
         d = torch.sqrt(d)[:, None] + EPS
         out_adj = (out_adj / d) / d.transpose(1, 2)
 
         return s, out, out_adj, spectral_loss, ortho_loss, cluster_loss
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.mlp.in_channels}, '
-                f'num_clusters={self.mlp.out_channels})')
+        return (f"{self.__class__.__name__}({self.mlp.in_channels}, "
+                f"num_clusters={self.mlp.out_channels})")
