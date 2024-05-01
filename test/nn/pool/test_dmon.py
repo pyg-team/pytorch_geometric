@@ -19,20 +19,23 @@ class TestDmoNPooling:
             # a matrix with expected sparsity = 0.2
             (torch.rand((self.batch_size, self.num_nodes, self.num_nodes))
              <= self.sparsity).type(torch.float).to_sparse())
-        adj_list = [
+        adj_csr_list = [
             batched_adj[b].to_sparse_csr() for b in range(self.batch_size)
+        ]
+        adj_csc_list = [
+            batched_adj[b].to_sparse_csc() for b in range(self.batch_size)
         ]
         mask = torch.randint(0, 2, (self.batch_size, self.num_nodes),
                              dtype=torch.bool)
 
-        return x, batched_adj, adj_list, mask
+        return x, batched_adj, adj_csr_list, adj_csc_list, mask
 
     def test_output_shape_and_range(self):
-        x, batched_adj, adj_list, mask = self.create_input()
+        x, batched_adj, adj_csr_list, adj_csc_list, mask = self.create_input()
         pool = SparseDMoNPooling([self.channels, self.channels],
                                  self.num_clusters)
         s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(
-            x, adj_list, batched_adj, mask)
+            x, adj_csr_list, adj_csc_list, mask)
         assert s.size() == (self.batch_size, self.num_nodes, self.num_clusters)
         assert x.size() == (self.batch_size, self.num_clusters, self.channels)
         assert adj.size() == (2, self.num_clusters, self.num_clusters)
@@ -42,18 +45,21 @@ class TestDmoNPooling:
 
     def test_output_vs_dense_dmon(self):
         """Check the output matches that of the dense DMoNPooling."""
-        x, adj, mask = self.create_input()
+        x, batched_adj, adj_csr_list, adj_csc_list, mask = self.create_input()
 
+        adj_coo_list = list(map(lambda m: m.to_sparse_coo(), adj_csr_list))
         dense_pool = DenseDMoNPooling([self.channels, self.channels],
                                       self.num_clusters)
-        dense_output = dense_pool(x, adj.to_dense(), mask)
+        dense_output = dense_pool(x,
+                                  torch.stack(adj_coo_list, dim=0).to_dense(),
+                                  mask)
 
         sparse_pool = SparseDMoNPooling([self.channels, self.channels],
                                         self.num_clusters)
         # copy the model parameters
         sparse_pool.load_state_dict(dense_pool.state_dict())
 
-        sparse_output = sparse_pool(x, adj, mask)
+        sparse_output = sparse_pool(x, adj_csr_list, adj_csc_list, mask)
 
         # convert to numpy
         (
