@@ -172,9 +172,6 @@ class WebQSPDataset(InMemoryDataset):
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
-        self.graph = None
-        self.graph_type = "Knowledge Graph"
-        self.model_name = "sbert"
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
