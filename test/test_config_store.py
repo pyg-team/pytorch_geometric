@@ -1,4 +1,6 @@
-from typing import Any
+from typing import Any, Dict, List
+
+import pytest
 
 from torch_geometric.config_store import (
     class_from_dataclass,
@@ -8,6 +10,7 @@ from torch_geometric.config_store import (
     get_config_store,
     register,
     to_dataclass,
+    map_annotation,
 )
 from torch_geometric.testing import withPackage
 from torch_geometric.transforms import AddSelfLoops
@@ -42,6 +45,21 @@ def test_to_dataclass():
     assert str(cfg) == ("AddSelfLoops(attr='edge_weight', fill_value=1.0, "
                         "_target_='torch_geometric.transforms.add_self_loops."
                         "AddSelfLoops')")
+
+
+@pytest.mark.parametrize('annotation, expected', [
+    (Dict[str, int], Dict[str, Any]),
+    (Dict[str, float], Dict[str, float]),
+    (List[str], List[str]),
+    (List[int], List[Any]),
+    (dict[str, int], dict[str, Any]),
+    (dict[str, float], dict[str, float]),
+    (list[str], list[str]),
+    (list[int], list[Any]),
+])
+def test_map_annotation(annotation, expected):
+    mapping = {int: Any}
+    assert map_annotation(annotation, mapping) == expected
 
 
 def test_register():

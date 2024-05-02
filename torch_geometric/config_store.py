@@ -4,6 +4,7 @@ import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from types import GenericAlias
 
 import torch
 
@@ -162,12 +163,18 @@ def map_annotation(
     annotation: Any,
     mapping: Optional[Dict[Any, Any]] = None,
 ) -> Any:
-
     origin = getattr(annotation, '__origin__', None)
-    args = getattr(annotation, '__args__', [])
+    args = getattr(annotation, '__args__', tuple())
     if origin == Union or origin == list or origin == dict:
-        annotation = copy.copy(annotation)
-        annotation.__args__ = tuple(map_annotation(a, mapping) for a in args)
+        new_args = tuple(map_annotation(a, mapping) for a in args)
+        if type(annotation) is GenericAlias:
+            # If annotated with list or dict
+            annotation = origin[new_args]
+        else:
+            # If annotated with typing.List or typing.Dict
+            annotation = copy.copy(annotation)
+            annotation.__args__ = new_args
+
         return annotation
 
     if mapping is not None and annotation in mapping:
