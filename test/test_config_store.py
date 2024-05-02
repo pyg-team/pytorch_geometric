@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Tuple
 
-import pytest
-
 from torch_geometric.config_store import (
     class_from_dataclass,
     clear_config_store,
