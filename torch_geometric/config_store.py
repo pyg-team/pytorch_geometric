@@ -3,7 +3,6 @@ import inspect
 import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
-from types import GenericAlias
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -167,7 +166,7 @@ def map_annotation(
     args = getattr(annotation, '__args__', tuple())
     if origin in {Union, list, dict, tuple}:
         new_args = tuple(map_annotation(a, mapping) for a in args)
-        if type(annotation) is GenericAlias:
+        if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]` (>= Python 3.10):
             annotation = origin[new_args]
         else:
