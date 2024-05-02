@@ -567,7 +567,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         global _DISPLAYED_TYPE_NAME_WARNING
         if not _DISPLAYED_TYPE_NAME_WARNING and '__' in name:
             _DISPLAYED_TYPE_NAME_WARNING = True
-            warnings.warn(f"There exists type names in the "
+            warnings.warn(f"There exist type names in the "
                           f"'{self.__class__.__name__}' object that contain "
                           f"double underscores '__' (e.g., '{name}'). This "
                           f"may lead to unexpected behavior. To avoid any "
