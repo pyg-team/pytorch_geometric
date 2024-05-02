@@ -163,16 +163,17 @@ def map_annotation(
     mapping: Optional[Dict[Any, Any]] = None,
 ) -> Any:
     origin = getattr(annotation, '__origin__', None)
-    args = getattr(annotation, '__args__', tuple())
+    args: Tuple[Any, ...] = getattr(annotation, '__args__', tuple())
     if origin in {Union, list, dict, tuple}:
-        new_args = tuple(map_annotation(a, mapping) for a in args)
+        assert origin is not None
+        args = tuple(map_annotation(a, mapping) for a in args)
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]` (>= Python 3.10):
-            annotation = origin[new_args]
+            annotation = origin[args]
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`:
             annotation = copy.copy(annotation)
-            annotation.__args__ = new_args
+            annotation.__args__ = args
 
         return annotation
 
