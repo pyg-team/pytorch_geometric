@@ -3,8 +3,8 @@ import inspect
 import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from types import GenericAlias
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 

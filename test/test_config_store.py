@@ -8,9 +8,9 @@ from torch_geometric.config_store import (
     dataclass_from_class,
     fill_config_store,
     get_config_store,
+    map_annotation,
     register,
     to_dataclass,
-    map_annotation,
 )
 from torch_geometric.testing import withPackage
 from torch_geometric.transforms import AddSelfLoops
