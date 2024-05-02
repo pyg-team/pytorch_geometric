@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pytest
 
@@ -12,7 +12,7 @@ from torch_geometric.config_store import (
     register,
     to_dataclass,
 )
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import minPython, withPackage
 from torch_geometric.transforms import AddSelfLoops
 
 
@@ -47,19 +47,19 @@ def test_to_dataclass():
                         "AddSelfLoops')")
 
 
-@pytest.mark.parametrize('annotation, expected', [
-    (Dict[str, int], Dict[str, Any]),
-    (Dict[str, float], Dict[str, float]),
-    (List[str], List[str]),
-    (List[int], List[Any]),
-    (dict[str, int], dict[str, Any]),
-    (dict[str, float], dict[str, float]),
-    (list[str], list[str]),
-    (list[int], list[Any]),
-])
-def test_map_annotation(annotation, expected):
+@minPython('3.10')
+def test_map_annotation():
     mapping = {int: Any}
-    assert map_annotation(annotation, mapping) == expected
+    assert map_annotation(dict[str, int], mapping) == dict[str, Any]
+    assert map_annotation(Dict[str, float], mapping) == Dict[str, float]
+    assert map_annotation(List[str], mapping) == List[str]
+    assert map_annotation(List[int], mapping) == List[Any]
+    assert map_annotation(Tuple[int], mapping) == Tuple[Any]
+    assert map_annotation(dict[str, int], mapping) == dict[str, Any]
+    assert map_annotation(dict[str, float], mapping) == dict[str, float]
+    assert map_annotation(list[str], mapping) == list[str]
+    assert map_annotation(list[int], mapping) == list[Any]
+    assert map_annotation(tuple[int], mapping) == tuple[Any]
 
 
 def test_register():
