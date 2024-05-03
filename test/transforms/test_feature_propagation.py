@@ -1,7 +1,6 @@
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.testing import withPackage
 from torch_geometric.transforms import FeaturePropagation, ToSparseTensor
 
 

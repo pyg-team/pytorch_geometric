@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GraphUNet
-from torch_geometric.testing import is_full_test, onlyLinux, withPackage
+from torch_geometric.testing import is_full_test, onlyLinux
 
 
 @onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.

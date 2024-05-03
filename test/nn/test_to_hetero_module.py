@@ -7,7 +7,6 @@ from torch_geometric.nn.to_hetero_module import (
     ToHeteroLinear,
     ToHeteroMessagePassing,
 )
-from torch_geometric.testing import withPackage
 
 
 @pytest.mark.parametrize('LinearCls', [torch.nn.Linear, Linear])

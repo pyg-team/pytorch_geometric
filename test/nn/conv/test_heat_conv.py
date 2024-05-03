@@ -3,7 +3,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import HEATConv
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 
 

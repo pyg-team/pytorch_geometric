@@ -4,7 +4,7 @@ import torch_geometric.typing
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.testing import get_random_edge_index
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, to_torch_csc_tensor
 

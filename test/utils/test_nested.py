@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-from torch_geometric.testing import withPackage
 from torch_geometric.utils import from_nested_tensor, to_nested_tensor
 
 

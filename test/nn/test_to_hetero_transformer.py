@@ -24,7 +24,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.testing import onlyCUDA, withPackage
+from torch_geometric.testing import onlyCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge
 
