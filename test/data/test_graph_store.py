@@ -44,7 +44,6 @@ def test_graph_store():
         graph_store['edge_type_2', 'coo']
 
 
-@withPackage('torch>=1.12.0')
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
 

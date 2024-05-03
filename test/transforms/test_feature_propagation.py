@@ -5,7 +5,6 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import FeaturePropagation, ToSparseTensor
 
 
-@withPackage('torch>=1.12.0')
 def test_feature_propagation():
     x = torch.randn(6, 4)
     x[0, 1] = float('nan')

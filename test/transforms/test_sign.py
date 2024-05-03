@@ -5,7 +5,6 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import SIGN
 
 
-@withPackage('torch>=1.12.0')
 def test_sign():
     x = torch.ones(5, 3)
     edge_index = torch.tensor([

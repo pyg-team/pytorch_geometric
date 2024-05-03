@@ -222,6 +222,8 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
+    _timing_cache: Dict[int, Tuple[float, float]]
+
     def __init__(
         self,
         in_channels: int,
@@ -245,14 +247,16 @@ class HeteroLinear(torch.nn.Module):
         else:
             self.weight = torch.nn.Parameter(
                 torch.empty(num_types, in_channels, out_channels))
+
         if kwargs.get('bias', True):
             self.bias = Parameter(torch.empty(num_types, out_channels))
         else:
             self.register_parameter('bias', None)
-        self.reset_parameters()
 
         # Timing cache for benchmarking naive vs. segment matmul usage:
         self._timing_cache: Dict[int, Tuple[float, float]] = {}
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""

@@ -7,7 +7,6 @@ from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.typing import SparseTensor
 
 
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('concat', [True, False])
 def test_heat_conv(concat):
     x = torch.randn(4, 8)

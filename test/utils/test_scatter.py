@@ -10,7 +10,6 @@ from torch_geometric.utils import group_argsort, group_cat, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
 
-@withPackage('torch>=1.12.0')
 def test_scatter_validate():
     src = torch.randn(100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
