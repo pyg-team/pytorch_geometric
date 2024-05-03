@@ -1256,6 +1256,17 @@ class EdgeIndex(Tensor):
         self._cat_metadata = None
         return self
 
+    def _to_one_dim(self) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a one-dimensional index
+        representation.
+        """
+        num_rows, num_cols = self.get_sparse_size()
+
+        if num_rows * num_cols > torch_geometric.typing.MAX_INT64:
+            raise ValueError("'_to_one_dim()' will result in an overflow")
+
+        return self._data[0] * num_rows + self._data[1]
+
 
 class SortReturnType(NamedTuple):
     values: EdgeIndex
