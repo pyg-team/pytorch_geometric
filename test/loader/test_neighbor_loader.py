@@ -966,3 +966,32 @@ def test_neighbor_loader_input_id():
             expected = [(2 * i) + 1]
 
         assert batch['a'].input_id.tolist() == expected
+
+
+@withPackage('pyg_lib')
+def test_temporal_neighbor_loader_single_link():
+    data = HeteroData()
+    data['a'].x = torch.arange(10)
+    data['b'].x = torch.arange(10)
+    data['c'].x = torch.arange(10)
+
+    data['b'].time = torch.arange(0, 10)
+    data['c'].time = torch.arange(1, 11)
+
+    data['a', 'b'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['b', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['a', 'c'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['c', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1],
+        input_nodes='a',
+        time_attr='time',
+        input_time=torch.arange(0, 10),
+        batch_size=10,
+    )
+    batch = next(iter(loader))
+    assert batch['a'].num_nodes == 10
+    assert batch['b'].num_nodes == 10
+    assert batch['c'].num_nodes == 0

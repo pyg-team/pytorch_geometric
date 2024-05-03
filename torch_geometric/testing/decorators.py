@@ -67,15 +67,23 @@ def noWindows(func: Callable) -> Callable:
     )(func)
 
 
-def onlyPython(*args: str) -> Callable:
+def minPython(version: str) -> Callable:
     r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
-        python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
+        major, minor = version.split('.')
+
+        skip = False
+        if sys.version_info.major < int(major):
+            skip = True
+        if (sys.version_info.major == int(major)
+                and sys.version_info.minor < int(minor)):
+            skip = True
+
         return pytest.mark.skipif(
-            python_version not in args,
-            reason=f"Python {python_version} not supported",
+            skip,
+            reason=f"Python {version} required",
         )(func)
 
     return decorator

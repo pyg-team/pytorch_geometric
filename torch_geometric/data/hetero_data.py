@@ -36,6 +36,8 @@ from torch_geometric.utils import (
 
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
+_DISPLAYED_TYPE_NAME_WARNING: bool = False
+
 
 class HeteroData(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
@@ -562,11 +564,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return mapping
 
     def _check_type_name(self, name: str):
-        if '__' in name:
-            warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which may lead to unexpected behavior. "
-                          f"To avoid any issues, ensure that your type names "
-                          f"only contain single underscores.")
+        global _DISPLAYED_TYPE_NAME_WARNING
+        if not _DISPLAYED_TYPE_NAME_WARNING and '__' in name:
+            _DISPLAYED_TYPE_NAME_WARNING = True
+            warnings.warn(f"There exist type names in the "
+                          f"'{self.__class__.__name__}' object that contain "
+                          f"double underscores '__' (e.g., '{name}'). This "
+                          f"may lead to unexpected behavior. To avoid any "
+                          f"issues, ensure that your type names only contain "
+                          f"single underscores.")
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
