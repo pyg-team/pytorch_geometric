@@ -74,7 +74,7 @@ runs:
       shell: bash
 
     - name: Install extension packages
-      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && (runner.os != 'macOS' || inputs.torch-version == '2.3.0') }}
       run: |
         pip install scipy
         pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
