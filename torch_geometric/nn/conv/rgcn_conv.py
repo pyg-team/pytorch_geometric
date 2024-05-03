@@ -7,6 +7,7 @@ from torch.nn import Parameter
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
@@ -17,7 +18,6 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
-from torch_geometric.utils.sparse import index2ptr
 
 
 def masked_edge_index(edge_index: Adj, edge_mask: Tensor) -> Adj:

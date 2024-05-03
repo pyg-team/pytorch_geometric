@@ -20,6 +20,7 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric import EdgeIndex, is_compiling
+from torch_geometric.index import ptr2index
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
@@ -30,7 +31,6 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     to_edge_index,
 )
-from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]

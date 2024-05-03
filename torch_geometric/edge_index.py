@@ -1,5 +1,4 @@
 import functools
-import typing
 from enum import Enum
 from typing import (
     Any,
@@ -11,7 +10,6 @@ from typing import (
     NamedTuple,
     Optional,
     Sequence,
-    Set,
     Tuple,
     Type,
     Union,
@@ -25,21 +23,12 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling
-from torch_geometric.typing import SparseTensor
+from torch_geometric.index import index2ptr, ptr2index
+from torch_geometric.typing import INDEX_DTYPES, SparseTensor
 
 aten = torch.ops.aten
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
-
-if torch_geometric.typing.WITH_PT20:
-    SUPPORTED_DTYPES: Set[torch.dtype] = {
-        torch.int32,
-        torch.int64,
-    }
-elif not typing.TYPE_CHECKING:  # pragma: no cover
-    SUPPORTED_DTYPES: Set[torch.dtype] = {
-        torch.int64,
-    }
 
 ReduceType = Literal['sum', 'mean', 'amin', 'amax', 'add', 'min', 'max']
 PYG_REDUCE: Dict[ReduceType, ReduceType] = {
@@ -118,16 +107,11 @@ def maybe_sub(
                  for v, o in zip(value, other))
 
 
-def ptr2index(ptr: Tensor, output_size: Optional[int] = None) -> Tensor:
-    index = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
-    return index.repeat_interleave(ptr.diff(), output_size=output_size)
-
-
 def assert_valid_dtype(tensor: Tensor) -> None:
-    if tensor.dtype not in SUPPORTED_DTYPES:
+    if tensor.dtype not in INDEX_DTYPES:
         raise ValueError(f"'EdgeIndex' holds an unsupported data type "
                          f"(got '{tensor.dtype}', but expected one of "
-                         f"{SUPPORTED_DTYPES})")
+                         f"{INDEX_DTYPES})")
 
 
 def assert_two_dimensional(tensor: Tensor) -> None:
@@ -610,11 +594,7 @@ class EdgeIndex(Tensor):
             return self._T_indptr
 
         dim = 0 if self.is_sorted_by_row else 1
-        self._indptr = torch._convert_indices_from_coo_to_csr(
-            self._data[dim],
-            self.get_sparse_size(dim),
-            out_int32=self.dtype != torch.int64,
-        )
+        self._indptr = index2ptr(self._data[dim], self.get_sparse_size(dim))
 
         return self._indptr
 
@@ -655,11 +635,7 @@ class EdgeIndex(Tensor):
         elif self.is_undirected and self._indptr is not None:
             rowptr = self._indptr
         else:
-            rowptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
-                row,
-                self.get_num_rows(),
-                out_int32=self.dtype != torch.int64,
-            )
+            rowptr = self._T_indptr = index2ptr(row, self.get_num_rows())
 
         return (rowptr, col), perm
 
@@ -679,11 +655,7 @@ class EdgeIndex(Tensor):
         elif self.is_undirected and self._indptr is not None:
             colptr = self._indptr
         else:
-            colptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
-                col,
-                self.get_num_cols(),
-                out_int32=self.dtype != torch.int64,
-            )
+            colptr = self._T_indptr = index2ptr(col, self.get_num_cols())
 
         return (colptr, row), perm
 
@@ -1282,7 +1254,7 @@ def apply_(
 
     data = fn(tensor._data, *args, **kwargs)
 
-    if data.dtype not in SUPPORTED_DTYPES:
+    if data.dtype not in INDEX_DTYPES:
         return data
 
     if tensor._data.data_ptr() != data.data_ptr():
@@ -1531,7 +1503,7 @@ def _add(
         alpha=alpha,
     )
 
-    if out.dtype not in SUPPORTED_DTYPES:
+    if out.dtype not in INDEX_DTYPES:
         return out
     if out.dim() != 2 or out.size(0) != 2:
         return out
@@ -1628,7 +1600,7 @@ def _sub(
         alpha=alpha,
     )
 
-    if out.dtype not in SUPPORTED_DTYPES:
+    if out.dtype not in INDEX_DTYPES:
         return out
     if out.dim() != 2 or out.size(0) != 2:
         return out
