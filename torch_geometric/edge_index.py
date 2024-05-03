@@ -1263,7 +1263,7 @@ class EdgeIndex(Tensor):
         num_rows, num_cols = self.get_sparse_size()
 
         if num_rows * num_cols > torch_geometric.typing.MAX_INT64:
-            raise ValueError("'_to_one_dim()' will result in an overflow")
+            raise ValueError("'to_vector()' will result in an overflow")
 
         return self._data[0] * num_rows + self._data[1]
 
