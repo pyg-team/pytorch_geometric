@@ -1256,9 +1256,9 @@ class EdgeIndex(Tensor):
         self._cat_metadata = None
         return self
 
-    def _to_one_dim(self) -> Tensor:
+    def to_vector(self) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a one-dimensional index
-        representation.
+        vector representation.
         """
         num_rows, num_cols = self.get_sparse_size()
 
