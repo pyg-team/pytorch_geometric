@@ -7,7 +7,6 @@ from torch_geometric.testing import is_full_test, withCUDA, withDevice
 from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
-classes = [RGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
 
 
@@ -67,10 +66,7 @@ def test_rgcn_conv_basic(cls, conf, device):
     assert str(conv) == f'{cls.__name__}(4, 32, num_relations=2)'
 
     out1 = conv(x1, edge_index, edge_type)
-    # assert out1.size() == (4, 32)
-
-    torch.jit.script(conv)
-    return
+    assert out1.size() == (4, 32)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, edge_type, (4, 4))
