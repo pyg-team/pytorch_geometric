@@ -1090,6 +1090,15 @@ def test_global_mapping(device, dtype):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
+def test_to_vector(device, dtype):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, dtype=dtype)
+    out = adj.to_vector()
+    assert not isinstance(out, EdgeIndex)
+    assert out.equal(tensor([1, 3, 5, 7], device=device))
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
 def test_save_and_load(dtype, device, tmp_path):
     kwargs = dict(dtype=dtype, device=device)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
