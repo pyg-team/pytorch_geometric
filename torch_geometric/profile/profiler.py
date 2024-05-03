@@ -337,6 +337,16 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
     if has_cpu_memory:
         cpu_memory = sum([getattr(e, "cpu_memory_usage", 0) for e in events])
     self_cuda_memory = None
+    print("===============")
+    for event in events:
+        print(event)
+        print()
+        print('self_cuda_memory_usage',
+              getattr(event, 'self_cuda_memory_usage', 0))
+        print()
+        print('cuda_memory_usage', getattr(event, 'cuda_memory_usage', 0))
+        print()
+    print("===============")
     has_self_cuda_memory = any(
         hasattr(e, "self_cuda_memory_usage") for e in events)
     if has_self_cuda_memory:
