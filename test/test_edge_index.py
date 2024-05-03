@@ -9,7 +9,6 @@ from torch import Tensor, tensor
 import torch_geometric
 from torch_geometric import EdgeIndex
 from torch_geometric.edge_index import (
-    SUPPORTED_DTYPES,
     ReduceType,
     SortReturnType,
     _scatter_spmm,
@@ -25,10 +24,10 @@ from torch_geometric.testing import (
     withoutExtensions,
     withPackage,
 )
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import INDEX_DTYPES, SparseTensor
 from torch_geometric.utils import scatter
 
-DTYPES = [pytest.param(dtype, id=str(dtype)[6:]) for dtype in SUPPORTED_DTYPES]
+DTYPES = [pytest.param(dtype, id=str(dtype)[6:]) for dtype in INDEX_DTYPES]
 IS_UNDIRECTED = [
     pytest.param(False, id='directed'),
     pytest.param(True, id='undirected'),

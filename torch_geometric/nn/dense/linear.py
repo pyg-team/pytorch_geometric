@@ -12,10 +12,10 @@ from torch.nn.parameter import Parameter
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric.index import index2ptr
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
-from torch_geometric.utils.sparse import index2ptr
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
