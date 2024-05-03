@@ -331,31 +331,23 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
         hasattr(e, "self_cpu_memory_usage") for e in events)
     if has_self_cpu_memory:
         self_cpu_memory = sum(
-            [getattr(e, "self_cpu_memory_usage", 0) for e in events])
+            [getattr(e, "self_cpu_memory_usage", 0) or 0 for e in events])
     cpu_memory = None
     has_cpu_memory = any(hasattr(e, "cpu_memory_usage") for e in events)
     if has_cpu_memory:
-        cpu_memory = sum([getattr(e, "cpu_memory_usage", 0) for e in events])
+        cpu_memory = sum(
+            [getattr(e, "cpu_memory_usage", 0) or 0 for e in events])
     self_cuda_memory = None
-    print("===============")
-    for event in events:
-        print(event)
-        print()
-        print('self_cuda_memory_usage',
-              getattr(event, 'self_cuda_memory_usage', 0))
-        print()
-        print('cuda_memory_usage', getattr(event, 'cuda_memory_usage', 0))
-        print()
-    print("===============")
     has_self_cuda_memory = any(
         hasattr(e, "self_cuda_memory_usage") for e in events)
     if has_self_cuda_memory:
         self_cuda_memory = sum(
-            [getattr(e, "self_cuda_memory_usage", 0) for e in events])
+            [getattr(e, "self_cuda_memory_usage", 0) or 0 for e in events])
     cuda_memory = None
     has_cuda_memory = any(hasattr(e, "cuda_memory_usage") for e in events)
     if has_cuda_memory:
-        cuda_memory = sum([getattr(e, "cuda_memory_usage", 0) for e in events])
+        cuda_memory = sum(
+            [getattr(e, "cuda_memory_usage", 0) or 0 for e in events])
 
     # self CUDA time supported in torch >= 1.7
     self_cuda_total = None
@@ -363,7 +355,7 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
         hasattr(e, "self_cuda_time_total") for e in events)
     if has_self_cuda_time:
         self_cuda_total = sum(
-            [getattr(e, "self_cuda_time_total", 0) for e in events])
+            [getattr(e, "self_cuda_time_total", 0) or 0 for e in events])
 
     return Measure(
         self_cpu_total=sum([e.self_cpu_time_total for e in events]),

@@ -1,4 +1,3 @@
-import pytest
 import torch
 
 from torch_geometric.nn import GraphSAGE
@@ -7,7 +6,6 @@ from torch_geometric.testing import withDevice
 
 
 @withDevice
-# @pytest.mark.skip(reason="Test error")  # TODO Investigate test errors
 def test_profiler(get_dataset, device):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.tensor([
