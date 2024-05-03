@@ -638,7 +638,6 @@ def test_to_sparse_csr(dtype, device):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-@pytest.mark.skipif(not torch_geometric.typing.WITH_PT112, reason="<1.12")
 def test_to_sparse_csc(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
     with pytest.raises(ValueError, match="not sorted"):

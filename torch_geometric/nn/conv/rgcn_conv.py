@@ -3,7 +3,6 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch.nn import Parameter as Param
 
 import torch_geometric.backend
 import torch_geometric.typing
@@ -143,12 +142,12 @@ class RGCNConv(MessagePassing):
             self.register_parameter('comp', None)
 
         if root_weight:
-            self.root = Param(torch.empty(in_channels[1], out_channels))
+            self.root = Parameter(torch.empty(in_channels[1], out_channels))
         else:
             self.register_parameter('root', None)
 
         if bias:
-            self.bias = Param(torch.empty(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
