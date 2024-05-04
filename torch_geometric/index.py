@@ -349,6 +349,16 @@ class Index(Tensor):
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
 
+    # Helpers #################################################################
+
+    def _shallow_copy(self) -> 'Index':
+        out = Index(self._data)
+        out._dim_size = self._dim_size
+        out._is_sorted = self._is_sorted
+        out._indptr = self._indptr
+        out._cat_metadata = self._cat_metadata
+        return out
+
 
 def apply_(
     tensor: Index,
@@ -524,5 +534,34 @@ def _index_select(
 
     out = Index(data)
     out._dim_size = input.dim_size
+
+    return out
+
+
+@implements(aten.slice.Tensor)
+def _slice(
+    input: Index,
+    dim: int,
+    start: Optional[int] = None,
+    end: Optional[int] = None,
+    step: int = 1,
+) -> Index:
+
+    if ((start is None or start <= 0)
+            and (end is None or end > input.size(dim)) and step == 1):
+        return input._shallow_copy()  # No-op.
+
+    data = aten.slice.Tensor(input._data, dim, start, end, step)
+
+    if step != 1:
+        data = data.contiguous()
+
+    out = Index(data)
+    out._dim_size = input.dim_size
+    # NOTE We could potentially maintain the `indptr` attribute here,
+    # but it is not really clear if this is worth it. The most important
+    # information `is_sorted` needs to be maintained though:
+    if step >= 0:
+        out._is_sorted = input.is_sorted
 
     return out
