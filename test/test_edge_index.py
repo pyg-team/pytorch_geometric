@@ -309,7 +309,7 @@ def test_cpu_cuda(dtype):
 
     out = out.cpu()
     assert isinstance(out, EdgeIndex)
-    assert not out.is_cpu
+    assert out.is_cpu
 
 
 @withCUDA
