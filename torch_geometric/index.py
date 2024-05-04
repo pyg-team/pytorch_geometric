@@ -167,6 +167,24 @@ class Index(Tensor):
 
     def validate(self) -> 'Index':
         r"""TODO."""
+        assert_valid_dtype(self._data)
+        assert_one_dimensional(self._data)
+        assert_contiguous(self._data)
+
+        if self.numel() > 0 and self._data.min() < 0:
+            raise ValueError(f"'{self.__class__.__name__}' contains negative "
+                             f"indices (got {int(self.min())})")
+
+        if (self.numel() > 0 and self.dim_size is not None
+                and self._data.max() >= self.dim_size):
+            raise ValueError(f"'{self.__class__.__name__}' contains larger "
+                             f"indices than its registered size "
+                             f"(got {int(self._data.max())}, but expected "
+                             f"values smaller than {self.dim_size})")
+
+        if self.is_sorted and (self._data.diff() < 0).any():
+            raise ValueError(f"'{self.__class__.__name__}' is not sorted")
+
         return self
 
     # Properties ##############################################################
@@ -185,20 +203,34 @@ class Index(Tensor):
 
     def get_dim_size(self) -> int:
         r"""TODO."""
-        raise NotImplementedError
+        if self._dim_size is None:
+            dim_size = int(self._data.max()) + 1 if self.numel() > 0 else 0
+            self._dim_size = dim_size
+
+        assert isinstance(self._dim_size, int)
+        return self._dim_size
 
     def dim_resize_(self, dim_size: Optional[int]) -> 'Index':
         r"""TODO."""
-        raise NotImplementedError
+        raise NotImplementedError  # TODO
 
     @assert_sorted
     def get_indptr(self) -> Tensor:
         r"""TODO."""
-        raise NotImplementedError
+        if self._indptr is None:
+            self._indptr = index2ptr(self._data, self.get_dim_size())
+
+        assert isinstance(self._indptr, Tensor)
+        return self._indptr
 
     def fill_cache_(self) -> 'Index':
         r"""TODO."""
-        raise NotImplementedError
+        self.get_dim_size()
+
+        if self.is_sorted:
+            self.get_indptr()
+
+        return self
 
     # Methods #################################################################
 
@@ -219,7 +251,7 @@ class Index(Tensor):
 
     def dim_narrow(self, start: Union[int, Tensor], length: int) -> 'Index':
         r"""TODO."""
-        raise NotImplementedError
+        raise NotImplementedError  # TODO
 
     # PyTorch/Python builtins #################################################
 
