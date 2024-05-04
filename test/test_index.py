@@ -305,3 +305,16 @@ def test_cat(dtype, device):
     assert out.data_ptr() == inplace.data_ptr()
     assert not isinstance(out, Index)
     assert not isinstance(inplace, Index)
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_flip(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    out = adj.flip(0)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([2, 1, 1, 0], device=device))
+    assert out.dim_size == 3
+    assert not out.is_sorted

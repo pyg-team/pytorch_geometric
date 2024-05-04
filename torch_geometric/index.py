@@ -497,3 +497,17 @@ def _cat(
     )
 
     return out
+
+
+@implements(aten.flip.default)
+def _flip(
+    input: Index,
+    dims: Union[List[int], Tuple[int, ...]],
+) -> Index:
+
+    data = aten.flip.default(input._data, dims)
+
+    out = Index(data)
+    out._dim_size = input.dim_size
+
+    return out
