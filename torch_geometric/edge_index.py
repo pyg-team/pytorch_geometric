@@ -1321,6 +1321,11 @@ def _to_copy(
     )
 
 
+@implements(aten.alias.default)
+def _alias(tensor: EdgeIndex) -> EdgeIndex:
+    return tensor._shallow_copy()
+
+
 @implements(aten.cat.default)
 def _cat(
     tensors: List[Union[EdgeIndex, Tensor]],
