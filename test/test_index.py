@@ -67,9 +67,9 @@ def test_validate():
     with pytest.raises(ValueError, match="needs to be one-dimensional"):
         Index([[0], [1]])
     with pytest.raises(TypeError, match="invalid combination of arguments"):
-        Index(torch.tensor([0, 1]), torch.long)
+        Index(tensor([0, 1]), torch.long)
     with pytest.raises(TypeError, match="invalid keyword arguments"):
-        Index(torch.tensor([0, 1]), dtype=torch.long)
+        Index(tensor([0, 1]), dtype=torch.long)
     with pytest.raises(ValueError, match="contains negative indices"):
         Index([-1, 0]).validate()
     with pytest.raises(ValueError, match="than its registered size"):
@@ -370,7 +370,7 @@ def test_getitem(dtype, device):
     assert out.dim_size == 3
     assert out.is_sorted
 
-    out = index[torch.tensor([False, True, False, True], device=device)]
+    out = index[tensor([False, True, False, True], device=device)]
     assert isinstance(out, Index)
     assert out.equal(tensor([1, 2], device=device))
     assert out.dim_size == 3
@@ -431,7 +431,7 @@ def test_add(dtype, device):
     assert out.dim_size == 7
     assert out.is_sorted
 
-    out = index + torch.tensor([2], dtype=dtype, device=device)
+    out = index + tensor([2], dtype=dtype, device=device)
     assert isinstance(out, Index)
     assert out.equal(tensor([2, 3, 3, 4], device=device))
     assert out.dim_size == 5
@@ -465,7 +465,7 @@ def test_sub(dtype, device):
     assert out.dim_size == 3
     assert out.is_sorted
 
-    out = index - torch.tensor([2], dtype=dtype, device=device)
+    out = index - tensor([2], dtype=dtype, device=device)
     assert isinstance(out, Index)
     assert out.equal(tensor([2, 3, 3, 4], device=device))
     assert out.dim_size == 5
