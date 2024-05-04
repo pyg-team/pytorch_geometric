@@ -352,3 +352,59 @@ def test_narrow(dtype, device):
     assert out.equal(tensor([1, 1], device=device))
     assert out.dim_size == 3
     assert out.is_sorted
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_getitem(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    out = index[:]
+    assert isinstance(out, Index)
+    assert out._data.data_ptr() == index._data.data_ptr()
+    assert out.equal(tensor([0, 1, 1, 2], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index[torch.tensor([False, True, False, True], device=device)]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 2], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index[tensor([1, 3], device=device)]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 2], device=device))
+    assert out.dim_size == 3
+    assert not out.is_sorted
+
+    out = index[1:3]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 1], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index[...]
+    assert isinstance(out, Index)
+    assert out._data.data_ptr() == index._data.data_ptr()
+    assert out.equal(tensor([0, 1, 1, 2], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index[None, 1:3]
+    assert not isinstance(out, Index)
+    assert out.equal(tensor([[1, 1]], device=device))
+
+    out = index[1:3, None]
+    assert not isinstance(out, Index)
+    assert out.equal(tensor([[1], [1]], device=device))
+
+    out = index[0]
+    assert not isinstance(out, Index)
+    assert out.equal(tensor(0, device=device))
+
+    tmp = torch.randn(3, device=device)
+    out = tmp[index]
+    assert not isinstance(out, Index)
+    assert out.equal(tmp[index.as_tensor()])

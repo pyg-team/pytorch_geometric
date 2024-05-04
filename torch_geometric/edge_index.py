@@ -1474,14 +1474,14 @@ def _index(
     index = indices[1]
     assert isinstance(index, Tensor)
 
+    out = EdgeIndex(out)
+
     # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
     if index.dtype in (torch.bool, torch.uint8):
-        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
         out._sort_order = input._sort_order
 
     else:  # 2. `edge_index[:, index]` or `edge_index[..., index]`.
-        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
 
     return out

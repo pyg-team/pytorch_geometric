@@ -424,6 +424,11 @@ def _to_copy(
     )
 
 
+@implements(aten.alias.default)
+def _alias(tensor: Index) -> Index:
+    return tensor._shallow_copy()
+
+
 @implements(aten.sort.default)
 def _sort(
     tensor: Index,
@@ -563,5 +568,33 @@ def _slice(
     # information `is_sorted` needs to be maintained though:
     if step >= 0:
         out._is_sorted = input.is_sorted
+
+    return out
+
+
+@implements(aten.index.Tensor)
+def _index(
+    input: Union[Index, Tensor],
+    indices: List[Optional[Union[Tensor, Index]]],
+) -> Union[Index, Tensor]:
+
+    if not isinstance(input, Index):
+        indices = pytree.tree_map_only(Index, lambda x: x._data, indices)
+        return aten.index.Tensor(input, indices)
+
+    data = aten.index.Tensor(input._data, indices)
+
+    assert len(indices) == 1
+    index = indices[0]
+    assert index is not None
+
+    out = Index(data)
+
+    if index.dtype in (torch.bool, torch.uint8):  # 1. `index[mask]`.
+        out._dim_size = input.dim_size
+        out._is_sorted = input.is_sorted
+
+    else:  # 2. `index[index]`.
+        out._dim_size = input.dim_size
 
     return out
