@@ -46,12 +46,8 @@ def test_basic(dtype, device):
     adj.validate()
     assert isinstance(adj, EdgeIndex)
 
-    if torch_geometric.typing.WITH_PT112:
-        assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],\n'
-                                   '           [1, 0, 2, 1]], ')
-    else:
-        assert str(adj).startswith('tensor([[0, 1, 1, 2],\n'
-                                   '        [1, 0, 2, 1]], ')
+    assert str(adj).startswith('EdgeIndex([[0, 1, 1, 2],\n'
+                               '           [1, 0, 2, 1]], ')
     assert 'sparse_size=(3, 3), nnz=4' in str(adj)
     assert (f"device='{device}'" in str(adj)) == adj.is_cuda
     assert (f'dtype={dtype}' in str(adj)) == (dtype != torch.long)
