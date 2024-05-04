@@ -318,3 +318,24 @@ def test_flip(dtype, device):
     assert out.equal(tensor([2, 1, 1, 0], device=device))
     assert out.dim_size == 3
     assert not out.is_sorted
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_index_select(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    i = tensor([1, 3], device=device)
+    out = index.index_select(0, i)
+    assert out.equal(tensor([1, 2], device=device))
+    assert isinstance(out, Index)
+    assert out.dim_size == 3
+    assert not out.is_sorted
+
+    inplace = torch.empty(2, dtype=dtype, device=device)
+    out = torch.index_select(index, 0, i, out=inplace)
+    assert out.equal(tensor([1, 2], device=device))
+    assert out.data_ptr() == inplace.data_ptr()
+    assert not isinstance(out, Index)
+    assert not isinstance(inplace, Index)

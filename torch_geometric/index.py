@@ -511,3 +511,18 @@ def _flip(
     out._dim_size = input.dim_size
 
     return out
+
+
+@implements(aten.index_select.default)
+def _index_select(
+    input: Index,
+    dim: int,
+    index: Tensor,
+) -> Index:
+
+    data = aten.index_select.default(input._data, dim, index)
+
+    out = Index(data)
+    out._dim_size = input.dim_size
+
+    return out
