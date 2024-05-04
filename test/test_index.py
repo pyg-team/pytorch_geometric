@@ -2,8 +2,9 @@ import pytest
 import torch
 from torch import tensor
 
+import torch_geometric.typing
 from torch_geometric import Index
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import onlyCUDA, withCUDA
 from torch_geometric.typing import INDEX_DTYPES
 
 DTYPES = [pytest.param(dtype, id=str(dtype)[6:]) for dtype in INDEX_DTYPES]
@@ -110,3 +111,108 @@ def test_dim_resize(dtype, device):
     out = index.dim_resize_(None)
     assert out.dim_size is None
     assert out._indptr is None
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_clone(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], is_sorted=True, dim_size=3, **kwargs)
+
+    out = index.clone()
+    assert isinstance(out, Index)
+    assert out.dtype == dtype
+    assert out.device == device
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = torch.clone(index)
+    assert isinstance(out, Index)
+    assert out.dtype == dtype
+    assert out.device == device
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_to_function(dtype, device):
+    kwargs = dict(dtype=dtype)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    index.fill_cache_()
+
+    index = index.to(device)
+    assert isinstance(index, Index)
+    assert index.device == device
+    assert index._indptr.dtype == dtype
+    assert index._indptr.device == device
+
+    out = index.cpu()
+    assert isinstance(out, Index)
+    assert out.device == torch.device('cpu')
+
+    out = index.to(torch.int)
+    assert out.dtype == torch.int
+    if torch_geometric.typing.WITH_PT20:
+        assert isinstance(out, Index)
+        assert out._indptr.dtype == torch.int
+    else:
+        assert not isinstance(out, Index)
+
+    out = index.to(torch.float)
+    assert not isinstance(out, Index)
+    assert out.dtype == torch.float
+
+    out = index.long()
+    assert isinstance(out, Index)
+    assert out.dtype == torch.int64
+
+    out = index.int()
+    assert out.dtype == torch.int
+    if torch_geometric.typing.WITH_PT20:
+        assert isinstance(out, Index)
+    else:
+        assert not isinstance(out, Index)
+
+
+@onlyCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_cpu_cuda(dtype):
+    kwargs = dict(dtype=dtype)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    assert index.is_cpu
+
+    out = index.cuda()
+    assert isinstance(out, Index)
+    assert out.is_cuda
+
+    out = out.cpu()
+    assert isinstance(out, Index)
+    assert out.is_cpu
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_share_memory(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    index.fill_cache_()
+
+    out = index.share_memory_()
+    assert isinstance(out, Index)
+    assert out.is_shared()
+    assert out._data.is_shared()
+    assert out._indptr.is_shared()
+    assert out.data_ptr() == index.data_ptr()
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_contiguous(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    assert index.is_contiguous
+    out = index.contiguous()
+    assert isinstance(out, Index)
+    assert out.is_contiguous
