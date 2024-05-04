@@ -1041,64 +1041,84 @@ class EdgeIndex(Tensor):
                              f"(got {start})")
 
         if dim == 0:
-            (rowptr, col), _ = self.get_csr()
-            rowptr = rowptr.narrow(0, start, length + 1)
+            if self.is_sorted_by_row:
+                (rowptr, col), _ = self.get_csr()
+                rowptr = rowptr.narrow(0, start, length + 1)
 
-            if rowptr.numel() < 2:
-                row, col = self._data[0, :0], self._data[1, :0]
-                rowptr = None
-                num_rows = 0
-            else:
-                col = col[rowptr[0]:rowptr[-1]]
-                rowptr = rowptr - rowptr[0]
-                num_rows = rowptr.numel() - 1
+                if rowptr.numel() < 2:
+                    row, col = self._data[0, :0], self._data[1, :0]
+                    rowptr = None
+                    num_rows = 0
+                else:
+                    col = col[rowptr[0]:rowptr[-1]]
+                    rowptr = rowptr - rowptr[0]
+                    num_rows = rowptr.numel() - 1
 
-                row = torch.arange(
-                    num_rows,
-                    dtype=col.dtype,
-                    device=col.device,
-                ).repeat_interleave(
-                    rowptr.diff(),
-                    output_size=col.numel(),
+                    row = torch.arange(
+                        num_rows,
+                        dtype=col.dtype,
+                        device=col.device,
+                    ).repeat_interleave(
+                        rowptr.diff(),
+                        output_size=col.numel(),
+                    )
+
+                edge_index = EdgeIndex(
+                    torch.stack([row, col], dim=0),
+                    sparse_size=(num_rows, self.sparse_size(1)),
+                    sort_order='row',
                 )
+                edge_index._indptr = rowptr
+                return edge_index
 
-            edge_index = EdgeIndex(
-                torch.stack([row, col], dim=0),
-                sparse_size=(num_rows, self.sparse_size(1)),
-                sort_order='row',
-            )
-            edge_index._indptr = rowptr
-            return edge_index
-
-        else:  # dim == 0:
-            (colptr, row), _ = self.get_csc()
-            colptr = colptr.narrow(0, start, length + 1)
-
-            if colptr.numel() < 2:
-                row, col = self._data[0, :0], self._data[1, :0]
-                colptr = None
-                num_cols = 0
             else:
-                row = row[colptr[0]:colptr[-1]]
-                colptr = colptr - colptr[0]
-                num_cols = colptr.numel() - 1
+                mask = self._data[0] >= start
+                mask &= self._data[0] < (start + length)
+                offset = torch.tensor([[start], [0]], device=self.device)
+                edge_index = self[:, mask].sub_(offset)
+                edge_index._sparse_size = (length, edge_index._sparse_size[1])
+                return edge_index
 
-                col = torch.arange(
-                    num_cols,
-                    dtype=row.dtype,
-                    device=row.device,
-                ).repeat_interleave(
-                    colptr.diff(),
-                    output_size=row.numel(),
+        else:
+            assert dim == 1
+
+            if self.is_sorted_by_col:
+                (colptr, row), _ = self.get_csc()
+                colptr = colptr.narrow(0, start, length + 1)
+
+                if colptr.numel() < 2:
+                    row, col = self._data[0, :0], self._data[1, :0]
+                    colptr = None
+                    num_cols = 0
+                else:
+                    row = row[colptr[0]:colptr[-1]]
+                    colptr = colptr - colptr[0]
+                    num_cols = colptr.numel() - 1
+
+                    col = torch.arange(
+                        num_cols,
+                        dtype=row.dtype,
+                        device=row.device,
+                    ).repeat_interleave(
+                        colptr.diff(),
+                        output_size=row.numel(),
+                    )
+
+                edge_index = EdgeIndex(
+                    torch.stack([row, col], dim=0),
+                    sparse_size=(self.sparse_size(0), num_cols),
+                    sort_order='col',
                 )
+                edge_index._indptr = colptr
+                return edge_index
 
-            edge_index = EdgeIndex(
-                torch.stack([row, col], dim=0),
-                sparse_size=(self.sparse_size(0), num_cols),
-                sort_order='col',
-            )
-            edge_index._indptr = colptr
-            return edge_index
+            else:
+                mask = self._data[1] >= start
+                mask &= self._data[1] < (start + length)
+                offset = torch.tensor([[0], [start]], device=self.device)
+                edge_index = self[:, mask].sub_(offset)
+                edge_index._sparse_size = (edge_index._sparse_size[0], length)
+                return edge_index
 
     def to_vector(self) -> Tensor:
         r"""Converts :class:`EdgeIndex` into a one-dimensional index

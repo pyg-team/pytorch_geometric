@@ -146,9 +146,9 @@ def test_validate():
     with pytest.raises(ValueError, match="received a non-symmetric size"):
         EdgeIndex([[0, 1], [1, 0]], is_undirected=True, sparse_size=(2, 3))
     with pytest.raises(TypeError, match="invalid combination of arguments"):
-        EdgeIndex(torch.tensor([[0, 1], [1, 0]]), torch.long)
+        EdgeIndex(tensor([[0, 1], [1, 0]]), torch.long)
     with pytest.raises(TypeError, match="invalid keyword arguments"):
-        EdgeIndex(torch.tensor([[0, 1], [1, 0]]), dtype=torch.long)
+        EdgeIndex(tensor([[0, 1], [1, 0]]), dtype=torch.long)
     with pytest.raises(ValueError, match="contains negative indices"):
         EdgeIndex([[-1, 0], [0, 1]]).validate()
     with pytest.raises(ValueError, match="than its number of rows"):
@@ -680,19 +680,19 @@ def test_add(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
     assert out.sparse_size() == (7, 7)
 
-    out = adj + torch.tensor([2], dtype=dtype, device=device)
+    out = adj + tensor([2], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
     assert out.is_undirected == is_undirected
     assert out.sparse_size() == (5, 5)
 
-    out = adj + torch.tensor([[2], [1]], dtype=dtype, device=device)
+    out = adj + tensor([[2], [1]], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [2, 1, 3, 2]], device=device))
     assert not out.is_undirected
     assert out.sparse_size() == (5, 4)
 
-    out = adj + torch.tensor([[2], [2]], dtype=dtype, device=device)
+    out = adj + tensor([[2], [2]], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
     assert out.is_undirected == is_undirected
@@ -727,19 +727,19 @@ def test_sub(dtype, device, is_undirected):
     assert out.is_undirected == is_undirected
     assert out.sparse_size() == (3, 3)
 
-    out = adj - torch.tensor([2], dtype=dtype, device=device)
+    out = adj - tensor([2], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
     assert out.is_undirected == is_undirected
     assert out.sparse_size() == (5, 5)
 
-    out = adj - torch.tensor([[2], [1]], dtype=dtype, device=device)
+    out = adj - tensor([[2], [1]], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [4, 3, 5, 4]], device=device))
     assert not out.is_undirected
     assert out.sparse_size() == (5, 6)
 
-    out = adj - torch.tensor([[2], [2]], dtype=dtype, device=device)
+    out = adj - tensor([[2], [2]], dtype=dtype, device=device)
     assert isinstance(out, EdgeIndex)
     assert out.equal(tensor([[2, 3, 3, 4], [3, 2, 4, 3]], device=device))
     assert out.is_undirected == is_undirected
@@ -997,32 +997,62 @@ def test_matmul(without_extensions, device):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
-def test_sparse_narrow(dtype, device):
+def test_sparse_row_narrow(dtype, device):
     kwargs = dict(dtype=dtype, device=device)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
     out = adj.sparse_narrow(dim=0, start=1, length=1)
-    assert out.equal(torch.tensor([[0, 0], [0, 2]], device=device))
+    assert out.equal(tensor([[0, 0], [0, 2]], device=device))
     assert out.sparse_size() == (1, None)
     assert out.sort_order == 'row'
-    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+    assert out._indptr.equal(tensor([0, 2], device=device))
 
     out = adj.sparse_narrow(dim=0, start=2, length=0)
-    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.equal(tensor([[], []], device=device))
     assert out.sparse_size() == (0, None)
     assert out.sort_order == 'row'
     assert out._indptr is None
 
     out = adj.sparse_narrow(dim=1, start=1, length=1)
-    assert (out.equal(torch.tensor([[0, 2], [0, 0]], device=device))
-            or out.equal(torch.tensor([[2, 0], [0, 0]], device=device)))
+    assert out.equal(tensor([[0, 2], [0, 0]], device=device))
     assert out.sparse_size() == (3, 1)
-    assert out.sort_order == 'col'
-    assert out._indptr.equal(torch.tensor([0, 2], device=device))
+    assert out.sort_order == 'row'
+    assert out._indptr is None
 
     out = adj.sparse_narrow(dim=1, start=2, length=0)
-    assert out.equal(torch.tensor([[], []], device=device))
+    assert out.equal(tensor([[], []], device=device))
     assert out.sparse_size() == (3, 0)
+    assert out.sort_order == 'row'
+    assert out._indptr is None
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sparse_col_narrow(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[1, 0, 2, 1], [0, 1, 1, 2]], sort_order='col', **kwargs)
+
+    out = adj.sparse_narrow(dim=1, start=1, length=1)
+    assert out.equal(tensor([[0, 2], [0, 0]], device=device))
+    assert out.sparse_size() == (None, 1)
+    assert out.sort_order == 'col'
+    assert out._indptr.equal(tensor([0, 2], device=device))
+
+    out = adj.sparse_narrow(dim=1, start=2, length=0)
+    assert out.equal(tensor([[], []], device=device))
+    assert out.sparse_size() == (None, 0)
+    assert out.sort_order == 'col'
+    assert out._indptr is None
+
+    out = adj.sparse_narrow(dim=0, start=1, length=1)
+    assert out.equal(tensor([[0, 0], [0, 2]], device=device))
+    assert out.sparse_size() == (1, 3)
+    assert out.sort_order == 'col'
+    assert out._indptr is None
+
+    out = adj.sparse_narrow(dim=0, start=2, length=0)
+    assert out.equal(tensor([[], []], device=device))
+    assert out.sparse_size() == (0, 3)
     assert out.sort_order == 'col'
     assert out._indptr is None
 
@@ -1083,7 +1113,7 @@ def test_numpy():
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_global_mapping(device, dtype):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device, dtype=dtype)
-    n_id = torch.tensor([10, 20, 30], device=device, dtype=dtype)
+    n_id = tensor([10, 20, 30], device=device, dtype=dtype)
 
     expected = tensor([[10, 20, 20, 30], [20, 10, 30, 20]], device=device)
     out = n_id[adj]
