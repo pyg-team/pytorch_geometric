@@ -137,6 +137,8 @@ def test_set_tuple_item():
 
 
 def test_validate():
+    with pytest.raises(TypeError, match="tensors of a single element"):
+        EdgeIndex([torch.tensor([0, 1]), torch.tensor([1, 0])])
     with pytest.raises(ValueError, match="unsupported data type"):
         EdgeIndex([[0.0, 1.0], [1.0, 0.0]])
     with pytest.raises(ValueError, match="needs to be two-dimensional"):
@@ -526,6 +528,20 @@ def test_getitem(dtype, device, is_undirected):
     assert out.equal(tensor([[1, 2], [0, 1]], device=device))
     assert out.is_sorted_by_row
     assert not out.is_undirected
+
+    out = adj[...]
+    assert isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device))
+    assert out.is_sorted_by_row
+    assert out.is_undirected == is_undirected
+
+    out = adj[None]
+    assert not isinstance(out, EdgeIndex)
+    assert out.equal(tensor([[[0, 1, 1, 2], [1, 0, 2, 1]]], device=device))
+
+    out = adj[0, 0]
+    assert not isinstance(out, EdgeIndex)
+    assert out.equal(tensor(0, device=device))
 
     out = adj[:, 0]
     assert not isinstance(out, EdgeIndex)
