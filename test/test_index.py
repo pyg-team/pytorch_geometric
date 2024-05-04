@@ -216,3 +216,55 @@ def test_contiguous(dtype, device):
     out = index.contiguous()
     assert isinstance(out, Index)
     assert out.is_contiguous
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sort(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([1, 0, 2, 1], dim_size=3, **kwargs)
+
+    index, _ = index.sort()
+    assert isinstance(index, Index)
+    assert index.equal(tensor([0, 1, 1, 2], device=device))
+    assert index.dim_size == 3
+    assert index.is_sorted
+
+    out, perm = index.sort()
+    assert isinstance(out, Index)
+    assert out._data.data_ptr() == index._data.data_ptr()
+    assert perm.equal(tensor([0, 1, 2, 3], device=device))
+    assert out.dim_size == 3
+
+    index, _ = index.sort(descending=True)
+    assert isinstance(index, Index)
+    assert index.equal(tensor([2, 1, 1, 0], device=device))
+    assert index.dim_size == 3
+    assert not index.is_sorted
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sort_stable(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([1, 0, 2, 1], dim_size=3, **kwargs)
+
+    index, perm = index.sort(stable=True)
+    assert isinstance(index, Index)
+    assert index.equal(tensor([0, 1, 1, 2], device=device))
+    assert perm.equal(tensor([1, 0, 3, 2], device=device))
+    assert index.dim_size == 3
+    assert index.is_sorted
+
+    out, perm = index.sort(stable=True)
+    assert isinstance(out, Index)
+    assert out._data.data_ptr() == index._data.data_ptr()
+    assert perm.equal(tensor([0, 1, 2, 3], device=device))
+    assert out.dim_size == 3
+
+    index, perm = index.sort(descending=True, stable=True)
+    assert isinstance(index, Index)
+    assert index.equal(tensor([2, 1, 1, 0], device=device))
+    assert perm.equal(tensor([3, 1, 2, 0], device=device))
+    assert index.dim_size == 3
+    assert not index.is_sorted

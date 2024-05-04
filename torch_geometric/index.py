@@ -414,6 +414,48 @@ def _to_copy(
     )
 
 
-# def sort(self) -> None:
-#     # TODO MOVE BEHIND TORCH DISPATCH
-#     raise NotImplementedError
+@implements(aten.sort.default)
+def _sort(
+    tensor: Index,
+    dim: int = -1,
+    descending: bool = False,
+) -> Tuple[Index, Tensor]:
+
+    if tensor.is_sorted and not descending:
+        return tensor, torch.arange(tensor._data.numel(),
+                                    device=tensor._data.device)
+
+    data, perm = aten.sort.default(tensor._data, dim, descending)
+
+    out = Index(data)
+    out._dim_size = tensor._dim_size
+
+    if not descending:
+        out._is_sorted = True
+
+    return out, perm
+
+
+@implements(aten.sort.stable)
+def _sort_stable(
+    tensor: Index,
+    *,
+    stable: bool = False,
+    dim: int = -1,
+    descending: bool = False,
+) -> Tuple[Index, Tensor]:
+
+    if tensor.is_sorted and not descending:
+        return tensor, torch.arange(tensor._data.numel(),
+                                    device=tensor._data.device)
+
+    data, perm = aten.sort.stable(tensor._data, stable=stable, dim=dim,
+                                  descending=descending)
+
+    out = Index(data)
+    out._dim_size = tensor._dim_size
+
+    if not descending:
+        out._is_sorted = True
+
+    return out, perm
