@@ -1358,9 +1358,9 @@ def _cat(
             total_num_cols = None
             break
         assert isinstance(total_num_cols, int)
-        num_cols = max(num_cols, total_num_cols)
+        total_num_cols = max(num_cols, total_num_cols)
 
-    out._sparse_size = (num_rows, num_cols)
+    out._sparse_size = (total_num_rows, total_num_cols)
 
     # Post-process `is_undirected`:
     out._is_undirected = all(is_undirected_list)

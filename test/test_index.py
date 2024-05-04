@@ -268,3 +268,40 @@ def test_sort_stable(dtype, device):
     assert perm.equal(tensor([3, 1, 2, 0], device=device))
     assert index.dim_size == 3
     assert not index.is_sorted
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_cat(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    index2 = Index([1, 2, 2, 3], dim_size=4, is_sorted=True, **kwargs)
+    index3 = Index([1, 2, 2, 3], **kwargs)
+
+    out = torch.cat([index1, index2])
+    assert out.equal(tensor([0, 1, 1, 2, 1, 2, 2, 3], device=device))
+    assert out.size() == (8, )
+    assert isinstance(out, Index)
+    assert out.dim_size == 4
+    assert not out.is_sorted
+
+    assert out._cat_metadata.nnz == [4, 4]
+    assert out._cat_metadata.dim_size == [3, 4]
+    assert out._cat_metadata.is_sorted == [True, True]
+
+    out = torch.cat([index1, index2, index3])
+    assert out.size() == (12, )
+    assert isinstance(out, Index)
+    assert out.dim_size is None
+    assert not out.is_sorted
+
+    out = torch.cat([index1, index2.as_tensor()])
+    assert out.size() == (8, )
+    assert not isinstance(out, Index)
+
+    inplace = torch.empty(8, dtype=dtype, device=device)
+    out = torch.cat([index1, index2], out=inplace)
+    assert out.equal(tensor([0, 1, 1, 2, 1, 2, 2, 3], device=device))
+    assert out.data_ptr() == inplace.data_ptr()
+    assert not isinstance(out, Index)
+    assert not isinstance(inplace, Index)
