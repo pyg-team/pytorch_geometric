@@ -1075,7 +1075,7 @@ class EdgeIndex(Tensor):
                 mask = self._data[0] >= start
                 mask &= self._data[0] < (start + length)
                 offset = torch.tensor([[start], [0]], device=self.device)
-                edge_index = self[:, mask].sub_(offset)
+                edge_index = self[:, mask].sub_(offset)  # type: ignore
                 edge_index._sparse_size = (length, edge_index._sparse_size[1])
                 return edge_index
 
@@ -1116,7 +1116,7 @@ class EdgeIndex(Tensor):
                 mask = self._data[1] >= start
                 mask &= self._data[1] < (start + length)
                 offset = torch.tensor([[0], [start]], device=self.device)
-                edge_index = self[:, mask].sub_(offset)
+                edge_index = self[:, mask].sub_(offset)  # type: ignore
                 edge_index._sparse_size = (edge_index._sparse_size[0], length)
                 return edge_index
 
