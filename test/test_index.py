@@ -339,3 +339,16 @@ def test_index_select(dtype, device):
     assert out.data_ptr() == inplace.data_ptr()
     assert not isinstance(out, Index)
     assert not isinstance(inplace, Index)
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_narrow(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    out = index.narrow(0, start=1, length=2)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 1], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
