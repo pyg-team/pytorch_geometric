@@ -67,7 +67,7 @@ def assert_sorted(func: Callable) -> Callable:
             raise ValueError(
                 f"Cannot call '{func.__name__}' since '{cls_name}' is not "
                 f"sorted. Please call `{cls_name}.sort()` first.")
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
@@ -202,6 +202,6 @@ class Index(Tensor):
         raise NotImplementedError
 
 
-def sort(self) -> None:
-    # TODO MOVE BEHIND TORCH DISPATCH
-    raise NotImplementedError
+# def sort(self) -> None:
+#     # TODO MOVE BEHIND TORCH DISPATCH
+#     raise NotImplementedError

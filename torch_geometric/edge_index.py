@@ -140,11 +140,11 @@ def assert_sorted(func: Callable) -> Callable:
     @functools.wraps(func)
     def wrapper(self: 'EdgeIndex', *args: Any, **kwargs: Any) -> Any:
         if not self.is_sorted:
-            cls_name = args[0].__class__.__name__
+            cls_name = self.__class__.__name__
             raise ValueError(
                 f"Cannot call '{func.__name__}' since '{cls_name}' is not "
                 f"sorted. Please call `{cls_name}.sort_by(...)` first.")
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
