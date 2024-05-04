@@ -459,3 +459,41 @@ def _sort_stable(
         out._is_sorted = True
 
     return out, perm
+
+
+@implements(aten.cat.default)
+def _cat(
+    tensors: List[Union[Index, Tensor]],
+    dim: int = 0,
+) -> Union[Index, Tensor]:
+
+    data_list = pytree.tree_map_only(Index, lambda x: x._data, tensors)
+    data = aten.cat.default(data_list, dim=dim)
+
+    if any([not isinstance(tensor, Index) for tensor in tensors]):
+        return data
+
+    out = Index(data)
+
+    nnz_list = [t.numel() for t in tensors]
+    dim_size_list = [t.dim_size for t in tensors]  # type: ignore
+    is_sorted_list = [t.is_sorted for t in tensors]  # type: ignore
+
+    # Post-process `dim_size`:
+    total_dim_size: Optional[int] = 0
+    for dim_size in dim_size_list:
+        if dim_size is None:
+            total_dim_size = None
+            break
+        assert isinstance(total_dim_size, int)
+        total_dim_size = max(dim_size, total_dim_size)
+
+    out._dim_size = total_dim_size
+
+    out._cat_metadata = CatMetadata(
+        nnz=nnz_list,
+        dim_size=dim_size_list,
+        is_sorted=is_sorted_list,
+    )
+
+    return out
