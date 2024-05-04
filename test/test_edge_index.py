@@ -301,6 +301,7 @@ def test_to_function(dtype, device, is_undirected):
 def test_cpu_cuda(dtype):
     kwargs = dict(dtype=dtype)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], **kwargs)
+    assert adj.is_cpu
 
     out = adj.cuda()
     assert isinstance(out, EdgeIndex)
@@ -308,7 +309,7 @@ def test_cpu_cuda(dtype):
 
     out = out.cpu()
     assert isinstance(out, EdgeIndex)
-    assert not out.is_cuda
+    assert out.is_cpu
 
 
 @withCUDA

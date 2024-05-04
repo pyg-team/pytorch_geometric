@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    Union,
 )
 
 import torch
@@ -347,6 +348,70 @@ class Index(Tensor):
 
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
+
+
+def apply_(
+    tensor: Index,
+    fn: Callable,
+    *args: Any,
+    **kwargs: Any,
+) -> Union[Index, Tensor]:
+
+    data = fn(tensor._data, *args, **kwargs)
+
+    if data.dtype not in INDEX_DTYPES:
+        return data
+
+    if tensor._data.data_ptr() != data.data_ptr():
+        out = Index(data)
+    else:  # In-place:
+        tensor._data = data
+        out = tensor
+
+    # Copy metadata:
+    out._dim_size = tensor._dim_size
+    out._is_sorted = tensor._is_sorted
+    out._cat_metadata = tensor._cat_metadata
+
+    # Convert cache:
+    if tensor._indptr is not None:
+        out._indptr = fn(tensor._indptr, *args, **kwargs)
+
+    return out
+
+
+@implements(aten.clone.default)
+def _clone(
+    tensor: Index,
+    *,
+    memory_format: torch.memory_format = torch.preserve_format,
+) -> Index:
+    out = apply_(tensor, aten.clone.default, memory_format=memory_format)
+    assert isinstance(out, Index)
+    return out
+
+
+@implements(aten._to_copy.default)
+def _to_copy(
+    tensor: Index,
+    *,
+    dtype: Optional[torch.dtype] = None,
+    layout: Optional[torch.layout] = None,
+    device: Optional[torch.device] = None,
+    pin_memory: bool = False,
+    non_blocking: bool = False,
+    memory_format: Optional[torch.memory_format] = None,
+) -> Union[Index, Tensor]:
+    return apply_(
+        tensor,
+        aten._to_copy.default,
+        dtype=dtype,
+        layout=layout,
+        device=device,
+        pin_memory=pin_memory,
+        non_blocking=non_blocking,
+        memory_format=memory_format,
+    )
 
 
 # def sort(self) -> None:
