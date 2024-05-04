@@ -138,8 +138,8 @@ def assert_symmetric(size: Tuple[Optional[int], Optional[int]]) -> None:
 
 def assert_sorted(func: Callable) -> Callable:
     @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        if not args[0].is_sorted:
+    def wrapper(self: 'EdgeIndex', *args: Any, **kwargs: Any) -> Any:
+        if not self.is_sorted:
             cls_name = args[0].__class__.__name__
             raise ValueError(
                 f"Cannot call '{func.__name__}' since '{cls_name}' is not "
@@ -222,7 +222,7 @@ class EdgeIndex(Tensor):
     # The size of the underlying sparse matrix:
     _sparse_size: Tuple[Optional[int], Optional[int]] = (None, None)
 
-    # Whether the `edge_index` represented is non-sorted (`None`), or sorted
+    # Whether the `edge_index` representation is non-sorted (`None`), or sorted
     # based on row or column values.
     _sort_order: Optional[SortOrder] = None
 
@@ -344,6 +344,7 @@ class EdgeIndex(Tensor):
         out._indptr = indptr
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            out._data = data._data
             out._T_perm = data._T_perm
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr
@@ -1102,6 +1103,17 @@ class EdgeIndex(Tensor):
             edge_index._indptr = colptr
             return edge_index
 
+    def to_vector(self) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a one-dimensional index
+        vector representation.
+        """
+        num_rows, num_cols = self.get_sparse_size()
+
+        if num_rows * num_cols > torch_geometric.typing.MAX_INT64:
+            raise ValueError("'to_vector()' will result in an overflow")
+
+        return self._data[0] * num_rows + self._data[1]
+
     # PyTorch/Python builtins #################################################
 
     def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
@@ -1227,17 +1239,6 @@ class EdgeIndex(Tensor):
         self._value = None
         self._cat_metadata = None
         return self
-
-    def to_vector(self) -> Tensor:
-        r"""Converts :class:`EdgeIndex` into a one-dimensional index
-        vector representation.
-        """
-        num_rows, num_cols = self.get_sparse_size()
-
-        if num_rows * num_cols > torch_geometric.typing.MAX_INT64:
-            raise ValueError("'to_vector()' will result in an overflow")
-
-        return self._data[0] * num_rows + self._data[1]
 
 
 class SortReturnType(NamedTuple):
