@@ -1,3 +1,6 @@
+import os.path as osp
+from typing import List
+
 import pytest
 import torch
 from torch import tensor
@@ -414,3 +417,131 @@ def test_getitem(dtype, device):
     out = tmp[index]
     assert not isinstance(out, Index)
     assert out.equal(tmp[index.as_tensor()])
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_add(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+
+    out = torch.add(index, 2, alpha=2)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([4, 5, 5, 6], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index + torch.tensor([2], dtype=dtype, device=device)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([2, 3, 3, 4], device=device))
+    assert out.dim_size == 5
+    assert out.is_sorted
+
+    out = index.add(index)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([0, 2, 2, 4], device=device))
+    assert out.dim_size == 6
+    assert not out.is_sorted
+
+    index += 2
+    assert isinstance(index, Index)
+    assert index.equal(tensor([2, 3, 3, 4], device=device))
+    assert index.dim_size == 5
+    assert index.is_sorted
+
+    with pytest.raises(RuntimeError, match="can't be cast"):
+        index += 2.5
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sub(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([4, 5, 5, 6], dim_size=7, is_sorted=True, **kwargs)
+
+    out = torch.sub(index, 2, alpha=2)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([0, 1, 1, 2], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
+    out = index - torch.tensor([2], dtype=dtype, device=device)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([2, 3, 3, 4], device=device))
+    assert out.dim_size == 5
+    assert out.is_sorted
+
+    out = index.sub(index)
+    assert isinstance(out, Index)
+    assert out.equal(tensor([0, 0, 0, 0], device=device))
+    assert out.dim_size is None
+    assert not out.is_sorted
+
+    index -= 2
+    assert isinstance(index, Index)
+    assert index.equal(tensor([2, 3, 3, 4], device=device))
+    assert out.dim_size == 5
+    assert not out.is_sorted
+
+    with pytest.raises(RuntimeError, match="can't be cast"):
+        index -= 2.5
+
+
+def test_to_list():
+    index = Index([0, 1, 1, 2])
+    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
+        index.tolist()
+
+
+def test_numpy():
+    index = Index([0, 1, 1, 2])
+    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
+        index.numpy()
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_save_and_load(dtype, device, tmp_path):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    index.fill_cache_()
+
+    path = osp.join(tmp_path, 'edge_index.pt')
+    torch.save(index, path)
+    out = torch.load(path)
+
+    assert isinstance(out, Index)
+    assert out.equal(index)
+    assert out.dim_size == 3
+    assert out.is_sorted
+    assert out._indptr.equal(index._indptr)
+
+
+def _collate_fn(indices: List[Index]) -> List[Index]:
+    return indices
+
+
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('num_workers', [0, 2])
+def test_data_loader(dtype, num_workers):
+    kwargs = dict(dtype=dtype)
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
+    index.fill_cache_()
+
+    loader = torch.utils.data.DataLoader(
+        [index] * 4,
+        batch_size=2,
+        num_workers=num_workers,
+        collate_fn=_collate_fn,
+        drop_last=True,
+    )
+
+    assert len(loader) == 2
+    for batch in loader:
+        assert isinstance(batch, list)
+        assert len(batch) == 2
+        for index in batch:
+            assert isinstance(index, Index)
+            assert index.is_shared() == (num_workers > 0)
+            assert index._data.is_shared() == (num_workers > 0)
+            assert index._indptr.is_shared() == (num_workers > 0)
