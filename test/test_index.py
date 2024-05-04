@@ -88,3 +88,25 @@ def test_fill_cache_(dtype, device):
     index.validate().fill_cache_()
     assert index.dim_size == 3
     assert index._indptr is None
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_dim_resize(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    index = Index([0, 1, 1, 2], is_sorted=True, **kwargs).fill_cache_()
+
+    assert index.dim_size == 3
+    assert index._indptr.equal(tensor([0, 1, 3, 4], device=device))
+
+    out = index.dim_resize_(4)
+    assert out.dim_size == 4
+    assert out._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+
+    out = index.dim_resize_(3)
+    assert out.dim_size == 3
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+
+    out = index.dim_resize_(None)
+    assert out.dim_size is None
+    assert out._indptr is None

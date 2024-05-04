@@ -9,7 +9,6 @@ from typing import (
     Optional,
     Tuple,
     Type,
-    Union,
 )
 
 import torch
@@ -212,7 +211,23 @@ class Index(Tensor):
 
     def dim_resize_(self, dim_size: Optional[int]) -> 'Index':
         r"""TODO."""
-        raise NotImplementedError  # TODO
+        if self.is_sorted and self._indptr is not None:
+            if dim_size is None:
+                self._indptr = None
+
+            elif self._indptr.numel() - 1 >= dim_size:
+                self._indptr = self._indptr[:dim_size + 1]
+
+            else:
+                fill_value = self._indptr.new_full(
+                    (dim_size - self._indptr.numel() + 1, ),
+                    fill_value=self._indptr[-1],  # type: ignore
+                )
+                self._indptr = torch.cat([self._indptr, fill_value], dim=0)
+
+        self._dim_size = dim_size
+
+        return self
 
     @assert_sorted
     def get_indptr(self) -> Tensor:
@@ -248,10 +263,6 @@ class Index(Tensor):
         :class:`torch.Tensor` representation.
         """
         return self._data
-
-    def dim_narrow(self, start: Union[int, Tensor], length: int) -> 'Index':
-        r"""TODO."""
-        raise NotImplementedError  # TODO
 
     # PyTorch/Python builtins #################################################
 
