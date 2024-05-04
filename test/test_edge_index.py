@@ -995,12 +995,10 @@ def test_matmul(without_extensions, device):
 
 
 @withCUDA
-def test_sparse_narrow(device):
-    adj = EdgeIndex(
-        [[0, 1, 1, 2], [1, 0, 2, 1]],
-        device=device,
-        sort_order='row',
-    )
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sparse_narrow(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
 
     out = adj.sparse_narrow(dim=0, start=1, length=1)
     assert out.equal(torch.tensor([[0, 0], [0, 2]], device=device))
@@ -1029,8 +1027,9 @@ def test_sparse_narrow(device):
 
 
 @withCUDA
-def test_sparse_resize(device):
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_sparse_resize(dtype, device):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=dtype, device=device)
 
     out = adj.sort_by('row')[0].fill_cache_()
     assert out.sparse_size() == (3, 3)
@@ -1042,6 +1041,10 @@ def test_sparse_resize(device):
     assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4, 4], device=device))
     out = out.sparse_resize_(3, 3)
     assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
+    out = out.sparse_resize_(None, None)
+    assert out.sparse_size() == (None, None)
     assert out._indptr is None
     assert out._T_indptr is None
 
@@ -1055,6 +1058,10 @@ def test_sparse_resize(device):
     assert out._T_indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
     out = out.sparse_resize_(3, 3)
     assert out.sparse_size() == (3, 3)
+    assert out._indptr.equal(tensor([0, 1, 3, 4], device=device))
+    assert out._T_indptr.equal(tensor([0, 1, 3, 4], device=device))
+    out = out.sparse_resize_(None, None)
+    assert out.sparse_size() == (None, None)
     assert out._indptr is None
     assert out._T_indptr is None
 

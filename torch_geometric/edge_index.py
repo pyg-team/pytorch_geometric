@@ -547,11 +547,8 @@ class EdgeIndex(Tensor):
             if ptr is None or size is None:
                 return None
 
-            if ptr.numel() - 1 == size:
-                return ptr
-
-            if ptr.numel() - 1 > size:
-                return None
+            if ptr.numel() - 1 >= size:
+                return ptr[:size + 1]
 
             fill_value = ptr.new_full(
                 (size - ptr.numel() + 1, ),
