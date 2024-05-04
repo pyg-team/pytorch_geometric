@@ -392,6 +392,12 @@ def test_getitem(dtype, device):
     assert out.dim_size == 3
     assert out.is_sorted
 
+    out = index[..., 1:3]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 1], device=device))
+    assert out.dim_size == 3
+    assert out.is_sorted
+
     out = index[None, 1:3]
     assert not isinstance(out, Index)
     assert out.equal(tensor([[1, 1]], device=device))
