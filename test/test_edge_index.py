@@ -1145,7 +1145,6 @@ def test_data_loader(dtype, num_workers):
         assert len(batch) == 2
         for adj in batch:
             assert isinstance(adj, EdgeIndex)
-            assert adj.dtype == adj.dtype
             assert adj.is_shared() == (num_workers > 0)
             assert adj._data.is_shared() == (num_workers > 0)
             assert adj._indptr.is_shared() == (num_workers > 0)

@@ -359,6 +359,13 @@ class Index(Tensor):
         out._cat_metadata = self._cat_metadata
         return out
 
+    def _clear_metadata(self) -> 'Index':
+        self._dim_size = None
+        self._is_sorted = False
+        self._indptr = None
+        self._cat_metadata = None
+        return self
+
 
 def apply_(
     tensor: Index,
@@ -598,3 +605,133 @@ def _index(
         out._dim_size = input.dim_size
 
     return out
+
+
+@implements(aten.add.Tensor)
+def _add(
+    input: Index,
+    other: Union[int, Tensor, Index],
+    *,
+    alpha: int = 1,
+) -> Union[Index, Tensor]:
+
+    data = aten.add.Tensor(
+        input._data,
+        other._data if isinstance(other, Index) else other,
+        alpha=alpha,
+    )
+
+    if data.dtype not in INDEX_DTYPES:
+        return data
+    if data.dim() != 1:
+        return data
+
+    out = Index(data)
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
+
+    if isinstance(other, int):
+        if input.dim_size is not None:
+            out._dim_size = input.dim_size + alpha * other
+        out._is_sorted = input.is_sorted
+
+    elif isinstance(other, Index):
+        if input.dim_size is not None and other.dim_size is not None:
+            out._dim_size = input.dim_size + alpha * other.dim_size
+
+    return out
+
+
+@implements(aten.add_.Tensor)
+def add_(
+    input: Index,
+    other: Union[int, Tensor, Index],
+    *,
+    alpha: int = 1,
+) -> Index:
+
+    dim_size = input.dim_size
+    is_sorted = input.is_sorted
+    input._clear_metadata()
+
+    aten.add_.Tensor(
+        input._data,
+        other._data if isinstance(other, Index) else other,
+        alpha=alpha,
+    )
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
+
+    if isinstance(other, int):
+        if dim_size is not None:
+            input._dim_size = dim_size + alpha * other
+        input._is_sorted = is_sorted
+
+    elif isinstance(other, Index):
+        if dim_size is not None and other.dim_size is not None:
+            input._dim_size = dim_size + alpha * other.dim_size
+
+    return input
+
+
+@implements(aten.sub.Tensor)
+def _sub(
+    input: Index,
+    other: Union[int, Tensor, Index],
+    *,
+    alpha: int = 1,
+) -> Union[Index, Tensor]:
+
+    data = aten.sub.Tensor(
+        input._data,
+        other._data if isinstance(other, Index) else other,
+        alpha=alpha,
+    )
+
+    if data.dtype not in INDEX_DTYPES:
+        return data
+    if data.dim() != 1:
+        return data
+
+    out = Index(data)
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
+
+    if isinstance(other, int):
+        if input.dim_size is not None:
+            out._dim_size = input.dim_size - alpha * other
+        out._is_sorted = input.is_sorted
+
+    return out
+
+
+@implements(aten.sub_.Tensor)
+def sub_(
+    input: Index,
+    other: Union[int, Tensor, Index],
+    *,
+    alpha: int = 1,
+) -> Index:
+
+    dim_size = input.dim_size
+    is_sorted = input.is_sorted
+    input._clear_metadata()
+
+    aten.sub_.Tensor(
+        input._data,
+        other._data if isinstance(other, Index) else other,
+        alpha=alpha,
+    )
+
+    if isinstance(other, Tensor) and other.numel() <= 1:
+        other = int(other)
+
+    if isinstance(other, int):
+        if dim_size is not None:
+            input._dim_size = dim_size - alpha * other
+        input._is_sorted = is_sorted
+
+    return input
