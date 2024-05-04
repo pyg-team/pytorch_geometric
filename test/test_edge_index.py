@@ -88,7 +88,7 @@ def test_identity(dtype, device, is_undirected):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sparse_size=(3, 3), **kwargs)
 
     out = EdgeIndex(adj)
-    print(out._data)
+    assert not isinstance(out.to_tensor(), EdgeIndex)
     assert out.data_ptr() == adj.data_ptr()
     assert out.dtype == adj.dtype
     assert out.device == adj.device
