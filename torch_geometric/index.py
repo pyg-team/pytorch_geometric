@@ -200,7 +200,8 @@ class Index(Tensor):
         return self._is_sorted
 
     @property
-    def dtype(self) -> torch.dtype:
+    def dtype(self) -> torch.dtype:  # type: ignore
+        # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
         return self._data.dtype
 
     # Cache Interface #########################################################
