@@ -199,6 +199,10 @@ class Index(Tensor):
         r"""TODO."""
         return self._is_sorted
 
+    @property
+    def dtype(self) -> torch.dtype:
+        return self._data.dtype
+
     # Cache Interface #########################################################
 
     def get_dim_size(self) -> int:

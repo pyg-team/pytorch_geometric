@@ -478,6 +478,10 @@ class EdgeIndex(Tensor):
         r"""Returns whether indices are bidirectional."""
         return self._is_undirected
 
+    @property
+    def dtype(self) -> torch.dtype:
+        return self._data.dtype
+
     # Cache Interface #########################################################
 
     @overload
