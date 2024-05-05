@@ -4,7 +4,7 @@ import os.path as osp
 import pytest
 import torch
 
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Data, RocksDatabase, SQLiteDatabase
 from torch_geometric.data.database import TensorInfo
 from torch_geometric.profile import benchmark
@@ -145,6 +145,36 @@ def test_database_schema(tmp_path, Database):
         assert torch.equal(out['tensor'], data['tensor'])
         assert isinstance(out['data'], Data) and len(out['data']) == 1
         assert torch.equal(out['data'].x, data['data'].x)
+
+    db.close()
+
+
+@pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
+def test_index(tmp_path, Database):
+    kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
+
+    path = osp.join(tmp_path, 'tuple_storage.db')
+    schema = dict(dtype=torch.long, is_index=True)
+    db = Database(path, schema=schema, **kwargs)
+    assert db.schema == {
+        0: TensorInfo(dtype=torch.long, is_index=True),
+    }
+
+    index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
+    index2 = Index([0, 1, 1, 2, 2, 3], dim_size=None, is_sorted=True)
+    index3 = Index([], dtype=torch.long)
+
+    db.insert(0, index1)
+    db.multi_insert([1, 2], [index2, index3])
+
+    out1 = db.get(0)
+    out2, out3 = db.multi_get([1, 2])
+
+    for out, index in zip([out1, out2, out3], [index1, index2, index3]):
+        assert index.equal(out)
+        assert index.dtype == out.dtype
+        assert index.dim_size == out.dim_size
+        assert index.is_sorted == out.is_sorted
 
     db.close()
 
