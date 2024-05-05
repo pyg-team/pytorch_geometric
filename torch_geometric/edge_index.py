@@ -478,6 +478,11 @@ class EdgeIndex(Tensor):
         r"""Returns whether indices are bidirectional."""
         return self._is_undirected
 
+    @property
+    def dtype(self) -> torch.dtype:  # type: ignore
+        # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
+        return self._data.dtype
+
     # Cache Interface #########################################################
 
     @overload

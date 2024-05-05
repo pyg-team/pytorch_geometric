@@ -206,6 +206,7 @@ def test_index_dataloader(num_workers):
 
     for batch in loader:
         assert isinstance(batch.index, Index)
+        assert batch.index.dtype == torch.long
         assert batch.index.dim_size == 7
         assert batch.index.is_sorted
 
@@ -236,6 +237,7 @@ def test_edge_index_dataloader(num_workers, sort_order):
 
     for batch in loader:
         assert isinstance(batch.edge_index, EdgeIndex)
+        assert batch.edge_index.dtype == torch.long
         assert batch.edge_index.sparse_size() == (6, 6)
         assert batch.edge_index.sort_order == sort_order
         assert batch.edge_index.is_undirected
