@@ -4,12 +4,13 @@ torch_geometric
 Tensor Objects
 --------------
 
-.. currentmodule:: torch_geometric.edge_index
+.. currentmodule:: torch_geometric
 
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
 
+   Index
    EdgeIndex
 
 Functions

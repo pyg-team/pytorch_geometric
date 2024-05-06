@@ -698,6 +698,7 @@ class EdgeIndex(Tensor):
     # Methods #################################################################
 
     def share_memory_(self) -> 'EdgeIndex':
+        """"""  # noqa: D419
         self._data.share_memory_()
         if self._indptr is not None:
             self._indptr.share_memory_()
@@ -714,6 +715,7 @@ class EdgeIndex(Tensor):
         return self
 
     def is_shared(self) -> bool:
+        """"""  # noqa: D419
         return self._data.is_shared()
 
     def as_tensor(self) -> Tensor:
