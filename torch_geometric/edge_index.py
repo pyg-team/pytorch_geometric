@@ -22,7 +22,7 @@ import torch.utils._pytree as pytree
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import is_compiling
+from torch_geometric import Index, is_compiling
 from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import INDEX_DTYPES, SparseTensor
 
@@ -1513,6 +1513,28 @@ def _index(
 
     else:  # 2. `edge_index[:, index]` or `edge_index[..., index]`.
         out._sparse_size = input.sparse_size()
+
+    return out
+
+
+@implements(aten.select.int)
+def _select(input: EdgeIndex, dim: int, index: int) -> Union[Tensor, Index]:
+    out = aten.select.int(input._data, dim, index)
+
+    if dim == 0 or dim == -2:
+        out = Index(out)
+        if index == 0 or index == -2:  # Row-select:
+            out._dim_size = input.sparse_size(0)
+            out._is_sorted = input.is_sorted_by_row
+            if input.is_sorted_by_row:
+                out._indptr = input._indptr
+
+        else:
+            assert index == 1 or index == -1
+            out._dim_size = input.sparse_size(1)
+            out._is_sorted = input.is_sorted_by_col
+            if input.is_sorted_by_col:
+                out._indptr = input._indptr
 
     return out
 
