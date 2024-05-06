@@ -1523,13 +1523,14 @@ def _select(input: EdgeIndex, dim: int, index: int) -> Union[Tensor, Index]:
 
     if dim == 0 or dim == -2:
         out = Index(out)
+
         if index == 0 or index == -2:  # Row-select:
             out._dim_size = input.sparse_size(0)
             out._is_sorted = input.is_sorted_by_row
             if input.is_sorted_by_row:
                 out._indptr = input._indptr
 
-        else:
+        else:  # Col-select:
             assert index == 1 or index == -1
             out._dim_size = input.sparse_size(1)
             out._is_sorted = input.is_sorted_by_col
