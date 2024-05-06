@@ -7,7 +7,7 @@ import torch
 from torch import Tensor, tensor
 
 import torch_geometric
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.edge_index import (
     ReduceType,
     SortReturnType,
@@ -551,6 +551,68 @@ def test_getitem(dtype, device, is_undirected):
 
     out = adj[tensor([0], device=device), tensor([0], device=device)]
     assert not isinstance(out, EdgeIndex)
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_select(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+
+    adj = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sort_order='row',
+        sparse_size=(4, 5),
+        **kwargs,
+    ).fill_cache_()
+
+    out = adj[0]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([0, 1, 1, 2], device=device))
+    assert out.dim_size == 4
+    assert out.is_sorted
+    assert out._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+
+    out = adj[-1]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 0, 2, 1], device=device))
+    assert out.dim_size == 5
+    assert not out.is_sorted
+    assert out._indptr is None
+
+    out = adj[-2, 2:4]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 2], device=device))
+    assert out.dim_size == 4
+    assert out.is_sorted
+    assert out._indptr is None
+
+    adj = EdgeIndex(
+        [[1, 0, 2, 1], [0, 1, 1, 2]],
+        sort_order='col',
+        sparse_size=(5, 4),
+        **kwargs,
+    ).fill_cache_()
+
+    out = adj[1]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([0, 1, 1, 2], device=device))
+    assert out.dim_size == 4
+    assert out.is_sorted
+    assert out._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+
+    out = adj[-2]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 0, 2, 1], device=device))
+    assert out.dim_size == 5
+    assert not out.is_sorted
+    assert out._indptr is None
+
+    out = adj[-1, 2:4]
+    assert isinstance(out, Index)
+    assert out.equal(tensor([1, 2], device=device))
+    assert out.dim_size == 4
+    assert out.is_sorted
+    assert out._indptr is None
 
 
 @withCUDA
