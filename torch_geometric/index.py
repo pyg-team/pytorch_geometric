@@ -542,15 +542,20 @@ def _flip(
 
 @implements(aten.index_select.default)
 def _index_select(
-    input: Index,
+    input: Union[Index, Tensor],
     dim: int,
-    index: Tensor,
-) -> Index:
+    index: Union[Index, Tensor],
+) -> Union[Index, Tensor]:
 
-    data = aten.index_select.default(input._data, dim, index)
+    out = aten.index_select.default(
+        input._data if isinstance(input, Index) else input,
+        dim,
+        index._data if isinstance(index, Index) else index,
+    )
 
-    out = Index(data)
-    out._dim_size = input.dim_size
+    if isinstance(input, Index):
+        out = Index(out)
+        out._dim_size = input.dim_size
 
     return out
 
