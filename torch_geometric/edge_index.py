@@ -1542,6 +1542,22 @@ def _select(input: EdgeIndex, dim: int, index: int) -> Union[Tensor, Index]:
     return out
 
 
+@implements(aten.unbind.int)
+def _unbind(
+    input: EdgeIndex,
+    dim: int = 0,
+) -> Union[List[Index], List[Tensor]]:
+
+    if dim == 0 or dim == -2:
+        row = input[0]
+        assert isinstance(row, Index)
+        col = input[1]
+        assert isinstance(col, Index)
+        return [row, col]
+
+    return aten.unbind.int(input._data, dim)
+
+
 @implements(aten.add.Tensor)
 def _add(
     input: EdgeIndex,
