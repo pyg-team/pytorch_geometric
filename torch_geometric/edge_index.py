@@ -1748,13 +1748,13 @@ def _torch_sparse_spmm(
     if not transpose:
         assert input.is_sorted_by_row
         (rowptr, col), _ = input.get_csr()
-        row = input[0]
+        row = input._data[0]
         if other.requires_grad and reduce in ['sum', 'mean']:
             (colptr, _), perm = input.get_csc()
     else:
         assert input.is_sorted_by_col
         (rowptr, col), _ = input.get_csc()
-        row = input[1]
+        row = input._data[1]
         if other.requires_grad and reduce in ['sum', 'mean']:
             (colptr, _), perm = input.get_csr()
 
