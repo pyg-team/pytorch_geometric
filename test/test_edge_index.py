@@ -617,6 +617,33 @@ def test_select(dtype, device):
 
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
+def test_unbind(dtype, device):
+    kwargs = dict(dtype=dtype, device=device)
+
+    adj = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sort_order='row',
+        sparse_size=(4, 5),
+        **kwargs,
+    ).fill_cache_()
+
+    row, col = adj
+
+    assert isinstance(row, Index)
+    assert row.equal(tensor([0, 1, 1, 2], device=device))
+    assert row.dim_size == 4
+    assert row.is_sorted
+    assert row._indptr.equal(tensor([0, 1, 3, 4, 4], device=device))
+
+    assert isinstance(col, Index)
+    assert col.equal(tensor([1, 0, 2, 1], device=device))
+    assert col.dim_size == 5
+    assert not col.is_sorted
+    assert col._indptr is None
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('value_dtype', [None, torch.double])
 def test_to_dense(dtype, device, value_dtype):
     kwargs = dict(dtype=dtype, device=device)
