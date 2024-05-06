@@ -601,6 +601,9 @@ def _index(
 
     data = aten.index.Tensor(input._data, indices)
 
+    if data.dim() != 1:
+        return data
+
     assert len(indices) == 1
     index = indices[0]
     assert index is not None
