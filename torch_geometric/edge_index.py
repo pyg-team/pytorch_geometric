@@ -1353,6 +1353,13 @@ def _alias(tensor: EdgeIndex) -> EdgeIndex:
     return tensor._shallow_copy()
 
 
+@implements(aten._pin_memory.default)
+def _pin_memory(tensor: EdgeIndex) -> EdgeIndex:
+    out = apply_(tensor, aten._pin_memory.default)
+    assert isinstance(out, EdgeIndex)
+    return out
+
+
 @implements(aten.cat.default)
 def _cat(
     tensors: List[Union[EdgeIndex, Tensor]],

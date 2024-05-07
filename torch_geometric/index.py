@@ -249,10 +249,10 @@ class Index(Tensor):
         r"""Returns whether indices are sorted in ascending order."""
         return self._is_sorted
 
-    @property
-    def dtype(self) -> torch.dtype:  # type: ignore
-        # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
-        return self._data.dtype
+    # @property
+    # def dtype(self) -> torch.dtype:  # type: ignore
+    #     # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
+    #     return self._data.dtype
 
     # Cache Interface #########################################################
 
@@ -495,6 +495,13 @@ def _to_copy(
 @implements(aten.alias.default)
 def _alias(tensor: Index) -> Index:
     return tensor._shallow_copy()
+
+
+@implements(aten._pin_memory.default)
+def _pin_memory(tensor: Index) -> Index:
+    out = apply_(tensor, aten._pin_memory.default)
+    assert isinstance(out, Index)
+    return out
 
 
 @implements(aten.sort.default)
