@@ -235,7 +235,6 @@ class WebQSPDataset(InMemoryDataset):
                                  columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")
-            df[col] = df[col].method(value)
             x = text2embedding(self.model, self.device,
                                nodes.node_attr.tolist())
             # encode edges
