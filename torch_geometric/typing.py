@@ -1,8 +1,9 @@
 import inspect
 import os
 import sys
+import typing
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import torch
@@ -20,6 +21,16 @@ WITH_WINDOWS = os.name == 'nt'
 NO_MKL = 'USE_MKL=OFF' in torch.__config__.show() or WITH_WINDOWS
 
 MAX_INT64 = torch.iinfo(torch.int64).max
+
+if WITH_PT20:
+    INDEX_DTYPES: Set[torch.dtype] = {
+        torch.int32,
+        torch.int64,
+    }
+elif not typing.TYPE_CHECKING:  # pragma: no cover
+    INDEX_DTYPES: Set[torch.dtype] = {
+        torch.int64,
+    }
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = torch.sparse_coo

@@ -1,5 +1,4 @@
 import functools
-import typing
 from enum import Enum
 from typing import (
     Any,
@@ -11,7 +10,6 @@ from typing import (
     NamedTuple,
     Optional,
     Sequence,
-    Set,
     Tuple,
     Type,
     Union,
@@ -24,22 +22,13 @@ import torch.utils._pytree as pytree
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import is_compiling
-from torch_geometric.typing import SparseTensor
+from torch_geometric import Index, is_compiling
+from torch_geometric.index import index2ptr, ptr2index
+from torch_geometric.typing import INDEX_DTYPES, SparseTensor
 
 aten = torch.ops.aten
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
-
-if torch_geometric.typing.WITH_PT20:
-    SUPPORTED_DTYPES: Set[torch.dtype] = {
-        torch.int32,
-        torch.int64,
-    }
-elif not typing.TYPE_CHECKING:  # pragma: no cover
-    SUPPORTED_DTYPES: Set[torch.dtype] = {
-        torch.int64,
-    }
 
 ReduceType = Literal['sum', 'mean', 'amin', 'amax', 'add', 'min', 'max']
 PYG_REDUCE: Dict[ReduceType, ReduceType] = {
@@ -118,16 +107,11 @@ def maybe_sub(
                  for v, o in zip(value, other))
 
 
-def ptr2index(ptr: Tensor, output_size: Optional[int] = None) -> Tensor:
-    index = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
-    return index.repeat_interleave(ptr.diff(), output_size=output_size)
-
-
 def assert_valid_dtype(tensor: Tensor) -> None:
-    if tensor.dtype not in SUPPORTED_DTYPES:
+    if tensor.dtype not in INDEX_DTYPES:
         raise ValueError(f"'EdgeIndex' holds an unsupported data type "
                          f"(got '{tensor.dtype}', but expected one of "
-                         f"{SUPPORTED_DTYPES})")
+                         f"{INDEX_DTYPES})")
 
 
 def assert_two_dimensional(tensor: Tensor) -> None:
@@ -154,13 +138,13 @@ def assert_symmetric(size: Tuple[Optional[int], Optional[int]]) -> None:
 
 def assert_sorted(func: Callable) -> Callable:
     @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        if not args[0].is_sorted:
-            cls_name = args[0].__class__.__name__
+    def wrapper(self: 'EdgeIndex', *args: Any, **kwargs: Any) -> Any:
+        if not self.is_sorted:
+            cls_name = self.__class__.__name__
             raise ValueError(
                 f"Cannot call '{func.__name__}' since '{cls_name}' is not "
                 f"sorted. Please call `{cls_name}.sort_by(...)` first.")
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
@@ -238,7 +222,7 @@ class EdgeIndex(Tensor):
     # The size of the underlying sparse matrix:
     _sparse_size: Tuple[Optional[int], Optional[int]] = (None, None)
 
-    # Whether the `edge_index` represented is non-sorted (`None`), or sorted
+    # Whether the `edge_index` representation is non-sorted (`None`), or sorted
     # based on row or column values.
     _sort_order: Optional[SortOrder] = None
 
@@ -360,6 +344,7 @@ class EdgeIndex(Tensor):
         out._indptr = indptr
 
         if isinstance(data, cls):  # If passed `EdgeIndex`, inherit metadata:
+            out._data = data._data
             out._T_perm = data._T_perm
             out._T_index = data._T_index
             out._T_indptr = data._T_indptr
@@ -493,6 +478,11 @@ class EdgeIndex(Tensor):
         r"""Returns whether indices are bidirectional."""
         return self._is_undirected
 
+    @property
+    def dtype(self) -> torch.dtype:  # type: ignore
+        # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
+        return self._data.dtype
+
     # Cache Interface #########################################################
 
     @overload
@@ -562,11 +552,8 @@ class EdgeIndex(Tensor):
             if ptr is None or size is None:
                 return None
 
-            if ptr.numel() - 1 == size:
-                return ptr
-
-            if ptr.numel() - 1 > size:
-                return None
+            if ptr.numel() - 1 >= size:
+                return ptr[:size + 1]
 
             fill_value = ptr.new_full(
                 (size - ptr.numel() + 1, ),
@@ -610,11 +597,7 @@ class EdgeIndex(Tensor):
             return self._T_indptr
 
         dim = 0 if self.is_sorted_by_row else 1
-        self._indptr = torch._convert_indices_from_coo_to_csr(
-            self._data[dim],
-            self.get_sparse_size(dim),
-            out_int32=self.dtype != torch.int64,
-        )
+        self._indptr = index2ptr(self._data[dim], self.get_sparse_size(dim))
 
         return self._indptr
 
@@ -655,11 +638,7 @@ class EdgeIndex(Tensor):
         elif self.is_undirected and self._indptr is not None:
             rowptr = self._indptr
         else:
-            rowptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
-                row,
-                self.get_num_rows(),
-                out_int32=self.dtype != torch.int64,
-            )
+            rowptr = self._T_indptr = index2ptr(row, self.get_num_rows())
 
         return (rowptr, col), perm
 
@@ -679,11 +658,7 @@ class EdgeIndex(Tensor):
         elif self.is_undirected and self._indptr is not None:
             colptr = self._indptr
         else:
-            colptr = self._T_indptr = torch._convert_indices_from_coo_to_csr(
-                col,
-                self.get_num_cols(),
-                out_int32=self.dtype != torch.int64,
-            )
+            colptr = self._T_indptr = index2ptr(col, self.get_num_cols())
 
         return (colptr, row), perm
 
@@ -723,6 +698,7 @@ class EdgeIndex(Tensor):
     # Methods #################################################################
 
     def share_memory_(self) -> 'EdgeIndex':
+        """"""  # noqa: D419
         self._data.share_memory_()
         if self._indptr is not None:
             self._indptr.share_memory_()
@@ -739,6 +715,7 @@ class EdgeIndex(Tensor):
         return self
 
     def is_shared(self) -> bool:
+        """"""  # noqa: D419
         return self._data.is_shared()
 
     def as_tensor(self) -> Tensor:
@@ -1071,64 +1048,95 @@ class EdgeIndex(Tensor):
                              f"(got {start})")
 
         if dim == 0:
-            (rowptr, col), _ = self.get_csr()
-            rowptr = rowptr.narrow(0, start, length + 1)
+            if self.is_sorted_by_row:
+                (rowptr, col), _ = self.get_csr()
+                rowptr = rowptr.narrow(0, start, length + 1)
 
-            if rowptr.numel() < 2:
-                row, col = self._data[0, :0], self._data[1, :0]
-                rowptr = None
-                num_rows = 0
-            else:
-                col = col[rowptr[0]:rowptr[-1]]
-                rowptr = rowptr - rowptr[0]
-                num_rows = rowptr.numel() - 1
+                if rowptr.numel() < 2:
+                    row, col = self._data[0, :0], self._data[1, :0]
+                    rowptr = None
+                    num_rows = 0
+                else:
+                    col = col[rowptr[0]:rowptr[-1]]
+                    rowptr = rowptr - rowptr[0]
+                    num_rows = rowptr.numel() - 1
 
-                row = torch.arange(
-                    num_rows,
-                    dtype=col.dtype,
-                    device=col.device,
-                ).repeat_interleave(
-                    rowptr.diff(),
-                    output_size=col.numel(),
+                    row = torch.arange(
+                        num_rows,
+                        dtype=col.dtype,
+                        device=col.device,
+                    ).repeat_interleave(
+                        rowptr.diff(),
+                        output_size=col.numel(),
+                    )
+
+                edge_index = EdgeIndex(
+                    torch.stack([row, col], dim=0),
+                    sparse_size=(num_rows, self.sparse_size(1)),
+                    sort_order='row',
                 )
+                edge_index._indptr = rowptr
+                return edge_index
 
-            edge_index = EdgeIndex(
-                torch.stack([row, col], dim=0),
-                sparse_size=(num_rows, self.sparse_size(1)),
-                sort_order='row',
-            )
-            edge_index._indptr = rowptr
-            return edge_index
-
-        else:  # dim == 0:
-            (colptr, row), _ = self.get_csc()
-            colptr = colptr.narrow(0, start, length + 1)
-
-            if colptr.numel() < 2:
-                row, col = self._data[0, :0], self._data[1, :0]
-                colptr = None
-                num_cols = 0
             else:
-                row = row[colptr[0]:colptr[-1]]
-                colptr = colptr - colptr[0]
-                num_cols = colptr.numel() - 1
+                mask = self._data[0] >= start
+                mask &= self._data[0] < (start + length)
+                offset = torch.tensor([[start], [0]], device=self.device)
+                edge_index = self[:, mask].sub_(offset)  # type: ignore
+                edge_index._sparse_size = (length, edge_index._sparse_size[1])
+                return edge_index
 
-                col = torch.arange(
-                    num_cols,
-                    dtype=row.dtype,
-                    device=row.device,
-                ).repeat_interleave(
-                    colptr.diff(),
-                    output_size=row.numel(),
+        else:
+            assert dim == 1
+
+            if self.is_sorted_by_col:
+                (colptr, row), _ = self.get_csc()
+                colptr = colptr.narrow(0, start, length + 1)
+
+                if colptr.numel() < 2:
+                    row, col = self._data[0, :0], self._data[1, :0]
+                    colptr = None
+                    num_cols = 0
+                else:
+                    row = row[colptr[0]:colptr[-1]]
+                    colptr = colptr - colptr[0]
+                    num_cols = colptr.numel() - 1
+
+                    col = torch.arange(
+                        num_cols,
+                        dtype=row.dtype,
+                        device=row.device,
+                    ).repeat_interleave(
+                        colptr.diff(),
+                        output_size=row.numel(),
+                    )
+
+                edge_index = EdgeIndex(
+                    torch.stack([row, col], dim=0),
+                    sparse_size=(self.sparse_size(0), num_cols),
+                    sort_order='col',
                 )
+                edge_index._indptr = colptr
+                return edge_index
 
-            edge_index = EdgeIndex(
-                torch.stack([row, col], dim=0),
-                sparse_size=(self.sparse_size(0), num_cols),
-                sort_order='col',
-            )
-            edge_index._indptr = colptr
-            return edge_index
+            else:
+                mask = self._data[1] >= start
+                mask &= self._data[1] < (start + length)
+                offset = torch.tensor([[0], [start]], device=self.device)
+                edge_index = self[:, mask].sub_(offset)  # type: ignore
+                edge_index._sparse_size = (edge_index._sparse_size[0], length)
+                return edge_index
+
+    def to_vector(self) -> Tensor:
+        r"""Converts :class:`EdgeIndex` into a one-dimensional index
+        vector representation.
+        """
+        num_rows, num_cols = self.get_sparse_size()
+
+        if num_rows * num_cols > torch_geometric.typing.MAX_INT64:
+            raise ValueError("'to_vector()' will result in an overflow")
+
+        return self._data[0] * num_rows + self._data[1]
 
     # PyTorch/Python builtins #################################################
 
@@ -1271,7 +1279,7 @@ def apply_(
 
     data = fn(tensor._data, *args, **kwargs)
 
-    if data.dtype not in SUPPORTED_DTYPES:
+    if data.dtype not in INDEX_DTYPES:
         return data
 
     if tensor._data.data_ptr() != data.data_ptr():
@@ -1340,6 +1348,18 @@ def _to_copy(
     )
 
 
+@implements(aten.alias.default)
+def _alias(tensor: EdgeIndex) -> EdgeIndex:
+    return tensor._shallow_copy()
+
+
+@implements(aten._pin_memory.default)
+def _pin_memory(tensor: EdgeIndex) -> EdgeIndex:
+    out = apply_(tensor, aten._pin_memory.default)
+    assert isinstance(out, EdgeIndex)
+    return out
+
+
 @implements(aten.cat.default)
 def _cat(
     tensors: List[Union[EdgeIndex, Tensor]],
@@ -1377,9 +1397,9 @@ def _cat(
             total_num_cols = None
             break
         assert isinstance(total_num_cols, int)
-        num_cols = max(num_cols, total_num_cols)
+        total_num_cols = max(num_cols, total_num_cols)
 
-    out._sparse_size = (num_rows, num_cols)
+    out._sparse_size = (total_num_rows, total_num_cols)
 
     # Post-process `is_undirected`:
     out._is_undirected = all(is_undirected_list)
@@ -1493,17 +1513,56 @@ def _index(
     index = indices[1]
     assert isinstance(index, Tensor)
 
+    out = EdgeIndex(out)
+
     # 1. `edge_index[:, mask]` or `edge_index[..., mask]`.
     if index.dtype in (torch.bool, torch.uint8):
-        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
         out._sort_order = input._sort_order
 
     else:  # 2. `edge_index[:, index]` or `edge_index[..., index]`.
-        out = EdgeIndex(out)
         out._sparse_size = input.sparse_size()
 
     return out
+
+
+@implements(aten.select.int)
+def _select(input: EdgeIndex, dim: int, index: int) -> Union[Tensor, Index]:
+    out = aten.select.int(input._data, dim, index)
+
+    if dim == 0 or dim == -2:
+        out = Index(out)
+
+        if index == 0 or index == -2:  # Row-select:
+            out._dim_size = input.sparse_size(0)
+            out._is_sorted = input.is_sorted_by_row
+            if input.is_sorted_by_row:
+                out._indptr = input._indptr
+
+        else:  # Col-select:
+            assert index == 1 or index == -1
+            out._dim_size = input.sparse_size(1)
+            out._is_sorted = input.is_sorted_by_col
+            if input.is_sorted_by_col:
+                out._indptr = input._indptr
+
+    return out
+
+
+@implements(aten.unbind.int)
+def _unbind(
+    input: EdgeIndex,
+    dim: int = 0,
+) -> Union[List[Index], List[Tensor]]:
+
+    if dim == 0 or dim == -2:
+        row = input[0]
+        assert isinstance(row, Index)
+        col = input[1]
+        assert isinstance(col, Index)
+        return [row, col]
+
+    return aten.unbind.int(input._data, dim)
 
 
 @implements(aten.add.Tensor)
@@ -1520,7 +1579,7 @@ def _add(
         alpha=alpha,
     )
 
-    if out.dtype not in SUPPORTED_DTYPES:
+    if out.dtype not in INDEX_DTYPES:
         return out
     if out.dim() != 2 or out.size(0) != 2:
         return out
@@ -1617,7 +1676,7 @@ def _sub(
         alpha=alpha,
     )
 
-    if out.dtype not in SUPPORTED_DTYPES:
+    if out.dtype not in INDEX_DTYPES:
         return out
     if out.dim() != 2 or out.size(0) != 2:
         return out
@@ -1712,13 +1771,13 @@ def _torch_sparse_spmm(
     if not transpose:
         assert input.is_sorted_by_row
         (rowptr, col), _ = input.get_csr()
-        row = input[0]
+        row = input._data[0]
         if other.requires_grad and reduce in ['sum', 'mean']:
             (colptr, _), perm = input.get_csc()
     else:
         assert input.is_sorted_by_col
         (rowptr, col), _ = input.get_csc()
-        row = input[1]
+        row = input._data[1]
         if other.requires_grad and reduce in ['sum', 'mean']:
             (colptr, _), perm = input.get_csr()
 
