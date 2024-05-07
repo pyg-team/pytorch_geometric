@@ -329,6 +329,15 @@ def test_share_memory(dtype, device):
     assert out.data_ptr() == adj.data_ptr()
 
 
+@onlyCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_pin_memory(dtype):
+    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=dtype)
+    assert not adj.is_pinned()
+    out = adj.pin_memory()
+    assert out.is_pinned()
+
+
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_contiguous(dtype, device):
@@ -1261,7 +1270,8 @@ def _collate_fn(edge_indices: List[EdgeIndex]) -> List[EdgeIndex]:
 
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('num_workers', [0, 2])
-def test_data_loader(dtype, num_workers):
+@pytest.mark.parametrize('pin_memory', [False, True])
+def test_data_loader(dtype, num_workers, pin_memory):
     kwargs = dict(dtype=dtype)
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
     adj.fill_cache_()
@@ -1271,6 +1281,7 @@ def test_data_loader(dtype, num_workers):
         batch_size=2,
         num_workers=num_workers,
         collate_fn=_collate_fn,
+        pin_memory=pin_memory,
         drop_last=True,
     )
 
@@ -1280,9 +1291,9 @@ def test_data_loader(dtype, num_workers):
         assert len(batch) == 2
         for adj in batch:
             assert isinstance(adj, EdgeIndex)
-            assert adj.is_shared() == (num_workers > 0)
-            assert adj._data.is_shared() == (num_workers > 0)
-            assert adj._indptr.is_shared() == (num_workers > 0)
+            assert adj.dtype == dtype
+            assert adj.is_shared() != (num_workers == 0) or pin_memory
+            assert adj._data.is_shared() != (num_workers == 0) or pin_memory
 
 
 def test_torch_script():

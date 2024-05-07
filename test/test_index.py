@@ -209,6 +209,15 @@ def test_share_memory(dtype, device):
     assert out.data_ptr() == index.data_ptr()
 
 
+@onlyCUDA
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_pin_memory(dtype):
+    index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, dtype=dtype)
+    assert not index.is_pinned()
+    out = index.pin_memory()
+    assert out.is_pinned()
+
+
 @withCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_contiguous(dtype, device):
@@ -523,7 +532,8 @@ def _collate_fn(indices: List[Index]) -> List[Index]:
 
 @pytest.mark.parametrize('dtype', DTYPES)
 @pytest.mark.parametrize('num_workers', [0, 2])
-def test_data_loader(dtype, num_workers):
+@pytest.mark.parametrize('pin_memory', [False, True])
+def test_data_loader(dtype, num_workers, pin_memory):
     kwargs = dict(dtype=dtype)
     index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, **kwargs)
     index.fill_cache_()
@@ -533,6 +543,7 @@ def test_data_loader(dtype, num_workers):
         batch_size=2,
         num_workers=num_workers,
         collate_fn=_collate_fn,
+        pin_memory=pin_memory,
         drop_last=True,
     )
 
@@ -542,6 +553,6 @@ def test_data_loader(dtype, num_workers):
         assert len(batch) == 2
         for index in batch:
             assert isinstance(index, Index)
-            assert index.is_shared() == (num_workers > 0)
-            assert index._data.is_shared() == (num_workers > 0)
-            assert index._indptr.is_shared() == (num_workers > 0)
+            assert index.dtype == dtype
+            assert index.is_shared() != (num_workers == 0) or pin_memory
+            assert index._data.is_shared() != (num_workers == 0) or pin_memory

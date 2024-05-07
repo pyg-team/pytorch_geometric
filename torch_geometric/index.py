@@ -497,6 +497,13 @@ def _alias(tensor: Index) -> Index:
     return tensor._shallow_copy()
 
 
+@implements(aten._pin_memory.default)
+def _pin_memory(tensor: Index) -> Index:
+    out = apply_(tensor, aten._pin_memory.default)
+    assert isinstance(out, Index)
+    return out
+
+
 @implements(aten.sort.default)
 def _sort(
     tensor: Index,
