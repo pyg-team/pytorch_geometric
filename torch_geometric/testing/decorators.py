@@ -67,6 +67,17 @@ def noWindows(func: Callable) -> Callable:
     )(func)
 
 
+def noMac(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should not execute on
+    macOS systems.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        sys.platform == 'darwin',
+        reason="macOS system",
+    )(func)
+
+
 def minPython(version: str) -> Callable:
     r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:

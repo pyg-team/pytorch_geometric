@@ -18,6 +18,7 @@ from torch_geometric.edge_index import (
 )
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
+    noMac,
     onlyCUDA,
     onlyLinux,
     withCUDA,
@@ -329,6 +330,7 @@ def test_share_memory(dtype, device):
     assert out.data_ptr() == adj.data_ptr()
 
 
+@noMac
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_pin_memory(dtype):
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=dtype)
