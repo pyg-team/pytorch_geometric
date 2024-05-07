@@ -249,10 +249,10 @@ class Index(Tensor):
         r"""Returns whether indices are sorted in ascending order."""
         return self._is_sorted
 
-    # @property
-    # def dtype(self) -> torch.dtype:  # type: ignore
-    #     # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
-    #     return self._data.dtype
+    @property
+    def dtype(self) -> torch.dtype:  # type: ignore
+        # TODO Remove once PyTorch does not override `dtype` in `DataLoader`.
+        return self._data.dtype
 
     # Cache Interface #########################################################
 
