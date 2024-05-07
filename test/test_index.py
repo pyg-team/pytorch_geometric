@@ -7,7 +7,7 @@ from torch import tensor
 
 import torch_geometric.typing
 from torch_geometric import Index
-from torch_geometric.testing import noMac, onlyCUDA, withCUDA
+from torch_geometric.testing import onlyCUDA, withCUDA
 from torch_geometric.typing import INDEX_DTYPES
 
 DTYPES = [pytest.param(dtype, id=str(dtype)[6:]) for dtype in INDEX_DTYPES]
@@ -209,7 +209,7 @@ def test_share_memory(dtype, device):
     assert out.data_ptr() == index.data_ptr()
 
 
-@noMac
+@onlyCUDA
 @pytest.mark.parametrize('dtype', DTYPES)
 def test_pin_memory(dtype):
     index = Index([0, 1, 1, 2], dim_size=3, is_sorted=True, dtype=dtype)
