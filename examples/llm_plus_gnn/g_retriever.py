@@ -2,7 +2,6 @@
 Original Paper: https://arxiv.org/abs/2402.07630
 “G-Retriever significantly reduces hallucinations
 by 54% compared to the [LLM] baseline“.
-
 requirements on top of basic PyG:
 pip install datasets transformers pcst_fast sentencepiece tqdm pandas
 """
@@ -262,9 +261,9 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
-        print("Would you like to reuse them?")
+        print("Would you like to redo untuned LLM eval?")
         user_input = str(input("(y/n):")).lower()
-        skip_step_one = user_input == "y"
+        skip_step_one = user_input == "n"
     else:
         skip_step_one = False
 
