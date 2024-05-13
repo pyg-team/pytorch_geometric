@@ -1995,10 +1995,6 @@ def matmul(
     else:
         other = other.to_sparse_csr(other_value)
 
-    print("========")
-    print(sparse_input, other)
-    print("========")
-
     out = torch.matmul(sparse_input, other)
 
     rowptr: Optional[Tensor] = None
