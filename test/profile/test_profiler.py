@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile.profiler import Profiler
 from torch_geometric.testing import withDevice
@@ -19,7 +20,8 @@ def test_profiler(capfd, get_dataset, device):
         model(x, edge_index)
 
     _, err = capfd.readouterr()
-    assert 'Completed Stage' in err
+    if not torch_geometric.typing.WITH_PT24:
+        assert 'Completed Stage' in err
 
     _, heading_list, raw_results, layer_names, layer_stats = prof.get_trace()
     assert 'Self CPU total' in heading_list
