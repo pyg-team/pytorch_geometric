@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from torch_geometric.nn.text import SentenceTransformer, text2embedding
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.nn.text import SentenceTransformer, text2embedding
 
 try:
     from pandas import DataFrame
@@ -230,8 +230,7 @@ class WebQSPDataset(InMemoryDataset):
                 "node_id": v,
                 "node_attr": k
             } for k, v in raw_nodes.items()], columns=["node_id", "node_attr"])
-            edges = DataFrame(raw_edges,
-                                 columns=["src", "edge_attr", "dst"])
+            edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")
             x = text2embedding(self.model, self.device,
