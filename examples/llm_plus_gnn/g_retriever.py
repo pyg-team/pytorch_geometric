@@ -117,7 +117,8 @@ def inference_step(model, batch, model_save_name):
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None, checkpointing=False):
+          eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None,
+          checkpointing=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -250,7 +251,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
 
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
-                 eval_batch_size, loss_fn, inference_fn, skip_pretrained_LLM=False):
+                 eval_batch_size, loss_fn, inference_fn,
+                 skip_pretrained_LLM=False):
     if not skip_pretrained_LLM:
         print("First comparing against a pretrained LLM...")
     # Step 1: Define a single batch size test loader
@@ -289,9 +291,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 pure_llm_out = pure_llm.inference(batch.question, batch.desc,
                                                   max_out_tokens=256)
                 pure_llm_pred = pure_llm_out['pred'][0]
-                pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
-                                                           correct_answer)
-                untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
+                pure_llm_hallucinates = detect_hallucinate(
+                    pure_llm_pred, correct_answer)
+                untuned_llm_save_list += [(pure_llm_pred,
+                                           pure_llm_hallucinates)]
 
             gnn_llm_pred = gnn_llm_preds[i]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
@@ -341,8 +344,9 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         print("Finetuning LLM...")
         since = time.time()
         _, _, pure_llm_eval_outputs = train(since, 1, None, None, batch_size,
-                                            eval_batch_size, lr, loss_fn, inference_fn,
-                                            model=pure_llm, dataset=dataset)
+                                            eval_batch_size, lr, loss_fn,
+                                            inference_fn, model=pure_llm,
+                                            dataset=dataset)
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:
@@ -419,8 +423,8 @@ if __name__ == "__main__":
         since = time.time()
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
-            args.batch_size, args.eval_batch_size, args.lr, get_loss, inference_step,
-            checkpointing=args.checkpointing)
+            args.batch_size, args.eval_batch_size, args.lr, get_loss,
+            inference_step, checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -431,5 +435,5 @@ if __name__ == "__main__":
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
         dataset = WebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
-    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, get_loss, inference_step,
-                 args.batch_size, args.eval_batch_size)
+    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, get_loss,
+                 inference_step, args.batch_size, args.eval_batch_size)
