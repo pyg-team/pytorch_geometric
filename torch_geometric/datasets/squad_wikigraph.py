@@ -32,7 +32,7 @@ def get_wiki_data(question: str, model:SentenceTransformer, device: torch.device
 			full_fan_links = src_doc.links
 			randomly_chosen_neighbor_links = list(random.sample(full_fan_links, k=fan_out))
 			new_seed_docs = [wikipedia.page(link) for link in randomly_chosen_neighbor_links]
-			for dst_doc in new_seed_docs
+			for dst_doc in new_seed_docs:
 				dst_doc_title = dst_doc.title
 				if dst_doc_title not in title_2_node_id_map:
 					# add new node to graph
