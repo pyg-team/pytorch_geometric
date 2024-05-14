@@ -75,9 +75,9 @@
 
 <script>
   var torchList = [
+    ['torch-2.3.0', 'PyTorch 2.3.*'],
     ['torch-2.2.0', 'PyTorch 2.2.*'],
     ['torch-2.1.0', 'PyTorch 2.1.*'],
-    ['torch-2.0.0', 'PyTorch 2.0.*'],
   ];
 
   var osList = [
@@ -92,7 +92,6 @@
   ];
 
   var cudaList = [
-    ['cu117', '11.7'],
     ['cu118', '11.8'],
     ['cu121', '12.1'],
     ['cpu', 'CPU'],
@@ -113,23 +112,11 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch == "torch-2.0.0" && cuda == "cu121") {
-      $("#command pre").text('# PyTorch 2.0.* binaries do not support CUDA 12.1');
-    }
-
-    else if (torch == "torch-2.2.0" && cuda == "cu117") {
-      $("#command pre").text('# PyTorch 2.2.* binaries do not support CUDA 11.7');
-    }
-
-    else if (torch == "torch-2.1.0" && cuda == "cu117") {
-      $("#command pre").text('# PyTorch 2.1.* binaries do not support CUDA 11.7');
-    }
-
     else if (package == "conda") {
       $("#command pre").text('conda install pyg -c pyg');
     }
 
-    else if (os == "windows" || os == "mac") {
+    else if ((os == "windows" || os == "mac") && (torch == "torch-2.1.0" || torch == "torch-2.2.0")) {
       $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
 
