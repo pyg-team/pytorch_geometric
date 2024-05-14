@@ -22,8 +22,8 @@ def get_list_of_embeddings_from_batch(batch):
     rag_embeddings = []
     ptr = batch.ptr
     for i in range(len(ptr) - 1):
-        if ptr[i] - ptr[i+1] > 0:
-            rag_embeddings.append(batch.x[ptr[i]:ptr[i+1]])
+        if ptr[i] - ptr[i + 1] > 0:
+            rag_embeddings.append(batch.x[ptr[i]:ptr[i + 1]])
         else:
             rag_embeddings.append(None)
     return rag_embeddings
@@ -74,8 +74,8 @@ if __name__ == "__main__":
         since = time.time()
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
-            args.batch_size, args.eval_batch_size, args.lr, get_loss, inference_step,
-            checkpointing=args.checkpointing)
+            args.batch_size, args.eval_batch_size, args.lr, get_loss,
+            inference_step, checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -87,4 +87,5 @@ if __name__ == "__main__":
         dataset = Squad_WikiGraph()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
-                 args.batch_size, args.eval_batch_size, get_loss, inference_step, skip_pretrained_llm=True)
+                 args.batch_size, args.eval_batch_size, get_loss,
+                 inference_step, skip_pretrained_llm=True)
