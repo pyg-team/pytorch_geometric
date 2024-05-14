@@ -36,7 +36,7 @@ def detect_hallucinate(pred, label):
         return "skip"
 
 
-def compute_accuracy(eval_output):
+def compute_accuracy(eval_output) -> float:
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
     all_hit = []
     all_precision = []
@@ -99,7 +99,7 @@ def load_params_dict(model, save_path):
     return model
 
 
-def get_loss(model, batch, model_save_name):
+def get_loss(model, batch, model_save_name) -> torch.Tensor:
     if model_save_name == "llm":
         return model(batch.question, batch.label, batch.desc)
     else:

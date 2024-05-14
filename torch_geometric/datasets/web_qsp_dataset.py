@@ -1,41 +1,44 @@
+# Alot of code in this file is based on the original G-Retriever paper
+# url: https://arxiv.org/abs/2402.07630
 from typing import Dict, List, Tuple, no_type_check
 
 import numpy as np
+import torch
+from tqdm import tqdm
+
+from torch_geometric.nn.text import SentenceTransformer, text2embedding
+from torch_geometric.data import Data, InMemoryDataset
 
 try:
-    import pandas as pd
-    from pandas import DataFrame as df
+    from pandas import DataFrame
     WITH_PANDAS = True
-except ImportError as e:  # noqa
-    df = None
+except ImportError:
+    DataFrame = None
     WITH_PANDAS = False
-import torch
 
 try:
     from pcst_fast import pcst_fast
     WITH_PCST = True
-except ImportError as e:  # noqa
+except ImportError:
     WITH_PCST = False
-from tqdm import tqdm
-
-from torch_geometric.nn.text import SentenceTransformer, text2embedding
 
 try:
     import datasets
     WITH_DATASETS = True
-except ImportError as e:  # noqa
+except ImportError:
     WITH_DATASETS = False
-
-from torch_geometric.data import Data, InMemoryDataset
-
-# Alot of code in this file is based on the original G-Retriever paper
-# url: https://arxiv.org/abs/2402.07630
 
 
 @no_type_check
-def retrieval_via_pcst(graph: Data, q_emb: torch.Tensor, textual_nodes: df,
-                       textual_edges: df, topk: int = 3, topk_e: int = 3,
-                       cost_e: float = 0.5) -> Tuple[Data, str]:
+def retrieval_via_pcst(
+    graph: Data,
+    q_emb: torch.Tensor,
+    textual_nodes: DataFrame,
+    textual_edges: DataFrame,
+    topk: int = 3,
+    topk_e: int = 3,
+    cost_e: float = 0.5,
+) -> Tuple[Data, str]:
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
         desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
@@ -157,18 +160,14 @@ class WebQSPDataset(InMemoryDataset):
         root: str = "",
         force_reload: bool = False,
     ) -> None:
-        missing_imports = False
         missing_str_list = []
         if not WITH_PCST:
             missing_str_list.append('pcst_fast')
-            missing_imports = True
         if not WITH_DATASETS:
             missing_str_list.append('datasets')
-            missing_imports = True
         if not WITH_PANDAS:
             missing_str_list.append('pandas')
-            missing_imports = True
-        if missing_imports:
+        if len(missing_str_list) > 0:
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
@@ -227,11 +226,11 @@ class WebQSPDataset(InMemoryDataset):
                     "edge_attr": r,
                     "dst": raw_nodes[t]
                 })
-            nodes = pd.DataFrame([{
+            nodes = DataFrame([{
                 "node_id": v,
                 "node_attr": k
             } for k, v in raw_nodes.items()], columns=["node_id", "node_attr"])
-            edges = pd.DataFrame(raw_edges,
+            edges = DataFrame(raw_edges,
                                  columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")

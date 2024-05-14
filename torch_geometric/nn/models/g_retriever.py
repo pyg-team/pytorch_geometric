@@ -60,7 +60,7 @@ class GRetriever(nn.Module):
         num_gnn_heads: int = 4,
         mlp_hidden_dim: int = 2048,
         mlp_out_dim: int = 4096,
-    ):
+    ) -> None:
         super().__init__()
         if 'llama' in llm_to_use.lower():
             self.llm_to_use = LLM('llama2', llm_dtype)
@@ -126,11 +126,17 @@ class GRetriever(nn.Module):
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
-    def forward(self, question: List[str], node_feat: torch.Tensor,
-                edge_index: torch.Tensor, batch: torch.Tensor,
-                ptr: torch.Tensor, label: List[str],
-                edge_attr: Optional[torch.Tensor] = None,
-                additional_text_context: Optional[List[str]] = None):
+    def forward(
+        self,
+        question: List[str],
+        node_feat: torch.Tensor,
+        edge_index: torch.Tensor,
+        batch: torch.Tensor,
+        ptr: torch.Tensor,
+        label: List[str],
+        edge_attr: Optional[torch.Tensor] = None,
+        additional_text_context: Optional[List[str]] = None,
+    ):
         r"""Forward pass.
 
         Args:
@@ -215,11 +221,17 @@ class GRetriever(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question: List[str], node_feat: torch.Tensor,
-                  edge_index: torch.Tensor, batch: torch.Tensor,
-                  ptr: torch.Tensor, edge_attr: Optional[torch.Tensor] = None,
-                  additional_text_context: Optional[List[str]] = None,
-                  max_out_tokens: Optional[int] = max_new_tokens):
+    def inference(
+        self,
+        question: List[str],
+        node_feat: torch.Tensor,
+        edge_index: torch.Tensor,
+        batch: torch.Tensor,
+        ptr: torch.Tensor,
+        edge_attr: Optional[torch.Tensor] = None,
+        additional_text_context: Optional[List[str]] = None,
+        max_out_tokens: Optional[int] = max_new_tokens,
+    ):
         r"""Inference.
 
         Args:
@@ -297,7 +309,7 @@ class GRetriever(nn.Module):
             'desc': additional_text_context,
         }
 
-    def print_trainable_params(self):
+    def print_trainable_params(self) -> None:
         trainable_params = 0
         all_param = 0
         for _, param in self.named_parameters():
