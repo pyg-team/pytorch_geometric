@@ -10,10 +10,10 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.data import Data
+from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort, narrow, select, sort_edge_index
 from torch_geometric.utils.map import map_index
-from torch_geometric.utils.sparse import index2ptr, ptr2index
 
 
 @dataclass

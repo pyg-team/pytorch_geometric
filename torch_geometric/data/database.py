@@ -9,7 +9,7 @@ import torch
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.edge_index import SortOrder
 from torch_geometric.utils.mixin import CastMixin
 
@@ -18,9 +18,17 @@ from torch_geometric.utils.mixin import CastMixin
 class TensorInfo(CastMixin):
     dtype: torch.dtype
     size: Tuple[int, ...] = (-1, )
+    is_index: bool = False
     is_edge_index: bool = False
 
     def __post_init__(self) -> None:
+        if self.is_index and self.is_edge_index:
+            raise ValueError("Tensor cannot be a 'Index' and 'EdgeIndex' "
+                             "tensor at the same time")
+
+        if self.is_index:
+            self.size = (-1, )
+
         if self.is_edge_index:
             self.size = (2, -1)
 
@@ -32,7 +40,8 @@ def maybe_cast_to_tensor_info(value: Any) -> Union[Any, TensorInfo]:
         return value
     if 'dtype' not in value:
         return value
-    if len(set(value.keys()) | {'dtype', 'size', 'is_edge_index'}) != 3:
+    valid_keys = {'dtype', 'size', 'is_index', 'is_edge_index'}
+    if len(set(value.keys()) | valid_keys) != len(valid_keys):
         return value
     return TensorInfo.cast(value)
 
@@ -452,10 +461,22 @@ class SQLiteDatabase(Database):
             if isinstance(col, Tensor) and not isinstance(schema, TensorInfo):
                 self.schema[key] = schema = TensorInfo(
                     col.dtype,
+                    is_index=isinstance(col, Index),
                     is_edge_index=isinstance(col, EdgeIndex),
                 )
 
-            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+            if isinstance(schema, TensorInfo) and schema.is_index:
+                assert isinstance(col, Index)
+
+                meta = torch.tensor([
+                    col.dim_size if col.dim_size is not None else -1,
+                    col.is_sorted,
+                ], dtype=torch.long)
+
+                out.append(meta.numpy().tobytes() +
+                           col.as_tensor().numpy().tobytes())
+
+            elif isinstance(schema, TensorInfo) and schema.is_edge_index:
                 assert isinstance(col, EdgeIndex)
 
                 num_rows, num_cols = col.sparse_size()
@@ -491,7 +512,23 @@ class SQLiteDatabase(Database):
         for i, (key, schema) in enumerate(self.schema.items()):
             value = row[i]
 
-            if isinstance(schema, TensorInfo) and schema.is_edge_index:
+            if isinstance(schema, TensorInfo) and schema.is_index:
+                meta = torch.frombuffer(value[:16], dtype=torch.long).tolist()
+                dim_size = meta[0] if meta[0] >= 0 else None
+                is_sorted = meta[1] > 0
+
+                if len(value) > 16:
+                    tensor = torch.frombuffer(value[16:], dtype=schema.dtype)
+                else:
+                    tensor = torch.empty(0, dtype=schema.dtype)
+
+                out_dict[key] = Index(
+                    tensor.view(*schema.size),
+                    dim_size=dim_size,
+                    is_sorted=is_sorted,
+                )
+
+            elif isinstance(schema, TensorInfo) and schema.is_edge_index:
                 meta = torch.frombuffer(value[:32], dtype=torch.long).tolist()
                 num_rows = meta[0] if meta[0] >= 0 else None
                 num_cols = meta[1] if meta[1] >= 0 else None

@@ -31,6 +31,7 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
+from torch_geometric.index import Index
 from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
@@ -644,7 +645,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if is_sparse(value) and 'adj' in key:
+        if is_sparse(value) and ('adj' in key or 'edge_index' in key):
             return (0, 1)
         elif 'index' in key or key == 'face':
             return -1
@@ -653,6 +654,8 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'batch' in key and isinstance(value, Tensor):
+            if isinstance(value, Index):
+                return value.get_dim_size()
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
             return self.num_nodes

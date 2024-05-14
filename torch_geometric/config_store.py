@@ -162,12 +162,19 @@ def map_annotation(
     annotation: Any,
     mapping: Optional[Dict[Any, Any]] = None,
 ) -> Any:
-
     origin = getattr(annotation, '__origin__', None)
-    args = getattr(annotation, '__args__', [])
-    if origin == Union or origin == list or origin == dict:
-        annotation = copy.copy(annotation)
-        annotation.__args__ = tuple(map_annotation(a, mapping) for a in args)
+    args: Tuple[Any, ...] = getattr(annotation, '__args__', tuple())
+    if origin in {Union, list, dict, tuple}:
+        assert origin is not None
+        args = tuple(map_annotation(a, mapping) for a in args)
+        if type(annotation).__name__ == 'GenericAlias':
+            # If annotated with `list[...]` or `dict[...]` (>= Python 3.10):
+            annotation = origin[args]
+        else:
+            # If annotated with `typing.List[...]` or `typing.Dict[...]`:
+            annotation = copy.copy(annotation)
+            annotation.__args__ = args
+
         return annotation
 
     if mapping is not None and annotation in mapping:
