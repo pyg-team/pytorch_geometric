@@ -1,6 +1,8 @@
-from torch_geometric.data import Data
-from typing import Optional
 import random
+from typing import Optional
+
+from torch_geometric.data import Data
+
 try:
     import datasets
     WITH_DATASETS = True
@@ -113,5 +115,3 @@ class SQUAD_WikiGraph(InMemoryDataset):
             list_of_data_objs.append(pyg_data_obj)
 
         self.save(list_of_data_objs, self.processed_paths[0])
-
-

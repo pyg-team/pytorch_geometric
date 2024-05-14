@@ -64,8 +64,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
-        print(
-            "text embedding failed, returning torch.zeros((0, 1024))...")
+        print("text embedding failed, returning torch.zeros((0, 1024))...")
         return torch.zeros((0, 1024))
 
     return all_embeddings

@@ -112,9 +112,13 @@ class LLM(nn.Module):
         return (batch_size, questions, additional_context, eos_user_tokens,
                 bos_embeds, pad_embeds)
 
-    def forward(self, question: List[str], label: List[str],
-                additional_text_context: Optional[List[str]] = None,
-                rag_embeddings: Optional[List[torch.tensor]] = None,):
+    def forward(
+        self,
+        question: List[str],
+        label: List[str],
+        additional_text_context: Optional[List[str]] = None,
+        rag_embeddings: Optional[List[torch.tensor]] = None,
+    ):
         r"""Forward pass.
 
         Args:

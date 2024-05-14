@@ -22,7 +22,9 @@ from torch_geometric.datasets import Squad_WikiGraph
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.text import LLM
+
 from .g_retriever import minimal_demo, train
+
 
 def get_list_of_embeddings_from_batch(batch):
     rag_embeddings = []
