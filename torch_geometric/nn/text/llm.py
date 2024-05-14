@@ -113,15 +113,24 @@ class LLM(nn.Module):
                 bos_embeds, pad_embeds)
 
     def forward(self, question: List[str], label: List[str],
-                additional_context: Optional[List[str]] = None):
+                additional_text_context: Optional[List[str]] = None,
+                rag_embeddings: Optional[List[torch.tensor]] = None,):
         r"""Forward pass.
 
         Args:
             question (List[str]): The questions/prompts.
             label (List[str]): The answers/labels.
-            additional_context (List[str], optional): Additional context to
-                give to the LLM, such as textified knowledge graphs.
+            additional_text_context (List[str], optional): Additional context
+                to give to the LLM, such as textified knowledge graphs.
+            rag_embeddings (List[torch.tensor], optional): Embedding tensors from RAG
+                docs, essentially just the embedded form of
+                `additional_text_context`. Only one of `additional_text_context`
+                or `rag_embeddings` should be used.
         """
+        if rag_embeddings is not None and additional_context is not None:
+            print("Warning: Using both `rag_embeddings` and \
+                `additional_context` inputs is a waste of compute & memory \
+                as both provide the same information")
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
         # encode labels
@@ -146,6 +155,8 @@ class LLM(nn.Module):
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
+            if rag_embeddings is not None and rag_embeddings[i] is not None:
+                to_cat.append(rag_embeddings[i])
             to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0)
             batch_inputs_embeds.append(inputs_embeds)
@@ -184,16 +195,25 @@ class LLM(nn.Module):
     @torch.no_grad()
     def inference(self, question: List[str],
                   additional_context: Optional[List[str]] = None,
+                  rag_embeddings: Optional[List[torch.tensor]] = None,
                   max_out_tokens: Optional[int] = max_new_tokens):
         r"""Inference.
 
         Args:
             question (List[str]): The questions/prompts.
-            additional_context (List[str], optional): Additional context to
-                give to the LLM, such as textified knowledge graphs.
+            additional_text_context (List[str], optional): Additional context
+                to give to the LLM, such as textified knowledge graphs.
+            rag_embeddings (torch.tensor, optional): Embedding tensor from RAG
+                docs, essentially just the embedded form of
+                `additional_text_context`. Only one of `additional_text_context`
+                or `rag_embeddings` should be used.
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: {32})
         """
+        if rag_embeddings is not None and additional_context is not None:
+            print("Warning: Using both `rag_embeddings` and \
+                `additional_context` inputs is a waste of compute & memory \
+                as both provide the same information")
         batch_size, questions, context, eos_user_tokens, \
             bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
         batch_inputs_embeds = []
@@ -209,7 +229,11 @@ class LLM(nn.Module):
 
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids).to(self.llm_device))
-            inputs_embeds = torch.cat([bos_embeds, inputs_embeds], dim=0)
+            to_cat = [bos_embeds]
+            if rag_embeddings is not None and rag_embeddings[i] is not None:
+                to_cat.append(rag_embeddings[i])
+            to_cat.append(inputs_embeds)
+            inputs_embeds = torch.cat(to_cat, dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 

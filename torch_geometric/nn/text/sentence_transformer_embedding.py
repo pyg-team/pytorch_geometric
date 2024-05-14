@@ -65,7 +65,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
         print(
-            "SBERT text embedding failed, returning torch.zeros((0, 1024))...")
+            "text embedding failed, returning torch.zeros((0, 1024))...")
         return torch.zeros((0, 1024))
 
     return all_embeddings
