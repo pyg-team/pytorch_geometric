@@ -25,6 +25,7 @@ from torch_geometric.typing import (
     QueryType,
     SparseTensor,
     TensorFrame,
+    TimeType,
     torch_frame,
 )
 from torch_geometric.utils import (
@@ -786,6 +787,74 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if node_type not in node_types:
                 del data[node_type]
         return data
+
+    def concat(self, hetero_data: Self) -> Self:
+        r"""Concatenates :obj:`self` with another :obj:`hetero_data` object.
+        All values needs to have matching shapes at non-concat dimensions.
+        """
+        out = copy.copy(self)
+        for store, other_store in zip(out.stores, hetero_data.stores):
+            store.concat(other_store)
+        return out
+
+    def is_sorted_by_time(
+            self, types: Optional[List[NodeOrEdgeType]] = None) -> bool:
+        r"""Returns :obj:`True` if :obj:`time` exists and is sorted for all
+        :obj:`types`. If :obj:`types` is set to :obj:`None`, will check all
+        currently hold types.
+        """
+        if not types:
+            types = self.node_types + self.edge_types
+
+        for t in types:
+            if 'time' not in self[t]:
+                return False
+            if not self[t].is_sorted_by_time():
+                return False
+
+        return True
+
+    def sort_by_time(self,
+                     types: Optional[List[NodeOrEdgeType]] = None) -> Self:
+        r"""Sorts data associated with :obj:`time` according to :obj:`time` for
+        all :obj:`types`. If :obj:`types` is set to :obj:`None`, will sort all
+        currently hold types.
+        """
+        if not types:
+            types = self.node_types + self.edge_types
+
+        out = copy.copy(self)
+        for t in types:
+            out[t].sort_by_time()
+        return out
+
+    def snapshot(self, start_time: TimeType, end_time: TimeType,
+                 types: Optional[List[NodeOrEdgeType]] = None) -> Self:
+        r"""Returns a snapshot restricted by :obj:`start_time` and
+        :obj:`end_time` for all :obj:`types`. If :obj:`types` is set to
+        :obj:`None`, will apply to all currently hold types.
+        """
+        if not types:
+            types = self.node_types + self.edge_types
+
+        out = copy.copy(self)
+        for t in types:
+            out[t].snapshot(start_time, end_time)
+        return out
+
+    def up_to(self, end_time: TimeType,
+              types: Optional[List[NodeOrEdgeType]] = None) -> Self:
+        r"""Returns a snapshot restricted by :obj:`end_time` for all
+        :obj:`types`. If :obj:`types` is set to :obj:`None`, will apply to
+        all currently hold types.
+        """
+        if not types:
+            types = self.node_types + self.edge_types
+
+        out = copy.copy(self)
+        for t in types:
+            out[t].up_to(end_time)
+        return out
 
     def to_homogeneous(
         self,
