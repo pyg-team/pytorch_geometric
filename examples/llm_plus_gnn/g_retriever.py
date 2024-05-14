@@ -419,7 +419,7 @@ if __name__ == "__main__":
         since = time.time()
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
-            args.batch_size, args.eval_batch_size, args.lr, get_loss, inference_step
+            args.batch_size, args.eval_batch_size, args.lr, get_loss, inference_step,
             checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
@@ -431,5 +431,5 @@ if __name__ == "__main__":
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
         dataset = WebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
-    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, get_loss, inference_step
+    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, get_loss, inference_step,
                  args.batch_size, args.eval_batch_size)
