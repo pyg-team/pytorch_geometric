@@ -136,7 +136,7 @@ class LLM(nn.Module):
                 `additional_context` inputs is a waste of compute & memory \
                 as both provide the same information")
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_text_context) # noqa
         # encode labels
         labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
@@ -219,7 +219,7 @@ class LLM(nn.Module):
                 `additional_context` inputs is a waste of compute & memory \
                 as both provide the same information")
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_context) # noqa
+            bos_embeds, pad_embeds = self.encode_inputs(question, additional_text_context) # noqa
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
