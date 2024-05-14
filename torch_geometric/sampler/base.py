@@ -5,7 +5,7 @@ from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import torch
 from torch import Tensor
@@ -533,24 +533,31 @@ class NegativeSampling(CastMixin):
             destination nodes for each positive source node.
         amount (int or float, optional): The ratio of sampled negative edges to
             the number of positive edges. (default: :obj:`1`)
-        weight (torch.Tensor, optional): A node-level vector determining the
-            sampling of nodes. Does not necessariyl need to sum up to one.
-            If not given, negative nodes will be sampled uniformly.
+        src_weight (torch.Tensor, optional): A node-level vector determining
+            the sampling of source nodes. Does not necessarily need to sum up
+            to one. If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
+        src_weight (torch.Tensor, optional): A node-level vector determining
+            the sampling of destination nodes. Does not necessarily need to sum
+            up to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)
     """
     mode: NegativeSamplingMode
     amount: Union[int, float] = 1
-    weight: Optional[Tensor] = None
+    src_weight: Optional[Tensor] = None
+    dst_weight: Optional[Tensor] = None
 
     def __init__(
         self,
         mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
-        weight: Optional[Tensor] = None,
+        src_weight: Optional[Tensor] = None,
+        dst_weight: Optional[Tensor] = None,
     ):
         self.mode = NegativeSamplingMode(mode)
         self.amount = amount
-        self.weight = weight
+        self.src_weight = src_weight
+        self.dst_weight = dst_weight
 
         if self.amount <= 0:
             raise ValueError(f"The attribute 'amount' needs to be positive "
@@ -571,22 +578,28 @@ class NegativeSampling(CastMixin):
     def is_triplet(self) -> bool:
         return self.mode == NegativeSamplingMode.triplet
 
-    def sample(self, num_samples: int,
-               num_nodes: Optional[int] = None) -> Tensor:
+    def sample(
+        self,
+        num_samples: int,
+        endpoint: Literal['src', 'dst'],
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         r"""Generates :obj:`num_samples` negative samples."""
-        if self.weight is None:
+        weight = self.src_weight if endpoint == 'src' else self.dst_weight
+
+        if weight is None:
             if num_nodes is None:
                 raise ValueError(
                     f"Cannot sample negatives in '{self.__class__.__name__}' "
                     f"without passing the 'num_nodes' argument")
             return torch.randint(num_nodes, (num_samples, ))
 
-        if num_nodes is not None and self.weight.numel() != num_nodes:
+        if num_nodes is not None and weight.numel() != num_nodes:
             raise ValueError(
                 f"The 'weight' attribute in '{self.__class__.__name__}' "
                 f"needs to match the number of nodes {num_nodes} "
                 f"(got {self.weight.numel()})")
-        return torch.multinomial(self.weight, num_samples, replacement=True)
+        return torch.multinomial(weight, num_samples, replacement=True)
 
 
 class BaseSampler(ABC):
