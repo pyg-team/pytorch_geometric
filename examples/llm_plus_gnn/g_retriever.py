@@ -341,7 +341,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         print("Finetuning LLM...")
         since = time.time()
         _, _, pure_llm_eval_outputs = train(since, 1, None, None, batch_size,
-                                            eval_batch_size, lr, loss_fn, inference_fn
+                                            eval_batch_size, lr, loss_fn, inference_fn,
                                             model=pure_llm, dataset=dataset)
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
