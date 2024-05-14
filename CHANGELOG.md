@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added the `WebQSPDataset` dataset with example training G-Retriever (GNN+LLM) ([#8984](https://github.com/pyg-team/pytorch_geometric/pull/8984))
+- Added the `WebQSPDataset` dataset with example training G-Retriever (GNN+LLM) ([#8984](https://github.com/pyg-team/pytorch_geometric/pull/9167))
 - Added support for `EdgeIndex.unbind` ([#9298](https://github.com/pyg-team/pytorch_geometric/pull/9298))
 - Integrate `torch_geometric.Index` into `torch_geometric.EdgeIndex` ([#9296](https://github.com/pyg-team/pytorch_geometric/pull/9296))
 - Support `EdgeIndex.sparse_narrow` for non-sorted edge indices ([#9291](https://github.com/pyg-team/pytorch_geometric/pull/9291))
