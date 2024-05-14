@@ -198,7 +198,7 @@ class LLM(nn.Module):
 
     @torch.no_grad()
     def inference(self, question: List[str],
-                  additional_context: Optional[List[str]] = None,
+                  additional_text_context: Optional[List[str]] = None,
                   rag_embeddings: Optional[List[torch.tensor]] = None,
                   max_out_tokens: Optional[int] = max_new_tokens):
         r"""Inference.

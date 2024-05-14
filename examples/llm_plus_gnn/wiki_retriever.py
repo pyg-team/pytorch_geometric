@@ -7,22 +7,13 @@ pip install datasets transformers pcst_fast sentencepiece tqdm pandas
 """
 import argparse
 import gc
-import math
-import re
 import time
 from os import path
 
-import pandas as pd
 import torch
-from torch.nn.utils import clip_grad_norm_
-from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import Squad_WikiGraph
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GRetriever
-from torch_geometric.nn.text import LLM
-
 from .g_retriever import minimal_demo, train
 
 
