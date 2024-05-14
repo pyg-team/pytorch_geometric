@@ -14,6 +14,7 @@ import torch
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import Squad_WikiGraph
+
 from .g_retriever import minimal_demo, train
 
 
