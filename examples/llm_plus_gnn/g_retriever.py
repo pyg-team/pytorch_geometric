@@ -228,8 +228,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                                  model_save_name + "_best_val_loss_ckpt.pt")
     model.eval()
     eval_output = []
-    progress_bar_test = tqdm(range(len(test_loader)))
     print("Final Evaluation...")
+    progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
             output = inference_fn(model, batch, model_save_name)
