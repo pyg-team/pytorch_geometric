@@ -3,6 +3,7 @@ from typing import Optional
 
 from torch_geometric.data import Data, InMemoryDataset
 import torch
+
 try:
     import datasets
     WITH_DATASETS = True
