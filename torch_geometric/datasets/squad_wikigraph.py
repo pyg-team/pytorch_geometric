@@ -106,10 +106,11 @@ class SQUAD_WikiGraph(InMemoryDataset):
             "train":
             torch.arange(len(dataset["train"])),
             "val":
-            torch.arange(len(dataset["validation"])/2) + len(dataset["train"]),
+            torch.arange(len(dataset["validation"]) / 2) +
+            len(dataset["train"]),
             "test":
-            torch.arange(len(dataset["validation"])/2) + len(dataset["train"]) +
-            len(dataset["validation"])/2
+            torch.arange(len(dataset["validation"]) / 2) +
+            len(dataset["train"]) + len(dataset["validation"]) / 2
         }
 
     def process(self) -> None:
