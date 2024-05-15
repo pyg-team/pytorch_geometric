@@ -126,7 +126,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
             question = f"Question: {data_i['question']}\nAnswer: "
-            label = data_i["answers"]["text"].lower()
+            label = data_i["answers"]["text"][0].lower()
             pyg_data_obj = get_wiki_data(question, self.model, label=label)
             list_of_data_objs.append(pyg_data_obj)
 
