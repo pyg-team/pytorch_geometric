@@ -2,21 +2,27 @@ from typing import List, Optional
 from contextlib import nullcontext
 import torch
 import torch.nn.functional as F
-from .llm import get_llm_kwargs
+from .llm import get_llm_kwargs, get_mem_needed_for_llm
 
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, pretrained_repo: str, device: Optional[torch.device] = None, autocast_dtype: Optional[torch.dtype] = None) -> None:
+    def __init__(self, pretrained_repo: str, device: Optional[torch.device] = None, autocast_dtype: Optional[torch.dtype] = None, num_params: int = 7) -> None:
         super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
         from transformers import AutoModel, AutoTokenizer
         self.autocast_dtype = autocast_dtype
+        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
         if device is not None:
             self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
-            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo).to(device)
         else:
-            # 
-
+            if autocast_dtype is None:
+                autocast_dtype = torch.bfloat16
+            self.mem_needed = get_mem_needed_for_llm(num_params)
+            kwargs = get_llm_kwargs(self.mem_needed)
+            self.llm = AutoModel.from_pretrained(
+            pretrained_repo, torch_dtype=autocast_dtype,
+            low_cpu_mem_usage=True, **kwargs)
+            self.llm_device = self.llm.device
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
@@ -39,9 +45,10 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def text2embedding(model: SentenceTransformer, device: torch.device,
+def text2embedding(model: SentenceTransformer,
                    text: List[str],
-                   batch_size: Optional[int] = 256, device: Optional[torch.device] = None) -> torch.Tensor:
+                   batch_size: Optional[int] = 256,
+                   device: Optional[torch.device] = None) -> torch.Tensor:
     try:
         encoding = model.tokenizer(text, padding=True, truncation=True,
                                    return_tensors="pt")
@@ -51,7 +58,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
 
         # Iterate through batches
         if device is None:
-            device = model.llm.device
+            device = model.llm_device
         with torch.no_grad():
             left_ptr = 0
             for i in range(num_full_batches):

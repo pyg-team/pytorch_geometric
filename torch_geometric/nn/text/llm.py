@@ -41,6 +41,15 @@ def get_llm_kwargs(mem_needed):
     kwargs["device_map"] = "auto"
     return kwargs
 
+def get_mem_needed_for_llm(num_params):
+    """
+    This is a rough hueristic:
+    We found that LLAMA2 (7B) + GAT hits OOM
+    on a single 80GB GPU, but can fit on a single
+    GPU that is slightly larger GPU.
+    """
+    return 85 * num_params / 7
+
 
 class LLM(nn.Module):
     r"""This module wraps a HuggingFace Transformer based model.
@@ -72,13 +81,7 @@ class LLM(nn.Module):
         else:
             self.printable_llm_name = model_name
             self.huggingface_str = model_name
-        """
-        This is a rough hueristic:
-        We found that LLAMA2 (7B) + GAT hits OOM
-        on a single 80GB GPU, but can fit on a single
-        GPU that is slightly larger GPU.
-        """
-        self.mem_needed = 85 * num_params / 7
+        self.mem_needed = get_mem_needed_for_llm(num_params)
         self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
         kwargs = get_llm_kwargs(self.mem_needed)

@@ -53,7 +53,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
         seed_docs = next_hops_seed_docs
 
     # put docs into model
-    embedded_docs = text2embedding(model, doc_contents)
+    embedded_docs = text2embedding(model, doc_contents, batch_size=8)
     del doc_contents
 
     # create node features, x
