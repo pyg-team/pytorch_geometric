@@ -2,7 +2,7 @@ import random
 from typing import List, Optional
 
 import torch
-import tqdm
+from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
 
