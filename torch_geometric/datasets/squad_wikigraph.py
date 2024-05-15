@@ -2,7 +2,7 @@ import random
 from typing import Optional
 
 from torch_geometric.data import Data
-
+import torch
 try:
     import datasets
     WITH_DATASETS = True
