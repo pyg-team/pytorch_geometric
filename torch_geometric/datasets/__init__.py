@@ -106,6 +106,7 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
+from .squad_wikigraph import SQUAD_WikiGraph
 
 import torch_geometric.datasets.utils
 
@@ -189,6 +190,7 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'SQUAD_WikiGraph'
 ]
 
 hetero_datasets = [
