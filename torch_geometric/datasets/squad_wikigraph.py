@@ -112,7 +112,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.model = SentenceTransformer(llama2_str_name)
+        self.model = SentenceTransformer(llama2_str_name, autocast_dtype=torch.bfloat16)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_data_objs = []

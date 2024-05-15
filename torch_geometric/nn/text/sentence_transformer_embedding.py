@@ -1,16 +1,22 @@
 from typing import List, Optional
-
+from contextlib import nullcontext
 import torch
 import torch.nn.functional as F
+from .llm import get_llm_kwargs
 
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, pretrained_repo: str) -> None:
+    def __init__(self, pretrained_repo: str, device: Optional[torch.device] = None, autocast_dtype: Optional[torch.dtype] = None) -> None:
         super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
         from transformers import AutoModel, AutoTokenizer
-        self.bert_model = AutoModel.from_pretrained(pretrained_repo)
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
+        self.autocast_dtype = autocast_dtype
+        if device is not None:
+            self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
+            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo).to(device)
+        else:
+            # 
+
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
@@ -22,8 +28,9 @@ class SentenceTransformer(torch.nn.Module):
 
     def forward(self, input_ids: torch.Tensor,
                 att_mask: torch.Tensor) -> torch.Tensor:
-        bert_out = self.bert_model(input_ids=input_ids,
-                                   attention_mask=att_mask)
+        with nullcontext() if autocast_dtype is None else torch.cuda.amp.autocast(dtype=self.llm_dtype):
+            bert_out = self.llm(input_ids=input_ids,
+                                       attention_mask=att_mask)
 
         # First element of model_output contains all token embeddings
         token_embeddings = bert_out[0]
@@ -44,7 +51,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
 
         # Iterate through batches
         if device is None:
-            device = model.device
+            device = model.llm.device
         with torch.no_grad():
             left_ptr = 0
             for i in range(num_full_batches):

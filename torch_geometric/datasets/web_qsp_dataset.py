@@ -200,8 +200,7 @@ class WebQSPDataset(InMemoryDataset):
 
     def process(self) -> None:
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
-        self.model = SentenceTransformer(pretrained_repo)
-        self.model.to(self.device)
+        self.model = SentenceTransformer(pretrained_repo, device=self.device)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_graphs = []
