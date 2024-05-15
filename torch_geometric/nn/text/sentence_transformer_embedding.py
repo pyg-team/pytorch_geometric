@@ -1,7 +1,9 @@
-from typing import List, Optional
 from contextlib import nullcontext
+from typing import List, Optional
+
 import torch
 import torch.nn.functional as F
+
 from .llm import get_llm_kwargs
 
 
@@ -15,7 +17,7 @@ class SentenceTransformer(torch.nn.Module):
             self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo).to(device)
         else:
-            # 
+            #
 
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
