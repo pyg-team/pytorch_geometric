@@ -2,9 +2,10 @@ import random
 from typing import List, Optional
 
 import torch
+import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
-import tqdm
+
 try:
     import datasets
     WITH_DATASETS = True
@@ -15,8 +16,8 @@ from torch_geometric.nn.text.llm import llama2_str_name
 
 
 def get_wiki_data(question: str, model: SentenceTransformer,
-                  seed_nodes: int = 3, fan_out: int = 3,
-                  num_hops: int = 2, label: Optional[str] = None) -> Data:
+                  seed_nodes: int = 3, fan_out: int = 3, num_hops: int = 2,
+                  label: Optional[str] = None) -> Data:
     """Performs neighborsampling on wikipedia
     """
     import wikipedia
@@ -117,7 +118,8 @@ class SQUAD_WikiGraph(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.model = SentenceTransformer(llama2_str_name, autocast_dtype=torch.bfloat16)
+        self.model = SentenceTransformer(llama2_str_name,
+                                         autocast_dtype=torch.bfloat16)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_data_objs = []
@@ -125,8 +127,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
             data_i = self.raw_dataset[index]
             question = f"Question: {data_i['question']}\nAnswer: "
             label = data_i["answer"].lower()
-            pyg_data_obj = get_wiki_data(question, self.model,
-                                         label=label)
+            pyg_data_obj = get_wiki_data(question, self.model, label=label)
             list_of_data_objs.append(pyg_data_obj)
 
         self.save(list_of_data_objs, self.processed_paths[0])
