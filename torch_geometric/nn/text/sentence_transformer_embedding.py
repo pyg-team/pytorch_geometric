@@ -8,7 +8,10 @@ from .llm import get_llm_kwargs, get_mem_needed_for_llm
 
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, pretrained_repo: str, device: Optional[torch.device] = None, autocast_dtype: Optional[torch.dtype] = None, num_params: int = 7) -> None:
+    def __init__(self, pretrained_repo: str,
+                 device: Optional[torch.device] = None,
+                 autocast_dtype: Optional[torch.dtype] = None,
+                 num_params: int = 7) -> None:
         super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
         from transformers import AutoModel, AutoTokenizer
@@ -21,9 +24,10 @@ class SentenceTransformer(torch.nn.Module):
                 autocast_dtype = torch.bfloat16
             self.mem_needed = get_mem_needed_for_llm(num_params)
             kwargs = get_llm_kwargs(self.mem_needed)
-            self.llm = AutoModel.from_pretrained(
-            pretrained_repo, torch_dtype=autocast_dtype,
-            low_cpu_mem_usage=True, **kwargs)
+            self.llm = AutoModel.from_pretrained(pretrained_repo,
+                                                 torch_dtype=autocast_dtype,
+                                                 low_cpu_mem_usage=True,
+                                                 **kwargs)
             self.llm_device = self.llm.device
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
@@ -36,9 +40,10 @@ class SentenceTransformer(torch.nn.Module):
 
     def forward(self, input_ids: torch.Tensor,
                 att_mask: torch.Tensor) -> torch.Tensor:
-        with nullcontext() if autocast_dtype is None else torch.cuda.amp.autocast(dtype=self.llm_dtype):
-            bert_out = self.llm(input_ids=input_ids,
-                                       attention_mask=att_mask)
+        with nullcontext(
+        ) if autocast_dtype is None else torch.cuda.amp.autocast(
+                dtype=self.llm_dtype):
+            bert_out = self.llm(input_ids=input_ids, attention_mask=att_mask)
 
         # First element of model_output contains all token embeddings
         token_embeddings = bert_out[0]
@@ -47,8 +52,7 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def text2embedding(model: SentenceTransformer,
-                   text: List[str],
+def text2embedding(model: SentenceTransformer, text: List[str],
                    batch_size: Optional[int] = 256,
                    device: Optional[torch.device] = None) -> torch.Tensor:
     try:
