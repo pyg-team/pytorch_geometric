@@ -41,9 +41,9 @@ def get_llm_kwargs(mem_needed):
     kwargs["device_map"] = "auto"
     return kwargs
 
+
 def get_mem_needed_for_llm(num_params):
-    """
-    This is a rough hueristic:
+    """This is a rough hueristic:
     We found that LLAMA2 (7B) + GAT hits OOM
     on a single 80GB GPU, but can fit on a single
     GPU that is slightly larger GPU.

@@ -232,12 +232,10 @@ class WebQSPDataset(InMemoryDataset):
             edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")
-            x = text2embedding(self.model,
-                               nodes.node_attr.tolist(),
+            x = text2embedding(self.model, nodes.node_attr.tolist(),
                                device=self.device)
             # encode edges
-            edge_attr = text2embedding(self.model,
-                                       edges.edge_attr.tolist(),
+            edge_attr = text2embedding(self.model, edges.edge_attr.tolist(),
                                        device=self.device)
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
