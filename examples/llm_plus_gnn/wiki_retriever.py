@@ -15,7 +15,7 @@ import torch
 from torch_geometric import seed_everything
 from torch_geometric.datasets import SQUAD_WikiGraph
 
-from .g_retriever import minimal_demo, train
+from g_retriever import minimal_demo, train
 
 
 def get_list_of_embeddings_from_batch(batch):
