@@ -435,5 +435,6 @@ if __name__ == "__main__":
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
         dataset = WebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
-    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs, args.batch_size, args.eval_batch_size, get_loss,
+    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
+                 args.batch_size, args.eval_batch_size, get_loss,
                  inference_step)
