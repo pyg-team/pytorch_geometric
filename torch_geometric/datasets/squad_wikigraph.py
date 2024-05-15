@@ -3,7 +3,7 @@ from typing import Optional
 
 from torch_geometric.data import Data, InMemoryDataset
 import torch
-
+from typing import List
 try:
     import datasets
     WITH_DATASETS = True
