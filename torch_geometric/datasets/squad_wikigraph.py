@@ -1,8 +1,10 @@
 import random
-from typing import Optional, List
+from typing import List, Optional
 
 import torch
+
 from torch_geometric.data import Data, InMemoryDataset
+
 try:
     import datasets
     WITH_DATASETS = True
