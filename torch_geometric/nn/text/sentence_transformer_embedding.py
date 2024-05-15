@@ -34,7 +34,7 @@ class SentenceTransformer(torch.nn.Module):
 
 def text2embedding(model: SentenceTransformer, device: torch.device,
                    text: List[str],
-                   batch_size: Optional[int] = 256) -> torch.Tensor:
+                   batch_size: Optional[int] = 256, device: Optional[torch.device] = None) -> torch.Tensor:
     try:
         encoding = model.tokenizer(text, padding=True, truncation=True,
                                    return_tensors="pt")
@@ -43,6 +43,8 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
         all_embeddings_list = []
 
         # Iterate through batches
+        if device is None:
+            device = model.device
         with torch.no_grad():
             left_ptr = 0
             for i in range(num_full_batches):

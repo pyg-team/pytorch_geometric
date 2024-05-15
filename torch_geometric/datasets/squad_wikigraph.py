@@ -4,7 +4,7 @@ from typing import List, Optional
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset
-
+import tqdm
 try:
     import datasets
     WITH_DATASETS = True
@@ -15,7 +15,7 @@ from torch_geometric.nn.text.llm import llama2_str_name
 
 
 def get_wiki_data(question: str, model: SentenceTransformer,
-                  device: torch.device, seed_nodes: int = 3, fan_out: int = 3,
+                  seed_nodes: int = 3, fan_out: int = 3,
                   num_hops: int = 2, label: Optional[str] = None) -> Data:
     """Performs neighborsampling on wikipedia
     """
@@ -83,8 +83,6 @@ class SQUAD_WikiGraph(InMemoryDataset):
     ) -> None:
         if not WITH_DATASETS:
             raise ImportError("Please pip install datasets")
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
@@ -102,6 +100,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
         self.raw_dataset = datasets.concatenate_datasets(
             [dataset["train"], dataset["validation"]])
         # split official eval set into eval and test
+        # note that the eval set has odd number of instances
         self.split_idxs = {
             "train":
             torch.arange(len(dataset["train"])),
@@ -121,7 +120,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
             data_i = self.raw_dataset[index]
             question = f"Question: {data_i['question']}\nAnswer: "
             label = data_i["answer"].lower()
-            pyg_data_obj = get_wiki_data(question, self.model, self.device,
+            pyg_data_obj = get_wiki_data(question, self.model,
                                          label=label)
             list_of_data_objs.append(pyg_data_obj)
 

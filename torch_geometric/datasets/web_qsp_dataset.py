@@ -207,7 +207,7 @@ class WebQSPDataset(InMemoryDataset):
         list_of_graphs = []
         # encode questions
         print("Encoding questions...")
-        q_embs = text2embedding(self.model, self.device, self.questions)
+        q_embs = text2embedding(self.model, self.questions, device=self.device)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
@@ -233,11 +233,13 @@ class WebQSPDataset(InMemoryDataset):
             edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")
-            x = text2embedding(self.model, self.device,
-                               nodes.node_attr.tolist())
+            x = text2embedding(self.model,
+                               nodes.node_attr.tolist(),
+                               device=self.device)
             # encode edges
-            edge_attr = text2embedding(self.model, self.device,
-                                       edges.edge_attr.tolist())
+            edge_attr = text2embedding(self.model,
+                                       edges.edge_attr.tolist(),
+                                       device=self.device)
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
             question = f"Question: {data_i['question']}\nAnswer: "
