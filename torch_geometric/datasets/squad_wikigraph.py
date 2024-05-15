@@ -126,7 +126,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
             question = f"Question: {data_i['question']}\nAnswer: "
-            # only take the 1st answer since we want our model to 
+            # only take the 1st answer since we want our model to
             # produce single answers
             label = data_i["answers"]["text"][0].lower()
             pyg_data_obj = get_wiki_data(question, self.model, label=label)
