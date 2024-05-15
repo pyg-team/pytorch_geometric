@@ -97,17 +97,19 @@ class SQUAD_WikiGraph(InMemoryDataset):
         return ["list_of_graphs.pt", "pre_filter.pt", "pre_transform.pt"]
 
     def download(self) -> None:
-        dataset = datasets.load_dataset("rajpurkar/squad")
+        dataset = datasets.load_dataset("rajpurkar/squad_v2")
+        # Squad Test Set is Hidden
         self.raw_dataset = datasets.concatenate_datasets(
-            [dataset["train"], dataset["validation"], dataset["test"]])
+            [dataset["train"], dataset["validation"]])
+        # split official eval set into eval and test
         self.split_idxs = {
             "train":
             torch.arange(len(dataset["train"])),
             "val":
-            torch.arange(len(dataset["validation"])) + len(dataset["train"]),
+            torch.arange(len(dataset["validation"])/2) + len(dataset["train"]),
             "test":
-            torch.arange(len(dataset["test"])) + len(dataset["train"]) +
-            len(dataset["validation"])
+            torch.arange(len(dataset["validation"])/2) + len(dataset["train"]) +
+            len(dataset["validation"]/2)
         }
 
     def process(self) -> None:
