@@ -75,7 +75,7 @@ if __name__ == "__main__":
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
             args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, checkpointing=args.checkpointing)
+            inference_step, dataset=SQUAD_WikiGraph(), checkpointing=args.checkpointing)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
     else:
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
-        dataset = Squad_WikiGraph()
+        dataset = SQUAD_WikiGraph()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size, get_loss,
