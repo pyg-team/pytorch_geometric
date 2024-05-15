@@ -1,8 +1,9 @@
 import random
 from typing import Optional
 
-from torch_geometric.data import Data, InMemoryDataset
 import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 try:
     import datasets
