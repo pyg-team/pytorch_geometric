@@ -92,7 +92,10 @@ class SQUAD_WikiGraph(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["list_of_wiki_graphs.pt", "pre_filter_4_wiki.pt", "pre_transform_4_wiki.pt"]
+        return [
+            "list_of_wiki_graphs.pt", "pre_filter_4_wiki.pt",
+            "pre_transform_4_wiki.pt"
+        ]
 
     def download(self) -> None:
         dataset = datasets.load_dataset("rajpurkar/squad_v2")
@@ -105,10 +108,12 @@ class SQUAD_WikiGraph(InMemoryDataset):
             "train":
             torch.arange(len(dataset["train"])),
             "val":
-            torch.arange(len(dataset["validation"])//2) + len(dataset["train"]),
+            torch.arange(len(dataset["validation"]) // 2) +
+            len(dataset["train"]),
             "test":
-            torch.arange(len(dataset["validation"])//2) + len(dataset["train"]) +
-            len(dataset["validation"])//2 + (len(dataset["validation"]) % 2)
+            torch.arange(len(dataset["validation"]) // 2) +
+            len(dataset["train"]) + len(dataset["validation"]) // 2 +
+            (len(dataset["validation"]) % 2)
         }
 
     def process(self) -> None:
