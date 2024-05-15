@@ -94,7 +94,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["list_of_graphs.pt", "pre_filter.pt", "pre_transform.pt"]
+        return ["list_of_wiki_graphs.pt", "pre_filter_4_wiki.pt", "pre_transform_4_wiki.pt"]
 
     def download(self) -> None:
         dataset = datasets.load_dataset("rajpurkar/squad_v2")
