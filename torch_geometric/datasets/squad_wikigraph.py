@@ -32,8 +32,11 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     seed_doc_names = search_list[:seed_nodes]
     seed_docs = [wiki.page(doc_name) for doc_name in seed_doc_names]
     # initialize our doc graph with seed docs
-    doc_contents = [doc.text for doc in seed_docs]
-    title_2_node_id_map = {doc.title: i for doc in enumerate(seed_docs)}
+    doc_contents = []
+    title_2_node_id_map
+    for i, doc in enumerate(seed_docs):
+        doc_contents.append(doc.summary)
+        title_2_node_id_map[doc.title] = i
     # do neighborsampling and create graph
     src_n_ids = []
     dst_n_ids = []
@@ -51,7 +54,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                     # add new node to graph
                     title_2_node_id_map[dst_doc_name] = len(
                         title_2_node_id_map)
-                    doc_contents.append(dst_doc.text)
+                    doc_contents.append(dst_doc.summary)
                 next_hops_seed_docs.append(doc)
                 src_n_ids.append(title_2_node_id_map[src_doc.title])
                 dst_n_ids.append(title_2_node_id_map[dst_doc.title])
