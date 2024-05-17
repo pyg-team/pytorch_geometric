@@ -13,17 +13,25 @@ except ImportError as e:  # noqa
     WITH_DATASETS = False
 from torch_geometric.nn.text import SentenceTransformer, text2embedding
 from torch_geometric.nn.text.llm import llama2_str_name
+try:
+    from wikipedia import search as wiki_search
+    import wikipediaapi
+    wiki = wikipediaapi.Wikipedia('Wiki-retriever', 'en')
+    WITH_WIKI = True
+except: # noqa
+    WITH_WIKI = False
+
 
 
 def get_wiki_data(question: str, model: SentenceTransformer,
                   seed_nodes: int = 3, fan_out: int = 3, num_hops: int = 2,
                   label: Optional[str] = None) -> Data:
-    """Performs neighborsampling on wikipedia
     """
-    import wikipedia
-    search_list = wikipedia.search(question)
+    Performs neighborsampling on Wikipedia.
+    """
+    search_list = wiki_search(question)
     seed_doc_names = search_list[:seed_nodes]
-    seed_docs = [wikipedia.page(doc_name) for doc_name in seed_doc_names]
+    seed_docs = [wiki.page(doc_name) for doc_name in seed_doc_names]
     # initialize our doc graph with seed docs
     doc_contents = [doc.content for doc in seed_docs]
     title_2_node_id_map = {doc.title: i for doc in enumerate(seed_docs)}
@@ -31,13 +39,12 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     src_n_ids = []
     dst_n_ids = []
     for hop in num_hops:
-        next_hops_seed_docs = []
         for src_doc in seed_docs:
             full_fan_links = src_doc.links
             randomly_chosen_neighbor_links = list(
                 random.sample(full_fan_links, k=fan_out))
             new_seed_docs = [
-                wikipedia.page(link) for link in randomly_chosen_neighbor_links
+                wiki.page(link) for link in randomly_chosen_neighbor_links
             ]
             for dst_doc in new_seed_docs:
                 dst_doc_title = dst_doc.title
@@ -51,7 +58,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                 dst_n_ids.append(title_2_node_id_map[dst_doc.title])
 
         # root nodes for the next hop
-        seed_docs = next_hops_seed_docs
+        seed_docs = new_seed_docs
 
     # put docs into model
     embedded_docs = text2embedding(model, doc_contents, batch_size=8)
@@ -70,7 +77,9 @@ def get_wiki_data(question: str, model: SentenceTransformer,
 class SQUAD_WikiGraph(InMemoryDataset):
     r"""This dataset uses the SQUAD dataset for Questions and Answers.
     It uses Wikipedia for the corresponding knowledge graphs.
-    SQUAD source: https://huggingface.co/datasets/rajpurkar/squad
+    SQUAD source: https://huggingface.co/datasets/rajpurkar/squad.
+    This dataset serves as an example for constructing custom GraphQA
+    datasets which consist of (Question, Answer, Knowledge Graph) triplets.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -84,6 +93,8 @@ class SQUAD_WikiGraph(InMemoryDataset):
     ) -> None:
         if not WITH_DATASETS:
             raise ImportError("Please pip install datasets")
+        if not WITH_DATASETS:
+            raise ImportError("Please pip install wikipedia wikipedia-api")
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
