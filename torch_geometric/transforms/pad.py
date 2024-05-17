@@ -270,7 +270,6 @@ class Pad(BaseTransform):
     value of :obj:`1.5`.
 
     Example:
-
     .. code-block:: python
 
         num_nodes = {'v0': 10, 'v1': 20, 'v2':30}
