@@ -221,7 +221,7 @@ class LightningDataset(LightningDataModule):
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
 
-        .. code-block::
+        .. code-block:: python
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
