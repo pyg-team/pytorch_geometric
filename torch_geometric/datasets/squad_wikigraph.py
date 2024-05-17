@@ -33,7 +33,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     seed_docs = [wiki.page(doc_name) for doc_name in seed_doc_names]
     # initialize our doc graph with seed docs
     doc_contents = []
-    title_2_node_id_map
+    title_2_node_id_map = {}
     for i, doc in enumerate(seed_docs):
         doc_contents.append(doc.summary)
         title_2_node_id_map[doc.title] = i
