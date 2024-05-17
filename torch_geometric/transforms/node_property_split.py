@@ -45,6 +45,7 @@ class NodePropertySplit(BaseTransform):
             property are considered to be OOD (default: :obj:`True`)
 
     Example:
+
     .. code-block:: python
 
         from torch_geometric.transforms import NodePropertySplit
