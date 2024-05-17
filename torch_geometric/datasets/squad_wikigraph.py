@@ -13,21 +13,20 @@ except ImportError as e:  # noqa
     WITH_DATASETS = False
 from torch_geometric.nn.text import SentenceTransformer, text2embedding
 from torch_geometric.nn.text.llm import llama2_str_name
+
 try:
-    from wikipedia import search as wiki_search
     import wikipediaapi
+    from wikipedia import search as wiki_search
     wiki = wikipediaapi.Wikipedia('Wiki-retriever', 'en')
     WITH_WIKI = True
-except: # noqa
+except:  # noqa
     WITH_WIKI = False
-
 
 
 def get_wiki_data(question: str, model: SentenceTransformer,
                   seed_nodes: int = 3, fan_out: int = 3, num_hops: int = 2,
                   label: Optional[str] = None) -> Data:
-    """
-    Performs neighborsampling on Wikipedia.
+    """Performs neighborsampling on Wikipedia.
     """
     search_list = wiki_search(question)
     seed_doc_names = search_list[:seed_nodes]
