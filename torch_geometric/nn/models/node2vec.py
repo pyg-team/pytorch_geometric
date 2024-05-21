@@ -5,10 +5,10 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
 from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.sparse import index2ptr
 
 
 class Node2Vec(torch.nn.Module):

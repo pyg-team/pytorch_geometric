@@ -5,9 +5,9 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import sort_edge_index
-from torch_geometric.utils.sparse import index2ptr
 
 EPS = 1e-15
 
@@ -256,6 +256,7 @@ def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
     rand = torch.rand((subset.size(0), num_neighbors), device=subset.device)
     rand *= count.to(rand.dtype).view(-1, 1)
     rand = rand.to(torch.long) + rowptr[subset].view(-1, 1)
+    rand = rand.clamp(max=col.numel() - 1)  # If last node is isolated.
 
     col = col[rand] if col.numel() > 0 else rand
     col[mask | (count == 0)] = dummy_idx

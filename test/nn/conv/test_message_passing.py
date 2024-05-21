@@ -159,6 +159,9 @@ def test_my_conv_edge_index():
 
 class MyCommentedConv(MessagePassing):
     r"""This layer calls `self.propagate()` internally."""
+    def __init__(self) -> None:
+        super().__init__()
+
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         # `self.propagate()` is used here to propagate messages.
         return self.propagate(edge_index, x=x)
@@ -170,6 +173,25 @@ def test_my_commented_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 
     conv = MyCommentedConv()
+    conv(x, edge_index)
+
+    jit = torch.jit.script(conv)
+    jit(x, edge_index)
+
+
+class MyKwargsConv(MessagePassing):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        return self.propagate(x=x, edge_index=edge_index)
+
+
+def test_my_kwargs_conv():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = MyKwargsConv()
     conv(x, edge_index)
 
     jit = torch.jit.script(conv)

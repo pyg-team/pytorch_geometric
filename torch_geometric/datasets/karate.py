@@ -8,8 +8,9 @@ from torch_geometric.data import Data, InMemoryDataset
 class KarateClub(InMemoryDataset):
     r"""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
-    <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
-    34 nodes, connected by 156 (undirected and unweighted) edges.
+    <https://www.journals.uchicago.edu/doi/abs/10.1086/jar.33.4.3629752>`_
+    paper, containing 34 nodes,
+    connected by 156 (undirected and unweighted) edges.
     Every node is labeled by one of four classes obtained via modularity-based
     clustering, following the `"Semi-supervised Classification with Graph
     Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_ paper.

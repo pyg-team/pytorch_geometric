@@ -110,11 +110,12 @@ def test_homo_neighbor_loader_basic(
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
-        assert isinstance(batch.edge_index, EdgeIndex)
-        batch.edge_index.validate()
-        size = (batch.num_nodes, batch.num_nodes)
-        assert batch.edge_index.sparse_size() == size
-        assert batch.edge_index.sort_order == 'col'
+        # TODO Re-enable once `EdgeIndex` is stable.
+        assert not isinstance(batch.edge_index, EdgeIndex)
+        # batch.edge_index.validate()
+        # size = (batch.num_nodes, batch.num_nodes)
+        # assert batch.edge_index.sparse_size() == size
+        # assert batch.edge_index.sort_order == 'col'
         assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -224,11 +225,12 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
 
         for edge_type, edge_index in batch.edge_index_dict.items():
             src, _, dst = edge_type
-            assert isinstance(edge_index, EdgeIndex)
-            edge_index.validate()
-            size = (batch[src].num_nodes, batch[dst].num_nodes)
-            assert edge_index.sparse_size() == size
-            assert edge_index.sort_order == 'col'
+            # TODO Re-enable once `EdgeIndex` is stable.
+            assert not isinstance(edge_index, EdgeIndex)
+            # edge_index.validate()
+            # size = (batch[src].num_nodes, batch[dst].num_nodes)
+            # assert edge_index.sparse_size() == size
+            # assert edge_index.sort_order == 'col'
 
         row, col = batch['paper', 'paper'].edge_index
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
@@ -964,3 +966,32 @@ def test_neighbor_loader_input_id():
             expected = [(2 * i) + 1]
 
         assert batch['a'].input_id.tolist() == expected
+
+
+@withPackage('pyg_lib')
+def test_temporal_neighbor_loader_single_link():
+    data = HeteroData()
+    data['a'].x = torch.arange(10)
+    data['b'].x = torch.arange(10)
+    data['c'].x = torch.arange(10)
+
+    data['b'].time = torch.arange(0, 10)
+    data['c'].time = torch.arange(1, 11)
+
+    data['a', 'b'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['b', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['a', 'c'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['c', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1],
+        input_nodes='a',
+        time_attr='time',
+        input_time=torch.arange(0, 10),
+        batch_size=10,
+    )
+    batch = next(iter(loader))
+    assert batch['a'].num_nodes == 10
+    assert batch['b'].num_nodes == 10
+    assert batch['c'].num_nodes == 0
