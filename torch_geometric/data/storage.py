@@ -373,8 +373,8 @@ class BaseStorage(MutableMapping):
         attr: str = 'time',
     ) -> Self:
         if attr in self:
-            mask = getattr(self, attr)
-            mask = (mask >= start_time) & (mask <= end_time)
+            time = self[attr]
+            mask = (time >= start_time) & (time <= end_time)
 
             if self.is_node_attr(attr):
                 keys = self.node_attrs()
