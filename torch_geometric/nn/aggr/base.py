@@ -25,7 +25,7 @@ class Aggregation(torch.nn.Module):
     Notably, :obj:`index` does not have to be sorted (for most aggregation
     operators):
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
@@ -39,7 +39,7 @@ class Aggregation(torch.nn.Module):
     called :obj:`ptr`. Here, elements within the same set need to be grouped
     together in the input, and :obj:`ptr` defines their boundaries:
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
