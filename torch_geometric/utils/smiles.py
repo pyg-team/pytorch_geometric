@@ -119,7 +119,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         row.append(x_map['is_in_ring'].index(atom.IsInRing()))
         xs.append(row)
 
-    x = torch.tensor(xs, dtype=torch.long).view(-1, 9)
+    x = torch.tensor(xs, dtype=torch.float).view(-1, 9)
 
     edge_indices, edge_attrs = [], []
     for bond in mol.GetBonds():  # type: ignore
