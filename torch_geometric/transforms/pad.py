@@ -269,7 +269,6 @@ class Pad(BaseTransform):
     All the attributes of edge types other than these two are padded using a
     value of :obj:`1.5`.
 
-    Example:
     .. code-block:: python
 
         num_nodes = {'v0': 10, 'v1': 20, 'v2':30}
