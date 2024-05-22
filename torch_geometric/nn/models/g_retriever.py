@@ -200,7 +200,7 @@ class GRetriever(nn.Module):
         for i in range(batch_size):
             pad_length = max_length - batch_inputs_embeds[i].shape[0]
             batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
+                [pad_embeds.repeat(pad_length, 1).to(self.llm_device), batch_inputs_embeds[i].to(self.llm_device)])
             batch_attention_mask[i] = [0
                                        ] * pad_length + batch_attention_mask[i]
             batch_label_input_ids[
