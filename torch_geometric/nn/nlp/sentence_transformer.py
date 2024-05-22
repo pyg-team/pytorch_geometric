@@ -43,10 +43,8 @@ class SentenceTransformer(torch.nn.Module):
 
         embs: List[Tensor] = []
         for start in range(0, len(text), batch_size):
-            end = start + batch_size
-
             token = self.tokenizer(
-                text[start:end],
+                text[start:start + batch_size],
                 padding=True,
                 truncation=True,
                 return_tensors='pt',
@@ -56,6 +54,7 @@ class SentenceTransformer(torch.nn.Module):
                 input_ids=token.input_ids.to(self.device),
                 attention_mask=token.attention_mask.to(self.device),
             ).to(output_device or 'cpu')
+
             embs.append(emb)
 
         return torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
