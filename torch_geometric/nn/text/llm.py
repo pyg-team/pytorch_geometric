@@ -93,7 +93,7 @@ class LLM(nn.Module):
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, torch_dtype=self.llm_dtype,
-            low_cpu_mem_usage=True, **kwargs)
+            low_cpu_mem_usage=not cpu_offload, **kwargs)
 
         self.llm_device = self.llm.device
         if cpu_offload:
