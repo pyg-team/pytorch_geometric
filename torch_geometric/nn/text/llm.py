@@ -39,10 +39,11 @@ def get_llm_kwargs(mem_needed):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
         kwargs["device_map"] = "auto"
+        cpu_offload = False
     else:
         kwargs["device_map"] = "auto"
-        kwargs["cpu_offload"] = True
-    return kwargs
+        cpu_offload = True
+    return kwargs, cpu_offload
 
 
 class LLM(nn.Module):
@@ -84,7 +85,7 @@ class LLM(nn.Module):
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
-        kwargs = get_llm_kwargs(self.mem_needed)
+        kwargs, cpu_offload = get_llm_kwargs(self.mem_needed)
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
         self.tokenizer = AutoTokenizer.from_pretrained(self.huggingface_str,
                                                        use_fast=False)
@@ -93,7 +94,11 @@ class LLM(nn.Module):
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, torch_dtype=self.llm_dtype,
             low_cpu_mem_usage=True, **kwargs)
+        
         self.llm_device = self.llm.device
+        if cpu_offload:
+            import accelerate
+            accelerate.cpu_offload(self.llm, execution_device=self.llm_device)
         self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
