@@ -95,12 +95,14 @@ class LLM(nn.Module):
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, torch_dtype=self.llm_dtype, **kwargs)
 
-        self.llm_device = self.llm.device
+        
         if cpu_offload:
             import accelerate
-            print("turning on cpu offload")
+            self.llm_device = torch.device("cuda:0")
             self.llm = accelerate.cpu_offload(self.llm,
-                                              execution_device=torch.device("cuda:0"))
+                                              execution_device=self.llm_device)
+        else:
+            self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
