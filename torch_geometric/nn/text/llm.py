@@ -100,7 +100,8 @@ class LLM(nn.Module):
             import accelerate
             self.llm_device = torch.device("cuda:0")
             self.llm = accelerate.cpu_offload(self.llm,
-                                              execution_device=self.llm_device)
+                                              execution_device=self.llm_device,
+                                              offload_buffers=True)
         else:
             self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
