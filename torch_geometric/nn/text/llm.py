@@ -94,7 +94,7 @@ class LLM(nn.Module):
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, torch_dtype=self.llm_dtype,
             low_cpu_mem_usage=True, **kwargs)
-        
+
         self.llm_device = self.llm.device
         if cpu_offload:
             import accelerate
