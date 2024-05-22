@@ -1,4 +1,4 @@
-# Examples for co-training LLMs and GNNs
+# Examples for Co-training LLMs and GNNs
 
 | Example | Description |
 | ------- | ----------- |
