@@ -277,7 +277,8 @@ class GRetriever(nn.Module):
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat(to_cat, dim=0)
+            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
+                                      dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
