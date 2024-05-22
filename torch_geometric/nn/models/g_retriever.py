@@ -184,7 +184,7 @@ class GRetriever(nn.Module):
                 torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
             if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
+                to_cat.append(graph_embeds[i].unsqueeze(0).to(self.llm_device))
             to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0)
             batch_inputs_embeds.append(inputs_embeds)
