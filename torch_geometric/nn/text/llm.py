@@ -101,17 +101,19 @@ class LLM(nn.Module):
                 import accelerate
                 device_type = "cuda"
                 self.exec_device = torch.device(device_type)
-                self.llm = accelerate.cpu_offload(
-                    self.llm, execution_device=device_type,
-                    offload_buffers=True)
+                self.llm = accelerate.cpu_offload(self.llm,
+                                                  execution_device=device_type,
+                                                  offload_buffers=True)
             else:
                 device_type = "cpu"
             self.exec_device = torch.device(device_type)
-            self.autocast_context = torch.autocast(device_type=device_type, dtype=self.llm_dtype)
+            self.autocast_context = torch.autocast(device_type=device_type,
+                                                   dtype=self.llm_dtype)
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
-            self.autocast_context = torch.cuda.amp.autocast(dtype=self.llm_dtype)
+            self.autocast_context = torch.cuda.amp.autocast(
+                dtype=self.llm_dtype)
         self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
