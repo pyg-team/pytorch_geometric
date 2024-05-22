@@ -68,7 +68,7 @@ class GRetriever(nn.Module):
             self.llm_to_use = LLM('gemma', llm_dtype)
         else:
             self.llm_to_use = LLM(llm_to_use, llm_dtype)
-        self.llm = self.llm_to_use.llm
+        self.llm_generator = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
         if llm_use_lora:
             from peft import (
@@ -77,7 +77,7 @@ class GRetriever(nn.Module):
                 prepare_model_for_kbit_training,
             )
             print("Training our LLM with LORA!")
-            self.llm = prepare_model_for_kbit_training(self.llm)
+            self.llm_generator = prepare_model_for_kbit_training(self.llm)
             lora_r: int = 8
             lora_alpha: int = 16
             lora_dropout: float = 0.05
@@ -93,8 +93,9 @@ class GRetriever(nn.Module):
                 bias="none",
                 task_type="CAUSAL_LM",
             )
-            self.llm = get_peft_model(self.llm, config)
+            self.llm_generator = get_peft_model(self.llm_generator, config)
         self.llm_device = self.llm_to_use.llm_device
+        self.exec_device = self.llm_to_use.exec_device
         self.tokenizer = self.llm_to_use.tokenizer
         print('Finished loading LLAMA!')
 
@@ -105,23 +106,23 @@ class GRetriever(nn.Module):
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
             norm='batch_norm',
-        ).to(self.llm_device)
+        ).to(self.exec_device)
         # For the MLP Projection
         mlp_hidden_dim = gnn_out_channels
         self.projector = nn.Sequential(
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
             nn.Linear(mlp_hidden_dim, mlp_out_dim),
-        ).to(self.llm_device)
+        ).to(self.exec_device)
 
         self.word_embedding = self.llm_to_use.word_embedding
 
     def encode_graphs(self, node_feat, edge_index, edge_attr, batch):
-        x = node_feat.to(self.llm_device)
-        edge_index = edge_index.long().to(self.llm_device)
-        edge_attr = edge_attr.to(self.llm_device)
+        x = node_feat.to(self.exec_device)
+        edge_index = edge_index.long().to(self.exec_device)
+        edge_attr = edge_attr.to(self.exec_device)
         n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
-        batch = batch.to(self.llm_device)
+        batch = batch.to(self.exec_device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
@@ -186,7 +187,8 @@ class GRetriever(nn.Module):
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat(to_cat, dim=0)
+            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
+                                      dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
             label_input_ids = [IGNORE_INDEX
@@ -198,21 +200,24 @@ class GRetriever(nn.Module):
         max_length = max([x.shape[0] for x in batch_inputs_embeds])
         for i in range(batch_size):
             pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
+            batch_inputs_embeds[i] = torch.cat([
+                pad_embeds.repeat(pad_length, 1).to(self.exec_device),
+                batch_inputs_embeds[i].to(self.exec_device)
+            ])
             batch_attention_mask[i] = [0
                                        ] * pad_length + batch_attention_mask[i]
             batch_label_input_ids[
                 i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+                                    dim=0).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.exec_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.llm_device)
+            self.exec_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
-            outputs = self.llm(
+        with self.llm_to_use.autocast_context:
+            outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
                 return_dict=True,
@@ -276,7 +281,8 @@ class GRetriever(nn.Module):
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat(to_cat, dim=0)
+            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
+                                      dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
 
@@ -290,11 +296,12 @@ class GRetriever(nn.Module):
                                        ] * pad_length + batch_attention_mask[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+                                    dim=0).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.exec_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
-            outputs = self.llm.generate(
+        with self.llm_to_use.autocast_context:
+            outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_new_tokens,
                 attention_mask=attention_mask,
