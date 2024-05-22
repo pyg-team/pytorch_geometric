@@ -99,15 +99,13 @@ class LLM(nn.Module):
             self.llm_device = torch.device("cpu")
             if torch.cuda.is_available():
                 import accelerate
-                device_type = "cuda"
-                self.exec_device = torch.device(device_type)
+                self.exec_device = torch.device("cuda:0")
                 self.llm = accelerate.cpu_offload(self.llm,
-                                                  execution_device=device_type,
+                                                  execution_device=self.exec_device,
                                                   offload_buffers=True)
             else:
-                device_type = "cpu"
-            self.exec_device = torch.device(device_type)
-            self.autocast_context = torch.autocast(device_type=device_type,
+                self.exec_device = torch.device("cpu")
+            self.autocast_context = torch.autocast(device_type="cpu",
                                                    dtype=self.llm_dtype)
         else:
             self.llm_device = self.llm.device
