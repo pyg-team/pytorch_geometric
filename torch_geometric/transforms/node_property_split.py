@@ -44,7 +44,6 @@ class NodePropertySplit(BaseTransform):
             of the node property, so that nodes with greater values of the
             property are considered to be OOD (default: :obj:`True`)
 
-    Example:
     .. code-block:: python
 
         from torch_geometric.transforms import NodePropertySplit

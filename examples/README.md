@@ -18,6 +18,6 @@ For examples on co-training LLM with GNN, see examples and README under [`exampl
 
 For examples on using `torch.compile`, see examples and README under [`examples/compile`](./compile).
 
-For examples on scaling PyG up via multi-GPUs, see examples and README under [`examples/multi_gpu`](./multi_gpu).
+For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
-For examples on working with heterogeneous data, see examples and README under [`examples/hetero`](./hetero).
+For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
