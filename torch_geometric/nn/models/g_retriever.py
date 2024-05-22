@@ -106,7 +106,7 @@ class GRetriever(nn.Module):
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
             norm='batch_norm',
-        ).to(self.llm_device)
+        ).to(self.exec_device)
         # For the MLP Projection
         mlp_hidden_dim = gnn_out_channels
         self.projector = nn.Sequential(
