@@ -98,6 +98,7 @@ class LLM(nn.Module):
         self.llm_device = self.llm.device
         if cpu_offload:
             import accelerate
+            print("turning on cpu offload")
             self.llm = accelerate.cpu_offload(self.llm, execution_device=self.llm_device)
         self.word_embedding = self.llm.model.get_input_embeddings()
 
