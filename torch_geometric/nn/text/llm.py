@@ -105,8 +105,8 @@ class LLM(nn.Module):
                                                   offload_buffers=True)
             else:
                 self.exec_device = torch.device("cpu")
-            self.autocast_context = torch.autocast(device_type="cpu",
-                                                   dtype=self.llm_dtype)
+            from contextlib import nullcontext
+            self.autocast_context = nullcontext()
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
