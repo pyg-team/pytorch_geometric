@@ -41,7 +41,6 @@ def get_llm_kwargs(mem_needed):
         kwargs["device_map"] = "auto"
         cpu_offload = False
     else:
-        kwargs["device_map"] = "auto"
         cpu_offload = True
     kwargs["low_cpu_mem_usage"] = not cpu_offload
 
