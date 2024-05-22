@@ -14,10 +14,10 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 - [`ogbn_papers_100m.py`](./ogbn_papers_100m.py) is an example for training a GNN on the large-scale `ogbn-papers100m` dataset, containing approximately ~1.6B edges.
 - [`ogbn_papers_100m_cugraph.py`](./ogbn_papers_100m_cugraph.py) shows how to accelerate the `ogbn-papers100m` workflow using [CuGraph](https://github.com/rapidsai/cugraph).
 
-For examples on co-training LLM with GNN, see examples and README under [`examples/llm_plus_gnn`](./llm_plus_gnn).
+For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
-For examples on using `torch.compile`, see examples and README under [`examples/compile`](./compile).
+For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
 
-For examples on scaling PyG up via multi-GPUs, see examples and README under [`examples/multi_gpu`](./multi_gpu).
+For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
-For examples on working with heterogeneous data, see examples and README under [`examples/hetero`](./hetero).
+For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
