@@ -34,7 +34,7 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         # this is to minimize the need for interGPU communications
         if mem_total >= mem_needed:
             break
-    cpu_offload = mem_total < mem_needed:
+    cpu_offload = mem_total < mem_needed
     if not cpu_offload:
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
