@@ -34,11 +34,14 @@ def get_llm_kwargs(mem_needed):
         # this is to minimize the need for interGPU communications
         if mem_total >= mem_needed:
             break
-
-    for i in range(gpus_2_use_4_llm):
-        max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
-    kwargs["max_memory"] = max_mem_dict
-    kwargs["device_map"] = "auto"
+    if mem_total >= mem_needed:
+        for i in range(gpus_2_use_4_llm):
+            max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
+        kwargs["max_memory"] = max_mem_dict
+        kwargs["device_map"] = "auto"
+    else:
+        kwargs["device_map"] = "auto"
+        kwargs["cpu_offload"] = True
     return kwargs
 
 
