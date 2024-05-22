@@ -182,12 +182,12 @@ class GRetriever(nn.Module):
                 input_ids = questions.input_ids[
                     i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
+                torch.tensor(input_ids).to(self.exec_device))
             to_cat = [bos_embeds]
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
+            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
                                       dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -201,8 +201,8 @@ class GRetriever(nn.Module):
         for i in range(batch_size):
             pad_length = max_length - batch_inputs_embeds[i].shape[0]
             batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad_length, 1).to(self.llm_device),
-                batch_inputs_embeds[i].to(self.llm_device)
+                pad_embeds.repeat(pad_length, 1).to(self.exec_device),
+                batch_inputs_embeds[i].to(self.exec_device)
             ])
             batch_attention_mask[i] = [0
                                        ] * pad_length + batch_attention_mask[i]
@@ -210,10 +210,10 @@ class GRetriever(nn.Module):
                 i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+                                    dim=0).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.exec_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.llm_device)
+            self.exec_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
@@ -275,12 +275,12 @@ class GRetriever(nn.Module):
             else:
                 input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
+                torch.tensor(input_ids).to(self.exec_device))
             to_cat = [bos_embeds]
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
+            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
                                       dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -295,8 +295,8 @@ class GRetriever(nn.Module):
                                        ] * pad_length + batch_attention_mask[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+                                    dim=0).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.exec_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(

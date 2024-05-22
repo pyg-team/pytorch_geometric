@@ -34,17 +34,14 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         # this is to minimize the need for interGPU communications
         if mem_total >= mem_needed:
             break
-    if mem_total >= mem_needed:
+    cpu_offload mem_total < mem_needed:
+    if not cpu_offload:
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
         kwargs["device_map"] = "auto"
         kwargs["torch_dtype"] = autocast_dtype
-        cpu_offload = False
-    else:
-        cpu_offload = True
-    kwargs["low_cpu_mem_usage"] = not cpu_offload
-
+        kwargs["low_cpu_mem_usage"] = True
 
     return kwargs, cpu_offload
 
@@ -114,7 +111,7 @@ class LLM(nn.Module):
             self.exec_device = self.llm_device
             self.autocast_context = torch.cuda.amp.autocast(
                 dtype=self.llm_dtype)
-        self.word_embedding = self.llm.model.get_input_embeddings()
+        self.word_embedding = self.llm.model.get_input_embeddings().to(self.exec_device)
 
     def encode_inputs(self, question, additional_context=None):
         batch_size = len(question)
