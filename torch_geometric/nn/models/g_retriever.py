@@ -68,7 +68,7 @@ class GRetriever(nn.Module):
             self.llm_to_use = LLM('gemma', llm_dtype)
         else:
             self.llm_to_use = LLM(llm_to_use, llm_dtype)
-        self.llm = self.llm_to_use.llm
+        self.llm_generator = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
         if llm_use_lora:
             from peft import (
@@ -77,7 +77,7 @@ class GRetriever(nn.Module):
                 prepare_model_for_kbit_training,
             )
             print("Training our LLM with LORA!")
-            self.llm = prepare_model_for_kbit_training(self.llm)
+            self.llm_generator = prepare_model_for_kbit_training(self.llm)
             lora_r: int = 8
             lora_alpha: int = 16
             lora_dropout: float = 0.05
@@ -93,7 +93,7 @@ class GRetriever(nn.Module):
                 bias="none",
                 task_type="CAUSAL_LM",
             )
-            self.llm = get_peft_model(self.llm, config)
+            self.llm_generator = get_peft_model(self.llm_generator, config)
         self.llm_device = self.llm_to_use.llm_device
         self.exec_device = self.llm_to_use.exec_device
         self.tokenizer = self.llm_to_use.tokenizer
@@ -215,8 +215,8 @@ class GRetriever(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with self.llm.autocast_context:
-            outputs = self.llm(
+        with self.llm_to_use.autocast_context:
+            outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
                 return_dict=True,
@@ -298,8 +298,8 @@ class GRetriever(nn.Module):
                                     dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
-            outputs = self.llm.generate(
+        with self.llm_to_use.autocast_context:
+            outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_new_tokens,
                 attention_mask=attention_mask,
