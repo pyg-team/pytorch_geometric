@@ -96,13 +96,15 @@ class LLM(nn.Module):
             self.huggingface_str, torch_dtype=self.llm_dtype, **kwargs)
 
         if cpu_offload:
-            import accelerate
             self.llm_device = torch.device("cpu")
-            self.exec_device = torch.device(
-                "cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-            self.llm = accelerate.cpu_offload(self.llm,
-                                              execution_device=self.exec_device,
-                                              offload_buffers=True)
+            if torch.cuda.is_available():
+                import accelerate
+                self.exec_device = torch.device("cuda:0")
+                self.llm = accelerate.cpu_offload(self.llm,
+                                                  execution_device=self.exec_device,
+                                                  offload_buffers=True)
+            else:
+                self.exec_device = torch.device("cpu")
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
