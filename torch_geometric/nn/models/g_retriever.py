@@ -113,7 +113,7 @@ class GRetriever(nn.Module):
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
             nn.Linear(mlp_hidden_dim, mlp_out_dim),
-        ).to(self.llm_device)
+        ).to(self.exec_device)
 
         self.word_embedding = self.llm_to_use.word_embedding
 
