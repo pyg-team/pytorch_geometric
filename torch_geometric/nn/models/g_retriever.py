@@ -215,7 +215,7 @@ class GRetriever(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.autocast(dtype=self.llm_dtype):
+        with self.llm.autocast_context:
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
