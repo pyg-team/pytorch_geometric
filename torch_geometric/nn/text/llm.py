@@ -97,9 +97,10 @@ class LLM(nn.Module):
 
         if cpu_offload:
             import accelerate
-            self.llm_device = torch.device("cuda:0")
+            self.llm_device = torch.device("cpu")
+            exec_dev = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
             self.llm = accelerate.cpu_offload(self.llm,
-                                              execution_device=self.llm_device,
+                                              execution_device=exec_dev,
                                               offload_buffers=True)
         else:
             self.llm_device = self.llm.device
