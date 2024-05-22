@@ -182,7 +182,7 @@ class LLM(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with torch.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
