@@ -18,7 +18,7 @@ class SentenceTransformer(torch.nn.Module):
 
     def mean_pooling(self, emb: Tensor, attention_mask: Tensor) -> Tensor:
         mask = attention_mask.unsqueeze(-1).expand(emb.size()).to(emb.dtype)
-        return torch.sum(emb * mask, dim=1) / mask.sum(dim=1).clamp(min=1e-9)
+        return (emb * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
 
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
         out = self.model(input_ids=input_ids, attention_mask=attention_mask)
