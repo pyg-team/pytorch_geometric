@@ -95,6 +95,7 @@ class GRetriever(nn.Module):
             )
             self.llm = get_peft_model(self.llm, config)
         self.llm_device = self.llm_to_use.llm_device
+        self.exec_device = self.llm_to_use.exec_device
         self.tokenizer = self.llm_to_use.tokenizer
         print('Finished loading LLAMA!')
 
@@ -117,11 +118,11 @@ class GRetriever(nn.Module):
         self.word_embedding = self.llm_to_use.word_embedding
 
     def encode_graphs(self, node_feat, edge_index, edge_attr, batch):
-        x = node_feat.to(self.llm_device)
-        edge_index = edge_index.long().to(self.llm_device)
-        edge_attr = edge_attr.to(self.llm_device)
+        x = node_feat.to(self.exec_device)
+        edge_index = edge_index.long().to(self.exec_device)
+        edge_attr = edge_attr.to(self.exec_device)
         n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
-        batch = batch.to(self.llm_device)
+        batch = batch.to(self.exec_device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
@@ -212,7 +213,7 @@ class GRetriever(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with torch.autocast(dtype=self.llm_dtype):
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
