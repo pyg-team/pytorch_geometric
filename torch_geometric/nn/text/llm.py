@@ -111,7 +111,7 @@ class LLM(nn.Module):
             self.exec_device = self.llm_device
             self.autocast_context = torch.cuda.amp.autocast(
                 dtype=self.llm_dtype)
-        self.word_embedding = self.llm.model.get_input_embeddings().to(self.exec_device)
+        self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
         batch_size = len(question)

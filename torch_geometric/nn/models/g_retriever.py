@@ -182,7 +182,7 @@ class GRetriever(nn.Module):
                 input_ids = questions.input_ids[
                     i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.exec_device))
+                torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
@@ -275,7 +275,7 @@ class GRetriever(nn.Module):
             else:
                 input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.exec_device))
+                torch.tensor(input_ids).to(self.llm_device))
             to_cat = [bos_embeds]
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
