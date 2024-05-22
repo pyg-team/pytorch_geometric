@@ -100,7 +100,7 @@ class LLM(nn.Module):
             import accelerate
             print("turning on cpu offload")
             self.llm = accelerate.cpu_offload(self.llm,
-                                              execution_device=self.llm_device)
+                                              execution_device=torch.device("cuda:0"))
         self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
@@ -182,7 +182,7 @@ class LLM(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.amp.autocast(dtype=self.llm_dtype):
+        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
