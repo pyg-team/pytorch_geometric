@@ -45,7 +45,6 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         cpu_offload = True
     kwargs["low_cpu_mem_usage"] = not cpu_offload
 
-
     return kwargs, cpu_offload
 
 
