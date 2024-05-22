@@ -15,7 +15,7 @@ pad_token_id = 0
 padding_side = 'left'
 
 
-def get_llm_kwargs(mem_needed):
+def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
     assert torch.cuda.is_available(), "GPU needed to run LLMs efficiently!"
     avail_gpus = torch.cuda.device_count()
     kwargs = {
@@ -39,10 +39,12 @@ def get_llm_kwargs(mem_needed):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
         kwargs["device_map"] = "auto"
+        kwargs["torch_dtype"] = autocast_dtype
         cpu_offload = False
     else:
         cpu_offload = True
     kwargs["low_cpu_mem_usage"] = not cpu_offload
+
 
     return kwargs, cpu_offload
 
@@ -86,14 +88,14 @@ class LLM(nn.Module):
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
-        kwargs, cpu_offload = get_llm_kwargs(self.mem_needed)
+        kwargs, cpu_offload = get_llm_kwargs(self.mem_needed, self.llm_dtype)
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
         self.tokenizer = AutoTokenizer.from_pretrained(self.huggingface_str,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
-            self.huggingface_str, torch_dtype=self.llm_dtype, **kwargs)
+            self.huggingface_str, **kwargs)
 
         if cpu_offload:
             self.llm_device = torch.device("cpu")
@@ -247,7 +249,7 @@ class LLM(nn.Module):
                                     dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with self.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_out_tokens,
