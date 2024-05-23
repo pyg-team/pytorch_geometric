@@ -42,8 +42,6 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         kwargs["max_memory"] = max_mem_dict
         kwargs["low_cpu_mem_usage"] = True
     kwargs["device_map"] = "auto"
-    kwargs["torch_dtype"] = autocast_dtype
-
 
     return kwargs, cpu_offload
 
@@ -95,20 +93,16 @@ class LLM(nn.Module):
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, **kwargs)
-
+        self.word_embedding = self.llm.model.get_input_embeddings()
         if cpu_offload:
             self.llm_device = torch.device("cpu")
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
-            # dist.init_process_group()
-            # self.llm = FSDP.FullyShardedDataParallel(
-            #     self.llm, cpu_offload=FSDP.CPUOffload())
+            accelerate.cpu_offload(self.word_embedding, "cuda")
         else:
             self.llm_device = self.llm.device
-            self.exec_device = self.llm_device
             self.autocast_context = torch.cuda.amp.autocast(
                 dtype=self.llm_dtype)
-        self.word_embedding = self.llm.model.get_input_embeddings()
 
     def encode_inputs(self, question, additional_context=None):
         batch_size = len(question)
