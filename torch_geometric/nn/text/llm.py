@@ -43,7 +43,7 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         kwargs["torch_dtype"] = autocast_dtype
         kwargs["low_cpu_mem_usage"] = True
     else:
-        kwargs["load_in_8bit"] = True
+        kwargs["load_in_4bit"] = True
     kwargs["device_map"] = "auto"
 
     return kwargs, cpu_offload
