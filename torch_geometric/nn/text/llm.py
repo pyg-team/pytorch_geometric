@@ -83,7 +83,7 @@ class LLM(nn.Module):
         This is a rough hueristic:
         We found that LLAMA2 (7B) + GAT hits OOM
         on a single 80GB GPU, but can fit on a single
-        GPU that is slightly larger GPU.
+        GPU that is slightly larger.
         """
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = dtype
@@ -102,7 +102,7 @@ class LLM(nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
         if need_cpu:
             from contextlib import nullcontext
-            self.autocast_context = nullcontext
+            self.autocast_context = nullcontext()
         else:
             self.autocast_context = torch.cuda.amp.autocast(dtype=self.llm_dtype)
 
