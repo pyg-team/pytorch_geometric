@@ -3,6 +3,7 @@ from typing import List, Optional
 import torch
 import torch.nn as nn
 from torch.distributed import fsdp as FSDP
+from torch import distributed as dist
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
@@ -98,6 +99,7 @@ class LLM(nn.Module):
             self.llm_device = torch.device("cpu")
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
+            dist.init_process_group()
             self.llm = FSDP.FullyShardedDataParallel(self.llm, cpu_offload=FSDP.CPUOffload())
         else:
             self.llm_device = self.llm.device
