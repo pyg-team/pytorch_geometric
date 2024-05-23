@@ -103,8 +103,8 @@ class LLM(nn.Module):
                 import accelerate
                 self.llm = accelerate.cpu_offload(self.llm,
                                                   execution_device="cuda")
-                self.word_embedding = accelerate.cpu_offload(
-                    self.word_embedding, execution_device="cuda")
+                # self.word_embedding = accelerate.cpu_offload(
+                #     self.word_embedding, execution_device="cuda")
         else:
             self.llm_device = self.llm.device
             self.autocast_context = torch.cuda.amp.autocast(
