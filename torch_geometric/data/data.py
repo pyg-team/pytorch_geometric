@@ -291,13 +291,14 @@ class BaseData:
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
+        attr: str = 'time',
     ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
         """
         out = copy.copy(self)
         for store in out.stores:
-            store.snapshot(start_time, end_time)
+            store.snapshot(start_time, end_time, attr)
         return out
 
     def up_to(self, end_time: Union[float, int]) -> Self:

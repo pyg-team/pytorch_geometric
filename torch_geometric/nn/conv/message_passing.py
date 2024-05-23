@@ -282,7 +282,8 @@ class MessagePassing(torch.nn.Module):
             return [edge_index.size(1), edge_index.size(0)]
 
         elif isinstance(edge_index, Tensor):
-            int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
+            int_dtypes = (torch.uint8, torch.int8, torch.int16, torch.int32,
+                          torch.int64)
 
             if edge_index.dtype not in int_dtypes:
                 raise ValueError(f"Expected 'edge_index' to be of integer "
