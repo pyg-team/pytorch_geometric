@@ -211,7 +211,8 @@ class GRetriever(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.exec_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.exec_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.exec_device)
         print("before LLM mem profile=", torch.cuda.mem_get_info())
@@ -296,7 +297,8 @@ class GRetriever(nn.Module):
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.exec_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.exec_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(
+            self.exec_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
