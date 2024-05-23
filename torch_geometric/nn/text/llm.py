@@ -93,7 +93,8 @@ class LLM(nn.Module):
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         import inspect
-        print("inspect.getargspec(AutoModelForCausalLM.from_pretrained)=", inspect.getargspec(AutoModelForCausalLM.from_pretrained))
+        print("inspect.getargspec(AutoModelForCausalLM.from_pretrained)=",
+              inspect.getargspec(AutoModelForCausalLM.from_pretrained))
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, **kwargs)
 
