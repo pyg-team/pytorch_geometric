@@ -100,8 +100,8 @@ class LLM(nn.Module):
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
             import accelerate
-            self.word_embedding = accelerate.cpu_offload(self.word_embedding, "cuda")
-            self.llm = accelerate.cpu_offload(self.llm, "cuda")
+            self.llm = accelerate.cpu_offload(self.llm, execution_device="cuda")
+            self.word_embedding = accelerate.cpu_offload(self.word_embedding, execution_device="cuda")
         else:
             self.llm_device = self.llm.device
             self.autocast_context = torch.cuda.amp.autocast(
