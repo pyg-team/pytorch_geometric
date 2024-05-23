@@ -101,12 +101,16 @@ class LLM(nn.Module):
             self.autocast_context = nullcontext()
             if torch.cuda.is_available():
                 import accelerate
+                self.exec_device = "cuda"
                 self.llm = accelerate.cpu_offload(self.llm,
-                                                  execution_device="cuda")
+                                                  execution_device=self.exec_device)
                 # self.word_embedding = accelerate.cpu_offload(
-                #     self.word_embedding, execution_device="cuda")
+                #     self.word_embedding, execution_device=self.exec_device)
+            else:
+                self.exec_device = "cpu"
         else:
             self.llm_device = self.llm.device
+            self.exec_device = self.llm_device
             self.autocast_context = torch.cuda.amp.autocast(
                 dtype=self.llm_dtype)
 
