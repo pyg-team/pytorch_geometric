@@ -98,7 +98,8 @@ class LLM(nn.Module):
             self.llm_device = torch.device("cpu")
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
-            self.llm = FSDP.FullyShardedDataParallel(self.llm, cpu_offload=FSDP.CPUOffload())
+            self.llm = FSDP.FullyShardedDataParallel(
+                self.llm, cpu_offload=FSDP.CPUOffload())
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
