@@ -40,6 +40,7 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
+        kwargs["torch_dtype"] = autocast_dtype
         kwargs["low_cpu_mem_usage"] = True
     kwargs["device_map"] = "auto"
 
@@ -98,7 +99,9 @@ class LLM(nn.Module):
             self.llm_device = torch.device("cpu")
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
-            accelerate.cpu_offload(self.word_embedding, "cuda")
+            import accelerate
+            self.word_embedding = accelerate.cpu_offload(self.word_embedding, "cuda")
+            self.llm = accelerate.cpu_offload(self.llm, "cuda")
         else:
             self.llm_device = self.llm.device
             self.autocast_context = torch.cuda.amp.autocast(
