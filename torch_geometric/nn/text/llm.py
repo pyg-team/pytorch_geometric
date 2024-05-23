@@ -100,7 +100,8 @@ class LLM(nn.Module):
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
             dist.init_process_group()
-            self.llm = FSDP.FullyShardedDataParallel(self.llm, cpu_offload=FSDP.CPUOffload())
+            self.llm = FSDP.FullyShardedDataParallel(
+                self.llm, cpu_offload=FSDP.CPUOffload())
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
