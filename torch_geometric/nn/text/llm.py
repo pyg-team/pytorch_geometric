@@ -38,9 +38,9 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         for i in range(gpus_2_use_4_llm):
             max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
         kwargs["max_memory"] = max_mem_dict
-        kwargs["torch_dtype"] = autocast_dtype
         kwargs["low_cpu_mem_usage"] = True
     kwargs["device_map"] = "auto"
+    kwargs["torch_dtype"] = autocast_dtype
 
     return kwargs, cpu_offload
 
