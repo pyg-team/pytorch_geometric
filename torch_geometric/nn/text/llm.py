@@ -42,7 +42,7 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         kwargs["max_memory"] = max_mem_dict
         kwargs["torch_dtype"] = autocast_dtype
         kwargs["low_cpu_mem_usage"] = True
-    kwargs["device_map"] = "auto"
+        kwargs["device_map"] = "auto"
 
     return kwargs, cpu_offload
 
