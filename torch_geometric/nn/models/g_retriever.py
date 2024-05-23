@@ -95,7 +95,6 @@ class GRetriever(nn.Module):
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
         self.llm_device = self.llm_to_use.llm_device
-        self.exec_device = self.llm_to_use.exec_device
         self.tokenizer = self.llm_to_use.tokenizer
         print('Finished loading LLAMA!')
 
@@ -210,11 +209,10 @@ class GRetriever(nn.Module):
                 i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.exec_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.exec_device)
+                                    dim=0).to(self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.exec_device)
+            self.llm_device)
         print("before LLM mem profile=", torch.cuda.mem_get_info())
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
@@ -296,9 +294,8 @@ class GRetriever(nn.Module):
                                        ] * pad_length + batch_attention_mask[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.exec_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(
-            self.exec_device)
+                                    dim=0).to(self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
