@@ -88,7 +88,7 @@ class LLM(nn.Module):
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
-        kwargs, self.need_cpu = get_llm_kwargs(self.mem_needed)
+        kwargs, need_cpu = get_llm_kwargs(self.mem_needed)
         if not need_cpu:
             kwargs["torch_dtype"] = self.llm_dtype,
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
@@ -100,7 +100,7 @@ class LLM(nn.Module):
             self.huggingface_str, **kwargs)
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
-        if self.need_cpu:
+        if need_cpu:
             from contextlib import nullcontext
             self.autocast_context = nullcontext
         else:
