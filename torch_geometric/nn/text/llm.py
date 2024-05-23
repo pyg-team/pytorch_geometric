@@ -92,6 +92,8 @@ class LLM(nn.Module):
                                                        use_fast=False)
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
+        import inspect
+        print("inspect.getargspec(AutoModelForCausalLM.from_pretrained)=", inspect.getargspec(AutoModelForCausalLM.from_pretrained))
         self.llm = AutoModelForCausalLM.from_pretrained(
             self.huggingface_str, **kwargs)
 
@@ -99,9 +101,9 @@ class LLM(nn.Module):
             self.llm_device = torch.device("cpu")
             from contextlib import nullcontext
             self.autocast_context = nullcontext()
-            dist.init_process_group()
-            self.llm = FSDP.FullyShardedDataParallel(
-                self.llm, cpu_offload=FSDP.CPUOffload())
+            # dist.init_process_group()
+            # self.llm = FSDP.FullyShardedDataParallel(
+            #     self.llm, cpu_offload=FSDP.CPUOffload())
         else:
             self.llm_device = self.llm.device
             self.exec_device = self.llm_device
