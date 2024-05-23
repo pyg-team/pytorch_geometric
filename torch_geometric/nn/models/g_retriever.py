@@ -95,7 +95,6 @@ class GRetriever(nn.Module):
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
         self.llm_device = self.llm_to_use.llm_device
-        self.exec_device = self.llm_to_use.exec_device
         self.tokenizer = self.llm_to_use.tokenizer
         print('Finished loading LLAMA!')
 
@@ -106,23 +105,23 @@ class GRetriever(nn.Module):
             num_layers=num_gnn_layers,
             heads=num_gnn_heads,
             norm='batch_norm',
-        ).to(self.exec_device)
+        ).to(self.llm_device)
         # For the MLP Projection
         mlp_hidden_dim = gnn_out_channels
         self.projector = nn.Sequential(
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
             nn.Linear(mlp_hidden_dim, mlp_out_dim),
-        ).to(self.exec_device)
+        ).to(self.llm_device)
 
         self.word_embedding = self.llm_to_use.word_embedding
 
     def encode_graphs(self, node_feat, edge_index, edge_attr, batch):
-        x = node_feat.to(self.exec_device)
-        edge_index = edge_index.long().to(self.exec_device)
-        edge_attr = edge_attr.to(self.exec_device)
+        x = node_feat.to(self.llm_device)
+        edge_index = edge_index.long().to(self.llm_device)
+        edge_attr = edge_attr.to(self.llm_device)
         n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
-        batch = batch.to(self.exec_device)
+        batch = batch.to(self.llm_device)
         # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
@@ -187,7 +186,7 @@ class GRetriever(nn.Module):
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
+            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
                                       dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -201,8 +200,8 @@ class GRetriever(nn.Module):
         for i in range(batch_size):
             pad_length = max_length - batch_inputs_embeds[i].shape[0]
             batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad_length, 1).to(self.exec_device),
-                batch_inputs_embeds[i].to(self.exec_device)
+                pad_embeds.repeat(pad_length, 1).to(self.llm_device),
+                batch_inputs_embeds[i].to(self.llm_device)
             ])
             batch_attention_mask[i] = [0
                                        ] * pad_length + batch_attention_mask[i]
@@ -210,11 +209,11 @@ class GRetriever(nn.Module):
                 i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.exec_device)
+                                    dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(
-            self.exec_device)
+            self.llm_device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.exec_device)
+            self.llm_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
@@ -281,7 +280,7 @@ class GRetriever(nn.Module):
             if num_nodes_per_graph[i] != 0:
                 to_cat.append(graph_embeds[i].unsqueeze(0))
             to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.exec_device) for i in to_cat],
+            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
                                       dim=0)
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -296,9 +295,9 @@ class GRetriever(nn.Module):
                                        ] * pad_length + batch_attention_mask[i]
 
         inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.exec_device)
+                                    dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(
-            self.exec_device)
+            self.llm_device)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
