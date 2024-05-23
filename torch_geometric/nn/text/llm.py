@@ -46,7 +46,7 @@ def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
         kwargs["max_memory"] = max_mem_dict
         kwargs["low_cpu_mem_usage"] = True
         kwargs["device_map"] = "auto"
-    kwargs["torch_dtype"] = autocast_dtype
+        kwargs["torch_dtype"] = autocast_dtype
 
     return kwargs, pure_cpu
 
@@ -101,8 +101,8 @@ class LLM(nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
         if pure_cpu:
             self.llm_device = torch.device("cpu")
-            self.autocast_context = torch.amp.autocast(device_type="cpu",
-                                                       dtype=self.llm_dtype)
+            from contextlib import nullcontext
+            self.autocast_context = nullcontext()
         else:
             self.llm_device = self.llm.device
             self.autocast_context = torch.cuda.amp.autocast(
