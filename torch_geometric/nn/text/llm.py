@@ -16,7 +16,6 @@ padding_side = 'left'
 
 
 def get_llm_kwargs(mem_needed):
-    assert torch.cuda.is_available(), "GPU needed to run LLMs efficiently!"
     avail_gpus = torch.cuda.device_count()
     kwargs = {
         "revision": "main",
@@ -35,11 +34,19 @@ def get_llm_kwargs(mem_needed):
         if mem_total >= mem_needed:
             break
 
-    for i in range(gpus_2_use_4_llm):
-        max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
-    kwargs["max_memory"] = max_mem_dict
-    kwargs["device_map"] = "auto"
-    return kwargs
+    # If not enough VRAM, we use pure CPU since huggingface automatic
+    # cpu offloading only works for inference.
+    # See: https://discuss.huggingface.co/t/device-map-auto/49610/2
+    need_cpu = mem_total < mem_needed
+    if not need_cpu:
+        for i in range(gpus_2_use_4_llm):
+            max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
+        kwargs["max_memory"] = max_mem_dict
+        kwargs["device_map"] = "auto"
+        kwargs["low_cpu_mem_usage"] = True
+
+
+    return kwargs, need_cpu
 
 
 class LLM(nn.Module):
@@ -81,17 +88,23 @@ class LLM(nn.Module):
         self.mem_needed = 85 * num_params / 7
         self.llm_dtype = dtype
         print('Loading ' + str(self.printable_llm_name))
-        kwargs = get_llm_kwargs(self.mem_needed)
+        kwargs, self.need_cpu = get_llm_kwargs(self.mem_needed)
+        if not need_cpu:
+            kwargs["torch_dtype"] = self.llm_dtype,
         print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
         self.tokenizer = AutoTokenizer.from_pretrained(self.huggingface_str,
                                                        use_fast=False)
         self.tokenizer.pad_token_id = pad_token_id
         self.tokenizer.padding_side = padding_side
         self.llm = AutoModelForCausalLM.from_pretrained(
-            self.huggingface_str, torch_dtype=self.llm_dtype,
-            low_cpu_mem_usage=True, **kwargs)
+            self.huggingface_str, **kwargs)
         self.llm_device = self.llm.device
         self.word_embedding = self.llm.model.get_input_embeddings()
+        if self.need_cpu:
+            from contextlib import nullcontext
+            self.autocast_context = nullcontext
+        else:
+            self.autocast_context = torch.cuda.amp.autocast(dtype=self.llm_dtype)
 
     def encode_inputs(self, question, additional_context=None):
         batch_size = len(question)
@@ -172,7 +185,7 @@ class LLM(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with self.autocast_context:
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
@@ -226,7 +239,7 @@ class LLM(nn.Module):
                                     dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with self.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_out_tokens,

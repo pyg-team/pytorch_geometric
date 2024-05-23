@@ -211,7 +211,7 @@ class GRetriever(nn.Module):
         label_input_ids = torch.tensor(batch_label_input_ids).to(
             self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with self.llm_to_use.autocast_context:
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
@@ -293,7 +293,7 @@ class GRetriever(nn.Module):
                                     dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
 
-        with torch.cuda.amp.autocast(dtype=self.llm_dtype):
+        with self.llm_to_use.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_new_tokens,
