@@ -161,6 +161,14 @@ class WebQSPDataset(InMemoryDataset):
         root: str = "",
         force_reload: bool = False,
     ) -> None:
+        self._check_dependencies()
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
+        super().__init__(root, None, None, force_reload=force_reload)
+        self.load(self.processed_paths[0])
+    
+    def _check_dependencies(self) -> None:
+        missing_imports = False
         missing_str_list = []
         if not WITH_PCST:
             missing_str_list.append('pcst_fast')
@@ -172,10 +180,6 @@ class WebQSPDataset(InMemoryDataset):
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
-        super().__init__(root, None, None, force_reload=force_reload)
-        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
