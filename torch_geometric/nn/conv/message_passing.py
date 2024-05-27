@@ -930,7 +930,8 @@ class MessagePassing(torch.nn.Module):
         # Optimize `propagate()` via `*.jinja` templates:
         if not self.propagate.__module__.startswith(jinja_prefix):
             try:
-                if (self.__class__.__dict__.get('propagate')
+                if ('propagate' in self.__class__.__dict__
+                        and self.__class__.__dict__['propagate']
                         != MessagePassing.propagate):
                     raise ValueError("Cannot compile custom 'propagate' "
                                      "method")
@@ -968,7 +969,8 @@ class MessagePassing(torch.nn.Module):
         if (self.inspector.implements('edge_update')
                 and not self.edge_updater.__module__.startswith(jinja_prefix)):
             try:
-                if (self.__class__.__dict__.get('edge_updater')
+                if ('edge_updater' in self.__class__.__dict__
+                        and self.__class__.__dict__['edge_updater']
                         != MessagePassing.edge_updater):
                     raise ValueError("Cannot compile custom 'edge_updater' "
                                      "method")
