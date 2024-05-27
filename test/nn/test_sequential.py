@@ -17,12 +17,12 @@ from torch_geometric.nn import (
 from torch_geometric.typing import SparseTensor
 
 
-def test_sequential():
+def test_sequential_basic():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     batch = torch.zeros(4, dtype=torch.long)
 
-    model = Sequential('x, edge_index', [
+    model = Sequential('x: Tensor, edge_index: Tensor -> Tensor', [
         (GCNConv(16, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         (GCNConv(64, 64), 'x, edge_index -> x'),
@@ -46,12 +46,6 @@ def test_sequential():
     assert isinstance(model[2], GCNConv)
     assert isinstance(model[3], ReLU)
     assert isinstance(model[4], Linear)
-
-    assert model._module_descs[0] == 'x, edge_index -> x'
-    assert model._module_descs[1] == 'x -> x'
-    assert model._module_descs[2] == 'x, edge_index -> x'
-    assert model._module_descs[3] == 'x -> x'
-    assert model._module_descs[4] == 'x -> x'
 
     out = model(x, edge_index)
     assert out.size() == (4, 7)
