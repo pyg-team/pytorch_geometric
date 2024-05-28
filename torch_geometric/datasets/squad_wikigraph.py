@@ -66,7 +66,8 @@ def get_wiki_data(question: str, model: SentenceTransformer,
         seed_docs = next_hop_seed_docs
 
     # create node features based on docs
-    x = text2embedding(model, doc_contents, batch_size=8, truncate_long_strs=False)
+    x = text2embedding(model, doc_contents, batch_size=8,
+                       truncate_long_strs=False)
     # construct and return Data object
     return Data(x=x, edge_index=torch.tensor([src_n_ids, dst_n_ids]),
                 n_id=torch.tensor(list(title_2_node_id_map.values())),

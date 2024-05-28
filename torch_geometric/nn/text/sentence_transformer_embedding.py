@@ -54,13 +54,16 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def text2embedding(model: SentenceTransformer, text: List[str],
-                   batch_size: Optional[int] = 256,
-                   device: Optional[torch.device] = None,
-                   truncate_long_strs=True,
-                   ) -> torch.Tensor:
+def text2embedding(
+    model: SentenceTransformer,
+    text: List[str],
+    batch_size: Optional[int] = 256,
+    device: Optional[torch.device] = None,
+    truncate_long_strs=True,
+) -> torch.Tensor:
     try:
-        encoding = model.tokenizer(text, padding=True, truncation=truncate_long_strs,
+        encoding = model.tokenizer(text, padding=True,
+                                   truncation=truncate_long_strs,
                                    return_tensors="pt")
         data_len = encoding.input_ids.size(0)
         num_full_batches = data_len // batch_size
