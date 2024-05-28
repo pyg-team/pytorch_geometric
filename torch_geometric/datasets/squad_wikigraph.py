@@ -70,8 +70,8 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                        truncate_long_strs=False)
     # construct and return Data object
     data_obj = Data(x=x, edge_index=torch.tensor([src_n_ids, dst_n_ids]),
-                n_id=torch.tensor(list(title_2_node_id_map.values())),
-                question=question, label=label).to("cpu")
+                    n_id=torch.tensor(list(title_2_node_id_map.values())),
+                    question=question, label=label).to("cpu")
     if x.numel() == 0:
         print("data_obj=", data_obj)
     return data_obj
