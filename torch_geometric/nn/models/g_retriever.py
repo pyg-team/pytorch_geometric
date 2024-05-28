@@ -67,6 +67,7 @@ class GRetriever(nn.Module):
         elif 'gemma' in llm_to_use.lower():
             self.llm_to_use = LLM('gemma', llm_dtype, num_params=num_llm_params)
         else:
+            print("inside else for picking other model...")
             self.llm_to_use = LLM(llm_to_use, llm_dtype, num_params=num_llm_params)
         self.llm_generator = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
