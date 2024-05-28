@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 import re
+import warnings
 from typing import Callable, Dict, Optional, Tuple, Union
 
 import torch
@@ -207,6 +208,11 @@ class MoleculeNet(InMemoryDataset):
 
             data = self.from_smiles(smiles)
             data.y = y
+
+            if data.num_nodes == 0:
+                warnings.warn(f"Skipping molecule '{smiles}' since it "
+                              f"resulted in zero atoms")
+                continue
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

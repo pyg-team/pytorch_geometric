@@ -16,7 +16,7 @@ ______________________________________________________________________
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
-In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/compile.html) support, [`DataPipe`](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py) support, a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/compile.html) support, [`DataPipe`](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py) support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 
 **[Click here to join our Slack community!][slack-url]**
 
@@ -47,7 +47,6 @@ Whether you are a machine learning researcher or first-time user of machine lear
   Making modifications to existing models or creating new architectures is simple, thanks to its easy-to-use message passing API, and a variety of operators and utility functions.
 - **Large-scale real-world GNN models**:
   We focus on the need of GNN applications in challenging real-world scenarios, and support learning on diverse types of graphs, including but not limited to: scalable GNNs for graphs with millions of nodes; dynamic GNNs for node predictions over time; heterogeneous GNNs with multiple node types and edge types.
-- **GraphGym integration**: GraphGym lets users easily reproduce GNN experiments, is able to launch and analyze thousands of different GNN configurations, and is customizable by registering new modules to a GNN learning pipeline.
 
 ## Quick Tour for New Users
 
@@ -138,20 +137,6 @@ class EdgeConv(MessagePassing):
         edge_features = torch.cat([x_i, x_j - x_i], dim=-1)
         return self.mlp(edge_features)  # shape [num_edges, out_channels]
 ```
-
-### Manage experiments with GraphGym
-
-GraphGym allows you to manage and launch GNN experiments, using a highly modularized pipeline (see [here](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) for the accompanying tutorial).
-
-```
-git clone https://github.com/pyg-team/pytorch_geometric.git
-cd pytorch_geometric/graphgym
-bash run_single.sh  # run a single GNN experiment (node/edge/graph-level)
-bash run_batch.sh   # run a batch of GNN experiments, using differnt GNN designs/datasets/tasks
-```
-
-Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest), which contains additional tutorials on the essential functionalities of PyG, including data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
-For a quick start, check out our [examples](https://github.com/pyg-team/pytorch_geometric/tree/master/examples) in `examples/`.
 
 ## Architecture Overview
 
@@ -386,6 +371,22 @@ We recommend to start with a minimal installation, and install additional depend
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
+#### PyTorch 2.3
+
+To install the binaries for PyTorch 2.3.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` depending on your PyTorch installation.
+
+|             | `cpu` | `cu118` | `cu121` |
+| ----------- | ----- | ------- | ------- |
+| **Linux**   | ✅     | ✅       | ✅       |
+| **Windows** | ✅     | ✅       | ✅       |
+| **macOS**   | ✅     |         |         |
+
 #### PyTorch 2.2
 
 To install the binaries for PyTorch 2.2.0, simply run
@@ -402,23 +403,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` dependin
 | **Windows** | ✅     | ✅       | ✅       |
 | **macOS**   | ✅     |         |         |
 
-#### PyTorch 2.1
-
-To install the binaries for PyTorch 2.1.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` depending on your PyTorch installation.
-
-|             | `cpu` | `cu118` | `cu121` |
-| ----------- | ----- | ------- | ------- |
-| **Linux**   | ✅     | ✅       | ✅       |
-| **Windows** | ✅     | ✅       | ✅       |
-| **macOS**   | ✅     |         |         |
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, and PyTorch 2.0.0 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, and PyTorch 2.1.0/2.1.1/2.1.2 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 

@@ -5,7 +5,7 @@ import pytest
 import torch
 
 import torch_geometric
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Batch, Data, HeteroData
 from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.typing import SparseTensor
@@ -106,6 +106,31 @@ def test_batch_basic():
     assert data_list[2].num_nodes == 4
 
     torch_geometric.set_debug(True)
+
+
+def test_index():
+    index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
+    index2 = Index([0, 1, 1, 2, 2, 3], dim_size=4, is_sorted=True)
+
+    data1 = Data(index=index1, num_nodes=3)
+    data2 = Data(index=index2, num_nodes=4)
+
+    batch = Batch.from_data_list([data1, data2])
+
+    assert len(batch) == 2
+    assert batch.batch.equal(torch.tensor([0, 0, 0, 1, 1, 1, 1]))
+    assert batch.ptr.equal(torch.tensor([0, 3, 7]))
+    assert isinstance(batch.index, Index)
+    assert batch.index.equal(torch.tensor([0, 1, 1, 2, 3, 4, 4, 5, 5, 6]))
+    assert batch.index.dim_size == 7
+    assert batch.index.is_sorted
+
+    for i, index in enumerate([index1, index2]):
+        data = batch[i]
+        assert isinstance(data.index, Index)
+        assert data.index.equal(index)
+        assert data.index.dim_size == index.dim_size
+        assert data.index.is_sorted == index.is_sorted
 
 
 def test_edge_index():
@@ -560,7 +585,6 @@ def test_torch_sparse_batch(layout):
     assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
 
 
-@withPackage('torch>=1.13.0')
 def test_torch_nested_batch():
     from torch.nested import nested_tensor
 
