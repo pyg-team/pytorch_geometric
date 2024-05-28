@@ -24,7 +24,7 @@ except:  # noqa
 
 
 def get_wiki_data(question: str, model: SentenceTransformer,
-                  seed_nodes: int = 3, fan_out: int = 3, num_hops: int = 2,
+                  seed_nodes: int = 3, fan_out: int = 5, num_hops: int = 2,
                   label: Optional[str] = None) -> Data:
     """Performs neighborsampling on Wikipedia.
     """
@@ -70,13 +70,8 @@ def get_wiki_data(question: str, model: SentenceTransformer,
         # root nodes for the next hop
         seed_docs = next_hop_seed_docs
 
-    # put docs into model
-    embedded_docs = text2embedding(model, doc_contents, batch_size=8)
-    del doc_contents
-
-    # create node features, x
-    x = torch.cat(embedded_docs)
-
+    # create node features based on docs
+    x = text2embedding(model, doc_contents, batch_size=8)
     # construct and return Data object
     return Data(x=x, edge_index=torch.tensor([src_n_ids, dst_n_ids]),
                 n_id=torch.tensor(title_2_node_id_map.values()),
