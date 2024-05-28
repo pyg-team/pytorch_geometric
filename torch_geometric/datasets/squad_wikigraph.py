@@ -40,13 +40,9 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     # do neighborsampling and create graph
     src_n_ids = []
     dst_n_ids = []
-    print("Question=", question)
-    print("Seed docs=", seed_docs)
     for hop in range(num_hops):
-        print("hop=", hop)
         next_hop_seed_docs = []
         for src_doc in seed_docs:
-            print("sampling from:", src_doc.title)
             full_fan_links = list((src_doc.links).values())
             if len(full_fan_links) > 0:
                 randomly_chosen_neighbor_links = list(
@@ -55,7 +51,6 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                     wiki.page(link) for link in randomly_chosen_neighbor_links
                 ]
 
-                print('New seed docs=', new_seed_docs)
                 for dst_doc in new_seed_docs:
                     dst_doc_title = dst_doc.title
                     if dst_doc_title not in title_2_node_id_map:
