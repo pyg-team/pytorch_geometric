@@ -118,7 +118,7 @@ def inference_step(model, batch, model_save_name):
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None,
-          checkpointing=False):
+          checkpointing=False, tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -151,8 +151,16 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     # Step 2: Build Model
     if model is None:
-        model = GRetriever(gnn_hidden_channels=hidden_channels,
-                           num_gnn_layers=num_gnn_layers)
+        if tiny_llama:
+            model = GRetriever(
+                llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                num_llm_params=1,  # 1 Billion
+                gnn_hidden_channels=hidden_channels,
+                num_gnn_layers=num_gnn_layers,
+            )
+        else:
+            model = GRetriever(gnn_hidden_channels=hidden_channels,
+                               num_gnn_layers=num_gnn_layers)
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
     else:
@@ -408,6 +416,10 @@ if __name__ == "__main__":
         "--checkpointing", action="store_true",
         help="Use this flag to checkpoint each time a \
         new best val loss is achieved")
+    parser.add_argument(
+        "--tiny_llama", action="store_true",
+        help="This example uses LLAMA2 (7B) by default. \
+        This flag will run the example with TinyLLAMA (1B).")
 
     args = parser.parse_args()
     # check if saved model
@@ -424,7 +436,7 @@ if __name__ == "__main__":
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
             args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, checkpointing=args.checkpointing)
+            inference_step, checkpointing=args.checkpointing, tiny_llama=args.tiny_llama))
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
