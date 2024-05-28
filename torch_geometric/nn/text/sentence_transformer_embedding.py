@@ -23,13 +23,14 @@ class SentenceTransformer(torch.nn.Module):
             if autocast_dtype is None:
                 autocast_dtype = torch.bfloat16
             self.mem_needed = get_mem_needed_for_llm(num_params)
-            kwargs = get_llm_kwargs(self.mem_needed)
+            kwargs, _ = get_llm_kwargs(self.mem_needed)
             self.llm = AutoModel.from_pretrained(pretrained_repo,
-                                                 torch_dtype=autocast_dtype,
-                                                 low_cpu_mem_usage=True,
                                                  **kwargs)
             self.llm_device = self.llm.device
-
+        if autocast_dtype is None:
+            self.autocast_context = nullcontext()
+        else:
+            self.autocast_context = torch.cuda.amp.autocast(dtype=self.llm_dtype)
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
         data_type = token_embeddings.dtype
@@ -40,9 +41,7 @@ class SentenceTransformer(torch.nn.Module):
 
     def forward(self, input_ids: torch.Tensor,
                 att_mask: torch.Tensor) -> torch.Tensor:
-        with nullcontext(
-        ) if autocast_dtype is None else torch.cuda.amp.autocast(
-                dtype=self.llm_dtype):
+        with self.autocast_context:
             bert_out = self.llm(input_ids=input_ids, attention_mask=att_mask)
 
         # First element of model_output contains all token embeddings
