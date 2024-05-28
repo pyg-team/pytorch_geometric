@@ -46,13 +46,15 @@ def get_wiki_data(question: str, model: SentenceTransformer,
         print("hop=", hop)
         next_hop_seed_docs = []
         for src_doc in seed_docs:
+            print("sampling from:", src_doc.title)
             full_fan_links = list((src_doc.links).values())
+            print("available docs to neighborsample from=", full_fan_links)
             randomly_chosen_neighbor_links = list(
                 random.sample(full_fan_links, k=fan_out))
             new_seed_docs = [
                 wiki.page(link) for link in randomly_chosen_neighbor_links
             ]
-            print("sampling from:", src_doc.title)
+            
             print('New seed docs=', new_seed_docs)
             for dst_doc in new_seed_docs:
                 dst_doc_title = dst_doc.title
