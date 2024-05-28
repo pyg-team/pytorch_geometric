@@ -1,6 +1,8 @@
+import copy
 import inspect
 import os.path as osp
 import random
+import sys
 from typing import (
     Any,
     Callable,
@@ -80,12 +82,22 @@ class Sequential(torch.nn.Module):
             :obj:`OrderedDict` of modules (and function header definitions) can
             be passed.
     """
+    children: List[Child]
+
     def __init__(
         self,
         input_args: str,
         modules: List[Union[Tuple[Callable, str], Callable]],
     ) -> None:
         super().__init__()
+
+        caller_path = inspect.stack()[1].filename
+        self._caller_module = osp.splitext(osp.basename(caller_path))[0]
+
+        _globals = copy.copy(globals())
+        _globals.update(sys.modules['__main__'].__dict__)
+        if self._caller_module in sys.modules:
+            _globals.update(sys.modules[self._caller_module].__dict__)
 
         signature = input_args.split('->')
         if len(signature) == 1:
@@ -95,7 +107,7 @@ class Sequential(torch.nn.Module):
         elif len(signature) == 2:
             args_repr = signature[0]
             return_type_repr = signature[1].strip()
-            return_type = eval_type(return_type_repr, globals())
+            return_type = eval_type(return_type_repr, _globals)
         else:
             raise ValueError(f"Failed to parse arguments (got '{input_args}')")
 
@@ -114,7 +126,7 @@ class Sequential(torch.nn.Module):
                 name = signature[0].strip()
                 param_dict[name] = Parameter(
                     name=name,
-                    type=eval_type(signature[1].strip(), globals()),
+                    type=eval_type(signature[1].strip(), _globals),
                     type_repr=signature[1].strip(),
                     default=inspect._empty,
                 )
@@ -168,6 +180,8 @@ class Sequential(torch.nn.Module):
             setattr(self, name, module)
             self.children.append(child)
 
+        self._set_jittable_template()
+
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         for child in self.children:
@@ -180,6 +194,10 @@ class Sequential(torch.nn.Module):
 
     def __getitem__(self, idx: int) -> torch.nn.Module:
         return getattr(self, self.children[idx].name)
+
+    def __setstate__(self, data: Dict[str, Any]) -> None:
+        super().__setstate__(data)
+        self._set_jittable_template()
 
     def __repr__(self) -> str:
         module_descs = [
@@ -216,3 +234,40 @@ class Sequential(torch.nn.Module):
                     value_dict[name] = out
 
         return outs
+
+    # TorchScript Support #####################################################
+
+    def _set_jittable_template(self, raise_on_error: bool = False) -> None:
+        try:  # Optimize `forward()` via `*.jinja` templates:
+            if ('forward' in self.__class__.__dict__ and
+                    self.__class__.__dict__['forward'] != Sequential.forward):
+                raise ValueError("Cannot compile custom 'forward' method")
+
+            root_dir = osp.dirname(osp.realpath(__file__))
+            uid = '%06x' % random.randrange(16**6)
+            jinja_prefix = f'{self.__module__}_{self.__class__.__name__}_{uid}'
+            module = module_from_template(
+                module_name=jinja_prefix,
+                template_path=osp.join(root_dir, 'sequential.jinja'),
+                tmp_dirname='sequential',
+                # Keyword arguments:
+                modules=[self._caller_module],
+                signature=self.signature,
+                children=self.children,
+            )
+
+            self.forward = module.forward.__get__(self)
+
+            # NOTE We override `forward` on the class level here in order to
+            # support `torch.jit.trace` - this is generally dangerous to do,
+            # and limits `torch.jit.trace` to a single `Sequential` module:
+            self.__class__.forward = module.forward
+        except Exception as e:  # pragma: no cover
+            if raise_on_error:
+                raise e
+
+    def __prepare_scriptable__(self) -> 'Sequential':
+        # Prevent type sharing when scripting `Sequential` modules:
+        type_store = torch.jit._recursive.concrete_type_store.type_store
+        type_store.pop(self.__class__, None)
+        return self
