@@ -44,6 +44,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     print("Seed docs=", seed_docs)
     for hop in range(num_hops):
         print("hop=", hop)
+        next_hop_seed_docs
         for src_doc in seed_docs:
             full_fan_links = list((src_doc.links).values())
             randomly_chosen_neighbor_links = list(
@@ -51,6 +52,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
             new_seed_docs = [
                 wiki.page(link) for link in randomly_chosen_neighbor_links
             ]
+            print("sampling from:", src_doc.title)
             print('New seed docs=', new_seed_docs)
             for dst_doc in new_seed_docs:
                 dst_doc_title = dst_doc.title
@@ -61,9 +63,10 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                     doc_contents.append(dst_doc.summary)
                 src_n_ids.append(title_2_node_id_map[src_doc.title])
                 dst_n_ids.append(title_2_node_id_map[dst_doc_title])
+                next_hop_seed_docs.append(dst_doc)
 
         # root nodes for the next hop
-        seed_docs = new_seed_docs
+        seed_docs = next_hop_seed_docs
 
     # put docs into model
     embedded_docs = text2embedding(model, doc_contents, batch_size=8)
