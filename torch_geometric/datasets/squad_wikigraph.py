@@ -42,9 +42,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     dst_n_ids = []
     for _ in range(num_hops):
         for src_doc in seed_docs:
-            full_fan_links = src_doc.links
-            print("full_fan_links=", full_fan_links)
-            print("type(full_fan_links)=", type(full_fan_links))
+            full_fan_links = list((src_doc.links).values())
             randomly_chosen_neighbor_links = list(
                 random.sample(full_fan_links, k=fan_out))
             new_seed_docs = [
