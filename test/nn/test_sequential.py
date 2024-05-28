@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 import torch
 import torch.fx
-from torch import Tensor  # noqa
 from torch.nn import Dropout, Linear, ReLU
 
 import torch_geometric.typing
@@ -82,7 +81,6 @@ def test_sequential_jit():
     torch.jit.script(model)(x, edge_index)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-
         adj_t = SparseTensor.from_edge_index(edge_index).t()
 
         model = Sequential('x: Tensor, edge_index: SparseTensor', [
