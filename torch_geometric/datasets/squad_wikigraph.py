@@ -26,7 +26,11 @@ except:  # noqa
 def get_wiki_data(question: str, model: SentenceTransformer,
                   seed_nodes: int = 3, fan_out: int = 5, num_hops: int = 2,
                   label: Optional[str] = None) -> Data:
-    """Performs neighborsampling on Wikipedia.
+    """
+    Performs neighborsampling on Wikipedia.
+    For questions where wikipedia search fails, this returns an PyG Data object
+    with 0 element tensor for node features, edge_indices, etc.
+    This case represents a database retrieval failure.
     """
     search_list = wiki_search(question)
     seed_doc_names = search_list[:seed_nodes]
