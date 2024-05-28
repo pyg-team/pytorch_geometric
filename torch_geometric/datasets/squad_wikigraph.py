@@ -48,6 +48,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
         for src_doc in seed_docs:
             print("sampling from:", src_doc.title)
             full_fan_links = list((src_doc.links).values())
+<<<<<<< HEAD
             if len(full_fan_links) > 0:
                 randomly_chosen_neighbor_links = list(
                     random.sample(full_fan_links, k=fan_out))
@@ -66,6 +67,26 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                     src_n_ids.append(title_2_node_id_map[src_doc.title])
                     dst_n_ids.append(title_2_node_id_map[dst_doc_title])
                     next_hop_seed_docs.append(dst_doc)
+=======
+            print("available docs to neighborsample from=", full_fan_links)
+            randomly_chosen_neighbor_links = list(
+                random.sample(full_fan_links, k=fan_out))
+            new_seed_docs = [
+                wiki.page(link) for link in randomly_chosen_neighbor_links
+            ]
+
+            print('New seed docs=', new_seed_docs)
+            for dst_doc in new_seed_docs:
+                dst_doc_title = dst_doc.title
+                if dst_doc_title not in title_2_node_id_map:
+                    # add new node to graph
+                    title_2_node_id_map[dst_doc_title] = len(
+                        title_2_node_id_map)
+                    doc_contents.append(dst_doc.summary)
+                src_n_ids.append(title_2_node_id_map[src_doc.title])
+                dst_n_ids.append(title_2_node_id_map[dst_doc_title])
+                next_hop_seed_docs.append(dst_doc)
+>>>>>>> 1aa3cdac2af4270d955dd5df0ebf288daba189ab
 
         # root nodes for the next hop
         seed_docs = next_hop_seed_docs
