@@ -4,7 +4,7 @@ from typing import List, Optional
 import torch
 import torch.nn.functional as F
 
-from .llm import get_llm_kwargs, get_mem_needed_for_llm
+from .llm import get_llm_kwargs, get_mem_needed_for_llm, pad_token_id
 
 
 class SentenceTransformer(torch.nn.Module):
@@ -16,7 +16,8 @@ class SentenceTransformer(torch.nn.Module):
         print(f"inherit model weights from {pretrained_repo}")
         from transformers import AutoModel, AutoTokenizer
         self.autocast_dtype = autocast_dtype
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
+        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo, use_fast=True)
+        self.tokenizer.pad_token_id = pad_token_id
         if device is not None:
             self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
         else:
@@ -31,6 +32,7 @@ class SentenceTransformer(torch.nn.Module):
         else:
             self.autocast_context = torch.cuda.amp.autocast(
                 dtype=self.autocast_dtype)
+
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
