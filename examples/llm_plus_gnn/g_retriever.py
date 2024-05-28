@@ -117,7 +117,8 @@ def inference_step(model, batch, model_save_name):
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, model=None, dataset=None, checkpointing=False, tiny_llama=False):
+          eval_batch_size, lr, model=None, dataset=None, checkpointing=False,
+          tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -152,7 +153,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     if model is None:
         if tiny_llama:
             model = GRetriever(llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-                                gnn_hidden_channels=hidden_channels,
+                               gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers, mlp_out_dim=2048)
         else:
             model = GRetriever(gnn_hidden_channels=hidden_channels,
