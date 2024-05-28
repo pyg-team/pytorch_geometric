@@ -437,7 +437,8 @@ if __name__ == "__main__":
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
             args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, checkpointing=args.checkpointing, tiny_llama=args.tiny_llama)
+            inference_step, checkpointing=args.checkpointing,
+            tiny_llama=args.tiny_llama)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         gc.collect()
