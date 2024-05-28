@@ -52,12 +52,12 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                 dst_doc_title = dst_doc.title
                 if dst_doc_title not in title_2_node_id_map:
                     # add new node to graph
-                    title_2_node_id_map[dst_doc_name] = len(
+                    title_2_node_id_map[dst_doc_title] = len(
                         title_2_node_id_map)
                     doc_contents.append(dst_doc.summary)
                 next_hops_seed_docs.append(doc)
                 src_n_ids.append(title_2_node_id_map[src_doc.title])
-                dst_n_ids.append(title_2_node_id_map[dst_doc.title])
+                dst_n_ids.append(title_2_node_id_map[dst_doc_title])
 
         # root nodes for the next hop
         seed_docs = new_seed_docs
