@@ -29,7 +29,9 @@ class SentenceTransformer(torch.nn.Module):
         if self.autocast_dtype is None:
             self.autocast_context = nullcontext()
         else:
-            self.autocast_context = torch.cuda.amp.autocast(dtype=self.autocast_dtype)
+            self.autocast_context = torch.cuda.amp.autocast(
+                dtype=self.autocast_dtype)
+
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
         data_type = token_embeddings.dtype
