@@ -40,7 +40,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     # do neighborsampling and create graph
     src_n_ids = []
     dst_n_ids = []
-    for hop in num_hops:
+    for _ in range(num_hops):
         for src_doc in seed_docs:
             full_fan_links = src_doc.links
             randomly_chosen_neighbor_links = list(
