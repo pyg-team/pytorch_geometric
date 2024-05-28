@@ -58,6 +58,7 @@ def text2embedding(model: SentenceTransformer, text: List[str],
                    batch_size: Optional[int] = 256,
                    device: Optional[torch.device] = None) -> torch.Tensor:
     # try:
+    print("text=", text)
     encoding = model.tokenizer(text, padding=True, truncation=True,
                                return_tensors="pt")
     data_len = encoding.input_ids.size(0)
