@@ -153,9 +153,9 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     if model is None:
         if tiny_llama:
             model = GRetriever(llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                               num_llm_params=1, # 1 Billion
                                gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers,)
-                               #mlp_out_dim=2048)
         else:
             model = GRetriever(gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers)
