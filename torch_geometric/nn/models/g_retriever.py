@@ -48,7 +48,7 @@ class GRetriever(nn.Module):
     """
     def __init__(
         self,
-        llm_to_use='llama2',
+        llm_to_use='llama2-7b',
         llm_use_lora: bool = False,
         llm_dtype=torch.bfloat16,
         num_llm_params: int = 7,
@@ -62,8 +62,8 @@ class GRetriever(nn.Module):
         mlp_out_dim: int = 4096,
     ) -> None:
         super().__init__()
-        if 'llama' in llm_to_use.lower():
-            self.llm_to_use = LLM('llama2', llm_dtype,
+        if 'llama2-7b' in llm_to_use.lower():
+            self.llm_to_use = LLM('llama2-7b', llm_dtype,
                                   num_params=num_llm_params)
         elif 'gemma' in llm_to_use.lower():
             self.llm_to_use = LLM('gemma', llm_dtype,
@@ -100,8 +100,6 @@ class GRetriever(nn.Module):
             self.llm_generator = get_peft_model(self.llm_generator, config)
         self.llm_device = self.llm_to_use.llm_device
         self.tokenizer = self.llm_to_use.tokenizer
-        print('Finished loading LLAMA!')
-
         self.graph_encoder = gnn_to_use(
             in_channels=gnn_in_channels,
             out_channels=gnn_out_channels,
