@@ -44,7 +44,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     print("Seed docs=", seed_docs)
     for hop in range(num_hops):
         print("hop=", hop)
-        next_hop_seed_docs
+        next_hop_seed_docs = []
         for src_doc in seed_docs:
             full_fan_links = list((src_doc.links).values())
             randomly_chosen_neighbor_links = list(
