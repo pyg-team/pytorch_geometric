@@ -1,11 +1,12 @@
 import pytest
 
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.testing import onlyFullTest, withCUDA
+from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
 
 @withCUDA
 @onlyFullTest
+@withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 def test_sentence_transformer(batch_size, device):
     model = SentenceTransformer(model_name='prajjwal1/bert-tiny').to(device)

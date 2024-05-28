@@ -41,8 +41,7 @@ class GATv2Conv(MessagePassing):
     In contrast, in :class:`GATv2`, every node can attend to any other node.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)}
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup \{ i \}}
         \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
