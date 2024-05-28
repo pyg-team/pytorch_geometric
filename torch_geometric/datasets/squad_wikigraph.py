@@ -54,7 +54,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
             new_seed_docs = [
                 wiki.page(link) for link in randomly_chosen_neighbor_links
             ]
-            
+
             print('New seed docs=', new_seed_docs)
             for dst_doc in new_seed_docs:
                 dst_doc_title = dst_doc.title
