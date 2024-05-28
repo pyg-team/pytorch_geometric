@@ -2,8 +2,6 @@ from typing import List, Optional
 
 import torch
 import torch.nn as nn
-from torch import distributed as dist
-from torch.distributed import fsdp as FSDP
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'

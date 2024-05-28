@@ -1,9 +1,10 @@
-"""This example implements G-retriever using PyG.
+"""
+This example implements G-retriever using PyG.
 Original Paper: https://arxiv.org/abs/2402.07630
 “G-Retriever significantly reduces hallucinations
 by 54% compared to the [LLM] baseline“.
-requirements on top of basic PyG:
-pip install datasets transformers pcst_fast sentencepiece tqdm pandas accelerate
+Requirements on top of basic PyG:
+`pip install datasets transformers pcst_fast sentencepiece tqdm accelerate`.
 """
 import argparse
 import gc
