@@ -74,7 +74,7 @@ def get_wiki_data(question: str, model: SentenceTransformer,
     x = text2embedding(model, doc_contents, batch_size=8)
     # construct and return Data object
     return Data(x=x, edge_index=torch.tensor([src_n_ids, dst_n_ids]),
-                n_id=torch.tensor(title_2_node_id_map.values()),
+                n_id=torch.tensor(list(title_2_node_id_map.values())),
                 question=question, label=label).to("cpu")
 
 
