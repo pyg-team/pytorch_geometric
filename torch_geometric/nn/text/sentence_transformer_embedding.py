@@ -24,13 +24,14 @@ class SentenceTransformer(torch.nn.Module):
                 autocast_dtype = torch.bfloat16
             self.mem_needed = get_mem_needed_for_llm(num_params)
             kwargs, _ = get_llm_kwargs(self.mem_needed)
-            self.llm = AutoModel.from_pretrained(pretrained_repo,
-                                                 **kwargs)
+            self.llm = AutoModel.from_pretrained(pretrained_repo, **kwargs)
             self.llm_device = self.llm.device
         if autocast_dtype is None:
             self.autocast_context = nullcontext()
         else:
-            self.autocast_context = torch.cuda.amp.autocast(dtype=self.llm_dtype)
+            self.autocast_context = torch.cuda.amp.autocast(
+                dtype=self.llm_dtype)
+
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
         data_type = token_embeddings.dtype
