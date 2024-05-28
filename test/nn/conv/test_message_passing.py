@@ -9,7 +9,7 @@ from torch.nn import Linear
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
-from torch_geometric.nn import MessagePassing, aggr
+from torch_geometric.nn import GATConv, MessagePassing, aggr
 from torch_geometric.typing import (
     Adj,
     OptPairTensor,
@@ -729,3 +729,15 @@ def test_traceable_my_conv_with_self_loops(num_nodes):
 
     assert torch.allclose(out, traced_out)
     assert torch.allclose(out, scripted_out)
+
+
+def test_pickle(tmp_path):
+    path = osp.join(tmp_path, 'model.pt')
+    model = GATConv(16, 32)
+    torch.save(model, path)
+
+    GATConv.propagate = GATConv._orig_propagate
+    GATConv.edge_updater = GATConv._orig_edge_updater
+
+    model = torch.load(path)
+    torch.jit.script(model)

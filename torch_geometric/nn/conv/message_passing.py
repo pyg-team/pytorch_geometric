@@ -167,71 +167,8 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-        root_dir = osp.dirname(osp.realpath(__file__))
-        jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
-        # Optimize `propagate()` via `*.jinja` templates:
-        if not self.propagate.__module__.startswith(jinja_prefix):
-            try:
-                if 'propagate' in self.__class__.__dict__:
-                    raise ValueError("Cannot compile custom 'propagate' "
-                                     "method")
-
-                module = module_from_template(
-                    module_name=f'{jinja_prefix}_propagate',
-                    template_path=osp.join(root_dir, 'propagate.jinja'),
-                    tmp_dirname='message_passing',
-                    # Keyword arguments:
-                    modules=self.inspector._modules,
-                    collect_name='collect',
-                    signature=self._get_propagate_signature(),
-                    collect_param_dict=self.inspector.get_flat_param_dict(
-                        ['message', 'aggregate', 'update']),
-                    message_args=self.inspector.get_param_names('message'),
-                    aggregate_args=self.inspector.get_param_names('aggregate'),
-                    message_and_aggregate_args=self.inspector.get_param_names(
-                        'message_and_aggregate'),
-                    update_args=self.inspector.get_param_names('update'),
-                    fuse=self.fuse,
-                )
-
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = module.propagate
-
-                self.__class__.propagate = module.propagate
-                self.__class__.collect = module.collect
-            except Exception:  # pragma: no cover
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = self.__class__.propagate
-
-        # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
-        if (self.inspector.implements('edge_update')
-                and not self.edge_updater.__module__.startswith(jinja_prefix)):
-            try:
-                if 'edge_updater' in self.__class__.__dict__:
-                    raise ValueError("Cannot compile custom 'edge_updater' "
-                                     "method")
-
-                module = module_from_template(
-                    module_name=f'{jinja_prefix}_edge_updater',
-                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
-                    tmp_dirname='message_passing',
-                    # Keyword arguments:
-                    modules=self.inspector._modules,
-                    collect_name='edge_collect',
-                    signature=self._get_edge_updater_signature(),
-                    collect_param_dict=self.inspector.get_param_dict(
-                        'edge_update'),
-                )
-
-                self.__class__._orig_edge_updater = self.__class__.edge_updater
-                self.__class__._jinja_edge_updater = module.edge_updater
-
-                self.__class__.edge_updater = module.edge_updater
-                self.__class__.edge_collect = module.edge_collect
-            except Exception:  # pragma: no cover
-                self.__class__._orig_edge_updater = self.__class__.edge_updater
-                self.__class__._jinja_edge_updater = (
-                    self.__class__.edge_updater)
+        # Set jittable `propagate` and `edge_updater` function templates:
+        self._set_jittable_templates()
 
         # Explainability:
         self._explain: Optional[bool] = None
@@ -247,6 +184,12 @@ class MessagePassing(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         if self.aggr_module is not None:
             self.aggr_module.reset_parameters()
+
+    def __setstate__(self, data: Dict[str, Any]) -> None:
+        self.inspector = data['inspector']
+        self.fuse = data['fuse']
+        self._set_jittable_templates()
+        super().__setstate__(data)
 
     def __repr__(self) -> str:
         channels_repr = ''
@@ -980,6 +923,81 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     # TorchScript Support #####################################################
+
+    def _set_jittable_templates(self, raise_on_error: bool = False) -> None:
+        root_dir = osp.dirname(osp.realpath(__file__))
+        jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
+        # Optimize `propagate()` via `*.jinja` templates:
+        if not self.propagate.__module__.startswith(jinja_prefix):
+            try:
+                if ('propagate' in self.__class__.__dict__
+                        and self.__class__.__dict__['propagate']
+                        != MessagePassing.propagate):
+                    raise ValueError("Cannot compile custom 'propagate' "
+                                     "method")
+
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_propagate',
+                    template_path=osp.join(root_dir, 'propagate.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='collect',
+                    signature=self._get_propagate_signature(),
+                    collect_param_dict=self.inspector.get_flat_param_dict(
+                        ['message', 'aggregate', 'update']),
+                    message_args=self.inspector.get_param_names('message'),
+                    aggregate_args=self.inspector.get_param_names('aggregate'),
+                    message_and_aggregate_args=self.inspector.get_param_names(
+                        'message_and_aggregate'),
+                    update_args=self.inspector.get_param_names('update'),
+                    fuse=self.fuse,
+                )
+
+                self.__class__._orig_propagate = self.__class__.propagate
+                self.__class__._jinja_propagate = module.propagate
+
+                self.__class__.propagate = module.propagate
+                self.__class__.collect = module.collect
+            except Exception as e:  # pragma: no cover
+                if raise_on_error:
+                    raise e
+                self.__class__._orig_propagate = self.__class__.propagate
+                self.__class__._jinja_propagate = self.__class__.propagate
+
+        # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
+        if (self.inspector.implements('edge_update')
+                and not self.edge_updater.__module__.startswith(jinja_prefix)):
+            try:
+                if ('edge_updater' in self.__class__.__dict__
+                        and self.__class__.__dict__['edge_updater']
+                        != MessagePassing.edge_updater):
+                    raise ValueError("Cannot compile custom 'edge_updater' "
+                                     "method")
+
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_edge_updater',
+                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='edge_collect',
+                    signature=self._get_edge_updater_signature(),
+                    collect_param_dict=self.inspector.get_param_dict(
+                        'edge_update'),
+                )
+
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = module.edge_updater
+
+                self.__class__.edge_updater = module.edge_updater
+                self.__class__.edge_collect = module.edge_collect
+            except Exception as e:  # pragma: no cover
+                if raise_on_error:
+                    raise e
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = (
+                    self.__class__.edge_updater)
 
     def _get_propagate_signature(self) -> Signature:
         param_dict = self.inspector.get_params_from_method_call(
