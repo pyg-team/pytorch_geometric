@@ -77,11 +77,11 @@ class LLM(nn.Module):
         automatically allocate the number of gpus needed, given the
         available GPU memory of your GPUs (default :obj:`7`)
     """
-    def __init__(self, model_name: str = "llama2", dtype=torch.bfloat16,
+    def __init__(self, model_name: str = "llama2-7b", dtype=torch.bfloat16,
                  num_params: int = 7):
         super().__init__()
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        if model_name == "llama2":
+        if model_name == "llama2-7b":
             self.printable_llm_name = "LLAMA2"
             self.huggingface_str = llama2_str_name
         elif model_name == "gemma":
