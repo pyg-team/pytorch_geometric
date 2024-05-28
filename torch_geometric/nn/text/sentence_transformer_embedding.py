@@ -24,8 +24,7 @@ class SentenceTransformer(torch.nn.Module):
                 self.autocast_dtype = torch.bfloat16
             self.mem_needed = get_mem_needed_for_llm(num_params)
             kwargs, _ = get_llm_kwargs(self.mem_needed)
-            self.llm = AutoModel.from_pretrained(pretrained_repo,
-                                                 **kwargs)
+            self.llm = AutoModel.from_pretrained(pretrained_repo, **kwargs)
             self.llm_device = self.llm.device
         if self.autocast_dtype is None:
             self.autocast_context = nullcontext()
