@@ -55,7 +55,6 @@ def get_wiki_data(question: str, model: SentenceTransformer,
                     title_2_node_id_map[dst_doc_title] = len(
                         title_2_node_id_map)
                     doc_contents.append(dst_doc.summary)
-                next_hops_seed_docs.append(doc)
                 src_n_ids.append(title_2_node_id_map[src_doc.title])
                 dst_n_ids.append(title_2_node_id_map[dst_doc_title])
 
