@@ -21,6 +21,7 @@ class SentenceTransformer(torch.nn.Module):
         self.tokenizer.pad_token_id = pad_token_id
         if device is not None:
             self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
+            self.llm_device = device
         else:
             if self.autocast_dtype is None:
                 self.autocast_dtype = torch.bfloat16
