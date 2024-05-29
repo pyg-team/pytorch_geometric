@@ -26,7 +26,8 @@ except:  # noqa
 def get_wiki_data(question: str, model: SentenceTransformer,
                   seed_nodes: int = 3, fan_out: int = 5, num_hops: int = 2,
                   label: Optional[str] = None) -> Data:
-    """Performs neighborsampling on Wikipedia.
+    """
+    Performs neighborsampling on Wikipedia.
     For questions where wikipedia search fails, this returns an PyG Data object
     with 0 element tensor for node features, edge_indices, etc.
     This case represents a database retrieval failure.
@@ -102,8 +103,6 @@ class SQUAD_WikiGraph(InMemoryDataset):
             raise ImportError("Please pip install datasets")
         if not WITH_WIKI:
             raise ImportError("Please pip install wikipedia wikipedia-api")
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
@@ -138,8 +137,8 @@ class SQUAD_WikiGraph(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.model = SentenceTransformer(
-            "sentence-transformers/all-roberta-large-v1", device=self.device)
+        self.model = SentenceTransformer(llama2_str_name,
+                                         autocast_dtype=torch.bfloat16)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_data_objs = []

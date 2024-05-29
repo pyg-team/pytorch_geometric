@@ -62,8 +62,7 @@ def text2embedding(
     device: Optional[torch.device] = None,
     truncate_long_strs=True,
 ) -> torch.Tensor:
-    # try:
-    if True:
+    try:
         encoding = model.tokenizer(text, padding=True,
                                    truncation=truncate_long_strs,
                                    return_tensors="pt")
@@ -94,8 +93,8 @@ def text2embedding(
                 all_embeddings_list.append(embeddings)
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
-    # except:  # noqa
-    #     print("text embedding failed, returning torch.zeros((0, 1024))...")
-    #     return torch.zeros((0, 1024))
+    except:  # noqa
+        print("text embedding failed, returning torch.zeros((0, 1024))...")
+        return torch.zeros((0, 1024))
 
     return all_embeddings
