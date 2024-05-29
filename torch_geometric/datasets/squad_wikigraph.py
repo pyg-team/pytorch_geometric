@@ -102,9 +102,9 @@ class SQUAD_WikiGraph(InMemoryDataset):
             raise ImportError("Please pip install datasets")
         if not WITH_WIKI:
             raise ImportError("Please pip install wikipedia wikipedia-api")
-        super().__init__(root, None, None, force_reload=force_reload)
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
+        super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
