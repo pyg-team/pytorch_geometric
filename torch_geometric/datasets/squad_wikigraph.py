@@ -104,6 +104,8 @@ class SQUAD_WikiGraph(InMemoryDataset):
         if not WITH_WIKI:
             raise ImportError("Please pip install wikipedia wikipedia-api")
         super().__init__(root, None, None, force_reload=force_reload)
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.load(self.processed_paths[0])
 
     @property
@@ -137,8 +139,7 @@ class SQUAD_WikiGraph(InMemoryDataset):
         }
 
     def process(self) -> None:
-        self.model = SentenceTransformer(llama2_str_name,
-                                         autocast_dtype=torch.bfloat16)
+        self.model = SentenceTransformer("sentence-transformers/all-roberta-large-v1", device=self.device)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_data_objs = []
