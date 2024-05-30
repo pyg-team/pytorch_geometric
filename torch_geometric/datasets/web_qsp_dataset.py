@@ -7,7 +7,7 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
-from torch_geometric.nn.text import SentenceTransformer, text2embedding
+from torch_geometric.nn.nlp import SentenceTransformer
 
 try:
     from pandas import DataFrame
@@ -199,14 +199,13 @@ class WebQSPDataset(InMemoryDataset):
         }
 
     def process(self) -> None:
-        pretrained_repo = "sentence-transformers/all-roberta-large-v1"
-        self.model = SentenceTransformer(pretrained_repo, device=self.device)
+        self.model = SentenceTransformer().to(self.device)
         self.model.eval()
         self.questions = [i["question"] for i in self.raw_dataset]
         list_of_graphs = []
         # encode questions
         print("Encoding questions...")
-        q_embs = text2embedding(self.model, self.questions, device=self.device)
+        q_embs = self.model.encode(self.questions, batch_size=256)
         print("Encoding graphs...")
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
@@ -232,11 +231,10 @@ class WebQSPDataset(InMemoryDataset):
             edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
             # encode nodes
             nodes.node_attr = nodes.node_attr.fillna("")
-            x = text2embedding(self.model, nodes.node_attr.tolist(),
-                               device=self.device)
+            x = self.model.encode(nodes.node_attr.tolist(), batch_size=256)
             # encode edges
-            edge_attr = text2embedding(self.model, edges.edge_attr.tolist(),
-                                       device=self.device)
+            edge_attr = self.model.encode(edges.edge_attr.tolist(),
+                                          batch_size=256)
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
             question = f"Question: {data_i['question']}\nAnswer: "

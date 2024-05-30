@@ -21,7 +21,7 @@ from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
-from torch_geometric.nn.text import LLM
+from torch_geometric.nn.nlp import LLM
 
 
 def detect_hallucinate(pred, label):
@@ -135,6 +135,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     seed_everything(42)
     if dataset is None:
         dataset = WebQSPDataset()
+        gc.collect()
     idx_split = dataset.split_idxs
 
     # Step 1: Build Node Classification Dataset
@@ -151,6 +152,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     # Step 2: Build Model
     if model is None:
+        gc.collect()
         if tiny_llama:
             model = GRetriever(
                 llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
@@ -296,7 +298,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 pure_llm_pred = None
                 pure_llm_hallucinates = False
             else:
-                # GNN+LLM only using 32 tokens to answer, give untrained LLM more
+                # GNN+LLM only using 32 tokens to answer.
+                # Allow more output tokens for untrained LLM
                 pure_llm_out = pure_llm.inference(batch.question, batch.desc,
                                                   max_out_tokens=256)
                 pure_llm_pred = pure_llm_out['pred'][0]

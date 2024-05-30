@@ -6,9 +6,17 @@ from torch import Tensor
 
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, model_name: str) -> None:
-        super().__init__()
+    r"""Embeds text as a vector using Huggingface transformers.
 
+    model_name (str): A string representing the huggingface model to use.
+            (default: :obj:`"sentence-transformers/all-roberta-large-v1"`)
+    """
+    def __init__(
+        self,
+        model_name: Optional[
+            str] = "sentence-transformers/all-roberta-large-v1",
+    ) -> None:
+        super().__init__()
         self.model_name = model_name
 
         from transformers import AutoModel, AutoTokenizer
@@ -39,8 +47,9 @@ class SentenceTransformer(torch.nn.Module):
         batch_size: Optional[int] = None,
         output_device: Optional[torch.device] = None,
     ) -> Tensor:
+        if len(text) == 0:
+            return torch.zeros((0, 1024))
         batch_size = len(text) if batch_size is None else batch_size
-
         embs: List[Tensor] = []
         for start in range(0, len(text), batch_size):
             token = self.tokenizer(

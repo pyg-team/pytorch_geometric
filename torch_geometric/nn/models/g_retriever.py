@@ -4,10 +4,10 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.text import LLM
-from torch_geometric.nn.text.llm import (
+from torch_geometric.nn.nlp.llm import (
     EOS,
     IGNORE_INDEX,
+    LLM,
     max_new_tokens,
     max_txt_len,
 )
