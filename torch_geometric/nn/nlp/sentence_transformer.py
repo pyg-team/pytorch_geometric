@@ -6,9 +6,21 @@ from torch import Tensor
 
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, model_name: str) -> None:
-        super().__init__()
+    r"""Embeds text as a vector using Huggingface transformers.
 
+    model_name (str): A string representing the huggingface model you
+        want to use. This module has been tested for
+        `sentence-transformers/all-roberta-large-v1`.
+        Other huggingface transformer models should work if you pass the
+        correct name, see huggingface.co for details. If any issues occur
+        please file an issue on
+        https://github.com/pyg-team/pytorch_geometric
+        and assign to puririshi98.
+    """
+    def __init__(self,
+        model_name: Optional[str] = "sentence-transformers/all-roberta-large-v1", # noqa
+        ) -> None:
+        super().__init__()
         self.model_name = model_name
 
         from transformers import AutoModel, AutoTokenizer
