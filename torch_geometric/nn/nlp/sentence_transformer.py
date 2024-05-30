@@ -14,7 +14,7 @@ class SentenceTransformer(torch.nn.Module):
     def __init__(
             self,
             model_name: Optional[
-                str] = "sentence-transformers/all-roberta-large-v1",  # noqa
+                str] = "sentence-transformers/all-roberta-large-v1",
     ) -> None:
         super().__init__()
         self.model_name = model_name
