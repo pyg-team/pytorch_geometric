@@ -17,9 +17,11 @@ class SentenceTransformer(torch.nn.Module):
         https://github.com/pyg-team/pytorch_geometric
         and assign to puririshi98.
     """
-    def __init__(self,
-        model_name: Optional[str] = "sentence-transformers/all-roberta-large-v1", # noqa
-        ) -> None:
+    def __init__(
+            self,
+            model_name: Optional[
+                str] = "sentence-transformers/all-roberta-large-v1",  # noqa
+    ) -> None:
         super().__init__()
         self.model_name = model_name
 
