@@ -233,7 +233,8 @@ class WebQSPDataset(InMemoryDataset):
             nodes.node_attr = nodes.node_attr.fillna("")
             x = self.model.encode(nodes.node_attr.tolist(), batch_size=256)
             # encode edges
-            edge_attr = self.model.encode(edges.edge_attr.tolist(), batch_size=256)
+            edge_attr = self.model.encode(edges.edge_attr.tolist(),
+                                          batch_size=256)
             edge_index = torch.LongTensor(
                 [edges.src.tolist(), edges.dst.tolist()])
             question = f"Question: {data_i['question']}\nAnswer: "
