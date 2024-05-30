@@ -23,7 +23,7 @@ class Partitioner:
 
     **Homogeneous graphs:**
 
-    .. code-block::
+    .. code-block:: none
 
         root/
         |-- META.json
@@ -40,7 +40,7 @@ class Partitioner:
 
     **Heterogeneous graphs:**
 
-    .. code-block::
+    .. code-block:: none
 
         root/
         |-- META.json
