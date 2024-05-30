@@ -14,10 +14,12 @@ from typing import (
     Sequence,
     Set,
     Tuple,
+    Type,
 )
 
 import torch
-from torch_geometric.data import Data
+from torch_geometric.data import Data, FeatureStore, GraphStore
+from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 
 # Is there a multiprocessing-friendly implementation of this?
 
@@ -28,12 +30,19 @@ def ordered_set(values: Iterable[Hashable]) -> List[Hashable]:
     return list(dict.fromkeys(values))
 
 
+# TODO: Refactor Node and Edge funcs and attrs to be accessible via an Enum?
+
 NODE_PID = "pid"
+
+NODE_KEYS = {NODE_PID}
 
 EDGE_PID = "e_pid"
 EDGE_HEAD = "h"
 EDGE_RELATION = "r"
 EDGE_TAIL = "t"
+EDGE_INDEX = "edge_idx"
+
+EDGE_KEYS = {EDGE_PID, EDGE_HEAD, EDGE_RELATION, EDGE_TAIL, EDGE_INDEX}
 
 
 @dataclass
@@ -77,6 +86,12 @@ class LargeGraphIndexer:
         if node_attr is not None:
             # TODO: Validity checks btw nodes and node_attr
             self.node_attr = node_attr
+            if NODE_KEYS & set(self.node_attr.keys()) != NODE_KEYS:
+                raise AttributeError(
+                    f"Invalid node_attr object. Missing {NODE_KEYS - set(self.node_attr.keys())}"
+                )
+            elif self.node_attr[NODE_PID] != nodes:
+                raise AttributeError(f"Nodes provided do not match those in node_attr")
         else:
             self.node_attr = dict()
             self.node_attr[NODE_PID] = nodes
@@ -87,20 +102,29 @@ class LargeGraphIndexer:
         if edge_attr is not None:
             # TODO: Validity checks btw edges and edge_attr
             self.edge_attr = edge_attr
-            for i, tup in enumerate(edges):
-                self._edges[tup] = i
+
+            if EDGE_KEYS & set(self.edge_attr.keys()) != EDGE_KEYS:
+                raise AttributeError(
+                    f"Invalid edge_attr object. Missing {EDGE_KEYS - set(self.edge_attr.keys())}"
+                )
+            elif self.node_attr[EDGE_PID] != edges:
+                raise AttributeError(f"Edges provided do not match those in edge_attr")
+
         else:
             self.edge_attr = dict()
-            for default_key in [EDGE_HEAD, EDGE_RELATION, EDGE_TAIL, EDGE_PID]:
+            for default_key in EDGE_KEYS:
                 self.edge_attr[default_key] = list()
+            self.edge_attr[EDGE_PID] = edges
 
             for i, tup in enumerate(edges):
                 h, r, t = tup
                 self.edge_attr[EDGE_HEAD].append(h)
                 self.edge_attr[EDGE_RELATION].append(r)
                 self.edge_attr[EDGE_TAIL].append(t)
-                self.edge_attr[EDGE_PID].append(tup)
-                self._edges[tup] = i
+                self.edge_attr[EDGE_INDEX].append((self._nodes[h], self._nodes[t]))
+
+        for i, tup in enumerate(edges):
+            self._edges[tup] = i
 
     @classmethod
     def from_triplets(
@@ -174,10 +198,22 @@ class LargeGraphIndexer:
     def get_node_features(
         self, feature_name: str = NODE_PID, pids: Optional[Iterable[Hashable]] = None
     ) -> List[Any]:
+        if feature_name in self._mapped_node_features:
+            values = self.node_attr[feature_name].values
+        else:
+            values = self.node_attr[feature_name]
+        if isinstance(values, torch.Tensor):
+            idxs = list(
+                self.get_node_features_iter(feature_name, pids, index_only=True)
+            )
+            return values[idxs]
         return list(self.get_node_features_iter(feature_name, pids))
 
     def get_node_features_iter(
-        self, feature_name: str = NODE_PID, pids: Optional[Iterable[Hashable]] = None
+        self,
+        feature_name: str = NODE_PID,
+        pids: Optional[Iterable[Hashable]] = None,
+        index_only: bool = False,
     ) -> Iterator[Any]:
         if pids is None:
             pids = self.node_attr[NODE_PID]
@@ -195,11 +231,17 @@ class LargeGraphIndexer:
                 idx = self._nodes[pid]
                 from_feature_val = self.node_attr[from_feature_name][idx]
                 to_feature_idx = feature_mapping[from_feature_val]
-                yield to_feature_vals[to_feature_idx]
+                if index_only:
+                    yield to_feature_idx
+                else:
+                    yield to_feature_vals[to_feature_idx]
         else:
             for pid in pids:
                 idx = self._nodes[pid]
-                yield self.node_attr[feature_name][idx]
+                if index_only:
+                    yield idx
+                else:
+                    yield self.node_attr[feature_name][idx]
 
     def get_unique_edge_features(self, feature_name: str = EDGE_PID) -> List[Hashable]:
         try:
@@ -239,13 +281,23 @@ class LargeGraphIndexer:
         self,
         feature_name: str = EDGE_PID,
         pids: Optional[Iterable[Hashable]] = None,
-    ) -> List[Any]:
+    ) -> Sequence[Any]:
+        if feature_name in self._mapped_edge_features:
+            values = self.edge_attr[feature_name].values
+        else:
+            values = self.edge_attr[feature_name]
+        if isinstance(values, torch.Tensor):
+            idxs = list(
+                self.get_edge_features_iter(feature_name, pids, index_only=True)
+            )
+            return values[idxs]
         return list(self.get_edge_features_iter(feature_name, pids))
 
     def get_edge_features_iter(
         self,
         feature_name: str = EDGE_PID,
         pids: Optional[Iterable[TripletLike]] = None,
+        index_only: bool = False,
     ) -> Iterator[Any]:
         if pids is None:
             pids = self.edge_attr[EDGE_PID]
@@ -263,11 +315,17 @@ class LargeGraphIndexer:
                 idx = self._edges[pid]
                 from_feature_val = self.edge_attr[from_feature_name][idx]
                 to_feature_idx = feature_mapping[from_feature_val]
-                yield to_feature_vals[to_feature_idx]
+                if index_only:
+                    yield to_feature_idx
+                else:
+                    yield to_feature_vals[to_feature_idx]
         else:
             for pid in pids:
                 idx = self._edges[pid]
-                yield self.edge_attr[feature_name][idx]
+                if index_only:
+                    yield idx
+                else:
+                    yield self.edge_attr[feature_name][idx]
 
     def to_triplets(self) -> Iterator[TripletLike]:
         return iter(self.edge_attr[EDGE_PID])
@@ -344,6 +402,26 @@ class LargeGraphIndexer:
                 eq &= self.edge_attr[k] == value.edge_attr[k]
         return eq
 
+    def _to_data_attrs(
+        self, node_feature_name: str, edge_feature_name: Optional[str] = None
+    ) -> Tuple[torch.Tensor, torch.LongTensor, Optional[torch.Tensor]]:
+        x = torch.Tensor(self.get_node_features(node_feature_name))
+        edge_index = torch.t(torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
+        edge_attr = (
+            self.get_edge_features(edge_feature_name)
+            if edge_feature_name is not None
+            else None
+        )
+        return x, edge_index, edge_attr
+
+    def to_data(
+        self, node_feature_name: str, edge_feature_name: Optional[str] = None
+    ) -> Data:
+        x, edge_index, edge_attr = self._to_data_attrs(
+            node_feature_name, edge_feature_name
+        )
+        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
 
 def get_features_for_triplets(
     indexer: LargeGraphIndexer,
@@ -375,17 +453,10 @@ def get_features_for_triplets(
         feature_name=edge_feature_name, pids=edge_keys
     )
 
-    edge_index = []
-    for h, t in zip(
-        small_graph_indexer.get_edge_features_iter("h", triplets),
-        small_graph_indexer.get_edge_features_iter("t", triplets),
-    ):
-        edge_index.append(
-            [small_graph_indexer._nodes[h], small_graph_indexer._nodes[t]]
-        )
+    edge_index = small_graph_indexer.get_edge_features(EDGE_INDEX, triplets)
 
-    x = torch.stack(node_feats, 0)
-    edge_attr = torch.stack(edge_feats, 0)
+    x = torch.Tensor(node_feats)
+    edge_attr = torch.Tensor(edge_feats)
     edge_index = torch.t(torch.LongTensor(edge_index))
     return Data(
         x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(node_feats)
