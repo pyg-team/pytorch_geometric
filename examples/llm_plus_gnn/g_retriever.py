@@ -135,6 +135,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     seed_everything(42)
     if dataset is None:
         dataset = WebQSPDataset()
+        gc.collect()
     idx_split = dataset.split_idxs
 
     # Step 1: Build Node Classification Dataset
@@ -151,6 +152,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
     # Step 2: Build Model
     if model is None:
+        gc.collect()
         if tiny_llama:
             model = GRetriever(
                 llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
