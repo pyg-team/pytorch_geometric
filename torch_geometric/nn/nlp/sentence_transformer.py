@@ -11,9 +11,11 @@ class SentenceTransformer(torch.nn.Module):
     model_name (str): A string representing the huggingface model to use.
             (default: :obj:`"sentence-transformers/all-roberta-large-v1"`)
     """
-    def __init__(self,
-        model_name: Optional[str] = "sentence-transformers/all-roberta-large-v1", # noqa
-        ) -> None:
+    def __init__(
+            self,
+            model_name: Optional[
+                str] = "sentence-transformers/all-roberta-large-v1",  # noqa
+    ) -> None:
         super().__init__()
         self.model_name = model_name
 
