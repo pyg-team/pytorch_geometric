@@ -48,7 +48,7 @@ class SentenceTransformer(torch.nn.Module):
         output_device: Optional[torch.device] = None,
     ) -> Tensor:
         if len(text) == 0:
-            return torch.zeros(0, 1024)
+            return torch.zeros((0, 1024))
         batch_size = len(text) if batch_size is None else batch_size
         embs: List[Tensor] = []
         for start in range(0, len(text), batch_size):
