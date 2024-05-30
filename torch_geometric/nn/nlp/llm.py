@@ -1,5 +1,6 @@
-from typing import List, Optional
 import gc
+from typing import List, Optional
+
 import torch
 import torch.nn as nn
 
