@@ -1,16 +1,39 @@
+from contextlib import nullcontext
 from typing import List, Optional
 
 import torch
 import torch.nn.functional as F
 
+from .llm import get_llm_kwargs, get_mem_needed_for_llm, pad_token_id
+
 
 class SentenceTransformer(torch.nn.Module):
-    def __init__(self, pretrained_repo: str) -> None:
+    def __init__(self, pretrained_repo: str,
+                 device: Optional[torch.device] = None,
+                 autocast_dtype: Optional[torch.dtype] = None,
+                 num_params: int = 7) -> None:
         super().__init__()
         print(f"inherit model weights from {pretrained_repo}")
         from transformers import AutoModel, AutoTokenizer
-        self.bert_model = AutoModel.from_pretrained(pretrained_repo)
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo)
+        self.autocast_dtype = autocast_dtype
+        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_repo,
+                                                       use_fast=True)
+        self.tokenizer.pad_token_id = pad_token_id
+        if device is not None:
+            self.llm = AutoModel.from_pretrained(pretrained_repo).to(device)
+            self.llm_device = device
+        else:
+            if self.autocast_dtype is None:
+                self.autocast_dtype = torch.bfloat16
+            self.mem_needed = get_mem_needed_for_llm(num_params)
+            kwargs, _ = get_llm_kwargs(self.mem_needed)
+            self.llm = AutoModel.from_pretrained(pretrained_repo, **kwargs)
+            self.llm_device = self.llm.device
+        if self.autocast_dtype is None:
+            self.autocast_context = nullcontext()
+        else:
+            self.autocast_context = torch.cuda.amp.autocast(
+                dtype=self.autocast_dtype)
 
     def mean_pooling(self, token_embeddings: torch.Tensor,
                      attention_mask: torch.Tensor) -> torch.Tensor:
@@ -22,8 +45,8 @@ class SentenceTransformer(torch.nn.Module):
 
     def forward(self, input_ids: torch.Tensor,
                 att_mask: torch.Tensor) -> torch.Tensor:
-        bert_out = self.bert_model(input_ids=input_ids,
-                                   attention_mask=att_mask)
+        with self.autocast_context:
+            bert_out = self.llm(input_ids=input_ids, attention_mask=att_mask)
 
         # First element of model_output contains all token embeddings
         token_embeddings = bert_out[0]
@@ -32,17 +55,24 @@ class SentenceTransformer(torch.nn.Module):
         return sentence_embeddings
 
 
-def text2embedding(model: SentenceTransformer, device: torch.device,
-                   text: List[str],
-                   batch_size: Optional[int] = 256) -> torch.Tensor:
+def text2embedding(
+    model: SentenceTransformer,
+    text: List[str],
+    batch_size: Optional[int] = 256,
+    device: Optional[torch.device] = None,
+    truncate_long_strs=True,
+) -> torch.Tensor:
     try:
-        encoding = model.tokenizer(text, padding=True, truncation=True,
+        encoding = model.tokenizer(text, padding=True,
+                                   truncation=truncate_long_strs,
                                    return_tensors="pt")
         data_len = encoding.input_ids.size(0)
         num_full_batches = data_len // batch_size
         all_embeddings_list = []
 
         # Iterate through batches
+        if device is None:
+            device = model.llm_device
         with torch.no_grad():
             left_ptr = 0
             for i in range(num_full_batches):
@@ -64,8 +94,7 @@ def text2embedding(model: SentenceTransformer, device: torch.device,
         # Concatenate the embeddings from all batches
         all_embeddings = torch.cat(all_embeddings_list, dim=0).cpu()
     except:  # noqa
-        print(
-            "SBERT text embedding failed, returning torch.zeros((0, 1024))...")
+        print("text embedding failed, returning torch.zeros((0, 1024))...")
         return torch.zeros((0, 1024))
 
     return all_embeddings
