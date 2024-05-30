@@ -144,12 +144,12 @@ class LLM(nn.Module):
             label (List[str]): The answers/labels.
             additional_text_context (List[str], optional): Additional context
                 to give to the LLM, such as textified knowledge graphs.
-            rag_embeddings (List[torch.tensor], optional): Embedding tensors from RAG
-                docs, essentially just the embedded form of
-                `additional_text_context`. Only one of `additional_text_context`
-                or `rag_embeddings` should be used.
+            rag_embeddings (List[torch.tensor], optional): Embedding tensors
+                from RAG docs. Essentially just the embedded form of
+                `additional_text_context`. Either `additional_text_context`
+                or `rag_embeddings` should be used, not both.
         """
-        if rag_embeddings is not None and additional_context is not None:
+        if rag_embeddings is not None and additional_text_context is not None:
             print("Warning: Using both `rag_embeddings` and \
                 `additional_context` inputs is a waste of compute & memory \
                 as both provide the same information")
@@ -227,12 +227,12 @@ class LLM(nn.Module):
                 to give to the LLM, such as textified knowledge graphs.
             rag_embeddings (torch.tensor, optional): Embedding tensor from RAG
                 docs, essentially just the embedded form of
-                `additional_text_context`. Only one of `additional_text_context`
-                or `rag_embeddings` should be used.
+                `additional_text_context`. Either `additional_text_context`
+                or `rag_embeddings` should be used, not both.
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: {32})
         """
-        if rag_embeddings is not None and additional_context is not None:
+        if rag_embeddings is not None and additional_text_context is not None:
             print("Warning: Using both `rag_embeddings` and \
                 `additional_context` inputs is a waste of compute & memory \
                 as both provide the same information")
