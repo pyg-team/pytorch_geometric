@@ -16,6 +16,8 @@ padding_side = 'left'
 
 
 def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
+    torch.cuda.empty_cache()
+    gc.collect()
     avail_gpus = torch.cuda.device_count()
     kwargs = {
         "revision": "main",
