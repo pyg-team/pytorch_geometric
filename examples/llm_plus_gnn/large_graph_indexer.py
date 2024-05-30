@@ -1,18 +1,23 @@
-from typing import (
-    Tuple,
-    Hashable,
-    Dict,
-    Iterable,
-    Set,
-    Optional,
-    Any,
-    Iterator,
-    List,
-    Sequence,
-)
+import os
 import pickle as pkl
 from dataclasses import dataclass
 from itertools import chain
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Hashable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+)
+
+import torch
+from torch_geometric.data import Data
 
 # Is there a multiprocessing-friendly implementation of this?
 
@@ -35,6 +40,14 @@ EDGE_TAIL = "t"
 class MappedFeature:
     name: str
     values: Sequence[Any]
+
+    def __eq__(self, value: "MappedFeature") -> bool:
+        eq = self.name == value.name
+        if isinstance(self.values, torch.Tensor):
+            eq &= torch.equal(self.values, value.values)
+        else:
+            eq &= self.values == value.values
+        return eq
 
 
 class LargeGraphIndexer:
@@ -90,10 +103,22 @@ class LargeGraphIndexer:
                 self._edges[tup] = i
 
     @classmethod
-    def from_triplets(cls, triplets: Iterable[TripletLike]) -> "LargeGraphIndexer":
+    def from_triplets(
+        cls,
+        triplets: Iterable[TripletLike],
+        pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+    ) -> "LargeGraphIndexer":
         # NOTE: Right now assumes that all trips can be loaded into memory
         nodes = set()
         edges = set()
+
+        if pre_transform is not None:
+
+            def apply_transform(trips: Iterable[TripletLike]) -> Iterator[TripletLike]:
+                for trip in trips:
+                    yield pre_transform(trip)
+
+            triplets = apply_transform(triplets)
 
         for h, r, t in triplets:
 
@@ -212,14 +237,14 @@ class LargeGraphIndexer:
 
     def get_edge_features(
         self,
-        feature_name: str = EDGE_RELATION,
+        feature_name: str = EDGE_PID,
         pids: Optional[Iterable[Hashable]] = None,
     ) -> List[Any]:
         return list(self.get_edge_features_iter(feature_name, pids))
 
     def get_edge_features_iter(
         self,
-        feature_name: str = EDGE_RELATION,
+        feature_name: str = EDGE_PID,
         pids: Optional[Iterable[TripletLike]] = None,
     ) -> Iterator[Any]:
         if pids is None:
@@ -248,10 +273,120 @@ class LargeGraphIndexer:
         return iter(self.edge_attr[EDGE_PID])
 
     def save(self, path: str) -> None:
-        with open(path, "w") as f:
-            pkl.dump(self, f)
+        os.makedirs(path, exist_ok=True)
+        with open(path + "/edges", "wb") as f:
+            pkl.dump(self._edges, f)
+        with open(path + "/nodes", "wb") as f:
+            pkl.dump(self._nodes, f)
+
+        with open(path + "/mapped_edges", "wb") as f:
+            pkl.dump(self._mapped_edge_features, f)
+        with open(path + "/mapped_nodes", "wb") as f:
+            pkl.dump(self._mapped_node_features, f)
+
+        node_attr_path = path + "/node_attr"
+        os.makedirs(node_attr_path, exist_ok=True)
+        for attr_name, vals in self.node_attr.items():
+            torch.save(vals, node_attr_path + f"/{attr_name}.pt")
+
+        edge_attr_path = path + "/edge_attr"
+        os.makedirs(edge_attr_path, exist_ok=True)
+        for attr_name, vals in self.edge_attr.items():
+            torch.save(vals, edge_attr_path + f"/{attr_name}.pt")
 
     @classmethod
     def from_disk(cls, path: str) -> "LargeGraphIndexer":
-        with open(path) as f:
-            return pkl.load(f)
+        indexer = cls(list(), list())
+        with open(path + "/edges", "rb") as f:
+            indexer._edges = pkl.load(f)
+        with open(path + "/nodes", "rb") as f:
+            indexer._nodes = pkl.load(f)
+
+        with open(path + "/mapped_edges", "rb") as f:
+            indexer._mapped_edge_features = pkl.load(f)
+        with open(path + "/mapped_nodes", "rb") as f:
+            indexer._mapped_node_features = pkl.load(f)
+
+        node_attr_path = path + "/node_attr"
+        for fname in os.listdir(node_attr_path):
+            full_fname = f"{node_attr_path}/{fname}"
+            key = fname.split(".")[0]
+            indexer.node_attr[key] = torch.load(full_fname)
+
+        edge_attr_path = path + "/edge_attr"
+        for fname in os.listdir(edge_attr_path):
+            full_fname = f"{edge_attr_path}/{fname}"
+            key = fname.split(".")[0]
+            indexer.edge_attr[key] = torch.load(full_fname)
+
+        return indexer
+
+    def __eq__(self, value: "LargeGraphIndexer") -> bool:
+        eq = True
+        eq &= self._nodes == value._nodes
+        eq &= self._edges == value._edges
+        eq &= self.node_attr.keys() == value.node_attr.keys()
+        eq &= self.edge_attr.keys() == value.edge_attr.keys()
+        eq &= self._mapped_node_features == value._mapped_node_features
+        eq &= self._mapped_edge_features == value._mapped_edge_features
+
+        for k in self.node_attr:
+            eq &= type(self.node_attr[k]) == type(value.node_attr[k])
+            if isinstance(self.node_attr[k], torch.Tensor):
+                eq &= torch.equal(self.node_attr[k], value.node_attr[k])
+            else:
+                eq &= self.node_attr[k] == value.node_attr[k]
+        for k in self.edge_attr:
+            eq &= type(self.edge_attr[k]) == type(value.edge_attr[k])
+            if isinstance(self.edge_attr[k], torch.Tensor):
+                eq &= torch.equal(self.edge_attr[k], value.edge_attr[k])
+            else:
+                eq &= self.edge_attr[k] == value.edge_attr[k]
+        return eq
+
+
+def get_features_for_triplets(
+    indexer: LargeGraphIndexer,
+    triplets: Iterable[TripletLike],
+    node_feature_name: str = "embs",
+    edge_feature_name: str = "embs",
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+) -> Data:
+
+    if pre_transform is not None:
+
+        def apply_transform(trips):
+            for trip in trips:
+                yield pre_transform(tuple(trip))
+
+        # TODO: Make this safe for large amounts of triplets?
+        triplets = list(apply_transform(triplets))
+
+    small_graph_indexer = LargeGraphIndexer.from_triplets(
+        triplets, pre_transform=pre_transform
+    )
+    node_keys = small_graph_indexer.get_node_features()
+    node_feats = indexer.get_node_features(
+        feature_name=node_feature_name, pids=node_keys
+    )
+
+    edge_keys = small_graph_indexer.get_edge_features(pids=triplets)
+    edge_feats = indexer.get_edge_features(
+        feature_name=edge_feature_name, pids=edge_keys
+    )
+
+    edge_index = []
+    for h, t in zip(
+        small_graph_indexer.get_edge_features_iter("h", triplets),
+        small_graph_indexer.get_edge_features_iter("t", triplets),
+    ):
+        edge_index.append(
+            [small_graph_indexer._nodes[h], small_graph_indexer._nodes[t]]
+        )
+
+    x = torch.stack(node_feats, 0)
+    edge_attr = torch.stack(edge_feats, 0)
+    edge_index = torch.t(torch.LongTensor(edge_index))
+    return Data(
+        x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(node_feats)
+    )
