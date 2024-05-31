@@ -18,12 +18,14 @@ except ImportError:
 
 try:
     from pcst_fast import pcst_fast
+
     WITH_PCST = True
 except ImportError:
     WITH_PCST = False
 
 try:
     import datasets
+
     WITH_DATASETS = True
 except ImportError:
     WITH_DATASETS = False
@@ -41,10 +43,17 @@ def retrieval_via_pcst(
 ) -> Tuple[Data, str]:
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
-        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-            index=False, columns=["src", "edge_attr", "dst"])
-        graph = Data(x=graph.x, edge_index=graph.edge_index,
-                     edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
+        desc = (
+            textual_nodes.to_csv(index=False)
+            + "\n"
+            + textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"])
+        )
+        graph = Data(
+            x=graph.x,
+            edge_index=graph.edge_index,
+            edge_attr=graph.edge_attr,
+            num_nodes=graph.num_nodes,
+        )
         return graph, desc
 
     root = -1  # unrooted
@@ -106,8 +115,9 @@ def retrieval_via_pcst(
         costs = np.array(costs + virtual_costs)
         edges = np.array(edges + virtual_edges)
 
-    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
-                                pruning, verbosity_level)
+    vertices, edges = pcst_fast(
+        edges, prizes, costs, root, num_clusters, pruning, verbosity_level
+    )
 
     selected_nodes = vertices[vertices < graph.num_nodes]
     selected_edges = [mapping_e[e] for e in edges if e < num_edges]
@@ -119,13 +129,16 @@ def retrieval_via_pcst(
 
     edge_index = graph.edge_index[:, selected_edges]
     selected_nodes = np.unique(
-        np.concatenate(
-            [selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
+        np.concatenate([selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()])
+    )
 
     n = textual_nodes.iloc[selected_nodes]
     e = textual_edges.iloc[selected_edges]
-    desc = n.to_csv(index=False) + "\n" + e.to_csv(
-        index=False, columns=["src", "edge_attr", "dst"])
+    desc = (
+        n.to_csv(index=False)
+        + "\n"
+        + e.to_csv(index=False, columns=["src", "edge_attr", "dst"])
+    )
 
     mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
 
@@ -134,8 +147,9 @@ def retrieval_via_pcst(
     src = [mapping[i] for i in edge_index[0].tolist()]
     dst = [mapping[i] for i in edge_index[1].tolist()]
     edge_index = torch.LongTensor([src, dst])
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                num_nodes=len(selected_nodes))
+    data = Data(
+        x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(selected_nodes)
+    )
 
     return data, desc
 
@@ -156,17 +170,17 @@ class WebQSPDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
+
     def __init__(
         self,
         root: str = "",
         force_reload: bool = False,
     ) -> None:
         self._check_dependencies()
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
         self.load(self.processed_paths[0])
-    
+
     def _check_dependencies(self) -> None:
         missing_imports = False
         missing_str_list = []
@@ -192,15 +206,14 @@ class WebQSPDataset(InMemoryDataset):
     def download(self) -> None:
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self.raw_dataset = datasets.concatenate_datasets(
-            [dataset["train"], dataset["validation"], dataset["test"]])
+            [dataset["train"], dataset["validation"], dataset["test"]]
+        )
         self.split_idxs = {
-            "train":
-            torch.arange(len(dataset["train"])),
-            "val":
-            torch.arange(len(dataset["validation"])) + len(dataset["train"]),
-            "test":
-            torch.arange(len(dataset["test"])) + len(dataset["train"]) +
-            len(dataset["validation"])
+            "train": torch.arange(len(dataset["train"])),
+            "val": torch.arange(len(dataset["validation"])) + len(dataset["train"]),
+            "test": torch.arange(len(dataset["test"]))
+            + len(dataset["train"])
+            + len(dataset["validation"]),
         }
 
     def process(self) -> None:

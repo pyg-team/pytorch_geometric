@@ -1,5 +1,6 @@
-from torch_geometric.datasets.web_qsp_dataset import *
 from typing import Optional
+
+from torch_geometric.datasets.web_qsp_dataset import *
 
 
 class RawWebQSPDataset(WebQSPDataset):
@@ -9,9 +10,11 @@ class RawWebQSPDataset(WebQSPDataset):
         root: str = "",
         force_reload: bool = False,
         with_process: bool = False,
+        with_pcst: bool = False,
         limit: Optional[int] = None,
     ) -> None:
         self.with_process = with_process
+        self.with_pcst = with_pcst
         self.limit = limit
         if self.with_process:
             super().__init__(root, force_reload)
@@ -29,6 +32,13 @@ class RawWebQSPDataset(WebQSPDataset):
             return ["raw_data", "split_idxs"]
         else:
             return []
+
+    @property
+    def processed_file_names(self) -> List[str]:
+        if self.with_process:
+            return super().processed_file_names + ["raw_graphs.pt"]
+        else:
+            return super().processed_file_names
 
     def _save_raw_data(self) -> None:
         self.raw_dataset.save_to_disk(self.raw_paths[0])
@@ -49,11 +59,13 @@ class RawWebQSPDataset(WebQSPDataset):
             self.model = SentenceTransformer(pretrained_repo)
             self.model.to(self.device)
             self.model.eval()
-            # self.questions = [i["question"] for i in self.raw_dataset]
             list_of_graphs = []
-            # encode questions
-            # print("Encoding questions...")
-            # q_embs = text2embedding(self.model, self.device, self.questions)
+            self.raw_graphs = []
+            if self.with_pcst:
+                self.questions = [i["question"] for i in self.raw_dataset]
+                print("Encoding questions...")
+                q_embs = text2embedding(self.model, self.device, self.questions)
+
             print("Encoding graphs...")
             limit = self.limit if self.limit else len(self.raw_dataset)
             for index in tqdm(range(limit)):
@@ -92,12 +104,22 @@ class RawWebQSPDataset(WebQSPDataset):
                     edge_attr=edge_attr,
                     num_nodes=len(nodes),
                 ).to("cpu")
-                list_of_graphs.append(raw_graph)
-                # psct_subgraph, desc = retrieval_via_pcst(raw_graph, q_embs[index],
-                #                                        nodes, edges, topk=3,
-                #                                        topk_e=5, cost_e=0.5)
-                # psct_subgraph["question"] = question
-                # psct_subgraph["label"] = label
-                # psct_subgraph["desc"] = desc
-                # list_of_graphs.append(psct_subgraph.to("cpu"))
+                self.raw_graphs.append(raw_graph)
+                if self.with_pcst:
+                    psct_subgraph, desc = retrieval_via_pcst(
+                        raw_graph,
+                        q_embs[index],
+                        nodes,
+                        edges,
+                        topk=3,
+                        topk_e=5,
+                        cost_e=0.5,
+                    )
+                    psct_subgraph["question"] = question
+                    psct_subgraph["label"] = label
+                    psct_subgraph["desc"] = desc
+                    list_of_graphs.append(psct_subgraph.to("cpu"))
+                else:
+                    list_of_graphs.append(raw_graph)
+            torch.save(self.raw_graphs, self.processed_paths[-1])
             self.save(list_of_graphs, self.processed_paths[0])

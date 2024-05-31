@@ -1,3 +1,4 @@
+import os
 from itertools import chain
 from typing import Iterator, Optional
 
@@ -37,7 +38,8 @@ class UpdatedWebQSPDataset(WebQSPDataset):
             "list_of_graphs.pt",
             "pre_filter.pt",
             "pre_transform.pt",
-            "large_graph.pt",
+            "raw_graphs.pt",
+            "large_graph_indexer",
         ]
 
     def _save_raw_data(self) -> None:
@@ -45,8 +47,10 @@ class UpdatedWebQSPDataset(WebQSPDataset):
         torch.save(self.split_idxs, self.raw_paths[1])
 
     def _load_raw_data(self) -> None:
-        self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
-        self.split_idxs = torch.load(self.raw_paths[1])
+        if not hasattr(self, "raw_dataset"):
+            self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
+        if not hasattr(self, "split_idxs"):
+            self.split_idxs = torch.load(self.raw_paths[1])
 
     def download(self) -> None:
         super().download()
@@ -77,30 +81,36 @@ class UpdatedWebQSPDataset(WebQSPDataset):
             map_from_feature=EDGE_RELATION,
         )
 
-        self.graph = self.indexer.to_data(
-            node_feature_name="x", edge_feature_name="edge_attr"
-        )
-        self.save(self.graph, self.processed_paths[3])
+        self.indexer.save(self.processed_paths[-1])
 
     def _retrieve_subgraphs(self) -> None:
         print("Encoding questions...")
+        self.questions = [ds["question"] for ds in self.raw_dataset]
         q_embs = text2embedding(self.model, self.device, self.questions)
         list_of_graphs = []
+        self.raw_graphs = []
         print("Retrieving subgraphs...")
+        textual_nodes = self.textual_nodes
+        textual_edges = self.textual_edges
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
             local_trips = data_i["graph"]
             if self.whole_graph_retrieval:
-                graph = self.graph
+                graph = self.indexer.to_data(
+                    node_feature_name="x", edge_feature_name="edge_attr"
+                )
             else:
                 graph = get_features_for_triplets(
                     self.indexer, local_trips, pre_transform=preprocess_triplet
                 )
+                textual_nodes = self.textual_nodes.iloc[graph["node_idx"]]
+                textual_edges = self.textual_edges.iloc[graph["edge_idx"]]
+                self.raw_graphs.append(graph)
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
                 q_embs[index],
-                self.textual_nodes,
-                self.textual_edges,
+                textual_nodes,
+                textual_edges,
                 topk=3,
                 topk_e=5,
                 cost_e=0.5,
@@ -110,23 +120,35 @@ class UpdatedWebQSPDataset(WebQSPDataset):
 
             pcst_subgraph["question"] = question
             pcst_subgraph["label"] = label
-            pcst_subgraph["desc"] - desc
+            pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
+        torch.save(self.raw_graphs, self.processed_paths[-2])
         self.save(list_of_graphs, self.processed_paths[0])
 
     def process(self) -> None:
+        self._load_raw_data()
         pretrained_repo = "sentence-transformers/all-roberta-large-v1"
         self.model = SentenceTransformer(pretrained_repo)
         self.model.to(self.device)
         self.model.eval()
-        self.questions = [ds["question"] for ds in self.raw_dataset]
-        print("Encoding graph...")
-        self._build_graph()
-        self.textual_nodes = pd.DataFrame(
-            {"node_attr": self.indexer.get_edge_features()}
+        if not os.path.exists(self.processed_dir[-1]):
+            print("Encoding graph...")
+            self._build_graph()
+        else:
+            print("Loading graph...")
+            self.indexer = LargeGraphIndexer.from_disk(self.processed_dir[-1])
+        self.textual_nodes = pd.DataFrame.from_dict(
+            {"node_attr": self.indexer.get_node_features()}
         )
         self.textual_nodes["node_id"] = self.textual_nodes.index
+        self.textual_nodes = self.textual_nodes[["node_id", "node_attr"]]
         self.textual_edges = pd.DataFrame(
-            self.indexer.get_edge_features, columns=["src", "edge_attr", "dst"]
+            self.indexer.get_edge_features(), columns=["src", "edge_attr", "dst"]
         )
+        self.textual_edges["src"] = [
+            self.indexer._nodes[h] for h in self.textual_edges["src"]
+        ]
+        self.textual_edges["dst"] = [
+            self.indexer._nodes[h] for h in self.textual_edges["dst"]
+        ]
         self._retrieve_subgraphs()
