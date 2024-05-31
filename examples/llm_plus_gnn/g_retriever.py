@@ -273,9 +273,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
                         pin_memory=True, shuffle=False)
     if tiny_llama:
-        pure_llm = LLM(model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-                       num_params=1,
-                      )
+        pure_llm = LLM(
+            model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+            num_params=1,
+        )
     else:
         pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
