@@ -1,14 +1,12 @@
-import torch
-import os
 import json
-from typing import Literal, List
-from functools import cached_property
-
+import os
 import shutil
+from functools import cached_property
+from typing import List, Literal
 
-from torch_geometric.data import (
-    HeteroData, Dataset, download_url, extract_tar
-)
+import torch
+
+from torch_geometric.data import Dataset, HeteroData, download_url, extract_tar
 
 
 def read_json(filename: str) -> dict:
@@ -20,21 +18,17 @@ def read_json(filename: str) -> dict:
 
 
 def extract_edge_index(json_file, edge_name: str) -> torch.tensor:
-    return torch.tensor(
-        [
-            json_file['grid']['edges'][edge_name]['senders'],
-            json_file['grid']['edges'][edge_name]['receivers'],
-        ]
-    )
+    return torch.tensor([
+        json_file['grid']['edges'][edge_name]['senders'],
+        json_file['grid']['edges'][edge_name]['receivers'],
+    ])
 
 
 def extract_edge_index_rev(json_file, edge_name: str) -> torch.tensor:
-    return torch.tensor(
-        [
-            json_file['grid']['edges'][edge_name]['receivers'],
-            json_file['grid']['edges'][edge_name]['senders'],
-        ]
-    )
+    return torch.tensor([
+        json_file['grid']['edges'][edge_name]['receivers'],
+        json_file['grid']['edges'][edge_name]['senders'],
+    ])
 
 
 class OPFData(Dataset):
@@ -69,28 +63,22 @@ class OPFData(Dataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    def __init__(
-        self,
-        root: str,
-        split: Literal['train', 'test', 'valid'] = 'train',
-        case_name: Literal[
-            'pglib_opf_case14_ieee',
-            'pglib_opf_case30_ieee',
-            'pglib_opf_case57_ieee',
-            'pglib_opf_case118_ieee',
-            'pglib_opf_case500_goc',
-            'pglib_opf_case2000_goc',
-            'pglib_opf_case6470_rte',
-            'pglib_opf_case4661_sdet'
-            'pglib_opf_case10000_goc',
-            'pglib_opf_case13659_pegase',
-        ] = 'pglib_opf_case14_ieee',
-        topological_perturbations = False,
-        transform = None,
-        pre_transform = None,
-        pre_filter = None
-    ) -> None:
-       # From the constructor.
+    def __init__(self, root: str, split: Literal['train', 'test',
+                                                 'valid'] = 'train',
+                 case_name: Literal[
+                     'pglib_opf_case14_ieee',
+                     'pglib_opf_case30_ieee',
+                     'pglib_opf_case57_ieee',
+                     'pglib_opf_case118_ieee',
+                     'pglib_opf_case500_goc',
+                     'pglib_opf_case2000_goc',
+                     'pglib_opf_case6470_rte',
+                     'pglib_opf_case4661_sdet'
+                     'pglib_opf_case10000_goc',
+                     'pglib_opf_case13659_pegase',
+                 ] = 'pglib_opf_case14_ieee', topological_perturbations=False,
+                 transform=None, pre_transform=None, pre_filter=None) -> None:
+        # From the constructor.
         self.split = split
         self.case_name = case_name
         self._release = 'dataset_release_1'
@@ -103,25 +91,24 @@ class OPFData(Dataset):
         # Initialise.
         self._base_url = 'https://storage.googleapis.com/gridopt-dataset'
         disambiguated_root = os.path.join(root, self._release, self.case_name)
-        super().__init__(
-            disambiguated_root, transform, pre_transform, pre_filter
-        )
+        super().__init__(disambiguated_root, transform, pre_transform,
+                         pre_filter)
 
     def file_indices(self) -> List[str]:
         if self.split == 'train':
-          return 0, int(0.9 * self._n_examples)
+            return 0, int(0.9 * self._n_examples)
         elif self.split == 'valid':
-          return int(0.9 * self._n_examples), int(0.95 * self._n_examples)
+            return int(0.9 * self._n_examples), int(0.95 * self._n_examples)
         elif self.split == 'test':
-          return int(0.95 * self._n_examples), self._n_examples
+            return int(0.95 * self._n_examples), self._n_examples
 
     def _group_indices(self) -> List[str]:
         if self.split == 'train':
-          return range(0, 18)
+            return range(0, 18)
         elif self.split == 'valid':
-          return range(18, 19)
+            return range(18, 19)
         elif self.split == 'test':
-          return range(19, 20)
+            return range(19, 20)
 
     @cached_property
     def raw_file_names(self) -> List[str]:
@@ -174,8 +161,7 @@ class OPFData(Dataset):
 
                 data['generator'].x = torch.tensor(grid['nodes']['generator'])
                 data['generator'].y = torch.tensor(
-                    solution['nodes']['generator']
-                )
+                    solution['nodes']['generator'])
 
                 data['load'].x = torch.tensor(grid['nodes']['load'])
 
@@ -183,45 +169,40 @@ class OPFData(Dataset):
 
                 # Edges. Only ac lines and transformers have features.
                 data['bus', 'ac_line', 'bus'].x = torch.tensor(
-                    grid['edges']['ac_line']['features']
-                )
+                    grid['edges']['ac_line']['features'])
                 data['bus', 'ac_line', 'bus'].y = torch.tensor(
-                    solution['edges']['ac_line']['features']
-                )
-                data['bus', 'ac_line', 'bus'].edge_index = (
-                    extract_edge_index(json_file, 'ac_line')
-                )
+                    solution['edges']['ac_line']['features'])
+                data['bus', 'ac_line', 'bus'].edge_index = (extract_edge_index(
+                    json_file, 'ac_line'))
 
                 data['bus', 'transformer', 'bus'].x = torch.tensor(
-                    grid['edges']['transformer']['features']
-                )
+                    grid['edges']['transformer']['features'])
                 data['bus', 'transformer', 'bus'].y = torch.tensor(
-                    solution['edges']['transformer']['features']
-                )
-                data['bus', 'transformer', 'bus'].edge_index = (
-                    extract_edge_index(json_file, 'transformer')
-                )
+                    solution['edges']['transformer']['features'])
+                data['bus', 'transformer',
+                     'bus'].edge_index = (extract_edge_index(
+                         json_file, 'transformer'))
 
-                data['generator', 'generator_link', 'bus'].edge_index = (
-                    extract_edge_index(json_file, 'generator_link')
-                )
-                data['bus', 'generator_link', 'generator'].edge_index = (
-                    extract_edge_index_rev(json_file, 'generator_link')
-                )
+                data['generator', 'generator_link',
+                     'bus'].edge_index = (extract_edge_index(
+                         json_file, 'generator_link'))
+                data['bus', 'generator_link',
+                     'generator'].edge_index = (extract_edge_index_rev(
+                         json_file, 'generator_link'))
 
-                data['load', 'load_link', 'bus'].edge_index = (
-                    extract_edge_index(json_file, 'load_link')
-                )
-                data['bus', 'load_link', 'load'].edge_index = (
-                    extract_edge_index_rev(json_file, 'load_link')
-                )
+                data['load', 'load_link',
+                     'bus'].edge_index = (extract_edge_index(
+                         json_file, 'load_link'))
+                data['bus', 'load_link',
+                     'load'].edge_index = (extract_edge_index_rev(
+                         json_file, 'load_link'))
 
-                data['shunt', 'shunt_link', 'bus'].edge_index = (
-                    extract_edge_index(json_file, 'shunt_link')
-                )
-                data['bus', 'shunt_link', 'shunt'].edge_index = (
-                    extract_edge_index_rev(json_file, 'shunt_link')
-                )
+                data['shunt', 'shunt_link',
+                     'bus'].edge_index = (extract_edge_index(
+                         json_file, 'shunt_link'))
+                data['bus', 'shunt_link',
+                     'shunt'].edge_index = (extract_edge_index_rev(
+                         json_file, 'shunt_link'))
 
                 # Apply pre-transform if needed.
                 if self.pre_transform is not None:
@@ -242,4 +223,3 @@ class OPFData(Dataset):
         offset_idx = idx + self.file_indices()[0]
         fname = f'example_{offset_idx}.pt'
         return torch.load(os.path.join(self.processed_dir, fname))
-
