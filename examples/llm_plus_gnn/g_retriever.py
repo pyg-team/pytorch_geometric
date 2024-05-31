@@ -263,7 +263,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
 
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                  eval_batch_size, loss_fn, inference_fn,
-                 skip_pretrained_LLM=False):
+                 skip_pretrained_LLM=False, tiny_llama=False):
     if not skip_pretrained_LLM:
         print("First comparing against a pretrained LLM...")
     # Step 1: Define a single batch size test loader
@@ -272,7 +272,12 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     # batch size 1 loader for simplicity
     loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
                         pin_memory=True, shuffle=False)
-    pure_llm = LLM()
+    if tiny_llama:
+        pure_llm = LLM(model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                       num_params=1,
+                      )
+    else:
+        pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
         print("Saved demo outputs for LLM and GNN+LLM found.")
         print("Would you like to redo untuned LLM eval?")
@@ -454,4 +459,4 @@ if __name__ == "__main__":
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size, get_loss,
-                 inference_step)
+                 inference_step, tiny_llama=args.tiny_llama)
