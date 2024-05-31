@@ -12,7 +12,8 @@ from torch_geometric.datasets.web_qsp_dataset import *
 
 
 def preprocess_triplet(triplet: TripletLike) -> TripletLike:
-    return tuple([s.lower() for s in triplet])
+    h, r, t = triplet
+    return h.lower(), r, t.lower()
 
 
 class UpdatedWebQSPDataset(WebQSPDataset):
@@ -103,8 +104,8 @@ class UpdatedWebQSPDataset(WebQSPDataset):
                 graph = get_features_for_triplets(
                     self.indexer, local_trips, pre_transform=preprocess_triplet
                 )
-                textual_nodes = self.textual_nodes.iloc[graph["node_idx"]]
-                textual_edges = self.textual_edges.iloc[graph["edge_idx"]]
+                textual_nodes = self.textual_nodes.iloc[graph["node_idx"]].reset_index()
+                textual_edges = self.textual_edges.iloc[graph["edge_idx"]].reset_index()
                 self.raw_graphs.append(graph)
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
