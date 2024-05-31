@@ -80,6 +80,7 @@ from .brca_tgca import BrcaTcga
 from .dbp15k import DBP15K
 from .aminer import AMiner
 from .ogb_mag import OGB_MAG
+from .opfdata import OPFData
 from .dblp import DBLP
 from .movie_lens import MovieLens
 from .movie_lens_100k import MovieLens100K
@@ -193,6 +194,7 @@ hetero_datasets = [
     'DBP15K',
     'AMiner',
     'OGB_MAG',
+    'OPFData',
     'DBLP',
     'MovieLens',
     'MovieLens100K',
