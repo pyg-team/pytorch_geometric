@@ -3,6 +3,7 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import (
     Data,
@@ -91,7 +92,8 @@ class S3DIS(InMemoryDataset):
         with open(self.raw_paths[1], 'r') as f:
             rooms = f.read().split('\n')[:-1]
 
-        xs, ys = [], []
+        xs: List[Tensor] = []
+        ys: List[Tensor] = []
         for filename in filenames:
             h5 = h5py.File(osp.join(self.raw_dir, filename))
             xs += torch.from_numpy(h5['data'][:]).unbind(0)

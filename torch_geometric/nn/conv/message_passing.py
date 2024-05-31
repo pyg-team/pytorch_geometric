@@ -6,6 +6,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Final,
     List,
     Optional,
     OrderedDict,
@@ -19,6 +20,7 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric import EdgeIndex, is_compiling
+from torch_geometric.index import ptr2index
 from torch_geometric.inspector import Inspector, Signature
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
@@ -29,7 +31,6 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     to_edge_index,
 )
-from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]
@@ -102,6 +103,10 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
+    # Supports `message_and_aggregate` via `EdgeIndex`.
+    # TODO Remove once migration is finished.
+    SUPPORTS_FUSED_EDGE_INDEX: Final[bool] = False
+
     def __init__(
         self,
         aggr: Optional[Union[str, List[str], Aggregation]] = 'sum',
@@ -162,71 +167,8 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-        root_dir = osp.dirname(osp.realpath(__file__))
-        jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
-        # Optimize `propagate()` via `*.jinja` templates:
-        if not self.propagate.__module__.startswith(jinja_prefix):
-            try:
-                if 'propagate' in self.__class__.__dict__:
-                    raise ValueError("Cannot compile custom 'propagate' "
-                                     "method")
-
-                module = module_from_template(
-                    module_name=f'{jinja_prefix}_propagate',
-                    template_path=osp.join(root_dir, 'propagate.jinja'),
-                    tmp_dirname='message_passing',
-                    # Keyword arguments:
-                    modules=self.inspector._modules,
-                    collect_name='collect',
-                    signature=self._get_propagate_signature(),
-                    collect_param_dict=self.inspector.get_flat_param_dict(
-                        ['message', 'aggregate', 'update']),
-                    message_args=self.inspector.get_param_names('message'),
-                    aggregate_args=self.inspector.get_param_names('aggregate'),
-                    message_and_aggregate_args=self.inspector.get_param_names(
-                        'message_and_aggregate'),
-                    update_args=self.inspector.get_param_names('update'),
-                    fuse=self.fuse,
-                )
-
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = module.propagate
-
-                self.__class__.propagate = module.propagate
-                self.__class__.collect = module.collect
-            except Exception:  # pragma: no cover
-                self.__class__._orig_propagate = self.__class__.propagate
-                self.__class__._jinja_propagate = self.__class__.propagate
-
-        # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
-        if (self.inspector.implements('edge_update')
-                and not self.edge_updater.__module__.startswith(jinja_prefix)):
-            try:
-                if 'edge_updater' in self.__class__.__dict__:
-                    raise ValueError("Cannot compile custom 'edge_updater' "
-                                     "method")
-
-                module = module_from_template(
-                    module_name=f'{jinja_prefix}_edge_updater',
-                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
-                    tmp_dirname='message_passing',
-                    # Keyword arguments:
-                    modules=self.inspector._modules,
-                    collect_name='edge_collect',
-                    signature=self._get_edge_updater_signature(),
-                    collect_param_dict=self.inspector.get_param_dict(
-                        'edge_update'),
-                )
-
-                self.__class__._orig_edge_updater = self.__class__.edge_updater
-                self.__class__._jinja_edge_updater = module.edge_updater
-
-                self.__class__.edge_updater = module.edge_updater
-                self.__class__.edge_collect = module.edge_collect
-            except Exception:  # pragma: no cover
-                self.__class__._orig_edge_updater = self.__class__.edge_updater
-                self.__class__._jinja_edge_updater = (
-                    self.__class__.edge_updater)
+        # Set jittable `propagate` and `edge_updater` function templates:
+        self._set_jittable_templates()
 
         # Explainability:
         self._explain: Optional[bool] = None
@@ -235,12 +177,19 @@ class MessagePassing(torch.nn.Module):
         self._apply_sigmoid: bool = True
 
         # Inference Decomposition:
+        self._decomposed_layers = 1
         self.decomposed_layers = decomposed_layers
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         if self.aggr_module is not None:
             self.aggr_module.reset_parameters()
+
+    def __setstate__(self, data: Dict[str, Any]) -> None:
+        self.inspector = data['inspector']
+        self.fuse = data['fuse']
+        self._set_jittable_templates()
+        super().__setstate__(data)
 
     def __repr__(self) -> str:
         channels_repr = ''
@@ -276,7 +225,8 @@ class MessagePassing(torch.nn.Module):
             return [edge_index.size(1), edge_index.size(0)]
 
         elif isinstance(edge_index, Tensor):
-            int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
+            int_dtypes = (torch.uint8, torch.int8, torch.int16, torch.int32,
+                          torch.int64)
 
             if edge_index.dtype not in int_dtypes:
                 raise ValueError(f"Expected 'edge_index' to be of integer "
@@ -517,7 +467,17 @@ class MessagePassing(torch.nn.Module):
         mutable_size = self._check_input(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
-        if is_sparse(edge_index) and self.fuse and not self.explain:
+        fuse = False
+        if self.fuse and not self.explain:
+            if is_sparse(edge_index):
+                fuse = True
+            elif (not torch.jit.is_scripting()
+                  and isinstance(edge_index, EdgeIndex)):
+                if (self.SUPPORTS_FUSED_EDGE_INDEX
+                        and edge_index.is_sorted_by_col):
+                    fuse = True
+
+        if fuse:
             coll_dict = self._collect(self._fused_user_args, edge_index,
                                       mutable_size, kwargs)
 
@@ -636,7 +596,7 @@ class MessagePassing(torch.nn.Module):
                                 dim=self.node_dim)
 
     @abstractmethod
-    def message_and_aggregate(self, adj_t: Adj) -> Tensor:
+    def message_and_aggregate(self, edge_index: Adj) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
@@ -728,6 +688,9 @@ class MessagePassing(torch.nn.Module):
             raise ValueError("Inference decomposition of message passing "
                              "modules is only supported on the Python module")
 
+        if decomposed_layers == self._decomposed_layers:
+            return  # Abort early if nothing to do.
+
         self._decomposed_layers = decomposed_layers
 
         if decomposed_layers != 1:
@@ -751,6 +714,9 @@ class MessagePassing(torch.nn.Module):
         if torch.jit.is_scripting():
             raise ValueError("Explainability of message passing modules "
                              "is only supported on the Python module")
+
+        if explain == self._explain:
+            return  # Abort early if nothing to do.
 
         self._explain = explain
 
@@ -957,6 +923,81 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     # TorchScript Support #####################################################
+
+    def _set_jittable_templates(self, raise_on_error: bool = False) -> None:
+        root_dir = osp.dirname(osp.realpath(__file__))
+        jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
+        # Optimize `propagate()` via `*.jinja` templates:
+        if not self.propagate.__module__.startswith(jinja_prefix):
+            try:
+                if ('propagate' in self.__class__.__dict__
+                        and self.__class__.__dict__['propagate']
+                        != MessagePassing.propagate):
+                    raise ValueError("Cannot compile custom 'propagate' "
+                                     "method")
+
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_propagate',
+                    template_path=osp.join(root_dir, 'propagate.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='collect',
+                    signature=self._get_propagate_signature(),
+                    collect_param_dict=self.inspector.get_flat_param_dict(
+                        ['message', 'aggregate', 'update']),
+                    message_args=self.inspector.get_param_names('message'),
+                    aggregate_args=self.inspector.get_param_names('aggregate'),
+                    message_and_aggregate_args=self.inspector.get_param_names(
+                        'message_and_aggregate'),
+                    update_args=self.inspector.get_param_names('update'),
+                    fuse=self.fuse,
+                )
+
+                self.__class__._orig_propagate = self.__class__.propagate
+                self.__class__._jinja_propagate = module.propagate
+
+                self.__class__.propagate = module.propagate
+                self.__class__.collect = module.collect
+            except Exception as e:  # pragma: no cover
+                if raise_on_error:
+                    raise e
+                self.__class__._orig_propagate = self.__class__.propagate
+                self.__class__._jinja_propagate = self.__class__.propagate
+
+        # Optimize `edge_updater()` via `*.jinja` templates (if implemented):
+        if (self.inspector.implements('edge_update')
+                and not self.edge_updater.__module__.startswith(jinja_prefix)):
+            try:
+                if ('edge_updater' in self.__class__.__dict__
+                        and self.__class__.__dict__['edge_updater']
+                        != MessagePassing.edge_updater):
+                    raise ValueError("Cannot compile custom 'edge_updater' "
+                                     "method")
+
+                module = module_from_template(
+                    module_name=f'{jinja_prefix}_edge_updater',
+                    template_path=osp.join(root_dir, 'edge_updater.jinja'),
+                    tmp_dirname='message_passing',
+                    # Keyword arguments:
+                    modules=self.inspector._modules,
+                    collect_name='edge_collect',
+                    signature=self._get_edge_updater_signature(),
+                    collect_param_dict=self.inspector.get_param_dict(
+                        'edge_update'),
+                )
+
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = module.edge_updater
+
+                self.__class__.edge_updater = module.edge_updater
+                self.__class__.edge_collect = module.edge_collect
+            except Exception as e:  # pragma: no cover
+                if raise_on_error:
+                    raise e
+                self.__class__._orig_edge_updater = self.__class__.edge_updater
+                self.__class__._jinja_edge_updater = (
+                    self.__class__.edge_updater)
 
     def _get_propagate_signature(self) -> Signature:
         param_dict = self.inspector.get_params_from_method_call(

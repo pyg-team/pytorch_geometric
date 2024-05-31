@@ -62,7 +62,7 @@ class LaplacianLambdaMax(BaseTransform):
             eig_fn = eigsh
 
         lambda_max = eig_fn(L, k=1, which='LM', return_eigenvectors=False)
-        data.lambda_max = float(lambda_max.real)
+        data.lambda_max = lambda_max.real.item()
 
         return data
 

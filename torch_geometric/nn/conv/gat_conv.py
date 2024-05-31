@@ -37,9 +37,8 @@ class GATConv(MessagePassing):
     <https://arxiv.org/abs/1710.10903>`_ paper.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}_{s}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)}
-        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup \{ i \}}
+        \alpha_{i,j}\mathbf{\Theta}_t\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 

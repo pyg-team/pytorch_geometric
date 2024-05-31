@@ -26,6 +26,9 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, out_channels)
 
+        # Add unused parameter:
+        self.param = torch.nn.Parameter(torch.empty(1))
+
     def forward(self, x, edge_index, batch=None, edge_label_index=None):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)

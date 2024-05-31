@@ -158,7 +158,7 @@ class AddMetaPaths(BaseTransform):
                         edge_index, edge_weight)
 
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
-            data[new_edge_type].edge_index = edge_index
+            data[new_edge_type].edge_index = edge_index.as_tensor()
             if self.weighted:
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath

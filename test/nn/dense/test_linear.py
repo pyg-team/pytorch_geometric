@@ -136,7 +136,7 @@ def test_copy_linear(lazy, device):
 
 
 @withCUDA
-def test_hetero_linear(device):
+def test_hetero_linear_basic(device):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
@@ -254,7 +254,6 @@ def test_lazy_hetero_dict_linear(device):
 
 @withCUDA
 @withPackage('pyg_lib')
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('type_vec', [
     torch.tensor([0, 0, 1, 1, 2, 2]),
     torch.tensor([0, 1, 2, 0, 1, 2]),

@@ -5,9 +5,9 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import sort_edge_index
-from torch_geometric.utils.sparse import index2ptr
 
 EPS = 1e-15
 
