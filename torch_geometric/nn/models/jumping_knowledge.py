@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import torch
 from torch import Tensor
@@ -94,3 +94,57 @@ class JumpingKnowledge(torch.nn.Module):
             return (f'{self.__class__.__name__}({self.mode}, '
                     f'channels={self.channels}, layers={self.num_layers})')
         return f'{self.__class__.__name__}({self.mode})'
+
+
+class HeteroJK(torch.nn.Module):
+    r"""Heterogeneous Jumping Knowledge, this class expands the usage of
+    :class:`~torch_geometric.nn.models.JumpingKnowledge` to heterogeneous
+    graph features.
+
+
+    Args:
+        node_types (List[str]): List of node types. This can be dynamically
+            inferred using :obj:`torch_geometric.data.HeteroData.node_types`.
+        mode (str): The aggregation scheme to use
+            (:obj:`"cat"`, :obj:`"max"` or :obj:`"lstm"`).
+        kwargs (optional): Additional arguments to be forwarded in the case of
+            the LSTM style aggregation. Namely you will need to provide the
+            following kwargs :obj:`channels` and :obj:`num_layers`. Please
+            refer to the documentation on
+            :class:`~torch_geometric.nn.models.JumpingKnowledge` for further
+            details.
+    """
+    def __init__(self, node_types: List[str], mode: str, **kwargs):
+        super().__init__()
+        self.jk_dict = torch.nn.ModuleDict()
+        self.mode = mode.lower()
+        for node_type in node_types:
+            self.jk_dict[node_type] = JumpingKnowledge(mode=self.mode,
+                                                       **kwargs)
+
+    def forward(self, xs_dict: Dict[str, List[Tensor]]) -> Dict[str, Tensor]:
+        r"""Forward pass.
+
+        Args:
+            xs_dict (Dict[str, List[torch.Tensor]]): A dictionary holding a
+                list of layer-wise representation for each node type.
+        """
+        out_dict = {}
+        for node_type, jk in self.jk_dict.items():
+            out_dict[node_type] = jk(xs_dict[node_type])
+        return out_dict
+
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        for node_t in self.jk_dict:
+            self.jk_dict[node_t].reset_parameters()
+
+    def __repr__(self):
+        if self.mode == 'lstm':
+            ref_jk = next(iter(self.jk_dict.values()))
+            return (f'{self.__class__.__name__}('
+                    f'num_node_types={len(self.jk_dict)}'
+                    f', mode={self.mode}, channels={ref_jk.channels}'
+                    f', layers={ref_jk.num_layers})')
+        return (f'{self.__class__.__name__}(num_node_types={len(self.jk_dict)}'
+                f', mode={self.mode})')

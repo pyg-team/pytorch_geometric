@@ -2,7 +2,7 @@ r"""Model package."""
 
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
-from .jumping_knowledge import JumpingKnowledge
+from .jumping_knowledge import JumpingKnowledge, HeteroJK
 from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -74,4 +74,5 @@ __all__ = classes = [
     'PMLP',
     'NeuralFingerprint',
     'ViSNet',
+    'HeteroJK',
 ]
