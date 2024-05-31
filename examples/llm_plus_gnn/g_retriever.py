@@ -279,8 +279,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     else:
         pure_llm = LLM()
     if path.exists("demo_save_dict.pt"):
-        print("Saved demo outputs for LLM and GNN+LLM found.")
-        print("Would you like to redo untuned LLM eval?")
+        print("Saved outputs for the first step of the demo found.")
+        print("Would you like to redo?")
         user_input = str(input("(y/n):")).lower()
         skip_step_one = user_input == "n"
     else:
@@ -294,8 +294,11 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         gnn_llm_preds = []
         for out in gnn_llm_eval_outs:
             gnn_llm_preds += out['pred']
-        print(
-            "Checking pretrained LLM vs trained GNN+LLM for hallucinations...")
+        if skip_pretrained_LLM:
+            print("Checking GNN+LLM for hallucinations...")
+        else:
+            print("Checking pretrained LLM vs trained\
+                  GNN+LLM for hallucinations...")
         for i, batch in enumerate(tqdm(loader)):
             question = batch.question[0]
             correct_answer = batch.label[0]
