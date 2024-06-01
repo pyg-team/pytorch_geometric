@@ -55,16 +55,14 @@ class RawWebQSPDataset(WebQSPDataset):
 
     def process(self) -> None:
         if self.with_process:
-            pretrained_repo = "sentence-transformers/all-roberta-large-v1"
-            self.model = SentenceTransformer(pretrained_repo)
-            self.model.to(self.device)
+            self.model = SentenceTransformer().to(self.device)
             self.model.eval()
             list_of_graphs = []
             self.raw_graphs = []
             if self.with_pcst:
                 self.questions = [i["question"] for i in self.raw_dataset]
                 print("Encoding questions...")
-                q_embs = text2embedding(self.model, self.device, self.questions)
+                q_embs = self.model.encode(self.questions, batch_size=256)
 
             print("Encoding graphs...")
             limit = self.limit if self.limit else len(self.raw_dataset)
@@ -83,18 +81,16 @@ class RawWebQSPDataset(WebQSPDataset):
                     raw_edges.append(
                         {"src": raw_nodes[h], "edge_attr": r, "dst": raw_nodes[t]}
                     )
-                nodes = pd.DataFrame(
+                nodes = DataFrame(
                     [{"node_id": v, "node_attr": k} for k, v in raw_nodes.items()],
                     columns=["node_id", "node_attr"],
                 )
-                edges = pd.DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
+                edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
                 # encode nodes
                 nodes.node_attr = nodes.node_attr.fillna("")
-                x = text2embedding(self.model, self.device, nodes.node_attr.tolist())
+                x = self.model.encode(nodes.node_attr.tolist(), batch_size=256)
                 # encode edges
-                edge_attr = text2embedding(
-                    self.model, self.device, edges.edge_attr.tolist()
-                )
+                edge_attr = self.model.encode(edges.edge_attr.tolist(), batch_size=256)
                 edge_index = torch.LongTensor([edges.src.tolist(), edges.dst.tolist()])
                 question = f"Question: {data_i['question']}\nAnswer: "
                 label = ("|").join(data_i["answer"]).lower()

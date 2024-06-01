@@ -70,12 +70,12 @@ class UpdatedWebQSPDataset(WebQSPDataset):
 
         # Nodes:
         nodes = self.indexer.get_unique_node_features()
-        x = text2embedding(self.model, self.device, nodes)
+        x = self.model.encode(nodes, batch_size=256)
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
         edges = self.indexer.get_unique_edge_features(feature_name=EDGE_RELATION)
-        edge_attr = text2embedding(self.model, self.device, edges)
+        edge_attr = self.model.encode(edges, batch_size=256)
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
             new_feature_vals=edge_attr,
@@ -87,7 +87,7 @@ class UpdatedWebQSPDataset(WebQSPDataset):
     def _retrieve_subgraphs(self) -> None:
         print("Encoding questions...")
         self.questions = [ds["question"] for ds in self.raw_dataset]
-        q_embs = text2embedding(self.model, self.device, self.questions)
+        q_embs = self.model.encode(self.questions, batch_size=256)
         list_of_graphs = []
         self.raw_graphs = []
         print("Retrieving subgraphs...")
@@ -128,9 +128,7 @@ class UpdatedWebQSPDataset(WebQSPDataset):
 
     def process(self) -> None:
         self._load_raw_data()
-        pretrained_repo = "sentence-transformers/all-roberta-large-v1"
-        self.model = SentenceTransformer(pretrained_repo)
-        self.model.to(self.device)
+        self.model = SentenceTransformer().to(self.device)
         self.model.eval()
         if not os.path.exists(self.processed_dir[-1]):
             print("Encoding graph...")
