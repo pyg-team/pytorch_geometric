@@ -136,12 +136,12 @@ class UpdatedWebQSPDataset(WebQSPDataset):
         else:
             print("Loading graph...")
             self.indexer = LargeGraphIndexer.from_disk(self.processed_dir[-1])
-        self.textual_nodes = pd.DataFrame.from_dict(
+        self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()}
         )
         self.textual_nodes["node_id"] = self.textual_nodes.index
         self.textual_nodes = self.textual_nodes[["node_id", "node_attr"]]
-        self.textual_edges = pd.DataFrame(
+        self.textual_edges = DataFrame(
             self.indexer.get_edge_features(), columns=["src", "edge_attr", "dst"]
         )
         self.textual_edges["src"] = [
