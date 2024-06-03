@@ -1,5 +1,6 @@
 import os
 import pickle as pkl
+import shutil
 from dataclasses import dataclass
 from itertools import chain
 from typing import (
@@ -14,13 +15,11 @@ from typing import (
     Sequence,
     Set,
     Tuple,
-    Type,
 )
-import shutil
 
 import torch
-from torch_geometric.data import Data, FeatureStore, GraphStore
-from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
+
+from torch_geometric.data import Data
 
 # Is there a multiprocessing-friendly implementation of this?
 
@@ -89,10 +88,11 @@ class LargeGraphIndexer:
             self.node_attr = node_attr
             if NODE_KEYS & set(self.node_attr.keys()) != NODE_KEYS:
                 raise AttributeError(
-                    f"Invalid node_attr object. Missing {NODE_KEYS - set(self.node_attr.keys())}"
+                    "Invalid node_attr object. Missing "
+                    + f"{NODE_KEYS - set(self.node_attr.keys())}"
                 )
             elif self.node_attr[NODE_PID] != nodes:
-                raise AttributeError(f"Nodes provided do not match those in node_attr")
+                raise AttributeError("Nodes provided do not match those in node_attr")
         else:
             self.node_attr = dict()
             self.node_attr[NODE_PID] = nodes
@@ -106,10 +106,11 @@ class LargeGraphIndexer:
 
             if EDGE_KEYS & set(self.edge_attr.keys()) != EDGE_KEYS:
                 raise AttributeError(
-                    f"Invalid edge_attr object. Missing {EDGE_KEYS - set(self.edge_attr.keys())}"
+                    "Invalid edge_attr object. Missing "
+                    + f"{EDGE_KEYS - set(self.edge_attr.keys())}"
                 )
             elif self.node_attr[EDGE_PID] != edges:
-                raise AttributeError(f"Edges provided do not match those in edge_attr")
+                raise AttributeError("Edges provided do not match those in edge_attr")
 
         else:
             self.edge_attr = dict()
@@ -139,7 +140,9 @@ class LargeGraphIndexer:
 
         if pre_transform is not None:
 
-            def apply_transform(trips: Iterable[TripletLike]) -> Iterator[TripletLike]:
+            def apply_transform(
+                trips: Iterable[TripletLike],
+            ) -> Iterator[TripletLike]:
                 for trip in trips:
                     yield pre_transform(trip)
 
@@ -164,7 +167,7 @@ class LargeGraphIndexer:
     def get_unique_node_features(self, feature_name: str = NODE_PID) -> List[Hashable]:
         try:
             if feature_name in self._mapped_node_features:
-                raise IndexError(f"Only non-mapped features can be retrieved uniquely.")
+                raise IndexError("Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_node_features(feature_name))
 
         except KeyError:
@@ -185,7 +188,8 @@ class LargeGraphIndexer:
         feature_keys = self.get_unique_node_features(map_from_feature)
         if len(feature_keys) != len(new_feature_vals):
             raise AttributeError(
-                f"Expected encodings for {len(feature_keys)} unique features, but got {len(new_feature_vals)} encodings."
+                "Expected encodings for {len(feature_keys)} unique features,"
+                + f" but got {len(new_feature_vals)} encodings."
             )
 
         if map_from_feature == NODE_PID:
@@ -197,7 +201,9 @@ class LargeGraphIndexer:
             self._mapped_node_features.add(new_feature_name)
 
     def get_node_features(
-        self, feature_name: str = NODE_PID, pids: Optional[Iterable[Hashable]] = None
+        self,
+        feature_name: str = NODE_PID,
+        pids: Optional[Iterable[Hashable]] = None,
     ) -> List[Any]:
         if feature_name in self._mapped_node_features:
             values = self.node_attr[feature_name].values
@@ -247,7 +253,7 @@ class LargeGraphIndexer:
     def get_unique_edge_features(self, feature_name: str = EDGE_PID) -> List[Hashable]:
         try:
             if feature_name in self._mapped_edge_features:
-                raise IndexError(f"Only non-mapped features can be retrieved uniquely.")
+                raise IndexError("Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_edge_features(feature_name))
         except KeyError:
             raise AttributeError(f"Edges do not have a feature called {feature_name}")
@@ -267,7 +273,8 @@ class LargeGraphIndexer:
         feature_keys = self.get_unique_edge_features(map_from_feature)
         if len(feature_keys) != len(new_feature_vals):
             raise AttributeError(
-                f"Expected encodings for {len(feature_keys)} unique features, but got {len(new_feature_vals)} encodings."
+                "Expected encodings for {len(feature_keys)} unique features, "
+                + f"but got {len(new_feature_vals)} encodings."
             )
 
         if map_from_feature == EDGE_PID:
@@ -392,13 +399,13 @@ class LargeGraphIndexer:
         eq &= self._mapped_edge_features == value._mapped_edge_features
 
         for k in self.node_attr:
-            eq &= type(self.node_attr[k]) == type(value.node_attr[k])
+            eq &= isinstance(self.node_attr[k], type(value.node_attr[k]))
             if isinstance(self.node_attr[k], torch.Tensor):
                 eq &= torch.equal(self.node_attr[k], value.node_attr[k])
             else:
                 eq &= self.node_attr[k] == value.node_attr[k]
         for k in self.edge_attr:
-            eq &= type(self.edge_attr[k]) == type(value.edge_attr[k])
+            eq &= isinstance(self.edge_attr[k], type(value.edge_attr[k]))
             if isinstance(self.edge_attr[k], torch.Tensor):
                 eq &= torch.equal(self.edge_attr[k], value.edge_attr[k])
             else:
@@ -462,7 +469,10 @@ def get_features_for_triplets(
     edge_attr = torch.Tensor(edge_feats)
     edge_index = torch.t(torch.LongTensor(edge_index))
     data_obj = Data(
-        x=x, edge_index=edge_index, edge_attr=edge_attr, num_nodes=len(node_feats)
+        x=x,
+        edge_index=edge_index,
+        edge_attr=edge_attr,
+        num_nodes=len(node_feats),
     )
     # needed for mappings
     data_obj[NODE_PID] = node_keys
