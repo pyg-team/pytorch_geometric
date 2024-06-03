@@ -59,7 +59,6 @@ if args.use_undirected_graph:
     end_undirected  =time.time()
     total_undirected_time = round(end_undirected - start_undirected, 2)
     print("to_undirected costs ", total_undirected_time, "second") 
-#data.edge_index =  to_undirected(data.edge_index)
 data.to(device, 'x', 'y')
 
 train_loader = NeighborLoader(
