@@ -1,8 +1,9 @@
 # Reaches around 0.7870 ± 0.0036 test accuracy.
 
+import argparse
 import os.path as osp
 import time
-import argparse
+
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
@@ -14,15 +15,23 @@ from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument( "-e", "--epochs", type=int, default=10, help='number of training epochs.')
-parser.add_argument( "--runs", type=int, default=4, help='number of runs.')
-parser.add_argument( "--num_layers", type=int, default=3, help='number of layers.')
-parser.add_argument( "-b", "--batch_size", type=int, default=1024, help='batch size.')
-parser.add_argument( "--workers", type=int, default=12, help='number of workers.')
-parser.add_argument( "--neighbors", type=str, default='15,10,5', help='number of neighbors.')
-parser.add_argument( "--fan_out", type=int, default=10, help='number of fanout.')
-parser.add_argument( "--log_interval", type=int, default=10, help='number of log interval.')
-parser.add_argument( "--hidden_channels", type=int, default=256, help='number of hidden channels.')
+parser.add_argument("-e", "--epochs", type=int, default=10,
+                    help='number of training epochs.')
+parser.add_argument("--runs", type=int, default=4, help='number of runs.')
+parser.add_argument("--num_layers", type=int, default=3,
+                    help='number of layers.')
+parser.add_argument("-b", "--batch_size", type=int, default=1024,
+                    help='batch size.')
+parser.add_argument("--workers", type=int, default=12,
+                    help='number of workers.')
+parser.add_argument("--neighbors", type=str, default='15,10,5',
+                    help='number of neighbors.')
+parser.add_argument("--fan_out", type=int, default=10,
+                    help='number of fanout.')
+parser.add_argument("--log_interval", type=int, default=10,
+                    help='number of log interval.')
+parser.add_argument("--hidden_channels", type=int, default=256,
+                    help='number of hidden channels.')
 parser.add_argument("--lr", type=float, default=0.003)
 parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
@@ -45,7 +54,8 @@ neighbors = args.neighbors.split(',')
 num_neighbors = [int(i) for i in neighbors]
 log_interval = args.log_interval
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ogb-papers100M')
+root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'ogb-papers100M')
 print("The root is: ", root)
 dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
@@ -56,9 +66,9 @@ if args.use_undirected_graph:
     print("use undirected graph")
     data.edge_index = to_undirected(data.edge_index, reduce = "mean")
     print("to_undirected is done")
-    end_undirected  =time.time()
+    end_undirected = time.time()
     total_undirected_time = round(end_undirected - start_undirected, 2)
-    print("to_undirected costs ", total_undirected_time, "second") 
+    print("to_undirected costs ", total_undirected_time, "second")
 data.to(device, 'x', 'y')
 
 train_loader = NeighborLoader(
@@ -100,7 +110,8 @@ subgraph_loader = NeighborLoader(
 
 
 class SAGE(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers, dropout):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
+                 dropout):
         super().__init__()
 
         self.num_layers = num_layers
@@ -110,7 +121,7 @@ class SAGE(torch.nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(SAGEConv(hidden_channels, hidden_channels))
         self.convs.append(SAGEConv(hidden_channels, out_channels))
-        self.dropout = dropout 
+        self.dropout = dropout
 
     def reset_parameters(self):
         for conv in self.convs:
@@ -151,7 +162,8 @@ class SAGE(torch.nn.Module):
         return x_all
 
 
-model = SAGE(dataset.num_features, num_hidden_channels, dataset.num_classes, num_layers=num_layers, dropout=args.dropout)
+model = SAGE(dataset.num_features, num_hidden_channels, dataset.num_classes,
+             num_layers=num_layers, dropout=args.dropout)
 model = model.to(device)
 
 
@@ -181,8 +193,9 @@ def train(epoch):
 
     return loss, approx_acc
 
+
 @torch.no_grad()
-def test(loader: NeighborLoader, val_steps = None):
+def test(loader: NeighborLoader, val_steps=None):
     model.eval()
 
     total_correct = total_examples = 0
@@ -199,6 +212,7 @@ def test(loader: NeighborLoader, val_steps = None):
         total_examples += y.size(0)
 
     return total_correct / total_examples
+
 
 test_accs = []
 val_accs = []
@@ -222,15 +236,15 @@ for run in range(1, num_runs + 1):
         train_start = time.time()
         loss, acc = train(epoch)
         train_end = time.time()
-        train_times.append(train_end-train_start)
+        train_times.append(train_end - train_start)
         print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}'
-                f' Time: {train_end - train_start:.4f}s')
+              f' Time: {train_end - train_start:.4f}s')
 
         inference_start = time.time()
         train_acc = test(test_loader)
         val_acc = test(val_loader)
         test_acc = test(test_loader)
-        inference_times.append(time.time()-inference_start)
+        inference_times.append(time.time() - inference_start)
         test_accs.append(test_acc)
         val_accs.append(val_acc)
         #if log_interval and epoch % log_interval:
@@ -241,18 +255,22 @@ for run in range(1, num_runs + 1):
             best_val_acc = val_acc
         if test_acc > best_test_acc:
             best_test_acc = test_acc
-        times.append(time.time()-train_start)
+        times.append(time.time() - train_start)
     if best_val < best_val_acc:
         best_val = best_val_acc
     if best_test < best_test_acc:
         best_test = best_test_acc
-    print("Total time used for run: {:02d} is {:.4f}".format(run, time.time()-start))
+    print("Total time used for run: {:02d} is {:.4f}".format(
+        run,
+        time.time() - start))
 
 test_acc = torch.tensor(test_accs)
 val_acc = torch.tensor(val_accs)
 print('============================')
-print("Average Epoch Time on training: {:.4f}".format(torch.tensor(train_times).mean()))
-print("Average Epoch Time on inference: {:.4f}".format(torch.tensor(inference_times).mean()))
+print("Average Epoch Time on training: {:.4f}".format(
+    torch.tensor(train_times).mean()))
+print("Average Epoch Time on inference: {:.4f}".format(
+    torch.tensor(inference_times).mean()))
 print("Average Epoch Time: {:.4f}".format(torch.tensor(times).mean()))
 print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
 print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
