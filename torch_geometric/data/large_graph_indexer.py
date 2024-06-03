@@ -16,6 +16,7 @@ from typing import (
     Tuple,
     Type,
 )
+import shutil
 
 import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore
@@ -331,6 +332,8 @@ class LargeGraphIndexer:
         return iter(self.edge_attr[EDGE_PID])
 
     def save(self, path: str) -> None:
+        if os.path.exists(path):
+            shutil.rmtree(path)
         os.makedirs(path, exist_ok=True)
         with open(path + "/edges", "wb") as f:
             pkl.dump(self._edges, f)
