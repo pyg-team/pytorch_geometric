@@ -64,7 +64,7 @@ data = dataset[0]
 if args.use_undirected_graph:
     start_undirected = time.time()
     print("use undirected graph")
-    data.edge_index = to_undirected(data.edge_index, reduce = "mean")
+    data.edge_index = to_undirected(data.edge_index, reduce="mean")
     print("to_undirected is done")
     end_undirected = time.time()
     total_undirected_time = round(end_undirected - start_undirected, 2)
