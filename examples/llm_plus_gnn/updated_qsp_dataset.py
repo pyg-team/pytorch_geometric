@@ -1,14 +1,23 @@
 import os
 from itertools import chain
-from typing import Iterator, Optional
+from typing import Iterator, List
 
+import torch
 from large_graph_indexer import (
     EDGE_RELATION,
     LargeGraphIndexer,
     TripletLike,
     get_features_for_triplets,
 )
-from torch_geometric.datasets.web_qsp_dataset import *
+from tqdm import tqdm
+
+from torch_geometric.datasets.web_qsp_dataset import (
+    DataFrame,
+    WebQSPDataset,
+    datasets,
+    retrieval_via_pcst,
+)
+from torch_geometric.nn.nlp import SentenceTransformer
 
 
 def preprocess_triplet(triplet: TripletLike) -> TripletLike:
@@ -17,7 +26,6 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
 
 
 class UpdatedWebQSPDataset(WebQSPDataset):
-
     def __init__(
         self,
         root: str = "",
@@ -60,13 +68,13 @@ class UpdatedWebQSPDataset(WebQSPDataset):
         self._save_raw_data()
 
     def _get_trips(self) -> Iterator[TripletLike]:
-        return chain.from_iterable((iter(ds["graph"]) for ds in self.raw_dataset))
+        return chain.from_iterable(
+            (iter(ds["graph"]) for ds in self.raw_dataset))
 
     def _build_graph(self) -> None:
         trips = self._get_trips()
         self.indexer: LargeGraphIndexer = LargeGraphIndexer.from_triplets(
-            trips, pre_transform=preprocess_triplet
-        )
+            trips, pre_transform=preprocess_triplet)
 
         # Nodes:
         nodes = self.indexer.get_unique_node_features()
@@ -74,7 +82,8 @@ class UpdatedWebQSPDataset(WebQSPDataset):
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        edges = self.indexer.get_unique_edge_features(feature_name=EDGE_RELATION)
+        edges = self.indexer.get_unique_edge_features(
+            feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(edges, batch_size=256)
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
@@ -97,15 +106,16 @@ class UpdatedWebQSPDataset(WebQSPDataset):
             data_i = self.raw_dataset[index]
             local_trips = data_i["graph"]
             if self.whole_graph_retrieval:
-                graph = self.indexer.to_data(
-                    node_feature_name="x", edge_feature_name="edge_attr"
-                )
+                graph = self.indexer.to_data(node_feature_name="x",
+                                             edge_feature_name="edge_attr")
             else:
                 graph = get_features_for_triplets(
-                    self.indexer, local_trips, pre_transform=preprocess_triplet
-                )
-                textual_nodes = self.textual_nodes.iloc[graph["node_idx"]].reset_index()
-                textual_edges = self.textual_edges.iloc[graph["edge_idx"]].reset_index()
+                    self.indexer, local_trips,
+                    pre_transform=preprocess_triplet)
+                textual_nodes = self.textual_nodes.iloc[
+                    graph["node_idx"]].reset_index()
+                textual_edges = self.textual_edges.iloc[
+                    graph["edge_idx"]].reset_index()
                 self.raw_graphs.append(graph)
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
@@ -137,13 +147,11 @@ class UpdatedWebQSPDataset(WebQSPDataset):
             print("Loading graph...")
             self.indexer = LargeGraphIndexer.from_disk(self.processed_dir[-1])
         self.textual_nodes = DataFrame.from_dict(
-            {"node_attr": self.indexer.get_node_features()}
-        )
+            {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index
         self.textual_nodes = self.textual_nodes[["node_id", "node_attr"]]
-        self.textual_edges = DataFrame(
-            self.indexer.get_edge_features(), columns=["src", "edge_attr", "dst"]
-        )
+        self.textual_edges = DataFrame(self.indexer.get_edge_features(),
+                                       columns=["src", "edge_attr", "dst"])
         self.textual_edges["src"] = [
             self.indexer._nodes[h] for h in self.textual_edges["src"]
         ]

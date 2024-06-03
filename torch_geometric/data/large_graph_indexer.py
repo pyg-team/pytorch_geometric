@@ -62,9 +62,8 @@ class MappedFeature:
 class LargeGraphIndexer:
     """For a dataset that consists of mulitiple subgraphs that are assumed to
     be part of a much larger graph, collate the values into a large graph store
-    to save resources
+    to save resources.
     """
-
     def __init__(
         self,
         nodes: Iterable[Hashable],
@@ -88,11 +87,11 @@ class LargeGraphIndexer:
             self.node_attr = node_attr
             if NODE_KEYS & set(self.node_attr.keys()) != NODE_KEYS:
                 raise AttributeError(
-                    "Invalid node_attr object. Missing "
-                    + f"{NODE_KEYS - set(self.node_attr.keys())}"
-                )
+                    "Invalid node_attr object. Missing " +
+                    f"{NODE_KEYS - set(self.node_attr.keys())}")
             elif self.node_attr[NODE_PID] != nodes:
-                raise AttributeError("Nodes provided do not match those in node_attr")
+                raise AttributeError(
+                    "Nodes provided do not match those in node_attr")
         else:
             self.node_attr = dict()
             self.node_attr[NODE_PID] = nodes
@@ -106,11 +105,11 @@ class LargeGraphIndexer:
 
             if EDGE_KEYS & set(self.edge_attr.keys()) != EDGE_KEYS:
                 raise AttributeError(
-                    "Invalid edge_attr object. Missing "
-                    + f"{EDGE_KEYS - set(self.edge_attr.keys())}"
-                )
+                    "Invalid edge_attr object. Missing " +
+                    f"{EDGE_KEYS - set(self.edge_attr.keys())}")
             elif self.node_attr[EDGE_PID] != edges:
-                raise AttributeError("Edges provided do not match those in edge_attr")
+                raise AttributeError(
+                    "Edges provided do not match those in edge_attr")
 
         else:
             self.edge_attr = dict()
@@ -123,7 +122,8 @@ class LargeGraphIndexer:
                 self.edge_attr[EDGE_HEAD].append(h)
                 self.edge_attr[EDGE_RELATION].append(r)
                 self.edge_attr[EDGE_TAIL].append(t)
-                self.edge_attr[EDGE_INDEX].append((self._nodes[h], self._nodes[t]))
+                self.edge_attr[EDGE_INDEX].append(
+                    (self._nodes[h], self._nodes[t]))
 
         for i, tup in enumerate(edges):
             self._edges[tup] = i
@@ -141,8 +141,7 @@ class LargeGraphIndexer:
         if pre_transform is not None:
 
             def apply_transform(
-                trips: Iterable[TripletLike],
-            ) -> Iterator[TripletLike]:
+                    trips: Iterable[TripletLike]) -> Iterator[TripletLike]:
                 for trip in trips:
                     yield pre_transform(trip)
 
@@ -159,19 +158,23 @@ class LargeGraphIndexer:
         return cls(list(nodes), list(edges))
 
     @classmethod
-    def collate(cls, graphs: Iterable["LargeGraphIndexer"]) -> "LargeGraphIndexer":
+    def collate(cls,
+                graphs: Iterable["LargeGraphIndexer"]) -> "LargeGraphIndexer":
         # FIXME Needs to merge node attrs and edge attrs?
         trips = chain.from_iterable([graph.to_triplets() for graph in graphs])
         return cls.from_triplets(trips)
 
-    def get_unique_node_features(self, feature_name: str = NODE_PID) -> List[Hashable]:
+    def get_unique_node_features(
+            self, feature_name: str = NODE_PID) -> List[Hashable]:
         try:
             if feature_name in self._mapped_node_features:
-                raise IndexError("Only non-mapped features can be retrieved uniquely.")
+                raise IndexError(
+                    "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_node_features(feature_name))
 
         except KeyError:
-            raise AttributeError(f"Nodes do not have a feature called {feature_name}")
+            raise AttributeError(
+                f"Nodes do not have a feature called {feature_name}")
 
     def add_node_feature(
         self,
@@ -183,21 +186,20 @@ class LargeGraphIndexer:
         if new_feature_name in self.node_attr:
             raise AttributeError("Features cannot be overridden once created")
         if map_from_feature in self._mapped_node_features:
-            raise AttributeError(f"{map_from_feature} is already a feature mapping.")
+            raise AttributeError(
+                f"{map_from_feature} is already a feature mapping.")
 
         feature_keys = self.get_unique_node_features(map_from_feature)
         if len(feature_keys) != len(new_feature_vals):
             raise AttributeError(
-                "Expected encodings for {len(feature_keys)} unique features,"
-                + f" but got {len(new_feature_vals)} encodings."
-            )
+                "Expected encodings for {len(feature_keys)} unique features," +
+                f" but got {len(new_feature_vals)} encodings.")
 
         if map_from_feature == NODE_PID:
             self.node_attr[new_feature_name] = new_feature_vals
         else:
             self.node_attr[new_feature_name] = MappedFeature(
-                name=map_from_feature, values=new_feature_vals
-            )
+                name=map_from_feature, values=new_feature_vals)
             self._mapped_node_features.add(new_feature_name)
 
     def get_node_features(
@@ -211,8 +213,8 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name]
         if isinstance(values, torch.Tensor):
             idxs = list(
-                self.get_node_features_iter(feature_name, pids, index_only=True)
-            )
+                self.get_node_features_iter(feature_name, pids,
+                                            index_only=True))
             return values[idxs]
         return list(self.get_node_features_iter(feature_name, pids))
 
@@ -231,7 +233,8 @@ class LargeGraphIndexer:
                 feature_map_info.name,
                 feature_map_info.values,
             )
-            from_feature_vals = self.get_unique_node_features(from_feature_name)
+            from_feature_vals = self.get_unique_node_features(
+                from_feature_name)
             feature_mapping = {k: i for i, k in enumerate(from_feature_vals)}
 
             for pid in pids:
@@ -250,13 +253,16 @@ class LargeGraphIndexer:
                 else:
                     yield self.node_attr[feature_name][idx]
 
-    def get_unique_edge_features(self, feature_name: str = EDGE_PID) -> List[Hashable]:
+    def get_unique_edge_features(
+            self, feature_name: str = EDGE_PID) -> List[Hashable]:
         try:
             if feature_name in self._mapped_edge_features:
-                raise IndexError("Only non-mapped features can be retrieved uniquely.")
+                raise IndexError(
+                    "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_edge_features(feature_name))
         except KeyError:
-            raise AttributeError(f"Edges do not have a feature called {feature_name}")
+            raise AttributeError(
+                f"Edges do not have a feature called {feature_name}")
 
     def add_edge_feature(
         self,
@@ -268,21 +274,20 @@ class LargeGraphIndexer:
         if new_feature_name in self.edge_attr:
             raise AttributeError("Features cannot be overridden once created")
         if map_from_feature in self._mapped_edge_features:
-            raise AttributeError(f"{map_from_feature} is already a feature mapping.")
+            raise AttributeError(
+                f"{map_from_feature} is already a feature mapping.")
 
         feature_keys = self.get_unique_edge_features(map_from_feature)
         if len(feature_keys) != len(new_feature_vals):
             raise AttributeError(
                 "Expected encodings for {len(feature_keys)} unique features, "
-                + f"but got {len(new_feature_vals)} encodings."
-            )
+                + f"but got {len(new_feature_vals)} encodings.")
 
         if map_from_feature == EDGE_PID:
             self.edge_attr[new_feature_name] = new_feature_vals
         else:
             self.edge_attr[new_feature_name] = MappedFeature(
-                name=map_from_feature, values=new_feature_vals
-            )
+                name=map_from_feature, values=new_feature_vals)
             self._mapped_edge_features.add(new_feature_name)
 
     def get_edge_features(
@@ -296,8 +301,8 @@ class LargeGraphIndexer:
             values = self.edge_attr[feature_name]
         if isinstance(values, torch.Tensor):
             idxs = list(
-                self.get_edge_features_iter(feature_name, pids, index_only=True)
-            )
+                self.get_edge_features_iter(feature_name, pids,
+                                            index_only=True))
             return values[idxs]
         return list(self.get_edge_features_iter(feature_name, pids))
 
@@ -316,7 +321,8 @@ class LargeGraphIndexer:
                 feature_map_info.name,
                 feature_map_info.values,
             )
-            from_feature_vals = self.get_unique_edge_features(from_feature_name)
+            from_feature_vals = self.get_unique_edge_features(
+                from_feature_name)
             feature_mapping = {k: i for i, k in enumerate(from_feature_vals)}
 
             for pid in pids:
@@ -416,20 +422,16 @@ class LargeGraphIndexer:
         self, node_feature_name: str, edge_feature_name: Optional[str] = None
     ) -> Tuple[torch.Tensor, torch.LongTensor, Optional[torch.Tensor]]:
         x = torch.Tensor(self.get_node_features(node_feature_name))
-        edge_index = torch.t(torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
-        edge_attr = (
-            self.get_edge_features(edge_feature_name)
-            if edge_feature_name is not None
-            else None
-        )
+        edge_index = torch.t(
+            torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
+        edge_attr = (self.get_edge_features(edge_feature_name)
+                     if edge_feature_name is not None else None)
         return x, edge_index, edge_attr
 
-    def to_data(
-        self, node_feature_name: str, edge_feature_name: Optional[str] = None
-    ) -> Data:
-        x, edge_index, edge_attr = self._to_data_attrs(
-            node_feature_name, edge_feature_name
-        )
+    def to_data(self, node_feature_name: str,
+                edge_feature_name: Optional[str] = None) -> Data:
+        x, edge_index, edge_attr = self._to_data_attrs(node_feature_name,
+                                                       edge_feature_name)
         return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
 
@@ -451,17 +453,14 @@ def get_features_for_triplets(
         triplets = list(apply_transform(triplets))
 
     small_graph_indexer = LargeGraphIndexer.from_triplets(
-        triplets, pre_transform=pre_transform
-    )
+        triplets, pre_transform=pre_transform)
     node_keys = small_graph_indexer.get_node_features()
-    node_feats = indexer.get_node_features(
-        feature_name=node_feature_name, pids=node_keys
-    )
+    node_feats = indexer.get_node_features(feature_name=node_feature_name,
+                                           pids=node_keys)
 
     edge_keys = small_graph_indexer.get_edge_features(pids=triplets)
-    edge_feats = indexer.get_edge_features(
-        feature_name=edge_feature_name, pids=edge_keys
-    )
+    edge_feats = indexer.get_edge_features(feature_name=edge_feature_name,
+                                           pids=edge_keys)
 
     edge_index = small_graph_indexer.get_edge_features(EDGE_INDEX, triplets)
 

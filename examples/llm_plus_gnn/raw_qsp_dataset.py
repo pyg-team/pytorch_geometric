@@ -1,10 +1,19 @@
-from typing import Optional
+from typing import Dict, List, Optional
 
-from torch_geometric.datasets.web_qsp_dataset import *
+import torch
+from tqdm import tqdm
+
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.datasets.web_qsp_dataset import (
+    DataFrame,
+    WebQSPDataset,
+    datasets,
+    retrieval_via_pcst,
+)
+from torch_geometric.nn.nlp import SentenceTransformer
 
 
 class RawWebQSPDataset(WebQSPDataset):
-
     def __init__(
         self,
         root: str = "",
@@ -20,10 +29,10 @@ class RawWebQSPDataset(WebQSPDataset):
             super().__init__(root, force_reload)
         else:
             self._check_dependencies()
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            super(InMemoryDataset, self).__init__(
-                root, None, None, force_reload=force_reload
-            )
+            self.device = torch.device(
+                "cuda" if torch.cuda.is_available() else "cpu")
+            super(InMemoryDataset, self).__init__(root, None, None,
+                                                  force_reload=force_reload)
             self._load_raw_data()
 
     @property
@@ -78,20 +87,29 @@ class RawWebQSPDataset(WebQSPDataset):
                         raw_nodes[h] = len(raw_nodes)
                     if t not in raw_nodes:
                         raw_nodes[t] = len(raw_nodes)
-                    raw_edges.append(
-                        {"src": raw_nodes[h], "edge_attr": r, "dst": raw_nodes[t]}
-                    )
+                    raw_edges.append({
+                        "src": raw_nodes[h],
+                        "edge_attr": r,
+                        "dst": raw_nodes[t]
+                    })
                 nodes = DataFrame(
-                    [{"node_id": v, "node_attr": k} for k, v in raw_nodes.items()],
+                    [{
+                        "node_id": v,
+                        "node_attr": k
+                    } for k, v in raw_nodes.items()],
                     columns=["node_id", "node_attr"],
                 )
-                edges = DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
+                edges = DataFrame(raw_edges,
+                                  columns=["src", "edge_attr", "dst"])
                 # encode nodes
                 nodes.node_attr = nodes.node_attr.fillna("")
                 x = self.model.encode(nodes.node_attr.tolist(), batch_size=256)
                 # encode edges
-                edge_attr = self.model.encode(edges.edge_attr.tolist(), batch_size=256)
-                edge_index = torch.LongTensor([edges.src.tolist(), edges.dst.tolist()])
+                edge_attr = self.model.encode(edges.edge_attr.tolist(),
+                                              batch_size=256)
+                edge_index = torch.LongTensor(
+                    [edges.src.tolist(),
+                     edges.dst.tolist()])
                 question = f"Question: {data_i['question']}\nAnswer: "
                 label = ("|").join(data_i["answer"]).lower()
                 raw_graph = Data(
