@@ -95,8 +95,10 @@ def test_large_graph_index():
         encode_graph_from_trips(triplets=trips) for trips in graphs
     ]
 
-    indexer = LargeGraphIndexer.collate(
-        [LargeGraphIndexer.from_triplets(g, pre_transform=preprocess_triplet) for g in graphs])
+    indexer = LargeGraphIndexer.collate([
+        LargeGraphIndexer.from_triplets(g, pre_transform=preprocess_triplet)
+        for g in graphs
+    ])
     indexer_nodes = indexer.get_unique_node_features()
     indexer_node_vals = torch.Tensor(
         [node_feature_vecs[n] for n in indexer_nodes])
@@ -110,7 +112,8 @@ def test_large_graph_index():
     large_graph_ds = [
         get_features_for_triplets(indexer=indexer, triplets=g,
                                   node_feature_name='x',
-                                  edge_feature_name='edge_attr', pre_transform=preprocess_triplet)
+                                  edge_feature_name='edge_attr',
+                                  pre_transform=preprocess_triplet)
         for g in graphs
     ]
 
