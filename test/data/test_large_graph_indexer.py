@@ -11,7 +11,7 @@ from torch_geometric.data import (
     TripletLike,
     get_features_for_triplets,
 )
-from torch_geometric.data.large_graph_indexer import EDGE_RELATION, NODE_PID
+from torch_geometric.data.large_graph_indexer import EDGE_RELATION, NODE_PID, EDGE_PID
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
@@ -116,6 +116,12 @@ def test_large_graph_index():
                                   pre_transform=preprocess_triplet)
         for g in graphs
     ]
+
+    for ds in large_graph_ds:
+        assert NODE_PID in ds
+        assert EDGE_PID in ds
+        assert "node_idx" in ds
+        assert "edge_idx" in ds
 
     def results_are_close_enough(ground_truth: Data, new_method: Data,
                                  thresh=.99):
