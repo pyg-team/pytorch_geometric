@@ -61,7 +61,7 @@ dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-papers100M')
 data = dataset[0]
-use_undirected_graph = args.use_undirected_graph == "True":
+use_undirected_graph = args.use_undirected_graph == "True"
 if use_undirected_graph:
     start_undirected = time.time()
     print("use undirected graph")
