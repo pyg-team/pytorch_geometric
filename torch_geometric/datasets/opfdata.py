@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 from functools import cached_property
-from typing import List, Literal, Tuple, Callable, Optional
+from typing import Callable, List, Literal, Optional, Tuple
 
 import torch
 
