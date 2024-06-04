@@ -113,7 +113,7 @@ def test_large_graph_index():
     ]
 
     def results_are_close_enough(ground_truth: Data, new_method: Data,
-                                 thresh=.9):
+                                 thresh=.99):
         def _sorted_tensors_are_close(tensor1, tensor2):
             return torch.all(
                 torch.isclose(tensor1.sort()[0],
