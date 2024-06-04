@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 from functools import cached_property
-from typing import List, Literal
+from typing import List, Literal, Tuple, Callable, Optional
 
 import torch
 
@@ -17,14 +17,14 @@ def read_json(filename: str) -> dict:
         return data
 
 
-def extract_edge_index(json_file, edge_name: str) -> torch.tensor:
+def extract_edge_index(json_file: dict, edge_name: str) -> torch.Tensor:
     return torch.tensor([
         json_file['grid']['edges'][edge_name]['senders'],
         json_file['grid']['edges'][edge_name]['receivers'],
     ])
 
 
-def extract_edge_index_rev(json_file, edge_name: str) -> torch.tensor:
+def extract_edge_index_rev(json_file: dict, edge_name: str) -> torch.Tensor:
     return torch.tensor([
         json_file['grid']['edges'][edge_name]['receivers'],
         json_file['grid']['edges'][edge_name]['senders'],
@@ -63,21 +63,27 @@ class OPFData(Dataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    def __init__(self, root: str, split: Literal['train', 'test',
-                                                 'valid'] = 'train',
-                 case_name: Literal[
-                     'pglib_opf_case14_ieee',
-                     'pglib_opf_case30_ieee',
-                     'pglib_opf_case57_ieee',
-                     'pglib_opf_case118_ieee',
-                     'pglib_opf_case500_goc',
-                     'pglib_opf_case2000_goc',
-                     'pglib_opf_case6470_rte',
-                     'pglib_opf_case4661_sdet'
-                     'pglib_opf_case10000_goc',
-                     'pglib_opf_case13659_pegase',
-                 ] = 'pglib_opf_case14_ieee', topological_perturbations=False,
-                 transform=None, pre_transform=None, pre_filter=None) -> None:
+    def __init__(
+        self,
+        root: str,
+        split: Literal['train', 'test', 'valid'] = 'train',
+        case_name: Literal[
+            'pglib_opf_case14_ieee',
+            'pglib_opf_case30_ieee',
+            'pglib_opf_case57_ieee',
+            'pglib_opf_case118_ieee',
+            'pglib_opf_case500_goc',
+            'pglib_opf_case2000_goc',
+            'pglib_opf_case6470_rte',
+            'pglib_opf_case4661_sdet'
+            'pglib_opf_case10000_goc',
+            'pglib_opf_case13659_pegase',
+        ] = 'pglib_opf_case14_ieee',
+        topological_perturbations: bool = False,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ) -> None:
         # From the constructor.
         self.split = split
         self.case_name = case_name
@@ -94,7 +100,7 @@ class OPFData(Dataset):
         super().__init__(disambiguated_root, transform, pre_transform,
                          pre_filter)
 
-    def file_indices(self) -> List[str]:
+    def file_indices(self) -> Tuple[int, int]:
         if self.split == 'train':
             return 0, int(0.9 * self._n_examples)
         elif self.split == 'valid':
@@ -102,7 +108,7 @@ class OPFData(Dataset):
         elif self.split == 'test':
             return int(0.95 * self._n_examples), self._n_examples
 
-    def _group_indices(self) -> List[str]:
+    def _group_indices(self) -> range:
         if self.split == 'train':
             return range(0, 18)
         elif self.split == 'valid':
@@ -219,7 +225,7 @@ class OPFData(Dataset):
     def len(self) -> int:
         return len(self.processed_file_names)
 
-    def get(self, idx) -> HeteroData:
+    def get(self, idx: int) -> HeteroData:
         offset_idx = idx + self.file_indices()[0]
         fname = f'example_{offset_idx}.pt'
         return torch.load(os.path.join(self.processed_dir, fname))
