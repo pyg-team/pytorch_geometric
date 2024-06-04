@@ -314,8 +314,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 pure_llm_pred = pure_llm_out['pred'][0]
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
-            untuned_llm_save_list += [(pure_llm_pred,
-                                        pure_llm_hallucinates)]
+            untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
 
             gnn_llm_pred = gnn_llm_preds[i]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
