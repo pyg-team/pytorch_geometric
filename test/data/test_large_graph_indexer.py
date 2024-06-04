@@ -68,7 +68,8 @@ def test_basic_collate():
 def test_large_graph_index():
     graphs = [sample_triplets(1000) for i in range(100)]
 
-    node_feature_vecs = {s: featurize(s) for s in NODE_POOL}
+    # Preprocessing of trips lowercases nodes but not edges
+    node_feature_vecs = {s.lower(): featurize(s.lower()) for s in NODE_POOL}
     edge_feature_vecs = {s: featurize(s) for s in EDGE_POOL}
 
     def encode_graph_from_trips(triplets: List[TripletLike]) -> Data:
@@ -76,6 +77,7 @@ def test_large_graph_index():
         edge_attrs = list()
         edge_idx = []
         for trip in triplets:
+            trip = preprocess_triplet(trip)
             h, r, t = trip
             seen_nodes[h] = len(
                 seen_nodes) if h not in seen_nodes else seen_nodes[h]
@@ -94,7 +96,7 @@ def test_large_graph_index():
     ]
 
     indexer = LargeGraphIndexer.collate(
-        [LargeGraphIndexer.from_triplets(g) for g in graphs])
+        [LargeGraphIndexer.from_triplets(g, pre_transform=preprocess_triplet) for g in graphs])
     indexer_nodes = indexer.get_unique_node_features()
     indexer_node_vals = torch.Tensor(
         [node_feature_vecs[n] for n in indexer_nodes])
@@ -108,7 +110,7 @@ def test_large_graph_index():
     large_graph_ds = [
         get_features_for_triplets(indexer=indexer, triplets=g,
                                   node_feature_name='x',
-                                  edge_feature_name='edge_attr')
+                                  edge_feature_name='edge_attr', pre_transform=preprocess_triplet)
         for g in graphs
     ]
 
