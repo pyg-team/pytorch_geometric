@@ -36,22 +36,13 @@ parser.add_argument("--lr", type=float, default=0.003)
 parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
-<<<<<<< HEAD
     "--use_undirected_graph",
     default = "True",
     choices=["False", "True"],
     help="Wether or not to use undirected graph",
-=======
-    "--use_directed_graph",
-    action='store_true',
-    help="Wether or not to use directed graph. \
-    Only recommended if undirected graph causes OOM, as this lowers \
-    test accuracy significantly.",
->>>>>>> ce0df9be9ec6b936440cb3ed0136953d235a8a7b
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device(args.device)
 num_epochs = args.epochs
 num_runs = args.runs
@@ -70,12 +61,8 @@ dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-papers100M')
 data = dataset[0]
-<<<<<<< HEAD
 use_undirected_graph = args.use_undirected_graph == "True":
 if use_undirected_graph:
-=======
-if not args.use_directed_graph:
->>>>>>> ce0df9be9ec6b936440cb3ed0136953d235a8a7b
     start_undirected = time.time()
     print("use undirected graph")
     data.edge_index = to_undirected(data.edge_index, reduce="mean")
