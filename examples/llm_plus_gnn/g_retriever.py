@@ -18,6 +18,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
+from torch_geometric.data import Dataset
 from torch_geometric.datasets import UpdatedWebQSPDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
@@ -139,6 +140,9 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     seed_everything(42)
     if dataset is None:
         dataset = WebQSPDataset()
+        gc.collect()
+    elif not isinstance(dataset, Dataset) and callable(dataset):
+        dataset = dataset()
         gc.collect()
     idx_split = dataset.split_idxs
 
@@ -456,7 +460,7 @@ if __name__ == "__main__":
     else:
         retrain = True
     if retrain:
-        dataset = UpdatedWebQSPDataset() if args.updated_qsp else None
+        dataset = UpdatedWebQSPDataset if args.updated_qsp else None
         since = time.time()
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
