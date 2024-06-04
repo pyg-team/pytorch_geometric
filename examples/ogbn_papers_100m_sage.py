@@ -38,8 +38,8 @@ parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
     action='store_true',
-    help="Wether or not to use directed graph.
-    Only recommended if undirected graph causes OOM, as this lowers
+    help="Wether or not to use directed graph. \
+    Only recommended if undirected graph causes OOM, as this lowers \
     test accuracy significantly.",
 )
 args = parser.parse_args()
