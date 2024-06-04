@@ -18,7 +18,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets import WebQSPDataset, UpdatedWebQSPDataset
+from torch_geometric.datasets import UpdatedWebQSPDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.nlp import LLM
@@ -443,8 +443,7 @@ if __name__ == "__main__":
         help="This flag will skip the evaluation of the pretrained LLM.")
     parser.add_argument(
         "--updated_qsp", action="store_true",
-        help="This enables the updated and inproved WebQSP dataloader."
-    )
+        help="This enables the updated and inproved WebQSP dataloader.")
 
     args = parser.parse_args()
     # check if saved model
@@ -472,7 +471,8 @@ if __name__ == "__main__":
         print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
     else:
         gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
-        dataset = WebQSPDataset() if not args.updated_qsp else UpdatedWebQSPDataset()
+        dataset = WebQSPDataset(
+        ) if not args.updated_qsp else UpdatedWebQSPDataset()
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size, get_loss,
