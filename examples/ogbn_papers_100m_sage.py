@@ -36,10 +36,11 @@ parser.add_argument("--lr", type=float, default=0.003)
 parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
-    "--use_undirected_graph",
-    default=True,
+    "--use_directed_graph",
     action='store_true',
-    help="Wether or not to use undirected graph",
+    help="Wether or not to use directed graph.
+    Only recommended if undirected graph causes OOM, as this lowers
+    test accuracy significantly.",
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
@@ -62,7 +63,7 @@ dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-papers100M')
 data = dataset[0]
-if args.use_undirected_graph:
+if not args.use_directed_graph:
     start_undirected = time.time()
     print("use undirected graph")
     data.edge_index = to_undirected(data.edge_index, reduce="mean")
