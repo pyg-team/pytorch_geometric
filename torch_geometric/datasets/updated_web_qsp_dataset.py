@@ -1,12 +1,18 @@
 import os
 from itertools import chain
-from typing import Iterator, List, no_type_check, Tuple
+from typing import Iterator, List, Tuple, no_type_check
 
 import numpy as np
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import InMemoryDataset, LargeGraphIndexer, TripletLike, get_features_for_triplets, Data
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    LargeGraphIndexer,
+    TripletLike,
+    get_features_for_triplets,
+)
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
 
@@ -30,6 +36,7 @@ try:
     WITH_DATASETS = True
 except ImportError:
     WITH_DATASETS = False
+
 
 @no_type_check
 def retrieval_via_pcst(
