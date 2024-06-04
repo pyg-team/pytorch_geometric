@@ -37,6 +37,7 @@ parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_undirected_graph",
+    default = True,
     action='store_true',
     help="Wether or not to use undirected graph",
 )
