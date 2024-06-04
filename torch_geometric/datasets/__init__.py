@@ -77,6 +77,7 @@ from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
 from .web_qsp_dataset import WebQSPDataset
+from .updated_web_qsp_dataset import UpdatedWebQSPDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -111,6 +112,7 @@ from .ba_shapes import BAShapes
 import torch_geometric.datasets.utils
 
 homo_datasets = [
+    'UpdatedWebQSPDataset',
     'WebQSPDataset',
     'KarateClub',
     'TUDataset',
