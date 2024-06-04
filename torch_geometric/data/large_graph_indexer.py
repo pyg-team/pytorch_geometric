@@ -473,5 +473,10 @@ def get_features_for_triplets(
         edge_attr=edge_attr,
         num_nodes=len(node_feats),
     )
+    # needed for mappings
+    data_obj[NODE_PID] = node_keys
+    data_obj[EDGE_PID] = edge_keys
+    data_obj["node_idx"] = [indexer._nodes[k] for k in node_keys]
+    data_obj["edge_idx"] = [indexer._edges[e] for e in edge_keys]
 
     return data_obj
