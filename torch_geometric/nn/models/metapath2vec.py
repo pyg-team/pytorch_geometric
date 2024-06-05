@@ -227,14 +227,14 @@ class MetaPath2Vec(torch.nn.Module):
         return pos_loss + neg_loss
 
     def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
-             test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
+             test_y: Tensor, solver: str = "lbfgs",
              *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task.
         """
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+        clf = LogisticRegression(solver=solver, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),
