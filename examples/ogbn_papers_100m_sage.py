@@ -92,7 +92,6 @@ test_loader = NeighborLoader(
     data,
     input_nodes=split_idx['test'],
     num_neighbors=[args.fan_out] * num_layers,
-    #num_neighbors=[2*args.fan_out] * num_layers,
     batch_size=batch_size,
     shuffle=True,
     num_workers=num_workers,
@@ -215,7 +214,6 @@ def test(loader: NeighborLoader, val_steps=None):
 
 test_accs = []
 val_accs = []
-#for run in range(1, 11):
 times = []
 train_times = []
 inference_times = []
@@ -246,7 +244,6 @@ for run in range(1, num_runs + 1):
         inference_times.append(time.time() - inference_start)
         test_accs.append(test_acc)
         val_accs.append(val_acc)
-        #if log_interval and epoch % log_interval:
         print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
               f'Test: {test_acc:.4f}')
 
