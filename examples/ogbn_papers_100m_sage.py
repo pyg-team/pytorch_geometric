@@ -37,7 +37,7 @@ parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
-    action = 'store_true',
+    action='store_true',
     help="Wether or not to use directed graph",
 )
 args = parser.parse_args()
