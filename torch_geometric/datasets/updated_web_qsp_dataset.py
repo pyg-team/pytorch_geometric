@@ -11,7 +11,7 @@ from torch_geometric.data import (
     InMemoryDataset,
     LargeGraphIndexer,
     TripletLike,
-    get_features_for_triplets,
+    get_features_for_triplets_groups
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
@@ -196,7 +196,6 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             "list_of_graphs.pt",
             "pre_filter.pt",
             "pre_transform.pt",
-            "raw_graphs.pt",
             "large_graph_indexer",
         ]
 
@@ -252,6 +251,7 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             map_from_feature=EDGE_RELATION,
         )
 
+        print("Saving graph...")
         self.indexer.save(self.processed_paths[-1])
 
     def _retrieve_subgraphs(self) -> None:
@@ -259,25 +259,25 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         self.questions = [ds["question"] for ds in self.raw_dataset]
         q_embs = self.model.encode(self.questions, batch_size=256)
         list_of_graphs = []
-        self.raw_graphs = []
         print("Retrieving subgraphs...")
         textual_nodes = self.textual_nodes
         textual_edges = self.textual_edges
+        graph = None
+        graph_gen = None
+        if self.whole_graph_retrieval:
+            graph = self.indexer.to_data(node_feature_name="x",
+                                            edge_feature_name="edge_attr")
+        else:
+            graph_gen = get_features_for_triplets_groups(self.indexer, (ds['graph'] for ds in self.raw_dataset), pre_transform=preprocess_triplet)
+
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
-            local_trips = data_i["graph"]
-            if self.whole_graph_retrieval:
-                graph = self.indexer.to_data(node_feature_name="x",
-                                             edge_feature_name="edge_attr")
-            else:
-                graph = get_features_for_triplets(
-                    self.indexer, local_trips,
-                    pre_transform=preprocess_triplet)
+            if not self.whole_graph_retrieval:
+                graph = next(graph_gen)
                 textual_nodes = self.textual_nodes.iloc[
                     graph["node_idx"]].reset_index()
                 textual_edges = self.textual_edges.iloc[
                     graph["edge_idx"]].reset_index()
-                self.raw_graphs.append(graph)
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
                 q_embs[index],
@@ -294,19 +294,19 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             pcst_subgraph["label"] = label
             pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
-        torch.save(self.raw_graphs, self.processed_paths[-2])
+        print("Saving subgraphs...")
         self.save(list_of_graphs, self.processed_paths[0])
 
     def process(self) -> None:
         self._load_raw_data()
         self.model = SentenceTransformer().to(self.device)
         self.model.eval()
-        if not os.path.exists(self.processed_dir[-1]):
+        if not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
             self._build_graph()
         else:
             print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(self.processed_dir[-1])
+            self.indexer = LargeGraphIndexer.from_disk(self.processed_paths[-1])
         self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index
