@@ -65,7 +65,7 @@ def dirichlet_energy(
         raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
 
     num_nodes: int = feat_matrix.shape[0]
-    de: Tensor = 0
+    de: Tensor = torch.tensor(0)
 
     if adj_dict is None:
         adj_dict = build_adj_dict(num_nodes=num_nodes, edge_index=edge_index)
@@ -113,7 +113,7 @@ def mean_average_distance(
         raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
 
     num_nodes: int = feat_matrix.shape[0]
-    mad: Tensor = 0
+    mad: Tensor = torch.tensor(0)
 
     if adj_dict is None:
         adj_dict = build_adj_dict(num_nodes=num_nodes, edge_index=edge_index)
