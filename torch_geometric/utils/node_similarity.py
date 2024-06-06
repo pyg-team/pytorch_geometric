@@ -19,13 +19,15 @@ def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict[int, list[int]]:
     """
 
     # initialize adjacency dict with empty neighborhoods for all nodes
-    adj_dict: dict[int, list[int]] = {nodeid: [] for nodeid in range(num_nodes)}
+    adj_dict: dict[int, list[int]] = {
+        nodeid: []
+        for nodeid in range(num_nodes)
+    }
 
-    # iterate through all edges and add head nodes to adjacency list of tail nodes
     for eidx in range(edge_index.shape[1]):
         ctail, chead = edge_index[0, eidx].item(), edge_index[1, eidx].item()
 
-        if not chead in adj_dict[ctail]:
+        if chead not in adj_dict[ctail]:
             adj_dict[ctail].append(chead)
 
     return adj_dict
@@ -43,18 +45,21 @@ def dirichlet_energy(
         <https://arxiv.org/abs/2303.10993>`_ paper.
 
     .. math::
-        \mu\left(\mathbf{X}^n\right)= \sqrt{\mathcal{E}\left(\mathbf{X}^n\right)}
+        \mu\left(\mathbf{X}^n\right) =
+        \sqrt{\mathcal{E}\left(\mathbf{X}^n\right)}
 
     with
 
     .. math::
-        \mathcal{E}(\mathbf{X}^n) = \mathrm{Ave}_{i\in \mathcal{V}} \sum_{j \in \mathcal{N}_i}
-        ||\mathbf{X}_{i}^n - \mathbf{X}_{j}^n||_p ^2
+        \mathcal{E}(\mathbf{X}^n) = \mathrm{Ave}_{i\in \mathcal{V}}
+        \sum_{j \in \mathcal{N}_i} ||\mathbf{X}_{i}^n - \mathbf{X}_{j}^n||_p ^2
 
     Args:
         feat_matrix (torch.Tensor): The node feature matrix.
-        edge_index (torch.Tensor, optional): The edge list (default: :obj:`None`)
-        adj_dict (dict, optional): The adjacency dictionary (default: :obj:`None`)
+        edge_index (torch.Tensor, optional): The edge list
+            (default: :obj:`None`)
+        adj_dict (dict, optional): The adjacency dictionary
+            (default: :obj:`None`)
         p (int or float, optional): The order of the norm (default: :obj:`2`)
 
     :rtype: float
@@ -64,7 +69,7 @@ def dirichlet_energy(
         raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
     if (edge_index is not None) and (adj_dict is not None):
         raise ValueError(
-            "Both 'edge_index' and 'adj_dict' were provided. Only one should be passed."
+            "Both 'edge_index' and 'adj_dict' were provided."
         )
 
     num_nodes: int = feat_matrix.shape[0]
@@ -96,13 +101,17 @@ def mean_average_distance(
         <https://arxiv.org/abs/2303.10993>`_ paper.
 
     .. math::
-        \mu(\mathbf{X}^n) = \mathrm{Ave}_{i\in \mathcal{V}} \sum_{j \in \mathcal{N}_i}
-        \frac{{\mathbf{X}_i ^n}^\mathrm{T} \mathbf{X}_j ^n}{||\mathbf{X}_i ^n|| ||\mathbf{X}_j^n||}
+        \mu(\mathbf{X}^n) = \mathrm{Ave}_{i\in \mathcal{V}}
+        \sum_{j \in \mathcal{N}_i}
+        \frac{{\mathbf{X}_i ^n}^\mathrm{T}\mathbf{X}_j ^n}
+        {||\mathbf{X}_i ^n|| ||\mathbf{X}_j^n||}
 
     Args:
         feat_matrix (torch.Tensor): The node feature matrix.
-        edge_index (torch.Tensor, optional): The edge list (default: :obj:`None`)
-        adj_dict (dict, optional): The adjacency dictionary (default: :obj:`None`)
+        edge_index (torch.Tensor, optional): The edge list
+            (default: :obj:`None`)
+        adj_dict (dict, optional): The adjacency dictionary
+            (default: :obj:`None`)
 
     :rtype: float
     """
@@ -111,7 +120,7 @@ def mean_average_distance(
         raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
     if (edge_index is not None) and (adj_dict is not None):
         raise ValueError(
-            "Both 'edge_index' and 'adj_dict' were provided. Only one should be passed."
+            "Both 'edge_index' and 'adj_dict' were provided."
         )
 
     num_nodes: int = feat_matrix.shape[0]
@@ -122,9 +131,8 @@ def mean_average_distance(
 
     def inner(x_i: Tensor, x_js: Tensor) -> Tensor:
         return (
-            1
-            - (x_i @ x_js.t())
-            / (TLA.vector_norm(x_i, ord=2) * TLA.vector_norm(x_js, ord=2, dim=1))
+            1 - (x_i @ x_js.t()) /
+            (TLA.vector_norm(x_i, ord=2) * TLA.vector_norm(x_js, ord=2, dim=1))
         ).sum()
 
     for node_index in range(num_nodes):
