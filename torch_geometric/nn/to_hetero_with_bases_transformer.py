@@ -309,6 +309,24 @@ class ToHeteroWithBasesTransformer(Transformer):
 ###############################################################################
 
 
+# We make use of a post-message computation hook to inject the
+# basis re-weighting for each individual edge type.
+# This currently requires us to set `conv.fuse = False`, which leads
+# to a materialization of messages.
+def hook(module, inputs, output):
+    assert isinstance(module._edge_type, Tensor)
+    if module._edge_type.size(0) != output.size(-2):
+        raise ValueError(
+            f"Number of messages ({output.size(0)}) does not match "
+            f"with the number of original edges "
+            f"({module._edge_type.size(0)}). Does your message "
+            f"passing layer create additional self-loops? Try to "
+            f"remove them via 'add_self_loops=False'")
+    weight = module.edge_type_weight.view(-1)[module._edge_type]
+    weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
+    return weight * output
+
+
 class HeteroBasisConv(torch.nn.Module):
     # A wrapper layer that applies the basis-decomposition technique to a
     # heterogeneous graph.
@@ -318,23 +336,6 @@ class HeteroBasisConv(torch.nn.Module):
 
         self.num_relations = num_relations
         self.num_bases = num_bases
-
-        # We make use of a post-message computation hook to inject the
-        # basis re-weighting for each individual edge type.
-        # This currently requires us to set `conv.fuse = False`, which leads
-        # to a materialization of messages.
-        def hook(module, inputs, output):
-            assert isinstance(module._edge_type, Tensor)
-            if module._edge_type.size(0) != output.size(-2):
-                raise ValueError(
-                    f"Number of messages ({output.size(0)}) does not match "
-                    f"with the number of original edges "
-                    f"({module._edge_type.size(0)}). Does your message "
-                    f"passing layer create additional self-loops? Try to "
-                    f"remove them via 'add_self_loops=False'")
-            weight = module.edge_type_weight.view(-1)[module._edge_type]
-            weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
-            return weight * output
 
         params = list(module.parameters())
         device = params[0].device if len(params) > 0 else 'cpu'
