@@ -17,7 +17,7 @@ def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict:
     :rtype: dict
     """
     # initialize adjacency dict with empty neighborhoods for all nodes
-    adj_dict: dict = { nodeid: [] for nodeid in range(num_nodes) }
+    adj_dict: dict = {nodeid: [] for nodeid in range(num_nodes)}
 
     for eidx in range(edge_index.shape[1]):
         ctail, chead = edge_index[0, eidx].item(), edge_index[1, eidx].item()
@@ -33,7 +33,7 @@ def dirichlet_energy(
     feat_matrix: Tensor,
     edge_index: Optional[Tensor] = None,
     adj_dict: Optional[dict] = None,
-    p: Optional[Union[int,float]] = 2,
+    p: Optional[Union[int, float]] = 2,
 ) -> float:
     r"""The 'Dirichlet Energy' node similarity measure from the
     `"A Survey on Oversmoothing in Graph Neural Networks"
