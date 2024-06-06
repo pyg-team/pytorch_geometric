@@ -1,6 +1,7 @@
 from typing import Optional
 
 from torch import Tensor
+from torch.nn import Identity
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
@@ -39,6 +40,8 @@ class SGConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        apply_linearity (bool, optional): If set to :obj:`False`, the layer will not learn
+            a linearity. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -55,7 +58,7 @@ class SGConv(MessagePassing):
 
     def __init__(self, in_channels: int, out_channels: int, K: int = 1,
                  cached: bool = False, add_self_loops: bool = True,
-                 bias: bool = True, **kwargs):
+                 bias: bool = True, apply_linearity: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
@@ -64,16 +67,20 @@ class SGConv(MessagePassing):
         self.K = K
         self.cached = cached
         self.add_self_loops = add_self_loops
-
         self._cached_x = None
 
-        self.lin = Linear(in_channels, out_channels, bias=bias)
+        if apply_linearity:
+            self.lin = Linear(in_channels, out_channels, bias=bias)
+        else:
+            assert in_channels == out_channels, "SGConv with apply_linearity=False does not support differet in and out channels."
+            self.lin = Identity()
 
         self.reset_parameters()
 
     def reset_parameters(self):
         super().reset_parameters()
-        self.lin.reset_parameters()
+        if hasattr(self.lin, "reset_parameters"):
+            self.lin.reset_parameters()
         self._cached_x = None
 
     def forward(self, x: Tensor, edge_index: Adj,
