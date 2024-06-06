@@ -13,7 +13,8 @@ def test_batch_norm(device, conf):
     norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
     norm.reset_running_stats()
     norm.reset_parameters()
-    assert str(norm) == 'BatchNorm(16)'
+    assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
+                         f'affine={conf}, track_running_stats={conf})')
 
     if is_full_test():
         torch.jit.script(norm)
