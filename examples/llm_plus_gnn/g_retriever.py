@@ -432,6 +432,9 @@ if __name__ == "__main__":
         "--tiny_llama", action="store_true",
         help="This example uses LLAMA2 (7B) by default. \
         This flag will run the example with TinyLLAMA (1B).")
+    parser.add_argument(
+        "--skip_pretrained_llm_eval", action="store_true",
+        help="This flag will skip the evaluation of the pretrained LLM.")
 
     args = parser.parse_args()
     # check if saved model
@@ -462,4 +465,6 @@ if __name__ == "__main__":
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size, get_loss,
-                 inference_step, tiny_llama=args.tiny_llama)
+                 inference_step, 
+                 skip_pretrained_LLM=args.skip_pretrained_llm_eval,
+                 tiny_llama=args.tiny_llama)
