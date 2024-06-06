@@ -6,8 +6,7 @@ from torch import Tensor
 
 
 def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict[int, list[int]]:
-    r"""
-    A function to turn a list of edges (edge_index) into an adjacency list,
+    r"""A function to turn a list of edges (edge_index) into an adjacency list,
     stored in a dictionary with vertex numbers as keys and lists of adjacent
     nodes as values.
 
@@ -17,7 +16,6 @@ def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict[int, list[int]]:
 
     :rtype: dict
     """
-
     # initialize adjacency dict with empty neighborhoods for all nodes
     adj_dict: dict[int, list[int]] = {
         nodeid: []
@@ -64,13 +62,10 @@ def dirichlet_energy(
 
     :rtype: float
     """
-
     if (edge_index is None) and (adj_dict is None):
         raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
     if (edge_index is not None) and (adj_dict is not None):
-        raise ValueError(
-            "Both 'edge_index' and 'adj_dict' were provided."
-        )
+        raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
 
     num_nodes: int = feat_matrix.shape[0]
     de: Tensor = 0
@@ -115,13 +110,10 @@ def mean_average_distance(
 
     :rtype: float
     """
-
     if (edge_index is None) and (adj_dict is None):
         raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
     if (edge_index is not None) and (adj_dict is not None):
-        raise ValueError(
-            "Both 'edge_index' and 'adj_dict' were provided."
-        )
+        raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
 
     num_nodes: int = feat_matrix.shape[0]
     mad: Tensor = 0
