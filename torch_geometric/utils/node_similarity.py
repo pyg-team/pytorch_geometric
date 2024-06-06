@@ -28,7 +28,7 @@ def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict:
     return adj_dict
 
 
-@torch.no_grad
+@torch.no_grad()
 def dirichlet_energy(
     feat_matrix: Tensor,
     edge_index: Optional[Tensor] = None,
@@ -82,7 +82,7 @@ def dirichlet_energy(
     return torch.sqrt(de / num_nodes).item()
 
 
-@torch.no_grad
+@torch.no_grad()
 def mean_average_distance(
     feat_matrix: Tensor,
     edge_index: Optional[Tensor] = None,
