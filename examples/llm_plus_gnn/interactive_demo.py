@@ -14,13 +14,24 @@ def inference_step(model, batch, model_save_name):
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
 
-def cleanup():
-	
-
 if __name__ == "__main__":
 	question = input("Please enter your Question:")
-	nodes = # get node ids and attributes
-	edges = # get edge ids and attributes
+	print("Please enter the node attributes with format \
+		'n_id,textual_node_attribute'")
+	print("Use [[stop]] to stop inputting.")
+	nodes = []
+	most_recent_node = ""
+	while most_recent_node != "[[stop]]":
+		most_recent_node = input()
+		nodes.append(most_recent_node)
+	edges = []
+	most_recent_edge = ""
+	print("Please enter the edge attributes with format \
+		'src_id,textual_edge_attribute,dst_id'")
+	print("Use [[stop]] to stop inputting.")
+	while most_recent_edge != "[[stop]]":
+		most_recent_edge = input()
+		edges.append(most_recent_edge)
 	data_obj = convert_kg_desc_2_data_obj(nodes, edges)
 
 	with torch.no_grad():
