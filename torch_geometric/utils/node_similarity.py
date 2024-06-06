@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 import torch.linalg as TLA
 from torch import Tensor
 
 
-def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict[int, list[int]]:
+def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict:
     r"""A function to turn a list of edges (edge_index) into an adjacency list,
     stored in a dictionary with vertex numbers as keys and lists of adjacent
     nodes as values.
@@ -17,10 +17,7 @@ def build_adj_dict(num_nodes: int, edge_index: Tensor) -> dict[int, list[int]]:
     :rtype: dict
     """
     # initialize adjacency dict with empty neighborhoods for all nodes
-    adj_dict: dict[int, list[int]] = {
-        nodeid: []
-        for nodeid in range(num_nodes)
-    }
+    adj_dict: dict = { nodeid: [] for nodeid in range(num_nodes) }
 
     for eidx in range(edge_index.shape[1]):
         ctail, chead = edge_index[0, eidx].item(), edge_index[1, eidx].item()
@@ -36,7 +33,7 @@ def dirichlet_energy(
     feat_matrix: Tensor,
     edge_index: Optional[Tensor] = None,
     adj_dict: Optional[dict] = None,
-    p: Optional[int | float] = 2,
+    p: Optional[Union[int,float]] = 2,
 ) -> float:
     r"""The 'Dirichlet Energy' node similarity measure from the
     `"A Survey on Oversmoothing in Graph Neural Networks"
