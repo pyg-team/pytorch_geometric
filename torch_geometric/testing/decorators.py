@@ -244,11 +244,7 @@ def withDevice(func: Callable) -> Callable:
         xpu_available = torch.xpu.is_available()
 
     if xpu_available:
-        try:  # Github CI may not have access to XPU hardware. Confirm:
-            torch.empty(1, device='xpu')
-            devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
-        except RuntimeError:
-            pass
+        devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
