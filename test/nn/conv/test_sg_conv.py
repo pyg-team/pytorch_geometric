@@ -1,16 +1,15 @@
+import pdb
+
+import pytest
 import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import SGConv
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
-from torch_geometric.nn.dense.linear import Linear
 
-import pdb
-import pytest
-
-import pytest
 
 def test_sg_conv():
     x = torch.randn(4, 16)
@@ -53,10 +52,11 @@ def test_sg_conv():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
 
+
 def test_sg_conv_pure():
-    in_channels=16
-    out_channels=32
-    K=10
+    in_channels = 16
+    out_channels = 32
+    K = 10
 
     x = torch.randn(4, 16)
 
@@ -73,11 +73,13 @@ def test_sg_conv_pure():
 
     conv_lin = SGConv(in_channels, out_channels, K=K, apply_linearity=True)
 
-
     y = ext_lin(conv(x, edge_index))
     y2 = conv_lin(x, edge_index)
 
     assert torch.allclose(y, y2)
 
-    with pytest.raises(AssertionError, match="SGConv with apply_linearity=False does not support differet in and out channels."):
+    with pytest.raises(
+            AssertionError, match=
+            "SGConv with apply_linearity=False does not support differet in and out channels."
+    ):
         conv = SGConv(in_channels, out_channels, K=K, apply_linearity=False)
