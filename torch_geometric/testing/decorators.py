@@ -234,6 +234,18 @@ def withDevice(func: Callable) -> Callable:
         except RuntimeError:
             pass
 
+    if not hasattr(torch, 'xpu'):
+        try:
+            import intel_extension_for_pytorch as ipex
+            xpu_available = ipex.xpu.is_available()
+        except ImportError:
+            xpu_available = False
+    else:
+        xpu_available = torch.xpu.is_available()
+
+    if xpu_available:
+        devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
+
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
     if device:
