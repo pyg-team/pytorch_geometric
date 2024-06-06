@@ -21,6 +21,17 @@ def test_random_link_split():
 
     data = Data(edge_index=edge_index, edge_attr=edge_attr, num_nodes=100)
 
+    # Check train, val and test splits are disjoint sets
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2)
+    train_data, val_data, test_data = transform(data)
+
+    is_disjoint = lambda a, b: not (a[0].unsqueeze(0) == b[0].unsqueeze(1) and
+                                    a[1].unsqueeze(0) == b[1].unsqueeze(1)).any()
+    assert is_disjoint(train_data.edge_index, val_data.edge_index)
+    assert is_disjoint(train_data.edge_index, test_data.edge_index)
+    assert is_disjoint(val_data.edge_index, test_data.edge_index)
+
+    train_data, val_data, test_data = transform(data)
     # No test split:
     transform = RandomLinkSplit(num_val=2, num_test=0, is_undirected=True)
     train_data, val_data, test_data = transform(data)

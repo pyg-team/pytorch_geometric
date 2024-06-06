@@ -204,7 +204,6 @@ class RandomLinkSplit(BaseTransform):
             train_edges = perm[:num_train]
             val_edges = perm[num_train:num_train + num_val]
             test_edges = perm[num_train + num_val:]
-            train_val_edges = perm[:num_train + num_val]
 
             num_disjoint = self.disjoint_train_ratio
             if isinstance(num_disjoint, float):
@@ -215,9 +214,8 @@ class RandomLinkSplit(BaseTransform):
             # Create data splits:
             self._split(train_store, train_edges[num_disjoint:], is_undirected,
                         rev_edge_type)
-            self._split(val_store, train_edges, is_undirected, rev_edge_type)
-            self._split(test_store, train_val_edges, is_undirected,
-                        rev_edge_type)
+            self._split(val_store, val_edges, is_undirected, rev_edge_type)
+            self._split(test_store, test_edges, is_undirected, rev_edge_type)
 
             # Create negative samples:
             num_neg_train = 0
