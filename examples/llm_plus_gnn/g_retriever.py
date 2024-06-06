@@ -465,10 +465,6 @@ if __name__ == "__main__":
     print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
     minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
                  args.batch_size, args.eval_batch_size, get_loss,
-<<<<<<< HEAD
-                 inference_step, 
-=======
                  inference_step,
->>>>>>> dfdc5f4409bd8f924907334f578e55289832a5b3
                  skip_pretrained_LLM=args.skip_pretrained_llm_eval,
                  tiny_llama=args.tiny_llama)
