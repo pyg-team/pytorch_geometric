@@ -56,6 +56,7 @@ from .embedding import get_embeddings
 from ._trim_to_layer import trim_to_layer
 from .ppr import get_ppr
 from ._train_test_split_edges import train_test_split_edges
+from .node_similarity import dirichlet_energy, mean_average_distance
 
 __all__ = [
     'scatter',
@@ -144,6 +145,8 @@ __all__ = [
     'trim_to_layer',
     'get_ppr',
     'train_test_split_edges',
+    'mean_average_distance',
+    'dirichlet_energy'
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
