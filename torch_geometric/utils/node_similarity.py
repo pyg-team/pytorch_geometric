@@ -42,7 +42,7 @@ def dirichlet_energy(
 ) -> float:
     r"""The 'Dirichlet Energy' node similarity measure from the
     `"A Survey on Oversmoothing in Graph Neural Networks"
-        <https://arxiv.org/abs/2303.10993>`_ paper.
+    <https://arxiv.org/abs/2303.10993>`_ paper.
 
     .. math::
         \mu\left(\mathbf{X}^n\right) =
@@ -98,7 +98,7 @@ def mean_average_distance(
 ) -> float:
     r"""The 'Mean Average Distance' node similarity measure from the
     `"A Survey on Oversmoothing in Graph Neural Networks"
-        <https://arxiv.org/abs/2303.10993>`_ paper.
+    <https://arxiv.org/abs/2303.10993>`_ paper.
 
     .. math::
         \mu(\mathbf{X}^n) = \mathrm{Ave}_{i\in \mathcal{V}}
