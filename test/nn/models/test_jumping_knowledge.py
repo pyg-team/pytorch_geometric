@@ -50,6 +50,7 @@ def test_hetero_jumping_knowledge():
     }
 
     model = HeteroJumpingKnowledge(types, mode='cat')
+    model.reset_parameters()
     assert str(model) == 'HeteroJumpingKnowledge(num_types=2, mode=cat)'
 
     out_dict = model(xs_dict)
