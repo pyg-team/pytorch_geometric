@@ -10,7 +10,7 @@ python training_benchmark_cuda.py --dataset ogbn-products --model edge_cnn --num
 
 ## Running benchmark on Intel GPU
 
-## Environment setup
+### Environment setup
 
 ### Prerequisites
 
