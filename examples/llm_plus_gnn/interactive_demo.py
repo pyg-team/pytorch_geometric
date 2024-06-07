@@ -32,9 +32,8 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	return data_obj
 
 if __name__ == "__main__":
-	question = input("Please enter your Question:")
-	print("Please enter the node attributes with format \
-		'n_id,textual_node_attribute'")
+	question = input("Please enter your Question:\n")
+	print("Please enter the node attributes with format 'n_id,textual_node_attribute'") # noqa
 	print("Use [[stop]] to stop inputting.")
 	nodes = []
 	most_recent_node = ""
@@ -44,8 +43,7 @@ if __name__ == "__main__":
 			break
 		else:
 			nodes.append(tuple(most_recent_node.split(',')))
-	print("Please enter the edge attributes with format \
-		'src_id,textual_edge_attribute,dst_id'")
+	print("Please enter the edge attributes with format 'src_id,textual_edge_attribute,dst_id'") # noqa
 	print("Use [[stop]] to stop inputting.")
 	edges = []
 	most_recent_edge = ""
