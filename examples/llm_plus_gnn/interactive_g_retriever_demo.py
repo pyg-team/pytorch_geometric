@@ -68,6 +68,7 @@ if __name__ == "__main__":
 	text_encoder = SentenceTransformer()
 	data_obj = make_data_obj(text_encoder, question, nodes[:-1], edges[:-1])
 	print("Done!")
+	print("Data =", data)
 	with torch.no_grad():
 		print("Loading GNN+LLM model...")
 		gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
