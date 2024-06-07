@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import Data
-from g_retriever import inference_step
+from g_retriever import inference_step, load_params_dict
 from typing import List, Tuple
 from torch_geometric.nn.nlp import SentenceTransformer
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 	print("Done!")
 	with torch.no_grad():
 		print("Loading GNN+LLM model...")
-		gnn_llm_model = torch.load("gnn_llm.pt").eval()
+		gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
 		print("Querying...")
 		gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm")["pred"]
 		del gnn_llm_model
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 		torch.cuda.empty_cache()
 		print("Done!")
 		print("Loading finetuned LLM model...")
-		finetuned_llm_model = torch.load("llm.pt").eval()
+		finetuned_llm_model = load_params_dict(LLM(), "llm.pt").eval()
 		print("Querying...")
 		llm_answer = inference_step(llm_model, data_obj, "llm")["pred"]
 		print("Done!")
