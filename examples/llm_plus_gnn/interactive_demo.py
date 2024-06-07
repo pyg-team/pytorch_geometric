@@ -5,16 +5,16 @@ from typing import List, Tuple
 from torch_geometric.nn.nlp import SentenceTransformer
 
 def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[Tuple[str, str]] , edges:List[Tuple[str, str, str]]) -> Data:
-	data_obj = Data()
+	data = Data()
 	num_nodes = 0
-	data_obj.question = question
-	data_obj.num_nodes = len(nodes)
-	data_obj.n_id = torch.arange(data_obj.num_nodes)
+	data.question = question
+	data.num_nodes = len(nodes)
+	data.n_id = torch.arange(data.num_nodes)
 
 	# Model expects batches sampled from Dataloader
 	# hardcoding values for single item batch
-	data_obj.batch = torch.zeros(data_obj.num_nodes)
-	data_obj.ptr = torch.tensor([0, data_obj.num_nodes])
+	data.batch = torch.zeros(data.num_nodes)
+	data.ptr = torch.tensor([0, data.num_nodes])
 
 	# encode node attributes
 	to_encode = [node[1] for node in nodes]
@@ -26,10 +26,10 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 		e_attrs.append(e_attr)
 	to_encode += e_attrs
 	encoded_text = text_encoder.encode(to_encode)
-	data_obj.x = encoded_text[:data_obj.num_nodes]
-	data_obj.e_attr = encoded_text[data_obj.num_nodes:data_obj.num_nodes+data.num_edges]
+	data.x = encoded_text[:data.num_nodes]
+	data.e_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 
-	return data_obj
+	return data
 
 if __name__ == "__main__":
 	question = input("Please enter your Question:\n")
