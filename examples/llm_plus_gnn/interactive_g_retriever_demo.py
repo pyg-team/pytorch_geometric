@@ -37,7 +37,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.x = encoded_text[:data.num_nodes]
 	data.edge_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 	data.edge_index = torch.tensor([src_ids, dst_ids])
-	data.desc = "dee"
+	data.desc = "dee" # todo finish this part
 
 	return data
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 	text_encoder = SentenceTransformer()
 	data_obj = make_data_obj(text_encoder, question, nodes[:-1], edges[:-1])
 	print("Done!")
-	print("Data =", data)
+	print("Data =", data_obj)
 	with torch.no_grad():
 		print("Loading GNN+LLM model...")
 		gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
