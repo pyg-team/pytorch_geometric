@@ -16,18 +16,28 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.batch = torch.zeros(data.num_nodes)
 	data.ptr = torch.tensor([0, data.num_nodes])
 
-	# encode node attributes
+	# collect node attributes
 	to_encode = [node[1] for node in nodes]
+
+	# collect edge info
 	data.num_edges = len(edges)
-	edge_index = torch.zeros((2, data.num_edges))
+	src_ids = []
+	dst_ids = []
 	e_attrs = []
 	for src_id, e_attr, dst_id in edges:
+		src_ids.append(src_id)
+		dst_ids.append(dst_id)
 		edge_index[:, len(e_attrs)] = (src_id, dst_id)
 		e_attrs.append(e_attr)
 	to_encode += e_attrs
+
+	# encode text
 	encoded_text = text_encoder.encode(to_encode)
+
+	# store processed data
 	data.x = encoded_text[:data.num_nodes]
 	data.e_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
+	data.edge_index = torch.tensor([src_ids, dst_ids])
 
 	return data
 
