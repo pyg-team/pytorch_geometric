@@ -9,6 +9,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	num_nodes = 0
 	data.question = question
 	data.num_nodes = len(nodes)
+	#
 	data.n_id = torch.arange(data.num_nodes)
 
 	# Model expects batches sampled from Dataloader
@@ -23,8 +24,8 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.num_edges = len(edges)
 	src_ids, dst_ids, e_attrs = [], [], []
 	for src_id, e_attr, dst_id in edges:
-		src_ids.append(src_id)
-		dst_ids.append(dst_id)
+		src_ids.append(int(src_id))
+		dst_ids.append(int(dst_id))
 		e_attrs.append(e_attr)
 	to_encode += e_attrs
 
@@ -40,7 +41,8 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 if __name__ == "__main__":
 	question = input("Please enter your Question:\n")
-	print("\nPlease enter the node attributes with format 'n_id,textual_node_attribute'") # noqa
+	print("\nPlease enter the node attributes with format 'n_id,textual_node_attribute'.") # noqa
+	print("Please ensure to order n_ids from 0, 1, 2, ..., num_nodes-1.")
 	print("Use [[stop]] to stop inputting.")
 	nodes = []
 	most_recent_node = ""
