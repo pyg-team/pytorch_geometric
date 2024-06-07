@@ -42,6 +42,7 @@ class Stats:
 
 @dataclass(repr=False)
 class Summary:
+    fmt: str
     name: str
     num_graphs: int
     num_nodes: Stats
@@ -55,6 +56,7 @@ class Summary:
         dataset: Dataset,
         progress_bar: Optional[bool] = None,
         per_type: bool = True,
+        fmt: str = "psql",
     ) -> Self:
         r"""Creates a summary of a :class:`~torch_geometric.data.Dataset`
         object.
@@ -68,6 +70,9 @@ class Summary:
             per_type (bool, optional): If set to :obj:`True`, will separate
                 statistics per node and edge type (only applicable in
                 heterogeneous graph datasets). (default: :obj:`True`)
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`psql`)
         """
         name = dataset.__class__.__name__
 
@@ -109,6 +114,7 @@ class Summary:
             }
 
         return cls(
+            fmt=fmt,
             name=name,
             num_graphs=len(dataset),
             num_nodes=Stats.from_data(num_nodes),
@@ -127,7 +133,7 @@ class Summary:
         for field in Stats.__dataclass_fields__:
             row = [field] + [f'{getattr(s, field):.1f}' for s in stats]
             content.append(row)
-        body += tabulate(content, headers='firstrow', tablefmt='psql')
+        body += tabulate(content, headers='firstrow', tablefmt=self.fmt)
 
         if self.num_nodes_per_type is not None:
             content = [['']]
@@ -140,7 +146,7 @@ class Summary:
                 ]
                 content.append(row)
             body += "\nNumber of nodes per node type:\n"
-            body += tabulate(content, headers='firstrow', tablefmt='psql')
+            body += tabulate(content, headers='firstrow', tablefmt=self.fmt)
 
         if self.num_edges_per_type is not None:
             content = [['']]
@@ -156,6 +162,6 @@ class Summary:
                 ]
                 content.append(row)
             body += "\nNumber of edges per edge type:\n"
-            body += tabulate(content, headers='firstrow', tablefmt='psql')
+            body += tabulate(content, headers='firstrow', tablefmt=self.fmt)
 
         return body

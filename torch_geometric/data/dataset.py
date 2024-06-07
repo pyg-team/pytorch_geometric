@@ -362,14 +362,27 @@ class Dataset(torch.utils.data.Dataset):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
-    def get_summary(self) -> Any:
-        r"""Collects summary statistics for the dataset."""
-        from torch_geometric.data.summary import Summary
-        return Summary.from_dataset(self)
+    def get_summary(self, fmt: str = "psql") -> Any:
+        r"""Collects summary statistics for the dataset.
 
-    def print_summary(self) -> None:
-        r"""Prints summary statistics of the dataset to the console."""
-        print(str(self.get_summary()))
+        Args:
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`psql`)
+        """
+        from torch_geometric.data.summary import Summary
+        return Summary.from_dataset(self, fmt=fmt)
+
+    def print_summary(self, fmt: str = "psql") -> None:
+        r"""Prints summary statistics of the dataset to the console.
+
+
+        Args:
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`psql`)
+        """
+        print(str(self.get_summary(fmt=fmt)))
 
     def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
