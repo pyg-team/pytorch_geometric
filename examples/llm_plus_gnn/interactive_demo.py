@@ -31,14 +31,6 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 	return data_obj
 
-def inference_step(model, batch, model_save_name):
-    if model_save_name == "llm":
-        return model.inference(batch.question, batch.desc)
-    else:
-        return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.ptr, batch.edge_attr,
-                               batch.desc)
-
 if __name__ == "__main__":
 	question = input("Please enter your Question:")
 	print("Please enter the node attributes with format \
