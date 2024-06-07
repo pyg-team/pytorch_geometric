@@ -21,13 +21,10 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 	# collect edge info
 	data.num_edges = len(edges)
-	src_ids = []
-	dst_ids = []
-	e_attrs = []
+	src_ids, dst_ids, e_attrs = [], [], []
 	for src_id, e_attr, dst_id in edges:
 		src_ids.append(src_id)
 		dst_ids.append(dst_id)
-		edge_index[:, len(e_attrs)] = (src_id, dst_id)
 		e_attrs.append(e_attr)
 	to_encode += e_attrs
 
