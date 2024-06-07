@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import Data
-from .g_retriever import inference_step
+from g_retriever import inference_step
 from typing import List, Tuple
 from torch_geometric.nn.nlp import SentenceTransformer
 
