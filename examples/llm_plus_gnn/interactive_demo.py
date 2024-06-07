@@ -67,14 +67,16 @@ if __name__ == "__main__":
 	data_obj = make_data_obj(text_encoder, question, nodes[:-1], edges[:-1])
 	print("Done!")
 	with torch.no_grad():
-		print("Loading and querying GNN+LLM model...")
+		print("Loading GNN+LLM model...")
 		gnn_llm_model = torch.load("gnn_llm.pt").eval()
+		print("Querying...")
 		gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm")["pred"]
 		del gnn_llm_model
 		gc.collect()
 		torch.cuda.empty_cache()
 		print("Done!")
-		print("Loading and querying finetuned LLM model...")
+		print("Loading finetuned LLM model...")
 		finetuned_llm_model = torch.load("llm.pt").eval()
+		print("Querying...")
 		llm_answer = inference_step(llm_model, data_obj, "llm")["pred"]
 		print("Done!")
