@@ -13,15 +13,20 @@ python training_benchmark_cuda.py --dataset ogbn-products --model edge_cnn --num
 ## Environment setup
 
 ### Prerequisites
+
 - Intel Data Center GPU Max Series. You could try it through [Intel DevCloud](https://www.intel.com/content/www/us/en/developer/tools/devcloud/services.html).
 - Verify the Intel GPU Driver is installed, refer to the [guide](https://dgpu-docs.intel.com/driver/installation.html).
 
 ### docker setup
+
 If you want to run your scripts inside a docker image, you could refer to the [dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile.xpu) and the corresponding [guide](https://github.com/pyg-team/pytorch_geometric/blob/master/docker).
 
 ### bare-mental setup
+
 If you prefer to run your scripts directly on the bare-mental server. We recommend this [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) and summarize it as follows:
-- Install [Intel® oneCCL Bindings for PyTorch](https://github.com/intel/torch-ccl) and [Intel® oneAPI Collective Communications Library (oneCCL)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneccl.html) 
+
+- Install [Intel® oneCCL Bindings for PyTorch](https://github.com/intel/torch-ccl) and [Intel® oneAPI Collective Communications Library (oneCCL)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneccl.html)
+
 ```bash
 # Install oneCCL package
 sudo apt install intel-oneapi-ccl-devel=2021.12.0-309
@@ -30,12 +35,15 @@ pip install oneccl_bind_pt==2.1.300+xpu --extra-index-url https://pytorch-extens
 # Runtime Dynamic Linking
 source /opt/intel/oneapi/setvars.sh
 ```
+
 - Install [Intel® Extension for PyTorch](https://github.com/intel/intel-extension-for-pytorch) and the corresponding version of PyTorch
+
 ```bash
 pip install torch==2.1.0.post2 intel-extension-for-pytorch==2.1.30+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 ```
 
 ### Running benchmark
+
 Run benchmark, e.g. assuming you have `n` XPUs:
 
 ```

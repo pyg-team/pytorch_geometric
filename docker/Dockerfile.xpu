@@ -19,13 +19,13 @@ RUN . /etc/os-release && \
     wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | \
     sudo gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg && \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu ${VERSION_CODENAME}/lts/2350 unified" | \
-    sudo tee /etc/apt/sources.list.d/intel-gpu-${VERSION_CODENAME}.list 
+    sudo tee /etc/apt/sources.list.d/intel-gpu-${VERSION_CODENAME}.list
 
 # Install oneCCL
-RUN sudo apt update && apt install -y intel-oneapi-ccl-devel=2021.12.0-309 python3-dev cmake vim 
+RUN sudo apt update && apt install -y intel-oneapi-ccl-devel=2021.12.0-309 python3-dev cmake vim
 RUN echo "source /opt/intel/oneapi/setvars.sh --force" >> /root/.bashrc
 
 # Install PyG
 RUN pip install ninja wheel ogb && pip install git+https://github.com/pyg-team/pyg-lib.git && \
-    pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cpu.html && \    
+    pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cpu.html && \
     pip install torch_geometric

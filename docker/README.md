@@ -10,6 +10,7 @@ The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/b
 If you encounter any problems, please feel free to contact <liangshengwen@ict.ac.cn>.
 
 # Docker on Intel GPU
+
 You can also run PyG with Intel GPU inside a docker image.
 The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile.xpu) refers to the dockerfiles provided by [Intel](https://github.com/intel/intel-extension-for-pytorch/blob/xpu-main/docker/Dockerfile.prebuilt) and the installation guidance provided by [Intel® Extension for PyTorch](https://intel.github.io/intel-extension-for-pytorch/index.html#installation?platform=gpu&version=v2.1.30%2bxpu&os=linux%2fwsl2&package=pip).
 
