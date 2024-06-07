@@ -59,15 +59,13 @@ def dirichlet_energy(
 
     :rtype: float
     """
-    if (edge_index is None) and (adj_dict is None):
-        raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
-    if (edge_index is not None) and (adj_dict is not None):
-        raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
-
     num_nodes: int = feat_matrix.shape[0]
     de: Tensor = torch.tensor(0)
 
     if adj_dict is None:
+        if edge_index is None:
+            raise ValueError(
+                "Neither 'edge_index' nor 'adj_dict' was provided.")
         adj_dict = build_adj_dict(num_nodes=num_nodes, edge_index=edge_index)
 
     def inner(x_i: Tensor, x_js: Tensor) -> Tensor:
@@ -107,15 +105,13 @@ def mean_average_distance(
 
     :rtype: float
     """
-    if (edge_index is None) and (adj_dict is None):
-        raise ValueError("Neither 'edge_index' nor 'adj_dict' was provided.")
-    if (edge_index is not None) and (adj_dict is not None):
-        raise ValueError("Both 'edge_index' and 'adj_dict' were provided.")
-
     num_nodes: int = feat_matrix.shape[0]
     mad: Tensor = torch.tensor(0)
 
     if adj_dict is None:
+        if edge_index is None:
+            raise ValueError(
+                "Neither 'edge_index' nor 'adj_dict' was provided.")
         adj_dict = build_adj_dict(num_nodes=num_nodes, edge_index=edge_index)
 
     def inner(x_i: Tensor, x_js: Tensor) -> Tensor:
