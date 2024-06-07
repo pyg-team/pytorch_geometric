@@ -37,6 +37,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.x = encoded_text[:data.num_nodes]
 	data.e_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 	data.edge_index = torch.tensor([src_ids, dst_ids])
+	data.desc = 
 
 	return data
 
