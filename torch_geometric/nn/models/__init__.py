@@ -2,7 +2,7 @@ r"""Model package."""
 
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
-from .jumping_knowledge import JumpingKnowledge
+from .jumping_knowledge import JumpingKnowledge, HeteroJumpingKnowledge
 from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -43,6 +43,7 @@ __all__ = classes = [
     'PNA',
     'EdgeCNN',
     'JumpingKnowledge',
+    'HeteroJumpingKnowledge',
     'MetaLayer',
     'Node2Vec',
     'DeepGraphInfomax',
