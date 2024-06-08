@@ -27,7 +27,7 @@ class MultiAggregation(Aggregation):
             aggregated results from multiple aggregations (:obj:`"cat"`,
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
-            :obj:`"attn"`). (default: :obj:`"cat"`)
+            :obj:`"attn"`, :obj:`"message_booster"`). (default: :obj:`"cat"`)
         mode_kwargs (dict, optional): Arguments passed for the combine
             :obj:`mode`. When :obj:`"proj"` or :obj:`"attn"` is used as the
             combine :obj:`mode`, :obj:`in_channels` (int or tuple) and
@@ -176,6 +176,8 @@ class MultiAggregation(Aggregation):
 
         if self.mode == 'cat':
             return torch.cat(inputs, dim=-1)
+        elif self.mode == 'message_booster':
+            return torch.prod(torch.stack(inputs, dim=0), dim=0)
 
         if hasattr(self, 'lin'):
             return self.lin(torch.cat(inputs, dim=-1))
