@@ -67,7 +67,7 @@ def user_input_data():
 			edges.append(tuple(most_recent_edge.split(',')))
 	print("Creating data object...")
 	text_encoder = SentenceTransformer()
-	data_obj = make_data_obj(text_encoder, question, nodes[:-1], edges[:-1])
+	data_obj = make_data_obj(text_encoder, question, nodes, edges)
 	print("Done!")
 	print("data =", data_obj)
 	print("data.edge_index=", data_obj.edge_index)
