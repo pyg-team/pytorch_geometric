@@ -41,7 +41,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 	return data
 
-if __name__ == "__main__":
+def user_input_data():
 	question = input("Please enter your Question:\n")
 	print("\nPlease enter the node attributes with format 'n_id,textual_node_attribute'.") # noqa
 	print("Please ensure to order n_ids from 0, 1, 2, ..., num_nodes-1.")
@@ -68,19 +68,26 @@ if __name__ == "__main__":
 	text_encoder = SentenceTransformer()
 	data_obj = make_data_obj(text_encoder, question, nodes[:-1], edges[:-1])
 	print("Done!")
-	print("Data =", data_obj)
-	print("e_idx=", data_obj.edge_index)
+	print("data =", data_obj)
+	print("data.edge_index=", data_obj.edge_index)
+	return data_obj
+
+
+if __name__ == "__main__":
+	print("Loading GNN+LLM model...")
+	gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
+	data_obj = user_input_data()	
 	with torch.no_grad():
-		print("Loading GNN+LLM model...")
-		gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
-		print("Querying...")
+		print("Querying GNN+LLM model...")
 		gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm")["pred"]
+		print("Answer=", gnn_llm_answer)
 		del gnn_llm_model
 		gc.collect()
 		torch.cuda.empty_cache()
 		print("Done!")
-		print("Loading finetuned LLM model...")
+		print("Loading finetuned LLM model for comparison...")
 		finetuned_llm_model = load_params_dict(LLM(), "llm.pt").eval()
-		print("Querying...")
+		print("Querying LLM...")
 		llm_answer = inference_step(llm_model, data_obj, "llm")["pred"]
+		print("Answer=", llm_answer)
 		print("Done!")
