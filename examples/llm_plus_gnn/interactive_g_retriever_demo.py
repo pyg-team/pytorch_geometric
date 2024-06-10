@@ -54,6 +54,7 @@ def user_input_data():
 			break
 		else:
 			nodes.append(tuple(most_recent_node.split(',')))
+	print(nodes)
 	print("\nPlease enter the edge attributes with format 'src_id,textual_edge_attribute,dst_id'") # noqa
 	print("Use [[stop]] to stop inputting.")
 	edges = []
