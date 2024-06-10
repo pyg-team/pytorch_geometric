@@ -10,12 +10,12 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	num_nodes = 0
 	data.question = question
 	data.num_nodes = len(nodes)
-	data.n_id = torch.arange(data.num_nodes)
+	data.n_id = torch.arange(data.num_nodes).to(torch.int64)
 
 	# Model expects batches sampled from Dataloader
 	# hardcoding values for single item batch
-	data.batch = torch.zeros(data.num_nodes)
-	data.ptr = torch.tensor([0, data.num_nodes])
+	data.batch = torch.zeros(data.num_nodes).to(torch.int64)
+	data.ptr = torch.tensor([0, data.num_nodes]).to(torch.int64)
 
 	# collect node attributes
 	to_encode = [node[1] for node in nodes]
