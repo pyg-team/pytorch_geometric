@@ -10,7 +10,6 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	num_nodes = 0
 	data.question = question
 	data.num_nodes = len(nodes)
-	#
 	data.n_id = torch.arange(data.num_nodes)
 
 	# Model expects batches sampled from Dataloader
@@ -36,7 +35,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	# store processed data
 	data.x = encoded_text[:data.num_nodes]
 	data.edge_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
-	data.edge_index = torch.tensor([src_ids, dst_ids])
+	data.edge_index = torch.tensor([src_ids, dst_ids]).to(torch.int64)
 	data.desc = "dee" # todo finish this part
 
 	return data
