@@ -98,10 +98,10 @@ if __name__ == "__main__":
     continue_input = True
     while continue_input:
         seed_everything(42)
-        print("Loading GNN+LLM model...")
-        gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
         data_obj = user_input_data()
         with torch.no_grad():
+            print("Loading GNN+LLM model...")
+            gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
             print("Querying GNN+LLM model...")
             gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm")["pred"][0].split("|")[0]
             print("Answer=", gnn_llm_answer)
