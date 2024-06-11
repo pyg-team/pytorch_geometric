@@ -17,16 +17,22 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.batch = torch.zeros(data.num_nodes).to(torch.int64)
 	data.ptr = torch.tensor([0, data.num_nodes]).to(torch.int64)
 
+	graph_text_description = "node_id,node_attr"
 	# collect node attributes
+	for node_id, node_attr in nodes:
+		to_encode.append(node_attr)
+		graph_text_description += str(node_id) + "," + str(node_attr) + "\n"
 	to_encode = [node[1] for node in nodes]
 
 	# collect edge info
 	data.num_edges = len(edges)
+	graph_text_description += "src,edge_attr,dst"
 	src_ids, dst_ids, e_attrs = [], [], []
 	for src_id, e_attr, dst_id in edges:
 		src_ids.append(int(src_id))
 		dst_ids.append(int(dst_id))
 		e_attrs.append(e_attr)
+		graph_text_description += str(src_id) + "," + str(e_attr) + "," + str(dst_id) +"\n"
 	to_encode += e_attrs
 
 	# encode text
@@ -36,7 +42,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.x = encoded_text[:data.num_nodes]
 	data.edge_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 	data.edge_index = torch.tensor([src_ids, dst_ids]).to(torch.int64)
-	data.desc = "dee" # todo finish this part
+	data.desc = graph_text_description
 
 	return data
 
