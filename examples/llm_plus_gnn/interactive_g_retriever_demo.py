@@ -8,7 +8,9 @@ from torch_geometric.nn.models import GRetriever
 def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[Tuple[str, str]] , edges:List[Tuple[str, str, str]]) -> Data:
 	data = Data()
 	num_nodes = 0
-	data.question = question
+	# list of size 1 to simulate batchsize=1
+	# true inference setting would batch user queries
+	data.question = [question]
 	data.num_nodes = len(nodes)
 	data.n_id = torch.arange(data.num_nodes).to(torch.int64)
 
@@ -42,7 +44,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.x = encoded_text[:data.num_nodes]
 	data.edge_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 	data.edge_index = torch.tensor([src_ids, dst_ids]).to(torch.int64)
-	data.desc = graph_text_description[:-1] # remove last newline
+	data.desc = [graph_text_description[:-1]] # remove last newline
 
 	return data
 
