@@ -22,7 +22,7 @@ from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.nlp import LLM
-
+from torch_geometric.nn.nlp.llm import max_new_tokens 
 
 def detect_hallucinate(pred, label):
     try:
@@ -107,13 +107,13 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
                      batch.ptr, batch.label, batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, model_save_name):
+def inference_step(model, batch, model_save_name, max_out_tokens=max_new_tokens):
     if model_save_name == "llm":
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question, batch.desc, max_out_tokens=max_out_tokens)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
-                               batch.desc)
+                               batch.desc, max_out_tokens=max_out_tokens)
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
