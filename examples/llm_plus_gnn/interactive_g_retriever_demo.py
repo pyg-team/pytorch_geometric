@@ -19,10 +19,10 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 	graph_text_description = "node_id,node_attr"
 	# collect node attributes
+	to_encode = []
 	for node_id, node_attr in nodes:
 		to_encode.append(node_attr)
 		graph_text_description += str(node_id) + "," + str(node_attr) + "\n"
-	to_encode = [node[1] for node in nodes]
 
 	# collect edge info
 	data.num_edges = len(edges)
