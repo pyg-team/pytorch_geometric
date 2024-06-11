@@ -16,9 +16,9 @@ from typing import (
     Set,
     Tuple,
 )
-from tqdm import tqdm
 
 import torch
+from tqdm import tqdm
 
 from torch_geometric.data import Data
 
@@ -212,7 +212,7 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name].values
         else:
             values = self.node_attr[feature_name]
-        
+
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
@@ -302,7 +302,7 @@ class LargeGraphIndexer:
             values = self.edge_attr[feature_name].values
         else:
             values = self.edge_attr[feature_name]
-        
+
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
@@ -435,40 +435,52 @@ class LargeGraphIndexer:
                      if edge_feature_name is not None else None)
         edge_id = torch.LongTensor(range(len(edge_attr)))
 
-        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, edge_id=edge_id, node_id=node_id)
+        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                    edge_id=edge_id, node_id=node_id)
 
 
-def get_features_for_triplets_groups(indexer: LargeGraphIndexer, triplet_groups: Iterable[Iterable[TripletLike]], node_feature_name: str = "x", edge_feature_name: str = "edge_attr", pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None) -> Iterator[Data]:
+def get_features_for_triplets_groups(
+    indexer: LargeGraphIndexer,
+    triplet_groups: Iterable[Iterable[TripletLike]],
+    node_feature_name: str = "x", edge_feature_name: str = "edge_attr",
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None
+) -> Iterator[Data]:
     if pre_transform is not None:
+
         def apply_transform(trips):
             for trip in trips:
                 yield pre_transform(tuple(trip))
 
         # TODO: Make this safe for large amounts of triplets?
-        triplet_groups = (list(apply_transform(triplets)) for triplets in triplet_groups)
+        triplet_groups = (list(apply_transform(triplets))
+                          for triplets in triplet_groups)
 
     node_keys = []
     edge_keys = []
     edge_index = []
-    
+
     for triplets in tqdm(triplet_groups):
-        small_graph_indexer = LargeGraphIndexer.from_triplets(triplets, pre_transform=pre_transform)
+        small_graph_indexer = LargeGraphIndexer.from_triplets(
+            triplets, pre_transform=pre_transform)
 
         node_keys.append(small_graph_indexer.get_node_features())
         edge_keys.append(small_graph_indexer.get_edge_features(pids=triplets))
-        edge_index.append(small_graph_indexer.get_edge_features(EDGE_INDEX, triplets))
-    
-    node_feats = indexer.get_node_features(feature_name=node_feature_name, pids=chain.from_iterable(node_keys))
-    edge_feats = indexer.get_edge_features(feature_name=edge_feature_name, pids=chain.from_iterable(edge_keys))
+        edge_index.append(
+            small_graph_indexer.get_edge_features(EDGE_INDEX, triplets))
 
+    node_feats = indexer.get_node_features(feature_name=node_feature_name,
+                                           pids=chain.from_iterable(node_keys))
+    edge_feats = indexer.get_edge_features(feature_name=edge_feature_name,
+                                           pids=chain.from_iterable(edge_keys))
 
     last_node_idx, last_edge_idx = 0, 0
     for (nkeys, ekeys, eidx) in zip(node_keys, edge_keys, edge_index):
         nlen, elen = len(nkeys), len(ekeys)
-        x = torch.Tensor(node_feats[last_node_idx:last_node_idx+nlen])
+        x = torch.Tensor(node_feats[last_node_idx:last_node_idx + nlen])
         last_node_idx += len(nkeys)
-        
-        edge_attr = torch.Tensor(edge_feats[last_edge_idx:last_edge_idx+elen])
+
+        edge_attr = torch.Tensor(edge_feats[last_edge_idx:last_edge_idx +
+                                            elen])
         last_edge_idx += len(ekeys)
 
         edge_idx = torch.LongTensor(eidx).T
@@ -490,5 +502,7 @@ def get_features_for_triplets(
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
 ) -> Data:
 
-    gen = get_features_for_triplets_groups(indexer, [triplets], node_feature_name, edge_feature_name, pre_transform)
+    gen = get_features_for_triplets_groups(indexer, [triplets],
+                                           node_feature_name,
+                                           edge_feature_name, pre_transform)
     return next(gen)

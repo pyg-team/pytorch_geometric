@@ -11,7 +11,7 @@ from torch_geometric.data import (
     InMemoryDataset,
     LargeGraphIndexer,
     TripletLike,
-    get_features_for_triplets_groups
+    get_features_for_triplets_groups,
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
@@ -266,9 +266,11 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         graph_gen = None
         if self.whole_graph_retrieval:
             graph = self.indexer.to_data(node_feature_name="x",
-                                            edge_feature_name="edge_attr")
+                                         edge_feature_name="edge_attr")
         else:
-            graph_gen = get_features_for_triplets_groups(self.indexer, (ds['graph'] for ds in self.raw_dataset), pre_transform=preprocess_triplet)
+            graph_gen = get_features_for_triplets_groups(
+                self.indexer, (ds['graph'] for ds in self.raw_dataset),
+                pre_transform=preprocess_triplet)
 
         for index in tqdm(range(len(self.raw_dataset))):
             data_i = self.raw_dataset[index]
@@ -306,7 +308,8 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             self._build_graph()
         else:
             print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(self.processed_paths[-1])
+            self.indexer = LargeGraphIndexer.from_disk(
+                self.processed_paths[-1])
         self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index

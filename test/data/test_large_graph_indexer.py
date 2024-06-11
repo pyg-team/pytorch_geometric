@@ -11,7 +11,11 @@ from torch_geometric.data import (
     TripletLike,
     get_features_for_triplets,
 )
-from torch_geometric.data.large_graph_indexer import EDGE_RELATION, NODE_PID, EDGE_PID
+from torch_geometric.data.large_graph_indexer import (
+    EDGE_PID,
+    EDGE_RELATION,
+    NODE_PID,
+)
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
