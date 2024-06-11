@@ -17,7 +17,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.batch = torch.zeros(data.num_nodes).to(torch.int64)
 	data.ptr = torch.tensor([0, data.num_nodes]).to(torch.int64)
 
-	graph_text_description = "node_id,node_attr"
+	graph_text_description = "node_id,node_attr" + "\n"
 	# collect node attributes
 	to_encode = []
 	for node_id, node_attr in nodes:
@@ -42,7 +42,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	data.x = encoded_text[:data.num_nodes]
 	data.edge_attr = encoded_text[data.num_nodes:data.num_nodes+data.num_edges]
 	data.edge_index = torch.tensor([src_ids, dst_ids]).to(torch.int64)
-	data.desc = graph_text_description
+	data.desc = graph_text_description[:-1] # remove last newline
 
 	return data
 
