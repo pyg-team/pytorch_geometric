@@ -104,7 +104,7 @@ if __name__ == "__main__":
             gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
             print("Querying GNN+LLM model...")
             gnn_llm_answer = inference_step(gnn_llm_model, data_obj,
-                                            "gnn_llm")["pred"][0].split("|")[0]
+                                            "gnn_llm")["pred"][0].replace("[/s]", "|").split("|")[0]
             print("Answer:", gnn_llm_answer)
             del gnn_llm_model
             gc.collect()
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             finetuned_llm_model = load_params_dict(LLM(), "llm.pt").eval()
             print("Querying LLM...")
             llm_answer = inference_step(finetuned_llm_model, data_obj,
-                                        "llm")["pred"][0].split("|")[0]
+                                        "llm")["pred"][0].replace("[/s]", "|").split("|")[0]
             print("Answer:", llm_answer)
             del finetuned_llm_model
             gc.collect()
