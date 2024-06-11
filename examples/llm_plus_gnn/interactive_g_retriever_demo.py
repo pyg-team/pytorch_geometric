@@ -51,7 +51,8 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 	return data
 
 def user_input_data():
-	question = f"Question: {input("Please enter your Question:\n")}\nAnswer: "
+	q_input = input("Please enter your Question:\n")
+	question = f"Question: {q_input}\nAnswer: "
 	print("\nPlease enter the node attributes with format 'n_id,textual_node_attribute'.") # noqa
 	print("Please ensure to order n_ids from 0, 1, 2, ..., num_nodes-1.")
 	print("Use [[stop]] to stop inputting.")
