@@ -96,6 +96,6 @@ if __name__ == "__main__":
 		print("Loading finetuned LLM model for comparison...")
 		finetuned_llm_model = load_params_dict(LLM(), "llm.pt").eval()
 		print("Querying LLM...")
-		llm_answer = inference_step(llm_model, data_obj, "llm")["pred"]
+		llm_answer = inference_step(finetuned_llm_model, data_obj, "llm")["pred"]
 		print("Answer=", llm_answer)
 		print("Done!")
