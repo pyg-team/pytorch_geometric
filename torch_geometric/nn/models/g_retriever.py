@@ -300,7 +300,7 @@ class GRetriever(nn.Module):
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
-                max_new_tokens=max_new_tokens,
+                max_new_tokens=max_out_tokens,
                 attention_mask=attention_mask,
                 # do_sample=True,
                 use_cache=True  # IMPORTANT!
