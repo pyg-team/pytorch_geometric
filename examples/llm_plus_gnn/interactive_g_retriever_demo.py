@@ -26,7 +26,7 @@ def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[
 
 	# collect edge info
 	data.num_edges = len(edges)
-	graph_text_description += "src,edge_attr,dst"
+	graph_text_description += "src,edge_attr,dst" + "\n"
 	src_ids, dst_ids, e_attrs = [], [], []
 	for src_id, e_attr, dst_id in edges:
 		src_ids.append(int(src_id))
