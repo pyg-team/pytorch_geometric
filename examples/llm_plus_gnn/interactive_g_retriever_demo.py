@@ -5,6 +5,7 @@ from typing import List, Tuple
 from torch_geometric.nn.nlp import SentenceTransformer, LLM
 from torch_geometric.nn.models import GRetriever
 import gc
+from torch_geometric import seed_everything
 
 def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[Tuple[str, str]] , edges:List[Tuple[str, str, str]]) -> Data:
 	data = Data()
@@ -82,12 +83,13 @@ def user_input_data():
 
 
 if __name__ == "__main__":
+	seed_everything(42)
 	print("Loading GNN+LLM model...")
 	gnn_llm_model = load_params_dict(GRetriever(), "gnn_llm.pt").eval()
 	data_obj = user_input_data()	
 	with torch.no_grad():
 		print("Querying GNN+LLM model...")
-		gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm", max_out_tokens=128)["pred"]
+		gnn_llm_answer = inference_step(gnn_llm_model, data_obj, "gnn_llm", max_out_tokens=256)["pred"]
 		print("Answer=", gnn_llm_answer)
 		del gnn_llm_model
 		gc.collect()
@@ -96,6 +98,6 @@ if __name__ == "__main__":
 		print("Loading finetuned LLM model for comparison...")
 		finetuned_llm_model = load_params_dict(LLM(), "llm.pt").eval()
 		print("Querying LLM...")
-		llm_answer = inference_step(finetuned_llm_model, data_obj, "llm", max_out_tokens=128)["pred"]
+		llm_answer = inference_step(finetuned_llm_model, data_obj, "llm", max_out_tokens=256)["pred"]
 		print("Answer=", llm_answer)
 		print("Done!")
