@@ -4,6 +4,7 @@ from g_retriever import inference_step, load_params_dict
 from typing import List, Tuple
 from torch_geometric.nn.nlp import SentenceTransformer, LLM
 from torch_geometric.nn.models import GRetriever
+import gc
 
 def make_data_obj(text_encoder: SentenceTransformer, question: str, nodes: List[Tuple[str, str]] , edges:List[Tuple[str, str, str]]) -> Data:
 	data = Data()
