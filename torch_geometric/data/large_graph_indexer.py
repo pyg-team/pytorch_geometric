@@ -212,6 +212,8 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name].values
         else:
             values = self.node_attr[feature_name]
+        
+        # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
@@ -300,6 +302,8 @@ class LargeGraphIndexer:
             values = self.edge_attr[feature_name].values
         else:
             values = self.edge_attr[feature_name]
+        
+        # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
                 self.get_edge_features_iter(feature_name, pids,
@@ -419,21 +423,20 @@ class LargeGraphIndexer:
                 eq &= self.edge_attr[k] == value.edge_attr[k]
         return eq
 
-    def _to_data_attrs(
-        self, node_feature_name: str, edge_feature_name: Optional[str] = None
-    ) -> Tuple[torch.Tensor, torch.LongTensor, Optional[torch.Tensor]]:
-        x = torch.Tensor(self.get_node_features(node_feature_name))
-        edge_index = torch.t(
-            torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
-        edge_attr = (self.get_edge_features(edge_feature_name)
-                     if edge_feature_name is not None else None)
-        return x, edge_index, edge_attr
-
     def to_data(self, node_feature_name: str,
                 edge_feature_name: Optional[str] = None) -> Data:
-        x, edge_index, edge_attr = self._to_data_attrs(node_feature_name,
-                                                       edge_feature_name)
-        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+        x = torch.Tensor(self.get_node_features(node_feature_name))
+        node_id = torch.LongTensor(range(len(x)))
+
+        edge_index = torch.t(
+            torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
+
+        edge_attr = (self.get_edge_features(edge_feature_name)
+                     if edge_feature_name is not None else None)
+        edge_id = torch.LongTensor(range(len(edge_attr)))
+
+        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, edge_id=edge_id, node_id=node_id)
+
 
 def get_features_for_triplets_groups(indexer: LargeGraphIndexer, triplet_groups: Iterable[Iterable[TripletLike]], node_feature_name: str = "x", edge_feature_name: str = "edge_attr", pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None) -> Iterator[Data]:
     if pre_transform is not None:
@@ -489,43 +492,3 @@ def get_features_for_triplets(
 
     gen = get_features_for_triplets_groups(indexer, [triplets], node_feature_name, edge_feature_name, pre_transform)
     return next(gen)
-
-    '''
-    if pre_transform is not None:
-
-        def apply_transform(trips):
-            for trip in trips:
-                yield pre_transform(tuple(trip))
-
-        # TODO: Make this safe for large amounts of triplets?
-        triplets = list(apply_transform(triplets))
-
-    small_graph_indexer = LargeGraphIndexer.from_triplets(
-        triplets, pre_transform=pre_transform)
-    node_keys = small_graph_indexer.get_node_features()
-    node_feats = indexer.get_node_features(feature_name=node_feature_name,
-                                           pids=node_keys)
-
-    edge_keys = small_graph_indexer.get_edge_features(pids=triplets)
-    edge_feats = indexer.get_edge_features(feature_name=edge_feature_name,
-                                           pids=edge_keys)
-
-    edge_index = small_graph_indexer.get_edge_features(EDGE_INDEX, triplets)
-
-    x = torch.Tensor(node_feats)
-    edge_attr = torch.Tensor(edge_feats)
-    edge_index = torch.t(torch.LongTensor(edge_index))
-    data_obj = Data(
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_attr,
-        num_nodes=len(node_feats),
-    )
-    # needed for mappings
-    data_obj[NODE_PID] = node_keys
-    data_obj[EDGE_PID] = edge_keys
-    data_obj["node_idx"] = [indexer._nodes[k] for k in node_keys]
-    data_obj["edge_idx"] = [indexer._edges[e] for e in edge_keys]
-
-    return data_obj
-    '''
