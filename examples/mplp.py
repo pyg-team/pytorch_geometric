@@ -582,9 +582,9 @@ def main():
 
         emb = initial_embedding(data, args.hidden_channels, device)
         encoder = MPLP_GCN(data.num_features, args.hidden_channels,
-                               args.hidden_channels, args.num_layers,
-                               args.feat_dropout, args.xdp, args.use_feature,
-                               args.jk, args.encoder, emb).to(device)
+                           args.hidden_channels, args.num_layers,
+                           args.feat_dropout, args.xdp, args.use_feature,
+                           args.jk, args.encoder, emb).to(device)
 
         predictor_in_dim = args.hidden_channels
 
