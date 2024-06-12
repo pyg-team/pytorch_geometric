@@ -75,7 +75,7 @@ def dirichlet_energy(
         own_feat_vector = feat_matrix[[node_index], :]
         nbh_feat_matrix = feat_matrix[adj_dict[node_index], :]
 
-        de += inner(own_feat_vector, nbh_feat_matrix)
+        de += inner(own_feat_vector, nbh_feat_matrix).cpu()
 
     return torch.sqrt(de / num_nodes).item()
 
@@ -124,6 +124,6 @@ def mean_average_distance(
         own_feat_vector = feat_matrix[[node_index], :]
         nbh_feat_matrix = feat_matrix[adj_dict[node_index], :]
 
-        mad += inner(own_feat_vector, nbh_feat_matrix)
+        mad += inner(own_feat_vector, nbh_feat_matrix).cpu()
 
     return (mad / num_nodes).item()
