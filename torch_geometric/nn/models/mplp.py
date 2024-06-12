@@ -10,7 +10,7 @@ from torch import Tensor
 from torch_sparse import SparseTensor, matmul
 from torch_sparse.matmul import spmm_add, spmm_max, spmm_mean
 
-from torch_geometric.nn import GCNConv, SGConv
+from torch_geometric.nn import GCNConv, LGConv
 from torch_geometric.nn.models import MLP
 from torch_geometric.utils import k_hop_subgraph as pyg_k_hop_subgraph
 from torch_geometric.utils import to_edge_index
@@ -310,7 +310,7 @@ class MPLP_GCN(torch.nn.Module):
             if gcn_name == 'gcn':
                 conv_func = partial(GCNConv, cached=False)
             elif 'pure' in gcn_name:
-                conv_func = partial(SGConv, apply_linearity=False)
+                conv_func = LGConv
             self.xemb = nn.Sequential(nn.Dropout(xdropout))
             if ("pure" in gcn_name or num_layers == 0):
                 self.xemb.append(nn.Linear(self.input_size, hidden_channels))

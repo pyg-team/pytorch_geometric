@@ -525,8 +525,6 @@ def main():
                         help='whether to use Jumping Knowledge')
     parser.add_argument('--batchnorm_affine', type=str2bool, default='True',
                         help='whether to use Affine in BatchNorm')
-    parser.add_argument('--use_embedding', type=str2bool, default='False',
-                        help='whether to train node embedding')
 
     # training setting
     parser.add_argument('--batch_size', type=int, default=64 * 1024)
@@ -581,24 +579,14 @@ def main():
             one_hot_dim = nodes_to_one_hot.sum()
             print(f"number of nodes to onehot: {int(one_hot_dim)}")
         data = data.to(device)
-        if args.use_embedding:
-            emb = initial_embedding(data, args.hidden_channels, device)
-        else:
-            emb = None
-        if 'gcn' in args.encoder:
-            encoder = MPLP_GCN(data.num_features, args.hidden_channels,
+
+        emb = initial_embedding(data, args.hidden_channels, device)
+        encoder = MPLP_GCN(data.num_features, args.hidden_channels,
                                args.hidden_channels, args.num_layers,
                                args.feat_dropout, args.xdp, args.use_feature,
                                args.jk, args.encoder, emb).to(device)
-        elif args.encoder == 'mlp':
-            encoder = MLP(num_layers=args.num_layers,
-                          in_channels=data.num_features,
-                          hidden_channels=args.hidden_channels,
-                          out_channels=args.hidden_channels,
-                          dropout=args.feat_dropout, act=None).to(device)
 
-        predictor_in_dim = args.hidden_channels * int(args.use_feature
-                                                      or args.use_embedding)
+        predictor_in_dim = args.hidden_channels
 
         predictor = MPLP(predictor_in_dim, args.hidden_channels,
                          args.num_layers, args.feat_dropout,
