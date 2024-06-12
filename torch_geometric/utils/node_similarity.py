@@ -60,7 +60,7 @@ def dirichlet_energy(
     :rtype: float
     """
     num_nodes: int = feat_matrix.shape[0]
-    de: Tensor = torch.tensor(0)
+    de: Tensor = torch.tensor(0, dtype=torch.float32)
 
     if adj_dict is None:
         if edge_index is None:
@@ -106,7 +106,7 @@ def mean_average_distance(
     :rtype: float
     """
     num_nodes: int = feat_matrix.shape[0]
-    mad: Tensor = torch.tensor(0)
+    mad: Tensor = torch.tensor(0, dtype=torch.float32)
 
     if adj_dict is None:
         if edge_index is None:
