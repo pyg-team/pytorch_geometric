@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import (
+    Any,
     Callable,
     Dict,
     Iterable,
@@ -9,7 +10,6 @@ from typing import (
     Tuple,
     Type,
     runtime_checkable,
-    Any,
 )
 
 import torch
@@ -129,14 +129,17 @@ class RemoteGraphBackendLoader:
 
 # TODO: make profilable
 def create_remote_backend_from_triplets(
-        triplets: Iterable[TripletLike], node_embedding_model: Module,
-        edge_embedding_model: Module | None = None,
-        graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
-        feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
-        node_method_to_call: str = "forward",
-        edge_method_to_call: str | None = None,
-        pre_transform: Callable[[TripletLike], TripletLike] | None = None,
-        path: str = '', n_parts: int = 1, node_method_kwargs: Optional[Dict[str, Any]] = None, edge_method_kwargs: Optional[Dict[str, Any]] = None) -> RemoteGraphBackendLoader:
+    triplets: Iterable[TripletLike], node_embedding_model: Module,
+    edge_embedding_model: Module | None = None,
+    graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
+    feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
+    node_method_to_call: str = "forward",
+    edge_method_to_call: str | None = None,
+    pre_transform: Callable[[TripletLike], TripletLike] | None = None,
+    path: str = '', n_parts: int = 1,
+    node_method_kwargs: Optional[Dict[str, Any]] = None,
+    edge_method_kwargs: Optional[Dict[str, Any]] = None
+) -> RemoteGraphBackendLoader:
 
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
@@ -163,14 +166,18 @@ def create_remote_backend_from_triplets(
     node_model = getattr(node_embedding_model, node_method_to_call)
     edge_model = getattr(edge_embedding_model, edge_method_to_call)
 
-    indexer = LargeGraphIndexer.from_triplets(triplets, pre_transform=pre_transform)
+    indexer = LargeGraphIndexer.from_triplets(triplets,
+                                              pre_transform=pre_transform)
 
     node_feats = node_model(indexer.get_node_features(), **node_method_kwargs)
     indexer.add_node_feature('x', node_feats)
 
     edge_feats = edge_model(
-        indexer.get_unique_edge_features(feature_name=EDGE_RELATION), **edge_method_kwargs)
-    indexer.add_edge_feature(new_feature_name="edge_attr", new_feature_vals=edge_feats, map_from_feature=EDGE_RELATION)
+        indexer.get_unique_edge_features(feature_name=EDGE_RELATION),
+        **edge_method_kwargs)
+    indexer.add_edge_feature(new_feature_name="edge_attr",
+                             new_feature_vals=edge_feats,
+                             map_from_feature=EDGE_RELATION)
 
     data = indexer.to_data(node_feature_name='x',
                            edge_feature_name='edge_attr')

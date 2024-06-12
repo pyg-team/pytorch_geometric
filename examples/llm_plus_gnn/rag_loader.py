@@ -1,18 +1,28 @@
 from abc import abstractmethod
-from typing import Any, Callable, Optional, Protocol, Tuple, Union, runtime_checkable, Iterable
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Optional,
+    Protocol,
+    Tuple,
+    Union,
+    runtime_checkable,
+)
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
-from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
+from torch_geometric.typing import InputEdges, InputNodes
 
 
 @runtime_checkable
 class RAGFeatureStore(Protocol):
     """Feature store for remote GNN RAG backend."""
     @abstractmethod
-    def retrieve_seed_nodes(self, query: Iterable[Any], **kwargs) -> Iterable[Tensor]:
+    def retrieve_seed_nodes(self, query: Iterable[Any],
+                            **kwargs) -> Iterable[Tensor]:
         """Makes a comparison between the query and all the nodes to get all
         the closest nodes. Return the indices of the nodes that are to be seeds
         for the RAG Sampler.
@@ -20,7 +30,8 @@ class RAGFeatureStore(Protocol):
         ...
 
     @abstractmethod
-    def retrieve_seed_edges(self, query: Iterable[Any], **kwargs) -> Iterable[Tensor]:
+    def retrieve_seed_edges(self, query: Iterable[Any],
+                            **kwargs) -> Iterable[Tensor]:
         """Makes a comparison between the query and all the edges to get all
         the closest nodes. Returns the edge indices that are to be the seeds
         for the RAG Sampler.
@@ -36,7 +47,7 @@ class RAGGraphStore(Protocol):
                           seed_edges: InputEdges) -> Union[Data, HeteroData]:
         """Sample a subgraph using the seeded nodes and edges."""
         ...
-    
+
     @abstractmethod
     def register_feature_store(self, feature_store: FeatureStore):
         """Register a feature store to be used with the sampler."""
@@ -44,6 +55,7 @@ class RAGGraphStore(Protocol):
 
 
 # TODO: Make compatible with Heterographs
+
 
 class RagQueryLoader:
     def __init__(self, data: Tuple[FeatureStore, GraphStore],
