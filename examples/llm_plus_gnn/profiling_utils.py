@@ -9,10 +9,12 @@ from typing import (
     Tuple,
     Type,
     runtime_checkable,
+    Any,
 )
 
 import torch
-from torch import Module, Tensor
+from torch import Tensor
+from torch.nn import Module
 
 from torch_geometric.data import (
     FeatureStore,
@@ -28,14 +30,14 @@ from torch_geometric.distributed import (
 )
 from torch_geometric.typing import EdgeType, NodeType
 
-RemoteGraphBackend = Tuple[GraphStore, FeatureStore]
+RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 
 # TODO: Make everything compatible with Hetero graphs aswell
 
 
 # Adapted from LocalGraphStore
 @runtime_checkable
-class ConvertableGraphStore(Protocol, GraphStore):
+class ConvertableGraphStore(Protocol):
     @classmethod
     def from_data(
         cls,
@@ -63,7 +65,7 @@ class ConvertableGraphStore(Protocol, GraphStore):
 
 # Adapted from LocalFeatureStore
 @runtime_checkable
-class ConvertableFeatureStore(Protocol, FeatureStore):
+class ConvertableFeatureStore(Protocol):
     @classmethod
     def from_data(
         cls,
@@ -122,7 +124,7 @@ class RemoteGraphBackendLoader:
                 self.path, pid)
         else:
             raise NotImplementedError
-        return (graph_store, feature_store)
+        return (feature_store, graph_store)
 
 
 # TODO: make profilable
@@ -134,7 +136,7 @@ def create_remote_backend_from_triplets(
         node_method_to_call: str = "forward",
         edge_method_to_call: str | None = None,
         pre_transform: Callable[[TripletLike], TripletLike] | None = None,
-        path: str = '', n_parts: int = 1) -> RemoteGraphBackendLoader:
+        path: str = '', n_parts: int = 1, node_method_kwargs: Optional[Dict[str, Any]] = None, edge_method_kwargs: Optional[Dict[str, Any]] = None) -> RemoteGraphBackendLoader:
 
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
@@ -147,24 +149,28 @@ def create_remote_backend_from_triplets(
         getattr(feature_db, "from_partition")
 
     # Resolve callable methods
+    node_method_kwargs = node_method_kwargs \
+        if node_method_kwargs is not None else dict()
+
     edge_embedding_model = edge_embedding_model \
         if edge_embedding_model is not None else node_embedding_model
     edge_method_to_call = edge_method_to_call \
         if edge_method_to_call is not None else node_method_to_call
+    edge_method_kwargs = edge_method_kwargs \
+        if edge_method_kwargs is not None else node_method_kwargs
 
     # These will return AttributeErrors if they don't exist
     node_model = getattr(node_embedding_model, node_method_to_call)
     edge_model = getattr(edge_embedding_model, edge_method_to_call)
 
-    indexer = LargeGraphIndexer.from_triplets(triplets)
+    indexer = LargeGraphIndexer.from_triplets(triplets, pre_transform=pre_transform)
 
-    node_feats = node_model(indexer.get_node_features())
+    node_feats = node_model(indexer.get_node_features(), **node_method_kwargs)
     indexer.add_node_feature('x', node_feats)
 
     edge_feats = edge_model(
-        indexer.get_edge_features(feature_name=EDGE_RELATION))
-    indexer.add_edge_feature('edge_attr', edge_feats,
-                             map_from_feature=EDGE_RELATION)
+        indexer.get_unique_edge_features(feature_name=EDGE_RELATION), **edge_method_kwargs)
+    indexer.add_edge_feature(new_feature_name="edge_attr", new_feature_vals=edge_feats, map_from_feature=EDGE_RELATION)
 
     data = indexer.to_data(node_feature_name='x',
                            edge_feature_name='edge_attr')

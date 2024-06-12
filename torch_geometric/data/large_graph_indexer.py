@@ -283,7 +283,7 @@ class LargeGraphIndexer:
         feature_keys = self.get_unique_edge_features(map_from_feature)
         if len(feature_keys) != len(new_feature_vals):
             raise AttributeError(
-                "Expected encodings for {len(feature_keys)} unique features, "
+                f"Expected encodings for {len(feature_keys)} unique features, "
                 + f"but got {len(new_feature_vals)} encodings.")
 
         if map_from_feature == EDGE_PID:
