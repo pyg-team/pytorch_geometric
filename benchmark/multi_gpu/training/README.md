@@ -23,13 +23,13 @@ If you want to run your scripts inside a docker image, you could refer to the [d
 
 ### bare-metal setup
 
-If you prefer to run your scripts directly on the bare-metal server. We recommend this [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) and summarize it as follows:
+If you prefer to run your scripts directly on the bare-metal server. We recommend the installation guidance provided by [Intel® Extension for PyTorch](https://intel.github.io/intel-extension-for-pytorch/index.html#installation?platform=gpu&version=v2.1.30%2bxpu&os=linux%2fwsl2&package=pip). The following are some key steps:
 
-- Install [Intel® oneCCL Bindings for PyTorch](https://github.com/intel/torch-ccl) and [Intel® oneAPI Collective Communications Library (oneCCL)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneccl.html)
+- Install [Intel® oneAPI Base Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit.html), indluding [Intel® oneAPI DPC++ Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-compiler.html), [Intel® oneAPI Math Kernel Library (oneMKL)](https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2024-1/intel-oneapi-math-kernel-library-onemkl.html), [Intel® oneAPI Collective Communications Library (oneCCL)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneccl.html), and [Intel® oneCCL Bindings for PyTorch](https://github.com/intel/torch-ccl).
 
 ```bash
-# Install oneCCL package
-sudo apt install intel-oneapi-ccl-devel=2021.12.0-309
+# Install oneCCL package on Ubuntu
+sudo apt install -y intel-oneapi-dpcpp-cpp-2024.1=2024.1.0-963 intel-oneapi-mkl-devel=2024.1.0-691 intel-oneapi-ccl-devel=2021.12.0-309
 # Install oneccl_bindings_for_pytorch
 pip install oneccl_bind_pt==2.1.300+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 # Runtime Dynamic Linking
@@ -49,3 +49,5 @@ Run benchmark, e.g. assuming you have `n` XPUs:
 ```
 mpirun -n <n> python training_benchmark_xpu.py --dataset ogbn-products --model edge_cnn --num-epochs 3
 ```
+
+This [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) is also helpful for you to lauch DDP training on intel GPU. 
