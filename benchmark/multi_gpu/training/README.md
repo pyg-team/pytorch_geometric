@@ -50,4 +50,4 @@ Run benchmark, e.g. assuming you have `n` XPUs:
 mpirun -n <n> python training_benchmark_xpu.py --dataset ogbn-products --model edge_cnn --num-epochs 3
 ```
 
-This [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) is also helpful for you to lauch DDP training on intel GPU. 
+This [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) is also helpful for you to lauch DDP training on intel GPU.
