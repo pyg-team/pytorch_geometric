@@ -21,9 +21,9 @@ python training_benchmark_cuda.py --dataset ogbn-products --model edge_cnn --num
 
 If you want to run your scripts inside a docker image, you could refer to the [dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile.xpu) and the corresponding [guide](https://github.com/pyg-team/pytorch_geometric/blob/master/docker).
 
-### bare-mental setup
+### bare-metal setup
 
-If you prefer to run your scripts directly on the bare-mental server. We recommend this [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) and summarize it as follows:
+If you prefer to run your scripts directly on the bare-metal server. We recommend this [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) and summarize it as follows:
 
 - Install [Intel® oneCCL Bindings for PyTorch](https://github.com/intel/torch-ccl) and [Intel® oneAPI Collective Communications Library (oneCCL)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneccl.html)
 
