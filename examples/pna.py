@@ -9,6 +9,7 @@ from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import BatchNorm, PNAConv, global_add_pool
 from torch_geometric.utils import degree
+from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC')
 train_dataset = ZINC(path, subset=True, split='train')
@@ -65,8 +66,12 @@ class Net(torch.nn.Module):
         x = global_add_pool(x, batch)
         return self.mlp(x)
 
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
