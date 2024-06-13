@@ -9,6 +9,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GATConv
+from torch_geometric.testing.device import is_xpu_avaliable
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='Cora')
@@ -19,7 +20,13 @@ parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
+
 init_wandb(name=f'GAT-{args.dataset}', heads=args.heads, epochs=args.epochs,
            hidden_channels=args.hidden_channels, lr=args.lr, device=device)
 
