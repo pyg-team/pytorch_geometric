@@ -3,17 +3,22 @@ from typing import Optional, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, FeatureStore, HeteroData
+from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
-from torch_geometric.loader import NeighborLoader, NodeLoader
-from torch_geometric.sampler import NeighborSampler
+from torch_geometric.sampler import (
+    HeteroSamplerOutput,
+    NeighborSampler,
+    NodeSamplerInput,
+    SamplerOutput,
+)
 from torch_geometric.sampler.neighbor_sampler import NumNeighborsType
 from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def __init__(self, feature_store: Optional[FeatureStore] = None,
-                 num_neighbors: NumNeighborsType = [10], **kwargs):
+                 num_neighbors: NumNeighborsType = [100, 100, 100, 100,
+                                                    100], **kwargs):
         self.feature_store = feature_store
         self.num_neighbors = num_neighbors
         self.sample_kwargs = kwargs
@@ -22,7 +27,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     def _init_sampler(self):
         if self.feature_store is None:
-            raise AttributeError("Feature store not set yet.")
+            raise AttributeError("Feature store not registered yet.")
         self.sampler = NeighborSampler(data=(self.feature_store, self),
                                        num_neighbors=self.num_neighbors,
                                        **self.sample_kwargs)
@@ -49,37 +54,34 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = False
         return ret
 
-    def retrieve_subgraph(self, seed_nodes: InputNodes,
-                          seed_edges: InputEdges) -> Union[Data, HeteroData]:
+    def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges,
+                        *args,
+                        **kwargs) -> Union[SamplerOutput, HeteroSamplerOutput]:
         if not self._sampler_is_initialized:
             self._init_sampler()
 
-        # Right now, only input nodes as tensors will be supported
+        # FIXME: Right now, only input nodes/edges as tensors are be supported
         if not isinstance(seed_nodes, Tensor):
+            raise NotImplementedError
+        if not isinstance(seed_edges, Tensor):
             raise NotImplementedError
         device = seed_nodes.device
 
-        if seed_edges is not None:
-            if isinstance(seed_edges, Tensor):
-                seed_edges = self.edge_index.to(device).T[seed_edges.to(
-                    device)].reshape((-1))
-                seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
-            else:
-                raise NotImplementedError
+        # TODO: Call sample_from_edges for seed_edges
+        seed_edges = self.edge_index.to(device).T[seed_edges.to(
+            device)].reshape((-1))
+        seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
 
         seed_nodes = seed_nodes.unique().contiguous()
-        num_nodes = len(seed_nodes)
+        '''
         loader = NeighborLoader(data=(self.feature_store, self),
                                 num_neighbors=[10], input_nodes=seed_nodes,
                                 batch_size=num_nodes)
-        # HACK: Fixes a bug where sampler columns aren't contiguous when
-        # initiated from local graph stores
-        loader.node_sampler.colptr = loader.node_sampler.colptr.contiguous()
-        loader.node_sampler.row = loader.node_sampler.row.contiguous()
-        '''
         loader = NodeLoader(data=(self.feature_store, self),
                             node_sampler=self.sampler, input_nodes=seed_nodes,
                             batch_size=num_nodes)
         '''
+        node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
+        out = self.sampler.sample_from_nodes(node_sample_input)
 
-        return next(iter(loader))
+        return out
