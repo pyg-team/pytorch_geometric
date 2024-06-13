@@ -1,5 +1,6 @@
 import torch
 
+
 def is_xpu_avaliable() -> bool:
     if hasattr(torch, 'xpu') and torch.xpu.is_available():
         return True
