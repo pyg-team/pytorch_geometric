@@ -12,6 +12,7 @@ from torch_geometric.data import Batch
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader, LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
+from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -29,7 +30,12 @@ train_loader = DataLoader(train_dataset, batch_size=2)
 val_loader = DataLoader(val_dataset, batch_size=2)
 test_loader = DataLoader(test_dataset, batch_size=2)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 model = GraphSAGE(
     in_channels=train_dataset.num_features,
     hidden_channels=64,
