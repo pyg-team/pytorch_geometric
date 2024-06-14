@@ -1,6 +1,7 @@
 import torch
 
 import torch_geometric.typing
+from torch_geometric import seed_everything
 from torch_geometric.nn import MFConv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
