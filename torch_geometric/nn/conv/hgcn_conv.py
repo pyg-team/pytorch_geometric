@@ -41,11 +41,11 @@ class HGCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, in_channels: int, out_channels: int, c_in: float = 1.0,
-                c_out: float = 1.0, act: Callable = None,
-                dropout: float = 0.0, use_bias: bool = True,
-                use_att: bool = True, local_agg: bool = True,
-                add_self_loops: bool = True, manifold: str = 'euclidean',
-                **kwargs):
+                 c_out: float = 1.0, act: Callable = None,
+                 dropout: float = 0.0, use_bias: bool = True,
+                 use_att: bool = True, local_agg: bool = True,
+                 add_self_loops: bool = True, manifold: str = 'euclidean',
+                 **kwargs):
         kwargs.setdefault('aggr', 'mean')
         super().__init__(**kwargs)
 
@@ -59,8 +59,7 @@ class HGCNConv(MessagePassing):
             self.manifold = Euclidean()
         else:
             raise NotImplementedError(
-                f"Expected 'poincare' or 'hyperboloid', but got {manifold}"
-            )
+                f"Expected 'poincare' or 'hyperboloid', but got {manifold}")
 
         self.hyp_linear = HypLinear(self.manifold, in_channels, out_channels,
                                     c_in, dropout, use_bias)
