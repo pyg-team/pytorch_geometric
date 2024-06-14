@@ -15,7 +15,7 @@ from torch_geometric.utils import add_self_loops
 class HGCNConv(MessagePassing):
     r"""The hyperbolic GCN operator from the
     `"Hyperbolic Graph Convolutional Neural Networks"
-    <https://arxiv.org/abs/1910.12933>`_ paper
+    <https://arxiv.org/abs/1910.12933>`_ paper.
 
     Args:
         in_channels (int): Size of each input sample.
