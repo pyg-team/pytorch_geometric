@@ -11,7 +11,6 @@ from torch_geometric.data import Dataset, HeteroData, download_url, extract_tar
 
 def read_json(filename: str) -> dict:
     """Reads json file."""
-    # with gfile.GFile(filename, 'r') as f:
     with open(filename, 'r') as f:
         data = json.load(f)
         return data
