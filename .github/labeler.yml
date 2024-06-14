@@ -54,5 +54,5 @@ benchmark:
   - changed-files:
       - any-glob-to-any-file: ["benchmark/**/*", "torch_geometric/profile/**/*"]
 
-skip-changelog:
+auto-skip-changelog:
   - head-branch: ['^skip', '^pre-commit-ci']
