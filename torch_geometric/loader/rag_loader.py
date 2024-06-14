@@ -74,7 +74,8 @@ class RAGQueryLoader:
         subgraph_sample = self.graph_store.sample_subgraph(
             seed_nodes, seed_edges, **self.sampler_kwargs)
 
-        data = self.feature_store.load_subgraph(sample=subgraph_sample, **self.loader_kwargs)
+        data = self.feature_store.load_subgraph(sample=subgraph_sample,
+                                                **self.loader_kwargs)
 
         if self.local_filter:
             data = self.local_filter(data)

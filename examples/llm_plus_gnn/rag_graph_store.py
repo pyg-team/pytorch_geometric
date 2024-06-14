@@ -53,18 +53,21 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.edge_idx_kwargs = kwargs
         self._sampler_is_initialized = False
         return ret
-    
+
     @property
     def num_neighbors(self):
         return self._num_neighbors
-    
+
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
         self._num_neighbors = num_neighbors
         if hasattr(self, 'sampler'):
             self.sampler.num_neighbors = num_neighbors
 
-    def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges, num_neighbors: Optional[NumNeighborsType] = None) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    def sample_subgraph(
+        self, seed_nodes: InputNodes, seed_edges: InputEdges,
+        num_neighbors: Optional[NumNeighborsType] = None
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         if not self._sampler_is_initialized:
             self._init_sampler()
         if num_neighbors is not None:
