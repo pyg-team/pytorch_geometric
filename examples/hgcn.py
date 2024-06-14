@@ -29,8 +29,7 @@ data = dataset[0].to(device)
 
 
 class LinearDecoder(torch.nn.Module):
-    """MLP Decoder for Hyperbolic/Euclidean node classification models.
-    """
+    """MLP Decoder for Hyperbolic/Euclidean node classification models."""
     def __init__(self, manifold, in_dim, out_dim, c):
         super(LinearDecoder, self).__init__()
         self.manifold = manifold

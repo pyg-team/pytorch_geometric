@@ -16,13 +16,14 @@ class HGCNConv(MessagePassing):
     r"""The hyperbolic GCN operator from the
     `"Hyperbolic Graph Convolutional Neural Networks"
     <https://arxiv.org/abs/1910.12933>`_ paper
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        c_in (float): The hyperbolic curvature of each input sample. Equal to
-            :math:`1/K_{\ell - 1}` in the paper. (default: :obj:`1.0`)
-        c_in (float): The hyperbolic curvature of each output sample. Equal to
-            :math:`1/K_{\ell}` in the paper. (default: :obj:`1.0`)
+        c_in (float): The hyperbolic curvature of each input sample.
+            (default: :obj:`1.0`)
+        c_in (float): The hyperbolic curvature of each output sample.
+            (default: :obj:`1.0`)
         dropout (float, optional): Dropout probability of the hyperboloid
             linear layer. (default: :obj:`0`)
         use_bias (bool, optional): Whether to add bias with hyperboloid bias
@@ -40,11 +41,11 @@ class HGCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, in_channels: int, out_channels: int, c_in: float = 1.0,
-                 c_out: float = 1.0, act: Callable = None,
-                 dropout: float = 0.0, use_bias: bool = True,
-                 use_att: bool = True, local_agg: bool = True,
-                 add_self_loops: bool = True, manifold: str = 'euclidean',
-                 **kwargs):
+                c_out: float = 1.0, act: Callable = None,
+                dropout: float = 0.0, use_bias: bool = True,
+                use_att: bool = True, local_agg: bool = True,
+                add_self_loops: bool = True, manifold: str = 'euclidean',
+                **kwargs):
         kwargs.setdefault('aggr', 'mean')
         super().__init__(**kwargs)
 
@@ -58,7 +59,7 @@ class HGCNConv(MessagePassing):
             self.manifold = Euclidean()
         else:
             raise NotImplementedError(
-                f"Expected 'poincare' or 'hyperboloid' type, but got {manifold}"
+                f"Expected 'poincare' or 'hyperboloid', but got {manifold}"
             )
 
         self.hyp_linear = HypLinear(self.manifold, in_channels, out_channels,
@@ -80,7 +81,7 @@ class HGCNConv(MessagePassing):
                 edge_weight: OptTensor = None):
         assert len(
             x.shape
-        ) == 2, f"HGCNConv Expected 2D input, but got input of size: {list(x.shape)}"
+        ) == 2, f"Expected 2D input, but got input of size: {list(x.shape)}"
         if self.add_self_loops:
             edge_index, _ = add_self_loops(edge_index)
         h = self.hyp_linear.forward(x)
@@ -108,8 +109,7 @@ class HGCNConv(MessagePassing):
 
 
 class HypLinear(nn.Module):
-    """Hyperbolic linear layer.
-    """
+    """Hyperbolic linear layer."""
     def __init__(self, manifold, in_channels, out_channels, c, dropout,
                  use_bias):
         super(HypLinear, self).__init__()
@@ -145,8 +145,7 @@ class HypLinear(nn.Module):
 
 
 class HypAct(Module):
-    """Hyperbolic activation layer.
-    """
+    """Hyperbolic activation layer."""
     def __init__(self, manifold, c_in, c_out, act):
         super(HypAct, self).__init__()
         self.manifold = manifold
@@ -512,8 +511,7 @@ class Arcosh(torch.autograd.Function):
 
 
 class Euclidean():
-    """Euclidean Manifold class.
-    """
+    """Euclidean Manifold class."""
     def __init__(self):
         super(Euclidean, self).__init__()
         self.name = 'Euclidean'
