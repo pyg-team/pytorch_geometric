@@ -17,10 +17,9 @@ from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def __init__(self, feature_store: Optional[FeatureStore] = None,
-                 num_neighbors: NumNeighborsType = [100, 100, 100, 100,
-                                                    100], **kwargs):
+                 num_neighbors: NumNeighborsType = [1], **kwargs):
         self.feature_store = feature_store
-        self.num_neighbors = num_neighbors
+        self._num_neighbors = num_neighbors
         self.sample_kwargs = kwargs
         self._sampler_is_initialized = False
         super().__init__()
@@ -29,12 +28,13 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
         self.sampler = NeighborSampler(data=(self.feature_store, self),
-                                       num_neighbors=self.num_neighbors,
+                                       num_neighbors=self._num_neighbors,
                                        **self.sample_kwargs)
         self._sampler_is_initialized = True
 
     def register_feature_store(self, feature_store: FeatureStore):
         self.feature_store = feature_store
+        self._sampler_is_initialized = False
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         ret = super().put_edge_id(edge_id.contiguous(), *args, **kwargs)
@@ -53,12 +53,22 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.edge_idx_kwargs = kwargs
         self._sampler_is_initialized = False
         return ret
+    
+    @property
+    def num_neighbors(self):
+        return self._num_neighbors
+    
+    @num_neighbors.setter
+    def num_neighbors(self, num_neighbors: NumNeighborsType):
+        self._num_neighbors = num_neighbors
+        if hasattr(self, 'sampler'):
+            self.sampler.num_neighbors = num_neighbors
 
-    def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges,
-                        *args,
-                        **kwargs) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges, num_neighbors: Optional[NumNeighborsType] = None) -> Union[SamplerOutput, HeteroSamplerOutput]:
         if not self._sampler_is_initialized:
             self._init_sampler()
+        if num_neighbors is not None:
+            self.num_neighbors = num_neighbors
 
         # FIXME: Right now, only input nodes/edges as tensors are be supported
         if not isinstance(seed_nodes, Tensor):
@@ -73,14 +83,6 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
 
         seed_nodes = seed_nodes.unique().contiguous()
-        '''
-        loader = NeighborLoader(data=(self.feature_store, self),
-                                num_neighbors=[10], input_nodes=seed_nodes,
-                                batch_size=num_nodes)
-        loader = NodeLoader(data=(self.feature_store, self),
-                            node_sampler=self.sampler, input_nodes=seed_nodes,
-                            batch_size=num_nodes)
-        '''
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)
 

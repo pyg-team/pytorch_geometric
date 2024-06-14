@@ -61,6 +61,8 @@ class RagQueryLoader:
         self.graph_store = gstore
         self.graph_store.register_feature_store(self.feature_store)
         self.local_filter = local_filter
+        self.sampler_kwargs = sampler_kwargs or {}
+        self.loader_kwargs = loader_kwargs or {}
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
@@ -70,9 +72,9 @@ class RagQueryLoader:
         seed_edges = self.feature_store.retrieve_seed_edges(query)
 
         subgraph_sample = self.graph_store.sample_subgraph(
-            seed_nodes, seed_edges)
+            seed_nodes, seed_edges, **self.sampler_kwargs)
 
-        data = self.feature_store.load_subgraph(sample=subgraph_sample)
+        data = self.feature_store.load_subgraph(sample=subgraph_sample, **self.loader_kwargs)
 
         if self.local_filter:
             data = self.local_filter(data)
