@@ -32,7 +32,7 @@ def extract_edge_index_rev(json_file: dict, edge_name: str) -> torch.Tensor:
 
 
 class OPFData(Dataset):
-    """Heterogeneous OPFData dataset from arxiv...TDOO...pdf.
+    """Heterogeneous OPFData dataset from https://arxiv.org/abs/2406.07234v1.
 
     OPFData is a large dataset of solved Optimal Power Flow problems,
     derived from the
