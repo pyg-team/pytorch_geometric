@@ -367,9 +367,15 @@ class Dataset(torch.utils.data.Dataset):
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self) -> None:
-        r"""Prints summary statistics of the dataset to the console."""
-        print(str(self.get_summary()))
+    def print_summary(self, fmt: str = "psql") -> None:
+        r"""Prints summary statistics of the dataset to the console.
+
+        Args:
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`"psql"`)
+        """
+        print(self.get_summary().format(fmt=fmt))
 
     def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
