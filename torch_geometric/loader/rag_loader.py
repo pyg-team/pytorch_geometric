@@ -51,7 +51,7 @@ class RAGGraphStore(Protocol):
 # TODO: Make compatible with Heterographs
 
 
-class RagQueryLoader:
+class RAGQueryLoader:
     def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
                  local_filter: Optional[Callable] = None,
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
