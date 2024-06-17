@@ -53,7 +53,9 @@ class RAGGraphStore(Protocol):
 
 class RAGQueryLoader:
     def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
-                 local_filter: Optional[Callable] = None,
+                 local_filter: Optional[Callable[[Data, Any], Data]] = None,
+                 seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
+                 seed_edges_kwargs: Optional[Dict[str, Any]] = None,
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
                  loader_kwargs: Optional[Dict[str, Any]] = None):
         fstore, gstore = data
@@ -61,6 +63,8 @@ class RAGQueryLoader:
         self.graph_store = gstore
         self.graph_store.register_feature_store(self.feature_store)
         self.local_filter = local_filter
+        self.seed_nodes_kwargs = seed_nodes_kwargs or {}
+        self.seed_edges_kwargs = seed_edges_kwargs or {}
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
 
@@ -68,8 +72,10 @@ class RAGQueryLoader:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
-        seed_nodes = self.feature_store.retrieve_seed_nodes(query)
-        seed_edges = self.feature_store.retrieve_seed_edges(query)
+        seed_nodes = self.feature_store.retrieve_seed_nodes(
+            query, **self.seed_nodes_kwargs)
+        seed_edges = self.feature_store.retrieve_seed_edges(
+            query, **self.seed_edges_kwargs)
 
         subgraph_sample = self.graph_store.sample_subgraph(
             seed_nodes, seed_edges, **self.sampler_kwargs)
@@ -78,5 +84,5 @@ class RAGQueryLoader:
                                                 **self.loader_kwargs)
 
         if self.local_filter:
-            data = self.local_filter(data)
+            data = self.local_filter(data, query)
         return data

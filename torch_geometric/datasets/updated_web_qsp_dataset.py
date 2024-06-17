@@ -150,6 +150,13 @@ def retrieval_via_pcst(
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                 num_nodes=len(selected_nodes))
 
+    # HACK Added so that the subset of nodes and edges selected can be tracked
+    try:
+        data['node_idx'] = np.array(graph.node_idx)[selected_nodes]
+        data['edge_idx'] = np.array(graph.edge_idx)[selected_edges]
+    except Exception:
+        pass
+
     return data, desc
 
 
