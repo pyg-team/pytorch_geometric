@@ -117,7 +117,14 @@ class Summary:
             num_edges_per_type=num_edges_per_type,
         )
 
-    def __repr__(self) -> str:
+    def format(self, fmt: str = "psql") -> str:
+        r"""Formats summary statistics of the dataset.
+
+        Args:
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`"psql"`)
+        """
         from tabulate import tabulate
 
         body = f'{self.name} (#graphs={self.num_graphs}):\n'
@@ -127,7 +134,7 @@ class Summary:
         for field in Stats.__dataclass_fields__:
             row = [field] + [f'{getattr(s, field):.1f}' for s in stats]
             content.append(row)
-        body += tabulate(content, headers='firstrow', tablefmt='psql')
+        body += tabulate(content, headers='firstrow', tablefmt=fmt)
 
         if self.num_nodes_per_type is not None:
             content = [['']]
@@ -140,7 +147,7 @@ class Summary:
                 ]
                 content.append(row)
             body += "\nNumber of nodes per node type:\n"
-            body += tabulate(content, headers='firstrow', tablefmt='psql')
+            body += tabulate(content, headers='firstrow', tablefmt=fmt)
 
         if self.num_edges_per_type is not None:
             content = [['']]
@@ -156,6 +163,9 @@ class Summary:
                 ]
                 content.append(row)
             body += "\nNumber of edges per edge type:\n"
-            body += tabulate(content, headers='firstrow', tablefmt='psql')
+            body += tabulate(content, headers='firstrow', tablefmt=fmt)
 
         return body
+
+    def __repr__(self) -> str:
+        return self.format()

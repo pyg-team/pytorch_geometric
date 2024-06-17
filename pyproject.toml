@@ -45,7 +45,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning",
+    "pytorch-lightning<2.3.0",
     "yacs",
 ]
 modelhub=[
@@ -77,7 +77,7 @@ full = [
     "h5py",
     "matplotlib",
     "networkx",
-    "numba",
+    "numba<0.60.0",
     "opt_einsum",
     "pandas",
     "pgmpy",
