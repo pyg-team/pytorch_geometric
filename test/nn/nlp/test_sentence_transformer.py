@@ -1,6 +1,6 @@
 import pytest
 
-from torch_geometric.nn.nlp import PoolingStrategy, SentenceTransformer
+from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
 
@@ -8,14 +8,12 @@ from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 @onlyFullTest
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
-@pytest.mark.parametrize('pooling_strategy', [
-    PoolingStrategy.MEAN,
-    PoolingStrategy.CLS,
-    PoolingStrategy.LAST,
-])
+@pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls'])
 def test_sentence_transformer(batch_size, pooling_strategy, device):
-    model = SentenceTransformer(model_name='prajjwal1/bert-tiny',
-                                pooling_strategy=pooling_strategy).to(device)
+    model = SentenceTransformer(
+        model_name='prajjwal1/bert-tiny',
+        pooling_strategy=pooling_strategy,
+    ).to(device)
     assert model.device == device
     assert str(model) == 'SentenceTransformer(model_name=prajjwal1/bert-tiny)'
 

@@ -1,6 +1,5 @@
-from .sentence_transformer import SentenceTransformer, PoolingStrategy
+from .sentence_transformer import SentenceTransformer
 
 __all__ = classes = [
     'SentenceTransformer',
-    'PoolingStrategy',
 ]

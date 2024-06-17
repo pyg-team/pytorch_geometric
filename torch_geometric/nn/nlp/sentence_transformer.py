@@ -14,8 +14,9 @@ class PoolingStrategy(Enum):
 
 class SentenceTransformer(torch.nn.Module):
     def __init__(
-        self, model_name: str,
-        pooling_strategy: Union[PoolingStrategy, str] = PoolingStrategy.MEAN
+        self,
+        model_name: str,
+        pooling_strategy: Union[PoolingStrategy, str] = 'mean',
     ) -> None:
         super().__init__()
 
@@ -33,13 +34,12 @@ class SentenceTransformer(torch.nn.Module):
         emb = out[0]  # First element contains all token embeddings.
         if self.pooling_strategy == PoolingStrategy.MEAN:
             emb = mean_pooling(emb, attention_mask)
-        elif self.pooling_strategy == PoolingStrategy.CLS:
-            emb = emb[:, 0, :]
         elif self.pooling_strategy == PoolingStrategy.LAST:
             emb = last_pooling(emb, attention_mask)
         else:
-            raise ValueError(f"Unsupported pooling strategy "
-                             f"{self.pooling_strategy}")
+            assert self.pooling_strategy == PoolingStrategy.CLS
+            emb = emb[:, 0, :]
+
         emb = F.normalize(emb, p=2, dim=1)
         return emb
 
@@ -86,10 +86,9 @@ def mean_pooling(emb: Tensor, attention_mask: Tensor) -> Tensor:
 def last_pooling(emb: Tensor, attention_mask: Tensor) -> Tensor:
     # Check whether language model uses left padding,
     # which is always used for decoder LLMs
-    left_padding = (attention_mask[:, -1].sum() == attention_mask.shape[0])
+    left_padding = attention_mask[:, -1].sum() == attention_mask.size(0)
     if left_padding:
         return emb[:, -1]
-    else:
-        seq_indices = attention_mask.sum(dim=1) - 1
-        batch_size = emb.shape[0]
-        return emb[torch.arange(batch_size, device=emb.device), seq_indices]
+
+    seq_indices = attention_mask.sum(dim=1) - 1
+    return emb[torch.arange(emb.size(0), device=emb.device), seq_indices]
