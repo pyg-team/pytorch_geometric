@@ -183,8 +183,8 @@ def has_package(package: str) -> bool:
         if not hasattr(module, '__version__'):
             return True
 
-            version = Version(module.__version__).base_version
-            return version in req.specifier
+        version = Version(module.__version__).base_version
+        return version in req.specifier
     except Exception:
         return False
 
