@@ -3,13 +3,14 @@ from typing import Callable, Optional, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
 
-try:
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import knn
-except ImportError:
+else:
     knn = None
 
 
