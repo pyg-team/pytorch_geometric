@@ -13,7 +13,7 @@ from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
     no_pytorch_lightning = False
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     PLLightningDataModule = object  # type: ignore
     no_pytorch_lightning = True
 
