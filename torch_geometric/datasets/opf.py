@@ -51,6 +51,10 @@ class OPFDataset(InMemoryDataset):
             in a :obj:`torch_geometric.data.HeteroData` object and returns
             a transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in a
+            :obj:`torch_geometric.data.HeteroData` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
@@ -75,6 +79,7 @@ class OPFDataset(InMemoryDataset):
         topological_perturbations: bool = False,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
 
@@ -86,7 +91,7 @@ class OPFDataset(InMemoryDataset):
         if topological_perturbations:
             self._release += '_nminusone'
 
-        super().__init__(root, transform, pre_transform,
+        super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
 
         idx = self.processed_file_names.index(f'{split}.pt')
@@ -180,6 +185,9 @@ class OPFDataset(InMemoryDataset):
                     extract_edge_index(obj, 'shunt_link'))
                 data['bus', 'shunt_link', 'shunt'].edge_index = (  #
                     extract_edge_index_rev(obj, 'shunt_link'))
+
+                if self.pre_filter is not None and not self.pre_filter(data):
+                    continue
 
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
