@@ -68,13 +68,19 @@ def test_save_pretrained_with_push_to_hub(model, tmp_path):
     # Push to hub with repo_id
     model.save_pretrained(save_directory, push_to_hub=True, repo_id='CustomID',
                           config=CONFIG)
-    model.push_to_hub.assert_called_with(repo_id='CustomID',
-                                         model_card_kwargs={}, config=CONFIG,)
+    model.push_to_hub.assert_called_with(
+        repo_id='CustomID',
+        model_card_kwargs={},
+        config=CONFIG,
+    )
 
     # Push to hub with default repo_id (based on dir name)
     model.save_pretrained(save_directory, push_to_hub=True, config=CONFIG)
-    model.push_to_hub.assert_called_with(repo_id=REPO_NAME,
-                                         model_card_kwargs={}, config=CONFIG,)
+    model.push_to_hub.assert_called_with(
+        repo_id=REPO_NAME,
+        model_card_kwargs={},
+        config=CONFIG,
+    )
 
 
 @withPackage('huggingface_hub')
