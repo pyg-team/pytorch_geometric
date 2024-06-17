@@ -178,13 +178,13 @@ def has_package(package: str) -> bool:
     if find_spec(req.name) is None:
         return False
 
-    module = import_module(req.name)
-    if not hasattr(module, '__version__'):
-        return True
-
     try:
-        version = Version(module.__version__).base_version
-        return version in req.specifier
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
+
+            version = Version(module.__version__).base_version
+            return version in req.specifier
     except Exception:
         return False
 
