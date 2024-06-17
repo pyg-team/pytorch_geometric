@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "tape"
+version = "0.1.0"
+description = "LLM-to-LM Interpreter for Enhanced Text-Attributed Graph Representation Learning"
+authors = ["Devansh Amin"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+pandas = "*"
+requests = "*"
+tqdm = "*"
+python-dotenv = "^1.0.1"
+gdown = "^5.2.0"
+numpy = "*"
+jinja2 = "*"
+tenacity = "*"
+ogb = "^1.3.6"
+jsonargparse = {extras = ["omegaconf"], version = "^4.29.0"} # Combining dataclasses + YAML + CLI
+instructor = {extras = ["litellm"], version = "^1.3.2"} # Getting structured outputs from LLM
+diskcache = "^5.6.3" # Caching LLM responses
+transformers = "^4.41.2" # LM inference
+sentence-transformers = "^3.0.1" # LM inference
+datasets = "^2.19.2" # Loading LLM predictions from Hugging Face
+vllm = { version = "0.5.0.post1", optional = true }
+
+[tool.poetry.extras]
+llm_offline = ["vllm"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

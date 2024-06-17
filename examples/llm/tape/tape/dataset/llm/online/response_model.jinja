@@ -1,0 +1,28 @@
+from enum import Enum
+from typing import List
+
+from pydantic import Field
+
+from tape.dataset.llm.engine import LlmResponseModel
+
+
+class PaperCategory(str, Enum):
+{%- for key, value in class_labels.items() %}
+    {{ key.replace(' ', '_')|upper }} = "{{ value }}"
+{%- endfor %}
+
+
+class Classification(LlmResponseModel):
+    label: List[PaperCategory] = Field(
+        ...,
+        description="{{ label_description }}",
+        examples={{ label_examples }}
+    )
+    reason: str = Field(
+        ...,
+        description=(
+            'Give a detailed explanation with quotes from the abstract explaining why '
+            'the paper is related to the chosen label based on the ranking.'
+        ),
+        examples={{ reason_examples }}
+    )

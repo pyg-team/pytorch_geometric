@@ -1,0 +1,52 @@
+# Harnessing Explanations: LLM-to-LM Interpreter for Enhanced Text Attributed Graph Representation Learning
+
+This repository implements the methodology introduced in the [paper](https://arxiv.org/abs/2305.19523) that leverages large language models (LLMs) to enhance text-attributed graph (TAG) representation learning, boosting graph neural network (GNN) performance on downstream tasks.
+
+## Framework Overview
+
+1. **Node Feature Extraction**
+
+   - Prepare prompts containing the article information (title and abstract) for each node.
+   - Query an LLM with these prompts to generate a ranked label prediction list and explanation.
+
+1. **Node Feature Encoder**
+
+   - Fine-tune a language model (LM) on a sequence classification task with the article title and abstract as input.
+
+1. **GNN Trainer**
+
+   - Train a GNN model using the following features, with node features updated by the fine-tuned LM encoder:
+     1. Title & Abstract (TA)
+     1. Prediction (P) - Using a PyTorch `nn.Embedding` layer for top-k ranked features.
+     1. Explanation (E)
+
+1. **Model Ensemble**
+
+   - Fuse predictions from the trained GNN models on TA, P, and E by averaging them.
+
+> \[!Note\]
+> Fine-tuning an LM is optional and not currently supported. Instead, you can use any open-weight fine-tuned embedding model, significantly reducing time and cost while achieving comparable results.
+
+## Usage
+
+### Setup the environment
+
+```bash
+# Replace the 'cu118' CUDA version according to your system
+pip install torch==2.3.0 --index-url https://download.pytorch.org/whl/cu118
+pip install torch_geometric
+pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu118.html
+
+# For online LLM inference
+$ poetry install
+# For offline LLM inference
+$ poetry install --extras "llm_offline"
+```
+
+### Training
+
+```bash
+$ python train.py --config=train_config.yaml
+# You can also provide CLI arguments to overwrite values in the `train_config.yaml` file
+$ python train.py --help
+```
