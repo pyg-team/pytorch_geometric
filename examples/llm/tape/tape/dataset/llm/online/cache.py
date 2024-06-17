@@ -7,7 +7,7 @@ from typing import Union
 import diskcache
 from litellm import ModelResponse
 from pydantic import BaseModel
-from tape.dataset.utils import generate_string_hash
+from tape.utils import generate_string_hash
 
 CACHE = None
 

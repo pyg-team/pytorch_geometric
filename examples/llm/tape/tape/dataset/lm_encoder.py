@@ -7,7 +7,7 @@ import torch
 from safetensors import safe_open
 from safetensors.torch import save_file
 from tape.config import DatasetName, FeatureType
-from tape.dataset.utils import generate_string_hash
+from tape.utils import generate_string_hash
 from tqdm import tqdm
 
 warnings.filterwarnings('ignore')  # Ignore HuggingFace libraries warnings
