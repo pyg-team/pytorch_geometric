@@ -5,7 +5,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from ogb.nodeproppred import PygNodePropPredDataset
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
@@ -27,7 +27,6 @@ args = parser.parse_args()
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'papers100')
 dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
-evaluator = Evaluator(name='ogbn-papers100M')
 
 data = dataset[0]
 data.edge_index = to_undirected(data.edge_index, reduce="mean")
