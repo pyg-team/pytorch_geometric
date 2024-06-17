@@ -179,7 +179,10 @@ def has_package(package: str) -> bool:
         return False
 
     try:
+        print()
+        print("1")
         module = import_module(req.name)
+        print("1")
         if not hasattr(module, '__version__'):
             return True
 
