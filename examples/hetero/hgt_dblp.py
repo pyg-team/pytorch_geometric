@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HGTConv, Linear
+from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
 # We initialize conference node features with a single one-vector as feature:
@@ -43,7 +44,12 @@ class HGT(torch.nn.Module):
 
 
 model = HGT(hidden_channels=64, out_channels=4, num_heads=2, num_layers=1)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 data, model = data.to(device), model.to(device)
 
 with torch.no_grad():  # Initialize lazy modules.

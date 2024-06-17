@@ -12,6 +12,7 @@ from torch.optim import Adam
 import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import GCNConv
+from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
 dataset = IMDB(path)
@@ -74,7 +75,13 @@ class DMGI(torch.nn.Module):
 
 model = DMGI(data['movie'].num_nodes, data['movie'].x.size(-1),
              out_channels=64, num_relations=len(data.edge_types))
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 data, model = data.to(device), model.to(device)
 
 optimizer = Adam(model.parameters(), lr=0.0005, weight_decay=0.0001)

@@ -8,6 +8,7 @@ from torch import nn
 import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import HANConv
+from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
 metapaths = [[('movie', 'actor'), ('actor', 'movie')],
@@ -34,7 +35,12 @@ class HAN(nn.Module):
 
 
 model = HAN(in_channels=-1, out_channels=3)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif is_xpu_avaliable():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 data, model = data.to(device), model.to(device)
 
 with torch.no_grad():  # Initialize lazy modules.
