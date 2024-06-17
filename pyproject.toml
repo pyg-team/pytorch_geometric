@@ -45,7 +45,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning",
+    "pytorch-lightning<2.3.0",
     "yacs",
 ]
 modelhub=[
