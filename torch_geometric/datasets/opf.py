@@ -20,7 +20,7 @@ class OPFDataset(InMemoryDataset):
     Optimal Power Flow with Topological Perturbations"
     <https://arxiv.org/abs/2406.07234>`_ paper.
 
-    class:`OPFDataset` is a large-scale dataset of solved optimal power flow
+    :class:`OPFDataset` is a large-scale dataset of solved optimal power flow
     problems, derived from the
     `pglib-opf <https://github.com/power-grid-lib/pglib-opf>`_ dataset.
 
