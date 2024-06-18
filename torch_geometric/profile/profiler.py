@@ -1,6 +1,7 @@
 import functools
 from collections import OrderedDict, defaultdict, namedtuple
 from typing import Any, List, NamedTuple, Optional, Tuple
+import re
 
 import torch
 import torch.profiler as torch_profiler
@@ -300,13 +301,14 @@ def _layer_trace(
     layer_names = []
     layer_stats = []
     for format_line in format_lines:  # body
+        # get current line's level based on number of '-' in prefix
+        current_line_level = len(re.match(r'^(-+).*', format_line[0]).group(1))
         if format_line[1] == '':  # key line
-            key_dict[format_line[0].count("-")] = format_line[0]
+            key_dict[current_line_level] = format_line[0]
         else:  # must print
             # get current line's level
-            curr_level = format_line[0].count("-")
             par_str = ""
-            for i in range(1, curr_level):
+            for i in range(1, current_line_level):
                 par_str += key_dict[i]
             curr_key = par_str + format_line[0]
             layer_names.append(curr_key)
