@@ -4,10 +4,8 @@ import torch
 import torch_geometric.typing
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import AttentionalAggregation
-from torch_geometric.testing import withPackage
 
 
-@withPackage('torch-scatter')
 @pytest.mark.parametrize('dim', [2, 3])
 def test_attentional_aggregation(dim):
     channels = 16
@@ -26,7 +24,7 @@ def test_attentional_aggregation(dim):
     assert out.size() == (3, channels) if dim == 2 else (2, 3, channels)
 
     if (not torch_geometric.typing.WITH_TORCH_SCATTER
-            and not torch_geometric.typing.WITH_PT20):
+            and (dim == 3 or not torch_geometric.typing.WITH_PT20)):
         with pytest.raises(ImportError, match="requires the 'torch-scatter'"):
             aggr(x, ptr=ptr)
     else:
