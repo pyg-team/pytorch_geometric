@@ -190,7 +190,7 @@ def mv(path1: str, path2: str, recursive: bool = True) -> None:
     fs1 = get_fs(path1)
     fs2 = get_fs(path2)
     assert fs1.protocol == fs2.protocol
-    fs1.mv(path1, path2, recursive)
+    fs1.mv(path1, path2, recursive=recursive)
 
 
 def glob(path: str) -> List[str]:

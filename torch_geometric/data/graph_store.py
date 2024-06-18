@@ -25,10 +25,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from torch import Tensor
 
+from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
-from torch_geometric.utils.sparse import index2ptr, ptr2index
 
 # The output of converting between two types in the GraphStore is a Tuple of
 # dictionaries: row, col, and perm. The dictionaries are keyed by the edge

@@ -275,7 +275,7 @@ class BPRLoss(_Loss):
         \sum_{j \not\in \mathcal{N}_u} \ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})
         + \lambda \vert\vert \textbf{x}^{(0)} \vert\vert^2
 
-    where :math:`lambda` controls the :math:`L_2` regularization strength.
+    where :math:`\lambda` controls the :math:`L_2` regularization strength.
     We compute the mean BPR loss for simplicity.
 
     Args:

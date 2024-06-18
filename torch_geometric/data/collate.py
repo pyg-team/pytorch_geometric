@@ -16,7 +16,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.edge_index import SortOrder
@@ -184,7 +184,8 @@ def _collate(
             return value, slices, incs
 
         out = None
-        if torch.utils.data.get_worker_info() is not None:
+        if (torch.utils.data.get_worker_info() is not None
+                and not isinstance(elem, (Index, EdgeIndex))):
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
             if torch_geometric.typing.WITH_PT20:
@@ -202,6 +203,11 @@ def _collate(
             out = elem.new(storage).resize_(*shape)
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
+
+        if increment and isinstance(value, Index) and values[0].is_sorted:
+            # Check whether the whole `Index` is sorted:
+            if (value.diff() >= 0).all():
+                value._is_sorted = True
 
         if increment and isinstance(value, EdgeIndex) and values[0].is_sorted:
             # Check whether the whole `EdgeIndex` is sorted by row:

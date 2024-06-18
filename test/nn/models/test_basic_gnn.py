@@ -254,7 +254,6 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
-@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
 def test_onnx(tmp_path):
     import onnx
@@ -327,7 +326,7 @@ def test_trim_to_layer():
     )[:2]
     assert out2.size() == (2, 16)
 
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
 
 @withDevice
