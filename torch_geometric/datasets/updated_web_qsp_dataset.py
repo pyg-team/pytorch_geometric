@@ -47,6 +47,7 @@ def retrieval_via_pcst(
     topk: int = 3,
     topk_e: int = 3,
     cost_e: float = 0.5,
+    save_idx: bool = False,
 ) -> Tuple[Data, str]:
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
@@ -151,11 +152,9 @@ def retrieval_via_pcst(
                 num_nodes=len(selected_nodes))
 
     # HACK Added so that the subset of nodes and edges selected can be tracked
-    try:
+    if save_idx:
         data['node_idx'] = np.array(graph.node_idx)[selected_nodes]
         data['edge_idx'] = np.array(graph.edge_idx)[selected_edges]
-    except Exception:
-        pass
 
     return data, desc
 
@@ -178,6 +177,7 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
+        self._load_raw_data()
         self.load(self.processed_paths[0])
 
     def _check_dependencies(self) -> None:
