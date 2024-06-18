@@ -4,8 +4,10 @@ import torch
 import torch_geometric.typing
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import AttentionalAggregation
+from torch_geometric.testing import withPackage
 
 
+@withPackage('torch-scatter')
 @pytest.mark.parametrize('dim', [2, 3])
 def test_attentional_aggregation(dim):
     channels = 16
