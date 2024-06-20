@@ -8,17 +8,17 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import HeteroConv, Linear, SAGEConv
-from torch_geometric.utils import trim_to_layer
 from torch_geometric.testing.device import is_xpu_avaliable
+from torch_geometric.utils import trim_to_layer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--use-sparse-tensor', action='store_true')
 args = parser.parse_args()
 
-if args.device=='cuda' and torch.cuda.is_available():
+if args.device == 'cuda' and torch.cuda.is_available():
     device = 'cuda'
-elif args.device=='xpu' and is_xpu_avaliable():
+elif args.device == 'xpu' and is_xpu_avaliable():
     device = 'xpu'
 else:
     device = 'cpu'

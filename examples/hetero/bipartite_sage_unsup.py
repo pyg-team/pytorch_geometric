@@ -12,8 +12,8 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
-from torch_geometric.utils.convert import to_scipy_sparse_matrix
 from torch_geometric.testing.device import is_xpu_avaliable
+from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
