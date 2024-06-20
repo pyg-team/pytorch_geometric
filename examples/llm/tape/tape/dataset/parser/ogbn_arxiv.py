@@ -27,8 +27,8 @@ class OgbnArxivParser(Parser):
     def __init__(self, seed: int = 0, cache_dir: str = '.cache') -> None:
         super().__init__(seed, cache_dir)
         self._dtype_to_path = self.download_data()
-        self.graph = OgbArxivGraph(dir_path=self._dtype_to_path['original'],
-                                   cache_dir=self.cache_dir)
+        self.graph = OgbnArxivGraph(dir_path=self._dtype_to_path['original'],
+                                    cache_dir=self.cache_dir)
         self.split = None
 
     def parse(self) -> None:
@@ -66,7 +66,7 @@ class OgbnArxivParser(Parser):
         return dtype_to_path
 
 
-class OgbArxivGraph:
+class OgbnArxivGraph:
     def __init__(self, dir_path: Path, cache_dir: Path) -> None:
 
         self.dir_path = dir_path
@@ -134,11 +134,14 @@ class OgbArxivGraph:
             'ogbn_arxiv/mapping/labelidx2arxivcategeory.csv.gz', skiprows=1,
             names=['label_id', 'label'], compression='gzip')
         class_id_to_label = {}
-        categories = OgbArxivGraph.fetch_arxiv_category_taxonomy()
-        arxiv_cs_categories_df = pd.DataFrame(categories)
+        categories = OgbnArxivGraph.fetch_arxiv_category_taxonomy()
+        df = pd.DataFrame(categories)
         for row in mapping_df.itertuples(index=False):
-            class_id_to_label[row.label_id] = arxiv_cs_categories_df.query(
-                'label == @label').iloc[0].to_dict()
+            label = row.label.replace('arxiv cs ',
+                                      'cs.').strip().upper().replace(
+                                          'CS', 'cs')
+            class_id_to_label[row.label_id] = df[df.label ==
+                                                 label].iloc[0].to_dict()
         return class_id_to_label
 
     @staticmethod
