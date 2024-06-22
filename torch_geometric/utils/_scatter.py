@@ -34,7 +34,9 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
             dim_size (int, optional): The size of the output tensor at
                 dimension :obj:`dim`. If set to :obj:`None`, will create a
                 minimal-sized output tensor according to
-                :obj:`index.max() + 1`. (default: :obj:`None`)
+                :obj:`index.max() + 1`. If given, it will avoid synchronization
+                needed to calculate output shape of the tensor.
+                (default: :obj:`None`)
             reduce (str, optional): The reduce operation (:obj:`"sum"`,
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
                 :obj:`"any"`). (default: :obj:`"sum"`)
