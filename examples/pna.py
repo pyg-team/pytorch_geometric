@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+import torch_geometric
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import BatchNorm, PNAConv, global_add_pool
@@ -69,7 +70,7 @@ class Net(torch.nn.Module):
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

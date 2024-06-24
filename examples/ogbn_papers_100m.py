@@ -21,7 +21,7 @@ parser.add_argument('--num_neighbors', type=int, default=10)
 parser.add_argument('--channels', type=int, default=256)
 parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--dropout', type=float, default=0.5)
-parser.add_argument('--workers', type=int, default=12)
+parser.add_argument('--num_workers', type=int, default=12)
 args = parser.parse_args()
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'papers100')
@@ -118,7 +118,7 @@ def test(loader):
 
 
 for epoch in range(1, args.epochs + 1):
-    loss, train_acc = train(epoch)
+    loss, train_acc = train()
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Acc: {train_acc:.4f}')
     val_acc = test(val_loader)
     print(f'Epoch {epoch:02d}, Val Acc: {val_acc:.4f}')

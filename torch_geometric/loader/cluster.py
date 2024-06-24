@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import sys
 from dataclasses import dataclass
@@ -43,6 +44,8 @@ class ClusterData(torch.utils.data.Dataset):
             (default: :obj:`False`)
         save_dir (str, optional): If set, will save the partitioned data to the
             :obj:`save_dir` directory for faster re-use. (default: :obj:`None`)
+        filename (str, optional): Name of the stored partitioned file.
+            (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
         keep_inter_cluster_edges (bool, optional): If set to :obj:`True`,
@@ -56,6 +59,7 @@ class ClusterData(torch.utils.data.Dataset):
         num_parts: int,
         recursive: bool = False,
         save_dir: Optional[str] = None,
+        filename: Optional[str] = None,
         log: bool = True,
         keep_inter_cluster_edges: bool = False,
         sparse_format: Literal['csr', 'csc'] = 'csr',
@@ -69,8 +73,8 @@ class ClusterData(torch.utils.data.Dataset):
         self.sparse_format = sparse_format
 
         recursive_str = '_recursive' if recursive else ''
-        filename = f'metis_{num_parts}{recursive_str}.pt'
-        path = osp.join(save_dir or '', filename)
+        root_dir = osp.join(save_dir or '', f'part_{num_parts}{recursive_str}')
+        path = osp.join(root_dir, filename or 'metis.pt')
 
         if save_dir is not None and osp.exists(path):
             self.partition = torch.load(path)
@@ -82,6 +86,7 @@ class ClusterData(torch.utils.data.Dataset):
             self.partition = self._partition(data.edge_index, cluster)
 
             if save_dir is not None:
+                os.makedirs(root_dir, exist_ok=True)
                 torch.save(self.partition, path)
 
             if log:  # pragma: no cover

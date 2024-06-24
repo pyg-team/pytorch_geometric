@@ -5,6 +5,7 @@ import time
 import torch
 import torch.nn.functional as F
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
@@ -22,7 +23,7 @@ args = parser.parse_args()
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

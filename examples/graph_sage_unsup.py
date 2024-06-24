@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
@@ -25,7 +26,7 @@ train_loader = LinkNeighborLoader(
 )
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')
