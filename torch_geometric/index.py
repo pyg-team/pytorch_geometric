@@ -685,7 +685,7 @@ def _index(
 
 @implements(aten.add.Tensor)
 def _add(
-    input: Union[Tensor, Index],
+    input: Union[int, Tensor, Index],
     other: Union[int, Tensor, Index],
     *,
     alpha: int = 1,
@@ -764,7 +764,7 @@ def add_(
 
 @implements(aten.sub.Tensor)
 def _sub(
-    input: Union[Tensor, Index],
+    input: Union[int, Tensor, Index],
     other: Union[int, Tensor, Index],
     *,
     alpha: int = 1,
