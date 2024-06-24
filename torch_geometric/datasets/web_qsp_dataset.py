@@ -72,8 +72,9 @@ def retrieval_via_pcst(
             indices = e_prizes == topk_e_values[k]
             value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
             e_prizes[indices] = value
-            last_topk_e_value = value
-        # cost_e = max(min(cost_e, e_prizes.max().item()-c), 0)
+            last_topk_e_value = value * (1 - c)
+        # reduce the cost of the edges such that at least one edge is selected
+        cost_e = min(cost_e, e_prizes.max().item() * (1 - c / 2))
     else:
         e_prizes = torch.zeros(graph.num_edges)
 
@@ -105,8 +106,8 @@ def retrieval_via_pcst(
         costs = np.array(costs + virtual_costs)
         edges = np.array(edges + virtual_edges)
 
-    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
-                                pruning, verbosity_level)
+    vertices, edges = pcst_fast(edges, prizes, costs, root=-1, num_clusters=1,
+                                pruning="gw", verbosity_level=0)
 
     selected_nodes = vertices[vertices < graph.num_nodes]
     selected_edges = [mapping_e[e] for e in edges if e < num_edges]
