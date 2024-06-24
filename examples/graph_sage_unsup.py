@@ -10,7 +10,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.testing.device import is_xpu_avaliable
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
