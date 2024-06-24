@@ -80,7 +80,8 @@ class GRetriever(nn.Module):
                 prepare_model_for_kbit_training,
             )
             print("Training our LLM with LORA!")
-            self.llm_generator = prepare_model_for_kbit_training(self.llm_generator)
+            self.llm_generator = prepare_model_for_kbit_training(
+                self.llm_generator)
             lora_r: int = 8
             lora_alpha: int = 16
             lora_dropout: float = 0.05
@@ -108,7 +109,7 @@ class GRetriever(nn.Module):
                 heads=num_gnn_heads,
                 norm='batch_norm',
             ).to(self.llm_device)
-        except: # noqa
+        except:  # noqa
             # to handle gnns that do not have `heads` param
             self.graph_encoder = gnn_to_use(
                 in_channels=gnn_in_channels,
