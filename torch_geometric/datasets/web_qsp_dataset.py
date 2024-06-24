@@ -47,6 +47,10 @@ def retrieval_via_pcst(
                      edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
         return graph, desc
 
+    root = -1  # unrooted
+    num_clusters = 1
+    pruning = "gw"
+    verbosity_level = 0
     if topk > 0:
         n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
         topk = min(topk, graph.num_nodes)
@@ -102,8 +106,8 @@ def retrieval_via_pcst(
         costs = np.array(costs + virtual_costs)
         edges = np.array(edges + virtual_edges)
 
-    vertices, edges = pcst_fast(edges, prizes, costs, root=-1, num_clusters=1,
-                                pruning="gw", verbosity_level=0)
+    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
+                                pruning, verbosity_level)
 
     selected_nodes = vertices[vertices < graph.num_nodes]
     selected_edges = [mapping_e[e] for e in edges if e < num_edges]
