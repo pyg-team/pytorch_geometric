@@ -3,16 +3,15 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HeteroConv, Linear, SAGEConv
-from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
 # We initialize conference node features with a single one-vector as feature:
 dataset = DBLP(path, transform=T.Constant(node_types='conference'))
 data = dataset[0]
-print(data)
 
 
 class HeteroGNN(torch.nn.Module):
@@ -40,7 +39,7 @@ model = HeteroGNN(data.metadata(), hidden_channels=64, out_channels=4,
                   num_layers=2)
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

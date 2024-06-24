@@ -9,10 +9,10 @@ import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression
 from torch.optim import Adam
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import GCNConv
-from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
 dataset = IMDB(path)
@@ -78,7 +78,7 @@ model = DMGI(data['movie'].num_nodes, data['movie'].x.size(-1),
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

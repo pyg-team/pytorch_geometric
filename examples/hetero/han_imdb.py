@@ -5,10 +5,10 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import HANConv
-from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
 metapaths = [[('movie', 'actor'), ('actor', 'movie')],
@@ -17,7 +17,6 @@ transform = T.AddMetaPaths(metapaths=metapaths, drop_orig_edge_types=True,
                            drop_unconnected_node_types=True)
 dataset = IMDB(path, transform=transform)
 data = dataset[0]
-print(data)
 
 
 class HAN(nn.Module):
@@ -37,7 +36,7 @@ class HAN(nn.Module):
 model = HAN(in_channels=-1, out_channels=3)
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

@@ -4,24 +4,23 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import HeteroConv, Linear, SAGEConv
-from torch_geometric.testing.device import is_xpu_avaliable
 from torch_geometric.utils import trim_to_layer
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--use-sparse-tensor', action='store_true')
 args = parser.parse_args()
 
-if args.device == 'cuda' and torch.cuda.is_available():
-    device = 'cuda'
-elif args.device == 'xpu' and is_xpu_avaliable():
-    device = 'xpu'
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
 else:
-    device = 'cpu'
+    device = torch.device('cpu')
 
 transforms = [T.ToUndirected(merge=True)]
 if args.use_sparse_tensor:

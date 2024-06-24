@@ -4,9 +4,9 @@ import os.path as osp
 
 import torch
 
+import torch_geometric
 from torch_geometric.datasets import AMiner
 from torch_geometric.nn import MetaPath2Vec
-from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/AMiner')
 dataset = AMiner(path)
@@ -20,11 +20,11 @@ metapath = [
 ]
 
 if torch.cuda.is_available():
-    device = 'cuda'
-elif is_xpu_avaliable():
-    device = 'xpu'
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
 else:
-    device = 'cpu'
+    device = torch.device('cpu')
 model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      metapath=metapath, walk_length=50, context_size=7,
                      walks_per_node=5, num_negative_samples=5,

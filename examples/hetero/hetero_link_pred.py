@@ -5,10 +5,10 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.nn import SAGEConv, to_hetero
-from torch_geometric.testing.device import is_xpu_avaliable
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_weighted_loss', action='store_true',
@@ -19,7 +19,7 @@ if torch.cuda.is_available():
     device = torch.device('cuda')
 elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

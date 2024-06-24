@@ -8,17 +8,17 @@ import tqdm
 from sklearn.metrics import roc_auc_score
 from torch.nn import Embedding, Linear
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
-from torch_geometric.testing.device import is_xpu_avaliable
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 if torch.cuda.is_available():
-    device = torch.device('cuda:0')
-elif is_xpu_avaliable():
-    device = torch.device('xpu:0')
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
 else:
     device = torch.device('cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
