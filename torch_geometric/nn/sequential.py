@@ -82,7 +82,7 @@ class Sequential(torch.nn.Module):
             :obj:`OrderedDict` of modules (and function header definitions) can
             be passed.
     """
-    children: List[Child]
+    _children: List[Child]
 
     def __init__(
         self,
@@ -145,7 +145,7 @@ class Sequential(torch.nn.Module):
             raise ValueError(f"'{self.__class__.__name__}' expects a "
                              f"non-empty list of modules")
 
-        self.children: List[Child] = []
+        self._children: List[Child] = []
         for i, (name, module) in enumerate(modules.items()):
             desc: Optional[str] = None
             if isinstance(module, (tuple, list)):
@@ -174,26 +174,26 @@ class Sequential(torch.nn.Module):
                 return_names = [v.strip() for v in signature[1].split(',')]
                 child = Child(name, param_names, return_names)
             else:
-                param_names = self.children[-1].return_names
+                param_names = self._children[-1].return_names
                 child = Child(name, param_names, param_names)
 
             setattr(self, name, module)
-            self.children.append(child)
+            self._children.append(child)
 
         self._set_jittable_template()
 
     def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
-        for child in self.children:
+        for child in self._children:
             module = getattr(self, child.name)
             if hasattr(module, 'reset_parameters'):
                 module.reset_parameters()
 
     def __len__(self) -> int:
-        return len(self.children)
+        return len(self._children)
 
     def __getitem__(self, idx: int) -> torch.nn.Module:
-        return getattr(self, self.children[idx].name)
+        return getattr(self, self._children[idx].name)
 
     def __setstate__(self, data: Dict[str, Any]) -> None:
         super().__setstate__(data)
@@ -202,7 +202,7 @@ class Sequential(torch.nn.Module):
     def __repr__(self) -> str:
         module_descs = [
             f"{', '.join(c.param_names)} -> {', '.join(c.return_names)}"
-            for c in self.children
+            for c in self._children
         ]
         module_reprs = [
             f'  ({i}) - {self[i]}: {module_descs[i]}' for i in range(len(self))
@@ -224,7 +224,7 @@ class Sequential(torch.nn.Module):
                                 f"values for argument '{key}'")
             value_dict[key] = arg
 
-        for child in self.children:
+        for child in self._children:
             args = [value_dict[name] for name in child.param_names]
             outs = getattr(self, child.name)(*args)
             if len(child.return_names) == 1:
@@ -253,7 +253,7 @@ class Sequential(torch.nn.Module):
                 # Keyword arguments:
                 modules=[self._caller_module],
                 signature=self.signature,
-                children=self.children,
+                children=self._children,
             )
 
             self.forward = module.forward.__get__(self)
