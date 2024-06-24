@@ -10,7 +10,7 @@ The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/b
 1. `$ docker build -t "custom image name"`
 1. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
 
-If you encounter any problems, please feel free to contact <liangshengwen@ict.ac.cn>.
+If you encounter any problems, please feel free to create a GitHub issue.
 
 # Docker on Intel GPU
 
