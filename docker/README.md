@@ -2,7 +2,7 @@
 
 The recommended way to use Docker for NVIDIA hardware is described [here](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg).
 
-You can also run PyG with CUDA 10.1 inside a docker image. This method is deprecated and we highly recommend the above mentioned official NVIDIA docker containers instead.
+You can also run PyG with CUDA 12.1 inside a docker image. This method is deprecated and we highly recommend the above mentioned official NVIDIA docker containers instead.
 
 The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu18.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
