@@ -486,11 +486,11 @@ def test_sub(dtype, device):
     assert out.dim_size == 5
     assert out.is_sorted
 
-    out = tensor([2], dtype=dtype, device=device) - index
+    out = tensor([6], dtype=dtype, device=device) - index
     assert isinstance(out, Index)
-    assert out.equal(tensor([-2, -3, -3, -4], device=device))
-    assert out.dim_size == 5
-    assert out.is_sorted
+    assert out.equal(tensor([2, 1, 1, 0], device=device))
+    assert out.dim_size is None
+    assert not out.is_sorted
 
     out = index.sub(index)
     assert isinstance(out, Index)

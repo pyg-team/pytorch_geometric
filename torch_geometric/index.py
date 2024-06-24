@@ -685,17 +685,14 @@ def _index(
 
 @implements(aten.add.Tensor)
 def _add(
-    input: Index,
+    input: Union[Tensor, Index],
     other: Union[int, Tensor, Index],
     *,
     alpha: int = 1,
 ) -> Union[Index, Tensor]:
 
-    if not isinstance(input, Index):
-        return _add(other, input, alpha=alpha)
-
     data = aten.add.Tensor(
-        input._data,
+        input._data if isinstance(input, Index) else input,
         other._data if isinstance(other, Index) else other,
         alpha=alpha,
     )
@@ -707,15 +704,25 @@ def _add(
 
     out = Index(data)
 
+    if isinstance(input, Tensor) and input.numel() <= 1:
+        input = int(input)
+
     if isinstance(other, Tensor) and other.numel() <= 1:
         other = int(other)
 
     if isinstance(other, int):
+        assert isinstance(input, Index)
         if input.dim_size is not None:
             out._dim_size = input.dim_size + alpha * other
         out._is_sorted = input.is_sorted
 
-    elif isinstance(other, Index):
+    elif isinstance(input, int):
+        assert isinstance(other, Index)
+        if other.dim_size is not None:
+            out._dim_size = input + alpha * other.dim_size
+        out._is_sorted = other.is_sorted
+
+    elif isinstance(input, Index) and isinstance(other, Index):
         if input.dim_size is not None and other.dim_size is not None:
             out._dim_size = input.dim_size + alpha * other.dim_size
 
@@ -757,17 +764,14 @@ def add_(
 
 @implements(aten.sub.Tensor)
 def _sub(
-    input: Index,
+    input: Union[Tensor, Index],
     other: Union[int, Tensor, Index],
     *,
     alpha: int = 1,
 ) -> Union[Index, Tensor]:
 
-    if not isinstance(input, Index):
-        return _sub(other, input, alpha=alpha)
-
     data = aten.sub.Tensor(
-        input._data,
+        input._data if isinstance(input, Index) else input,
         other._data if isinstance(other, Index) else other,
         alpha=alpha,
     )
@@ -778,6 +782,9 @@ def _sub(
         return data
 
     out = Index(data)
+
+    if not isinstance(input, Index):
+        return out
 
     if isinstance(other, Tensor) and other.numel() <= 1:
         other = int(other)
