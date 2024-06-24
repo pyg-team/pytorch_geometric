@@ -691,6 +691,9 @@ def _add(
     alpha: int = 1,
 ) -> Union[Index, Tensor]:
 
+    if not isinstance(input, Index):
+        return _add(other, input, alpha=alpha)
+
     data = aten.add.Tensor(
         input._data,
         other._data if isinstance(other, Index) else other,
@@ -759,6 +762,10 @@ def _sub(
     *,
     alpha: int = 1,
 ) -> Union[Index, Tensor]:
+
+    if not isinstance(input, Index):
+        return _sub(other, input, alpha=alpha)
+
 
     data = aten.sub.Tensor(
         input._data,
