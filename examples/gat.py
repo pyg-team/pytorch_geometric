@@ -20,7 +20,12 @@ parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-device = torch_geometric.device('auto')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 
 init_wandb(name=f'GAT-{args.dataset}', heads=args.heads, epochs=args.epochs,
            hidden_channels=args.hidden_channels, lr=args.lr, device=device)
