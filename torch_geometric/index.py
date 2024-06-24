@@ -766,7 +766,6 @@ def _sub(
     if not isinstance(input, Index):
         return _sub(other, input, alpha=alpha)
 
-
     data = aten.sub.Tensor(
         input._data,
         other._data if isinstance(other, Index) else other,
