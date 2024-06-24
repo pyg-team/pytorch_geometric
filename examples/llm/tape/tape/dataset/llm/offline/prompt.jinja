@@ -1,0 +1,15 @@
+{{ role }} Given an article with title and abstract, classify the article into the following categories:
+{%- for category in categories %}
+{{ loop.index }}. {{ category }}
+{%- endfor %}
+
+Ensure that the "label" is a list of str selected from the categories and that both "label" and "reason" are non-empty.
+
+Return the output in a JSON format as following:
+```json
+{
+    "label": [...], # {{ label_description }}
+    "reason": "..." # A detailed explanation with quotes from the article explaining why the article is related to the chosen label based on the ranking.
+}
+```
+Do not return anything else except the JSON string.
