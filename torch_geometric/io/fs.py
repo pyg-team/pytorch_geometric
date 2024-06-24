@@ -186,7 +186,7 @@ def rm(path: str, recursive: bool = True) -> None:
     get_fs(path).rm(path, recursive)
 
 
-def mv(path1: str, path2: str, recursive: bool = True) -> None:
+def mv(path1: str, path2: str) -> None:
     fs1 = get_fs(path1)
     fs2 = get_fs(path2)
     assert fs1.protocol == fs2.protocol

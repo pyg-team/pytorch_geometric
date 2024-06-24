@@ -68,7 +68,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed `OSError` on read-only file systems within `MessagePassing` ([#9032](https://github.com/pyg-team/pytorch_geometric/pull/9032))
 - Fixed metaclass conflict in `Dataset` ([#8999](https://github.com/pyg-team/pytorch_geometric/pull/8999))
 - Fixed import errors on `MessagePassing` modules with nested inheritance ([#8973](https://github.com/pyg-team/pytorch_geometric/pull/8973))
-- Fix argument count issue in `fs.mv` call within `TUDataset (ENZYMES)` download method ([#9436](https://github.com/pyg-team/pytorch_geometric/pull/9436))
 
 ### Removed
 
