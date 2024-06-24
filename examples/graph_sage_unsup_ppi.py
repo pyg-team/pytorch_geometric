@@ -8,11 +8,11 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import f1_score
 from sklearn.multioutput import MultiOutputClassifier
 
+import torch_geometric
 from torch_geometric.data import Batch
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader, LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.testing.device import is_xpu_avaliable
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -32,7 +32,7 @@ test_loader = DataLoader(test_dataset, batch_size=2)
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
-elif is_xpu_avaliable():
+elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
 else:
     device = torch.device('cpu')

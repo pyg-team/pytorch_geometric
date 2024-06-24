@@ -115,7 +115,7 @@ def onlyXPU(func: Callable) -> Callable:
     r"""A decorator to skip tests if XPU is not found."""
     import pytest
     return pytest.mark.skipif(
-        not torch_geometric.is_xpu_avaliable(),
+        not torch_geometric.is_xpu_available(),
         reason="XPU not available",
     )(func)
 
