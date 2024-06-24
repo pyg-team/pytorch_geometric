@@ -47,10 +47,6 @@ def retrieval_via_pcst(
                      edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
         return graph, desc
 
-    root = -1  # unrooted
-    num_clusters = 1
-    pruning = "gw"
-    verbosity_level = 0
     if topk > 0:
         n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, graph.x)
         topk = min(topk, graph.num_nodes)
