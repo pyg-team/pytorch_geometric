@@ -44,6 +44,7 @@ from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph, from_cugraph
 from .convert import to_dgl, from_dgl
+from .convert import from_hetero_networkx
 from .smiles import from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
@@ -144,6 +145,7 @@ __all__ = [
     'trim_to_layer',
     'get_ppr',
     'train_test_split_edges',
+    'from_hetero_networkx',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
