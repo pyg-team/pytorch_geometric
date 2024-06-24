@@ -22,11 +22,13 @@ jobs:
           sync-labels: true
 
   assign-author:
+    if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
     steps:
       - name: Add PR author
         uses: samspills/assign-pr-to-author@v1.0
+        continue-on-error: true
         if: github.event_name == 'pull_request'
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
