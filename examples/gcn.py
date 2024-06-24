@@ -5,11 +5,11 @@ import time
 import torch
 import torch.nn.functional as F
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GCNConv
-from torch_geometric.testing.device import is_xpu_avaliable
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='Cora')
@@ -20,14 +20,7 @@ parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-if torch.cuda.is_available():
-    device = torch.device('cuda')
-elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-    device = torch.device('mps')
-elif is_xpu_avaliable():
-    device = torch.device('xpu')
-else:
-    device = torch.device('cpu')
+device = torch_geometric.device('auto')
 
 init_wandb(
     name=f'GCN-{args.dataset}',
