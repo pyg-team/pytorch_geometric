@@ -76,6 +76,7 @@ e_map: Dict[str, List[Any]] = {
     'is_conjugated': [False, True],
 }
 
+
 def from_smiles(smiles: str, with_hydrogen: bool = False,
                 kekulize: bool = False) -> 'torch_geometric.data.Data':
     r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
@@ -90,7 +91,6 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     """
     from rdkit import Chem, RDLogger
 
-
     RDLogger.DisableLog('rdApp.*')  # type: ignore
 
     mol = Chem.MolFromSmiles(smiles)
@@ -101,13 +101,13 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         mol = Chem.AddHs(mol)
     if kekulize:
         Chem.Kekulize(mol)
-    
+
     data = from_rdmol(mol)
     data['smiles'] = smiles
     return data
 
 
-def from_rdmol(mol:'rdkit.Chem.Mol') -> 'torch_geometric.data.Data':
+def from_rdmol(mol: 'rdkit.Chem.Mol') -> 'torch_geometric.data.Data':
     r"""Converts an :class:`rdkit.Chem.Mol` instance to a :class:`torch_geometric.data.Data`
     instance.
 
@@ -161,7 +161,7 @@ def from_rdmol(mol:'rdkit.Chem.Mol') -> 'torch_geometric.data.Data':
 
 
 def to_rdmol(data: 'torch_geometric.data.Data',
-              kekulize: bool = False) -> 'rdkit.Chem.Mol':
+             kekulize: bool = False) -> 'rdkit.Chem.Mol':
     """Converts a :class:`torch_geometric.data.Data` instance \
     to a :class:`rdkit.Chem.Mol` instance.
 

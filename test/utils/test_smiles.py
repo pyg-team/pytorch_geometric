@@ -1,8 +1,7 @@
 import pytest
 
 from torch_geometric.testing import withPackage
-from torch_geometric.utils import from_smiles, to_smiles, from_rdmol, to_rdmol
-
+from torch_geometric.utils import from_rdmol, from_smiles, to_rdmol, to_smiles
 
 smiles = [
     r'F/C=C/F',
@@ -17,11 +16,13 @@ smiles = [
      r'cc4)ccc2-3)cc1'),
 ]
 
+
 @withPackage('rdkit')
 @pytest.mark.parametrize('smiles', smiles)
 def test_from_to_smiles(smiles):
     data = from_smiles(smiles)
     assert to_smiles(data) == smiles
+
 
 @withPackage('rdkit')
 @pytest.mark.parametrize('smiles', smiles)
