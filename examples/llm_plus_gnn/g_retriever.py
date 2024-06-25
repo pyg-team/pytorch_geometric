@@ -301,8 +301,9 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         if skip_pretrained_LLM:
             print("Checking GNN+LLM for hallucinations...")
         else:
-            print("Checking pretrained LLM vs trained\
-                  GNN+LLM for hallucinations...")
+            print(
+                "Checking pretrained LLM vs trained GNN+LLM for hallucinations..." # noqa
+            )
         for i, batch in enumerate(tqdm(loader)):
             question = batch.question[0]
             correct_answer = batch.label[0]
@@ -366,10 +367,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     if retrain:
         print("Finetuning LLM...")
         since = time.time()
-        _, _, pure_llm_eval_outputs = train(since, 1, None, None, batch_size,
-                                            eval_batch_size, lr, loss_fn,
-                                            inference_fn, model=pure_llm,
-                                            dataset=dataset)
+        _, _, pure_llm_eval_outputs = train(since, epochs, None, None,
+                                            batch_size, eval_batch_size, lr,
+                                            loss_fn, inference_fn,
+                                            model=pure_llm, dataset=dataset)
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:

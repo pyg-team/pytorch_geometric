@@ -94,6 +94,7 @@ from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
 from .rcdd import RCDD
+from .opf import OPFDataset
 
 from .cornell import CornellTemporalHyperGraphDataset
 
@@ -208,6 +209,7 @@ hetero_datasets = [
     'HM',
     'OSE_GVCS',
     'RCDD',
+    'OPFDataset',
 ]
 hyper_datasets = [
     'CornellTemporalHyperGraphDataset',
