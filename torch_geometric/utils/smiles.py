@@ -78,7 +78,7 @@ e_map: Dict[str, List[Any]] = {
 
 
 def from_rdmol(
-        mol: 'rdkit.Chem.Mol',  # noqa
+        mol: Any,  # noqa
 ) -> 'torch_geometric.data.Data':
     r"""Converts a :class:`rdkit.Chem.Mol` instance to a
     :class:`torch_geometric.data.Data` instance.
@@ -86,7 +86,11 @@ def from_rdmol(
     Args:
         mol (rdkit.Chem.Mol): The :class:`rdkit` molecule.
     """
+    from rdkit import Chem
+
     from torch_geometric.data import Data
+
+    assert isinstance(mol, Chem.Mol)
 
     xs: List[List[int]] = []
     for atom in mol.GetAtoms():  # type: ignore
@@ -162,7 +166,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
 def to_rdmol(
     data: 'torch_geometric.data.Data',
     kekulize: bool = False,
-) -> 'rdkit.Chem.Mol':  # noqa
+) -> Any:
     """Converts a :class:`torch_geometric.data.Data` instance to a
     :class:`rdkit.Chem.Mol` instance.
 
