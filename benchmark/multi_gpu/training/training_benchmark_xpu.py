@@ -48,6 +48,11 @@ if __name__ == '__main__':
 
     assert args.dataset in supported_sets.keys(), \
         f"Dataset {args.dataset} isn't supported."
-    data, num_classes = get_dataset(args.dataset, args.root)
+
+    if rank == 0:
+        data, num_classes = get_dataset(args.dataset, args.root)
+    dist.barrier()
+    if rank != 0:
+        data, num_classes = get_dataset(args.dataset, args.root)
 
     run(rank, world_size, args, num_classes, data, custom_optimizer)
