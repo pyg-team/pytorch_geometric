@@ -1,5 +1,3 @@
-import pytest
-
 from torch_geometric.data import Data
 from torch_geometric.nn.nlp.llm import LLM
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
