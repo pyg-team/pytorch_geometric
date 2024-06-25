@@ -299,7 +299,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             print("Checking GNN+LLM for hallucinations...")
         else:
             print(
-                "Checking pretrained LLM vs trained GNN+LLM for hallucinations..." # noqa
+                "Checking pretrained LLM vs trained GNN+LLM for hallucinations..."  # noqa
             )
         for i, batch in enumerate(tqdm(loader)):
             question = batch.question[0]
