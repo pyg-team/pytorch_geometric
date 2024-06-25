@@ -7,7 +7,7 @@ from torch_geometric.data import Data
 @withCUDA
 @onlyFullTest
 @withPackage('transformers')
-def test_llm():
+def test_llm(device):
     batch = Data()
     batch.question = ["Is PyG the best open-source GNN library?"]
     batch.label = ["yes!"]

@@ -8,7 +8,7 @@ import torch
 @withCUDA
 @onlyFullTest
 @withPackage('transformers')
-def test_g_retriever():
+def test_g_retriever(device):
     batch = Data()
     batch.question = ["Is PyG the best open-source GNN library?"]
     batch.label = ["yes!"]
