@@ -61,7 +61,7 @@ def user_input_data():
     q_input = input("Please enter your Question:\n")
     question = f"Question: {q_input}\nAnswer: "
     print(
-        "\nPlease enter the node attributes with format 'n_id,textual_node_attribute'." # noqa
+        "\nPlease enter the node attributes with format 'n_id,textual_node_attribute'."  # noqa
     )
     print("Please ensure to order n_ids from 0, 1, 2, ..., num_nodes-1.")
     print("Use [[stop]] to stop inputting.")
@@ -74,7 +74,7 @@ def user_input_data():
         else:
             nodes.append(tuple(most_recent_node.split(',')))
     print(
-        "\nPlease enter the edge attributes with format 'src_id,textual_edge_attribute,dst_id'" # noqa
+        "\nPlease enter the edge attributes with format 'src_id,textual_edge_attribute,dst_id'"  # noqa
     )
     print("Use [[stop]] to stop inputting.")
     edges = []
