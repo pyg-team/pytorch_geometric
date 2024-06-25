@@ -77,48 +77,17 @@ e_map: Dict[str, List[Any]] = {
 }
 
 
-def from_smiles(smiles: str, with_hydrogen: bool = False,
-                kekulize: bool = False) -> 'torch_geometric.data.Data':
-    r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
-    instance.
+def from_rdmol(
+        mol: 'rdkit.Chem.Mol',  # noqa
+) -> 'torch_geometric.data.Data':
+    r"""Converts a :class:`rdkit.Chem.Mol` instance to a
+    :class:`torch_geometric.data.Data` instance.
 
     Args:
-        smiles (str): The SMILES string.
-        with_hydrogen (bool, optional): If set to :obj:`True`, will store
-            hydrogens in the molecule graph. (default: :obj:`False`)
-        kekulize (bool, optional): If set to :obj:`True`, converts aromatic
-            bonds to single/double bonds. (default: :obj:`False`)
-    """
-    from rdkit import Chem, RDLogger
-
-    RDLogger.DisableLog('rdApp.*')  # type: ignore
-
-    mol = Chem.MolFromSmiles(smiles)
-
-    if mol is None:
-        mol = Chem.MolFromSmiles('')
-    if with_hydrogen:
-        mol = Chem.AddHs(mol)
-    if kekulize:
-        Chem.Kekulize(mol)
-
-    data = from_rdmol(mol)
-    data['smiles'] = smiles
-    return data
-
-
-def from_rdmol(mol: 'rdkit.Chem.Mol') -> 'torch_geometric.data.Data':
-    r"""Converts an :class:`rdkit.Chem.Mol` instance to a :class:`torch_geometric.data.Data`
-    instance.
-
-    Args:
-        smiles (str): The SMILES string.
-        with_hydrogen (bool, optional): If set to :obj:`True`, will store
-            hydrogens in the molecule graph. (default: :obj:`False`)
-        kekulize (bool, optional): If set to :obj:`True`, converts aromatic
-            bonds to single/double bonds. (default: :obj:`False`)
+        mol (rdkit.Chem.Mol): The :class:`rdkit` molecule.
     """
     from torch_geometric.data import Data
+
     xs: List[List[int]] = []
     for atom in mol.GetAtoms():  # type: ignore
         row: List[int] = []
@@ -160,13 +129,45 @@ def from_rdmol(mol: 'rdkit.Chem.Mol') -> 'torch_geometric.data.Data':
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
 
-def to_rdmol(data: 'torch_geometric.data.Data',
-             kekulize: bool = False) -> 'rdkit.Chem.Mol':
-    """Converts a :class:`torch_geometric.data.Data` instance \
-    to a :class:`rdkit.Chem.Mol` instance.
+def from_smiles(smiles: str, with_hydrogen: bool = False,
+                kekulize: bool = False) -> 'torch_geometric.data.Data':
+    r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
+    instance.
 
     Args:
-        data (torch_geometric.data.Data): The molecular graph.
+        smiles (str): The SMILES string.
+        with_hydrogen (bool, optional): If set to :obj:`True`, will store
+            hydrogens in the molecule graph. (default: :obj:`False`)
+        kekulize (bool, optional): If set to :obj:`True`, converts aromatic
+            bonds to single/double bonds. (default: :obj:`False`)
+    """
+    from rdkit import Chem, RDLogger
+
+    RDLogger.DisableLog('rdApp.*')  # type: ignore
+
+    mol = Chem.MolFromSmiles(smiles)
+
+    if mol is None:
+        mol = Chem.MolFromSmiles('')
+    if with_hydrogen:
+        mol = Chem.AddHs(mol)
+    if kekulize:
+        Chem.Kekulize(mol)
+
+    data = from_rdmol(mol)
+    data.smiles = smiles
+    return data
+
+
+def to_rdmol(
+    data: 'torch_geometric.data.Data',
+    kekulize: bool = False,
+) -> 'rdkit.Chem.Mol':  # noqa
+    """Converts a :class:`torch_geometric.data.Data` instance to a
+    :class:`rdkit.Chem.Mol` instance.
+
+    Args:
+        data (torch_geometric.data.Data): The molecular graph data.
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
