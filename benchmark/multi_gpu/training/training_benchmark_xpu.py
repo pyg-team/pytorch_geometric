@@ -50,7 +50,8 @@ if __name__ == '__main__':
         f"Dataset {args.dataset} isn't supported."
 
     # if the dataset is not present, it will be downloaded only by process rank=0
-    # other process will use the dataset cache from rank=0, and will not re-download and process it
+    # other process will use the dataset cache from rank=0, 
+    # and will not re-download and process it
     if rank == 0:
         data, num_classes = get_dataset(args.dataset, args.root)
     dist.barrier()
