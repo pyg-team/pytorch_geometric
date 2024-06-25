@@ -5,7 +5,7 @@ from torch import Tensor
 from torch_geometric.utils import scatter
 
 
-def global_add_pool(x: Tensor, batch: Optional[Tensor],
+def global_add_pool(x: Tensor, batch: Optional[Tensor] = None,
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by adding node features
     across the node dimension.
@@ -34,7 +34,7 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     return scatter(x, batch, dim=dim, dim_size=size, reduce='sum')
 
 
-def global_mean_pool(x: Tensor, batch: Optional[Tensor],
+def global_mean_pool(x: Tensor, batch: Optional[Tensor] = None,
                      size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by averaging node features
     across the node dimension.
@@ -63,7 +63,7 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     return scatter(x, batch, dim=dim, dim_size=size, reduce='mean')
 
 
-def global_max_pool(x: Tensor, batch: Optional[Tensor],
+def global_max_pool(x: Tensor, batch: Optional[Tensor] = None,
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
     maximum across the node dimension.
