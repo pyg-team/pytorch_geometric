@@ -1,5 +1,5 @@
-# Code adapted from OGB:
-# https://github.com/snap-stanford/ogb/tree/f631af76359c9687b2fe60905557bbb241916258/examples/lsc/pcqm4m-v2
+# Code adapted from OGB.
+# https://github.com/snap-stanford/ogb/tree/master/examples/lsc/pcqm4m-v2
 import argparse
 import os
 
@@ -105,7 +105,8 @@ class GCNConv(MessagePassing):
 class GNNNode(torch.nn.Module):
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        """emb_dim (int): node embedding dimensionality
+        """ GNN Node.
+        emb_dim (int): node embedding dimensionality
         num_layers (int): number of GNN message passing layers
         residual (bool): whether to add residual connection
         """
@@ -165,13 +166,9 @@ class GNNNode(torch.nn.Module):
 
 
 class GNNNodeVirtualNode(torch.nn.Module):
-    """Output:
-    node representations
-    """
+    """Outputs node representations."""
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        """emb_dim (int): node embedding dimensionality
-        """
         super(GNNNodeVirtualNode, self).__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
@@ -284,7 +281,8 @@ class GNN(torch.nn.Module):
         JK="last",
         graph_pooling="sum",
     ):
-        """num_tasks (int): number of labels to be predicted
+        """ GNN.
+        num_tasks (int): number of labels to be predicted
         virtual_node (bool): whether to add virtual node or not
         """
         super(GNN, self).__init__()
@@ -601,7 +599,7 @@ if __name__ == "__main__":
                         help='directory to save checkpoint')
     parser.add_argument('--save_test_dir', type=str, default='',
                         help='directory to save test submission file')
-    parser.add_argument('--num_devices', type=int, default='0',
+    parser.add_argument('--num_devices', type=int, default='1',
                         help="Number of GPUs, if 0 runs on the CPU")
     parser.add_argument('--on_disk_dataset', action='store_true')
     args = parser.parse_args()
@@ -609,8 +607,11 @@ if __name__ == "__main__":
     available_gpus = torch.cuda.device_count() if torch.cuda.is_available(
     ) else 0
     if args.num_devices > available_gpus:
-        raise ValueError(f"Cannot train with {args.num_devices} GPUs: "
-                         f"available GPUs count {available_gpus}")
+        if available_gpus == 0:
+            print("No GPUs available, running w/ CPU...")
+        else:
+            raise ValueError(f"Cannot train with {args.num_devices} GPUs: "
+                             f"available GPUs count {available_gpus}")
 
     # automatic dataloading and splitting
     if args.on_disk_dataset:
