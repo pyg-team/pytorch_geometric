@@ -208,3 +208,6 @@ exclude_lines = [
     "register_parameter",
     "torch.cuda.is_available",
 ]
+
+[tool.setuptools]
+py-modules = []
