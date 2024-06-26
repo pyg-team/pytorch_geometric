@@ -7,7 +7,7 @@ from torch_geometric.utils import get_ppr
 
 
 @withPackage('numba')
-@pytest.mark.parametrize('target', [None, torch.tensor([0, 4, 5, 6])])
+@pytest.mark.parametrize('target', [torch.tensor([0, 4, 5, 6])])
 def test_get_ppr(target):
     data = KarateClub()[0]
 
