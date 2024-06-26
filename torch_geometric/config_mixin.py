@@ -33,7 +33,7 @@ class ConfigMixin:
         if getattr(cfg, '_target_', None):
             cls = _locate_cls(cfg._target_)
         elif isinstance(cfg, dict) and '_target_' in cfg:
-            cls = _locate_cls(cfg['target'])
+            cls = _locate_cls(cfg['_target_'])
 
         data_cls = cfg.__class__
         if not is_dataclass(data_cls):
