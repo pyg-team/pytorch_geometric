@@ -52,6 +52,7 @@ def ogb_from_smiles_wrapper(smiles, *args, **kwargs):
 class GINConv(MessagePassing):
     def __init__(self, emb_dim):
         r"""GINConv.
+
         Args:
             emb_dim (int): node embedding dimensionality
         """
@@ -108,6 +109,7 @@ class GNNNode(torch.nn.Module):
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
         r"""GNN Node.
+
         Args:
             emb_dim (int): node embedding dimensionality
             num_layers (int): number of GNN message passing layers
@@ -285,6 +287,7 @@ class GNN(torch.nn.Module):
         graph_pooling="sum",
     ):
         r"""GNN.
+
         Args:
             num_tasks (int): number of labels to be predicted
             virtual_node (bool): whether to add virtual node or not
