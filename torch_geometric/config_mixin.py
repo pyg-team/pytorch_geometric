@@ -1,7 +1,7 @@
 import inspect
 from dataclasses import fields, is_dataclass
 from importlib import import_module
-from typing import Any
+from typing import Any, Dict
 
 from torch_geometric.config_store import (
     class_from_dataclass,
@@ -20,7 +20,7 @@ class ConfigMixin:
                              f"belongs to '{self.__class__.__name__}'. Please "
                              f"register it in the configuration store.")
 
-        kwargs: dict[str, Any] = {}
+        kwargs: Dict[str, Any] = {}
         for field in fields(data_cls):
             if not hasattr(self, field.name):
                 continue
