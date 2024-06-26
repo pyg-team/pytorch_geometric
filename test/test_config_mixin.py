@@ -1,4 +1,4 @@
-from dataclasses import dataclass, is_dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 
 import torch
 
@@ -61,6 +61,39 @@ def test_config_mixin() -> None:
     assert isinstance(model.data, Dataclass)
     assert model.data.x == 1
     assert model.data.y == 2
+
+    model = Base.from_config(cfg, data=Dataclass(x=2, y=3))
+    assert isinstance(model, Module)
+    assert model.x == 0
+    assert isinstance(model.data, Dataclass)
+    assert model.data.x == 2
+    assert model.data.y == 3
+
+    cfg = asdict(cfg)
+
+    model = Module.from_config(cfg)
+    assert isinstance(model, Module)
+    assert model.x == 0
+    # TODO: Support recursively restoring objects when cfg is dict.
+    # assert isinstance(model.data, Dataclass)
+    # assert model.data.x == 1
+    # assert model.data.y == 2
+
+    model = Base.from_config(cfg)
+    assert isinstance(model, Module)
+    assert model.x == 0
+    # TODO: Support recursively restoring objects when cfg is dict.
+    # assert isinstance(model.data, Dataclass)
+    # assert model.data.x == 1
+    # assert model.data.y == 2
+
+    model = Base.from_config(cfg, 3)
+    assert isinstance(model, Module)
+    assert model.x == 3
+    # TODO: Support recursively restoring objects when cfg is dict.
+    # assert isinstance(model.data, Dataclass)
+    # assert model.data.x == 1
+    # assert model.data.y == 2
 
     model = Base.from_config(cfg, data=Dataclass(x=2, y=3))
     assert isinstance(model, Module)
