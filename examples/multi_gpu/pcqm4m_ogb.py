@@ -51,7 +51,9 @@ def ogb_from_smiles_wrapper(smiles, *args, **kwargs):
 
 class GINConv(MessagePassing):
     def __init__(self, emb_dim):
-        """emb_dim (int): node embedding dimensionality
+        r"""GINConv.
+        Args:
+            emb_dim (int): node embedding dimensionality
         """
         super(GINConv, self).__init__(aggr="add")
         self.mlp = torch.nn.Sequential(
@@ -105,10 +107,11 @@ class GCNConv(MessagePassing):
 class GNNNode(torch.nn.Module):
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        """GNN Node.
-        emb_dim (int): node embedding dimensionality
-        num_layers (int): number of GNN message passing layers
-        residual (bool): whether to add residual connection
+        r"""GNN Node.
+        Args:
+            emb_dim (int): node embedding dimensionality
+            num_layers (int): number of GNN message passing layers
+            residual (bool): whether to add residual connection
         """
         super(GNNNode, self).__init__()
         if num_layers < 2:
@@ -281,9 +284,10 @@ class GNN(torch.nn.Module):
         JK="last",
         graph_pooling="sum",
     ):
-        """GNN.
-        num_tasks (int): number of labels to be predicted
-        virtual_node (bool): whether to add virtual node or not
+        r"""GNN.
+        Args:
+            num_tasks (int): number of labels to be predicted
+            virtual_node (bool): whether to add virtual node or not
         """
         super(GNN, self).__init__()
         if num_layers < 2:
