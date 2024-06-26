@@ -111,9 +111,13 @@ class GNNNode(torch.nn.Module):
         r"""GNN Node.
 
         Args:
-            emb_dim (int): node embedding dimensionality
-            num_layers (int): number of GNN message passing layers
-            residual (bool): whether to add residual connection
+            emb_dim (int): node embedding dimensionality.
+            num_layers (int): number of GNN message passing layers.
+            residual (bool): whether to add residual connection.
+            drop_ratio (float): dropout ratio.
+            JK (str): "last" or "sum" to choose JK concat strat.
+            residual (bool): Wether or not to add the residual
+            gnn_type (str): Type of GNN to use.
         """
         super(GNNNode, self).__init__()
         if num_layers < 2:
@@ -290,7 +294,14 @@ class GNN(torch.nn.Module):
 
         Args:
             num_tasks (int): number of labels to be predicted
-            virtual_node (bool): whether to add virtual node or not
+            num_layers (int): number of gnn layers.
+            emb_dim (int): embedding dim to use.
+            gnn_type (str): Type of GNN to use.
+            virtual_node (bool): whether to add virtual node or not.
+            residual (bool): Wether or not to add the residual
+            drop_ratio (float): dropout ratio.
+            JK (str): "last" or "sum" to choose JK concat strat.
+            graph_pooling (str): Graph pooling strat to use.
         """
         super(GNN, self).__init__()
         if num_layers < 2:
