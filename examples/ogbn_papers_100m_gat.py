@@ -7,10 +7,11 @@ import time
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from torch.nn import Linear as Lin
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import SAGEConv
+from torch_geometric.nn import GATConv
 from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser()
@@ -20,6 +21,8 @@ parser.add_argument("-e", "--epochs", type=int, default=10,
 parser.add_argument("--runs", type=int, default=4, help='number of runs.')
 parser.add_argument("--num_layers", type=int, default=3,
                     help='number of layers.')
+parser.add_argument("--num_heads", type=int, default=2,
+                    help='number of heads.')
 parser.add_argument("-b", "--batch_size", type=int, default=1024,
                     help='batch size.')
 parser.add_argument("--workers", type=int, default=12,
@@ -37,8 +40,8 @@ parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
-    action='store_true',
-    help="Weather or not to use directed graph",
+    action = 'store_true',
+    help="Wether or not to use directed graph",
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
@@ -54,11 +57,11 @@ num_neighbors = [int(i) for i in neighbors]
 log_interval = args.log_interval
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
-                'products')
+                'ogb-papers100M')
 print("The root is: ", root)
-dataset = PygNodePropPredDataset('ogbn-products', root)
+dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
-evaluator = Evaluator(name='ogbn-products')
+evaluator = Evaluator(name='ogbn-papers100M')
 data = dataset[0]
 if not args.use_directed_graph:
     start_undirected = time.time()
@@ -107,29 +110,42 @@ subgraph_loader = NeighborLoader(
 )
 
 
-class SAGE(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 dropout):
+class GAT(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers, dropout,
+                 heads):
         super().__init__()
 
         self.num_layers = num_layers
 
         self.convs = torch.nn.ModuleList()
-        self.convs.append(SAGEConv(in_channels, hidden_channels))
+        self.convs.append(GATConv(dataset.num_features, hidden_channels,
+                                  heads))
         for _ in range(num_layers - 2):
-            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
-        self.convs.append(SAGEConv(hidden_channels, out_channels))
+            self.convs.append(
+                GATConv(heads * hidden_channels, hidden_channels, heads))
+        self.convs.append(
+            GATConv(heads * hidden_channels, out_channels, heads,
+                    concat=False))
+
+        self.skips = torch.nn.ModuleList()
+        self.skips.append(Lin(dataset.num_features, hidden_channels * heads))
+        for _ in range(num_layers - 2):
+            self.skips.append(
+                Lin(hidden_channels * heads, hidden_channels * heads))
+        self.skips.append(Lin(hidden_channels * heads, out_channels))
         self.dropout = dropout
 
     def reset_parameters(self):
         for conv in self.convs:
             conv.reset_parameters()
+        for skip in self.skips:
+            skip.reset_parameters()
 
     def forward(self, x, edge_index):
-        for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
+        for i, (conv, skip) in enumerate(zip(self.convs, self.skips)):
+            x = conv(x, edge_index) + skip(x)
             if i != self.num_layers - 1:
-                x = x.relu()
+                x = F.elu(x)
                 x = F.dropout(x, p=self.dropout, training=self.training)
         return x
 
@@ -145,10 +161,10 @@ class SAGE(torch.nn.Module):
             for batch in subgraph_loader:
                 x = x_all[batch.n_id].to(device)
                 edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)
+                x = self.convs[i](x, edge_index) + self.skips[i](x)
                 x = x[:batch.batch_size]
                 if i != self.num_layers - 1:
-                    x = x.relu()
+                    x = F.elu(x)
                 xs.append(x.cpu())
 
                 pbar.update(batch.batch_size)
@@ -160,8 +176,9 @@ class SAGE(torch.nn.Module):
         return x_all
 
 
-model = SAGE(dataset.num_features, num_hidden_channels, dataset.num_classes,
-             num_layers=num_layers, dropout=args.dropout)
+model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes, num_layers=num_layers,
+            dropout=args.dropout, heads=args.num_heads).to(device)
+
 model = model.to(device)
 
 
