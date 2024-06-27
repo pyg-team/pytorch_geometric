@@ -9,12 +9,13 @@ from torch.nn import Conv1d
 from torch.nn import Linear as L
 from torch.nn import Sequential as S
 
+import torch_geometric.typing
 from torch_geometric.nn import Reshape
 from torch_geometric.nn.inits import reset
 
-try:
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import knn_graph
-except ImportError:
+else:
     knn_graph = None
 
 

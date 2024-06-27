@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+import torch_geometric
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import BatchNorm, PNAConv, global_add_pool
@@ -66,7 +67,12 @@ class Net(torch.nn.Module):
         return self.mlp(x)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,

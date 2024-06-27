@@ -59,6 +59,16 @@ class ZipLoader(torch.utils.data.DataLoader):
         self.loaders = loaders
         self.filter_per_worker = filter_per_worker
 
+    def __call__(
+        self,
+        index: Union[Tensor, List[int]],
+    ) -> Union[Tuple[Data, ...], Tuple[HeteroData, ...]]:
+        r"""Samples subgraphs from a batch of input IDs."""
+        out = self.collate_fn(index)
+        if not self.filter_per_worker:
+            out = self.filter_fn(out)
+        return out
+
     def collate_fn(self, index: List[int]) -> Tuple[Any, ...]:
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
