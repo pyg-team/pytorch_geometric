@@ -49,6 +49,7 @@ repos:
           --remove-all-unused-imports,
           --remove-unused-variables,
           --remove-duplicate-keys,
+          --ignore-init-module-imports,
           --in-place,
         ]
 
