@@ -53,8 +53,7 @@ neighbors = args.neighbors.split(',')
 num_neighbors = [int(i) for i in neighbors]
 log_interval = args.log_interval
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
-                'products')
+root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 print("The root is: ", root)
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()

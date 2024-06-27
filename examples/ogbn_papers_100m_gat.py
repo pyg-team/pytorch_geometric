@@ -40,7 +40,7 @@ parser.add_argument("--wd", type=float, default=0.00)
 parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
-    action = 'store_true',
+    action='store_true',
     help="Wether or not to use directed graph",
 )
 args = parser.parse_args()
@@ -111,8 +111,8 @@ subgraph_loader = NeighborLoader(
 
 
 class GAT(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers, dropout,
-                 heads):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
+                 dropout, heads):
         super().__init__()
 
         self.num_layers = num_layers
@@ -176,8 +176,9 @@ class GAT(torch.nn.Module):
         return x_all
 
 
-model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes, num_layers=num_layers,
-            dropout=args.dropout, heads=args.num_heads).to(device)
+model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
+            num_layers=num_layers, dropout=args.dropout,
+            heads=args.num_heads).to(device)
 
 model = model.to(device)
 
