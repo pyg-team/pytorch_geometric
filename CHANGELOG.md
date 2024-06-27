@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.6.0\] - 2024-MM-DD
 
 ### Added
-
+- Improve training accuracy to 57% on ogbn-papers100M for GAT model and add undirected graph on ogbn-products ([#9467](https://github.com/pyg-team/pytorch_geometric/pull/9467)) 
 - Added the heterogeneous `HeteroJumpingKnowledge` module ([#9380](https://github.com/pyg-team/pytorch_geometric/pull/9380))
 - Started work on GNN+LLM package ([#9350](https://github.com/pyg-team/pytorch_geometric/pull/9350))
 - Added support for negative sampling in `LinkLoader` acccording to source and destination node weights ([#9316](https://github.com/pyg-team/pytorch_geometric/pull/9316))
