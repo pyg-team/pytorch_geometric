@@ -7,6 +7,7 @@ from typing import Callable
 
 import torch
 from packaging.requirements import Requirement
+from packaging.version import Version
 
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
@@ -180,12 +181,7 @@ def has_package(package: str) -> bool:
     if not hasattr(module, '__version__'):
         return True
 
-    version = module.__version__
-    # `req.specifier` does not support `.dev` suffixes, e.g., for
-    # `pyg_lib==0.1.0.dev*`, so we manually drop them:
-    if '.dev' in version:
-        version = '.'.join(version.split('.dev')[:-1])
-
+    version = Version(module.__version__).base_version
     return version in req.specifier
 
 
@@ -233,6 +229,18 @@ def withDevice(func: Callable) -> Callable:
             devices.append(pytest.param(torch.device('mps:0'), id='mps'))
         except RuntimeError:
             pass
+
+    if not hasattr(torch, 'xpu'):
+        try:
+            import intel_extension_for_pytorch as ipex
+            xpu_available = ipex.xpu.is_available()
+        except ImportError:
+            xpu_available = False
+    else:
+        xpu_available = torch.xpu.is_available()
+
+    if xpu_available:
+        devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')

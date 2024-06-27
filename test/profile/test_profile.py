@@ -92,9 +92,10 @@ def test_profileit_xpu(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
 
     dataset = get_dataset(name='Cora')
-    data = dataset[0].cuda()
+    device = torch.device('xpu')
+    data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
-                      out_channels=dataset.num_classes).cuda()
+                      out_channels=dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     @profileit('xpu')
