@@ -94,11 +94,9 @@ class Aggregation(torch.nn.Module):
             max_num_elements: (int, optional): The maximum number of elements
                 within a single aggregation group. (default: :obj:`None`)
         """
-        pass
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     @disable_dynamic_shapes(required_args=['dim_size'])
     def __call__(

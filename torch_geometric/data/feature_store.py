@@ -283,7 +283,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
-        pass
 
     def put_tensor(self, tensor: FeatureTensorType, *args, **kwargs) -> bool:
         r"""Synchronously adds a :obj:`tensor` to the :class:`FeatureStore`.
@@ -309,7 +308,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
-        pass
 
     def get_tensor(
         self,
@@ -394,7 +392,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         r"""To be implemented by :obj:`FeatureStore` subclasses."""
-        pass
 
     def remove_tensor(self, *args, **kwargs) -> bool:
         r"""Removes a tensor from the :class:`FeatureStore`.
@@ -452,7 +449,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         r"""Returns all registered tensor attributes."""
-        pass
 
     # `AttrView` methods ######################################################
 

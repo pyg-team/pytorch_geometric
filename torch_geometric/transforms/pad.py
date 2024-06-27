@@ -466,9 +466,11 @@ class Pad(BaseTransform):
         edge_type: Optional[EdgeType] = None,
     ) -> None:
 
-        attrs_to_pad = set(
-            attr for attr in store.keys()
-            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr))
+        attrs_to_pad = {
+            attr
+            for attr in store.keys()
+            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr)
+        }
         if not attrs_to_pad:
             return
         num_target_edges = self.max_num_edges.get_value(edge_type)
