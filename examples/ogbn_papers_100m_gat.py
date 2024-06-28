@@ -56,11 +56,12 @@ neighbors = args.neighbors.split(',')
 num_neighbors = [int(i) for i in neighbors]
 log_interval = args.log_interval
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
+root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'ogb-papers100M')
 print("The root is: ", root)
-dataset = PygNodePropPredDataset('ogbn-products', root)
+dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
-evaluator = Evaluator(name='ogbn-products')
+evaluator = Evaluator(name='ogbn-papers100M')
 data = dataset[0]
 if not args.use_directed_graph:
     start_undirected = time.time()
