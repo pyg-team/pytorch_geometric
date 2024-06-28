@@ -2,7 +2,6 @@ import torch
 from typing import Optional
 from functools import wraps
 
-
 def nvtxit(name: str, n_warmups: int = 0, n_iters: Optional[int] = None):
     def nvtx(func):
         iters_so_far = 0
