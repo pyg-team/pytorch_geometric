@@ -2,9 +2,13 @@ import torch
 from typing import Optional
 from functools import wraps
 
-def nvtxit(name: str, n_warmups: int = 0, n_iters: Optional[int] = None):
+def nvtxit(name: Optional[str] = None, n_warmups: int = 0, n_iters: Optional[int] = None):
     def nvtx(func):
+
+        nonlocal name
         iters_so_far = 0
+        if name is None:
+            name = func.__name__
 
         @wraps(func)
         def wrapper(*args, **kwargs):
