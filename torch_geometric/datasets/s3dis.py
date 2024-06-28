@@ -86,10 +86,10 @@ class S3DIS(InMemoryDataset):
     def process(self) -> None:
         import h5py
 
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             filenames = [x.split('/')[-1] for x in f.read().split('\n')[:-1]]
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             rooms = f.read().split('\n')[:-1]
 
         xs: List[Tensor] = []

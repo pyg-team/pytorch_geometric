@@ -134,7 +134,7 @@ class OPFDataset(InMemoryDataset):
             )
 
             for name in os.listdir(tmp_dir):
-                with open(osp.join(tmp_dir, name), 'r') as f:
+                with open(osp.join(tmp_dir, name)) as f:
                     obj = json.load(f)
 
                 grid = obj['grid']

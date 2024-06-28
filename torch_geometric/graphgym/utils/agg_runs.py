@@ -54,7 +54,7 @@ def agg_dict_list(dict_list):
         if key != 'epoch':
             value = np.array([dict[key] for dict in dict_list])
             dict_agg[key] = np.mean(value).round(cfg.round)
-            dict_agg['{}_std'.format(key)] = np.std(value).round(cfg.round)
+            dict_agg[f'{key}_std'] = np.std(value).round(cfg.round)
     return dict_agg
 
 
@@ -107,7 +107,7 @@ def agg_runs(dir, metric_best='auto'):
                     [stats[metric] for stats in stats_list])
                 best_epoch = \
                     stats_list[
-                        eval("performance_np.{}()".format(cfg.metric_agg))][
+                        eval(f"performance_np.{cfg.metric_agg}()")][
                         'epoch']
                 print(best_epoch)
 
@@ -190,7 +190,7 @@ def agg_batch(dir, metric_best='auto'):
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = osp.join(dir_out, '{}_best.csv'.format(key))
+            fname = osp.join(dir_out, f'{key}_best.csv')
             results[key].to_csv(fname, index=False)
 
     results = {'train': [], 'val': [], 'test': []}
@@ -213,7 +213,7 @@ def agg_batch(dir, metric_best='auto'):
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = osp.join(dir_out, '{}.csv'.format(key))
+            fname = osp.join(dir_out, f'{key}.csv')
             results[key].to_csv(fname, index=False)
 
     results = {'train': [], 'val': [], 'test': []}
@@ -245,7 +245,7 @@ def agg_batch(dir, metric_best='auto'):
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = osp.join(dir_out, '{}_bestepoch.csv'.format(key))
+            fname = osp.join(dir_out, f'{key}_bestepoch.csv')
             results[key].to_csv(fname, index=False)
 
-    print('Results aggregated across models saved in {}'.format(dir_out))
+    print(f'Results aggregated across models saved in {dir_out}')

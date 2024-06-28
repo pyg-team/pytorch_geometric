@@ -168,7 +168,7 @@ class NeighborSampler(BaseSampler):
             attrs = [attr for attr in feature_store.get_all_tensor_attrs()]
 
             edge_attrs = graph_store.get_all_edge_attrs()
-            self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
+            self.edge_types = list({attr.edge_type for attr in edge_attrs})
 
             if weight_attr is not None:
                 raise NotImplementedError(
