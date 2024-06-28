@@ -88,7 +88,7 @@ def load_config(fname):
 
 
 def load_search_file(fname):
-    with open(fname, 'r') as f:
+    with open(fname) as f:
         out_raw = csv.reader(f, delimiter=' ')
         outs = []
         out = []
@@ -110,7 +110,7 @@ def load_search_file(fname):
 
 
 def load_alias_file(fname):
-    with open(fname, 'r') as f:
+    with open(fname) as f:
         file = csv.reader(f, delimiter=' ')
         for line in file:
             break

@@ -27,7 +27,7 @@ def test_dot_syntax_keys():
 
     expected_keys = {'lin1', 'model.lin2', 'model.sub_model.lin3'}
     assert set(module_dict.keys()) == expected_keys
-    assert set([key for key, _ in module_dict.items()]) == expected_keys
+    assert {key for key, _ in module_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in module_dict
@@ -44,7 +44,7 @@ def test_tuple_keys():
 
     expected_keys = {('a', 'b'), ('a.b', 'c')}
     assert set(module_dict.keys()) == expected_keys
-    assert set([key for key, _ in module_dict.items()]) == expected_keys
+    assert {key for key, _ in module_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in module_dict
@@ -61,7 +61,7 @@ def test_reserved_keys():
 
     expected_keys = {'type', '__annotations__'}
     assert set(module_dict.keys()) == expected_keys
-    assert set([key for key, _ in module_dict.items()]) == expected_keys
+    assert {key for key, _ in module_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in module_dict

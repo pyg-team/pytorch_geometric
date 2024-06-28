@@ -116,7 +116,6 @@ class GraphStore(ABC):
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
@@ -137,7 +136,6 @@ class GraphStore(ABC):
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously obtains an :obj:`edge_index` tuple from the
@@ -160,7 +158,6 @@ class GraphStore(ABC):
     @abstractmethod
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def remove_edge_index(self, *args, **kwargs) -> bool:
         r"""Synchronously deletes an :obj:`edge_index` tuple from the
@@ -177,7 +174,6 @@ class GraphStore(ABC):
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         r"""Returns all registered edge attributes."""
-        pass
 
     # Layout Conversion #######################################################
 

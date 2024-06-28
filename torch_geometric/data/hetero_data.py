@@ -780,8 +780,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type in self.edge_types:
             if edge_type not in edge_types:
                 del data[edge_type]
-        node_types = set(e[0] for e in edge_types)
-        node_types |= set(e[-1] for e in edge_types)
+        node_types = {e[0] for e in edge_types}
+        node_types |= {e[-1] for e in edge_types}
         for node_type in self.node_types:
             if node_type not in node_types:
                 del data[node_type]
@@ -887,7 +887,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if len(sizes) != len(stores):
                     continue
                 # The attributes needs to have the same number of dimensions:
-                lengths = set([len(size) for size in sizes])
+                lengths = {len(size) for size in sizes}
                 if len(lengths) != 1:
                     continue
                 # The attributes needs to have the same size in all dimensions:
