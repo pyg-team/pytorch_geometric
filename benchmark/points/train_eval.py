@@ -63,7 +63,7 @@ def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16,
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
     if torch.cuda.is_available():
-        amp = torch.cuda.amp.autocast(enabled=False)
+        amp = torch.amp.autocast('cuda', enabled=False)
     else:
         amp = torch.cpu.amp.autocast(enabled=bf16)
 
