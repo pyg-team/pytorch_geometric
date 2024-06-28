@@ -1,8 +1,11 @@
-import torch
-from typing import Optional
 from functools import wraps
+from typing import Optional
 
-def nvtxit(name: Optional[str] = None, n_warmups: int = 0, n_iters: Optional[int] = None):
+import torch
+
+
+def nvtxit(name: Optional[str] = None, n_warmups: int = 0,
+           n_iters: Optional[int] = None):
     def nvtx(func):
 
         nonlocal name
@@ -26,5 +29,7 @@ def nvtxit(name: Optional[str] = None, n_warmups: int = 0, n_iters: Optional[int
                 return result
             else:
                 return func(*args, **kwargs)
+
         return wrapper
+
     return nvtx
