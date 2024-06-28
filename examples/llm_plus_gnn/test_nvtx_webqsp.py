@@ -4,6 +4,7 @@ import torch
 
 # Apply Patches
 web_qsp_dataset.retrieval_via_pcst = nvtxit(n_warmups=1, n_iters=10)(web_qsp_dataset.retrieval_via_pcst)
+web_qsp_dataset.WebQSPDataset.process = nvtxit()(web_qsp_dataset.WebQSPDataset.process)
 
 
 if __name__ == "__main__":
