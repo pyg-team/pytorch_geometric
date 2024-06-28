@@ -166,5 +166,5 @@ def lr_scheduler_resolver(
                 return obj
             return cls
 
-    choices = set(cls.__name__ for cls in classes)
+    choices = {cls.__name__ for cls in classes}
     raise ValueError(f"Could not resolve '{query}' among choices {choices}")

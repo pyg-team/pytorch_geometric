@@ -123,7 +123,7 @@ class AirfRANS(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             manifest = json.load(f)
         total = manifest['full_train'] + manifest['full_test']
         partial = set(manifest[f'{self.task}_{self.split}'])

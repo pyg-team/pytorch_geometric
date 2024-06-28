@@ -102,7 +102,7 @@ class WebKB(InMemoryDataset):
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             lines = f.read().split('\n')[1:-1]
             xs = [[float(value) for value in line.split('\t')[1].split(',')]
                   for line in lines]
@@ -111,7 +111,7 @@ class WebKB(InMemoryDataset):
             ys = [int(line.split('\t')[2]) for line in lines]
             y = torch.tensor(ys, dtype=torch.long)
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             lines = f.read().split('\n')[1:-1]
             edge_indices = [[int(value) for value in line.split('\t')]
                             for line in lines]

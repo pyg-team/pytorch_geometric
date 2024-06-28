@@ -253,7 +253,7 @@ def run_proc(
         backend='gloo',
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
-        init_method='tcp://{}:{}'.format(master_addr, ddp_port),
+        init_method=f'tcp://{master_addr}:{ddp_port}',
     )
 
     print('--- Initialize distributed loaders ...')

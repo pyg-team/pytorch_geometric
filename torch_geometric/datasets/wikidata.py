@@ -107,7 +107,7 @@ class Wikidata5M(InMemoryDataset):
 
         rel_to_id: Dict[str, int] = {}
         for split, path in enumerate(self.raw_paths[2:]):
-            with open(path, 'r') as f:
+            with open(path) as f:
                 for line in f:
                     head, rel, tail = line[:-1].split('\t')
                     src = entity_to_id[head]
