@@ -70,6 +70,13 @@ def check_retrieval_recall(subg: Data, ground_truth: Data):
 # %%
 
 if __name__ == "__main__":
-    with torch.autograd.profiler.emit_nvtx():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--capture-torch-kernels", "-k", action="store_true")
+    args = parser.parse_args()
+    if args.capture_torch_kernels:
+        with torch.autograd.profiler.emit_nvtx():
+            for subg, gt in zip((query_loader.query(q) for q in questions), ground_truth_graphs):
+                print(check_retrieval_accuracy(subg, gt, num_edges), check_retrieval_precision(subg, gt), check_retrieval_recall(subg, gt))
+    else:
         for subg, gt in zip((query_loader.query(q) for q in questions), ground_truth_graphs):
             print(check_retrieval_accuracy(subg, gt, num_edges), check_retrieval_precision(subg, gt), check_retrieval_recall(subg, gt))

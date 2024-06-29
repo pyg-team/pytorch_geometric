@@ -22,6 +22,6 @@ fi
 python_file=$(basename "$1")
 
 # Run nsys profile on the Python file
-nsys profile -c cudaProfilerApi --capture-range-end repeat -t cuda,nvtx,osrt,cudnn,cublas --cudabacktrace true --force-overwrite true --output=profile_${python_file%.py} python "$1"
+nsys profile -c cudaProfilerApi --capture-range-end repeat -t cuda,nvtx,osrt,cudnn,cublas --cuda-memory-usage true --cudabacktrace all --force-overwrite true --output=profile_${python_file%.py} python "$1"
 
 echo "Profile data saved as profile_${python_file%.py}.nsys-rep"
