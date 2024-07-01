@@ -13,7 +13,8 @@ import os.path as osp
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
-import numpy.typing as npt
+import torch
+from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data, Dataset, download_url, extract_tar_gz
@@ -26,14 +27,7 @@ _CATEGORY_COLS_ID: tuple = (6, )
 _INSTANCE_COLS_ID: tuple = (7, )
 
 
-def read_inlut3d_pts(
-    path: str,
-) -> Tuple[
-        npt.NDArray[np.float32],
-        npt.NDArray[np.int32],
-        npt.NDArray[np.int32],
-        npt.NDArray[np.int32],
-]:
+def read_inlut3d_pts(path: str, ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     """Read PTS file containing point cloud data of InLUT3D dataset."""
     xyz = np.loadtxt(
         path,
@@ -55,7 +49,8 @@ def read_inlut3d_pts(
         skiprows=_PTS_SKIP_ROW_NBR,
         dtype=np.int32,
     )
-    return (xyz, rgb, categories, instances)
+    return (torch.from_numpy(xyz), torch.from_numpy(rgb),
+            torch.from_numpy(categories), torch.from_numpy(instances))
 
 
 def _get_setup_name_from_path(path: str) -> str:
