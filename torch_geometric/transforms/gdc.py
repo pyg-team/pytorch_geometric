@@ -338,10 +338,10 @@ class GDC(BaseTransform):
 
         elif method == 'heat':
             raise NotImplementedError(
-                ('Currently no fast heat kernel is implemented. You are '
-                 'welcome to create one yourself, e.g., based on '
-                 '"Kloster and Gleich: Heat kernel based community detection '
-                 '(KDD 2014)."'))
+                'Currently no fast heat kernel is implemented. You are '
+                'welcome to create one yourself, e.g., based on '
+                '"Kloster and Gleich: Heat kernel based community detection '
+                '(KDD 2014)."')
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 

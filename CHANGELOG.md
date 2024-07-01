@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Continued work on GNN+LLM package ([#9350](https://github.com/pyg-team/pytorch_geometric/pull/9350), [#9167](https://github.com/pyg-team/pytorch_geometric/pull/9167))
+- Finalizing merging of GNN+LLM package ([#9350](https://github.com/pyg-team/pytorch_geometric/pull/9350), [#9167](https://github.com/pyg-team/pytorch_geometric/pull/9167))
+- Added an example of training GNNs for a graph-level regression task ([#9070](https://github.com/pyg-team/pytorch_geometric/pull/9070))
 - Added `utils.from_rdmol`/`utils.to_rdmol` functionality ([#9452](https://github.com/pyg-team/pytorch_geometric/pull/9452))
 - Added the `OPFDataset` ([#9379](https://github.com/pyg-team/pytorch_geometric/pull/9379))
 - Added the heterogeneous `HeteroJumpingKnowledge` module ([#9380](https://github.com/pyg-team/pytorch_geometric/pull/9380))

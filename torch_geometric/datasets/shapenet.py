@@ -148,8 +148,8 @@ class ShapeNet(InMemoryDataset):
         elif split == 'trainval':
             path = self.processed_paths[3]
         else:
-            raise ValueError((f'Split {split} found, but expected either '
-                              'train, val, trainval or test'))
+            raise ValueError(f'Split {split} found, but expected either '
+                             'train, val, trainval or test')
 
         self.load(path)
 
@@ -213,7 +213,7 @@ class ShapeNet(InMemoryDataset):
         for i, split in enumerate(['train', 'val', 'test']):
             path = osp.join(self.raw_dir, 'train_test_split',
                             f'shuffled_{split}_file_list.json')
-            with open(path, 'r') as f:
+            with open(path) as f:
                 filenames = [
                     osp.sep.join(name.split('/')[1:]) + '.txt'
                     for name in json.load(f)
