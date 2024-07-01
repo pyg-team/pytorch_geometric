@@ -125,7 +125,7 @@ class InLUT3D(Dataset):
 
     @property
     def train_setups(self) -> List[str]:
-        with open(osp.join(self.raw_dir, "train.txt"), "rt") as f:
+        with open(osp.join(self.raw_dir, "train.txt")) as f:
             return [
                 _get_setup_name_from_path(file)
                 for file in f.read().splitlines()
@@ -133,7 +133,7 @@ class InLUT3D(Dataset):
 
     @property
     def test_files(self) -> List[str]:
-        with open(osp.join(self.raw_dir, "train.txt"), "rt") as f:
+        with open(osp.join(self.raw_dir, "train.txt")) as f:
             return [
                 _get_setup_name_from_path(file)
                 for file in f.read().splitlines()
@@ -143,7 +143,7 @@ class InLUT3D(Dataset):
     def labels(self) -> dict:
         import json
 
-        with open(osp.join(self.raw_dir, "labels.json"), "rt") as f:
+        with open(osp.join(self.raw_dir, "labels.json")) as f:
             return json.load(f)
 
     def download(self) -> None:
