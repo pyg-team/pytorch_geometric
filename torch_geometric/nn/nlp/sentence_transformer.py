@@ -15,7 +15,8 @@ class PoolingStrategy(Enum):
 class SentenceTransformer(torch.nn.Module):
     def __init__(
         self,
-        model_name: str,
+        model_name: Optional[
+            str] = "sentence-transformers/all-roberta-large-v1",
         pooling_strategy: Union[PoolingStrategy, str] = 'mean',
     ) -> None:
         super().__init__()
@@ -54,6 +55,8 @@ class SentenceTransformer(torch.nn.Module):
         batch_size: Optional[int] = None,
         output_device: Optional[torch.device] = None,
     ) -> Tensor:
+        if len(text) == 0:
+            return torch.zeros((0, 1024))
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
