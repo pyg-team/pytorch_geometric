@@ -208,7 +208,7 @@ class LLM(torch.nn.Module):
         question: List[str],
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
-        max_out_tokens: Optional[int] = MAX_NEW_TOKENS,
+        max_tokens: Optional[int] = MAX_NEW_TOKENS,
     ) -> List[str]:
         r"""The inference pass.
 
@@ -221,7 +221,7 @@ class LLM(torch.nn.Module):
                 tensors, *i.e.* the embedded form of :obj:`context`. Either
                 :obj:`context` or :obj:`rag_embeddings` should be used, not
                 both. (default: :obj:`None`)
-            max_out_tokens (int, optional): How many tokens for the LLM to
+            max_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
         """
         if context is not None and embedding is not None:
@@ -275,7 +275,7 @@ class LLM(torch.nn.Module):
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
                 bos_token_id=bos_token,
-                max_new_tokens=max_out_tokens,
+                max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
                 use_cache=True,
             )
