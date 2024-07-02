@@ -70,8 +70,8 @@ class HeteroConv(torch.nn.Module):
         for edge_type, module in convs.items():
             check_add_self_loops(module, [edge_type])
 
-        src_node_types = set([key[0] for key in convs.keys()])
-        dst_node_types = set([key[-1] for key in convs.keys()])
+        src_node_types = {key[0] for key in convs.keys()}
+        dst_node_types = {key[-1] for key in convs.keys()}
         if len(src_node_types - dst_node_types) > 0:
             warnings.warn(
                 f"There exist node types ({src_node_types - dst_node_types}) "

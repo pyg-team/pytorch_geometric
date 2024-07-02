@@ -98,7 +98,7 @@ class MalNetTiny(InMemoryDataset):
         split_slices = [0]
 
         for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_paths[1], f'{split}.txt'), 'r') as f:
+            with open(osp.join(self.raw_paths[1], f'{split}.txt')) as f:
                 filenames = f.read().split('\n')[:-1]
                 split_slices.append(split_slices[-1] + len(filenames))
 
@@ -107,7 +107,7 @@ class MalNetTiny(InMemoryDataset):
                 malware_type = filename.split('/')[0]
                 y = y_map.setdefault(malware_type, len(y_map))
 
-                with open(path, 'r') as f:
+                with open(path) as f:
                     edges = f.read().split('\n')[5:-1]
 
                 edge_indices = [[int(s) for s in e.split()] for e in edges]

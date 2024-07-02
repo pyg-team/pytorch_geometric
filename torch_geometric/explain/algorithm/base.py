@@ -50,7 +50,6 @@ class ExplainerAlgorithm(torch.nn.Module):
         r"""Checks if the explainer supports the user-defined settings provided
         in :obj:`self.explainer_config`, :obj:`self.model_config`.
         """
-        pass
 
     ###########################################################################
 

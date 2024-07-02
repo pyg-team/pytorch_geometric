@@ -189,7 +189,7 @@ def withPackage(*args: str) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification.
     """
-    na_packages = set(package for package in args if not has_package(package))
+    na_packages = {package for package in args if not has_package(package)}
 
     if len(na_packages) == 1:
         reason = f"Package {list(na_packages)[0]} not found"

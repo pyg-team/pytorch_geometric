@@ -38,7 +38,7 @@ def kill_proc(ip, port, pids):
         assert curr_pid != pid
         print(f"Kill process {pid} on {ip}:{port}", flush=True)
         kill_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " +
-                    ip + " 'kill {}'".format(pid))
+                    ip + f" 'kill {pid}'")
         subprocess.run(kill_cmd, shell=True)
         killed_pids.append(pid)
     for i in range(3):
@@ -50,7 +50,7 @@ def kill_proc(ip, port, pids):
             for pid in killed_pids:
                 print(f"Kill process {pid} on {ip}:{port}", flush=True)
                 kill_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) +
-                            " " + ip + " 'kill -9 {}'".format(pid))
+                            " " + ip + f" 'kill -9 {pid}'")
                 subprocess.run(kill_cmd, shell=True)
 
 
@@ -59,7 +59,7 @@ def get_pids_to_kill(ip, port, killed_pids):
     killed_pids = [str(pid) for pid in killed_pids]
     killed_pids = ",".join(killed_pids)
     ps_cmd = ("ssh -o StrictHostKeyChecking=no -p " + str(port) + " " + ip +
-              " 'ps -p {} -h'".format(killed_pids))
+              f" 'ps -p {killed_pids} -h'")
     res = subprocess.run(ps_cmd, shell=True, stdout=subprocess.PIPE)
     pids = []
     for p in res.stdout.decode("utf-8").split("\n"):

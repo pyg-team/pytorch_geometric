@@ -76,7 +76,7 @@ class Actor(InMemoryDataset):
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             node_data = [x.split('\t') for x in f.read().split('\n')[1:-1]]
 
             rows, cols = [], []
@@ -93,7 +93,7 @@ class Actor(InMemoryDataset):
             for n_id, _, label in node_data:
                 y[int(n_id)] = int(label)
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             edge_data = f.read().split('\n')[1:-1]
             edge_indices = [[int(v) for v in r.split('\t')] for r in edge_data]
             edge_index = torch.tensor(edge_indices).t().contiguous()
