@@ -6,7 +6,6 @@ import torch.nn as nn
 from torch_geometric.nn.models import GAT
 from torch_geometric.nn.nlp.llm import (
     EOS,
-    BOS,
     IGNORE_INDEX,
     LLM,
     MAX_NEW_TOKENS,
@@ -305,14 +304,10 @@ class GRetriever(nn.Module):
         inputs_embeds = torch.stack(batch_inputs_embeds,
                                     dim=0).to(self.llm_device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-        bos_token = self.tokenizer(
-            BOS,
-            add_special_tokens=False,
-        ).input_ids[0]
+        
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
-                bos_token_id=bos_token,
                 max_new_tokens=max_out_tokens,
                 attention_mask=attention_mask,
                 # do_sample=True,
