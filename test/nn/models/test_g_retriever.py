@@ -37,5 +37,5 @@ def test_g_retriever() -> None:
 
     # test inference
     pred = model.inference(batch.question, batch.x, batch.edge_index,
-                          batch.batch, batch.ptr, batch.edge_attr)
+                           batch.batch, batch.ptr, batch.edge_attr)
     assert pred is not None
