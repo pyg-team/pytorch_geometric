@@ -313,13 +313,7 @@ class GRetriever(nn.Module):
                 # do_sample=True,
                 use_cache=True  # IMPORTANT!
             )
-        pred = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
-        return {
-            'pred': pred,
-            'question': question,
-            'desc': additional_text_context,
-        }
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     def print_trainable_params(self) -> None:
         trainable_params = 0
