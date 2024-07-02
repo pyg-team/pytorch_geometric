@@ -10,17 +10,20 @@ from torch_geometric.data import get_features_for_triplets_groups, Data
 from itertools import chain
 from torch_geometric.profile.nvtx import nvtxit
 import torch
+import argparse
+from typing import Tuple
 
 # %%
 # Patch FeatureStore and GraphStore
 
-SentenceTransformerFeatureStore.retrieve_seed_nodes = nvtxit(n_iter=10)(SentenceTransformerFeatureStore.retrieve_seed_nodes)
-SentenceTransformerFeatureStore.retrieve_seed_edges = nvtxit(n_iters=10)(SentenceTransformerFeatureStore.retrieve_seed_edges)
-SentenceTransformerFeatureStore.load_subgraph = nvtxit(n_iters=10)(SentenceTransformerFeatureStore.load_subgraph)
-NeighborSamplingRAGGraphStore.sample_subgraph = nvtxit(n_iters=10)(NeighborSamplingRAGGraphStore.sample_subgraph)
+SentenceTransformerFeatureStore.retrieve_seed_nodes = nvtxit()(SentenceTransformerFeatureStore.retrieve_seed_nodes)
+SentenceTransformerFeatureStore.retrieve_seed_edges = nvtxit()(SentenceTransformerFeatureStore.retrieve_seed_edges)
+SentenceTransformerFeatureStore.load_subgraph = nvtxit()(SentenceTransformerFeatureStore.load_subgraph)
+NeighborSamplingRAGGraphStore.sample_subgraph = nvtxit()(NeighborSamplingRAGGraphStore.sample_subgraph)
+rag_loader.RAGQueryLoader.query = nvtxit()(rag_loader.RAGQueryLoader.query)
 
 # %%
-ds = UpdatedWebQSPDataset("small_ds", force_reload=True, limit=10)
+ds = UpdatedWebQSPDataset("small_ds_1", force_reload=True, limit=10)
 
 # %%
 triplets = list(chain.from_iterable((d['graph'] for d in ds.raw_dataset)))
@@ -40,7 +43,19 @@ model = SentenceTransformer().to(device)
 fs, gs = create_remote_backend_from_triplets(triplets=triplets, node_embedding_model=model, node_method_to_call="encode", path="backend", pre_transform=preprocess_triplet, node_method_kwargs={"batch_size": 256}, graph_db=NeighborSamplingRAGGraphStore, feature_db=SentenceTransformerFeatureStore).load()
 
 # %%
-query_loader = rag_loader.RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10}, seed_edges_kwargs={"k_edges": 10}, sampler_kwargs={"num_neighbors": [40]*10})
+from torch_geometric.datasets.updated_web_qsp_dataset import retrieval_via_pcst
+
+@nvtxit()
+def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3, topk_e: int = 3, cost_e: float = 0.5) -> Tuple[Data, str]:
+    q_emb = model.encode(query)
+    textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
+    textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
+    out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes, textual_edges, topk, topk_e, cost_e)
+    out_graph["desc"] = desc
+    return graph
+
+# %%
+query_loader = rag_loader.RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10}, seed_edges_kwargs={"k_edges": 10}, sampler_kwargs={"num_neighbors": [40]*10}, local_filter=apply_retrieval_via_pcst)
 
 # %%
 # Accuracy Metrics to be added to Profiler
@@ -69,14 +84,18 @@ def check_retrieval_recall(subg: Data, ground_truth: Data):
 
 # %%
 
+@nvtxit()
+def _run_eval():
+    for subg, gt in zip((query_loader.query(q) for q in questions), ground_truth_graphs):
+        print(check_retrieval_accuracy(subg, gt, num_edges), check_retrieval_precision(subg, gt), check_retrieval_recall(subg, gt))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--capture-torch-kernels", "-k", action="store_true")
     args = parser.parse_args()
     if args.capture_torch_kernels:
         with torch.autograd.profiler.emit_nvtx():
-            for subg, gt in zip((query_loader.query(q) for q in questions), ground_truth_graphs):
-                print(check_retrieval_accuracy(subg, gt, num_edges), check_retrieval_precision(subg, gt), check_retrieval_recall(subg, gt))
+            _run_eval()
     else:
-        for subg, gt in zip((query_loader.query(q) for q in questions), ground_truth_graphs):
-            print(check_retrieval_accuracy(subg, gt, num_edges), check_retrieval_precision(subg, gt), check_retrieval_recall(subg, gt))
+        _run_eval()
