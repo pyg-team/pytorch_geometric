@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.6.0\] - 2024-MM-DD
 
 ### Added
+
 - Added the `nn.models.GRetriever` model ([#9480](https://github.com/pyg-team/pytorch_geometric/pull/9480))
 - Added the `nn.nlp.LLM` model ([#9462](https://github.com/pyg-team/pytorch_geometric/pull/9462))
 - Added an example of training GNNs for a graph-level regression task ([#9070](https://github.com/pyg-team/pytorch_geometric/pull/9070))
