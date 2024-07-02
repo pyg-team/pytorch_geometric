@@ -245,7 +245,12 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
             pred = inference_fn(model, batch, model_save_name)
-            eval_data = {"pred": pred, "question":batch.question, "desc": batch.desc, "label":batch.label}
+            eval_data = {
+                "pred": pred,
+                "question": batch.question,
+                "desc": batch.desc,
+                "label": batch.label
+            }
             eval_output.append(eval_data)
         progress_bar_test.update(1)
 
@@ -311,7 +316,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 # GNN+LLM only using 32 tokens to answer.
                 # Allow more output tokens for untrained LLM
                 pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
-                                                  max_out_tokens=256)
+                                                   max_out_tokens=256)
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
             untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
