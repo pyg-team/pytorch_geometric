@@ -93,7 +93,7 @@ class LLM(torch.nn.Module):
             )
             print("If you do not have a GPU, consider getting one.")
             print(
-                "If you do, you need more VRAM either by upgrading or getting another GPU." # noqa
+                "If you do, you need more VRAM either by upgrading or getting another GPU."  # noqa
             )
             self.llm_device = torch.device('cpu')
             self.autocast_context = nullcontext()
