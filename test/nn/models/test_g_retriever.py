@@ -5,7 +5,6 @@ from torch_geometric.nn.models import GRetriever
 from torch_geometric.testing import onlyFullTest, withPackage
 
 
-@withCUDA
 @onlyFullTest
 @withPackage('transformers', 'accelerate')
 def test_g_retriever() -> None:
