@@ -106,6 +106,7 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
+from .inlut3d import InLUT3D
 
 import torch_geometric.datasets.utils
 
@@ -188,6 +189,7 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    "InLUT3D",
 ]
 
 hetero_datasets = [
