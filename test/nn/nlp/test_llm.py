@@ -1,22 +1,26 @@
-from torch_geometric.data import Data
+import torch
+from torch import Tensor
+
 from torch_geometric.nn.nlp.llm import LLM
-from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 
 
-@withCUDA
 @onlyFullTest
-@withPackage('transformers')
-def test_llm(device):
-    batch = Data()
-    batch.question = ["Is PyG the best open-source GNN library?"]
-    batch.label = ["yes!"]
+@withPackage('transformers', 'accelerate')
+def test_llm() -> None:
+    question = ["Is PyG the best open-source GNN library?"]
+    answer = ["yes!"]
 
-    model = LLM(model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1", num_params=1)
+    model = LLM(
+        model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+        num_params=1,
+        dtype=torch.float16,
+    )
 
-    # test train
-    loss = model(batch.question, batch.label)
-    assert loss is not None
+    loss = model(question, answer)
+    assert isinstance(loss, Tensor)
+    assert loss.dim() == 0
+    assert loss >= 0.0
 
-    # test inference
-    out = model.inference(batch.question)
-    assert out['pred'] is not None
+    pred = model.inference(question)
+    assert len(pred) == 1
