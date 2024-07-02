@@ -1,210 +1,197 @@
-import gc
-from typing import List, Optional
+import warnings
+from contextlib import nullcontext
+from typing import Any, Dict, List, Optional
 
 import torch
-import torch.nn as nn
+from torch import Tensor
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
 EOS = '[/s]'
 IGNORE_INDEX = -100
-llama2_str_name = "meta-llama/Llama-2-7b-chat-hf"
-gemma_str_name = "google/gemma-7b"
-max_txt_len = 512
-max_new_tokens = 32
-pad_token_id = 0
-padding_side = 'left'
+MAX_TXT_LEN = 512
+MAX_NEW_TOKENS = 32
+PAD_TOKEN_ID = 0
+PADDING_SIDE = 'left'
 
 
-def get_llm_kwargs(mem_needed, autocast_dtype=torch.bfloat16):
+def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
     torch.cuda.empty_cache()
-    gc.collect()
-    avail_gpus = torch.cuda.device_count()
-    kwargs = {
-        "revision": "main",
-    }
-    max_mem_dict = {}
-    avail_mem_dict = {}
-    mem_total = 0
-    gpus_2_use_4_llm = 0
-    for i in range(avail_gpus):
-        available_mem = int(torch.cuda.mem_get_info(i)[0] // 1024**3)
-        mem_total += available_mem
-        avail_mem_dict[i] = available_mem
-        gpus_2_use_4_llm += 1
-        # We want to use the minimum number of GPUs that LLM can fit on
-        # this is to minimize the need for interGPU communications
-        if mem_total >= mem_needed:
+
+    gpu_memory: List[int] = []
+    for i in range(torch.cuda.device_count()):
+        gpu_memory.append(torch.cuda.mem_get_info(i)[0] // 1024**3)
+        # Use the minimum number of GPUs to fit the LLM on.
+        if sum(gpu_memory) >= required_memory:
             break
 
-    # If not enough VRAM, we use pure CPU since huggingface automatic
-    # cpu offloading only works for inference.
-    # See: https://discuss.huggingface.co/t/device-map-auto/49610/2
-    pure_cpu = mem_total < mem_needed
-    if not pure_cpu:
-        for i in range(gpus_2_use_4_llm):
-            max_mem_dict[i] = str(avail_mem_dict[i]) + "GiB"
-        kwargs["max_memory"] = max_mem_dict
-        kwargs["low_cpu_mem_usage"] = True
-        kwargs["device_map"] = "auto"
-        kwargs["torch_dtype"] = autocast_dtype
+    if sum(gpu_memory) < required_memory:
+        gpu_memory = []  # If not enough VRAM, use pure CPU.
 
-    return kwargs, pure_cpu
+    kwargs = dict(revision='main')
+    if len(gpu_memory) > 0:
+        kwargs['max_memory'] = {
+            i: f'{memory}GiB'
+            for i, memory in enumerate(gpu_memory)
+        }
+        kwargs['low_cpu_mem_usage'] = True
+        kwargs['device_map'] = 'auto'
+        kwargs['torch_dtype'] = dtype
+
+    return kwargs
 
 
-def get_mem_needed_for_llm(num_params):
-    """This is a rough hueristic:
-    We found that LLAMA2 (7B) + GAT hits OOM
-    on a single 80GB GPU, but can fit on a single
-    GPU that is slightly larger GPU.
+class LLM(torch.nn.Module):
+    r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
+
+    model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"` or
+        :obj:`"gemma"`.
+    num_params (int): An integer representing how many parameters the
+        HuggingFace model has, in billions. This is used to automatically
+        allocate the correct number of GPUs needed, given the available GPU
+        memory of your GPUs.
+    dtype (torch.dtype, optional): The data type to use for the LLM.
+        (default :obj: `torch.bloat16`)
     """
-    return 85 * num_params / 7
-
-
-class LLM(nn.Module):
-    r"""This module wraps a HuggingFace Transformer based model.
-
-    model_name (str): A string representing the huggingface model you
-        want to use. This module has been tested for 'llama2' and 'gemma'.
-        Other huggingface transformer models should work if you pass the
-        correct name, see huggingface.co for details. If any issues occur
-        please file an issue on
-        https://github.com/pyg-team/pytorch_geometric
-        and assign to puririshi98. (default: :obj:'llama2')
-    dtype (torch.dtype): The dtype to use for the LLM.
-            (default :obj: `torch.bloat16`)
-    num_params (int): An integer representing how many params your
-        huggingface transformer model has, in billions. This is used to
-        automatically allocate the number of gpus needed, given the
-        available GPU memory of your GPUs (default :obj:`7`)
-    """
-    def __init__(self, model_name: str = "llama2-7b", dtype=torch.bfloat16,
-                 num_params: int = 7):
+    def __init__(
+        self,
+        model_name: str,
+        num_params: int,
+        dtype=torch.bfloat16,
+    ) -> None:
         super().__init__()
+
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        if model_name == "llama2-7b":
-            self.printable_llm_name = "LLAMA2"
-            self.huggingface_str = llama2_str_name
-        elif model_name == "gemma":
-            self.printable_llm_name = "GEMMA"
-            self.huggingface_str = gemma_str_name
+
+        if model_name == 'llama2-7b':
+            pretty_model_name = 'LLAMA2'
+            model_name = 'meta-llama/Llama-2-7b-chat-hf'
+        elif model_name == 'gemma':
+            pretty_model_name = 'GEMMA'
+            model_name = 'google/gemma-7b'
         else:
-            self.printable_llm_name = model_name
-            self.huggingface_str = model_name
-        self.mem_needed = get_mem_needed_for_llm(num_params)
-        self.llm_dtype = dtype
-        print('Loading ' + str(self.printable_llm_name))
-        kwargs, pure_cpu = get_llm_kwargs(self.mem_needed, self.llm_dtype)
-        print("Setting up " + self.printable_llm_name + " w/ kwargs =", kwargs)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.huggingface_str,
-                                                       use_fast=False)
-        self.tokenizer.pad_token_id = pad_token_id
-        self.tokenizer.padding_side = padding_side
-        self.llm = AutoModelForCausalLM.from_pretrained(
-            self.huggingface_str, **kwargs)
+            pretty_model_name = model_name
+
+        # A rough heuristic on GPU memory requirements, e.g., we found that
+        # LLAMA2 (7B parameters) fits on a 85GB GPU.
+        required_memory = 85 * num_params / 7
+        kwargs = get_llm_kwargs(required_memory, dtype)
+
+        print(f"Setting up '{pretty_model_name}' with configuration: {kwargs}")
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            use_fast=False,
+        )
+        self.tokenizer.pad_token_id = PAD_TOKEN_ID
+        self.tokenizer.padding_side = PADDING_SIDE
+        self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
         self.word_embedding = self.llm.model.get_input_embeddings()
-        if pure_cpu:
-            self.llm_device = torch.device("cpu")
-            from contextlib import nullcontext
+
+        if 'max_memory' not in kwargs:  # Pure CPU:
+            self.llm_device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
             self.llm_device = self.llm.device
-            self.autocast_context = torch.cuda.amp.autocast(
-                dtype=self.llm_dtype)
+            self.autocast_context = torch.cuda.amp.autocast(dtype=dtype)
 
-    def encode_inputs(self, question, additional_context=None):
+    def _encode_inputs(
+        self,
+        question: List[str],
+        context: Optional[List[str]] = None,
+    ) -> None:
         batch_size = len(question)
         questions = self.tokenizer(question, add_special_tokens=False)
-        if additional_context is not None:
-            additional_context = self.tokenizer(additional_context,
-                                                add_special_tokens=False)
+        if context is not None:
+            context = self.tokenizer(context, add_special_tokens=False)
 
-        # encode special tokens
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(
-            self.tokenizer(BOS, add_special_tokens=False,
-                           return_tensors='pt').input_ids[0].to(
-                               self.llm_device))
-        pad_embeds = self.word_embedding(
-            torch.tensor(self.tokenizer.pad_token_id).to(
-                self.llm_device)).unsqueeze(0)
-        return (batch_size, questions, additional_context, eos_user_tokens,
-                bos_embeds, pad_embeds)
+        bos_token = self.tokenizer(
+            BOS,
+            add_special_tokens=False,
+            return_tensors='pt',
+        ).input_ids[0].to(self.llm_device)
+        bos_embeds = self.word_embedding(bos_token)
+        pad_token = torch.tensor(self.tokenizer.pad_token_id,
+                                 device=self.llm_device)
+        pad_embeds = self.word_embedding(pad_token).unsqueeze(0)
+        return (batch_size, questions, context, eos_user_tokens, bos_embeds,
+                pad_embeds)
 
     def forward(
         self,
         question: List[str],
-        label: List[str],
-        additional_text_context: Optional[List[str]] = None,
-        rag_embeddings: Optional[List[torch.tensor]] = None,
-    ):
-        r"""Forward pass.
+        answer: List[str],
+        context: Optional[List[str]] = None,
+        embedding: Optional[List[Tensor]] = None,
+    ) -> Tensor:
+        r"""The forward pass.
 
         Args:
-            question (List[str]): The questions/prompts.
-            label (List[str]): The answers/labels.
-            additional_text_context (List[str], optional): Additional context
-                to give to the LLM, such as textified knowledge graphs.
-            rag_embeddings (List[torch.tensor], optional): Embedding tensors
-                from RAG docs. Essentially just the embedded form of
-                `additional_text_context`. Either `additional_text_context`
-                or `rag_embeddings` should be used, not both.
+            question (list[str]): The questions/prompts.
+            answer (list[str]): The answers/labels.
+            context (list[str], optional): Additional context to give to the
+                LLM, such as textified knowledge graphs. (default: :obj:`None`)
+            embedding (list[torch.Tensor], optional): RAG embedding
+                tensors, *i.e.* the embedded form of :obj:`context`. Either
+                :obj:`context` or :obj:`rag_embeddings` should be used, not
+                both. (default: :obj:`None`)
         """
-        if rag_embeddings is not None and additional_text_context is not None:
-            print("Warning: Using both `rag_embeddings` and \
-                `additional_context` inputs is a waste of compute & memory \
-                as both provide the same information")
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_text_context) # noqa
-        # encode labels
-        labels = self.tokenizer(label, add_special_tokens=False)
-        # encode training specific special token
+        if context is not None and embedding is not None:
+            warnings.warn("Using both 'context' and 'embedding' is a waste of "
+                          "compute and memory")
+
+        (batch_size, question, context, eos_user_tokens, bos_embeds,
+         pad_embeds) = self._encode_inputs(question, context)
+
+        label = self.tokenizer(answer, add_special_tokens=False)
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
 
         batch_inputs_embeds = []
         batch_attention_mask = []
         batch_label_input_ids = []
         for i in range(batch_size):
-            # Add bos & eos token
-            label_input_ids = labels.input_ids[
-                i][:max_new_tokens] + eos_tokens.input_ids
+            label_input_ids = label.input_ids[i][:MAX_NEW_TOKENS]
+            label_input_ids += eos_tokens.input_ids  # Add EOS token.
+
+            input_ids: List[int] = []
             if context is not None:
-                input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids + label_input_ids
-            else:
-                input_ids = questions.input_ids[
-                    i] + eos_user_tokens.input_ids + label_input_ids
+                input_ids += context.input_ids[i][:MAX_TXT_LEN]
+            input_ids += question.input_ids[i]
+            input_ids += eos_user_tokens.input_ids
+            input_ids += label_input_ids
+
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
+                torch.tensor(input_ids, device=self.llm_device))
+
             to_cat = [bos_embeds]
-            if rag_embeddings is not None and rag_embeddings[i] is not None:
-                to_cat.append(rag_embeddings[i])
+            if embedding is not None:
+                to_cat.append(embedding[i])
             to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0)
+
             batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
-            label_input_ids = [IGNORE_INDEX
-                               ] * (inputs_embeds.shape[0] -
-                                    len(label_input_ids)) + label_input_ids
+            batch_attention_mask.append([1] * inputs_embeds.size(0))
+            label_input_ids = [IGNORE_INDEX] * (
+                inputs_embeds.size(0) - len(label_input_ids)) + label_input_ids
             batch_label_input_ids.append(label_input_ids)
 
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
+        # Pad input embeddings:
+        max_length = max([x.size(0) for x in batch_inputs_embeds])
         for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
-            batch_label_input_ids[
-                i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
+            pad = max_length - batch_inputs_embeds[i].size(0)
+            batch_inputs_embeds[i] = torch.cat([
+                pad_embeds.repeat(pad, 1),
+                batch_inputs_embeds[i],
+            ])
+            batch_attention_mask[i] = [0] * pad + batch_attention_mask[i]
+            batch_label_input_ids[i] = ([IGNORE_INDEX] * pad +
+                                        batch_label_input_ids[i])
 
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-        label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.llm_device)
+        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
+        attention_mask = torch.tensor(batch_attention_mask,
+                                      device=self.llm_device)
+        label_input_ids = torch.tensor(batch_label_input_ids,
+                                       device=self.llm_device)
 
         with self.autocast_context:
             outputs = self.llm(
@@ -216,75 +203,81 @@ class LLM(nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self, question: List[str],
-                  additional_text_context: Optional[List[str]] = None,
-                  rag_embeddings: Optional[List[torch.tensor]] = None,
-                  max_out_tokens: Optional[int] = max_new_tokens):
-        r"""Inference.
+    def inference(
+        self,
+        question: List[str],
+        context: Optional[List[str]] = None,
+        embedding: Optional[List[Tensor]] = None,
+        max_tokens: Optional[int] = MAX_NEW_TOKENS,
+    ) -> List[str]:
+        r"""The inference pass.
 
         Args:
-            question (List[str]): The questions/prompts.
-            additional_text_context (List[str], optional): Additional context
-                to give to the LLM, such as textified knowledge graphs.
-            rag_embeddings (torch.tensor, optional): Embedding tensor from RAG
-                docs, essentially just the embedded form of
-                `additional_text_context`. Either `additional_text_context`
-                or `rag_embeddings` should be used, not both.
-            max_out_tokens (int, optional): How many tokens for the LLM to
-                generate. (default: {32})
+            question (list[str]): The questions/prompts.
+            answer (list[str]): The answers/labels.
+            context (list[str], optional): Additional context to give to the
+                LLM, such as textified knowledge graphs. (default: :obj:`None`)
+            embedding (list[torch.Tensor], optional): RAG embedding
+                tensors, *i.e.* the embedded form of :obj:`context`. Either
+                :obj:`context` or :obj:`rag_embeddings` should be used, not
+                both. (default: :obj:`None`)
+            max_tokens (int, optional): How many tokens for the LLM to
+                generate. (default: :obj:`32`)
         """
-        if rag_embeddings is not None and additional_text_context is not None:
-            print("Warning: Using both `rag_embeddings` and \
-                `additional_context` inputs is a waste of compute & memory \
-                as both provide the same information")
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.encode_inputs(question, additional_text_context) # noqa
+        if context is not None and embedding is not None:
+            warnings.warn("Using both 'context' and 'embedding' is a waste of "
+                          "compute and memory")
+
+        (batch_size, question, context, eos_user_tokens, bos_embeds,
+         pad_embeds) = self._encode_inputs(question, context)
+
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(batch_size):
-            # Add bos & eos token
+            input_ids: List[int] = []
             if context is not None:
-                input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids
-            else:
-                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
+                input_ids = context.input_ids[i][:MAX_TXT_LEN]
+            input_ids += question.input_ids[i]
+            input_ids += eos_user_tokens.input_ids
 
             inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
+                torch.tensor(input_ids, device=self.llm_device))
+
             to_cat = [bos_embeds]
-            if rag_embeddings is not None and rag_embeddings[i] is not None:
-                to_cat.append(rag_embeddings[i])
+            if embedding is not None:
+                to_cat.append(embedding[i])
             to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0)
+
             batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
+            batch_attention_mask.append([1] * inputs_embeds.size(0))
 
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
+        # Pad input embeddings:
+        max_length = max([x.size(0) for x in batch_inputs_embeds])
         for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
+            pad = max_length - batch_inputs_embeds[i].size(0)
+            batch_inputs_embeds[i] = torch.cat([
+                pad_embeds.repeat(pad, 1),
+                batch_inputs_embeds[i],
+            ])
+            batch_attention_mask[i] = [0] * pad + batch_attention_mask[i]
 
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
+        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
+        attention_mask = torch.tensor(batch_attention_mask,
+                                      device=self.llm_device)
+
+        bos_token = self.tokenizer(
+            BOS,
+            add_special_tokens=False,
+        ).input_ids[0]
 
         with self.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
-                max_new_tokens=max_out_tokens,
+                bos_token_id=bos_token,
+                max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
-                # do_sample=True,
-                use_cache=True  # IMPORTANT!
+                use_cache=True,
             )
-        pred = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        return {
-            'pred': pred,
-            'question': question,
-            'desc': additional_text_context,
-        }
+        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
