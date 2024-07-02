@@ -2,13 +2,13 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.nn.models import GRetriever
-from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 
 
 @withCUDA
 @onlyFullTest
-@withPackage('transformers')
-def test_g_retriever(device):
+@withPackage('transformers', 'accelerate')
+def test_g_retriever() -> None:
     batch = Data()
     batch.question = ["Is PyG the best open-source GNN library?"]
     batch.label = ["yes!"]

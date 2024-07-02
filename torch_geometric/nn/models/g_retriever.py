@@ -8,8 +8,8 @@ from torch_geometric.nn.nlp.llm import (
     EOS,
     IGNORE_INDEX,
     LLM,
-    max_new_tokens,
-    max_txt_len,
+    MAX_NEW_TOKENS,
+    MAX_TXT_LEN,
 )
 from torch_geometric.utils import scatter
 
@@ -184,10 +184,10 @@ class GRetriever(nn.Module):
         for i in range(batch_size):
             # Add bos & eos token
             label_input_ids = labels.input_ids[
-                i][:max_new_tokens] + eos_tokens.input_ids
+                i][:MAX_NEW_TOKENS] + eos_tokens.input_ids
             if additional_text_context is not None:
                 input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
+                    i][:MAX_TXT_LEN] + questions.input_ids[
                         i] + eos_user_tokens.input_ids + label_input_ids
             else:
                 input_ids = questions.input_ids[
@@ -244,7 +244,7 @@ class GRetriever(nn.Module):
         ptr: torch.Tensor,
         edge_attr: Optional[torch.Tensor] = None,
         additional_text_context: Optional[List[str]] = None,
-        max_out_tokens: Optional[int] = max_new_tokens,
+        max_out_tokens: Optional[int] = MAX_NEW_TOKENS,
     ):
         r"""Inference.
 
@@ -280,7 +280,7 @@ class GRetriever(nn.Module):
             # Add bos & eos token
             if additional_text_context is not None:
                 input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
+                    i][:MAX_TXT_LEN] + questions.input_ids[
                         i] + eos_user_tokens.input_ids
             else:
                 input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
