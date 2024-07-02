@@ -88,6 +88,9 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
 
         if 'max_memory' not in kwargs:  # Pure CPU:
+            print("Warning: LLM is being run w/ CPU, this may be extremely slow.")
+            print("If you do not have a GPU, consider getting one.")
+            print("If you do, you need more VRAM either by upgrading or getting another GPU.") # noqa
             self.llm_device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
