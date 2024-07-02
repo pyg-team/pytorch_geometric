@@ -63,14 +63,11 @@ class GRetriever(nn.Module):
     ) -> None:
         super().__init__()
         if 'llama2-7b' in llm_to_use.lower():
-            self.llm_to_use = LLM('llama2-7b', llm_dtype,
-                                  num_params=num_llm_params)
+            self.llm_to_use = LLM('llama2-7b', num_llm_params, llm_dtype)
         elif 'gemma' in llm_to_use.lower():
-            self.llm_to_use = LLM('gemma', llm_dtype,
-                                  num_params=num_llm_params)
+            self.llm_to_use = LLM('gemma', num_llm_params, llm_dtype)
         else:
-            self.llm_to_use = LLM(llm_to_use, llm_dtype,
-                                  num_params=num_llm_params)
+            self.llm_to_use = LLM(llm_to_use, num_llm_params, llm_dtype)
         self.llm_generator = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
         if llm_use_lora:
