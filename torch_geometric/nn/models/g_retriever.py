@@ -164,7 +164,7 @@ class GRetriever(nn.Module):
                 to give to the LLM, such as textified knowledge graphs.
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
+            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
         # encode labels
         labels = self.tokenizer(label, add_special_tokens=False)
         # encode training specific special token
@@ -264,7 +264,7 @@ class GRetriever(nn.Module):
                 generate. (default: {32})
         """
         batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
+            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
         # encode graphs
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
