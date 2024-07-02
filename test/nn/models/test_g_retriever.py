@@ -36,6 +36,6 @@ def test_g_retriever() -> None:
     assert loss is not None
 
     # test inference
-    out = model.inference(batch.question, batch.x, batch.edge_index,
+    pred = model.inference(batch.question, batch.x, batch.edge_index,
                           batch.batch, batch.ptr, batch.edge_attr)
-    assert out['pred'] is not None
+    assert pred is not None
