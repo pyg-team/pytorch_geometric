@@ -2,7 +2,6 @@ import os
 import os.path as osp
 from typing import Callable, List, Optional
 
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -156,6 +155,7 @@ class AttributedGraphDataset(InMemoryDataset):
 
     def process(self) -> None:
         import pandas as pd
+        import scipy.sparse as sp
 
         x = sp.load_npz(self.raw_paths[0]).tocsr()
         if x.shape[-1] > 10000 or self.name == 'mag':
@@ -172,7 +172,7 @@ class AttributedGraphDataset(InMemoryDataset):
                          engine='python')
         edge_index = torch.from_numpy(df.values).t().contiguous()
 
-        with open(self.raw_paths[2], 'r') as f:
+        with open(self.raw_paths[2]) as f:
             rows = f.read().split('\n')[:-1]
             ys = [[int(y) - 1 for y in row.split()[1:]] for row in rows]
             multilabel = max([len(y) for y in ys]) > 1

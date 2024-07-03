@@ -66,7 +66,6 @@ class Connect(torch.nn.Module):
     """
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     def forward(
         self,

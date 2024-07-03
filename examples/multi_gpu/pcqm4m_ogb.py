@@ -56,7 +56,7 @@ class GINConv(MessagePassing):
         Args:
             emb_dim (int): node embedding dimensionality
         """
-        super(GINConv, self).__init__(aggr="add")
+        super().__init__(aggr="add")
         self.mlp = torch.nn.Sequential(
             torch.nn.Linear(emb_dim, emb_dim),
             torch.nn.BatchNorm1d(emb_dim),
@@ -81,7 +81,7 @@ class GINConv(MessagePassing):
 
 class GCNConv(MessagePassing):
     def __init__(self, emb_dim):
-        super(GCNConv, self).__init__(aggr='add')
+        super().__init__(aggr='add')
         self.linear = torch.nn.Linear(emb_dim, emb_dim)
         self.root_emb = torch.nn.Embedding(1, emb_dim)
         self.bond_encoder = BondEncoder(emb_dim=emb_dim)
@@ -119,7 +119,7 @@ class GNNNode(torch.nn.Module):
             residual (bool): Wether or not to add the residual
             gnn_type (str): Type of GNN to use.
         """
-        super(GNNNode, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 
@@ -178,7 +178,7 @@ class GNNNodeVirtualNode(torch.nn.Module):
     """Outputs node representations."""
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        super(GNNNodeVirtualNode, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 
@@ -303,7 +303,7 @@ class GNN(torch.nn.Module):
             JK (str): "last" or "sum" to choose JK concat strat.
             graph_pooling (str): Graph pooling strat to use.
         """
-        super(GNN, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 

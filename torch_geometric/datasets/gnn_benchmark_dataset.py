@@ -126,9 +126,9 @@ class GNNBenchmarkDataset(InMemoryDataset):
         if self.name == 'CSL' and split != 'train':
             split = 'train'
             logging.warning(
-                ("Dataset 'CSL' does not provide a standardized splitting. "
-                 "Instead, it is recommended to perform 5-fold cross "
-                 "validation with stratifed sampling"))
+                "Dataset 'CSL' does not provide a standardized splitting. "
+                "Instead, it is recommended to perform 5-fold cross "
+                "validation with stratifed sampling")
 
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)

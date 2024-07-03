@@ -272,7 +272,6 @@ class ToHeteroWithBasesTransformer(Transformer):
                     args=(value, self.find_by_name('edge_offset_dict')),
                     name=f'{value.name}__split')
 
-                pass
             elif isinstance(value, Node):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(

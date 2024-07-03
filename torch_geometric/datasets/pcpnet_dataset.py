@@ -121,7 +121,7 @@ class PCPNetDataset(InMemoryDataset):
 
     def process(self) -> None:
         path_file = self.raw_paths
-        with open(path_file[0], "r") as f:
+        with open(path_file[0]) as f:
             filenames = f.read().split('\n')[:-1]
         data_list = []
         for filename in filenames:

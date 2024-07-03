@@ -1,7 +1,5 @@
 from typing import Optional
 
-from scipy.sparse.linalg import eigs, eigsh
-
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -41,6 +39,8 @@ class LaplacianLambdaMax(BaseTransform):
         self.is_undirected = is_undirected
 
     def forward(self, data: Data) -> Data:
+        from scipy.sparse.linalg import eigs, eigsh
+
         assert data.edge_index is not None
         num_nodes = data.num_nodes
 
