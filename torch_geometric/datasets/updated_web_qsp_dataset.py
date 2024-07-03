@@ -308,7 +308,7 @@ class UpdatedWebQSPDataset(InMemoryDataset):
 
     def process(self) -> None:
         self._load_raw_data()
-        self.model = SentenceTransformer().to(self.device)
+        self.model = SentenceTransformer('sentence-transformers/all-roberta-large-v1').to(self.device)
         self.model.eval()
         if not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
