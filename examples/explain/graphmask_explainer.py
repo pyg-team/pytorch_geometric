@@ -19,7 +19,6 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
 data = dataset[0].to(device)
 
-
 # GCN Node Classification =====================================================
 
 
