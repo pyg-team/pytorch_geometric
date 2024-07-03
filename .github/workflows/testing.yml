@@ -67,7 +67,7 @@ jobs:
           pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Linux' }}
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: false
