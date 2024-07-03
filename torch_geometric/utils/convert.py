@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
 
-import scipy.sparse
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
@@ -14,7 +13,7 @@ def to_scipy_sparse_matrix(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
-) -> scipy.sparse.coo_matrix:
+) -> Any:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
@@ -34,6 +33,8 @@ def to_scipy_sparse_matrix(
         <4x4 sparse matrix of type '<class 'numpy.float32'>'
             with 6 stored elements in COOrdinate format>
     """
+    import scipy.sparse as sp
+
     row, col = edge_index.cpu()
 
     if edge_attr is None:
@@ -43,13 +44,12 @@ def to_scipy_sparse_matrix(
         assert edge_attr.size(0) == row.size(0)
 
     N = maybe_num_nodes(edge_index, num_nodes)
-    out = scipy.sparse.coo_matrix(
+    out = sp.coo_matrix(  #
         (edge_attr.numpy(), (row.numpy(), col.numpy())), (N, N))
     return out
 
 
-def from_scipy_sparse_matrix(
-        A: scipy.sparse.spmatrix) -> Tuple[Tensor, Tensor]:
+def from_scipy_sparse_matrix(A: Any) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
