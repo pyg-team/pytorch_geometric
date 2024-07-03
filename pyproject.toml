@@ -38,7 +38,6 @@ dependencies=[
     "pyparsing",
     "requests",
     "scikit-learn",
-    "scipy",
     "tqdm",
 ]
 
@@ -71,6 +70,7 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
+    "scipy",
     "ase",
     "captum<0.7.0",
     "graphviz",

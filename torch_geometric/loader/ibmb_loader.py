@@ -1,9 +1,17 @@
 import logging
 import math
-from typing import Callable, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterator,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
-import scipy.sparse
 import torch
 from torch import Tensor
 from tqdm import tqdm
@@ -281,7 +289,7 @@ def create_batchwise_out_aux_pairs(
     return loader
 
 
-def get_pairs(ppr_mat: scipy.sparse.csr_matrix) -> np.ndarray:
+def get_pairs(ppr_mat: Any) -> np.ndarray:
     ppr_mat = ppr_mat + ppr_mat.transpose()
 
     ppr_mat = ppr_mat.tocoo()
@@ -387,7 +395,7 @@ def topk_ppr_matrix(
     output_node_indices: Union[np.ndarray, torch.LongTensor],
     topk: int,
     normalization='row',
-) -> Tuple[scipy.sparse.csr_matrix, List[np.ndarray]]:
+) -> Tuple[Any, List[np.ndarray]]:
     neighbors, weights = get_ppr(edge_index, alpha, eps, output_node_indices,
                                  num_nodes)
 
