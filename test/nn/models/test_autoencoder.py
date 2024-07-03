@@ -3,7 +3,7 @@ from torch import Tensor as T
 
 from torch_geometric.data import Data
 from torch_geometric.nn import ARGA, ARGVA, GAE, VGAE
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import has_package, is_full_test
 from torch_geometric.transforms import RandomLinkSplit
 
 
@@ -43,9 +43,10 @@ def test_gae():
     loss = model.recon_loss(z, train_data.pos_edge_label_index)
     assert float(loss) > 0
 
-    auc, ap = model.test(z, val_data.pos_edge_label_index,
-                         val_data.neg_edge_label_index)
-    assert auc >= 0 and auc <= 1 and ap >= 0 and ap <= 1
+    if has_package('sklearn'):
+        auc, ap = model.test(z, val_data.pos_edge_label_index,
+                             val_data.neg_edge_label_index)
+        assert auc >= 0 and auc <= 1 and ap >= 0 and ap <= 1
 
 
 def test_vgae():

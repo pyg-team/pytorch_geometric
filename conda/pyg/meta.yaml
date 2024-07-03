@@ -24,7 +24,6 @@ requirements:
     - scipy
     - aiohttp
     - requests
-    - scikit-learn
 
 build:
   string: py{{ environ.get('PYTHON_VERSION').replace('.', '') }}_torch_{{ environ['TORCH_VERSION'] }}_{{ environ['CUDA_VERSION'] }}

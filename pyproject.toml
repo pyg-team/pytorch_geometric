@@ -37,7 +37,6 @@ dependencies=[
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
-    "scikit-learn",
     "scipy",
     "tqdm",
 ]
@@ -71,6 +70,7 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
+    "scikit-learn",
     "ase",
     "captum<0.7.0",
     "graphviz",
