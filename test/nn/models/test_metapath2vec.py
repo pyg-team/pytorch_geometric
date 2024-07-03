@@ -1,11 +1,10 @@
 import torch
 
 from torch_geometric.nn import MetaPath2Vec
-from torch_geometric.testing import withDevice, withPackage
+from torch_geometric.testing import has_package, withDevice
 
 
 @withDevice
-@withPackage('sklearn')
 def test_metapath2vec(device):
     edge_index_dict = {
         ('author', 'writes', 'paper'):
@@ -37,9 +36,10 @@ def test_metapath2vec(device):
     loss = model.loss(pos_rw.to(device), neg_rw.to(device))
     assert 0 <= loss.item()
 
-    acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
-                     torch.ones(20, 16), torch.randint(10, (20, )))
-    assert 0 <= acc and acc <= 1
+    if has_package('sklearn'):
+        acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
+                         torch.ones(20, 16), torch.randint(10, (20, )))
+        assert 0 <= acc and acc <= 1
 
 
 def test_metapath2vec_empty_edges():
