@@ -284,7 +284,7 @@ print("Average Epoch Time on training: {:.4f}".format(
     torch.tensor(train_times).mean()))
 print("Average Epoch Time on inference: {:.4f}".format(
     torch.tensor(inference_times).mean()))
-print("Average Epoch Time: {:.4f}".format(torch.tensor(times).mean()))
+print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
 print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
 print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
 print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
