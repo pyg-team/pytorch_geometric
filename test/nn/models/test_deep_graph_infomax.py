@@ -1,10 +1,11 @@
 import torch
 
 from torch_geometric.nn import GCN, DeepGraphInfomax
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import is_full_test, withDevice, withPackage
 
 
 @withDevice
+@withPackage('sklearn')
 def test_infomax(device):
     def corruption(z):
         return z + 1

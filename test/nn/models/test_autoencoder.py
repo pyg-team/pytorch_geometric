@@ -3,10 +3,11 @@ from torch import Tensor as T
 
 from torch_geometric.data import Data
 from torch_geometric.nn import ARGA, ARGVA, GAE, VGAE
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.transforms import RandomLinkSplit
 
 
+@withPackage('sklearn')
 def test_gae():
     model = GAE(encoder=lambda x: x)
     model.reset_parameters()
