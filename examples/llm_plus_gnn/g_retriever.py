@@ -316,7 +316,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 # GNN+LLM only using 32 tokens to answer.
                 # Allow more output tokens for untrained LLM
                 pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
-                                                   max_out_tokens=256)
+                                                   max_tokens=256)
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
             untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
