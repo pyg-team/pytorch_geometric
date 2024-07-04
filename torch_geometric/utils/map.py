@@ -121,7 +121,7 @@ def map_index(
         if out.is_floating_point() and inclusive:
             raise ValueError("Found invalid entries in 'src' that do not have "
                              "a corresponding entry in 'index'. Set "
-                             "`inclusive=False` to ignore these entries.")
+                             "`inclusive=False` to ignore these entries.") from None
 
         if out.is_floating_point():
             mask = torch.isnan(out).logical_not_()
@@ -151,7 +151,7 @@ def map_index(
             except ValueError:
                 raise ValueError("Found invalid entries in 'src' that do not "
                                  "have a corresponding entry in 'index'. Set "
-                                 "`inclusive=False` to ignore these entries.")
+                                 "`inclusive=False` to ignore these entries.") from None
         else:
             out = from_dlpack(result['right_ser'].fillna(-1).to_dlpack())
 

@@ -276,8 +276,8 @@ class MessagePassing(torch.nn.Module):
                     f"{index.min().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
-
+                    f"your node feature matrix and try again.") from e
+        
             if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
                 raise IndexError(
                     f"Found indices in 'edge_index' that are larger "
@@ -285,9 +285,9 @@ class MessagePassing(torch.nn.Module):
                     f"{index.max().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
-
-            raise e
+                    f"your node feature matrix and try again.") from e
+        
+            raise IndexError(f"Found error in 'edge_index': {e}") from e
 
     def _lift(
         self,
