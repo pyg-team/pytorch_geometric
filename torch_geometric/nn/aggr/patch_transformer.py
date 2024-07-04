@@ -67,9 +67,8 @@ class PatchTransformerAggregation(Aggregation):
         self.out_dim = out_dim
         self.heads = heads
         self.layer_norm = layer_norm
-        self.dropout = dropout
         self.patch_size = patch_size
-        self.dropout = torch.nn.Dropout(dropout)
+        self.dropout = dropout
         self.num_edge_per_node = num_edge_per_node
 
         # encoders and linear layers
@@ -78,14 +77,14 @@ class PatchTransformerAggregation(Aggregation):
         self.layernorm = torch.nn.LayerNorm(self.hidden_dim)
         self.time_encoder = TemporalEncoding(self.time_dim)
         self.atten_blocks = torch.nn.ModuleList([
-            TransformerBlock(dims=self.edge_channels, heads=self.heads,
-                             droout=self.dropout)
+            TransformerBlock(dims=self.hidden_dim, heads=self.heads,
+                             dropout=self.dropout)
             for _ in range(num_encoder_blocks)
         ])
 
         # input is node feature and transformer node embed
         self.mlp_head = torch.nn.Linear(self.hidden_dim + self.channels,
-                                        self.hidden_dim)
+                                        self.out_dim)
 
         # padding
         self.stride = self.patch_size
@@ -113,8 +112,6 @@ class PatchTransformerAggregation(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                      max_num_elements=max_num_elements)
 
         edge_time_feats = self.feat_encoder(edge_feats, edge_ts)
         x_feat = torch.zeros(
@@ -140,7 +137,8 @@ class PatchTransformerAggregation(Aggregation):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
-                f'edge_channels={self.edge_channels}',
-                f'time_dim={self.time_dim}', f'heads={self.heads}, '
-                f'layer_norm={self.layer_norm}, '
+                f'edge_channels={self.edge_channels},'
+                f'time_dim={self.time_dim},'
+                f'heads={self.heads},'
+                f'layer_norm={self.layer_norm},'
                 f'dropout={self.dropout})')

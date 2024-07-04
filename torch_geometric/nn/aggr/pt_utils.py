@@ -19,9 +19,8 @@ class FeatEncoder(torch.nn.Module):
         super().__init__()
 
         self.time_dim = time_dim
-        self.feat_dm = feat_dim
+        self.feat_dim = feat_dim
         self.out_dim = out_dim
-
         self.time_encoder = TemporalEncoding(self.time_dim)
         self.feat_encoder = torch.nn.Linear(self.time_dim + self.feat_dim,
                                             self.out_dim)
