@@ -2,8 +2,6 @@ import copy
 import os
 
 import torch
-import intel_extension_for_pytorch as ipex
-import oneccl_bindings_for_pytorch
 import torch.distributed as dist
 import torch.nn.functional as F
 from torch import Tensor
@@ -154,8 +152,7 @@ def run(world_size: int, rank: int, local_rank: int):
 
 if __name__ == '__main__':
     # Get the world size from the WORLD_SIZE variable or directly from SLURM:
-    world_size = int(
-        os.environ.get('WORLD_SIZE', os.environ.get('PMI_SIZE')))
+    world_size = int(os.environ.get('WORLD_SIZE', os.environ.get('PMI_SIZE')))
     # Likewise for RANK and LOCAL_RANK:
     rank = int(os.environ.get('RANK', os.environ.get('PMI_RANK')))
     local_rank = int(
