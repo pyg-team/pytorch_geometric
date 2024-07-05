@@ -3,7 +3,6 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -76,6 +75,8 @@ class Reddit(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
+        import scipy.sparse as sp
+
         data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
         x = torch.from_numpy(data['feature']).to(torch.float)
         y = torch.from_numpy(data['label']).to(torch.long)

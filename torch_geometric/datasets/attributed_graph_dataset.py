@@ -2,7 +2,6 @@ import os
 import os.path as osp
 from typing import Callable, List, Optional
 
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -156,6 +155,7 @@ class AttributedGraphDataset(InMemoryDataset):
 
     def process(self) -> None:
         import pandas as pd
+        import scipy.sparse as sp
 
         x = sp.load_npz(self.raw_paths[0]).tocsr()
         if x.shape[-1] > 10000 or self.name == 'mag':

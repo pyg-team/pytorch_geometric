@@ -1,13 +1,9 @@
 # Shameless steal from: https://github.com/klicperajo/dimenet
 
 import numpy as np
+import sympy as sym
 from scipy import special as sp
 from scipy.optimize import brentq
-
-try:
-    import sympy as sym
-except ImportError:
-    sym = None
 
 
 def Jn(r, n):

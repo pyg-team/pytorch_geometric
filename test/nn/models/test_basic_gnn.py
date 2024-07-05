@@ -185,7 +185,7 @@ def test_batch(norm):
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
