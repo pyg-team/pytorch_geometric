@@ -138,7 +138,7 @@ def run(world_size: int, rank: int, local_rank: int):
             with torch.no_grad():
                 out = model.module.inference(
                     data.x,
-                    local_rank,
+                    device,
                     subgraph_loader,
                 )
             res = out.argmax(dim=-1) == data.y.to(out.device)
