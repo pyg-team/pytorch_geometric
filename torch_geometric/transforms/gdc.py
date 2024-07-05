@@ -2,7 +2,6 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
-from scipy.linalg import expm
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -473,6 +472,8 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`Tensor`)
         """
+        from scipy.linalg import expm
+
         if symmetric:
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
