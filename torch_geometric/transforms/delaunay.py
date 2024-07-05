@@ -1,4 +1,3 @@
-import scipy.spatial
 import torch
 
 from torch_geometric.data import Data
@@ -12,6 +11,8 @@ class Delaunay(BaseTransform):
     (functional name: :obj:`delaunay`).
     """
     def forward(self, data: Data) -> Data:
+        import scipy.spatial
+
         assert data.pos is not None
 
         if data.pos.size(0) < 2:
