@@ -71,6 +71,7 @@ def run(world_size: int, rank: int, local_rank: int):
     # Will query the runtime environment for `MASTER_ADDR` and `MASTER_PORT`.
     # Make sure, those are set!
     dist.init_process_group('ccl', world_size=world_size, rank=rank)
+    device = torch.device(f'xpu:{local_rank}')
 
     # Download and unzip only with one process ...
     if rank == 0:
@@ -84,7 +85,7 @@ def run(world_size: int, rank: int, local_rank: int):
     data = dataset[0]
 
     # Move to device for faster feature fetch.
-    data = data.to(local_rank, 'x', 'y')
+    data = data.to(device, 'x', 'y')
 
     # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
@@ -113,7 +114,7 @@ def run(world_size: int, rank: int, local_rank: int):
         subgraph_loader.data.node_id = torch.arange(data.num_nodes)
 
     torch.manual_seed(12345)
-    model = SAGE(dataset.num_features, 256, dataset.num_classes).to(local_rank)
+    model = SAGE(dataset.num_features, 256, dataset.num_classes).to(device)
     model = DistributedDataParallel(model, device_ids=[local_rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
@@ -122,7 +123,7 @@ def run(world_size: int, rank: int, local_rank: int):
         for batch in train_loader:
             optimizer.zero_grad()
             out = model(batch.x,
-                        batch.edge_index.to(local_rank))[:batch.batch_size]
+                        batch.edge_index.to(device))[:batch.batch_size]
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
