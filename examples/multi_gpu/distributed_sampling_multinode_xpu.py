@@ -91,7 +91,7 @@ def run(world_size: int, rank: int, local_rank: int):
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
 
-    kwargs = dict(batch_size=1024, num_workers=4)
+    kwargs = dict(batch_size=1024, num_workers=0, persistent_workers=True)
     train_loader = NeighborLoader(
         data,
         input_nodes=train_idx,
