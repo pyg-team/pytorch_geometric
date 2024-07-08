@@ -28,6 +28,7 @@ from .gnnff import GNNFF
 from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
+from .mplp import MPLP_GCN, MPLP
 
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
@@ -75,4 +76,6 @@ __all__ = classes = [
     'PMLP',
     'NeuralFingerprint',
     'ViSNet',
+    'MPLP_GCN',
+    'MPLP',
 ]
