@@ -64,7 +64,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 10
         run: |
-          FULL_TEST=1 pytest --cov --cov-report=xml --durations 10
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Linux' }}
