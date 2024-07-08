@@ -18,12 +18,6 @@ class PatchTransformerAggregation(Aggregation):
     from `"Simplifying Temporal Heterogeneous Network for
     Continuous-Time Link Prediction
     "<https://dl.acm.org/doi/pdf/10.1145/3583780.3615059>`_paper.
-    .. note::
-        :class:`PatchTransformerAggregation` requires indices :obj:`index`,
-        edge features :obj:`edge_feats` and edge timestamps :obj:`edge_ts`
-        as input.
-        The output dimension must be fixed
-        and can be set via `out_dim` argument.
 
     Args:
         channels (int): Size of each edge feature
