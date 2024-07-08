@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 from torch_geometric.nn.aggr.utils import MultiheadAttentionBlock
 from torch_geometric.nn.encoding import TemporalEncoding
@@ -10,18 +11,25 @@ class FeatEncoder(torch.nn.Module):
     r"""Returns [raw_edge_feat | TimeEncode(edge_time_stamp)].
 
     Args:
-        time_dim (int): size of the time embedding.
         feat_dim (int): edge feature dimension.
         out_dim (int): output dimension.
+        time_dim (int, optional): time embedding dimension,
+
+
     """
-    def __init__(self, time_dim: int = 16, feat_dim: int = 16,
-                 out_dim: int = 16):
+    def __init__(
+        self,
+        feat_dim: int = 16,
+        out_dim: int = 16,
+        time_dim: int = 0,
+    ):
         super().__init__()
 
-        self.time_dim = time_dim
         self.feat_dim = feat_dim
         self.out_dim = out_dim
-        self.time_encoder = TemporalEncoding(self.time_dim)
+        self.time_dim = time_dim
+        if self.time_dim > 0:
+            self.time_encoder = TemporalEncoding(self.time_dim)
         self.feat_encoder = torch.nn.Linear(self.time_dim + self.feat_dim,
                                             self.out_dim)
         self.reset_parameters()
@@ -31,9 +39,12 @@ class FeatEncoder(torch.nn.Module):
             self.time_encoder.reset_parameters()
         self.feat_encoder.reset_parameters()
 
-    def forward(self, edge_feats, edge_ts):
-        edge_time_feats = self.time_encoder(edge_ts)
-        x = torch.cat([edge_feats, edge_time_feats], dim=1)
+    def forward(self, edge_feats: Tensor, edge_ts: Tensor = None):
+        if (self.time_dim > 0):
+            edge_time_feats = self.time_encoder(edge_ts)
+            x = torch.cat([edge_feats, edge_time_feats], dim=1)
+        else:
+            x = edge_feats
         return self.feat_encoder(x)
 
 
