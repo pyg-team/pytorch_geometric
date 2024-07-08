@@ -26,8 +26,7 @@ class PatchTransformerAggregation(Aggregation):
         and can be set via `out_dim` argument.
 
     Args:
-        channels (int): Size of each input sample, node embedding size
-        edge_channels (int): edge embedding size.
+        channels (int): Size of each edge feature
         use to specify the time embedding dimension of edge timestamps
         hidden_dim (int, optional): hidden dimension
         out_dim (int, optional): output dimension
@@ -60,9 +59,7 @@ class PatchTransformerAggregation(Aggregation):
         time_dim: int = 0,
     ):
         super().__init__()
-        # node dim
         self.channels = channels
-        self.edge_channels = edge_channels
         self.time_dim = time_dim
         self.hidden_dim = hidden_dim
         self.out_dim = out_dim
@@ -73,7 +70,7 @@ class PatchTransformerAggregation(Aggregation):
         self.max_edge = max_edge
 
         # encoders and linear layers
-        self.feat_encoder = FeatEncoder(self.edge_channels, self.hidden_dim,
+        self.feat_encoder = FeatEncoder(self.channels, self.hidden_dim,
                                         time_dim=self.time_dim)
         self.layernorm = torch.nn.LayerNorm(self.hidden_dim)
         self.atten_blocks = torch.nn.ModuleList([
@@ -149,7 +146,6 @@ class PatchTransformerAggregation(Aggregation):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
-                f'edge_channels={self.edge_channels},'
                 f'heads={self.heads},'
                 f'layer_norm={self.layer_norm},'
                 f'dropout={self.dropout})')

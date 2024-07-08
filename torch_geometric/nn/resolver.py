@@ -73,6 +73,7 @@ def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     ]
     aggr_dict = {
         'add': aggr.SumAggregation,
+        'patch_transformer': aggr.PatchTransformerAggregation,
     }
     return resolver(aggrs, aggr_dict, query, base_cls, None, *args, **kwargs)
 
