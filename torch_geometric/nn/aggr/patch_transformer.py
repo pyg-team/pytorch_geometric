@@ -47,7 +47,6 @@ class PatchTransformerAggregation(Aggregation):
     def __init__(
         self,
         channels: int,
-        edge_channels: int,
         hidden_dim: int = 64,
         out_dim: int = 128,
         max_edge: int = 16,
