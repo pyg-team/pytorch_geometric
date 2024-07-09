@@ -479,7 +479,7 @@ class HeteroDictLinear(torch.nn.Module):
             lin = self.lins[key]
             if is_uninitialized_parameter(lin.weight):
                 self.lins[key].initialize_parameters(None, x)
-        self.reset_parameters()
+                self.lins[key].reset_parameters()
         self._hook.remove()
         self.in_channels = {key: x.size(-1) for key, x in input[0].items()}
         delattr(self, '_hook')
