@@ -4,13 +4,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.nlp.llm import (
-    EOS,
-    IGNORE_INDEX,
-    LLM,
-    MAX_NEW_TOKENS,
-    MAX_TXT_LEN,
-)
+from torch_geometric.nn.nlp.llm import EOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
@@ -179,12 +173,19 @@ class GRetriever(nn.Module):
         batch_label_input_ids = []
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         for i in range(batch_size):
-            label_input_ids = self.llm_to_use._label_input_ids(label, eos_tokens)
-            input_ids = self.llm_to_use._input_ids(additional_text_context, question, eos_user_tokens)
+            label_input_ids = self.llm_to_use._label_input_ids(
+                label, eos_tokens)
+            input_ids = self.llm_to_use._input_ids(additional_text_context,
+                                                   question, eos_user_tokens)
             input_ids += label_input_ids
-            inputs_embeds = self.llm_to_use._inputs_embeds(input_ids, bos_embeds, graph_embeds[i].unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self.llm_to_use.append_embeds(inputs_embeds, batch_inputs_embeds, batch_attention_mask, label_input_ids, batch_label_input_ids)
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use.pad_embeds(batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
+            inputs_embeds = self.llm_to_use._inputs_embeds(
+                input_ids, bos_embeds, graph_embeds[i].unsqueeze(0)
+                if num_nodes_per_graph[i] != 0 else None)
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self.llm_to_use.append_embeds(
+                inputs_embeds, batch_inputs_embeds, batch_attention_mask,
+                label_input_ids, batch_label_input_ids)
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use.pad_embeds(
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
@@ -237,11 +238,16 @@ class GRetriever(nn.Module):
         batch_attention_mask = []
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         for i in range(batch_size):
-            input_ids = self.llm_to_use._input_ids(additional_text_context, question, eos_user_tokens)
-            inputs_embeds = self.llm_to_use._inputs_embeds(input_ids, bos_embeds, graph_embeds[i].unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
-            batch_inputs_embeds, batch_attention_mask, _ = self.llm_to_use.append_embeds(inputs_embeds, batch_inputs_embeds, batch_attention_mask)
+            input_ids = self.llm_to_use._input_ids(additional_text_context,
+                                                   question, eos_user_tokens)
+            inputs_embeds = self.llm_to_use._inputs_embeds(
+                input_ids, bos_embeds, graph_embeds[i].unsqueeze(0)
+                if num_nodes_per_graph[i] != 0 else None)
+            batch_inputs_embeds, batch_attention_mask, _ = self.llm_to_use.append_embeds(
+                inputs_embeds, batch_inputs_embeds, batch_attention_mask)
 
-        inputs_embeds, attention_mask, _ = self.llm_to_use.pad_embeds(batch_inputs_embeds, batch_attention_mask)
+        inputs_embeds, attention_mask, _ = self.llm_to_use.pad_embeds(
+            batch_inputs_embeds, batch_attention_mask)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
