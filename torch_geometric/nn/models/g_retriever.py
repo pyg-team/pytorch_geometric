@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.nlp.llm import EOS, LLM, MAX_NEW_TOKENS
+from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
@@ -160,9 +160,12 @@ class GRetriever(nn.Module):
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None) for i, embed in enumerate(self.projector(graph_embeds))]
+        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None)
+                        for i, embed in enumerate(self.projector(graph_embeds))
+                        ]
 
-        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(question, context, graph_embeds, answer)
+        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
+            question, context, graph_embeds, answer)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
@@ -208,8 +211,11 @@ class GRetriever(nn.Module):
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None) for i, embed in enumerate(self.projector(graph_embeds))]
-        inputs_embeds, attention_mask, _ = self._get_embeds(question, context, graph_embeds)
+        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None)
+                        for i, embed in enumerate(self.projector(graph_embeds))
+                        ]
+        inputs_embeds, attention_mask, _ = self._get_embeds(
+            question, context, graph_embeds)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,

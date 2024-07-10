@@ -1,4 +1,3 @@
-import warnings
 from contextlib import nullcontext
 from typing import Any, Dict, List, Optional
 
@@ -143,8 +142,8 @@ class LLM(torch.nn.Module):
         return inputs_embeds
 
     def _append_embeds(self, inputs_embeds, batch_inputs_embeds,
-                      batch_attention_mask, label_input_ids=None,
-                      batch_label_input_ids=None):
+                       batch_attention_mask, label_input_ids=None,
+                       batch_label_input_ids=None):
         batch_inputs_embeds.append(inputs_embeds)
         batch_attention_mask.append([1] * inputs_embeds.size(0))
         if label_input_ids is not None:
@@ -154,7 +153,7 @@ class LLM(torch.nn.Module):
         return batch_inputs_embeds, batch_attention_mask, batch_label_input_ids
 
     def _pad_embeds(self, batch_inputs_embeds, batch_attention_mask,
-                   batch_label_input_ids=None):
+                    batch_label_input_ids=None):
         max_length = max([x.size(0) for x in batch_inputs_embeds])
         for i in range(batch_size):
             pad = max_length - batch_inputs_embeds[i].size(0)
@@ -224,7 +223,8 @@ class LLM(torch.nn.Module):
                 :obj:`context` or :obj:`embedding` should be used, not
                 both. (default: :obj:`None`)
         """
-        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(question, context, embedding, answer)
+        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
+            question, context, embedding, answer)
 
         with self.autocast_context:
             outputs = self.llm(
@@ -257,7 +257,8 @@ class LLM(torch.nn.Module):
             max_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
         """
-        inputs_embeds, attention_mask, _ = self._get_embeds(question, context, embedding)
+        inputs_embeds, attention_mask, _ = self._get_embeds(
+            question, context, embedding)
 
         bos_token = self.tokenizer(
             BOS,
