@@ -1,9 +1,11 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import Delaunay
 
 
+@withPackage('scipy')
 def test_delaunay():
     assert str(Delaunay()) == 'Delaunay()'
 
