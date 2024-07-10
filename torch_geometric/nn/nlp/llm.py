@@ -117,6 +117,61 @@ class LLM(torch.nn.Module):
         return (batch_size, questions, context, eos_user_tokens, bos_embeds,
                 pad_embeds)
 
+    def _label_input_ids(self, label, eos_tokens):
+        label_input_ids = label.input_ids[i][:MAX_NEW_TOKENS]
+        label_input_ids += eos_tokens.input_ids  # Add EOS token.
+        return label_input_ids
+
+    def _input_ids(self, context, question, eos_user_tokens):
+        input_ids: List[int] = []
+        if context is not None:
+            input_ids += context.input_ids[i][:MAX_TXT_LEN]
+        input_ids += question.input_ids[i]
+        input_ids += eos_user_tokens.input_ids
+        return input_ids
+
+    def _inputs_embeds(self, input_ids, bos_embeds, embedding=None):
+        inputs_embeds = self.word_embedding(
+            torch.tensor(input_ids, device=self.llm_device))
+
+        to_cat = [bos_embeds]
+        if embedding is not None:
+            to_cat.append(embedding[i])
+        to_cat.append(inputs_embeds)
+        inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat], dim=0)
+        return inputs_embeds
+
+    def append_embeds(self, inputs_embeds, batch_inputs_embeds, batch_attention_mask, label_input_ids=None, batch_label_input_ids=None):
+        batch_inputs_embeds.append(inputs_embeds)
+        batch_attention_mask.append([1] * inputs_embeds.size(0))
+        if label_input_ids is not None:
+            label_input_ids = [IGNORE_INDEX] * (
+                inputs_embeds.size(0) - len(label_input_ids)) + label_input_ids
+            batch_label_input_ids.append(label_input_ids)
+        return batch_inputs_embeds, batch_attention_mask, batch_label_input_ids
+
+    def pad_embeds(batch_inputs_embeds, batch_attention_mask, batch_label_input_ids=None):
+        max_length = max([x.size(0) for x in batch_inputs_embeds])
+        for i in range(batch_size):
+            pad = max_length - batch_inputs_embeds[i].size(0)
+            batch_inputs_embeds[i] = torch.cat([
+                pad_embeds.repeat(pad, 1),
+                batch_inputs_embeds[i],
+            ])
+            batch_attention_mask[i] = [0] * pad + batch_attention_mask[i]
+            if batch_label_input_ids is not None:
+                batch_label_input_ids[i] = ([IGNORE_INDEX] * pad +
+                                            batch_label_input_ids[i])
+        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
+        attention_mask = torch.tensor(batch_attention_mask,
+                                      device=self.llm_device)
+        if batch_label_input_ids is not None:
+            label_input_ids = torch.tensor(batch_label_input_ids,
+                                           device=self.llm_device)
+        else:
+            label_input_ids = None
+        return inputs_embeds, attention_mask, label_input_ids
+
     def forward(
         self,
         question: List[str],
@@ -150,48 +205,15 @@ class LLM(torch.nn.Module):
         batch_attention_mask = []
         batch_label_input_ids = []
         for i in range(batch_size):
-            label_input_ids = label.input_ids[i][:MAX_NEW_TOKENS]
-            label_input_ids += eos_tokens.input_ids  # Add EOS token.
-
-            input_ids: List[int] = []
-            if context is not None:
-                input_ids += context.input_ids[i][:MAX_TXT_LEN]
-            input_ids += question.input_ids[i]
-            input_ids += eos_user_tokens.input_ids
+            label_input_ids = self._label_input_ids(label, eos_tokens)
+            input_ids = self._input_ids(context, question, eos_user_tokens)
             input_ids += label_input_ids
 
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids, device=self.llm_device))
+            inputs_embeds = self._inputs_embeds(input_ids, bos_embeds, embedding)
 
-            to_cat = [bos_embeds]
-            if embedding is not None:
-                to_cat.append(embedding[i])
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat(to_cat, dim=0)
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self.append_embeds(inputs_embeds, batch_inputs_embeds, batch_attention_mask, label_input_ids, batch_label_input_ids)
 
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.size(0))
-            label_input_ids = [IGNORE_INDEX] * (
-                inputs_embeds.size(0) - len(label_input_ids)) + label_input_ids
-            batch_label_input_ids.append(label_input_ids)
-
-        # Pad input embeddings:
-        max_length = max([x.size(0) for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad = max_length - batch_inputs_embeds[i].size(0)
-            batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad, 1),
-                batch_inputs_embeds[i],
-            ])
-            batch_attention_mask[i] = [0] * pad + batch_attention_mask[i]
-            batch_label_input_ids[i] = ([IGNORE_INDEX] * pad +
-                                        batch_label_input_ids[i])
-
-        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
-        attention_mask = torch.tensor(batch_attention_mask,
-                                      device=self.llm_device)
-        label_input_ids = torch.tensor(batch_label_input_ids,
-                                       device=self.llm_device)
+        inputs_embeds, attention_mask, label_input_ids = self.pad_embeds(batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
 
         with self.autocast_context:
             outputs = self.llm(
@@ -235,37 +257,14 @@ class LLM(torch.nn.Module):
         batch_attention_mask = []
         for i in range(batch_size):
             input_ids: List[int] = []
-            if context is not None:
-                input_ids = context.input_ids[i][:MAX_TXT_LEN]
-            input_ids += question.input_ids[i]
-            input_ids += eos_user_tokens.input_ids
+            input_ids = self._input_ids(context, question, eos_user_tokens)
 
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids, device=self.llm_device))
+            inputs_embeds = self._inputs_embeds(input_ids, bos_embeds, embedding)
 
-            to_cat = [bos_embeds]
-            if embedding is not None:
-                to_cat.append(embedding[i])
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat(to_cat, dim=0)
+            batch_inputs_embeds, batch_attention_mask, _ = self.append_embeds(inputs_embeds, batch_inputs_embeds, batch_attention_mask)
 
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.size(0))
 
-        # Pad input embeddings:
-        max_length = max([x.size(0) for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad = max_length - batch_inputs_embeds[i].size(0)
-            batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad, 1),
-                batch_inputs_embeds[i],
-            ])
-            batch_attention_mask[i] = [0] * pad + batch_attention_mask[i]
-
-        inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
-        attention_mask = torch.tensor(batch_attention_mask,
-                                      device=self.llm_device)
-
+        inputs_embeds, attention_mask, _ = self.pad_embeds(batch_inputs_embeds, batch_attention_mask)
         bos_token = self.tokenizer(
             BOS,
             add_special_tokens=False,
