@@ -172,6 +172,7 @@ class LLM(torch.nn.Module):
             label_input_ids = None
         return inputs_embeds, attention_mask, label_input_ids
 
+    def _get_embeds
     def forward(
         self,
         question: List[str],
