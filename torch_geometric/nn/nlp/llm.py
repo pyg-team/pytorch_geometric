@@ -142,7 +142,7 @@ class LLM(torch.nn.Module):
                                   dim=0)
         return inputs_embeds
 
-    def append_embeds(self, inputs_embeds, batch_inputs_embeds,
+    def _append_embeds(self, inputs_embeds, batch_inputs_embeds,
                       batch_attention_mask, label_input_ids=None,
                       batch_label_input_ids=None):
         batch_inputs_embeds.append(inputs_embeds)
@@ -153,7 +153,7 @@ class LLM(torch.nn.Module):
             batch_label_input_ids.append(label_input_ids)
         return batch_inputs_embeds, batch_attention_mask, batch_label_input_ids
 
-    def pad_embeds(batch_inputs_embeds, batch_attention_mask,
+    def _pad_embeds(self, batch_inputs_embeds, batch_attention_mask,
                    batch_label_input_ids=None):
         max_length = max([x.size(0) for x in batch_inputs_embeds])
         for i in range(batch_size):
@@ -176,7 +176,35 @@ class LLM(torch.nn.Module):
             label_input_ids = None
         return inputs_embeds, attention_mask, label_input_ids
 
-    def _get_embeds
+    def _get_embeds(self, question, context=None, embedding=None, answer=None):
+        (batch_size, question, context, eos_user_tokens, bos_embeds,
+         pad_embeds) = self._encode_inputs(question, context)
+        if answer is not None:
+            label = self.tokenizer(answer, add_special_tokens=False)
+            eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
+            batch_label_input_ids = []
+        else:
+            batch_label_input_ids = None
+
+        batch_inputs_embeds = []
+        batch_attention_mask = []
+        for i in range(batch_size):
+            if answer is not None:
+                label_input_ids = self._label_input_ids(label, eos_tokens)
+            input_ids = self._input_ids(context, question, eos_user_tokens)
+            input_ids += label_input_ids
+
+            inputs_embeds = self._inputs_embeds(input_ids, bos_embeds,
+                                                embedding[i])
+
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self._append_embeds(
+                inputs_embeds, batch_inputs_embeds, batch_attention_mask,
+                label_input_ids, batch_label_input_ids)
+
+        inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
+        return inputs_embeds, attention_mask, label_input_ids
+
     def forward(
         self,
         question: List[str],
@@ -193,36 +221,10 @@ class LLM(torch.nn.Module):
                 LLM, such as textified knowledge graphs. (default: :obj:`None`)
             embedding (list[torch.Tensor], optional): RAG embedding
                 tensors, *i.e.* the embedded form of :obj:`context`. Either
-                :obj:`context` or :obj:`rag_embeddings` should be used, not
+                :obj:`context` or :obj:`embedding` should be used, not
                 both. (default: :obj:`None`)
         """
-        if context is not None and embedding is not None:
-            warnings.warn("Using both 'context' and 'embedding' is a waste of "
-                          "compute and memory")
-
-        (batch_size, question, context, eos_user_tokens, bos_embeds,
-         pad_embeds) = self._encode_inputs(question, context)
-
-        label = self.tokenizer(answer, add_special_tokens=False)
-        eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
-
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        batch_label_input_ids = []
-        for i in range(batch_size):
-            label_input_ids = self._label_input_ids(label, eos_tokens)
-            input_ids = self._input_ids(context, question, eos_user_tokens)
-            input_ids += label_input_ids
-
-            inputs_embeds = self._inputs_embeds(input_ids, bos_embeds,
-                                                embedding)
-
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self.append_embeds(
-                inputs_embeds, batch_inputs_embeds, batch_attention_mask,
-                label_input_ids, batch_label_input_ids)
-
-        inputs_embeds, attention_mask, label_input_ids = self.pad_embeds(
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
+        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(question, context, embedding, answer)
 
         with self.autocast_context:
             outputs = self.llm(
@@ -250,32 +252,13 @@ class LLM(torch.nn.Module):
                 LLM, such as textified knowledge graphs. (default: :obj:`None`)
             embedding (list[torch.Tensor], optional): RAG embedding
                 tensors, *i.e.* the embedded form of :obj:`context`. Either
-                :obj:`context` or :obj:`rag_embeddings` should be used, not
+                :obj:`context` or :obj:`embedding` should be used, not
                 both. (default: :obj:`None`)
             max_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
         """
-        if context is not None and embedding is not None:
-            warnings.warn("Using both 'context' and 'embedding' is a waste of "
-                          "compute and memory")
+        inputs_embeds, attention_mask, _ = self._get_embeds(question, context, embedding)
 
-        (batch_size, question, context, eos_user_tokens, bos_embeds,
-         pad_embeds) = self._encode_inputs(question, context)
-
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        for i in range(batch_size):
-            input_ids: List[int] = []
-            input_ids = self._input_ids(context, question, eos_user_tokens)
-
-            inputs_embeds = self._inputs_embeds(input_ids, bos_embeds,
-                                                embedding)
-
-            batch_inputs_embeds, batch_attention_mask, _ = self.append_embeds(
-                inputs_embeds, batch_inputs_embeds, batch_attention_mask)
-
-        inputs_embeds, attention_mask, _ = self.pad_embeds(
-            batch_inputs_embeds, batch_attention_mask)
         bos_token = self.tokenizer(
             BOS,
             add_special_tokens=False,

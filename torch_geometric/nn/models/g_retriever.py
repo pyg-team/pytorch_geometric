@@ -157,35 +157,13 @@ class GRetriever(nn.Module):
             additional_text_context (List[str], optional): Additional context
                 to give to the LLM, such as textified knowledge graphs.
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
-        # encode labels
-        labels = self.tokenizer(label, add_special_tokens=False)
-        # encode training specific special token
-        eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
-
-        # encode graphs
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = self.projector(graph_embeds)
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        batch_label_input_ids = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            label_input_ids = self.llm_to_use._label_input_ids(
-                label, eos_tokens)
-            input_ids = self.llm_to_use._input_ids(additional_text_context,
-                                                   question, eos_user_tokens)
-            input_ids += label_input_ids
-            inputs_embeds = self.llm_to_use._inputs_embeds(
-                input_ids, bos_embeds, graph_embeds[i].unsqueeze(0)
-                if num_nodes_per_graph[i] != 0 else None)
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self.llm_to_use.append_embeds(
-                inputs_embeds, batch_inputs_embeds, batch_attention_mask,
-                label_input_ids, batch_label_input_ids)
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use.pad_embeds(
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
+        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None) for i, embed in enumerate(self.projector(graph_embeds))]
+
+        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(question, context, graph_embeds, answer)
+
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
@@ -227,28 +205,11 @@ class GRetriever(nn.Module):
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: {32})
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
-        # encode graphs
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = self.projector(graph_embeds)
-
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            input_ids = self.llm_to_use._input_ids(additional_text_context,
-                                                   question, eos_user_tokens)
-            inputs_embeds = self.llm_to_use._inputs_embeds(
-                input_ids, bos_embeds, graph_embeds[i].unsqueeze(0)
-                if num_nodes_per_graph[i] != 0 else None)
-            batch_inputs_embeds, batch_attention_mask, _ = self.llm_to_use.append_embeds(
-                inputs_embeds, batch_inputs_embeds, batch_attention_mask)
-
-        inputs_embeds, attention_mask, _ = self.llm_to_use.pad_embeds(
-            batch_inputs_embeds, batch_attention_mask)
-
+        graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None) for i, embed in enumerate(self.projector(graph_embeds))]
+        inputs_embeds, attention_mask, _ = self._get_embeds(question, context, graph_embeds)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
