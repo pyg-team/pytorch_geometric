@@ -164,7 +164,7 @@ class GRetriever(nn.Module):
                         for i, embed in enumerate(self.projector(graph_embeds))
                         ]
 
-        inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
@@ -214,7 +214,7 @@ class GRetriever(nn.Module):
         graph_embeds = [(embed if num_nodes_per_graph[i] != 0 else None)
                         for i, embed in enumerate(self.projector(graph_embeds))
                         ]
-        inputs_embeds, attention_mask, _ = self._get_embeds(
+        inputs_embeds, attention_mask, _ = self.llm_to_use._get_embeds(
             question, additional_text_context, graph_embeds)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
