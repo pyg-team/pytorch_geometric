@@ -152,8 +152,8 @@ class LLM(torch.nn.Module):
             batch_label_input_ids.append(label_input_ids)
         return batch_inputs_embeds, batch_attention_mask, batch_label_input_ids
 
-    def _pad_embeds(self, pad_embeds, batch_inputs_embeds, batch_attention_mask,
-                    batch_label_input_ids=None):
+    def _pad_embeds(self, pad_embeds, batch_inputs_embeds,
+                    batch_attention_mask, batch_label_input_ids=None):
         max_length = max([x.size(0) for x in batch_inputs_embeds])
         batch_size = len(batch_inputs_embeds)
         for i in range(batch_size):
@@ -197,12 +197,13 @@ class LLM(torch.nn.Module):
             inputs_embeds = self._inputs_embeds(i, input_ids, bos_embeds,
                                                 embedding)
 
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self._append_embeds( # noqa
+            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = self._append_embeds(  # noqa
                 inputs_embeds, batch_inputs_embeds, batch_attention_mask,
                 label_input_ids, batch_label_input_ids)
 
         inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
-            pad_embeds, batch_inputs_embeds, batch_attention_mask, batch_label_input_ids)
+            pad_embeds, batch_inputs_embeds, batch_attention_mask,
+            batch_label_input_ids)
         return inputs_embeds, attention_mask, label_input_ids
 
     def forward(
