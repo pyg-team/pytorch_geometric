@@ -16,6 +16,8 @@ import pandas as pd
 import torch
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
+import torch.nn as nn
+from typing import Callable, List, Type, Dict, Any
 
 from torch_geometric import seed_everything
 from torch_geometric.data import Dataset
@@ -127,9 +129,10 @@ def inference_step(model, batch, model_save_name):
                                batch.desc)
 
 
+
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None,
-          checkpointing=False, tiny_llama=False):
+          checkpointing=False, tiny_llama=False, model_save_name=None):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -156,6 +159,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     train_dataset = [dataset[i] for i in idx_split['train']]
     val_dataset = [dataset[i] for i in idx_split['val']]
     test_dataset = [dataset[i] for i in idx_split['test']]
+    print(len(train_dataset), len(val_dataset), len(test_dataset))
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
@@ -179,10 +183,11 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
             model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf",
                                gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers)
-    if num_gnn_layers is not None:
-        model_save_name = "gnn_llm"
-    else:
-        model_save_name = "llm"
+    if model_save_name is None:
+        if num_gnn_layers is not None:
+            model_save_name = "gnn_llm"
+        else:
+            model_save_name = "llm"
 
     # Step 3 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -274,6 +279,133 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     torch.save(eval_output, model_save_name + "_eval_outs.pt")
     print("Done!")
     return prep_time, dataset, eval_output
+
+def _eval_hallucinations_on_loader(outs, loader, eval_batch_size):
+    model_save_list = []
+    model_preds = []
+    for out in outs:
+        model_preds += out['pred']
+    for i, batch in enumerate(loader):
+        correct_answer = batch.label
+
+        model_pred = model_preds[i*eval_batch_size:(i+1)*eval_batch_size]
+        model_hallucinates = detect_hallucinate(model_pred,
+                                                correct_answer)
+        model_save_list += [tup for tup in zip(model_pred, model_hallucinates)]
+    return model_save_list
+
+
+def benchmark_models(models: List[Type[nn.Module]], model_names: List[str], model_kwargs: List[Dict[str, Any]], dataset: Dataset, lr: float, epochs: int, batch_size: int, eval_batch_size: int, loss_fn: Callable, inference_fn: Callable, skip_LLMs: bool = True, tiny_llama: bool = False, checkpointing: bool = True):
+
+    model_log: Dict[str, Dict[str, Any]] = dict()
+    idx_split = dataset.split_idxs
+    test_dataset = [dataset[i] for i in idx_split['test']]
+    loader = DataLoader(test_dataset, batch_size=eval_batch_size, drop_last=False,
+                        pin_memory=True, shuffle=False)
+
+    if not skip_LLMs:
+        if tiny_llama:
+            pure_llm = LLM(
+                model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                num_params=1,
+            )
+        else:
+            pure_llm = LLM(model_name="llama2-7b", num_params=7)
+
+        if not path.exists("pure_llm_model_log.pt"):
+            model_log["pure_llm"] = dict()
+            
+            pure_preds = []
+            for batch in tqdm(loader):
+                pure_llm_preds = pure_llm.inference(batch.question, batch.desc, max_tokens=256)
+                pure_preds += pure_llm_preds
+            pure_preds = [{"pred": pred} for pred in pure_preds]
+
+            model_log["pure_llm"]["preds"] = pure_preds
+            model_log["pure_llm"]["hallucinates_list"] = _eval_hallucinations_on_loader(pure_preds, loader, eval_batch_size)
+            torch.save(model_log["pure_llm"], "pure_llm_model_log.pt")
+        else:
+            model_log["pure_llm"] = torch.load("pure_llm_model_log.pt")
+
+        # LORA
+        if not path.exists("tuned_llm_model_log.pt"):
+            model_log["tuned_llm"] = dict()
+            since = time.time()
+            gc.collect()
+            prep_time, _, lora_eval_outs = train(since, epochs, None, None, batch_size, eval_batch_size, lr, loss_fn, inference_fn, model=pure_llm, dataset=dataset)
+            torch.cuda.empty_cache()
+            torch.cuda.reset_max_memory_allocated()
+            gc.collect()
+            e2e_time = round(time.time() - since, 2)
+            model_log["tuned_llm"]["prep_time"] = prep_time
+            model_log["tuned_llm"]["e2e_time"] = e2e_time
+            model_log["tuned_llm"]["eval_output"] = lora_eval_outs
+            print("E2E time (e2e_time) =", e2e_time, "seconds")
+            print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
+
+            model_log["tuned_llm"]["hallucinates_list"] = _eval_hallucinations_on_loader(lora_eval_outs, loader, eval_batch_size)
+            torch.save(model_log["tuned_llm"], "tuned_llm_model_log.pt")
+        else:
+            model_log["tuned_llm"] = torch.load("tuned_llm_model_log.pt")
+        
+        del pure_llm
+        gc.collect()
+     
+    # All other models
+    for name, Model, kwargs in zip(model_names, models, model_kwargs):
+        model_log[name] = dict()
+        train_model = True
+        if path.exists(f"{name}.pt"):
+            print(f"Model {name} appears to already exist.")
+            print("Would you like to retrain?")
+            train_model = str(input("(y/n):")).lower() == "y"
+        
+        if train_model:
+            since = time.time()
+            gc.collect()
+            model = Model(**kwargs)
+            prep_time, _, model_eval_outs = train(
+                since=since, num_epochs=epochs, hidden_channels=None, num_gnn_layers=None,
+                batch_size=batch_size, eval_batch_size=eval_batch_size, lr=lr, loss_fn=loss_fn,
+                inference_fn=inference_fn, checkpointing=checkpointing,
+                tiny_llama=tiny_llama, dataset=dataset, model_save_name=name, model=model)
+            torch.cuda.empty_cache()
+            torch.cuda.reset_max_memory_allocated()
+            gc.collect()
+            e2e_time = round(time.time() - since, 2)
+            model_log[name]["prep_time"] = prep_time
+            model_log[name]["e2e_time"] = e2e_time
+            model_log[name]["eval_output"] = model_eval_outs
+            print("E2E time (e2e_time) =", e2e_time, "seconds")
+            print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
+            del model
+            gc.collect()
+        else:
+            model_eval_outs = torch.load(f"{name}_eval_outs.pt")
+        
+        # Calculate Hallucinations
+        skip_hallucination_detection = False
+
+        if path.exists(f"{name}_model_log.pt"):
+            print(f"Saved outputs for {name} have been found.")
+            print("Would you like to redo?")
+            user_input = str(input("(y/n):")).lower()
+            skip_hallucination_detection = user_input != "y"
+
+
+        if not skip_hallucination_detection:
+            model_save_list = _eval_hallucinations_on_loader(model_eval_outs, loader, eval_batch_size)
+ 
+            model_log[name]["hallucinates_list"] = model_save_list
+            torch.save(model_log[name], f"{name}_model_log.pt")
+        else:
+            model_log[name]["hallucinates_list"] = torch.load(f"{name}_model_log.pt")["hallucinates_list"]
+    
+    hal_dict = {k: [tup[1] for tup in v["hallucinates_list"]] for (k, v) in model_log.items()}
+    hallucinates_df = pd.DataFrame(hal_dict)
+    for col in hallucinates_df.columns:
+        print(f"Hallucinates for {col}:")
+        print(hallucinates_df[col].value_counts())
 
 
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
