@@ -188,11 +188,17 @@ class LLM(torch.nn.Module):
 
         batch_inputs_embeds = []
         batch_attention_mask = []
+        if answer is not None:
+            batch_label_input_ids = []
+        else:
+            batch_label_input_ids = None
         for i in range(batch_size):
             input_ids = self._input_ids(i, context, question, eos_user_tokens)
             if answer is not None:
                 label_input_ids = self._label_input_ids(i, label, eos_tokens)
                 input_ids += label_input_ids
+            else:
+                label_input_ids = None
 
             inputs_embeds = self._inputs_embeds(i, input_ids, bos_embeds,
                                                 embedding)
