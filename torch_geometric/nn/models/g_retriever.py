@@ -160,9 +160,10 @@ class GRetriever(nn.Module):
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = [(embed.unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
-                        for i, embed in enumerate(self.projector(graph_embeds))
-                        ]
+        graph_embeds = [
+            (embed.unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
+            for i, embed in enumerate(self.projector(graph_embeds))
+        ]
 
         inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(
             question, additional_text_context, graph_embeds, label)
