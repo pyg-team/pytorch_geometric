@@ -18,9 +18,10 @@
 | [`data_parallel.py`](./data_parallel.py)                                           | single-node | Example for training GNNs on multiple graphs. Note that [`torch_geometric.nn.DataParallel`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.data_parallel.DataParallel) is deprecated and [discouraged](https://github.com/pytorch/pytorch/issues/65936). |
 
 ## Examples with Intel GPUs (XPUs)
+
 Please refer to the [guide](https://github.com/pyg-team/pytorch_geometric/tree/master/benchmark/multi_gpu/training#running-benchmark-on-intel-gpu) for environment setup on Intel GPUs.
 
-| Example                                                        | Scalability            | Description                                                              |
-| -------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------ |
-| [`distributed_sampling_xpu.py`](./distributed_sampling_xpu.py) | single-node, multi-gpu | Example for training GNNs on a homogeneous graph with neighbor sampling. |
-| [`distributed_sampling_multinode_xpu.py`](./distributed_sampling_multinode_xpu.py) | multi-node, multi-gpu | Example for training GNNs on a homogeneous graph with neighbor sampling on multiple nodes. |
+| Example                                                                            | Scalability            | Description                                                                                |
+| ---------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| [`distributed_sampling_xpu.py`](./distributed_sampling_xpu.py)                     | single-node, multi-gpu | Example for training GNNs on a homogeneous graph with neighbor sampling.                   |
+| [`distributed_sampling_multinode_xpu.py`](./distributed_sampling_multinode_xpu.py) | multi-node, multi-gpu  | Example for training GNNs on a homogeneous graph with neighbor sampling on multiple nodes. |

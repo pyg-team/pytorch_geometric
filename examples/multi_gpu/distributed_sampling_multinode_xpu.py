@@ -1,9 +1,9 @@
 """Distributed GraphSAGE training, targeting XPU devices.
 
 Suppose you have a cluster with ${np} nodes, each node has
-${ppn} xpu cards, ${HOSTS_LIST} is the hostname list of the 
-cluster, it looks like 'host1,host2,host3' if you got 3 nodes. 
-The master address and port are ${MASTER_ADDR} and ${MASTER_PORT} 
+${ppn} xpu cards, ${HOSTS_LIST} is the hostname list of the
+cluster, it looks like 'host1,host2,host3' if you got 3 nodes.
+The master address and port are ${MASTER_ADDR} and ${MASTER_PORT}
 for pytorch distributed training.
 
 You can run this script on the cluster:
