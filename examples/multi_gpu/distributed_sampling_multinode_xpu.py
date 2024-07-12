@@ -1,3 +1,22 @@
+"""Distributed GraphSAGE training, targeting XPU devices.
+
+Suppose you have a cluster with ${np} nodes, each node has
+${ppn} xpu cards, ${HOSTS_LIST} is the hostname list of the 
+cluster, it looks like 'host1,host2,host3' if you got 3 nodes. 
+The master address and port are ${MASTER_ADDR} and ${MASTER_PORT} 
+for pytorch distributed training.
+
+You can run this script on the cluster:
+
+I_MPI_OFI_PROVIDER=tcp FI_TCP_IFACE=${your_network_interface} \
+mpirun \
+    -genv MASTER_ADDR=${MASTER_ADDR} \
+    -genv MASTER_PORT=${MASTER_PORT} \
+    -hosts ${HOSTS_LIST} \
+    -np ${np} -ppn ${ppn}  \
+    python distributed_sampling_multinode_xpu.py
+"""
+
 import copy
 import os
 
