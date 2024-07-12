@@ -4,13 +4,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.nlp.llm import (
-    EOS,
-    IGNORE_INDEX,
-    LLM,
-    MAX_NEW_TOKENS,
-    MAX_TXT_LEN,
-)
+from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
@@ -163,65 +157,17 @@ class GRetriever(nn.Module):
             additional_text_context (List[str], optional): Additional context
                 to give to the LLM, such as textified knowledge graphs.
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
-        # encode labels
-        labels = self.tokenizer(label, add_special_tokens=False)
-        # encode training specific special token
-        eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
-
-        # encode graphs
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = self.projector(graph_embeds)
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        batch_label_input_ids = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            # Add bos & eos token
-            label_input_ids = labels.input_ids[
-                i][:MAX_NEW_TOKENS] + eos_tokens.input_ids
-            if additional_text_context is not None:
-                input_ids = context.input_ids[
-                    i][:MAX_TXT_LEN] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids + label_input_ids
-            else:
-                input_ids = questions.input_ids[
-                    i] + eos_user_tokens.input_ids + label_input_ids
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
-            to_cat = [bos_embeds]
-            if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
-                                      dim=0)
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
-            label_input_ids = [IGNORE_INDEX
-                               ] * (inputs_embeds.shape[0] -
-                                    len(label_input_ids)) + label_input_ids
-            batch_label_input_ids.append(label_input_ids)
+        graph_embeds = [
+            (embed.unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
+            for i, embed in enumerate(self.projector(graph_embeds))
+        ]
 
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad_length, 1).to(self.llm_device),
-                batch_inputs_embeds[i].to(self.llm_device)
-            ])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
-            batch_label_input_ids[
-                i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(  # noqa
+            question, additional_text_context, graph_embeds, label)
 
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-        label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.llm_device)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
@@ -263,48 +209,15 @@ class GRetriever(nn.Module):
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: {32})
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use._encode_inputs(question, additional_text_context) # noqa
-        # encode graphs
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
-        graph_embeds = self.projector(graph_embeds)
-
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            # Add bos & eos token
-            if additional_text_context is not None:
-                input_ids = context.input_ids[
-                    i][:MAX_TXT_LEN] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids
-            else:
-                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
-            to_cat = [bos_embeds]
-            if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
-                                      dim=0)
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
-
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
-
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-
+        graph_embeds = [
+            (embed.unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
+            for i, embed in enumerate(self.projector(graph_embeds))
+        ]
+        inputs_embeds, attention_mask, _ = self.llm_to_use._get_embeds(
+            question, additional_text_context, graph_embeds)
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
