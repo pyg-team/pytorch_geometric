@@ -82,11 +82,11 @@ class PatchTransformerAggregation(Aggregation):
         self.pe = PositionalEncoding1D(self.hidden_dim)
 
     def reset_parameters(self):
-        for encoder in self.encoders:
-            encoder.reset_parameters()
-        self.pma.reset_parameters()
-        for decoder in self.decoders:
-            decoder.reset_parameters()
+        self.feat_encoder.reset_parameters()
+        for atten_block in self.atten_blocks:
+            atten_block.reset_parameters()
+        self.mlp_head.reset_parameters()
+        self.pad_projector.reset_parameters()
 
     @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
@@ -126,8 +126,8 @@ class PatchTransformerAggregation(Aggregation):
         x_feat = self.layernorm(x_feat)
 
         # aggregation choice here, mean, sum, max or a combination
-        x_feat = torch.mean(x_feat, dim=1)
-        # x_feat = torch.sum(x_feat, dim=1)
+        # x_feat = torch.mean(x_feat, dim=1)
+        x_feat = torch.sum(x_feat, dim=1)
         # x_feat, _ = torch.max(x_feat, dim=1)
 
         return self.mlp_head(x_feat)
