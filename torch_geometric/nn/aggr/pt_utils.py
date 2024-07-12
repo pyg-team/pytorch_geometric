@@ -1,6 +1,7 @@
+from typing import Optional
+
 import numpy as np
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn.aggr.utils import MultiheadAttentionBlock
@@ -8,14 +9,12 @@ from torch_geometric.nn.encoding import TemporalEncoding
 
 
 class FeatEncoder(torch.nn.Module):
-    r"""Returns [raw_edge_feat | TimeEncode(edge_time_stamp)].
+    r"""Returns embedded edge features.
 
     Args:
         feat_dim (int): edge feature dimension.
         out_dim (int): output dimension.
-        time_dim (int, optional): time embedding dimension,
-
-
+        time_dim (int, optional): time embedding dimension.
     """
     def __init__(
         self,
@@ -49,81 +48,25 @@ class FeatEncoder(torch.nn.Module):
 
 
 class TransformerBlock(torch.nn.Module):
-    r"""out = X.T + MLP_Layernorm(X.T),     # apply token mixing
-    out = out.T + MLP_Layernorm(out.T) # apply channel mixing.
+    r"""transformer block for patch transformer.
+
+    Args:
+        dims (int): hidden dimension
+        heads (int): number of attention heads
+        dropout (float, optional): dropout value.
     """
-    def __init__(self, dims, heads, channel_expansion_factor=4, dropout=0.2,
-                 use_single_layer=False):
-        super().__init__()
-
-        self.module_spec = ['token', 'channel']
-
-        self.dims = dims
-        if 'token' in self.module_spec:
-            self.transformer_encoder = MultiheadAttentionBlock(
-                dims, heads, layer_norm=False, dropout=dropout)
-        if 'channel' in self.module_spec:
-            self.channel_layernorm = torch.nn.LayerNorm(dims)
-            self.channel_forward = GeluMLP(dims, channel_expansion_factor,
-                                           dropout, use_single_layer)
-
-    def reset_parameters(self):
-        if 'token' in self.module_spec:
-            self.transformer_encoder.reset_parameters()
-        if 'channel' in self.module_spec:
-            self.channel_layernorm.reset_parameters()
-            self.channel_forward.reset_parameters()
-
-    def token_mixer(self, x):
-        x = self.transformer_encoder(x, x)
-        return x
-
-    def channel_mixer(self, x):
-        x = self.channel_layernorm(x)
-        x = self.channel_forward(x)
-        return x
-
-    def forward(self, x):
-        if 'token' in self.module_spec:
-            x = x + self.token_mixer(x)
-        if 'channel' in self.module_spec:
-            x = x + self.channel_mixer(x)
-        return x
-
-
-class GeluMLP(torch.nn.Module):
-    r"""2-layer MLP with GeLU (fancy version of ReLU) as activation."""
-    def __init__(self, dims, expansion_factor, dropout=0,
-                 use_single_layer=False):
+    def __init__(self, dims: int, heads: int, dropout: float = 0.2):
         super().__init__()
 
         self.dims = dims
-        self.use_single_layer = use_single_layer
-
-        self.expansion_factor = expansion_factor
-        self.dropout = dropout
-
-        if use_single_layer:
-            self.linear_0 = torch.nn.Linear(dims, dims)
-        else:
-            self.linear_0 = torch.nn.Linear(dims, int(expansion_factor * dims))
-            self.linear_1 = torch.nn.Linear(int(expansion_factor * dims), dims)
-
-        self.reset_parameters()
+        self.transformer_encoder = MultiheadAttentionBlock(
+            dims, heads, layer_norm=True, dropout=dropout)
 
     def reset_parameters(self):
-        self.linear_0.reset_parameters()
-        if self.use_single_layer is False:
-            self.linear_1.reset_parameters()
+        self.transformer_encoder.reset_parameters()
 
-    def forward(self, x):
-        x = self.linear_0(x)
-        x = F.gelu(x)
-        x = F.dropout(x, p=self.dropout, training=self.training)
-
-        if self.use_single_layer is False:
-            x = self.linear_1(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
+    def forward(self, x, mask: Optional[Tensor] = None):
+        x = x + self.transformer_encoder(x, x, mask, mask)
         return x
 
 

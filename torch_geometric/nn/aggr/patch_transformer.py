@@ -109,17 +109,10 @@ class PatchTransformerAggregation(Aggregation):
         x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                       max_num_elements=max_num_elements)
 
-        # x_feat = [batch_size * max_num_edges_per_node, edge_feat_size]
-        x_feat = torch.zeros((x.shape[0] * self.max_edge, edge_feat_size),
-                             device=x.device)
-
-        # adding the edge features into the zero tensor
-        x_feat[index] = x_feat[index] + x[mask]
-
+        x_feat = x.view(mask.shape[0] * max_num_elements, edge_feat_size)
         # x_feat = [batch_size, # patch, patch_size * edge_feat_size]
         x_feat = x_feat.view(-1, self.max_edge // self.patch_size,
                              self.patch_size * x_feat.shape[-1])
-
         # x_feat = [batch_size, max_edge, edge_feat_size]
         x_feat = self.pad_projector(x_feat)
 
@@ -132,8 +125,10 @@ class PatchTransformerAggregation(Aggregation):
 
         x_feat = self.layernorm(x_feat)
 
-        # x_feat = [batch_size, edge_feat_size]
+        # aggregation choice here, mean, sum, max or a combination
         x_feat = torch.mean(x_feat, dim=1)
+        # x_feat = torch.sum(x_feat, dim=1)
+        # x_feat, _ = torch.max(x_feat, dim=1)
 
         return self.mlp_head(x_feat)
 
