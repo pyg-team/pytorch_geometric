@@ -22,7 +22,8 @@ def test_patch_transformer_aggregation():
         dropout=0.2,
     )
     assert str(aggr) == ('PatchTransformerAggregation(16,'
-                         'heads=1,layer_norm=False,dropout=0.2)')
+                         'heads=1,layer_norm=False,'
+                         'aggr=[\'mean\'],dropout=0.2)')
     out = aggr(x=x, index=index, ptr=None, dim_size=None,
                max_num_elements=max_elements)
     assert out.size() == (3, 128)

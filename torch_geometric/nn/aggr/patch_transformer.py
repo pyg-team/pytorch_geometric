@@ -35,6 +35,7 @@ class PatchTransformerAggregation(Aggregation):
             normalization. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)
+        aggr (list[str], optional): aggregation module, ['sum','max','mean']
         time_dim (int, optional): time embedding dimension,
 
     """
@@ -49,6 +50,7 @@ class PatchTransformerAggregation(Aggregation):
         patch_size: int = 5,
         layer_norm: bool = False,
         dropout: float = 0.0,
+        aggr: list[str] = ['mean'],
         time_dim: int = 0,
     ):
         super().__init__()
@@ -61,6 +63,7 @@ class PatchTransformerAggregation(Aggregation):
         self.patch_size = patch_size
         self.dropout = dropout
         self.max_edge = max_edge
+        self.aggr = aggr
 
         # encoders and linear layers
         self.feat_encoder = FeatEncoder(self.channels, self.hidden_dim,
@@ -73,7 +76,8 @@ class PatchTransformerAggregation(Aggregation):
         ])
 
         # input is node feature and transformer node embed
-        self.mlp_head = torch.nn.Linear(self.hidden_dim, self.out_dim)
+        self.mlp_head = torch.nn.Linear(self.hidden_dim * (len(self.aggr)),
+                                        self.out_dim)
 
         # padding
         self.stride = self.patch_size
@@ -125,15 +129,29 @@ class PatchTransformerAggregation(Aggregation):
 
         x_feat = self.layernorm(x_feat)
 
-        # aggregation choice here, mean, sum, max or a combination
-        # x_feat = torch.mean(x_feat, dim=1)
-        x_feat = torch.sum(x_feat, dim=1)
+        # aggregate with a list of operations
         # x_feat, _ = torch.max(x_feat, dim=1)
 
-        return self.mlp_head(x_feat)
+        out_list = []
+        for aggr in self.aggr:
+            if aggr == "sum":
+                out_list.append(torch.sum(x_feat, dim=1))
+            elif aggr == "mean":
+                out_list.append(torch.mean(x_feat, dim=1))
+            elif aggr == "max":
+                out, _ = torch.max(x_feat, dim=1)
+                out_list.append(out)
+            else:
+                raise ValueError(f"the following aggregation is not supported"
+                                 f"'{aggr}'")
+
+        x_final = torch.cat(out_list, dim=1)
+
+        return self.mlp_head(x_final)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.channels}, '
+        return (f'{self.__class__.__name__}({self.channels},'
                 f'heads={self.heads},'
                 f'layer_norm={self.layer_norm},'
+                f'aggr={self.aggr},'
                 f'dropout={self.dropout})')
