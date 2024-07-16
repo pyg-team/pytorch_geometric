@@ -7,7 +7,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 
-import torch_geometric.transforms as T
+import torch_geometric.transfsorms as T
 from torch_geometric.contrib.explain import PGMExplainer
 from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, ModelConfig
