@@ -1,6 +1,6 @@
-from torch_geometric.graphgym.logger import Logger, LoggerCallback
-from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.config import set_run_dir
+from torch_geometric.graphgym.loader import create_loader
+from torch_geometric.graphgym.logger import Logger, LoggerCallback
 from torch_geometric.testing import withPackage
 
 
