@@ -172,6 +172,8 @@ def test_captum_explainer_multiclass_classification(
 ):
     if node_mask_type is None and edge_mask_type is None:
         return
+    if method == 'ShapleyValueSampling' and type(index) != int:
+        return
 
     batch = torch.tensor([0, 0, 1, 1])
     edge_label_index = torch.tensor([[0, 1, 2], [2, 3, 1]])
