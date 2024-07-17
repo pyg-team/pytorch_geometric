@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Parameter
+from torch.nn import Parameter, Identity
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -106,6 +106,9 @@ class GATv2Conv(MessagePassing):
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        residual (bool, optional): If set to :obj:`True`, the layer will add
+            skip-connection mentioned in the `"Graph Attention Networks"
+            <https://arxiv.org/abs/1710.10903>`_ paper.
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
             will be applied to the source and the target node of every edge,
             *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
@@ -140,6 +143,7 @@ class GATv2Conv(MessagePassing):
         edge_dim: Optional[int] = None,
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
+        residual: bool = False,
         share_weights: bool = False,
         **kwargs,
     ):
@@ -154,6 +158,7 @@ class GATv2Conv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
         self.fill_value = fill_value
+        self.residual = residual
         self.share_weights = share_weights
 
         if isinstance(in_channels, int):
@@ -181,6 +186,20 @@ class GATv2Conv(MessagePassing):
         else:
             self.lin_edge = None
 
+        self.lin_res = None
+        if residual and concat:
+            if in_channels != out_channels * heads:
+                self.lin_res = Linear(in_channels, out_channels * heads,
+                                      bias=bias, weight_initializer='glorot')
+            else:
+                self.lin_res = Identity()
+        elif residual and not concat:
+            if in_channels != out_channels:
+                self.lin_res = Linear(in_channels, out_channels, bias=bias,
+                                      weight_initializer='glorot')
+        else:
+            self.register_parameter('res_lin', None)
+
         if bias and concat:
             self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
@@ -196,6 +215,10 @@ class GATv2Conv(MessagePassing):
         self.lin_r.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
+        if isinstance(self.lin_res, Linear):
+            self.lin_res.reset_parameters()
+            if self.lin_res.bias is not None:
+                zeros(self.lin_res.bias)
         glorot(self.att)
         zeros(self.bias)
 
@@ -255,10 +278,18 @@ class GATv2Conv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
+        res = None
+
         x_l: OptTensor = None
         x_r: OptTensor = None
         if isinstance(x, Tensor):
             assert x.dim() == 2
+
+            if self.lin_res is not None:
+                # Clone to avoid unexpected reference when lin_res is
+                # identity mapping
+                res = self.lin_res(x.clone())
+
             x_l = self.lin_l(x).view(-1, H, C)
             if self.share_weights:
                 x_r = x_l
@@ -267,6 +298,8 @@ class GATv2Conv(MessagePassing):
         else:
             x_l, x_r = x[0], x[1]
             assert x[0].dim() == 2
+            if x_r is not None and self.lin_res is not None:
+                res = self.lin_res(x_r.clone())
             x_l = self.lin_l(x_l).view(-1, H, C)
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
@@ -304,6 +337,9 @@ class GATv2Conv(MessagePassing):
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
+
+        if self.lin_res is not None:
+            out = out + res
 
         if self.bias is not None:
             out = out + self.bias
