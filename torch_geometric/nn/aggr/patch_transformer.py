@@ -50,7 +50,7 @@ class PatchTransformerAggregation(Aggregation):
         patch_size: int = 5,
         layer_norm: bool = False,
         dropout: float = 0.0,
-        aggr: list[str] = ['mean'],
+        aggr: list[str] = None,
         time_dim: int = 0,
     ):
         super().__init__()
@@ -64,6 +64,8 @@ class PatchTransformerAggregation(Aggregation):
         self.dropout = dropout
         self.max_edge = max_edge
         self.aggr = aggr
+        if (self.aggr is None):
+            self.aggr = ["mean"]
 
         # encoders and linear layers
         self.feat_encoder = FeatEncoder(self.channels, self.hidden_dim,
