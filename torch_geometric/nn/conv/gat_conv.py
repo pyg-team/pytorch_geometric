@@ -181,7 +181,6 @@ class GATConv(MessagePassing):
             self.lin_edge = None
             self.register_parameter('att_edge', None)
 
-        self.lin_res = None
         if residual and concat:
             if in_channels != out_channels * heads:
                 self.lin_res = Linear(in_channels, out_channels * heads,

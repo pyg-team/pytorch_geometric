@@ -186,7 +186,6 @@ class GATv2Conv(MessagePassing):
         else:
             self.lin_edge = None
 
-        self.lin_res = None
         if residual and concat:
             if in_channels != out_channels * heads:
                 self.lin_res = Linear(in_channels, out_channels * heads,
