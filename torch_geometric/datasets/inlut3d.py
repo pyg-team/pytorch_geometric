@@ -10,7 +10,16 @@ __email__ = "jakub.walczak@p.lodz.pl"
 
 import os
 import os.path as osp
-from typing import Callable, List, Literal, Optional, Tuple, Type, Union
+from typing import (
+    Callable,
+    Generator,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import numpy as np
 import torch
@@ -52,17 +61,13 @@ def read_inlut3d_pts(path: str, ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     return (
         torch.from_numpy(xyz),
         torch.from_numpy(rgb),
-        torch.from_numpy(categories).type(torch.LongTensor),
-        torch.from_numpy(instances).type(torch.LongTensor),
+        torch.from_numpy(categories.astype(int)),
+        torch.from_numpy(instances.astype(int)),
     )
 
 
-def _get_setup_name_from_path(path: str) -> str:
-    return osp.splitext(osp.basename(path))[0]
-
-
 class _BaseInLUT3D(Dataset):
-    URL: str = "https://zenodo.org/records/8131487/files/inlut3d.tar.gz"
+    URL: str = "https://zenodo.org/records/12754337/files/inlut3d.tar.gz"
     SETUPS_NBR: int = 321
     FIRST_TEST_ID: int = 301
 
@@ -133,7 +138,7 @@ class _BaseInLUT3D(Dataset):
     def process(self) -> None:
         raise NotImplementedError
 
-    def iter_over_setups(self):
+    def iter_over_setups(self) -> Generator[Tuple, None, None]:
         for filename in tqdm(self.raw_paths):
             setup_name, _ = osp.splitext(osp.basename(filename))
             xyz, rgb, categories, instances = read_inlut3d_pts(filename)
@@ -146,6 +151,7 @@ class _BaseInLUT3D(Dataset):
                     instances[mask],
                 )
                 yield setup_name, (xyz, rgb, categories, instances)
+        return None
 
 
 class ClassificationInLUT3D(_BaseInLUT3D):
@@ -177,6 +183,7 @@ class ClassificationInLUT3D(_BaseInLUT3D):
         while True:
             yield id_
             id_ += 1
+        return None
 
     def process(self) -> None:
         id_ = self._samples_ids_gen()
