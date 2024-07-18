@@ -51,16 +51,16 @@ class TransformerBlock(torch.nn.Module):
     r"""transformer block for patch transformer.
 
     Args:
-        dims (int): hidden dimension
-        heads (int): number of attention heads
+        hidden_channels (int): Hidden dimension.
+        heads (int): Number of attention heads.
         dropout (float, optional): dropout value.
     """
-    def __init__(self, dims: int, heads: int, dropout: float = 0.2):
+    def __init__(self, hidden_channels: int, heads: int, dropout: float = 0.2):
         super().__init__()
 
-        self.dims = dims
+        self.hidden_channels = hidden_channels
         self.transformer_encoder = MultiheadAttentionBlock(
-            dims, heads, layer_norm=True, dropout=dropout)
+            hidden_channels, heads, layer_norm=True, dropout=dropout)
 
     def reset_parameters(self):
         self.transformer_encoder.reset_parameters()
@@ -71,13 +71,15 @@ class TransformerBlock(torch.nn.Module):
 
 
 class PositionalEncoding1D(torch.nn.Module):
-    def __init__(self, dims):
-        r""":param channels: The last dimension of the tensor
-        you want to apply pos emb to.
+    def __init__(self, hidden_channels):
+        r"""1D positional encoding.
+
+        Args:
+            hidden_channels (int): hidden dimension.
         """
         super().__init__()
-        self.org_channels = dims
-        channels = int(np.ceil(dims / 2) * 2)
+        self.org_channels = hidden_channels
+        channels = int(np.ceil(hidden_channels / 2) * 2)
         self.channels = channels
         channel_range = torch.arange(0, channels, 2).float() / channels
         inv_freq = 1.0 / (1000**channel_range)

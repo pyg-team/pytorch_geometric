@@ -10,6 +10,7 @@ from torch_geometric.nn.aggr.pt_utils import (
     PositionalEncoding1D,
     TransformerBlock,
 )
+from torch_geometric.nn.encoding import PositionalEncoding
 
 
 class PatchTransformerAggregation(Aggregation):
@@ -21,34 +22,33 @@ class PatchTransformerAggregation(Aggregation):
 
     Args:
         channels (int): Size of each edge feature
-        use to specify the time embedding dimension of edge timestamps
-        hidden_dim (int, optional): hidden dimension
-        out_dim (int, optional): output dimension
-        max_edge (int, optional): max number of edges per node
-        num_encoder_blocks (int, optional): Number of Set Attention Blocks
-            (SABs) in the encoder. (default: :obj:`1`).
+            use to specify the time embedding dimension of edge timestamps.
+        hidden_channels (int, optional): Hidden channels.
+        out_dim (int, optional): output dimension.
+        max_edge (int, optional): max number of edges per node.
+        num_encoder_blocks (int, optional): Number of transformer blocks
+            (default: :obj:`1`).
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        patch_size (int, optional): Number of links in a patch
+        patch_size (int, optional): Number of links in a patch.
             (default: :obj:`5`)
         norm (str, optional): If set to :obj:`True`, will apply layer
             normalization. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)
-        aggr (list[str], optional): aggregation module, ['sum','max','mean']
+        aggr (list[str], optional): Aggregation module, ['sum','max','mean'].
         time_dim (int, optional): time embedding dimension,
 
     """
     def __init__(
         self,
         channels: int,
-        hidden_dim: int = 64,
+        hidden_channels: int = 64,
         out_dim: int = 128,
         max_edge: int = 16,
         num_encoder_blocks: int = 1,
         heads: int = 1,
-        patch_size: int = 5,
-        layer_norm: bool = False,
+        patch_size: int = 4,
         dropout: float = 0.0,
         aggr: list[str] = None,
         time_dim: int = 0,
@@ -56,10 +56,9 @@ class PatchTransformerAggregation(Aggregation):
         super().__init__()
         self.channels = channels
         self.time_dim = time_dim
-        self.hidden_dim = hidden_dim
+        self.hidden_channels = hidden_channels
         self.out_dim = out_dim
         self.heads = heads
-        self.layer_norm = layer_norm
         self.patch_size = patch_size
         self.dropout = dropout
         self.max_edge = max_edge
@@ -68,30 +67,31 @@ class PatchTransformerAggregation(Aggregation):
             self.aggr = ["mean"]
 
         # encoders and linear layers
-        self.feat_encoder = FeatEncoder(self.channels, self.hidden_dim,
+        self.feat_encoder = FeatEncoder(self.channels, self.hidden_channels,
                                         time_dim=self.time_dim)
-        self.layernorm = torch.nn.LayerNorm(self.hidden_dim)
+        self.layernorm = torch.nn.LayerNorm(self.hidden_channels)
         self.atten_blocks = torch.nn.ModuleList([
-            TransformerBlock(dims=self.hidden_dim, heads=self.heads,
-                             dropout=self.dropout)
+            TransformerBlock(hidden_channels=self.hidden_channels,
+                             heads=self.heads, dropout=self.dropout)
             for _ in range(num_encoder_blocks)
         ])
 
         # input is node feature and transformer node embed
-        self.mlp_head = torch.nn.Linear(self.hidden_dim * (len(self.aggr)),
-                                        self.out_dim)
+        self.fc = torch.nn.Linear(self.hidden_channels * (len(self.aggr)),
+                                  self.out_dim)
 
         # padding
         self.stride = self.patch_size
-        self.pad_projector = torch.nn.Linear(self.patch_size * self.hidden_dim,
-                                             self.hidden_dim)
-        self.pe = PositionalEncoding1D(self.hidden_dim)
+        self.pad_projector = torch.nn.Linear(
+            self.patch_size * self.hidden_channels, self.hidden_channels)
+        self.pe = PositionalEncoding1D(self.hidden_channels)
+        self.pe = PositionalEncoding(self.hidden_channels)
 
     def reset_parameters(self):
         self.feat_encoder.reset_parameters()
         for atten_block in self.atten_blocks:
             atten_block.reset_parameters()
-        self.mlp_head.reset_parameters()
+        self.fc.reset_parameters()
         self.pad_projector.reset_parameters()
 
     @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
@@ -108,7 +108,7 @@ class PatchTransformerAggregation(Aggregation):
         # x = [num_edges, input_channels]
         x = self.feat_encoder(x)
 
-        # x = [num_edges, hidden_dim]
+        # x = [num_edges, hidden_channels]
         edge_feat_size = x.shape[1]
 
         # x = [batch_size, max_num_elements, -1]
@@ -132,8 +132,6 @@ class PatchTransformerAggregation(Aggregation):
         x_feat = self.layernorm(x_feat)
 
         # aggregate with a list of operations
-        # x_feat, _ = torch.max(x_feat, dim=1)
-
         out_list = []
         for aggr in self.aggr:
             if aggr == "sum":
@@ -146,14 +144,13 @@ class PatchTransformerAggregation(Aggregation):
             else:
                 raise ValueError(f"the following aggregation is not supported"
                                  f"'{aggr}'")
-
         x_final = torch.cat(out_list, dim=1)
-
-        return self.mlp_head(x_final)
+        return self.fc(x_final)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels},'
+                f'hidden_channels={self.hidden_channels},'
                 f'heads={self.heads},'
-                f'layer_norm={self.layer_norm},'
+                f'patch_size={self.patch_size},'
                 f'aggr={self.aggr},'
                 f'dropout={self.dropout})')
