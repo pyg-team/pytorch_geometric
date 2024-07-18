@@ -198,7 +198,7 @@ class GATv2Conv(MessagePassing):
                 self.lin_res = Linear(in_channels, out_channels, bias=bias,
                                       weight_initializer='glorot')
             else:
-                self.linres = Identity()
+                self.lin_res = Identity()
         else:
             self.register_parameter('lin_res', None)
 
