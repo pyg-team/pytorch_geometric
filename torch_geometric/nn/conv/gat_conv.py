@@ -192,8 +192,10 @@ class GATConv(MessagePassing):
             if in_channels != out_channels:
                 self.lin_res = Linear(in_channels, out_channels, bias=bias,
                                       weight_initializer='glorot')
+            else:
+                self.linres = Identity()
         else:
-            self.register_parameter('res_lin', None)
+            self.register_parameter('lin_res', None)
 
         if bias and concat:
             self.bias = Parameter(torch.empty(heads * out_channels))
