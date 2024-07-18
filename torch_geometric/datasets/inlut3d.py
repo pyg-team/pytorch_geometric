@@ -10,16 +10,7 @@ __email__ = "jakub.walczak@p.lodz.pl"
 
 import os
 import os.path as osp
-from typing import (
-    Callable,
-    Generator,
-    List,
-    Literal,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Callable, List, Literal, Optional, Tuple, Type, Union
 
 import numpy as np
 import torch
@@ -138,7 +129,7 @@ class _BaseInLUT3D(Dataset):
     def process(self) -> None:
         raise NotImplementedError
 
-    def iter_over_setups(self) -> Generator[Tuple, None, None]:
+    def iter_over_setups(self):  # type: ignore[no-untyped-def]
         for filename in tqdm(self.raw_paths):
             setup_name, _ = osp.splitext(osp.basename(filename))
             xyz, rgb, categories, instances = read_inlut3d_pts(filename)
@@ -151,7 +142,6 @@ class _BaseInLUT3D(Dataset):
                     instances[mask],
                 )
                 yield setup_name, (xyz, rgb, categories, instances)
-        return None
 
 
 class ClassificationInLUT3D(_BaseInLUT3D):
@@ -178,12 +168,11 @@ class ClassificationInLUT3D(_BaseInLUT3D):
             for i in range(self.FIRST_TEST_ID, self.SAMPLES_NBR)
         ]
 
-    def _samples_ids_gen(self):
+    def _samples_ids_gen(self):  # type: ignore[no-untyped-def]
         id_ = 0
         while True:
             yield id_
             id_ += 1
-        return None
 
     def process(self) -> None:
         id_ = self._samples_ids_gen()
