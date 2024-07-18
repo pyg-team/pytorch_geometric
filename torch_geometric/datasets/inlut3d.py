@@ -2,7 +2,7 @@
 
 The InLUT3D dataset was released under the Creative Commons Attribution
 Non Commercial 2.5 Generic Licese and is publicly available under the
-following link: https://doi.org/10.5281/zenodo.8131487
+following link: https://zenodo.org/doi/10.5281/zenodo.8131486
 """
 
 __author__ = "Jakub Walczak"
