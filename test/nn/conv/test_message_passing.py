@@ -740,3 +740,24 @@ def test_pickle(tmp_path):
 
     model = torch.load(path)
     torch.jit.script(model)
+
+
+class MyOptionalEdgeAttrConv(MessagePassing):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x, edge_index, edge_attr=None):
+        return self.propagate(edge_index, x=x, edge_attr=edge_attr)
+
+    def message(self, x_j, edge_attr=None):
+        return x_j if edge_attr is None else x_j * edge_attr.view(-1, 1)
+
+
+def test_my_optional_edge_attr_conv():
+    conv = MyOptionalEdgeAttrConv()
+
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    out = conv(x, edge_index)
+    assert out.size() == (4, 8)
