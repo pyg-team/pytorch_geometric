@@ -20,7 +20,7 @@ def test_patch_transformer_aggregation(device: torch.device) -> None:
     assert str(aggr) == 'PatchTransformerAggregation(16, 32, patch_size=2)'
 
     index = torch.tensor([0, 0, 1, 1, 1, 2], device=device)
-    x = torch.ones(index.size(0), 16, device=device)
+    x = torch.randn(index.size(0), 16, device=device)
 
     out = aggr(x, index)
     assert out.device == device
