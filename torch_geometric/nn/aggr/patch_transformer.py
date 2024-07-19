@@ -16,7 +16,7 @@ class PatchTransformerAggregation(Aggregation):
     aggregate are processed by multi-head attention blocks across patches, as
     described in the `"Simplifying Temporal Heterogeneous Network for
     Continuous-Time Link Prediction"
-    <https://dl.acm.org/doi/pdf/10.1145/3583780.3615059>`_paper.
+    <https://dl.acm.org/doi/pdf/10.1145/3583780.3615059>`_ paper.
 
     Args:
         in_channels (int): Size of each input sample.
