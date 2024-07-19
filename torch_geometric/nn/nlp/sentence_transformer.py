@@ -15,8 +15,7 @@ class PoolingStrategy(Enum):
 class SentenceTransformer(torch.nn.Module):
     def __init__(
         self,
-        model_name: Optional[
-            str] = "sentence-transformers/all-roberta-large-v1",
+        model_name: str,
         pooling_strategy: Union[PoolingStrategy, str] = 'mean',
     ) -> None:
         super().__init__()

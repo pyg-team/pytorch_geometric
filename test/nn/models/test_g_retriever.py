@@ -2,13 +2,12 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.nn.models import GRetriever
-from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 
 
-@withCUDA
 @onlyFullTest
-@withPackage('transformers')
-def test_g_retriever(device):
+@withPackage('transformers', 'accelerate')
+def test_g_retriever() -> None:
     batch = Data()
     batch.question = ["Is PyG the best open-source GNN library?"]
     batch.label = ["yes!"]
@@ -37,6 +36,6 @@ def test_g_retriever(device):
     assert loss is not None
 
     # test inference
-    out = model.inference(batch.question, batch.x, batch.edge_index,
-                          batch.batch, batch.ptr, batch.edge_attr)
-    assert out['pred'] is not None
+    pred = model.inference(batch.question, batch.x, batch.edge_index,
+                           batch.batch, batch.ptr, batch.edge_attr)
+    assert pred is not None

@@ -4,7 +4,6 @@ from itertools import product
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -68,6 +67,8 @@ class LastFM(InMemoryDataset):
         os.remove(path)
 
     def process(self) -> None:
+        import scipy.sparse as sp
+
         data = HeteroData()
 
         node_type_idx = np.load(osp.join(self.raw_dir, 'node_types.npy'))

@@ -247,9 +247,14 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            output = inference_fn(model, batch, model_save_name)
-            output["label"] = batch.label
-            eval_output.append(output)
+            pred = inference_fn(model, batch, model_save_name)
+            eval_data = {
+                "pred": pred,
+                "question": batch.question,
+                "desc": batch.desc,
+                "label": batch.label
+            }
+            eval_output.append(eval_data)
         progress_bar_test.update(1)
 
     # Step 6 Post-processing & compute metrics
@@ -281,7 +286,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             num_params=1,
         )
     else:
-        pure_llm = LLM()
+        pure_llm = LLM(model_name="llama2-7b", num_params=7)
     if path.exists("demo_save_dict.pt"):
         print("Saved outputs for the first step of the demo found.")
         print("Would you like to redo?")
@@ -313,9 +318,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             else:
                 # GNN+LLM only using 32 tokens to answer.
                 # Allow more output tokens for untrained LLM
-                pure_llm_out = pure_llm.inference(batch.question, batch.desc,
-                                                  max_out_tokens=256)
-                pure_llm_pred = pure_llm_out['pred'][0]
+                pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
+                                                   max_tokens=256)
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
             untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]

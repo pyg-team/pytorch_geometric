@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCN, DeepGraphInfomax
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import has_package, is_full_test, withDevice
 
 
 @withDevice
@@ -33,13 +33,14 @@ def test_infomax(device):
         assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
         assert summary.size() == (16, )
 
-    acc = model.test(
-        train_z=torch.ones(20, 16),
-        train_y=torch.randint(10, (20, )),
-        test_z=torch.ones(20, 16),
-        test_y=torch.randint(10, (20, )),
-    )
-    assert 0 <= acc <= 1
+    if has_package('sklearn'):
+        acc = model.test(
+            train_z=torch.ones(20, 16),
+            train_y=torch.randint(10, (20, )),
+            test_z=torch.ones(20, 16),
+            test_y=torch.randint(10, (20, )),
+        )
+        assert 0 <= acc <= 1
 
 
 @withDevice
