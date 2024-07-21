@@ -218,7 +218,8 @@ class GATv2Conv(MessagePassing):
             self.lin_edge.reset_parameters()
         if isinstance(self.lin_res, Linear):
             self.lin_res.reset_parameters()
-            zeros(self.lin_res.bias)
+            if self.lin_res.bias is not None:
+                zeros(self.lin_res.bias)
         glorot(self.att)
         zeros(self.bias)
 

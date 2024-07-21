@@ -217,7 +217,8 @@ class GATConv(MessagePassing):
             self.lin_edge.reset_parameters()
         if isinstance(self.lin_res, Linear):
             self.lin_res.reset_parameters()
-            zeros(self.lin_res.bias)
+            if self.lin_res.bias is not None:
+                zeros(self.lin_res.bias)
         glorot(self.att_src)
         glorot(self.att_dst)
         glorot(self.att_edge)
