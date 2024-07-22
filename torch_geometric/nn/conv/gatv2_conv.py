@@ -108,7 +108,7 @@ class GATv2Conv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             skip-connection mentioned in the `"Graph Attention Networks"
-            <https://arxiv.org/abs/1710.10903>`_ paper.
+            <https://arxiv.org/abs/1710.10903>`_ paper. (default: :obj:`False`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
             will be applied to the source and the target node of every edge,
             *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
@@ -186,25 +186,23 @@ class GATv2Conv(MessagePassing):
         else:
             self.lin_edge = None
 
-        if residual and concat:
-            if in_channels != out_channels * heads:
+        # The number of out channels for residual and bias depending on concat
+        if concat:
+            out_chennels_total = out_channels * heads
+        else:
+            out_chennels_total = out_channels
+
+        if residual:
+            if in_channels != out_chennels_total:
                 self.lin_res = Linear(in_channels, out_channels * heads,
                                       bias=bias, weight_initializer='glorot')
-            else:
-                self.lin_res = Identity()
-        elif residual and not concat:
-            if in_channels != out_channels:
-                self.lin_res = Linear(in_channels, out_channels, bias=bias,
-                                      weight_initializer='glorot')
             else:
                 self.lin_res = Identity()
         else:
             self.register_parameter('lin_res', None)
 
-        if bias and concat:
-            self.bias = Parameter(torch.empty(heads * out_channels))
-        elif bias and not concat:
-            self.bias = Parameter(torch.empty(out_channels))
+        if bias:
+            self.bias = Parameter(torch.empty(out_chennels_total))
         else:
             self.register_parameter('bias', None)
 
